@@ -286,4 +286,145 @@ void main() {
     expect(find.text('shell'), findsNothing);
     expect(find.byKey(e), findsOneWidget);
   });
+
+  testWidgets('re-enter a shell route still in the stack', (WidgetTester tester) async {
+    // Regression test for https://github.com/flutter/flutter/issues/140586.
+    final shellKey = GlobalKey<NavigatorState>();
+    final a = UniqueKey();
+    final b = UniqueKey();
+    final c = UniqueKey();
+    final routes = <RouteBase>[
+      GoRoute(
+        path: '/a',
+        builder: (_, _) => DummyScreen(key: a),
+      ),
+      ShellRoute(
+        navigatorKey: shellKey,
+        builder: (_, _, Widget child) => child,
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/b',
+            builder: (_, _) => DummyScreen(key: b),
+          ),
+          GoRoute(
+            path: '/c',
+            builder: (_, _) => DummyScreen(key: c),
+          ),
+        ],
+      ),
+    ];
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/a');
+
+    router.push('/b');
+    await tester.pumpAndSettle();
+    router.push('/c');
+    await tester.pumpAndSettle();
+    router.pushReplacement('/a');
+    await tester.pumpAndSettle();
+
+    // Re-entering the shell route while a previous instance is still in the
+    // stack used to throw a duplicate page key assertion.
+    router.push('/b');
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.byKey(b), findsOneWidget);
+
+    // Popping the re-entered shell restores the replaced top-level page.
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.byKey(a), findsOneWidget);
+  });
+
+  testWidgets('re-enter a nested shell route still in the stack', (WidgetTester tester) async {
+    // Regression test for https://github.com/flutter/flutter/issues/140586.
+    // Variant with a nested shell and auto-generated navigator keys.
+    final a = UniqueKey();
+    final b = UniqueKey();
+    final c = UniqueKey();
+    final routes = <RouteBase>[
+      GoRoute(
+        path: '/a',
+        builder: (_, _) => DummyScreen(key: a),
+        routes: <RouteBase>[
+          ShellRoute(
+            builder: (_, _, Widget child) => child,
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'b',
+                builder: (_, _) => DummyScreen(key: b),
+              ),
+            ],
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/c',
+        builder: (_, _) => DummyScreen(key: c),
+      ),
+    ];
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/a');
+
+    router.push('/a/b');
+    await tester.pumpAndSettle();
+    router.push('/c');
+    await tester.pumpAndSettle();
+    router.push('/a/b');
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.byKey(b), findsOneWidget);
+  });
+
+  testWidgets('re-enter nested shell routes still in the stack', (WidgetTester tester) async {
+    // Regression test for https://github.com/flutter/flutter/issues/140586.
+    // Two nested shell routes are both duplicated when re-entered; each cloned
+    // shell must get its own distinct navigator key.
+    final outerKey = GlobalKey<NavigatorState>();
+    final innerKey = GlobalKey<NavigatorState>();
+    final a = UniqueKey();
+    final b = UniqueKey();
+    final c = UniqueKey();
+    final routes = <RouteBase>[
+      GoRoute(
+        path: '/a',
+        builder: (_, _) => DummyScreen(key: a),
+      ),
+      ShellRoute(
+        navigatorKey: outerKey,
+        builder: (_, _, Widget child) => child,
+        routes: <RouteBase>[
+          ShellRoute(
+            navigatorKey: innerKey,
+            builder: (_, _, Widget child) => child,
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/b',
+                builder: (_, _) => DummyScreen(key: b),
+              ),
+              GoRoute(
+                path: '/c',
+                builder: (_, _) => DummyScreen(key: c),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ];
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/a');
+
+    router.push('/b');
+    await tester.pumpAndSettle();
+    router.push('/c');
+    await tester.pumpAndSettle();
+    router.pushReplacement('/a');
+    await tester.pumpAndSettle();
+    router.push('/b');
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.byKey(b), findsOneWidget);
+
+    // The original navigator keys still resolve to the bottom-most instances.
+    expect(outerKey.currentState, isNotNull);
+    expect(innerKey.currentState, isNotNull);
+  });
 }

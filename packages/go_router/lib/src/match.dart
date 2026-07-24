@@ -389,13 +389,17 @@ class ShellRouteMatch extends RouteMatchBase {
   // TODO(loic-sharma): Remove meta library prefix.
   // https://github.com/flutter/flutter/issues/171410
   @meta.internal
-  ShellRouteMatch copyWith({required List<RouteMatchBase>? matches}) {
+  ShellRouteMatch copyWith({
+    List<RouteMatchBase>? matches,
+    ValueKey<String>? pageKey,
+    GlobalKey<NavigatorState>? navigatorKey,
+  }) {
     return ShellRouteMatch(
       matches: matches ?? this.matches,
       route: route,
       matchedLocation: matchedLocation,
-      pageKey: pageKey,
-      navigatorKey: navigatorKey,
+      pageKey: pageKey ?? this.pageKey,
+      navigatorKey: navigatorKey ?? this.navigatorKey,
     );
   }
 
@@ -605,18 +609,98 @@ class RouteMatchList with Diagnosticable {
       );
       return newMatches;
     }
-    newMatches.add(_cloneBranchAndInsertImperativeMatch(otherMatches.last, match));
+    // Collect the page keys and shell navigator keys already in use so that
+    // re-entering a shell route that is still in the stack does not reuse them.
+    final usedPageKeys = <String>{};
+    final usedNavigatorKeys = <GlobalKey<NavigatorState>>{};
+    _collectUsedKeys(newMatches, usedPageKeys, usedNavigatorKeys);
+    newMatches.add(
+      _cloneBranchAndInsertImperativeMatch(
+        otherMatches.last,
+        match,
+        usedPageKeys,
+        usedNavigatorKeys,
+      ),
+    );
     return newMatches;
+  }
+
+  /// Recursively collects the page keys and shell navigator keys already in use
+  /// by `matches`.
+  static void _collectUsedKeys(
+    List<RouteMatchBase> matches,
+    Set<String> usedPageKeys,
+    Set<GlobalKey<NavigatorState>> usedNavigatorKeys,
+  ) {
+    for (final match in matches) {
+      usedPageKeys.add(match.pageKey.value);
+      if (match is ShellRouteMatch) {
+        usedNavigatorKeys.add(match.navigatorKey);
+        _collectUsedKeys(match.matches, usedPageKeys, usedNavigatorKeys);
+      }
+    }
+  }
+
+  /// Weak, per-imperative-push cache of synthesized navigator keys for shell
+  /// routes that are re-entered while a previous instance is still in the stack.
+  ///
+  /// Keyed on the imperative match's page key, which is reused by reference
+  /// across reparses, so the same logical duplicate shell keeps a stable
+  /// navigator key (and therefore its navigator state). Entries disappear once
+  /// the imperative match is removed and its page key is garbage collected.
+  static final Expando<Map<String, GlobalKey<NavigatorState>>> _syntheticShellNavigatorKeys =
+      Expando<Map<String, GlobalKey<NavigatorState>>>();
+
+  static GlobalKey<NavigatorState> _syntheticShellNavigatorKey(
+    ValueKey<String> imperativeKey,
+    String discriminator,
+  ) {
+    final Map<String, GlobalKey<NavigatorState>> keys =
+        _syntheticShellNavigatorKeys[imperativeKey] ??= <String, GlobalKey<NavigatorState>>{};
+    return keys.putIfAbsent(discriminator, () => GlobalKey<NavigatorState>());
   }
 
   static RouteMatchBase _cloneBranchAndInsertImperativeMatch(
     RouteMatchBase branch,
     ImperativeRouteMatch match,
+    Set<String> usedPageKeys,
+    Set<GlobalKey<NavigatorState>> usedNavigatorKeys,
   ) {
     if (branch is ShellRouteMatch) {
-      return branch.copyWith(
-        matches: <RouteMatchBase>[_cloneBranchAndInsertImperativeMatch(branch.matches.last, match)],
-      );
+      final matches = <RouteMatchBase>[
+        _cloneBranchAndInsertImperativeMatch(
+          branch.matches.last,
+          match,
+          usedPageKeys,
+          usedNavigatorKeys,
+        ),
+      ];
+      // A [ShellRouteMatch] derives both its page key and its navigator key from
+      // its route. Re-entering the same shell route while a previous instance is
+      // still in the stack would therefore produce two pages and two navigators
+      // sharing the same keys, tripping the framework's duplicate page key (and
+      // duplicate [GlobalKey]) assertions.
+      //
+      // The page key and the navigator key are handled independently since
+      // either can collide on its own. A page key only needs a distinct value.
+      // A navigator key is compared with [identical], so its replacement must
+      // also be stable across reparses; it is cached per imperative push (keyed
+      // on the reparse-stable imperative page key) and kept distinct per shell
+      // via the original page key value. The first instance keeps the route's
+      // original keys, so an explicitly provided navigatorKey still resolves to
+      // the bottom-most shell.
+      // Regression test for https://github.com/flutter/flutter/issues/140586.
+      ValueKey<String> pageKey = branch.pageKey;
+      if (!usedPageKeys.add(pageKey.value)) {
+        pageKey = ValueKey<String>('${match.pageKey.value}${branch.pageKey.value}');
+        usedPageKeys.add(pageKey.value);
+      }
+      GlobalKey<NavigatorState> navigatorKey = branch.navigatorKey;
+      if (!usedNavigatorKeys.add(navigatorKey)) {
+        navigatorKey = _syntheticShellNavigatorKey(match.pageKey, branch.pageKey.value);
+        usedNavigatorKeys.add(navigatorKey);
+      }
+      return branch.copyWith(matches: matches, pageKey: pageKey, navigatorKey: navigatorKey);
     }
     // Add the input `match` instead of the incompatibleMatch since it contains
     // page key and push future.
