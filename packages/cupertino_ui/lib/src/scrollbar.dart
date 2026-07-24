@@ -37,7 +37,10 @@ const double _kScrollbarCrossAxisMargin = 3.0;
 ///
 /// {@youtube 560 315 https://www.youtube.com/watch?v=DbkIQSvwnZc}
 ///
-/// {@macro flutter.widgets.Scrollbar}
+/// For more information, see [RawScrollbar].
+// TODO(dkwingsmt): Migrate the doc back to macro
+// flutter.widgets.Scrollbar
+// https://github.com/flutter/flutter/issues/189629
 ///
 /// When dragging a [CupertinoScrollbar] thumb, the thickness and radius will
 /// animate from [thickness] and [radius] to [thicknessWhileDragging] and

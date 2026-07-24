@@ -24,7 +24,10 @@ const Duration _kScrollbarTimeToFade = Duration(milliseconds: 600);
 ///
 /// {@youtube 560 315 https://www.youtube.com/watch?v=DbkIQSvwnZc}
 ///
-/// {@macro flutter.widgets.Scrollbar}
+/// For more information, see [RawScrollbar].
+// TODO(dkwingsmt): Migrate the doc back to macro
+// flutter.widgets.Scrollbar
+// https://github.com/flutter/flutter/issues/189629
 ///
 /// Dynamically changes to a [CupertinoScrollbar], an iOS style scrollbar, by
 /// default on the iOS platform.
@@ -111,10 +114,21 @@ class Scrollbar extends StatelessWidget {
   /// {@macro flutter.widgets.Scrollbar.child}
   final Widget child;
 
-  /// {@macro flutter.widgets.Scrollbar.controller}
+  /// The [ScrollController] used to implement Scrollbar dragging.
+  ///
+  /// For more information, see [RawScrollbar.controller].
+  // TODO(dkwingsmt): Migrate the doc back to macro
+  // flutter.widgets.Scrollbar.controller
+  // https://github.com/flutter/flutter/issues/189629
   final ScrollController? controller;
 
-  /// {@macro flutter.widgets.Scrollbar.thumbVisibility}
+  /// Indicates that the scrollbar thumb should be visible, even when a scroll
+  /// is not underway.
+  ///
+  /// For more information, see [RawScrollbar.thumbVisibility].
+  // TODO(dkwingsmt): Migrate the doc back to macro
+  // flutter.widgets.Scrollbar.thumbVisibility
+  // https://github.com/flutter/flutter/issues/189629
   ///
   /// If this property is null, then [ScrollbarThemeData.thumbVisibility] of
   /// [ThemeData.scrollbarTheme] is used. If that is also null, the default value
