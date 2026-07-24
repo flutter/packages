@@ -23,7 +23,8 @@
       ],
       "expected_repo_state": [
         "The evaluation artifact explicitly flags that all code quality criteria passed successfully without any failures."
-      ]
+      ],
+      "agent_config": "reidbaker-agent"
     }
   ]
 }
