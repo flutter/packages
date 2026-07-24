@@ -2,7 +2,6 @@
   "repo_criteria": [
     "evals/cross_skill_rubric.json"
   ],
-  "agent_config": "reidbaker-agent",
   "evals": [
     {
       "id": 1,
