@@ -345,6 +345,23 @@ void main() {
     });
   });
 
+  testWidgets('popRoute does not throw Bad state when currentConfiguration is empty', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter goRouter = GoRouter(
+      initialLocation: '/',
+      routes: <GoRoute>[GoRoute(path: '/', builder: (_, _) => const DummyStatefulWidget())],
+    );
+    addTearDown(goRouter.dispose);
+    await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
+
+    // Simulate empty configuration (e.g. startup window before first route resolves)
+    goRouter.routerDelegate.currentConfiguration = RouteMatchList.empty;
+
+    // Should return false without throwing "Bad state: No element"
+    expect(await goRouter.routerDelegate.popRoute(), isFalse);
+  });
+
   group('push', () {
     testWidgets('It should return different pageKey when push is called', (
       WidgetTester tester,
