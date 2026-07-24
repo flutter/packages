@@ -102,8 +102,7 @@ import 'package:swiftgen/swiftgen.dart';
   }
 ''');
       final String prefix = generatorOptions.swiftOptions.fileSpecificClassNameComponent ?? '';
-      indent.writeScoped('final classes = <String>{', '};', () {
-        indent.inc();
+      indent.writeScoped('final classes = <String>{', '};', nestCount: 2, () {
         indent.writeln("'${prefix}PigeonInternalNull',");
         indent.writeln("'${prefix}PigeonTypedData',");
         indent.writeln("'${prefix}NumberWrapper',");
@@ -124,10 +123,8 @@ import 'package:swiftgen/swiftgen.dart';
           indent.writeln("'${dataClass.name}Bridge',");
         }
         indent.writeln("'${generatorOptions.swiftOptions.errorClassName ?? 'PigeonError'}'");
-        indent.dec();
       });
-      indent.writeScoped('final enums = <String>{', '};', () {
-        indent.inc();
+      indent.writeScoped('final enums = <String>{', '};', nestCount: 2, () {
         for (final Enum enumType in root.enums) {
           indent.writeln("'${enumType.name}',");
         }
@@ -135,9 +132,9 @@ import 'package:swiftgen/swiftgen.dart';
           indent.writeln("'NSURLSessionAuthChallengeDisposition',");
         }
         indent.writeln("'${prefix}PigeonInternalNumberType',");
-        indent.dec();
       });
 
+      // TODO(tarrinneal): Make minimum OS versions configurable (ios/macos in externalVersions below).
       indent.format('''
   var targetTriple = '${configuredSdkTriple ?? ''}';
   if (targetTriple.isEmpty) {

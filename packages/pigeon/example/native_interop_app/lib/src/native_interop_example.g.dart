@@ -435,7 +435,7 @@ class NativeInteropExampleApiForNativeInterop {
   static NativeInteropExampleApiForNativeInterop? getInstance({
     String channelName = defaultInstanceName,
   }) {
-    late NativeInteropExampleApiForNativeInterop res;
+    final NativeInteropExampleApiForNativeInterop res;
     if (Platform.isAndroid) {
       final jni_bridge.NativeInteropExampleApiRegistrar? link =
           jni_bridge.NativeInteropExampleApiRegistrar().getInstance(channelName.toJString());

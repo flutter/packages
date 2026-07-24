@@ -20,6 +20,10 @@ const String pigeonVersion = '27.3.0';
 /// Default plugin package name.
 const String defaultPluginPackageName = 'dev.flutter.pigeon';
 
+/// The default instance name string for native interop generated APIs.
+const String defaultNativeInteropInstanceName =
+    'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
+
 /// Read all the content from [stdin] to a String.
 String readStdin() {
   final bytes = <int>[];

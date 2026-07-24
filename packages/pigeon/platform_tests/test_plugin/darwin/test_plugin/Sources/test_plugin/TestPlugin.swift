@@ -2837,6 +2837,32 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
       }
     }
   }
+
+  func testDeregisterHostApi() throws -> Bool {
+    let name = "testDeregisterHostInstance"
+    NativeInteropHostIntegrationCoreApiSetup.register(api: NativeInteropTestsClass(), name: name)
+    guard NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) != nil else {
+      return false
+    }
+    NativeInteropHostIntegrationCoreApiSetup.register(api: nil, name: name)
+    return NativeInteropHostIntegrationCoreApiSetup.getInstance(name: name) == nil
+  }
+
+  func testDeregisterFlutterApi() throws -> Bool {
+    let name = "testDeregisterFlutterInstance"
+    NativeInteropFlutterIntegrationCoreApiRegistrar.registerInstance(api: nil, name: name)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar.getInstance(name: name) == nil
+  }
+
+  func registerAndImmediatelyDeregisterHostApi(name: String) throws {
+    NativeInteropHostIntegrationCoreApiSetup.register(api: NativeInteropTestsClass(), name: name)
+    NativeInteropHostIntegrationCoreApiSetup.register(api: nil, name: name)
+  }
+
+  func testCallDeregisteredFlutterApi(name: String) throws -> Bool {
+    NativeInteropFlutterIntegrationCoreApiRegistrar.registerInstance(api: nil, name: name)
+    return NativeInteropFlutterIntegrationCoreApi.getInstance(name: name) == nil
+  }
 }
 
 public class TestPluginWithSuffix: HostSmallApi {

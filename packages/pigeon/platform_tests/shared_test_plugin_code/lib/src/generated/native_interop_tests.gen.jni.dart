@@ -9920,6 +9920,104 @@ extension NativeInteropHostIntegrationCoreApi$$Methods on NativeInteropHostInteg
     }
     return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
   }
+
+  static final _id_testDeregisterHostApi = NativeInteropHostIntegrationCoreApi._class
+      .instanceMethodId(r'testDeregisterHostApi', r'()Z');
+
+  static final _testDeregisterHostApi =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallBooleanMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun testDeregisterHostApi(): kotlin.Boolean`
+  core$_.bool testDeregisterHostApi() {
+    return _testDeregisterHostApi(reference.pointer, _id_testDeregisterHostApi.pointer).boolean;
+  }
+
+  static final _id_testDeregisterFlutterApi = NativeInteropHostIntegrationCoreApi._class
+      .instanceMethodId(r'testDeregisterFlutterApi', r'()Z');
+
+  static final _testDeregisterFlutterApi =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallBooleanMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun testDeregisterFlutterApi(): kotlin.Boolean`
+  core$_.bool testDeregisterFlutterApi() {
+    return _testDeregisterFlutterApi(
+      reference.pointer,
+      _id_testDeregisterFlutterApi.pointer,
+    ).boolean;
+  }
+
+  static final _id_registerAndImmediatelyDeregisterHostApi = NativeInteropHostIntegrationCoreApi
+      ._class
+      .instanceMethodId(r'registerAndImmediatelyDeregisterHostApi', r'(Ljava/lang/String;)V');
+
+  static final _registerAndImmediatelyDeregisterHostApi =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun registerAndImmediatelyDeregisterHostApi(name: kotlin.String): kotlin.Unit`
+  void registerAndImmediatelyDeregisterHostApi(jni$_.JString string) {
+    final _$string = string.reference;
+    _registerAndImmediatelyDeregisterHostApi(
+      reference.pointer,
+      _id_registerAndImmediatelyDeregisterHostApi.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_testCallDeregisteredFlutterApi = NativeInteropHostIntegrationCoreApi._class
+      .instanceMethodId(r'testCallDeregisteredFlutterApi', r'(Ljava/lang/String;)Z');
+
+  static final _testCallDeregisteredFlutterApi =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallBooleanMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun testCallDeregisteredFlutterApi(name: kotlin.String): kotlin.Boolean`
+  core$_.bool testCallDeregisteredFlutterApi(jni$_.JString string) {
+    final _$string = string.reference;
+    return _testCallDeregisteredFlutterApi(
+      reference.pointer,
+      _id_testCallDeregisteredFlutterApi.pointer,
+      _$string.pointer,
+    ).boolean;
+  }
 }
 
 final class $NativeInteropHostIntegrationCoreApi$Type$
@@ -10044,13 +10142,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun register(api: com.example.test_plugin.NativeInteropHostIntegrationCoreApi, name: kotlin.String): com.example.test_plugin.NativeInteropHostIntegrationCoreApiRegistrar`
+  /// from: `public fun register(api: com.example.test_plugin.NativeInteropHostIntegrationCoreApi?, name: kotlin.String): com.example.test_plugin.NativeInteropHostIntegrationCoreApiRegistrar`
   /// The returned object must be released after use, by calling the [release] method.
   NativeInteropHostIntegrationCoreApiRegistrar register(
-    NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi,
+    NativeInteropHostIntegrationCoreApi? nativeInteropHostIntegrationCoreApi,
     jni$_.JString string,
   ) {
-    final _$nativeInteropHostIntegrationCoreApi = nativeInteropHostIntegrationCoreApi.reference;
+    final _$nativeInteropHostIntegrationCoreApi =
+        nativeInteropHostIntegrationCoreApi?.reference ?? jni$_.jNullReference;
     final _$string = string.reference;
     return _register(
       reference.pointer,
@@ -19764,6 +19863,107 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
   }
+
+  static final _id_testDeregisterHostApi = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'testDeregisterHostApi', r'()Z');
+
+  static final _testDeregisterHostApi =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallBooleanMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun testDeregisterHostApi(): kotlin.Boolean`
+  core$_.bool testDeregisterHostApi() {
+    return _testDeregisterHostApi(reference.pointer, _id_testDeregisterHostApi.pointer).boolean;
+  }
+
+  static final _id_testDeregisterFlutterApi = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'testDeregisterFlutterApi', r'()Z');
+
+  static final _testDeregisterFlutterApi =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallBooleanMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun testDeregisterFlutterApi(): kotlin.Boolean`
+  core$_.bool testDeregisterFlutterApi() {
+    return _testDeregisterFlutterApi(
+      reference.pointer,
+      _id_testDeregisterFlutterApi.pointer,
+    ).boolean;
+  }
+
+  static final _id_registerAndImmediatelyDeregisterHostApi =
+      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
+        r'registerAndImmediatelyDeregisterHostApi',
+        r'(Ljava/lang/String;)V',
+      );
+
+  static final _registerAndImmediatelyDeregisterHostApi =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun registerAndImmediatelyDeregisterHostApi(name: kotlin.String): kotlin.Unit`
+  void registerAndImmediatelyDeregisterHostApi(jni$_.JString string) {
+    final _$string = string.reference;
+    _registerAndImmediatelyDeregisterHostApi(
+      reference.pointer,
+      _id_registerAndImmediatelyDeregisterHostApi.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_testCallDeregisteredFlutterApi = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(r'testCallDeregisteredFlutterApi', r'(Ljava/lang/String;)Z');
+
+  static final _testCallDeregisteredFlutterApi =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallBooleanMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun testCallDeregisteredFlutterApi(name: kotlin.String): kotlin.Boolean`
+  core$_.bool testCallDeregisteredFlutterApi(jni$_.JString string) {
+    final _$string = string.reference;
+    return _testCallDeregisteredFlutterApi(
+      reference.pointer,
+      _id_testCallDeregisteredFlutterApi.pointer,
+      _$string.pointer,
+    ).boolean;
+  }
 }
 
 final class $NativeInteropHostIntegrationCoreApiRegistrar$Type$
@@ -26988,13 +27188,13 @@ extension NativeInteropFlutterIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun registerInstance(api: com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi, name: kotlin.String): kotlin.Unit`
+  /// from: `public fun registerInstance(api: com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi?, name: kotlin.String): kotlin.Unit`
   void registerInstance(
-    NativeInteropFlutterIntegrationCoreApi nativeInteropFlutterIntegrationCoreApi,
+    NativeInteropFlutterIntegrationCoreApi? nativeInteropFlutterIntegrationCoreApi,
     jni$_.JString string,
   ) {
     final _$nativeInteropFlutterIntegrationCoreApi =
-        nativeInteropFlutterIntegrationCoreApi.reference;
+        nativeInteropFlutterIntegrationCoreApi?.reference ?? jni$_.jNullReference;
     final _$string = string.reference;
     _registerInstance(
       reference.pointer,

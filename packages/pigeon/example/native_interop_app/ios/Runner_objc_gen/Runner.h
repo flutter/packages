@@ -333,8 +333,6 @@ typedef unsigned int swift_uint4 __attribute__((__ext_vector_type__(4)));
 /// Generated setup class from Pigeon to register implemented
 /// NativeInteropExampleApi classes.
 SWIFT_CLASS("_TtC6Runner28NativeInteropExampleApiSetup")
-SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
 @interface NativeInteropExampleApiSetup : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 + (NativeInteropExampleApiSetup* _Nullable)getInstanceWithName:
@@ -365,8 +363,6 @@ SWIFT_CLASS("_TtC6Runner38NativeInteropExamplePigeonInternalNull")
 
 @class NSData;
 SWIFT_CLASS("_TtC6Runner35NativeInteropExamplePigeonTypedData")
-SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
 @interface NativeInteropExamplePigeonTypedData : NSObject
 @property(nonatomic, readonly, strong) NSData* _Nonnull data;
 @property(nonatomic, readonly) NSInteger type;

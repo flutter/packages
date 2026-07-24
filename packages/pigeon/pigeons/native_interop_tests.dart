@@ -1394,6 +1394,18 @@ abstract class NativeInteropHostIntegrationCoreApi {
   /// Returns the result of whether the flutter call was successful.
   @async
   bool callFlutterNoopOnBackgroundThread();
+
+  /// Tests deregistering a Host API natively.
+  bool testDeregisterHostApi();
+
+  /// Tests deregistering a Flutter API natively.
+  bool testDeregisterFlutterApi();
+
+  /// Registers and immediately deregisters a Host API under [name].
+  void registerAndImmediatelyDeregisterHostApi(String name);
+
+  /// Tests that calling a deregistered Flutter API under [name] fails / returns null.
+  bool testCallDeregisteredFlutterApi(String name);
 }
 
 /// The core interface that the Dart platform_test code implements for host

@@ -73,8 +73,9 @@ class SwiftOptions {
   /// The Apple target triple to use for FFI generation.
   ///
   /// If not provided, the triple is automatically derived based on the
-  /// `appleSdkPath`, defaulting to `arm64-apple-ios` (or `x86_64-apple-macosx14.0`
-  /// if `appleSdkPath` contains "macosx").
+  /// `appleSdkPath` using `macOSX64TargetTripleLatest` or `iOSArm64TargetTripleLatest`,
+  /// falling back to `arm64-apple-ios` (or `x86_64-apple-macosx` if `appleSdkPath`
+  /// contains "macosx").
   final String? appleSdkTriple;
 
   /// Creates a [SwiftOptions] from a Map representation where:
@@ -359,7 +360,6 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     indent.format('''
 @objc class ${_classNamePrefix}PigeonInternalNull: NSObject {}
 
-@available(iOS 13, macOS 10.15, *)
 class _PigeonFfiCodec {
   static func readValue(value: NSObject?, type: String? = nil, type2: String? = nil) -> Any? {
     if (${_classNamePrefix}PigeonInternal.isNullish(value)) {
@@ -468,15 +468,17 @@ class _PigeonFfiCodec {
     }).join()}
     }
     if (value is [Any]) {
-      let res: NSMutableArray = NSMutableArray()
-      for item in (value as! [Any]) {
+      let list = value as! [Any]
+      let res: NSMutableArray = NSMutableArray(capacity: list.count)
+      for item in list {
         res.add(${_classNamePrefix}PigeonInternal.isNullish(item) ? ${_classNamePrefix}PigeonInternalNull() : writeValue(value: item, isObject: true) as! NSObject)
       }
       return res
     }
     if (value is [AnyHashable: Any]) {
-      let res: NSMutableDictionary = NSMutableDictionary()
-      for (key, value) in (value as! [AnyHashable: Any]) {
+      let dict = value as! [AnyHashable: Any]
+      let res: NSMutableDictionary = NSMutableDictionary(capacity: dict.count)
+      for (key, value) in dict {
          res.setObject(${_classNamePrefix}PigeonInternal.isNullish(key) ? ${_classNamePrefix}PigeonInternalNull() : writeValue(value: value, isObject: true) as! NSObject, forKey: writeValue(value: key, isObject: true) as! NSCopying)
       }
       return res
@@ -867,7 +869,6 @@ if (wrapped == nil) {
       _docCommentSpec,
       generatorComments: generatedComments,
     );
-    indent.writeln('@available(iOS 13, macOS 10.15, *)');
     _writeDataClassSignature(indent, classDefinition, useFfi: true, hashable: false);
     indent.writeScoped('', '}', () {
       if (classDefinition.isSealed) {
@@ -1195,11 +1196,6 @@ if (wrapped == nil) {
     )) {
       indent.newln();
     }
-    if (generatorOptions.useFfi) {
-      indent.writeln(
-        'let defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u";',
-      );
-    }
     super.writeApis(generatorOptions, root, indent, dartPackageName: dartPackageName);
   }
 
@@ -1293,7 +1289,6 @@ if (wrapped == nil) {
     required String dartPackageName,
   }) {
     final String errorClassName = _getErrorClassName(generatorOptions);
-    indent.writeln('@available(iOS 13, macOS 10.15, *)');
     indent.write('@objc protocol ${api.name}Bridge ');
     indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
@@ -1318,36 +1313,45 @@ if (wrapped == nil) {
     });
 
     indent.newln();
-    indent.writeln('@available(iOS 13, macOS 10.15, *)');
     indent.write('@objc class ${api.name}Registrar: NSObject ');
     indent.addScoped('{', '}', () {
       indent.writeln('static var registered${api.name} = [String: ${api.name}]()');
       indent.newln();
       indent.write(
-        '@objc static func registerInstance(api: ${api.name}Bridge, name: String = defaultInstanceName) ',
+        '@objc static func registerInstance(api: ${api.name}Bridge?, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) ',
       );
       indent.addScoped('{', '}', () {
-        indent.writeln('${api.name}Registrar.registered${api.name}[name] = ${api.name}(api: api)');
+        indent.writeScoped('if let api = api {', '}', () {
+          indent.writeln(
+            '${api.name}Registrar.registered${api.name}[name] = ${api.name}(api: api)',
+          );
+        }, addTrailingNewline: false);
+        indent.addScoped(' else {', '}', () {
+          indent.writeln('${api.name}Registrar.registered${api.name}.removeValue(forKey: name)');
+        });
       });
       indent.newln();
-      indent.write('static func getInstance(name: String = defaultInstanceName) -> ${api.name}? ');
+      indent.write(
+        'static func getInstance(name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) -> ${api.name}? ',
+      );
       indent.addScoped('{', '}', () {
         indent.writeln('return ${api.name}Registrar.registered${api.name}[name]');
       });
     });
 
     indent.newln();
-    indent.writeln('@available(iOS 13, macOS 10.15, *)');
     indent.write('class ${api.name} ');
     indent.addScoped('{', '}', () {
-      indent.writeln('private let api: ${api.name}Bridge?');
+      indent.writeln('private let api: ${api.name}Bridge');
       indent.newln();
       indent.write('fileprivate init(api: ${api.name}Bridge) ');
       indent.addScoped('{', '}', () {
         indent.writeln('self.api = api');
       });
       indent.newln();
-      indent.write('static func getInstance(name: String = defaultInstanceName) -> ${api.name}? ');
+      indent.write(
+        'static func getInstance(name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) -> ${api.name}? ',
+      );
       indent.addScoped('{', '}', () {
         indent.writeln('return ${api.name}Registrar.getInstance(name: name)');
       });
@@ -1374,15 +1378,15 @@ if (wrapped == nil) {
 
           if (method.isAsynchronous) {
             if (method.returnType.isVoid) {
-              indent.writeln('await api!.${method.name}(${params.join(', ')})');
+              indent.writeln('await api.${method.name}(${params.join(', ')})');
             } else {
-              indent.writeln('let res = await api!.${method.name}(${params.join(', ')})');
+              indent.writeln('let res = await api.${method.name}(${params.join(', ')})');
             }
           } else {
             if (method.returnType.isVoid) {
-              indent.writeln('api!.${method.name}(${params.join(', ')})');
+              indent.writeln('api.${method.name}(${params.join(', ')})');
             } else {
-              indent.writeln('let res = api!.${method.name}(${params.join(', ')})');
+              indent.writeln('let res = api.${method.name}(${params.join(', ')})');
             }
           }
           indent.writeScoped('if (error.code != nil) {', '}', () {
@@ -1425,18 +1429,24 @@ if (wrapped == nil) {
     indent.writeln(
       '$_docCommentPrefix Generated setup class from Pigeon to register implemented ${api.name} classes.',
     );
-    indent.writeln('@available(iOS 13, macOS 10.15, *)');
     indent.writeScoped('@objc class ${api.name}Setup: NSObject {', '}', () {
       if (generatorOptions.useFfi) {
         indent.writeln('private var api: ${api.name}?');
         indent.writeln('override init() {}');
         indent.writeScoped(
-          'static func register(api: ${api.name}?, name: String = defaultInstanceName) {',
+          'static func register(api: ${api.name}?, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) {',
           '}',
           () {
-            indent.writeln('let wrapper = ${api.name}Setup()');
-            indent.writeln('wrapper.api = api');
-            indent.writeln('${api.name}InstanceTracker.instancesOf${api.name}[name] = wrapper');
+            indent.writeScoped('if let api = api {', '}', () {
+              indent.writeln('let wrapper = ${api.name}Setup()');
+              indent.writeln('wrapper.api = api');
+              indent.writeln('${api.name}InstanceTracker.instancesOf${api.name}[name] = wrapper');
+            }, addTrailingNewline: false);
+            indent.addScoped(' else {', '}', () {
+              indent.writeln(
+                '${api.name}InstanceTracker.instancesOf${api.name}.removeValue(forKey: name)',
+              );
+            });
           },
         );
         indent.writeScoped(
@@ -1528,7 +1538,6 @@ if (wrapped == nil) {
     final String apiName = api.name;
     if (generatorOptions.useFfi) {
       indent.format('''
-        @available(iOS 13, macOS 10.15, *)
         class ${apiName}InstanceTracker {
           static var instancesOf$apiName = [String: ${apiName}Setup?]()
         }
@@ -1545,9 +1554,6 @@ if (wrapped == nil) {
       generatorComments: generatedComments,
     );
 
-    if (generatorOptions.useFfi) {
-      indent.writeln('@available(iOS 13, macOS 10.15, *)');
-    }
     indent.write('protocol $apiName ');
     indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
@@ -2152,19 +2158,19 @@ static func deepEquals(_ lhs: Any?, _ rhs: Any?) -> Bool {
   case is (Void, Void):
     return true
 
-  case (let lhsArray, let rhsArray) as ([Any?], [Any?]):
+  case (let lhsArray, let rhsArray) as ([Double], [Double]):
     guard lhsArray.count == rhsArray.count else { return false }
     for (index, element) in lhsArray.enumerated() {
-      if !deepEquals(element, rhsArray[index]) {
+      if !doubleEquals(element, rhsArray[index]) {
         return false
       }
     }
     return true
 
-  case (let lhsArray, let rhsArray) as ([Double], [Double]):
+  case (let lhsArray, let rhsArray) as ([Any?], [Any?]):
     guard lhsArray.count == rhsArray.count else { return false }
     for (index, element) in lhsArray.enumerated() {
-      if !doubleEquals(element, rhsArray[index]) {
+      if !deepEquals(element, rhsArray[index]) {
         return false
       }
     }
@@ -2234,8 +2240,18 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
 ''');
   }
 
+  /// Writes a custom number wrapper class (`${_classNamePrefix}NumberWrapper`).
+  ///
+  /// Objective-C's `NSNumber` erases specific primitive types (`Int`, `Double`, `Bool`)
+  /// and enum types when boxed generically as `NSObject` or `Any`. This wrapper
+  /// pairs an `NSNumber` with an explicit `type` integer discriminant (e.g. 1 = int,
+  /// 2 = double, 3 = bool, 4+ = specific enums) so the FFI bridge between Swift and Dart
+  /// can preserve and reconstruct the exact original primitive or enum type across untyped boundaries.
   void _writeNumberWrapper(Root root, Indent indent) {
     indent.newln();
+    indent.writeln(
+      '// A wrapper around NSNumber that preserves the original primitive/enum type across FFI.',
+    );
     indent.writeScoped(
       '@objc class ${_classNamePrefix}NumberWrapper: NSObject, NSCopying {',
       '}',
@@ -2335,31 +2351,6 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
         });
       },
     );
-    indent.newln();
-    indent.writeScoped('private func numberCodec(number: Any) -> Int {', '}', () {
-      indent.writeScoped('switch number {', '}', () {
-        var caseNum = 4;
-        indent.format('''
-    case is Int:
-      return 1
-    case is Double:
-      return 2
-    case is Float:
-      return 2
-    case is Bool:
-      return 3''');
-        for (final Enum anEnum in root.enums) {
-          indent.writeln('case is ${anEnum.name}:');
-          indent.inc();
-          indent.writeln('return ${caseNum++}');
-          indent.dec();
-        }
-        indent.writeln('default:');
-        indent.inc();
-        indent.writeln('return 0');
-        indent.dec();
-      });
-    });
 
     indent.format('''
 // Enum to represent the Dart TypedData types
@@ -2371,7 +2362,6 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
   case float64 = 4
 }
 
-@available(iOS 13, macOS 10.15, *)
 @objc public class ${_classNamePrefix}PigeonTypedData: NSObject {
   @objc public let data: NSData
   @objc public let type: Int
@@ -2459,6 +2449,9 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
     indent.newln();
     final String uniqueComponent = generatorOptions.fileSpecificClassNameComponent ?? '';
     indent.writeScoped('enum ${uniqueComponent}PigeonInternal {', '}', () {
+      if (generatorOptions.useFfi) {
+        indent.writeln('static let defaultInstanceName = "$defaultNativeInteropInstanceName"');
+      }
       _writeIsNullish(generatorOptions, indent);
       if (root.classes.isNotEmpty) {
         _writeDeepEquals(generatorOptions, indent);
@@ -3543,7 +3536,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         indent.writeScoped('var localizedDescription: String {', '}', () {
           indent.writeScoped('return', '', () {
             indent.writeln(
-              '"${_getErrorClassName(generatorOptions)}(code: \\(code${generatorOptions.useFfi ? ' ?? "<nil>"' : ''}), message: \\(message ?? "<nil>"), details: \\(details ?? "<nil>")"',
+              '"${_getErrorClassName(generatorOptions)}(code: \\(code${generatorOptions.useFfi ? ' ?? "<nil>"' : ''}), message: \\(message ?? "<nil>"), details: \\(details ?? "<nil>"))"',
             );
           }, addTrailingNewline: false);
         });

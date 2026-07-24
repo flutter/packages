@@ -22,10 +22,11 @@ import Foundation
 
   var localizedDescription: String {
     return
-      "PigeonError(code: \(code ?? "<nil>"), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
+      "PigeonError(code: \(code ?? "<nil>"), message: \(message ?? "<nil>"), details: \(details ?? "<nil>"))"
   }
 }
 
+// A wrapper around NSNumber that preserves the original primitive/enum type across FFI.
 @objc class NativeInteropExampleNumberWrapper: NSObject, NSCopying {
   @objc required init(
     number: NSNumber,
@@ -88,21 +89,6 @@ private func unwrapNumber(wrappedNumber: NativeInteropExampleNumberWrapper) -> A
     return wrappedNumber.number.int64Value
   }
 }
-
-private func numberCodec(number: Any) -> Int {
-  switch number {
-  case is Int:
-    return 1
-  case is Double:
-    return 2
-  case is Float:
-    return 2
-  case is Bool:
-    return 3
-  default:
-    return 0
-  }
-}
 // Enum to represent the Dart TypedData types
 enum NativeInteropExamplePigeonInternalNumberType: Int {
   case uint8 = 0
@@ -112,7 +98,6 @@ enum NativeInteropExamplePigeonInternalNumberType: Int {
   case float64 = 4
 }
 
-@available(iOS 13, macOS 10.15, *)
 @objc public class NativeInteropExamplePigeonTypedData: NSObject {
   @objc public let data: NSData
   @objc public let type: Int
@@ -195,6 +180,7 @@ enum NativeInteropExamplePigeonInternalNumberType: Int {
 }
 
 enum NativeInteropExamplePigeonInternal {
+  static let defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
   static func isNullish(_ value: Any?) -> Bool {
     guard let innerValue = value else {
       return true
@@ -215,7 +201,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
 @objc class NativeInteropExamplePigeonInternalNull: NSObject {}
 
-@available(iOS 13, macOS 10.15, *)
 class _PigeonFfiCodec {
   static func readValue(value: NSObject?, type: String? = nil, type2: String? = nil) -> Any? {
     if NativeInteropExamplePigeonInternal.isNullish(value) {
@@ -307,8 +292,9 @@ class _PigeonFfiCodec {
 
     }
     if value is [Any] {
-      let res: NSMutableArray = NSMutableArray()
-      for item in (value as! [Any]) {
+      let list = value as! [Any]
+      let res: NSMutableArray = NSMutableArray(capacity: list.count)
+      for item in list {
         res.add(
           NativeInteropExamplePigeonInternal.isNullish(item)
             ? NativeInteropExamplePigeonInternalNull()
@@ -317,8 +303,9 @@ class _PigeonFfiCodec {
       return res
     }
     if value is [AnyHashable: Any] {
-      let res: NSMutableDictionary = NSMutableDictionary()
-      for (key, value) in (value as! [AnyHashable: Any]) {
+      let dict = value as! [AnyHashable: Any]
+      let res: NSMutableDictionary = NSMutableDictionary(capacity: dict.count)
+      for (key, value) in dict {
         res.setObject(
           NativeInteropExamplePigeonInternal.isNullish(key)
             ? NativeInteropExamplePigeonInternalNull()
@@ -335,27 +322,31 @@ class _PigeonFfiCodec {
   }
 }
 
-let defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
-@available(iOS 13, macOS 10.15, *)
 class NativeInteropExampleApiInstanceTracker {
   static var instancesOfNativeInteropExampleApi = [String: NativeInteropExampleApiSetup?]()
 }
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
-@available(iOS 13, macOS 10.15, *)
 protocol NativeInteropExampleApi {
   func doSomething() throws
 }
 
 /// Generated setup class from Pigeon to register implemented NativeInteropExampleApi classes.
-@available(iOS 13, macOS 10.15, *)
 @objc class NativeInteropExampleApiSetup: NSObject {
   private var api: NativeInteropExampleApi?
   override init() {}
-  static func register(api: NativeInteropExampleApi?, name: String = defaultInstanceName) {
-    let wrapper = NativeInteropExampleApiSetup()
-    wrapper.api = api
-    NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] = wrapper
+  static func register(
+    api: NativeInteropExampleApi?,
+    name: String = NativeInteropExamplePigeonInternal.defaultInstanceName
+  ) {
+    if let api = api {
+      let wrapper = NativeInteropExampleApiSetup()
+      wrapper.api = api
+      NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] = wrapper
+    } else {
+      NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi.removeValue(
+        forKey: name)
+    }
   }
   @objc static func getInstance(name: String) -> NativeInteropExampleApiSetup? {
     return NativeInteropExampleApiInstanceTracker.instancesOfNativeInteropExampleApi[name] ?? nil

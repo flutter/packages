@@ -14,18 +14,10 @@ import 'package:objective_c/objective_c.dart' as objc;
 import 'package:ffi/ffi.dart' as pkg_ffi;
 
 /// Generated setup class from Pigeon to register implemented NativeInteropExampleApi classes.
-///
-/// iOS: introduced 13.0.0
-/// macOS: introduced 10.15.0
 extension type NativeInteropExampleApiSetup._(objc.ObjCObject object$)
     implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [NativeInteropExampleApiSetup] that points to the same underlying object as [other].
   NativeInteropExampleApiSetup.as(objc.ObjCObject other) : object$ = other {
-    objc.checkOsVersionInternal(
-      'NativeInteropExampleApiSetup',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -35,11 +27,6 @@ extension type NativeInteropExampleApiSetup._(objc.ObjCObject object$)
     bool retain = false,
     bool release = false,
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
-    objc.checkOsVersionInternal(
-      'NativeInteropExampleApiSetup',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -69,15 +56,7 @@ extension type NativeInteropExampleApiSetup._(objc.ObjCObject object$)
   }
 
   /// getInstanceWithName:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static NativeInteropExampleApiSetup? getInstanceWithName(objc.NSString name) {
-    objc.checkOsVersionInternal(
-      'NativeInteropExampleApiSetup.getInstanceWithName:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1sotr3r(
       _class_NativeInteropExampleApiSetup,
       _sel_getInstanceWithName_,
@@ -100,15 +79,7 @@ extension type NativeInteropExampleApiSetup._(objc.ObjCObject object$)
 
 extension NativeInteropExampleApiSetup$Methods on NativeInteropExampleApiSetup {
   /// doSomethingWithWrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void doSomethingWithWrappedError(PigeonError wrappedError) {
-    objc.checkOsVersionInternal(
-      'NativeInteropExampleApiSetup.doSomethingWithWrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_doSomethingWithWrappedError_,
@@ -291,18 +262,10 @@ extension NativeInteropExamplePigeonInternalNull$Methods on NativeInteropExample
 }
 
 /// NativeInteropExamplePigeonTypedData
-///
-/// iOS: introduced 13.0.0
-/// macOS: introduced 10.15.0
 extension type NativeInteropExamplePigeonTypedData._(objc.ObjCObject object$)
     implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [NativeInteropExamplePigeonTypedData] that points to the same underlying object as [other].
   NativeInteropExamplePigeonTypedData.as(objc.ObjCObject other) : object$ = other {
-    objc.checkOsVersionInternal(
-      'NativeInteropExamplePigeonTypedData',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -312,11 +275,6 @@ extension type NativeInteropExamplePigeonTypedData._(objc.ObjCObject object$)
     bool retain = false,
     bool release = false,
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
-    objc.checkOsVersionInternal(
-      'NativeInteropExamplePigeonTypedData',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -347,28 +305,14 @@ extension type NativeInteropExamplePigeonTypedData._(objc.ObjCObject object$)
 }
 
 extension NativeInteropExamplePigeonTypedData$Methods on NativeInteropExamplePigeonTypedData {
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// data
   objc.NSData get data {
-    objc.checkOsVersionInternal(
-      'NativeInteropExamplePigeonTypedData.data',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_data);
     return objc.NSData.fromPointer($ret, retain: true, release: true);
   }
 
   /// initWithData:type:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropExamplePigeonTypedData initWithData(objc.NSData data, {required int type}) {
-    objc.checkOsVersionInternal(
-      'NativeInteropExamplePigeonTypedData.initWithData:type:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_9slupp(
       object$.ref.retainAndReturnPointer(),
       _sel_initWithData_type_,
@@ -378,14 +322,8 @@ extension NativeInteropExamplePigeonTypedData$Methods on NativeInteropExamplePig
     return NativeInteropExamplePigeonTypedData.fromPointer($ret, retain: false, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// type
   int get type {
-    objc.checkOsVersionInternal(
-      'NativeInteropExamplePigeonTypedData.type',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     return _objc_msgSend_1hz7y9r(object$.ref.pointer, _sel_type);
   }
 }

@@ -2653,7 +2653,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   static NativeInteropHostIntegrationCoreApiForNativeInterop? getInstance({
     String channelName = defaultInstanceName,
   }) {
-    late NativeInteropHostIntegrationCoreApiForNativeInterop res;
+    final NativeInteropHostIntegrationCoreApiForNativeInterop res;
     if (Platform.isAndroid) {
       final jni_bridge.NativeInteropHostIntegrationCoreApiRegistrar? link =
           jni_bridge.NativeInteropHostIntegrationCoreApiRegistrar().getInstance(
@@ -9441,6 +9441,85 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
       throw _wrapJniException(e);
     }
   }
+
+  bool testDeregisterHostApi() {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.testDeregisterHostApi();
+      } else if (_ffiApi != null) {
+        final error = ffi_bridge.NativeInteropTestsError();
+        final NSNumber? res = _ffiApi.testDeregisterHostApiWithWrappedError(error);
+        _throwIfFfiError(error);
+        final bool dartTypeRes = res!.boolValue;
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  bool testDeregisterFlutterApi() {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.testDeregisterFlutterApi();
+      } else if (_ffiApi != null) {
+        final error = ffi_bridge.NativeInteropTestsError();
+        final NSNumber? res = _ffiApi.testDeregisterFlutterApiWithWrappedError(error);
+        _throwIfFfiError(error);
+        final bool dartTypeRes = res!.boolValue;
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  void registerAndImmediatelyDeregisterHostApi(String name) {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.registerAndImmediatelyDeregisterHostApi(
+          _PigeonJniCodec.writeValue<JString>(name),
+        );
+      } else if (_ffiApi != null) {
+        final error = ffi_bridge.NativeInteropTestsError();
+        _ffiApi.registerAndImmediatelyDeregisterHostApiWithName(
+          _PigeonFfiCodec.writeValue<NSString>(name),
+          wrappedError: error,
+        );
+        _throwIfFfiError(error);
+        return;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  bool testCallDeregisteredFlutterApi(String name) {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.testCallDeregisteredFlutterApi(_PigeonJniCodec.writeValue<JString>(name));
+      } else if (_ffiApi != null) {
+        final error = ffi_bridge.NativeInteropTestsError();
+        final NSNumber? res = _ffiApi.testCallDeregisteredFlutterApiWithName(
+          _PigeonFfiCodec.writeValue<NSString>(name),
+          wrappedError: error,
+        );
+        _throwIfFfiError(error);
+        final bool dartTypeRes = res!.boolValue;
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
 }
 
 /// The core interface that each host language plugin must implement in
@@ -14678,6 +14757,93 @@ class NativeInteropHostIntegrationCoreApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as bool;
+  }
+
+  /// Tests deregistering a Host API natively.
+  Future<bool> testDeregisterHostApi() async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+      return _nativeInteropApi.testDeregisterHostApi();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.testDeregisterHostApi$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as bool;
+  }
+
+  /// Tests deregistering a Flutter API natively.
+  Future<bool> testDeregisterFlutterApi() async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+      return _nativeInteropApi.testDeregisterFlutterApi();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.testDeregisterFlutterApi$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as bool;
+  }
+
+  /// Registers and immediately deregisters a Host API under [name].
+  Future<void> registerAndImmediatelyDeregisterHostApi(String name) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+      return _nativeInteropApi.registerAndImmediatelyDeregisterHostApi(name);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.registerAndImmediatelyDeregisterHostApi$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[name]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
+
+  /// Tests that calling a deregistered Flutter API under [name] fails / returns null.
+  Future<bool> testCallDeregisteredFlutterApi(String name) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+      return _nativeInteropApi.testCallDeregisteredFlutterApi(name);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.testCallDeregisteredFlutterApi$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[name]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(

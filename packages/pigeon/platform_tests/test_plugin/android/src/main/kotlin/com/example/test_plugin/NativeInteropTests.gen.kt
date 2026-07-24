@@ -191,7 +191,7 @@ class NativeInteropTestsError(
     val details: Any? = null
 ) : RuntimeException()
 
-const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
+private const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
 
 enum class NativeInteropAnEnum(val raw: Int) {
   ONE(0),
@@ -1619,6 +1619,14 @@ abstract class NativeInteropHostIntegrationCoreApi {
    * Returns the result of whether the flutter call was successful.
    */
   abstract suspend fun callFlutterNoopOnBackgroundThread(): Boolean
+  /** Tests deregistering a Host API natively. */
+  abstract fun testDeregisterHostApi(): Boolean
+  /** Tests deregistering a Flutter API natively. */
+  abstract fun testDeregisterFlutterApi(): Boolean
+  /** Registers and immediately deregisters a Host API under [name]. */
+  abstract fun registerAndImmediatelyDeregisterHostApi(name: String)
+  /** Tests that calling a deregistered Flutter API under [name] fails / returns null. */
+  abstract fun testCallDeregisteredFlutterApi(name: String): Boolean
 }
 
 @Keep
@@ -1626,11 +1634,15 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
   var api: NativeInteropHostIntegrationCoreApi? = null
 
   fun register(
-      api: NativeInteropHostIntegrationCoreApi,
+      api: NativeInteropHostIntegrationCoreApi?,
       name: String = defaultInstanceName
   ): NativeInteropHostIntegrationCoreApiRegistrar {
-    this.api = api
-    NativeInteropHostIntegrationCoreApiInstances[name] = this
+    if (api != null) {
+      this.api = api
+      NativeInteropHostIntegrationCoreApiInstances[name] = this
+    } else {
+      NativeInteropHostIntegrationCoreApiInstances.remove(name)
+    }
     return this
   }
 
@@ -4253,6 +4265,50 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
     }
     error("NativeInteropHostIntegrationCoreApi has not been set")
   }
+  /** Tests deregistering a Host API natively. */
+  override fun testDeregisterHostApi(): Boolean {
+    api?.let {
+      try {
+        return it.testDeregisterHostApi()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropHostIntegrationCoreApi has not been set")
+  }
+  /** Tests deregistering a Flutter API natively. */
+  override fun testDeregisterFlutterApi(): Boolean {
+    api?.let {
+      try {
+        return it.testDeregisterFlutterApi()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropHostIntegrationCoreApi has not been set")
+  }
+  /** Registers and immediately deregisters a Host API under [name]. */
+  override fun registerAndImmediatelyDeregisterHostApi(name: String) {
+    api?.let {
+      try {
+        return it.registerAndImmediatelyDeregisterHostApi(name)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropHostIntegrationCoreApi has not been set")
+  }
+  /** Tests that calling a deregistered Flutter API under [name] fails / returns null. */
+  override fun testCallDeregisteredFlutterApi(name: String): Boolean {
+    api?.let {
+      try {
+        return it.testCallDeregisteredFlutterApi(name)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropHostIntegrationCoreApi has not been set")
+  }
 }
 /**
  * The core interface that the Dart platform_test code implements for host integration tests to call
@@ -4260,20 +4316,27 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
  *
  * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
  */
+/// Map that stores instances
 val registeredNativeInteropFlutterIntegrationCoreApi:
     MutableMap<String, NativeInteropFlutterIntegrationCoreApi> =
     mutableMapOf()
 
+/// Class that stores instances
 class NativeInteropFlutterIntegrationCoreApiRegistrar() {
-  /// Map that stores instances
 
+  /// Registers an instance with the given name.
   fun registerInstance(
-      api: NativeInteropFlutterIntegrationCoreApi,
+      api: NativeInteropFlutterIntegrationCoreApi?,
       name: String = defaultInstanceName
   ) {
-    registeredNativeInteropFlutterIntegrationCoreApi[name] = api
+    if (api != null) {
+      registeredNativeInteropFlutterIntegrationCoreApi[name] = api
+    } else {
+      registeredNativeInteropFlutterIntegrationCoreApi.remove(name)
+    }
   }
 
+  /// Gets an instance with the given name.
   fun getInstance(name: String = defaultInstanceName): NativeInteropFlutterIntegrationCoreApi? {
     return registeredNativeInteropFlutterIntegrationCoreApi[name]
   }

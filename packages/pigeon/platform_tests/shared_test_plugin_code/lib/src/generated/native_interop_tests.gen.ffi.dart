@@ -491,18 +491,10 @@ enum NSURLCredentialPersistence {
 /// <code>NativeInteropAllNullableTypes</code> is non-nullable here as it is easier to instantiate
 /// than <code>NativeInteropAllTypes</code> when testing doesn’t require both (ie. testing null classes).
 /// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
-///
-/// iOS: introduced 13.0.0
-/// macOS: introduced 10.15.0
 extension type NativeInteropAllClassesWrapperBridge._(objc.ObjCObject object$)
     implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [NativeInteropAllClassesWrapperBridge] that points to the same underlying object as [other].
   NativeInteropAllClassesWrapperBridge.as(objc.ObjCObject other) : object$ = other {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllClassesWrapperBridge',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -512,11 +504,6 @@ extension type NativeInteropAllClassesWrapperBridge._(objc.ObjCObject object$)
     bool retain = false,
     bool release = false,
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllClassesWrapperBridge',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -547,26 +534,14 @@ extension type NativeInteropAllClassesWrapperBridge._(objc.ObjCObject object$)
 }
 
 extension NativeInteropAllClassesWrapperBridge$Methods on NativeInteropAllClassesWrapperBridge {
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// allNullableTypes
   NativeInteropAllNullableTypesBridge get allNullableTypes {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllClassesWrapperBridge.allNullableTypes',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_allNullableTypes);
     return NativeInteropAllNullableTypesBridge.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// allNullableTypesWithoutRecursion
   NativeInteropAllNullableTypesWithoutRecursionBridge? get allNullableTypesWithoutRecursion {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllClassesWrapperBridge.allNullableTypesWithoutRecursion',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_allNullableTypesWithoutRecursion);
     return $ret.address == 0
         ? null
@@ -577,48 +552,27 @@ extension NativeInteropAllClassesWrapperBridge$Methods on NativeInteropAllClasse
           );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// allTypes
   NativeInteropAllTypesBridge? get allTypes {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllClassesWrapperBridge.allTypes',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_allTypes);
     return $ret.address == 0
         ? null
         : NativeInteropAllTypesBridge.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// classList
   objc.NSArray get classList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllClassesWrapperBridge.classList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_classList);
     return objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// classMap
   objc.NSDictionary get classMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllClassesWrapperBridge.classMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_classMap);
     return objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
   /// initWithAllNullableTypes:allNullableTypesWithoutRecursion:allTypes:classList:nullableClassList:classMap:nullableClassMap:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllClassesWrapperBridge initWithAllNullableTypes(
     NativeInteropAllNullableTypesBridge allNullableTypes, {
     NativeInteropAllNullableTypesWithoutRecursionBridge? allNullableTypesWithoutRecursion,
@@ -628,11 +582,6 @@ extension NativeInteropAllClassesWrapperBridge$Methods on NativeInteropAllClasse
     required objc.NSDictionary classMap,
     objc.NSDictionary? nullableClassMap,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllClassesWrapperBridge.initWithAllNullableTypes:allNullableTypesWithoutRecursion:allTypes:classList:nullableClassList:classMap:nullableClassMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1387m63(
       object$.ref.retainAndReturnPointer(),
       _sel_initWithAllNullableTypes_allNullableTypesWithoutRecursion_allTypes_classList_nullableClassList_classMap_nullableClassMap_,
@@ -647,51 +596,27 @@ extension NativeInteropAllClassesWrapperBridge$Methods on NativeInteropAllClasse
     return NativeInteropAllClassesWrapperBridge.fromPointer($ret, retain: false, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// nullableClassList
   objc.NSArray? get nullableClassList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllClassesWrapperBridge.nullableClassList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_nullableClassList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// nullableClassMap
   objc.NSDictionary? get nullableClassMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllClassesWrapperBridge.nullableClassMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_nullableClassMap);
     return $ret.address == 0
         ? null
         : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setAllNullableTypes:
   set allNullableTypes(NativeInteropAllNullableTypesBridge value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllClassesWrapperBridge.setAllNullableTypes:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setAllNullableTypes_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setAllNullableTypesWithoutRecursion:
   set allNullableTypesWithoutRecursion(NativeInteropAllNullableTypesWithoutRecursionBridge? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllClassesWrapperBridge.setAllNullableTypesWithoutRecursion:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setAllNullableTypesWithoutRecursion_,
@@ -699,47 +624,23 @@ extension NativeInteropAllClassesWrapperBridge$Methods on NativeInteropAllClasse
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setAllTypes:
   set allTypes(NativeInteropAllTypesBridge? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllClassesWrapperBridge.setAllTypes:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setAllTypes_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setClassList:
   set classList(objc.NSArray value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllClassesWrapperBridge.setClassList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setClassList_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setClassMap:
   set classMap(objc.NSDictionary value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllClassesWrapperBridge.setClassMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setClassMap_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setNullableClassList:
   set nullableClassList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllClassesWrapperBridge.setNullableClassList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setNullableClassList_,
@@ -747,14 +648,8 @@ extension NativeInteropAllClassesWrapperBridge$Methods on NativeInteropAllClasse
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setNullableClassMap:
   set nullableClassMap(objc.NSDictionary? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllClassesWrapperBridge.setNullableClassMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setNullableClassMap_,
@@ -765,18 +660,10 @@ extension NativeInteropAllClassesWrapperBridge$Methods on NativeInteropAllClasse
 
 /// A class containing all supported nullable types.
 /// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
-///
-/// iOS: introduced 13.0.0
-/// macOS: introduced 10.15.0
 extension type NativeInteropAllNullableTypesBridge._(objc.ObjCObject object$)
     implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [NativeInteropAllNullableTypesBridge] that points to the same underlying object as [other].
   NativeInteropAllNullableTypesBridge.as(objc.ObjCObject other) : object$ = other {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -786,11 +673,6 @@ extension type NativeInteropAllNullableTypesBridge._(objc.ObjCObject object$)
     bool retain = false,
     bool release = false,
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -821,216 +703,114 @@ extension type NativeInteropAllNullableTypesBridge._(objc.ObjCObject object$)
 }
 
 extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullableTypesBridge {
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullable4ByteArray
   NativeInteropTestsPigeonTypedData? get aNullable4ByteArray {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.aNullable4ByteArray',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullable4ByteArray);
     return $ret.address == 0
         ? null
         : NativeInteropTestsPigeonTypedData.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullable8ByteArray
   NativeInteropTestsPigeonTypedData? get aNullable8ByteArray {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.aNullable8ByteArray',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullable8ByteArray);
     return $ret.address == 0
         ? null
         : NativeInteropTestsPigeonTypedData.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableBool
   objc.NSNumber? get aNullableBool {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.aNullableBool',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableBool);
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableByteArray
   NativeInteropTestsPigeonTypedData? get aNullableByteArray {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.aNullableByteArray',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableByteArray);
     return $ret.address == 0
         ? null
         : NativeInteropTestsPigeonTypedData.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableDouble
   objc.NSNumber? get aNullableDouble {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.aNullableDouble',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableDouble);
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableEnum
   objc.NSNumber? get aNullableEnum {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.aNullableEnum',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableEnum);
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableFloatArray
   NativeInteropTestsPigeonTypedData? get aNullableFloatArray {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.aNullableFloatArray',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableFloatArray);
     return $ret.address == 0
         ? null
         : NativeInteropTestsPigeonTypedData.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableInt
   objc.NSNumber? get aNullableInt {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.aNullableInt',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableInt);
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableInt64
   objc.NSNumber? get aNullableInt64 {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.aNullableInt64',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableInt64);
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableObject
   objc.NSObject? get aNullableObject {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.aNullableObject',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableObject);
     return $ret.address == 0 ? null : objc.NSObject.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableString
   objc.NSString? get aNullableString {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.aNullableString',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableString);
     return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// allNullableTypes
   NativeInteropAllNullableTypesBridge? get allNullableTypes {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.allNullableTypes',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_allNullableTypes);
     return $ret.address == 0
         ? null
         : NativeInteropAllNullableTypesBridge.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// anotherNullableEnum
   objc.NSNumber? get anotherNullableEnum {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.anotherNullableEnum',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_anotherNullableEnum);
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// boolList
   objc.NSArray? get boolList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.boolList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_boolList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// doubleList
   objc.NSArray? get doubleList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.doubleList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_doubleList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// enumList
   objc.NSArray? get enumList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.enumList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_enumList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// enumMap
   objc.NSDictionary? get enumMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.enumMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_enumMap);
     return $ret.address == 0
         ? null
@@ -1038,9 +818,6 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
   }
 
   /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableByteArray:aNullable4ByteArray:aNullable8ByteArray:aNullableFloatArray:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:allNullableTypes:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:recursiveClassList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:recursiveClassMap:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllNullableTypesBridge initWithANullableBool(
     objc.NSNumber? aNullableBool, {
     objc.NSNumber? aNullableInt,
@@ -1074,11 +851,6 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     objc.NSDictionary? mapMap,
     objc.NSDictionary? recursiveClassMap,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableByteArray:aNullable4ByteArray:aNullable8ByteArray:aNullableFloatArray:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:allNullableTypes:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:recursiveClassList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:recursiveClassMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_etw0ff(
       object$.ref.retainAndReturnPointer(),
       _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableByteArray_aNullable4ByteArray_aNullable8ByteArray_aNullableFloatArray_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_allNullableTypes_list_stringList_intList_doubleList_boolList_enumList_objectList_listList_mapList_recursiveClassList_map_stringMap_intMap_enumMap_objectMap_listMap_mapMap_recursiveClassMap_,
@@ -1117,170 +889,92 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     return NativeInteropAllNullableTypesBridge.fromPointer($ret, retain: false, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// intList
   objc.NSArray? get intList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.intList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_intList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// intMap
   objc.NSDictionary? get intMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.intMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_intMap);
     return $ret.address == 0
         ? null
         : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// list
   objc.NSArray? get list {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.list',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_list);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// listList
   objc.NSArray? get listList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.listList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_listList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// listMap
   objc.NSDictionary? get listMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.listMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_listMap);
     return $ret.address == 0
         ? null
         : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// map
   objc.NSDictionary? get map {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.map',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_map);
     return $ret.address == 0
         ? null
         : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// mapList
   objc.NSArray? get mapList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.mapList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_mapList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// mapMap
   objc.NSDictionary? get mapMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.mapMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_mapMap);
     return $ret.address == 0
         ? null
         : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// objectList
   objc.NSArray? get objectList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.objectList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_objectList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// objectMap
   objc.NSDictionary? get objectMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.objectMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_objectMap);
     return $ret.address == 0
         ? null
         : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// recursiveClassList
   objc.NSArray? get recursiveClassList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.recursiveClassList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_recursiveClassList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// recursiveClassMap
   objc.NSDictionary? get recursiveClassMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.recursiveClassMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_recursiveClassMap);
     return $ret.address == 0
         ? null
         : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullable4ByteArray:
   set aNullable4ByteArray(NativeInteropTestsPigeonTypedData? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setANullable4ByteArray:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullable4ByteArray_,
@@ -1288,14 +982,8 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullable8ByteArray:
   set aNullable8ByteArray(NativeInteropTestsPigeonTypedData? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setANullable8ByteArray:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullable8ByteArray_,
@@ -1303,14 +991,8 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableBool:
   set aNullableBool(objc.NSNumber? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setANullableBool:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableBool_,
@@ -1318,14 +1000,8 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableByteArray:
   set aNullableByteArray(NativeInteropTestsPigeonTypedData? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setANullableByteArray:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableByteArray_,
@@ -1333,14 +1009,8 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableDouble:
   set aNullableDouble(objc.NSNumber? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setANullableDouble:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableDouble_,
@@ -1348,14 +1018,8 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableEnum:
   set aNullableEnum(objc.NSNumber? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setANullableEnum:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableEnum_,
@@ -1363,14 +1027,8 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableFloatArray:
   set aNullableFloatArray(NativeInteropTestsPigeonTypedData? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setANullableFloatArray:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableFloatArray_,
@@ -1378,14 +1036,8 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableInt64:
   set aNullableInt64(objc.NSNumber? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setANullableInt64:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableInt64_,
@@ -1393,14 +1045,8 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableInt:
   set aNullableInt(objc.NSNumber? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setANullableInt:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableInt_,
@@ -1408,14 +1054,8 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableObject:
   set aNullableObject(objc.NSObject? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setANullableObject:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableObject_,
@@ -1423,14 +1063,8 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableString:
   set aNullableString(objc.NSString? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setANullableString:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableString_,
@@ -1438,14 +1072,8 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setAllNullableTypes:
   set allNullableTypes(NativeInteropAllNullableTypesBridge? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setAllNullableTypes:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setAllNullableTypes_,
@@ -1453,14 +1081,8 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setAnotherNullableEnum:
   set anotherNullableEnum(objc.NSNumber? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setAnotherNullableEnum:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setAnotherNullableEnum_,
@@ -1468,25 +1090,13 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setBoolList:
   set boolList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setBoolList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setBoolList_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setDoubleList:
   set doubleList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setDoubleList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setDoubleList_,
@@ -1494,124 +1104,58 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setEnumList:
   set enumList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setEnumList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setEnumList_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setEnumMap:
   set enumMap(objc.NSDictionary? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setEnumMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setEnumMap_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setIntList:
   set intList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setIntList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setIntList_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setIntMap:
   set intMap(objc.NSDictionary? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setIntMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setIntMap_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setList:
   set list(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setList_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setListList:
   set listList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setListList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setListList_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setListMap:
   set listMap(objc.NSDictionary? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setListMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setListMap_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setMap:
   set map(objc.NSDictionary? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setMap_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setMapList:
   set mapList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setMapList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setMapList_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setMapMap:
   set mapMap(objc.NSDictionary? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setMapMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setMapMap_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setObjectList:
   set objectList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setObjectList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setObjectList_,
@@ -1619,14 +1163,8 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setObjectMap:
   set objectMap(objc.NSDictionary? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setObjectMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setObjectMap_,
@@ -1634,14 +1172,8 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setRecursiveClassList:
   set recursiveClassList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setRecursiveClassList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setRecursiveClassList_,
@@ -1649,14 +1181,8 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setRecursiveClassMap:
   set recursiveClassMap(objc.NSDictionary? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setRecursiveClassMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setRecursiveClassMap_,
@@ -1664,14 +1190,8 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setStringList:
   set stringList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setStringList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setStringList_,
@@ -1679,14 +1199,8 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setStringMap:
   set stringMap(objc.NSDictionary? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.setStringMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setStringMap_,
@@ -1694,26 +1208,14 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// stringList
   objc.NSArray? get stringList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.stringList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_stringList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// stringMap
   objc.NSDictionary? get stringMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesBridge.stringMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_stringMap);
     return $ret.address == 0
         ? null
@@ -1725,18 +1227,10 @@ extension NativeInteropAllNullableTypesBridge$Methods on NativeInteropAllNullabl
 /// with nullable items, as the primary [NativeInteropAllNullableTypes] class is being used to
 /// test Swift classes.
 /// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
-///
-/// iOS: introduced 13.0.0
-/// macOS: introduced 10.15.0
 extension type NativeInteropAllNullableTypesWithoutRecursionBridge._(objc.ObjCObject object$)
     implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [NativeInteropAllNullableTypesWithoutRecursionBridge] that points to the same underlying object as [other].
   NativeInteropAllNullableTypesWithoutRecursionBridge.as(objc.ObjCObject other) : object$ = other {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -1746,11 +1240,6 @@ extension type NativeInteropAllNullableTypesWithoutRecursionBridge._(objc.ObjCOb
     bool retain = false,
     bool release = false,
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -1795,202 +1284,106 @@ extension type NativeInteropAllNullableTypesWithoutRecursionBridge._(objc.ObjCOb
 
 extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     on NativeInteropAllNullableTypesWithoutRecursionBridge {
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullable4ByteArray
   NativeInteropTestsPigeonTypedData? get aNullable4ByteArray {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.aNullable4ByteArray',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullable4ByteArray);
     return $ret.address == 0
         ? null
         : NativeInteropTestsPigeonTypedData.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullable8ByteArray
   NativeInteropTestsPigeonTypedData? get aNullable8ByteArray {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.aNullable8ByteArray',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullable8ByteArray);
     return $ret.address == 0
         ? null
         : NativeInteropTestsPigeonTypedData.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableBool
   objc.NSNumber? get aNullableBool {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.aNullableBool',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableBool);
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableByteArray
   NativeInteropTestsPigeonTypedData? get aNullableByteArray {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.aNullableByteArray',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableByteArray);
     return $ret.address == 0
         ? null
         : NativeInteropTestsPigeonTypedData.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableDouble
   objc.NSNumber? get aNullableDouble {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.aNullableDouble',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableDouble);
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableEnum
   objc.NSNumber? get aNullableEnum {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.aNullableEnum',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableEnum);
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableFloatArray
   NativeInteropTestsPigeonTypedData? get aNullableFloatArray {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.aNullableFloatArray',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableFloatArray);
     return $ret.address == 0
         ? null
         : NativeInteropTestsPigeonTypedData.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableInt
   objc.NSNumber? get aNullableInt {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.aNullableInt',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableInt);
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableInt64
   objc.NSNumber? get aNullableInt64 {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.aNullableInt64',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableInt64);
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableObject
   objc.NSObject? get aNullableObject {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.aNullableObject',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableObject);
     return $ret.address == 0 ? null : objc.NSObject.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aNullableString
   objc.NSString? get aNullableString {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.aNullableString',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aNullableString);
     return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// anotherNullableEnum
   objc.NSNumber? get anotherNullableEnum {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.anotherNullableEnum',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_anotherNullableEnum);
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// boolList
   objc.NSArray? get boolList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.boolList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_boolList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// doubleList
   objc.NSArray? get doubleList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.doubleList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_doubleList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// enumList
   objc.NSArray? get enumList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.enumList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_enumList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// enumMap
   objc.NSDictionary? get enumMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.enumMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_enumMap);
     return $ret.address == 0
         ? null
@@ -1998,9 +1391,6 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
   }
 
   /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableByteArray:aNullable4ByteArray:aNullable8ByteArray:aNullableFloatArray:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllNullableTypesWithoutRecursionBridge initWithANullableBool(
     objc.NSNumber? aNullableBool, {
     objc.NSNumber? aNullableInt,
@@ -2031,11 +1421,6 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     objc.NSDictionary? listMap,
     objc.NSDictionary? mapMap,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableByteArray:aNullable4ByteArray:aNullable8ByteArray:aNullableFloatArray:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1hm1urt(
       object$.ref.retainAndReturnPointer(),
       _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableByteArray_aNullable4ByteArray_aNullable8ByteArray_aNullableFloatArray_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_list_stringList_intList_doubleList_boolList_enumList_objectList_listList_mapList_map_stringMap_intMap_enumMap_objectMap_listMap_mapMap_,
@@ -2075,144 +1460,78 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// intList
   objc.NSArray? get intList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.intList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_intList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// intMap
   objc.NSDictionary? get intMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.intMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_intMap);
     return $ret.address == 0
         ? null
         : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// list
   objc.NSArray? get list {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.list',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_list);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// listList
   objc.NSArray? get listList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.listList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_listList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// listMap
   objc.NSDictionary? get listMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.listMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_listMap);
     return $ret.address == 0
         ? null
         : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// map
   objc.NSDictionary? get map {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.map',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_map);
     return $ret.address == 0
         ? null
         : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// mapList
   objc.NSArray? get mapList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.mapList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_mapList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// mapMap
   objc.NSDictionary? get mapMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.mapMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_mapMap);
     return $ret.address == 0
         ? null
         : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// objectList
   objc.NSArray? get objectList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.objectList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_objectList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// objectMap
   objc.NSDictionary? get objectMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.objectMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_objectMap);
     return $ret.address == 0
         ? null
         : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullable4ByteArray:
   set aNullable4ByteArray(NativeInteropTestsPigeonTypedData? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setANullable4ByteArray:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullable4ByteArray_,
@@ -2220,14 +1539,8 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullable8ByteArray:
   set aNullable8ByteArray(NativeInteropTestsPigeonTypedData? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setANullable8ByteArray:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullable8ByteArray_,
@@ -2235,14 +1548,8 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableBool:
   set aNullableBool(objc.NSNumber? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setANullableBool:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableBool_,
@@ -2250,14 +1557,8 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableByteArray:
   set aNullableByteArray(NativeInteropTestsPigeonTypedData? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setANullableByteArray:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableByteArray_,
@@ -2265,14 +1566,8 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableDouble:
   set aNullableDouble(objc.NSNumber? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setANullableDouble:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableDouble_,
@@ -2280,14 +1575,8 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableEnum:
   set aNullableEnum(objc.NSNumber? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setANullableEnum:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableEnum_,
@@ -2295,14 +1584,8 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableFloatArray:
   set aNullableFloatArray(NativeInteropTestsPigeonTypedData? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setANullableFloatArray:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableFloatArray_,
@@ -2310,14 +1593,8 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableInt64:
   set aNullableInt64(objc.NSNumber? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setANullableInt64:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableInt64_,
@@ -2325,14 +1602,8 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableInt:
   set aNullableInt(objc.NSNumber? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setANullableInt:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableInt_,
@@ -2340,14 +1611,8 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableObject:
   set aNullableObject(objc.NSObject? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setANullableObject:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableObject_,
@@ -2355,14 +1620,8 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setANullableString:
   set aNullableString(objc.NSString? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setANullableString:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setANullableString_,
@@ -2370,14 +1629,8 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setAnotherNullableEnum:
   set anotherNullableEnum(objc.NSNumber? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setAnotherNullableEnum:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setAnotherNullableEnum_,
@@ -2385,25 +1638,13 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setBoolList:
   set boolList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setBoolList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setBoolList_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setDoubleList:
   set doubleList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setDoubleList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setDoubleList_,
@@ -2411,124 +1652,58 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setEnumList:
   set enumList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setEnumList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setEnumList_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setEnumMap:
   set enumMap(objc.NSDictionary? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setEnumMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setEnumMap_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setIntList:
   set intList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setIntList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setIntList_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setIntMap:
   set intMap(objc.NSDictionary? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setIntMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setIntMap_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setList:
   set list(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setList_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setListList:
   set listList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setListList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setListList_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setListMap:
   set listMap(objc.NSDictionary? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setListMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setListMap_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setMap:
   set map(objc.NSDictionary? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setMap_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setMapList:
   set mapList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setMapList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setMapList_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setMapMap:
   set mapMap(objc.NSDictionary? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setMapMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setMapMap_, value?.ref.pointer ?? ffi.nullptr);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setObjectList:
   set objectList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setObjectList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setObjectList_,
@@ -2536,14 +1711,8 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setObjectMap:
   set objectMap(objc.NSDictionary? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setObjectMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setObjectMap_,
@@ -2551,14 +1720,8 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setStringList:
   set stringList(objc.NSArray? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setStringList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setStringList_,
@@ -2566,14 +1729,8 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setStringMap:
   set stringMap(objc.NSDictionary? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.setStringMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_setStringMap_,
@@ -2581,26 +1738,14 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     );
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// stringList
   objc.NSArray? get stringList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.stringList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_stringList);
     return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// stringMap
   objc.NSDictionary? get stringMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllNullableTypesWithoutRecursionBridge.stringMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_stringMap);
     return $ret.address == 0
         ? null
@@ -2610,18 +1755,10 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
 
 /// A class containing all supported types.
 /// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
-///
-/// iOS: introduced 13.0.0
-/// macOS: introduced 10.15.0
 extension type NativeInteropAllTypesBridge._(objc.ObjCObject object$)
     implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [NativeInteropAllTypesBridge] that points to the same underlying object as [other].
   NativeInteropAllTypesBridge.as(objc.ObjCObject other) : object$ = other {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -2631,11 +1768,6 @@ extension type NativeInteropAllTypesBridge._(objc.ObjCObject object$)
     bool retain = false,
     bool release = false,
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -2666,200 +1798,101 @@ extension type NativeInteropAllTypesBridge._(objc.ObjCObject object$)
 }
 
 extension NativeInteropAllTypesBridge$Methods on NativeInteropAllTypesBridge {
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// a4ByteArray
   NativeInteropTestsPigeonTypedData get a4ByteArray {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.a4ByteArray',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_a4ByteArray);
     return NativeInteropTestsPigeonTypedData.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// a8ByteArray
   NativeInteropTestsPigeonTypedData get a8ByteArray {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.a8ByteArray',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_a8ByteArray);
     return NativeInteropTestsPigeonTypedData.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aBool
   bool get aBool {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.aBool',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     return _objc_msgSend_91o635(object$.ref.pointer, _sel_aBool);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aByteArray
   NativeInteropTestsPigeonTypedData get aByteArray {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.aByteArray',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aByteArray);
     return NativeInteropTestsPigeonTypedData.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aDouble
   double get aDouble {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.aDouble',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     return objc.useMsgSendVariants
         ? _objc_msgSend_1ukqyt8Fpret(object$.ref.pointer, _sel_aDouble)
         : _objc_msgSend_1ukqyt8(object$.ref.pointer, _sel_aDouble);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aFloatArray
   NativeInteropTestsPigeonTypedData get aFloatArray {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.aFloatArray',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aFloatArray);
     return NativeInteropTestsPigeonTypedData.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aString
   objc.NSString get aString {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.aString',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aString);
     return objc.NSString.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// anEnum
   NativeInteropAnEnum get anEnum {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.anEnum',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_13e57b1(object$.ref.pointer, _sel_anEnum);
     return NativeInteropAnEnum.fromValue($ret);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// anInt
   int get anInt {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.anInt',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     return _objc_msgSend_pysgoz(object$.ref.pointer, _sel_anInt);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// anInt64
   int get anInt64 {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.anInt64',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     return _objc_msgSend_pysgoz(object$.ref.pointer, _sel_anInt64);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// anObject
   objc.NSObject get anObject {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.anObject',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_anObject);
     return objc.NSObject.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// anotherEnum
   NativeInteropAnotherEnum get anotherEnum {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.anotherEnum',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_xw7tjf(object$.ref.pointer, _sel_anotherEnum);
     return NativeInteropAnotherEnum.fromValue($ret);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// boolList
   objc.NSArray get boolList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.boolList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_boolList);
     return objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// doubleList
   objc.NSArray get doubleList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.doubleList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_doubleList);
     return objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// enumList
   objc.NSArray get enumList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.enumList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_enumList);
     return objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// enumMap
   objc.NSDictionary get enumMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.enumMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_enumMap);
     return objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
   /// initWithABool:anInt:anInt64:aDouble:aByteArray:a4ByteArray:a8ByteArray:aFloatArray:anEnum:anotherEnum:aString:anObject:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllTypesBridge initWithABool(
     bool aBool, {
     required int anInt,
@@ -2890,11 +1923,6 @@ extension NativeInteropAllTypesBridge$Methods on NativeInteropAllTypesBridge {
     required objc.NSDictionary listMap,
     required objc.NSDictionary mapMap,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.initWithABool:anInt:anInt64:aDouble:aByteArray:a4ByteArray:a8ByteArray:aFloatArray:anEnum:anotherEnum:aString:anObject:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1rzlw7q(
       object$.ref.retainAndReturnPointer(),
       _sel_initWithABool_anInt_anInt64_aDouble_aByteArray_a4ByteArray_a8ByteArray_aFloatArray_anEnum_anotherEnum_aString_anObject_list_stringList_intList_doubleList_boolList_enumList_objectList_listList_mapList_map_stringMap_intMap_enumMap_objectMap_listMap_mapMap_,
@@ -2930,454 +1958,214 @@ extension NativeInteropAllTypesBridge$Methods on NativeInteropAllTypesBridge {
     return NativeInteropAllTypesBridge.fromPointer($ret, retain: false, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// intList
   objc.NSArray get intList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.intList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_intList);
     return objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// intMap
   objc.NSDictionary get intMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.intMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_intMap);
     return objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// list
   objc.NSArray get list {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.list',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_list);
     return objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// listList
   objc.NSArray get listList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.listList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_listList);
     return objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// listMap
   objc.NSDictionary get listMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.listMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_listMap);
     return objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// map
   objc.NSDictionary get map {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.map',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_map);
     return objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// mapList
   objc.NSArray get mapList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.mapList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_mapList);
     return objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// mapMap
   objc.NSDictionary get mapMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.mapMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_mapMap);
     return objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// objectList
   objc.NSArray get objectList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.objectList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_objectList);
     return objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// objectMap
   objc.NSDictionary get objectMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.objectMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_objectMap);
     return objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setA4ByteArray:
   set a4ByteArray(NativeInteropTestsPigeonTypedData value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setA4ByteArray:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setA4ByteArray_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setA8ByteArray:
   set a8ByteArray(NativeInteropTestsPigeonTypedData value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setA8ByteArray:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setA8ByteArray_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setABool:
   set aBool(bool value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setABool:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_1s56lr9(object$.ref.pointer, _sel_setABool_, value);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setAByteArray:
   set aByteArray(NativeInteropTestsPigeonTypedData value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setAByteArray:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setAByteArray_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setADouble:
   set aDouble(double value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setADouble:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_hwm8nu(object$.ref.pointer, _sel_setADouble_, value);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setAFloatArray:
   set aFloatArray(NativeInteropTestsPigeonTypedData value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setAFloatArray:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setAFloatArray_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setAString:
   set aString(objc.NSString value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setAString:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setAString_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setAnEnum:
   set anEnum(NativeInteropAnEnum value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setAnEnum:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_wqpzrx(object$.ref.pointer, _sel_setAnEnum_, value.value);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setAnInt64:
   set anInt64(int value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setAnInt64:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_17gvxvj(object$.ref.pointer, _sel_setAnInt64_, value);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setAnInt:
   set anInt(int value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setAnInt:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_17gvxvj(object$.ref.pointer, _sel_setAnInt_, value);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setAnObject:
   set anObject(objc.NSObject value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setAnObject:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setAnObject_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setAnotherEnum:
   set anotherEnum(NativeInteropAnotherEnum value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setAnotherEnum:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_1ptq3i3(object$.ref.pointer, _sel_setAnotherEnum_, value.value);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setBoolList:
   set boolList(objc.NSArray value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setBoolList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setBoolList_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setDoubleList:
   set doubleList(objc.NSArray value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setDoubleList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setDoubleList_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setEnumList:
   set enumList(objc.NSArray value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setEnumList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setEnumList_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setEnumMap:
   set enumMap(objc.NSDictionary value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setEnumMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setEnumMap_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setIntList:
   set intList(objc.NSArray value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setIntList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setIntList_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setIntMap:
   set intMap(objc.NSDictionary value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setIntMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setIntMap_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setList:
   set list(objc.NSArray value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setList_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setListList:
   set listList(objc.NSArray value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setListList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setListList_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setListMap:
   set listMap(objc.NSDictionary value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setListMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setListMap_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setMap:
   set map(objc.NSDictionary value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setMap_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setMapList:
   set mapList(objc.NSArray value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setMapList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setMapList_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setMapMap:
   set mapMap(objc.NSDictionary value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setMapMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setMapMap_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setObjectList:
   set objectList(objc.NSArray value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setObjectList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setObjectList_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setObjectMap:
   set objectMap(objc.NSDictionary value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setObjectMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setObjectMap_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setStringList:
   set stringList(objc.NSArray value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setStringList:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setStringList_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setStringMap:
   set stringMap(objc.NSDictionary value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.setStringMap:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setStringMap_, value.ref.pointer);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// stringList
   objc.NSArray get stringList {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.stringList',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_stringList);
     return objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// stringMap
   objc.NSDictionary get stringMap {
-    objc.checkOsVersionInternal(
-      'NativeInteropAllTypesBridge.stringMap',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_stringMap);
     return objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
@@ -3418,9 +2206,6 @@ enum NativeInteropAnotherEnum {
 /// The core interface that the Dart platform_test code implements for host
 /// integration tests to call into.
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
-///
-/// iOS: introduced 13.0.0
-/// macOS: introduced 10.15.0
 extension type NativeInteropFlutterIntegrationCoreApiBridge._(objc.ObjCProtocol object$)
     implements objc.ObjCProtocol {
   /// Constructs a [NativeInteropFlutterIntegrationCoreApiBridge] that points to the same underlying object as [other].
@@ -3446,19 +2231,11 @@ extension type NativeInteropFlutterIntegrationCoreApiBridge._(objc.ObjCProtocol 
 extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
     on NativeInteropFlutterIntegrationCoreApiBridge {
   /// echoAnotherAsyncEnumWithAnotherEnum:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAnotherAsyncEnumWithAnotherEnum(
     objc.NSNumber? anotherEnum, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAnotherAsyncEnumWithAnotherEnum:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAnotherAsyncEnumWithAnotherEnum_error_completionHandler_,
@@ -3469,19 +2246,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAnotherAsyncNullableEnumWithAnotherEnum:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAnotherAsyncNullableEnumWithAnotherEnum(
     objc.NSNumber? anotherEnum, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAnotherAsyncNullableEnumWithAnotherEnum:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAnotherAsyncNullableEnumWithAnotherEnum_error_completionHandler_,
@@ -3492,18 +2261,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed enum to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoAnotherNullableEnumWithAnotherEnum(
     objc.NSNumber? anotherEnum, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAnotherNullableEnumWithAnotherEnum:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoAnotherNullableEnumWithAnotherEnum_error_,
@@ -3514,19 +2275,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncBoolWithABool:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncBoolWithABool(
     objc.NSNumber? aBool, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncBoolWithABool:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncBoolWithABool_error_completionHandler_,
@@ -3537,19 +2290,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncClassListWithClassList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncClassListWithClassList(
     objc.NSArray? classList, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncClassListWithClassList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncClassListWithClassList_error_completionHandler_,
@@ -3560,19 +2305,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncClassMapWithClassMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncClassMapWithClassMap(
     objc.NSDictionary? classMap, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncClassMapWithClassMap:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncClassMapWithClassMap_error_completionHandler_,
@@ -3583,19 +2320,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncDoubleWithADouble:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncDoubleWithADouble(
     objc.NSNumber? aDouble, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncDoubleWithADouble:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncDoubleWithADouble_error_completionHandler_,
@@ -3606,19 +2335,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncEnumListWithEnumList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncEnumListWithEnumList(
     objc.NSArray? enumList, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncEnumListWithEnumList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncEnumListWithEnumList_error_completionHandler_,
@@ -3629,19 +2350,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncEnumMapWithEnumMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncEnumMapWithEnumMap(
     objc.NSDictionary? enumMap, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncEnumMapWithEnumMap:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncEnumMapWithEnumMap_error_completionHandler_,
@@ -3652,19 +2365,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncEnumWithAnEnum:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncEnumWithAnEnum(
     objc.NSNumber? anEnum, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncEnumWithAnEnum:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncEnumWithAnEnum_error_completionHandler_,
@@ -3675,20 +2380,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncFloat64ListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncFloat64ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncFloat64ListWithList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncFloat64ListWithList_error_completionHandler_,
@@ -3699,20 +2396,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncInt32ListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncInt32ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncInt32ListWithList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncInt32ListWithList_error_completionHandler_,
@@ -3723,20 +2412,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncInt64ListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncInt64ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncInt64ListWithList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncInt64ListWithList_error_completionHandler_,
@@ -3747,19 +2428,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncIntMapWithIntMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncIntMapWithIntMap(
     objc.NSDictionary? intMap, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncIntMapWithIntMap:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncIntMapWithIntMap_error_completionHandler_,
@@ -3770,19 +2443,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncIntWithAnInt:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncIntWithAnInt(
     objc.NSNumber? anInt, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncIntWithAnInt:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncIntWithAnInt_error_completionHandler_,
@@ -3793,19 +2458,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncListWithList(
     objc.NSArray? list, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncListWithList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncListWithList_error_completionHandler_,
@@ -3816,19 +2473,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncMapWithMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncMapWithMap(
     objc.NSDictionary? map, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncMapWithMap:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncMapWithMap_error_completionHandler_,
@@ -3839,19 +2488,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNativeInteropAllTypesWithEverything:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNativeInteropAllTypesWithEverything(
     NativeInteropAllTypesBridge? everything, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllTypesBridge?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNativeInteropAllTypesWithEverything:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNativeInteropAllTypesWithEverything_error_completionHandler_,
@@ -3862,19 +2503,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNonNullClassListWithClassList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNonNullClassListWithClassList(
     objc.NSArray? classList, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNonNullClassListWithClassList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNonNullClassListWithClassList_error_completionHandler_,
@@ -3885,19 +2518,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNonNullEnumListWithEnumList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNonNullEnumListWithEnumList(
     objc.NSArray? enumList, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNonNullEnumListWithEnumList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNonNullEnumListWithEnumList_error_completionHandler_,
@@ -3908,19 +2533,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableBoolWithABool:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableBoolWithABool(
     objc.NSNumber? aBool, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableBoolWithABool:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableBoolWithABool_error_completionHandler_,
@@ -3931,19 +2548,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableClassListWithClassList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableClassListWithClassList(
     objc.NSArray? classList, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableClassListWithClassList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableClassListWithClassList_error_completionHandler_,
@@ -3954,19 +2563,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableClassMapWithClassMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableClassMapWithClassMap(
     objc.NSDictionary? classMap, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableClassMapWithClassMap:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableClassMapWithClassMap_error_completionHandler_,
@@ -3977,19 +2578,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableDoubleWithADouble:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableDoubleWithADouble(
     objc.NSNumber? aDouble, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableDoubleWithADouble:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableDoubleWithADouble_error_completionHandler_,
@@ -4000,19 +2593,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableEnumListWithEnumList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableEnumListWithEnumList(
     objc.NSArray? enumList, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableEnumListWithEnumList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableEnumListWithEnumList_error_completionHandler_,
@@ -4023,19 +2608,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableEnumMapWithEnumMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableEnumMapWithEnumMap(
     objc.NSDictionary? enumMap, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableEnumMapWithEnumMap:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableEnumMapWithEnumMap_error_completionHandler_,
@@ -4046,19 +2623,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableEnumWithAnEnum:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableEnumWithAnEnum(
     objc.NSNumber? anEnum, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableEnumWithAnEnum:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableEnumWithAnEnum_error_completionHandler_,
@@ -4069,20 +2638,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableFloat64ListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableFloat64ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableFloat64ListWithList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableFloat64ListWithList_error_completionHandler_,
@@ -4093,20 +2654,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableInt32ListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableInt32ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableInt32ListWithList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableInt32ListWithList_error_completionHandler_,
@@ -4117,20 +2670,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableInt64ListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableInt64ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableInt64ListWithList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableInt64ListWithList_error_completionHandler_,
@@ -4141,19 +2686,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableIntMapWithIntMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableIntMapWithIntMap(
     objc.NSDictionary? intMap, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableIntMapWithIntMap:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableIntMapWithIntMap_error_completionHandler_,
@@ -4164,19 +2701,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableIntWithAnInt:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableIntWithAnInt(
     objc.NSNumber? anInt, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableIntWithAnInt:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableIntWithAnInt_error_completionHandler_,
@@ -4187,19 +2716,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableListWithList(
     objc.NSArray? list, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableListWithList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableListWithList_error_completionHandler_,
@@ -4210,19 +2731,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableMapWithMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableMapWithMap(
     objc.NSDictionary? map, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableMapWithMap:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableMapWithMap_error_completionHandler_,
@@ -4233,20 +2746,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableNativeInteropAllNullableTypesWithEverything:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableNativeInteropAllNullableTypesWithEverything(
     NativeInteropAllNullableTypesBridge? everything, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllNullableTypesBridge?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableNativeInteropAllNullableTypesWithEverything:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableNativeInteropAllNullableTypesWithEverything_error_completionHandler_,
@@ -4257,20 +2762,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything(
     NativeInteropAllNullableTypesWithoutRecursionBridge? everything, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllNullableTypesWithoutRecursionBridge?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything_error_completionHandler_,
@@ -4281,19 +2778,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableNonNullClassListWithClassList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableNonNullClassListWithClassList(
     objc.NSArray? classList, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableNonNullClassListWithClassList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableNonNullClassListWithClassList_error_completionHandler_,
@@ -4304,19 +2793,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableNonNullEnumListWithEnumList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableNonNullEnumListWithEnumList(
     objc.NSArray? enumList, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableNonNullEnumListWithEnumList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableNonNullEnumListWithEnumList_error_completionHandler_,
@@ -4327,19 +2808,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableObjectWithAnObject:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableObjectWithAnObject(
     objc.NSObject? anObject, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSObject?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableObjectWithAnObject:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableObjectWithAnObject_error_completionHandler_,
@@ -4350,19 +2823,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableStringMapWithStringMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableStringMapWithStringMap(
     objc.NSDictionary? stringMap, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableStringMapWithStringMap:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableStringMapWithStringMap_error_completionHandler_,
@@ -4373,19 +2838,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableStringWithAString:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableStringWithAString(
     objc.NSString? aString, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSString?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableStringWithAString:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableStringWithAString_error_completionHandler_,
@@ -4396,20 +2853,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncNullableUint8ListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableUint8ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncNullableUint8ListWithList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableUint8ListWithList_error_completionHandler_,
@@ -4420,19 +2869,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncObjectWithAnObject:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncObjectWithAnObject(
     objc.NSObject? anObject, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSObject?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncObjectWithAnObject:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncObjectWithAnObject_error_completionHandler_,
@@ -4443,19 +2884,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncStringMapWithStringMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncStringMapWithStringMap(
     objc.NSDictionary? stringMap, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncStringMapWithStringMap:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncStringMapWithStringMap_error_completionHandler_,
@@ -4466,19 +2899,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncStringWithAString:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncStringWithAString(
     objc.NSString? aString, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSString?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncStringWithAString:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncStringWithAString_error_completionHandler_,
@@ -4489,20 +2914,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// echoAsyncUint8ListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncUint8ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoAsyncUint8ListWithList:error:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncUint8ListWithList_error_completionHandler_,
@@ -4513,15 +2930,7 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed boolean, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoBoolWithABool(objc.NSNumber? aBool, {required NativeInteropTestsError error}) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoBoolWithABool:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoBoolWithABool_error_,
@@ -4532,18 +2941,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoClassListWithClassList(
     objc.NSArray? classList, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoClassListWithClassList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoClassListWithClassList_error_,
@@ -4554,18 +2955,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoClassMapWithClassMap(
     objc.NSDictionary? classMap, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoClassMapWithClassMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoClassMapWithClassMap_error_,
@@ -4578,18 +2971,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed double, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoDoubleWithADouble(
     objc.NSNumber? aDouble, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoDoubleWithADouble:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoDoubleWithADouble_error_,
@@ -4600,18 +2985,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoEnumListWithEnumList(
     objc.NSArray? enumList, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoEnumListWithEnumList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoEnumListWithEnumList_error_,
@@ -4622,18 +2999,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoEnumMapWithEnumMap(
     objc.NSDictionary? enumMap, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoEnumMapWithEnumMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoEnumMapWithEnumMap_error_,
@@ -4646,18 +3015,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed enum to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoEnumWithAnEnum(
     objc.NSNumber? anEnum, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoEnumWithAnEnum:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoEnumWithAnEnum_error_,
@@ -4668,18 +3029,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed float64 list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? echoFloat64ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoFloat64ListWithList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoFloat64ListWithList_error_,
@@ -4692,18 +3045,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed int32 list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? echoInt32ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoInt32ListWithList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoInt32ListWithList_error_,
@@ -4716,18 +3061,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed int64 list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? echoInt64ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoInt64ListWithList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoInt64ListWithList_error_,
@@ -4740,18 +3077,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoIntMapWithIntMap(
     objc.NSDictionary? intMap, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoIntMapWithIntMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoIntMapWithIntMap_error_,
@@ -4764,15 +3093,7 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed int, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoIntWithAnInt(objc.NSNumber? anInt, {required NativeInteropTestsError error}) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoIntWithAnInt:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoIntWithAnInt_error_,
@@ -4783,15 +3104,7 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoListWithList(objc.NSArray? list, {required NativeInteropTestsError error}) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoListWithList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoListWithList_error_,
@@ -4802,18 +3115,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoMapWithMap(
     objc.NSDictionary? map, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoMapWithMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoMapWithMap_error_,
@@ -4826,18 +3131,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed object, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllNullableTypesBridge? echoNativeInteropAllNullableTypesWithEverything(
     NativeInteropAllNullableTypesBridge? everything, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNativeInteropAllNullableTypesWithEverything:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNativeInteropAllNullableTypesWithEverything_error_,
@@ -4850,19 +3147,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed object, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllNullableTypesWithoutRecursionBridge?
   echoNativeInteropAllNullableTypesWithoutRecursionWithEverything(
     NativeInteropAllNullableTypesWithoutRecursionBridge? everything, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNativeInteropAllNullableTypesWithoutRecursionWithEverything:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNativeInteropAllNullableTypesWithoutRecursionWithEverything_error_,
@@ -4879,18 +3168,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed object, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllTypesBridge? echoNativeInteropAllTypesWithEverything(
     NativeInteropAllTypesBridge? everything, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNativeInteropAllTypesWithEverything:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNativeInteropAllTypesWithEverything_error_,
@@ -4903,18 +3184,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed enum to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoNativeInteropAnotherEnumWithAnotherEnum(
     objc.NSNumber? anotherEnum, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNativeInteropAnotherEnumWithAnotherEnum:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNativeInteropAnotherEnumWithAnotherEnum_error_,
@@ -4925,18 +3198,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoNonNullClassListWithClassList(
     objc.NSArray? classList, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNonNullClassListWithClassList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNonNullClassListWithClassList_error_,
@@ -4947,18 +3212,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNonNullClassMapWithClassMap(
     objc.NSDictionary? classMap, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNonNullClassMapWithClassMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNonNullClassMapWithClassMap_error_,
@@ -4971,18 +3228,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoNonNullEnumListWithEnumList(
     objc.NSArray? enumList, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNonNullEnumListWithEnumList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNonNullEnumListWithEnumList_error_,
@@ -4993,18 +3242,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNonNullEnumMapWithEnumMap(
     objc.NSDictionary? enumMap, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNonNullEnumMapWithEnumMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNonNullEnumMapWithEnumMap_error_,
@@ -5017,18 +3258,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNonNullIntMapWithIntMap(
     objc.NSDictionary? intMap, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNonNullIntMapWithIntMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNonNullIntMapWithIntMap_error_,
@@ -5041,18 +3274,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNonNullStringMapWithStringMap(
     objc.NSDictionary? stringMap, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNonNullStringMapWithStringMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNonNullStringMapWithStringMap_error_,
@@ -5065,18 +3290,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed boolean, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoNullableBoolWithABool(
     objc.NSNumber? aBool, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableBoolWithABool:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableBoolWithABool_error_,
@@ -5087,18 +3304,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoNullableClassListWithClassList(
     objc.NSArray? classList, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableClassListWithClassList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableClassListWithClassList_error_,
@@ -5109,18 +3318,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableClassMapWithClassMap(
     objc.NSDictionary? classMap, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableClassMapWithClassMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableClassMapWithClassMap_error_,
@@ -5133,18 +3334,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed double, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoNullableDoubleWithADouble(
     objc.NSNumber? aDouble, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableDoubleWithADouble:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableDoubleWithADouble_error_,
@@ -5155,18 +3348,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoNullableEnumListWithEnumList(
     objc.NSArray? enumList, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableEnumListWithEnumList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableEnumListWithEnumList_error_,
@@ -5177,18 +3362,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableEnumMapWithEnumMap(
     objc.NSDictionary? enumMap, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableEnumMapWithEnumMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableEnumMapWithEnumMap_error_,
@@ -5201,18 +3378,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed enum to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoNullableEnumWithAnEnum(
     objc.NSNumber? anEnum, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableEnumWithAnEnum:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableEnumWithAnEnum_error_,
@@ -5223,18 +3392,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed float64 list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? echoNullableFloat64ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableFloat64ListWithList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableFloat64ListWithList_error_,
@@ -5247,18 +3408,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed int32 list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? echoNullableInt32ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableInt32ListWithList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableInt32ListWithList_error_,
@@ -5271,18 +3424,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed int64 list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? echoNullableInt64ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableInt64ListWithList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableInt64ListWithList_error_,
@@ -5295,18 +3440,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableIntMapWithIntMap(
     objc.NSDictionary? intMap, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableIntMapWithIntMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableIntMapWithIntMap_error_,
@@ -5319,18 +3456,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed int, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoNullableIntWithAnInt(
     objc.NSNumber? anInt, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableIntWithAnInt:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableIntWithAnInt_error_,
@@ -5341,18 +3470,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoNullableListWithList(
     objc.NSArray? list, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableListWithList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableListWithList_error_,
@@ -5363,18 +3484,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableMapWithMap(
     objc.NSDictionary? map, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableMapWithMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableMapWithMap_error_,
@@ -5387,18 +3500,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoNullableNonNullClassListWithClassList(
     objc.NSArray? classList, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableNonNullClassListWithClassList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableNonNullClassListWithClassList_error_,
@@ -5409,18 +3514,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableNonNullClassMapWithClassMap(
     objc.NSDictionary? classMap, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableNonNullClassMapWithClassMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableNonNullClassMapWithClassMap_error_,
@@ -5433,18 +3530,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoNullableNonNullEnumListWithEnumList(
     objc.NSArray? enumList, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableNonNullEnumListWithEnumList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableNonNullEnumListWithEnumList_error_,
@@ -5455,18 +3544,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableNonNullEnumMapWithEnumMap(
     objc.NSDictionary? enumMap, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableNonNullEnumMapWithEnumMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableNonNullEnumMapWithEnumMap_error_,
@@ -5479,18 +3560,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableNonNullIntMapWithIntMap(
     objc.NSDictionary? intMap, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableNonNullIntMapWithIntMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableNonNullIntMapWithIntMap_error_,
@@ -5503,18 +3576,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableNonNullStringMapWithStringMap(
     objc.NSDictionary? stringMap, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableNonNullStringMapWithStringMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableNonNullStringMapWithStringMap_error_,
@@ -5527,18 +3592,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableStringMapWithStringMap(
     objc.NSDictionary? stringMap, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableStringMapWithStringMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableStringMapWithStringMap_error_,
@@ -5551,18 +3608,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed string, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSString? echoNullableStringWithAString(
     objc.NSString? aString, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableStringWithAString:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableStringWithAString_error_,
@@ -5573,18 +3622,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed byte list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? echoNullableUint8ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoNullableUint8ListWithList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableUint8ListWithList_error_,
@@ -5597,18 +3638,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoStringMapWithStringMap(
     objc.NSDictionary? stringMap, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoStringMapWithStringMap:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoStringMapWithStringMap_error_,
@@ -5621,18 +3654,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed string, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSString? echoStringWithAString(
     objc.NSString? aString, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoStringWithAString:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoStringWithAString_error_,
@@ -5643,18 +3668,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed byte list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? echoUint8ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.echoUint8ListWithList:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoUint8ListWithList_error_,
@@ -5668,18 +3685,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void noopAsyncWithError(
     NativeInteropTestsError error, {
     required objc.ObjCBlock<ffi.Void Function()> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.noopAsyncWithError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_o762yo(
       object$.ref.pointer,
       _sel_noopAsyncWithError_completionHandler_,
@@ -5690,34 +3699,18 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void noopWithError(NativeInteropTestsError error) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.noopWithError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_noopWithError_, error.ref.pointer);
   }
 
   /// Returns passed in arguments of multiple types.
   /// Tests multiple-arity FlutterApi handling.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllNullableTypesBridge? sendMultipleNullableTypesWithANullableBool(
     objc.NSNumber? aNullableBool, {
     objc.NSNumber? aNullableInt,
     objc.NSString? aNullableString,
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.sendMultipleNullableTypesWithANullableBool:aNullableInt:aNullableString:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_s92gih(
       object$.ref.pointer,
       _sel_sendMultipleNullableTypesWithANullableBool_aNullableInt_aNullableString_error_,
@@ -5733,9 +3726,6 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns passed in arguments of multiple types.
   /// Tests multiple-arity FlutterApi handling.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllNullableTypesWithoutRecursionBridge?
   sendMultipleNullableTypesWithoutRecursionWithANullableBool(
     objc.NSNumber? aNullableBool, {
@@ -5743,11 +3733,6 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
     objc.NSString? aNullableString,
     required NativeInteropTestsError error,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.sendMultipleNullableTypesWithoutRecursionWithANullableBool:aNullableInt:aNullableString:error:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_s92gih(
       object$.ref.pointer,
       _sel_sendMultipleNullableTypesWithoutRecursionWithANullableBool_aNullableInt_aNullableString_error_,
@@ -5766,28 +3751,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Responds with an error from an async void function.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void throwErrorFromVoidWithError(NativeInteropTestsError error) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.throwErrorFromVoidWithError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_throwErrorFromVoidWithError_, error.ref.pointer);
   }
 
   /// Responds with an error from an async function returning a value.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSObject? throwErrorWithError(NativeInteropTestsError error) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.throwErrorWithError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1sotr3r(
       object$.ref.pointer,
       _sel_throwErrorWithError_,
@@ -5797,18 +3766,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// throwFlutterErrorAsyncWithError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void throwFlutterErrorAsyncWithError(
     NativeInteropTestsError error, {
     required objc.ObjCBlock<ffi.Void Function(objc.NSObject?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.throwFlutterErrorAsyncWithError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_o762yo(
       object$.ref.pointer,
       _sel_throwFlutterErrorAsyncWithError_completionHandler_,
@@ -5818,15 +3779,7 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns a Flutter error, to test error handling.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSObject? throwFlutterErrorWithError(NativeInteropTestsError error) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiBridge.throwFlutterErrorWithError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1sotr3r(
       object$.ref.pointer,
       _sel_throwFlutterErrorWithError_,
@@ -10578,9 +8531,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
   }
 
   /// echoAnotherAsyncEnumWithAnotherEnum:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAnotherAsyncEnumWithAnotherEnum_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -10658,9 +8608,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAnotherAsyncNullableEnumWithAnotherEnum:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAnotherAsyncNullableEnumWithAnotherEnum_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -10738,9 +8685,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed enum to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAnotherNullableEnumWithAnotherEnum_error_ =
       objc.ObjCProtocolMethod<objc.NSNumber? Function(objc.NSNumber?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -10770,9 +8714,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncBoolWithABool:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncBoolWithABool_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -10850,9 +8791,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncClassListWithClassList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncClassListWithClassList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -10929,9 +8867,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncClassMapWithClassMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncClassMapWithClassMap_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -11011,9 +8946,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncDoubleWithADouble:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncDoubleWithADouble_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -11091,9 +9023,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncEnumListWithEnumList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncEnumListWithEnumList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -11170,9 +9099,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncEnumMapWithEnumMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncEnumMapWithEnumMap_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -11252,9 +9178,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncEnumWithAnEnum:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncEnumWithAnEnum_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -11332,9 +9255,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncFloat64ListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncFloat64ListWithList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -11414,9 +9334,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncInt32ListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncInt32ListWithList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -11496,9 +9413,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncInt64ListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncInt64ListWithList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -11578,9 +9492,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncIntMapWithIntMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncIntMapWithIntMap_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -11660,9 +9571,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncIntWithAnInt:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncIntWithAnInt_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -11740,9 +9648,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncListWithList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -11819,9 +9724,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncMapWithMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncMapWithMap_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -11901,9 +9803,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNativeInteropAllTypesWithEverything:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNativeInteropAllTypesWithEverything_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -11983,9 +9882,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNonNullClassListWithClassList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNonNullClassListWithClassList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -12062,9 +9958,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNonNullEnumListWithEnumList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNonNullEnumListWithEnumList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -12141,9 +10034,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableBoolWithABool:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableBoolWithABool_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -12221,9 +10111,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableClassListWithClassList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableClassListWithClassList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -12300,9 +10187,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableClassMapWithClassMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableClassMapWithClassMap_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -12382,9 +10266,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableDoubleWithADouble:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableDoubleWithADouble_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -12462,9 +10343,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableEnumListWithEnumList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableEnumListWithEnumList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -12541,9 +10419,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableEnumMapWithEnumMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableEnumMapWithEnumMap_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -12623,9 +10498,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableEnumWithAnEnum:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableEnumWithAnEnum_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -12703,9 +10575,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableFloat64ListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableFloat64ListWithList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -12785,9 +10654,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableInt32ListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableInt32ListWithList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -12867,9 +10733,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableInt64ListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableInt64ListWithList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -12949,9 +10812,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableIntMapWithIntMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableIntMapWithIntMap_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -13031,9 +10891,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableIntWithAnInt:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableIntWithAnInt_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -13111,9 +10968,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableListWithList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -13190,9 +11044,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableMapWithMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableMapWithMap_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -13272,9 +11123,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableNativeInteropAllNullableTypesWithEverything:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableNativeInteropAllNullableTypesWithEverything_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -13354,9 +11202,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -13445,9 +11290,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableNonNullClassListWithClassList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableNonNullClassListWithClassList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -13524,9 +11366,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableNonNullEnumListWithEnumList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableNonNullEnumListWithEnumList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -13603,9 +11442,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableObjectWithAnObject:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableObjectWithAnObject_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -13685,9 +11521,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableStringMapWithStringMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableStringMapWithStringMap_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -13767,9 +11600,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableStringWithAString:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableStringWithAString_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -13847,9 +11677,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncNullableUint8ListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncNullableUint8ListWithList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -13929,9 +11756,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncObjectWithAnObject:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncObjectWithAnObject_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -14011,9 +11835,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncStringMapWithStringMap:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncStringMapWithStringMap_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -14093,9 +11914,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncStringWithAString:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncStringWithAString_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -14173,9 +11991,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// echoAsyncUint8ListWithList:error:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoAsyncUint8ListWithList_error_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(
@@ -14255,9 +12070,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed boolean, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoBoolWithABool_error_ =
       objc.ObjCProtocolMethod<objc.NSNumber? Function(objc.NSNumber?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -14287,9 +12099,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoClassListWithClassList_error_ =
       objc.ObjCProtocolMethod<objc.NSArray? Function(objc.NSArray?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -14319,9 +12128,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoClassMapWithClassMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -14353,9 +12159,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed double, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoDoubleWithADouble_error_ =
       objc.ObjCProtocolMethod<objc.NSNumber? Function(objc.NSNumber?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -14385,9 +12188,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoEnumListWithEnumList_error_ =
       objc.ObjCProtocolMethod<objc.NSArray? Function(objc.NSArray?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -14417,9 +12217,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoEnumMapWithEnumMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -14451,9 +12248,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed enum to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoEnumWithAnEnum_error_ =
       objc.ObjCProtocolMethod<objc.NSNumber? Function(objc.NSNumber?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -14483,9 +12277,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed float64 list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoFloat64ListWithList_error_ =
       objc.ObjCProtocolMethod<
         NativeInteropTestsPigeonTypedData? Function(
@@ -14529,9 +12320,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed int32 list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoInt32ListWithList_error_ =
       objc.ObjCProtocolMethod<
         NativeInteropTestsPigeonTypedData? Function(
@@ -14575,9 +12363,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed int64 list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoInt64ListWithList_error_ =
       objc.ObjCProtocolMethod<
         NativeInteropTestsPigeonTypedData? Function(
@@ -14621,9 +12406,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoIntMapWithIntMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -14655,9 +12437,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed int, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoIntWithAnInt_error_ =
       objc.ObjCProtocolMethod<objc.NSNumber? Function(objc.NSNumber?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -14687,9 +12466,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoListWithList_error_ =
       objc.ObjCProtocolMethod<objc.NSArray? Function(objc.NSArray?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -14719,9 +12495,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoMapWithMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -14753,9 +12526,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed object, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNativeInteropAllNullableTypesWithEverything_error_ =
       objc.ObjCProtocolMethod<
         NativeInteropAllNullableTypesBridge? Function(
@@ -14799,9 +12569,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed object, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNativeInteropAllNullableTypesWithoutRecursionWithEverything_error_ =
       objc.ObjCProtocolMethod<
         NativeInteropAllNullableTypesWithoutRecursionBridge? Function(
@@ -14845,9 +12612,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed object, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNativeInteropAllTypesWithEverything_error_ =
       objc.ObjCProtocolMethod<
         NativeInteropAllTypesBridge? Function(NativeInteropAllTypesBridge?, NativeInteropTestsError)
@@ -14888,9 +12652,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed enum to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNativeInteropAnotherEnumWithAnotherEnum_error_ =
       objc.ObjCProtocolMethod<objc.NSNumber? Function(objc.NSNumber?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -14920,9 +12681,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNonNullClassListWithClassList_error_ =
       objc.ObjCProtocolMethod<objc.NSArray? Function(objc.NSArray?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -14952,9 +12710,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNonNullClassMapWithClassMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -14986,9 +12741,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNonNullEnumListWithEnumList_error_ =
       objc.ObjCProtocolMethod<objc.NSArray? Function(objc.NSArray?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -15018,9 +12770,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNonNullEnumMapWithEnumMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -15052,9 +12801,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNonNullIntMapWithIntMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -15086,9 +12832,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNonNullStringMapWithStringMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -15120,9 +12863,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed boolean, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableBoolWithABool_error_ =
       objc.ObjCProtocolMethod<objc.NSNumber? Function(objc.NSNumber?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -15152,9 +12892,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableClassListWithClassList_error_ =
       objc.ObjCProtocolMethod<objc.NSArray? Function(objc.NSArray?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -15184,9 +12921,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableClassMapWithClassMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -15218,9 +12952,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed double, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableDoubleWithADouble_error_ =
       objc.ObjCProtocolMethod<objc.NSNumber? Function(objc.NSNumber?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -15250,9 +12981,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableEnumListWithEnumList_error_ =
       objc.ObjCProtocolMethod<objc.NSArray? Function(objc.NSArray?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -15282,9 +13010,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableEnumMapWithEnumMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -15316,9 +13041,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed enum to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableEnumWithAnEnum_error_ =
       objc.ObjCProtocolMethod<objc.NSNumber? Function(objc.NSNumber?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -15348,9 +13070,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed float64 list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableFloat64ListWithList_error_ =
       objc.ObjCProtocolMethod<
         NativeInteropTestsPigeonTypedData? Function(
@@ -15394,9 +13113,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed int32 list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableInt32ListWithList_error_ =
       objc.ObjCProtocolMethod<
         NativeInteropTestsPigeonTypedData? Function(
@@ -15440,9 +13156,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed int64 list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableInt64ListWithList_error_ =
       objc.ObjCProtocolMethod<
         NativeInteropTestsPigeonTypedData? Function(
@@ -15486,9 +13199,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableIntMapWithIntMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -15520,9 +13230,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed int, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableIntWithAnInt_error_ =
       objc.ObjCProtocolMethod<objc.NSNumber? Function(objc.NSNumber?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -15552,9 +13259,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableListWithList_error_ =
       objc.ObjCProtocolMethod<objc.NSArray? Function(objc.NSArray?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -15584,9 +13288,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableMapWithMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -15618,9 +13319,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableNonNullClassListWithClassList_error_ =
       objc.ObjCProtocolMethod<objc.NSArray? Function(objc.NSArray?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -15650,9 +13348,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableNonNullClassMapWithClassMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -15684,9 +13379,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableNonNullEnumListWithEnumList_error_ =
       objc.ObjCProtocolMethod<objc.NSArray? Function(objc.NSArray?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -15716,9 +13408,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableNonNullEnumMapWithEnumMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -15750,9 +13439,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableNonNullIntMapWithIntMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -15784,9 +13470,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableNonNullStringMapWithStringMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -15818,9 +13501,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableStringMapWithStringMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -15852,9 +13532,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed string, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableStringWithAString_error_ =
       objc.ObjCProtocolMethod<objc.NSString? Function(objc.NSString?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -15884,9 +13561,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed byte list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoNullableUint8ListWithList_error_ =
       objc.ObjCProtocolMethod<
         NativeInteropTestsPigeonTypedData? Function(
@@ -15930,9 +13604,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoStringMapWithStringMap_error_ =
       objc.ObjCProtocolMethod<
         objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -15964,9 +13635,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed string, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoStringWithAString_error_ =
       objc.ObjCProtocolMethod<objc.NSString? Function(objc.NSString?, NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -15996,9 +13664,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns the passed byte list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final echoUint8ListWithList_error_ =
       objc.ObjCProtocolMethod<
         NativeInteropTestsPigeonTypedData? Function(
@@ -16043,9 +13708,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final noopAsyncWithError_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(NativeInteropTestsError, objc.ObjCBlock<ffi.Void Function()>)
@@ -16097,9 +13759,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final noopWithError_ =
       objc.ObjCProtocolListenableMethod<void Function(NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -16136,9 +13795,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
 
   /// Returns passed in arguments of multiple types.
   /// Tests multiple-arity FlutterApi handling.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final sendMultipleNullableTypesWithANullableBool_aNullableInt_aNullableString_error_ =
       objc.ObjCProtocolMethod<
         NativeInteropAllNullableTypesBridge? Function(
@@ -16191,9 +13847,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
 
   /// Returns passed in arguments of multiple types.
   /// Tests multiple-arity FlutterApi handling.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final sendMultipleNullableTypesWithoutRecursionWithANullableBool_aNullableInt_aNullableString_error_ =
       objc.ObjCProtocolMethod<
         NativeInteropAllNullableTypesWithoutRecursionBridge? Function(
@@ -16245,9 +13898,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Responds with an error from an async void function.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final throwErrorFromVoidWithError_ =
       objc.ObjCProtocolListenableMethod<void Function(NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -16283,9 +13933,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Responds with an error from an async function returning a value.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final throwErrorWithError_ =
       objc.ObjCProtocolMethod<objc.NSObject? Function(NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -16313,9 +13960,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// throwFlutterErrorAsyncWithError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final throwFlutterErrorAsyncWithError_completionHandler_ =
       objc.ObjCProtocolListenableMethod<
         void Function(NativeInteropTestsError, objc.ObjCBlock<ffi.Void Function(objc.NSObject?)>)
@@ -16372,9 +14016,6 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
       );
 
   /// Returns a Flutter error, to test error handling.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static final throwFlutterErrorWithError_ =
       objc.ObjCProtocolMethod<objc.NSObject? Function(NativeInteropTestsError)>(
         _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
@@ -16403,18 +14044,10 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
 }
 
 /// NativeInteropFlutterIntegrationCoreApiRegistrar
-///
-/// iOS: introduced 13.0.0
-/// macOS: introduced 10.15.0
 extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(objc.ObjCObject object$)
     implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [NativeInteropFlutterIntegrationCoreApiRegistrar] that points to the same underlying object as [other].
   NativeInteropFlutterIntegrationCoreApiRegistrar.as(objc.ObjCObject other) : object$ = other {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiRegistrar',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -16424,11 +14057,6 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(objc.ObjCObject
     bool retain = false,
     bool release = false,
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiRegistrar',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -16484,22 +14112,14 @@ extension type NativeInteropFlutterIntegrationCoreApiRegistrar._(objc.ObjCObject
   }
 
   /// registerInstanceWithApi:name:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static void registerInstanceWithApi(
-    NativeInteropFlutterIntegrationCoreApiBridge api, {
+    NativeInteropFlutterIntegrationCoreApiBridge? api, {
     required objc.NSString name,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropFlutterIntegrationCoreApiRegistrar.registerInstanceWithApi:name:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_pfv6jd(
       _class_NativeInteropFlutterIntegrationCoreApiRegistrar,
       _sel_registerInstanceWithApi_name_,
-      api.ref.pointer,
+      api?.ref.pointer ?? ffi.nullptr,
       name.ref.pointer,
     );
   }
@@ -16527,18 +14147,10 @@ extension NativeInteropFlutterIntegrationCoreApiRegistrar$Methods
 }
 
 /// Generated setup class from Pigeon to register implemented NativeInteropHostIntegrationCoreApi classes.
-///
-/// iOS: introduced 13.0.0
-/// macOS: introduced 10.15.0
 extension type NativeInteropHostIntegrationCoreApiSetup._(objc.ObjCObject object$)
     implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [NativeInteropHostIntegrationCoreApiSetup] that points to the same underlying object as [other].
   NativeInteropHostIntegrationCoreApiSetup.as(objc.ObjCObject other) : object$ = other {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -16548,11 +14160,6 @@ extension type NativeInteropHostIntegrationCoreApiSetup._(objc.ObjCObject object
     bool retain = false,
     bool release = false,
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -16582,15 +14189,7 @@ extension type NativeInteropHostIntegrationCoreApiSetup._(objc.ObjCObject object
   }
 
   /// getInstanceWithName:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   static NativeInteropHostIntegrationCoreApiSetup? getInstanceWithName(objc.NSString name) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.getInstanceWithName:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1sotr3r(
       _class_NativeInteropHostIntegrationCoreApiSetup,
       _sel_getInstanceWithName_,
@@ -16614,19 +14213,11 @@ extension type NativeInteropHostIntegrationCoreApiSetup._(objc.ObjCObject object
 extension NativeInteropHostIntegrationCoreApiSetup$Methods
     on NativeInteropHostIntegrationCoreApiSetup {
   /// callFlutterEchoAnotherAsyncEnumWithAnotherEnum:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAnotherAsyncEnumWithAnotherEnum(
     NativeInteropAnotherEnum anotherEnum, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAnotherAsyncEnumWithAnotherEnum:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_1p6535m(
       object$.ref.pointer,
       _sel_callFlutterEchoAnotherAsyncEnumWithAnotherEnum_wrappedError_completionHandler_,
@@ -16637,19 +14228,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAnotherAsyncNullableEnumWithAnotherEnum:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAnotherAsyncNullableEnumWithAnotherEnum(
     objc.NSNumber? anotherEnum, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAnotherAsyncNullableEnumWithAnotherEnum:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAnotherAsyncNullableEnumWithAnotherEnum_wrappedError_completionHandler_,
@@ -16660,18 +14243,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAnotherNullableEnumWithAnotherEnum:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? callFlutterEchoAnotherNullableEnumWithAnotherEnum(
     objc.NSNumber? anotherEnum, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAnotherNullableEnumWithAnotherEnum:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoAnotherNullableEnumWithAnotherEnum_wrappedError_,
@@ -16682,19 +14257,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncBoolWithABool:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncBoolWithABool(
     bool aBool, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncBoolWithABool:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_1oby3xk(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncBoolWithABool_wrappedError_completionHandler_,
@@ -16705,19 +14272,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncClassListWithClassList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncClassListWithClassList(
     objc.NSArray classList, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncClassListWithClassList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncClassListWithClassList_wrappedError_completionHandler_,
@@ -16728,19 +14287,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncClassMapWithClassMap:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncClassMapWithClassMap(
     objc.NSDictionary classMap, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncClassMapWithClassMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncClassMapWithClassMap_wrappedError_completionHandler_,
@@ -16751,19 +14302,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncDoubleWithADouble:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncDoubleWithADouble(
     double aDouble, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncDoubleWithADouble:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_f15nnv(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncDoubleWithADouble_wrappedError_completionHandler_,
@@ -16774,19 +14317,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncEnumListWithEnumList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncEnumListWithEnumList(
     objc.NSArray enumList, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncEnumListWithEnumList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncEnumListWithEnumList_wrappedError_completionHandler_,
@@ -16797,19 +14332,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncEnumMapWithEnumMap:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncEnumMapWithEnumMap(
     objc.NSDictionary enumMap, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncEnumMapWithEnumMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncEnumMapWithEnumMap_wrappedError_completionHandler_,
@@ -16820,19 +14347,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncEnumWithAnEnum:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncEnumWithAnEnum(
     NativeInteropAnEnum anEnum, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncEnumWithAnEnum:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_gthscw(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncEnumWithAnEnum_wrappedError_completionHandler_,
@@ -16843,20 +14362,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncFloat64ListWithList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncFloat64ListWithList(
     NativeInteropTestsPigeonTypedData list, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncFloat64ListWithList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncFloat64ListWithList_wrappedError_completionHandler_,
@@ -16867,20 +14378,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncInt32ListWithList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncInt32ListWithList(
     NativeInteropTestsPigeonTypedData list, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncInt32ListWithList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncInt32ListWithList_wrappedError_completionHandler_,
@@ -16891,20 +14394,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncInt64ListWithList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncInt64ListWithList(
     NativeInteropTestsPigeonTypedData list, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncInt64ListWithList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncInt64ListWithList_wrappedError_completionHandler_,
@@ -16915,19 +14410,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncIntMapWithIntMap:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncIntMapWithIntMap(
     objc.NSDictionary intMap, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncIntMapWithIntMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncIntMapWithIntMap_wrappedError_completionHandler_,
@@ -16938,19 +14425,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncIntWithAnInt:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncIntWithAnInt(
     int anInt, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncIntWithAnInt:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_1bf2hie(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncIntWithAnInt_wrappedError_completionHandler_,
@@ -16961,19 +14440,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncListWithList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncListWithList(
     objc.NSArray list, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncListWithList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncListWithList_wrappedError_completionHandler_,
@@ -16984,19 +14455,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncMapWithMap:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncMapWithMap(
     objc.NSDictionary map, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncMapWithMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncMapWithMap_wrappedError_completionHandler_,
@@ -17007,19 +14470,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNativeInteropAllTypesWithEverything:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNativeInteropAllTypesWithEverything(
     NativeInteropAllTypesBridge everything, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllTypesBridge?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNativeInteropAllTypesWithEverything:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNativeInteropAllTypesWithEverything_wrappedError_completionHandler_,
@@ -17030,19 +14485,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNonNullClassListWithClassList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNonNullClassListWithClassList(
     objc.NSArray classList, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNonNullClassListWithClassList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNonNullClassListWithClassList_wrappedError_completionHandler_,
@@ -17053,19 +14500,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNonNullEnumListWithEnumList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNonNullEnumListWithEnumList(
     objc.NSArray enumList, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNonNullEnumListWithEnumList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNonNullEnumListWithEnumList_wrappedError_completionHandler_,
@@ -17076,19 +14515,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableBoolWithABool:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableBoolWithABool(
     objc.NSNumber? aBool, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableBoolWithABool:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableBoolWithABool_wrappedError_completionHandler_,
@@ -17099,19 +14530,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableClassListWithClassList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableClassListWithClassList(
     objc.NSArray? classList, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableClassListWithClassList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableClassListWithClassList_wrappedError_completionHandler_,
@@ -17122,19 +14545,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableClassMapWithClassMap:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableClassMapWithClassMap(
     objc.NSDictionary? classMap, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableClassMapWithClassMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableClassMapWithClassMap_wrappedError_completionHandler_,
@@ -17145,19 +14560,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableDoubleWithADouble:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableDoubleWithADouble(
     objc.NSNumber? aDouble, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableDoubleWithADouble:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableDoubleWithADouble_wrappedError_completionHandler_,
@@ -17168,19 +14575,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableEnumListWithEnumList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableEnumListWithEnumList(
     objc.NSArray? enumList, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableEnumListWithEnumList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableEnumListWithEnumList_wrappedError_completionHandler_,
@@ -17191,19 +14590,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableEnumMapWithEnumMap:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableEnumMapWithEnumMap(
     objc.NSDictionary? enumMap, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableEnumMapWithEnumMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableEnumMapWithEnumMap_wrappedError_completionHandler_,
@@ -17214,19 +14605,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableEnumWithAnEnum:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableEnumWithAnEnum(
     objc.NSNumber? anEnum, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableEnumWithAnEnum:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableEnumWithAnEnum_wrappedError_completionHandler_,
@@ -17237,20 +14620,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableFloat64ListWithList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableFloat64ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableFloat64ListWithList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableFloat64ListWithList_wrappedError_completionHandler_,
@@ -17261,20 +14636,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableInt32ListWithList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableInt32ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableInt32ListWithList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableInt32ListWithList_wrappedError_completionHandler_,
@@ -17285,20 +14652,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableInt64ListWithList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableInt64ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableInt64ListWithList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableInt64ListWithList_wrappedError_completionHandler_,
@@ -17309,19 +14668,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableIntMapWithIntMap:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableIntMapWithIntMap(
     objc.NSDictionary? intMap, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableIntMapWithIntMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableIntMapWithIntMap_wrappedError_completionHandler_,
@@ -17332,19 +14683,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableIntWithAnInt:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableIntWithAnInt(
     objc.NSNumber? anInt, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableIntWithAnInt:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableIntWithAnInt_wrappedError_completionHandler_,
@@ -17355,19 +14698,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableListWithList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableListWithList(
     objc.NSArray? list, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableListWithList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableListWithList_wrappedError_completionHandler_,
@@ -17378,19 +14713,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableMapWithMap:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableMapWithMap(
     objc.NSDictionary? map, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableMapWithMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableMapWithMap_wrappedError_completionHandler_,
@@ -17401,20 +14728,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithEverything:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithEverything(
     NativeInteropAllNullableTypesBridge? everything, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllNullableTypesBridge?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithEverything:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithEverything_wrappedError_completionHandler_,
@@ -17425,20 +14744,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything(
     NativeInteropAllNullableTypesWithoutRecursionBridge? everything, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllNullableTypesWithoutRecursionBridge?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything_wrappedError_completionHandler_,
@@ -17449,19 +14760,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableNonNullClassListWithClassList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableNonNullClassListWithClassList(
     objc.NSArray? classList, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableNonNullClassListWithClassList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableNonNullClassListWithClassList_wrappedError_completionHandler_,
@@ -17472,19 +14775,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableNonNullEnumListWithEnumList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableNonNullEnumListWithEnumList(
     objc.NSArray? enumList, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableNonNullEnumListWithEnumList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableNonNullEnumListWithEnumList_wrappedError_completionHandler_,
@@ -17495,19 +14790,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableObjectWithAnObject:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableObjectWithAnObject(
     objc.NSObject anObject, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSObject?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableObjectWithAnObject:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableObjectWithAnObject_wrappedError_completionHandler_,
@@ -17518,19 +14805,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableStringMapWithStringMap:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableStringMapWithStringMap(
     objc.NSDictionary? stringMap, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableStringMapWithStringMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableStringMapWithStringMap_wrappedError_completionHandler_,
@@ -17541,19 +14820,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableStringWithAString:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableStringWithAString(
     objc.NSString? aString, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSString?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableStringWithAString:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableStringWithAString_wrappedError_completionHandler_,
@@ -17564,20 +14835,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncNullableUint8ListWithList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncNullableUint8ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncNullableUint8ListWithList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncNullableUint8ListWithList_wrappedError_completionHandler_,
@@ -17588,19 +14851,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncObjectWithAnObject:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncObjectWithAnObject(
     objc.NSObject anObject, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSObject?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncObjectWithAnObject:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncObjectWithAnObject_wrappedError_completionHandler_,
@@ -17611,19 +14866,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncStringMapWithStringMap:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncStringMapWithStringMap(
     objc.NSDictionary stringMap, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncStringMapWithStringMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncStringMapWithStringMap_wrappedError_completionHandler_,
@@ -17634,19 +14881,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncStringWithAString:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncStringWithAString(
     objc.NSString aString, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSString?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncStringWithAString:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncStringWithAString_wrappedError_completionHandler_,
@@ -17657,20 +14896,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoAsyncUint8ListWithList:wrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterEchoAsyncUint8ListWithList(
     NativeInteropTestsPigeonTypedData list, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoAsyncUint8ListWithList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_callFlutterEchoAsyncUint8ListWithList_wrappedError_completionHandler_,
@@ -17681,18 +14912,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoBoolWithABool:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? callFlutterEchoBoolWithABool(
     bool aBool, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoBoolWithABool:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_w1rg4f(
       object$.ref.pointer,
       _sel_callFlutterEchoBoolWithABool_wrappedError_,
@@ -17703,18 +14926,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoClassListWithClassList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? callFlutterEchoClassListWithClassList(
     objc.NSArray classList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoClassListWithClassList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoClassListWithClassList_wrappedError_,
@@ -17725,18 +14940,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoClassMapWithClassMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoClassMapWithClassMap(
     objc.NSDictionary classMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoClassMapWithClassMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoClassMapWithClassMap_wrappedError_,
@@ -17749,18 +14956,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoDoubleWithADouble:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? callFlutterEchoDoubleWithADouble(
     double aDouble, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoDoubleWithADouble:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1ozwf6k(
       object$.ref.pointer,
       _sel_callFlutterEchoDoubleWithADouble_wrappedError_,
@@ -17771,18 +14970,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoEnumListWithEnumList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? callFlutterEchoEnumListWithEnumList(
     objc.NSArray enumList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoEnumListWithEnumList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoEnumListWithEnumList_wrappedError_,
@@ -17793,18 +14984,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoEnumMapWithEnumMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoEnumMapWithEnumMap(
     objc.NSDictionary enumMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoEnumMapWithEnumMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoEnumMapWithEnumMap_wrappedError_,
@@ -17817,18 +15000,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoEnumWithAnEnum:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? callFlutterEchoEnumWithAnEnum(
     NativeInteropAnEnum anEnum, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoEnumWithAnEnum:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1dnmby7(
       object$.ref.pointer,
       _sel_callFlutterEchoEnumWithAnEnum_wrappedError_,
@@ -17839,18 +15014,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoFloat64ListWithList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? callFlutterEchoFloat64ListWithList(
     NativeInteropTestsPigeonTypedData list, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoFloat64ListWithList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoFloat64ListWithList_wrappedError_,
@@ -17863,18 +15030,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoInt32ListWithList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? callFlutterEchoInt32ListWithList(
     NativeInteropTestsPigeonTypedData list, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoInt32ListWithList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoInt32ListWithList_wrappedError_,
@@ -17887,18 +15046,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoInt64ListWithList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? callFlutterEchoInt64ListWithList(
     NativeInteropTestsPigeonTypedData list, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoInt64ListWithList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoInt64ListWithList_wrappedError_,
@@ -17911,18 +15062,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoIntMapWithIntMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoIntMapWithIntMap(
     objc.NSDictionary intMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoIntMapWithIntMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoIntMapWithIntMap_wrappedError_,
@@ -17935,18 +15078,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoIntWithAnInt:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? callFlutterEchoIntWithAnInt(
     int anInt, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoIntWithAnInt:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1j962g9(
       object$.ref.pointer,
       _sel_callFlutterEchoIntWithAnInt_wrappedError_,
@@ -17957,18 +15092,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoListWithList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? callFlutterEchoListWithList(
     objc.NSArray list, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoListWithList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoListWithList_wrappedError_,
@@ -17979,18 +15106,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoMapWithMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoMapWithMap(
     objc.NSDictionary map, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoMapWithMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoMapWithMap_wrappedError_,
@@ -18003,18 +15122,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNativeInteropAllNullableTypesWithEverything:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllNullableTypesBridge? callFlutterEchoNativeInteropAllNullableTypesWithEverything(
     NativeInteropAllNullableTypesBridge? everything, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNativeInteropAllNullableTypesWithEverything:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNativeInteropAllNullableTypesWithEverything_wrappedError_,
@@ -18027,19 +15138,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNativeInteropAllNullableTypesWithoutRecursionWithEverything:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllNullableTypesWithoutRecursionBridge?
   callFlutterEchoNativeInteropAllNullableTypesWithoutRecursionWithEverything(
     NativeInteropAllNullableTypesWithoutRecursionBridge? everything, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNativeInteropAllNullableTypesWithoutRecursionWithEverything:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNativeInteropAllNullableTypesWithoutRecursionWithEverything_wrappedError_,
@@ -18056,18 +15159,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNativeInteropAllTypesWithEverything:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllTypesBridge? callFlutterEchoNativeInteropAllTypesWithEverything(
     NativeInteropAllTypesBridge everything, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNativeInteropAllTypesWithEverything:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNativeInteropAllTypesWithEverything_wrappedError_,
@@ -18080,18 +15175,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNativeInteropAnotherEnumWithAnotherEnum:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? callFlutterEchoNativeInteropAnotherEnumWithAnotherEnum(
     NativeInteropAnotherEnum anotherEnum, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNativeInteropAnotherEnumWithAnotherEnum:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15mcegd(
       object$.ref.pointer,
       _sel_callFlutterEchoNativeInteropAnotherEnumWithAnotherEnum_wrappedError_,
@@ -18102,18 +15189,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNonNullClassListWithClassList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? callFlutterEchoNonNullClassListWithClassList(
     objc.NSArray classList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNonNullClassListWithClassList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNonNullClassListWithClassList_wrappedError_,
@@ -18124,18 +15203,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNonNullClassMapWithClassMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoNonNullClassMapWithClassMap(
     objc.NSDictionary classMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNonNullClassMapWithClassMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNonNullClassMapWithClassMap_wrappedError_,
@@ -18148,18 +15219,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNonNullEnumListWithEnumList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? callFlutterEchoNonNullEnumListWithEnumList(
     objc.NSArray enumList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNonNullEnumListWithEnumList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNonNullEnumListWithEnumList_wrappedError_,
@@ -18170,18 +15233,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNonNullEnumMapWithEnumMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoNonNullEnumMapWithEnumMap(
     objc.NSDictionary enumMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNonNullEnumMapWithEnumMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNonNullEnumMapWithEnumMap_wrappedError_,
@@ -18194,18 +15249,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNonNullIntMapWithIntMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoNonNullIntMapWithIntMap(
     objc.NSDictionary intMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNonNullIntMapWithIntMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNonNullIntMapWithIntMap_wrappedError_,
@@ -18218,18 +15265,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNonNullStringMapWithStringMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoNonNullStringMapWithStringMap(
     objc.NSDictionary stringMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNonNullStringMapWithStringMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNonNullStringMapWithStringMap_wrappedError_,
@@ -18242,18 +15281,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableBoolWithABool:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? callFlutterEchoNullableBoolWithABool(
     objc.NSNumber? aBool, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableBoolWithABool:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableBoolWithABool_wrappedError_,
@@ -18264,18 +15295,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableClassListWithClassList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? callFlutterEchoNullableClassListWithClassList(
     objc.NSArray? classList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableClassListWithClassList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableClassListWithClassList_wrappedError_,
@@ -18286,18 +15309,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableClassMapWithClassMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoNullableClassMapWithClassMap(
     objc.NSDictionary? classMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableClassMapWithClassMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableClassMapWithClassMap_wrappedError_,
@@ -18310,18 +15325,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableDoubleWithADouble:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? callFlutterEchoNullableDoubleWithADouble(
     objc.NSNumber? aDouble, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableDoubleWithADouble:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableDoubleWithADouble_wrappedError_,
@@ -18332,18 +15339,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableEnumListWithEnumList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? callFlutterEchoNullableEnumListWithEnumList(
     objc.NSArray? enumList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableEnumListWithEnumList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableEnumListWithEnumList_wrappedError_,
@@ -18354,18 +15353,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableEnumMapWithEnumMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoNullableEnumMapWithEnumMap(
     objc.NSDictionary? enumMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableEnumMapWithEnumMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableEnumMapWithEnumMap_wrappedError_,
@@ -18378,18 +15369,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableEnumWithAnEnum:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? callFlutterEchoNullableEnumWithAnEnum(
     objc.NSNumber? anEnum, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableEnumWithAnEnum:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableEnumWithAnEnum_wrappedError_,
@@ -18400,18 +15383,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableFloat64ListWithList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? callFlutterEchoNullableFloat64ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableFloat64ListWithList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableFloat64ListWithList_wrappedError_,
@@ -18424,18 +15399,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableInt32ListWithList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? callFlutterEchoNullableInt32ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableInt32ListWithList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableInt32ListWithList_wrappedError_,
@@ -18448,18 +15415,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableInt64ListWithList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? callFlutterEchoNullableInt64ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableInt64ListWithList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableInt64ListWithList_wrappedError_,
@@ -18472,18 +15431,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableIntMapWithIntMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoNullableIntMapWithIntMap(
     objc.NSDictionary? intMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableIntMapWithIntMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableIntMapWithIntMap_wrappedError_,
@@ -18496,18 +15447,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableIntWithAnInt:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? callFlutterEchoNullableIntWithAnInt(
     objc.NSNumber? anInt, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableIntWithAnInt:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableIntWithAnInt_wrappedError_,
@@ -18518,18 +15461,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableListWithList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? callFlutterEchoNullableListWithList(
     objc.NSArray? list, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableListWithList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableListWithList_wrappedError_,
@@ -18540,18 +15475,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableMapWithMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoNullableMapWithMap(
     objc.NSDictionary? map, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableMapWithMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableMapWithMap_wrappedError_,
@@ -18564,18 +15491,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableNonNullClassListWithClassList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? callFlutterEchoNullableNonNullClassListWithClassList(
     objc.NSArray? classList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableNonNullClassListWithClassList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableNonNullClassListWithClassList_wrappedError_,
@@ -18586,18 +15505,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableNonNullClassMapWithClassMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoNullableNonNullClassMapWithClassMap(
     objc.NSDictionary? classMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableNonNullClassMapWithClassMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableNonNullClassMapWithClassMap_wrappedError_,
@@ -18610,18 +15521,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableNonNullEnumListWithEnumList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? callFlutterEchoNullableNonNullEnumListWithEnumList(
     objc.NSArray? enumList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableNonNullEnumListWithEnumList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableNonNullEnumListWithEnumList_wrappedError_,
@@ -18632,18 +15535,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableNonNullEnumMapWithEnumMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoNullableNonNullEnumMapWithEnumMap(
     objc.NSDictionary? enumMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableNonNullEnumMapWithEnumMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableNonNullEnumMapWithEnumMap_wrappedError_,
@@ -18656,18 +15551,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableNonNullIntMapWithIntMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoNullableNonNullIntMapWithIntMap(
     objc.NSDictionary? intMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableNonNullIntMapWithIntMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableNonNullIntMapWithIntMap_wrappedError_,
@@ -18680,18 +15567,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableNonNullStringMapWithStringMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoNullableNonNullStringMapWithStringMap(
     objc.NSDictionary? stringMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableNonNullStringMapWithStringMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableNonNullStringMapWithStringMap_wrappedError_,
@@ -18704,18 +15583,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableStringMapWithStringMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoNullableStringMapWithStringMap(
     objc.NSDictionary? stringMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableStringMapWithStringMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableStringMapWithStringMap_wrappedError_,
@@ -18728,18 +15599,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableStringWithAString:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSString? callFlutterEchoNullableStringWithAString(
     objc.NSString? aString, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableStringWithAString:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableStringWithAString_wrappedError_,
@@ -18750,18 +15613,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoNullableUint8ListWithList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? callFlutterEchoNullableUint8ListWithList(
     NativeInteropTestsPigeonTypedData? list, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoNullableUint8ListWithList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoNullableUint8ListWithList_wrappedError_,
@@ -18774,18 +15629,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoStringMapWithStringMap:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? callFlutterEchoStringMapWithStringMap(
     objc.NSDictionary stringMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoStringMapWithStringMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoStringMapWithStringMap_wrappedError_,
@@ -18798,18 +15645,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoStringWithAString:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSString? callFlutterEchoStringWithAString(
     objc.NSString aString, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoStringWithAString:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoStringWithAString_wrappedError_,
@@ -18820,18 +15659,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterEchoUint8ListWithList:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? callFlutterEchoUint8ListWithList(
     NativeInteropTestsPigeonTypedData list, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterEchoUint8ListWithList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_callFlutterEchoUint8ListWithList_wrappedError_,
@@ -18844,18 +15675,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterNoopAsyncWithWrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterNoopAsyncWithWrappedError(
     NativeInteropTestsError wrappedError, {
     required objc.ObjCBlock<ffi.Void Function()> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterNoopAsyncWithWrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_o762yo(
       object$.ref.pointer,
       _sel_callFlutterNoopAsyncWithWrappedError_completionHandler_,
@@ -18866,18 +15689,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Spawns a background thread and calls <code>noop</code> on the [NativeInteropFlutterIntegrationCoreApi].
   /// Returns the result of whether the flutter call was successful.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterNoopOnBackgroundThreadWithWrappedError(
     NativeInteropTestsError wrappedError, {
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterNoopOnBackgroundThreadWithWrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_o762yo(
       object$.ref.pointer,
       _sel_callFlutterNoopOnBackgroundThreadWithWrappedError_completionHandler_,
@@ -18887,15 +15702,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterNoopWithWrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterNoopWithWrappedError(NativeInteropTestsError wrappedError) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterNoopWithWrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_callFlutterNoopWithWrappedError_,
@@ -18904,20 +15711,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterSendMultipleNullableTypesWithANullableBool:aNullableInt:aNullableString:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllNullableTypesBridge? callFlutterSendMultipleNullableTypesWithANullableBool(
     objc.NSNumber? aNullableBool, {
     objc.NSNumber? aNullableInt,
     objc.NSString? aNullableString,
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterSendMultipleNullableTypesWithANullableBool:aNullableInt:aNullableString:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_s92gih(
       object$.ref.pointer,
       _sel_callFlutterSendMultipleNullableTypesWithANullableBool_aNullableInt_aNullableString_wrappedError_,
@@ -18932,9 +15731,6 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterSendMultipleNullableTypesWithoutRecursionWithANullableBool:aNullableInt:aNullableString:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllNullableTypesWithoutRecursionBridge?
   callFlutterSendMultipleNullableTypesWithoutRecursionWithANullableBool(
     objc.NSNumber? aNullableBool, {
@@ -18942,11 +15738,6 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     objc.NSString? aNullableString,
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterSendMultipleNullableTypesWithoutRecursionWithANullableBool:aNullableInt:aNullableString:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_s92gih(
       object$.ref.pointer,
       _sel_callFlutterSendMultipleNullableTypesWithoutRecursionWithANullableBool_aNullableInt_aNullableString_wrappedError_,
@@ -18965,15 +15756,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterThrowErrorFromVoidWithWrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterThrowErrorFromVoidWithWrappedError(NativeInteropTestsError wrappedError) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterThrowErrorFromVoidWithWrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_callFlutterThrowErrorFromVoidWithWrappedError_,
@@ -18982,15 +15765,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterThrowErrorWithWrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSObject? callFlutterThrowErrorWithWrappedError(NativeInteropTestsError wrappedError) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterThrowErrorWithWrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1sotr3r(
       object$.ref.pointer,
       _sel_callFlutterThrowErrorWithWrappedError_,
@@ -19000,18 +15775,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// callFlutterThrowFlutterErrorAsyncWithWrappedError:completionHandler:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void callFlutterThrowFlutterErrorAsyncWithWrappedError(
     NativeInteropTestsError wrappedError, {
     required objc.ObjCBlock<ffi.Void Function(objc.NSObject?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.callFlutterThrowFlutterErrorAsyncWithWrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_o762yo(
       object$.ref.pointer,
       _sel_callFlutterThrowFlutterErrorAsyncWithWrappedError_completionHandler_,
@@ -19022,18 +15789,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the inner <code>aString</code> value from the wrapped object, to test
   /// sending of nested objects.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllClassesWrapperBridge? createNestedNullableStringWithNullableString(
     objc.NSString? nullableString, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.createNestedNullableStringWithNullableString:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_createNestedNullableStringWithNullableString_wrappedError_,
@@ -19046,15 +15805,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns true if the handler is run on a main thread.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? defaultIsMainThreadWithWrappedError(NativeInteropTestsError wrappedError) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.defaultIsMainThreadWithWrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1sotr3r(
       object$.ref.pointer,
       _sel_defaultIsMainThreadWithWrappedError_,
@@ -19064,18 +15815,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed object, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllNullableTypesBridge? echoAllNullableTypesWithEverything(
     NativeInteropAllNullableTypesBridge? everything, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAllNullableTypesWithEverything:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoAllNullableTypesWithEverything_wrappedError_,
@@ -19088,19 +15831,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed object, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllNullableTypesWithoutRecursionBridge?
   echoAllNullableTypesWithoutRecursionWithEverything(
     NativeInteropAllNullableTypesWithoutRecursionBridge? everything, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAllNullableTypesWithoutRecursionWithEverything:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoAllNullableTypesWithoutRecursionWithEverything_wrappedError_,
@@ -19117,18 +15852,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed object, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllTypesBridge? echoAllTypesWithEverything(
     NativeInteropAllTypesBridge everything, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAllTypesWithEverything:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoAllTypesWithEverything_wrappedError_,
@@ -19141,19 +15868,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAnotherAsyncEnumWithAnotherEnum(
     NativeInteropAnotherEnum anotherEnum, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAnotherAsyncEnumWithAnotherEnum:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_1p6535m(
       object$.ref.pointer,
       _sel_echoAnotherAsyncEnumWithAnotherEnum_wrappedError_completionHandler_,
@@ -19164,19 +15883,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAnotherAsyncNullableEnumWithAnotherEnum(
     objc.NSNumber? anotherEnum, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAnotherAsyncNullableEnumWithAnotherEnum:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAnotherAsyncNullableEnumWithAnotherEnum_wrappedError_completionHandler_,
@@ -19187,18 +15898,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed enum to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoAnotherEnumWithAnotherEnum(
     NativeInteropAnotherEnum anotherEnum, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAnotherEnumWithAnotherEnum:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15mcegd(
       object$.ref.pointer,
       _sel_echoAnotherEnumWithAnotherEnum_wrappedError_,
@@ -19209,18 +15912,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// echoAnotherNullableEnumWithAnotherEnum:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoAnotherNullableEnumWithAnotherEnum(
     objc.NSNumber? anotherEnum, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAnotherNullableEnumWithAnotherEnum:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoAnotherNullableEnumWithAnotherEnum_wrappedError_,
@@ -19231,19 +15926,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in boolean asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncBoolWithABool(
     bool aBool, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncBoolWithABool:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_1oby3xk(
       object$.ref.pointer,
       _sel_echoAsyncBoolWithABool_wrappedError_completionHandler_,
@@ -19254,19 +15941,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncClassListWithClassList(
     objc.NSArray classList, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncClassListWithClassList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncClassListWithClassList_wrappedError_completionHandler_,
@@ -19277,19 +15956,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncClassMapWithClassMap(
     objc.NSDictionary classMap, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncClassMapWithClassMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncClassMapWithClassMap_wrappedError_completionHandler_,
@@ -19300,19 +15971,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns passed in double asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncDoubleWithADouble(
     double aDouble, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncDoubleWithADouble:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_f15nnv(
       object$.ref.pointer,
       _sel_echoAsyncDoubleWithADouble_wrappedError_completionHandler_,
@@ -19323,19 +15986,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncEnumListWithEnumList(
     objc.NSArray enumList, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncEnumListWithEnumList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncEnumListWithEnumList_wrappedError_completionHandler_,
@@ -19346,19 +16001,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncEnumMapWithEnumMap(
     objc.NSDictionary enumMap, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncEnumMapWithEnumMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncEnumMapWithEnumMap_wrappedError_completionHandler_,
@@ -19369,19 +16016,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncEnumWithAnEnum(
     NativeInteropAnEnum anEnum, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncEnumWithAnEnum:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_gthscw(
       object$.ref.pointer,
       _sel_echoAsyncEnumWithAnEnum_wrappedError_completionHandler_,
@@ -19392,20 +16031,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in Float64List asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncFloat64ListWithAFloat64List(
     NativeInteropTestsPigeonTypedData aFloat64List, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncFloat64ListWithAFloat64List:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncFloat64ListWithAFloat64List_wrappedError_completionHandler_,
@@ -19416,20 +16047,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in Int32List asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncInt32ListWithAInt32List(
     NativeInteropTestsPigeonTypedData aInt32List, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncInt32ListWithAInt32List:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncInt32ListWithAInt32List_wrappedError_completionHandler_,
@@ -19440,20 +16063,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in Int64List asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncInt64ListWithAInt64List(
     NativeInteropTestsPigeonTypedData aInt64List, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncInt64ListWithAInt64List:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncInt64ListWithAInt64List_wrappedError_completionHandler_,
@@ -19464,19 +16079,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncIntMapWithIntMap(
     objc.NSDictionary intMap, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncIntMapWithIntMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncIntMapWithIntMap_wrappedError_completionHandler_,
@@ -19487,19 +16094,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns passed in int asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncIntWithAnInt(
     int anInt, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncIntWithAnInt:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_1bf2hie(
       object$.ref.pointer,
       _sel_echoAsyncIntWithAnInt_wrappedError_completionHandler_,
@@ -19510,19 +16109,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncListWithList(
     objc.NSArray list, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncListWithList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncListWithList_wrappedError_completionHandler_,
@@ -19533,19 +16124,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncMapWithMap(
     objc.NSDictionary map, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncMapWithMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncMapWithMap_wrappedError_completionHandler_,
@@ -19556,19 +16139,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed object, to test async serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNativeInteropAllTypesWithEverything(
     NativeInteropAllTypesBridge everything, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllTypesBridge?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNativeInteropAllTypesWithEverything:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNativeInteropAllTypesWithEverything_wrappedError_completionHandler_,
@@ -19579,19 +16154,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in boolean asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableBoolWithABool(
     objc.NSNumber? aBool, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableBoolWithABool:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableBoolWithABool_wrappedError_completionHandler_,
@@ -19602,19 +16169,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableClassListWithClassList(
     objc.NSArray? classList, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableClassListWithClassList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableClassListWithClassList_wrappedError_completionHandler_,
@@ -19625,19 +16184,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableClassMapWithClassMap(
     objc.NSDictionary? classMap, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableClassMapWithClassMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableClassMapWithClassMap_wrappedError_completionHandler_,
@@ -19648,19 +16199,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns passed in double asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableDoubleWithADouble(
     objc.NSNumber? aDouble, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableDoubleWithADouble:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableDoubleWithADouble_wrappedError_completionHandler_,
@@ -19671,19 +16214,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableEnumListWithEnumList(
     objc.NSArray? enumList, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableEnumListWithEnumList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableEnumListWithEnumList_wrappedError_completionHandler_,
@@ -19694,19 +16229,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableEnumMapWithEnumMap(
     objc.NSDictionary? enumMap, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableEnumMapWithEnumMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableEnumMapWithEnumMap_wrappedError_completionHandler_,
@@ -19717,19 +16244,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableEnumWithAnEnum(
     objc.NSNumber? anEnum, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableEnumWithAnEnum:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableEnumWithAnEnum_wrappedError_completionHandler_,
@@ -19740,20 +16259,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in Float64List asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableFloat64ListWithAFloat64List(
     NativeInteropTestsPigeonTypedData? aFloat64List, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableFloat64ListWithAFloat64List:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableFloat64ListWithAFloat64List_wrappedError_completionHandler_,
@@ -19764,20 +16275,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in Int32List asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableInt32ListWithAInt32List(
     NativeInteropTestsPigeonTypedData? aInt32List, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableInt32ListWithAInt32List:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableInt32ListWithAInt32List_wrappedError_completionHandler_,
@@ -19788,20 +16291,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in Int64List asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableInt64ListWithAInt64List(
     NativeInteropTestsPigeonTypedData? aInt64List, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableInt64ListWithAInt64List:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableInt64ListWithAInt64List_wrappedError_completionHandler_,
@@ -19812,19 +16307,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableIntMapWithIntMap(
     objc.NSDictionary? intMap, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableIntMapWithIntMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableIntMapWithIntMap_wrappedError_completionHandler_,
@@ -19835,19 +16322,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns passed in int asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableIntWithAnInt(
     objc.NSNumber? anInt, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableIntWithAnInt:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableIntWithAnInt_wrappedError_completionHandler_,
@@ -19858,19 +16337,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableListWithList(
     objc.NSArray? list, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableListWithList:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableListWithList_wrappedError_completionHandler_,
@@ -19881,19 +16352,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableMapWithMap(
     objc.NSDictionary? map, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableMapWithMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableMapWithMap_wrappedError_completionHandler_,
@@ -19904,20 +16367,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed object, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableNativeInteropAllNullableTypesWithEverything(
     NativeInteropAllNullableTypesBridge? everything, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllNullableTypesBridge?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableNativeInteropAllNullableTypesWithEverything:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableNativeInteropAllNullableTypesWithEverything_wrappedError_completionHandler_,
@@ -19928,20 +16383,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed object, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything(
     NativeInteropAllNullableTypesWithoutRecursionBridge? everything, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllNullableTypesWithoutRecursionBridge?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything_wrappedError_completionHandler_,
@@ -19952,19 +16399,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in generic Object asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableObjectWithAnObject(
     objc.NSObject anObject, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSObject?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableObjectWithAnObject:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableObjectWithAnObject_wrappedError_completionHandler_,
@@ -19975,19 +16414,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableStringMapWithStringMap(
     objc.NSDictionary? stringMap, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableStringMapWithStringMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableStringMapWithStringMap_wrappedError_completionHandler_,
@@ -19998,19 +16429,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed string asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableStringWithAString(
     objc.NSString? aString, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSString?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableStringWithAString:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableStringWithAString_wrappedError_completionHandler_,
@@ -20021,20 +16444,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in Uint8List asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncNullableUint8ListWithAUint8List(
     NativeInteropTestsPigeonTypedData? aUint8List, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncNullableUint8ListWithAUint8List:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncNullableUint8ListWithAUint8List_wrappedError_completionHandler_,
@@ -20045,19 +16460,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in generic Object asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncObjectWithAnObject(
     objc.NSObject anObject, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSObject?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncObjectWithAnObject:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncObjectWithAnObject_wrappedError_completionHandler_,
@@ -20068,19 +16475,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncStringMapWithStringMap(
     objc.NSDictionary stringMap, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncStringMapWithStringMap:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncStringMapWithStringMap_wrappedError_completionHandler_,
@@ -20091,19 +16490,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed string asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncStringWithAString(
     objc.NSString aString, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSString?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncStringWithAString:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncStringWithAString_wrappedError_completionHandler_,
@@ -20114,20 +16505,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in Uint8List asynchronously.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void echoAsyncUint8ListWithAUint8List(
     NativeInteropTestsPigeonTypedData aUint8List, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoAsyncUint8ListWithAUint8List:wrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_18qun1e(
       object$.ref.pointer,
       _sel_echoAsyncUint8ListWithAUint8List_wrappedError_completionHandler_,
@@ -20138,18 +16521,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoBoolListWithBoolList(
     objc.NSArray boolList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoBoolListWithBoolList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoBoolListWithBoolList_wrappedError_,
@@ -20160,15 +16535,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in boolean.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoBoolWithABool(bool aBool, {required NativeInteropTestsError wrappedError}) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoBoolWithABool:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_w1rg4f(
       object$.ref.pointer,
       _sel_echoBoolWithABool_wrappedError_,
@@ -20179,18 +16546,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoClassListWithClassList(
     objc.NSArray classList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoClassListWithClassList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoClassListWithClassList_wrappedError_,
@@ -20201,18 +16560,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoClassMapWithClassMap(
     objc.NSDictionary classMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoClassMapWithClassMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoClassMapWithClassMap_wrappedError_,
@@ -20225,18 +16576,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed class to test nested class serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllClassesWrapperBridge? echoClassWrapperWithWrapper(
     NativeInteropAllClassesWrapperBridge wrapper, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoClassWrapperWithWrapper:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoClassWrapperWithWrapper_wrappedError_,
@@ -20249,18 +16592,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoDoubleListWithDoubleList(
     objc.NSArray doubleList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoDoubleListWithDoubleList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoDoubleListWithDoubleList_wrappedError_,
@@ -20271,18 +16606,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns passed in double.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoDoubleWithADouble(
     double aDouble, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoDoubleWithADouble:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1ozwf6k(
       object$.ref.pointer,
       _sel_echoDoubleWithADouble_wrappedError_,
@@ -20293,18 +16620,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoEnumListWithEnumList(
     objc.NSArray enumList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoEnumListWithEnumList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoEnumListWithEnumList_wrappedError_,
@@ -20315,18 +16634,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoEnumMapWithEnumMap(
     objc.NSDictionary enumMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoEnumMapWithEnumMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoEnumMapWithEnumMap_wrappedError_,
@@ -20339,18 +16650,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed enum to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoEnumWithAnEnum(
     NativeInteropAnEnum anEnum, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoEnumWithAnEnum:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1dnmby7(
       object$.ref.pointer,
       _sel_echoEnumWithAnEnum_wrappedError_,
@@ -20361,18 +16664,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in Float64List.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? echoFloat64ListWithAFloat64List(
     NativeInteropTestsPigeonTypedData aFloat64List, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoFloat64ListWithAFloat64List:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoFloat64ListWithAFloat64List_wrappedError_,
@@ -20385,18 +16680,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in Int32List.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? echoInt32ListWithAInt32List(
     NativeInteropTestsPigeonTypedData aInt32List, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoInt32ListWithAInt32List:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoInt32ListWithAInt32List_wrappedError_,
@@ -20409,18 +16696,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in Int64List.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? echoInt64ListWithAInt64List(
     NativeInteropTestsPigeonTypedData aInt64List, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoInt64ListWithAInt64List:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoInt64ListWithAInt64List_wrappedError_,
@@ -20433,18 +16712,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoIntListWithIntList(
     objc.NSArray intList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoIntListWithIntList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoIntListWithIntList_wrappedError_,
@@ -20455,18 +16726,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoIntMapWithIntMap(
     objc.NSDictionary intMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoIntMapWithIntMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoIntMapWithIntMap_wrappedError_,
@@ -20479,15 +16742,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns passed in int.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoIntWithAnInt(int anInt, {required NativeInteropTestsError wrappedError}) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoIntWithAnInt:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1j962g9(
       object$.ref.pointer,
       _sel_echoIntWithAnInt_wrappedError_,
@@ -20498,18 +16753,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoListWithList(
     objc.NSArray list, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoListWithList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoListWithList_wrappedError_,
@@ -20520,18 +16767,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoMapWithMap(
     objc.NSDictionary map, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoMapWithMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoMapWithMap_wrappedError_,
@@ -20544,18 +16783,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the default string.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSString? echoNamedDefaultStringWithAString(
     objc.NSString aString, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNamedDefaultStringWithAString:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNamedDefaultStringWithAString_wrappedError_,
@@ -20566,18 +16797,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in string.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSString? echoNamedNullableStringWithANullableString(
     objc.NSString? aNullableString, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNamedNullableStringWithANullableString:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNamedNullableStringWithANullableString_wrappedError_,
@@ -20588,18 +16811,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoNonNullClassListWithClassList(
     objc.NSArray classList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNonNullClassListWithClassList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNonNullClassListWithClassList_wrappedError_,
@@ -20610,18 +16825,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNonNullClassMapWithClassMap(
     objc.NSDictionary classMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNonNullClassMapWithClassMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNonNullClassMapWithClassMap_wrappedError_,
@@ -20634,18 +16841,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoNonNullEnumListWithEnumList(
     objc.NSArray enumList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNonNullEnumListWithEnumList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNonNullEnumListWithEnumList_wrappedError_,
@@ -20656,18 +16855,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNonNullEnumMapWithEnumMap(
     objc.NSDictionary enumMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNonNullEnumMapWithEnumMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNonNullEnumMapWithEnumMap_wrappedError_,
@@ -20680,18 +16871,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNonNullIntMapWithIntMap(
     objc.NSDictionary intMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNonNullIntMapWithIntMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNonNullIntMapWithIntMap_wrappedError_,
@@ -20704,18 +16887,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNonNullStringMapWithStringMap(
     objc.NSDictionary stringMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNonNullStringMapWithStringMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNonNullStringMapWithStringMap_wrappedError_,
@@ -20728,18 +16903,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in boolean.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoNullableBoolWithANullableBool(
     objc.NSNumber? aNullableBool, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableBoolWithANullableBool:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableBoolWithANullableBool_wrappedError_,
@@ -20750,18 +16917,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoNullableClassListWithClassList(
     objc.NSArray? classList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableClassListWithClassList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableClassListWithClassList_wrappedError_,
@@ -20772,18 +16931,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableClassMapWithClassMap(
     objc.NSDictionary? classMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableClassMapWithClassMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableClassMapWithClassMap_wrappedError_,
@@ -20796,18 +16947,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns passed in double.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoNullableDoubleWithANullableDouble(
     objc.NSNumber? aNullableDouble, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableDoubleWithANullableDouble:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableDoubleWithANullableDouble_wrappedError_,
@@ -20818,18 +16961,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoNullableEnumListWithEnumList(
     objc.NSArray? enumList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableEnumListWithEnumList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableEnumListWithEnumList_wrappedError_,
@@ -20840,18 +16975,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableEnumMapWithEnumMap(
     objc.NSDictionary? enumMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableEnumMapWithEnumMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableEnumMapWithEnumMap_wrappedError_,
@@ -20864,18 +16991,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// echoNullableEnumWithAnEnum:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoNullableEnumWithAnEnum(
     objc.NSNumber? anEnum, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableEnumWithAnEnum:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableEnumWithAnEnum_wrappedError_,
@@ -20886,18 +17005,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in Float64List.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? echoNullableFloat64ListWithANullableFloat64List(
     NativeInteropTestsPigeonTypedData? aNullableFloat64List, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableFloat64ListWithANullableFloat64List:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableFloat64ListWithANullableFloat64List_wrappedError_,
@@ -20910,18 +17021,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in Int32List.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? echoNullableInt32ListWithANullableInt32List(
     NativeInteropTestsPigeonTypedData? aNullableInt32List, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableInt32ListWithANullableInt32List:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableInt32ListWithANullableInt32List_wrappedError_,
@@ -20934,18 +17037,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in Int64List.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? echoNullableInt64ListWithANullableInt64List(
     NativeInteropTestsPigeonTypedData? aNullableInt64List, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableInt64ListWithANullableInt64List:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableInt64ListWithANullableInt64List_wrappedError_,
@@ -20958,18 +17053,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableIntMapWithIntMap(
     objc.NSDictionary? intMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableIntMapWithIntMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableIntMapWithIntMap_wrappedError_,
@@ -20982,18 +17069,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns passed in int.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoNullableIntWithANullableInt(
     objc.NSNumber? aNullableInt, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableIntWithANullableInt:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableIntWithANullableInt_wrappedError_,
@@ -21004,18 +17083,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoNullableListWithANullableList(
     objc.NSArray? aNullableList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableListWithANullableList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableListWithANullableList_wrappedError_,
@@ -21026,18 +17097,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableMapWithMap(
     objc.NSDictionary? map, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableMapWithMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableMapWithMap_wrappedError_,
@@ -21050,18 +17113,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoNullableNonNullClassListWithClassList(
     objc.NSArray? classList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableNonNullClassListWithClassList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableNonNullClassListWithClassList_wrappedError_,
@@ -21072,18 +17127,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableNonNullClassMapWithClassMap(
     objc.NSDictionary? classMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableNonNullClassMapWithClassMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableNonNullClassMapWithClassMap_wrappedError_,
@@ -21096,18 +17143,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoNullableNonNullEnumListWithEnumList(
     objc.NSArray? enumList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableNonNullEnumListWithEnumList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableNonNullEnumListWithEnumList_wrappedError_,
@@ -21118,18 +17157,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableNonNullEnumMapWithEnumMap(
     objc.NSDictionary? enumMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableNonNullEnumMapWithEnumMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableNonNullEnumMapWithEnumMap_wrappedError_,
@@ -21142,18 +17173,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableNonNullIntMapWithIntMap(
     objc.NSDictionary? intMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableNonNullIntMapWithIntMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableNonNullIntMapWithIntMap_wrappedError_,
@@ -21166,18 +17189,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableNonNullStringMapWithStringMap(
     objc.NSDictionary? stringMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableNonNullStringMapWithStringMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableNonNullStringMapWithStringMap_wrappedError_,
@@ -21190,18 +17205,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in generic Object.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSObject? echoNullableObjectWithANullableObject(
     objc.NSObject aNullableObject, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableObjectWithANullableObject:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableObjectWithANullableObject_wrappedError_,
@@ -21212,18 +17219,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoNullableStringMapWithStringMap(
     objc.NSDictionary? stringMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableStringMapWithStringMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableStringMapWithStringMap_wrappedError_,
@@ -21236,18 +17235,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in string.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSString? echoNullableStringWithANullableString(
     objc.NSString? aNullableString, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableStringWithANullableString:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableStringWithANullableString_wrappedError_,
@@ -21258,18 +17249,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in Uint8List.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? echoNullableUint8ListWithANullableUint8List(
     NativeInteropTestsPigeonTypedData? aNullableUint8List, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoNullableUint8ListWithANullableUint8List:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoNullableUint8ListWithANullableUint8List_wrappedError_,
@@ -21282,18 +17265,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in generic Object.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSObject? echoObjectWithAnObject(
     objc.NSObject anObject, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoObjectWithAnObject:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoObjectWithAnObject_wrappedError_,
@@ -21304,18 +17279,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns passed in double.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoOptionalDefaultDoubleWithADouble(
     double aDouble, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoOptionalDefaultDoubleWithADouble:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1ozwf6k(
       object$.ref.pointer,
       _sel_echoOptionalDefaultDoubleWithADouble_wrappedError_,
@@ -21326,18 +17293,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns passed in int.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoOptionalNullableIntWithANullableInt(
     objc.NSNumber? aNullableInt, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoOptionalNullableIntWithANullableInt:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoOptionalNullableIntWithANullableInt_wrappedError_,
@@ -21348,18 +17307,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns passed in int.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSNumber? echoRequiredIntWithAnInt(
     int anInt, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoRequiredIntWithAnInt:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1j962g9(
       object$.ref.pointer,
       _sel_echoRequiredIntWithAnInt_wrappedError_,
@@ -21370,18 +17321,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSArray? echoStringListWithStringList(
     objc.NSArray stringList, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoStringListWithStringList:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoStringListWithStringList_wrappedError_,
@@ -21392,18 +17335,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSDictionary? echoStringMapWithStringMap(
     objc.NSDictionary stringMap, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoStringMapWithStringMap:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoStringMapWithStringMap_wrappedError_,
@@ -21416,18 +17351,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in string.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSString? echoStringWithAString(
     objc.NSString aString, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoStringWithAString:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoStringWithAString_wrappedError_,
@@ -21438,18 +17365,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in Uint8List.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData? echoUint8ListWithAUint8List(
     NativeInteropTestsPigeonTypedData aUint8List, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.echoUint8ListWithAUint8List:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_echoUint8ListWithAUint8List_wrappedError_,
@@ -21463,18 +17382,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the inner <code>aString</code> value from the wrapped object, to test
   /// sending of nested objects.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSString? extractNestedNullableStringWithWrapper(
     NativeInteropAllClassesWrapperBridge wrapper, {
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.extractNestedNullableStringWithWrapper:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_15qeuct(
       object$.ref.pointer,
       _sel_extractNestedNullableStringWithWrapper_wrappedError_,
@@ -21497,18 +17408,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void noopAsyncWithWrappedError(
     NativeInteropTestsError wrappedError, {
     required objc.ObjCBlock<ffi.Void Function()> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.noopAsyncWithWrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_o762yo(
       object$.ref.pointer,
       _sel_noopAsyncWithWrappedError_completionHandler_,
@@ -21519,33 +17422,30 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void noopWithWrappedError(NativeInteropTestsError wrappedError) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.noopWithWrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_noopWithWrappedError_, wrappedError.ref.pointer);
   }
 
+  /// Registers and immediately deregisters a Host API under [name].
+  void registerAndImmediatelyDeregisterHostApiWithName(
+    objc.NSString name, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    _objc_msgSend_pfv6jd(
+      object$.ref.pointer,
+      _sel_registerAndImmediatelyDeregisterHostApiWithName_wrappedError_,
+      name.ref.pointer,
+      wrappedError.ref.pointer,
+    );
+  }
+
   /// sendMultipleNullableTypesWithANullableBool:aNullableInt:aNullableString:wrappedError:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllNullableTypesBridge? sendMultipleNullableTypesWithANullableBool(
     objc.NSNumber? aNullableBool, {
     objc.NSNumber? aNullableInt,
     objc.NSString? aNullableString,
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.sendMultipleNullableTypesWithANullableBool:aNullableInt:aNullableString:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_s92gih(
       object$.ref.pointer,
       _sel_sendMultipleNullableTypesWithANullableBool_aNullableInt_aNullableString_wrappedError_,
@@ -21560,9 +17460,6 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns passed in arguments of multiple types.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropAllNullableTypesWithoutRecursionBridge?
   sendMultipleNullableTypesWithoutRecursionWithANullableBool(
     objc.NSNumber? aNullableBool, {
@@ -21570,11 +17467,6 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     objc.NSString? aNullableString,
     required NativeInteropTestsError wrappedError,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.sendMultipleNullableTypesWithoutRecursionWithANullableBool:aNullableInt:aNullableString:wrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_s92gih(
       object$.ref.pointer,
       _sel_sendMultipleNullableTypesWithoutRecursionWithANullableBool_aNullableInt_aNullableString_wrappedError_,
@@ -21592,19 +17484,45 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
           );
   }
 
+  /// Tests that calling a deregistered Flutter API under [name] fails / returns null.
+  objc.NSNumber? testCallDeregisteredFlutterApiWithName(
+    objc.NSString name, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final $ret = _objc_msgSend_15qeuct(
+      object$.ref.pointer,
+      _sel_testCallDeregisteredFlutterApiWithName_wrappedError_,
+      name.ref.pointer,
+      wrappedError.ref.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Tests deregistering a Flutter API natively.
+  objc.NSNumber? testDeregisterFlutterApiWithWrappedError(NativeInteropTestsError wrappedError) {
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_testDeregisterFlutterApiWithWrappedError_,
+      wrappedError.ref.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Tests deregistering a Host API natively.
+  objc.NSNumber? testDeregisterHostApiWithWrappedError(NativeInteropTestsError wrappedError) {
+    final $ret = _objc_msgSend_1sotr3r(
+      object$.ref.pointer,
+      _sel_testDeregisterHostApiWithWrappedError_,
+      wrappedError.ref.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
   /// Responds with an error from an async void function.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void throwAsyncErrorFromVoidWithWrappedError(
     NativeInteropTestsError wrappedError, {
     required objc.ObjCBlock<ffi.Void Function()> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.throwAsyncErrorFromVoidWithWrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_o762yo(
       object$.ref.pointer,
       _sel_throwAsyncErrorFromVoidWithWrappedError_completionHandler_,
@@ -21614,18 +17532,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Responds with an error from an async function returning a value.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void throwAsyncErrorWithWrappedError(
     NativeInteropTestsError wrappedError, {
     required objc.ObjCBlock<ffi.Void Function(objc.NSObject?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.throwAsyncErrorWithWrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_o762yo(
       object$.ref.pointer,
       _sel_throwAsyncErrorWithWrappedError_completionHandler_,
@@ -21635,18 +17545,10 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Responds with a Flutter error from an async function returning a value.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void throwAsyncFlutterErrorWithWrappedError(
     NativeInteropTestsError wrappedError, {
     required objc.ObjCBlock<ffi.Void Function(objc.NSObject?)> completionHandler,
   }) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.throwAsyncFlutterErrorWithWrappedError:completionHandler:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_o762yo(
       object$.ref.pointer,
       _sel_throwAsyncFlutterErrorWithWrappedError_completionHandler_,
@@ -21656,15 +17558,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns an error from a void function, to test error handling.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   void throwErrorFromVoidWithWrappedError(NativeInteropTestsError wrappedError) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.throwErrorFromVoidWithWrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(
       object$.ref.pointer,
       _sel_throwErrorFromVoidWithWrappedError_,
@@ -21673,15 +17567,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns an error, to test error handling.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSObject? throwErrorWithWrappedError(NativeInteropTestsError wrappedError) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.throwErrorWithWrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1sotr3r(
       object$.ref.pointer,
       _sel_throwErrorWithWrappedError_,
@@ -21691,15 +17577,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns a Flutter error, to test error handling.
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   objc.NSObject? throwFlutterErrorWithWrappedError(NativeInteropTestsError wrappedError) {
-    objc.checkOsVersionInternal(
-      'NativeInteropHostIntegrationCoreApiSetup.throwFlutterErrorWithWrappedError:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1sotr3r(
       object$.ref.pointer,
       _sel_throwFlutterErrorWithWrappedError_,
@@ -21978,18 +17856,10 @@ extension NativeInteropTestsPigeonInternalNull$Methods on NativeInteropTestsPige
 }
 
 /// NativeInteropTestsPigeonTypedData
-///
-/// iOS: introduced 13.0.0
-/// macOS: introduced 10.15.0
 extension type NativeInteropTestsPigeonTypedData._(objc.ObjCObject object$)
     implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [NativeInteropTestsPigeonTypedData] that points to the same underlying object as [other].
   NativeInteropTestsPigeonTypedData.as(objc.ObjCObject other) : object$ = other {
-    objc.checkOsVersionInternal(
-      'NativeInteropTestsPigeonTypedData',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -21999,11 +17869,6 @@ extension type NativeInteropTestsPigeonTypedData._(objc.ObjCObject object$)
     bool retain = false,
     bool release = false,
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
-    objc.checkOsVersionInternal(
-      'NativeInteropTestsPigeonTypedData',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -22034,28 +17899,14 @@ extension type NativeInteropTestsPigeonTypedData._(objc.ObjCObject object$)
 }
 
 extension NativeInteropTestsPigeonTypedData$Methods on NativeInteropTestsPigeonTypedData {
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// data
   objc.NSData get data {
-    objc.checkOsVersionInternal(
-      'NativeInteropTestsPigeonTypedData.data',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_data);
     return objc.NSData.fromPointer($ret, retain: true, release: true);
   }
 
   /// initWithData:type:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropTestsPigeonTypedData initWithData(objc.NSData data, {required int type}) {
-    objc.checkOsVersionInternal(
-      'NativeInteropTestsPigeonTypedData.initWithData:type:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_9slupp(
       object$.ref.retainAndReturnPointer(),
       _sel_initWithData_type_,
@@ -22065,31 +17916,17 @@ extension NativeInteropTestsPigeonTypedData$Methods on NativeInteropTestsPigeonT
     return NativeInteropTestsPigeonTypedData.fromPointer($ret, retain: false, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// type
   int get type {
-    objc.checkOsVersionInternal(
-      'NativeInteropTestsPigeonTypedData.type',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     return _objc_msgSend_1hz7y9r(object$.ref.pointer, _sel_type);
   }
 }
 
 /// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
-///
-/// iOS: introduced 13.0.0
-/// macOS: introduced 10.15.0
 extension type NativeInteropUnusedClassBridge._(objc.ObjCObject object$)
     implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [NativeInteropUnusedClassBridge] that points to the same underlying object as [other].
   NativeInteropUnusedClassBridge.as(objc.ObjCObject other) : object$ = other {
-    objc.checkOsVersionInternal(
-      'NativeInteropUnusedClassBridge',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -22099,11 +17936,6 @@ extension type NativeInteropUnusedClassBridge._(objc.ObjCObject object$)
     bool retain = false,
     bool release = false,
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
-    objc.checkOsVersionInternal(
-      'NativeInteropUnusedClassBridge',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     assert(isA(object$));
   }
 
@@ -22134,28 +17966,14 @@ extension type NativeInteropUnusedClassBridge._(objc.ObjCObject object$)
 }
 
 extension NativeInteropUnusedClassBridge$Methods on NativeInteropUnusedClassBridge {
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// aField
   objc.NSObject? get aField {
-    objc.checkOsVersionInternal(
-      'NativeInteropUnusedClassBridge.aField',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_aField);
     return $ret.address == 0 ? null : objc.NSObject.fromPointer($ret, retain: true, release: true);
   }
 
   /// initWithAField:
-  ///
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
   NativeInteropUnusedClassBridge initWithAField(objc.NSObject? aField) {
-    objc.checkOsVersionInternal(
-      'NativeInteropUnusedClassBridge.initWithAField:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     final $ret = _objc_msgSend_1sotr3r(
       object$.ref.retainAndReturnPointer(),
       _sel_initWithAField_,
@@ -22164,14 +17982,8 @@ extension NativeInteropUnusedClassBridge$Methods on NativeInteropUnusedClassBrid
     return NativeInteropUnusedClassBridge.fromPointer($ret, retain: false, release: true);
   }
 
-  /// iOS: introduced 13.0.0
-  /// macOS: introduced 10.15.0
+  /// setAField:
   set aField(objc.NSObject? value) {
-    objc.checkOsVersionInternal(
-      'NativeInteropUnusedClassBridge.setAField:',
-      iOS: (false, (13, 0, 0)),
-      macOS: (false, (10, 15, 0)),
-    );
     _objc_msgSend_xtuoz7(object$.ref.pointer, _sel_setAField_, value?.ref.pointer ?? ffi.nullptr);
   }
 }
@@ -33826,6 +29638,9 @@ late final _sel_password = objc.registerName("password");
 late final _sel_persistence = objc.registerName("persistence");
 late final _sel_recursiveClassList = objc.registerName("recursiveClassList");
 late final _sel_recursiveClassMap = objc.registerName("recursiveClassMap");
+late final _sel_registerAndImmediatelyDeregisterHostApiWithName_wrappedError_ = objc.registerName(
+  "registerAndImmediatelyDeregisterHostApiWithName:wrappedError:",
+);
 late final _sel_registerInstanceWithApi_name_ = objc.registerName("registerInstanceWithApi:name:");
 late final _sel_sendMultipleNullableTypesWithANullableBool_aNullableInt_aNullableString_error_ =
     objc.registerName(
@@ -33903,6 +29718,15 @@ late final _sel_setType_ = objc.registerName("setType:");
 late final _sel_stringList = objc.registerName("stringList");
 late final _sel_stringMap = objc.registerName("stringMap");
 late final _sel_supportsSecureCoding = objc.registerName("supportsSecureCoding");
+late final _sel_testCallDeregisteredFlutterApiWithName_wrappedError_ = objc.registerName(
+  "testCallDeregisteredFlutterApiWithName:wrappedError:",
+);
+late final _sel_testDeregisterFlutterApiWithWrappedError_ = objc.registerName(
+  "testDeregisterFlutterApiWithWrappedError:",
+);
+late final _sel_testDeregisterHostApiWithWrappedError_ = objc.registerName(
+  "testDeregisterHostApiWithWrappedError:",
+);
 late final _sel_throwAsyncErrorFromVoidWithWrappedError_completionHandler_ = objc.registerName(
   "throwAsyncErrorFromVoidWithWrappedError:completionHandler:",
 );

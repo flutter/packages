@@ -764,14 +764,22 @@ if (wrapped == null) {
     required String dartPackageName,
   }) {
     indent.format('''
+/// Map that stores instances
 val registered${api.name}: MutableMap<String, ${api.name}> = mutableMapOf()
-class ${api.name}Registrar() {
-  /// Map that stores instances
 
-  fun registerInstance(api: ${api.name}, name: String = defaultInstanceName) {
-    registered${api.name}[name] = api
+/// Class that stores instances
+class ${api.name}Registrar() {
+
+  /// Registers an instance with the given name.
+  fun registerInstance(api: ${api.name}?, name: String = defaultInstanceName) {
+    if (api != null) {
+      registered${api.name}[name] = api
+    } else {
+      registered${api.name}.remove(name)
+    }
   }
 
+  /// Gets an instance with the given name.
   fun getInstance(name: String = defaultInstanceName): ${api.name}? {
     return registered${api.name}[name]
   }
@@ -899,12 +907,17 @@ class ${api.name}Registrar() {
       indent.writeln('var api: ${api.name}? = null');
 
       indent.writeScoped('fun register(', '):', () {
-        indent.writeln('api: ${api.name},');
+        indent.writeln('api: ${api.name}?,');
         indent.writeln('name: String = defaultInstanceName');
       }, addTrailingNewline: false);
       indent.writeScoped(' ${api.name}Registrar {', '}', () {
-        indent.writeln('this.api = api');
-        indent.writeln('${api.name}Instances[name] = this');
+        indent.writeScoped('if (api != null) {', '}', () {
+          indent.writeln('this.api = api');
+          indent.writeln('${api.name}Instances[name] = this');
+        }, addTrailingNewline: false);
+        indent.addScoped(' else {', '}', () {
+          indent.writeln('${api.name}Instances.remove(name)');
+        });
         indent.writeln('return this');
       });
 
@@ -1671,9 +1684,7 @@ fun floatHash(f: Float): Int {
       _writeErrorClass(generatorOptions, indent);
     }
     if (generatorOptions.useJni) {
-      indent.writeln(
-        'const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"',
-      );
+      indent.writeln('private const val defaultInstanceName = "$defaultNativeInteropInstanceName"');
     }
   }
 

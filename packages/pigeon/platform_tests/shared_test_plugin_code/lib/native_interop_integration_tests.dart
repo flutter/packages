@@ -2774,6 +2774,46 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       },
     );
   });
+
+  group('Deregistration tests', () {
+    testWidgets('host API deregistration works natively', (WidgetTester _) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+      final bool success = api!.testDeregisterHostApi();
+      expect(success, true);
+    });
+
+    testWidgets('flutter API deregistration works natively', (WidgetTester _) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+      final bool success = api!.testDeregisterFlutterApi();
+      expect(success, true);
+    });
+
+    testWidgets('calling a deregistered Host API fails as expected', (WidgetTester _) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+      const instanceName = 'deregisteredHostInstanceTest';
+      api!.registerAndImmediatelyDeregisterHostApi(instanceName);
+
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? deregisteredApi =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(
+            channelName: instanceName,
+          );
+      expect(() => deregisteredApi!.noop(), throwsA(anything));
+    });
+
+    testWidgets('calling a deregistered Flutter API fails on native lookup', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+      const instanceName = 'deregisteredFlutterInstanceTest';
+      final bool success = api!.testCallDeregisteredFlutterApi(instanceName);
+      expect(success, true);
+    });
+  });
+
   group('Threading tests', () {
     testWidgets('default calls land on main thread', (WidgetTester _) async {
       final NativeInteropHostIntegrationCoreApiForNativeInterop? api =

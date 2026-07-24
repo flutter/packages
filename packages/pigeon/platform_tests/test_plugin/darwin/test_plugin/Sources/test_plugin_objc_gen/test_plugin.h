@@ -339,8 +339,6 @@ typedef unsigned int swift_uint4 __attribute__((__ext_vector_type__(4)));
 /// doesn’t require both (ie. testing null classes). Generated bridge class from
 /// Pigeon that moves data from Swift to Objective-C.
 SWIFT_CLASS("_TtC11test_plugin36NativeInteropAllClassesWrapperBridge")
-SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
 @interface NativeInteropAllClassesWrapperBridge : NSObject
 - (nonnull instancetype)
             initWithAllNullableTypes:
@@ -380,8 +378,6 @@ SWIFT_AVAILABILITY(ios, introduced = 13)
 /// Generated bridge class from Pigeon that moves data from Swift to
 /// Objective-C.
 SWIFT_CLASS("_TtC11test_plugin35NativeInteropAllNullableTypesBridge")
-SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
 @interface NativeInteropAllNullableTypesBridge : NSObject
 - (nonnull instancetype)
     initWithANullableBool:(NSNumber* _Nullable)aNullableBool
@@ -482,8 +478,6 @@ SWIFT_AVAILABILITY(ios, introduced = 13)
 /// moves data from Swift to Objective-C.
 SWIFT_CLASS(
     "_TtC11test_plugin51NativeInteropAllNullableTypesWithoutRecursionBridge")
-SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
 @interface NativeInteropAllNullableTypesWithoutRecursionBridge : NSObject
 - (nonnull instancetype)
     initWithANullableBool:(NSNumber* _Nullable)aNullableBool
@@ -574,8 +568,6 @@ enum NativeInteropAnotherEnum : NSInteger;
 /// Generated bridge class from Pigeon that moves data from Swift to
 /// Objective-C.
 SWIFT_CLASS("_TtC11test_plugin27NativeInteropAllTypesBridge")
-SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
 @interface NativeInteropAllTypesBridge : NSObject
 - (nonnull instancetype)
     initWithABool:(BOOL)aBool
@@ -668,8 +660,6 @@ typedef SWIFT_ENUM(NSInteger, NativeInteropAnotherEnum, closed){
 /// called from Swift.
 SWIFT_PROTOCOL(
     "_TtP11test_plugin44NativeInteropFlutterIntegrationCoreApiBridge_")
-SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
 @protocol NativeInteropFlutterIntegrationCoreApiBridge
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic calling.
@@ -1312,11 +1302,9 @@ SWIFT_AVAILABILITY(ios, introduced = 13)
 
 SWIFT_CLASS(
     "_TtC11test_plugin47NativeInteropFlutterIntegrationCoreApiRegistrar")
-SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
 @interface NativeInteropFlutterIntegrationCoreApiRegistrar : NSObject
 + (void)registerInstanceWithApi:
-            (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nonnull)api
+            (id<NativeInteropFlutterIntegrationCoreApiBridge> _Nullable)api
                            name:(NSString* _Nonnull)name;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
@@ -1324,8 +1312,6 @@ SWIFT_AVAILABILITY(ios, introduced = 13)
 /// Generated setup class from Pigeon to register implemented
 /// NativeInteropHostIntegrationCoreApi classes.
 SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
-SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
 @interface NativeInteropHostIntegrationCoreApiSetup : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 + (NativeInteropHostIntegrationCoreApiSetup* _Nullable)getInstanceWithName:
@@ -2913,6 +2899,25 @@ SWIFT_AVAILABILITY(ios, introduced = 13)
                                     completionHandler:
                                         (void (^_Nonnull)(NSNumber* _Nullable))
                                             completionHandler;
+/// Tests deregistering a Host API natively.
+- (NSNumber* _Nullable)testDeregisterHostApiWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// Tests deregistering a Flutter API natively.
+- (NSNumber* _Nullable)testDeregisterFlutterApiWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// Registers and immediately deregisters a Host API under [name].
+- (void)
+    registerAndImmediatelyDeregisterHostApiWithName:(NSString* _Nonnull)name
+                                       wrappedError:
+                                           (NativeInteropTestsError* _Nonnull)
+                                               wrappedError;
+/// Tests that calling a deregistered Flutter API under [name] fails / returns
+/// null.
+- (NSNumber* _Nullable)
+    testCallDeregisteredFlutterApiWithName:(NSString* _Nonnull)name
+                              wrappedError:(NativeInteropTestsError* _Nonnull)
+                                               wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
 @end
 
 /// Error class for passing custom error details to Dart side.
@@ -2950,8 +2955,6 @@ SWIFT_CLASS("_TtC11test_plugin36NativeInteropTestsPigeonInternalNull")
 
 @class NSData;
 SWIFT_CLASS("_TtC11test_plugin33NativeInteropTestsPigeonTypedData")
-SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
 @interface NativeInteropTestsPigeonTypedData : NSObject
 @property(nonatomic, readonly, strong) NSData* _Nonnull data;
 @property(nonatomic, readonly) NSInteger type;
@@ -2965,8 +2968,6 @@ SWIFT_AVAILABILITY(ios, introduced = 13)
 /// Generated bridge class from Pigeon that moves data from Swift to
 /// Objective-C.
 SWIFT_CLASS("_TtC11test_plugin30NativeInteropUnusedClassBridge")
-SWIFT_AVAILABILITY(macos, introduced = 10.15)
-SWIFT_AVAILABILITY(ios, introduced = 13)
 @interface NativeInteropUnusedClassBridge : NSObject
 - (nonnull instancetype)initWithAField:(NSObject* _Nullable)aField
     OBJC_DESIGNATED_INITIALIZER;

@@ -1566,9 +1566,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     required String dartPackageName,
   }) {
     if (usesNativeInterop(generatorOptions)) {
-      indent.writeln(
-        "const String defaultInstanceName = 'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';",
-      );
+      indent.writeln("const String defaultInstanceName = '$defaultNativeInteropInstanceName';");
     }
     super.writeApis(generatorOptions, root, indent, dartPackageName: dartPackageName);
   }
@@ -1618,7 +1616,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         'static $dartApiName? getInstance({String channelName = defaultInstanceName}) {',
         '}',
         () {
-          indent.writeln('late $dartApiName res;');
+          indent.writeln('final $dartApiName res;');
           var isFirst = true;
           if (generatorOptions.useJni) {
             indent.writeScoped('if (Platform.isAndroid) {', '}', () {
@@ -3345,16 +3343,19 @@ String _getJniMethodParameterSignature(
   bool addTrailingComma = false,
   bool isAsynchronous = false,
 }) {
-  var signature = '';
   if (parameters.isEmpty) {
-    return signature;
+    return '';
   }
-  for (final parameter in parameters) {
+  final comma = addTrailingComma || parameters.length > 1 ? ',' : '';
+  return parameters.map((Parameter parameter) {
     final _JniType jniType = _JniType.fromTypeDeclaration(parameter.type);
-    signature +=
-        '${jniType.getJniCallReturnType(false, isParameter: true, isAsynchronous: isAsynchronous)} ${parameter.name}${addTrailingComma || parameters.length > 1 ? ',' : ''}';
-  }
-  return signature;
+    final String type = jniType.getJniCallReturnType(
+      false,
+      isParameter: true,
+      isAsynchronous: isAsynchronous,
+    );
+    return '$type ${parameter.name}$comma';
+  }).join();
 }
 
 String _getFfiMethodParameterSignature(
@@ -3362,16 +3363,15 @@ String _getFfiMethodParameterSignature(
   bool addTrailingComma = false,
   bool isAsynchronous = false,
 }) {
-  var signature = '';
   if (parameters.isEmpty) {
-    return signature;
+    return '';
   }
-  for (final parameter in parameters) {
+  final comma = addTrailingComma || parameters.length > 1 ? ',' : '';
+  return parameters.map((Parameter parameter) {
     final _FfiType ffiType = _FfiType.fromTypeDeclaration(parameter.type);
-    signature +=
-        '${ffiType.getFfiCallReturnType()} ${parameter.name}${addTrailingComma || parameters.length > 1 ? ',' : ''}';
-  }
-  return signature;
+    final String type = ffiType.getFfiCallReturnType();
+    return '$type ${parameter.name}$comma';
+  }).join();
 }
 
 /// Generates the parameters code for [func]

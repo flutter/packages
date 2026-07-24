@@ -2138,6 +2138,34 @@ class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi() {
       }
     }
   }
+
+  override fun testDeregisterHostApi(): Boolean {
+    val name = "testDeregisterHostInstance"
+    NativeInteropHostIntegrationCoreApiRegistrar()
+        .register(NativeInteropIntegrationTests(), name = name)
+    if (NativeInteropHostIntegrationCoreApiRegistrar().getInstance(name) == null) {
+      return false
+    }
+    NativeInteropHostIntegrationCoreApiRegistrar().register(null, name = name)
+    return NativeInteropHostIntegrationCoreApiRegistrar().getInstance(name) == null
+  }
+
+  override fun testDeregisterFlutterApi(): Boolean {
+    val name = "testDeregisterFlutterInstance"
+    NativeInteropFlutterIntegrationCoreApiRegistrar().registerInstance(null, name = name)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance(name) == null
+  }
+
+  override fun registerAndImmediatelyDeregisterHostApi(name: String) {
+    NativeInteropHostIntegrationCoreApiRegistrar()
+        .register(NativeInteropIntegrationTests(), name = name)
+    NativeInteropHostIntegrationCoreApiRegistrar().register(null, name = name)
+  }
+
+  override fun testCallDeregisteredFlutterApi(name: String): Boolean {
+    NativeInteropFlutterIntegrationCoreApiRegistrar().registerInstance(null, name = name)
+    return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance(name) == null
+  }
 }
 
 //   class NIHostSmallApiTests : NIHostSmallApi() {

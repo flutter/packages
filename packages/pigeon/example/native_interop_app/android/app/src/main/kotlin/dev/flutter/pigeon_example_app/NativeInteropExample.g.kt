@@ -41,7 +41,7 @@ class FlutterError(
     val details: Any? = null
 ) : RuntimeException()
 
-const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
+private const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
 val NativeInteropExampleApiInstances: MutableMap<String, NativeInteropExampleApiRegistrar> =
     mutableMapOf()
 
@@ -55,11 +55,15 @@ class NativeInteropExampleApiRegistrar : NativeInteropExampleApi() {
   var api: NativeInteropExampleApi? = null
 
   fun register(
-      api: NativeInteropExampleApi,
+      api: NativeInteropExampleApi?,
       name: String = defaultInstanceName
   ): NativeInteropExampleApiRegistrar {
-    this.api = api
-    NativeInteropExampleApiInstances[name] = this
+    if (api != null) {
+      this.api = api
+      NativeInteropExampleApiInstances[name] = this
+    } else {
+      NativeInteropExampleApiInstances.remove(name)
+    }
     return this
   }
 
