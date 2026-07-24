@@ -183,8 +183,14 @@ class MyLocationButton {
   late web.HTMLDivElement _imageChild;
   late web.HTMLDivElement _controlDiv;
 
+  static bool _cssAdded = false;
+
   /// Add animation css
   void _addCss() {
+    if (_cssAdded) {
+      return;
+    }
+    _cssAdded = true;
     final styleElement = web.HTMLStyleElement();
     web.document.head?.append(styleElement);
     final web.CSSStyleSheet? sheet = styleElement.sheet;
