@@ -118,7 +118,13 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
 
     RouteMatchBase walker = currentConfiguration.matches.last;
     while (walker is ShellRouteMatch) {
-      final NavigatorState potentialCandidate = walker.navigatorKey.currentState!;
+      final NavigatorState? potentialCandidate = walker.navigatorKey.currentState;
+      if (potentialCandidate == null) {
+        // Stop if the shell route's navigator is not mounted, e.g. when the
+        // configuration references a shell route whose widget tree has not
+        // been built yet or has already been removed.
+        break;
+      }
 
       final ModalRoute<dynamic>? modalRoute = ModalRoute.of(potentialCandidate.context);
       if (modalRoute == null || !modalRoute.isCurrent) {
