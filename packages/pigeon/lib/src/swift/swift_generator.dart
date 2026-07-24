@@ -55,7 +55,7 @@ class SwiftOptions {
   /// Whether to use FFI when possible.
   final bool useFfi;
 
-  /// The module name that the FFi classes will use. Required if useFfi is true.
+  /// The module name that the FFI classes will use. Required if useFfi is true.
   final String? ffiModuleName;
 
   /// The directory that the app exists in.
@@ -180,7 +180,7 @@ class InternalSwiftOptions extends InternalOptions {
   /// Module to use for FFI.
   final String? ffiModuleName;
 
-  /// The directory that the app exists in, this is required for FFi APIs.
+  /// The directory that the app exists in, this is required for FFI APIs.
   final String? appDirectory;
 
   /// The path to the Apple SDK to use for FFI generation.

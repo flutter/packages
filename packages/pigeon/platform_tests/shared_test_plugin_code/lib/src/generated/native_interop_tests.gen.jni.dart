@@ -10062,62 +10062,6 @@ extension type NativeInteropHostIntegrationCoreApiRegistrar._(jni$_.JObject _$th
 
 extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     on NativeInteropHostIntegrationCoreApiRegistrar {
-  static final _id_get$api = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-    r'getApi',
-    r'()Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApi;',
-  );
-
-  static final _get$api =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
-
-  /// from: `public final com.example.test_plugin.NativeInteropHostIntegrationCoreApi getApi()`
-  /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropHostIntegrationCoreApi? get api {
-    return _get$api(
-      reference.pointer,
-      _id_get$api.pointer,
-    ).object<NativeInteropHostIntegrationCoreApi?>();
-  }
-
-  static final _id_set$api = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-    r'setApi',
-    r'(Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApi;)V',
-  );
-
-  static final _set$api =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JThrowablePtr Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallVoidMethod')
-          .asFunction<
-            jni$_.JThrowablePtr Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public final void setApi(com.example.test_plugin.NativeInteropHostIntegrationCoreApi nativeInteropHostIntegrationCoreApi)`
-  set api(NativeInteropHostIntegrationCoreApi? nativeInteropHostIntegrationCoreApi) {
-    final _$nativeInteropHostIntegrationCoreApi =
-        nativeInteropHostIntegrationCoreApi?.reference ?? jni$_.jNullReference;
-    _set$api(
-      reference.pointer,
-      _id_set$api.pointer,
-      _$nativeInteropHostIntegrationCoreApi.pointer,
-    ).check();
-  }
-
   static final _id_register = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
     r'register',
     r'(Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApi;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApiRegistrar;',

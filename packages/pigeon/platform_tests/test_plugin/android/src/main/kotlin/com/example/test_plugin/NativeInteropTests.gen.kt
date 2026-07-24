@@ -1631,7 +1631,7 @@ abstract class NativeInteropHostIntegrationCoreApi {
 
 @Keep
 class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegrationCoreApi() {
-  var api: NativeInteropHostIntegrationCoreApi? = null
+  private var api: NativeInteropHostIntegrationCoreApi? = null
 
   fun register(
       api: NativeInteropHostIntegrationCoreApi?,

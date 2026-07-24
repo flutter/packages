@@ -512,7 +512,7 @@ ${_argParser.usage}''';
     ..addOption('input', help: 'REQUIRED: Path to pigeon file.')
     ..addOption(
       'app_directory',
-      help: 'The directory that the app exists in, this is required for Jni and Ffi APIs.',
+      help: 'The directory that the app exists in, this is required for JNI and FFI APIs.',
     )
     ..addOption(
       'dart_out',
@@ -551,11 +551,11 @@ ${_argParser.usage}''';
       help: 'Whether to include the error class in Swift generation.',
       defaultsTo: true,
     )
-    ..addFlag('swift_use_ffi', help: 'Whether to use Ffi for Swift generation.')
-    ..addOption('swift_ffi_module_name', help: 'The ffi module name for Swift generation.')
+    ..addFlag('swift_use_ffi', help: 'Whether to use FFI for Swift generation.')
+    ..addOption('swift_ffi_module_name', help: 'The FFI module name for Swift generation.')
     ..addOption(
       'swift_app_directory',
-      help: 'The directory that the app exists in, this is required for Swift Ffi APIs.',
+      help: 'The directory that the app exists in, this is required for Swift FFI APIs.',
     )
     ..addOption('swift_apple_sdk_path', help: 'The path to the apple sdk for Swift generation.')
     ..addOption('swift_apple_sdk_triple', help: 'The apple sdk triple for Swift generation.')
@@ -573,10 +573,10 @@ ${_argParser.usage}''';
       'kotlin_use_generated_annotation',
       help: 'Adds javax.annotation.Generated annotation to the output.',
     )
-    ..addFlag('kotlin_use_jni', help: 'Whether to use Jni for Kotlin generation.')
+    ..addFlag('kotlin_use_jni', help: 'Whether to use JNI for Kotlin generation.')
     ..addOption(
       'kotlin_app_directory',
-      help: 'The directory that the app exists in, this is required for Kotlin Jni APIs.',
+      help: 'The directory that the app exists in, this is required for Kotlin JNI APIs.',
     )
     ..addOption(
       'kotlin_error_class_name',
@@ -899,20 +899,20 @@ ${_argParser.usage}''';
     }
   }
 
-  /// Runs ffigen in FFI multi-step generation.
+  /// Runs FFIgen in FFI multi-step generation.
   static Future<int> _runFfigen(String swiftAppDir, String dartExecutable) async {
     final String configFile = path.join(swiftAppDir, 'ffigen_config.dart');
     if (File(configFile).existsSync()) {
-      print('FFI Multi-step: Running ffigen for $configFile...');
+      print('FFI Multi-step: Running FFIgen for $configFile...');
       final ProcessResult ffigenResult = await Process.run(dartExecutable, ['run', configFile]);
       if (ffigenResult.exitCode != 0) {
-        print('Error running ffigen: ${ffigenResult.stderr}');
+        print('Error running FFIgen: ${ffigenResult.stderr}');
         return 1;
       }
-      print('FFI Multi-step: ffigen completed successfully.');
+      print('FFI Multi-step: FFIgen completed successfully.');
       return 0;
     } else {
-      print('FFI Multi-step: skipping ffigen because $configFile does not exist.');
+      print('FFI Multi-step: skipping FFIgen because $configFile does not exist.');
       return 0;
     }
   }

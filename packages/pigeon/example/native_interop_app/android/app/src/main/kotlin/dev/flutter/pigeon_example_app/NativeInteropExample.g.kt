@@ -52,7 +52,7 @@ abstract class NativeInteropExampleApi {
 
 @Keep
 class NativeInteropExampleApiRegistrar : NativeInteropExampleApi() {
-  var api: NativeInteropExampleApi? = null
+  private var api: NativeInteropExampleApi? = null
 
   fun register(
       api: NativeInteropExampleApi?,

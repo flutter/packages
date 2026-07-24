@@ -467,7 +467,7 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
   }
 }
 
-/// A [GeneratorAdapter] that generates FfigenConfig source code.
+/// A [GeneratorAdapter] that generates FFIgen config source code.
 class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [FfigenConfigGeneratorAdapter].
   const FfigenConfigGeneratorAdapter();
@@ -645,7 +645,7 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
   List<Error> validate(InternalPigeonOptions options, Root root) => <Error>[];
 }
 
-/// A [GeneratorAdapter] that generates JnigenYaml source code.
+/// A [GeneratorAdapter] that generates JNIgen config source code.
 class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [JnigenConfigGeneratorAdapter].
   const JnigenConfigGeneratorAdapter();

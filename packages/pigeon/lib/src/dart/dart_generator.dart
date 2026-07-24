@@ -627,10 +627,10 @@ class InternalDartOptions extends InternalOptions {
   /// Path to output generated Test file for tests.
   final String? testOut;
 
-  /// Whether to use Jni for generating kotlin interop code.
+  /// Whether to use JNI for generating Kotlin interop code.
   final bool useJni;
 
-  /// Whether to use Ffi for generating swift interop code.
+  /// Whether to use FFI for generating Swift interop code.
   final bool useFfi;
 
   /// The error class name used for FFI methods.

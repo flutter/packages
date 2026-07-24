@@ -33,7 +33,7 @@ class InternalJnigenConfigOptions extends InternalOptions {
   final String? appDirectory;
 }
 
-/// Generator for jnigen yaml configuration file.
+/// Generator for JNIgen configuration file.
 class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
   @override
   void generate(

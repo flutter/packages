@@ -58,7 +58,7 @@ class KotlinOptions {
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
 
-  /// Whether to use Jni when possible.
+  /// Whether to use JNI when possible.
   final bool useJni;
 
   /// The directory that the app exists in.
@@ -182,10 +182,10 @@ class InternalKotlinOptions extends InternalOptions {
   /// Kotlin file in the same directory.
   final bool includeErrorClass;
 
-  /// Whether to use Jni for generating kotlin interop code.
+  /// Whether to use JNI for generating kotlin interop code.
   final bool useJni;
 
-  /// The directory that the app exists in, this is required for Jni APIs.
+  /// The directory that the app exists in, this is required for JNI APIs.
   final String? appDirectory;
 
   /// A String to augment class names to avoid cross file collisions.
@@ -904,7 +904,7 @@ class ${api.name}Registrar() {
 
     indent.writeln('@Keep');
     indent.writeScoped('class ${api.name}Registrar : ${api.name}() {', '}', () {
-      indent.writeln('var api: ${api.name}? = null');
+      indent.writeln('private var api: ${api.name}? = null');
 
       indent.writeScoped('fun register(', '):', () {
         indent.writeln('api: ${api.name}?,');

@@ -37,7 +37,7 @@ class InternalFfigenConfigOptions extends InternalOptions {
   final String? exampleAppDirectory;
 }
 
-/// Generator for ffigen configuration file.
+/// Generator for FFIgen configuration file.
 class FfigenConfigGenerator extends Generator<InternalFfigenConfigOptions> {
   @override
   void generate(
