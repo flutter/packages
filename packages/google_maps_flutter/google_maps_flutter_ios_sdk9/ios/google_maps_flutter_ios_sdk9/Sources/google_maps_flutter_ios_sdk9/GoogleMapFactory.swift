@@ -20,7 +20,7 @@ class GoogleMapFactory: NSObject, FlutterPlatformViewFactory {
     // on a background thread controlled by the GoogleMaps framework.
     _ = GoogleMapFactory.sharedMapServices
 
-    return FGMGoogleMapController(
+    return GoogleMapController(
       frame: frame, viewIdentifier: viewId,
       creationParameters: args as! FGMPlatformMapViewCreationParams, registrar: registrar!)
   }

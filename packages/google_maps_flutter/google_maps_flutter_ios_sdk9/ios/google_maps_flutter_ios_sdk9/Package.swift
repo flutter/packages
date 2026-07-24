@@ -53,6 +53,6 @@ let package = Package(
       cSettings: [
         .headerSearchPath("include/google_maps_flutter_ios_sdk9_objc")
       ]
-    )
+    ),
   ]
 )

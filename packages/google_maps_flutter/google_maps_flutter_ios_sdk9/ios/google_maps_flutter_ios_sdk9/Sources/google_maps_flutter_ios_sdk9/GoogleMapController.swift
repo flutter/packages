@@ -102,31 +102,31 @@ class DefaultMapEventHandler: NSObject, FGMMapEventDelegate {
   }
 }
 
-public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformView,
-  FGMTileProviderDelegate
-{
+public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformView {
   /// The Google Maps SDK map view managed by this controller.
-  private(set) var mapView: GMSMapView
+  let mapView: GMSMapView
   /// The Pigeon callback API implementation, used to send events to the Dart side.
-  var dartCallbackHandler: FGMMapsCallbackApi
+  let dartCallbackHandler: FGMMapsCallbackApi
   /// The map SDK event handler, which routes events to the Dart callback handler.
-  var mapEventHandler: DefaultMapEventHandler
-  // The main Pigeon API implementation, separate to avoid lifetime extension.
-  var callHandler: MapCallHandler
-  // The inspector API implementation, separate to avoid lifetime extension.
-  var inspector: MapInspector
+  let mapEventHandler: DefaultMapEventHandler
+  /// The main Pigeon API implementation, separate to avoid lifetime extension.
+  let callHandler: MapCallHandler
+  /// The inspector API implementation, separate to avoid lifetime extension.
+  let inspector: MapInspector
+  /// A shim to pass tile requests to `dartCallbackHandler`. This is a separate object to avoid init ordering issues.
+  private let tileProvider: ConcreteTileProvider
   /// Whether to send notifications about camera position changes to Dart.
   var trackCameraPosition = false
 
   /// Sub-controllers for managing individual map features.
-  var clusterManagersController: FGMClusterManagersController
-  var markersController: FGMMarkersController
-  var polygonsController: FGMPolygonsController
-  var polylinesController: FGMPolylinesController
-  var circlesController: FGMCirclesController
-  var heatmapsController: FGMHeatmapsController
-  var tileOverlaysController: FGMTileOverlaysController
-  var groundOverlaysController: FGMGroundOverlaysController
+  let clusterManagersController: FGMClusterManagersController
+  let markersController: FGMMarkersController
+  let polygonsController: FGMPolygonsController
+  let polylinesController: FGMPolylinesController
+  let circlesController: FGMCirclesController
+  let heatmapsController: FGMHeatmapsController
+  let tileOverlaysController: FGMTileOverlaysController
+  let groundOverlaysController: FGMGroundOverlaysController
 
   // The resulting error message, if any, from the last attempt to set the map style.
   // This is used to provide access to errors after the fact, since the map style is generally set at
@@ -166,57 +166,59 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     assetProvider: FGMAssetProvider,
     binaryMessenger: FlutterBinaryMessenger
   ) {
-
     self.mapView = mapView
-
     mapView.accessibilityElementsHidden = false
-    // TODO(stuartmorgan): avoid calling a state-mutating method in the middle of the init method.
-    // https://github.com/flutter/flutter/issues/104121
-    interpretMapConfiguration(creationParameters.mapConfiguration)
+    mapView.paddingAdjustmentBehavior = .never
+    // The code below must be kept in sync with `interpretMapConfiguration`. The small amount of
+    // duplication here is to avoid having to defer all map view configuration until after the
+    // sub-controllers are given the map view.
+    styleError = GoogleMapController.updateMapView(
+      mapView, fromConfiguration: creationParameters.mapConfiguration)
+    if let trackCameraPosition = creationParameters.mapConfiguration.trackCameraPosition {
+      self.trackCameraPosition = trackCameraPosition.boolValue
+    }
+    // End duplicate code.
+
     let pigeonSuffix = String(format: "%lld", viewId)
-    let dartCallbackHandler = FGMMapsCallbackApi(
+    dartCallbackHandler = FGMMapsCallbackApi(
       binaryMessenger: binaryMessenger,
       messageChannelSuffix: pigeonSuffix
     )
-    self.dartCallbackHandler = dartCallbackHandler
 
-    let mapEventHandler = DefaultMapEventHandler(callbackHandler: dartCallbackHandler)
-    self.mapEventHandler = mapEventHandler
+    mapEventHandler = DefaultMapEventHandler(callbackHandler: dartCallbackHandler)
 
     let markerType = creationParameters.mapConfiguration.markerType
-    mapView.delegate = self
-    mapView.paddingAdjustmentBehavior = .never
 
-    let clusterManagersController = FGMClusterManagersController(
+    clusterManagersController = FGMClusterManagersController(
       mapView: mapView,
       eventDelegate: mapEventHandler
     )
-    self.clusterManagersController = clusterManagersController
-    self.markersController = FGMMarkersController(
+    markersController = FGMMarkersController(
       mapView: mapView,
       eventDelegate: mapEventHandler,
       clusterManagersController: clusterManagersController,
       assetProvider: assetProvider,
       markerType: markerType
     )
-    self.polygonsController = FGMPolygonsController(
+    polygonsController = FGMPolygonsController(
       mapView: mapView,
       eventDelegate: mapEventHandler
     )
-    self.polylinesController = FGMPolylinesController(
+    polylinesController = FGMPolylinesController(
       mapView: mapView,
       eventDelegate: mapEventHandler
     )
-    self.circlesController = FGMCirclesController(
+    circlesController = FGMCirclesController(
       mapView: mapView,
       eventDelegate: mapEventHandler
     )
-    self.heatmapsController = FGMHeatmapsController(mapView: mapView)
-    self.tileOverlaysController = FGMTileOverlaysController(
+    heatmapsController = FGMHeatmapsController(mapView: mapView)
+    tileProvider = ConcreteTileProvider(dartCallbackHandler: dartCallbackHandler)
+    tileOverlaysController = FGMTileOverlaysController(
       mapView: mapView,
-      tileProvider: self
+      tileProvider: tileProvider
     )
-    self.groundOverlaysController = FGMGroundOverlaysController(
+    groundOverlaysController = FGMGroundOverlaysController(
       mapView: mapView,
       eventDelegate: mapEventHandler,
       assetProvider: assetProvider
@@ -231,28 +233,27 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     tileOverlaysController.add(creationParameters.initialTileOverlays)
     groundOverlaysController.add(creationParameters.initialGroundOverlays)
 
-    // Invoke clustering after markers are added.
-    clusterManagersController.invokeClusteringForEachClusterManager()
-
-    mapView.addObserver(self, forKeyPath: "frame", options: [], context: nil)
-
-    let callHandler = MapCallHandler(
-      mapController: self,
+    callHandler = MapCallHandler(
       messenger: binaryMessenger,
       pigeonSuffix: pigeonSuffix
     )
-    self.callHandler = callHandler
-    SetUpFGMMapsApiWithSuffix(binaryMessenger, callHandler, pigeonSuffix)
-
-    let inspector = MapInspector(
-      mapController: self,
+    inspector = MapInspector(
       messenger: binaryMessenger,
       pigeonSuffix: pigeonSuffix
     )
-    self.inspector = inspector
-    SetUpFGMMapsInspectorApiWithSuffix(binaryMessenger, inspector, pigeonSuffix)
 
     super.init()
+
+    callHandler.controller = self
+    SetUpFGMMapsApiWithSuffix(binaryMessenger, callHandler, pigeonSuffix)
+    inspector.controller = self
+    SetUpFGMMapsInspectorApiWithSuffix(binaryMessenger, inspector, pigeonSuffix)
+
+    mapView.delegate = self
+    mapView.addObserver(self, forKeyPath: "frame", options: [], context: nil)
+
+    // Invoke clustering after everything is configured.
+    clusterManagersController.invokeClusteringForEachClusterManager()
   }
 
   deinit {
@@ -308,86 +309,34 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     mapView.camera = camera
   }
 
-  func setCameraTargetBounds(_ bounds: GMSCoordinateBounds?) {
-    mapView.cameraTargetBounds = bounds
-  }
-
-  func setCompassEnabled(_ enabled: Bool) {
-    mapView.settings.compassButton = enabled
-  }
-
-  func setIndoorEnabled(_ enabled: Bool) {
-    mapView.isIndoorEnabled = enabled
-  }
-
-  func setTrafficEnabled(_ enabled: Bool) {
-    mapView.isTrafficEnabled = enabled
-  }
-
-  func setBuildingsEnabled(_ enabled: Bool) {
-    mapView.isBuildingsEnabled = enabled
-  }
-
-  func setMapType(_ mapType: GMSMapViewType) {
-    mapView.mapType = mapType
-  }
-
-  func setMinZoom(_ minZoom: Float, maxZoom: Float) {
-    mapView.setMinZoom(minZoom, maxZoom: maxZoom)
-  }
-
-  func setPadding(top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat) {
-    mapView.padding = UIEdgeInsets(
-      top: top,
-      left: left,
-      bottom: bottom,
-      right: right
-    )
-  }
-
-  func setRotateGesturesEnabled(_ enabled: Bool) {
-    mapView.settings.rotateGestures = enabled
-  }
-
-  func setScrollGesturesEnabled(_ enabled: Bool) {
-    mapView.settings.scrollGestures = enabled
-  }
-
-  func setTiltGesturesEnabled(_ enabled: Bool) {
-    mapView.settings.tiltGestures = enabled
-  }
-
-  func setTrackCameraPosition(_ enabled: Bool) {
-    trackCameraPosition = enabled
-  }
-
-  func setZoomGesturesEnabled(_ enabled: Bool) {
-    mapView.settings.zoomGestures = enabled
-  }
-
-  func setMyLocationEnabled(_ enabled: Bool) {
-    mapView.isMyLocationEnabled = enabled
-  }
-
-  func setMyLocationButtonEnabled(_ enabled: Bool) {
-    mapView.settings.myLocationButton = enabled
-  }
-
   /// Sets the map style, returning any error string as well as storing that error in `styleError` for
   /// later access.
   func setMapStyle(_ mapStyle: String) -> String? {
-    var errorString: String? = nil
-    if mapStyle.isEmpty {
-      mapView.mapStyle = nil
-    } else {
-      do {
-        mapView.mapStyle = try GMSMapStyle(jsonString: mapStyle)
-      } catch let error {
-        errorString = error.localizedDescription
-      }
+    let (style, errorString) = GoogleMapController.parseMapStyle(mapStyle)
+    if errorString == nil {
+      mapView.mapStyle = style
     }
     styleError = errorString
     return errorString
+  }
+
+  /// Attempts to construct a GMSMapStyle from a JSON style string, returning the style, as well as
+  /// an error string if it the style could not be created.
+  ///
+  /// - If the String? value is non-nil, that description of the error should be stored in
+  ///   `styleError` by the caller for later access, and the style should be set on the map.
+  /// - If the String? value is nil, the style should be set on the map. The style may be nil if
+  ///   the input string is empty, which is how the platform channel expresses clearing the style.
+  static func parseMapStyle(_ jsonStyle: String) -> (GMSMapStyle?, String?) {
+    if jsonStyle.isEmpty {
+      return (nil, nil)
+    }
+    do {
+      let style = try GMSMapStyle(jsonString: jsonStyle)
+      return (style, nil)
+    } catch let error {
+      return (nil, error.localizedDescription)
+    }
   }
 
   // MARK: - GMSMapViewDelegate methods
@@ -467,35 +416,50 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   }
 
   func interpretMapConfiguration(_ config: FGMPlatformMapConfiguration) {
+    // Any changes here must also be made to the `init` method above. See the comment there for
+    // details.
+    styleError = GoogleMapController.updateMapView(mapView, fromConfiguration: config)
+    if let trackCameraPosition = config.trackCameraPosition {
+      self.trackCameraPosition = trackCameraPosition.boolValue
+    }
+  }
+
+  /// Updates the given map view with new configuration options.
+  ///
+  /// Returns a style error string if there was an error interpreting the style in `config`. The
+  /// caller should store this in `styleError` for later access.
+  static func updateMapView(
+    _ mapView: GMSMapView, fromConfiguration config: FGMPlatformMapConfiguration
+  ) -> String? {
     if let cameraTargetBounds = config.cameraTargetBounds {
       if let bounds = cameraTargetBounds.bounds {
-        setCameraTargetBounds(FGMGetCoordinateBoundsForPigeonLatLngBounds(bounds))
+        mapView.cameraTargetBounds = FGMGetCoordinateBoundsForPigeonLatLngBounds(bounds)
       } else {
-        setCameraTargetBounds(nil)
+        mapView.cameraTargetBounds = nil
       }
     }
     if let compassEnabled = config.compassEnabled {
-      setCompassEnabled(compassEnabled.boolValue)
+      mapView.settings.compassButton = compassEnabled.boolValue
     }
     if let indoorEnabled = config.indoorViewEnabled {
-      setIndoorEnabled(indoorEnabled.boolValue)
+      mapView.isIndoorEnabled = indoorEnabled.boolValue
     }
     if let trafficEnabled = config.trafficEnabled {
-      setTrafficEnabled(trafficEnabled.boolValue)
+      mapView.isTrafficEnabled = trafficEnabled.boolValue
     }
     if let buildingsEnabled = config.buildingsEnabled {
-      setBuildingsEnabled(buildingsEnabled.boolValue)
+      mapView.isBuildingsEnabled = buildingsEnabled.boolValue
     }
     if let mapType = config.mapType {
-      setMapType(FGMGetMapViewTypeForPigeonMapType(mapType.value))
+      mapView.mapType = FGMGetMapViewTypeForPigeonMapType(mapType.value)
     }
     if let zoomData = config.minMaxZoomPreference {
       let minZoom = zoomData.min?.floatValue ?? kGMSMinZoomLevel
       let maxZoom = zoomData.max?.floatValue ?? kGMSMaxZoomLevel
-      setMinZoom(minZoom, maxZoom: maxZoom)
+      mapView.setMinZoom(minZoom, maxZoom: maxZoom)
     }
     if let padding = config.padding {
-      setPadding(
+      mapView.padding = UIEdgeInsets(
         top: CGFloat(padding.top),
         left: CGFloat(padding.left),
         bottom: CGFloat(padding.bottom),
@@ -503,32 +467,44 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
       )
     }
     if let rotateGesturesEnabled = config.rotateGesturesEnabled {
-      setRotateGesturesEnabled(rotateGesturesEnabled.boolValue)
+      mapView.settings.rotateGestures = rotateGesturesEnabled.boolValue
     }
     if let scrollGesturesEnabled = config.scrollGesturesEnabled {
-      setScrollGesturesEnabled(scrollGesturesEnabled.boolValue)
+      mapView.settings.scrollGestures = scrollGesturesEnabled.boolValue
     }
     if let tiltGesturesEnabled = config.tiltGesturesEnabled {
-      setTiltGesturesEnabled(tiltGesturesEnabled.boolValue)
-    }
-    if let trackCameraPosition = config.trackCameraPosition {
-      setTrackCameraPosition(trackCameraPosition.boolValue)
+      mapView.settings.tiltGestures = tiltGesturesEnabled.boolValue
     }
     if let zoomGesturesEnabled = config.zoomGesturesEnabled {
-      setZoomGesturesEnabled(zoomGesturesEnabled.boolValue)
+      mapView.settings.zoomGestures = zoomGesturesEnabled.boolValue
     }
     if let myLocationEnabled = config.myLocationEnabled {
-      setMyLocationEnabled(myLocationEnabled.boolValue)
+      mapView.isMyLocationEnabled = myLocationEnabled.boolValue
     }
     if let myLocationButtonEnabled = config.myLocationButtonEnabled {
-      setMyLocationButtonEnabled(myLocationButtonEnabled.boolValue)
+      mapView.settings.myLocationButton = myLocationButtonEnabled.boolValue
     }
-    if let style = config.style {
-      _ = setMapStyle(style)
+    var styleErrorString: String?
+    if let mapStyle = config.style {
+      let (style, errorString) = GoogleMapController.parseMapStyle(mapStyle)
+      if errorString == nil {
+        mapView.mapStyle = style
+      }
+      styleErrorString = errorString
     }
+    return styleErrorString
   }
+}
 
-  // MARK: - FGMTileProviderDelegate
+// TODO(stuartmorgan): Remove this in favor of an extension to add FGMTileProviderDelegate to
+// the Pigeon Flutter API object once this plugin has switched to Swift Pigeon generation
+// (adjusting the protocol to match the Swift version of the signature).
+private class ConcreteTileProvider: NSObject, FGMTileProviderDelegate {
+  let handler: FGMMapsCallbackApi
+
+  init(dartCallbackHandler: FGMMapsCallbackApi) {
+    handler = dartCallbackHandler
+  }
 
   public func tile(
     withOverlayIdentifier tileOverlayId: String,
@@ -536,7 +512,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     zoom: Int,
     completion: @escaping (FGMPlatformTile?, FlutterError?) -> Void
   ) {
-    dartCallbackHandler.tile(
+    handler.tile(
       withOverlayIdentifier: tileOverlayId,
       location: location,
       zoom: zoom,
@@ -552,11 +528,9 @@ class MapCallHandler: NSObject, FGMMapsApi {
   var transactionWrapper: FGMCATransactionProtocol
 
   init(
-    mapController controller: GoogleMapController,
     messenger: FlutterBinaryMessenger,
     pigeonSuffix suffix: String
   ) {
-    self.controller = controller
     self.messenger = messenger
     self.pigeonSuffix = suffix
     self.transactionWrapper = FGMCATransactionWrapper()
@@ -811,11 +785,9 @@ class MapInspector: NSObject, FGMMapsInspectorApi {
   let pigeonSuffix: String
 
   init(
-    mapController controller: GoogleMapController,
     messenger: FlutterBinaryMessenger,
     pigeonSuffix suffix: String
   ) {
-    self.controller = controller
     self.messenger = messenger
     self.pigeonSuffix = suffix
     super.init()
