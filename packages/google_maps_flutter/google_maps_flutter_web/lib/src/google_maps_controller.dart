@@ -629,6 +629,8 @@ class GoogleMapController {
       return;
     }
 
+    assert(_markersController != null, 'Cannot render my location after dispose().');
+
     await _myLocationController?.displayAndWatchMyLocation(_markersController!);
     await _myLocationController?.centerMyCurrentLocation(this);
 
