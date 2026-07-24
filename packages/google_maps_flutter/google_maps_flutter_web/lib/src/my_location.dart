@@ -204,6 +204,8 @@ class MyLocationButton {
 
     _btnChild = web.HTMLButtonElement();
     _btnChild.className = 'gm-control-active';
+    _btnChild.title = 'Your Location';
+    _btnChild.setAttribute('aria-label', 'Your Location');
     _btnChild.style.backgroundColor = '#fff';
     _btnChild.style.border = 'none';
     _btnChild.style.outline = 'none';
