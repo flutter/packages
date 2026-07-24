@@ -157,7 +157,7 @@ class MyLocationController {
       package: 'google_maps_flutter_web',
     );
 
-    return Marker(markerId: const MarkerId(_kMyLocationBlueDot), icon: icon, zIndex: .5);
+    return Marker(markerId: const MarkerId(_kMyLocationBlueDot), icon: icon, zIndex: 0.5);
   }
 
   /// Dispose the controller and stop watching the position
