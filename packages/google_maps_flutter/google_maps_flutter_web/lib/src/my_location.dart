@@ -95,6 +95,7 @@ class MyLocationController {
   /// Find and move to current location
   Future<void> centerMyCurrentLocation(GoogleMapController controller) async {
     try {
+      myLocationButton?.startAnimation();
       final LatLng? location = await _getCurrentLocation();
 
       if (location != null) {
