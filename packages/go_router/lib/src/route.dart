@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: doc_directive_unknown
+
 import 'dart:async';
 
 import 'package:collection/collection.dart';
@@ -340,6 +342,19 @@ class GoRoute extends RouteBase {
   /// matches all URIs start with `/family/...`, e.g. `/family/123`,
   /// `/family/456` and etc. The parameter values are stored in [GoRouterState]
   /// that are passed into [pageBuilder] and [builder].
+  ///
+  /// A path parameter may optionally be constrained to a regular expression
+  /// by appending the expression in parentheses after the parameter name:
+  /// `:paramName(regex)`.
+  ///
+  /// {@example /example/lib/path_parameter_regex.dart}
+  ///
+  /// The path matches `/users/42` but not `/users/settings`. If a path segment
+  /// does not satisfy the regular expression, route matching continues with
+  /// other route candidates.
+  ///
+  /// The regular expression is interpreted as a Dart [RegExp] pattern and must
+  /// not contain nested parentheses.
   ///
   /// The query parameter are also capture during the route parsing and stored
   /// in [GoRouterState].
