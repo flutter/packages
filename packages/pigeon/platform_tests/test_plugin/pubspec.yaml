@@ -25,9 +25,41 @@ flutter:
         pluginClass: TestPluginCApi
 
 dependencies:
+  ffi: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/ffi
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
   flutter:
     sdk: flutter
+  jni: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/jni
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+dependency_overrides:
+  ffi: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/ffi
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
+  ffigen: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/ffigen
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
+  objective_c: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/objective_c
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f
+  swift2objc: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/swift2objc
+      ref: 27890daeab690209603a979c7fbb54b22a3c878f

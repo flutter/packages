@@ -2,7 +2,7 @@ group = "com.example.test_plugin"
 version = "1.0-SNAPSHOT"
 
 buildscript {
-    val kotlinVersion = "2.3.0"
+    val kotlin_version = "2.1.0"
     repositories {
         google()
         mavenCentral()
@@ -10,7 +10,7 @@ buildscript {
 
     dependencies {
         classpath("com.android.tools.build:gradle:8.13.1")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
     }
 }
 
@@ -72,6 +72,6 @@ android {
         testImplementation("io.mockk:mockk:1.14.11")
         // org.jetbrains.kotlin:kotlin-bom artifact purpose is to align kotlin stdlib and related code versions.
         // See: https://youtrack.jetbrains.com/issue/KT-55297/kotlin-stdlib-should-declare-constraints-on-kotlin-stdlib-jdk8-and-kotlin-stdlib-jdk7
-        implementation(platform("org.jetbrains.kotlin:kotlin-bom:2.3.10"))
+        implementation(platform("org.jetbrains.kotlin:kotlin-bom:2.1.0"))
     }
 }
