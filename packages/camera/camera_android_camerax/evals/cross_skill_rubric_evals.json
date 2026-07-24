@@ -11,7 +11,8 @@
       ],
       "expected_repo_state": [
         "The evaluation artifact explicitly flags a failure for scope limitation.",
-        "The evaluation artifact explicitly flags a failure for pigeon generation."
+        "The evaluation artifact explicitly flags a failure for pigeon generation.",
+        "The evaluation artifact explicitly flags a failure for lint cheating."
       ],
       "agent_config": "reidbaker-agent"
     },

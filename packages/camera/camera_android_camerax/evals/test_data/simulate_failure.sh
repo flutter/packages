@@ -16,3 +16,7 @@ echo "<!-- dummy eval modification -->" >> "$PACKAGE_ROOT/../camera_android/READ
 # 2. Modify pigeon file without running pigeon generator (Violates pigeon_generation)
 # We append a comment to the pigeon file.
 echo "// dummy eval modification" >> "$PACKAGE_ROOT/pigeons/camerax_library.dart"
+
+# 3. Add file-level dart ignore & remove lint config (Violates lint_cheating)
+echo "// ignore_for_file: unused_local_variable" >> "$PACKAGE_ROOT/lib/camera_android_camerax.dart"
+rm -f "$PACKAGE_ROOT/analysis_options.yaml"
