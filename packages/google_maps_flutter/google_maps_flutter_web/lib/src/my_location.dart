@@ -19,6 +19,9 @@ class MyLocationController {
   LatLng? _lastKnownLocation;
   int? _watchId;
 
+  gmaps.MapsEventListener? _dragEndListener;
+  gmaps.MapsEventListener? _centerChangedListener;
+
   /// Watch current location and update blue dot
   Future<void> displayAndWatchMyLocation(
     MarkersController<Object?, Object> markersController,
@@ -107,13 +110,13 @@ class MyLocationController {
   void addMyLocationButton(gmaps.Map map, GoogleMapController controller) {
     myLocationButton = MyLocationButton();
     myLocationButton?.addClickListener((_) => centerMyCurrentLocation(controller));
-    map.addListener(
+    _dragEndListener = map.addListener(
       'dragend',
       () {
         myLocationButton?.resetAnimation();
       }.toJS,
     );
-    map.addListener(
+    _centerChangedListener = map.addListener(
       'center_changed',
       () {
         myLocationButton?.resetAnimation();
@@ -130,6 +133,10 @@ class MyLocationController {
       map.controls[gmaps.ControlPosition.RIGHT_BOTTOM as int].pop();
       myLocationButton = null;
     }
+    _dragEndListener?.remove();
+    _dragEndListener = null;
+    _centerChangedListener?.remove();
+    _centerChangedListener = null;
   }
 
   /// Remove blue dot from map
