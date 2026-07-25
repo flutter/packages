@@ -915,8 +915,8 @@ final class DefaultCamera: NSObject, Camera {
     #else
       try? captureDevice.lockForConfiguration()
       captureDevice.exposurePointOfInterest = CGPoint(
-        x: (point ?? PlatformPoint(x: 0.5, y: 0.5)).x,
-        y: (point ?? PlatformPoint(x: 0.5, y: 0.5)).y)
+        x: point?.x ?? 0.5,
+        y: point?.y ?? 0.5)
     #endif
     captureDevice.unlockForConfiguration()
     // Retrigger auto exposure
@@ -953,8 +953,8 @@ final class DefaultCamera: NSObject, Camera {
     #else
       try? captureDevice.lockForConfiguration()
       captureDevice.focusPointOfInterest = CGPoint(
-        x: (point ?? PlatformPoint(x: 0.5, y: 0.5)).x,
-        y: (point ?? PlatformPoint(x: 0.5, y: 0.5)).y)
+        x: point?.x ?? 0.5,
+        y: point?.y ?? 0.5)
     #endif
 
     captureDevice.unlockForConfiguration()
