@@ -64,7 +64,8 @@ import XCTest
       waitForQueueRoundTrip(with: captureSessionQueue)
     }
 
-    private func createMockNotification(for deviceOrientation: UIDeviceOrientation) -> Notification {
+    private func createMockNotification(for deviceOrientation: UIDeviceOrientation) -> Notification
+    {
       let mockDevice = MockUIDevice()
       mockDevice.mockOrientation = deviceOrientation
       return Notification(name: Notification.Name("orientation_test"), object: mockDevice)
@@ -73,7 +74,8 @@ import XCTest
     func testOrientationNotifications() {
       let (cameraPlugin, _, mockEventAPI, _, _, captureSessionQueue) = createCameraPlugin()
 
-      sendOrientation(.portraitUpsideDown, to: cameraPlugin, captureSessionQueue: captureSessionQueue)
+      sendOrientation(
+        .portraitUpsideDown, to: cameraPlugin, captureSessionQueue: captureSessionQueue)
       XCTAssertEqual(mockEventAPI.lastOrientation, .portraitDown)
       sendOrientation(.portrait, to: cameraPlugin, captureSessionQueue: captureSessionQueue)
       XCTAssertEqual(mockEventAPI.lastOrientation, .portraitUp)
