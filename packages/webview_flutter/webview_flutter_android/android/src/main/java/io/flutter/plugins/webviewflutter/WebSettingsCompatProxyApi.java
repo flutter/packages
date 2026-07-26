@@ -38,7 +38,7 @@ public class WebSettingsCompatProxyApi extends PigeonApiWebSettingsCompat {
    * safely converted to {@code int} for the underlying Android API call. {@link
    * Math#toIntExact(long)} is used to verify the value fits in the {@code int} range and throw
    * {@link ArithmeticException} if it overflows. This is safe because the valid support levels are
-   * constants (0, 1, 2) that well within the integer range.
+   * constants (0, 1, 2) that are well within the integer range.
    *
    * <p>Note: {@link Math#toIntExact(long)} requires API level 24 or higher. This is compatible with
    * this plugin's minimum SDK version.
