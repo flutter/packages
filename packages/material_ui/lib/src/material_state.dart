@@ -37,7 +37,7 @@ import 'input_border.dart';
 ///    except [WidgetState] can be used outside of Material.
 ///  * [MaterialStateProperty], an interface for objects that "resolve" to
 ///    different values depending on a widget's material state.
-/// {@template flutter.material.MaterialStateProperty.implementations}
+/// {@template material_ui.MaterialStateProperty.implementations}
 ///  * [MaterialStateColor], a [Color] that implements `MaterialStateProperty`
 ///    which is used in APIs that need to accept either a [Color] or a
 ///    `MaterialStateProperty<Color>`.
@@ -107,8 +107,8 @@ typedef MaterialPropertyResolver<T> = WidgetPropertyResolver<T>;
 /// to provide a `defaultValue` to the super constructor, so that we can know
 /// at compile-time what its default color is.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -134,7 +134,7 @@ typedef MaterialPropertyResolver<T> = WidgetPropertyResolver<T>;
 /// }
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// See also
 ///
@@ -161,15 +161,18 @@ typedef MaterialStateColor = WidgetStateColor;
 /// To use a [MaterialStateMouseCursor], you should create a subclass of
 /// [MaterialStateMouseCursor] and implement the abstract `resolve` method.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example defines a mouse cursor that resolves to
 /// [SystemMouseCursors.forbidden] when its widget is disabled.
 ///
-/// {@example /example/lib/material_state/material_state_mouse_cursor.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/material_state/material_state_mouse_cursor.0.dart#body}
+///
+/// </callout-box>
 ///
 /// This class should only be used for parameters which are documented to take
 /// [MaterialStateMouseCursor], otherwise only the default state will be used.
@@ -199,15 +202,18 @@ typedef MaterialStateMouseCursor = WidgetStateMouseCursor;
 /// property values. [MaterialStateBorderSide] should only be used with widgets that document
 /// their support, like [ActionChip.side].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example defines a subclass of [MaterialStateBorderSide], that resolves
 /// to a red border side when its widget is selected.
 ///
-/// {@example /example/lib/material_state/material_state_border_side.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/material_state/material_state_border_side.0.dart#body}
+///
+/// </callout-box>
 ///
 /// This class should only be used for parameters which are documented to take
 /// [MaterialStateBorderSide], otherwise only the default state will be used.
@@ -230,16 +236,19 @@ typedef MaterialStateBorderSide = WidgetStateBorderSide;
 /// [OutlinedBorder] and implement [MaterialStateOutlinedBorder]'s abstract
 /// `resolve` method.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example defines a subclass of [RoundedRectangleBorder] and an
 /// implementation of [MaterialStateOutlinedBorder], that resolves to
 /// [RoundedRectangleBorder] when its widget is selected.
 ///
-/// {@example /example/lib/material_state/material_state_outlined_border.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/material_state/material_state_outlined_border.0.dart#body}
+///
+/// </callout-box>
 ///
 /// This class should only be used for parameters which are documented to take
 /// [MaterialStateOutlinedBorder], otherwise only the default state will be used.
@@ -469,15 +478,18 @@ class _MaterialStateUnderlineInputBorder extends MaterialStateUnderlineInputBord
 ///     resolves the input border in the given states.
 ///  3. Using [WidgetStateInputBorder.fromMap] to assign a border with a [WidgetStateMap].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to use [WidgetStateInputBorder] to create
 /// a [TextField] with an appearance that responds to user interaction.
 ///
-/// {@example /example/lib/widget_state_input_border/widget_state_input_border.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/widget_state_input_border/widget_state_input_border.0.dart#body}
+///
+/// </callout-box>
 abstract interface class WidgetStateInputBorder
     implements InputBorder, WidgetStateProperty<InputBorder> {
   /// Creates a [WidgetStateInputBorder] using a [WidgetPropertyResolver]
@@ -536,8 +548,7 @@ class _WidgetInputBorderMapper extends WidgetStateMapper<InputBorder>
 /// of their current material state and [resolve] the button style's
 /// material state properties when their value is needed.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how you can override the default text and icon
 /// color (the "foreground color") of a [TextButton] with a
@@ -545,15 +556,19 @@ class _WidgetInputBorderMapper extends WidgetStateMapper<InputBorder>
 /// will be `Colors.blue` when the button is being pressed, hovered,
 /// or focused. Otherwise, the text color will be `Colors.red`.
 ///
-/// {@example /example/lib/material_state/material_state_property.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/material_state/material_state_property.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
 ///  * [WidgetStateProperty], the non-Material version that can be used
 ///    interchangeably with `MaterialStateProperty`.
-/// {@macro flutter.material.MaterialStateProperty.implementations}
+/// {@macro material_ui.MaterialStateProperty.implementations}
 @Deprecated(
   'Use WidgetStateProperty instead. '
   'Moved to the Widgets layer to make code available outside of Material. '

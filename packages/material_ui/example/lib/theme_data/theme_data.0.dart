@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// #region body
 import 'package:material_ui/material_ui.dart';
 
 void main() {
@@ -108,3 +109,4 @@ class _HomeState extends State<Home> {
     );
   }
 }
+// #endregion body

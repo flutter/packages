@@ -70,8 +70,7 @@ const Duration _kFadeDuration = Duration(milliseconds: 165);
 /// [disabledChildren]. If the child is not present in the [Set], it is enabled
 /// by default.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a [CupertinoSegmentedControl] with an enum type.
 ///
@@ -82,9 +81,13 @@ const Duration _kFadeDuration = Duration(milliseconds: 165);
 /// This example also demonstrates how to use the [disabledChildren] property by
 /// toggling each [CupertinoSwitch] to enable or disable the segments.
 ///
-/// {@example /example/lib/segmented_control/cupertino_segmented_control.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/segmented_control/cupertino_segmented_control.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///

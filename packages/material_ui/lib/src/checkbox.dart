@@ -40,8 +40,7 @@ enum _CheckboxType { material, adaptive }
 ///
 /// Requires one of its ancestors to be a [Material] widget.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how you can override the default theme of
 /// a [Checkbox] with a [WidgetStateProperty].
@@ -49,18 +48,25 @@ enum _CheckboxType { material, adaptive }
 /// is being pressed, hovered, or focused. Otherwise, the checkbox's color will
 /// be `Colors.red`.
 ///
-/// {@example /example/lib/checkbox/checkbox.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/checkbox/checkbox.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows what the checkbox error state looks like.
 ///
-/// {@example /example/lib/checkbox/checkbox.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/checkbox/checkbox.1.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -185,7 +191,7 @@ class Checkbox extends StatefulWidget {
   /// ```
   final ValueChanged<bool?>? onChanged;
 
-  /// {@template flutter.material.checkbox.mouseCursor}
+  /// {@template material_ui.checkbox.mouseCursor}
   /// The cursor for a mouse pointer when it enters or is hovering over the
   /// widget.
   ///
@@ -212,7 +218,7 @@ class Checkbox extends StatefulWidget {
   /// state, it will be used instead of this color.
   final Color? activeColor;
 
-  /// {@template flutter.material.checkbox.fillColor}
+  /// {@template material_ui.checkbox.fillColor}
   /// The color that fills the checkbox, in all [WidgetState]s.
   ///
   /// Resolves in the following states:
@@ -221,8 +227,8 @@ class Checkbox extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -243,7 +249,7 @@ class Checkbox extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   /// {@endtemplate}
   ///
   /// If null, then the value of [activeColor] is used in the selected
@@ -254,7 +260,7 @@ class Checkbox extends StatefulWidget {
   /// default state.
   final WidgetStateProperty<Color?>? fillColor;
 
-  /// {@template flutter.material.checkbox.checkColor}
+  /// {@template material_ui.checkbox.checkColor}
   /// The color to use for the check icon when this checkbox is checked.
   /// {@endtemplate}
   ///
@@ -274,7 +280,7 @@ class Checkbox extends StatefulWidget {
   /// If tristate is false (the default), [value] must not be null.
   final bool tristate;
 
-  /// {@template flutter.material.checkbox.materialTapTargetSize}
+  /// {@template material_ui.checkbox.materialTapTargetSize}
   /// Configures the minimum size of the tap target.
   /// {@endtemplate}
   ///
@@ -287,11 +293,11 @@ class Checkbox extends StatefulWidget {
   ///  * [MaterialTapTargetSize], for a description of how this affects tap targets.
   final MaterialTapTargetSize? materialTapTargetSize;
 
-  /// {@template flutter.material.checkbox.visualDensity}
+  /// {@template material_ui.checkbox.visualDensity}
   /// Defines how compact the checkbox's layout will be.
   /// {@endtemplate}
   ///
-  /// {@macro flutter.material.themedata.visualDensity}
+  /// {@macro material_ui.themedata.visualDensity}
   ///
   /// If null, then the value of [CheckboxThemeData.visualDensity] is used. If
   /// that is also null and if [ThemeData.useMaterial3] is false, then the
@@ -314,7 +320,7 @@ class Checkbox extends StatefulWidget {
   /// [ThemeData.focusColor] is used.
   final Color? focusColor;
 
-  /// {@template flutter.material.checkbox.hoverColor}
+  /// {@template material_ui.checkbox.hoverColor}
   /// The color for the checkbox's [Material] when a pointer is hovering over it.
   ///
   /// If [overlayColor] returns a non-null color in the [WidgetState.hovered]
@@ -326,7 +332,7 @@ class Checkbox extends StatefulWidget {
   /// [ThemeData.hoverColor] is used.
   final Color? hoverColor;
 
-  /// {@template flutter.material.checkbox.overlayColor}
+  /// {@template material_ui.checkbox.overlayColor}
   /// The color for the checkbox's [Material].
   ///
   /// Resolves in the following states:
@@ -345,7 +351,7 @@ class Checkbox extends StatefulWidget {
   /// is used in the pressed, focused and hovered state.
   final WidgetStateProperty<Color?>? overlayColor;
 
-  /// {@template flutter.material.checkbox.splashRadius}
+  /// {@template material_ui.checkbox.splashRadius}
   /// The splash radius of the circular [Material] ink response.
   /// {@endtemplate}
   ///
@@ -359,7 +365,7 @@ class Checkbox extends StatefulWidget {
   /// {@macro flutter.widgets.Focus.autofocus}
   final bool autofocus;
 
-  /// {@template flutter.material.checkbox.shape}
+  /// {@template material_ui.checkbox.shape}
   /// The shape of the checkbox's [Material].
   /// {@endtemplate}
   ///
@@ -368,7 +374,7 @@ class Checkbox extends StatefulWidget {
   /// with a circular corner radius of 1.0 in Material 2, and 2.0 in Material 3.
   final OutlinedBorder? shape;
 
-  /// {@template flutter.material.checkbox.side}
+  /// {@template material_ui.checkbox.side}
   /// The color and width of the checkbox's border.
   ///
   /// This property can be a [WidgetStateBorderSide] that can
@@ -393,7 +399,7 @@ class Checkbox extends StatefulWidget {
   /// used. If that is also null, then the side will be width 2.
   final BorderSide? side;
 
-  /// {@template flutter.material.checkbox.isError}
+  /// {@template material_ui.checkbox.isError}
   /// True if this checkbox wants to show an error state.
   ///
   /// The checkbox will have different default container color and check color when
@@ -403,7 +409,7 @@ class Checkbox extends StatefulWidget {
   /// Defaults to false.
   final bool isError;
 
-  /// {@template flutter.material.checkbox.semanticLabel}
+  /// {@template material_ui.checkbox.semanticLabel}
   /// The semantic label for the checkbox that will be announced by screen readers.
   ///
   /// This is announced by assistive technologies (e.g TalkBack/VoiceOver).

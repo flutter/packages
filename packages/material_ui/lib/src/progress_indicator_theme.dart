@@ -72,16 +72,16 @@ class ProgressIndicatorThemeData with Diagnosticable {
   ///    a an animated color.
   final Color? color;
 
-  /// {@macro flutter.material.LinearProgressIndicator.trackColor}
+  /// {@macro material_ui.LinearProgressIndicator.trackColor}
   final Color? linearTrackColor;
 
-  /// {@macro flutter.material.LinearProgressIndicator.minHeight}
+  /// {@macro material_ui.LinearProgressIndicator.minHeight}
   final double? linearMinHeight;
 
-  /// {@macro flutter.material.CircularProgressIndicator.trackColor}
+  /// {@macro material_ui.CircularProgressIndicator.trackColor}
   final Color? circularTrackColor;
 
-  /// {@macro flutter.material.RefreshProgressIndicator.backgroundColor}
+  /// {@macro material_ui.RefreshProgressIndicator.backgroundColor}
   final Color? refreshBackgroundColor;
 
   /// Overrides the border radius of the [ProgressIndicator].
@@ -316,8 +316,8 @@ class ProgressIndicatorThemeData with Diagnosticable {
 /// Values specified here are used for [ProgressIndicator] properties that are not
 /// given an explicit non-null value.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -333,7 +333,7 @@ class ProgressIndicatorThemeData with Diagnosticable {
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 class ProgressIndicatorTheme extends InheritedTheme {
   /// Creates a theme that controls the configurations for [ProgressIndicator]
   /// widgets.

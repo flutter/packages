@@ -87,33 +87,42 @@ enum _IndicatorType { material, adaptive, noSpinner }
 ///
 /// The trigger mode is configured by [RefreshIndicator.triggerMode].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how [RefreshIndicator] can be triggered in different ways.
 ///
-/// {@example /example/lib/refresh_indicator/refresh_indicator.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/refresh_indicator/refresh_indicator.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to trigger [RefreshIndicator] in a nested scroll view using
 /// the [notificationPredicate] property.
 ///
-/// {@example /example/lib/refresh_indicator/refresh_indicator.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/refresh_indicator/refresh_indicator.1.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to use [RefreshIndicator] without the spinner.
 ///
-/// {@example /example/lib/refresh_indicator/refresh_indicator.2.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/refresh_indicator/refresh_indicator.2.dart#body}
+///
+/// </callout-box>
 ///
 /// ## Troubleshooting
 ///
@@ -289,13 +298,13 @@ class RefreshIndicator extends StatefulWidget {
   /// else for more complicated layouts.
   final ScrollNotificationPredicate notificationPredicate;
 
-  /// {@macro flutter.progress_indicator.ProgressIndicator.semanticsLabel}
+  /// {@macro material_ui.progress_indicator.ProgressIndicator.semanticsLabel}
   ///
   /// This will be defaulted to [MaterialLocalizations.refreshIndicatorSemanticLabel]
   /// if it is null.
   final String? semanticsLabel;
 
-  /// {@macro flutter.progress_indicator.ProgressIndicator.semanticsValue}
+  /// {@macro material_ui.progress_indicator.ProgressIndicator.semanticsValue}
   final String? semanticsValue;
 
   /// Defines [strokeWidth] for `RefreshIndicator`.

@@ -4,6 +4,12 @@
 
 import 'package:pigeon/pigeon.dart';
 
+const String aStringConstant = 'stringConstantValue';
+const String aStringConstantWithEscapes = r'''string\'\"\$ConstantValue''';
+const int anIntConstant = 42;
+const double aDoubleConstant = 3.14;
+const bool aBoolConstant = true;
+
 enum AnEnum { one, two, three, fortyTwo, fourHundredTwentyTwo }
 
 // Enums require special logic, having multiple ensures that the logic can be
@@ -251,6 +257,9 @@ class AllNullableTypesWithoutRecursion {
   Map<int?, Map<Object?, Object?>?>? mapMap;
 }
 
+/// A data class without fields for testing empty classes.
+class AnEmptyClass {}
+
 /// A class for testing nested class handling.
 ///
 /// This is needed to test nested nullable and non-nullable classes,
@@ -265,6 +274,7 @@ class AllClassesWrapper {
     this.classMap,
     this.nullableClassList,
     this.nullableClassMap,
+    this.anEmptyClass,
   );
   AllNullableTypes allNullableTypes;
   AllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
@@ -273,6 +283,7 @@ class AllClassesWrapper {
   List<AllNullableTypesWithoutRecursion?>? nullableClassList;
   Map<int?, AllTypes?> classMap;
   Map<int?, AllNullableTypesWithoutRecursion?>? nullableClassMap;
+  AnEmptyClass? anEmptyClass;
 }
 
 /// The core interface that each host language plugin must implement in
