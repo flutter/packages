@@ -97,14 +97,13 @@ The WebAuthentication support level can be set to one of three values:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (web_authentication_example)"?>
 ```dart
-final bool webAuthenticationSupported = await androidController
-    .isWebViewFeatureSupported(WebViewFeatureType.webAuthentication);
+final bool webAuthenticationSupported = await androidController.isWebViewFeatureSupported(
+  WebViewFeatureType.webAuthentication,
+);
 
 if (webAuthenticationSupported) {
   // Enable WebAuthn for the embedded app
-  await androidController.setWebAuthenticationSupport(
-    WebAuthenticationSupport.forApp,
-  );
+  await androidController.setWebAuthenticationSupport(WebAuthenticationSupport.forApp);
   // Or for browser-like behavior supporting any website:
   // await androidController.setWebAuthenticationSupport(
   //   WebAuthenticationSupport.forBrowser,
