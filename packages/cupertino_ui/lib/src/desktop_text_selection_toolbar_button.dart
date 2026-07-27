@@ -51,16 +51,16 @@ class CupertinoDesktopTextSelectionToolbarButton extends StatefulWidget {
        text = null,
        child = null;
 
-  /// {@macro flutter.cupertino.CupertinoTextSelectionToolbarButton.onPressed}
+  /// {@macro cupertino_ui.CupertinoTextSelectionToolbarButton.onPressed}
   final VoidCallback? onPressed;
 
-  /// {@macro flutter.cupertino.CupertinoTextSelectionToolbarButton.child}
+  /// {@macro cupertino_ui.CupertinoTextSelectionToolbarButton.child}
   final Widget? child;
 
-  /// {@macro flutter.cupertino.CupertinoTextSelectionToolbarButton.onPressed}
+  /// {@macro cupertino_ui.CupertinoTextSelectionToolbarButton.onPressed}
   final ContextMenuButtonItem? buttonItem;
 
-  /// {@macro flutter.cupertino.CupertinoTextSelectionToolbarButton.text}
+  /// {@macro cupertino_ui.CupertinoTextSelectionToolbarButton.text}
   final String? text;
 
   @override

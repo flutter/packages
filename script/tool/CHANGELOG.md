@@ -1,3 +1,12 @@
+## NEXT
+
+* Adds support for batch release of pre-1.0 packages.
+
+## 0.14.4
+
+* Adds `--run-on-staged-packages` argument to support running commands only
+  on packages with staged changes.
+
 ## 0.14.3
 
 * Deprecates the `--custom-analysis` argument to `analyze`, which is now

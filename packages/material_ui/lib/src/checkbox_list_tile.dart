@@ -61,8 +61,8 @@ enum _CheckboxType { material, adaptive }
 /// In this case, one can wrap a [Material] widget around the [CheckboxListTile],
 /// e.g.:
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -80,7 +80,7 @@ enum _CheckboxType { material, adaptive }
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// ## Performance considerations when wrapping [CheckboxListTile] with [Material]
 ///
@@ -91,8 +91,7 @@ enum _CheckboxType { material, adaptive }
 /// To show the [CheckboxListTile] as disabled, pass null as the [onChanged]
 /// callback.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// ![CheckboxListTile sample](https://flutter.github.io/assets-for-api-docs/assets/material/checkbox_list_tile.png)
 ///
@@ -102,19 +101,26 @@ enum _CheckboxType { material, adaptive }
 /// This sample requires that you also import 'package:flutter/scheduler.dart',
 /// so that you can reference [timeDilation].
 ///
-/// {@example /example/lib/checkbox_list_tile/checkbox_list_tile.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/checkbox_list_tile/checkbox_list_tile.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample demonstrates how [CheckboxListTile] positions the checkbox widget
 /// relative to the text in different configurations.
 ///
-/// {@example /example/lib/checkbox_list_tile/checkbox_list_tile.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/checkbox_list_tile/checkbox_list_tile.1.dart#body}
+///
+/// </callout-box>
 ///
 /// ## Semantics in CheckboxListTile
 ///
@@ -133,8 +139,7 @@ enum _CheckboxType { material, adaptive }
 /// into one. Therefore, it may be necessary to create a custom radio tile
 /// widget to accommodate similar use cases.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// ![Checkbox list tile semantics sample](https://flutter.github.io/assets-for-api-docs/assets/material/checkbox_list_tile_semantics.png)
 ///
@@ -142,9 +147,13 @@ enum _CheckboxType { material, adaptive }
 /// LinkedLabelCheckbox, that includes an interactive [RichText] widget that
 /// handles tap gestures.
 ///
-/// {@example /example/lib/checkbox_list_tile/custom_labeled_checkbox.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/checkbox_list_tile/custom_labeled_checkbox.0.dart#body}
+///
+/// </callout-box>
 ///
 /// ## CheckboxListTile isn't exactly what I want
 ///
@@ -153,17 +162,20 @@ enum _CheckboxType { material, adaptive }
 /// combining [Checkbox] with other widgets, such as [Text], [Padding] and
 /// [InkWell].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// ![Custom checkbox list tile sample](https://flutter.github.io/assets-for-api-docs/assets/material/checkbox_list_tile_custom.png)
 ///
 /// Here is an example of a custom LabeledCheckbox widget, but you can easily
 /// make your own configurable widget.
 ///
-/// {@example /example/lib/checkbox_list_tile/custom_labeled_checkbox.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/checkbox_list_tile/custom_labeled_checkbox.1.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -296,8 +308,8 @@ class CheckboxListTile extends StatelessWidget {
   ///
   /// If null, the checkbox will be displayed as disabled.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -317,7 +329,7 @@ class CheckboxListTile extends StatelessWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   final ValueChanged<bool?>? onChanged;
 
   /// The cursor for a mouse pointer when it enters or is hovering over the
@@ -356,7 +368,7 @@ class CheckboxListTile extends StatelessWidget {
   /// Defaults to Color(0xFFFFFFFF).
   final Color? checkColor;
 
-  /// {@macro flutter.material.checkbox.hoverColor}
+  /// {@macro material_ui.checkbox.hoverColor}
   final Color? hoverColor;
 
   /// The color for the checkbox's [Material].
@@ -372,20 +384,20 @@ class CheckboxListTile extends StatelessWidget {
   /// then the default value is used in the pressed and hovered state.
   final WidgetStateProperty<Color?>? overlayColor;
 
-  /// {@macro flutter.material.checkbox.splashRadius}
+  /// {@macro material_ui.checkbox.splashRadius}
   ///
   /// If null, then the value of [CheckboxThemeData.splashRadius] is used. If
   /// that is also null, then [kRadialReactionRadius] is used.
   final double? splashRadius;
 
-  /// {@macro flutter.material.checkbox.materialTapTargetSize}
+  /// {@macro material_ui.checkbox.materialTapTargetSize}
   ///
   /// Defaults to [MaterialTapTargetSize.shrinkWrap].
   final MaterialTapTargetSize? materialTapTargetSize;
 
   /// Defines how compact the list tile's layout will be.
   ///
-  /// {@macro flutter.material.themedata.visualDensity}
+  /// {@macro material_ui.themedata.visualDensity}
   final VisualDensity? visualDensity;
 
   /// {@macro flutter.widgets.Focus.focusNode}
@@ -397,10 +409,10 @@ class CheckboxListTile extends StatelessWidget {
   /// {@macro flutter.widgets.Focus.autofocus}
   final bool autofocus;
 
-  /// {@macro flutter.material.ListTile.shape}
+  /// {@macro material_ui.ListTile.shape}
   final ShapeBorder? shape;
 
-  /// {@macro flutter.material.checkbox.side}
+  /// {@macro material_ui.checkbox.side}
   ///
   /// The given value is passed directly to [Checkbox.side].
   ///
@@ -409,12 +421,12 @@ class CheckboxListTile extends StatelessWidget {
   /// will be width 2.
   final BorderSide? side;
 
-  /// {@macro flutter.material.checkbox.isError}
+  /// {@macro material_ui.checkbox.isError}
   ///
   /// Defaults to false.
   final bool isError;
 
-  /// {@macro flutter.material.ListTile.tileColor}
+  /// {@macro material_ui.ListTile.tileColor}
   final Color? tileColor;
 
   /// The primary content of the list tile.
@@ -475,7 +487,7 @@ class CheckboxListTile extends StatelessWidget {
   /// If tristate is false (the default), [value] must not be null.
   final bool tristate;
 
-  /// {@macro flutter.material.checkbox.shape}
+  /// {@macro material_ui.checkbox.shape}
   ///
   /// If this property is null then [CheckboxThemeData.shape] of [ThemeData.checkboxTheme]
   /// is used. If that's null then the shape will be a [RoundedRectangleBorder]
@@ -485,26 +497,26 @@ class CheckboxListTile extends StatelessWidget {
   /// If non-null, defines the background color when [CheckboxListTile.selected] is true.
   final Color? selectedTileColor;
 
-  /// {@macro flutter.material.inkwell.onFocusChange}
+  /// {@macro cupertino_ui.inkwell.onFocusChange}
   final ValueChanged<bool>? onFocusChange;
 
-  /// {@macro flutter.material.ListTile.enableFeedback}
+  /// {@macro material_ui.ListTile.enableFeedback}
   ///
   /// See also:
   ///
   ///  * [Feedback] for providing platform-specific feedback to certain actions.
   final bool? enableFeedback;
 
-  /// {@macro flutter.material.ListTile.horizontalTitleGap}
+  /// {@macro material_ui.ListTile.horizontalTitleGap}
   final double? horizontalTitleGap;
 
-  /// {@macro flutter.material.ListTile.minVerticalPadding}
+  /// {@macro material_ui.ListTile.minVerticalPadding}
   final double? minVerticalPadding;
 
-  /// {@macro flutter.material.ListTile.minLeadingWidth}
+  /// {@macro material_ui.ListTile.minLeadingWidth}
   final double? minLeadingWidth;
 
-  /// {@macro flutter.material.ListTile.minTileHeight}
+  /// {@macro material_ui.ListTile.minTileHeight}
   final double? minTileHeight;
 
   /// Whether the CheckboxListTile is interactive.
@@ -540,7 +552,7 @@ class CheckboxListTile extends StatelessWidget {
   /// Defaults to 1.0.
   final double checkboxScaleFactor;
 
-  /// {@macro flutter.material.checkbox.semanticLabel}
+  /// {@macro material_ui.checkbox.semanticLabel}
   final String? checkboxSemanticLabel;
 
   final _CheckboxType _checkboxType;

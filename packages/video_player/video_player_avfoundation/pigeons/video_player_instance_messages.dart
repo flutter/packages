@@ -122,4 +122,7 @@ abstract class VideoPlayerInstanceApi {
   /// Pass 0 to enable auto quality selection.
   @ObjCSelector('selectVideoTrackWithBitrate:')
   void selectVideoTrack(int bitrate);
+
+  @ObjCSelector('setPreventsDisplaySleepDuringVideoPlayback:')
+  void setPreventsDisplaySleepDuringVideoPlayback(bool preventsDisplaySleepDuringVideoPlayback);
 }

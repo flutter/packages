@@ -939,8 +939,7 @@ class DropdownButtonHideUnderline extends InheritedWidget {
 /// dropdown with the new value.
 ///
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows a [DropdownButton] with a large arrow icon,
 /// purple text style, and bold purple underline, whose value is one of "One",
@@ -948,9 +947,13 @@ class DropdownButtonHideUnderline extends InheritedWidget {
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/dropdown_button.png)
 ///
-/// {@example /example/lib/dropdown/dropdown_button.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/dropdown/dropdown_button.0.dart#body}
+///
+/// </callout-box>
 ///
 /// If the [onChanged] callback is null or the list of [items] is null
 /// then the dropdown button will be disabled, i.e. its arrow will be
@@ -959,15 +962,18 @@ class DropdownButtonHideUnderline extends InheritedWidget {
 /// [disabledHint] is null and [hint] is non-null, the [hint] widget will
 /// instead be displayed.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows how you would rewrite the above [DropdownButton]
 /// to use the [DropdownMenu].
 ///
-/// {@example /example/lib/dropdown_menu/dropdown_menu.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/dropdown_menu/dropdown_menu.1.dart#body}
+///
+/// </callout-box>
 ///
 ///
 /// See also:
@@ -1128,7 +1134,7 @@ class DropdownButton<T> extends StatefulWidget {
   /// this widget is displayed as a placeholder for the dropdown button's value.
   final Widget? disabledHint;
 
-  /// {@template flutter.material.dropdownButton.onChanged}
+  /// {@template material_ui.dropdownButton.onChanged}
   /// Called when the user selects an item.
   ///
   /// If the [onChanged] callback is null or the list of [DropdownButton.items]
@@ -1155,15 +1161,18 @@ class DropdownButton<T> extends StatefulWidget {
   /// from the list corresponds to the [DropdownMenuItem] of the same index
   /// in [items].
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample shows a `DropdownButton` with a button with [Text] that
   /// corresponds to but is unique from [DropdownMenuItem].
   ///
-  /// {@example /example/lib/dropdown/dropdown_button.selected_item_builder.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/dropdown/dropdown_button.selected_item_builder.0.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// If this callback is null, the [DropdownMenuItem] from [items]
   /// that matches [value] will be displayed.
@@ -1186,15 +1195,18 @@ class DropdownButton<T> extends StatefulWidget {
   /// To use a separate text style for selected item when it's displayed within
   /// the dropdown button, consider using [selectedItemBuilder].
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample shows a `DropdownButton` with a dropdown button text style
   /// that is different than its menu items.
   ///
-  /// {@example /example/lib/dropdown/dropdown_button.style.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/dropdown/dropdown_button.style.0.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// Defaults to the [TextTheme.titleMedium] value of the current
   /// [ThemeData.textTheme] of the current [Theme].
@@ -1337,7 +1349,7 @@ class DropdownButton<T> extends StatefulWidget {
   /// The cursor for a mouse pointer when it enters or is hovering over this
   /// button.
   ///
-  /// {@macro flutter.material.InkWell.mouseCursor}
+  /// {@macro material_ui.InkWell.mouseCursor}
   ///
   /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
   final MouseCursor? mouseCursor;
@@ -1345,7 +1357,7 @@ class DropdownButton<T> extends StatefulWidget {
   /// The cursor for a mouse pointer when it enters or is hovering over the
   /// this button's [items].
   ///
-  /// {@macro flutter.material.InkWell.mouseCursor}
+  /// {@macro material_ui.InkWell.mouseCursor}
   ///
   /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
   final MouseCursor? dropdownMenuItemMouseCursor;
@@ -1958,7 +1970,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
          },
        );
 
-  /// {@macro flutter.material.dropdownButton.onChanged}
+  /// {@macro material_ui.dropdownButton.onChanged}
   ///
   /// This callback is invoked after the parent [Form]'s [Form.onChanged] callback.
   /// The field's updated value is available in the [Form.onChanged] callback
@@ -1982,7 +1994,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
   /// The cursor for a mouse pointer when it enters or is hovering over the
   /// dropdown button and its [DropdownMenuItem]s.
   ///
-  /// {@macro flutter.material.InkWell.mouseCursor}
+  /// {@macro material_ui.InkWell.mouseCursor}
   ///
   /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
   final MouseCursor? mouseCursor;
@@ -1990,7 +2002,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
   /// The cursor for a mouse pointer when it enters or is hovering over the
   /// this button's [DropdownMenuItem]s.
   ///
-  /// {@macro flutter.material.InkWell.mouseCursor}
+  /// {@macro material_ui.InkWell.mouseCursor}
   ///
   /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
   final MouseCursor? dropdownMenuItemMouseCursor;
