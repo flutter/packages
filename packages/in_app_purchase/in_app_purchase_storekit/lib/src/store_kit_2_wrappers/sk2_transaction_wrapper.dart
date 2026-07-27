@@ -146,6 +146,7 @@ extension on SK2TransactionMessage {
       SK2PurchaseStatusMessage.restored => PurchaseStatus.restored,
     };
 
+    final SK2Transaction sk2Transaction = convertFromPigeon();
     return SK2PurchaseDetails(
       productID: productId,
       // in SK2, as per Apple
@@ -162,6 +163,7 @@ extension on SK2TransactionMessage {
       status: purchaseStatus,
       purchaseID: id > 0 ? id.toString() : null,
       appAccountToken: appAccountToken,
+      sk2Transaction: sk2Transaction,
     );
   }
 
