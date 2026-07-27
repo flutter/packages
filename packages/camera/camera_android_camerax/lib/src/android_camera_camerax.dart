@@ -521,6 +521,8 @@ class AndroidCameraCameraX extends CameraPlatform {
       deviceOrientationManager.stopListeningForDeviceOrientationChange(),
     ]);
 
+    // `processCameraProvider.unbindAll()` implicitly finalizes active recordings natively.
+    // Clear the Dart state here to prevent an exception on resume.
     recording = null;
     pendingRecording = null;
     videoOutputPath = null;
