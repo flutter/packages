@@ -1,6 +1,5 @@
 {
   "repo_criteria": [
-    "evals/code_quality_rubric.json"
   ],
   "evals": [
     {
