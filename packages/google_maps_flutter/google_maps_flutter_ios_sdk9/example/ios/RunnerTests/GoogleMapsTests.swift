@@ -69,7 +69,7 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     options.frame = frame
     options.camera = GMSCameraPosition(latitude: 0, longitude: 0, zoom: 0)
     let mapView = PartiallyMockedMapView(options: options)
-    let controller = FGMGoogleMapController(
+    let controller = GoogleMapController(
       mapView: mapView,
       viewIdentifier: 0,
       creationParameters: emptyCreationParameters(),
@@ -114,7 +114,7 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
 
     let mapView = PartiallyMockedMapView(options: mapViewOptions)
 
-    let controller = FGMGoogleMapController(
+    let controller = GoogleMapController(
       mapView: mapView,
       viewIdentifier: 0,
       creationParameters: emptyCreationParameters(),
@@ -146,7 +146,7 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
 
     let mapView = PartiallyMockedMapView(options: mapViewOptions)
 
-    let controller = FGMGoogleMapController(
+    let controller = GoogleMapController(
       mapView: mapView,
       viewIdentifier: 0,
       creationParameters: emptyCreationParameters(),
@@ -186,7 +186,7 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     let mapView = PartiallyMockedMapView(options: mapViewOptions)
 
     let binaryMessenger = StubBinaryMessenger()
-    let controller = FGMGoogleMapController(
+    let controller = GoogleMapController(
       mapView: mapView,
       viewIdentifier: 0,
       creationParameters: emptyCreationParameters(),
@@ -194,11 +194,8 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
       binaryMessenger: binaryMessenger
     )
 
-    let inspector = FGMMapInspector(
-      mapController: controller,
-      messenger: binaryMessenger,
-      pigeonSuffix: "0"
-    )
+    let inspector = MapInspector(messenger: binaryMessenger, pigeonSuffix: "0")
+    inspector.controller = controller
 
     var error: FlutterError? = nil
     let cameraPosition = try #require(inspector.cameraPosition(&error))
