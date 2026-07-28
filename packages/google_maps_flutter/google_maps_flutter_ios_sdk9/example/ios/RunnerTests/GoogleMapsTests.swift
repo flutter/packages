@@ -246,4 +246,67 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
       initialGroundOverlays: []
     )
   }
+
+  @Test func frameObserverRemovedOnDeinitIfNeverFired() {
+    let options = GMSMapViewOptions()
+    options.frame = .zero
+    options.camera = GMSCameraPosition(latitude: 0, longitude: 0, zoom: 0)
+    let mapView = PartiallyMockedMapView(options: options)
+
+    var controller: GoogleMapController? = GoogleMapController(
+      mapView: mapView,
+      viewIdentifier: 0,
+      creationParameters: emptyCreationParameters(),
+      assetProvider: TestAssetProvider(),
+      binaryMessenger: StubBinaryMessenger()
+    )
+
+    #expect(mapView.frameObserverCount == 1)
+
+    // Deallocate the controller
+    controller = nil
+
+    #expect(mapView.frameObserverCount == 0)
+  }
+
+  @Test func styleErrorPersistsAcrossConfigUpdates() {
+    let mapView = PartiallyMockedMapView(options: GMSMapViewOptions())
+    let controller = GoogleMapController(
+      mapView: mapView,
+      viewIdentifier: 0,
+      creationParameters: emptyCreationParameters(),
+      assetProvider: TestAssetProvider(),
+      binaryMessenger: StubBinaryMessenger()
+    )
+
+    // Set an invalid style to trigger an error
+    _ = controller.setMapStyle("invalid json")
+    #expect(controller.styleError != nil)
+
+    // Update config without style
+    let config = FGMPlatformMapConfiguration.make(
+      withCompassEnabled: true,
+      cameraTargetBounds: nil,
+      mapType: nil,
+      minMaxZoomPreference: nil,
+      rotateGesturesEnabled: nil,
+      scrollGesturesEnabled: nil,
+      tiltGesturesEnabled: nil,
+      trackCameraPosition: nil,
+      zoomGesturesEnabled: nil,
+      myLocationEnabled: nil,
+      myLocationButtonEnabled: nil,
+      padding: nil,
+      indoorViewEnabled: nil,
+      trafficEnabled: nil,
+      buildingsEnabled: nil,
+      markerType: .marker,
+      mapId: nil,
+      style: nil
+    )
+    controller.interpretMapConfiguration(config)
+
+    // The style error should still be present
+    #expect(controller.styleError != nil)
+  }
 }
