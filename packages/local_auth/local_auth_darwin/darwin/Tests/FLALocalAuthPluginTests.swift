@@ -47,6 +47,7 @@ final class StubAuthContext: NSObject, AuthContext, @unchecked Sendable {
   // Overridden as read-write to allow stubbing.
   var biometryType: LABiometryType = .none
   var localizedFallbackTitle: String?
+  var localizedCancelTitle: String?
 
   func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
     #expect(
@@ -328,6 +329,26 @@ struct LocalAuthPluginTests {
         strings: strings
       ) { resultDetails in
         #expect(stubAuthContext.localizedFallbackTitle == nil)
+        continuation.resume()
+      }
+    }
+  }
+
+  @Test
+  func localizedCancelTitle() async {
+    let stubAuthContext = StubAuthContext()
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
+
+    let strings = createAuthStrings()
+    stubAuthContext.evaluateResponse = true
+
+    await withCheckedContinuation { continuation in
+      plugin.authenticate(
+        options: AuthOptions(biometricOnly: false, sticky: false),
+        strings: strings
+      ) { resultDetails in
+        #expect(stubAuthContext.localizedCancelTitle == strings.cancelButton)
         continuation.resume()
       }
     }
