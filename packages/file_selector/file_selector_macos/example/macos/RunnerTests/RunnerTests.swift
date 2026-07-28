@@ -215,10 +215,11 @@ class TestViewProvider: NSObject, ViewProvider {
     let panel = try #require(panelController.openPanel)
     if #available(macOS 11.0, *) {
       #expect(panel.allowedContentTypes.count == 1)
-      #expect(panel.allowedContentTypes[0].preferredFilenameExtension == unknownExtension)
+      let allowedType = try #require(panel.allowedContentTypes.first)
+      #expect(allowedType.preferredFilenameExtension == unknownExtension)
       // If this isn't true, the dynamic type created for the extension won't work as a file
       // extension filter.
-      #expect(panel.allowedContentTypes[0].conforms(to: UTType.data))
+      #expect(allowedType.conforms(to: UTType.data))
     } else {
       #expect(panel.allowedFileTypes == [unknownExtension])
     }
@@ -284,7 +285,7 @@ class TestViewProvider: NSObject, ViewProvider {
       plugin.displayOpenPanel(options: options) { result in
         switch result {
         case .success(let paths):
-          #expect(paths.count == 0)
+          #expect(paths.isEmpty)
         case .failure(let error):
           Issue.record("\(error)")
         }
@@ -453,7 +454,7 @@ class TestViewProvider: NSObject, ViewProvider {
       plugin.displayOpenPanel(options: options) { result in
         switch result {
         case .success(let paths):
-          #expect(paths.count == 0)
+          #expect(paths.isEmpty)
         case .failure(let error):
           Issue.record("\(error)")
         }
@@ -514,7 +515,7 @@ class TestViewProvider: NSObject, ViewProvider {
       plugin.displayOpenPanel(options: options) { result in
         switch result {
         case .success(let paths):
-          #expect(paths.count == 0)
+          #expect(paths.isEmpty)
         case .failure(let error):
           Issue.record("\(error)")
         }
