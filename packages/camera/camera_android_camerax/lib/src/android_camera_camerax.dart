@@ -513,13 +513,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Releases the resources of the accessed camera with ID [cameraId].
   @override
   Future<void> dispose(int cameraId) async {
-    await Future.wait(<Future<void>>[
-      if (preview != null) preview!.releaseSurfaceProvider(),
-      if (liveCameraState != null) liveCameraState!.removeObservers(),
-      if (processCameraProvider != null) processCameraProvider!.unbindAll(),
-      if (imageAnalysis != null) imageAnalysis!.clearAnalyzer(),
-      deviceOrientationManager.stopListeningForDeviceOrientationChange(),
-    ]);
+    await preview?.releaseSurfaceProvider();
+    await liveCameraState?.removeObservers();
+    await processCameraProvider?.unbindAll();
+    await imageAnalysis?.clearAnalyzer();
+    await deviceOrientationManager.stopListeningForDeviceOrientationChange();
 
     // `processCameraProvider.unbindAll()` implicitly finalizes active recordings natively.
     // Clear the Dart state here to prevent an exception on resume.
