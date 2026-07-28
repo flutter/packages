@@ -609,7 +609,7 @@ class SliderThemeData with Diagnosticable {
   /// Override this for custom thumb selection.
   final RangeThumbSelector? thumbSelector;
 
-  /// {@macro flutter.material.slider.mouseCursor}
+  /// {@macro material_ui.slider.mouseCursor}
   ///
   /// If specified, overrides the default value of [Slider.mouseCursor].
   final WidgetStateProperty<MouseCursor?>? mouseCursor;

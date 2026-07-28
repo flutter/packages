@@ -135,7 +135,7 @@ class CupertinoRadio<T> extends StatefulWidget {
   /// {@macro flutter.widget.RawRadio.value}
   final T value;
 
-  /// {@template flutter.cupertino.Radio.groupValue}
+  /// {@template cupertino_ui.Radio.groupValue}
   /// The currently selected value for a group of radio buttons.
   ///
   /// This radio button is considered selected if its [value] matches the
@@ -149,7 +149,7 @@ class CupertinoRadio<T> extends StatefulWidget {
   )
   final T? groupValue;
 
-  /// {@template flutter.cupertino.Radio.onChanged}
+  /// {@template cupertino_ui.Radio.onChanged}
   /// Called when the user selects this radio button.
   ///
   /// The radio button passes [value] as a parameter to this callback. The radio
@@ -257,7 +257,7 @@ class CupertinoRadio<T> extends StatefulWidget {
   /// [RadioGroupRegistry].
   final RadioGroupRegistry<T>? groupRegistry;
 
-  /// {@template flutter.cupertino.Radio.enabled}
+  /// {@template cupertino_ui.Radio.enabled}
   /// Whether this widget is interactive.
   ///
   /// If not provided, this widget will be interactable if one of the following

@@ -281,7 +281,7 @@ class ToggleButtons extends StatelessWidget {
   /// When the callback is null, all toggle buttons will be disabled.
   final void Function(int index)? onPressed;
 
-  /// {@macro flutter.material.RawMaterialButton.mouseCursor}
+  /// {@macro material_ui.RawMaterialButton.mouseCursor}
   ///
   /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] is used.
   final MouseCursor? mouseCursor;

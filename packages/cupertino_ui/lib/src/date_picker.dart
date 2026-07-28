@@ -473,7 +473,7 @@ class CupertinoDatePicker extends StatefulWidget {
   /// Function to provide full control over which [DateTime] can be selected.
   final SelectableDayPredicate? selectableDayPredicate;
 
-  /// {@macro flutter.cupertino.picker.itemExtent}
+  /// {@macro cupertino_ui.picker.itemExtent}
   ///
   /// Defaults to a value that matches the default iOS date picker wheel.
   final double itemExtent;
@@ -2260,7 +2260,7 @@ class CupertinoTimerPicker extends StatefulWidget {
   /// Defaults to null, which disables background painting entirely.
   final Color? backgroundColor;
 
-  /// {@macro flutter.cupertino.picker.itemExtent}
+  /// {@macro cupertino_ui.picker.itemExtent}
   ///
   /// Defaults to a value that matches the default iOS timer picker wheel.
   final double itemExtent;

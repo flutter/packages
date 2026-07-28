@@ -2374,10 +2374,10 @@ class TimePickerDialog extends StatefulWidget {
   /// Callback called when the selected entry mode is changed.
   final EntryModeChangeCallback? onEntryModeChanged;
 
-  /// {@macro flutter.material.time_picker.switchToInputEntryModeIcon}
+  /// {@macro material_ui.time_picker.switchToInputEntryModeIcon}
   final Icon? switchToInputEntryModeIcon;
 
-  /// {@macro flutter.material.time_picker.switchToTimerEntryModeIcon}
+  /// {@macro material_ui.time_picker.switchToTimerEntryModeIcon}
   final Icon? switchToTimerEntryModeIcon;
 
   /// If true and entry mode is [TimePickerEntryMode.input], the hour and minute
@@ -2838,10 +2838,10 @@ class _TimePicker extends StatefulWidget {
   /// Callback called when the selected entry mode is changed.
   final EntryModeChangeCallback? onEntryModeChanged;
 
-  /// {@macro flutter.material.time_picker.switchToInputEntryModeIcon}
+  /// {@macro material_ui.time_picker.switchToInputEntryModeIcon}
   final Icon? switchToInputEntryModeIcon;
 
-  /// {@macro flutter.material.time_picker.switchToTimerEntryModeIcon}
+  /// {@macro material_ui.time_picker.switchToTimerEntryModeIcon}
   final Icon? switchToTimerEntryModeIcon;
 
   /// If true, input fields start empty in input mode.
@@ -3179,7 +3179,7 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 /// parameter to override the default and force the dialog to appear in either
 /// portrait or landscape mode.
 ///
-/// {@template flutter.material.time_picker.switchToInputEntryModeIcon}
+/// {@template material_ui.time_picker.switchToInputEntryModeIcon}
 /// The optional [switchToInputEntryModeIcon] argument can be used to customize
 /// the input method icon that is shown when the [TimePickerEntryMode]
 /// is [TimePickerEntryMode.dial].
@@ -3187,7 +3187,7 @@ class _TimePickerState extends State<_TimePicker> with RestorationMixin {
 /// Defaults to an [Icon] widget with [Icons.keyboard_outlined] as icon.
 /// {@endtemplate}
 ///
-/// {@template flutter.material.time_picker.switchToTimerEntryModeIcon}
+/// {@template material_ui.time_picker.switchToTimerEntryModeIcon}
 /// The optional [switchToTimerEntryModeIcon] argument can be used to customize
 /// the input method icon that is shown when the [TimePickerEntryMode]
 /// is [TimePickerEntryMode.input].

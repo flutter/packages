@@ -189,14 +189,14 @@ class Radio<T> extends StatefulWidget {
   /// {@macro flutter.widget.RawRadio.value}
   final T value;
 
-  /// {@macro flutter.cupertino.Radio.groupValue}
+  /// {@macro cupertino_ui.Radio.groupValue}
   @Deprecated(
     'Use a RadioGroup ancestor to manage group value instead. '
     'This feature was deprecated after v3.32.0-0.0.pre.',
   )
   final T? groupValue;
 
-  /// {@macro flutter.cupertino.Radio.onChanged}
+  /// {@macro cupertino_ui.Radio.onChanged}
   ///
   /// For example:
   ///
@@ -251,7 +251,7 @@ class Radio<T> extends StatefulWidget {
   /// state, it will be used instead of this color.
   final Color? activeColor;
 
-  /// {@template flutter.material.radio.fillColor}
+  /// {@template material_ui.radio.fillColor}
   /// The color that fills the radio button, in all [WidgetState]s.
   ///
   /// Resolves in the following states:
@@ -294,7 +294,7 @@ class Radio<T> extends StatefulWidget {
   /// selected state and [ColorScheme.onSurfaceVariant] is used in the default state.
   final WidgetStateProperty<Color?>? fillColor;
 
-  /// {@template flutter.material.radio.materialTapTargetSize}
+  /// {@template material_ui.radio.materialTapTargetSize}
   /// Configures the minimum size of the tap target.
   /// {@endtemplate}
   ///
@@ -307,11 +307,11 @@ class Radio<T> extends StatefulWidget {
   ///  * [MaterialTapTargetSize], for a description of how this affects tap targets.
   final MaterialTapTargetSize? materialTapTargetSize;
 
-  /// {@template flutter.material.radio.visualDensity}
+  /// {@template material_ui.radio.visualDensity}
   /// Defines how compact the radio's layout will be.
   /// {@endtemplate}
   ///
-  /// {@macro flutter.material.themedata.visualDensity}
+  /// {@macro material_ui.themedata.visualDensity}
   ///
   /// If null, then the value of [RadioThemeData.visualDensity] is used. If that
   /// is also null, then the value of [ThemeData.visualDensity] is used.
@@ -332,7 +332,7 @@ class Radio<T> extends StatefulWidget {
   /// [ThemeData.focusColor] is used.
   final Color? focusColor;
 
-  /// {@template flutter.material.radio.hoverColor}
+  /// {@template material_ui.radio.hoverColor}
   /// The color for the radio's [Material] when a pointer is hovering over it.
   ///
   /// If [overlayColor] returns a non-null color in the [WidgetState.hovered]
@@ -344,7 +344,7 @@ class Radio<T> extends StatefulWidget {
   /// [ThemeData.hoverColor] is used.
   final Color? hoverColor;
 
-  /// {@template flutter.material.radio.overlayColor}
+  /// {@template material_ui.radio.overlayColor}
   /// The color for the radio's [Material].
   ///
   /// Resolves in the following states:
@@ -371,7 +371,7 @@ class Radio<T> extends StatefulWidget {
   ///   * focused - Theme.colorScheme.onSurface(0.1)
   final WidgetStateProperty<Color?>? overlayColor;
 
-  /// {@template flutter.material.radio.splashRadius}
+  /// {@template material_ui.radio.splashRadius}
   /// The splash radius of the circular [Material] ink response.
   /// {@endtemplate}
   ///
@@ -402,10 +402,10 @@ class Radio<T> extends StatefulWidget {
 
   final _RadioType _radioType;
 
-  /// {@macro flutter.cupertino.Radio.enabled}
+  /// {@macro cupertino_ui.Radio.enabled}
   final bool? enabled;
 
-  /// {@template flutter.material.Radio.backgroundColor}
+  /// {@template material_ui.Radio.backgroundColor}
   /// The color of the background of the radio button, in all [WidgetState]s.
   ///
   /// Resolves in the following states:
@@ -419,7 +419,7 @@ class Radio<T> extends StatefulWidget {
   /// If that is also null the default value is transparent in all states.
   final WidgetStateProperty<Color?>? backgroundColor;
 
-  /// {@template flutter.material.Radio.side}
+  /// {@template material_ui.Radio.side}
   /// The side for the circular border of the radio button, in all
   /// [WidgetState]s.
   ///
@@ -437,7 +437,7 @@ class Radio<T> extends StatefulWidget {
   /// also null, the default value is a border using the fill color.
   final BorderSide? side;
 
-  /// {@template flutter.material.Radio.innerRadius}
+  /// {@template material_ui.Radio.innerRadius}
   /// The radius of the inner circle of the radio button, in all [WidgetState]s.
   ///
   /// Resolves in the following states:

@@ -335,7 +335,7 @@ class ButtonStyle with Diagnosticable {
 
   /// Defines how compact the button's layout will be.
   ///
-  /// {@macro flutter.material.themedata.visualDensity}
+  /// {@macro material_ui.themedata.visualDensity}
   ///
   /// See also:
   ///

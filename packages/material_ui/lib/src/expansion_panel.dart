@@ -286,7 +286,7 @@ class ExpansionPanelList extends StatefulWidget {
   /// By default, the value of elevation is 2.
   final double elevation;
 
-  /// {@macro flutter.material.ExpandIcon.color}
+  /// {@macro material_ui.ExpandIcon.color}
   final Color? expandIconColor;
 
   /// Defines the [MaterialGap.size] of the [MaterialGap] which is placed

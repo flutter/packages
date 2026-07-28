@@ -42,12 +42,12 @@ abstract class SliderComponentShape {
 
   /// Paints the shape, taking into account the state passed to it.
   ///
-  /// {@template flutter.material.SliderComponentShape.paint.context}
+  /// {@template material_ui.SliderComponentShape.paint.context}
   /// The `context` argument is the same as the one that includes the [Slider]'s
   /// render box.
   /// {@endtemplate}
   ///
-  /// {@template flutter.material.SliderComponentShape.paint.center}
+  /// {@template material_ui.SliderComponentShape.paint.center}
   /// The `center` argument is the offset for where this shape's center should be
   /// painted. This offset is relative to the origin of the [context] canvas.
   /// {@endtemplate}
@@ -56,14 +56,14 @@ abstract class SliderComponentShape {
   /// begins to interact with the slider. It reverses when the user stops interacting
   /// with the slider.
   ///
-  /// {@template flutter.material.SliderComponentShape.paint.enableAnimation}
+  /// {@template material_ui.SliderComponentShape.paint.enableAnimation}
   /// The `enableAnimation` argument is an animation triggered when the [Slider]
   /// is enabled, and it reverses when the slider is disabled. The [Slider] is
   /// enabled when [Slider.onChanged] is not null. Use this to paint
   /// intermediate frames for this shape when the slider changes enabled state.
   /// {@endtemplate}
   ///
-  /// {@template flutter.material.SliderComponentShape.paint.isDiscrete}
+  /// {@template material_ui.SliderComponentShape.paint.isDiscrete}
   /// The `isDiscrete` argument is true if [Slider.divisions] is non-null. When
   /// true, the slider will render tick marks on top of the track.
   /// {@endtemplate}
@@ -73,12 +73,12 @@ abstract class SliderComponentShape {
   /// should appear. If the `labelPainter` argument is null, then no label was
   /// supplied to the [Slider].
   ///
-  /// {@template flutter.material.SliderComponentShape.paint.parentBox}
+  /// {@template material_ui.SliderComponentShape.paint.parentBox}
   /// The `parentBox` argument is the [RenderBox] of the [Slider]. Its attributes,
   /// such as size, can be used to assist in painting this shape.
   /// {@endtemplate}
   ///
-  /// {@template flutter.material.SliderComponentShape.paint.sliderTheme}
+  /// {@template material_ui.SliderComponentShape.paint.sliderTheme}
   /// the `sliderTheme` argument is the theme assigned to the [Slider] that this
   /// shape belongs to.
   /// {@endtemplate}
@@ -90,14 +90,14 @@ abstract class SliderComponentShape {
   /// The `value` argument is the current parametric value (from 0.0 to 1.0) of
   /// the slider.
   ///
-  /// {@template flutter.material.SliderComponentShape.paint.textScaleFactor}
+  /// {@template material_ui.SliderComponentShape.paint.textScaleFactor}
   /// The `textScaleFactor` argument can be used to determine whether the
   /// component should paint larger or smaller, depending on whether
   /// [textScaleFactor] is greater than 1 for larger, and between 0 and 1 for
   /// smaller. It's usually computed from [MediaQueryData.textScaler].
   /// {@endtemplate}
   ///
-  /// {@template flutter.material.SliderComponentShape.paint.sizeWithOverflow}
+  /// {@template material_ui.SliderComponentShape.paint.sizeWithOverflow}
   /// The `sizeWithOverflow` argument can be used to determine the bounds the
   /// drawing of the components that are outside of the regular slider bounds.
   /// It's the size of the box, whose center is aligned with the slider's

@@ -298,13 +298,13 @@ class RefreshIndicator extends StatefulWidget {
   /// else for more complicated layouts.
   final ScrollNotificationPredicate notificationPredicate;
 
-  /// {@macro flutter.progress_indicator.ProgressIndicator.semanticsLabel}
+  /// {@macro material_ui.progress_indicator.ProgressIndicator.semanticsLabel}
   ///
   /// This will be defaulted to [MaterialLocalizations.refreshIndicatorSemanticLabel]
   /// if it is null.
   final String? semanticsLabel;
 
-  /// {@macro flutter.progress_indicator.ProgressIndicator.semanticsValue}
+  /// {@macro material_ui.progress_indicator.ProgressIndicator.semanticsValue}
   final String? semanticsValue;
 
   /// Defines [strokeWidth] for `RefreshIndicator`.

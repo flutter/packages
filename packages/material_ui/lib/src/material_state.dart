@@ -37,7 +37,7 @@ import 'input_border.dart';
 ///    except [WidgetState] can be used outside of Material.
 ///  * [MaterialStateProperty], an interface for objects that "resolve" to
 ///    different values depending on a widget's material state.
-/// {@template flutter.material.MaterialStateProperty.implementations}
+/// {@template material_ui.MaterialStateProperty.implementations}
 ///  * [MaterialStateColor], a [Color] that implements `MaterialStateProperty`
 ///    which is used in APIs that need to accept either a [Color] or a
 ///    `MaterialStateProperty<Color>`.
@@ -568,7 +568,7 @@ class _WidgetInputBorderMapper extends WidgetStateMapper<InputBorder>
 ///
 ///  * [WidgetStateProperty], the non-Material version that can be used
 ///    interchangeably with `MaterialStateProperty`.
-/// {@macro flutter.material.MaterialStateProperty.implementations}
+/// {@macro material_ui.MaterialStateProperty.implementations}
 @Deprecated(
   'Use WidgetStateProperty instead. '
   'Moved to the Widgets layer to make code available outside of Material. '

@@ -305,7 +305,7 @@ class BottomNavigationBar extends StatefulWidget {
   ///
   /// If null, defaults to `8.0`.
   ///
-  /// {@macro flutter.material.material.elevation}
+  /// {@macro material_ui.material.elevation}
   final double? elevation;
 
   /// Defines the layout and behavior of a [BottomNavigationBar].

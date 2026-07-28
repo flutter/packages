@@ -29,7 +29,7 @@ import 'package:flutter/painting.dart';
 /// For more information on colors in Material 3 see
 /// the spec at <https://m3.material.io/styles/color/the-color-system>.
 ///
-///{@template flutter.material.colors.colorRoles}
+///{@template material_ui.colors.colorRoles}
 /// In Material 3, colors are represented using color roles and
 /// corresponding tokens. Each property in the [ColorScheme] class
 /// represents one color role as defined in the spec above.
@@ -37,7 +37,7 @@ import 'package:flutter/painting.dart';
 ///
 /// ### Material 3 Colors in Flutter
 ///
-///{@template flutter.material.colors.settingColors}
+///{@template material_ui.colors.settingColors}
 /// Flutter's Material widgets can be assigned colors at the widget level
 /// using widget properties,
 /// or at the app level using theme classes.

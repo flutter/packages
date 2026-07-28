@@ -167,7 +167,7 @@ class _CupertinoTextFieldSelectionGestureDetectorBuilder
 /// rounded rectangle border around the text field. If you set the [decoration]
 /// property to null, the decoration will be removed entirely.
 ///
-/// {@template flutter.cupertino.textfield.wantKeepAlive}
+/// {@template cupertino_ui.textfield.wantKeepAlive}
 /// When the widget has focus, it will prevent itself from disposing via its
 /// underlying [EditableText]'s [AutomaticKeepAliveClientMixin.wantKeepAlive] in
 /// order to avoid losing the selection. Removing the focus will allow it to be
@@ -613,7 +613,7 @@ class CupertinoTextField extends StatefulWidget {
   )
   final ToolbarOptions? toolbarOptions;
 
-  /// {@template flutter.cupertino.InputDecorator.textAlignVertical}
+  /// {@template cupertino_ui.InputDecorator.textAlignVertical}
   /// How the text should be aligned vertically.
   ///
   /// Determines the alignment of the baseline within the available space of
@@ -794,7 +794,7 @@ class CupertinoTextField extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.selectionEnabled}
   bool get selectionEnabled => enableInteractiveSelection;
 
-  /// {@template flutter.cupertino.textfield.onTap}
+  /// {@template cupertino_ui.textfield.onTap}
   /// Called for the first tap in a series of taps.
   ///
   /// The text field builds a [GestureDetector] to handle input events like tap,
@@ -820,7 +820,7 @@ class CupertinoTextField extends StatefulWidget {
   /// {@macro flutter.services.AutofillConfiguration.autofillHints}
   final Iterable<String>? autofillHints;
 
-  /// {@template flutter.cupertino.Material.clipBehavior}
+  /// {@template cupertino_ui.Material.clipBehavior}
   /// The content will be clipped (or not) according to this option.
   ///
   /// See the enum [Clip] for details of all possible options and their common
@@ -830,7 +830,7 @@ class CupertinoTextField extends StatefulWidget {
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
 
-  /// {@template flutter.cupertino.textfield.restorationId}
+  /// {@template cupertino_ui.textfield.restorationId}
   /// Restoration ID to save and restore the state of the text field.
   ///
   /// If non-null, the text field will persist and restore its current scroll

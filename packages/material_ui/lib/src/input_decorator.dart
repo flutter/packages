@@ -1893,7 +1893,7 @@ class InputDecorator extends StatefulWidget {
   /// How the text in the decoration should be aligned horizontally.
   final TextAlign? textAlign;
 
-  /// {@macro flutter.cupertino.InputDecorator.textAlignVertical}
+  /// {@macro cupertino_ui.InputDecorator.textAlignVertical}
   final TextAlignVertical? textAlignVertical;
 
   /// Whether the input field has focus.
@@ -3006,7 +3006,7 @@ class InputDecoration {
 
   /// Optional widget that describes the input field.
   ///
-  /// {@template flutter.material.inputDecoration.label}
+  /// {@template material_ui.inputDecoration.label}
   /// When the input field is empty and unfocused, the label is displayed on
   /// top of the input field (i.e., at the same location on the screen where
   /// text may be entered in the input field). When the input field receives
@@ -3036,13 +3036,13 @@ class InputDecoration {
 
   /// Optional text that describes the input field.
   ///
-  /// {@macro flutter.material.inputDecoration.label}
+  /// {@macro material_ui.inputDecoration.label}
   ///
   /// If a more elaborate label is required, consider using [label] instead.
   /// Only one of [label] and [labelText] can be specified.
   final String? labelText;
 
-  /// {@template flutter.material.inputDecoration.labelStyle}
+  /// {@template material_ui.inputDecoration.labelStyle}
   /// The style to use for [InputDecoration.labelText] when the label is on top
   /// of the input field.
   ///
@@ -3079,7 +3079,7 @@ class InputDecoration {
   /// {@endtemplate}
   final TextStyle? labelStyle;
 
-  /// {@template flutter.material.inputDecoration.floatingLabelStyle}
+  /// {@template material_ui.inputDecoration.floatingLabelStyle}
   /// The style to use for [InputDecoration.labelText] when the label is
   /// above (i.e., vertically adjacent to) the input field.
   ///
@@ -3279,7 +3279,7 @@ class InputDecoration {
   /// Only one of [error] and [errorText] can be specified.
   final String? errorText;
 
-  /// {@template flutter.material.inputDecoration.errorStyle}
+  /// {@template material_ui.inputDecoration.errorStyle}
   /// The style to use for the [InputDecoration.errorText].
   ///
   /// If null, defaults of a value derived from the base [TextStyle] for the
@@ -3313,7 +3313,7 @@ class InputDecoration {
   ///  * [helperMaxLines], the equivalent but for the [helperText].
   final int? errorMaxLines;
 
-  /// {@template flutter.material.inputDecoration.floatingLabelBehavior}
+  /// {@template material_ui.inputDecoration.floatingLabelBehavior}
   /// Defines **how** the floating label should behave.
   ///
   /// When [FloatingLabelBehavior.auto] the label will float to the top only when
@@ -3335,7 +3335,7 @@ class InputDecoration {
   ///    should be displayed.
   final FloatingLabelBehavior? floatingLabelBehavior;
 
-  /// {@template flutter.material.inputDecoration.floatingLabelAlignment}
+  /// {@template material_ui.inputDecoration.floatingLabelAlignment}
   /// Defines **where** the floating label should be displayed.
   ///
   /// [FloatingLabelAlignment.start] aligns the floating label to the leftmost
@@ -3363,7 +3363,7 @@ class InputDecoration {
 
   /// The padding for the input decoration's container.
   ///
-  /// {@macro flutter.material.input_decorator.container_description}
+  /// {@macro material_ui.input_decorator.container_description}
   ///
   /// By default the [contentPadding] reflects [isDense] and the type of the
   /// [border].
@@ -3428,7 +3428,7 @@ class InputDecoration {
   /// )
   /// ```
   ///
-  /// {@macro flutter.material.input_decorator.container_description}
+  /// {@macro material_ui.input_decorator.container_description}
   ///
   /// The prefix icon alignment can be changed using [Align] with a fixed `widthFactor` and
   /// `heightFactor`.
@@ -3708,7 +3708,7 @@ class InputDecoration {
   ///
   /// Typically this field set to true if [border] is an [UnderlineInputBorder].
   ///
-  /// {@template flutter.material.input_decorator.container_description}
+  /// {@template material_ui.input_decorator.container_description}
   /// The decoration's container is the area which is filled if [filled] is true
   /// and bordered per the [border]. It's the area adjacent to [icon] and above
   /// the widgets that contain [helperText], [errorText], and [counterText].
@@ -3725,7 +3725,7 @@ class InputDecoration {
   /// By default the [fillColor] is based on the current
   /// [InputDecorationThemeData.fillColor].
   ///
-  /// {@macro flutter.material.input_decorator.container_description}
+  /// {@macro material_ui.input_decorator.container_description}
   final Color? fillColor;
 
   /// The fill color of the decoration's container when it has the input focus.
@@ -3738,7 +3738,7 @@ class InputDecoration {
   /// container color, they respond by changing their border to the
   /// [focusedBorder], which you can change the color of.
   ///
-  /// {@macro flutter.material.input_decorator.container_description}
+  /// {@macro material_ui.input_decorator.container_description}
   final Color? focusColor;
 
   /// The color of the highlight for the decoration shown if the container
@@ -3752,7 +3752,7 @@ class InputDecoration {
   ///
   /// By default the [hoverColor] is based on the current [Theme].
   ///
-  /// {@macro flutter.material.input_decorator.container_description}
+  /// {@macro material_ui.input_decorator.container_description}
   final Color? hoverColor;
 
   /// The border to display when the [InputDecorator] does not have the focus and
@@ -5012,10 +5012,10 @@ class InputDecorationThemeData with Diagnosticable {
     this.visualDensity,
   });
 
-  /// {@macro flutter.material.inputDecoration.labelStyle}
+  /// {@macro material_ui.inputDecoration.labelStyle}
   final TextStyle? labelStyle;
 
-  /// {@macro flutter.material.inputDecoration.floatingLabelStyle}
+  /// {@macro material_ui.inputDecoration.floatingLabelStyle}
   final TextStyle? floatingLabelStyle;
 
   /// The style to use for [InputDecoration.helperText].
@@ -5065,7 +5065,7 @@ class InputDecorationThemeData with Diagnosticable {
   /// of the [Text] widget used to display the hint text.
   final int? hintMaxLines;
 
-  /// {@macro flutter.material.inputDecoration.errorStyle}
+  /// {@macro material_ui.inputDecoration.errorStyle}
   final TextStyle? errorStyle;
 
   /// The maximum number of lines the [InputDecoration.errorText] can occupy.
@@ -5081,12 +5081,12 @@ class InputDecorationThemeData with Diagnosticable {
   ///  * [helperMaxLines], the equivalent but for the [InputDecoration.helperText].
   final int? errorMaxLines;
 
-  /// {@macro flutter.material.inputDecoration.floatingLabelBehavior}
+  /// {@macro material_ui.inputDecoration.floatingLabelBehavior}
   ///
   /// Defaults to [FloatingLabelBehavior.auto].
   final FloatingLabelBehavior floatingLabelBehavior;
 
-  /// {@macro flutter.material.inputDecoration.floatingLabelAlignment}
+  /// {@macro material_ui.inputDecoration.floatingLabelAlignment}
   ///
   /// Defaults to [FloatingLabelAlignment.start].
   final FloatingLabelAlignment floatingLabelAlignment;

@@ -283,7 +283,7 @@ class CupertinoTextFormFieldRow extends FormField<String> {
   /// initialize its [TextEditingController.text] with [initialValue].
   final TextEditingController? controller;
 
-  /// {@template flutter.cupertino.TextFormField.onChanged}
+  /// {@template cupertino_ui.TextFormField.onChanged}
   /// Called when the user initiates a change to the TextField's
   /// value: when they have inserted or deleted text or reset the form.
   /// {@endtemplate}
