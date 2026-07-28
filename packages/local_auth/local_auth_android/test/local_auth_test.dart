@@ -198,6 +198,16 @@ void main() {
         // auth_messages_android.dart
         expect(strings.signInTitle, androidSignInTitle);
       });
+
+      test('passes provided messages without reason', () async {
+        when(
+          api.authenticate(any, any),
+        ).thenAnswer((_) async => AuthResult(code: AuthResultCode.success));
+
+        final bool result = await plugin.authenticate(authMessages: <AuthMessages>[]);
+
+        expect(result, true);
+      });
     });
 
     group('options', () {

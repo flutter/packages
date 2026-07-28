@@ -73,6 +73,13 @@ void main() {
     expect(result, true);
     verify(mockLocalAuthPlatform.deviceSupportsBiometrics()).called(2);
   });
+
+  test('requiresLocalizedReason calls platform implementation', () {
+    when(mockLocalAuthPlatform.requiresLocalizedReason()).thenReturn(true);
+    final bool result = localAuthentication.requiresLocalizedReason();
+    expect(result, true);
+    verify(mockLocalAuthPlatform.requiresLocalizedReason()).called(1);
+  });
 }
 
 class MockLocalAuthPlatform extends Mock
@@ -84,7 +91,7 @@ class MockLocalAuthPlatform extends Mock
 
   @override
   Future<bool> authenticate({
-    required String? localizedReason,
+    String? localizedReason,
     required Iterable<AuthMessages>? authMessages,
     AuthenticationOptions? options = const AuthenticationOptions(),
   }) =>
@@ -129,4 +136,12 @@ class MockLocalAuthPlatform extends Mock
             returnValue: Future<bool>.value(false),
           )
           as Future<bool>;
+
+  @override
+  bool requiresLocalizedReason() =>
+      super.noSuchMethod(
+            Invocation.method(#requiresLocalizedReason, <Object>[]),
+            returnValue: false,
+          )
+          as bool;
 }
