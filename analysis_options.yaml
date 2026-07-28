@@ -24,8 +24,6 @@ analyzer:
     - '**/*.pb.dart'
     - '**/*.g.dart'
     - '**/*.mocks.dart' # Mockito @GenerateMocks
-    - '**/evals/**/*.json'
-    - '**/evals/**/*.md'
 
 formatter:
   page_width: 100
