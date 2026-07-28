@@ -1,3 +1,5 @@
+<?code-excerpt path-base="example"?>
+
 # vector_graphics_compiler
 
 A compiler for `package:vector_graphics`.
@@ -28,6 +30,33 @@ Optimizations:
 - Transformation inlining (except for text and radial gradients)
 - Group collapsing
 - Mask and clip elimination
+
+## Usage
+
+`vector_graphics_compiler` compiles SVG files into an optimized binary format
+at build time using Flutter's [asset transformer](https://docs.flutter.dev/ui/assets/asset-transformation) system.
+
+Declare your SVG asset with the transformer in `pubspec.yaml`:
+
+<?code-excerpt "pubspec.yaml (transformer-config)"?>
+```yaml
+flutter:
+  assets:
+    - path: assets/dart_logo.svg
+      transformers:
+        - package: vector_graphics_compiler
+```
+
+Load the pre-compiled asset with `AssetBytesLoader` from
+[`package:vector_graphics`](https://pub.dev/packages/vector_graphics):
+
+<?code-excerpt "lib/main.dart (asset-loader)"?>
+```dart
+child: VectorGraphic(
+  loader: AssetBytesLoader('assets/dart_logo.svg'),
+  semanticsLabel: 'Dart logo',
+),
+```
 
 ## Commemoration
 
