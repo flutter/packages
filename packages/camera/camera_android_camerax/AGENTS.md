@@ -23,5 +23,5 @@
 - Maintain high test coverage using [dart-add-unit-test](.agents/skills/dart-add-unit-test/SKILL.md)
   and [dart-collect-coverage](.agents/skills/dart-collect-coverage/SKILL.md).
 - Avoid duplicating constant strings; reuse existing ones from adjacent code.
-- **Video Recording Integration Tests**: You MUST insert a delay (e.g., `await Future<void>.delayed(const Duration(seconds: 4));`) after starting a video recording and before stopping it. Without this delay, the test will flake or fail because the Android device/emulator needs time to initialize the encoder and capture frames before finalizing.
+- **Testing Guidelines**: You MUST read and follow all rules in [TESTING.md](TESTING.md) BEFORE writing or modifying any tests. This is CRITICAL for preventing CI flakiness.
 - **CRITICAL**: When spawning subagents, NEVER provide absolute file paths in prompts. ALWAYS use relative paths. Passing absolute paths breaks `Workspace: branch` isolation and causes state bleed into the active workspace.
