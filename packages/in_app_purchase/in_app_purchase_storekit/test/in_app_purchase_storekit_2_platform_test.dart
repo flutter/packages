@@ -114,6 +114,7 @@ void main() {
         expect(result.first.productID, dummyProductWrapper.id);
         expect(result.first.status, PurchaseStatus.purchased);
         expect(result.first.pendingCompletePurchase, true);
+        expect(result.first.transactionDate, (123123.121 * 1000).round().toString());
       },
     );
 
@@ -141,6 +142,7 @@ void main() {
         final List<PurchaseDetails> result = await completer.future;
         expect(result.length, 1);
         expect(result.first.productID, dummyProductWrapper.id);
+        expect(result.first.transactionDate, (123123.121 * 1000).round().toString());
       },
     );
 
@@ -638,6 +640,7 @@ void main() {
       expect(transactions, isNotEmpty);
       expect(transactions.first.id, '123');
       expect(transactions.first.productId, 'product_id');
+      expect(transactions.first.expirationDate, (321321.32 * 1000).round().toString());
     });
 
     test('should expose receiptData (JWS) in unfinished transactions', () async {

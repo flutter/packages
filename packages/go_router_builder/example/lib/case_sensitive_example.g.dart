@@ -12,6 +12,7 @@ List<RouteBase> get $appRoutes => [$caseSensitiveRoute, $notCaseSensitiveRoute];
 
 RouteBase get $caseSensitiveRoute => GoRouteData.$route(
   path: '/case-sensitive',
+  hasOverriddenOnExit: false,
   factory: $CaseSensitiveRoute._fromState,
 );
 
@@ -39,6 +40,7 @@ mixin $CaseSensitiveRoute on GoRouteData {
 RouteBase get $notCaseSensitiveRoute => GoRouteData.$route(
   path: '/not-case-sensitive',
   caseSensitive: false,
+  hasOverriddenOnExit: false,
   factory: $NotCaseSensitiveRoute._fromState,
 );
 
