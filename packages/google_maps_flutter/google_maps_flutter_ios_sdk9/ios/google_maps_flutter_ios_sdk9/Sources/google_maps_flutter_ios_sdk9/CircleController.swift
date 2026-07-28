@@ -7,7 +7,7 @@ import google_maps_flutter_ios_sdk9_objc
 
 /// Defines circle controllable by Flutter.
 class CircleController: NSObject {
-  private(set) var circle: GMSCircle
+  let circle: GMSCircle
   private weak var mapView: GMSMapView?
 
   init(circle: FGMPlatformCircle, mapView: GMSMapView) {
@@ -23,13 +23,16 @@ class CircleController: NSObject {
     circle.map = nil
   }
 
+  /// Updates the controller's circle with the properties from a FGMPlatformCircle.
+  ///
+  /// Setting the circle to visible will set its map to the given mapView.
   func update(from platformCircle: FGMPlatformCircle) {
     if let mapView = mapView {
       CircleController.update(circle, from: platformCircle, with: mapView)
     }
   }
 
-  /// Updates the underlying GMSCircle with the properties from the given FGMPlatformCircle.
+  /// Updates the given GMSCircle with the properties from a FGMPlatformCircle.
   ///
   /// Setting the circle to visible will set its map to the given mapView.
   static func update(
@@ -51,28 +54,24 @@ class CircleController: NSObject {
 class CirclesController: NSObject {
   private weak var eventDelegate: FGMMapEventDelegate?
   private weak var mapView: GMSMapView?
-  private var circleIdToController: [String: CircleController]
+  private var circleIdToController: [String: CircleController] = [:]
 
   init(mapView: GMSMapView, eventDelegate: FGMMapEventDelegate) {
     self.mapView = mapView
     self.eventDelegate = eventDelegate
-    self.circleIdToController = [:]
     super.init()
   }
 
   func add(_ circles: [FGMPlatformCircle]) {
     guard let mapView = mapView else { return }
     for circle in circles {
-      let controller = CircleController(circle: circle, mapView: mapView)
-      circleIdToController[circle.circleId] = controller
+      circleIdToController[circle.circleId] = CircleController(circle: circle, mapView: mapView)
     }
   }
 
   func change(_ circles: [FGMPlatformCircle]) {
     for circle in circles {
-      if let controller = circleIdToController[circle.circleId] {
-        controller.update(from: circle)
-      }
+      circleIdToController[circle.circleId]?.update(from: circle)
     }
   }
 

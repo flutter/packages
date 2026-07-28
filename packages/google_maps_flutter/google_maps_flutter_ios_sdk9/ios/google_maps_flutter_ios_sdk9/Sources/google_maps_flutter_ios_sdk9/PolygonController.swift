@@ -5,13 +5,9 @@
 import GoogleMaps
 import google_maps_flutter_ios_sdk9_objc
 
-private func pathHoles(from locationHoles: [[CLLocation]]) -> [GMSMutablePath] {
-  return locationHoles.map { FGMGetPathFromPoints($0) }
-}
-
 /// Defines polygon controllable by Flutter.
 class PolygonController: NSObject {
-  private(set) var polygon: GMSPolygon
+  let polygon: GMSPolygon
   private weak var mapView: GMSMapView?
 
   init(path: GMSMutablePath, identifier: String, mapView: GMSMapView) {
@@ -25,13 +21,16 @@ class PolygonController: NSObject {
     polygon.map = nil
   }
 
+  /// Updates the controller's polygon with the properties from a FGMPlatformPolygon.
+  ///
+  /// Setting the polygon to visible will set its map to the controller's mapView.
   func update(from platformPolygon: FGMPlatformPolygon) {
     if let mapView = mapView {
       PolygonController.update(polygon, from: platformPolygon, with: mapView)
     }
   }
 
-  /// Updates the underlying GMSPolygon with the properties from the given FGMPlatformPolygon.
+  /// Updates the given GMSPolygon with the properties from a FGMPlatformPolygon.
   ///
   /// Setting the polygon to visible will set its map to the given mapView.
   static func update(
@@ -40,7 +39,9 @@ class PolygonController: NSObject {
     polygon.isTappable = platformPolygon.consumesTapEvents
     polygon.zIndex = Int32(platformPolygon.zIndex)
     polygon.path = FGMGetPathFromPoints(FGMGetPointsForPigeonLatLngs(platformPolygon.points))
-    polygon.holes = pathHoles(from: FGMGetHolesForPigeonLatLngArrays(platformPolygon.holes))
+    polygon.holes = FGMGetHolesForPigeonLatLngArrays(platformPolygon.holes).map {
+      FGMGetPathFromPoints($0)
+    }
     polygon.fillColor = FGMGetColorForPigeonColor(platformPolygon.fillColor)
     polygon.strokeColor = FGMGetColorForPigeonColor(platformPolygon.strokeColor)
     polygon.strokeWidth = CGFloat(platformPolygon.strokeWidth)
@@ -51,14 +52,13 @@ class PolygonController: NSObject {
 }
 
 class PolygonsController: NSObject {
-  private var polygonIdentifierToController: [String: PolygonController]
+  private var polygonIdentifierToController: [String: PolygonController] = [:]
   private weak var eventDelegate: FGMMapEventDelegate?
   private weak var mapView: GMSMapView?
 
   init(mapView: GMSMapView, eventDelegate: FGMMapEventDelegate) {
     self.mapView = mapView
     self.eventDelegate = eventDelegate
-    self.polygonIdentifierToController = [:]
     super.init()
   }
 
@@ -76,9 +76,7 @@ class PolygonsController: NSObject {
   func change(_ polygons: [FGMPlatformPolygon]) {
     for polygon in polygons {
       let identifier = polygon.polygonId
-      if let controller = polygonIdentifierToController[identifier] {
-        controller.update(from: polygon)
-      }
+      polygonIdentifierToController[identifier]?.update(from: polygon)
     }
   }
 

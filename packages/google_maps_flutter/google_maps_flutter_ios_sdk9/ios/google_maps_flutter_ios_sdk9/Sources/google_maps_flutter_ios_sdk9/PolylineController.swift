@@ -21,13 +21,16 @@ class PolylineController: NSObject {
     polyline.map = nil
   }
 
+  /// Updates the controller's polyline with the properties from a FGMPlatformPolyline.
+  ///
+  /// Setting the polyline to visible will set its map to the controller's mapView.
   func update(from platformPolyline: FGMPlatformPolyline) {
     if let mapView = mapView {
       PolylineController.update(polyline, from: platformPolyline, with: mapView)
     }
   }
 
-  /// Updates the underlying GMSPolyline with the properties from the given FGMPlatformPolyline.
+  /// Updates the given GMSPolyline with the properties from a FGMPlatformPolyline.
   ///
   /// Setting the polyline to visible will set its map to the given mapView.
   static func update(
@@ -40,17 +43,13 @@ class PolylineController: NSObject {
     let strokeColor = FGMGetColorForPigeonColor(platformPolyline.color)
     polyline.strokeColor = strokeColor
     polyline.strokeWidth = CGFloat(platformPolyline.width)
-    polyline.isGeodesic = platformPolyline.geodesic
-    if let patterns = platformPolyline.patterns {
-      polyline.spans = GMSStyleSpans(
-        path,
-        FGMGetStrokeStylesFromPatterns(patterns, strokeColor),
-        FGMGetSpanLengthsFromPatterns(patterns),
-        .rhumb
-      )
-    } else {
-      polyline.spans = nil
-    }
+    polyline.geodesic = platformPolyline.geodesic
+    polyline.spans = GMSStyleSpans(
+      path,
+      FGMGetStrokeStylesFromPatterns(platformPolyline.patterns, strokeColor),
+      FGMGetSpanLengthsFromPatterns(platformPolyline.patterns),
+      .rhumb
+    )
 
     // This must be done last, to avoid visual flickers of default property values.
     polyline.map = platformPolyline.visible ? mapView : nil
@@ -58,14 +57,13 @@ class PolylineController: NSObject {
 }
 
 class PolylinesController: NSObject {
-  private var polylineIdentifierToController: [String: PolylineController]
+  private var polylineIdentifierToController: [String: PolylineController] = [:]
   private weak var eventDelegate: FGMMapEventDelegate?
   private weak var mapView: GMSMapView?
 
   init(mapView: GMSMapView, eventDelegate: FGMMapEventDelegate) {
     self.mapView = mapView
     self.eventDelegate = eventDelegate
-    self.polylineIdentifierToController = [:]
     super.init()
   }
 
@@ -83,9 +81,7 @@ class PolylinesController: NSObject {
   func change(_ polylines: [FGMPlatformPolyline]) {
     for polyline in polylines {
       let identifier = polyline.polylineId
-      if let controller = polylineIdentifierToController[identifier] {
-        controller.update(from: polyline)
-      }
+      polylineIdentifierToController[identifier]?.update(from: polyline)
     }
   }
 
