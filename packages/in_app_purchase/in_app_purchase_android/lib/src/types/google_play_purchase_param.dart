@@ -14,6 +14,7 @@ class GooglePlayPurchaseParam extends PurchaseParam {
     super.applicationUserName,
     this.changeSubscriptionParam,
     this.offerToken,
+    this.obfuscatedProfileId,
   });
 
   /// The 'changeSubscriptionParam' containing information for upgrading or
@@ -25,4 +26,12 @@ class GooglePlayPurchaseParam extends PurchaseParam {
   /// For subscriptions, to get the offer token corresponding to the selected
   /// offer call productDetails.subscriptionOfferDetails?.get(selectedOfferIndex)?.offerToken
   final String? offerToken;
+
+  /// An optional obfuscated profile ID associated with the user's profile.
+  ///
+  /// This is useful when an app allows multiple profiles under a single account.
+  /// Google Play can use this value to detect irregular activity and to associate
+  /// the purchase with the profile that initiated it. If specified, consider also
+  /// setting [applicationUserName], which maps to the obfuscated account ID.
+  final String? obfuscatedProfileId;
 }

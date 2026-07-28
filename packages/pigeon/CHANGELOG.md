@@ -1,3 +1,7 @@
+## 27.3.0
+
+* Adds support for sharing constants across platforms.
+
 ## 27.2.0
 
 * Adds support for empty data classes.
