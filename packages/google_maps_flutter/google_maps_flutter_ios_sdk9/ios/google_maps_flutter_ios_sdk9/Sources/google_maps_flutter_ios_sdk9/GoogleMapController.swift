@@ -787,9 +787,7 @@ class MapCallHandler: NSObject, FGMMapsApi {
     guard let mapView = controller?.mapView else {
       return false
     }
-    let advancedMarkerFlag =
-      mapView.mapCapabilities.rawValue & GMSMapCapabilityFlags.advancedMarkers.rawValue
-    return NSNumber(value: advancedMarkerFlag != 0)
+    return NSNumber(value: mapView.mapCapabilities.contains(.advancedMarkers))
   }
 }
 
