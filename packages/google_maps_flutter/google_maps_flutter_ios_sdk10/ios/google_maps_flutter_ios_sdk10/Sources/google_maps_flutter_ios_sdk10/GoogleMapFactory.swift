@@ -8,7 +8,7 @@ import google_maps_flutter_ios_sdk10_objc
 
 class GoogleMapFactory: NSObject, FlutterPlatformViewFactory {
   weak var registrar: FlutterPluginRegistrar?
-  static var sharedMapServices = GMSServices()
+  static var sharedMapServices = GMSServices.sharedServices()
   init(registrar: FlutterPluginRegistrar) {
     self.registrar = registrar
   }

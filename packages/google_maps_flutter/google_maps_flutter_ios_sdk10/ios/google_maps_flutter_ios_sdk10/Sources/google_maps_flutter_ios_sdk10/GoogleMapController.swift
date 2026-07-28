@@ -133,6 +133,8 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   // creation time and there's no mechanism to return non-fatal error details during platform view
   // initialization.
   var styleError: String?
+  /// Whether we are currently observing the "frame" key path on `mapView`.
+  private var isObservingFrame = false
 
   public convenience init(
     frame: CGRect,
@@ -172,8 +174,11 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     // The code below must be kept in sync with `interpretMapConfiguration`. The small amount of
     // duplication here is to avoid having to defer all map view configuration until after the
     // sub-controllers are given the map view.
-    styleError = GoogleMapController.updateMapView(
+    let (styleUpdateAttempted, errorString) = GoogleMapController.updateMapView(
       mapView, fromConfiguration: creationParameters.mapConfiguration)
+    if styleUpdateAttempted {
+      styleError = errorString
+    }
     if let trackCameraPosition = creationParameters.mapConfiguration.trackCameraPosition {
       self.trackCameraPosition = trackCameraPosition.boolValue
     }
@@ -250,6 +255,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     SetUpFGMMapsInspectorApiWithSuffix(binaryMessenger, inspector, pigeonSuffix)
 
     mapView.delegate = self
+    isObservingFrame = true
     mapView.addObserver(self, forKeyPath: "frame", options: [], context: nil)
 
     // Invoke clustering after everything is configured.
@@ -257,6 +263,9 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   }
 
   deinit {
+    if isObservingFrame {
+      mapView.removeObserver(self, forKeyPath: "frame")
+    }
     SetUpFGMMapsApiWithSuffix(callHandler.messenger, nil, callHandler.pigeonSuffix)
     SetUpFGMMapsInspectorApiWithSuffix(inspector.messenger, nil, inspector.pigeonSuffix)
   }
@@ -285,6 +294,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
         return
       }
       // We only observe the frame for initial setup.
+      isObservingFrame = false
       mapView.removeObserver(self, forKeyPath: "frame")
       mapView.moveCamera(GMSCameraUpdate.setCamera(mapView.camera))
     } else {
@@ -418,7 +428,11 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   func interpretMapConfiguration(_ config: FGMPlatformMapConfiguration) {
     // Any changes here must also be made to the `init` method above. See the comment there for
     // details.
-    styleError = GoogleMapController.updateMapView(mapView, fromConfiguration: config)
+    let (styleUpdateAttempted, errorString) = GoogleMapController.updateMapView(
+      mapView, fromConfiguration: config)
+    if styleUpdateAttempted {
+      styleError = errorString
+    }
     if let trackCameraPosition = config.trackCameraPosition {
       self.trackCameraPosition = trackCameraPosition.boolValue
     }
@@ -426,11 +440,12 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
 
   /// Updates the given map view with new configuration options.
   ///
-  /// Returns a style error string if there was an error interpreting the style in `config`. The
-  /// caller should store this in `styleError` for later access.
+  /// Returns a boolean indicating whether a style update was attempted, and an error string
+  /// describing any error interpreting the style in `config`. If the boolean is true, the error
+  /// string should be stored in `styleError` for later access.
   static func updateMapView(
     _ mapView: GMSMapView, fromConfiguration config: FGMPlatformMapConfiguration
-  ) -> String? {
+  ) -> (Bool, String?) {
     if let cameraTargetBounds = config.cameraTargetBounds {
       if let bounds = cameraTargetBounds.bounds {
         mapView.cameraTargetBounds = FGMGetCoordinateBoundsForPigeonLatLngBounds(bounds)
@@ -484,15 +499,14 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     if let myLocationButtonEnabled = config.myLocationButtonEnabled {
       mapView.settings.myLocationButton = myLocationButtonEnabled.boolValue
     }
-    var styleErrorString: String?
     if let mapStyle = config.style {
       let (style, errorString) = GoogleMapController.parseMapStyle(mapStyle)
       if errorString == nil {
         mapView.mapStyle = style
       }
-      styleErrorString = errorString
+      return (true, errorString)
     }
-    return styleErrorString
+    return (false, nil)
   }
 }
 
@@ -773,9 +787,7 @@ class MapCallHandler: NSObject, FGMMapsApi {
     guard let mapView = controller?.mapView else {
       return false
     }
-    let advancedMarkerFlag =
-      mapView.mapCapabilities.rawValue & GMSMapCapabilityFlags.advancedMarkers.rawValue
-    return NSNumber(value: advancedMarkerFlag != 0)
+    return NSNumber(value: mapView.mapCapabilities.contains(.advancedMarkers))
   }
 }
 

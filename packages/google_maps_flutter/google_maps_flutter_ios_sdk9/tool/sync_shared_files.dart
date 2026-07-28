@@ -116,8 +116,9 @@ void _syncFile(File source, String destinationPath, String destinationPackageNam
   ].any((pattern) => source.absolute.path.contains(pattern))) {
     updatePackageNameInPathReferences(File(destinationPath), destinationPackageName);
   }
-  // Native unit tests need to import the Swift package.
-  if (source.absolute.path.contains('/RunnerTests/')) {
+  // Native unit tests need to import the Swift package, and the Swift files need to import the
+  // Obj-C sub-package untli the Swift migration is complete.
+  if (source.absolute.path.contains('/RunnerTests/') || source.absolute.path.endsWith('.swift')) {
     updatePackageNameInImports(File(destinationPath), destinationPackageName);
   }
 }
