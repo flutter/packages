@@ -1,7 +1,3 @@
-## 0.7.4+3
-
-* Adds agent evaluation scripts and skills.
-
 ## 0.7.4+2
 
 * Bumps cameraxVersion from 1.6.0 to 1.6.1.
