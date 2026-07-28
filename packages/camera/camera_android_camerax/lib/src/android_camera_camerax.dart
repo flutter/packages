@@ -131,9 +131,23 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The flash mode currently configured for [imageCapture].
   CameraXFlashMode? _currentFlashMode;
 
-  /// Whether or not torch flash mode has been enabled for the [camera].
+  /// Whether or not torch flash mode has been enabled for each camera.
+  final Map<String, bool> _torchEnabledPerCamera = <String, bool>{};
+
+  /// The description of the currently active camera.
   @visibleForTesting
-  bool torchEnabled = false;
+  CameraDescription? currentCameraDescription;
+
+  /// Backwards-compatible getter for tests.
+  @visibleForTesting
+  bool get torchEnabled =>
+      _torchEnabledPerCamera[currentCameraDescription?.name ?? 'test_camera'] ?? false;
+
+  /// Backwards-compatible setter for tests.
+  @visibleForTesting
+  set torchEnabled(bool value) {
+    _torchEnabledPerCamera[currentCameraDescription?.name ?? 'test_camera'] = value;
+  }
 
   /// The [ImageAnalysis] instance that can be configured to analyze individual
   /// frames.
@@ -383,6 +397,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
     cameraIsFrontFacing = cameraSelectorLensDirection == LensFacing.front;
     cameraSelector = CameraSelector(cameraInfoForFilter: chosenCameraInfo);
+    currentCameraDescription = cameraDescription;
     // Start listening for device orientation changes preceding camera creation.
     unawaited(deviceOrientationManager.startListeningForDeviceOrientationChange());
     // Determine ResolutionSelector and QualitySelector based on
@@ -953,6 +968,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
     cameraIsFrontFacing = cameraSelectorLensDirection == LensFacing.front;
     cameraSelector = CameraSelector(cameraInfoForFilter: chosenCameraInfo);
+    currentCameraDescription = description;
 
     // Unbind all use cases and rebind to new CameraSelector
     final useCases = <UseCase>[videoCapture!];
@@ -1021,7 +1037,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Set flash mode.
     if (_currentFlashMode != null) {
       await imageCapture!.setFlashMode(_currentFlashMode!);
-    } else if (torchEnabled) {
+    } else if (_torchEnabledPerCamera[currentCameraDescription?.name] ?? false) {
       // Ensure any previously set flash modes are unset when torch mode has
       // been enabled.
       await imageCapture!.setFlashMode(CameraXFlashMode.off);
@@ -1053,10 +1069,15 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// respectively.
   @override
   Future<void> setFlashMode(int cameraId, FlashMode mode) async {
+    final String? cameraName = currentCameraDescription?.name;
+    final bool torchEnabled = _torchEnabledPerCamera[cameraName] ?? false;
+
     // Turn off torch mode if it is enabled and not being redundantly set.
     if (mode != FlashMode.torch && torchEnabled) {
       await _enableTorchMode(false);
-      torchEnabled = false;
+      if (cameraName != null) {
+        _torchEnabledPerCamera[cameraName] = false;
+      }
     }
 
     switch (mode) {
@@ -1073,8 +1094,15 @@ class AndroidCameraCameraX extends CameraPlatform {
           return;
         }
 
+        final bool hasFlash = await cameraInfo?.hasFlashUnit() ?? false;
+        if (!hasFlash) {
+          throw CameraException('setFlashModeFailed', 'Device does not have flash');
+        }
+
         await _enableTorchMode(true);
-        torchEnabled = true;
+        if (cameraName != null) {
+          _torchEnabledPerCamera[cameraName] = true;
+        }
     }
   }
 
@@ -1436,12 +1464,23 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// If a previous [liveCameraState] was stored, existing observers are
   /// removed, as well.
+  @visibleForTesting
+  Future<void> updateCameraInfoAndLiveCameraState(int cameraId) =>
+      _updateCameraInfoAndLiveCameraState(cameraId);
+
   Future<void> _updateCameraInfoAndLiveCameraState(int cameraId) async {
     cameraInfo = (await camera!.getCameraInfo()) as CameraInfo;
     cameraControl = camera!.cameraControl;
     await liveCameraState?.removeObservers();
     liveCameraState = await cameraInfo!.getCameraState();
     await liveCameraState!.observe(_createCameraClosingObserver(cameraId));
+
+    // Restore torch state if necessary.
+    if (_torchEnabledPerCamera[currentCameraDescription?.name] ?? false) {
+      if (await cameraInfo!.hasFlashUnit()) {
+        await _enableTorchMode(true, addErrorToStream: false);
+      }
+    }
   }
 
   /// Creates [Observer] of the [CameraState] that will:
@@ -1794,11 +1833,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     ];
   }
 
-  Future<void> _enableTorchMode(bool value) async {
+  Future<void> _enableTorchMode(bool value, {bool addErrorToStream = true}) async {
     try {
       await cameraControl.enableTorch(value);
     } on PlatformException catch (e) {
-      cameraErrorStreamController.add(e.message ?? 'The camera was unable to change torch modes.');
+      if (addErrorToStream) {
+        cameraErrorStreamController.add(
+          e.message ?? 'The camera was unable to change torch modes.',
+        );
+      }
     }
   }
 

@@ -3447,6 +3447,14 @@ void main() {
     camera.imageCapture = MockImageCapture();
     camera.cameraControl = MockCameraControl();
     camera.processCameraProvider = mockProcessCameraProvider;
+    final mockCameraInfo = MockCameraInfo();
+    when(mockCameraInfo.hasFlashUnit()).thenAnswer((_) async => true);
+    camera.cameraInfo = mockCameraInfo;
+    camera.currentCameraDescription = const CameraDescription(
+      name: 'test_camera',
+      lensDirection: CameraLensDirection.back,
+      sensorOrientation: 0,
+    );
 
     // Ignore setting target rotation for this test; tested seprately.
     camera.captureOrientationLocked = true;
@@ -3473,6 +3481,14 @@ void main() {
     // Set directly for test versus calling createCamera.
     camera.imageCapture = MockImageCapture();
     camera.cameraControl = mockCameraControl;
+    final mockCameraInfo = MockCameraInfo();
+    when(mockCameraInfo.hasFlashUnit()).thenAnswer((_) async => true);
+    camera.cameraInfo = mockCameraInfo;
+    camera.currentCameraDescription = const CameraDescription(
+      name: 'test_camera',
+      lensDirection: CameraLensDirection.back,
+      sensorOrientation: 0,
+    );
 
     // Ignore setting target rotation for this test; tested seprately.
     camera.captureOrientationLocked = true;
@@ -3520,6 +3536,14 @@ void main() {
 
     // Set directly for test versus calling createCamera.
     camera.cameraControl = mockCameraControl;
+    final mockCameraInfo = MockCameraInfo();
+    when(mockCameraInfo.hasFlashUnit()).thenAnswer((_) async => true);
+    camera.cameraInfo = mockCameraInfo;
+    camera.currentCameraDescription = const CameraDescription(
+      name: 'test_camera',
+      lensDirection: CameraLensDirection.back,
+      sensorOrientation: 0,
+    );
 
     await camera.setFlashMode(cameraId, FlashMode.torch);
 
@@ -3534,6 +3558,14 @@ void main() {
 
     // Set directly for test versus calling createCamera.
     camera.cameraControl = mockCameraControl;
+    final mockCameraInfo = MockCameraInfo();
+    when(mockCameraInfo.hasFlashUnit()).thenAnswer((_) async => true);
+    camera.cameraInfo = mockCameraInfo;
+    camera.currentCameraDescription = const CameraDescription(
+      name: 'test_camera',
+      lensDirection: CameraLensDirection.back,
+      sensorOrientation: 0,
+    );
 
     for (final FlashMode flashMode in FlashMode.values) {
       camera.torchEnabled = true;
@@ -3551,6 +3583,89 @@ void main() {
       }
     }
   });
+
+  test(
+    'updateCameraInfoAndLiveCameraState restores torch state to ON if enabled and flash is available',
+    () async {
+      final camera = AndroidCameraCameraX();
+      final mockCameraControl = MockCameraControl();
+      final mockCameraInfo = MockCameraInfo();
+      final mockLiveCameraState = MockLiveCameraState();
+      final mockCamera = MockCamera();
+
+      camera.camera = mockCamera;
+      camera.currentCameraDescription = const CameraDescription(
+        name: 'test_camera',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: 0,
+      );
+      camera.torchEnabled = true;
+
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(mockCamera.cameraControl).thenReturn(mockCameraControl);
+      when(mockCameraInfo.getCameraState()).thenAnswer((_) async => mockLiveCameraState);
+      when(mockLiveCameraState.observe(any)).thenAnswer((_) async => {});
+      when(mockCameraInfo.hasFlashUnit()).thenAnswer((_) async => true);
+
+      GenericsPigeonOverrides.observerNew =
+          <T>({required void Function(Observer<T>, T) onChanged}) {
+            return Observer<T>.detached(onChanged: onChanged);
+          };
+
+      await camera.updateCameraInfoAndLiveCameraState(33);
+
+      verify(mockCameraControl.enableTorch(true));
+    },
+  );
+
+  test(
+    'updateCameraInfoAndLiveCameraState gracefully handles torch failure during restoration',
+    () async {
+      final camera = AndroidCameraCameraX();
+      final mockCameraControl = MockCameraControl();
+      final mockCameraInfo = MockCameraInfo();
+      final mockLiveCameraState = MockLiveCameraState();
+      final mockCamera = MockCamera();
+
+      camera.camera = mockCamera;
+      camera.currentCameraDescription = const CameraDescription(
+        name: 'test_camera',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: 0,
+      );
+      camera.torchEnabled = true;
+
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(mockCamera.cameraControl).thenReturn(mockCameraControl);
+      when(mockCameraInfo.getCameraState()).thenAnswer((_) async => mockLiveCameraState);
+      when(mockLiveCameraState.observe(any)).thenAnswer((_) async => {});
+      when(mockCameraInfo.hasFlashUnit()).thenAnswer((_) async => true);
+      // Simulate failure to enable torch (e.g. camera disconnected)
+      when(mockCameraControl.enableTorch(true)).thenThrow(PlatformException(code: 'error'));
+
+      GenericsPigeonOverrides.observerNew =
+          <T>({required void Function(Observer<T>, T) onChanged}) {
+            return Observer<T>.detached(onChanged: onChanged);
+          };
+
+      var errorEmitted = false;
+      final StreamSubscription<CameraEvent> subscription = camera.cameraEventStreamController.stream
+          .listen((dynamic event) {
+            if (event is CameraErrorEvent) {
+              errorEmitted = true;
+            }
+          });
+
+      // This should NOT throw an error to the stream because addErrorToStream is false when restoring state.
+      await camera.updateCameraInfoAndLiveCameraState(33);
+
+      // Give the stream a chance to propagate if it were added
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      expect(errorEmitted, isFalse);
+
+      await subscription.cancel();
+    },
+  );
 
   test('getMinExposureOffset returns expected exposure offset', () async {
     final camera = AndroidCameraCameraX();
