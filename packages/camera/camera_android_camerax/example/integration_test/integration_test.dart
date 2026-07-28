@@ -273,6 +273,8 @@ void main() {
     // Attempt to start a new recording. This should not throw or silently fail.
     await newController.startVideoRecording();
 
+    await Future<void>.delayed(const Duration(seconds: 4));
+
     // Stop it, ensuring no NPE is thrown by the native side and the file is valid.
     final XFile file = await newController.stopVideoRecording();
     expect(file, isNotNull);
