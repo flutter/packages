@@ -26,8 +26,8 @@ Downloaded by pub (not CocoaPods).
   # Find the Swift runtime when these plugins are built as libraries without `use_frameworks!`
   s.swift_version = '5.9'
   s.xcconfig = {
-    'LIBRARY_SEARCH_PATHS' => '$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
-    'LD_RUNPATH_SEARCH_PATHS' => '$(inherited) /usr/lib/swift',
+    'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
+    'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
     # To handle the difference in framework names between CocoaPods and Swift Package Manager.
     'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) FGM_USING_COCOAPODS=1',
   }
