@@ -14,7 +14,7 @@ dart pub get -C script/githooks
 dart script/githooks/bin/install_hooks.dart
 ```
 
-To uninstall ALL of the Git hooks in this directory, run
+To uninstall ALL of the Git hooks in this directory, run:
 
 ```bash
 git config --unset core.hooksPath
@@ -37,7 +37,6 @@ And make it executable:
 ```bash
 chmod +x .git/hooks/pre-commit
 git config --unset core.hooksPath
-```
 ```
 
 ## Available Hooks
