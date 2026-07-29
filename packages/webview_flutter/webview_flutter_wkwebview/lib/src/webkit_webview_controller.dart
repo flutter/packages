@@ -196,7 +196,7 @@ class WebKitWebViewController extends PlatformWebViewController {
             }
 
             // Upstream default when no host callback is registered.
-            PlatformWebView.fromNativeWebView(webView).load(navigationAction.request);
+            await PlatformWebView.fromNativeWebView(webView).load(navigationAction.request);
           },
       requestMediaCapturePermission:
           (
