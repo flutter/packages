@@ -22,11 +22,15 @@ git config --unset core.hooksPath
 
 # To uninstall certain hooks TEMPORARILY pass --no-verify to the related
 # action (like `git commit --no-verify` to bypass the pre-commit hook).
-# To long term only use specific Git hooks in this directory, only
-# show the desired hooks in your local hidden hooks directory. For
-# example:
+# To only use specific Git hooks in this directory long-term, create a
+# script in your local .git/hooks directory that runs the desired hook.
+# For example, create .git/hooks/pre-commit with:
+#
+# #!/usr/bin/env bash
+# exec dart script/githooks/bin/main.dart pre-commit "$@"
+#
+# And make it executable: chmod +x .git/hooks/pre-commit
 git config --unset core.hooksPath
-cp script/githooks/pre-commit .git/hooks/pre-commit
 ```
 
 ## Available Hooks
