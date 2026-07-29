@@ -77,10 +77,7 @@ class MetadataScreen extends StatelessWidget {
             title: const Text('requiresAuth'),
             subtitle: Text(requiresAuth.toString()),
           ),
-          ListTile(
-            title: const Text('analyticsName'),
-            subtitle: Text(title),
-          ),
+          ListTile(title: const Text('analyticsName'), subtitle: Text(title)),
           const SizedBox(height: 16),
           FilledButton(
             onPressed: () => context.go('/books'),
