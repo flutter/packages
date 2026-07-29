@@ -69,8 +69,18 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 ///   }
 /// }
 /// ```
+@Deprecated(
+  'CupertinoUiCompatibilityBridge is a temporary migration utility intended for use only while '
+  'dependencies are being migrated to package:cupertino_ui. '
+  'This feature was deprecated to indicate it will be removed in a future release.',
+)
 class CupertinoUiCompatibilityBridge extends StatelessWidget {
   /// Creates a [CupertinoUiCompatibilityBridge].
+  @Deprecated(
+    'CupertinoUiCompatibilityBridge is a temporary migration utility intended for use only while '
+    'dependencies are being migrated to package:cupertino_ui. '
+    'This feature was deprecated to indicate it will be removed in a future release.',
+  )
   const CupertinoUiCompatibilityBridge({super.key, required this.child, this.delegates});
 
   /// The widget below this widget in the tree.

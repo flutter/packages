@@ -67,8 +67,18 @@ import 'package:material_ui/material_ui.dart' as modern; // ignore: prefer_relat
 ///   }
 /// }
 /// ```
+@Deprecated(
+  'MaterialUiCompatibilityBridge is a temporary migration utility intended for use only while '
+  'dependencies are being migrated to package:material_ui. '
+  'This feature was deprecated to indicate it will be removed in a future release.',
+)
 class MaterialUiCompatibilityBridge extends StatelessWidget {
   /// Creates a [MaterialUiCompatibilityBridge].
+  @Deprecated(
+    'MaterialUiCompatibilityBridge is a temporary migration utility intended for use only while '
+    'dependencies are being migrated to package:material_ui. '
+    'This feature was deprecated to indicate it will be removed in a future release.',
+  )
   const MaterialUiCompatibilityBridge({super.key, required this.child, this.delegates});
 
   /// The widget below this widget in the tree.
