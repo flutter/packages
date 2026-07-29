@@ -88,7 +88,7 @@ String normalizedFileContents(File file) {
 /// should be replaced in all files.
 void updatePackageNameInPathReferences(File file, String packageName) {
   final String newContents = file.readAsStringSync().replaceAllMapped(
-    RegExp(r'google_maps_flutter_ios(?:_sdk\d+)?((?:_obj)?[:/])'),
+    RegExp(r'google_maps_flutter_ios(?:_sdk\d+)?((?:_objc)?[:/])'),
     (match) => '$packageName${match.group(1)}',
   );
   file.writeAsStringSync(newContents);
