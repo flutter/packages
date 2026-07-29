@@ -1540,6 +1540,26 @@ void main() {
     expect(textFieldWidget.hintLocales, hintLocales);
   });
 
+  testWidgets('Passes enableInlinePrediction to enableInlinePrediction TextField', (
+    WidgetTester tester,
+  ) async {
+    const enableInlinePrediction = false;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(child: TextFormField(enableInlinePrediction: enableInlinePrediction)),
+        ),
+      ),
+    );
+
+    final Finder textFieldFinder = find.byType(TextField);
+    expect(textFieldFinder, findsOneWidget);
+
+    final TextField textFieldWidget = tester.widget(textFieldFinder);
+    expect(textFieldWidget.enableInlinePrediction, enableInlinePrediction);
+  });
+
   testWidgets('Error color for cursor while validating', (WidgetTester tester) async {
     const themeErrorColor = Color(0xff111111);
     const errorStyleColor = Color(0xff777777);
