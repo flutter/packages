@@ -4,7 +4,10 @@
 
 import Flutter
 import GoogleMaps
-import google_maps_flutter_ios_sdk9_objc
+
+#if canImport(google_maps_flutter_ios_sdk9_objc)
+  import google_maps_flutter_ios_sdk9_objc
+#endif
 
 class GoogleMapFactory: NSObject, FlutterPlatformViewFactory {
   weak var registrar: FlutterPluginRegistrar?
