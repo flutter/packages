@@ -5,7 +5,10 @@
 import Flutter
 import GoogleMaps
 import GoogleMapsUtils
-import google_maps_flutter_ios_sdk10_objc
+
+#if canImport(google_maps_flutter_ios_sdk9_objc)
+  import google_maps_flutter_ios_sdk9_objc
+#endif
 
 /// Non-test implementation of FGMAssetProvider, wrapping a Flutter plugin registrar.
 class DefaultAssetProvider: NSObject, FGMAssetProvider {
