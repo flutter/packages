@@ -55,6 +55,7 @@ export 'src/list_tile.dart';
 export 'src/localizations.dart';
 export 'src/magnifier.dart';
 export 'src/menu_anchor.dart';
+export 'src/migration_utility.dart';
 export 'src/nav_bar.dart';
 export 'src/page_scaffold.dart';
 export 'src/picker.dart';
