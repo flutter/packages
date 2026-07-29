@@ -42,6 +42,7 @@ import 'android_camera_camerax_test.mocks.dart';
   MockSpec<PendingRecording>(),
   MockSpec<PlaneProxy>(),
   MockSpec<Preview>(),
+  MockSpec<PreviewView>(),
   MockSpec<ProcessCameraProvider>(),
   MockSpec<QualitySelector>(),
   MockSpec<Recorder>(),
@@ -49,6 +50,7 @@ import 'android_camera_camerax_test.mocks.dart';
   MockSpec<ResolutionSelector>(),
   MockSpec<ResolutionStrategy>(),
   MockSpec<Recording>(),
+  MockSpec<SurfaceProvider>(),
   MockSpec<SystemServicesManager>(),
   MockSpec<VideoCapture>(),
   MockSpec<ZoomState>(),
@@ -495,6 +497,8 @@ void main() {
       final mockLiveCameraState = MockLiveCameraState();
       final mockSystemServicesManager = MockSystemServicesManager();
       final mockCameraCharacteristicsKey = MockCameraCharacteristicsKey();
+      final mockPreviewView = MockPreviewView();
+      final mockSurfaceProvider = MockSurfaceProvider();
 
       var cameraPermissionsRequested = false;
       var startedListeningForDeviceOrientationChanges = false;
@@ -621,7 +625,7 @@ void main() {
       PigeonOverrides.cameraIntegerRange_new = CameraIntegerRange.pigeon_detached;
 
       when(
-        mockPreview.setSurfaceProvider(mockSystemServicesManager),
+        mockPreview.setSurfaceProvider(mockSurfaceProvider),
       ).thenAnswer((_) async => testSurfaceTextureId);
       when(
         mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector, <UseCase>[
@@ -666,7 +670,7 @@ void main() {
       expect(camera.videoCapture, equals(mockVideoCapture));
 
       // Verify the camera's Preview instance has its surface provider set.
-      verify(camera.preview!.setSurfaceProvider(mockSystemServicesManager));
+      verify(camera.preview!.setSurfaceProvider(mockSurfaceProvider));
     },
   );
 

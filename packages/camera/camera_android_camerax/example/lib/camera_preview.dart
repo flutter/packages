@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -30,9 +29,12 @@ class CameraPreview extends StatelessWidget {
                     ? controller.value.aspectRatio
                     : (1 / controller.value.aspectRatio),
                 child: Stack(
-                  fit: StackFit.expand,
-                  children: <Widget>[
-                    _wrapInRotatedBox(child: controller.buildPreview()),
+                fit: StackFit.expand,
+                children: <Widget>[
+                    RotatedBox(
+                      quarterTurns: _getQuarterTurns(),
+                      child: controller.buildPreview(),
+                    ),
                     child ?? Container(),
                   ],
                 ),
@@ -43,12 +45,20 @@ class CameraPreview extends StatelessWidget {
         : Container();
   }
 
-  Widget _wrapInRotatedBox({required Widget child}) {
-    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
-      return child;
+  int _getQuarterTurns() {
+    final Map<DeviceOrientation, int> turns = <DeviceOrientation, int>{
+      DeviceOrientation.portraitUp: 0,
+      DeviceOrientation.landscapeRight: 1,
+      DeviceOrientation.portraitDown: 2,
+      DeviceOrientation.landscapeLeft: 3,
+    };
+    int deviceTurns = turns[controller.value.deviceOrientation] ?? 0;
+    int targetTurns = turns[_getApplicableOrientation()] ?? 0;
+    int quarterTurns = (targetTurns - deviceTurns) % 4;
+    if (quarterTurns < 0) {
+      quarterTurns += 4;
     }
-
-    return RotatedBox(quarterTurns: _getQuarterTurns(), child: child);
+    return quarterTurns;
   }
 
   bool _isLandscape() {
@@ -56,16 +66,6 @@ class CameraPreview extends StatelessWidget {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ].contains(_getApplicableOrientation());
-  }
-
-  int _getQuarterTurns() {
-    final turns = <DeviceOrientation, int>{
-      DeviceOrientation.portraitUp: 0,
-      DeviceOrientation.landscapeRight: 1,
-      DeviceOrientation.portraitDown: 2,
-      DeviceOrientation.landscapeLeft: 3,
-    };
-    return turns[_getApplicableOrientation()]!;
   }
 
   DeviceOrientation _getApplicableOrientation() {

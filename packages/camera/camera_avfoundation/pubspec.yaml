@@ -18,7 +18,8 @@ flutter:
         sharedDarwinSource: true
 
 dependencies:
-  camera_platform_interface: ^2.13.0
+  camera_platform_interface:
+    path: ../camera_platform_interface/ # testing change
   flutter:
     sdk: flutter
   stream_transform: ^2.0.0

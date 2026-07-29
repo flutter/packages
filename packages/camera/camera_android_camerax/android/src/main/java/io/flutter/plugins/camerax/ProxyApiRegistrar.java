@@ -15,8 +15,10 @@ import android.view.WindowManager;
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.camera.view.PreviewView;
 import androidx.lifecycle.LifecycleOwner;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.platform.PlatformViewRegistry;
 import io.flutter.view.TextureRegistry;
 
 public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
@@ -26,6 +28,8 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   @NonNull private final TextureRegistry textureRegistry;
 
   @NonNull private Context context;
+
+  @NonNull private PlatformViewRegistry platformViewRegistry;
 
   @Nullable private CameraPermissionsManager.PermissionsRegistry permissionsRegistry;
 
@@ -65,9 +69,11 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   public ProxyApiRegistrar(
       @NonNull BinaryMessenger binaryMessenger,
       @NonNull Context context,
+      @NonNull PlatformViewRegistry platformViewRegistry,
       @NonNull TextureRegistry textureRegistry) {
     super(binaryMessenger);
     this.context = context;
+    this.platformViewRegistry = platformViewRegistry;
     this.textureRegistry = textureRegistry;
   }
 
@@ -103,6 +109,12 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
 
   public void setContext(@NonNull Context context) {
     this.context = context;
+  }
+
+  public void registerPlatformView(@NonNull PreviewView previewPlatformView) {
+    platformViewRegistry.registerViewFactory(
+        "plugins.flutter.dev/camera_android_camerax",
+        new CameraPreviewFactory(previewPlatformView));
   }
 
   @Nullable
@@ -435,5 +447,11 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   @Override
   public PigeonApiImageProxyUtils getPigeonApiImageProxyUtils() {
     return new ImageProxyUtilsProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiPreviewView getPigeonApiPreviewView() {
+    return new PreviewViewProxyApi(this);
   }
 }
