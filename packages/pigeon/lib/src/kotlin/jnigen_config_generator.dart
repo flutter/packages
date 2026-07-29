@@ -69,7 +69,7 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
 
     indent.writeln('');
     indent.writeScoped('void main() async {', '}', () {
-      indent.writeln("  Directory.current = Platform.script.resolve('.').toFilePath();");
+      indent.writeln("  Directory.current = Platform.script.resolve('../..').toFilePath();");
       indent.writeScoped('await generateJniBindings(', ');', () {
         indent.writeScoped('Config(', '),', () {
           indent.format('''

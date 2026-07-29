@@ -86,7 +86,7 @@ import 'package:swiftgen/swiftgen.dart';
         : 'Runner';
 
     indent.writeScoped('Future<void> main(List<String> args) async {', '}', () {
-      indent.writeln("  Directory.current = Platform.script.resolve('.').toFilePath();");
+      indent.writeln("  Directory.current = Platform.script.resolve('../..').toFilePath();");
       indent.format('''
   Uri sdk;
   if (args.isNotEmpty) {

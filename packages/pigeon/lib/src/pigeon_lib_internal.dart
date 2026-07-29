@@ -499,7 +499,7 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
       (options.swiftOptions?.useFfi ?? false)
       ? _openSink(
-          'ffigen_config.dart',
+          ffigenConfigPath,
           basePath: options.swiftOptions?.appDirectory ?? options.appDirectory ?? '',
         )
       : null;
@@ -514,6 +514,7 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
       dartOutPath: options.dartOptions?.dartOut,
       apiName: 'Swift FFI',
       requiredDeps: const <String>['ffi', 'objective_c'],
+      requiredDevDeps: const <String>['ffigen'],
     );
   }
 }
@@ -673,7 +674,7 @@ class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
       options.kotlinOptions?.kotlinOut != null && (options.kotlinOptions?.useJni ?? false)
       ? _openSink(
-          'jnigen_config.dart',
+          jnigenConfigPath,
           basePath: options.kotlinOptions?.appDirectory ?? options.appDirectory ?? '',
         )
       : null;
@@ -688,6 +689,7 @@ class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
       dartOutPath: options.dartOptions?.dartOut,
       apiName: 'Kotlin JNI',
       requiredDeps: const <String>['jni'],
+      requiredDevDeps: const <String>['jnigen'],
     );
   }
 }
@@ -2358,19 +2360,30 @@ List<Error> _validateDependencies({
   required String? dartOutPath,
   required String apiName,
   required List<String> requiredDeps,
+  List<String> requiredDevDeps = const <String>[],
 }) {
   final errors = <Error>[];
 
   String? pubspecPath;
   if (appDirectory != null && appDirectory.isNotEmpty) {
-    pubspecPath = findPubspecPath(path.join(appDirectory, 'placeholder.dart'));
+    pubspecPath = findPubspecPath(Directory(appDirectory));
   }
   if (pubspecPath == null && dartOutPath != null && dartOutPath.isNotEmpty) {
-    pubspecPath = findPubspecPath(dartOutPath);
+    pubspecPath = findPubspecPath(File(dartOutPath).parent);
   }
-  pubspecPath ??= findPubspecPath(path.join(Directory.current.path, 'placeholder.dart'));
+  if (pubspecPath == null &&
+      (appDirectory == null || appDirectory.isEmpty) &&
+      (dartOutPath == null || dartOutPath.isEmpty)) {
+    pubspecPath = findPubspecPath(Directory.current);
+  }
 
   if (pubspecPath == null) {
+    errors.add(
+      Error(
+        message:
+            'Could not find pubspec.yaml to validate dependencies for $apiName native interop support.',
+      ),
+    );
     return errors;
   }
 
@@ -2388,18 +2401,56 @@ List<Error> _validateDependencies({
         final bool inDeps = dependencies?.containsKey(dep) ?? false;
         final bool inDevDeps = devDependencies?.containsKey(dep) ?? false;
         final bool inOverrides = dependencyOverrides?.containsKey(dep) ?? false;
+        if (!inDeps && !inOverrides) {
+          if (inDevDeps) {
+            errors.add(
+              Error(
+                message:
+                    'Required dependency "$dep" for $apiName native interop support must be in "dependencies", but was found in "dev_dependencies" in pubspec.yaml.\n'
+                    'Please move "$dep" to dependencies in your pubspec.yaml file.',
+              ),
+            );
+          } else {
+            errors.add(
+              Error(
+                message:
+                    'Missing required dependency "$dep" in pubspec.yaml for $apiName native interop support.\n'
+                    'Please add "$dep" to your dependencies in your pubspec.yaml file.',
+              ),
+            );
+          }
+        }
+      }
+
+      for (final dep in requiredDevDeps) {
+        final bool inDeps = dependencies?.containsKey(dep) ?? false;
+        final bool inDevDeps = devDependencies?.containsKey(dep) ?? false;
+        final bool inOverrides = dependencyOverrides?.containsKey(dep) ?? false;
         if (!inDeps && !inDevDeps && !inOverrides) {
           errors.add(
             Error(
               message:
-                  'Missing required dependency "$dep" in pubspec.yaml for $apiName native interop support.\n'
-                  'Please add "$dep" to your dependencies or dev_dependencies in your pubspec.yaml file.',
+                  'Missing required dev dependency "$dep" in pubspec.yaml for $apiName native interop support.\n'
+                  'Please add "$dep" to your dev_dependencies in your pubspec.yaml file.',
             ),
           );
         }
       }
+    } else {
+      errors.add(
+        Error(
+          message:
+              'Failed to parse "$pubspecPath" for $apiName native interop support: expected a YAML map.',
+        ),
+      );
     }
-  } catch (_) {}
+  } catch (e) {
+    errors.add(
+      Error(
+        message: 'Failed to read or parse "$pubspecPath" for $apiName native interop support: $e',
+      ),
+    );
+  }
 
   return errors;
 }

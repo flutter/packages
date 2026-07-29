@@ -2055,6 +2055,76 @@ dev_dependencies:
       }
     });
 
+    test(
+      'FfigenConfigGeneratorAdapter validation fails if runtime dependency is in dev_dependencies',
+      () async {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_dependency_test_');
+        try {
+          final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+          pubspecFile.writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+dev_dependencies:
+  objective_c: ^1.0.0
+  ffigen: ^20.0.0
+''');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              dartOut: '${tempDir.path}/lib/messages.dart',
+              swiftOut: '${tempDir.path}/lib/messages.swift',
+              swiftOptions: const SwiftOptions(useFfi: true),
+              dartPackageName: 'my_package',
+            ),
+          );
+          const adapter = FfigenConfigGeneratorAdapter();
+          final List<Error> errors = adapter.validate(
+            options,
+            Root(apis: [], classes: [], enums: []),
+          );
+          expect(errors, isNotEmpty);
+          expect(
+            errors[0].message,
+            contains('must be in "dependencies", but was found in "dev_dependencies"'),
+          );
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
+    test('FfigenConfigGeneratorAdapter validation fails if ffigen is missing', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_dependency_test_');
+      try {
+        final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+        pubspecFile.writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+  objective_c: ^1.0.0
+''');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            dartOut: '${tempDir.path}/lib/messages.dart',
+            swiftOut: '${tempDir.path}/lib/messages.swift',
+            swiftOptions: const SwiftOptions(useFfi: true),
+            dartPackageName: 'my_package',
+          ),
+        );
+        const adapter = FfigenConfigGeneratorAdapter();
+        final List<Error> errors = adapter.validate(
+          options,
+          Root(apis: [], classes: [], enums: []),
+        );
+        expect(errors, isNotEmpty);
+        expect(errors[0].message, contains('Missing required dev dependency "ffigen"'));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
     test('JnigenConfigGeneratorAdapter validation passes if jni and jnigen exist', () async {
       final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_dependency_test_');
       try {
@@ -2111,6 +2181,56 @@ dev_dependencies:
         );
         expect(errors, isNotEmpty);
         expect(errors[0].message, contains('Missing required dependency "jni"'));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test('validation fails if pubspec.yaml is not found', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_no_pubspec_test_');
+      try {
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            swiftOut: '${tempDir.path}/lib/messages.swift',
+            appDirectory: tempDir.path,
+            swiftOptions: const SwiftOptions(useFfi: true),
+          ),
+        );
+        const adapter = FfigenConfigGeneratorAdapter();
+        final List<Error> errors = adapter.validate(
+          options,
+          Root(apis: [], classes: [], enums: []),
+        );
+        expect(errors, isNotEmpty);
+        expect(errors[0].message, contains('Could not find pubspec.yaml'));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test('validation fails if pubspec.yaml is malformed', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync(
+        'pigeon_malformed_pubspec_test_',
+      );
+      try {
+        final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+        pubspecFile.writeAsStringSync('invalid_yaml: [unclosed list');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            swiftOut: '${tempDir.path}/lib/messages.swift',
+            appDirectory: tempDir.path,
+            swiftOptions: const SwiftOptions(useFfi: true),
+          ),
+        );
+        const adapter = FfigenConfigGeneratorAdapter();
+        final List<Error> errors = adapter.validate(
+          options,
+          Root(apis: [], classes: [], enums: []),
+        );
+        expect(errors, isNotEmpty);
+        expect(errors[0].message, contains('Failed to read or parse'));
       } finally {
         tempDir.deleteSync(recursive: true);
       }

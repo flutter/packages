@@ -7,7 +7,7 @@ import 'package:jnigen/jnigen.dart';
 import 'package:logging/logging.dart';
 
 void main() async {
-  Directory.current = Platform.script.resolve('.').toFilePath();
+  Directory.current = Platform.script.resolve('../..').toFilePath();
   await generateJniBindings(
     Config(
       androidSdkConfig: AndroidSdkConfig(addGradleDeps: true, androidExample: './'),

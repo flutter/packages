@@ -12,7 +12,7 @@ import 'package:swiftgen/src/config.dart';
 import 'package:swiftgen/swiftgen.dart';
 
 Future<void> main(List<String> args) async {
-  Directory.current = Platform.script.resolve('.').toFilePath();
+  Directory.current = Platform.script.resolve('../..').toFilePath();
   Uri sdk;
   if (args.isNotEmpty) {
     sdk = Uri.directory(args[0]);

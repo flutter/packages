@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:mirrors';
 
+import 'package:path/path.dart' as path;
 import 'package:yaml/yaml.dart' as yaml;
 
 import 'ast.dart';
@@ -23,6 +24,28 @@ const String defaultPluginPackageName = 'dev.flutter.pigeon';
 /// The default instance name string for native interop generated APIs.
 const String defaultNativeInteropInstanceName =
     'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
+
+/// Default filename for generated FFIgen config files.
+const String ffigenConfigFileName = 'ffigen_config.dart';
+
+/// Default filename for generated JNIgen config files.
+const String jnigenConfigFileName = 'jnigen_config.dart';
+
+/// Default relative path for generated FFIgen config files.
+final String ffigenConfigPath = path.join('tool', 'pigeon', ffigenConfigFileName);
+
+/// Default relative path for generated JNIgen config files.
+final String jnigenConfigPath = path.join('tool', 'pigeon', jnigenConfigFileName);
+
+/// Returns the path to the FFIgen config file in [appDirectory].
+String getFfigenConfigPath(String appDirectory) {
+  return path.join(appDirectory, ffigenConfigPath);
+}
+
+/// Returns the path to the JNIgen config file in [appDirectory].
+String getJnigenConfigPath(String appDirectory) {
+  return path.join(appDirectory, jnigenConfigPath);
+}
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -737,20 +760,16 @@ Iterable<NamedType> getFieldsInSerializationOrder(Class classDefinition) {
   return classDefinition.fields;
 }
 
-/// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a
-/// parent directory and returns its path.
-String? findPubspecPath(String dartFilePath) {
+/// Crawls up the path starting from [startDirectory] until it finds a pubspec.yaml
+/// in [startDirectory] or one of its parent directories, and returns its path.
+String? findPubspecPath(Directory startDirectory) {
   try {
-    Directory dir = File(dartFilePath).parent;
-    String? pubspecPath;
-    while (pubspecPath == null) {
+    var dir = startDirectory;
+    while (true) {
       if (dir.existsSync()) {
-        final Iterable<String> pubspecPaths = dir
-            .listSync()
-            .map((FileSystemEntity e) => e.path)
-            .where((String path) => path.endsWith('pubspec.yaml'));
-        if (pubspecPaths.isNotEmpty) {
-          pubspecPath = pubspecPaths.first;
+        final pubspecFile = File(path.join(dir.path, 'pubspec.yaml'));
+        if (pubspecFile.existsSync()) {
+          return pubspecFile.path;
         }
       }
       if (dir.path == dir.parent.path) {
@@ -758,7 +777,7 @@ String? findPubspecPath(String dartFilePath) {
       }
       dir = dir.parent;
     }
-    return pubspecPath;
+    return null;
   } catch (ex) {
     return null;
   }
@@ -767,7 +786,7 @@ String? findPubspecPath(String dartFilePath) {
 /// Given the path of a Dart file, [mainDartFile], the name of the package will
 /// be deduced by locating and parsing its associated pubspec.yaml.
 String? deducePackageName(String mainDartFile) {
-  final String? pubspecPath = findPubspecPath(mainDartFile);
+  final String? pubspecPath = findPubspecPath(File(mainDartFile).parent);
   if (pubspecPath == null) {
     return null;
   }

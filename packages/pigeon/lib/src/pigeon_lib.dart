@@ -901,7 +901,7 @@ ${_argParser.usage}''';
 
   /// Runs FFIgen in FFI multi-step generation.
   static Future<int> _runFfigen(String swiftAppDir, String dartExecutable) async {
-    final String configFile = path.join(swiftAppDir, 'ffigen_config.dart');
+    final String configFile = getFfigenConfigPath(swiftAppDir);
     if (File(configFile).existsSync()) {
       print('FFI Multi-step: Running FFIgen for $configFile...');
       final ProcessResult ffigenResult = await Process.run(dartExecutable, ['run', configFile]);
@@ -912,8 +912,8 @@ ${_argParser.usage}''';
       print('FFI Multi-step: FFIgen completed successfully.');
       return 0;
     } else {
-      print('FFI Multi-step: skipping FFIgen because $configFile does not exist.');
-      return 0;
+      print('Error: FFIgen config file $configFile does not exist.');
+      return 1;
     }
   }
 
@@ -961,29 +961,27 @@ ${_argParser.usage}''';
     String dartExecutable,
     Map<String, String> env,
   ) async {
-    final String configFile = path.join(appDir, 'jnigen_config.dart');
+    final String configFile = getJnigenConfigPath(appDir);
     print('JNI Multi-step: Running JNIgen for $configFile...');
     final ProcessResult jnigenResult = await Process.run(dartExecutable, [
       'run',
       configFile,
     ], environment: env);
     if (jnigenResult.exitCode != 0) {
+      print('Error running JNIgen:\n${jnigenResult.stderr}');
       print('''
 
 ================================================================================
 
-PIGEON USERS: If you have changed your pigeon api surface and haven't updated your native code that uses it, you may need to do that before running JNIgen
+PIGEON USERS: If you have changed your pigeon api surface and haven't updated your native code that uses it, you may need to do that before running JNIgen.
 
+Once you have updated the code to use the newly generated API surface, re-run Pigeon and JNIgen will be run as well.
 
-Once you have updated the code to use the newly generated API surface you can re-run pigeon and JNIgen will be run as well.
-
-
-If you have updated the native code and JNIgen still fails to run, continue reading this error.
+If you have updated the native code and JNIgen still fails to run, review the error output above.
 
 ================================================================================
 
 ''');
-      print('Error running JNIgen:\n${jnigenResult.stderr}');
       return false;
     } else {
       print('JNI Multi-step: JNIgen completed successfully.');
