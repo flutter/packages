@@ -20,7 +20,6 @@ To uninstall ALL of the Git hooks in this directory, run
 git config --unset core.hooksPath
 ```
 
-
 To uninstall certain hooks TEMPORARILY pass `--no-verify` to the related
 action, e.g. `git commit --no-verify` to bypass the pre-commit hook.
 
