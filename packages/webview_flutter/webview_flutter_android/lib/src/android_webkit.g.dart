@@ -99,6 +99,7 @@ class PigeonOverrides {
     onReceivedRequestErrorCompat,
     void Function(WebViewClient pigeon_instance, WebView webView, WebResourceRequest request)?
     requestLoading,
+    void Function(WebViewClient pigeon_instance, String url)? onCreateWindow,
     void Function(WebViewClient pigeon_instance, WebView webView, String url)? urlLoading,
     void Function(WebViewClient pigeon_instance, WebView webView, String url, bool isReload)?
     doUpdateVisitedHistory,
@@ -2712,6 +2713,7 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     onReceivedRequestErrorCompat,
     void Function(WebViewClient pigeon_instance, WebView webView, WebResourceRequest request)?
     requestLoading,
+    void Function(WebViewClient pigeon_instance, String url)? onCreateWindow,
     void Function(WebViewClient pigeon_instance, WebView webView, String url)? urlLoading,
     void Function(WebViewClient pigeon_instance, WebView webView, String url, bool isReload)?
     doUpdateVisitedHistory,
@@ -2760,6 +2762,7 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
         onReceivedRequestError: onReceivedRequestError,
         onReceivedRequestErrorCompat: onReceivedRequestErrorCompat,
         requestLoading: requestLoading,
+        onCreateWindow: onCreateWindow,
         urlLoading: urlLoading,
         doUpdateVisitedHistory: doUpdateVisitedHistory,
         onReceivedHttpAuthRequest: onReceivedHttpAuthRequest,
@@ -2781,6 +2784,7 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
       onReceivedRequestError: onReceivedRequestError,
       onReceivedRequestErrorCompat: onReceivedRequestErrorCompat,
       requestLoading: requestLoading,
+      onCreateWindow: onCreateWindow,
       urlLoading: urlLoading,
       doUpdateVisitedHistory: doUpdateVisitedHistory,
       onReceivedHttpAuthRequest: onReceivedHttpAuthRequest,
@@ -2804,6 +2808,7 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     this.onReceivedRequestError,
     this.onReceivedRequestErrorCompat,
     this.requestLoading,
+    this.onCreateWindow,
     this.urlLoading,
     this.doUpdateVisitedHistory,
     this.onReceivedHttpAuthRequest,
@@ -2849,6 +2854,7 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     this.onReceivedRequestError,
     this.onReceivedRequestErrorCompat,
     this.requestLoading,
+    this.onCreateWindow,
     this.urlLoading,
     this.doUpdateVisitedHistory,
     this.onReceivedHttpAuthRequest,
@@ -3010,6 +3016,9 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
   /// release the associated Native object manually.
   final void Function(WebViewClient pigeon_instance, WebView webView, WebResourceRequest request)?
   requestLoading;
+
+  /// Notifies the host that the page requested a new window.
+  final void Function(WebViewClient pigeon_instance, String url)? onCreateWindow;
 
   /// Give the host application a chance to take control when a URL is about to
   /// be loaded in the current WebView.
@@ -3293,6 +3302,7 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     onReceivedRequestErrorCompat,
     void Function(WebViewClient pigeon_instance, WebView webView, WebResourceRequest request)?
     requestLoading,
+    void Function(WebViewClient pigeon_instance, String url)? onCreateWindow,
     void Function(WebViewClient pigeon_instance, WebView webView, String url)? urlLoading,
     void Function(WebViewClient pigeon_instance, WebView webView, String url, bool isReload)?
     doUpdateVisitedHistory,
@@ -3551,6 +3561,36 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
               arg_pigeon_instance,
               arg_webView,
               arg_request,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onCreateWindow',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final WebViewClient arg_pigeon_instance = args[0]! as WebViewClient;
+          final String arg_url = args[1]! as String;
+          try {
+            (onCreateWindow ?? arg_pigeon_instance.onCreateWindow)?.call(
+              arg_pigeon_instance,
+              arg_url,
             );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
@@ -3940,6 +3980,7 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
       onReceivedRequestError: onReceivedRequestError,
       onReceivedRequestErrorCompat: onReceivedRequestErrorCompat,
       requestLoading: requestLoading,
+      onCreateWindow: onCreateWindow,
       urlLoading: urlLoading,
       doUpdateVisitedHistory: doUpdateVisitedHistory,
       onReceivedHttpAuthRequest: onReceivedHttpAuthRequest,
