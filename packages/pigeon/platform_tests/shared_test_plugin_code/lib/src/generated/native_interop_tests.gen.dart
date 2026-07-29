@@ -9585,7 +9585,7 @@ class NativeInteropHostIntegrationCoreApi {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
   Future<void> noop() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.noop();
     }
     final pigeonVar_channelName =
@@ -9603,7 +9603,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed object, to test serialization and deserialization.
   Future<NativeInteropAllTypes> echoAllTypes(NativeInteropAllTypes everything) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAllTypes(everything);
     }
     final pigeonVar_channelName =
@@ -9626,7 +9626,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns an error, to test error handling.
   Future<Object?> throwError() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.throwError();
     }
     final pigeonVar_channelName =
@@ -9649,7 +9649,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns an error from a void function, to test error handling.
   Future<void> throwErrorFromVoid() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.throwErrorFromVoid();
     }
     final pigeonVar_channelName =
@@ -9667,7 +9667,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns a Flutter error, to test error handling.
   Future<Object?> throwFlutterError() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.throwFlutterError();
     }
     final pigeonVar_channelName =
@@ -9690,7 +9690,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns passed in int.
   Future<int> echoInt(int anInt) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoInt(anInt);
     }
     final pigeonVar_channelName =
@@ -9713,7 +9713,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns passed in double.
   Future<double> echoDouble(double aDouble) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoDouble(aDouble);
     }
     final pigeonVar_channelName =
@@ -9736,7 +9736,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in boolean.
   Future<bool> echoBool(bool aBool) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoBool(aBool);
     }
     final pigeonVar_channelName =
@@ -9759,7 +9759,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in string.
   Future<String> echoString(String aString) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoString(aString);
     }
     final pigeonVar_channelName =
@@ -9782,7 +9782,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in Uint8List.
   Future<Uint8List> echoUint8List(Uint8List aUint8List) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoUint8List(aUint8List);
     }
     final pigeonVar_channelName =
@@ -9805,7 +9805,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in Int32List.
   Future<Int32List> echoInt32List(Int32List aInt32List) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoInt32List(aInt32List);
     }
     final pigeonVar_channelName =
@@ -9828,7 +9828,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in Int64List.
   Future<Int64List> echoInt64List(Int64List aInt64List) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoInt64List(aInt64List);
     }
     final pigeonVar_channelName =
@@ -9851,7 +9851,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in Float64List.
   Future<Float64List> echoFloat64List(Float64List aFloat64List) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoFloat64List(aFloat64List);
     }
     final pigeonVar_channelName =
@@ -9874,7 +9874,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in generic Object.
   Future<Object> echoObject(Object anObject) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoObject(anObject);
     }
     final pigeonVar_channelName =
@@ -9897,7 +9897,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed list, to test serialization and deserialization.
   Future<List<Object?>> echoList(List<Object?> list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoList(list);
     }
     final pigeonVar_channelName =
@@ -9920,7 +9920,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed list, to test serialization and deserialization.
   Future<List<String?>> echoStringList(List<String?> stringList) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoStringList(stringList);
     }
     final pigeonVar_channelName =
@@ -9943,7 +9943,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed list, to test serialization and deserialization.
   Future<List<int?>> echoIntList(List<int?> intList) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoIntList(intList);
     }
     final pigeonVar_channelName =
@@ -9966,7 +9966,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed list, to test serialization and deserialization.
   Future<List<double?>> echoDoubleList(List<double?> doubleList) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoDoubleList(doubleList);
     }
     final pigeonVar_channelName =
@@ -9989,7 +9989,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed list, to test serialization and deserialization.
   Future<List<bool?>> echoBoolList(List<bool?> boolList) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoBoolList(boolList);
     }
     final pigeonVar_channelName =
@@ -10012,7 +10012,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed list, to test serialization and deserialization.
   Future<List<NativeInteropAnEnum?>> echoEnumList(List<NativeInteropAnEnum?> enumList) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoEnumList(enumList);
     }
     final pigeonVar_channelName =
@@ -10037,7 +10037,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAllNullableTypes?>> echoClassList(
     List<NativeInteropAllNullableTypes?> classList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoClassList(classList);
     }
     final pigeonVar_channelName =
@@ -10060,7 +10060,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed list, to test serialization and deserialization.
   Future<List<NativeInteropAnEnum>> echoNonNullEnumList(List<NativeInteropAnEnum> enumList) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNonNullEnumList(enumList);
     }
     final pigeonVar_channelName =
@@ -10085,7 +10085,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAllNullableTypes>> echoNonNullClassList(
     List<NativeInteropAllNullableTypes> classList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNonNullClassList(classList);
     }
     final pigeonVar_channelName =
@@ -10108,7 +10108,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<Object?, Object?>> echoMap(Map<Object?, Object?> map) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoMap(map);
     }
     final pigeonVar_channelName =
@@ -10131,7 +10131,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<String?, String?>> echoStringMap(Map<String?, String?> stringMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoStringMap(stringMap);
     }
     final pigeonVar_channelName =
@@ -10154,7 +10154,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<int?, int?>> echoIntMap(Map<int?, int?> intMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoIntMap(intMap);
     }
     final pigeonVar_channelName =
@@ -10179,7 +10179,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<NativeInteropAnEnum?, NativeInteropAnEnum?>> echoEnumMap(
     Map<NativeInteropAnEnum?, NativeInteropAnEnum?> enumMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoEnumMap(enumMap);
     }
     final pigeonVar_channelName =
@@ -10205,7 +10205,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<int?, NativeInteropAllNullableTypes?>> echoClassMap(
     Map<int?, NativeInteropAllNullableTypes?> classMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoClassMap(classMap);
     }
     final pigeonVar_channelName =
@@ -10229,7 +10229,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<String, String>> echoNonNullStringMap(Map<String, String> stringMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNonNullStringMap(stringMap);
     }
     final pigeonVar_channelName =
@@ -10252,7 +10252,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<int, int>> echoNonNullIntMap(Map<int, int> intMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNonNullIntMap(intMap);
     }
     final pigeonVar_channelName =
@@ -10277,7 +10277,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<NativeInteropAnEnum, NativeInteropAnEnum>> echoNonNullEnumMap(
     Map<NativeInteropAnEnum, NativeInteropAnEnum> enumMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNonNullEnumMap(enumMap);
     }
     final pigeonVar_channelName =
@@ -10303,7 +10303,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<int, NativeInteropAllNullableTypes>> echoNonNullClassMap(
     Map<int, NativeInteropAllNullableTypes> classMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNonNullClassMap(classMap);
     }
     final pigeonVar_channelName =
@@ -10329,7 +10329,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<NativeInteropAllClassesWrapper> echoClassWrapper(
     NativeInteropAllClassesWrapper wrapper,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoClassWrapper(wrapper);
     }
     final pigeonVar_channelName =
@@ -10352,7 +10352,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed enum to test serialization and deserialization.
   Future<NativeInteropAnEnum> echoEnum(NativeInteropAnEnum anEnum) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoEnum(anEnum);
     }
     final pigeonVar_channelName =
@@ -10375,7 +10375,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed enum to test serialization and deserialization.
   Future<NativeInteropAnotherEnum> echoAnotherEnum(NativeInteropAnotherEnum anotherEnum) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAnotherEnum(anotherEnum);
     }
     final pigeonVar_channelName =
@@ -10398,7 +10398,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the default string.
   Future<String> echoNamedDefaultString({String aString = 'default'}) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNamedDefaultString(aString: aString);
     }
     final pigeonVar_channelName =
@@ -10421,7 +10421,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns passed in double.
   Future<double> echoOptionalDefaultDouble([double aDouble = 3.14]) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoOptionalDefaultDouble(aDouble);
     }
     final pigeonVar_channelName =
@@ -10444,7 +10444,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns passed in int.
   Future<int> echoRequiredInt({required int anInt}) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoRequiredInt(anInt: anInt);
     }
     final pigeonVar_channelName =
@@ -10469,7 +10469,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<NativeInteropAllNullableTypes?> echoAllNullableTypes(
     NativeInteropAllNullableTypes? everything,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAllNullableTypes(everything);
     }
     final pigeonVar_channelName =
@@ -10494,7 +10494,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<NativeInteropAllNullableTypesWithoutRecursion?> echoAllNullableTypesWithoutRecursion(
     NativeInteropAllNullableTypesWithoutRecursion? everything,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAllNullableTypesWithoutRecursion(everything);
     }
     final pigeonVar_channelName =
@@ -10518,7 +10518,7 @@ class NativeInteropHostIntegrationCoreApi {
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   Future<String?> extractNestedNullableString(NativeInteropAllClassesWrapper wrapper) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.extractNestedNullableString(wrapper);
     }
     final pigeonVar_channelName =
@@ -10542,7 +10542,7 @@ class NativeInteropHostIntegrationCoreApi {
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   Future<NativeInteropAllClassesWrapper> createNestedNullableString(String? nullableString) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.createNestedNullableString(nullableString);
     }
     final pigeonVar_channelName =
@@ -10568,7 +10568,7 @@ class NativeInteropHostIntegrationCoreApi {
     int? aNullableInt,
     String? aNullableString,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.sendMultipleNullableTypes(
         aNullableBool,
         aNullableInt,
@@ -10603,7 +10603,7 @@ class NativeInteropHostIntegrationCoreApi {
     int? aNullableInt,
     String? aNullableString,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.sendMultipleNullableTypesWithoutRecursion(
         aNullableBool,
         aNullableInt,
@@ -10634,7 +10634,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns passed in int.
   Future<int?> echoNullableInt(int? aNullableInt) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableInt(aNullableInt);
     }
     final pigeonVar_channelName =
@@ -10657,7 +10657,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns passed in double.
   Future<double?> echoNullableDouble(double? aNullableDouble) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableDouble(aNullableDouble);
     }
     final pigeonVar_channelName =
@@ -10680,7 +10680,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in boolean.
   Future<bool?> echoNullableBool(bool? aNullableBool) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableBool(aNullableBool);
     }
     final pigeonVar_channelName =
@@ -10703,7 +10703,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in string.
   Future<String?> echoNullableString(String? aNullableString) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableString(aNullableString);
     }
     final pigeonVar_channelName =
@@ -10726,7 +10726,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in Uint8List.
   Future<Uint8List?> echoNullableUint8List(Uint8List? aNullableUint8List) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableUint8List(aNullableUint8List);
     }
     final pigeonVar_channelName =
@@ -10751,7 +10751,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in Int32List.
   Future<Int32List?> echoNullableInt32List(Int32List? aNullableInt32List) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableInt32List(aNullableInt32List);
     }
     final pigeonVar_channelName =
@@ -10776,7 +10776,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in Int64List.
   Future<Int64List?> echoNullableInt64List(Int64List? aNullableInt64List) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableInt64List(aNullableInt64List);
     }
     final pigeonVar_channelName =
@@ -10801,7 +10801,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in Float64List.
   Future<Float64List?> echoNullableFloat64List(Float64List? aNullableFloat64List) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableFloat64List(aNullableFloat64List);
     }
     final pigeonVar_channelName =
@@ -10826,7 +10826,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in generic Object.
   Future<Object?> echoNullableObject(Object? aNullableObject) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableObject(aNullableObject);
     }
     final pigeonVar_channelName =
@@ -10849,7 +10849,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed list, to test serialization and deserialization.
   Future<List<Object?>?> echoNullableList(List<Object?>? aNullableList) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableList(aNullableList);
     }
     final pigeonVar_channelName =
@@ -10874,7 +10874,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAnEnum?>?> echoNullableEnumList(
     List<NativeInteropAnEnum?>? enumList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableEnumList(enumList);
     }
     final pigeonVar_channelName =
@@ -10899,7 +10899,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAllNullableTypes?>?> echoNullableClassList(
     List<NativeInteropAllNullableTypes?>? classList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableClassList(classList);
     }
     final pigeonVar_channelName =
@@ -10924,7 +10924,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAnEnum>?> echoNullableNonNullEnumList(
     List<NativeInteropAnEnum>? enumList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableNonNullEnumList(enumList);
     }
     final pigeonVar_channelName =
@@ -10949,7 +10949,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAllNullableTypes>?> echoNullableNonNullClassList(
     List<NativeInteropAllNullableTypes>? classList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableNonNullClassList(classList);
     }
     final pigeonVar_channelName =
@@ -10972,7 +10972,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<Object?, Object?>?> echoNullableMap(Map<Object?, Object?>? map) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableMap(map);
     }
     final pigeonVar_channelName =
@@ -10995,7 +10995,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<String?, String?>?> echoNullableStringMap(Map<String?, String?>? stringMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableStringMap(stringMap);
     }
     final pigeonVar_channelName =
@@ -11018,7 +11018,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<int?, int?>?> echoNullableIntMap(Map<int?, int?>? intMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableIntMap(intMap);
     }
     final pigeonVar_channelName =
@@ -11043,7 +11043,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?> echoNullableEnumMap(
     Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? enumMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableEnumMap(enumMap);
     }
     final pigeonVar_channelName =
@@ -11069,7 +11069,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<int?, NativeInteropAllNullableTypes?>?> echoNullableClassMap(
     Map<int?, NativeInteropAllNullableTypes?>? classMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableClassMap(classMap);
     }
     final pigeonVar_channelName =
@@ -11093,7 +11093,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<String, String>?> echoNullableNonNullStringMap(Map<String, String>? stringMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableNonNullStringMap(stringMap);
     }
     final pigeonVar_channelName =
@@ -11116,7 +11116,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<int, int>?> echoNullableNonNullIntMap(Map<int, int>? intMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableNonNullIntMap(intMap);
     }
     final pigeonVar_channelName =
@@ -11141,7 +11141,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<NativeInteropAnEnum, NativeInteropAnEnum>?> echoNullableNonNullEnumMap(
     Map<NativeInteropAnEnum, NativeInteropAnEnum>? enumMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableNonNullEnumMap(enumMap);
     }
     final pigeonVar_channelName =
@@ -11167,7 +11167,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<int, NativeInteropAllNullableTypes>?> echoNullableNonNullClassMap(
     Map<int, NativeInteropAllNullableTypes>? classMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableNonNullClassMap(classMap);
     }
     final pigeonVar_channelName =
@@ -11190,7 +11190,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<NativeInteropAnEnum?> echoNullableEnum(NativeInteropAnEnum? anEnum) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableEnum(anEnum);
     }
     final pigeonVar_channelName =
@@ -11214,7 +11214,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<NativeInteropAnotherEnum?> echoAnotherNullableEnum(
     NativeInteropAnotherEnum? anotherEnum,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAnotherNullableEnum(anotherEnum);
     }
     final pigeonVar_channelName =
@@ -11237,7 +11237,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns passed in int.
   Future<int?> echoOptionalNullableInt([int? aNullableInt]) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoOptionalNullableInt(aNullableInt);
     }
     final pigeonVar_channelName =
@@ -11260,7 +11260,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in string.
   Future<String?> echoNamedNullableString({String? aNullableString}) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoNamedNullableString(aNullableString: aNullableString);
     }
     final pigeonVar_channelName =
@@ -11284,7 +11284,7 @@ class NativeInteropHostIntegrationCoreApi {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   Future<void> noopAsync() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.noopAsync();
     }
     final pigeonVar_channelName =
@@ -11302,7 +11302,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns passed in int asynchronously.
   Future<int> echoAsyncInt(int anInt) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncInt(anInt);
     }
     final pigeonVar_channelName =
@@ -11325,7 +11325,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns passed in double asynchronously.
   Future<double> echoAsyncDouble(double aDouble) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncDouble(aDouble);
     }
     final pigeonVar_channelName =
@@ -11348,7 +11348,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in boolean asynchronously.
   Future<bool> echoAsyncBool(bool aBool) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncBool(aBool);
     }
     final pigeonVar_channelName =
@@ -11371,7 +11371,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed string asynchronously.
   Future<String> echoAsyncString(String aString) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncString(aString);
     }
     final pigeonVar_channelName =
@@ -11394,7 +11394,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in Uint8List asynchronously.
   Future<Uint8List> echoAsyncUint8List(Uint8List aUint8List) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncUint8List(aUint8List);
     }
     final pigeonVar_channelName =
@@ -11417,7 +11417,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in Int32List asynchronously.
   Future<Int32List> echoAsyncInt32List(Int32List aInt32List) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncInt32List(aInt32List);
     }
     final pigeonVar_channelName =
@@ -11440,7 +11440,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in Int64List asynchronously.
   Future<Int64List> echoAsyncInt64List(Int64List aInt64List) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncInt64List(aInt64List);
     }
     final pigeonVar_channelName =
@@ -11463,7 +11463,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in Float64List asynchronously.
   Future<Float64List> echoAsyncFloat64List(Float64List aFloat64List) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncFloat64List(aFloat64List);
     }
     final pigeonVar_channelName =
@@ -11486,7 +11486,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in generic Object asynchronously.
   Future<Object> echoAsyncObject(Object anObject) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncObject(anObject);
     }
     final pigeonVar_channelName =
@@ -11509,7 +11509,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   Future<List<Object?>> echoAsyncList(List<Object?> list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncList(list);
     }
     final pigeonVar_channelName =
@@ -11532,7 +11532,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   Future<List<NativeInteropAnEnum?>> echoAsyncEnumList(List<NativeInteropAnEnum?> enumList) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncEnumList(enumList);
     }
     final pigeonVar_channelName =
@@ -11557,7 +11557,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAllNullableTypes?>> echoAsyncClassList(
     List<NativeInteropAllNullableTypes?> classList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncClassList(classList);
     }
     final pigeonVar_channelName =
@@ -11580,7 +11580,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   Future<Map<Object?, Object?>> echoAsyncMap(Map<Object?, Object?> map) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncMap(map);
     }
     final pigeonVar_channelName =
@@ -11603,7 +11603,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   Future<Map<String?, String?>> echoAsyncStringMap(Map<String?, String?> stringMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncStringMap(stringMap);
     }
     final pigeonVar_channelName =
@@ -11626,7 +11626,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   Future<Map<int?, int?>> echoAsyncIntMap(Map<int?, int?> intMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncIntMap(intMap);
     }
     final pigeonVar_channelName =
@@ -11651,7 +11651,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<NativeInteropAnEnum?, NativeInteropAnEnum?>> echoAsyncEnumMap(
     Map<NativeInteropAnEnum?, NativeInteropAnEnum?> enumMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncEnumMap(enumMap);
     }
     final pigeonVar_channelName =
@@ -11677,7 +11677,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<int?, NativeInteropAllNullableTypes?>> echoAsyncClassMap(
     Map<int?, NativeInteropAllNullableTypes?> classMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncClassMap(classMap);
     }
     final pigeonVar_channelName =
@@ -11701,7 +11701,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   Future<NativeInteropAnEnum> echoAsyncEnum(NativeInteropAnEnum anEnum) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncEnum(anEnum);
     }
     final pigeonVar_channelName =
@@ -11726,7 +11726,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<NativeInteropAnotherEnum> echoAnotherAsyncEnum(
     NativeInteropAnotherEnum anotherEnum,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAnotherAsyncEnum(anotherEnum);
     }
     final pigeonVar_channelName =
@@ -11749,7 +11749,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Responds with an error from an async function returning a value.
   Future<Object?> throwAsyncError() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.throwAsyncError();
     }
     final pigeonVar_channelName =
@@ -11772,7 +11772,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Responds with an error from an async void function.
   Future<void> throwAsyncErrorFromVoid() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.throwAsyncErrorFromVoid();
     }
     final pigeonVar_channelName =
@@ -11790,7 +11790,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Responds with a Flutter error from an async function returning a value.
   Future<Object?> throwAsyncFlutterError() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.throwAsyncFlutterError();
     }
     final pigeonVar_channelName =
@@ -11815,7 +11815,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<NativeInteropAllTypes> echoAsyncNativeInteropAllTypes(
     NativeInteropAllTypes everything,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNativeInteropAllTypes(everything);
     }
     final pigeonVar_channelName =
@@ -11840,7 +11840,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<NativeInteropAllNullableTypes?> echoAsyncNullableNativeInteropAllNullableTypes(
     NativeInteropAllNullableTypes? everything,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableNativeInteropAllNullableTypes(everything);
     }
     final pigeonVar_channelName =
@@ -11866,7 +11866,7 @@ class NativeInteropHostIntegrationCoreApi {
   echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
     NativeInteropAllNullableTypesWithoutRecursion? everything,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
         everything,
       );
@@ -11891,7 +11891,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns passed in int asynchronously.
   Future<int?> echoAsyncNullableInt(int? anInt) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableInt(anInt);
     }
     final pigeonVar_channelName =
@@ -11914,7 +11914,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns passed in double asynchronously.
   Future<double?> echoAsyncNullableDouble(double? aDouble) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableDouble(aDouble);
     }
     final pigeonVar_channelName =
@@ -11937,7 +11937,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in boolean asynchronously.
   Future<bool?> echoAsyncNullableBool(bool? aBool) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableBool(aBool);
     }
     final pigeonVar_channelName =
@@ -11960,7 +11960,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed string asynchronously.
   Future<String?> echoAsyncNullableString(String? aString) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableString(aString);
     }
     final pigeonVar_channelName =
@@ -11983,7 +11983,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in Uint8List asynchronously.
   Future<Uint8List?> echoAsyncNullableUint8List(Uint8List? aUint8List) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableUint8List(aUint8List);
     }
     final pigeonVar_channelName =
@@ -12006,7 +12006,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in Int32List asynchronously.
   Future<Int32List?> echoAsyncNullableInt32List(Int32List? aInt32List) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableInt32List(aInt32List);
     }
     final pigeonVar_channelName =
@@ -12029,7 +12029,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in Int64List asynchronously.
   Future<Int64List?> echoAsyncNullableInt64List(Int64List? aInt64List) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableInt64List(aInt64List);
     }
     final pigeonVar_channelName =
@@ -12052,7 +12052,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in Float64List asynchronously.
   Future<Float64List?> echoAsyncNullableFloat64List(Float64List? aFloat64List) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableFloat64List(aFloat64List);
     }
     final pigeonVar_channelName =
@@ -12075,7 +12075,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed in generic Object asynchronously.
   Future<Object?> echoAsyncNullableObject(Object? anObject) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableObject(anObject);
     }
     final pigeonVar_channelName =
@@ -12098,7 +12098,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   Future<List<Object?>?> echoAsyncNullableList(List<Object?>? list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableList(list);
     }
     final pigeonVar_channelName =
@@ -12123,7 +12123,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAnEnum?>?> echoAsyncNullableEnumList(
     List<NativeInteropAnEnum?>? enumList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableEnumList(enumList);
     }
     final pigeonVar_channelName =
@@ -12148,7 +12148,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAllNullableTypes?>?> echoAsyncNullableClassList(
     List<NativeInteropAllNullableTypes?>? classList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableClassList(classList);
     }
     final pigeonVar_channelName =
@@ -12171,7 +12171,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   Future<Map<Object?, Object?>?> echoAsyncNullableMap(Map<Object?, Object?>? map) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableMap(map);
     }
     final pigeonVar_channelName =
@@ -12196,7 +12196,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<String?, String?>?> echoAsyncNullableStringMap(
     Map<String?, String?>? stringMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableStringMap(stringMap);
     }
     final pigeonVar_channelName =
@@ -12219,7 +12219,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   Future<Map<int?, int?>?> echoAsyncNullableIntMap(Map<int?, int?>? intMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableIntMap(intMap);
     }
     final pigeonVar_channelName =
@@ -12244,7 +12244,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?> echoAsyncNullableEnumMap(
     Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? enumMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableEnumMap(enumMap);
     }
     final pigeonVar_channelName =
@@ -12270,7 +12270,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<int?, NativeInteropAllNullableTypes?>?> echoAsyncNullableClassMap(
     Map<int?, NativeInteropAllNullableTypes?>? classMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableClassMap(classMap);
     }
     final pigeonVar_channelName =
@@ -12294,7 +12294,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   Future<NativeInteropAnEnum?> echoAsyncNullableEnum(NativeInteropAnEnum? anEnum) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableEnum(anEnum);
     }
     final pigeonVar_channelName =
@@ -12319,7 +12319,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<NativeInteropAnotherEnum?> echoAnotherAsyncNullableEnum(
     NativeInteropAnotherEnum? anotherEnum,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.echoAnotherAsyncNullableEnum(anotherEnum);
     }
     final pigeonVar_channelName =
@@ -12341,7 +12341,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<void> callFlutterNoop() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterNoop();
     }
     final pigeonVar_channelName =
@@ -12358,7 +12358,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Object?> callFlutterThrowError() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterThrowError();
     }
     final pigeonVar_channelName =
@@ -12380,7 +12380,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<void> callFlutterThrowErrorFromVoid() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterThrowErrorFromVoid();
     }
     final pigeonVar_channelName =
@@ -12399,7 +12399,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<NativeInteropAllTypes> callFlutterEchoNativeInteropAllTypes(
     NativeInteropAllTypes everything,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNativeInteropAllTypes(everything);
     }
     final pigeonVar_channelName =
@@ -12423,7 +12423,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<NativeInteropAllNullableTypes?> callFlutterEchoNativeInteropAllNullableTypes(
     NativeInteropAllNullableTypes? everything,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNativeInteropAllNullableTypes(everything);
     }
     final pigeonVar_channelName =
@@ -12449,7 +12449,7 @@ class NativeInteropHostIntegrationCoreApi {
     int? aNullableInt,
     String? aNullableString,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterSendMultipleNullableTypes(
         aNullableBool,
         aNullableInt,
@@ -12482,7 +12482,7 @@ class NativeInteropHostIntegrationCoreApi {
   callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
     NativeInteropAllNullableTypesWithoutRecursion? everything,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
         everything,
       );
@@ -12511,7 +12511,7 @@ class NativeInteropHostIntegrationCoreApi {
     int? aNullableInt,
     String? aNullableString,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterSendMultipleNullableTypesWithoutRecursion(
         aNullableBool,
         aNullableInt,
@@ -12541,7 +12541,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<bool> callFlutterEchoBool(bool aBool) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoBool(aBool);
     }
     final pigeonVar_channelName =
@@ -12563,7 +12563,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<int> callFlutterEchoInt(int anInt) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoInt(anInt);
     }
     final pigeonVar_channelName =
@@ -12585,7 +12585,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<double> callFlutterEchoDouble(double aDouble) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoDouble(aDouble);
     }
     final pigeonVar_channelName =
@@ -12607,7 +12607,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<String> callFlutterEchoString(String aString) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoString(aString);
     }
     final pigeonVar_channelName =
@@ -12629,7 +12629,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Uint8List> callFlutterEchoUint8List(Uint8List list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoUint8List(list);
     }
     final pigeonVar_channelName =
@@ -12651,7 +12651,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Int32List> callFlutterEchoInt32List(Int32List list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoInt32List(list);
     }
     final pigeonVar_channelName =
@@ -12673,7 +12673,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Int64List> callFlutterEchoInt64List(Int64List list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoInt64List(list);
     }
     final pigeonVar_channelName =
@@ -12695,7 +12695,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Float64List> callFlutterEchoFloat64List(Float64List list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoFloat64List(list);
     }
     final pigeonVar_channelName =
@@ -12717,7 +12717,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<List<Object?>> callFlutterEchoList(List<Object?> list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoList(list);
     }
     final pigeonVar_channelName =
@@ -12741,7 +12741,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAnEnum?>> callFlutterEchoEnumList(
     List<NativeInteropAnEnum?> enumList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoEnumList(enumList);
     }
     final pigeonVar_channelName =
@@ -12765,7 +12765,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAllNullableTypes?>> callFlutterEchoClassList(
     List<NativeInteropAllNullableTypes?> classList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoClassList(classList);
     }
     final pigeonVar_channelName =
@@ -12789,7 +12789,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAnEnum>> callFlutterEchoNonNullEnumList(
     List<NativeInteropAnEnum> enumList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNonNullEnumList(enumList);
     }
     final pigeonVar_channelName =
@@ -12813,7 +12813,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAllNullableTypes>> callFlutterEchoNonNullClassList(
     List<NativeInteropAllNullableTypes> classList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNonNullClassList(classList);
     }
     final pigeonVar_channelName =
@@ -12835,7 +12835,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Map<Object?, Object?>> callFlutterEchoMap(Map<Object?, Object?> map) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoMap(map);
     }
     final pigeonVar_channelName =
@@ -12857,7 +12857,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Map<String?, String?>> callFlutterEchoStringMap(Map<String?, String?> stringMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoStringMap(stringMap);
     }
     final pigeonVar_channelName =
@@ -12879,7 +12879,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Map<int?, int?>> callFlutterEchoIntMap(Map<int?, int?> intMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoIntMap(intMap);
     }
     final pigeonVar_channelName =
@@ -12903,7 +12903,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<NativeInteropAnEnum?, NativeInteropAnEnum?>> callFlutterEchoEnumMap(
     Map<NativeInteropAnEnum?, NativeInteropAnEnum?> enumMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoEnumMap(enumMap);
     }
     final pigeonVar_channelName =
@@ -12928,7 +12928,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<int?, NativeInteropAllNullableTypes?>> callFlutterEchoClassMap(
     Map<int?, NativeInteropAllNullableTypes?> classMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoClassMap(classMap);
     }
     final pigeonVar_channelName =
@@ -12951,7 +12951,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Map<String, String>> callFlutterEchoNonNullStringMap(Map<String, String> stringMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNonNullStringMap(stringMap);
     }
     final pigeonVar_channelName =
@@ -12973,7 +12973,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Map<int, int>> callFlutterEchoNonNullIntMap(Map<int, int> intMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNonNullIntMap(intMap);
     }
     final pigeonVar_channelName =
@@ -12997,7 +12997,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<NativeInteropAnEnum, NativeInteropAnEnum>> callFlutterEchoNonNullEnumMap(
     Map<NativeInteropAnEnum, NativeInteropAnEnum> enumMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNonNullEnumMap(enumMap);
     }
     final pigeonVar_channelName =
@@ -13022,7 +13022,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<int, NativeInteropAllNullableTypes>> callFlutterEchoNonNullClassMap(
     Map<int, NativeInteropAllNullableTypes> classMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNonNullClassMap(classMap);
     }
     final pigeonVar_channelName =
@@ -13045,7 +13045,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<NativeInteropAnEnum> callFlutterEchoEnum(NativeInteropAnEnum anEnum) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoEnum(anEnum);
     }
     final pigeonVar_channelName =
@@ -13069,7 +13069,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<NativeInteropAnotherEnum> callFlutterEchoNativeInteropAnotherEnum(
     NativeInteropAnotherEnum anotherEnum,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNativeInteropAnotherEnum(anotherEnum);
     }
     final pigeonVar_channelName =
@@ -13091,7 +13091,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<bool?> callFlutterEchoNullableBool(bool? aBool) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableBool(aBool);
     }
     final pigeonVar_channelName =
@@ -13113,7 +13113,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<int?> callFlutterEchoNullableInt(int? anInt) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableInt(anInt);
     }
     final pigeonVar_channelName =
@@ -13135,7 +13135,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<double?> callFlutterEchoNullableDouble(double? aDouble) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableDouble(aDouble);
     }
     final pigeonVar_channelName =
@@ -13157,7 +13157,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<String?> callFlutterEchoNullableString(String? aString) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableString(aString);
     }
     final pigeonVar_channelName =
@@ -13179,7 +13179,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Uint8List?> callFlutterEchoNullableUint8List(Uint8List? list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableUint8List(list);
     }
     final pigeonVar_channelName =
@@ -13201,7 +13201,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Int32List?> callFlutterEchoNullableInt32List(Int32List? list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableInt32List(list);
     }
     final pigeonVar_channelName =
@@ -13223,7 +13223,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Int64List?> callFlutterEchoNullableInt64List(Int64List? list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableInt64List(list);
     }
     final pigeonVar_channelName =
@@ -13245,7 +13245,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Float64List?> callFlutterEchoNullableFloat64List(Float64List? list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableFloat64List(list);
     }
     final pigeonVar_channelName =
@@ -13267,7 +13267,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<List<Object?>?> callFlutterEchoNullableList(List<Object?>? list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableList(list);
     }
     final pigeonVar_channelName =
@@ -13291,7 +13291,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAnEnum?>?> callFlutterEchoNullableEnumList(
     List<NativeInteropAnEnum?>? enumList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableEnumList(enumList);
     }
     final pigeonVar_channelName =
@@ -13315,7 +13315,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAllNullableTypes?>?> callFlutterEchoNullableClassList(
     List<NativeInteropAllNullableTypes?>? classList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableClassList(classList);
     }
     final pigeonVar_channelName =
@@ -13339,7 +13339,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAnEnum>?> callFlutterEchoNullableNonNullEnumList(
     List<NativeInteropAnEnum>? enumList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableNonNullEnumList(enumList);
     }
     final pigeonVar_channelName =
@@ -13363,7 +13363,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAllNullableTypes>?> callFlutterEchoNullableNonNullClassList(
     List<NativeInteropAllNullableTypes>? classList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableNonNullClassList(classList);
     }
     final pigeonVar_channelName =
@@ -13385,7 +13385,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Map<Object?, Object?>?> callFlutterEchoNullableMap(Map<Object?, Object?>? map) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableMap(map);
     }
     final pigeonVar_channelName =
@@ -13409,7 +13409,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<String?, String?>?> callFlutterEchoNullableStringMap(
     Map<String?, String?>? stringMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableStringMap(stringMap);
     }
     final pigeonVar_channelName =
@@ -13431,7 +13431,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Map<int?, int?>?> callFlutterEchoNullableIntMap(Map<int?, int?>? intMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableIntMap(intMap);
     }
     final pigeonVar_channelName =
@@ -13455,7 +13455,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?> callFlutterEchoNullableEnumMap(
     Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? enumMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableEnumMap(enumMap);
     }
     final pigeonVar_channelName =
@@ -13480,7 +13480,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<int?, NativeInteropAllNullableTypes?>?> callFlutterEchoNullableClassMap(
     Map<int?, NativeInteropAllNullableTypes?>? classMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableClassMap(classMap);
     }
     final pigeonVar_channelName =
@@ -13505,7 +13505,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<String, String>?> callFlutterEchoNullableNonNullStringMap(
     Map<String, String>? stringMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableNonNullStringMap(stringMap);
     }
     final pigeonVar_channelName =
@@ -13527,7 +13527,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Map<int, int>?> callFlutterEchoNullableNonNullIntMap(Map<int, int>? intMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableNonNullIntMap(intMap);
     }
     final pigeonVar_channelName =
@@ -13551,7 +13551,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<NativeInteropAnEnum, NativeInteropAnEnum>?> callFlutterEchoNullableNonNullEnumMap(
     Map<NativeInteropAnEnum, NativeInteropAnEnum>? enumMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableNonNullEnumMap(enumMap);
     }
     final pigeonVar_channelName =
@@ -13576,7 +13576,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<int, NativeInteropAllNullableTypes>?> callFlutterEchoNullableNonNullClassMap(
     Map<int, NativeInteropAllNullableTypes>? classMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableNonNullClassMap(classMap);
     }
     final pigeonVar_channelName =
@@ -13599,7 +13599,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<NativeInteropAnEnum?> callFlutterEchoNullableEnum(NativeInteropAnEnum? anEnum) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoNullableEnum(anEnum);
     }
     final pigeonVar_channelName =
@@ -13623,7 +13623,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<NativeInteropAnotherEnum?> callFlutterEchoAnotherNullableEnum(
     NativeInteropAnotherEnum? anotherEnum,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAnotherNullableEnum(anotherEnum);
     }
     final pigeonVar_channelName =
@@ -13645,7 +13645,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<void> callFlutterNoopAsync() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterNoopAsync();
     }
     final pigeonVar_channelName =
@@ -13664,7 +13664,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<NativeInteropAllTypes> callFlutterEchoAsyncNativeInteropAllTypes(
     NativeInteropAllTypes everything,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNativeInteropAllTypes(everything);
     }
     final pigeonVar_channelName =
@@ -13688,7 +13688,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<NativeInteropAllNullableTypes?> callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
     NativeInteropAllNullableTypes? everything,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
         everything,
       );
@@ -13715,7 +13715,7 @@ class NativeInteropHostIntegrationCoreApi {
   callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
     NativeInteropAllNullableTypesWithoutRecursion? everything,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi
           .callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(everything);
     }
@@ -13738,7 +13738,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<bool> callFlutterEchoAsyncBool(bool aBool) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncBool(aBool);
     }
     final pigeonVar_channelName =
@@ -13760,7 +13760,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<int> callFlutterEchoAsyncInt(int anInt) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncInt(anInt);
     }
     final pigeonVar_channelName =
@@ -13782,7 +13782,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<double> callFlutterEchoAsyncDouble(double aDouble) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncDouble(aDouble);
     }
     final pigeonVar_channelName =
@@ -13804,7 +13804,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<String> callFlutterEchoAsyncString(String aString) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncString(aString);
     }
     final pigeonVar_channelName =
@@ -13826,7 +13826,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Uint8List> callFlutterEchoAsyncUint8List(Uint8List list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncUint8List(list);
     }
     final pigeonVar_channelName =
@@ -13848,7 +13848,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Int32List> callFlutterEchoAsyncInt32List(Int32List list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncInt32List(list);
     }
     final pigeonVar_channelName =
@@ -13870,7 +13870,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Int64List> callFlutterEchoAsyncInt64List(Int64List list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncInt64List(list);
     }
     final pigeonVar_channelName =
@@ -13892,7 +13892,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Float64List> callFlutterEchoAsyncFloat64List(Float64List list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncFloat64List(list);
     }
     final pigeonVar_channelName =
@@ -13914,7 +13914,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Object> callFlutterEchoAsyncObject(Object anObject) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncObject(anObject);
     }
     final pigeonVar_channelName =
@@ -13936,7 +13936,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<List<Object?>> callFlutterEchoAsyncList(List<Object?> list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncList(list);
     }
     final pigeonVar_channelName =
@@ -13960,7 +13960,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAnEnum?>> callFlutterEchoAsyncEnumList(
     List<NativeInteropAnEnum?> enumList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncEnumList(enumList);
     }
     final pigeonVar_channelName =
@@ -13984,7 +13984,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAllNullableTypes?>> callFlutterEchoAsyncClassList(
     List<NativeInteropAllNullableTypes?> classList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncClassList(classList);
     }
     final pigeonVar_channelName =
@@ -14008,7 +14008,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAnEnum>> callFlutterEchoAsyncNonNullEnumList(
     List<NativeInteropAnEnum> enumList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNonNullEnumList(enumList);
     }
     final pigeonVar_channelName =
@@ -14032,7 +14032,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAllNullableTypes>> callFlutterEchoAsyncNonNullClassList(
     List<NativeInteropAllNullableTypes> classList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNonNullClassList(classList);
     }
     final pigeonVar_channelName =
@@ -14054,7 +14054,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Map<Object?, Object?>> callFlutterEchoAsyncMap(Map<Object?, Object?> map) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncMap(map);
     }
     final pigeonVar_channelName =
@@ -14078,7 +14078,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<String?, String?>> callFlutterEchoAsyncStringMap(
     Map<String?, String?> stringMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncStringMap(stringMap);
     }
     final pigeonVar_channelName =
@@ -14100,7 +14100,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Map<int?, int?>> callFlutterEchoAsyncIntMap(Map<int?, int?> intMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncIntMap(intMap);
     }
     final pigeonVar_channelName =
@@ -14124,7 +14124,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<NativeInteropAnEnum?, NativeInteropAnEnum?>> callFlutterEchoAsyncEnumMap(
     Map<NativeInteropAnEnum?, NativeInteropAnEnum?> enumMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncEnumMap(enumMap);
     }
     final pigeonVar_channelName =
@@ -14149,7 +14149,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<int?, NativeInteropAllNullableTypes?>> callFlutterEchoAsyncClassMap(
     Map<int?, NativeInteropAllNullableTypes?> classMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncClassMap(classMap);
     }
     final pigeonVar_channelName =
@@ -14172,7 +14172,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<NativeInteropAnEnum> callFlutterEchoAsyncEnum(NativeInteropAnEnum anEnum) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncEnum(anEnum);
     }
     final pigeonVar_channelName =
@@ -14196,7 +14196,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<NativeInteropAnotherEnum> callFlutterEchoAnotherAsyncEnum(
     NativeInteropAnotherEnum anotherEnum,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAnotherAsyncEnum(anotherEnum);
     }
     final pigeonVar_channelName =
@@ -14218,7 +14218,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<bool?> callFlutterEchoAsyncNullableBool(bool? aBool) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableBool(aBool);
     }
     final pigeonVar_channelName =
@@ -14240,7 +14240,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<int?> callFlutterEchoAsyncNullableInt(int? anInt) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableInt(anInt);
     }
     final pigeonVar_channelName =
@@ -14262,7 +14262,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<double?> callFlutterEchoAsyncNullableDouble(double? aDouble) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableDouble(aDouble);
     }
     final pigeonVar_channelName =
@@ -14284,7 +14284,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<String?> callFlutterEchoAsyncNullableString(String? aString) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableString(aString);
     }
     final pigeonVar_channelName =
@@ -14306,7 +14306,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Uint8List?> callFlutterEchoAsyncNullableUint8List(Uint8List? list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableUint8List(list);
     }
     final pigeonVar_channelName =
@@ -14328,7 +14328,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Int32List?> callFlutterEchoAsyncNullableInt32List(Int32List? list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableInt32List(list);
     }
     final pigeonVar_channelName =
@@ -14350,7 +14350,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Int64List?> callFlutterEchoAsyncNullableInt64List(Int64List? list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableInt64List(list);
     }
     final pigeonVar_channelName =
@@ -14372,7 +14372,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Float64List?> callFlutterEchoAsyncNullableFloat64List(Float64List? list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableFloat64List(list);
     }
     final pigeonVar_channelName =
@@ -14394,7 +14394,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Object?> callFlutterThrowFlutterErrorAsync() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterThrowFlutterErrorAsync();
     }
     final pigeonVar_channelName =
@@ -14416,7 +14416,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Object?> callFlutterEchoAsyncNullableObject(Object? anObject) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableObject(anObject);
     }
     final pigeonVar_channelName =
@@ -14438,7 +14438,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<List<Object?>?> callFlutterEchoAsyncNullableList(List<Object?>? list) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableList(list);
     }
     final pigeonVar_channelName =
@@ -14462,7 +14462,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAnEnum?>?> callFlutterEchoAsyncNullableEnumList(
     List<NativeInteropAnEnum?>? enumList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableEnumList(enumList);
     }
     final pigeonVar_channelName =
@@ -14486,7 +14486,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAllNullableTypes?>?> callFlutterEchoAsyncNullableClassList(
     List<NativeInteropAllNullableTypes?>? classList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableClassList(classList);
     }
     final pigeonVar_channelName =
@@ -14510,7 +14510,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAnEnum>?> callFlutterEchoAsyncNullableNonNullEnumList(
     List<NativeInteropAnEnum>? enumList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableNonNullEnumList(enumList);
     }
     final pigeonVar_channelName =
@@ -14534,7 +14534,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<List<NativeInteropAllNullableTypes>?> callFlutterEchoAsyncNullableNonNullClassList(
     List<NativeInteropAllNullableTypes>? classList,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableNonNullClassList(classList);
     }
     final pigeonVar_channelName =
@@ -14556,7 +14556,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Map<Object?, Object?>?> callFlutterEchoAsyncNullableMap(Map<Object?, Object?>? map) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableMap(map);
     }
     final pigeonVar_channelName =
@@ -14580,7 +14580,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<String?, String?>?> callFlutterEchoAsyncNullableStringMap(
     Map<String?, String?>? stringMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableStringMap(stringMap);
     }
     final pigeonVar_channelName =
@@ -14602,7 +14602,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<Map<int?, int?>?> callFlutterEchoAsyncNullableIntMap(Map<int?, int?>? intMap) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableIntMap(intMap);
     }
     final pigeonVar_channelName =
@@ -14626,7 +14626,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?> callFlutterEchoAsyncNullableEnumMap(
     Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? enumMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableEnumMap(enumMap);
     }
     final pigeonVar_channelName =
@@ -14651,7 +14651,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<Map<int?, NativeInteropAllNullableTypes?>?> callFlutterEchoAsyncNullableClassMap(
     Map<int?, NativeInteropAllNullableTypes?>? classMap,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableClassMap(classMap);
     }
     final pigeonVar_channelName =
@@ -14674,7 +14674,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   Future<NativeInteropAnEnum?> callFlutterEchoAsyncNullableEnum(NativeInteropAnEnum? anEnum) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAsyncNullableEnum(anEnum);
     }
     final pigeonVar_channelName =
@@ -14698,7 +14698,7 @@ class NativeInteropHostIntegrationCoreApi {
   Future<NativeInteropAnotherEnum?> callFlutterEchoAnotherAsyncNullableEnum(
     NativeInteropAnotherEnum? anotherEnum,
   ) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterEchoAnotherAsyncNullableEnum(anotherEnum);
     }
     final pigeonVar_channelName =
@@ -14721,7 +14721,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Returns true if the handler is run on a main thread.
   Future<bool> defaultIsMainThread() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.defaultIsMainThread();
     }
     final pigeonVar_channelName =
@@ -14746,7 +14746,7 @@ class NativeInteropHostIntegrationCoreApi {
   ///
   /// Returns the result of whether the flutter call was successful.
   Future<bool> callFlutterNoopOnBackgroundThread() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.callFlutterNoopOnBackgroundThread();
     }
     final pigeonVar_channelName =
@@ -14769,7 +14769,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Tests deregistering a Host API natively.
   Future<bool> testDeregisterHostApi() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.testDeregisterHostApi();
     }
     final pigeonVar_channelName =
@@ -14792,7 +14792,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Tests deregistering a Flutter API natively.
   Future<bool> testDeregisterFlutterApi() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.testDeregisterFlutterApi();
     }
     final pigeonVar_channelName =
@@ -14815,7 +14815,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Registers and immediately deregisters a Host API under [name].
   Future<void> registerAndImmediatelyDeregisterHostApi(String name) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.registerAndImmediatelyDeregisterHostApi(name);
     }
     final pigeonVar_channelName =
@@ -14833,7 +14833,7 @@ class NativeInteropHostIntegrationCoreApi {
 
   /// Tests that calling a deregistered Flutter API under [name] fails / returns null.
   Future<bool> testCallDeregisteredFlutterApi(String name) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.testCallDeregisteredFlutterApi(name);
     }
     final pigeonVar_channelName =

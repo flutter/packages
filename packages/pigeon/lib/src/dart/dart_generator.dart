@@ -3103,15 +3103,11 @@ if (wrapped == null) {
     indent.write('Future<${addGenericTypes(returnType)}> $name($argSignature) async ');
     indent.addScoped('{', '}', () {
       if (useJni || useFfi) {
-        indent.writeScoped(
-          'if (${useFfi ? '(' : ''}${useJni ? 'Platform.isAndroid ' : ''}${useJni && useFfi ? '|| ' : ''}${useFfi ? 'Platform.isIOS || Platform.isMacOS)' : ''} && _nativeInteropApi != null) {',
-          '}',
-          () {
-            indent.writeln(
-              'return _nativeInteropApi.$name(${parameters.map((Parameter e) => '${e.isNamed ? '${e.name}: ' : ''}${e.name}').join(', ')});',
-            );
-          },
-        );
+        indent.writeScoped('if (_nativeInteropApi != null) {', '}', () {
+          indent.writeln(
+            'return _nativeInteropApi.$name(${parameters.map((Parameter e) => '${e.isNamed ? '${e.name}: ' : ''}${e.name}').join(', ')});',
+          );
+        });
       }
       writeHostMethodMessageCall(
         indent,

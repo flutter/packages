@@ -9,7 +9,9 @@ import io.flutter.embedding.engine.FlutterEngine
 
 private class PigeonApiImplementation : NativeInteropExampleApi() {
   override fun doSomething() {
-    // Do nothing or print
+    // In a real application, native platform logic (e.g., accessing Android system APIs,
+    // hardware features, or third-party native SDKs) would be implemented here.
+    println("NativeInteropExampleApi.doSomething called from Dart")
   }
 }
 

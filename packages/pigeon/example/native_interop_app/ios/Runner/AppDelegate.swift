@@ -7,7 +7,9 @@ import UIKit
 
 private class PigeonApiImplementation: NativeInteropExampleApi {
   func doSomething() throws {
-    // Do nothing
+    // In a real application, native platform logic (e.g., accessing iOS system APIs,
+    // hardware features, or third-party native frameworks) would be implemented here.
+    print("NativeInteropExampleApi.doSomething called from Dart")
   }
 }
 

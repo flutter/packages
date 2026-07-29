@@ -538,7 +538,7 @@ class NativeInteropExampleApi {
   final NativeInteropExampleApiForNativeInterop? _nativeInteropApi;
 
   Future<void> doSomething() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
+    if (_nativeInteropApi != null) {
       return _nativeInteropApi.doSomething();
     }
     final pigeonVar_channelName =
