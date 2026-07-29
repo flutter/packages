@@ -14,6 +14,21 @@ dart pub get -C script/githooks
 dart script/githooks/bin/install_hooks.dart
 ```
 
+To uninstall the Git hooks, run:
+
+```bash
+# Uninstalls ALL Git hooks in this directory:
+git config --unset core.hooksPath
+
+# To uninstall certain hooks TEMPORARILY pass --no-verify to the related
+# action (like `git commit --no-verify` to bypass the pre-commit hook).
+# To long term only use specific Git hooks in this directory, only
+# show the desired hooks in your local hidden hooks directory. For
+# example:
+git config --unset core.hooksPath
+cp script/githooks/pre-commit .git/hooks/pre-commit
+```
+
 ## Available Hooks
 
 ### pre-commit
