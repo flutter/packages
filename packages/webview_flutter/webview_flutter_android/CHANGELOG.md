@@ -1,3 +1,7 @@
+## 4.14.0
+
+* Adds NavigationDelegate.onCreateWindow for target=_blank / window.open.
+
 ## 4.13.0
 
 * Adds new method for accessing a native `WebView` from a `FlutterPluginBinding`.

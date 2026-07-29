@@ -1,5 +1,6 @@
-## NEXT
+## 2.16.0
 
+* Adds NavigationDelegate.onCreateWindow for target=_blank / window.open.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.15.1
