@@ -4,7 +4,9 @@ This directory contains Git hooks for the `flutter/packages` repository.
 
 ## Installation
 
-To install the Git hooks, run the following commands from the root of the repository:
+### Option 1: Install All Hooks (Recommended)
+
+To install all Git hooks, run the following commands from the root of the repository:
 
 ```bash
 # Fetch dependencies for the githooks package
@@ -14,29 +16,48 @@ dart pub get -C script/githooks
 dart script/githooks/bin/install_hooks.dart
 ```
 
-To uninstall ALL of the Git hooks in this directory, run:
+### Option 2: Install Specific Hooks
+
+To only use specific Git hooks in this directory long-term, create a script in your local `.git/hooks` directory that runs the desired hook.
+
+For example, to install only the `pre-commit` hook, create `.git/hooks/pre-commit` with:
 
 ```bash
-git config --unset core.hooksPath
-```
-
-To uninstall certain hooks TEMPORARILY pass `--no-verify` to the related
-action, e.g. `git commit --no-verify` to bypass the pre-commit hook.
-
-To only use specific Git hooks in this directory long-term, create a
-script in your local .git/hooks directory that runs the desired hook.
-For example, create `.git/hooks/pre-commit` with:
-
-```dart
 #!/usr/bin/env bash
 exec dart script/githooks/bin/main.dart pre-commit "$@"
 ```
 
-And make it executable:
+Then, make it executable and ensure Git uses your local `.git/hooks` directory:
 
 ```bash
 chmod +x .git/hooks/pre-commit
 git config --unset core.hooksPath
+```
+
+## Uninstallation
+
+### Uninstall All Hooks
+
+If you installed all hooks using Option 1, you can uninstall them by running:
+
+```bash
+git config --unset core.hooksPath
+```
+
+### Uninstall Specific Hooks
+
+If you manually added a specific Git hook (Option 2), you can uninstall it by deleting the script from your `.git/hooks` directory:
+
+```bash
+rm .git/hooks/pre-commit
+```
+
+### Bypass Hooks Temporarily
+
+To skip running hooks for a single action, pass the `--no-verify` flag. For example, to bypass the pre-commit hook during a commit:
+
+```bash
+git commit --no-verify
 ```
 
 ## Available Hooks
