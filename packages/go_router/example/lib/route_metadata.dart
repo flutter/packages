@@ -21,10 +21,7 @@ class RouteMetadataApp extends StatelessWidget {
 final GoRouter _router = GoRouter(
   initialLocation: '/books',
   routes: <RouteBase>[
-    GoRoute(
-      path: '/',
-      redirect: (BuildContext context, GoRouterState state) => '/books',
-    ),
+    GoRoute(path: '/', redirect: (BuildContext context, GoRouterState state) => '/books'),
     GoRoute(
       path: '/books',
       metadata: const <String, dynamic>{
@@ -38,10 +35,7 @@ final GoRouter _router = GoRouter(
       routes: <RouteBase>[
         GoRoute(
           path: 'preview',
-          metadata: const <String, dynamic>{
-            'requiresAuth': false,
-            'analyticsName': 'book-preview',
-          },
+          metadata: const <String, dynamic>{'requiresAuth': false, 'analyticsName': 'book-preview'},
           builder: (BuildContext context, GoRouterState state) {
             return MetadataScreen(state: state);
           },
@@ -73,21 +67,12 @@ class MetadataScreen extends StatelessWidget {
             title: const Text('section'),
             subtitle: Text(state.metadata['section'] as String),
           ),
-          ListTile(
-            title: const Text('requiresAuth'),
-            subtitle: Text(requiresAuth.toString()),
-          ),
+          ListTile(title: const Text('requiresAuth'), subtitle: Text(requiresAuth.toString())),
           ListTile(title: const Text('analyticsName'), subtitle: Text(title)),
           const SizedBox(height: 16),
-          FilledButton(
-            onPressed: () => context.go('/books'),
-            child: const Text('Books'),
-          ),
+          FilledButton(onPressed: () => context.go('/books'), child: const Text('Books')),
           const SizedBox(height: 8),
-          FilledButton(
-            onPressed: () => context.go('/books/preview'),
-            child: const Text('Preview'),
-          ),
+          FilledButton(onPressed: () => context.go('/books/preview'), child: const Text('Preview')),
         ],
       ),
     );

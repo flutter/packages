@@ -208,8 +208,7 @@ class GoRouterState {
     pageKey,
     Object.hashAllUnordered(
       metadata.entries.map<int>(
-        (MapEntry<String, dynamic> entry) =>
-            Object.hash(entry.key, entry.value),
+        (MapEntry<String, dynamic> entry) => Object.hash(entry.key, entry.value),
       ),
     ),
   );
