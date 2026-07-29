@@ -2,10 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.1.2
+// Version: 38.1.12
 
 import 'color_role.dart';
 import 'shape_struct.dart';
+import 'typescale.dart';
 import 'typescale_struct.dart';
 
 class TokenFilterChip {
@@ -127,13 +128,7 @@ class TokenFilterChip {
   static const double focusIndicatorThickness = 3.00;
 
   /// md.comp.filter-chip.label-text.type
-  static const TypescaleStruct labelTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 14.00,
-    fontWeight: 500,
-    lineHeight: 20.00,
-    letterSpacing: 0.10,
-  );
+  static const TypescaleStruct labelTextType = TokenTypescale.labelLarge;
 
   /// md.comp.filter-chip.selected.dragged.label-text.color
   static const TokenColorRole selectedDraggedLabelTextColor =

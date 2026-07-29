@@ -2,10 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.1.2
+// Version: 38.1.12
 
 import 'color_role.dart';
 import 'shape_struct.dart';
+import 'typescale.dart';
 import 'typescale_struct.dart';
 
 class TokenNavigationRail {
@@ -141,13 +142,7 @@ class TokenNavigationRail {
       TokenColorRole.onSurface;
 
   /// md.comp.navigation-rail.label-text.type
-  static const TypescaleStruct labelTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 12.00,
-    fontWeight: 500,
-    lineHeight: 16.00,
-    letterSpacing: 0.50,
-  );
+  static const TypescaleStruct labelTextType = TokenTypescale.labelMedium;
 
   /// md.comp.navigation-rail.no-label.active-indicator.height
   static const double noLabelActiveIndicatorHeight = 56.00;

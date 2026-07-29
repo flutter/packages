@@ -2,10 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.1.2
+// Version: 38.1.12
 
 import 'color_role.dart';
 import 'shape_struct.dart';
+import 'typescale.dart';
 import 'typescale_struct.dart';
 
 class TokenRichTooltip {
@@ -35,13 +36,7 @@ class TokenRichTooltip {
   static const TokenColorRole actionLabelTextColor = TokenColorRole.primary;
 
   /// md.comp.rich-tooltip.action.label-text.type
-  static const TypescaleStruct actionLabelTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 14.00,
-    fontWeight: 500,
-    lineHeight: 20.00,
-    letterSpacing: 0.10,
-  );
+  static const TypescaleStruct actionLabelTextType = TokenTypescale.labelLarge;
 
   /// md.comp.rich-tooltip.action.pressed.label-text.color
   static const TokenColorRole actionPressedLabelTextColor =
@@ -76,24 +71,12 @@ class TokenRichTooltip {
   static const TokenColorRole subheadColor = TokenColorRole.onSurfaceVariant;
 
   /// md.comp.rich-tooltip.subhead.type
-  static const TypescaleStruct subheadType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 14.00,
-    fontWeight: 500,
-    lineHeight: 20.00,
-    letterSpacing: 0.10,
-  );
+  static const TypescaleStruct subheadType = TokenTypescale.titleSmall;
 
   /// md.comp.rich-tooltip.supporting-text.color
   static const TokenColorRole supportingTextColor =
       TokenColorRole.onSurfaceVariant;
 
   /// md.comp.rich-tooltip.supporting-text.type
-  static const TypescaleStruct supportingTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 14.00,
-    fontWeight: 400,
-    lineHeight: 20.00,
-    letterSpacing: 0.25,
-  );
+  static const TypescaleStruct supportingTextType = TokenTypescale.bodyMedium;
 }

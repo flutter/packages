@@ -2,10 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.1.2
+// Version: 38.1.12
 
 import 'color_role.dart';
 import 'shape_struct.dart';
+import 'typescale.dart';
 import 'typescale_struct.dart';
 
 class TokenPlainTooltip {
@@ -26,11 +27,5 @@ class TokenPlainTooltip {
       TokenColorRole.inverseOnSurface;
 
   /// md.comp.plain-tooltip.supporting-text.type
-  static const TypescaleStruct supportingTextType = TypescaleStruct(
-    fontFamily: 'Roboto',
-    fontSize: 12.00,
-    fontWeight: 400,
-    lineHeight: 16.00,
-    letterSpacing: 0.40,
-  );
+  static const TypescaleStruct supportingTextType = TokenTypescale.bodySmall;
 }
