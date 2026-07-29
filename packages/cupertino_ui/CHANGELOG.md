@@ -1,3 +1,8 @@
+## 0.0.3
+
+- Reuses a single `Paint` object when painting the page transition edge
+  shadow, instead of allocating one per drawn rect per frame.
+
 ## 0.0.2
 
 - Copies over all Cupertino code from flutter/flutter.
