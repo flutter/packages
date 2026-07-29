@@ -6,6 +6,7 @@ on:
       # As packages opt into batched releases, they need to be added here
       - 'release-go_router-*'
       - 'release-cupertino_ui-*'
+      - 'release-material_ui-*'
 
 jobs:
   create_sync_pr:
@@ -49,4 +50,4 @@ jobs:
             --head "${GITHUB_REF_NAME}" \
             --title "Sync ${GITHUB_REF_NAME} to main" \
             --body "This automated PR syncs the changes from the release branch ${GITHUB_REF_NAME} back to the main branch." \
-            --label "override: skip-batch-release-repo-check-${PACKAGE_NAME}"
+            --label "override: batch-${PACKAGE_NAME}"

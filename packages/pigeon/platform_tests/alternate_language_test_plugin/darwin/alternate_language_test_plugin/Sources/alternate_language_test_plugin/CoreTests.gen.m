@@ -13,6 +13,11 @@
 @import Flutter;
 #endif
 
+NSString *const FLTAStringConstant = @"stringConstantValue";
+NSString *const FLTAStringConstantWithEscapes = @"string\\'\\\"\\$ConstantValue";
+const NSInteger FLTAnIntConstant = 42;
+const double FLTADoubleConstant = 3.14;
+const BOOL FLTABoolConstant = YES;
 static BOOL __attribute__((unused)) FLTPigeonDeepEquals(id _Nullable a, id _Nullable b) {
   if (a == b) {
     return YES;

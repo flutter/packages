@@ -23,3 +23,4 @@
 - Maintain high test coverage using [dart-add-unit-test](.agents/skills/dart-add-unit-test/SKILL.md)
   and [dart-collect-coverage](.agents/skills/dart-collect-coverage/SKILL.md).
 - Avoid duplicating constant strings; reuse existing ones from adjacent code.
+- **CRITICAL**: When spawning subagents, NEVER provide absolute file paths in prompts. ALWAYS use relative paths. Passing absolute paths breaks `Workspace: branch` isolation and causes state bleed into the active workspace.
