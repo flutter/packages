@@ -35,13 +35,9 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
       this.api = api;
     }
 
-    /**
-     * Notifies Dart that the page requested a new window (`target=_blank` /
-     * `window.open`).
-     */
+    /** Notifies Dart that the page requested a new window (`target=_blank` / `window.open`). */
     public void notifyCreateWindow(@NonNull String url) {
-      api.getPigeonRegistrar()
-          .runOnMainThread(() -> api.onCreateWindow(this, url, reply -> null));
+      api.getPigeonRegistrar().runOnMainThread(() -> api.onCreateWindow(this, url, reply -> null));
     }
 
     @Override
