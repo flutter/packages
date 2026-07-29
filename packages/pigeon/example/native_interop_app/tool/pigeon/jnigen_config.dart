@@ -22,9 +22,9 @@ void main() async {
       classPath: [Uri.directory('build/app/tmp/kotlin-classes/release')],
 
       classes: [
-        'dev.flutter.pigeon_example_app.FlutterError',
-        'dev.flutter.pigeon_example_app.NativeInteropExampleApi',
-        'dev.flutter.pigeon_example_app.NativeInteropExampleApiRegistrar',
+        'dev.flutter.pigeonnativeinteropapp.FlutterError',
+        'dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi',
+        'dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApiRegistrar',
       ],
     ),
   );

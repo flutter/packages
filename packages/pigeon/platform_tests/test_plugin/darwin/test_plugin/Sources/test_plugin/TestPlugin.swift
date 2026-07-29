@@ -1706,422 +1706,255 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     return anotherEnum
   }
 
-  func callFlutterNoop() throws {
+  private func getNativeInteropFlutterApi() throws -> NativeInteropFlutterIntegrationCoreApi {
     guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
       throw NativeInteropTestsError(
         code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
         details: nil)
     }
+    return flutterApi
+  }
+
+  func callFlutterNoop() throws {
+    let flutterApi = try getNativeInteropFlutterApi()
     try flutterApi.noop()
   }
 
   func callFlutterThrowError() throws -> Any? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.throwError()
   }
 
   func callFlutterThrowErrorFromVoid() throws {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     try flutterApi.throwErrorFromVoid()
   }
 
   func callFlutterEcho(_ everything: NativeInteropAllTypes) throws -> NativeInteropAllTypes {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNativeInteropAllTypes(everything: everything)
   }
 
   func callFlutterEcho(_ aBool: Bool) throws -> Bool {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoBool(aBool: aBool)
   }
 
   func callFlutterEcho(_ anInt: Int64) throws -> Int64 {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoInt(anInt: anInt)
   }
 
   func callFlutterEcho(_ aDouble: Double) throws -> Double {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoDouble(aDouble: aDouble)
   }
 
   func callFlutterEcho(_ aString: String) throws -> String {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoString(aString: aString)
   }
 
   func callFlutterEcho(_ list: [UInt8]) throws -> [UInt8] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoUint8List(list: list)
   }
 
   func callFlutterEcho(_ list: [Int32]) throws -> [Int32] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoInt32List(list: list)
   }
 
   func callFlutterEcho(_ list: [Int64]) throws -> [Int64] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoInt64List(list: list)
   }
 
   func callFlutterEcho(_ list: [Float64]) throws -> [Float64] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoFloat64List(list: list)
   }
 
   func callFlutterEcho(_ list: [Any?]) throws -> [Any?] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoList(list: list)
   }
 
   func callFlutterEcho(enumList: [NativeInteropAnEnum?]) throws -> [NativeInteropAnEnum?] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoEnumList(enumList: enumList)
   }
 
   func callFlutterEcho(classList: [NativeInteropAllNullableTypes?]) throws
     -> [NativeInteropAllNullableTypes?]
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoClassList(classList: classList)
   }
 
   func callFlutterEchoNonNull(enumList: [NativeInteropAnEnum]) throws -> [NativeInteropAnEnum] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNonNullEnumList(enumList: enumList)
   }
 
   func callFlutterEchoNonNull(classList: [NativeInteropAllNullableTypes]) throws
     -> [NativeInteropAllNullableTypes]
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNonNullClassList(classList: classList)
   }
 
   func callFlutterEcho(_ map: [AnyHashable?: Any?]) throws -> [AnyHashable?: Any?] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoMap(map: map)
   }
 
   func callFlutterEcho(stringMap: [String?: String?]) throws -> [String?: String?] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoStringMap(stringMap: stringMap)
   }
 
   func callFlutterEcho(intMap: [Int64?: Int64?]) throws -> [Int64?: Int64?] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoIntMap(intMap: intMap)
   }
 
   func callFlutterEcho(enumMap: [NativeInteropAnEnum?: NativeInteropAnEnum?]) throws
     -> [NativeInteropAnEnum?: NativeInteropAnEnum?]
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoEnumMap(enumMap: enumMap)
   }
 
   func callFlutterEcho(classMap: [Int64?: NativeInteropAllNullableTypes?]) throws -> [Int64?:
     NativeInteropAllNullableTypes?]
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoClassMap(classMap: classMap)
   }
 
   func callFlutterEchoNonNull(stringMap: [String: String]) throws -> [String: String] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNonNullStringMap(stringMap: stringMap)
   }
 
   func callFlutterEchoNonNull(intMap: [Int64: Int64]) throws -> [Int64: Int64] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNonNullIntMap(intMap: intMap)
   }
 
   func callFlutterEchoNonNull(enumMap: [NativeInteropAnEnum: NativeInteropAnEnum]) throws
     -> [NativeInteropAnEnum: NativeInteropAnEnum]
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNonNullEnumMap(enumMap: enumMap)
   }
 
   func callFlutterEchoNonNull(classMap: [Int64: NativeInteropAllNullableTypes]) throws -> [Int64:
     NativeInteropAllNullableTypes]
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNonNullClassMap(classMap: classMap)
   }
 
   func callFlutterEchoNullable(_ anEnum: NativeInteropAnEnum?) throws -> NativeInteropAnEnum? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableEnum(anEnum: anEnum)
   }
 
   func callFlutterEchoNullable(_ anotherEnum: NativeInteropAnotherEnum?) throws
     -> NativeInteropAnotherEnum?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoAnotherNullableEnum(anotherEnum: anotherEnum)
   }
 
   func callFlutterEchoNullable(_ aBool: Bool?) throws -> Bool? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableBool(aBool: aBool)
   }
 
   func callFlutterEchoNullable(_ anInt: Int64?) throws -> Int64? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableInt(anInt: anInt)
   }
 
   func callFlutterEchoNullable(_ aDouble: Double?) throws -> Double? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableDouble(aDouble: aDouble)
   }
 
   func callFlutterEchoNullable(_ aString: String?) throws -> String? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableString(aString: aString)
   }
 
   func callFlutterEchoNullable(_ list: [UInt8]?) throws -> [UInt8]? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableUint8List(list: list)
   }
 
   func callFlutterEchoNullable(_ list: [Int32]?) throws -> [Int32]? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableInt32List(list: list)
   }
 
   func callFlutterEchoNullable(_ list: [Int64]?) throws -> [Int64]? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableInt64List(list: list)
   }
 
   func callFlutterEchoNullable(_ list: [Float64]?) throws -> [Float64]? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableFloat64List(list: list)
   }
 
   func callFlutterEchoNullable(_ list: [Any?]?) throws -> [Any?]? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableList(list: list)
   }
 
   func callFlutterEchoNullable(enumList: [NativeInteropAnEnum?]?) throws -> [NativeInteropAnEnum?]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableEnumList(enumList: enumList)
   }
 
   func callFlutterEchoNullable(classList: [NativeInteropAllNullableTypes?]?) throws
     -> [NativeInteropAllNullableTypes?]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableClassList(classList: classList)
   }
 
   func callFlutterEchoNullableNonNull(enumList: [NativeInteropAnEnum]?) throws
     -> [NativeInteropAnEnum]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableNonNullEnumList(enumList: enumList)
   }
 
   func callFlutterEchoNullableNonNull(classList: [NativeInteropAllNullableTypes]?) throws
     -> [NativeInteropAllNullableTypes]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableNonNullClassList(classList: classList)
   }
 
   func callFlutterEchoNullable(_ map: [AnyHashable?: Any?]?) throws -> [AnyHashable?: Any?]? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableMap(map: map)
   }
 
   func callFlutterEchoNullable(stringMap: [String?: String?]?) throws -> [String?:
     String?]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableStringMap(stringMap: stringMap)
   }
 
   func callFlutterEchoNullable(intMap: [Int64?: Int64?]?) throws -> [Int64?: Int64?]? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableIntMap(intMap: intMap)
   }
 
@@ -2129,11 +1962,7 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     -> [NativeInteropAnEnum?:
     NativeInteropAnEnum?]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableEnumMap(enumMap: enumMap)
   }
 
@@ -2141,31 +1970,19 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     -> [Int64?:
     NativeInteropAllNullableTypes?]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableClassMap(classMap: classMap)
   }
 
   func callFlutterEchoNullableNonNull(stringMap: [String: String]?) throws -> [String:
     String]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableNonNullStringMap(stringMap: stringMap)
   }
 
   func callFlutterEchoNullableNonNull(intMap: [Int64: Int64]?) throws -> [Int64: Int64]? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableNonNullIntMap(intMap: intMap)
   }
 
@@ -2173,42 +1990,26 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     -> [NativeInteropAnEnum:
     NativeInteropAnEnum]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableNonNullEnumMap(enumMap: enumMap)
   }
 
   func callFlutterEchoNullableNonNull(classMap: [Int64: NativeInteropAllNullableTypes]?) throws
     -> [Int64: NativeInteropAllNullableTypes]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNullableNonNullClassMap(classMap: classMap)
   }
 
   func callFlutterNoopAsync() async throws {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     try await flutterApi.noopAsync()
   }
 
   func callFlutterEchoAsyncNativeInteropAllTypes(everything: NativeInteropAllTypes) async throws
     -> NativeInteropAllTypes
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNativeInteropAllTypes(everything: everything)
   }
 
@@ -2217,11 +2018,7 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
   ) async throws
     -> NativeInteropAllNullableTypes?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableNativeInteropAllNullableTypes(
       everything: everything)
   }
@@ -2229,175 +2026,103 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
   func callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
     everything: NativeInteropAllNullableTypesWithoutRecursion?
   ) async throws -> NativeInteropAllNullableTypesWithoutRecursion? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
       everything: everything)
   }
 
   func callFlutterEchoAsyncBool(aBool: Bool) async throws -> Bool {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncBool(aBool: aBool)
   }
 
   func callFlutterEchoAsyncInt(anInt: Int64) async throws -> Int64 {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncInt(anInt: anInt)
   }
 
   func callFlutterEchoAsyncDouble(aDouble: Double) async throws -> Double {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncDouble(aDouble: aDouble)
   }
 
   func callFlutterEchoAsyncString(aString: String) async throws -> String {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncString(aString: aString)
   }
 
   func callFlutterEchoAsyncUint8List(list: [UInt8]) async throws -> [UInt8] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncUint8List(list: list)
   }
 
   func callFlutterEchoAsyncInt32List(list: [Int32]) async throws -> [Int32] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncInt32List(list: list)
   }
 
   func callFlutterEchoAsyncInt64List(list: [Int64]) async throws -> [Int64] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncInt64List(list: list)
   }
 
   func callFlutterEchoAsyncFloat64List(list: [Float64]) async throws -> [Float64] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncFloat64List(list: list)
   }
 
   func callFlutterEchoAsyncObject(anObject: Any) async throws -> Any {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncObject(anObject: anObject)
   }
 
   func callFlutterEchoAsyncList(list: [Any?]) async throws -> [Any?] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncList(list: list)
   }
 
   func callFlutterEchoAsyncEnumList(enumList: [NativeInteropAnEnum?]) async throws
     -> [NativeInteropAnEnum?]
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncEnumList(enumList: enumList)
   }
 
   func callFlutterEchoAsyncClassList(classList: [NativeInteropAllNullableTypes?]) async throws
     -> [NativeInteropAllNullableTypes?]
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncClassList(classList: classList)
   }
 
   func callFlutterEchoAsyncNonNullEnumList(enumList: [NativeInteropAnEnum]) async throws
     -> [NativeInteropAnEnum]
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNonNullEnumList(enumList: enumList)
   }
 
   func callFlutterEchoAsyncNonNullClassList(classList: [NativeInteropAllNullableTypes]) async throws
     -> [NativeInteropAllNullableTypes]
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNonNullClassList(classList: classList)
   }
 
   func callFlutterEchoAsyncMap(map: [AnyHashable?: Any?]) async throws -> [AnyHashable?: Any?] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncMap(map: map)
   }
 
   func callFlutterEchoAsyncStringMap(stringMap: [String?: String?]) async throws -> [String?:
     String?]
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncStringMap(stringMap: stringMap)
   }
 
   func callFlutterEchoAsyncIntMap(intMap: [Int64?: Int64?]) async throws -> [Int64?: Int64?] {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncIntMap(intMap: intMap)
   }
 
@@ -2405,60 +2130,36 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     async throws -> [NativeInteropAnEnum?:
     NativeInteropAnEnum?]
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncEnumMap(enumMap: enumMap)
   }
 
   func callFlutterThrowFlutterErrorAsync() async throws -> Any? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.throwFlutterErrorAsync()
   }
 
   func callFlutterEchoAsyncNullableFloat64List(list: [Float64]?) async throws -> [Float64]? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableFloat64List(list: list)
   }
 
   func callFlutterThrowFlutterError() throws -> Any? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.throwFlutterError()
   }
 
   func callFlutterEcho(_ everything: NativeInteropAllNullableTypes?) throws
     -> NativeInteropAllNullableTypes?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNativeInteropAllNullableTypes(everything: everything)
   }
 
   func callFlutterSendMultipleNullableTypes(
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
   ) throws -> NativeInteropAllNullableTypes {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.sendMultipleNullableTypes(
       aNullableBool: aNullableBool, aNullableInt: aNullableInt, aNullableString: aNullableString)
   }
@@ -2466,41 +2167,25 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
   func callFlutterEcho(_ everything: NativeInteropAllNullableTypesWithoutRecursion?)
     throws -> NativeInteropAllNullableTypesWithoutRecursion?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNativeInteropAllNullableTypesWithoutRecursion(everything: everything)
   }
 
   func callFlutterSendMultipleNullableTypesWithoutRecursion(
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
   ) throws -> NativeInteropAllNullableTypesWithoutRecursion {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.sendMultipleNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool, aNullableInt: aNullableInt, aNullableString: aNullableString)
   }
 
   func callFlutterEcho(_ anEnum: NativeInteropAnEnum) throws -> NativeInteropAnEnum {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoEnum(anEnum: anEnum)
   }
 
   func callFlutterEcho(_ anotherEnum: NativeInteropAnotherEnum) throws -> NativeInteropAnotherEnum {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try flutterApi.echoNativeInteropAnotherEnum(anotherEnum: anotherEnum)
   }
 
@@ -2580,11 +2265,7 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     async throws
     -> [NativeInteropAnEnum?: NativeInteropAnEnum?]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableEnumMap(enumMap: enumMap)
   }
 
@@ -2592,33 +2273,21 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     async throws
     -> [Int64?: NativeInteropAllNullableTypes?]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableClassMap(classMap: classMap)
   }
 
   func callFlutterEchoAsyncNullableEnum(anEnum: NativeInteropAnEnum?) async throws
     -> NativeInteropAnEnum?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableEnum(anEnum: anEnum)
   }
 
   func callFlutterEchoAnotherAsyncNullableEnum(anotherEnum: NativeInteropAnotherEnum?) async throws
     -> NativeInteropAnotherEnum?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAnotherAsyncNullableEnum(anotherEnum: anotherEnum)
   }
 
@@ -2626,123 +2295,71 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     -> [Int64?:
     NativeInteropAllNullableTypes?]
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncClassMap(classMap: classMap)
   }
 
   func callFlutterEchoAsyncEnum(anEnum: NativeInteropAnEnum) async throws -> NativeInteropAnEnum {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncEnum(anEnum: anEnum)
   }
 
   func callFlutterEchoAnotherAsyncEnum(anotherEnum: NativeInteropAnotherEnum) async throws
     -> NativeInteropAnotherEnum
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAnotherAsyncEnum(anotherEnum: anotherEnum)
   }
 
   func callFlutterEchoAsyncNullableBool(aBool: Bool?) async throws -> Bool? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableBool(aBool: aBool)
   }
 
   func callFlutterEchoAsyncNullableInt(anInt: Int64?) async throws -> Int64? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableInt(anInt: anInt)
   }
 
   func callFlutterEchoAsyncNullableDouble(aDouble: Double?) async throws -> Double? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableDouble(aDouble: aDouble)
   }
 
   func callFlutterEchoAsyncNullableString(aString: String?) async throws -> String? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableString(aString: aString)
   }
 
   func callFlutterEchoAsyncNullableUint8List(list: [UInt8]?) async throws -> [UInt8]? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableUint8List(list: list)
   }
 
   func callFlutterEchoAsyncNullableInt32List(list: [Int32]?) async throws -> [Int32]? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableInt32List(list: list)
   }
 
   func callFlutterEchoAsyncNullableInt64List(list: [Int64]?) async throws -> [Int64]? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableInt64List(list: list)
   }
 
   func callFlutterEchoAsyncNullableObject(anObject: Any?) async throws -> Any? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableObject(anObject: anObject)
   }
 
   func callFlutterEchoAsyncNullableList(list: [Any?]?) async throws -> [Any?]? {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableList(list: list)
   }
 
   func callFlutterEchoAsyncNullableEnumList(enumList: [NativeInteropAnEnum?]?) async throws
     -> [NativeInteropAnEnum?]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableEnumList(enumList: enumList)
   }
 
@@ -2750,22 +2367,14 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     async throws
     -> [NativeInteropAllNullableTypes?]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableClassList(classList: classList)
   }
 
   func callFlutterEchoAsyncNullableNonNullEnumList(enumList: [NativeInteropAnEnum]?) async throws
     -> [NativeInteropAnEnum]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableNonNullEnumList(enumList: enumList)
   }
 
@@ -2773,22 +2382,14 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     async throws
     -> [NativeInteropAllNullableTypes]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableNonNullClassList(classList: classList)
   }
 
   func callFlutterEchoAsyncNullableMap(map: [AnyHashable?: Any?]?) async throws -> [AnyHashable?:
     Any?]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableMap(map: map)
   }
 
@@ -2796,22 +2397,14 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     -> [String?:
     String?]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableStringMap(stringMap: stringMap)
   }
 
   func callFlutterEchoAsyncNullableIntMap(intMap: [Int64?: Int64?]?) async throws -> [Int64?:
     Int64?]?
   {
-    guard let flutterApi = NativeInteropFlutterIntegrationCoreApi.getInstance() else {
-      throw NativeInteropTestsError(
-        code: "not_registered", message: "NativeInteropFlutterIntegrationCoreApi not registered",
-        details: nil)
-    }
+    let flutterApi = try getNativeInteropFlutterApi()
     return try await flutterApi.echoAsyncNullableIntMap(intMap: intMap)
   }
 

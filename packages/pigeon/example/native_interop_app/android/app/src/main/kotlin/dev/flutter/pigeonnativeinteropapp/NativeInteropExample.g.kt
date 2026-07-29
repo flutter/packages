@@ -5,7 +5,7 @@
 // See also: https://pub.dev/packages/pigeon
 @file:Suppress("UNCHECKED_CAST", "ArrayInDataClass")
 
-package dev.flutter.pigeon_example_app
+package dev.flutter.pigeonnativeinteropapp
 
 import android.util.Log
 import androidx.annotation.Keep

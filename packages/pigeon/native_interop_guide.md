@@ -8,7 +8,7 @@ This guide describes Pigeon's Native Interop feature, which allows for direct, h
 ## 1. Overview
 
 Pigeon Native Interop allows Dart code to make direct function calls into native platform code, and vice versa, without the overhead of MethodChannel-based message passing. Instead of serializing data into binary buffers, Native Interop establishes direct memory-bound bridges using native pointers and JVM references.
-For a detailed comparison between MethodChannel-based communication and Native Interop—including advantages, limitations, and recommended use cases—see the [Pigeon README](file:///Users/tarrinneal/work/packages/packages/pigeon/README.md#communication-options-method-channels-vs-native-interop).
+For a detailed comparison between MethodChannel-based communication and Native Interop—including advantages, limitations, and recommended use cases—see the [Pigeon README](./README.md#communication-options-method-channels-vs-native-interop).
 
 ---
 
@@ -16,7 +16,7 @@ For a detailed comparison between MethodChannel-based communication and Native I
 
 Using Native Interop in pigeon follows the standard pigeon workflow, with a few additional configuration and compilation steps. The complete end-to-end process is:
 
-1. **Define the Interface**: Create a Dart definition file outlining your `HostApi` and `FlutterApi` declarations (refer to the [Pigeon README](file:///Users/tarrinneal/work/packages/packages/pigeon/README.md#rules-for-defining-your-communication-interface) for syntax and rules).
+1. **Define the Interface**: Create a Dart definition file outlining your `HostApi` and `FlutterApi` declarations (refer to the [Pigeon README](./README.md#rules-for-defining-your-communication-interface) for syntax and rules).
 2. **Configure Options**: Configure `kotlinOptions.useJni` or `swiftOptions.useFfi` in your `PigeonOptions` (see [Step 1: Configure Pigeon Options](#step-1-configure-pigeon-options) below).
 3. **Prerequisites**: Ensure your local environment meets the toolchain prerequisites for `jnigen` and `ffigen` (see [Section 3: Prerequisites](#section-3-prerequisites) below).
 4. **Run Code Generation**: Run the `pigeon` tool to generate the native bridge code, Dart wrapper, and config scripts, then run the generated config scripts to produce the underlying interop bindings (see [Step 2: Automated Interop Generation](#step-2-automated-interop-generation) below).
@@ -55,7 +55,7 @@ Enable Native Interop for your target platforms by setting the configuration opt
     dartOptions: DartOptions(),
     kotlinOptions: KotlinOptions(
       useJni: true,
-      // Optional: Paths to search for compiled local classes (primarily needed for standalone Apps)
+      // Optional: Paths to search for compiled local classes (primarily needed for standalone apps)
       jniClassPaths: <String>['build/app/tmp/kotlin-classes/release'],
     ),
     swiftOptions: SwiftOptions(useFfi: true, ffiModuleName: 'my_plugin'),
@@ -120,4 +120,4 @@ targets: [
 
 ## 5. Migration from Method Channels
 
-If you are migrating an existing Pigeon plugin from the `MethodChannel`-based model to the Native Interop model, see the [Native Interop Migration Guide](file:///Users/tarrinneal/work/packages/packages/pigeon/native_interop_migration_guide.md) for a complete comparison of the API models and transition examples.
+If you are migrating an existing Pigeon plugin from the `MethodChannel`-based model to the Native Interop model, see the [Native Interop Migration Guide](./native_interop_migration_guide.md) for a complete comparison of the API models and transition examples.

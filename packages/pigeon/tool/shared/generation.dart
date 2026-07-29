@@ -79,8 +79,8 @@ Future<int> generateExamplePigeons() async {
     suppressVersion: true,
     dartOut: 'lib/src/native_interop_example.g.dart',
     kotlinOut:
-        'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/NativeInteropExample.g.kt',
-    kotlinPackage: 'dev.flutter.pigeon_example_app',
+        'android/app/src/main/kotlin/dev/flutter/pigeonnativeinteropapp/NativeInteropExample.g.kt',
+    kotlinPackage: 'dev.flutter.pigeonnativeinteropapp',
     swiftOut: 'ios/Runner/NativeInteropExample.g.swift',
     copyrightHeader: 'pigeons/copyright.txt',
   );
@@ -98,12 +98,12 @@ Future<int> generateTestPigeons({required String baseDir, bool includeOverflow =
     'flutter_unittests', // Only for Dart unit tests in shared_test_plugin_code
     'message',
     'multiple_arity',
+    'native_interop_tests',
     'non_null_fields',
     'null_fields',
     'nullable_returns',
     'primitive',
     'proxy_api_tests',
-    'native_interop_tests',
   };
 
   const testPluginName = 'test_plugin';

@@ -3,7 +3,7 @@
 
 This guide provides detailed information on migrating from the `MethodChannel`-based Pigeon model to the direct **Native Interop (FFI & JNI)** model.
 
-For a comprehensive walkthrough on setting up Native Interop from scratch, see the main [Native Interop Guide](file:///Users/tarrinneal/work/packages/packages/pigeon/native_interop_guide.md).
+For a comprehensive walkthrough on setting up Native Interop from scratch, see the main [Native Interop Guide](./native_interop_guide.md).
 
 ---
 
@@ -43,7 +43,7 @@ func echoAsync(_ value: String) async throws -> String {
 ### 2.2 Kotlin Async Methods
 
 #### Method Channels (Callback Style)
-<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/NativeInteropExample.kt (callback-style)"?>
+<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeonnativeinteropapp/NativeInteropExample.kt (callback-style)"?>
 ```kotlin
 fun echoAsync(value: String, callback: (Result<String>) -> Unit) {
   callback(Result.success(value))
@@ -51,7 +51,7 @@ fun echoAsync(value: String, callback: (Result<String>) -> Unit) {
 ```
 
 #### Native Interop (suspend Style)
-<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/NativeInteropExample.kt (concurrency-style)"?>
+<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeonnativeinteropapp/NativeInteropExample.kt (concurrency-style)"?>
 ```kotlin
 suspend fun echoAsync(value: String): String {
   return value
@@ -64,4 +64,4 @@ suspend fun echoAsync(value: String): String {
 
 From the Dart side, the API surface remains largely identical because both models return standard Dart `Future`s for asynchronous calls. However:
 - **Synchronous execution**: Host API methods that are synchronous now block the calling thread until completion, bypassing any message loop scheduling latency.
-- **Type changes**: Some complex data types or generic collections may have stricter typing requirements at the FFI/JNI boundary compared to the MethodChannel message codec. Refer to the [Native Interop Guide](file:///Users/tarrinneal/work/packages/packages/pigeon/native_interop_guide.md) for handling specific data types.
+- **Type changes**: Some complex data types or generic collections may have stricter typing requirements at the FFI/JNI boundary compared to the MethodChannel message codec. Refer to the [Native Interop Guide](./native_interop_guide.md) for handling specific data types.

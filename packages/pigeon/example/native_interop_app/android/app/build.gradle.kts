@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.flutter.pigeon_example_app"
+    namespace = "dev.flutter.pigeonnativeinteropapp"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -14,7 +14,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "dev.flutter.pigeon_example_app"
+        applicationId = "dev.flutter.pigeonnativeinteropapp"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
