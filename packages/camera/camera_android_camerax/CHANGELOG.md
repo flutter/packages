@@ -1,3 +1,11 @@
+## 0.7.4+4
+
+* Fix torch state retention when switching cameras.
+
+## 0.7.4+3
+
+* Fix torch state retention when switching cameras.
+
 ## 0.7.4+2
 
 * Bumps cameraxVersion from 1.6.0 to 1.6.1.
