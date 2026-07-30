@@ -274,15 +274,13 @@ class ThemeData with Diagnosticable {
   /// each component widget explains exactly how the defaults are computed.
   ///
   /// When providing a [ColorScheme], apps can either provide one directly with
-  /// the [colorScheme] parameter, or have one generated for them. A provided
+  /// the [colorScheme] parameter, or have one generated for them by using the
+  /// [colorSchemeSeed], [brightness], and [contrastLevel] parameters. A
+  /// generated color scheme will be based on the tones of [colorSchemeSeed],
+  /// and all of its contrasting colors will meet accessibility guidelines for
+  /// readability. (See [ColorScheme.fromSeed] for more details.) A provided
   /// [colorScheme] is used directly and is not affected by [brightness],
   /// [colorSchemeSeed], or [contrastLevel].
-  ///
-  /// If a [colorSchemeSeed] is provided, [ColorScheme.fromSeed] is used to
-  /// generate a color scheme from [colorSchemeSeed], [brightness], and
-  /// [contrastLevel].
-  /// All of its contrasting colors will meet accessibility guidelines for
-  /// readability. (See [ColorScheme.fromSeed] for more details.)
   ///
   /// If [colorSchemeSeed] is null and [useMaterial3] is true, the default
   /// Material 3 color scheme is selected from [brightness] and [contrastLevel].
