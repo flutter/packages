@@ -17,7 +17,7 @@ base class XEntity {
   @internal
   final PlatformXEntity platform;
 
-  /// A string used to reference the resource's location.
+  /// A unique string used to identify the resource.
   String get uri => platform.params.uri;
 
   /// Whether the resource represented by this reference exists.
