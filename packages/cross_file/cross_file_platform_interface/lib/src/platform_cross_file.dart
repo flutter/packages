@@ -131,6 +131,7 @@ abstract base class PlatformXFile extends PlatformXEntity {
   /// The name of the resource represented by this object or null if the file
   /// doesn't exist or information is not available.
   ///
-  /// The path is excluded from this value.
+  /// If the file is identified by a path, only the base name of the file will
+  /// be included in the name.
   Future<String?> name();
 }
