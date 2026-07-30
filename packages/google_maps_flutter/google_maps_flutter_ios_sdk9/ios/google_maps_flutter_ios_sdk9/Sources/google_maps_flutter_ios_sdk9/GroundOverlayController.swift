@@ -28,6 +28,9 @@ class GroundOverlayController: NSObject {
     groundOverlay.map = nil
   }
 
+  /// Updates the controller's ground overlay with the properties from a FGMPlatformGroundOverlay.
+  ///
+  /// Setting the ground overlay to visible will set its map to the controller's mapView.
   func update(
     from platformGroundOverlay: FGMPlatformGroundOverlay, assetProvider: FGMAssetProvider,
     screenScale: CGFloat
@@ -36,7 +39,7 @@ class GroundOverlayController: NSObject {
       GroundOverlayController.update(
         groundOverlay,
         from: platformGroundOverlay,
-        with: mapView,
+        mapView: mapView,
         assetProvider: assetProvider,
         screenScale: screenScale,
         usingBounds: createdWithBounds
@@ -44,22 +47,25 @@ class GroundOverlayController: NSObject {
     }
   }
 
+  /// Updates the given GMSGroundOverlay with the properties from a FGMPlatformGroundOverlay.
+  ///
+  /// Setting the ground overlay to visible will set its map to the given mapView.
   static func update(
     _ groundOverlay: GMSGroundOverlay,
     from platformGroundOverlay: FGMPlatformGroundOverlay,
-    with mapView: GMSMapView,
+    mapView: GMSMapView,
     assetProvider: FGMAssetProvider,
     screenScale: CGFloat,
     usingBounds useBounds: Bool
   ) {
     groundOverlay.isTappable = platformGroundOverlay.clickable
     groundOverlay.zIndex = Int32(platformGroundOverlay.zIndex)
-    groundOverlay.anchor = CGPoint(
-      x: platformGroundOverlay.anchor.x, y: platformGroundOverlay.anchor.y)
-    let image = FGMIconFromBitmap(platformGroundOverlay.image, assetProvider, screenScale)
-    groundOverlay.icon = image
+    if let anchor = platformGroundOverlay.anchor {
+      groundOverlay.anchor = CGPoint(x: anchor.x, y: anchor.y)
+    }
+    groundOverlay.icon = FGMIconFromBitmap(platformGroundOverlay.image, assetProvider, screenScale)
     groundOverlay.bearing = platformGroundOverlay.bearing
-    groundOverlay.opacity = 1.0 - platformGroundOverlay.transparency
+    groundOverlay.opacity = Float(1.0 - platformGroundOverlay.transparency)
     if useBounds {
       if let bounds = platformGroundOverlay.bounds {
         groundOverlay.bounds = GMSCoordinateBounds(
@@ -91,7 +97,7 @@ class GroundOverlayController: NSObject {
 class GroundOverlaysController: NSObject {
   private var groundOverlayControllerByIdentifier: [String: GroundOverlayController] = [:]
   private weak var eventDelegate: FGMMapEventDelegate?
-  private var assetProvider: FGMAssetProvider
+  private let assetProvider: FGMAssetProvider
   private weak var mapView: GMSMapView?
 
   init(mapView: GMSMapView, eventDelegate: FGMMapEventDelegate, assetProvider: FGMAssetProvider) {
@@ -108,12 +114,27 @@ class GroundOverlaysController: NSObject {
       let identifier = groundOverlay.groundOverlayId
       let gmsOverlay: GMSGroundOverlay
       var isCreatedWithBounds = false
-      if groundOverlay.position == nil {
+      if let position = groundOverlay.position {
+        guard let zoomLevel = groundOverlay.zoomLevel else {
+          fatalError("If ground overlay is initialized with position, zoomLevel is required")
+        }
+        gmsOverlay = GMSGroundOverlay(
+          position: CLLocationCoordinate2D(
+            latitude: position.latitude,
+            longitude: position.longitude
+          ),
+          icon: FGMIconFromBitmap(groundOverlay.image, assetProvider, screenScale),
+          zoomLevel: CGFloat(zoomLevel.doubleValue)
+        )
+      } else {
         isCreatedWithBounds = true
+        // TODO(stuartmorgan): Convert these to Pigeon error handling rather
+        // than being fatal. The original Obj-C code used NSAssert instead of
+        // passing errors back, which isn't how we should handle errors.
         guard let bounds = groundOverlay.bounds else {
           fatalError("If ground overlay is initialized without position, bounds are required")
         }
-        let boundsObj = GMSCoordinateBounds(
+        let gmsBounds = GMSCoordinateBounds(
           coordinate: CLLocationCoordinate2D(
             latitude: bounds.northeast.latitude,
             longitude: bounds.northeast.longitude
@@ -123,21 +144,9 @@ class GroundOverlaysController: NSObject {
             longitude: bounds.southwest.longitude
           )
         )
-        let iconImage = FGMIconFromBitmap(groundOverlay.image, assetProvider, screenScale)
-        gmsOverlay = GMSGroundOverlay(bounds: boundsObj, icon: iconImage)
-      } else {
-        guard let zoomLevel = groundOverlay.zoomLevel else {
-          fatalError("If ground overlay is initialized with position, zoomLevel is required")
-        }
-        let position = CLLocationCoordinate2D(
-          latitude: groundOverlay.position.latitude,
-          longitude: groundOverlay.position.longitude
-        )
-        let iconImage = FGMIconFromBitmap(groundOverlay.image, assetProvider, screenScale)
         gmsOverlay = GMSGroundOverlay(
-          position: position,
-          icon: iconImage,
-          zoomLevel: CGFloat(zoomLevel.doubleValue)
+          bounds: gmsBounds,
+          icon: FGMIconFromBitmap(groundOverlay.image, assetProvider, screenScale)
         )
       }
       let controller = GroundOverlayController(

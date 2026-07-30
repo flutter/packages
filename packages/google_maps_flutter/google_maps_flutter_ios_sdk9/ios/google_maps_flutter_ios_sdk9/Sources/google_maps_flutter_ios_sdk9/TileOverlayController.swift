@@ -6,6 +6,18 @@ import GoogleMaps
 import UIKit
 import google_maps_flutter_ios_sdk9_objc
 
+/// Protocol for requesting tiles from the Dart side.
+// TODO(stuartmorgan): Adjust this to match the Swift API once the Pigeon
+// generation is switched to Swift.
+protocol TileProviderDelegate: AnyObject {
+  func tile(
+    withOverlayIdentifier tileOverlayId: String,
+    location: FGMPlatformPoint,
+    zoom: Int,
+    completion: @escaping (FGMPlatformTile?, FlutterError?) -> Void
+  )
+}
+
 /// Controller of a single tile overlay on the map.
 class TileOverlayController: NSObject {
   let layer: GMSTileLayer
@@ -26,12 +38,18 @@ class TileOverlayController: NSObject {
     layer.clearTileCache()
   }
 
+  /// Updates the controller's tile overlay with the properties from a FGMPlatformTileOverlay.
+  ///
+  /// Setting the tile overlay to visible will set its map to the controller's mapView.
   func update(from overlay: FGMPlatformTileOverlay) {
     if let mapView = mapView {
       TileOverlayController.update(layer, from: overlay, with: mapView)
     }
   }
 
+  /// Updates the given GMSTileLayer with the properties from a FGMPlatformTileOverlay.
+  ///
+  /// Setting the tile overlay to visible will set its map to the given mapView.
   static func update(
     _ tileLayer: GMSTileLayer,
     from platformOverlay: FGMPlatformTileOverlay,
@@ -47,14 +65,14 @@ class TileOverlayController: NSObject {
   }
 }
 
-/// Custom tile layer that requests tiles through a FGMTileProviderDelegate.
+/// Custom tile layer that requests tiles through a TileProviderDelegate.
 class TileProviderController: GMSTileLayer {
   let tileOverlayIdentifier: String
-  private weak var tileProviderDelegate: FGMTileProviderDelegate?
+  private weak var tileProviderDelegate: TileProviderDelegate?
 
   init(
     tileOverlayIdentifier: String,
-    tileProvider: FGMTileProviderDelegate
+    tileProvider: TileProviderDelegate
   ) {
     self.tileOverlayIdentifier = tileOverlayIdentifier
     self.tileProviderDelegate = tileProvider
@@ -73,22 +91,19 @@ class TileProviderController: GMSTileLayer {
     // If it is wide gamut, we want to downsample it.
     if isFloat && bitsPerComponent == 16 {
       let colorSpace = CGColorSpaceCreateDeviceRGB()
-      guard
-        let context = CGContext(
-          data: nil,
-          width: Int(tile.size.width),
-          height: Int(tile.size.height),
-          bitsPerComponent: 8,
-          bytesPerRow: 0,
-          space: colorSpace,
-          bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-        )
-      else {
-        return tile
-      }
-      context.draw(imageRef, in: CGRect(origin: .zero, size: tile.size))
-      if let image = context.makeImage() {
-        return UIImage(cgImage: image)
+      if let context = CGContext(
+        data: nil,
+        width: Int(tile.size.width),
+        height: Int(tile.size.height),
+        bitsPerComponent: 8,
+        bytesPerRow: 0,
+        space: colorSpace,
+        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+      ) {
+        context.draw(imageRef, in: CGRect(origin: .zero, size: tile.size))
+        if let image = context.makeImage() {
+          return UIImage(cgImage: image)
+        }
       }
     }
     return tile
@@ -112,10 +127,7 @@ class TileProviderController: GMSTileLayer {
         }
         if let error = error {
           NSLog(
-            "Can't get tile: errorCode = %@, errorMessage = %@, details = %@",
-            error.code,
-            error.message ?? "nil",
-            error.details ?? "nil"
+            "Can't get tile: errorCode = \(error.code), errorMessage = \(error.message ?? "nil"), details = \(error.details ?? "nil")"
           )
         }
         receiver.receiveTileWith(x: x, y: y, zoom: zoom, image: tileImage)
@@ -127,10 +139,10 @@ class TileProviderController: GMSTileLayer {
 /// Controller of multiple tile overlays on the map.
 class TileOverlaysController: NSObject {
   private var tileOverlayIdentifierToController: [String: TileOverlayController] = [:]
-  private weak var tileProviderDelegate: FGMTileProviderDelegate?
+  private weak var tileProviderDelegate: TileProviderDelegate?
   private weak var mapView: GMSMapView?
 
-  init(mapView: GMSMapView, tileProvider: FGMTileProviderDelegate) {
+  init(mapView: GMSMapView, tileProvider: TileProviderDelegate) {
     self.mapView = mapView
     self.tileProviderDelegate = tileProvider
     super.init()
