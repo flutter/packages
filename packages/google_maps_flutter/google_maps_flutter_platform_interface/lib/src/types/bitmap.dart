@@ -1009,10 +1009,11 @@ class BytesMapBitmap extends MapBitmap {
 /// ```dart
 /// PinConfig(
 ///   glyph: BitmapGlyph(
-///     bitmap: BitmapDescriptor.asset(
+///     bitmap: await BitmapDescriptor.asset(
 ///       ImageConfiguration(size: Size(12, 12)),
-///       'assets/cat.png'
-///    )
+///       'assets/cat.png',
+///     ),
+///   ),
 /// )
 /// ```
 ///
