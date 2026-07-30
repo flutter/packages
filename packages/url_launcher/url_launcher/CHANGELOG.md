@@ -5,7 +5,10 @@
   versions of the endorsed platform implementations.
   * Applications built with older versions of Flutter will continue to
     use compatible versions of the platform implementations.
-* `url_launcher_android` package version updated to resolve the KGP warning.
+
+## 6.3.3
+
+* Updates `url_launcher_android` package version to resolve the KGP warning.
 
 ## 6.3.2
 
