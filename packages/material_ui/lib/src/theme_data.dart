@@ -274,21 +274,23 @@ class ThemeData with Diagnosticable {
   /// each component widget explains exactly how the defaults are computed.
   ///
   /// When providing a [ColorScheme], apps can either provide one directly with
-  /// the [colorScheme] parameter, or have one generated for them by using the
-  /// [colorSchemeSeed], [brightness], and [contrastLevel] parameters. A
-  /// generated color scheme will be based on the tones of [colorSchemeSeed],
-  /// and all of its contrasting colors will meet accessibility guidelines for
-  /// readability. (See [ColorScheme.fromSeed] for more details.) A provided
+  /// the [colorScheme] parameter, or have one generated for them. A provided
   /// [colorScheme] is used directly and is not affected by [brightness],
   /// [colorSchemeSeed], or [contrastLevel].
   ///
-  /// If [colorSchemeSeed] is null and [useMaterial3] is true, the default
-  /// Material 3 color scheme is selected from [brightness] and [contrastLevel].
+  /// If a [colorSchemeSeed] is provided, [ColorScheme.fromSeed] generates the
+  /// color scheme from [colorSchemeSeed], [brightness], and [contrastLevel].
+  /// In this case, [contrastLevel] can be any value between -1.0 and 1.0
+  /// inclusive. All of the color scheme's contrasting colors will meet
+  /// accessibility guidelines for readability. (See [ColorScheme.fromSeed] for
+  /// more details.)
+  ///
+  /// If [colorSchemeSeed] is null and [useMaterial3] is true, [brightness] and
+  /// [contrastLevel] select a token-backed Material 3 baseline color scheme.
   /// Use [ContrastLevel.standard], [ContrastLevel.medium], or
-  /// [ContrastLevel.high] to choose the token-backed default color scheme for
-  /// that contrast level. Custom [contrastLevel] values, such as 0.6, can only
-  /// be used when [colorSchemeSeed] is provided. Otherwise they are ignored and
-  /// the standard contrast default color scheme is used.
+  /// [ContrastLevel.high] to choose between the standard, medium, and high
+  /// contrast baselines. Other custom [contrastLevel] values, such as 0.6, are
+  /// ignored and the standard contrast baseline is used.
   ///
   /// If the app wants to customize a generated color scheme, it can use
   /// [ColorScheme.fromSeed] directly and then [ColorScheme.copyWith] on the
@@ -304,7 +306,7 @@ class ThemeData with Diagnosticable {
   /// [primarySwatch] must all be null.
   ///
   /// [contrastLevel] sets the contrast level for generated Material 3 color
-  /// schemes. Values must be between -1.0 and 1.0 inclusive.
+  /// schemes.
   ///
   /// The [textTheme] [TextStyle] colors are black if the color scheme's
   /// brightness is [Brightness.light], and white for [Brightness.dark].
