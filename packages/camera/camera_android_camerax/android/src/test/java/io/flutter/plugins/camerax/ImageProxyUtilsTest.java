@@ -135,6 +135,49 @@ public class ImageProxyUtilsTest {
     assertEquals(width * height + (width * height / 2), nv21.length);
   }
 
+  @Test
+  public void planesToNV21_doesNotOverAllocateWhenYBufferIsOversized() {
+    int width = 1280;
+    int height = 720;
+    int expectedYSize = width * height;
+    int expectedTotalSize = expectedYSize + (expectedYSize / 2);
+
+    // Create a Y buffer that is massively oversized (simulating a direct buffer shared across
+    // planes)
+    // In the old code, this would cause the allocated NV21 array to be (oversized +
+    // expectedYSize/2)
+    int oversizedRemaining = expectedYSize * 3;
+    ByteBuffer yBuffer = ByteBuffer.allocate(oversizedRemaining);
+    PlaneProxy yPlane = mock(PlaneProxy.class);
+    when(yPlane.getBuffer()).thenReturn(yBuffer);
+    when(yPlane.getPixelStride()).thenReturn(1);
+    when(yPlane.getRowStride()).thenReturn(width);
+
+    // Mock U and V planes
+    ByteBuffer uBuffer = ByteBuffer.allocate(expectedYSize / 4);
+    PlaneProxy uPlane = mock(PlaneProxy.class);
+    when(uPlane.getBuffer()).thenReturn(uBuffer);
+    when(uPlane.getPixelStride()).thenReturn(1);
+    when(uPlane.getRowStride()).thenReturn(width / 2);
+
+    ByteBuffer vBuffer = ByteBuffer.allocate(expectedYSize / 4);
+    PlaneProxy vPlane = mock(PlaneProxy.class);
+    when(vPlane.getBuffer()).thenReturn(vBuffer);
+    when(vPlane.getPixelStride()).thenReturn(1);
+    when(vPlane.getRowStride()).thenReturn(width / 2);
+
+    List<PlaneProxy> planes = Arrays.asList(yPlane, uPlane, vPlane);
+
+    ByteBuffer nv21Buffer = ImageProxyUtils.planesToNV21(planes, width, height);
+
+    // The capacity of the newly allocated buffer should exactly match the required NV21 size
+    // and must not be impacted by the oversized remaining bytes in the Y buffer.
+    assertEquals(
+        "The NV21 byte array should be tightly packed without over-allocation.",
+        expectedTotalSize,
+        nv21Buffer.capacity());
+  }
+
   // Creates a mock PlaneProxy with a buffer (of zeroes) of the given size.
   private PlaneProxy mockPlaneProxy(int bufferSize) {
     PlaneProxy plane = mock(PlaneProxy.class);

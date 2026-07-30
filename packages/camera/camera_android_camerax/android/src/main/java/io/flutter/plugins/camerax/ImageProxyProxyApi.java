@@ -7,7 +7,8 @@ package io.flutter.plugins.camerax;
 import androidx.annotation.NonNull;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.ImageProxy.PlaneProxy;
-import java.util.Arrays;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,7 +39,42 @@ class ImageProxyProxyApi extends PigeonApiImageProxy {
   @NonNull
   @Override
   public List<PlaneProxy> getPlanes(ImageProxy pigeonInstance) {
-    return Arrays.asList(pigeonInstance.getPlanes());
+    PlaneProxy[] originalPlanes = pigeonInstance.getPlanes();
+    List<PlaneProxy> planes = new ArrayList<>();
+    int height = pigeonInstance.getHeight();
+
+    for (int i = 0; i < originalPlanes.length; i++) {
+      final PlaneProxy original = originalPlanes[i];
+      final int planeHeight = (i == 0) ? height : height / 2;
+
+      planes.add(
+          new PlaneProxy() {
+            @Override
+            public int getRowStride() {
+              return original.getRowStride();
+            }
+
+            @Override
+            public int getPixelStride() {
+              return original.getPixelStride();
+            }
+
+            @NonNull
+            @Override
+            public ByteBuffer getBuffer() {
+              ByteBuffer sourceBuffer = original.getBuffer();
+              // Create a duplicate so we don't modify the original's position/limit.
+              ByteBuffer slicedBuffer = sourceBuffer.duplicate();
+              // Limit the buffer to what's actually needed for this plane.
+              int maxValidBytes = planeHeight * original.getRowStride();
+              if (maxValidBytes < slicedBuffer.remaining()) {
+                slicedBuffer.limit(slicedBuffer.position() + maxValidBytes);
+              }
+              return slicedBuffer;
+            }
+          });
+    }
+    return planes;
   }
 
   @Override

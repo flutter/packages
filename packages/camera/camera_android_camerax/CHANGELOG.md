@@ -1,3 +1,8 @@
+## 0.7.5
+
+* Fixes NV21 buffer over-allocation when the Y plane buffer is oversized.
+* Optimizes per-frame NV21 conversion by reusing a pre-allocated output buffer to reduce GC pressure.
+
 ## 0.7.4+2
 
 * Bumps cameraxVersion from 1.6.0 to 1.6.1.

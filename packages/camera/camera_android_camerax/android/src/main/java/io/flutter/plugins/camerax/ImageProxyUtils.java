@@ -15,9 +15,21 @@ public class ImageProxyUtils {
   /**
    * Converts list of {@link PlaneProxy}s in YUV_420_888 format (with VU planes in NV21 layout) to a
    * single NV21 {@code ByteBuffer}.
+   *
+   * <p>The result is written into {@code outBuffer}, which must have a capacity of at least {@code
+   * width * height * 3 / 2} bytes. Passing a pre-allocated, reusable buffer avoids per-frame heap
+   * allocations and reduces GC pressure in high-throughput camera pipelines.
+   *
+   * @param planes the YUV_420_888 planes (Y at index 0, U at 1, V at 2).
+   * @param width image width in pixels.
+   * @param height image height in pixels.
+   * @param outBuffer caller-owned buffer that receives the NV21 data; must be large enough.
+   * @return a {@link ByteBuffer} wrapping {@code outBuffer} with position 0 and limit set to the
+   *     number of bytes written ({@code width * height * 3 / 2}).
    */
   @NonNull
-  public static ByteBuffer planesToNV21(@NonNull List<PlaneProxy> planes, int width, int height) {
+  public static ByteBuffer planesToNV21(
+      @NonNull List<PlaneProxy> planes, int width, int height, @NonNull byte[] outBuffer) {
     if (planes.size() < 3) {
       throw new IllegalArgumentException(
           "The plane list must contain at least 3 planes (Y, U, V).");
@@ -36,26 +48,20 @@ public class ImageProxyUtils {
     uBuffer.rewind();
     vBuffer.rewind();
 
-    // Allocate a byte array for the NV21 frame.
-    // NV21 = Y plane + interleaved VU plane.
-    // Y = width * height; VU = (width * height) / 2 (4:2:0 subsampling).
-    // If the Y plane includes padding, ySize may be larger than width*height,
-    // but only the valid Y bytes are copied, so output size remains correct.
-    int ySize = yBuffer.remaining();
-    byte[] nv21Bytes = new byte[ySize + (width * height / 2)];
+    int expectedYSize = width * height;
     int position = 0;
 
     int yRowStride = yPlane.getRowStride();
     if (yRowStride == width) {
       // If no padding, copy entire Y plane at once.
-      yBuffer.get(nv21Bytes, 0, ySize);
-      position = ySize;
+      yBuffer.get(outBuffer, 0, expectedYSize);
+      position = expectedYSize;
     } else {
       // Copy row by row if padding exists.
       byte[] row = new byte[width];
       for (int rowIndex = 0; rowIndex < height; rowIndex++) {
         yBuffer.get(row, 0, width);
-        System.arraycopy(row, 0, nv21Bytes, position, width);
+        System.arraycopy(row, 0, outBuffer, position, width);
         position += width;
         // Adjust buffer position to start of next row.
         // After reading 'width' bytes, move ahead by (yRowStride - width)
@@ -85,13 +91,32 @@ public class ImageProxyUtils {
       // Interleave V and U chroma data into the NV21 buffer.
       // In NV21, chroma bytes follow the Y plane in repeating VU pairs (VUVU...).
       for (int col = 0; col < width / 2; col++) {
-        int vIndex = col * vPixelStride;
-        int uIndex = col * uPixelStride;
-        nv21Bytes[position++] = vRowBuffer[vIndex];
-        nv21Bytes[position++] = uRowBuffer[uIndex];
+        outBuffer[position++] = vRowBuffer[col * vPixelStride];
+        outBuffer[position++] = uRowBuffer[col * uPixelStride];
       }
     }
 
-    return ByteBuffer.wrap(nv21Bytes);
+    return ByteBuffer.wrap(outBuffer, 0, expectedYSize + (expectedYSize / 2));
+  }
+
+  /**
+   * Converts list of {@link PlaneProxy}s in YUV_420_888 format (with VU planes in NV21 layout) to a
+   * single NV21 {@code ByteBuffer}.
+   *
+   * <p>Allocates a new output buffer sized {@code width * height * 3 / 2} bytes on every call. For
+   * hot paths such as per-frame camera callbacks, prefer {@link #planesToNV21(List, int, int,
+   * byte[])} with a pre-allocated, reusable buffer to reduce GC pressure.
+   *
+   * @param planes the YUV_420_888 planes (Y at index 0, U at 1, V at 2).
+   * @param width image width in pixels.
+   * @param height image height in pixels.
+   * @return a {@link ByteBuffer} containing the NV21 data with a capacity of {@code width * height
+   *     * 3 / 2} bytes.
+   */
+  @NonNull
+  public static ByteBuffer planesToNV21(@NonNull List<PlaneProxy> planes, int width, int height) {
+    int expectedYSize = width * height;
+    byte[] outBuffer = new byte[expectedYSize + (expectedYSize / 2)];
+    return planesToNV21(planes, width, height, outBuffer);
   }
 }

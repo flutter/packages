@@ -128,8 +128,7 @@ void main() {
     })?
     newImageAnalysis,
     Analyzer Function({required void Function(Analyzer, ImageProxy) analyze})? newAnalyzer,
-    Future<Uint8List> Function(int imageWidth, int imageHeight, List<PlaneProxy> planes)?
-    getNv21BufferImageProxyUtils,
+    Future<Uint8List> Function(ImageProxy imageProxy)? getNv21BufferImageProxyUtils,
   }) {
     final AspectRatioStrategy ratio_4_3FallbackAutoStrategyAspectRatioStrategy =
         MockAspectRatioStrategy();
@@ -284,7 +283,7 @@ void main() {
         };
     PigeonOverrides.imageProxyUtils_getNv21Buffer =
         getNv21BufferImageProxyUtils ??
-        (int imageWidth, int imageHeight, List<PlaneProxy> planes) {
+        (ImageProxy imageProxy) {
           return Future<Uint8List>.value(Uint8List(0));
         };
   }
@@ -4084,7 +4083,7 @@ void main() {
               int? targetRotation,
               CameraIntegerRange? targetFpsRange,
             }) => mockImageAnalysis,
-        getNv21BufferImageProxyUtils: (int imageWidth, int imageHeight, List<PlaneProxy> planes) =>
+        getNv21BufferImageProxyUtils: (ImageProxy imageProxy) =>
             Future<Uint8List>.value(testNv21Buffer),
       );
 
