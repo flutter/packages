@@ -129,6 +129,7 @@ export 'src/menu_button_theme.dart';
 export 'src/menu_style.dart';
 export 'src/menu_theme.dart';
 export 'src/mergeable_material.dart';
+export 'src/migration_utility.dart';
 export 'src/motion.dart';
 export 'src/navigation_bar.dart';
 export 'src/navigation_bar_theme.dart';
