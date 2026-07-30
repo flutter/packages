@@ -146,7 +146,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     creationParameters: FGMPlatformMapViewCreationParams,
     registrar: FlutterPluginRegistrar
   ) {
-    let camera = cameraPosition(from: creationParameters.initialCameraPosition)
+    let camera = gmsCameraPosition(from: creationParameters.initialCameraPosition)
 
     let options = GMSMapViewOptions()
     options.frame = frame
@@ -691,7 +691,7 @@ class MapCallHandler: NSObject, FGMMapsApi {
     with cameraUpdate: FGMPlatformCameraUpdate,
     error: AutoreleasingUnsafeMutablePointer<FlutterError?>
   ) {
-    guard let update = cameraUpdate(from: cameraUpdate) else {
+    guard let update = gmsCameraUpdate(from: cameraUpdate) else {
       error.pointee = FlutterError(
         code: "Invalid update",
         message: "Unrecognized camera update",
@@ -706,7 +706,7 @@ class MapCallHandler: NSObject, FGMMapsApi {
     with cameraUpdate: FGMPlatformCameraUpdate, duration durationMilliseconds: NSNumber?,
     error: AutoreleasingUnsafeMutablePointer<FlutterError?>
   ) {
-    guard let update = cameraUpdate(from: cameraUpdate) else {
+    guard let update = gmsCameraUpdate(from: cameraUpdate) else {
       error.pointee = FlutterError(
         code: "Invalid update",
         message: "Unrecognized camera update",

@@ -52,15 +52,15 @@ func pigeonCameraPosition(from position: GMSCameraPosition) -> FGMPlatformCamera
     withBearing: position.bearing,
     target: pigeonLatLng(from: position.target),
     tilt: position.viewingAngle,
-    zoom: position.zoom
+    zoom: Double(position.zoom)
   )
 }
 
 /// Creates a GMSCameraPosition from its Pigeon representation.
-func cameraPosition(from position: FGMPlatformCameraPosition) -> GMSCameraPosition {
+func gmsCameraPosition(from position: FGMPlatformCameraPosition) -> GMSCameraPosition {
   return GMSCameraPosition(
     target: coordinate(from: position.target),
-    zoom: position.zoom,
+    zoom: Float(position.zoom),
     bearing: position.bearing,
     viewingAngle: position.tilt
   )
@@ -126,25 +126,25 @@ func pigeonGroundOverlay(
 ) -> FGMPlatformGroundOverlay {
   let placeholderImage = FGMPlatformBitmap.make(
     withBitmap: FGMPlatformBitmapDefaultMarker.make(withHue: 0))
-  if isCreatedWithBounds {
+  if isCreatedWithBounds, let bounds = groundOverlay.bounds {
     return FGMPlatformGroundOverlay.make(
       withGroundOverlayId: overlayId,
       image: placeholderImage,
       position: nil,
       bounds: FGMPlatformLatLngBounds.make(
         withNortheast: FGMPlatformLatLng.make(
-          withLatitude: groundOverlay.bounds.northEast.latitude,
-          longitude: groundOverlay.bounds.northEast.longitude
+          withLatitude: bounds.northEast.latitude,
+          longitude: bounds.northEast.longitude
         ),
         southwest: FGMPlatformLatLng.make(
-          withLatitude: groundOverlay.bounds.southWest.latitude,
-          longitude: groundOverlay.bounds.southWest.longitude
+          withLatitude: bounds.southWest.latitude,
+          longitude: bounds.southWest.longitude
         )
       ),
       anchor: FGMPlatformPoint.makeWith(x: groundOverlay.anchor.x, y: groundOverlay.anchor.y),
       transparency: 1.0 - Double(groundOverlay.opacity),
       bearing: groundOverlay.bearing,
-      zIndex: Double(groundOverlay.zIndex),
+      zIndex: Int(groundOverlay.zIndex),
       visible: groundOverlay.map != nil,
       clickable: groundOverlay.isTappable,
       zoomLevel: zoomLevel
@@ -161,7 +161,7 @@ func pigeonGroundOverlay(
       anchor: FGMPlatformPoint.makeWith(x: groundOverlay.anchor.x, y: groundOverlay.anchor.y),
       transparency: 1.0 - Double(groundOverlay.opacity),
       bearing: groundOverlay.bearing,
-      zIndex: Double(groundOverlay.zIndex),
+      zIndex: Int(groundOverlay.zIndex),
       visible: groundOverlay.map != nil,
       clickable: groundOverlay.isTappable,
       zoomLevel: zoomLevel
@@ -175,7 +175,7 @@ func gradient(from heatmapGradient: FGMPlatformHeatmapGradient) -> GMUGradient {
   return GMUGradient(
     colors: colors,
     startPoints: heatmapGradient.startPoints,
-    colorMapSize: heatmapGradient.colorMapSize
+    colorMapSize: UInt(heatmapGradient.colorMapSize)
   )
 }
 
@@ -183,9 +183,9 @@ func gradient(from heatmapGradient: FGMPlatformHeatmapGradient) -> GMUGradient {
 func pigeonHeatmapGradient(from gradient: GMUGradient) -> FGMPlatformHeatmapGradient {
   let colors = gradient.colors.map { pigeonColor(from: $0) }
   return FGMPlatformHeatmapGradient.make(
-    withColors: colors,
+    with: colors,
     startPoints: gradient.startPoints,
-    colorMapSize: gradient.mapSize
+    colorMapSize: Int(gradient.mapSize)
   )
 }
 
@@ -202,7 +202,7 @@ func weightedData(from weightedLatLngs: [FGMPlatformWeightedLatLng]) -> [GMUWeig
 /// Converts a GMUWeightedLatLng array to its Pigeon equivalent.
 func pigeonWeightedData(from weightedLatLngs: [GMUWeightedLatLng]) -> [FGMPlatformWeightedLatLng] {
   return weightedLatLngs.map {
-    let point = GMSMapPoint(x: $0.point.x, y: $0.point.y)
+    let point = GMSMapPoint(x: $0.point().x, y: $0.point().y)
     return FGMPlatformWeightedLatLng.make(
       withPoint: pigeonLatLng(from: GMSUnproject(point)),
       weight: Double($0.intensity)
@@ -211,11 +211,11 @@ func pigeonWeightedData(from weightedLatLngs: [GMUWeightedLatLng]) -> [FGMPlatfo
 }
 
 /// Creates a GMSCameraUpdate from its Pigeon equivalent.
-func cameraUpdate(from cameraUpdate: FGMPlatformCameraUpdate) -> GMSCameraUpdate? {
+func gmsCameraUpdate(from cameraUpdate: FGMPlatformCameraUpdate) -> GMSCameraUpdate? {
   // See note in messages.dart for why this is so loosely typed.
   let update = cameraUpdate.cameraUpdate
   if let newCameraPosition = update as? FGMPlatformCameraUpdateNewCameraPosition {
-    return GMSCameraUpdate.setCamera(cameraPosition(from: newCameraPosition.cameraPosition))
+    return GMSCameraUpdate.setCamera(gmsCameraPosition(from: newCameraPosition.cameraPosition))
   } else if let newLatLng = update as? FGMPlatformCameraUpdateNewLatLng {
     return GMSCameraUpdate.setTarget(coordinate(from: newLatLng.latLng))
   } else if let newLatLngBounds = update as? FGMPlatformCameraUpdateNewLatLngBounds {
