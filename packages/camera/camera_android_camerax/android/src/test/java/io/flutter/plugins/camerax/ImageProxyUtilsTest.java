@@ -136,6 +136,56 @@ public class ImageProxyUtilsTest {
   }
 
   @Test
+  public void planesToNV21_noBufferOverload_producesIdenticalOutputToBufferOverload() {
+    int width = 4;
+    int height = 2;
+
+    // Y plane — tightly packed, no padding.
+    byte[] y = new byte[] {0, 1, 2, 3, 4, 5, 6, 7};
+    PlaneProxy yPlane = mockPlaneProxyWithData(y);
+    when(yPlane.getPixelStride()).thenReturn(1);
+    when(yPlane.getRowStride()).thenReturn(width);
+
+    ByteBuffer vBuffer = ByteBuffer.wrap(new byte[] {9, 5, 7});
+    ByteBuffer uBuffer = ByteBuffer.wrap(new byte[] {5, 7, 33});
+
+    PlaneProxy uPlane = Mockito.mock(PlaneProxy.class);
+    PlaneProxy vPlane = Mockito.mock(PlaneProxy.class);
+    Mockito.when(uPlane.getBuffer()).thenReturn(uBuffer);
+    Mockito.when(vPlane.getBuffer()).thenReturn(vBuffer);
+    Mockito.when(uPlane.getPixelStride()).thenReturn(2);
+    Mockito.when(uPlane.getRowStride()).thenReturn(width);
+    Mockito.when(vPlane.getPixelStride()).thenReturn(2);
+    Mockito.when(vPlane.getRowStride()).thenReturn(width);
+
+    List<PlaneProxy> planes = Arrays.asList(yPlane, uPlane, vPlane);
+
+    // Call the no-buffer overload.
+    ByteBuffer noBufferResult = ImageProxyUtils.planesToNV21(planes, width, height);
+    byte[] noBufferBytes = new byte[noBufferResult.remaining()];
+    noBufferResult.get(noBufferBytes);
+
+    // Call the buffer overload with a fresh outBuffer for comparison.
+    int totalSize = width * height + (width * height / 2);
+    byte[] outBuffer = new byte[totalSize];
+
+    // Reset plane buffers — planesToNV21 rewinds them, but calling it twice requires
+    // rewinding the mocked ByteBuffers back to position 0 between calls.
+    uBuffer.rewind();
+    vBuffer.rewind();
+
+    ByteBuffer bufferedResult = ImageProxyUtils.planesToNV21(planes, width, height, outBuffer);
+    byte[] bufferedBytes = new byte[bufferedResult.remaining()];
+    bufferedResult.get(bufferedBytes);
+
+    // Both overloads must produce identical NV21 output.
+    assertArrayEquals(bufferedBytes, noBufferBytes);
+
+    // The no-buffer overload must allocate exactly width * height * 3 / 2 bytes.
+    assertEquals(totalSize, noBufferResult.capacity());
+  }
+
+  @Test
   public void planesToNV21_doesNotOverAllocateWhenYBufferIsOversized() {
     int width = 1280;
     int height = 720;
