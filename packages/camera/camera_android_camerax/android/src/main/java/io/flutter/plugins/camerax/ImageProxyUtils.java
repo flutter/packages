@@ -57,18 +57,14 @@ public class ImageProxyUtils {
       yBuffer.get(outBuffer, 0, expectedYSize);
       position = expectedYSize;
     } else {
-      // Copy row by row if padding exists.
-      byte[] row = new byte[width];
+      // Copy row by row, reading directly into outBuffer to avoid a temporary array.
       for (int rowIndex = 0; rowIndex < height; rowIndex++) {
-        yBuffer.get(row, 0, width);
-        System.arraycopy(row, 0, outBuffer, position, width);
+        yBuffer.get(outBuffer, position, width);
         position += width;
-        // Adjust buffer position to start of next row.
-        // After reading 'width' bytes, move ahead by (yRowStride - width)
-        // to skip any padding bytes at the end of the current row.
-        if (rowIndex < height - 1) {
-          yBuffer.position(yBuffer.position() - width + yRowStride);
-        }
+        // Skip padding bytes to advance to the start of the next row.
+        // Setting position to (current - width + yRowStride) moves past the
+        // (yRowStride - width) padding bytes appended to each row.
+        yBuffer.position(yBuffer.position() - width + yRowStride);
       }
     }
 
