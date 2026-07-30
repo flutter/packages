@@ -220,11 +220,11 @@ class GroundOverlaysController: NSObject {
     guard let controller = groundOverlayControllerByIdentifier[identifier] else {
       return nil
     }
-    return FGMGetPigeonGroundOverlay(
-      controller.groundOverlay,
-      identifier,
-      controller.createdWithBounds,
-      controller.zoomLevel
+    return pigeonGroundOverlay(
+      from: controller.groundOverlay,
+      overlayId: identifier,
+      isCreatedWithBounds: controller.createdWithBounds,
+      zoomLevel: controller.zoomLevel
     )
   }
 }

@@ -41,16 +41,16 @@ class PolylineController: NSObject {
   ) {
     polyline.isTappable = platformPolyline.consumesTapEvents
     polyline.zIndex = Int32(platformPolyline.zIndex)
-    let path = FGMGetPathFromPoints(FGMGetPointsForPigeonLatLngs(platformPolyline.points))
-    polyline.path = path
-    let strokeColor = FGMGetColorForPigeonColor(platformPolyline.color)
+    let gmsPath = path(from: points(from: platformPolyline.points))
+    polyline.path = gmsPath
+    let strokeColor = color(from: platformPolyline.color)
     polyline.strokeColor = strokeColor
     polyline.strokeWidth = CGFloat(platformPolyline.width)
     polyline.geodesic = platformPolyline.geodesic
     polyline.spans = GMSStyleSpans(
-      path,
-      FGMGetStrokeStylesFromPatterns(platformPolyline.patterns, strokeColor),
-      FGMGetSpanLengthsFromPatterns(platformPolyline.patterns),
+      gmsPath,
+      strokeStyles(from: platformPolyline.patterns ?? [], strokeColor: strokeColor),
+      spanLengths(from: platformPolyline.patterns ?? []),
       .rhumb
     )
 

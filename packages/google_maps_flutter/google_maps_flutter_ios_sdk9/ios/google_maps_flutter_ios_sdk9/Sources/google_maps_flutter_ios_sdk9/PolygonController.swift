@@ -41,12 +41,10 @@ class PolygonController: NSObject {
   ) {
     polygon.isTappable = platformPolygon.consumesTapEvents
     polygon.zIndex = Int32(platformPolygon.zIndex)
-    polygon.path = FGMGetPathFromPoints(FGMGetPointsForPigeonLatLngs(platformPolygon.points))
-    polygon.holes = FGMGetHolesForPigeonLatLngArrays(platformPolygon.holes).map {
-      FGMGetPathFromPoints($0)
-    }
-    polygon.fillColor = FGMGetColorForPigeonColor(platformPolygon.fillColor)
-    polygon.strokeColor = FGMGetColorForPigeonColor(platformPolygon.strokeColor)
+    polygon.path = path(from: points(from: platformPolygon.points))
+    polygon.holes = holes(from: platformPolygon.holes).map { path(from: $0) }
+    polygon.fillColor = color(from: platformPolygon.fillColor)
+    polygon.strokeColor = color(from: platformPolygon.strokeColor)
     polygon.strokeWidth = CGFloat(platformPolygon.strokeWidth)
 
     // This must be done last, to avoid visual flickers of default property values.

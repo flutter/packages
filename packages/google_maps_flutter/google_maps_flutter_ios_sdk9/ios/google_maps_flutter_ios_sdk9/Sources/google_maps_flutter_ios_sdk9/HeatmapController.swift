@@ -39,9 +39,9 @@ class HeatmapController: NSObject {
     from platformHeatmap: FGMPlatformHeatmap,
     mapView: GMSMapView
   ) {
-    heatmapTileLayer.weightedData = FGMGetWeightedDataForPigeonWeightedData(platformHeatmap.data)
-    if let gradient = platformHeatmap.gradient {
-      heatmapTileLayer.gradient = FGMGetGradientForPigeonHeatmapGradient(gradient)
+    heatmapTileLayer.weightedData = weightedData(from: platformHeatmap.data)
+    if let gradientValue = platformHeatmap.gradient {
+      heatmapTileLayer.gradient = gradient(from: gradientValue)
     }
     heatmapTileLayer.opacity = Float(platformHeatmap.opacity)
     heatmapTileLayer.radius = UInt(platformHeatmap.radius)
@@ -104,8 +104,8 @@ class HeatmapsController: NSObject {
     let heatmap = controller.heatmapTileLayer
     return FGMPlatformHeatmap.make(
       withHeatmapId: identifier,
-      data: FGMGetPigeonWeightedDataForWeightedData(heatmap.weightedData),
-      gradient: FGMGetPigeonHeatmapGradientForGradient(heatmap.gradient),
+      data: pigeonWeightedData(from: heatmap.weightedData),
+      gradient: pigeonHeatmapGradient(from: heatmap.gradient),
       opacity: Double(heatmap.opacity),
       radius: Int(heatmap.radius),
       minimumZoomIntensity: Int(heatmap.minimumZoomIntensity),
