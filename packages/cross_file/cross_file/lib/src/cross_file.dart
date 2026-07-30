@@ -101,7 +101,7 @@ base class XFile extends XEntity {
   /// the resource.
   Future<Uint8List> readAsBytes() => platform.readAsBytes();
 
-  /// Reads the entire resource contents as a string using the given Encoding.
+  /// Reads the entire resource contents as a string using the given [Encoding].
   ///
   /// Platforms may throw an exception if there is an error opening or reading
   /// the resource.
