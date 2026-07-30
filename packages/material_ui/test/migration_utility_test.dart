@@ -70,17 +70,47 @@ void main() {
     );
 
     expect(capturedLegacyTheme, isNotNull);
-    expect(capturedLegacyTheme!.colorScheme.brightness, Brightness.dark);
-    expect(capturedLegacyTheme!.colorScheme.primary, const Color(0xFF112233));
-    expect(capturedLegacyTheme!.colorScheme.onPrimary, const Color(0xFF445566));
-    expect(capturedLegacyTheme!.colorScheme.secondary, const Color(0xFFDDEEFF));
-    expect(capturedLegacyTheme!.colorScheme.tertiary, const Color(0xFF334455));
-    expect(capturedLegacyTheme!.colorScheme.error, const Color(0xFFFF0000));
-    expect(capturedLegacyTheme!.colorScheme.surface, const Color(0xFF101010));
-    expect(capturedLegacyTheme!.colorScheme.onSurface, const Color(0xFFEEEEEE));
-    expect(capturedLegacyTheme!.colorScheme.outline, const Color(0xFF777777));
-    expect(capturedLegacyTheme!.colorScheme.shadow, const Color(0xFF000001));
-    expect(capturedLegacyTheme!.colorScheme.scrim, const Color(0xFF000002));
+    expect(capturedLegacyTheme!.colorScheme.brightness, modernColorScheme.brightness);
+    expect(capturedLegacyTheme!.colorScheme.primary, modernColorScheme.primary);
+    expect(capturedLegacyTheme!.colorScheme.onPrimary, modernColorScheme.onPrimary);
+    expect(capturedLegacyTheme!.colorScheme.secondary, modernColorScheme.secondary);
+    expect(capturedLegacyTheme!.colorScheme.tertiary, modernColorScheme.tertiary);
+    expect(capturedLegacyTheme!.colorScheme.error, modernColorScheme.error);
+    expect(capturedLegacyTheme!.colorScheme.surface, modernColorScheme.surface);
+    expect(capturedLegacyTheme!.colorScheme.onSurface, modernColorScheme.onSurface);
+    expect(capturedLegacyTheme!.colorScheme.outline, modernColorScheme.outline);
+    expect(capturedLegacyTheme!.colorScheme.shadow, modernColorScheme.shadow);
+    expect(capturedLegacyTheme!.colorScheme.scrim, modernColorScheme.scrim);
+  });
+
+  testWidgets('MaterialUiCompatibilityBridge maps platform and visualDensity properties', (
+    WidgetTester tester,
+  ) async {
+    legacy.ThemeData? capturedLegacyTheme;
+
+    final modernThemeData = modern.ThemeData(
+      platform: TargetPlatform.iOS,
+      visualDensity: modern.VisualDensity.compact,
+    );
+
+    await tester.pumpWidget(
+      modern.MaterialApp(
+        theme: modernThemeData,
+        home: modern.MaterialUiCompatibilityBridge(
+          child: Builder(
+            builder: (BuildContext context) {
+              capturedLegacyTheme = legacy.Theme.of(context);
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(capturedLegacyTheme, isNotNull);
+    expect(capturedLegacyTheme!.platform, modernThemeData.platform);
+    expect(capturedLegacyTheme!.visualDensity.horizontal, modernThemeData.visualDensity.horizontal);
+    expect(capturedLegacyTheme!.visualDensity.vertical, modernThemeData.visualDensity.vertical);
   });
 
   testWidgets('MaterialUiCompatibilityBridge maps TextTheme properties', (
@@ -113,12 +143,27 @@ void main() {
     );
 
     expect(capturedLegacyTheme, isNotNull);
-    expect(capturedLegacyTheme!.textTheme.displayLarge?.fontSize, 57.0);
-    expect(capturedLegacyTheme!.textTheme.headlineMedium?.fontSize, 28.0);
-    expect(capturedLegacyTheme!.textTheme.headlineMedium?.fontWeight, FontWeight.w600);
-    expect(capturedLegacyTheme!.textTheme.titleLarge?.fontSize, 22.0);
-    expect(capturedLegacyTheme!.textTheme.bodyLarge?.color, const Color(0xFF123456));
-    expect(capturedLegacyTheme!.textTheme.labelSmall?.fontSize, 11.0);
+    expect(
+      capturedLegacyTheme!.textTheme.displayLarge?.fontSize,
+      modernTextTheme.displayLarge?.fontSize,
+    );
+    expect(
+      capturedLegacyTheme!.textTheme.headlineMedium?.fontSize,
+      modernTextTheme.headlineMedium?.fontSize,
+    );
+    expect(
+      capturedLegacyTheme!.textTheme.headlineMedium?.fontWeight,
+      modernTextTheme.headlineMedium?.fontWeight,
+    );
+    expect(
+      capturedLegacyTheme!.textTheme.titleLarge?.fontSize,
+      modernTextTheme.titleLarge?.fontSize,
+    );
+    expect(capturedLegacyTheme!.textTheme.bodyLarge?.color, modernTextTheme.bodyLarge?.color);
+    expect(
+      capturedLegacyTheme!.textTheme.labelSmall?.fontSize,
+      modernTextTheme.labelSmall?.fontSize,
+    );
   });
 
   testWidgets('MaterialUiCompatibilityBridge provides MaterialLocalizations for custom locales', (

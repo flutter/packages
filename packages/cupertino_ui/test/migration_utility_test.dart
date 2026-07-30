@@ -39,11 +39,11 @@ void main() {
     );
 
     expect(capturedLegacyTheme, isNotNull);
-    expect(capturedLegacyTheme!.brightness, Brightness.dark);
-    expect(capturedLegacyTheme!.primaryColor, const Color(0xFF00FF00));
-    expect(capturedLegacyTheme!.primaryContrastingColor, const Color(0xFFFF0000));
-    expect(capturedLegacyTheme!.barBackgroundColor, const Color(0xFF111111));
-    expect(capturedLegacyTheme!.scaffoldBackgroundColor, const Color(0xFF222222));
+    expect(capturedLegacyTheme!.brightness, modernThemeData.brightness);
+    expect(capturedLegacyTheme!.primaryColor, modernThemeData.primaryColor);
+    expect(capturedLegacyTheme!.primaryContrastingColor, modernThemeData.primaryContrastingColor);
+    expect(capturedLegacyTheme!.barBackgroundColor, modernThemeData.barBackgroundColor);
+    expect(capturedLegacyTheme!.scaffoldBackgroundColor, modernThemeData.scaffoldBackgroundColor);
   });
 
   testWidgets('CupertinoUiCompatibilityBridge maps CupertinoTextThemeData properties', (
@@ -73,9 +73,18 @@ void main() {
     );
 
     expect(capturedLegacyTheme, isNotNull);
-    expect(capturedLegacyTheme!.textTheme.navTitleTextStyle.fontSize, 20.0);
-    expect(capturedLegacyTheme!.textTheme.navTitleTextStyle.fontWeight, FontWeight.bold);
-    expect(capturedLegacyTheme!.textTheme.actionTextStyle.color, const Color(0xFF123456));
+    expect(
+      capturedLegacyTheme!.textTheme.navTitleTextStyle.fontSize,
+      modernTextTheme.navTitleTextStyle.fontSize,
+    );
+    expect(
+      capturedLegacyTheme!.textTheme.navTitleTextStyle.fontWeight,
+      modernTextTheme.navTitleTextStyle.fontWeight,
+    );
+    expect(
+      capturedLegacyTheme!.textTheme.actionTextStyle.color,
+      modernTextTheme.actionTextStyle.color,
+    );
   });
 
   testWidgets('CupertinoUiCompatibilityBridge provides CupertinoLocalizations', (

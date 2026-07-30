@@ -114,6 +114,11 @@ class MaterialUiCompatibilityBridge extends StatelessWidget {
     final modern.TextTheme textTheme = modernTheme.textTheme;
 
     return legacy.ThemeData(
+      platform: modernTheme.platform,
+      visualDensity: legacy.VisualDensity(
+        horizontal: modernTheme.visualDensity.horizontal,
+        vertical: modernTheme.visualDensity.vertical,
+      ),
       colorScheme: legacy.ColorScheme(
         brightness: scheme.brightness,
         primary: scheme.primary,
