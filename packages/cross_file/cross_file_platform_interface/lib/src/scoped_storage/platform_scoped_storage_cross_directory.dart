@@ -9,11 +9,11 @@ import '../platform_cross_directory.dart';
 
 /// Object specifying creation parameters for creating a [PlatformScopedStorageXDirectory].
 ///
-/// Platform specific implementations can add additional fields by extending
+/// Platform-specific implementations can add additional fields by extending
 /// this class.
 ///
 /// This example demonstrates how to extend the [PlatformScopedStorageXDirectoryCreationParams] to
-/// provide additional platform specific parameters.
+/// provide additional platform-specific parameters.
 ///
 /// When extending [PlatformScopedStorageXDirectoryCreationParams] additional parameters
 /// should always accept `null` or have a default value to prevent breaking
@@ -43,7 +43,7 @@ base class PlatformScopedStorageXDirectoryCreationParams extends PlatformXDirect
   const PlatformScopedStorageXDirectoryCreationParams({required super.uri});
 }
 
-/// Base mixin used to provide platform specific features for implementations of
+/// Base mixin used to provide platform-specific features for implementations of
 /// [PlatformScopedStorageXDirectory].
 ///
 /// Platform implementations are expected to declare a mixin that implements

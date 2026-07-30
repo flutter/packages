@@ -9,11 +9,11 @@ import '../platform_cross_file.dart';
 
 /// Object specifying creation parameters for creating a [PlatformScopedStorageXFile].
 ///
-/// Platform specific implementations can add additional fields by extending
+/// Platform-specific implementations can add additional fields by extending
 /// this class.
 ///
 /// This example demonstrates how to extend the [PlatformScopedStorageXFileCreationParams] to
-/// provide additional platform specific parameters.
+/// provide additional platform-specific parameters.
 ///
 /// When extending [PlatformScopedStorageXFileCreationParams] additional parameters
 /// should always accept `null` or have a default value to prevent breaking
@@ -43,7 +43,7 @@ base class PlatformScopedStorageXFileCreationParams extends PlatformXFileCreatio
   const PlatformScopedStorageXFileCreationParams({required super.uri});
 }
 
-/// Base mixin used to provide platform specific features for implementations of
+/// Base mixin used to provide platform-specific features for implementations of
 /// [PlatformScopedStorageXFile].
 ///
 /// Platform implementations are expected to declare a mixin that implements

@@ -11,11 +11,11 @@ import 'platform_cross_entity.dart';
 
 /// Object specifying creation parameters for creating a [PlatformXDirectory].
 ///
-/// Platform specific implementations can add additional fields by extending
+/// Platform-specific implementations can add additional fields by extending
 /// this class.
 ///
 /// This example demonstrates how to extend the [PlatformXDirectoryCreationParams] to
-/// provide additional platform specific parameters.
+/// provide additional platform-specific parameters.
 ///
 /// When extending [PlatformXDirectoryCreationParams] additional parameters
 /// should always accept `null` or have a default value to prevent breaking
@@ -45,7 +45,7 @@ base class PlatformXDirectoryCreationParams extends PlatformXEntityCreationParam
   const PlatformXDirectoryCreationParams({required super.uri});
 }
 
-/// Base mixin used to provide platform specific features for implementations of
+/// Base mixin used to provide platform-specific features for implementations of
 /// [PlatformXDirectory].
 ///
 /// Platform implementations are expected to declare a mixin that implements
