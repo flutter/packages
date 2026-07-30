@@ -7,6 +7,8 @@ import 'package:pigeon/pigeon.dart';
 // #docregion config
 @ConfigurePigeon(
   PigeonOptions(
+    // (Recommended) Path to the compiled application directory (where pubspec.yaml resides)
+    appDirectory: './',
     dartOptions: DartOptions(),
     kotlinOptions: KotlinOptions(
       useJni: true,

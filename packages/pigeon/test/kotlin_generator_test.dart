@@ -47,6 +47,14 @@ void main() {
     expect(code, isNot(contains('containsKey')));
   });
 
+  test('fileSpecificClassNameComponent defaults to UpperCamelCase from kotlinOut', () {
+    final kotlinOptions = InternalKotlinOptions.fromKotlinOptions(
+      const KotlinOptions(),
+      kotlinOut: 'path/to/messages.g.kt',
+    );
+    expect(kotlinOptions.fileSpecificClassNameComponent, equals('Messages'));
+  });
+
   test('gen one enum', () {
     final anEnum = Enum(
       name: 'Foobar',

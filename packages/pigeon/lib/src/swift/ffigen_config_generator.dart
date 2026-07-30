@@ -134,6 +134,10 @@ import 'package:swiftgen/swiftgen.dart';
         indent.writeln("'${prefix}PigeonInternalNumberType',");
       });
 
+      final String targetAppDir = (generatorOptions.basePath?.isNotEmpty ?? false)
+          ? generatorOptions.basePath!
+          : (generatorOptions.exampleAppDirectory ?? './');
+
       // TODO(tarrinneal): Make minimum OS versions configurable (ios/macos in externalVersions below).
       indent.format('''
   var targetTriple = '${configuredSdkTriple ?? ''}';
@@ -155,15 +159,15 @@ import 'package:swiftgen/swiftgen.dart';
       sdk: sdk,
     ),
     inputs: <SwiftGenInput>[ObjCCompatibleSwiftFileInput(files: <Uri>[
-        Uri.file('${path.relative(fullSwiftOut, from: generatorOptions.exampleAppDirectory ?? './')}')
+        Uri.file('${path.relative(fullSwiftOut, from: targetAppDir)}')
       ])
     ],
     include: (Declaration d) =>
         classes.contains(d.name) || enums.contains(d.name),
     output: Output(
       module: '$moduleName',
-      dartFile: Uri.file('${path.relative(path.withoutExtension(fullDartOut), from: generatorOptions.exampleAppDirectory ?? './')}.ffi.dart'),
-      objectiveCFile: Uri.file('${path.relative(path.posix.join(objcDir, '${path.posix.basenameWithoutExtension(fullSwiftOut)}.m'), from: generatorOptions.exampleAppDirectory ?? './')}'),
+      dartFile: Uri.file('${path.relative(path.withoutExtension(fullDartOut), from: targetAppDir)}.ffi.dart'),
+      objectiveCFile: Uri.file('${path.relative(path.posix.join(objcDir, '${path.posix.basenameWithoutExtension(fullSwiftOut)}.m'), from: targetAppDir)}'),
       preamble: \'''
 // ${generatorOptions.swiftOptions.copyrightHeader?.join('\n// ') ?? ''}
 

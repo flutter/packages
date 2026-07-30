@@ -142,12 +142,13 @@ class InternalSwiftOptions extends InternalOptions {
     Iterable<String>? copyrightHeader,
     String? fileSpecificClassNameComponent,
   }) : copyrightHeader = options.copyrightHeader ?? copyrightHeader,
-       fileSpecificClassNameComponent =
-           (options.useFfi
-               ? fileSpecificClassNameComponent ?? options.fileSpecificClassNameComponent
-               : options.fileSpecificClassNameComponent ?? fileSpecificClassNameComponent) ??
-           swiftOut.split('/').lastOrNull?.split('.').firstOrNull ??
-           '',
+       fileSpecificClassNameComponent = toUpperCamelCase(
+         (options.useFfi
+                 ? fileSpecificClassNameComponent ?? options.fileSpecificClassNameComponent
+                 : options.fileSpecificClassNameComponent ?? fileSpecificClassNameComponent) ??
+             swiftOut.split('/').lastOrNull?.split('.').firstOrNull ??
+             '',
+       ),
        errorClassName = options.errorClassName,
        useFfi = options.useFfi,
        ffiModuleName = options.ffiModuleName,

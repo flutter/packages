@@ -47,6 +47,14 @@ void main() {
     expect(code, isNot(contains('if (')));
   });
 
+  test('fileSpecificClassNameComponent defaults to UpperCamelCase from swiftOut', () {
+    final swiftOptions = InternalSwiftOptions.fromSwiftOptions(
+      const SwiftOptions(),
+      swiftOut: 'path/to/messages.g.swift',
+    );
+    expect(swiftOptions.fileSpecificClassNameComponent, equals('Messages'));
+  });
+
   test('gen one enum', () {
     final anEnum = Enum(
       name: 'Foobar',

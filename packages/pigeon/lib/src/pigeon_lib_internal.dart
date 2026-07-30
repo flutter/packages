@@ -54,7 +54,11 @@ class InternalPigeonOptions {
     PigeonOptions options,
     Iterable<String>? copyrightHeader,
   ) : input = options.input,
-      appDirectory = options.appDirectory,
+      appDirectory = (options.basePath != null && options.basePath!.isNotEmpty)
+          ? (options.appDirectory != null
+                ? path.posix.join(options.basePath!, options.appDirectory)
+                : options.basePath)
+          : options.appDirectory,
       objcOptions = (options.objcHeaderOut == null || options.objcSourceOut == null)
           ? null
           : InternalObjcOptions.fromObjcOptions(

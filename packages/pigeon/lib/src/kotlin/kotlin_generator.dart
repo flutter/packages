@@ -158,11 +158,13 @@ class InternalKotlinOptions extends InternalOptions {
        appDirectory = options.appDirectory,
        useGeneratedAnnotation = options.useGeneratedAnnotation,
        jniClassPaths = options.jniClassPaths,
-       fileSpecificClassNameComponent =
-           (options.useJni
-               ? fileSpecificClassNameComponent ?? options.fileSpecificClassNameComponent
-               : options.fileSpecificClassNameComponent ?? fileSpecificClassNameComponent) ??
-           kotlinOut.split('/').lastOrNull?.split('.').first;
+       fileSpecificClassNameComponent = toUpperCamelCase(
+         (options.useJni
+                 ? fileSpecificClassNameComponent ?? options.fileSpecificClassNameComponent
+                 : options.fileSpecificClassNameComponent ?? fileSpecificClassNameComponent) ??
+             kotlinOut.split('/').lastOrNull?.split('.').firstOrNull ??
+             '',
+       );
 
   /// The package where the generated class will live.
   final String? package;

@@ -849,10 +849,12 @@ ${_argParser.usage}''';
       return 1;
     }
 
-    final bool useFfi = options.swiftOptions?.useFfi ?? false;
-    final String? swiftAppDir = options.swiftOptions?.appDirectory ?? options.appDirectory;
-    final bool useJni = options.kotlinOptions?.useJni ?? false;
-    final String? appDir = options.kotlinOptions?.appDirectory ?? options.appDirectory;
+    final bool useFfi = internalOptions.swiftOptions?.useFfi ?? false;
+    final String? swiftAppDir =
+        internalOptions.swiftOptions?.appDirectory ?? internalOptions.appDirectory;
+    final bool useJni = internalOptions.kotlinOptions?.useJni ?? false;
+    final String? appDir =
+        internalOptions.kotlinOptions?.appDirectory ?? internalOptions.appDirectory;
 
     final String dartExecutable = Platform.resolvedExecutable;
     for (final adapter in safeGeneratorAdapters) {
