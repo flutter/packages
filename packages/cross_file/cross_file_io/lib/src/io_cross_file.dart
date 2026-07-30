@@ -78,7 +78,7 @@ base class IOXFile extends PlatformXFile with IOXFileExtension {
   Future<String?> name() async => path.basename(file.path);
 }
 
-/// Provides platform specific features for [IOXFile].
+/// Provides platform-specific features for [IOXFile].
 mixin IOXFileExtension implements PlatformXFileExtension {
   /// The underlying file.
   File get file;

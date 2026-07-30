@@ -60,7 +60,7 @@ base class IOXDirectory extends PlatformXDirectory with IOXDirectoryExtension {
   }
 }
 
-/// Provides platform specific features for [IOXDirectory].
+/// Provides platform-specific features for [IOXDirectory].
 mixin IOXDirectoryExtension implements PlatformXDirectoryExtension {
   /// The underlying directory.
   Directory get directory;

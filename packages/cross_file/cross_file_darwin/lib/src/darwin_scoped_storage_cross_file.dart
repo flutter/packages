@@ -335,11 +335,11 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
   }
 }
 
-/// Provides platform specific features for
+/// Provides platform-specific features for
 /// [SecurityScopedDarwinScopedStorageXFile].
 mixin SecurityScopedDarwinScopedStorageXFileExtension
     implements PlatformScopedStorageXFileExtension, SecurityScopedResource {}
 
-/// Provides platform specific features for
+/// Provides platform-specific features for
 /// [PhotoKitDarwinScopedStorageXFile].
 mixin PhotoKitDarwinScopedStorageXFileExtension implements PlatformScopedStorageXFileExtension {}

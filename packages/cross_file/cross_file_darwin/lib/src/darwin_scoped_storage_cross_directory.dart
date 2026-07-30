@@ -121,7 +121,7 @@ base class SecurityScopedDarwinScopedStorageXDirectory extends DarwinScopedStora
   }
 }
 
-/// Provides platform specific features for
+/// Provides platform-specific features for
 /// [SecurityScopedDarwinScopedStorageXDirectory].
 mixin SecurityScopedDarwinScopedStorageXDirectoryExtension
     implements PlatformScopedStorageXDirectoryExtension, SecurityScopedResource {}

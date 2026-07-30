@@ -173,7 +173,7 @@ base class WebScopedStorageXFile extends PlatformScopedStorageXFile
   }
 }
 
-/// Provides platform specific features for [WebScopedStorageXFile].
+/// Provides platform-specific features for [WebScopedStorageXFile].
 mixin WebScopedStorageXFileExtension implements PlatformScopedStorageXFileExtension {
   /// The raw data represented by a [WebScopedStorageXFile].
   Future<Blob> getBlob();
