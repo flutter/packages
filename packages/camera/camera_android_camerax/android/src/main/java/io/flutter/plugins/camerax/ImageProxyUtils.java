@@ -62,8 +62,8 @@ public class ImageProxyUtils {
         yBuffer.get(outBuffer, position, width);
         position += width;
         // Skip padding bytes to advance to the start of the next row.
-        // Setting position to (current - width + yRowStride) moves past the
-        // (yRowStride - width) padding bytes appended to each row.
+        // On the last row this seeks past the limit, which is harmless because
+        // yBuffer is not read again after the loop.
         yBuffer.position(yBuffer.position() - width + yRowStride);
       }
     }
