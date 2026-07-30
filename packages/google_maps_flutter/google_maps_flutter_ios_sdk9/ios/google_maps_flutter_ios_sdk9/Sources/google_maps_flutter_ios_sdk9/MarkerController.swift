@@ -84,7 +84,7 @@ class MarkerController: NSObject {
   ) {
     marker.groundAnchor = point(from: platformMarker.anchor ?? FGMPlatformPoint.makeWith(x: 0, y: 0))
     marker.isDraggable = platformMarker.draggable
-    marker.icon = FGMIconFromBitmap(platformMarker.icon, assetProvider, screenScale)
+    marker.icon = icon(from: platformMarker.icon, assetProvider: assetProvider, screenScale: screenScale)
     marker.isFlat = platformMarker.flat
     marker.position = coordinate(from: platformMarker.position)
     marker.rotation = platformMarker.rotation
