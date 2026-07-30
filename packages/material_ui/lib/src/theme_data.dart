@@ -305,9 +305,6 @@ class ThemeData with Diagnosticable {
   /// If [colorSchemeSeed] is non-null then [colorScheme], [primaryColor] and
   /// [primarySwatch] must all be null.
   ///
-  /// [contrastLevel] sets the contrast level for generated Material 3 color
-  /// schemes.
-  ///
   /// The [textTheme] [TextStyle] colors are black if the color scheme's
   /// brightness is [Brightness.light], and white for [Brightness.dark].
   ///
