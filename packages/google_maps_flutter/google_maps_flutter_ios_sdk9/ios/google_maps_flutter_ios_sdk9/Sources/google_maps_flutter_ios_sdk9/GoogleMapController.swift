@@ -127,7 +127,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   let polygonsController: PolygonsController
   let polylinesController: PolylinesController
   let circlesController: CirclesController
-  let heatmapsController: FGMHeatmapsController
+  let heatmapsController: HeatmapsController
   let tileOverlaysController: TileOverlaysController
   let groundOverlaysController: GroundOverlaysController
 
@@ -221,7 +221,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
       mapView: mapView,
       eventDelegate: mapEventHandler
     )
-    heatmapsController = FGMHeatmapsController(mapView: mapView)
+    heatmapsController = HeatmapsController(mapView: mapView)
     tileProvider = ConcreteTileProvider(dartCallbackHandler: dartCallbackHandler)
     tileOverlaysController = TileOverlaysController(
       mapView: mapView,

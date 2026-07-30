@@ -45,8 +45,8 @@ class HeatmapController: NSObject {
     }
     heatmapTileLayer.opacity = Float(platformHeatmap.opacity)
     heatmapTileLayer.radius = UInt(platformHeatmap.radius)
-    heatmapTileLayer.minimumZoomIntensity = Float(platformHeatmap.minimumZoomIntensity)
-    heatmapTileLayer.maximumZoomIntensity = Float(platformHeatmap.maximumZoomIntensity)
+    heatmapTileLayer.minimumZoomIntensity = UInt(platformHeatmap.minimumZoomIntensity)
+    heatmapTileLayer.maximumZoomIntensity = UInt(platformHeatmap.maximumZoomIntensity)
 
     // The map must be set each time for options to update.
     // This must be done last, to avoid visual flickers of default property values.
@@ -108,8 +108,8 @@ class HeatmapsController: NSObject {
       gradient: FGMGetPigeonHeatmapGradientForGradient(heatmap.gradient),
       opacity: Double(heatmap.opacity),
       radius: Int(heatmap.radius),
-      minimumZoomIntensity: Double(heatmap.minimumZoomIntensity),
-      maximumZoomIntensity: Double(heatmap.maximumZoomIntensity)
+      minimumZoomIntensity: Int(heatmap.minimumZoomIntensity),
+      maximumZoomIntensity: Int(heatmap.maximumZoomIntensity)
     )
   }
 }
