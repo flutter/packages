@@ -287,8 +287,8 @@ class ThemeData with Diagnosticable {
   /// Material 3 color scheme is selected from [brightness] and [contrastLevel].
   /// [ContrastLevel.standard], [ContrastLevel.medium], and [ContrastLevel.high]
   /// select token-backed default color schemes. Custom [contrastLevel] values
-  /// can only be used when [colorSchemeSeed] is provided; otherwise they use
-  /// the standard contrast default color scheme.
+  /// can only be used when [colorSchemeSeed] is provided. Otherwise they are
+  /// ignored and the standard contrast default color scheme is used.
   ///
   /// If the app wants to customize a generated color scheme, it can use
   /// [ColorScheme.fromSeed] directly and then [ColorScheme.copyWith] on the
