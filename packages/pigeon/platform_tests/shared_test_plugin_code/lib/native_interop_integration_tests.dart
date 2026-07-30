@@ -184,18 +184,14 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
           NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
 
-      expect(() async {
-        api!.throwError();
-      }, throwsA(isA<PlatformException>()));
+      expect(() => api!.throwError(), throwsA(isA<PlatformException>()));
     });
 
     testWidgets('errors are returned from void methods correctly', (WidgetTester _) async {
       final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
           NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
 
-      expect(() async {
-        api!.throwErrorFromVoid();
-      }, throwsA(isA<PlatformException>()));
+      expect(() => api!.throwErrorFromVoid(), throwsA(isA<PlatformException>()));
     });
 
     testWidgets('flutter errors are returned correctly', (WidgetTester _) async {
@@ -1743,43 +1739,35 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
     });
   });
 
-  //   group('Host API with suffix', () {
-  //     testWidgets('echo string succeeds with suffix with multiple instances',
-  //         (_) async {
-  //       final NativeInteropHostSmallApiForAndroid? apiWithSuffixOne =
-  //           NativeInteropHostSmallApiForAndroid.getInstance(channelName: 'suffixOne');
-  //       final NativeInteropHostSmallApiForAndroid? apiWithSuffixTwo =
-  //           NativeInteropHostSmallApiForAndroid.getInstance(channelName: 'suffixTwo');
-  //       const String sentString = "I'm a computer";
-  //       final String echoStringOne = await apiWithSuffixOne!.echo(sentString);
-  //       final String echoStringTwo = await apiWithSuffixTwo!.echo(sentString);
-  //       expect(sentString, echoStringOne);
-  //       expect(sentString, echoStringTwo);
-  //     });
+  group('Host API with suffix', () {
+    testWidgets('multiple instances will have different instance names', (WidgetTester _) async {
+      expect(
+        () => NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(
+          channelName: 'suffixWithNoHost',
+        ),
+        throwsA(
+          isA<ArgumentError>().having(
+            (ArgumentError e) => e.message,
+            'message',
+            contains('suffixWithNoHost'),
+          ),
+        ),
+      );
 
-  //     testWidgets('multiple instances will have different instance names',
-  //         (_) async {
-  //       // The only way to get the channel name back is to throw an exception.
-  //       // These APIs have no corresponding APIs on the host platforms.
-  //       const String sentString = "I'm a computer";
-  //       try {
-  //         final NativeInteropHostSmallApiForAndroid? apiWithSuffixOne =
-  //             NativeInteropHostSmallApiForAndroid.getInstance(
-  //                 channelName: 'suffixWithNoHost');
-  //         await apiWithSuffixOne!.echo(sentString);
-  //       } on ArgumentError catch (e) {
-  //         expect(e.message, contains('suffixWithNoHost'));
-  //       }
-  //       try {
-  //         final NativeInteropHostSmallApiForAndroid? apiWithSuffixTwo =
-  //             NativeInteropHostSmallApiForAndroid.getInstance(
-  //                 channelName: 'suffixWithoutHost');
-  //         await apiWithSuffixTwo!.echo(sentString);
-  //       } on ArgumentError catch (e) {
-  //         expect(e.message, contains('suffixWithoutHost'));
-  //       }
-  //     });
-  //   });
+      expect(
+        () => NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(
+          channelName: 'suffixWithoutHost',
+        ),
+        throwsA(
+          isA<ArgumentError>().having(
+            (ArgumentError e) => e.message,
+            'message',
+            contains('suffixWithoutHost'),
+          ),
+        ),
+      );
+    });
+  });
 
   group('Flutter Api', () {
     final registrar = NativeInteropFlutterIntegrationCoreApiRegistrar();
@@ -1805,15 +1793,11 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
     });
 
     testWidgets('errors are returned from non void methods correctly', (WidgetTester _) async {
-      expect(() async {
-        api.callFlutterThrowError();
-      }, throwsA(isA<PlatformException>()));
+      expect(() => api.callFlutterThrowError(), throwsA(isA<PlatformException>()));
     });
 
     testWidgets('errors are returned from void methods correctly', (WidgetTester _) async {
-      expect(() async {
-        api.callFlutterThrowErrorFromVoid();
-      }, throwsA(isA<PlatformException>()));
+      expect(() => api.callFlutterThrowErrorFromVoid(), throwsA(isA<PlatformException>()));
     });
 
     testWidgets('all datatypes serialize and deserialize correctly', (WidgetTester _) async {
@@ -2796,11 +2780,12 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       const instanceName = 'deregisteredHostInstanceTest';
       api!.registerAndImmediatelyDeregisterHostApi(instanceName);
 
-      final NativeInteropHostIntegrationCoreApiForNativeInterop? deregisteredApi =
-          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(
-            channelName: instanceName,
-          );
-      expect(() => deregisteredApi!.noop(), throwsA(anything));
+      expect(
+        () => NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(
+          channelName: instanceName,
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
     });
 
     testWidgets('calling a deregistered Flutter API fails on native lookup', (
@@ -3433,14 +3418,4 @@ class NativeInteropFlutterIntegrationCoreApiImpl extends NativeInteropFlutterInt
   void throwErrorFromVoid() {
     throw PlatformException(code: 'code', message: 'message', details: 'details');
   }
-
-  //   @override
-  //   Object? throwError() {
-  //     throw FlutterError('this is an error');
-  //   }
-
-  //   @override
-  //   void throwErrorFromVoid() {
-  //     throw FlutterError('this is an error');
-  //   }
 }

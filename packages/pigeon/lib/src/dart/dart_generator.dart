@@ -2399,7 +2399,7 @@ ${api.name}({
         );
       }
     }
-    sink.write(indent.toString());
+    sink.write('${indent.toString().trimRight()}\n');
   }
 
   /// Writes file header to sink.

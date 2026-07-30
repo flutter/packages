@@ -460,43 +460,6 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(listEquals(echoObject, list), true);
     });
 
-    // // Currently need set up
-    // testWidgets('string lists serialize and deserialize correctly', (
-    //   WidgetTester _,
-    // ) async {
-    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
-
-    //   final List<String?> echoObject = await api.echoStringList(stringList);
-    //   expect(listEquals(echoObject, stringList), true);
-    // });
-
-    // testWidgets('int lists serialize and deserialize correctly', (
-    //   WidgetTester _,
-    // ) async {
-    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
-
-    //   final List<int?> echoObject = await api.echoIntList(intList);
-    //   expect(listEquals(echoObject, intList), true);
-    // });
-
-    // testWidgets('double lists serialize and deserialize correctly', (
-    //   WidgetTester _,
-    // ) async {
-    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
-
-    //   final List<double?> echoObject = await api.echoDoubleList(doubleList);
-    //   expect(listEquals(echoObject, doubleList), true);
-    // });
-
-    // testWidgets('bool lists serialize and deserialize correctly', (
-    //   WidgetTester _,
-    // ) async {
-    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
-
-    //   final List<bool?> echoObject = await api.echoBoolList(boolList);
-    //   expect(listEquals(echoObject, boolList), true);
-    // });
-
     testWidgets('enum lists serialize and deserialize correctly', (WidgetTester _) async {
       final api = HostIntegrationCoreApi();
 
