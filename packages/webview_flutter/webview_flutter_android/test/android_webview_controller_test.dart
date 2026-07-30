@@ -26,6 +26,7 @@ import 'android_webview_controller_test.mocks.dart';
   MockSpec<android_webview.JavaScriptChannel>(),
   MockSpec<android_webview.PermissionRequest>(),
   MockSpec<PlatformViewsServiceProxy>(),
+  MockSpec<android_webview.ScriptHandler>(),
   MockSpec<SurfaceAndroidViewController>(),
   MockSpec<android_webview.WebChromeClient>(),
   MockSpec<android_webview.WebSettings>(),
@@ -1404,6 +1405,68 @@ void main() {
       await controller.runJavaScript('alert("This is a test.");');
 
       verify(mockWebView.evaluateJavascript('alert("This is a test.");')).called(1);
+    });
+
+    test('addDocumentStartJavaScript', () async {
+      final mockWebView = MockWebView();
+      final mockScriptHandler = MockScriptHandler();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        mockWebView: mockWebView,
+        isWebViewFeatureSupported: (_) async => true,
+      );
+      when(mockWebView.addDocumentStartJavaScript(any)).thenAnswer((_) async => mockScriptHandler);
+
+      await controller.addDocumentStartJavaScript('window.test = true;');
+
+      verify(mockWebView.addDocumentStartJavaScript('window.test = true;')).called(1);
+    });
+
+    test('addDocumentStartJavaScript throws if the feature is unsupported', () async {
+      final mockWebView = MockWebView();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        mockWebView: mockWebView,
+        isWebViewFeatureSupported: (_) async => false,
+      );
+
+      await expectLater(
+        () => controller.addDocumentStartJavaScript('window.test = true;'),
+        throwsA(isA<UnsupportedError>()),
+      );
+
+      verifyNever(mockWebView.addDocumentStartJavaScript(any));
+    });
+
+    test('removing document start JavaScript removes the script handler', () async {
+      final mockWebView = MockWebView();
+      final mockScriptHandler = MockScriptHandler();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        mockWebView: mockWebView,
+        isWebViewFeatureSupported: (_) async => true,
+      );
+      when(mockWebView.addDocumentStartJavaScript(any)).thenAnswer((_) async => mockScriptHandler);
+
+      final PlatformDocumentStartJavaScriptRegistration documentStartJavaScript = await controller
+          .addDocumentStartJavaScript('window.test = true;');
+      await documentStartJavaScript.remove();
+
+      verify(mockScriptHandler.remove()).called(1);
+    });
+
+    test('removing document start JavaScript more than once is a no-op', () async {
+      final mockWebView = MockWebView();
+      final mockScriptHandler = MockScriptHandler();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        mockWebView: mockWebView,
+        isWebViewFeatureSupported: (_) async => true,
+      );
+      when(mockWebView.addDocumentStartJavaScript(any)).thenAnswer((_) async => mockScriptHandler);
+
+      final PlatformDocumentStartJavaScriptRegistration documentStartJavaScript = await controller
+          .addDocumentStartJavaScript('window.test = true;');
+      await documentStartJavaScript.remove();
+      await documentStartJavaScript.remove();
+
+      verify(mockScriptHandler.remove()).called(1);
     });
 
     test('runJavaScriptReturningResult with return value', () async {

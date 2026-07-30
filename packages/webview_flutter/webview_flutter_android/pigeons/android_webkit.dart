@@ -347,6 +347,9 @@ abstract class WebView extends View {
   @async
   String? evaluateJavascript(String javascriptString);
 
+  /// Adds JavaScript that runs at the start of future document loads.
+  ScriptHandler addDocumentStartJavaScript(String javaScript);
+
   /// Gets the title for the current page.
   String? getTitle();
 
@@ -1016,4 +1019,14 @@ abstract class WebSettingsCompat {
 abstract class WebViewFeature {
   @static
   bool isFeatureSupported(String feature);
+}
+
+/// Handle to a document start JavaScript that was added with
+/// `WebView.addDocumentStartJavaScript`.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/webkit/ScriptHandler.
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'androidx.webkit.ScriptHandler'))
+abstract class ScriptHandler {
+  /// Removes the script from the WebView.
+  void remove();
 }

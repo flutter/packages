@@ -609,6 +609,12 @@ abstract class AndroidWebkitLibraryPigeonProxyApiRegistrar(val binaryMessenger: 
    */
   abstract fun getPigeonApiWebViewFeature(): PigeonApiWebViewFeature
 
+  /**
+   * An implementation of [PigeonApiScriptHandler] used to add a new Dart instance of
+   * `ScriptHandler` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiScriptHandler(): PigeonApiScriptHandler
+
   fun setUp() {
     AndroidWebkitLibraryPigeonInstanceManagerApi.setUpMessageHandlers(
         binaryMessenger, instanceManager)
@@ -643,6 +649,7 @@ abstract class AndroidWebkitLibraryPigeonProxyApiRegistrar(val binaryMessenger: 
     PigeonApiWebSettingsCompat.setUpMessageHandlers(
         binaryMessenger, getPigeonApiWebSettingsCompat())
     PigeonApiWebViewFeature.setUpMessageHandlers(binaryMessenger, getPigeonApiWebViewFeature())
+    PigeonApiScriptHandler.setUpMessageHandlers(binaryMessenger, getPigeonApiScriptHandler())
   }
 
   fun tearDown() {
@@ -670,6 +677,7 @@ abstract class AndroidWebkitLibraryPigeonProxyApiRegistrar(val binaryMessenger: 
     PigeonApiCertificate.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiWebSettingsCompat.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiWebViewFeature.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiScriptHandler.setUpMessageHandlers(binaryMessenger, null)
   }
 }
 
@@ -911,6 +919,12 @@ private class AndroidWebkitLibraryPigeonProxyApiBaseCodec(
       registrar.getPigeonApiWebViewFeature().pigeon_newInstance(value) {
         if (it.isFailure) {
           logNewInstanceFailure("WebViewFeature", value, it.exceptionOrNull())
+        }
+      }
+    } else if (value is androidx.webkit.ScriptHandler) {
+      registrar.getPigeonApiScriptHandler().pigeon_newInstance(value) {
+        if (it.isFailure) {
+          logNewInstanceFailure("ScriptHandler", value, it.exceptionOrNull())
         }
       }
     }
@@ -1815,6 +1829,12 @@ abstract class PigeonApiWebView(
       callback: (Result<String?>) -> Unit
   )
 
+  /** Adds JavaScript that runs at the start of future document loads. */
+  abstract fun addDocumentStartJavaScript(
+      pigeon_instance: android.webkit.WebView,
+      javaScript: String
+  ): androidx.webkit.ScriptHandler
+
   /** Gets the title for the current page. */
   abstract fun getTitle(pigeon_instance: android.webkit.WebView): String?
 
@@ -2197,6 +2217,29 @@ abstract class PigeonApiWebView(
                 reply.reply(AndroidWebkitLibraryPigeonUtils.wrapResult(data))
               }
             }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.WebView.addDocumentStartJavaScript",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as android.webkit.WebView
+            val javaScriptArg = args[1] as String
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.addDocumentStartJavaScript(pigeon_instanceArg, javaScriptArg))
+                } catch (exception: Throwable) {
+                  AndroidWebkitLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)
@@ -6979,6 +7022,85 @@ abstract class PigeonApiWebViewFeature(
       val codec = pigeonRegistrar.codec
       val channelName =
           "dev.flutter.pigeon.webview_flutter_android.WebViewFeature.pigeon_newInstance"
+      val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+      channel.send(listOf(pigeon_identifierArg)) {
+        if (it is List<*>) {
+          if (it.size > 1) {
+            callback(
+                Result.failure(
+                    AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+          } else {
+            callback(Result.success(Unit))
+          }
+        } else {
+          callback(
+              Result.failure(AndroidWebkitLibraryPigeonUtils.createConnectionError(channelName)))
+        }
+      }
+    }
+  }
+}
+/**
+ * Handle to a document start JavaScript that was added with `WebView.addDocumentStartJavaScript`.
+ *
+ * See https://developer.android.com/reference/kotlin/androidx/webkit/ScriptHandler.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiScriptHandler(
+    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+) {
+  /** Removes the script from the WebView. */
+  abstract fun remove(pigeon_instance: androidx.webkit.ScriptHandler)
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiScriptHandler?) {
+      val codec = api?.pigeonRegistrar?.codec ?: AndroidWebkitLibraryPigeonCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.ScriptHandler.remove",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.webkit.ScriptHandler
+            val wrapped: List<Any?> =
+                try {
+                  api.remove(pigeon_instanceArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  AndroidWebkitLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of ScriptHandler and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: androidx.webkit.ScriptHandler,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+    } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      callback(Result.success(Unit))
+    } else {
+      val pigeon_identifierArg =
+          pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      val binaryMessenger = pigeonRegistrar.binaryMessenger
+      val codec = pigeonRegistrar.codec
+      val channelName =
+          "dev.flutter.pigeon.webview_flutter_android.ScriptHandler.pigeon_newInstance"
       val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
       channel.send(listOf(pigeon_identifierArg)) {
         if (it is List<*>) {

@@ -83,6 +83,17 @@ class WebWebViewController extends PlatformWebViewController {
     }
   }
 
+  /// Always throws an [UnsupportedError].
+  ///
+  /// Content is rendered in an `<iframe>`, which provides no way to inject a
+  /// script into a document before it loads.
+  @override
+  Future<PlatformDocumentStartJavaScriptRegistration> addDocumentStartJavaScript(
+    String javaScript,
+  ) async {
+    throw UnsupportedError('Document-start JavaScript injection is not supported on web.');
+  }
+
   /// Performs an AJAX request defined by [params].
   Future<void> _updateIFrameFromXhr(LoadRequestParams params) async {
     final response =

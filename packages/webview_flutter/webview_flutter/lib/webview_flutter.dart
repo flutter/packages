@@ -19,6 +19,7 @@ export 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
         NavigationRequest,
         NavigationRequestCallback,
         PageEventCallback,
+        PlatformDocumentStartJavaScriptRegistration,
         PlatformNavigationDelegateCreationParams,
         PlatformWebViewControllerCreationParams,
         PlatformWebViewCookieManagerCreationParams,

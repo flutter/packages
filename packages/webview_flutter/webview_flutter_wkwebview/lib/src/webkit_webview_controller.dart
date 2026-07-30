@@ -317,6 +317,10 @@ class WebKitWebViewController extends PlatformWebViewController {
   final Map<String, WebKitJavaScriptChannelParams> _javaScriptChannelParams =
       <String, WebKitJavaScriptChannelParams>{};
 
+  /// Active document-start JavaScript registrations, in insertion order.
+  final List<WebKitDocumentStartJavaScriptRegistration> _documentStartJavaScriptRegistrations =
+      <WebKitDocumentStartJavaScriptRegistration>[];
+
   bool _zoomEnabled = true;
   WebKitNavigationDelegate? _currentNavigationDelegate;
 
@@ -445,6 +449,31 @@ class WebKitWebViewController extends PlatformWebViewController {
       contentController.addUserScript(wrapperScript),
       contentController.addScriptMessageHandler(webKitParams._messageHandler, webKitParams.name),
     ]);
+  }
+
+  /// Adds JavaScript that runs at the start of future document loads.
+  ///
+  /// The script is added as a `WKUserScript` that is injected into all frames
+  /// at [UserScriptInjectionTime.atDocumentStart].
+  @override
+  Future<PlatformDocumentStartJavaScriptRegistration> addDocumentStartJavaScript(
+    String javaScript,
+  ) async {
+    final registration = WebKitDocumentStartJavaScriptRegistration._(this, javaScript);
+    await _addDocumentStartJavaScript(javaScript);
+    _documentStartJavaScriptRegistrations.add(registration);
+    return registration;
+  }
+
+  Future<void> _removeDocumentStartJavaScriptRegistration(
+    WebKitDocumentStartJavaScriptRegistration registration,
+  ) async {
+    if (!_documentStartJavaScriptRegistrations.remove(registration)) {
+      return;
+    }
+    // WKWebView does not support removing a single user script, so all user
+    // scripts are removed and the remaining ones are re-added.
+    await _resetUserScripts();
   }
 
   @override
@@ -795,7 +824,9 @@ class WebKitWebViewController extends PlatformWebViewController {
   Future<void> _resetUserScripts({String? removedJavaScriptChannel}) async {
     final WKUserContentController controller = await _webView.configuration
         .getUserContentController();
-    unawaited(controller.removeAllUserScripts());
+    // This is awaited so that it cannot remove the scripts that are re-added
+    // below.
+    await controller.removeAllUserScripts();
     // TODO(bparrishMines): This can be replaced with
     // `removeAllScriptMessageHandlers` once Dart supports runtime version
     // checking. (e.g. The equivalent to @availability in Objective-C.)
@@ -807,6 +838,9 @@ class WebKitWebViewController extends PlatformWebViewController {
     _javaScriptChannelParams.clear();
 
     await Future.wait(<Future<void>>[
+      // These are added sequentially with each other, since user scripts are
+      // run in the order they were added.
+      _addAllDocumentStartJavaScriptRegistrations(),
       for (final JavaScriptChannelParams params in remainingChannelParams.values)
         addJavaScriptChannel(params),
       // Zoom is disabled with a WKUserScript, so this adds it back if it was
@@ -816,6 +850,26 @@ class WebKitWebViewController extends PlatformWebViewController {
       // if a console callback was registered with [setOnConsoleMessage].
       if (_onConsoleMessageCallback != null) _injectConsoleOverride(),
     ]);
+  }
+
+  Future<void> _addAllDocumentStartJavaScriptRegistrations() async {
+    final registrations = List<WebKitDocumentStartJavaScriptRegistration>.of(
+      _documentStartJavaScriptRegistrations,
+    );
+    for (final registration in registrations) {
+      await _addDocumentStartJavaScript(registration._javaScript);
+    }
+  }
+
+  Future<void> _addDocumentStartJavaScript(String javaScript) async {
+    final userScript = WKUserScript(
+      source: javaScript,
+      injectionTime: UserScriptInjectionTime.atDocumentStart,
+      isForMainFrameOnly: false,
+    );
+    final WKUserContentController controller = await _webView.configuration
+        .getUserContentController();
+    await controller.addUserScript(userScript);
   }
 
   Future<void> _disableZoom() async {
@@ -907,6 +961,23 @@ window.addEventListener("error", function(e) {
     final WKUserContentController controller = await _webView.configuration
         .getUserContentController();
     await controller.addUserScript(overrideScript);
+  }
+}
+
+/// An implementation of [PlatformDocumentStartJavaScriptRegistration] with the WebKit api.
+///
+/// See [WebKitWebViewController.addDocumentStartJavaScript].
+class WebKitDocumentStartJavaScriptRegistration
+    extends PlatformDocumentStartJavaScriptRegistration {
+  WebKitDocumentStartJavaScriptRegistration._(this._controller, this._javaScript);
+
+  final WebKitWebViewController _controller;
+
+  final String _javaScript;
+
+  @override
+  Future<void> remove() {
+    return _controller._removeDocumentStartJavaScriptRegistration(this);
   }
 }
 

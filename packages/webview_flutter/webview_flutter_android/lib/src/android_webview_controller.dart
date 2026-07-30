@@ -518,6 +518,31 @@ class AndroidWebViewController extends PlatformWebViewController {
     return _webView.evaluateJavascript(javaScript);
   }
 
+  /// Adds JavaScript that runs at the start of future document loads.
+  ///
+  /// This requires the `DOCUMENT_START_SCRIPT` feature, which depends on the
+  /// version of the WebView installed on the device. Throws an
+  /// [UnsupportedError] if the feature is not available; support can be checked
+  /// ahead of time with [isWebViewFeatureSupported] and
+  /// [WebViewFeatureType.documentStartScript].
+  @override
+  Future<PlatformDocumentStartJavaScriptRegistration> addDocumentStartJavaScript(
+    String javaScript,
+  ) async {
+    final bool isSupported = await isWebViewFeatureSupported(
+      WebViewFeatureType.documentStartScript,
+    );
+    if (!isSupported) {
+      throw UnsupportedError(
+        'Document-start JavaScript injection is not supported by the WebView '
+        'installed on this device.',
+      );
+    }
+    return AndroidDocumentStartJavaScriptRegistration._(
+      await _webView.addDocumentStartJavaScript(javaScript),
+    );
+  }
+
   @override
   Future<Object> runJavaScriptReturningResult(String javaScript) async {
     final String? result = await _webView.evaluateJavascript(javaScript);
@@ -791,6 +816,7 @@ class AndroidWebViewController extends PlatformWebViewController {
     final String feature = switch (featureType) {
       WebViewFeatureType.paymentRequest => WebViewFeatureConstants.paymentRequest,
       WebViewFeatureType.webAuthentication => WebViewFeatureConstants.webAuthentication,
+      WebViewFeatureType.documentStartScript => WebViewFeatureConstants.documentStartScript,
     };
     return android_webview.WebViewFeature.isFeatureSupported(feature);
   }
@@ -997,6 +1023,9 @@ enum WebViewFeatureType {
   ///
   /// This feature covers [WebSettingsCompat.setWebAuthenticationSupport].
   webAuthentication,
+  /// This feature covers
+  /// [AndroidWebViewController.addDocumentStartJavaScript].
+  documentStartScript,
 }
 
 /// Support levels for [android_webview.WebSettingsCompat.setWebAuthenticationSupport].
@@ -1074,6 +1103,28 @@ class FileSelectorParams {
 
   /// Mode of how to select files for a file selector.
   final FileSelectorMode mode;
+}
+
+/// An implementation of [PlatformDocumentStartJavaScriptRegistration] with the Android
+/// WebView API.
+///
+/// See [AndroidWebViewController.addDocumentStartJavaScript].
+class AndroidDocumentStartJavaScriptRegistration
+    extends PlatformDocumentStartJavaScriptRegistration {
+  AndroidDocumentStartJavaScriptRegistration._(this._scriptHandler);
+
+  final android_webview.ScriptHandler _scriptHandler;
+
+  bool _removed = false;
+
+  @override
+  Future<void> remove() async {
+    if (_removed) {
+      return;
+    }
+    _removed = true;
+    await _scriptHandler.remove();
+  }
 }
 
 /// An implementation of [JavaScriptChannelParams] with the Android WebView API.

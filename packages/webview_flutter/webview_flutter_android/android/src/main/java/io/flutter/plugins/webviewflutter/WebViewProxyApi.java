@@ -17,8 +17,11 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.webkit.ScriptHandler;
+import androidx.webkit.WebViewCompat;
 import io.flutter.embedding.android.FlutterView;
 import io.flutter.plugin.platform.PlatformView;
+import java.util.Collections;
 import java.util.Map;
 import kotlin.Result;
 import kotlin.Unit;
@@ -224,6 +227,19 @@ public class WebViewProxyApi extends PigeonApiWebView {
       @NonNull Function1<? super Result<String>, Unit> callback) {
     pigeon_instance.evaluateJavascript(
         javascriptString, result -> ResultCompat.success(result, callback));
+  }
+
+  /**
+   * This method should only be called if {@link WebViewFeatureProxyApi#isFeatureSupported(String)}
+   * with DOCUMENT_START_SCRIPT returns true.
+   */
+  @SuppressLint("RequiresFeature")
+  @NonNull
+  @Override
+  public ScriptHandler addDocumentStartJavaScript(
+      @NonNull WebView pigeon_instance, @NonNull String javaScript) {
+    return WebViewCompat.addDocumentStartJavaScript(
+        pigeon_instance, javaScript, Collections.singleton("*"));
   }
 
   @Nullable

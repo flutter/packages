@@ -212,5 +212,14 @@ void main() {
         );
       });
     });
+
+    test('addDocumentStartJavaScript is unsupported', () async {
+      final controller = WebWebViewController(WebWebViewControllerCreationParams());
+
+      await expectLater(
+        () async => controller.addDocumentStartJavaScript('window.test = true;'),
+        throwsA(isA<UnsupportedError>()),
+      );
+    });
   });
 }

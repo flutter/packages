@@ -46,42 +46,47 @@ class _FakeWebStorage_3 extends _i1.SmartFake implements _i2.WebStorage {
   _FakeWebStorage_3(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
-class _FakeWebView_4 extends _i1.SmartFake implements _i2.WebView {
-  _FakeWebView_4(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
-}
-
-class _FakeWebViewPoint_5 extends _i1.SmartFake implements _i2.WebViewPoint {
-  _FakeWebViewPoint_5(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
-}
-
-class _FakeWebResourceRequest_6 extends _i1.SmartFake implements _i2.WebResourceRequest {
-  _FakeWebResourceRequest_6(Object parent, Invocation parentInvocation)
+class _FakeScriptHandler_4 extends _i1.SmartFake implements _i2.ScriptHandler {
+  _FakeScriptHandler_4(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeDownloadListener_7 extends _i1.SmartFake implements _i2.DownloadListener {
-  _FakeDownloadListener_7(Object parent, Invocation parentInvocation)
+class _FakeWebView_5 extends _i1.SmartFake implements _i2.WebView {
+  _FakeWebView_5(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+}
+
+class _FakeWebViewPoint_6 extends _i1.SmartFake implements _i2.WebViewPoint {
+  _FakeWebViewPoint_6(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+}
+
+class _FakeWebResourceRequest_7 extends _i1.SmartFake implements _i2.WebResourceRequest {
+  _FakeWebResourceRequest_7(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeJavascriptChannelRegistry_8 extends _i1.SmartFake
+class _FakeDownloadListener_8 extends _i1.SmartFake implements _i2.DownloadListener {
+  _FakeDownloadListener_8(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeJavascriptChannelRegistry_9 extends _i1.SmartFake
     implements _i3.JavascriptChannelRegistry {
-  _FakeJavascriptChannelRegistry_8(Object parent, Invocation parentInvocation)
+  _FakeJavascriptChannelRegistry_9(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeJavaScriptChannel_9 extends _i1.SmartFake implements _i2.JavaScriptChannel {
-  _FakeJavaScriptChannel_9(Object parent, Invocation parentInvocation)
+class _FakeJavaScriptChannel_10 extends _i1.SmartFake implements _i2.JavaScriptChannel {
+  _FakeJavaScriptChannel_10(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeWebChromeClient_10 extends _i1.SmartFake implements _i2.WebChromeClient {
-  _FakeWebChromeClient_10(Object parent, Invocation parentInvocation)
+class _FakeWebChromeClient_11 extends _i1.SmartFake implements _i2.WebChromeClient {
+  _FakeWebChromeClient_11(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeWebViewClient_11 extends _i1.SmartFake implements _i2.WebViewClient {
-  _FakeWebViewClient_11(Object parent, Invocation parentInvocation)
+class _FakeWebViewClient_12 extends _i1.SmartFake implements _i2.WebViewClient {
+  _FakeWebViewClient_12(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -499,6 +504,19 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
           as _i4.Future<String?>);
 
   @override
+  _i4.Future<_i2.ScriptHandler> addDocumentStartJavaScript(String? javaScript) =>
+      (super.noSuchMethod(
+            Invocation.method(#addDocumentStartJavaScript, [javaScript]),
+            returnValue: _i4.Future<_i2.ScriptHandler>.value(
+              _FakeScriptHandler_4(
+                this,
+                Invocation.method(#addDocumentStartJavaScript, [javaScript]),
+              ),
+            ),
+          )
+          as _i4.Future<_i2.ScriptHandler>);
+
+  @override
   _i4.Future<String?> getTitle() =>
       (super.noSuchMethod(
             Invocation.method(#getTitle, []),
@@ -573,7 +591,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   _i2.WebView pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWebView_4(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeWebView_5(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.WebView);
 
@@ -600,7 +618,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
       (super.noSuchMethod(
             Invocation.method(#getScrollPosition, []),
             returnValue: _i4.Future<_i2.WebViewPoint>.value(
-              _FakeWebViewPoint_5(this, Invocation.method(#getScrollPosition, [])),
+              _FakeWebViewPoint_6(this, Invocation.method(#getScrollPosition, [])),
             ),
           )
           as _i4.Future<_i2.WebViewPoint>);
@@ -693,7 +711,7 @@ class MockWebResourceRequest extends _i1.Mock implements _i2.WebResourceRequest 
   _i2.WebResourceRequest pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWebResourceRequest_6(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeWebResourceRequest_7(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.WebResourceRequest);
 }
@@ -737,7 +755,7 @@ class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
   _i2.DownloadListener pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeDownloadListener_7(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeDownloadListener_8(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.DownloadListener);
 }
@@ -755,7 +773,7 @@ class MockWebViewAndroidJavaScriptChannel extends _i1.Mock
   _i3.JavascriptChannelRegistry get javascriptChannelRegistry =>
       (super.noSuchMethod(
             Invocation.getter(#javascriptChannelRegistry),
-            returnValue: _FakeJavascriptChannelRegistry_8(
+            returnValue: _FakeJavascriptChannelRegistry_9(
               this,
               Invocation.getter(#javascriptChannelRegistry),
             ),
@@ -793,7 +811,7 @@ class MockWebViewAndroidJavaScriptChannel extends _i1.Mock
   _i2.JavaScriptChannel pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeJavaScriptChannel_9(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeJavaScriptChannel_10(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.JavaScriptChannel);
 }
@@ -898,7 +916,7 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
   _i2.WebChromeClient pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWebChromeClient_10(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeWebChromeClient_11(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.WebChromeClient);
 }
@@ -935,7 +953,7 @@ class MockWebViewClient extends _i1.Mock implements _i2.WebViewClient {
   _i2.WebViewClient pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWebViewClient_11(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeWebViewClient_12(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.WebViewClient);
 }
@@ -1024,7 +1042,7 @@ class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
   _i2.WebView createWebView() =>
       (super.noSuchMethod(
             Invocation.method(#createWebView, []),
-            returnValue: _FakeWebView_4(this, Invocation.method(#createWebView, [])),
+            returnValue: _FakeWebView_5(this, Invocation.method(#createWebView, [])),
           )
           as _i2.WebView);
 
@@ -1054,7 +1072,7 @@ class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
               #onReceivedSslError: onReceivedSslError,
               #urlLoading: urlLoading,
             }),
-            returnValue: _FakeWebViewClient_11(
+            returnValue: _FakeWebViewClient_12(
               this,
               Invocation.method(#createWebViewClient, [], {
                 #onPageStarted: onPageStarted,

@@ -42,12 +42,18 @@ class _FakePlatformWebViewControllerCreationParams_2 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
-class _FakeObject_3 extends _i1.SmartFake implements Object {
-  _FakeObject_3(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+class _FakePlatformDocumentStartJavaScript_3 extends _i1.SmartFake
+    implements _i3.PlatformDocumentStartJavaScriptRegistration {
+  _FakePlatformDocumentStartJavaScript_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeOffset_4 extends _i1.SmartFake implements _i4.Offset {
-  _FakeOffset_4(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+class _FakeObject_4 extends _i1.SmartFake implements Object {
+  _FakeObject_4(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+}
+
+class _FakeOffset_5 extends _i1.SmartFake implements _i4.Offset {
+  _FakeOffset_5(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
 /// A class which mocks [CookieManager].
@@ -277,11 +283,26 @@ class MockAndroidWebViewController extends _i1.Mock implements _i6.AndroidWebVie
           as _i5.Future<void>);
 
   @override
+  _i5.Future<_i3.PlatformDocumentStartJavaScriptRegistration> addDocumentStartJavaScript(
+    String? javaScript,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#addDocumentStartJavaScript, [javaScript]),
+            returnValue: _i5.Future<_i3.PlatformDocumentStartJavaScriptRegistration>.value(
+              _FakePlatformDocumentStartJavaScript_3(
+                this,
+                Invocation.method(#addDocumentStartJavaScript, [javaScript]),
+              ),
+            ),
+          )
+          as _i5.Future<_i3.PlatformDocumentStartJavaScriptRegistration>);
+
+  @override
   _i5.Future<Object> runJavaScriptReturningResult(String? javaScript) =>
       (super.noSuchMethod(
             Invocation.method(#runJavaScriptReturningResult, [javaScript]),
             returnValue: _i5.Future<Object>.value(
-              _FakeObject_3(this, Invocation.method(#runJavaScriptReturningResult, [javaScript])),
+              _FakeObject_4(this, Invocation.method(#runJavaScriptReturningResult, [javaScript])),
             ),
           )
           as _i5.Future<Object>);
@@ -335,7 +356,7 @@ class MockAndroidWebViewController extends _i1.Mock implements _i6.AndroidWebVie
       (super.noSuchMethod(
             Invocation.method(#getScrollPosition, []),
             returnValue: _i5.Future<_i4.Offset>.value(
-              _FakeOffset_4(this, Invocation.method(#getScrollPosition, [])),
+              _FakeOffset_5(this, Invocation.method(#getScrollPosition, [])),
             ),
           )
           as _i5.Future<_i4.Offset>);

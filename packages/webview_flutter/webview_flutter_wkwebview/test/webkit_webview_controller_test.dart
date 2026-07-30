@@ -889,6 +889,170 @@ void main() {
       expect(userScript.injectionTime, UserScriptInjectionTime.atDocumentStart);
     });
 
+    test('addDocumentStartJavaScript', () async {
+      final mockUserContentController = MockWKUserContentController();
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockUserContentController: mockUserContentController,
+      );
+
+      await controller.addDocumentStartJavaScript('window.test = true;');
+
+      final userScript =
+          verify(mockUserContentController.addUserScript(captureAny)).captured.single
+              as WKUserScript;
+      expect(userScript.source, 'window.test = true;');
+      expect(userScript.injectionTime, UserScriptInjectionTime.atDocumentStart);
+      expect(userScript.isForMainFrameOnly, isFalse);
+    });
+
+    test('addDocumentStartJavaScript allows the same JavaScript twice', () async {
+      final mockUserContentController = MockWKUserContentController();
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockUserContentController: mockUserContentController,
+      );
+
+      final PlatformDocumentStartJavaScriptRegistration first = await controller
+          .addDocumentStartJavaScript('window.test = true;');
+      final PlatformDocumentStartJavaScriptRegistration second = await controller
+          .addDocumentStartJavaScript('window.test = true;');
+
+      expect(first, isNot(same(second)));
+      verify(mockUserContentController.addUserScript(any)).called(2);
+    });
+
+    test('removing document start JavaScript re-adds the remaining scripts', () async {
+      final mockUserContentController = MockWKUserContentController();
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockUserContentController: mockUserContentController,
+      );
+
+      final PlatformDocumentStartJavaScriptRegistration first = await controller
+          .addDocumentStartJavaScript('window.first = true;');
+      await controller.addDocumentStartJavaScript('window.second = true;');
+      reset(mockUserContentController);
+
+      await first.remove();
+
+      // WKWebView can only remove all user scripts, so the remaining script is
+      // re-added.
+      verify(mockUserContentController.removeAllUserScripts());
+      final userScript =
+          verify(mockUserContentController.addUserScript(captureAny)).captured.single
+              as WKUserScript;
+      expect(userScript.source, 'window.second = true;');
+    });
+
+    test('removing document start JavaScript more than once is a no-op', () async {
+      final mockUserContentController = MockWKUserContentController();
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockUserContentController: mockUserContentController,
+      );
+
+      final PlatformDocumentStartJavaScriptRegistration documentStartJavaScript = await controller
+          .addDocumentStartJavaScript('window.test = true;');
+      await documentStartJavaScript.remove();
+      reset(mockUserContentController);
+
+      await documentStartJavaScript.remove();
+
+      verifyNever(mockUserContentController.removeAllUserScripts());
+    });
+
+    test('removed document start JavaScript is not re-added', () async {
+      final mockUserContentController = MockWKUserContentController();
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockUserContentController: mockUserContentController,
+      );
+
+      final PlatformDocumentStartJavaScriptRegistration documentStartJavaScript = await controller
+          .addDocumentStartJavaScript('window.test = true;');
+      await documentStartJavaScript.remove();
+      reset(mockUserContentController);
+
+      await controller.enableZoom(false);
+      await controller.enableZoom(true);
+
+      final List<WKUserScript> userScripts = verify(
+        mockUserContentController.addUserScript(captureAny),
+      ).captured.cast<WKUserScript>();
+      expect(
+        userScripts.map((WKUserScript script) => script.source),
+        isNot(contains('window.test = true;')),
+      );
+    });
+
+    test('removeJavaScriptChannel preserves document start JavaScript', () async {
+      PigeonOverrides.wKScriptMessageHandler_new =
+          ({
+            required void Function(WKScriptMessageHandler, WKUserContentController, WKScriptMessage)
+            didReceiveScriptMessage,
+            dynamic observeValue,
+          }) {
+            return WKScriptMessageHandler.pigeon_detached(
+              didReceiveScriptMessage: didReceiveScriptMessage,
+            );
+          };
+
+      final javaScriptChannelParams = WebKitJavaScriptChannelParams(
+        name: 'name',
+        onMessageReceived: (JavaScriptMessage message) {},
+      );
+
+      final mockUserContentController = MockWKUserContentController();
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockUserContentController: mockUserContentController,
+      );
+
+      await controller.addDocumentStartJavaScript('window.test = true;');
+      await controller.addJavaScriptChannel(javaScriptChannelParams);
+      reset(mockUserContentController);
+
+      await controller.removeJavaScriptChannel('name');
+
+      verify(mockUserContentController.removeAllUserScripts());
+      verify(mockUserContentController.removeScriptMessageHandler('name'));
+      final userScript =
+          verify(mockUserContentController.addUserScript(captureAny)).captured.single
+              as WKUserScript;
+      expect(userScript.source, 'window.test = true;');
+      expect(userScript.injectionTime, UserScriptInjectionTime.atDocumentStart);
+      expect(userScript.isForMainFrameOnly, isFalse);
+    });
+
+    test('enableZoom re-adds document start JavaScript in order', () async {
+      final mockWebViewConfiguration = MockWKWebViewConfiguration();
+      final mockUserContentController = MockWKUserContentController();
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockWebViewConfiguration: mockWebViewConfiguration,
+        mockUserContentController: mockUserContentController,
+      );
+
+      await controller.addDocumentStartJavaScript('window.first = true;');
+      await controller.addDocumentStartJavaScript('window.second = true;');
+      await controller.enableZoom(false);
+      reset(mockUserContentController);
+
+      // Make each lookup faster than the previous one, so that the scripts
+      // would be added out of order if they were added in parallel.
+      var lookupCount = 0;
+      when(mockWebViewConfiguration.getUserContentController()).thenAnswer((_) async {
+        final int milliseconds = 40 - 10 * lookupCount++;
+        await Future<void>.delayed(Duration(milliseconds: milliseconds));
+        return mockUserContentController;
+      });
+
+      await controller.enableZoom(true);
+
+      verify(mockUserContentController.removeAllUserScripts());
+      final List<WKUserScript> userScripts = verify(
+        mockUserContentController.addUserScript(captureAny),
+      ).captured.cast<WKUserScript>();
+      expect(userScripts.map((WKUserScript script) => script.source), <String>[
+        'window.first = true;',
+        'window.second = true;',
+      ]);
+    });
+
     test('addJavaScriptChannel requires channel with a unique name', () async {
       PigeonOverrides.wKScriptMessageHandler_new =
           ({
