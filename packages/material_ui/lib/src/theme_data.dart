@@ -285,8 +285,8 @@ class ThemeData with Diagnosticable {
   /// accessibility guidelines for readability. (See [ColorScheme.fromSeed] for
   /// more details.)
   ///
-  /// If [colorSchemeSeed] is null and [useMaterial3] is true, [brightness] and
-  /// [contrastLevel] select a token-backed Material 3 baseline color scheme.
+  /// If [colorSchemeSeed] is null, use [brightness] and [contrastLevel] to
+  /// select a token-backed Material 3 baseline color scheme.
   /// Use [ContrastLevel.standard], [ContrastLevel.medium], or
   /// [ContrastLevel.high] to choose between the standard, medium, and high
   /// contrast baselines. Other custom [contrastLevel] values, such as 0.6, are
