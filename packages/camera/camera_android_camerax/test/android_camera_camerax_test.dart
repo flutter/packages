@@ -211,6 +211,7 @@ void main() {
           AspectRatioStrategy? aspectRatioStrategy,
           ResolutionStrategy? resolutionStrategy,
           ResolutionFilter? resolutionFilter,
+          int? allowedResolutionMode,
         }) {
           final mockResolutionSelector = MockResolutionSelector();
           when(mockResolutionSelector.getAspectRatioStrategy()).thenAnswer(
@@ -218,6 +219,7 @@ void main() {
           );
           when(mockResolutionSelector.resolutionStrategy).thenReturn(resolutionStrategy);
           when(mockResolutionSelector.resolutionFilter).thenReturn(resolutionFilter);
+          when(mockResolutionSelector.allowedResolutionMode).thenReturn(allowedResolutionMode);
           return mockResolutionSelector;
         };
     PigeonOverrides.qualitySelector_from =
@@ -559,6 +561,7 @@ void main() {
             AspectRatioStrategy? aspectRatioStrategy,
             ResolutionStrategy? resolutionStrategy,
             ResolutionFilter? resolutionFilter,
+            int? allowedResolutionMode,
           }) {
             return MockResolutionSelector();
           };
@@ -758,6 +761,9 @@ void main() {
           await camera.imageAnalysis!.resolutionSelector!.resolutionStrategy!.getFallbackRule(),
           ResolutionStrategyFallbackRule.closestLowerThenHigher,
         );
+        expect(camera.preview!.resolutionSelector!.allowedResolutionMode, isNull);
+        expect(camera.imageCapture!.resolutionSelector!.allowedResolutionMode, isNull);
+        expect(camera.imageAnalysis!.resolutionSelector!.allowedResolutionMode, isNull);
       }
 
       // Test max case.
@@ -775,6 +781,19 @@ void main() {
         camera.imageAnalysis!.resolutionSelector!.resolutionStrategy,
         equals(ResolutionStrategy.highestAvailableStrategy),
       );
+      expect(
+        camera.preview!.resolutionSelector!.allowedResolutionMode,
+        ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
+      );
+      expect(
+        camera.imageCapture!.resolutionSelector!.allowedResolutionMode,
+        ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
+      );
+      expect(
+        camera.imageAnalysis!.resolutionSelector!.allowedResolutionMode,
+        ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
+      );
+      expect(camera.preview!.resolutionSelector, same(camera.imageCapture!.resolutionSelector));
 
       // Test null case.
       final int flutterSurfaceTextureId = await camera.createCamera(testCameraDescription, null);
@@ -1078,6 +1097,7 @@ void main() {
             AspectRatioStrategy? aspectRatioStrategy,
             ResolutionStrategy? resolutionStrategy,
             ResolutionFilter? resolutionFilter,
+            int? allowedResolutionMode,
           }) {
             return MockResolutionSelector();
           };
@@ -1488,6 +1508,7 @@ void main() {
           AspectRatioStrategy? aspectRatioStrategy,
           ResolutionStrategy? resolutionStrategy,
           ResolutionFilter? resolutionFilter,
+          int? allowedResolutionMode,
         }) {
           return MockResolutionSelector();
         };
@@ -1496,6 +1517,7 @@ void main() {
           AspectRatioStrategy? aspectRatioStrategy,
           ResolutionStrategy? resolutionStrategy,
           ResolutionFilter? resolutionFilter,
+          int? allowedResolutionMode,
         }) {
           return MockResolutionSelector();
         };
@@ -1828,6 +1850,7 @@ void main() {
           AspectRatioStrategy? aspectRatioStrategy,
           ResolutionStrategy? resolutionStrategy,
           ResolutionFilter? resolutionFilter,
+          int? allowedResolutionMode,
         }) => MockResolutionSelector();
     PigeonOverrides.fallbackStrategy_lowerQualityOrHigherThan = ({required VideoQuality quality}) =>
         MockFallbackStrategy();

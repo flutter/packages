@@ -4607,6 +4607,7 @@ abstract class PigeonApiResolutionSelector(
   abstract fun pigeon_defaultConstructor(
       resolutionFilter: androidx.camera.core.resolutionselector.ResolutionFilter?,
       resolutionStrategy: androidx.camera.core.resolutionselector.ResolutionStrategy?,
+      allowedResolutionMode: Long?,
       aspectRatioStrategy: androidx.camera.core.resolutionselector.AspectRatioStrategy?
   ): androidx.camera.core.resolutionselector.ResolutionSelector
 
@@ -4619,6 +4620,15 @@ abstract class PigeonApiResolutionSelector(
   abstract fun resolutionStrategy(
       pigeon_instance: androidx.camera.core.resolutionselector.ResolutionSelector
   ): androidx.camera.core.resolutionselector.ResolutionStrategy?
+
+  /**
+   * The allowed resolution mode for the `UseCase`.
+   *
+   * See [ResolutionSelectorAllowedResolutionMode].
+   */
+  abstract fun allowedResolutionMode(
+      pigeon_instance: androidx.camera.core.resolutionselector.ResolutionSelector
+  ): Long?
 
   /**
    * Returns the specified `AspectRatioStrategy`, or
@@ -4647,13 +4657,17 @@ abstract class PigeonApiResolutionSelector(
                 args[1] as androidx.camera.core.resolutionselector.ResolutionFilter?
             val resolutionStrategyArg =
                 args[2] as androidx.camera.core.resolutionselector.ResolutionStrategy?
+            val allowedResolutionModeArg = args[3] as Long?
             val aspectRatioStrategyArg =
-                args[3] as androidx.camera.core.resolutionselector.AspectRatioStrategy?
+                args[4] as androidx.camera.core.resolutionselector.AspectRatioStrategy?
             val wrapped: List<Any?> =
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
                       api.pigeon_defaultConstructor(
-                          resolutionFilterArg, resolutionStrategyArg, aspectRatioStrategyArg),
+                          resolutionFilterArg,
+                          resolutionStrategyArg,
+                          allowedResolutionModeArg,
+                          aspectRatioStrategyArg),
                       pigeon_identifierArg)
                   listOf(null)
                 } catch (exception: Throwable) {
@@ -4708,23 +4722,30 @@ abstract class PigeonApiResolutionSelector(
           pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
       val resolutionFilterArg = resolutionFilter(pigeon_instanceArg)
       val resolutionStrategyArg = resolutionStrategy(pigeon_instanceArg)
+      val allowedResolutionModeArg = allowedResolutionMode(pigeon_instanceArg)
       val binaryMessenger = pigeonRegistrar.binaryMessenger
       val codec = pigeonRegistrar.codec
       val channelName =
           "dev.flutter.pigeon.camera_android_camerax.ResolutionSelector.pigeon_newInstance"
       val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-      channel.send(listOf(pigeon_identifierArg, resolutionFilterArg, resolutionStrategyArg)) {
-        if (it is List<*>) {
-          if (it.size > 1) {
-            callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
-          } else {
-            callback(Result.success(Unit))
+      channel.send(
+          listOf(
+              pigeon_identifierArg,
+              resolutionFilterArg,
+              resolutionStrategyArg,
+              allowedResolutionModeArg)) {
+            if (it is List<*>) {
+              if (it.size > 1) {
+                callback(
+                    Result.failure(
+                        CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
+              } else {
+                callback(Result.success(Unit))
+              }
+            } else {
+              callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
+            }
           }
-        } else {
-          callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        }
-      }
     }
   }
 }
