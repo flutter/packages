@@ -278,8 +278,9 @@ class ThemeData with Diagnosticable {
   /// [colorScheme] is used directly and is not affected by [brightness],
   /// [colorSchemeSeed], or [contrastLevel].
   ///
-  /// If a [colorSchemeSeed] is provided, a generated color scheme will be based
-  /// on the tones of [colorSchemeSeed] using [brightness] and [contrastLevel].
+  /// If a [colorSchemeSeed] is provided, [ColorScheme.fromSeed] is used to
+  /// generate a color scheme from [colorSchemeSeed], [brightness], and
+  /// [contrastLevel].
   /// All of its contrasting colors will meet accessibility guidelines for
   /// readability. (See [ColorScheme.fromSeed] for more details.)
   ///
