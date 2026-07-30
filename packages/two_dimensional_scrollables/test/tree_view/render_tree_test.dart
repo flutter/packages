@@ -161,6 +161,109 @@ void main() {
       expect(log, <String>['First', 'Second', 'Third']);
     });
 
+    testWidgets('TreeRow gesture hit testing spans the viewport when scrolled', (
+      WidgetTester tester,
+    ) async {
+      final horizontalController = ScrollController();
+      addTearDown(horizontalController.dispose);
+      var tapped = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: 200,
+              height: 80,
+              child: TreeView<int>(
+                tree: <TreeViewNode<int>>[TreeViewNode<int>(0), TreeViewNode<int>(1)],
+                horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
+                indentation: TreeViewIndentationType.none,
+                treeNodeBuilder: (_, TreeViewNode<int> node, _) {
+                  return SizedBox(width: node.content == 0 ? 100 : 250, height: 40);
+                },
+                treeRowBuilder: (TreeViewNode<int> node) {
+                  return TreeRow(
+                    extent: const FixedTreeRowExtent(40),
+                    recognizerFactories: node.content == 0
+                        ? <Type, GestureRecognizerFactory>{
+                            TapGestureRecognizer:
+                                GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+                                  TapGestureRecognizer.new,
+                                  (TapGestureRecognizer recognizer) {
+                                    recognizer.onTap = () => tapped = true;
+                                  },
+                                ),
+                          }
+                        : <Type, GestureRecognizerFactory>{},
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      horizontalController.jumpTo(50);
+      await tester.pump();
+      await tester.tapAt(const Offset(175, 20));
+      await tester.pump();
+
+      expect(tapped, isTrue);
+    });
+
+    testWidgets('row children remain hittable after horizontal scrolling', (
+      WidgetTester tester,
+    ) async {
+      final horizontalController = ScrollController();
+      addTearDown(horizontalController.dispose);
+      final tappedSegments = <String>[];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: 200,
+              height: 40,
+              child: TreeView<int>(
+                tree: <TreeViewNode<int>>[TreeViewNode<int>(0)],
+                horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
+                indentation: TreeViewIndentationType.none,
+                treeNodeBuilder: (_, _, _) {
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => tappedSegments.add('leading'),
+                        child: const SizedBox(width: 200, height: 40),
+                      ),
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => tappedSegments.add('trailing'),
+                        child: const SizedBox(width: 50, height: 40),
+                      ),
+                    ],
+                  );
+                },
+                treeRowBuilder: (_) => const TreeRow(extent: FixedTreeRowExtent(40)),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      horizontalController.jumpTo(50);
+      await tester.pump();
+      await tester.tapAt(const Offset(175, 20));
+      await tester.pump();
+
+      expect(tappedSegments, <String>['trailing']);
+    });
+
     testWidgets('mouse handling', (WidgetTester tester) async {
       var enterCounter = 0;
       var exitCounter = 0;

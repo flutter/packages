@@ -18,12 +18,18 @@ import 'material_localizations.dart';
 /// navigated within the picker. Different calendar systems (e.g., Gregorian,
 /// Nepali, Hijri, Buddhist) can be supported by providing custom implementations.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example demonstrates how a [CalendarDelegate] is used to implement a
 /// custom calendar system in the date picker.
 ///
-/// ** See code in examples/api/lib/material/date_picker/custom_calendar_date_picker.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/date_picker/custom_calendar_date_picker.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -36,34 +42,34 @@ abstract class CalendarDelegate<T extends DateTime> {
   /// Returns a [DateTime] representing the current date and time.
   T now();
 
-  /// {@macro flutter.material.date.dateOnly}
+  /// {@macro material_ui.date.dateOnly}
   T dateOnly(T date);
 
-  /// {@macro flutter.material.date.datesOnly}
+  /// {@macro material_ui.date.datesOnly}
   DateTimeRange<T> datesOnly(DateTimeRange<T> range) {
     return DateTimeRange<T>(start: dateOnly(range.start), end: dateOnly(range.end));
   }
 
-  /// {@macro flutter.material.date.isSameDay}
+  /// {@macro material_ui.date.isSameDay}
   bool isSameDay(T? dateA, T? dateB) {
     return dateA?.year == dateB?.year && dateA?.month == dateB?.month && dateA?.day == dateB?.day;
   }
 
-  /// {@macro flutter.material.date.isSameMonth}
+  /// {@macro material_ui.date.isSameMonth}
   bool isSameMonth(T? dateA, T? dateB) {
     return dateA?.year == dateB?.year && dateA?.month == dateB?.month;
   }
 
-  /// {@macro flutter.material.date.monthDelta}
+  /// {@macro material_ui.date.monthDelta}
   int monthDelta(T startDate, T endDate);
 
-  /// {@macro flutter.material.date.addMonthsToMonthDate}
+  /// {@macro material_ui.date.addMonthsToMonthDate}
   T addMonthsToMonthDate(T monthDate, int monthsToAdd);
 
-  /// {@macro flutter.material.date.addDaysToDate}
+  /// {@macro material_ui.date.addDaysToDate}
   T addDaysToDate(T date, int days);
 
-  /// {@macro flutter.material.date.firstDayOffset}
+  /// {@macro material_ui.date.firstDayOffset}
   int firstDayOffset(int year, int month, MaterialLocalizations localizations);
 
   /// Returns the number of days in a month, according to the calendar system.
@@ -192,7 +198,7 @@ class GregorianCalendarDelegate extends CalendarDelegate<DateTime> {
     return DateUtils.firstDayOffset(year, month, localizations);
   }
 
-  /// {@macro flutter.material.date.getDaysInMonth}
+  /// {@macro material_ui.date.getDaysInMonth}
   @override
   int getDaysInMonth(int year, int month) => DateUtils.getDaysInMonth(year, month);
 
@@ -245,7 +251,7 @@ class GregorianCalendarDelegate extends CalendarDelegate<DateTime> {
 
 /// Utility functions for working with dates.
 abstract final class DateUtils {
-  /// {@template flutter.material.date.dateOnly}
+  /// {@template material_ui.date.dateOnly}
   /// Returns a [DateTime] with the date of the original, but time set to
   /// midnight.
   /// {@endtemplate}
@@ -253,7 +259,7 @@ abstract final class DateUtils {
     return DateTime(date.year, date.month, date.day);
   }
 
-  /// {@template flutter.material.date.datesOnly}
+  /// {@template material_ui.date.datesOnly}
   /// Returns a [DateTimeRange] with the dates of the original, but with times
   /// set to midnight.
   ///
@@ -264,7 +270,7 @@ abstract final class DateUtils {
     return DateTimeRange(start: dateOnly(range.start), end: dateOnly(range.end));
   }
 
-  /// {@template flutter.material.date.isSameDay}
+  /// {@template material_ui.date.isSameDay}
   /// Returns true if the two [DateTime] objects have the same day, month, and
   /// year, or are both null.
   /// {@endtemplate}
@@ -272,7 +278,7 @@ abstract final class DateUtils {
     return dateA?.year == dateB?.year && dateA?.month == dateB?.month && dateA?.day == dateB?.day;
   }
 
-  /// {@template flutter.material.date.isSameMonth}
+  /// {@template material_ui.date.isSameMonth}
   /// Returns true if the two [DateTime] objects have the same month and
   /// year, or are both null.
   /// {@endtemplate}
@@ -280,7 +286,7 @@ abstract final class DateUtils {
     return dateA?.year == dateB?.year && dateA?.month == dateB?.month;
   }
 
-  /// {@template flutter.material.date.monthDelta}
+  /// {@template material_ui.date.monthDelta}
   /// Determines the number of months between two [DateTime] objects.
   ///
   /// For example:
@@ -297,7 +303,7 @@ abstract final class DateUtils {
     return (endDate.year - startDate.year) * 12 + endDate.month - startDate.month;
   }
 
-  /// {@template flutter.material.date.addMonthsToMonthDate}
+  /// {@template material_ui.date.addMonthsToMonthDate}
   /// Returns a [DateTime] that is [monthDate] with the added number
   /// of months and the day set to 1 and time set to midnight.
   ///
@@ -315,7 +321,7 @@ abstract final class DateUtils {
     return DateTime(monthDate.year, monthDate.month + monthsToAdd);
   }
 
-  /// {@template flutter.material.date.addDaysToDate}
+  /// {@template material_ui.date.addDaysToDate}
   /// Returns a [DateTime] with the added number of days and time set to
   /// midnight.
   /// {@endtemplate}
@@ -323,7 +329,7 @@ abstract final class DateUtils {
     return DateTime(date.year, date.month, date.day + days);
   }
 
-  /// {@template flutter.material.date.firstDayOffset}
+  /// {@template material_ui.date.firstDayOffset}
   /// Computes the offset from the first day of the week that the first day of
   /// the [month] falls on.
   ///
@@ -369,7 +375,7 @@ abstract final class DateUtils {
     return (weekdayFromMonday - firstDayOfWeekIndex) % 7;
   }
 
-  /// {@template flutter.material.date.getDaysInMonth}
+  /// {@template material_ui.date.getDaysInMonth}
   /// Returns the number of days in a month, according to the proleptic
   /// Gregorian calendar.
   ///

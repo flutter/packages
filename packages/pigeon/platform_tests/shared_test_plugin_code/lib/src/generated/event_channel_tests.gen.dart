@@ -588,6 +588,41 @@ class ClassEvent extends PlatformEvent {
   }
 }
 
+class EmptyEvent extends PlatformEvent {
+  EmptyEvent();
+
+  List<Object?> _toList() {
+    return <Object?>[];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static EmptyEvent decode(Object result) {
+    result as List<Object?>;
+    return EmptyEvent();
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! EmptyEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'EmptyEvent()';
+  }
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -625,6 +660,9 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is ClassEvent) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
+    } else if (value is EmptyEvent) {
+      buffer.putUint8(139);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -655,6 +693,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return EnumEvent.decode(readValue(buffer)!);
       case 138:
         return ClassEvent.decode(readValue(buffer)!);
+      case 139:
+        return EmptyEvent.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -663,6 +703,12 @@ class _PigeonCodec extends StandardMessageCodec {
 
 const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(_PigeonCodec());
 
+/// Returns a broadcast [Stream] of events from the `streamInts` event channel.
+///
+/// Each call to this method creates a new [EventChannel], so it should
+/// not be called multiple times for the same `instanceName`. To deliver
+/// events to multiple listeners, call this method once and listen to the
+/// returned broadcast stream multiple times instead.
 Stream<int> streamInts({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
@@ -676,6 +722,12 @@ Stream<int> streamInts({String instanceName = ''}) {
   });
 }
 
+/// Returns a broadcast [Stream] of events from the `streamEvents` event channel.
+///
+/// Each call to this method creates a new [EventChannel], so it should
+/// not be called multiple times for the same `instanceName`. To deliver
+/// events to multiple listeners, call this method once and listen to the
+/// returned broadcast stream multiple times instead.
 Stream<PlatformEvent> streamEvents({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
@@ -689,6 +741,12 @@ Stream<PlatformEvent> streamEvents({String instanceName = ''}) {
   });
 }
 
+/// Returns a broadcast [Stream] of events from the `streamConsistentNumbers` event channel.
+///
+/// Each call to this method creates a new [EventChannel], so it should
+/// not be called multiple times for the same `instanceName`. To deliver
+/// events to multiple listeners, call this method once and listen to the
+/// returned broadcast stream multiple times instead.
 Stream<int> streamConsistentNumbers({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
