@@ -133,9 +133,12 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
   )
     -> UIApplicationShortcutItem?
   {
+    var icon: UIApplicationShortcutIcon? = nil
 
-    let icon = (shortcut.icon).map {
-      UIApplicationShortcutIcon(templateImageName: $0)
+    if let systemImageName = shortcut.iosSystemIcon {
+      icon = UIApplicationShortcutIcon(systemImageName: systemImageName)
+    } else if let templateImageName = shortcut.icon {
+      icon = UIApplicationShortcutIcon(templateImageName: templateImageName)
     }
 
     // type and localizedTitle are required.
