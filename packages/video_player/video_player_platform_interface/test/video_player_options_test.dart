@@ -18,4 +18,12 @@ void main() {
     final options = VideoPlayerOptions();
     expect(options.preventsDisplaySleepDuringVideoPlayback, true);
   });
+  test('VideoPlayerOptions backBufferDurationMs defaults to null', () {
+    final options = VideoPlayerOptions();
+    expect(options.backBufferDurationMs, null);
+  });
+  test('VideoPlayerOptions backBufferDurationMs stores configured value', () {
+    final options = VideoPlayerOptions(backBufferDurationMs: 20000);
+    expect(options.backBufferDurationMs, 20000);
+  });
 }

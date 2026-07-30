@@ -353,12 +353,12 @@ void main() {
       expect(() => cameraPlatform.resumePreview(1), throwsUnimplementedError);
     });
 
-    test('Default implementation of setJpegImageQuality() should throw unimplemented error', () {
+    test('Default implementation of setJpegImageQuality() is a no-op', () {
       // Arrange
       final cameraPlatform = ExtendsCameraPlatform();
 
       // Act & Assert
-      expect(() => cameraPlatform.setJpegImageQuality(1, 50), throwsUnimplementedError);
+      expect(cameraPlatform.setJpegImageQuality(1, 50), completes);
     });
 
     test('Default implementation of supportsImageStreaming() should return false', () {

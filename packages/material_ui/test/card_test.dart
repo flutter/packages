@@ -2,11 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-
-import 'semantics_tester.dart';
 
 void main() {
   testWidgets('Material3 - Card defaults (Elevated card)', (WidgetTester tester) async {
@@ -91,7 +88,6 @@ void main() {
   });
 
   testWidgets('Card can take semantic text from multiple children', (WidgetTester tester) async {
-    final semantics = SemanticsTester(tester);
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
@@ -113,38 +109,29 @@ void main() {
     );
 
     expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics(id: 1, label: 'I am text!', textDirection: TextDirection.ltr),
-            TestSemantics(id: 2, label: 'Moar text!!1', textDirection: TextDirection.ltr),
-            TestSemantics(
-              id: 3,
-              label: 'Button',
-              textDirection: TextDirection.ltr,
-              actions: <SemanticsAction>[SemanticsAction.tap, SemanticsAction.focus],
-              flags: <SemanticsFlag>[
-                SemanticsFlag.hasEnabledState,
-                SemanticsFlag.isButton,
-                SemanticsFlag.isEnabled,
-                SemanticsFlag.isFocusable,
-              ],
-            ),
-          ],
-        ),
-        ignoreTransform: true,
-        ignoreRect: true,
+      tester.getSemantics(find.text('I am text!')),
+      matchesSemantics(label: 'I am text!', textDirection: TextDirection.ltr),
+    );
+    expect(
+      tester.getSemantics(find.text('Moar text!!1')),
+      matchesSemantics(label: 'Moar text!!1', textDirection: TextDirection.ltr),
+    );
+    expect(
+      tester.getSemantics(find.widgetWithText(ElevatedButton, 'Button')),
+      matchesSemantics(
+        label: 'Button',
+        textDirection: TextDirection.ltr,
+        hasTapAction: true,
+        hasFocusAction: true,
+        hasEnabledState: true,
+        isButton: true,
+        isEnabled: true,
+        isFocusable: true,
       ),
     );
-
-    semantics.dispose();
   });
 
   testWidgets('Card merges children when it is a semanticContainer', (WidgetTester tester) async {
-    final semantics = SemanticsTester(tester);
-    debugResetSemanticsIdCounter();
-
     await tester.pumpWidget(
       const Directionality(
         textDirection: TextDirection.ltr,
@@ -159,23 +146,9 @@ void main() {
     );
 
     expect(
-      semantics,
-      hasSemantics(
-        TestSemantics.root(
-          children: <TestSemantics>[
-            TestSemantics(
-              id: 1,
-              label: 'First child\nSecond child',
-              textDirection: TextDirection.ltr,
-            ),
-          ],
-        ),
-        ignoreTransform: true,
-        ignoreRect: true,
-      ),
+      tester.getSemantics(find.byType(Card)),
+      matchesSemantics(label: 'First child\nSecond child', textDirection: TextDirection.ltr),
     );
-
-    semantics.dispose();
   });
 
   testWidgets('Card margin', (WidgetTester tester) async {

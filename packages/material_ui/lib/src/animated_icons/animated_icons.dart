@@ -14,14 +14,20 @@ part of material_animated_icons; // ignore: use_string_in_part_of_directives
 ///
 /// The available icons are specified in [AnimatedIcons].
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=pJcbh8pbvJs}
+/// Learn more about [AnimatedIcon] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=pJcbh8pbvJs).
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows how to create an animated icon. The icon is animated
 /// forward and reverse in a loop.
 ///
-/// ** See code in examples/api/lib/material/animated_icon/animated_icon.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/animated_icon/animated_icon.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///

@@ -28,12 +28,14 @@ void main() {
       plugin.ciConfigFile.writeAsStringSync('''
 release:
   batch: true
+analyze_skills: true
 ''');
 
       final CIConfig? config = plugin.parseCIConfig();
 
       expect(config, isNotNull);
       expect(config!.isBatchRelease, isTrue);
+      expect(config.analyzeSkills, isTrue);
     });
 
     test('parsing missing file returns null', () async {

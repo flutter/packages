@@ -295,19 +295,27 @@ typedef CupertinoMenuAnimationStatusChangedCallback = void Function(AnimationSta
 /// invoked every time the [AnimationStatus] of the menu animation changes.
 ///
 /// ## Usage
-/// {@tool sample}
+/// <callout-box>
+///
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
 /// a button.
 ///
-/// ** See code in examples/api/lib/cupertino/menu_anchor/menu_anchor.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/menu_anchor/menu_anchor.0.dart#body}
 ///
-/// {@tool dartpad}
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example demonstrates a [CupertinoMenuAnchor] that wraps a button and
 /// shows a menu with three [CupertinoMenuItem]s and one [CupertinoMenuDivider].
 ///
-/// ** See code in examples/api/lib/cupertino/menu_anchor/menu_anchor.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/menu_anchor/menu_anchor.1.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1695,19 +1703,27 @@ class _CupertinoDividerPainter extends CustomPainter {
 /// will perform a destructive action, and will color the text of the menu item
 /// [CupertinoColors.systemRed].
 ///
-/// {@tool sample}
+/// <callout-box>
+///
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
 /// a button.
 ///
-/// ** See code in examples/api/lib/cupertino/menu_anchor/menu_anchor.0.dart **
-/// {@end-tool}
+/// {@example /example/lib/menu_anchor/menu_anchor.0.dart#body}
 ///
-/// {@tool dartpad}
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example demonstrates a [CupertinoMenuAnchor] that wraps a button and
 /// shows a menu with three [CupertinoMenuItem]s and one [CupertinoMenuDivider].
 ///
-/// ** See code in examples/api/lib/cupertino/menu_anchor/menu_anchor.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/menu_anchor/menu_anchor.1.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 /// * [CupertinoMenuAnchor], a Cupertino-style widget that shows a menu of
@@ -1782,7 +1798,12 @@ class CupertinoMenuItem extends StatelessWidget implements CupertinoMenuEntry {
   /// pointer event, which is always between frames.
   final ValueChanged<bool>? onHover;
 
-  /// {@macro flutter.material.inkwell.onFocusChange}
+  /// {@template cupertino_ui.inkwell.onFocusChange}
+  /// Handler called when the focus changes.
+  ///
+  /// Called with true if this widget's node gains focus, and false if it loses
+  /// focus.
+  /// {@endtemplate}
   final ValueChanged<bool>? onFocusChange;
 
   /// Whether hovering should request focus for this widget.

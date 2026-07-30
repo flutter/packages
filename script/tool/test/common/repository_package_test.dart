@@ -184,6 +184,110 @@ void main() {
       expect(plugin.isExample, isFalse);
     });
   });
+  group('isPubIgnored', () {
+    test('returns false if there is no enclosing package', () async {
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+      expect(package.isPubIgnored, false);
+    });
+
+    test('returns false if there is no .pubignore file', () async {
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+      final RepositoryPackage subPackage = createFakePackage('sub_package', package.directory);
+      expect(subPackage.isPubIgnored, false);
+    });
+
+    test('returns true if the package is in an ignored directory (with trailing slash)', () async {
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+      package.directory.childFile('.pubignore').writeAsStringSync('.agents/');
+
+      final Directory agentsDir = package.directory.childDirectory('.agents')..createSync();
+      final RepositoryPackage subPackage = createFakePackage('sub_package', agentsDir);
+
+      expect(subPackage.isPubIgnored, true);
+    });
+
+    test(
+      'returns true if the package is in an ignored directory (without trailing slash)',
+      () async {
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+        package.directory.childFile('.pubignore').writeAsStringSync('.agents');
+
+        final Directory agentsDir = package.directory.childDirectory('.agents')..createSync();
+        final RepositoryPackage subPackage = createFakePackage('sub_package', agentsDir);
+
+        expect(subPackage.isPubIgnored, true);
+      },
+    );
+
+    test('returns true if a deeply nested package is in an ignored directory', () async {
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+      package.directory.childFile('.pubignore').writeAsStringSync('.agents/');
+
+      final Directory nestedDir =
+          package.directory.childDirectory('.agents').childDirectory('skills')
+            ..createSync(recursive: true);
+      final RepositoryPackage subPackage = createFakePackage('sub_package', nestedDir);
+
+      expect(subPackage.isPubIgnored, true);
+    });
+
+    test('returns false if the package is not in an ignored directory', () async {
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+      package.directory.childFile('.pubignore').writeAsStringSync('.agents/');
+
+      final Directory otherDir = package.directory.childDirectory('other')..createSync();
+      final RepositoryPackage subPackage = createFakePackage('sub_package', otherDir);
+
+      expect(subPackage.isPubIgnored, false);
+    });
+
+    test('ignores comments and empty lines in .pubignore', () async {
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+      package.directory.childFile('.pubignore').writeAsStringSync('\n# a comment\n.agents/\n');
+
+      final Directory agentsDir = package.directory.childDirectory('.agents')..createSync();
+      final RepositoryPackage subPackage = createFakePackage('sub_package', agentsDir);
+
+      expect(subPackage.isPubIgnored, true);
+    });
+
+    test('respects anchored patterns', () async {
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+      package.directory.childFile('.pubignore').writeAsStringSync('/.agents/');
+
+      final Directory agentsDir = package.directory.childDirectory('.agents')..createSync();
+      final RepositoryPackage subPackage1 = createFakePackage('sub_package1', agentsDir);
+
+      final Directory nestedAgentsDir =
+          package.directory.childDirectory('other').childDirectory('.agents')
+            ..createSync(recursive: true);
+      final RepositoryPackage subPackage2 = createFakePackage('sub_package2', nestedAgentsDir);
+
+      expect(subPackage1.isPubIgnored, true);
+      expect(subPackage2.isPubIgnored, false);
+    });
+
+    test('handles trailing slashes correctly', () async {
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+      package.directory.childFile('.pubignore').writeAsStringSync('foo/');
+
+      final Directory fooDir = package.directory.childDirectory('foo')..createSync();
+      final RepositoryPackage subPackage = createFakePackage('sub_package', fooDir);
+
+      expect(subPackage.isPubIgnored, true);
+    });
+
+    test('gracefully ignores malformed glob patterns', () async {
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+      package.directory.childFile('.pubignore').writeAsStringSync('[unclosed bracket\n.agents/');
+
+      final Directory agentsDir = package.directory.childDirectory('.agents')..createSync();
+      final RepositoryPackage subPackage = createFakePackage('sub_package', agentsDir);
+
+      // Should not throw, and should still match valid patterns in the file
+      expect(subPackage.isPubIgnored, true);
+    });
+  });
 
   group('pubspec', () {
     test('file', () async {

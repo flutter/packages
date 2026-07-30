@@ -342,6 +342,24 @@ void main() {
       verify(playerApi.setPlaybackSpeed(speed));
     });
 
+    group('setPreventsDisplaySleepDuringVideoPlayback', () {
+      test('passes true', () async {
+        final (AVFoundationVideoPlayer player, _, MockVideoPlayerInstanceApi playerApi) =
+            setUpMockPlayer(playerId: 1);
+        await player.setPreventsDisplaySleepDuringVideoPlayback(1, true);
+
+        verify(playerApi.setPreventsDisplaySleepDuringVideoPlayback(true));
+      });
+
+      test('passes false', () async {
+        final (AVFoundationVideoPlayer player, _, MockVideoPlayerInstanceApi playerApi) =
+            setUpMockPlayer(playerId: 1);
+        await player.setPreventsDisplaySleepDuringVideoPlayback(1, false);
+
+        verify(playerApi.setPreventsDisplaySleepDuringVideoPlayback(false));
+      });
+    });
+
     test('seekTo', () async {
       final (AVFoundationVideoPlayer player, _, MockVideoPlayerInstanceApi playerApi) =
           setUpMockPlayer(playerId: 1);
