@@ -74,13 +74,6 @@ base class XFile extends XEntity {
   @override
   PlatformXFile get platform => super.platform as PlatformXFile;
 
-  /// Attempt to provide the platform class extension.
-  ///
-  /// Returns null if the specified platform extension cannot be retrieved.
-  S? getExtension<S extends PlatformXFileExtension>() {
-    return platform.extension is S ? platform.extension! as S : null;
-  }
-
   /// Date and time when the resource was last modified, if the information is
   /// available.
   Future<DateTime?> lastModified() => platform.lastModified();

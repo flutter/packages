@@ -22,7 +22,7 @@ void main() {
     expect(await xDir.exists(), isTrue);
 
     final file = XFile.fromPath(path.join(dir.path, 'hello.txt'));
-    file.getExtension<IOXFileExtension>().file
+    file.getExtension<IOXFileExtension>()!.file
       ..createSync()
       ..writeAsStringSync('Hello, World!');
 

@@ -87,13 +87,13 @@ if (CrossFileWeb.isCurrentImplementation()) {
 }
 
 await file
-    .maybeGetExtension<SecurityScopedDarwinScopedStorageXFileExtension>()
+    .getExtension<SecurityScopedDarwinScopedStorageXFileExtension>()
     ?.startAccessingSecurityScopedResource();
 
 debugPrint(await file.readAsString());
 
 await file
-    .maybeGetExtension<SecurityScopedDarwinScopedStorageXFileExtension>()
+    .getExtension<SecurityScopedDarwinScopedStorageXFileExtension>()
     ?.stopAccessingSecurityScopedResource();
 ```
 
