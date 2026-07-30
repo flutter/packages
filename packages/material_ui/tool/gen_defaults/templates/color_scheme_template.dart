@@ -370,16 +370,37 @@ class ColorSchemeTemplateM3 extends TokenTemplateM3 {
 const ColorScheme $name = ColorScheme(
   brightness: $brightness,
 ''');
-    for (final (parameterName, tokenName) in colorRoles) {
-      buffer.writeln('  $parameterName: Color(${_token(tokenName, tokens, fallbackTokens)}),');
+    final Iterable<(String, String)> rolesWithTokens = colorRoles.where(
+      ((String, String) role) => tokens.containsKey(role.$2),
+    );
+    final Iterable<(String, String)> rolesWithFallbackTokens = colorRoles.where(
+      ((String, String) role) => !tokens.containsKey(role.$2),
+    );
+
+    for (final (parameterName, tokenName) in rolesWithTokens) {
+      buffer.writeln('  $parameterName: Color(${tokens[tokenName]}),');
+    }
+    if (fallbackTokens != null && rolesWithFallbackTokens.isNotEmpty) {
+      buffer.writeln(
+        '  // These roles fall back to the default ${_brightnessName(brightness)} tokens.',
+      );
+      for (final (parameterName, tokenName) in rolesWithFallbackTokens) {
+        buffer.writeln('  $parameterName: Color(${_fallbackToken(tokenName, fallbackTokens)}),');
+      }
     }
     buffer.writeln(');\n');
     return buffer.toString();
   }
 
-  String _token(String name, Map<String, String> tokens, Map<String, String>? fallbackTokens) {
-    return tokens[name] ??
-        fallbackTokens?[name] ??
-        (throw StateError('No token is defined for $name.'));
+  String _brightnessName(String brightness) {
+    return switch (brightness) {
+      'Brightness.light' => 'light',
+      'Brightness.dark' => 'dark',
+      _ => throw StateError('Unsupported brightness: $brightness.'),
+    };
+  }
+
+  String _fallbackToken(String name, Map<String, String> fallbackTokens) {
+    return fallbackTokens[name] ?? (throw StateError('No fallback token is defined for $name.'));
   }
 }
