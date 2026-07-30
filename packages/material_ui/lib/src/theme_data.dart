@@ -203,9 +203,10 @@ enum StyleVariant {
 
 /// Named contrast levels for Material 3 color schemes.
 ///
-/// Material 3 color schemes are generated from color roles and tonal palettes.
-/// When [ThemeData.colorSchemeSeed] is null, use [standard], [medium], or [high]
-/// to select between the default Material 3 color schemes.
+/// Material 3 baseline color schemes provide standard, medium, and high
+/// contrast levels. When [ThemeData.colorSchemeSeed] is null, use [standard],
+/// [medium], or [high] to select a token-backed baseline color scheme with that
+/// contrast level.
 ///
 /// A custom `double` between -1.0 and 1.0 can also be passed to
 /// [ThemeData.contrastLevel] when [ThemeData.colorSchemeSeed] is provided, in
