@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Flutter
 import GoogleMaps
 import UIKit
 import google_maps_flutter_ios_sdk9_objc
@@ -60,7 +61,7 @@ class MarkerController: NSObject {
     MarkerController.update(
       marker,
       from: platformMarker,
-      with: mapView,
+      mapView: mapView,
       assetProvider: assetProvider,
       screenScale: screenScale,
       usingOpacityForVisibility: useOpacityForVisibility
@@ -73,26 +74,23 @@ class MarkerController: NSObject {
   static func update(
     _ marker: GMSMarker,
     from platformMarker: FGMPlatformMarker,
-    with mapView: GMSMapView?,
+    mapView: GMSMapView?,
     assetProvider: FGMAssetProvider,
     screenScale: CGFloat,
     usingOpacityForVisibility useOpacityForVisibility: Bool
   ) {
-    if let anchor = platformMarker.anchor {
-      marker.groundAnchor = FGMGetCGPointForPigeonPoint(anchor)
-    }
+    marker.groundAnchor = FGMGetCGPointForPigeonPoint(platformMarker.anchor)
     marker.isDraggable = platformMarker.draggable
     marker.icon = FGMIconFromBitmap(platformMarker.icon, assetProvider, screenScale)
     marker.isFlat = platformMarker.flat
     marker.position = FGMGetCoordinateForPigeonLatLng(platformMarker.position)
     marker.rotation = platformMarker.rotation
     marker.zIndex = Int32(platformMarker.zIndex)
-    if let infoWindow = platformMarker.infoWindow {
-      marker.infoWindowAnchor = FGMGetCGPointForPigeonPoint(infoWindow.anchor)
-      if let title = infoWindow.title {
-        marker.title = title
-        marker.snippet = infoWindow.snippet
-      }
+    let infoWindow = platformMarker.infoWindow
+    marker.infoWindowAnchor = FGMGetCGPointForPigeonPoint(infoWindow.anchor)
+    if let title = infoWindow.title {
+      marker.title = title
+      marker.snippet = infoWindow.snippet
     }
 
     if let advancedMarker = marker as? GMSAdvancedMarker,
@@ -116,7 +114,7 @@ class MarkerController: NSObject {
 class MarkersController: NSObject {
   private(set) var markerIdentifierToController: [String: MarkerController] = [:]
   private weak var eventDelegate: FGMMapEventDelegate?
-  private weak var clusterManagersController: FGMClusterManagersController?
+  private weak var clusterManagersController: ClusterManagersController?
   private let assetProvider: FGMAssetProvider
   private weak var mapView: GMSMapView?
   private let markerType: FGMPlatformMarkerType
@@ -124,7 +122,7 @@ class MarkersController: NSObject {
   init(
     mapView: GMSMapView,
     eventDelegate: FGMMapEventDelegate,
-    clusterManagersController: FGMClusterManagersController?,
+    clusterManagersController: ClusterManagersController?,
     assetProvider: FGMAssetProvider,
     markerType: FGMPlatformMarkerType
   ) {
@@ -136,13 +134,14 @@ class MarkersController: NSObject {
     super.init()
   }
 
-  func addMarkers(_ markersToAdd: [FGMPlatformMarker]) {
+  func add(_ markersToAdd: [FGMPlatformMarker]) {
     for marker in markersToAdd {
       addMarker(marker)
     }
   }
 
   private func addMarker(_ markerToAdd: FGMPlatformMarker) {
+    guard let mapView = mapView else { return }
     let position = FGMGetCoordinateForPigeonLatLng(markerToAdd.position)
     let markerIdentifier = markerToAdd.markerId
     let clusterManagerIdentifier = markerToAdd.clusterManagerId
@@ -152,7 +151,6 @@ class MarkersController: NSObject {
       ? GMSAdvancedMarker(position: position)
       : GMSMarker(position: position)
 
-    guard let mapView = mapView else { return }
     let controller = MarkerController(
       marker: marker,
       markerIdentifier: markerIdentifier,
@@ -165,15 +163,14 @@ class MarkersController: NSObject {
     )
 
     if let clusterManagerIdentifier = clusterManagerIdentifier {
-      let clusterManager = clusterManagersController?.clusterManager(withIdentifier: clusterManagerIdentifier)
-      if let clusterItem = marker as? GMUClusterItem {
-        clusterManager?.add(clusterItem)
-      }
+      let clusterManager = clusterManagersController?.clusterManager(
+        withIdentifier: clusterManagerIdentifier)
+      clusterManager?.add(marker)
     }
     markerIdentifierToController[markerIdentifier] = controller
   }
 
-  func changeMarkers(_ markersToChange: [FGMPlatformMarker]) {
+  func change(_ markersToChange: [FGMPlatformMarker]) {
     for marker in markersToChange {
       changeMarker(marker)
     }
@@ -191,15 +188,13 @@ class MarkersController: NSObject {
       screenScale: getScreenScale()
     )
 
-    if let clusterItem = controller.marker as? GMUClusterItem {
-      if let prevId = previousClusterManagerIdentifier, prevId != clusterManagerIdentifier {
-        let clusterManager = clusterManagersController?.clusterManager(withIdentifier: prevId)
-        clusterManager?.remove(clusterItem)
-      }
-      if let newId = clusterManagerIdentifier, newId != previousClusterManagerIdentifier {
-        let clusterManager = clusterManagersController?.clusterManager(withIdentifier: newId)
-        clusterManager?.add(clusterItem)
-      }
+    if let previousId = previousClusterManagerIdentifier, previousId != clusterManagerIdentifier {
+      let clusterManager = clusterManagersController?.clusterManager(withIdentifier: previousId)
+      clusterManager?.remove(controller.marker)
+    }
+    if let newId = clusterManagerIdentifier, newId != previousClusterManagerIdentifier {
+      let clusterManager = clusterManagersController?.clusterManager(withIdentifier: newId)
+      clusterManager?.add(controller.marker)
     }
   }
 
@@ -212,10 +207,9 @@ class MarkersController: NSObject {
   private func removeMarker(_ identifier: String) {
     guard let controller = markerIdentifierToController[identifier] else { return }
     if let clusterManagerIdentifier = controller.clusterManagerIdentifier {
-      let clusterManager = clusterManagersController?.clusterManager(withIdentifier: clusterManagerIdentifier)
-      if let clusterItem = controller.marker as? GMUClusterItem {
-        clusterManager?.remove(clusterItem)
-      }
+      let clusterManager = clusterManagersController?.clusterManager(
+        withIdentifier: clusterManagerIdentifier)
+      clusterManager?.remove(controller.marker)
     } else {
       controller.removeMarker()
     }
@@ -232,7 +226,7 @@ class MarkersController: NSObject {
     guard markerIdentifierToController[identifier] != nil else { return }
     eventDelegate?.didStartDragForMarker(
       withIdentifier: identifier,
-      at: FGMGetPigeonLatLngForCoordinate(location)
+      atPosition: FGMGetPigeonLatLngForCoordinate(location)
     )
   }
 
@@ -240,7 +234,7 @@ class MarkersController: NSObject {
     guard markerIdentifierToController[identifier] != nil else { return }
     eventDelegate?.didDragMarker(
       withIdentifier: identifier,
-      at: FGMGetPigeonLatLngForCoordinate(location)
+      atPosition: FGMGetPigeonLatLngForCoordinate(location)
     )
   }
 
@@ -248,13 +242,13 @@ class MarkersController: NSObject {
     guard markerIdentifierToController[identifier] != nil else { return }
     eventDelegate?.didEndDragForMarker(
       withIdentifier: identifier,
-      at: FGMGetPigeonLatLngForCoordinate(location)
+      atPosition: FGMGetPigeonLatLngForCoordinate(location)
     )
   }
 
   func didTapInfoWindowOfMarker(withIdentifier identifier: String) {
     if markerIdentifierToController[identifier] != nil {
-      eventDelegate?.didTapInfoWindow(forMarkerWithIdentifier: identifier)
+      eventDelegate?.didTapInfoWindowOfMarker(withIdentifier: identifier)
     }
   }
 

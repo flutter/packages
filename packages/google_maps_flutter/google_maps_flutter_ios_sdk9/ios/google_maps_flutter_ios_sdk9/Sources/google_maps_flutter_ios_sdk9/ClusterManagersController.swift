@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Flutter
 import GoogleMaps
 import google_maps_flutter_ios_sdk9_objc
 
@@ -17,17 +18,16 @@ class ClusterManagersController: NSObject {
     super.init()
   }
 
-  func addClusterManagers(_ clusterManagersToAdd: [FGMPlatformClusterManager]) {
+  func add(_ clusterManagersToAdd: [FGMPlatformClusterManager]) {
     for clusterManager in clusterManagersToAdd {
-      let identifier = clusterManager.identifier
-      addClusterManager(identifier)
+      addClusterManager(clusterManager.identifier)
     }
   }
 
   func addClusterManager(_ identifier: String) {
+    guard let mapView = mapView else { return }
     let algorithm = GMUNonHierarchicalDistanceBasedAlgorithm()
     let iconGenerator = GMUDefaultClusterIconGenerator()
-    guard let mapView = mapView else { return }
     let renderer = GMUDefaultClusterRenderer(mapView: mapView, clusterIconGenerator: iconGenerator)
     clusterManagerIdentifierToManagers[identifier] = GMUClusterManager(
       map: mapView,
@@ -50,9 +50,7 @@ class ClusterManagersController: NSObject {
   }
 
   func invokeClusteringForEachClusterManager() {
-    for clusterManager in clusterManagerIdentifierToManagers.values {
-      clusterManager.cluster()
-    }
+    clusterManagerIdentifierToManagers.values.forEach({ $0.cluster() })
   }
 
   func clusters(
@@ -67,28 +65,22 @@ class ClusterManagersController: NSObject {
       )
       return nil
     }
+    guard let mapView = mapView else { return [] }
 
     // Ref:
     // https://github.com/googlemaps/google-maps-ios-utils/blob/0e7ed81f1bbd9d29e4529c40ae39b0791b0a0eb8/src/Clustering/GMUClusterManager.m#L94.
-    guard let mapView = mapView else { return [] }
-    let integralZoom = UInt(floorf(Float(mapView.camera.zoom) + 0.5))
-    guard let clusters = clusterManager.algorithm.clusters(atZoom: integralZoom) as? [GMUCluster] else {
-      return []
-    }
-    return clusters.map { FGMGetPigeonCluster($0, identifier) }
+    let integralZoom = floorf(Float(mapView.camera.zoom) + 0.5)
+    let clusters = clusterManager.algorithm.clusters(atZoom: integralZoom)
+    return clusters.map { pigeonCluster(for: $0, clusterManagerIdentifier: identifier) }
   }
 
-  func didTapCluster(_ cluster: GMUStaticCluster) {
+  func didTap(_ cluster: GMUStaticCluster) {
     guard let clusterManagerId = clusterManagerIdentifier(for: cluster) else { return }
-    let platformCluster = FGMGetPigeonCluster(cluster, clusterManagerId)
-    eventDelegate?.didTapCluster(platformCluster)
+    let platformCluster = pigeonCluster(for: cluster, clusterManagerIdentifier: clusterManagerId)
+    eventDelegate?.didTap(platformCluster)
   }
-
-  // MARK: - Private methods
 
   /// Returns the cluster manager identifier for given cluster.
-  ///
-  /// - Returns: The cluster manager identifier if found; otherwise, nil.
   private func clusterManagerIdentifier(for cluster: GMUStaticCluster) -> String? {
     if let firstMarker = cluster.items.first as? GMSMarker {
       return clusterManagerIdentifierFromMarker(firstMarker)
