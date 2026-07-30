@@ -128,10 +128,9 @@ abstract base class PlatformXFile extends PlatformXEntity {
   /// the resource.
   Future<String> readAsString({Encoding encoding = utf8});
 
-  /// The name of the resource represented by this object.
+  /// The name of the resource represented by this object or null if the file
+  /// doesn't exist or information is not available.
   ///
   /// The path is excluded from this value.
-  ///
-  /// Returns null if file doesn't exist or information is not available.
   Future<String?> name();
 }
