@@ -74,18 +74,10 @@ base class XFile extends XEntity {
   @override
   PlatformXFile get platform => super.platform as PlatformXFile;
 
-  /// Provides a nonnull platform class extension.
-  ///
-  /// Will throw an exception if the specified platform extension can not be
-  /// returned.
-  S getExtension<S extends PlatformXFileExtension>() {
-    return platform.extension! as S;
-  }
-
   /// Attempt to provide the platform class extension.
   ///
   /// Returns null if the specified platform extension cannot be retrieved.
-  S? maybeGetExtension<S extends PlatformXFileExtension>() {
+  S? getExtension<S extends PlatformXFileExtension>() {
     return platform.extension is S ? platform.extension! as S : null;
   }
 
