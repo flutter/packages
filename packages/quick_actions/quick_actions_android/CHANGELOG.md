@@ -2,7 +2,7 @@
 
 * Fixes `getLaunchAction` throwing when the plugin has no attached activity, which made
   `initialize` throw for engines that run without UI, such as a cached engine warmed up by a
-  background service. It now logs a warning and returns `null`.
+  background service. It now returns `null`.
 
 ## 1.0.32
 

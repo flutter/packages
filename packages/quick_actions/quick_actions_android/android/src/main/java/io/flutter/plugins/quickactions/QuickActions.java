@@ -108,7 +108,7 @@ final class QuickActions implements AndroidQuickActionsApi {
       // up by a background service. Nothing launched the app in that case, so there is no launch
       // action to report. Any action that arrives later is reported through the plugin's
       // onNewIntent listener once an activity attaches.
-      Log.w(TAG, "There is no activity available when getting the launch action.");
+      Log.d(TAG, "There is no activity available when getting the launch action.");
       return null;
     }
     final Intent intent = activity.getIntent();
