@@ -95,6 +95,7 @@ abstract base class PlatformScopedStorageXDirectory extends PlatformXDirectory {
   PlatformScopedStorageXDirectoryCreationParams get params =>
       super.params as PlatformScopedStorageXDirectoryCreationParams;
 
-  /// Whether the directory represented by this reference can be read.
+  /// Whether the files in this directory represented by this reference can be
+  /// viewed.
   Future<bool> canRead();
 }

@@ -79,6 +79,7 @@ base class ScopedStorageXDirectory extends XDirectory {
   @override
   PlatformScopedStorageXDirectory get platform => super.platform as PlatformScopedStorageXDirectory;
 
-  /// Whether the directory represented by this reference can be read.
+  /// Whether the files in this directory represented by this reference can be
+  /// viewed.
   Future<bool> canRead() => platform.canRead();
 }
