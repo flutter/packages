@@ -11,6 +11,8 @@ import 'package:pigeon/pigeon.dart';
     kotlinOptions: KotlinOptions(
       package: 'io.flutter.plugins.sharedpreferences',
       errorClassName: 'SharedPreferencesError',
+      useJni: true,
+      appDirectory: 'example/',
     ),
     dartOut: 'lib/src/messages_async.g.dart',
     copyrightHeader: 'pigeons/copyright.txt',

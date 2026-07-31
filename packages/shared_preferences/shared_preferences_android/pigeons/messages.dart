@@ -11,7 +11,11 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     input: 'pigeons/messages.dart',
     kotlinOut: 'android/src/main/kotlin/io/flutter/plugins/sharedpreferences/Messages.g.kt',
-    kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.sharedpreferences'),
+    kotlinOptions: KotlinOptions(
+      package: 'io.flutter.plugins.sharedpreferences',
+      useJni: true,
+      appDirectory: 'example/',
+    ),
     dartOut: 'lib/src/messages.g.dart',
     copyrightHeader: 'pigeons/copyright.txt',
   ),

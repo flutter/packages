@@ -16,13 +16,7 @@ public class LegacySharedPreferencesPlugin: NSObject, FlutterPlugin, LegacyUserD
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = LegacySharedPreferencesPlugin()
-    // Workaround for https://github.com/flutter/flutter/issues/118103.
-    #if os(iOS)
-      let messenger = registrar.messenger()
-    #else
-      let messenger = registrar.messenger
-    #endif
-    LegacyUserDefaultsApiSetup.setUp(binaryMessenger: messenger, api: instance)
+    LegacyUserDefaultsApiSetup.register(api: instance)
   }
 
   func getAll(prefix: String, allowList: [String]?) -> [String: Any] {
@@ -74,13 +68,7 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = SharedPreferencesPlugin()
-    // Workaround for https://github.com/flutter/flutter/issues/118103.
-    #if os(iOS)
-      let messenger = registrar.messenger()
-    #else
-      let messenger = registrar.messenger
-    #endif
-    UserDefaultsApiSetup.setUp(binaryMessenger: messenger, api: instance)
+    UserDefaultsApiSetup.register(api: instance)
     LegacySharedPreferencesPlugin.register(with: registrar)
   }
 
