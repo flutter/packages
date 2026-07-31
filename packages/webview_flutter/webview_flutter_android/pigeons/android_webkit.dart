@@ -428,6 +428,12 @@ abstract class WebSettings {
   /// Enables or disables content URL access within WebView.
   void setAllowContentAccess(bool enabled);
 
+  /// Enables or disables universal cross-origin access from file URLs.
+  void setAllowUniversalAccessFromFileURLs(bool enabled);
+
+  /// Enables or disables file URL access to other file URLs.
+  void setAllowFileAccessFromFileURLs(bool enabled);
+
   /// Sets whether Geolocation is enabled within WebView.
   void setGeolocationEnabled(bool enabled);
 

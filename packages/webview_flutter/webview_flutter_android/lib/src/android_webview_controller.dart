@@ -620,6 +620,20 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setAllowContentAccess(bool enabled) =>
       _webView.settings.setAllowContentAccess(enabled);
 
+  /// Sets the file URL access to other file URLs permission for the web view.
+  ///
+  /// The default value is true for apps targeting API 15 and below, and false
+  /// when targeting API 16 and above.
+  Future<void> setAllowFileAccessFromFileURLs(bool enabled) =>
+      _webView.settings.setAllowFileAccessFromFileURLs(enabled);
+
+  /// Sets the universal cross-origin access from file URLs permission for the web view.
+  ///
+  /// The default value is true for apps targeting API 15 and below, and false
+  /// when targeting API 16 and above.
+  Future<void> setAllowUniversalAccessFromFileURLs(bool enabled) =>
+      _webView.settings.setAllowUniversalAccessFromFileURLs(enabled);
+
   /// Sets whether Geolocation is enabled.
   ///
   /// The default is true.
