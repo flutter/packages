@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.flutter.packages.cross_file_android_example"
+    namespace = "dev.flutter.packages.crossfileandroidexample"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -14,7 +14,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "dev.flutter.packages.cross_file_android_example"
+        applicationId = "dev.flutter.packages.crossfileandroidexample"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

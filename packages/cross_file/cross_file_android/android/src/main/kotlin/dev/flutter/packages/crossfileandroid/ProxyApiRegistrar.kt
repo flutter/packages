@@ -2,16 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package dev.flutter.packages.cross_file_android
+package dev.flutter.packages.crossfileandroid
 
 import android.content.Context
-import dev.flutter.packages.cross_file_android.proxies.AndroidLibraryPigeonProxyApiRegistrar
-import dev.flutter.packages.cross_file_android.proxies.ContentResolverProxyApi
-import dev.flutter.packages.cross_file_android.proxies.DocumentFileProxyApi
-import dev.flutter.packages.cross_file_android.proxies.InputStreamProxyApi
-import dev.flutter.packages.cross_file_android.proxies.PigeonApiContentResolver
-import dev.flutter.packages.cross_file_android.proxies.PigeonApiDocumentFile
-import dev.flutter.packages.cross_file_android.proxies.PigeonApiInputStream
+import dev.flutter.packages.crossfileandroid.proxies.AndroidLibraryPigeonProxyApiRegistrar
+import dev.flutter.packages.crossfileandroid.proxies.ContentResolverProxyApi
+import dev.flutter.packages.crossfileandroid.proxies.DocumentFileProxyApi
+import dev.flutter.packages.crossfileandroid.proxies.InputStreamProxyApi
+import dev.flutter.packages.crossfileandroid.proxies.PigeonApiContentResolver
+import dev.flutter.packages.crossfileandroid.proxies.PigeonApiDocumentFile
+import dev.flutter.packages.crossfileandroid.proxies.PigeonApiInputStream
 import io.flutter.plugin.common.BinaryMessenger
 
 /**

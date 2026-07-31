@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package dev.flutter.packages.cross_file_android.proxies
+package dev.flutter.packages.crossfileandroid.proxies
 
 import android.content.ContentResolver
 import androidx.core.net.toUri
-import dev.flutter.packages.cross_file_android.ProxyApiRegistrar
+import dev.flutter.packages.crossfileandroid.ProxyApiRegistrar
 import java.io.InputStream
 
 /**

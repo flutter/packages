@@ -10,8 +10,8 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     dartOut: 'lib/src/android_library.g.dart',
     kotlinOut:
-        'android/src/main/kotlin/dev/flutter/packages/cross_file_android/proxies/AndroidLibrary.g.kt',
-    kotlinOptions: KotlinOptions(package: 'dev.flutter.packages.cross_file_android.proxies'),
+        'android/src/main/kotlin/dev/flutter/packages/crossfileandroid/proxies/AndroidLibrary.g.kt',
+    kotlinOptions: KotlinOptions(package: 'dev.flutter.packages.crossfileandroid.proxies'),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )

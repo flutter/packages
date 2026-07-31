@@ -15,7 +15,7 @@ flutter:
     platforms:
       android:
         dartPluginClass: CrossFileAndroid
-        package: dev.flutter.packages.cross_file_android
+        package: dev.flutter.packages.crossfileandroid
         pluginClass: CrossFileAndroidPlugin
 
 dependencies:

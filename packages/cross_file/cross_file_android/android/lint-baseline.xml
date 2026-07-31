@@ -7,7 +7,7 @@
         errorLine1="    return strongInstances.remove(identifier) as T?"
         errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/kotlin/dev/flutter/packages/cross_file_android/proxies/AndroidLibrary.g.kt"
+            file="src/main/kotlin/dev/flutter/packages/crossfileandroid/proxies/AndroidLibrary.g.kt"
             line="158"
             column="12"/>
     </issue>
@@ -18,7 +18,7 @@
         errorLine1="    return instance != null &amp;&amp; identifiers.containsKey(IdentityWeakReference(instance))"
         errorLine2="                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/kotlin/dev/flutter/packages/cross_file_android/proxies/AndroidLibrary.g.kt"
+            file="src/main/kotlin/dev/flutter/packages/crossfileandroid/proxies/AndroidLibrary.g.kt"
             line="225"
             column="32"/>
     </issue>
@@ -29,7 +29,7 @@
         errorLine1="        weakInstances.remove(identifier)"
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/kotlin/dev/flutter/packages/cross_file_android/proxies/AndroidLibrary.g.kt"
+            file="src/main/kotlin/dev/flutter/packages/crossfileandroid/proxies/AndroidLibrary.g.kt"
             line="270"
             column="9"/>
     </issue>
@@ -40,7 +40,7 @@
         errorLine1="        strongInstances.remove(identifier)"
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/kotlin/dev/flutter/packages/cross_file_android/proxies/AndroidLibrary.g.kt"
+            file="src/main/kotlin/dev/flutter/packages/crossfileandroid/proxies/AndroidLibrary.g.kt"
             line="271"
             column="9"/>
     </issue>
@@ -51,7 +51,7 @@
         errorLine1="    require(!weakInstances.containsKey(identifier)) {"
         errorLine2="             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/kotlin/dev/flutter/packages/cross_file_android/proxies/AndroidLibrary.g.kt"
+            file="src/main/kotlin/dev/flutter/packages/crossfileandroid/proxies/AndroidLibrary.g.kt"
             line="280"
             column="14"/>
     </issue>

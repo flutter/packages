@@ -1,4 +1,4 @@
-group = "dev.flutter.packages.cross_file_android"
+group = "dev.flutter.packages.crossfileandroid"
 version = "1.0"
 
 buildscript {
@@ -32,7 +32,7 @@ kotlin {
 }
 
 android {
-    namespace = "dev.flutter.packages.cross_file_android"
+    namespace = "dev.flutter.packages.crossfileandroid"
     compileSdk = flutter.compileSdkVersion
 
     compileOptions {
