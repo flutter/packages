@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-
 import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
