@@ -1,9 +1,3 @@
-## 1.0.33
-
-* Fixes `getLaunchAction` throwing when the plugin has no attached activity, which made
-  `initialize` throw for engines that run without UI, such as a cached engine warmed up by a
-  background service. It now returns `null`.
-
 ## 1.0.32
 
 * Bumps the androidx group across 10 directories with 1 update.
