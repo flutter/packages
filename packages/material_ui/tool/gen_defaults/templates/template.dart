@@ -100,9 +100,6 @@ abstract class TokenTemplate {
     };
   }
 
-  /// The `part of` path written to the generated file.
-  String get partOfPath => '../$parentFilePath';
-
   /// Whether the generated contents must declare the generated defaults class.
   bool get requiresGeneratedClass => true;
 
@@ -197,7 +194,7 @@ abstract class TokenTemplate {
     final buffer = StringBuffer();
     buffer.write(_copyrightHeader);
     buffer.write(_headerComment);
-    buffer.write("part of '$partOfPath';\n\n");
+    buffer.write("part of '../$parentFilePath';\n\n");
     buffer.write(contents);
 
     if (verbose) {
