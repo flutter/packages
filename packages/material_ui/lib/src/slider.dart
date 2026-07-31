@@ -76,7 +76,7 @@ enum SliderInteraction {
 ///
 /// Used to select from a range of values.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=ufb4gIPDmEs}
+/// Learn more about [Slider] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=ufb4gIPDmEs).
 ///
 /// <callout-box>
 ///
@@ -521,7 +521,7 @@ class Slider extends StatefulWidget {
   /// to [ColorScheme.primary] with an opacity of 0.12.
   final WidgetStateProperty<Color?>? overlayColor;
 
-  /// {@template flutter.material.slider.mouseCursor}
+  /// {@template material_ui.slider.mouseCursor}
   /// The cursor for a mouse pointer when it enters or is hovering over the
   /// widget.
   ///

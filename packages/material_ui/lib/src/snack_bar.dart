@@ -217,7 +217,7 @@ class _SnackBarActionState extends State<SnackBarAction> {
 /// A lightweight message with an optional action which briefly displays at the
 /// bottom of the screen.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=zpO6n_oZWw0}
+/// Learn more about [SnackBar] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=zpO6n_oZWw0).
 ///
 /// To display a snack bar, call `ScaffoldMessenger.of(context).showSnackBar()`,
 /// passing an instance of [SnackBar] that describes the message.
@@ -506,7 +506,7 @@ class SnackBar extends StatefulWidget {
   /// is used. If that is null, then the default is [DismissDirection.down].
   final DismissDirection? dismissDirection;
 
-  /// {@macro flutter.cupertino.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;

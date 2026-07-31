@@ -39,7 +39,7 @@ import 'toggle_buttons_theme.dart';
 /// that's preferred for applications that are configured for Material 3
 /// (see [ThemeData.useMaterial3]).
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=kVEguaQWGAY}
+/// Learn more about [ToggleButtons] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=kVEguaQWGAY).
 ///
 /// ## Updating to [SegmentedButton]
 ///
@@ -281,7 +281,7 @@ class ToggleButtons extends StatelessWidget {
   /// When the callback is null, all toggle buttons will be disabled.
   final void Function(int index)? onPressed;
 
-  /// {@macro flutter.material.RawMaterialButton.mouseCursor}
+  /// {@macro material_ui.RawMaterialButton.mouseCursor}
   ///
   /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] is used.
   final MouseCursor? mouseCursor;

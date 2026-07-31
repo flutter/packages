@@ -35,7 +35,7 @@ enum _FloatingActionButtonType { regular, small, large, extended }
 /// to promote a primary action in the application. Floating action buttons are
 /// most commonly used in the [Scaffold.floatingActionButton] field.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=2uaoEDOgk_I}
+/// Learn more about [FloatingActionButton] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=2uaoEDOgk_I).
 ///
 /// Use at most a single floating action button per screen. Floating action
 /// buttons should be used for positive actions such as "create", "share", or
@@ -339,7 +339,7 @@ class FloatingActionButton extends StatelessWidget {
   /// If this is set to null, the button will be disabled.
   final VoidCallback? onPressed;
 
-  /// {@macro flutter.material.RawMaterialButton.mouseCursor}
+  /// {@macro material_ui.RawMaterialButton.mouseCursor}
   ///
   /// If this property is null, [FloatingActionButtonThemeData.mouseCursor] is used.
   /// If that is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
@@ -433,7 +433,7 @@ class FloatingActionButton extends StatelessWidget {
   /// shape as well.
   final ShapeBorder? shape;
 
-  /// {@macro flutter.cupertino.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;

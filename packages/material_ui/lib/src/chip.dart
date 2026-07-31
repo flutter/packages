@@ -143,7 +143,7 @@ abstract interface class ChipAttributes {
   ///  * [WidgetState.pressed].
   OutlinedBorder? get shape;
 
-  /// {@macro flutter.cupertino.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   Clip get clipBehavior;
@@ -179,7 +179,7 @@ abstract interface class ChipAttributes {
   ///
   /// Chips are unaffected by horizontal density changes.
   ///
-  /// {@macro flutter.material.themedata.visualDensity}
+  /// {@macro material_ui.themedata.visualDensity}
   ///
   /// See also:
   ///

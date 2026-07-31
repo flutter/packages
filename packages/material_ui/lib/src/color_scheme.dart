@@ -62,7 +62,7 @@ enum DynamicSchemeVariant {
   fruitSalad,
 }
 
-/// {@template flutter.material.color_scheme.ColorScheme}
+/// {@template material_ui.color_scheme.ColorScheme}
 /// A set of 45 colors based on the
 /// [Material spec](https://m3.material.io/styles/color/the-color-system/color-roles)
 /// that can be used to configure the color properties of most components.
@@ -70,7 +70,7 @@ enum DynamicSchemeVariant {
 ///
 /// ### Colors in Material 3
 ///
-/// {@macro flutter.material.colors.colorRoles}
+/// {@macro material_ui.colors.colorRoles}
 ///
 /// The main accent color groups in the scheme are [primary], [secondary],
 /// and [tertiary].
@@ -129,7 +129,7 @@ enum DynamicSchemeVariant {
 ///
 /// ### Setting Colors in Flutter
 ///
-///{@macro flutter.material.colors.settingColors}
+///{@macro material_ui.colors.settingColors}
 @immutable
 class ColorScheme with Diagnosticable {
   /// Create a ColorScheme instance from the given colors.

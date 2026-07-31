@@ -76,7 +76,7 @@ enum _IndicatorType { material, adaptive, noSpinner }
 
 /// A widget that supports the Material "swipe to refresh" idiom.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=ORApMlzwMdM}
+/// Learn more about [RefreshIndicator] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=ORApMlzwMdM).
 ///
 /// When the child's [Scrollable] descendant overscrolls, an animated circular
 /// progress indicator is faded into view. When the scroll ends, if the
@@ -298,13 +298,13 @@ class RefreshIndicator extends StatefulWidget {
   /// else for more complicated layouts.
   final ScrollNotificationPredicate notificationPredicate;
 
-  /// {@macro flutter.progress_indicator.ProgressIndicator.semanticsLabel}
+  /// {@macro material_ui.progress_indicator.ProgressIndicator.semanticsLabel}
   ///
   /// This will be defaulted to [MaterialLocalizations.refreshIndicatorSemanticLabel]
   /// if it is null.
   final String? semanticsLabel;
 
-  /// {@macro flutter.progress_indicator.ProgressIndicator.semanticsValue}
+  /// {@macro material_ui.progress_indicator.ProgressIndicator.semanticsValue}
   final String? semanticsValue;
 
   /// Defines [strokeWidth] for `RefreshIndicator`.

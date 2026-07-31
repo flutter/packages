@@ -59,7 +59,7 @@ const List<double> _kDisabledDarkGradientOpacities = <double>[0.08, 0.14];
 
 /// A widget that builds a [RawRadio] with a macOS-style UI.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=D0xwcz2IqAY}
+/// Learn more about [CupertinoRadio] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=D0xwcz2IqAY).
 ///
 /// Used to select between a number of mutually exclusive values. When one radio
 /// button in a group is selected, the other radio buttons in the group are
@@ -135,7 +135,7 @@ class CupertinoRadio<T> extends StatefulWidget {
   /// {@macro flutter.widget.RawRadio.value}
   final T value;
 
-  /// {@template flutter.cupertino.Radio.groupValue}
+  /// {@template cupertino_ui.Radio.groupValue}
   /// The currently selected value for a group of radio buttons.
   ///
   /// This radio button is considered selected if its [value] matches the
@@ -149,7 +149,7 @@ class CupertinoRadio<T> extends StatefulWidget {
   )
   final T? groupValue;
 
-  /// {@template flutter.cupertino.Radio.onChanged}
+  /// {@template cupertino_ui.Radio.onChanged}
   /// Called when the user selects this radio button.
   ///
   /// The radio button passes [value] as a parameter to this callback. The radio
@@ -257,7 +257,7 @@ class CupertinoRadio<T> extends StatefulWidget {
   /// [RadioGroupRegistry].
   final RadioGroupRegistry<T>? groupRegistry;
 
-  /// {@template flutter.cupertino.Radio.enabled}
+  /// {@template cupertino_ui.Radio.enabled}
   /// Whether this widget is interactive.
   ///
   /// If not provided, this widget will be interactable if one of the following

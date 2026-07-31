@@ -2,136 +2,137 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Foundation
+import Testing
 import WebKit
-import XCTest
 
 @testable import webview_flutter_wkwebview
 
-class WebViewConfigurationProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@Suite struct WebViewConfigurationProxyAPITests {
+  @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
-    XCTAssertNotNil(instance)
+    #expect(instance != nil)
   }
 
-  @MainActor func testSetUserContentController() {
+  @MainActor @Test func setUserContentController() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
     let controller = WKUserContentController()
-    try? api.pigeonDelegate.setUserContentController(
+    try api.pigeonDelegate.setUserContentController(
       pigeonApi: api, pigeonInstance: instance, controller: controller)
 
-    XCTAssertEqual(instance.userContentController, controller)
+    #expect(instance.userContentController == controller)
   }
 
-  @MainActor func testGetUserContentController() {
+  @MainActor @Test func getUserContentController() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
-    let value = try? api.pigeonDelegate.getUserContentController(
+    let value = try api.pigeonDelegate.getUserContentController(
       pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.userContentController)
+    #expect(value == instance.userContentController)
   }
 
-  @MainActor func testSetWebsiteDataStore() {
+  @MainActor @Test func setWebsiteDataStore() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
     let dataStore = WKWebsiteDataStore.default()
-    try? api.pigeonDelegate.setWebsiteDataStore(
+    try api.pigeonDelegate.setWebsiteDataStore(
       pigeonApi: api, pigeonInstance: instance, dataStore: dataStore)
 
-    XCTAssertEqual(instance.websiteDataStore, dataStore)
+    #expect(instance.websiteDataStore == dataStore)
   }
 
-  @MainActor func testGetWebsiteDataStore() {
+  @MainActor @Test func getWebsiteDataStore() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
-    let value = try? api.pigeonDelegate.getWebsiteDataStore(
+    let value = try api.pigeonDelegate.getWebsiteDataStore(
       pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.websiteDataStore)
+    #expect(value == instance.websiteDataStore)
   }
 
-  @MainActor func testSetPreferences() {
+  @MainActor @Test func setPreferences() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
     let preferences = WKPreferences()
-    try? api.pigeonDelegate.setPreferences(
+    try api.pigeonDelegate.setPreferences(
       pigeonApi: api, pigeonInstance: instance, preferences: preferences)
 
-    XCTAssertEqual(instance.preferences, preferences)
+    #expect(instance.preferences == preferences)
   }
 
-  @MainActor func testGetPreferences() {
+  @MainActor @Test func getPreferences() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
-    let value = try? api.pigeonDelegate.getPreferences(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.getPreferences(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.preferences)
+    #expect(value == instance.preferences)
   }
 
-  @MainActor func testSetAllowsInlineMediaPlayback() {
+  @MainActor @Test func setAllowsInlineMediaPlayback() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
     let allow = true
-    try? api.pigeonDelegate.setAllowsInlineMediaPlayback(
+    try api.pigeonDelegate.setAllowsInlineMediaPlayback(
       pigeonApi: api, pigeonInstance: instance, allow: allow)
 
     // setAllowsInlineMediaPlayback does not existing on macOS; the call above should no-op for macOS.
     #if !os(macOS)
-      XCTAssertEqual(instance.allowsInlineMediaPlayback, allow)
+      #expect(instance.allowsInlineMediaPlayback == allow)
     #endif
   }
 
   @available(iOS 14.0, macOS 11.0, *)
-  @MainActor func testSetLimitsNavigationsToAppBoundDomains() {
+  @MainActor @Test func setLimitsNavigationsToAppBoundDomains() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
     let limit = true
-    try? api.pigeonDelegate.setLimitsNavigationsToAppBoundDomains(
+    try api.pigeonDelegate.setLimitsNavigationsToAppBoundDomains(
       pigeonApi: api, pigeonInstance: instance, limit: limit)
 
-    XCTAssertEqual(instance.limitsNavigationsToAppBoundDomains, limit)
+    #expect(instance.limitsNavigationsToAppBoundDomains == limit)
   }
 
-  @MainActor func testSetMediaTypesRequiringUserActionForPlayback() {
+  @MainActor @Test func setMediaTypesRequiringUserActionForPlayback() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
     let type: AudiovisualMediaType = .none
-    try? api.pigeonDelegate.setMediaTypesRequiringUserActionForPlayback(
+    try api.pigeonDelegate.setMediaTypesRequiringUserActionForPlayback(
       pigeonApi: api, pigeonInstance: instance, type: type)
 
-    XCTAssertEqual(instance.mediaTypesRequiringUserActionForPlayback, [])
+    #expect(instance.mediaTypesRequiringUserActionForPlayback == [])
   }
 
-  @MainActor func testGetDefaultWebpagePreferences() {
+  @MainActor @Test func getDefaultWebpagePreferences() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
-    let value = try? api.pigeonDelegate.getDefaultWebpagePreferences(
+    let value = try api.pigeonDelegate.getDefaultWebpagePreferences(
       pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.defaultWebpagePreferences)
+    #expect(value == instance.defaultWebpagePreferences)
   }
 }

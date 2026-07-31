@@ -480,7 +480,7 @@ class CarouselView extends StatefulWidget {
   /// The child widgets for the carousel.
   final List<Widget> children;
 
-  /// {@template flutter.material.CarouselView.onIndexChanged}
+  /// {@template material_ui.CarouselView.onIndexChanged}
   /// A callback invoked when the leading item changes.
   ///
   /// The leading item is the first visible item in the carousel view.
@@ -1927,7 +1927,7 @@ class CarouselController extends ScrollController {
 
   /// The current leading item index in the [CarouselView].
   ///
-  /// {@macro flutter.material.CarouselView.onIndexChanged}
+  /// {@macro material_ui.CarouselView.onIndexChanged}
   int get leadingItem {
     assert(
       positions.isNotEmpty,

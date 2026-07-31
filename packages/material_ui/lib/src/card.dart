@@ -219,7 +219,7 @@ class Card extends StatelessWidget {
   /// If false, the border will be painted behind the [child].
   final bool borderOnForeground;
 
-  /// {@macro flutter.cupertino.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// If this property is null then the ambient [CardThemeData.clipBehavior] is
   /// used. If that's null then the behavior will be [Clip.none].
