@@ -1756,6 +1756,38 @@ void main() {
     verify(mockSettings.setAllowContentAccess(false)).called(1);
   });
 
+  test('setAllowFileAccessFromFileURLs', () async {
+    final mockWebView = MockWebView();
+    final mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+    );
+
+    clearInteractions(mockWebView);
+
+    await controller.setAllowFileAccessFromFileURLs(false);
+
+    verify(mockWebView.settings).called(1);
+    verify(mockSettings.setAllowFileAccessFromFileURLs(false)).called(1);
+  });
+
+  test('setAllowUniversalAccessFromFileURLs', () async {
+    final mockWebView = MockWebView();
+    final mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+    );
+
+    clearInteractions(mockWebView);
+
+    await controller.setAllowUniversalAccessFromFileURLs(false);
+
+    verify(mockWebView.settings).called(1);
+    verify(mockSettings.setAllowUniversalAccessFromFileURLs(false)).called(1);
+  });
+
   test('setGeolocationEnabled', () async {
     final mockWebView = MockWebView();
     final mockSettings = MockWebSettings();
