@@ -46,11 +46,12 @@ base class PlatformScopedStorageXFileCreationParams extends PlatformXFileCreatio
 /// Base mixin used to provide platform-specific features for implementations of
 /// [PlatformScopedStorageXFile].
 ///
-/// Platform implementations are expected to declare a mixin that implements
-/// this mixin and return an instance with [PlatformScopedStorageXFile.extension].
+/// When providing platform specific features, platform implementations are
+/// expected to declare a mixin that implements this mixin and return an
+/// instance with [PlatformScopedStorageXFile.extension].
 ///
 /// ```dart
-/// base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile with AndroidXFileExtension {
+/// base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile with AndroidScopedStorageXFileExtension {
 ///   // ...
 ///   @override
 ///   PlatformScopedStorageXFileExtension? get extension => this;
@@ -60,7 +61,7 @@ base class PlatformScopedStorageXFileCreationParams extends PlatformXFileCreatio
 ///   }
 /// }
 ///
-/// mixin AndroidXFileExtension implements PlatformScopedStorageXFileExtension {
+/// mixin AndroidScopedStorageXFileExtension implements PlatformScopedStorageXFileExtension {
 ///   Future<void> platformMethod();
 /// }
 /// ```

@@ -46,11 +46,12 @@ base class PlatformScopedStorageXDirectoryCreationParams extends PlatformXDirect
 /// Base mixin used to provide platform-specific features for implementations of
 /// [PlatformScopedStorageXDirectory].
 ///
-/// Platform implementations are expected to declare a mixin that implements
-/// this mixin and return an instance with [PlatformScopedStorageXDirectory.extension].
+/// When providing platform specific features, platform implementations are
+/// expected to declare a mixin that implements this mixin and return an
+/// instance with [PlatformScopedStorageXDirectory.extension].
 ///
 /// ```dart
-/// base class AndroidScopedStorageXDirectory extends PlatformScopedStorageXDirectory with AndroidXFileExtension {
+/// base class AndroidScopedStorageXDirectory extends PlatformScopedStorageXDirectory with AndroidScopedStorageXDirectoryExtension {
 ///   // ...
 ///   @override
 ///   PlatformScopedStorageXDirectoryExtension? get extension => this;
@@ -60,7 +61,7 @@ base class PlatformScopedStorageXDirectoryCreationParams extends PlatformXDirect
 ///   }
 /// }
 ///
-/// mixin AndroidXFileExtension implements PlatformScopedStorageXDirectoryExtension {
+/// mixin AndroidScopedStorageXDirectoryExtension implements PlatformScopedStorageXDirectoryExtension {
 ///   Future<void> platformMethod();
 /// }
 /// ```

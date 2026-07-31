@@ -48,11 +48,12 @@ base class PlatformXDirectoryCreationParams extends PlatformXEntityCreationParam
 /// Base mixin used to provide platform-specific features for implementations of
 /// [PlatformXDirectory].
 ///
-/// Platform implementations are expected to declare a mixin that implements
-/// this mixin and return an instance with [PlatformXDirectory.extension].
+/// When providing platform specific features, platform implementations are
+/// expected to declare a mixin that implements this mixin and return an
+/// instance with [PlatformXDirectory.extension].
 ///
 /// ```dart
-/// base class AndroidXDirectory extends PlatformXDirectory with AndroidXFileExtension {
+/// base class AndroidXDirectory extends PlatformXDirectory with AndroidXDirectoryExtension {
 ///   // ...
 ///   @override
 ///   PlatformXDirectoryExtension? get extension => this;
@@ -62,7 +63,7 @@ base class PlatformXDirectoryCreationParams extends PlatformXEntityCreationParam
 ///   }
 /// }
 ///
-/// mixin AndroidXFileExtension implements PlatformXDirectoryExtension {
+/// mixin AndroidXDirectoryExtension implements PlatformXDirectoryExtension {
 ///   Future<void> platformMethod();
 /// }
 /// ```

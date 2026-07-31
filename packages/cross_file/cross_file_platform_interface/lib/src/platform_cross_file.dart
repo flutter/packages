@@ -49,8 +49,9 @@ base class PlatformXFileCreationParams extends PlatformXEntityCreationParams {
 /// Base mixin used to provide platform-specific features for implementations of
 /// [PlatformXFile].
 ///
-/// Platform implementations are expected to declare a mixin that implements
-/// this mixin and return an instance with [PlatformXFile.extension].
+/// When providing platform specific features, platform implementations are
+/// expected to declare a mixin that implements this mixin and return an
+/// instance with [PlatformXFile.extension].
 ///
 /// ```dart
 /// base class AndroidXFile extends PlatformXFile with AndroidXFileExtension {
