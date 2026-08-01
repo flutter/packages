@@ -7,7 +7,7 @@ import 'dart:typed_data';
 
 /// Byte range filter for a continuous stream of data.
 ///
-/// Takes incoming chunks of bytes (Uint8List) as they arrive, and slices out
+/// Takes incoming chunks of bytes ([Uint8List]) as they arrive, and slices out
 /// only the portion that falls within a specific ([start], [end]) index range.
 ///
 /// All byte chunks are passed to [addBytes] which returns only the bytes that
@@ -31,33 +31,28 @@ class ByteRangeFilter {
   /// Returns a list of bytes if they are within the desired range of [start]
   /// and [end]. Otherwise, returns an empty list.
   Uint8List addBytes(Uint8List bytes) {
-    Uint8List? inRangeBytes;
-    final int newByteIndex = _currentByteIndex + bytes.length;
+    final int chunkStart = _currentByteIndex;
+    final int chunkEnd = chunkStart + bytes.length;
+    _currentByteIndex = chunkEnd;
 
-    if (end == null) {
-      if (_currentByteIndex >= start) {
-        inRangeBytes = bytes;
-      } else {
-        if (newByteIndex > start) {
-          inRangeBytes = bytes.sublist(start - _currentByteIndex);
-        }
-      }
-    } else if (end case final int end) {
-      final int bytesLeftToRead = end - max(_currentByteIndex, start);
-
-      if (bytesLeftToRead > 0) {
-        if (_currentByteIndex >= start) {
-          inRangeBytes = bytes.sublist(0, min(bytesLeftToRead, bytes.length));
-        } else if (newByteIndex > start) {
-          inRangeBytes = bytes.sublist(
-            start - _currentByteIndex,
-            min(start - _currentByteIndex + bytesLeftToRead, bytes.length),
-          );
-        }
-      }
+    // 1. Early-exit short-circuit
+    if (end != null && chunkStart >= end!) {
+      return Uint8List(0);
     }
 
-    _currentByteIndex = newByteIndex;
-    return inRangeBytes ?? Uint8List(0);
+    // 2. Compute absolute interval intersection
+    final int intersectStart = max(chunkStart, start);
+    final int intersectEnd = end == null ? chunkEnd : min(chunkEnd, end!);
+
+    if (intersectStart < intersectEnd) {
+      // 3. Convert absolute indices to chunk-local offsets
+      final int localStart = intersectStart - chunkStart;
+      final int localEnd = intersectEnd - chunkStart;
+
+      // 4. Zero-copy view
+      return Uint8List.sublistView(bytes, localStart, localEnd);
+    }
+
+    return Uint8List(0);
   }
 }
