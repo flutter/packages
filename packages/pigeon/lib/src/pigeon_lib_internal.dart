@@ -503,7 +503,7 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
       (options.swiftOptions?.useFfi ?? false)
       ? _openSink(
-          ffigenConfigPath,
+          getFfigenConfigPath('', options.input),
           basePath: options.swiftOptions?.appDirectory ?? options.appDirectory ?? '',
         )
       : null;
@@ -678,7 +678,7 @@ class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
       options.kotlinOptions?.kotlinOut != null && (options.kotlinOptions?.useJni ?? false)
       ? _openSink(
-          jnigenConfigPath,
+          getJnigenConfigPath('', options.input),
           basePath: options.kotlinOptions?.appDirectory ?? options.appDirectory ?? '',
         )
       : null;

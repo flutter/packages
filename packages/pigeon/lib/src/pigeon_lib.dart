@@ -869,7 +869,7 @@ ${_argParser.usage}''';
     }
 
     if (useFfi && swiftAppDir != null && swiftAppDir.isNotEmpty) {
-      final int exitCode = await _runFfigen(swiftAppDir, dartExecutable);
+      final int exitCode = await _runFfigen(swiftAppDir, internalOptions.input, dartExecutable);
       if (exitCode != 0) {
         return exitCode;
       }
@@ -877,7 +877,7 @@ ${_argParser.usage}''';
 
     if (useJni && appDir != null && appDir.isNotEmpty) {
       final Map<String, String> env = await _getJniEnvironment(dartExecutable);
-      final bool success = await _runJnigen(appDir, dartExecutable, env);
+      final bool success = await _runJnigen(appDir, internalOptions.input, dartExecutable, env);
       if (!success) {
         return 1;
       }
@@ -902,8 +902,12 @@ ${_argParser.usage}''';
   }
 
   /// Runs FFIgen in FFI multi-step generation.
-  static Future<int> _runFfigen(String swiftAppDir, String dartExecutable) async {
-    final String configFile = getFfigenConfigPath(swiftAppDir);
+  static Future<int> _runFfigen(
+    String swiftAppDir,
+    String? inputPath,
+    String dartExecutable,
+  ) async {
+    final String configFile = getFfigenConfigPath(swiftAppDir, inputPath);
     if (File(configFile).existsSync()) {
       print('FFI Multi-step: Running FFIgen for $configFile...');
       final ProcessResult ffigenResult = await Process.run(dartExecutable, ['run', configFile]);
@@ -960,10 +964,11 @@ ${_argParser.usage}''';
   /// Runs JNIgen in JNI multi-step generation.
   static Future<bool> _runJnigen(
     String appDir,
+    String? inputPath,
     String dartExecutable,
     Map<String, String> env,
   ) async {
-    final String configFile = getJnigenConfigPath(appDir);
+    final String configFile = getJnigenConfigPath(appDir, inputPath);
     print('JNI Multi-step: Running JNIgen for $configFile...');
     final ProcessResult jnigenResult = await Process.run(dartExecutable, [
       'run',
