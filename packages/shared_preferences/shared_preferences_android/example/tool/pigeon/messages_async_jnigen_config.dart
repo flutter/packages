@@ -14,31 +14,13 @@ void main() async {
       summarizerOptions: SummarizerOptions(backend: SummarizerBackend.asm),
       outputConfig: OutputConfig(
         dartConfig: DartCodeOutputConfig(
-          path: Uri.file('../lib/src/messages.g.jni.dart'),
-          structure: OutputStructure.singleFile,
-        ),
-      ),
-      logLevel: Level.ALL,
-      classPath: [Uri.directory('build/app/tmp/kotlin-classes/release')],
-      classes: [
-        'io.flutter.plugins.sharedpreferences.FlutterError',
-        'io.flutter.plugins.sharedpreferences.SharedPreferencesApi',
-        'io.flutter.plugins.sharedpreferences.SharedPreferencesApiRegistrar',
-      ],
-    ),
-  );
-  await generateJniBindings(
-    Config(
-      androidSdkConfig: AndroidSdkConfig(addGradleDeps: true, androidExample: './'),
-      summarizerOptions: SummarizerOptions(backend: SummarizerBackend.asm),
-      outputConfig: OutputConfig(
-        dartConfig: DartCodeOutputConfig(
           path: Uri.file('../lib/src/messages_async.g.jni.dart'),
           structure: OutputStructure.singleFile,
         ),
       ),
       logLevel: Level.ALL,
       classPath: [Uri.directory('build/app/tmp/kotlin-classes/release')],
+
       classes: [
         'io.flutter.plugins.sharedpreferences.SharedPreferencesError',
         'io.flutter.plugins.sharedpreferences.SharedPreferencesAsyncApi',
