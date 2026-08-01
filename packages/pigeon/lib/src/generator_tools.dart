@@ -25,26 +25,38 @@ const String defaultPluginPackageName = 'dev.flutter.pigeon';
 const String defaultNativeInteropInstanceName =
     'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
 
-/// Default filename for generated FFIgen config files.
-const String ffigenConfigFileName = 'ffigen_config.dart';
-
-/// Default filename for generated JNIgen config files.
-const String jnigenConfigFileName = 'jnigen_config.dart';
-
-/// Default relative path for generated FFIgen config files.
-final String ffigenConfigPath = path.join('tool', 'pigeon', ffigenConfigFileName);
-
-/// Default relative path for generated JNIgen config files.
-final String jnigenConfigPath = path.join('tool', 'pigeon', jnigenConfigFileName);
-
-/// Returns the path to the FFIgen config file in [appDirectory].
-String getFfigenConfigPath(String appDirectory) {
-  return path.join(appDirectory, ffigenConfigPath);
+/// Returns the filename for generated FFIgen config files based on [inputPath].
+String getFfigenConfigFileName([String? inputPath]) {
+  if (inputPath == null || inputPath.isEmpty) {
+    return 'ffigen_config.dart';
+  }
+  final String baseName = path.basenameWithoutExtension(inputPath);
+  return '${baseName}_ffigen_config.dart';
 }
 
-/// Returns the path to the JNIgen config file in [appDirectory].
-String getJnigenConfigPath(String appDirectory) {
-  return path.join(appDirectory, jnigenConfigPath);
+/// Returns the filename for generated JNIgen config files based on [inputPath].
+String getJnigenConfigFileName([String? inputPath]) {
+  if (inputPath == null || inputPath.isEmpty) {
+    return 'jnigen_config.dart';
+  }
+  final String baseName = path.basenameWithoutExtension(inputPath);
+  return '${baseName}_jnigen_config.dart';
+}
+
+/// Default relative path for generated FFIgen config files.
+final String ffigenConfigPath = path.join('tool', 'pigeon', getFfigenConfigFileName());
+
+/// Default relative path for generated JNIgen config files.
+final String jnigenConfigPath = path.join('tool', 'pigeon', getJnigenConfigFileName());
+
+/// Returns the path to the FFIgen config file in [appDirectory] and optional [inputPath].
+String getFfigenConfigPath(String appDirectory, [String? inputPath]) {
+  return path.join(appDirectory, 'tool', 'pigeon', getFfigenConfigFileName(inputPath));
+}
+
+/// Returns the path to the JNIgen config file in [appDirectory] and optional [inputPath].
+String getJnigenConfigPath(String appDirectory, [String? inputPath]) {
+  return path.join(appDirectory, 'tool', 'pigeon', getJnigenConfigFileName(inputPath));
 }
 
 /// Read all the content from [stdin] to a String.
