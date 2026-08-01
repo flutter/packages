@@ -676,14 +676,17 @@ void main() {
     addTearDown(router.dispose);
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-    // Capture completion via a flag rather than awaiting the future directly: if
-    // the refresh orphans the live completer (the bug), the future never completes
-    // and `completed` stays false — a synchronous, fail-fast assertion that cannot
-    // hang the suite.
+    // Capture completion via a flag first rather than awaiting the future
+    // directly: if the refresh orphans the live completer (the bug), the future
+    // never completes and `completed` stays false — a synchronous, fail-fast
+    // assertion that cannot hang the suite. Only after that fail-fast check do
+    // we also await the same future directly, since a Dart future accepts
+    // multiple listeners.
+    final Future<String?> result = router.push<String>('/form');
     var completed = false;
     Object? completedWith;
     unawaited(
-      router.push<String>('/form').then((Object? value) {
+      result.then((Object? value) {
         completed = true;
         completedWith = value;
       }),
@@ -698,6 +701,7 @@ void main() {
 
     expect(completed, isTrue);
     expect(completedWith, 'result');
+    expect(await result, 'result');
   });
 
   testWidgets('replace() to the same location still completes its future', (

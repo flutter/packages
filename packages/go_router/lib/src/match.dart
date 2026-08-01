@@ -995,7 +995,11 @@ class _RouteMatchListDecoder extends Converter<Map<Object?, Object?>, RouteMatch
         );
         final imperativeMatch = ImperativeRouteMatch(
           pageKey: pageKey,
-          // TODO(chunhtai): Figure out a way to preserve future.
+          // The push future cannot be serialized, so decoding mints a fresh
+          // completer. The route information parser swaps in the live completer
+          // by pageKey (reconcileImperativeCompleters) when re-decoding the
+          // current configuration. Across state restoration there is no live
+          // completer to adopt; see
           // https://github.com/flutter/flutter/issues/128122.
           completer: Completer<Object?>(),
           matches: imperativeMatchList,
