@@ -1561,7 +1561,7 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
         : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
-  /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableByteArray:aNullable4ByteArray:aNullable8ByteArray:aNullableFloatArray:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:
+  /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableByteArray:aNullable4ByteArray:aNullable8ByteArray:aNullableFloatArray:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:type:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:
   NativeInteropAllNullableTypesWithoutRecursionBridge initWithANullableBool(
     objc.NSNumber? aNullableBool, {
     objc.NSNumber? aNullableInt,
@@ -1575,6 +1575,7 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     objc.NSNumber? anotherNullableEnum,
     objc.NSString? aNullableString,
     objc.NSObject? aNullableObject,
+    objc.NSNumber? type,
     objc.NSArray? list,
     objc.NSArray? stringList,
     objc.NSArray? intList,
@@ -1605,25 +1606,26 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     final _$$ref$10 = anotherNullableEnum?.ref;
     final _$$ref$11 = aNullableString?.ref;
     final _$$ref$12 = aNullableObject?.ref;
-    final _$$ref$13 = list?.ref;
-    final _$$ref$14 = stringList?.ref;
-    final _$$ref$15 = intList?.ref;
-    final _$$ref$16 = doubleList?.ref;
-    final _$$ref$17 = boolList?.ref;
-    final _$$ref$18 = enumList?.ref;
-    final _$$ref$19 = objectList?.ref;
-    final _$$ref$20 = listList?.ref;
-    final _$$ref$21 = mapList?.ref;
-    final _$$ref$22 = map?.ref;
-    final _$$ref$23 = stringMap?.ref;
-    final _$$ref$24 = intMap?.ref;
-    final _$$ref$25 = enumMap?.ref;
-    final _$$ref$26 = objectMap?.ref;
-    final _$$ref$27 = listMap?.ref;
-    final _$$ref$28 = mapMap?.ref;
-    final $ret = _objc_msgSend_1hm1urt(
+    final _$$ref$13 = type?.ref;
+    final _$$ref$14 = list?.ref;
+    final _$$ref$15 = stringList?.ref;
+    final _$$ref$16 = intList?.ref;
+    final _$$ref$17 = doubleList?.ref;
+    final _$$ref$18 = boolList?.ref;
+    final _$$ref$19 = enumList?.ref;
+    final _$$ref$20 = objectList?.ref;
+    final _$$ref$21 = listList?.ref;
+    final _$$ref$22 = mapList?.ref;
+    final _$$ref$23 = map?.ref;
+    final _$$ref$24 = stringMap?.ref;
+    final _$$ref$25 = intMap?.ref;
+    final _$$ref$26 = enumMap?.ref;
+    final _$$ref$27 = objectMap?.ref;
+    final _$$ref$28 = listMap?.ref;
+    final _$$ref$29 = mapMap?.ref;
+    final $ret = _objc_msgSend_f0hf0v(
       _$$ref.retainAndReturnPointer(),
-      _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableByteArray_aNullable4ByteArray_aNullable8ByteArray_aNullableFloatArray_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_list_stringList_intList_doubleList_boolList_enumList_objectList_listList_mapList_map_stringMap_intMap_enumMap_objectMap_listMap_mapMap_,
+      _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableByteArray_aNullable4ByteArray_aNullable8ByteArray_aNullableFloatArray_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_type_list_stringList_intList_doubleList_boolList_enumList_objectList_listList_mapList_map_stringMap_intMap_enumMap_objectMap_listMap_mapMap_,
       _$$ref$1?.pointer ?? ffi.nullptr,
       _$$ref$2?.pointer ?? ffi.nullptr,
       _$$ref$3?.pointer ?? ffi.nullptr,
@@ -1652,6 +1654,7 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
       _$$ref$26?.pointer ?? ffi.nullptr,
       _$$ref$27?.pointer ?? ffi.nullptr,
       _$$ref$28?.pointer ?? ffi.nullptr,
+      _$$ref$29?.pointer ?? ffi.nullptr,
     );
     return NativeInteropAllNullableTypesWithoutRecursionBridge.fromPointer(
       $ret,
@@ -1968,6 +1971,13 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setStringMap_, _$$ref$1?.pointer ?? ffi.nullptr);
   }
 
+  /// setType:
+  set type(objc.NSNumber? value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value?.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setType_, _$$ref$1?.pointer ?? ffi.nullptr);
+  }
+
   /// stringList
   objc.NSArray? get stringList {
     final _$$ref = object$.ref;
@@ -1982,6 +1992,13 @@ extension NativeInteropAllNullableTypesWithoutRecursionBridge$Methods
     return $ret.address == 0
         ? null
         : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// type
+  objc.NSNumber? get type {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_type);
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 }
 
@@ -28193,77 +28210,6 @@ final _objc_msgSend_1dnmby7 = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
-final _objc_msgSend_1hm1urt = objc.msgSendPointer
-    .cast<
-      ffi.NativeFunction<
-        ffi.Pointer<objc.ObjCObjectImpl> Function(
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCSelector>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCObjectImpl>,
-        )
-      >
-    >()
-    .asFunction<
-      ffi.Pointer<objc.ObjCObjectImpl> Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCObjectImpl>,
-      )
-    >();
 final _objc_msgSend_1hz7y9r = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -28624,6 +28570,79 @@ final _objc_msgSend_etw0ff = objc.msgSendPointer
         ffi.Pointer<objc.ObjCSelector>,
         ffi.Pointer<objc.ObjCObjectImpl>,
         ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+final _objc_msgSend_f0hf0v = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObjectImpl> Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
         ffi.Pointer<objc.ObjCObjectImpl>,
         ffi.Pointer<objc.ObjCObjectImpl>,
         ffi.Pointer<objc.ObjCObjectImpl>,
@@ -29822,9 +29841,9 @@ late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDoubl
     objc.registerName(
       "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableByteArray:aNullable4ByteArray:aNullable8ByteArray:aNullableFloatArray:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:allNullableTypes:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:recursiveClassList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:recursiveClassMap:",
     );
-late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableByteArray_aNullable4ByteArray_aNullable8ByteArray_aNullableFloatArray_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_list_stringList_intList_doubleList_boolList_enumList_objectList_listList_mapList_map_stringMap_intMap_enumMap_objectMap_listMap_mapMap_ =
+late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableByteArray_aNullable4ByteArray_aNullable8ByteArray_aNullableFloatArray_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_type_list_stringList_intList_doubleList_boolList_enumList_objectList_listList_mapList_map_stringMap_intMap_enumMap_objectMap_listMap_mapMap_ =
     objc.registerName(
-      "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableByteArray:aNullable4ByteArray:aNullable8ByteArray:aNullableFloatArray:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:",
+      "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableByteArray:aNullable4ByteArray:aNullable8ByteArray:aNullableFloatArray:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:type:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:",
     );
 late final _sel_initWithAllNullableTypes_allNullableTypesWithoutRecursion_allTypes_classList_nullableClassList_classMap_nullableClassMap_ =
     objc.registerName(

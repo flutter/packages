@@ -709,6 +709,7 @@ data class NativeInteropAllNullableTypesWithoutRecursion(
     val anotherNullableEnum: NativeInteropAnotherEnum? = null,
     val aNullableString: String? = null,
     val aNullableObject: Any? = null,
+    val type: Long? = null,
     val list: List<Any?>? = null,
     val stringList: List<String?>? = null,
     val intList: List<Long?>? = null,
@@ -740,22 +741,23 @@ data class NativeInteropAllNullableTypesWithoutRecursion(
       val anotherNullableEnum = pigeonVar_list[9] as NativeInteropAnotherEnum?
       val aNullableString = pigeonVar_list[10] as String?
       val aNullableObject = pigeonVar_list[11]
-      val list = pigeonVar_list[12] as List<Any?>?
-      val stringList = pigeonVar_list[13] as List<String?>?
-      val intList = pigeonVar_list[14] as List<Long?>?
-      val doubleList = pigeonVar_list[15] as List<Double?>?
-      val boolList = pigeonVar_list[16] as List<Boolean?>?
-      val enumList = pigeonVar_list[17] as List<NativeInteropAnEnum?>?
-      val objectList = pigeonVar_list[18] as List<Any?>?
-      val listList = pigeonVar_list[19] as List<List<Any?>?>?
-      val mapList = pigeonVar_list[20] as List<Map<Any?, Any?>?>?
-      val map = pigeonVar_list[21] as Map<Any, Any?>?
-      val stringMap = pigeonVar_list[22] as Map<String?, String?>?
-      val intMap = pigeonVar_list[23] as Map<Long?, Long?>?
-      val enumMap = pigeonVar_list[24] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
-      val objectMap = pigeonVar_list[25] as Map<Any?, Any?>?
-      val listMap = pigeonVar_list[26] as Map<Long?, List<Any?>?>?
-      val mapMap = pigeonVar_list[27] as Map<Long?, Map<Any?, Any?>?>?
+      val type = pigeonVar_list[12] as Long?
+      val list = pigeonVar_list[13] as List<Any?>?
+      val stringList = pigeonVar_list[14] as List<String?>?
+      val intList = pigeonVar_list[15] as List<Long?>?
+      val doubleList = pigeonVar_list[16] as List<Double?>?
+      val boolList = pigeonVar_list[17] as List<Boolean?>?
+      val enumList = pigeonVar_list[18] as List<NativeInteropAnEnum?>?
+      val objectList = pigeonVar_list[19] as List<Any?>?
+      val listList = pigeonVar_list[20] as List<List<Any?>?>?
+      val mapList = pigeonVar_list[21] as List<Map<Any?, Any?>?>?
+      val map = pigeonVar_list[22] as Map<Any, Any?>?
+      val stringMap = pigeonVar_list[23] as Map<String?, String?>?
+      val intMap = pigeonVar_list[24] as Map<Long?, Long?>?
+      val enumMap = pigeonVar_list[25] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+      val objectMap = pigeonVar_list[26] as Map<Any?, Any?>?
+      val listMap = pigeonVar_list[27] as Map<Long?, List<Any?>?>?
+      val mapMap = pigeonVar_list[28] as Map<Long?, Map<Any?, Any?>?>?
       return NativeInteropAllNullableTypesWithoutRecursion(
           aNullableBool,
           aNullableInt,
@@ -769,6 +771,7 @@ data class NativeInteropAllNullableTypesWithoutRecursion(
           anotherNullableEnum,
           aNullableString,
           aNullableObject,
+          type,
           list,
           stringList,
           intList,
@@ -802,6 +805,7 @@ data class NativeInteropAllNullableTypesWithoutRecursion(
         anotherNullableEnum,
         aNullableString,
         aNullableObject,
+        type,
         list,
         stringList,
         intList,
@@ -846,6 +850,7 @@ data class NativeInteropAllNullableTypesWithoutRecursion(
             this.anotherNullableEnum, other.anotherNullableEnum) &&
         NativeInteropTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) &&
         NativeInteropTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.type, other.type) &&
         NativeInteropTestsPigeonUtils.deepEquals(this.list, other.list) &&
         NativeInteropTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
         NativeInteropTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
@@ -878,6 +883,7 @@ data class NativeInteropAllNullableTypesWithoutRecursion(
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.anotherNullableEnum)
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableString)
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableObject)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.type)
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.list)
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.stringList)
     result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.intList)
@@ -898,7 +904,7 @@ data class NativeInteropAllNullableTypesWithoutRecursion(
   }
 
   override fun toString(): String {
-    return "NativeInteropAllNullableTypesWithoutRecursion(aNullableBool=$aNullableBool, aNullableInt=$aNullableInt, aNullableInt64=$aNullableInt64, aNullableDouble=$aNullableDouble, aNullableByteArray=${aNullableByteArray?.contentToString()}, aNullable4ByteArray=${aNullable4ByteArray?.contentToString()}, aNullable8ByteArray=${aNullable8ByteArray?.contentToString()}, aNullableFloatArray=${aNullableFloatArray?.contentToString()}, aNullableEnum=$aNullableEnum, anotherNullableEnum=$anotherNullableEnum, aNullableString=$aNullableString, aNullableObject=$aNullableObject, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap)"
+    return "NativeInteropAllNullableTypesWithoutRecursion(aNullableBool=$aNullableBool, aNullableInt=$aNullableInt, aNullableInt64=$aNullableInt64, aNullableDouble=$aNullableDouble, aNullableByteArray=${aNullableByteArray?.contentToString()}, aNullable4ByteArray=${aNullable4ByteArray?.contentToString()}, aNullable8ByteArray=${aNullable8ByteArray?.contentToString()}, aNullableFloatArray=${aNullableFloatArray?.contentToString()}, aNullableEnum=$aNullableEnum, anotherNullableEnum=$anotherNullableEnum, aNullableString=$aNullableString, aNullableObject=$aNullableObject, type=$type, list=$list, stringList=$stringList, intList=$intList, doubleList=$doubleList, boolList=$boolList, enumList=$enumList, objectList=$objectList, listList=$listList, mapList=$mapList, map=$map, stringMap=$stringMap, intMap=$intMap, enumMap=$enumMap, objectMap=$objectMap, listMap=$listMap, mapMap=$mapMap)"
   }
 }
 

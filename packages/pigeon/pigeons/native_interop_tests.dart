@@ -200,6 +200,7 @@ class NativeInteropAllNullableTypesWithoutRecursion {
     this.anotherNullableEnum,
     this.aNullableString,
     this.aNullableObject,
+    this.type,
 
     // Lists
     // This name is in a different format than the others to ensure that name
@@ -236,6 +237,7 @@ class NativeInteropAllNullableTypesWithoutRecursion {
   NativeInteropAnotherEnum? anotherNullableEnum;
   String? aNullableString;
   Object? aNullableObject;
+  int? type;
 
   // Lists
   List? list;

@@ -990,6 +990,11 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     });
   }
 
+  String _getJniFieldName(String name) {
+    const jniReservedNames = <String>{'type', 'hashCode', 'toString', 'equals'};
+    return jniReservedNames.contains(name) ? '$name\$1' : name;
+  }
+
   void _writeFromJni(Indent indent, Class classDefinition) {
     final _JniType jniClass = _JniType.fromClass(classDefinition);
     indent.writeScoped(
@@ -999,8 +1004,9 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         indent.writeScoped('return jniClass == null ? null : ${jniClass.type.baseName}(', ');', () {
           for (final NamedType field in getFieldsInSerializationOrder(classDefinition)) {
             final _JniType jniType = _JniType.fromTypeDeclaration(field.type);
+            final String jniFieldName = _getJniFieldName(field.name);
             indent.writeln(
-              '${field.name}: ${jniType.getToDartCall(field.type, varName: 'jniClass.${field.name}')},',
+              '${field.name}: ${jniType.getToDartCall(field.type, varName: 'jniClass.$jniFieldName')},',
             );
           }
         });

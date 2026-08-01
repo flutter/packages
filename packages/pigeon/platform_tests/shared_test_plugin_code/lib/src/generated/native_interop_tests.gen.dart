@@ -2016,6 +2016,7 @@ class NativeInteropAllNullableTypesWithoutRecursion {
     this.anotherNullableEnum,
     this.aNullableString,
     this.aNullableObject,
+    this.type,
     this.list,
     this.stringList,
     this.intList,
@@ -2057,6 +2058,8 @@ class NativeInteropAllNullableTypesWithoutRecursion {
   String? aNullableString;
 
   Object? aNullableObject;
+
+  int? type;
 
   List<Object?>? list;
 
@@ -2104,6 +2107,7 @@ class NativeInteropAllNullableTypesWithoutRecursion {
       anotherNullableEnum,
       aNullableString,
       aNullableObject,
+      type,
       list,
       stringList,
       intList,
@@ -2137,6 +2141,7 @@ class NativeInteropAllNullableTypesWithoutRecursion {
       anotherNullableEnum?.toJni(),
       _PigeonJniCodec.writeValue<JString?>(aNullableString),
       _PigeonJniCodec.writeValue<JObject?>(aNullableObject),
+      _PigeonJniCodec.writeValue<JLong?>(type),
       _PigeonJniCodec.writeValue<JList<JObject?>?>(list),
       _PigeonJniCodec.writeValue<JList<JString?>?>(stringList),
       _PigeonJniCodec.writeValue<JList<JLong?>?>(intList),
@@ -2185,6 +2190,7 @@ class NativeInteropAllNullableTypesWithoutRecursion {
           anotherNullableEnum: _PigeonFfiCodec.writeValue<NSNumber?>(anotherNullableEnum?.index),
           aNullableString: _PigeonFfiCodec.writeValue<NSString?>(aNullableString),
           aNullableObject: _PigeonFfiCodec.writeValue<NSObject>(aNullableObject, generic: true),
+          type: _PigeonFfiCodec.writeValue<NSNumber?>(type),
           list: _PigeonFfiCodec.writeValue<NSMutableArray?>(list),
           stringList: _PigeonFfiCodec.writeValue<NSMutableArray?>(stringList),
           intList: _PigeonFfiCodec.writeValue<NSMutableArray?>(intList),
@@ -2230,6 +2236,7 @@ class NativeInteropAllNullableTypesWithoutRecursion {
             anotherNullableEnum: NativeInteropAnotherEnum.fromJni(jniClass.anotherNullableEnum),
             aNullableString: jniClass.aNullableString?.toDartString(releaseOriginal: true),
             aNullableObject: _PigeonJniCodec.readValue(jniClass.aNullableObject),
+            type: jniClass.type$1?.toDartInt(releaseOriginal: true),
             list: (_PigeonJniCodec.readValue(jniClass.list) as List<Object?>?)?.cast<Object?>(),
             stringList: (_PigeonJniCodec.readValue(jniClass.stringList) as List<Object?>?)
                 ?.cast<String?>(),
@@ -2289,6 +2296,7 @@ class NativeInteropAllNullableTypesWithoutRecursion {
                 : NativeInteropAnotherEnum.values[ffiClass.anotherNullableEnum!.longValue],
             aNullableString: ffiClass.aNullableString?.toDartString(),
             aNullableObject: _PigeonFfiCodec.readValue(ffiClass.aNullableObject),
+            type: ffiClass.type?.longValue,
             list: (_PigeonFfiCodec.readValue(ffiClass.list) as List<Object?>?)?.cast<Object?>(),
             stringList: (_PigeonFfiCodec.readValue(ffiClass.stringList) as List<Object?>?)
                 ?.cast<String?>(),
@@ -2346,23 +2354,24 @@ class NativeInteropAllNullableTypesWithoutRecursion {
       anotherNullableEnum: result[9] as NativeInteropAnotherEnum?,
       aNullableString: result[10] as String?,
       aNullableObject: result[11],
-      list: result[12] as List<Object?>?,
-      stringList: (result[13] as List<Object?>?)?.cast<String?>(),
-      intList: (result[14] as List<Object?>?)?.cast<int?>(),
-      doubleList: (result[15] as List<Object?>?)?.cast<double?>(),
-      boolList: (result[16] as List<Object?>?)?.cast<bool?>(),
-      enumList: (result[17] as List<Object?>?)?.cast<NativeInteropAnEnum?>(),
-      objectList: result[18] as List<Object?>?,
-      listList: (result[19] as List<Object?>?)?.cast<List<Object?>?>(),
-      mapList: (result[20] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
-      map: result[21] as Map<Object?, Object?>?,
-      stringMap: (result[22] as Map<Object?, Object?>?)?.cast<String?, String?>(),
-      intMap: (result[23] as Map<Object?, Object?>?)?.cast<int?, int?>(),
-      enumMap: (result[24] as Map<Object?, Object?>?)
+      type: result[12] as int?,
+      list: result[13] as List<Object?>?,
+      stringList: (result[14] as List<Object?>?)?.cast<String?>(),
+      intList: (result[15] as List<Object?>?)?.cast<int?>(),
+      doubleList: (result[16] as List<Object?>?)?.cast<double?>(),
+      boolList: (result[17] as List<Object?>?)?.cast<bool?>(),
+      enumList: (result[18] as List<Object?>?)?.cast<NativeInteropAnEnum?>(),
+      objectList: result[19] as List<Object?>?,
+      listList: (result[20] as List<Object?>?)?.cast<List<Object?>?>(),
+      mapList: (result[21] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
+      map: result[22] as Map<Object?, Object?>?,
+      stringMap: (result[23] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      intMap: (result[24] as Map<Object?, Object?>?)?.cast<int?, int?>(),
+      enumMap: (result[25] as Map<Object?, Object?>?)
           ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
-      objectMap: result[25] as Map<Object?, Object?>?,
-      listMap: (result[26] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
-      mapMap: (result[27] as Map<Object?, Object?>?)?.cast<int?, Map<Object?, Object?>?>(),
+      objectMap: result[26] as Map<Object?, Object?>?,
+      listMap: (result[27] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
+      mapMap: (result[28] as Map<Object?, Object?>?)?.cast<int?, Map<Object?, Object?>?>(),
     );
   }
 
@@ -2388,6 +2397,7 @@ class NativeInteropAllNullableTypesWithoutRecursion {
         _deepEquals(anotherNullableEnum, other.anotherNullableEnum) &&
         _deepEquals(aNullableString, other.aNullableString) &&
         _deepEquals(aNullableObject, other.aNullableObject) &&
+        _deepEquals(type, other.type) &&
         _deepEquals(list, other.list) &&
         _deepEquals(stringList, other.stringList) &&
         _deepEquals(intList, other.intList) &&
@@ -2412,7 +2422,7 @@ class NativeInteropAllNullableTypesWithoutRecursion {
 
   @override
   String toString() {
-    return 'NativeInteropAllNullableTypesWithoutRecursion(aNullableBool: $aNullableBool, aNullableInt: $aNullableInt, aNullableInt64: $aNullableInt64, aNullableDouble: $aNullableDouble, aNullableByteArray: $aNullableByteArray, aNullable4ByteArray: $aNullable4ByteArray, aNullable8ByteArray: $aNullable8ByteArray, aNullableFloatArray: $aNullableFloatArray, aNullableEnum: $aNullableEnum, anotherNullableEnum: $anotherNullableEnum, aNullableString: $aNullableString, aNullableObject: $aNullableObject, list: $list, stringList: $stringList, intList: $intList, doubleList: $doubleList, boolList: $boolList, enumList: $enumList, objectList: $objectList, listList: $listList, mapList: $mapList, map: $map, stringMap: $stringMap, intMap: $intMap, enumMap: $enumMap, objectMap: $objectMap, listMap: $listMap, mapMap: $mapMap)';
+    return 'NativeInteropAllNullableTypesWithoutRecursion(aNullableBool: $aNullableBool, aNullableInt: $aNullableInt, aNullableInt64: $aNullableInt64, aNullableDouble: $aNullableDouble, aNullableByteArray: $aNullableByteArray, aNullable4ByteArray: $aNullable4ByteArray, aNullable8ByteArray: $aNullable8ByteArray, aNullableFloatArray: $aNullableFloatArray, aNullableEnum: $aNullableEnum, anotherNullableEnum: $anotherNullableEnum, aNullableString: $aNullableString, aNullableObject: $aNullableObject, type: $type, list: $list, stringList: $stringList, intList: $intList, doubleList: $doubleList, boolList: $boolList, enumList: $enumList, objectList: $objectList, listList: $listList, mapList: $mapList, map: $map, stringMap: $stringMap, intMap: $intMap, enumMap: $enumMap, objectMap: $objectMap, listMap: $listMap, mapMap: $mapMap)';
   }
 }
 

@@ -2262,6 +2262,50 @@ dev_dependencies:
       final output = sink.toString();
       expect(output, contains("classPath: [Uri.directory('foo/bar'), Uri.file('baz.jar')]"));
     });
+
+    test(
+      'JnigenConfigGeneratorAdapter resolves relative output path using kotlinOptions.appDirectory',
+      () {
+        final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+        final sink = StringBuffer();
+        const adapter = JnigenConfigGeneratorAdapter();
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            input: 'pigeons/messages.dart',
+            dartOut: 'lib/src/messages.g.dart',
+            kotlinOut: 'android/src/main/kotlin/com/example/Messages.g.kt',
+            kotlinOptions: KotlinOptions(useJni: true, appDirectory: 'example/'),
+          ),
+        );
+
+        adapter.generate(sink, options, root, FileType.na);
+        final String code = sink.toString();
+
+        expect(code, contains("path: Uri.file('../lib/src/messages.g.jni.dart')"));
+      },
+    );
+
+    test(
+      'FfigenConfigGeneratorAdapter resolves relative output path using swiftOptions.appDirectory',
+      () {
+        final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+        final sink = StringBuffer();
+        const adapter = FfigenConfigGeneratorAdapter();
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            input: 'pigeons/messages.dart',
+            dartOut: 'lib/src/messages.g.dart',
+            swiftOut: 'darwin/Messages.g.swift',
+            swiftOptions: SwiftOptions(useFfi: true, appDirectory: 'example/'),
+          ),
+        );
+
+        adapter.generate(sink, options, root, FileType.na);
+        final String code = sink.toString();
+
+        expect(code, contains("dartFile: Uri.file('../lib/src/messages.g.ffi.dart')"));
+      },
+    );
   });
 
   group('constants parsing', () {
