@@ -85,9 +85,11 @@ abstract class ContentResolver {
 /// See https://developer.android.com/reference/java/io/InputStream.
 @ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'java.io.InputStream'))
 abstract class InputStream {
-  /// Reads some number of bytes from the input stream and stores them into the
-  /// returns them.
-  Uint8List readBytes(int len);
+  /// Read up to a `maxLength` of bytes from the input stream.
+  ///
+  /// Returns a `Uint8List` with a length of the bytes read even if it less than
+  /// `maxLength`.
+  Uint8List readBytes(int maxLength);
 
   /// Reads all remaining bytes from the input stream.
   Uint8List readAllBytes();

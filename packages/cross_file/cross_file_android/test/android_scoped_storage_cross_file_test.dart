@@ -63,7 +63,6 @@ void main() {
       final testBytes = Uint8List.fromList([0, 1, 2]);
 
       final mockDocumentFile = MockDocumentFile();
-      when(mockDocumentFile.length()).thenAnswer((_) async => testBytes.length);
 
       const uri = 'uri';
       android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
@@ -91,7 +90,6 @@ void main() {
       );
 
       final mockDocumentFile = MockDocumentFile();
-      when(mockDocumentFile.length()).thenAnswer((_) async => testBytes.length);
 
       const uri = 'uri';
       android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
@@ -117,7 +115,6 @@ void main() {
       final testBytes = Uint8List.fromList(<int>[0, 0, 0, 1, 1, 1, 0, 0, 0]);
 
       final mockDocumentFile = MockDocumentFile();
-      when(mockDocumentFile.length()).thenAnswer((_) async => testBytes.length);
 
       const uri = 'uri';
       android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {

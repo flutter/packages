@@ -199,8 +199,13 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
 
   @override
   Stream<Uint8List> openRead([int? start, int? end]) {
-    assert(start == null || start >= 0);
-    assert(end == null || end >= (start ?? 0));
+    if (start != null && start < 0) {
+      throw ArgumentError('`start` must be greater than 0. start: $start');
+    } else if (end != null && end <= (start ?? 0)) {
+      throw ArgumentError(
+        '`end` must be greater than 0 and greater than `start`. start: $start, end: $end',
+      );
+    }
 
     final streamController = StreamController<Uint8List>();
 

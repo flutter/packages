@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
@@ -51,27 +50,36 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
 
   @override
   Stream<Uint8List> openRead([int? start, int? end]) async* {
-    final int? fileLength = await length();
-    if (fileLength == null) {
-      throw UnsupportedError('Cannot access file length.');
+    if (start != null && start < 0) {
+      throw ArgumentError('`start` must be greater than 0. start: $start');
+    } else if (end != null && end <= (start ?? 0)) {
+      throw ArgumentError(
+        '`end` must be greater than 0 and greater than `start`. start: $start, end: $end',
+      );
     }
 
-    int bytesToRead = (end ?? fileLength) - (start ?? 0);
-    assert(bytesToRead >= 0);
-
     final android.InputStream? inputStream = await _contentResolver.openInputStream(params.uri);
-
     if (inputStream case final android.InputStream inputStream) {
-      if (start != null && start > 0) {
-        await inputStream.skip(start);
+      int currentByteIndex = start ?? 0;
+
+      if (currentByteIndex > 0) {
+        await inputStream.skip(currentByteIndex);
       }
 
-      late Uint8List bytes;
+      late Uint8List chunk;
       do {
-        bytes = await inputStream.readBytes(min(bytesToRead, maxByteArrayLen));
-        yield bytes;
-        bytesToRead -= bytes.length;
-      } while (bytesToRead > 0 && bytes.isNotEmpty);
+        chunk = await inputStream.readBytes(maxByteArrayLen);
+
+        if (chunk.isNotEmpty) {
+          if (end == null) {
+            yield chunk;
+          } else {
+            yield Uint8List.sublistView(chunk, 0, end - currentByteIndex);
+          }
+        }
+
+        currentByteIndex += chunk.length;
+      } while (chunk.isNotEmpty && (end == null || currentByteIndex < end));
     } else {
       throw NullInputStreamError(params.uri);
     }

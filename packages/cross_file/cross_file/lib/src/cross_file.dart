@@ -93,7 +93,16 @@ base class XFile extends XEntity {
   ///
   /// Platforms may throw an exception if there is an error opening or reading
   /// the resource.
-  Stream<Uint8List> openRead([int? start, int? end]) => platform.openRead(start, end);
+  Stream<Uint8List> openRead([int? start, int? end]) {
+    if (start != null && start < 0) {
+      throw ArgumentError('`start` must be greater than 0. start: $start');
+    } else if (end != null && end <= (start ?? 0)) {
+      throw ArgumentError(
+        '`end` must be greater than 0 and greater than `start`. start: $start, end: $end',
+      );
+    }
+    return platform.openRead(start, end);
+  }
 
   /// Reads the entire resource contents as a list of bytes.
   ///
