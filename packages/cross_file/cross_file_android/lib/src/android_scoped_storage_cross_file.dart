@@ -81,7 +81,7 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
         currentByteIndex += chunk.length;
       } while (chunk.isNotEmpty && (end == null || currentByteIndex < end));
     } else {
-      throw NullInputStreamError(params.uri);
+      throw NullInputStreamException(params.uri);
     }
   }
 
@@ -92,7 +92,7 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
       return inputStream.readAllBytes();
     }
 
-    throw NullInputStreamError(params.uri);
+    throw NullInputStreamException(params.uri);
   }
 
   @override
@@ -113,11 +113,16 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
 }
 
 /// Error thrown when the native [android.InputStream] is not accessible.
-class NullInputStreamError extends UnsupportedError {
-  /// Constructs a [NullInputStreamError].
-  NullInputStreamError(String uri)
-    : super(
-        'Failed to get native InputStream from file with path: $uri. '
-        'App may not have permissions to access file.',
-      );
+final class NullInputStreamException implements Exception {
+  /// Constructs a [NullInputStreamException].
+  NullInputStreamException(this.uri);
+
+  /// The URI the input stream that was request for.
+  final String uri;
+
+  @override
+  String toString() {
+    return 'NullInputStreamException: Failed to get native InputStream from file with path: $uri. '
+        'App may not have permissions to access file.';
+  }
 }
