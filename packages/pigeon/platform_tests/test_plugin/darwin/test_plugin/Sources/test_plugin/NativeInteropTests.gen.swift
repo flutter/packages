@@ -1307,6 +1307,7 @@ struct NativeInteropAllNullableTypesWithoutRecursion: Hashable, CustomStringConv
   var anotherNullableEnum: NativeInteropAnotherEnum? = nil
   var aNullableString: String? = nil
   var aNullableObject: Any? = nil
+  var type: Int64? = nil
   var list: [Any?]? = nil
   var stringList: [String?]? = nil
   var intList: [Int64?]? = nil
@@ -1338,23 +1339,24 @@ struct NativeInteropAllNullableTypesWithoutRecursion: Hashable, CustomStringConv
     let anotherNullableEnum: NativeInteropAnotherEnum? = nilOrValue(pigeonVar_list[9])
     let aNullableString: String? = nilOrValue(pigeonVar_list[10])
     let aNullableObject: Any? = pigeonVar_list[11]
-    let list: [Any?]? = nilOrValue(pigeonVar_list[12])
-    let stringList: [String?]? = nilOrValue(pigeonVar_list[13])
-    let intList: [Int64?]? = nilOrValue(pigeonVar_list[14])
-    let doubleList: [Double?]? = nilOrValue(pigeonVar_list[15])
-    let boolList: [Bool?]? = nilOrValue(pigeonVar_list[16])
-    let enumList: [NativeInteropAnEnum?]? = nilOrValue(pigeonVar_list[17])
-    let objectList: [Any?]? = nilOrValue(pigeonVar_list[18])
-    let listList: [[Any?]?]? = nilOrValue(pigeonVar_list[19])
-    let mapList: [[AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[20])
-    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[21])
-    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[22])
-    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[23])
+    let type: Int64? = nilOrValue(pigeonVar_list[12])
+    let list: [Any?]? = nilOrValue(pigeonVar_list[13])
+    let stringList: [String?]? = nilOrValue(pigeonVar_list[14])
+    let intList: [Int64?]? = nilOrValue(pigeonVar_list[15])
+    let doubleList: [Double?]? = nilOrValue(pigeonVar_list[16])
+    let boolList: [Bool?]? = nilOrValue(pigeonVar_list[17])
+    let enumList: [NativeInteropAnEnum?]? = nilOrValue(pigeonVar_list[18])
+    let objectList: [Any?]? = nilOrValue(pigeonVar_list[19])
+    let listList: [[Any?]?]? = nilOrValue(pigeonVar_list[20])
+    let mapList: [[AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[21])
+    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[22])
+    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[23])
+    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[24])
     let enumMap: [NativeInteropAnEnum?: NativeInteropAnEnum?]? =
-      pigeonVar_list[24] as? [NativeInteropAnEnum?: NativeInteropAnEnum?]
-    let objectMap: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[25])
-    let listMap: [Int64?: [Any?]?]? = nilOrValue(pigeonVar_list[26])
-    let mapMap: [Int64?: [AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[27])
+      pigeonVar_list[25] as? [NativeInteropAnEnum?: NativeInteropAnEnum?]
+    let objectMap: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[26])
+    let listMap: [Int64?: [Any?]?]? = nilOrValue(pigeonVar_list[27])
+    let mapMap: [Int64?: [AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[28])
 
     return NativeInteropAllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool,
@@ -1369,6 +1371,7 @@ struct NativeInteropAllNullableTypesWithoutRecursion: Hashable, CustomStringConv
       anotherNullableEnum: anotherNullableEnum,
       aNullableString: aNullableString,
       aNullableObject: aNullableObject,
+      type: type,
       list: list,
       stringList: stringList,
       intList: intList,
@@ -1401,6 +1404,7 @@ struct NativeInteropAllNullableTypesWithoutRecursion: Hashable, CustomStringConv
       anotherNullableEnum,
       aNullableString,
       aNullableObject,
+      type,
       list,
       stringList,
       intList,
@@ -1442,6 +1446,7 @@ struct NativeInteropAllNullableTypesWithoutRecursion: Hashable, CustomStringConv
         lhs.anotherNullableEnum, rhs.anotherNullableEnum)
       && NativeInteropTestsPigeonInternal.deepEquals(lhs.aNullableString, rhs.aNullableString)
       && NativeInteropTestsPigeonInternal.deepEquals(lhs.aNullableObject, rhs.aNullableObject)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.type, rhs.type)
       && NativeInteropTestsPigeonInternal.deepEquals(lhs.list, rhs.list)
       && NativeInteropTestsPigeonInternal.deepEquals(lhs.stringList, rhs.stringList)
       && NativeInteropTestsPigeonInternal.deepEquals(lhs.intList, rhs.intList)
@@ -1474,6 +1479,7 @@ struct NativeInteropAllNullableTypesWithoutRecursion: Hashable, CustomStringConv
     NativeInteropTestsPigeonInternal.deepHash(value: anotherNullableEnum, hasher: &hasher)
     NativeInteropTestsPigeonInternal.deepHash(value: aNullableString, hasher: &hasher)
     NativeInteropTestsPigeonInternal.deepHash(value: aNullableObject, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: type, hasher: &hasher)
     NativeInteropTestsPigeonInternal.deepHash(value: list, hasher: &hasher)
     NativeInteropTestsPigeonInternal.deepHash(value: stringList, hasher: &hasher)
     NativeInteropTestsPigeonInternal.deepHash(value: intList, hasher: &hasher)
@@ -1494,7 +1500,7 @@ struct NativeInteropAllNullableTypesWithoutRecursion: Hashable, CustomStringConv
 
   public var description: String {
     return
-      "NativeInteropAllNullableTypesWithoutRecursion(aNullableBool: \(String(describing: aNullableBool)), aNullableInt: \(String(describing: aNullableInt)), aNullableInt64: \(String(describing: aNullableInt64)), aNullableDouble: \(String(describing: aNullableDouble)), aNullableByteArray: \(String(describing: aNullableByteArray)), aNullable4ByteArray: \(String(describing: aNullable4ByteArray)), aNullable8ByteArray: \(String(describing: aNullable8ByteArray)), aNullableFloatArray: \(String(describing: aNullableFloatArray)), aNullableEnum: \(String(describing: aNullableEnum)), anotherNullableEnum: \(String(describing: anotherNullableEnum)), aNullableString: \(String(describing: aNullableString)), aNullableObject: \(String(describing: aNullableObject)), list: \(String(describing: list)), stringList: \(String(describing: stringList)), intList: \(String(describing: intList)), doubleList: \(String(describing: doubleList)), boolList: \(String(describing: boolList)), enumList: \(String(describing: enumList)), objectList: \(String(describing: objectList)), listList: \(String(describing: listList)), mapList: \(String(describing: mapList)), map: \(String(describing: map)), stringMap: \(String(describing: stringMap)), intMap: \(String(describing: intMap)), enumMap: \(String(describing: enumMap)), objectMap: \(String(describing: objectMap)), listMap: \(String(describing: listMap)), mapMap: \(String(describing: mapMap)))"
+      "NativeInteropAllNullableTypesWithoutRecursion(aNullableBool: \(String(describing: aNullableBool)), aNullableInt: \(String(describing: aNullableInt)), aNullableInt64: \(String(describing: aNullableInt64)), aNullableDouble: \(String(describing: aNullableDouble)), aNullableByteArray: \(String(describing: aNullableByteArray)), aNullable4ByteArray: \(String(describing: aNullable4ByteArray)), aNullable8ByteArray: \(String(describing: aNullable8ByteArray)), aNullableFloatArray: \(String(describing: aNullableFloatArray)), aNullableEnum: \(String(describing: aNullableEnum)), anotherNullableEnum: \(String(describing: anotherNullableEnum)), aNullableString: \(String(describing: aNullableString)), aNullableObject: \(String(describing: aNullableObject)), type: \(String(describing: type)), list: \(String(describing: list)), stringList: \(String(describing: stringList)), intList: \(String(describing: intList)), doubleList: \(String(describing: doubleList)), boolList: \(String(describing: boolList)), enumList: \(String(describing: enumList)), objectList: \(String(describing: objectList)), listList: \(String(describing: listList)), mapList: \(String(describing: mapList)), map: \(String(describing: map)), stringMap: \(String(describing: stringMap)), intMap: \(String(describing: intMap)), enumMap: \(String(describing: enumMap)), objectMap: \(String(describing: objectMap)), listMap: \(String(describing: listMap)), mapMap: \(String(describing: mapMap)))"
   }
 }
 
@@ -1517,6 +1523,7 @@ struct NativeInteropAllNullableTypesWithoutRecursion: Hashable, CustomStringConv
     anotherNullableEnum: NSNumber? = nil,
     aNullableString: NSString? = nil,
     aNullableObject: NSObject? = nil,
+    type: NSNumber? = nil,
     list: [NSObject]? = nil,
     stringList: [NSObject]? = nil,
     intList: [NSObject]? = nil,
@@ -1546,6 +1553,7 @@ struct NativeInteropAllNullableTypesWithoutRecursion: Hashable, CustomStringConv
     self.anotherNullableEnum = anotherNullableEnum
     self.aNullableString = aNullableString
     self.aNullableObject = aNullableObject
+    self.type = type
     self.list = list
     self.stringList = stringList
     self.intList = intList
@@ -1575,6 +1583,7 @@ struct NativeInteropAllNullableTypesWithoutRecursion: Hashable, CustomStringConv
   @objc var anotherNullableEnum: NSNumber? = nil
   @objc var aNullableString: NSString? = nil
   @objc var aNullableObject: NSObject? = nil
+  @objc var type: NSNumber? = nil
   @objc var list: [NSObject]? = nil
   @objc var stringList: [NSObject]? = nil
   @objc var intList: [NSObject]? = nil
@@ -1628,6 +1637,8 @@ struct NativeInteropAllNullableTypesWithoutRecursion: Hashable, CustomStringConv
       aNullableString: pigeonVar_Class!.aNullableString as NSString?,
       aNullableObject: _PigeonFfiCodec.writeValue(
         value: pigeonVar_Class!.aNullableObject, isObject: true) as? NSObject,
+      type: NativeInteropTestsPigeonInternal.isNullish(pigeonVar_Class!.type)
+        ? nil : NSNumber(value: pigeonVar_Class!.type!),
       list: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.list) as? [NSObject],
       stringList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.stringList) as? [NSObject],
       intList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.intList) as? [NSObject],
@@ -1672,6 +1683,7 @@ struct NativeInteropAllNullableTypesWithoutRecursion: Hashable, CustomStringConv
         ? nil : NativeInteropAnotherEnum.init(rawValue: anotherNullableEnum!.intValue),
       aNullableString: aNullableString as String?,
       aNullableObject: _PigeonFfiCodec.readValue(value: aNullableObject),
+      type: NativeInteropTestsPigeonInternal.isNullish(type) ? nil : type!.int64Value,
       list: _PigeonFfiCodec.readValue(value: list as NSObject?) as? [Any?],
       stringList: _PigeonFfiCodec.readValue(value: stringList as NSObject?, type: "String")
         as? [String?],

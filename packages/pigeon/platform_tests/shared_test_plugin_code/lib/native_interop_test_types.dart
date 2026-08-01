@@ -200,6 +200,7 @@ genericNativeInteropAllNullableTypesWithoutRecursion =
       aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
       aNullableEnum: NativeInteropAnEnum.fourHundredTwentyTwo,
       aNullableObject: 'nullable',
+      type: 42,
       list: list,
       stringList: stringList,
       intList: intList,

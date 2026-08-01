@@ -493,7 +493,7 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
       swiftOptions,
       options.basePath,
       dartOptions.dartOut,
-      options.appDirectory,
+      options.swiftOptions?.appDirectory ?? options.appDirectory,
     );
 
     generator.generate(ffigenYamlOptions, root, sink, dartPackageName: options.dartPackageName);
@@ -668,7 +668,7 @@ class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
       options.dartOptions!,
       options.kotlinOptions!,
       options.basePath,
-      options.appDirectory,
+      options.kotlinOptions?.appDirectory ?? options.appDirectory,
     );
 
     generator.generate(jnigenYamlOptions, root, sink, dartPackageName: options.dartPackageName);

@@ -32214,7 +32214,7 @@ extension type NativeInteropAllNullableTypesWithoutRecursion._(jni$_.JObject _$t
           as NativeInteropAllNullableTypesWithoutRecursion$Companion;
 
   static final _id_new$ = _class.constructorId(
-    r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLcom/example/test_plugin/NativeInteropAnEnum;Lcom/example/test_plugin/NativeInteropAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)V',
+    r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLcom/example/test_plugin/NativeInteropAnEnum;Lcom/example/test_plugin/NativeInteropAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Long;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)V',
   );
 
   static final _new$ =
@@ -32225,6 +32225,7 @@ extension type NativeInteropAllNullableTypesWithoutRecursion._(jni$_.JObject _$t
                 jni$_.JMethodIDPtr,
                 jni$_.VarArgs<
                   (
+                    jni$_.Pointer<jni$_.Void>,
                     jni$_.Pointer<jni$_.Void>,
                     jni$_.Pointer<jni$_.Void>,
                     jni$_.Pointer<jni$_.Void>,
@@ -32290,10 +32291,11 @@ extension type NativeInteropAllNullableTypesWithoutRecursion._(jni$_.JObject _$t
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public void <init>(java.lang.Boolean boolean, java.lang.Long long, java.lang.Long long1, java.lang.Double double, byte[] bs, int[] is, long[] js, double[] ds, com.example.test_plugin.NativeInteropAnEnum nativeInteropAnEnum, com.example.test_plugin.NativeInteropAnotherEnum nativeInteropAnotherEnum, java.lang.String string, java.lang.Object object, java.util.List<? extends java.lang.Object> list, java.util.List<java.lang.String> list1, java.util.List<java.lang.Long> list2, java.util.List<java.lang.Double> list3, java.util.List<java.lang.Boolean> list4, java.util.List<? extends com.example.test_plugin.NativeInteropAnEnum> list5, java.util.List<? extends java.lang.Object> list6, java.util.List<? extends java.util.List> list7, java.util.List<? extends java.util.Map> list8, java.util.Map<java.lang.Object, ? extends java.lang.Object> map, java.util.Map<java.lang.String, java.lang.String> map1, java.util.Map<java.lang.Long, java.lang.Long> map2, java.util.Map<com.example.test_plugin.NativeInteropAnEnum, ? extends com.example.test_plugin.NativeInteropAnEnum> map3, java.util.Map<java.lang.Object, ? extends java.lang.Object> map4, java.util.Map<java.lang.Long, ? extends java.util.List> map5, java.util.Map<java.lang.Long, ? extends java.util.Map> map6)`
+  /// from: `public void <init>(java.lang.Boolean boolean, java.lang.Long long, java.lang.Long long1, java.lang.Double double, byte[] bs, int[] is, long[] js, double[] ds, com.example.test_plugin.NativeInteropAnEnum nativeInteropAnEnum, com.example.test_plugin.NativeInteropAnotherEnum nativeInteropAnotherEnum, java.lang.String string, java.lang.Object object, java.lang.Long long2, java.util.List<? extends java.lang.Object> list, java.util.List<java.lang.String> list1, java.util.List<java.lang.Long> list2, java.util.List<java.lang.Double> list3, java.util.List<java.lang.Boolean> list4, java.util.List<? extends com.example.test_plugin.NativeInteropAnEnum> list5, java.util.List<? extends java.lang.Object> list6, java.util.List<? extends java.util.List> list7, java.util.List<? extends java.util.Map> list8, java.util.Map<java.lang.Object, ? extends java.lang.Object> map, java.util.Map<java.lang.String, java.lang.String> map1, java.util.Map<java.lang.Long, java.lang.Long> map2, java.util.Map<com.example.test_plugin.NativeInteropAnEnum, ? extends com.example.test_plugin.NativeInteropAnEnum> map3, java.util.Map<java.lang.Object, ? extends java.lang.Object> map4, java.util.Map<java.lang.Long, ? extends java.util.List> map5, java.util.Map<java.lang.Long, ? extends java.util.Map> map6)`
   /// The returned object must be released after use, by calling the [release] method.
   factory NativeInteropAllNullableTypesWithoutRecursion(
     jni$_.JBoolean? boolean,
@@ -32308,6 +32310,7 @@ extension type NativeInteropAllNullableTypesWithoutRecursion._(jni$_.JObject _$t
     NativeInteropAnotherEnum? nativeInteropAnotherEnum,
     jni$_.JString? string,
     jni$_.JObject? object,
+    jni$_.JLong? long2,
     jni$_.JList<jni$_.JObject?>? list,
     jni$_.JList<jni$_.JString?>? list1,
     jni$_.JList<jni$_.JLong?>? list2,
@@ -32338,6 +32341,7 @@ extension type NativeInteropAllNullableTypesWithoutRecursion._(jni$_.JObject _$t
     final _$nativeInteropAnotherEnum = nativeInteropAnotherEnum?.reference ?? jni$_.jNullReference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     final _$object = object?.reference ?? jni$_.jNullReference;
+    final _$long2 = long2?.reference ?? jni$_.jNullReference;
     final _$list = list?.reference ?? jni$_.jNullReference;
     final _$list1 = list1?.reference ?? jni$_.jNullReference;
     final _$list2 = list2?.reference ?? jni$_.jNullReference;
@@ -32369,6 +32373,7 @@ extension type NativeInteropAllNullableTypesWithoutRecursion._(jni$_.JObject _$t
       _$nativeInteropAnotherEnum.pointer,
       _$string.pointer,
       _$object.pointer,
+      _$long2.pointer,
       _$list.pointer,
       _$list1.pointer,
       _$list2.pointer,
@@ -32389,7 +32394,7 @@ extension type NativeInteropAllNullableTypesWithoutRecursion._(jni$_.JObject _$t
   }
 
   static final _id_new$1 = _class.constructorId(
-    r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLcom/example/test_plugin/NativeInteropAnEnum;Lcom/example/test_plugin/NativeInteropAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V',
+    r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLcom/example/test_plugin/NativeInteropAnEnum;Lcom/example/test_plugin/NativeInteropAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Long;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V',
   );
 
   static final _new$1 =
@@ -32400,6 +32405,7 @@ extension type NativeInteropAllNullableTypesWithoutRecursion._(jni$_.JObject _$t
                 jni$_.JMethodIDPtr,
                 jni$_.VarArgs<
                   (
+                    jni$_.Pointer<jni$_.Void>,
                     jni$_.Pointer<jni$_.Void>,
                     jni$_.Pointer<jni$_.Void>,
                     jni$_.Pointer<jni$_.Void>,
@@ -32467,12 +32473,13 @@ extension type NativeInteropAllNullableTypesWithoutRecursion._(jni$_.JObject _$t
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
               core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `synthetic public void <init>(java.lang.Boolean boolean, java.lang.Long long, java.lang.Long long1, java.lang.Double double, byte[] bs, int[] is, long[] js, double[] ds, com.example.test_plugin.NativeInteropAnEnum nativeInteropAnEnum, com.example.test_plugin.NativeInteropAnotherEnum nativeInteropAnotherEnum, java.lang.String string, java.lang.Object object, java.util.List list, java.util.List list1, java.util.List list2, java.util.List list3, java.util.List list4, java.util.List list5, java.util.List list6, java.util.List list7, java.util.List list8, java.util.Map map, java.util.Map map1, java.util.Map map2, java.util.Map map3, java.util.Map map4, java.util.Map map5, java.util.Map map6, int i, kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
+  /// from: `synthetic public void <init>(java.lang.Boolean boolean, java.lang.Long long, java.lang.Long long1, java.lang.Double double, byte[] bs, int[] is, long[] js, double[] ds, com.example.test_plugin.NativeInteropAnEnum nativeInteropAnEnum, com.example.test_plugin.NativeInteropAnotherEnum nativeInteropAnotherEnum, java.lang.String string, java.lang.Object object, java.lang.Long long2, java.util.List list, java.util.List list1, java.util.List list2, java.util.List list3, java.util.List list4, java.util.List list5, java.util.List list6, java.util.List list7, java.util.List list8, java.util.Map map, java.util.Map map1, java.util.Map map2, java.util.Map map3, java.util.Map map4, java.util.Map map5, java.util.Map map6, int i, kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
   /// The returned object must be released after use, by calling the [release] method.
   factory NativeInteropAllNullableTypesWithoutRecursion.new$1(
     jni$_.JBoolean? boolean,
@@ -32487,6 +32494,7 @@ extension type NativeInteropAllNullableTypesWithoutRecursion._(jni$_.JObject _$t
     NativeInteropAnotherEnum? nativeInteropAnotherEnum,
     jni$_.JString? string,
     jni$_.JObject? object,
+    jni$_.JLong? long2,
     jni$_.JList<jni$_.JObject?>? list,
     jni$_.JList<jni$_.JObject?>? list1,
     jni$_.JList<jni$_.JObject?>? list2,
@@ -32519,6 +32527,7 @@ extension type NativeInteropAllNullableTypesWithoutRecursion._(jni$_.JObject _$t
     final _$nativeInteropAnotherEnum = nativeInteropAnotherEnum?.reference ?? jni$_.jNullReference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     final _$object = object?.reference ?? jni$_.jNullReference;
+    final _$long2 = long2?.reference ?? jni$_.jNullReference;
     final _$list = list?.reference ?? jni$_.jNullReference;
     final _$list1 = list1?.reference ?? jni$_.jNullReference;
     final _$list2 = list2?.reference ?? jni$_.jNullReference;
@@ -32551,6 +32560,7 @@ extension type NativeInteropAllNullableTypesWithoutRecursion._(jni$_.JObject _$t
       _$nativeInteropAnotherEnum.pointer,
       _$string.pointer,
       _$object.pointer,
+      _$long2.pointer,
       _$list.pointer,
       _$list1.pointer,
       _$list2.pointer,
@@ -32848,6 +32858,24 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
       _$$selfRef.pointer,
       _id_get$aNullableObject.pointer,
     ).object<jni$_.JObject?>();
+  }
+
+  static final _id_get$type$1 = NativeInteropAllNullableTypesWithoutRecursion._class
+      .instanceMethodId(r'getType', r'()Ljava/lang/Long;');
+
+  static final _get$type$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public final java.lang.Long getType()`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JLong? get type$1 {
+    final _$$selfRef = reference;
+    return _get$type$1(_$$selfRef.pointer, _id_get$type$1.pointer).object<jni$_.JLong?>();
   }
 
   static final _id_get$list = NativeInteropAllNullableTypesWithoutRecursion._class.instanceMethodId(
@@ -33495,7 +33523,7 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
   }
 
   static final _id_component13 = NativeInteropAllNullableTypesWithoutRecursion._class
-      .instanceMethodId(r'component13', r'()Ljava/util/List;');
+      .instanceMethodId(r'component13', r'()Ljava/lang/Long;');
 
   static final _component13 =
       jni$_.ProtectedJniExtensions.lookup<
@@ -33505,14 +33533,11 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public operator fun component13(): kotlin.collections.List<kotlin.Any?>?`
+  /// from: `public operator fun component13(): kotlin.Long?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JObject?>? component13() {
+  jni$_.JLong? component13() {
     final _$$selfRef = reference;
-    return _component13(
-      _$$selfRef.pointer,
-      _id_component13.pointer,
-    ).object<jni$_.JList<jni$_.JObject?>?>();
+    return _component13(_$$selfRef.pointer, _id_component13.pointer).object<jni$_.JLong?>();
   }
 
   static final _id_component14 = NativeInteropAllNullableTypesWithoutRecursion._class
@@ -33526,14 +33551,14 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public operator fun component14(): kotlin.collections.List<kotlin.String?>?`
+  /// from: `public operator fun component14(): kotlin.collections.List<kotlin.Any?>?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JString?>? component14() {
+  jni$_.JList<jni$_.JObject?>? component14() {
     final _$$selfRef = reference;
     return _component14(
       _$$selfRef.pointer,
       _id_component14.pointer,
-    ).object<jni$_.JList<jni$_.JString?>?>();
+    ).object<jni$_.JList<jni$_.JObject?>?>();
   }
 
   static final _id_component15 = NativeInteropAllNullableTypesWithoutRecursion._class
@@ -33547,14 +33572,14 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public operator fun component15(): kotlin.collections.List<kotlin.Long?>?`
+  /// from: `public operator fun component15(): kotlin.collections.List<kotlin.String?>?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JLong?>? component15() {
+  jni$_.JList<jni$_.JString?>? component15() {
     final _$$selfRef = reference;
     return _component15(
       _$$selfRef.pointer,
       _id_component15.pointer,
-    ).object<jni$_.JList<jni$_.JLong?>?>();
+    ).object<jni$_.JList<jni$_.JString?>?>();
   }
 
   static final _id_component16 = NativeInteropAllNullableTypesWithoutRecursion._class
@@ -33568,14 +33593,14 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public operator fun component16(): kotlin.collections.List<kotlin.Double?>?`
+  /// from: `public operator fun component16(): kotlin.collections.List<kotlin.Long?>?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JDouble?>? component16() {
+  jni$_.JList<jni$_.JLong?>? component16() {
     final _$$selfRef = reference;
     return _component16(
       _$$selfRef.pointer,
       _id_component16.pointer,
-    ).object<jni$_.JList<jni$_.JDouble?>?>();
+    ).object<jni$_.JList<jni$_.JLong?>?>();
   }
 
   static final _id_component17 = NativeInteropAllNullableTypesWithoutRecursion._class
@@ -33589,14 +33614,14 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public operator fun component17(): kotlin.collections.List<kotlin.Boolean?>?`
+  /// from: `public operator fun component17(): kotlin.collections.List<kotlin.Double?>?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JBoolean?>? component17() {
+  jni$_.JList<jni$_.JDouble?>? component17() {
     final _$$selfRef = reference;
     return _component17(
       _$$selfRef.pointer,
       _id_component17.pointer,
-    ).object<jni$_.JList<jni$_.JBoolean?>?>();
+    ).object<jni$_.JList<jni$_.JDouble?>?>();
   }
 
   static final _id_component18 = NativeInteropAllNullableTypesWithoutRecursion._class
@@ -33610,14 +33635,14 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public operator fun component18(): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>?`
+  /// from: `public operator fun component18(): kotlin.collections.List<kotlin.Boolean?>?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAnEnum?>? component18() {
+  jni$_.JList<jni$_.JBoolean?>? component18() {
     final _$$selfRef = reference;
     return _component18(
       _$$selfRef.pointer,
       _id_component18.pointer,
-    ).object<jni$_.JList<NativeInteropAnEnum?>?>();
+    ).object<jni$_.JList<jni$_.JBoolean?>?>();
   }
 
   static final _id_component19 = NativeInteropAllNullableTypesWithoutRecursion._class
@@ -33631,14 +33656,14 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public operator fun component19(): kotlin.collections.List<kotlin.Any?>?`
+  /// from: `public operator fun component19(): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JObject?>? component19() {
+  jni$_.JList<NativeInteropAnEnum?>? component19() {
     final _$$selfRef = reference;
     return _component19(
       _$$selfRef.pointer,
       _id_component19.pointer,
-    ).object<jni$_.JList<jni$_.JObject?>?>();
+    ).object<jni$_.JList<NativeInteropAnEnum?>?>();
   }
 
   static final _id_component20 = NativeInteropAllNullableTypesWithoutRecursion._class
@@ -33652,14 +33677,14 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public operator fun component20(): kotlin.collections.List<kotlin.collections.List<kotlin.Any?>?>?`
+  /// from: `public operator fun component20(): kotlin.collections.List<kotlin.Any?>?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JList<jni$_.JObject?>?>? component20() {
+  jni$_.JList<jni$_.JObject?>? component20() {
     final _$$selfRef = reference;
     return _component20(
       _$$selfRef.pointer,
       _id_component20.pointer,
-    ).object<jni$_.JList<jni$_.JList<jni$_.JObject?>?>?>();
+    ).object<jni$_.JList<jni$_.JObject?>?>();
   }
 
   static final _id_component21 = NativeInteropAllNullableTypesWithoutRecursion._class
@@ -33673,18 +33698,18 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public operator fun component21(): kotlin.collections.List<kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?>?`
+  /// from: `public operator fun component21(): kotlin.collections.List<kotlin.collections.List<kotlin.Any?>?>?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>? component21() {
+  jni$_.JList<jni$_.JList<jni$_.JObject?>?>? component21() {
     final _$$selfRef = reference;
     return _component21(
       _$$selfRef.pointer,
       _id_component21.pointer,
-    ).object<jni$_.JList<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>?>();
+    ).object<jni$_.JList<jni$_.JList<jni$_.JObject?>?>?>();
   }
 
   static final _id_component22 = NativeInteropAllNullableTypesWithoutRecursion._class
-      .instanceMethodId(r'component22', r'()Ljava/util/Map;');
+      .instanceMethodId(r'component22', r'()Ljava/util/List;');
 
   static final _component22 =
       jni$_.ProtectedJniExtensions.lookup<
@@ -33694,14 +33719,14 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public operator fun component22(): kotlin.collections.Map<kotlin.Any, kotlin.Any?>?`
+  /// from: `public operator fun component22(): kotlin.collections.List<kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?>?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JObject, jni$_.JObject?>? component22() {
+  jni$_.JList<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>? component22() {
     final _$$selfRef = reference;
     return _component22(
       _$$selfRef.pointer,
       _id_component22.pointer,
-    ).object<jni$_.JMap<jni$_.JObject, jni$_.JObject?>?>();
+    ).object<jni$_.JList<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>?>();
   }
 
   static final _id_component23 = NativeInteropAllNullableTypesWithoutRecursion._class
@@ -33715,14 +33740,14 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public operator fun component23(): kotlin.collections.Map<kotlin.String?, kotlin.String?>?`
+  /// from: `public operator fun component23(): kotlin.collections.Map<kotlin.Any, kotlin.Any?>?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JString?, jni$_.JString?>? component23() {
+  jni$_.JMap<jni$_.JObject, jni$_.JObject?>? component23() {
     final _$$selfRef = reference;
     return _component23(
       _$$selfRef.pointer,
       _id_component23.pointer,
-    ).object<jni$_.JMap<jni$_.JString?, jni$_.JString?>?>();
+    ).object<jni$_.JMap<jni$_.JObject, jni$_.JObject?>?>();
   }
 
   static final _id_component24 = NativeInteropAllNullableTypesWithoutRecursion._class
@@ -33736,14 +33761,14 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public operator fun component24(): kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?`
+  /// from: `public operator fun component24(): kotlin.collections.Map<kotlin.String?, kotlin.String?>?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? component24() {
+  jni$_.JMap<jni$_.JString?, jni$_.JString?>? component24() {
     final _$$selfRef = reference;
     return _component24(
       _$$selfRef.pointer,
       _id_component24.pointer,
-    ).object<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?>();
+    ).object<jni$_.JMap<jni$_.JString?, jni$_.JString?>?>();
   }
 
   static final _id_component25 = NativeInteropAllNullableTypesWithoutRecursion._class
@@ -33757,14 +33782,14 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public operator fun component25(): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>?`
+  /// from: `public operator fun component25(): kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? component25() {
+  jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? component25() {
     final _$$selfRef = reference;
     return _component25(
       _$$selfRef.pointer,
       _id_component25.pointer,
-    ).object<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?>();
+    ).object<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?>();
   }
 
   static final _id_component26 = NativeInteropAllNullableTypesWithoutRecursion._class
@@ -33778,14 +33803,14 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public operator fun component26(): kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?`
+  /// from: `public operator fun component26(): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? component26() {
+  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? component26() {
     final _$$selfRef = reference;
     return _component26(
       _$$selfRef.pointer,
       _id_component26.pointer,
-    ).object<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>();
+    ).object<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?>();
   }
 
   static final _id_component27 = NativeInteropAllNullableTypesWithoutRecursion._class
@@ -33799,14 +33824,14 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public operator fun component27(): kotlin.collections.Map<kotlin.Long?, kotlin.collections.List<kotlin.Any?>?>?`
+  /// from: `public operator fun component27(): kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong?, jni$_.JList<jni$_.JObject?>?>? component27() {
+  jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? component27() {
     final _$$selfRef = reference;
     return _component27(
       _$$selfRef.pointer,
       _id_component27.pointer,
-    ).object<jni$_.JMap<jni$_.JLong?, jni$_.JList<jni$_.JObject?>?>?>();
+    ).object<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>();
   }
 
   static final _id_component28 = NativeInteropAllNullableTypesWithoutRecursion._class
@@ -33820,19 +33845,40 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public operator fun component28(): kotlin.collections.Map<kotlin.Long?, kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?>?`
+  /// from: `public operator fun component28(): kotlin.collections.Map<kotlin.Long?, kotlin.collections.List<kotlin.Any?>?>?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong?, jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>? component28() {
+  jni$_.JMap<jni$_.JLong?, jni$_.JList<jni$_.JObject?>?>? component28() {
     final _$$selfRef = reference;
     return _component28(
       _$$selfRef.pointer,
       _id_component28.pointer,
+    ).object<jni$_.JMap<jni$_.JLong?, jni$_.JList<jni$_.JObject?>?>?>();
+  }
+
+  static final _id_component29 = NativeInteropAllNullableTypesWithoutRecursion._class
+      .instanceMethodId(r'component29', r'()Ljava/util/Map;');
+
+  static final _component29 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public operator fun component29(): kotlin.collections.Map<kotlin.Long?, kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?>?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JMap<jni$_.JLong?, jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>? component29() {
+    final _$$selfRef = reference;
+    return _component29(
+      _$$selfRef.pointer,
+      _id_component29.pointer,
     ).object<jni$_.JMap<jni$_.JLong?, jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>?>();
   }
 
   static final _id_copy = NativeInteropAllNullableTypesWithoutRecursion._class.instanceMethodId(
     r'copy',
-    r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLcom/example/test_plugin/NativeInteropAnEnum;Lcom/example/test_plugin/NativeInteropAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;',
+    r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLcom/example/test_plugin/NativeInteropAnEnum;Lcom/example/test_plugin/NativeInteropAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Long;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;',
   );
 
   static final _copy =
@@ -33843,6 +33889,7 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
                 jni$_.JMethodIDPtr,
                 jni$_.VarArgs<
                   (
+                    jni$_.Pointer<jni$_.Void>,
                     jni$_.Pointer<jni$_.Void>,
                     jni$_.Pointer<jni$_.Void>,
                     jni$_.Pointer<jni$_.Void>,
@@ -33908,10 +33955,11 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun copy(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableInt64: kotlin.Long?, aNullableDouble: kotlin.Double?, aNullableByteArray: kotlin.ByteArray?, aNullable4ByteArray: kotlin.IntArray?, aNullable8ByteArray: kotlin.LongArray?, aNullableFloatArray: kotlin.DoubleArray?, aNullableEnum: com.example.test_plugin.NativeInteropAnEnum?, anotherNullableEnum: com.example.test_plugin.NativeInteropAnotherEnum?, aNullableString: kotlin.String?, aNullableObject: kotlin.Any?, list: kotlin.collections.List<kotlin.Any?>?, stringList: kotlin.collections.List<kotlin.String?>?, intList: kotlin.collections.List<kotlin.Long?>?, doubleList: kotlin.collections.List<kotlin.Double?>?, boolList: kotlin.collections.List<kotlin.Boolean?>?, enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>?, objectList: kotlin.collections.List<kotlin.Any?>?, listList: kotlin.collections.List<kotlin.collections.List<kotlin.Any?>?>?, mapList: kotlin.collections.List<kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?>?, map: kotlin.collections.Map<kotlin.Any, kotlin.Any?>?, stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>?, intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?, enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>?, objectMap: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?, listMap: kotlin.collections.Map<kotlin.Long?, kotlin.collections.List<kotlin.Any?>?>?, mapMap: kotlin.collections.Map<kotlin.Long?, kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?>?): com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion`
+  /// from: `public fun copy(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableInt64: kotlin.Long?, aNullableDouble: kotlin.Double?, aNullableByteArray: kotlin.ByteArray?, aNullable4ByteArray: kotlin.IntArray?, aNullable8ByteArray: kotlin.LongArray?, aNullableFloatArray: kotlin.DoubleArray?, aNullableEnum: com.example.test_plugin.NativeInteropAnEnum?, anotherNullableEnum: com.example.test_plugin.NativeInteropAnotherEnum?, aNullableString: kotlin.String?, aNullableObject: kotlin.Any?, type: kotlin.Long?, list: kotlin.collections.List<kotlin.Any?>?, stringList: kotlin.collections.List<kotlin.String?>?, intList: kotlin.collections.List<kotlin.Long?>?, doubleList: kotlin.collections.List<kotlin.Double?>?, boolList: kotlin.collections.List<kotlin.Boolean?>?, enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>?, objectList: kotlin.collections.List<kotlin.Any?>?, listList: kotlin.collections.List<kotlin.collections.List<kotlin.Any?>?>?, mapList: kotlin.collections.List<kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?>?, map: kotlin.collections.Map<kotlin.Any, kotlin.Any?>?, stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>?, intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?, enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>?, objectMap: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?, listMap: kotlin.collections.Map<kotlin.Long?, kotlin.collections.List<kotlin.Any?>?>?, mapMap: kotlin.collections.Map<kotlin.Long?, kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?>?): com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion`
   /// The returned object must be released after use, by calling the [release] method.
   NativeInteropAllNullableTypesWithoutRecursion copy(
     jni$_.JBoolean? boolean,
@@ -33926,6 +33974,7 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
     NativeInteropAnotherEnum? nativeInteropAnotherEnum,
     jni$_.JString? string,
     jni$_.JObject? object,
+    jni$_.JLong? long2,
     jni$_.JList<jni$_.JObject?>? list,
     jni$_.JList<jni$_.JString?>? list1,
     jni$_.JList<jni$_.JLong?>? list2,
@@ -33956,6 +34005,7 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
     final _$nativeInteropAnotherEnum = nativeInteropAnotherEnum?.reference ?? jni$_.jNullReference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     final _$object = object?.reference ?? jni$_.jNullReference;
+    final _$long2 = long2?.reference ?? jni$_.jNullReference;
     final _$list = list?.reference ?? jni$_.jNullReference;
     final _$list1 = list1?.reference ?? jni$_.jNullReference;
     final _$list2 = list2?.reference ?? jni$_.jNullReference;
@@ -33987,6 +34037,7 @@ extension NativeInteropAllNullableTypesWithoutRecursion$$Methods
       _$nativeInteropAnotherEnum.pointer,
       _$string.pointer,
       _$object.pointer,
+      _$long2.pointer,
       _$list.pointer,
       _$list1.pointer,
       _$list2.pointer,

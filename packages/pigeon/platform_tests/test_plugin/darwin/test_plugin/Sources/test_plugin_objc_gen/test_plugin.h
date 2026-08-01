@@ -496,6 +496,7 @@ SWIFT_CLASS(
       anotherNullableEnum:(NSNumber* _Nullable)anotherNullableEnum
           aNullableString:(NSString* _Nullable)aNullableString
           aNullableObject:(NSObject* _Nullable)aNullableObject
+                     type:(NSNumber* _Nullable)type
                      list:(NSArray<NSObject*>* _Nullable)list
                stringList:(NSArray<NSObject*>* _Nullable)stringList
                   intList:(NSArray<NSObject*>* _Nullable)intList
@@ -535,6 +536,7 @@ SWIFT_CLASS(
 @property(nonatomic, strong) NSNumber* _Nullable anotherNullableEnum;
 @property(nonatomic, strong) NSString* _Nullable aNullableString;
 @property(nonatomic, strong) NSObject* _Nullable aNullableObject;
+@property(nonatomic, strong) NSNumber* _Nullable type;
 @property(nonatomic, copy) NSArray<NSObject*>* _Nullable list;
 @property(nonatomic, copy) NSArray<NSObject*>* _Nullable stringList;
 @property(nonatomic, copy) NSArray<NSObject*>* _Nullable intList;
