@@ -66,20 +66,17 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
         await inputStream.skip(currentByteIndex);
       }
 
-      late Uint8List chunk;
-      do {
-        chunk = await inputStream.readBytes(maxByteArrayLen);
-
-        if (chunk.isNotEmpty) {
-          if (end == null) {
-            yield chunk;
-          } else {
-            yield Uint8List.sublistView(chunk, 0, end - currentByteIndex);
-          }
+      Uint8List chunk = await inputStream.readBytes(maxByteArrayLen);
+      while (chunk.isNotEmpty && (end == null || currentByteIndex < end)) {
+        if (end == null) {
+          yield chunk;
+        } else {
+          yield Uint8List.sublistView(chunk, 0, end - currentByteIndex);
         }
-
         currentByteIndex += chunk.length;
-      } while (chunk.isNotEmpty && (end == null || currentByteIndex < end));
+
+        chunk = await inputStream.readBytes(maxByteArrayLen);
+      }
     } else {
       throw NullInputStreamException(params.uri);
     }
