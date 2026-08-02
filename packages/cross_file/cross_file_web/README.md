@@ -28,9 +28,5 @@ its size is known beforehand), so that case can be handled programmatically.
 
 [![Data on Global support for Blob URLs](https://caniuse.bitsofco.de/image/bloburls.png)](https://caniuse.com/bloburls)
 
-### Tests
-
-Tests for the web platform can be run with `flutter test --platform chrome`.
-
 [1]: https://pub.dev/packages/cross_file
 [2]: https://flutter.dev/to/endorsed-federated-plugin
