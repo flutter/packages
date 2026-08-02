@@ -2074,6 +2074,67 @@ void main() {
     semantics.dispose();
   });
 
+  testWidgets('showOnScreen works with pinned SliverAppBar and individual slivers', (
+    WidgetTester tester,
+  ) async {
+    final semantics = SemanticsTester(tester); // enables semantics tree generation
+
+    const kItemHeight = 100.0;
+    const kExpandedAppBarHeight = 256.0;
+
+    final children = <Widget>[];
+    final slivers = List<Widget>.generate(30, (int i) {
+      final Widget child = MergeSemantics(child: SizedBox(height: 72.0, child: Text('Item $i')));
+      children.add(child);
+      return SliverToBoxAdapter(child: child);
+    });
+
+    final scrollController = ScrollController(initialScrollOffset: 2.5 * kItemHeight);
+    addTearDown(scrollController.dispose);
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: MediaQuery(
+          data: const MediaQueryData(),
+          child: Localizations(
+            locale: const Locale('en', 'us'),
+            delegates: const <LocalizationsDelegate<dynamic>>[
+              DefaultWidgetsLocalizations.delegate,
+              DefaultMaterialLocalizations.delegate,
+            ],
+            child: Scrollable(
+              controller: scrollController,
+              viewportBuilder: (BuildContext context, ViewportOffset offset) {
+                return Viewport(
+                  offset: offset,
+                  slivers: <Widget>[
+                    const SliverAppBar(
+                      pinned: true,
+                      expandedHeight: kExpandedAppBarHeight,
+                      flexibleSpace: FlexibleSpaceBar(title: Text('App Bar')),
+                    ),
+                    ...slivers,
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(scrollController.offset, 2.5 * kItemHeight);
+
+    final int id0 = tester.renderObject(find.byWidget(children[0])).debugSemantics!.id;
+    tester.binding.pipelineOwner.semanticsOwner!.performAction(id0, SemanticsAction.showOnScreen);
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    expect(tester.getTopLeft(find.byWidget(children[0])).dy, kToolbarHeight);
+
+    semantics.dispose();
+  });
+
   testWidgets('Changing SliverAppBar snap from true to false', (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/issues/17598
     const appBarHeight = 256.0;
