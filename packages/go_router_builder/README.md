@@ -42,6 +42,35 @@ dart run build_runner build
 Read more about using
 [`build_runner` on pub.dev](https://pub.dev/packages/build_runner).
 
+### Builder options
+
+#### `duplicate_route_paths`
+
+Sibling routes can end up matching the same URL pattern, either because their
+paths are identical or because they differ only in the name of a path parameter,
+such as `meal/:id` and `meal/:mealId`. `go_router` matches the first route that
+fits, so the later route is unreachable. The builder reports these as warnings
+by default.
+
+Shell routes and `StatefulShellRoute` branches do not own a path of their own,
+so the routes inside them compete with the routes around them. Routes declared
+by separate annotations in the same file compete too, because the generated
+`$appRoutes` collects them into one list. Routes declared in different files
+are not compared, since the builder generates one file at a time.
+
+To fail the build instead of warning, set the option in `build.yaml`:
+
+```yaml
+targets:
+  $default:
+    builders:
+      go_router_builder:
+        options:
+          duplicate_route_paths: error
+```
+
+Accepted values are `warning` (the default), `error`, and `ignore`.
+
 ## Migration Guides
 - [Migrating to 4.0.0](https://flutter.dev/go/go-router-builder-v4-breaking-changes).
 
@@ -504,5 +533,14 @@ Relative routing methods are not idempotent and will cause an error when the rel
 ## Run tests
 
 To run unit tests, run command `dart tool/run_tests.dart` from `packages/go_router_builder/`.
+
+Each `.dart` file in `test_inputs/` is a test case, paired with a `.expect` file
+holding either the generated output or the error message the builder must
+produce. Two optional companion files tune a case:
+
+* `<name>.dart.options` holds a JSON map of builder options, matching what
+  `build.yaml` would pass to the builder.
+* `<name>.dart.warnings` holds the warnings the builder must log, one per line.
+  An empty file asserts that the builder logs nothing.
 
 To run tests in examples, run `flutter test` from `packages/go_router_builder/example`.
