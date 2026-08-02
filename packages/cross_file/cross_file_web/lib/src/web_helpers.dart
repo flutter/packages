@@ -89,6 +89,20 @@ Future<Blob> fetchBlob(String objectUrl) async {
   }
 }
 
+/// Converts a [ReadableStream] to a [Stream] of [Uint8List].
+Stream<Uint8List> readableStreamToStream(ReadableStream stream) async* {
+  final reader = stream.getReader() as ReadableStreamDefaultReader;
+  try {
+    late ReadableStreamReadResult chunk;
+    do {
+      chunk = await reader.read().toDart;
+      yield (chunk.value! as JSUint8Array).toDart;
+    } while(!chunk.done);
+  } finally {
+    reader.releaseLock();
+  }
+}
+
 /// Overrides some functions to allow testing.
 // TODO(dit): https://github.com/flutter/flutter/issues/91400
 // Move this to web_helpers_test.dart
