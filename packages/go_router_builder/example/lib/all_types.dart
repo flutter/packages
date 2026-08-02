@@ -20,7 +20,6 @@ part 'all_types.g.dart';
     TypedGoRoute<DoubleRoute>(path: 'double-route/:requiredDoubleField'),
     TypedGoRoute<IntRoute>(path: 'int-route/:requiredIntField'),
     TypedGoRoute<NumRoute>(path: 'num-route/:requiredNumField'),
-    TypedGoRoute<DoubleRoute>(path: 'double-route/:requiredDoubleField'),
     TypedGoRoute<EnumRoute>(path: 'enum-route/:requiredEnumField'),
     TypedGoRoute<EnhancedEnumRoute>(
       path: 'enhanced-enum-route/:requiredEnumField',
