@@ -91,13 +91,15 @@ Future<Blob> fetchBlob(String objectUrl) async {
 
 /// Converts a [ReadableStream] to a [Stream] of [Uint8List].
 Stream<Uint8List> readableStreamToStream(ReadableStream stream) async* {
+  // Always returns `ReadableStreamDefaultReader` if no options are passed to
+  // `getReader`.
   final reader = stream.getReader() as ReadableStreamDefaultReader;
   try {
-    late ReadableStreamReadResult chunk;
-    do {
-      chunk = await reader.read().toDart;
+    ReadableStreamReadResult chunk = await reader.read().toDart;
+    while (!chunk.done) {
       yield (chunk.value! as JSUint8Array).toDart;
-    } while(!chunk.done);
+      chunk = await reader.read().toDart;
+    }
   } finally {
     reader.releaseLock();
   }
