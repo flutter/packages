@@ -327,6 +327,12 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   void Function(bool)? _onCanGoBackChangeCallback;
   void Function(JavaScriptConsoleMessage)? _onConsoleMessageCallback;
+
+  // Whether the console override script from [_injectConsoleOverride] is
+  // currently added to the user content controller. This prevents the script
+  // from being added more than once, which would cause console messages to be
+  // forwarded multiple times.
+  bool _isConsoleOverrideScriptInjected = false;
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
   Future<void> Function(JavaScriptAlertDialogRequest request)? _onJavaScriptAlertDialog;
@@ -710,8 +716,16 @@ class WebKitWebViewController extends PlatformWebViewController {
       },
     );
 
-    await addJavaScriptChannel(channelParams);
-    return _enqueueUserContentOperation(_injectConsoleOverride);
+    // Registering the channel and injecting the console override must run as
+    // a single queued operation. Otherwise another queued operation could run
+    // in between, call [_resetUserScripts], and inject the console override
+    // itself, resulting in the override script being added twice.
+    return _enqueueUserContentOperation(() async {
+      if (!_javaScriptChannelParams.containsKey(_onConsoleMessageChannelName)) {
+        await _addJavaScriptChannel(channelParams);
+      }
+      await _injectConsoleOverride();
+    });
   }
 
   @override
@@ -829,6 +843,7 @@ class WebKitWebViewController extends PlatformWebViewController {
     final WKUserContentController controller = await _webView.configuration
         .getUserContentController();
     unawaited(controller.removeAllUserScripts());
+    _isConsoleOverrideScriptInjected = false;
     // TODO(bparrishMines): This can be replaced with
     // `removeAllScriptMessageHandlers` once Dart supports runtime version
     // checking. (e.g. The equivalent to @availability in Objective-C.)
@@ -868,6 +883,11 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   Future<void> _injectConsoleOverride() async {
+    if (_isConsoleOverrideScriptInjected) {
+      return;
+    }
+    _isConsoleOverrideScriptInjected = true;
+
     // Within overrideScript, a series of console output methods such as
     // console.log will be rewritten to pass the output content to the Flutter
     // end.

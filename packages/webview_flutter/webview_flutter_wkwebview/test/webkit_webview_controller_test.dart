@@ -1108,6 +1108,64 @@ void main() {
       verify(mockUserContentController.removeScriptMessageHandler('name'));
     });
 
+    test('setOnConsoleMessage does not inject the console override script twice when '
+        'interleaved with removeJavaScriptChannel', () async {
+      PigeonOverrides.wKScriptMessageHandler_new =
+          ({
+            required void Function(WKScriptMessageHandler, WKUserContentController, WKScriptMessage)
+            didReceiveScriptMessage,
+            dynamic observeValue,
+          }) {
+            return WKScriptMessageHandler.pigeon_detached(
+              didReceiveScriptMessage: didReceiveScriptMessage,
+            );
+          };
+
+      final mockUserContentController = MockWKUserContentController();
+
+      // Track the user scripts currently added to the user content controller.
+      final addedScriptSources = <String>[];
+      when(mockUserContentController.addUserScript(any)).thenAnswer((Invocation invocation) async {
+        await Future<void>.delayed(Duration.zero);
+        addedScriptSources.add((invocation.positionalArguments[0] as WKUserScript).source);
+      });
+      when(mockUserContentController.removeAllUserScripts()).thenAnswer((
+        Invocation invocation,
+      ) async {
+        await Future<void>.delayed(Duration.zero);
+        addedScriptSources.clear();
+      });
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockUserContentController: mockUserContentController,
+      );
+
+      await controller.addJavaScriptChannel(
+        WebKitJavaScriptChannelParams(
+          name: 'channel1',
+          onMessageReceived: (JavaScriptMessage m) {},
+        ),
+      );
+
+      // Set the console callback and remove a channel without awaiting, so the
+      // reset from `removeJavaScriptChannel` runs between the operations
+      // queued by `setOnConsoleMessage`.
+      await Future.wait(<Future<void>>[
+        controller.setOnConsoleMessage((JavaScriptConsoleMessage message) {}),
+        controller.removeJavaScriptChannel('channel1'),
+      ]);
+
+      // Allow the unawaited calls made by the last reset to complete.
+      await Future<void>.delayed(Duration.zero);
+
+      expect(
+        addedScriptSources.where(
+          (String source) => source.contains('_flutter_webview_plugin_overrides'),
+        ),
+        hasLength(1),
+      );
+    });
+
     test('removeJavaScriptChannel with zoom disabled', () async {
       PigeonOverrides.wKScriptMessageHandler_new =
           ({
