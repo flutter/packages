@@ -17,11 +17,6 @@ dependencies:
   web: ^1.1.1
   cupertino_ui:
     path: ..
-  material_ui: ^0.0.2
-
-dependency_overrides:
-  cupertino_ui:
-    path: ..
 
 dev_dependencies:
   integration_test:
@@ -37,6 +32,3 @@ dev_dependencies:
   flutter_web_plugins:
     sdk: flutter
   flutter_lints: ^6.0.0
-
-flutter:
-  uses-material-design: true
