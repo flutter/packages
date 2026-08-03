@@ -79,8 +79,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
 
   /// Returns `true` if any navigator in the current route stack can pop.
   ///
-  /// Unlike [maybePop], this considers nested shell navigators as well as the
-  /// root navigator.
+  /// This does not evaluate pop vetoes such as [PopScope]. See [maybePop].
   bool canPop() {
     if (navigatorKey.currentState?.canPop() ?? false) {
       return true;
@@ -109,32 +108,33 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     states.first.pop(result);
   }
 
-  /// Calls [NavigatorState.maybePop] on the current (top-most) navigator.
+  /// Attempts to pop the top-most poppable route in the current stack.
   ///
-  /// Unlike [popRoute], this only consults the first navigator returned by
-  /// [_findCurrentNavigators], matching [Navigator.maybePop]'s single-navigator
-  /// scope. It does not fall through to parent navigators when that navigator
-  /// has nothing to pop (its top route is the first route on that navigator).
+  /// Walks [_findCurrentNavigators] from innermost to outermost and calls
+  /// [NavigatorState.maybePop] on each mounted navigator so [PopScope] / route
+  /// pop disposition is consulted even when [NavigatorState.canPop] is false
+  /// (for example a shell leaf that is the only route on its navigator).
   ///
-  /// This can disagree with [canPop] and [pop] under shell routes: [canPop] is
-  /// true if any navigator in the current stack can pop, and [pop] pops the
-  /// first navigator that [NavigatorState.canPop] reports as true. [maybePop]
-  /// only asks the current navigator, so [canPop] may be `true` while this
-  /// method returns `false`.
+  /// Returns `true` if a navigator handled the request (including when a
+  /// [PopScope] blocks the pop) and `false` when every navigator bubbles.
+  /// Unlike [pop], this method does not throw when there is nothing to pop, and
+  /// unlike filtering on [NavigatorState.canPop] first, a leaf [PopScope] veto
+  /// is not skipped in favor of popping a parent navigator.
   ///
-  /// Returns `true` if the current navigator handled the request (including
-  /// when a [PopScope] blocks the pop) and `false` when that navigator has
-  /// nothing to pop. This method does not throw if there is nothing to pop.
+  /// Fallthrough happens only when a navigator returns `false` (bubble). After
+  /// a navigator returns `true` (popped or `doNotPop`), parents are not tried.
+  /// Unlike [popRoute], this method does not consult [GoRoute.onExit] for
+  /// app-exit behavior when nothing can pop.
   Future<bool> maybePop<T extends Object?>([T? result]) async {
-    final Iterator<NavigatorState> iterator = _findCurrentNavigators().iterator;
-    if (!iterator.moveNext()) {
-      return false;
+    for (final NavigatorState state in _findCurrentNavigators()) {
+      if (!state.mounted) {
+        continue;
+      }
+      if (await state.maybePop<T>(result)) {
+        return true;
+      }
     }
-    final NavigatorState state = iterator.current;
-    if (!state.mounted) {
-      return false;
-    }
-    return state.maybePop<T>(result);
+    return false;
   }
 
   /// Get a prioritized list of NavigatorStates,
@@ -341,4 +341,3 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     return SynchronousFuture<void>(null);
   }
 }
-

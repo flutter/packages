@@ -446,7 +446,7 @@ void main() {
     testWidgets('It should return false on screen A and true on screen B after push', (
       WidgetTester tester,
     ) async {
-      final GoRouter goRouter = GoRouter(
+      final goRouter = GoRouter(
         initialLocation: '/a',
         routes: <GoRoute>[
           GoRoute(path: '/a', builder: (_, _) => const Text('Screen A')),
@@ -479,7 +479,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final shellNavigatorKey = GlobalKey<NavigatorState>();
-      final GoRouter goRouter = GoRouter(
+      final goRouter = GoRouter(
         initialLocation: '/a',
         routes: <RouteBase>[
           ShellRoute(
@@ -519,17 +519,14 @@ void main() {
     testWidgets('does not remove route when page handles pop internally', (
       WidgetTester tester,
     ) async {
-      final GoRouter goRouter = GoRouter(
+      final goRouter = GoRouter(
         initialLocation: '/',
         routes: <GoRoute>[
           GoRoute(
             path: '/',
             builder: (_, _) => const Text('Home'),
             routes: <GoRoute>[
-              GoRoute(
-                path: 'internal',
-                pageBuilder: (_, _) => const _InternalPopPage(),
-              ),
+              GoRoute(path: 'internal', pageBuilder: (_, _) => const _InternalPopPage()),
             ],
           ),
         ],

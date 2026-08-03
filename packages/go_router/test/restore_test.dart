@@ -374,7 +374,7 @@ void main() {
         matchList,
       )!;
 
-      expect(encoded.state, isNot(isA<RouteInformationState>()));
+      expect(encoded.state, isNot(isA<RouteInformationState<void>>()));
 
       router.go('/');
       await tester.pumpAndSettle();

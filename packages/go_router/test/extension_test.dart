@@ -107,7 +107,7 @@ void main() {
     testWidgets('returns true on screen B and false after popping back to screen A', (
       WidgetTester tester,
     ) async {
-      final screenAKey = GlobalKey();
+      final GlobalKey<State<StatefulWidget>> screenAKey = GlobalKey();
       final router = GoRouter(
         initialLocation: '/a',
         routes: <GoRoute>[
@@ -239,7 +239,7 @@ void main() {
     ) async {
       final GoRouter router = await pumpRouter(tester);
 
-      router.replace('/a');
+      router.replace<void>('/a');
       await tester.pumpAndSettle();
 
       expect(find.text('Screen A'), findsOneWidget);
@@ -329,18 +329,16 @@ void main() {
       expect(find.text('Screen Home'), findsOneWidget);
       expect(routerNav.canPop(), isFalse);
 
-      final GoRouter routerGo = GoRouter(
+      final routerGo = GoRouter(
         initialLocation: '/',
         routes: <GoRoute>[
           GoRoute(
             path: '/',
-            builder: (_, _) =>
-                const _ScreenWithPopButton(label: 'Home', popMethod: PopMethod.goRouter),
+            builder: (_, _) => const _ScreenWithPopButton(label: 'Home'),
           ),
           GoRoute(
             path: '/a',
-            builder: (_, _) =>
-                const _ScreenWithPopButton(label: 'A', popMethod: PopMethod.goRouter),
+            builder: (_, _) => const _ScreenWithPopButton(label: 'A'),
           ),
         ],
       );
@@ -467,7 +465,7 @@ void main() {
     testWidgets('push A, push B, Navigator.pop, push B, context.pop returns to A correctly', (
       WidgetTester tester,
     ) async {
-      final GoRouter router = GoRouter(
+      final router = GoRouter(
         initialLocation: '/home',
         routes: <GoRoute>[
           GoRoute(
