@@ -1,0 +1,7 @@
+# A list of packages and their minimum required code coverage.
+# Only packages listed in this file will be checked for code coverage
+# when running the script/tool/lib/src/coverage_check_command.dart
+# command. If a package drops below its listed threshold, the check
+# will fail.
+custom_coverage_minimums:
+  camera_android_camerax: 18.3

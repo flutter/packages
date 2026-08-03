@@ -193,6 +193,8 @@ Future<bool> _isDevChange(
   return _isTestChange(pathComponents) ||
       // Agent directories (.agents/) are for developer-only utility tools (skills, scripts).
       pathComponents.first == '.agents' ||
+      // Eval directories (evals/) are for evaluation utility code.
+      pathComponents.first == 'evals' ||
       // The top-level "tool" directory is for non-client-facing utility
       // code, such as test scripts.
       pathComponents.first == 'tool' ||
