@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/rendering.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:cupertino_ui_examples/magnifier/text_magnifier.0.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';
@@ -20,7 +20,7 @@ List<TextSelectionPoint> _globalize(
 RenderEditable _findRenderEditable<T extends State<StatefulWidget>>(
   WidgetTester tester,
 ) {
-  return (tester.state(find.byType(TextField))
+  return (tester.state(find.byType(CupertinoTextField))
           as TextSelectionGestureDetectorBuilderDelegate)
       .editableTextKey
       .currentState!
@@ -65,7 +65,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final TextEditingController controller = tester
-        .firstWidget<TextField>(find.byType(TextField))
+        .firstWidget<CupertinoTextField>(find.byType(CupertinoTextField))
         .controller!;
 
     final TextSelection selection = controller.selection;
