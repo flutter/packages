@@ -82,15 +82,16 @@ class MarkerController: NSObject {
     screenScale: CGFloat,
     usingOpacityForVisibility useOpacityForVisibility: Bool
   ) {
-    marker.groundAnchor = point(from: platformMarker.anchor ?? FGMPlatformPoint.makeWith(x: 0, y: 0))
+    marker.groundAnchor = platformMarker.anchor.toCGPoint()
     marker.isDraggable = platformMarker.draggable
-    marker.icon = icon(from: platformMarker.icon, assetProvider: assetProvider, screenScale: screenScale)
+    marker.icon = makeIcon(
+      from: platformMarker.icon, assetProvider: assetProvider, screenScale: screenScale)
     marker.isFlat = platformMarker.flat
-    marker.position = coordinate(from: platformMarker.position)
+    marker.position = platformMarker.position.toCLCoordinate()
     marker.rotation = platformMarker.rotation
     marker.zIndex = Int32(platformMarker.zIndex)
     let infoWindow = platformMarker.infoWindow
-    marker.infoWindowAnchor = point(from: infoWindow.anchor ?? FGMPlatformPoint.makeWith(x: 0, y: 0))
+    marker.infoWindowAnchor = infoWindow.anchor.toCGPoint()
     if let title = infoWindow.title {
       marker.title = title
       marker.snippet = infoWindow.snippet
@@ -144,7 +145,7 @@ class MarkersController: NSObject {
 
   private func addMarker(_ markerToAdd: FGMPlatformMarker) {
     guard let mapView = mapView else { return }
-    let position = coordinate(from: markerToAdd.position)
+    let position = markerToAdd.position.toCLCoordinate()
     let markerIdentifier = markerToAdd.markerId
     let clusterManagerIdentifier = markerToAdd.clusterManagerId
 
@@ -228,7 +229,7 @@ class MarkersController: NSObject {
     guard markerIdentifierToController[identifier] != nil else { return }
     eventDelegate?.didStartDragForMarker(
       withIdentifier: identifier,
-      atPosition: pigeonLatLng(from: location)
+      atPosition: FGMPlatformLatLng.make(from: location)
     )
   }
 
@@ -236,7 +237,7 @@ class MarkersController: NSObject {
     guard markerIdentifierToController[identifier] != nil else { return }
     eventDelegate?.didDragMarker(
       withIdentifier: identifier,
-      atPosition: pigeonLatLng(from: location)
+      atPosition: FGMPlatformLatLng.make(from: location)
     )
   }
 
@@ -244,7 +245,7 @@ class MarkersController: NSObject {
     guard markerIdentifierToController[identifier] != nil else { return }
     eventDelegate?.didEndDragForMarker(
       withIdentifier: identifier,
-      atPosition: pigeonLatLng(from: location)
+      atPosition: FGMPlatformLatLng.make(from: location)
     )
   }
 

@@ -26,29 +26,31 @@ func makeIcon(
   var image: UIImage?
 
   if let bitmapDefaultMarker = bitmap as? FGMPlatformBitmapDefaultMarker {
-    let hue = bitmapDefaultMarker.hue.doubleValue
-    image = GMSMarker.markerImage(with: UIColor(hue: CGFloat(hue) / 360.0,
-                                               saturation: 1.0,
-                                               brightness: 0.7,
-                                               alpha: 1.0))
+    let hue = bitmapDefaultMarker.hue?.doubleValue ?? 0
+    image = GMSMarker.markerImage(
+      with: UIColor(
+        hue: CGFloat(hue) / 360.0,
+        saturation: 1.0,
+        brightness: 0.7,
+        alpha: 1.0))
   } else if let bitmapAsset = bitmap as? FGMPlatformBitmapAsset {
     // Deprecated: This message handling for 'fromAsset' has been replaced by 'asset'.
     // Refer to the flutter google_maps_flutter_platform_interface package for details.
     if let pkg = bitmapAsset.pkg {
       if let key = assetProvider.lookupKey(forAsset: bitmapAsset.name, fromPackage: pkg) {
-        image = assetProvider.image(named: key)
+        image = assetProvider.imageNamed(key)
       }
     } else {
       if let key = assetProvider.lookupKey(forAsset: bitmapAsset.name) {
-        image = assetProvider.image(named: key)
+        image = assetProvider.imageNamed(key)
       }
     }
   } else if let bitmapAssetImage = bitmap as? FGMPlatformBitmapAssetImage {
     // Deprecated: This message handling for 'fromAssetImage' has been replaced by 'asset'.
     // Refer to the flutter google_maps_flutter_platform_interface package for details.
     if let key = assetProvider.lookupKey(forAsset: bitmapAssetImage.name) {
-      if let assetImage = assetProvider.image(named: key) {
-        image = scaledImage(assetImage, scale: bitmapAssetImage.scale.doubleValue)
+      if let assetImage = assetProvider.imageNamed(key) {
+        image = scaledImage(assetImage, scale: bitmapAssetImage.scale)
       }
     }
   } else if let bitmapBytes = bitmap as? FGMPlatformBitmapBytes {
@@ -57,7 +59,7 @@ func makeIcon(
     image = UIImage(data: bitmapBytes.byteData.data, scale: screenScale)
   } else if let bitmapAssetMap = bitmap as? FGMPlatformBitmapAssetMap {
     if let key = assetProvider.lookupKey(forAsset: bitmapAssetMap.assetName) {
-      image = assetProvider.image(named: key)
+      image = assetProvider.imageNamed(key)
     }
     if let currentImage = image, bitmapAssetMap.bitmapScaling == .auto {
       let width = bitmapAssetMap.width
@@ -66,7 +68,7 @@ func makeIcon(
         let tempImage = scaledImage(currentImage, scale: screenScale)
         image = scaledImage(tempImage, width: width, height: height, screenScale: screenScale)
       } else {
-        image = scaledImage(currentImage, scale: CGFloat(bitmapAssetMap.imagePixelRatio.doubleValue))
+        image = scaledImage(currentImage, scale: CGFloat(bitmapAssetMap.imagePixelRatio))
       }
     }
   } else if let bitmapBytesMap = bitmap as? FGMPlatformBitmapBytesMap {
@@ -77,40 +79,46 @@ func makeIcon(
         let width = bitmapBytesMap.width
         let height = bitmapBytesMap.height
         if width != nil || height != nil {
+          // Before scaling the image, image must be in screenScale.
           let tempImage = scaledImage(currentImage, scale: screenScale)
           image = scaledImage(tempImage, width: width, height: height, screenScale: screenScale)
         } else {
-          image = scaledImage(currentImage, scale: CGFloat(bitmapBytesMap.imagePixelRatio.doubleValue))
+          image = scaledImage(currentImage, scale: CGFloat(bitmapBytesMap.imagePixelRatio))
         }
+      } else {
+        // No scaling, load image from bytes without scale parameter.
+        image = UIImage(data: bytes.data)
       }
     }
   } else if let pinConfig = bitmap as? FGMPlatformBitmapPinConfig {
     let options = GMSPinImageOptions()
     if let backgroundColor = pinConfig.backgroundColor {
-      options.backgroundColor = color(from: backgroundColor)
+      options.backgroundColor = backgroundColor.toUIColor()
     }
     if let borderColor = pinConfig.borderColor {
-      options.borderColor = color(from: borderColor)
+      options.borderColor = borderColor.toUIColor()
     }
 
     var glyph: GMSPinImageGlyph?
     if let glyphText = pinConfig.glyphText {
       let glyphTextColor: UIColor
       if let textColor = pinConfig.glyphTextColor {
-        glyphTextColor = color(from: textColor)
+        glyphTextColor = textColor.toUIColor()
       } else {
         glyphTextColor = .black
       }
       glyph = GMSPinImageGlyph(text: glyphText, textColor: glyphTextColor)
     } else if let glyphColorValue = pinConfig.glyphColor {
-      glyph = GMSPinImageGlyph(glyphColor: color(from: glyphColorValue))
+      glyph = GMSPinImageGlyph(glyphColor: glyphColorValue.toUIColor())
     } else if let glyphBitmap = pinConfig.glyphBitmap {
-      if let glyphImage = icon(from: glyphBitmap, assetProvider: assetProvider, screenScale: screenScale) {
+      if let glyphImage = makeIcon(
+        from: glyphBitmap, assetProvider: assetProvider, screenScale: screenScale)
+      {
         glyph = GMSPinImageGlyph(image: glyphImage)
       }
     }
     options.glyph = glyph
-    image = GMSPinImage.pinImage(with: options)
+    image = GMSPinImage(options: options)
   }
 
   return image
@@ -134,6 +142,11 @@ private func scaledImage(_ image: UIImage, scale: Double) -> UIImage {
   return image
 }
 
+/// Creates a scaled version of the provided UIImage based on a specified scale factor.
+///
+/// If the scale factor differs from the image's current scale by more than a small epsilon-delta
+/// (to account for minor floating-point inaccuracies), a new UIImage object is created with the
+/// specified scale. Otherwise, the original image is returned.
 private func scaledImage(_ image: UIImage, scale: CGFloat) -> UIImage {
   if abs(scale - image.scale) > .ulpOfOne {
     if let cgImage = image.cgImage {
@@ -147,24 +160,38 @@ private func scaledImage(_ image: UIImage, scale: CGFloat) -> UIImage {
   return image
 }
 
-private func scaledImage(_ image: UIImage, size: CGSize) -> UIImage {
+/// Scales an input UIImage to a specified size.
+///
+/// If the aspect ratio of the input image closely matches the target size, indicated by a
+/// small epsilon-delta, the image's scale property is updated instead of resizing the image. If
+/// the aspect ratios differ beyond this threshold, the method redraws the image at the target
+/// size.
+private func scaledImage(_ image: UIImage, to size: CGSize) -> UIImage {
   let originalPixelWidth = image.size.width * image.scale
   let originalPixelHeight = image.size.height * image.scale
 
+  // Return original image if either original image size or target size is so small that
+  // image cannot be resized or displayed.
   if originalPixelWidth <= 0 || originalPixelHeight <= 0 || size.width <= 0 || size.height <= 0 {
     return image
   }
 
-  if abs(originalPixelWidth - size.width) <= .ulpOfOne &&
-     abs(originalPixelHeight - size.height) <= .ulpOfOne {
+  // Check if the image's size, accounting for scale, matches the target size.
+  if abs(originalPixelWidth - size.width) <= .ulpOfOne
+    && abs(originalPixelHeight - size.height) <= .ulpOfOne
+  {
     return image
   }
 
+  // Check if the aspect ratios are approximately equal.
   let originalPixelSize = CGSize(width: originalPixelWidth, height: originalPixelHeight)
-  if isScalableWithScaleFactor(from: originalPixelSize, targetSize: size) {
+  if isScalableWithScaleFactor(from: originalPixelSize, to: size) {
+    // Scaled image has close to same aspect ratio,
+    // updating image scale instead of resizing image.
     let factor = originalPixelWidth / size.width
     return scaledImage(image, scale: image.scale * factor)
   } else {
+    // Aspect ratios differ significantly, resize the image.
     let format = UIGraphicsImageRendererFormat.default()
     format.scale = 1.0
     format.opaque = false
@@ -176,6 +203,8 @@ private func scaledImage(_ image: UIImage, size: CGSize) -> UIImage {
   }
 }
 
+/// Scales an input UIImage to a specified width and height, preserving aspect ratio if both
+/// widht and height are not given.
 private func scaledImage(
   _ image: UIImage,
   width: NSNumber?,
@@ -193,9 +222,11 @@ private func scaledImage(
   var calculatedHeight = targetHeight
 
   if width != nil && height == nil {
+    // Calculate height based on aspect ratio if only width is provided.
     let aspectRatio = image.size.height / image.size.width
     calculatedHeight = (targetWidth * aspectRatio).rounded()
   } else if width == nil && height != nil {
+    // Calculate width based on aspect ratio if only height is provided.
     let aspectRatio = image.size.width / image.size.height
     calculatedWidth = (targetHeight * aspectRatio).rounded()
   }
@@ -204,19 +235,26 @@ private func scaledImage(
     width: (calculatedWidth * screenScale).rounded(),
     height: (calculatedHeight * screenScale).rounded()
   )
-  return scaledImage(image, size: targetSize)
+  return scaledImage(image, to: targetSize)
 }
 
-func isScalableWithScaleFactor(from originalSize: CGSize, targetSize: CGSize) -> Bool {
-  let scaleFactor = (originalSize.width > originalSize.height)
+func isScalableWithScaleFactor(from originalSize: CGSize, to targetSize: CGSize) -> Bool {
+  // Select the scaling factor based on the longer side to have good precision.
+  let scaleFactor =
+    (originalSize.width > originalSize.height)
     ? (targetSize.width / originalSize.width)
     : (targetSize.height / originalSize.height)
 
+  // Calculate the scaled dimensions.
   let scaledWidth = originalSize.width * scaleFactor
   let scaledHeight = originalSize.height * scaleFactor
 
+  // Check if the scaled dimensions are within a one-pixel
+  // threshold of the target dimensions.
   let widthWithinThreshold = abs(scaledWidth - targetSize.width) <= 1.0
   let heightWithinThreshold = abs(scaledHeight - targetSize.height) <= 1.0
 
+  // The image is considered scalable with scale factor
+  // if both dimensions are within the threshold.
   return widthWithinThreshold && heightWithinThreshold
 }

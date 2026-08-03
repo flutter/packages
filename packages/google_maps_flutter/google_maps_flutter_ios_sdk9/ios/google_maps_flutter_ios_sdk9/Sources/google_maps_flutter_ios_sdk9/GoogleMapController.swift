@@ -146,7 +146,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     creationParameters: FGMPlatformMapViewCreationParams,
     registrar: FlutterPluginRegistrar
   ) {
-    let camera = gmsCameraPosition(from: creationParameters.initialCameraPosition)
+    let camera = creationParameters.initialCameraPosition.toGMSCameraPosition()
 
     let options = GMSMapViewOptions()
     options.frame = frame
@@ -360,7 +360,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
 
   public func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
     if trackCameraPosition {
-      mapEventHandler.didMoveCamera(to: pigeonCameraPosition(from: position))
+      mapEventHandler.didMoveCamera(to: FGMPlatformCameraPosition.make(from: position))
     }
   }
 
@@ -421,11 +421,11 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   }
 
   public func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
-    mapEventHandler.didTap(atPosition: pigeonLatLng(from: coordinate))
+    mapEventHandler.didTap(atPosition: FGMPlatformLatLng.make(from: coordinate))
   }
 
   public func mapView(_ mapView: GMSMapView, didLongPressAt coordinate: CLLocationCoordinate2D) {
-    mapEventHandler.didLongPress(atPosition: pigeonLatLng(from: coordinate))
+    mapEventHandler.didLongPress(atPosition: FGMPlatformLatLng.make(from: coordinate))
   }
 
   func interpretMapConfiguration(_ config: FGMPlatformMapConfiguration) {
@@ -451,7 +451,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   ) -> (Bool, String?) {
     if let cameraTargetBounds = config.cameraTargetBounds {
       if let bounds = cameraTargetBounds.bounds {
-        mapView.cameraTargetBounds = coordinateBounds(from: bounds)
+        mapView.cameraTargetBounds = bounds.toGMSBounds()
       } else {
         mapView.cameraTargetBounds = nil
       }
@@ -650,9 +650,9 @@ class MapCallHandler: NSObject, FGMMapsApi {
       )
       return nil
     }
-    let point = point(from: screenCoordinate)
+    let point = screenCoordinate.toCGPoint()
     let latlng = mapView.projection.coordinate(for: point)
-    return pigeonLatLng(from: latlng)
+    return FGMPlatformLatLng.make(from: latlng)
   }
 
   func screenCoordinates(
@@ -666,9 +666,9 @@ class MapCallHandler: NSObject, FGMMapsApi {
       )
       return nil
     }
-    let location = coordinate(from: latLng)
+    let location = latLng.toCLCoordinate()
     let point = mapView.projection.point(for: location)
-    return pigeonPoint(from: point)
+    return FGMPlatformPoint.make(from: point)
   }
 
   func visibleMapRegion(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
@@ -684,14 +684,14 @@ class MapCallHandler: NSObject, FGMMapsApi {
     }
     let visibleRegion = mapView.projection.visibleRegion()
     let bounds = GMSCoordinateBounds(region: visibleRegion)
-    return pigeonLatLngBounds(from: bounds)
+    return FGMPlatformLatLngBounds.make(from: bounds)
   }
 
   func moveCamera(
     with cameraUpdate: FGMPlatformCameraUpdate,
     error: AutoreleasingUnsafeMutablePointer<FlutterError?>
   ) {
-    guard let update = gmsCameraUpdate(from: cameraUpdate) else {
+    guard let update = FGMPlatformCameraUpdate.make(from: cameraUpdate) else {
       error.pointee = FlutterError(
         code: "Invalid update",
         message: "Unrecognized camera update",
@@ -706,7 +706,7 @@ class MapCallHandler: NSObject, FGMMapsApi {
     with cameraUpdate: FGMPlatformCameraUpdate, duration durationMilliseconds: NSNumber?,
     error: AutoreleasingUnsafeMutablePointer<FlutterError?>
   ) {
-    guard let update = gmsCameraUpdate(from: cameraUpdate) else {
+    guard let update = FGMPlatformCameraUpdate.make(from: cameraUpdate) else {
       error.pointee = FlutterError(
         code: "Invalid update",
         message: "Unrecognized camera update",
@@ -934,6 +934,6 @@ class MapInspector: NSObject, FGMMapsInspectorApi {
     guard let mapView = controller?.mapView else {
       return nil
     }
-    return pigeonCameraPosition(from: mapView.camera)
+    return FGMPlatformCameraPosition.make(from: mapView.camera)
   }
 }

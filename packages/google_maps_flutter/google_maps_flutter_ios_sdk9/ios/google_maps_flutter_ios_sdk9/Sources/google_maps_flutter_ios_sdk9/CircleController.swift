@@ -42,11 +42,11 @@ class CircleController: NSObject {
   ) {
     circle.isTappable = platformCircle.consumeTapEvents
     circle.zIndex = Int32(platformCircle.zIndex)
-    circle.position = coordinate(from: platformCircle.center)
+    circle.position = platformCircle.center.toCLCoordinate()
     circle.radius = platformCircle.radius
-    circle.strokeColor = color(from: platformCircle.strokeColor)
+    circle.strokeColor = platformCircle.strokeColor.toUIColor()
     circle.strokeWidth = CGFloat(platformCircle.strokeWidth)
-    circle.fillColor = color(from: platformCircle.fillColor)
+    circle.fillColor = platformCircle.fillColor.toUIColor()
 
     // This must be done last, to avoid visual flickers of default property values.
     circle.map = platformCircle.visible ? mapView : nil
