@@ -4,8 +4,11 @@
 * Adds `XDirectory` to access file containers.
 * Adds file implementation for scoped storage APIs that use ephemeral URLS. See `ScopedStorageXFile`
   and `ScopedStorageXDirector`.
-* **Breaking Change** Removes `XFile.saveTo` because not all platform implementations support this
-  feature. gSee `README` for accessing platform-specific features.
+* **Breaking Change** Replaces `XFile(String path)` with `XFile.fromPath(String path)`.
+* **Breaking Change** Removes `XFile.fromDatag`.
+* **Breaking Change** Removes `XFile.saveTo`.
+* **Breaking Change** Removes `mimeType` and `path`.
+* **Breaking Change** Changes `XFile.name` to return `Future<String>` rather than `String`.
 
 ## 0.3.5+4
 
