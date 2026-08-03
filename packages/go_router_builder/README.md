@@ -48,9 +48,40 @@ Read more about using
 
 Sibling routes can end up matching the same URL pattern, either because their
 paths are identical or because they differ only in the name of a path parameter,
-such as `meal/:id` and `meal/:mealId`. `go_router` matches the first route that
-fits, so the later route is unreachable. The builder reports these as warnings
-by default.
+such as `meal/:id` and `meal/:mealId`. The builder reports these as warnings by
+default.
+
+Warnings rather than errors, because a duplicate path is legal at runtime and is
+not always dead code. `go_router` tries sibling routes in declaration order and
+takes the first one that matches the whole URL. So when two different route
+classes share a path, only the first is reachable at that URL, and navigating to
+the second class's `location` lands on the first class's page instead. That is
+almost always a mistake.
+
+Matching backtracks, though: when a route matches only a prefix and none of its
+children complete the URL, matching moves on to the next sibling. Declaring one
+route class twice with different children is therefore sound, and is one way to
+group children by feature area rather than listing them all in one place:
+
+```dart
+@TypedGoRoute<HomeRoute>(
+  path: '/home',
+  routes: <TypedGoRoute<GoRouteData>>[
+    // Both declarations name the same class, so `/home/details` is
+    // unambiguous and both children stay reachable.
+    TypedGoRoute<DetailsRoute>(path: 'details', routes: <TypedGoRoute<GoRouteData>>[
+      TypedGoRoute<InvoicesRoute>(path: 'invoices'),
+    ]),
+    TypedGoRoute<DetailsRoute>(path: 'details', routes: <TypedGoRoute<GoRouteData>>[
+      TypedGoRoute<ShipmentsRoute>(path: 'shipments'),
+    ]),
+  ],
+)
+```
+
+The builder reports that too, since it cannot tell a deliberate grouping from an
+accidental duplicate. Set the option to `ignore` if you want the pattern without
+the warning.
 
 Shell routes and `StatefulShellRoute` branches do not own a path of their own,
 so the routes inside them compete with the routes around them. Routes declared
