@@ -124,13 +124,13 @@ class TableView extends StatefulWidget {
       'This feature was deprecated after v3.41.0-0.0.pre.',
     )
     this.cacheExtent,
-    required TableCellDelegateMixin this.delegate,
+    required this.delegate,
     this.diagonalDragBehavior = DiagonalDragBehavior.none,
     this.dragStartBehavior = DragStartBehavior.start,
     this.keyboardDismissBehavior,
     this.clipBehavior = Clip.hardEdge,
     this.alignment = Alignment.topLeft,
-  }) : _buildDelegateParameters = null;
+  }) : _isInternalDelegate = false;
 
   /// Creates a [TableView] of widgets that are created on demand.
   ///
@@ -185,8 +185,7 @@ class TableView extends StatefulWidget {
        assert(pinnedColumnCount >= 0),
        assert(trailingPinnedColumnCount >= 0),
        assert(columnCount == null || columnCount >= pinnedColumnCount + trailingPinnedColumnCount),
-       delegate = null,
-       _buildDelegateParameters = _TableCellBuilderDelegateParameters(
+       delegate = TableCellBuilderDelegate(
          columnCount: columnCount,
          rowCount: rowCount,
          pinnedColumnCount: pinnedColumnCount,
@@ -196,7 +195,8 @@ class TableView extends StatefulWidget {
          cellBuilder: cellBuilder,
          columnBuilder: columnBuilder,
          rowBuilder: rowBuilder,
-       );
+       ),
+       _isInternalDelegate = true;
 
   /// Creates a [TableView] from an explicit two dimensional array of children.
   ///
@@ -235,9 +235,7 @@ class TableView extends StatefulWidget {
        assert(pinnedColumnCount >= 0),
        assert(trailingPinnedRowCount >= 0),
        assert(trailingPinnedColumnCount >= 0),
-       delegate = null,
-
-       _buildDelegateParameters = _TableCellListDelegateParameters(
+       delegate = TableCellListDelegate(
          pinnedColumnCount: pinnedColumnCount,
          pinnedRowCount: pinnedRowCount,
          trailingPinnedColumnCount: trailingPinnedColumnCount,
@@ -245,7 +243,8 @@ class TableView extends StatefulWidget {
          cells: cells,
          columnBuilder: columnBuilder,
          rowBuilder: rowBuilder,
-       );
+       ),
+       _isInternalDelegate = true;
 
   /// {@macro flutter.widgets.scroll_view.primary}
   final bool? primary;
@@ -283,9 +282,11 @@ class TableView extends StatefulWidget {
   /// Defaults to [Alignment.topLeft].
 
   /// A delegate that provides the children for the [TwoDimensionalScrollView].
-  final TableCellDelegateMixin? delegate;
+  final TableCellDelegateMixin delegate;
 
-  final _TableCellDelegateParameters? _buildDelegateParameters;
+  /// Whether the [delegate] was provided by the user or created internally by
+  /// the [TableView].
+  final bool _isInternalDelegate;
 
   /// Whether scrolling gestures should lock to one axes, allow free movement
   /// in both axes, or be evaluated on a weighted scale.
@@ -318,79 +319,18 @@ class TableView extends StatefulWidget {
 }
 
 class _TableViewState extends State<TableView> {
-  late TableCellDelegateMixin _delegate;
-
-  TableCellDelegateMixin _buildDelegate() {
-    if (widget.delegate != null) {
-      return widget.delegate!;
-    }
-    return switch (widget._buildDelegateParameters) {
-      _TableCellBuilderDelegateParameters(
-        :final int? columnCount,
-        :final int? rowCount,
-        :final int pinnedColumnCount,
-        :final int pinnedRowCount,
-        :final int trailingPinnedColumnCount,
-        :final int trailingPinnedRowCount,
-        :final TableViewCellBuilder cellBuilder,
-        :final TableSpanBuilder columnBuilder,
-        :final TableSpanBuilder rowBuilder,
-      ) =>
-        TableCellBuilderDelegate(
-          columnCount: columnCount,
-          rowCount: rowCount,
-          pinnedColumnCount: pinnedColumnCount,
-          pinnedRowCount: pinnedRowCount,
-          trailingPinnedColumnCount: trailingPinnedColumnCount,
-          trailingPinnedRowCount: trailingPinnedRowCount,
-          cellBuilder: cellBuilder,
-          columnBuilder: columnBuilder,
-          rowBuilder: rowBuilder,
-        ),
-      _TableCellListDelegateParameters(
-        :final int pinnedColumnCount,
-        :final int pinnedRowCount,
-        :final int trailingPinnedColumnCount,
-        :final int trailingPinnedRowCount,
-        :final List<List<TableViewCell>> cells,
-        :final TableSpanBuilder columnBuilder,
-        :final TableSpanBuilder rowBuilder,
-      ) =>
-        TableCellListDelegate(
-          pinnedColumnCount: pinnedColumnCount,
-          pinnedRowCount: pinnedRowCount,
-          trailingPinnedColumnCount: trailingPinnedColumnCount,
-          trailingPinnedRowCount: trailingPinnedRowCount,
-          cells: cells,
-          columnBuilder: columnBuilder,
-          rowBuilder: rowBuilder,
-        ),
-      null => throw ArgumentError('Either a delegate or delegate parameters must be provided.'),
-    };
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _delegate = _buildDelegate();
-  }
-
   @override
   void didUpdateWidget(TableView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.delegate != oldWidget.delegate ||
-        widget._buildDelegateParameters != oldWidget._buildDelegateParameters) {
-      if (oldWidget.delegate == null) {
-        _delegate.dispose();
-      }
-      _delegate = _buildDelegate();
+    if (oldWidget._isInternalDelegate) {
+      oldWidget.delegate.dispose();
     }
   }
 
   @override
   void dispose() {
-    if (widget.delegate == null) {
-      _delegate.dispose();
+    if (widget._isInternalDelegate) {
+      widget.delegate.dispose();
     }
     super.dispose();
   }
@@ -407,117 +347,8 @@ class _TableViewState extends State<TableView> {
       dragStartBehavior: widget.dragStartBehavior,
       keyboardDismissBehavior: widget.keyboardDismissBehavior,
       clipBehavior: widget.clipBehavior,
-      delegate: _delegate,
+      delegate: widget.delegate,
       alignment: widget.alignment,
-    );
-  }
-}
-
-@immutable
-sealed class _TableCellDelegateParameters {
-  const _TableCellDelegateParameters();
-}
-
-class _TableCellBuilderDelegateParameters extends _TableCellDelegateParameters {
-  const _TableCellBuilderDelegateParameters({
-    required this.columnCount,
-    required this.rowCount,
-    required this.pinnedColumnCount,
-    required this.pinnedRowCount,
-    required this.trailingPinnedColumnCount,
-    required this.trailingPinnedRowCount,
-    required this.cellBuilder,
-    required this.columnBuilder,
-    required this.rowBuilder,
-  });
-
-  final int? columnCount;
-  final int? rowCount;
-  final int pinnedColumnCount;
-  final int pinnedRowCount;
-  final int trailingPinnedColumnCount;
-  final int trailingPinnedRowCount;
-  final TableViewCellBuilder cellBuilder;
-  final TableSpanBuilder columnBuilder;
-  final TableSpanBuilder rowBuilder;
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    return other is _TableCellBuilderDelegateParameters &&
-        other.columnCount == columnCount &&
-        other.rowCount == rowCount &&
-        other.pinnedColumnCount == pinnedColumnCount &&
-        other.pinnedRowCount == pinnedRowCount &&
-        other.trailingPinnedColumnCount == trailingPinnedColumnCount &&
-        other.trailingPinnedRowCount == trailingPinnedRowCount &&
-        other.cellBuilder == cellBuilder &&
-        other.columnBuilder == columnBuilder &&
-        other.rowBuilder == rowBuilder;
-  }
-
-  @override
-  int get hashCode {
-    return Object.hash(
-      columnCount,
-      rowCount,
-      pinnedColumnCount,
-      pinnedRowCount,
-      trailingPinnedColumnCount,
-      trailingPinnedRowCount,
-      cellBuilder,
-      columnBuilder,
-      rowBuilder,
-    );
-  }
-}
-
-class _TableCellListDelegateParameters extends _TableCellDelegateParameters {
-  const _TableCellListDelegateParameters({
-    required this.pinnedColumnCount,
-    required this.pinnedRowCount,
-    required this.trailingPinnedColumnCount,
-    required this.trailingPinnedRowCount,
-    required this.cells,
-    required this.columnBuilder,
-    required this.rowBuilder,
-  });
-
-  final int pinnedRowCount;
-  final int pinnedColumnCount;
-  final int trailingPinnedRowCount;
-  final int trailingPinnedColumnCount;
-  final TableSpanBuilder columnBuilder;
-  final TableSpanBuilder rowBuilder;
-  final List<List<TableViewCell>> cells;
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    return other is _TableCellListDelegateParameters &&
-        other.pinnedColumnCount == pinnedColumnCount &&
-        other.pinnedRowCount == pinnedRowCount &&
-        other.trailingPinnedColumnCount == trailingPinnedColumnCount &&
-        other.trailingPinnedRowCount == trailingPinnedRowCount &&
-        listEquals(other.cells, cells) &&
-        other.columnBuilder == columnBuilder &&
-        other.rowBuilder == rowBuilder;
-  }
-
-  @override
-  int get hashCode {
-    return Object.hash(
-      pinnedColumnCount,
-      pinnedRowCount,
-      trailingPinnedColumnCount,
-      trailingPinnedRowCount,
-      Object.hashAll(cells),
-      columnBuilder,
-      rowBuilder,
     );
   }
 }
