@@ -15,9 +15,18 @@ enum DuplicatePathSeverity {
 
   /// Duplicate paths are reported as build warnings.
   ///
-  /// Code is still generated for every route. This is the default, because
-  /// duplicate paths are legal at runtime: `go_router` matches the first route
-  /// that fits, so the later route is unreachable rather than invalid.
+  /// Code is still generated for every route. This is the default, because a
+  /// duplicate path is legal at runtime and is not always dead code.
+  ///
+  /// `go_router` tries sibling routes in declaration order and takes the first
+  /// one that matches the whole URL. So when two different route classes share
+  /// a path, navigating to the second class's location lands on the first
+  /// class's page, which is almost always a mistake. But matching backtracks:
+  /// when a route matches only a prefix and none of its children complete the
+  /// URL, matching moves on to the next sibling. Declaring one route class
+  /// twice with different children is therefore sound, and is one way to group
+  /// children by feature area. Both shapes are reported, since the builder
+  /// cannot tell a deliberate grouping from an accidental duplicate.
   warning,
 
   /// Duplicate paths fail the build.
