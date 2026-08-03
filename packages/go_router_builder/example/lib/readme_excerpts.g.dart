@@ -23,9 +23,14 @@ List<RouteBase> get $appRoutes => [
 
 RouteBase get $homeRoute => GoRouteData.$route(
   path: '/',
+  hasOverriddenOnExit: false,
   factory: $HomeRoute._fromState,
   routes: [
-    GoRouteData.$route(path: 'family/:fid', factory: $FamilyRoute._fromState),
+    GoRouteData.$route(
+      path: 'family/:fid',
+      hasOverriddenOnExit: false,
+      factory: $FamilyRoute._fromState,
+    ),
   ],
 );
 
@@ -73,8 +78,11 @@ mixin $FamilyRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $loginRoute =>
-    GoRouteData.$route(path: '/login', factory: $LoginRoute._fromState);
+RouteBase get $loginRoute => GoRouteData.$route(
+  path: '/login',
+  hasOverriddenOnExit: false,
+  factory: $LoginRoute._fromState,
+);
 
 mixin $LoginRoute on GoRouteData {
   static LoginRoute _fromState(GoRouterState state) =>
@@ -102,8 +110,11 @@ mixin $LoginRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $myRoute =>
-    GoRouteData.$route(path: '/my-route', factory: $MyRoute._fromState);
+RouteBase get $myRoute => GoRouteData.$route(
+  path: '/my-route',
+  hasOverriddenOnExit: false,
+  factory: $MyRoute._fromState,
+);
 
 mixin $MyRoute on GoRouteData {
   static MyRoute _fromState(GoRouterState state) => MyRoute(
@@ -138,6 +149,7 @@ mixin $MyRoute on GoRouteData {
 
 RouteBase get $personRouteWithExtra => GoRouteData.$route(
   path: '/person',
+  hasOverriddenOnExit: false,
   factory: $PersonRouteWithExtra._fromState,
 );
 
@@ -168,6 +180,7 @@ mixin $PersonRouteWithExtra on GoRouteData {
 
 RouteBase get $hotdogRouteWithEverything => GoRouteData.$route(
   path: '/:ketchup',
+  hasOverriddenOnExit: false,
   factory: $HotdogRouteWithEverything._fromState,
 );
 
@@ -214,8 +227,11 @@ bool _$boolConverter(String value) {
   }
 }
 
-RouteBase get $booksRoute =>
-    GoRouteData.$route(path: '/books', factory: $BooksRoute._fromState);
+RouteBase get $booksRoute => GoRouteData.$route(
+  path: '/books',
+  hasOverriddenOnExit: false,
+  factory: $BooksRoute._fromState,
+);
 
 mixin $BooksRoute on GoRouteData {
   static BooksRoute _fromState(GoRouterState state) => BooksRoute(
@@ -274,6 +290,7 @@ extension<T extends Enum> on Map<T, String> {
 
 RouteBase get $myMaterialRouteWithKey => GoRouteData.$route(
   path: '/my-material-route-with-key',
+  hasOverriddenOnExit: false,
   factory: $MyMaterialRouteWithKey._fromState,
 );
 
@@ -298,8 +315,11 @@ mixin $MyMaterialRouteWithKey on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $fancyRoute =>
-    GoRouteData.$route(path: '/fancy', factory: $FancyRoute._fromState);
+RouteBase get $fancyRoute => GoRouteData.$route(
+  path: '/fancy',
+  hasOverriddenOnExit: false,
+  factory: $FancyRoute._fromState,
+);
 
 mixin $FancyRoute on GoRouteData {
   static FancyRoute _fromState(GoRouterState state) => const FancyRoute();
@@ -327,6 +347,7 @@ RouteBase get $myShellRouteData => ShellRouteData.$route(
   routes: [
     GoRouteData.$route(
       path: 'my-go-route',
+      hasOverriddenOnExit: false,
       parentNavigatorKey: MyGoRouteData.$parentNavigatorKey,
       factory: $MyGoRouteData._fromState,
     ),
@@ -360,6 +381,7 @@ mixin $MyGoRouteData on GoRouteData {
 
 RouteBase get $detailsRoute => RelativeGoRouteData.$route(
   path: 'details',
+  hasOverriddenOnExit: false,
   factory: $DetailsRoute._fromState,
 );
 

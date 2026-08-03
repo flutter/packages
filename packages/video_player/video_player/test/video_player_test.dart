@@ -72,6 +72,9 @@ class FakeController extends ValueNotifier<VideoPlayerValue> implements VideoPla
   Future<void> setLooping(bool looping) async {}
 
   @override
+  Future<void> setPreventsDisplaySleepDuringVideoPlayback(bool prevents) async {}
+
+  @override
   VideoFormat? get formatHint => null;
 
   @override
@@ -1667,7 +1670,8 @@ void main() {
           'volume: 0.5, '
           'playbackSpeed: 1.5, '
           'errorDescription: null, '
-          'isCompleted: false),',
+          'isCompleted: false, '
+          'preventsDisplaySleepDuringVideoPlayback: true),',
         );
       });
 
@@ -1752,6 +1756,22 @@ void main() {
 
         await controller.initialize();
         expect(controller.videoPlayerOptions!.mixWithOthers, true);
+      });
+
+      test('setPreventsDisplaySleepDuringVideoPlayback', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        expect(controller.value.preventsDisplaySleepDuringVideoPlayback, true);
+
+        await controller.setPreventsDisplaySleepDuringVideoPlayback(false);
+        expect(controller.value.preventsDisplaySleepDuringVideoPlayback, false);
+
+        expect(
+          fakeVideoPlayerPlatform.calls.contains('setPreventsDisplaySleepDuringVideoPlayback'),
+          true,
+        );
       });
 
       test('true allowBackgroundPlayback continues playback', () async {
@@ -1900,6 +1920,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   List<DataSource> dataSources = <DataSource>[];
   List<VideoViewType> viewTypes = <VideoViewType>[];
   final Map<int, StreamController<VideoEvent>> streams = <int, StreamController<VideoEvent>>{};
+  List<VideoPlayerOptions?> videoPlayerOptions = <VideoPlayerOptions?>[];
   bool forceInitError = false;
   int nextPlayerId = 0;
   final Map<int, Duration> _positions = <int, Duration>{};
@@ -1943,6 +1964,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
     }
     dataSources.add(options.dataSource);
     viewTypes.add(options.viewType);
+    videoPlayerOptions.add(options.videoPlayerOptions);
     return nextPlayerId++;
   }
 
@@ -2002,6 +2024,14 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) async {
     calls.add('setMixWithOthers');
+  }
+
+  @override
+  Future<void> setPreventsDisplaySleepDuringVideoPlayback(
+    int playerId,
+    bool preventsDisplaySleepDuringVideoPlayback,
+  ) async {
+    calls.add('setPreventsDisplaySleepDuringVideoPlayback');
   }
 
   @override

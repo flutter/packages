@@ -71,49 +71,49 @@ class DataTableThemeData with Diagnosticable {
        dataRowMinHeight = dataRowHeight ?? dataRowMinHeight,
        dataRowMaxHeight = dataRowHeight ?? dataRowMaxHeight;
 
-  /// {@macro flutter.material.dataTable.decoration}
+  /// {@macro material_ui.dataTable.decoration}
   final Decoration? decoration;
 
-  /// {@macro flutter.material.dataTable.dataRowColor}
-  /// {@macro flutter.material.DataTable.dataRowColor}
+  /// {@macro material_ui.dataTable.dataRowColor}
+  /// {@macro material_ui.DataTable.dataRowColor}
   final WidgetStateProperty<Color?>? dataRowColor;
 
-  /// {@macro flutter.material.dataTable.dataRowHeight}
+  /// {@macro material_ui.dataTable.dataRowHeight}
   @Deprecated(
     'Migrate to use dataRowMinHeight and dataRowMaxHeight instead. '
     'This feature was deprecated after v3.7.0-5.0.pre.',
   )
   double? get dataRowHeight => dataRowMinHeight == dataRowMaxHeight ? dataRowMinHeight : null;
 
-  /// {@macro flutter.material.dataTable.dataRowMinHeight}
+  /// {@macro material_ui.dataTable.dataRowMinHeight}
   final double? dataRowMinHeight;
 
-  /// {@macro flutter.material.dataTable.dataRowMaxHeight}
+  /// {@macro material_ui.dataTable.dataRowMaxHeight}
   final double? dataRowMaxHeight;
 
-  /// {@macro flutter.material.dataTable.dataTextStyle}
+  /// {@macro material_ui.dataTable.dataTextStyle}
   final TextStyle? dataTextStyle;
 
-  /// {@macro flutter.material.dataTable.headingRowColor}
-  /// {@macro flutter.material.DataTable.headingRowColor}
+  /// {@macro material_ui.dataTable.headingRowColor}
+  /// {@macro material_ui.DataTable.headingRowColor}
   final WidgetStateProperty<Color?>? headingRowColor;
 
-  /// {@macro flutter.material.dataTable.headingRowHeight}
+  /// {@macro material_ui.dataTable.headingRowHeight}
   final double? headingRowHeight;
 
-  /// {@macro flutter.material.dataTable.headingTextStyle}
+  /// {@macro material_ui.dataTable.headingTextStyle}
   final TextStyle? headingTextStyle;
 
-  /// {@macro flutter.material.dataTable.horizontalMargin}
+  /// {@macro material_ui.dataTable.horizontalMargin}
   final double? horizontalMargin;
 
-  /// {@macro flutter.material.dataTable.columnSpacing}
+  /// {@macro material_ui.dataTable.columnSpacing}
   final double? columnSpacing;
 
-  /// {@macro flutter.material.dataTable.dividerThickness}
+  /// {@macro material_ui.dataTable.dividerThickness}
   final double? dividerThickness;
 
-  /// {@macro flutter.material.dataTable.checkboxHorizontalMargin}
+  /// {@macro material_ui.dataTable.checkboxHorizontalMargin}
   final double? checkboxHorizontalMargin;
 
   /// If specified, overrides the default value of [DataColumn.mouseCursor].

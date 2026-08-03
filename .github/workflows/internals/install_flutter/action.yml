@@ -3,7 +3,7 @@ description: "Installs a pinned version of Flutter"
 runs:
   using: "composite"
   steps:
-    - name: "Install Flutter"
+    - name: "Clone Flutter"
       # This uses a pinned version of Flutter rather than `stable` so that it is
       # not subject to out-of-band failures when new releases happen. It does
       # not use the auto-rolled pin because there's no way for the autoroller
@@ -16,5 +16,9 @@ runs:
       run: |
         cd $HOME
         git clone https://github.com/flutter/flutter.git --depth 1 -b 3.44.0 _flutter
-        echo "$HOME/_flutter/bin" >> $GITHUB_PATH
         cd $GITHUB_WORKSPACE
+
+    # GITHUB_PATH write is safe here as it only appends a hardcoded, trusted path ($HOME/_flutter/bin) with no user-controlled input.
+    - name: "Add Flutter to Path"
+      shell: bash
+      run: echo "$HOME/_flutter/bin" >> $GITHUB_PATH # zizmor: ignore[github-env]
