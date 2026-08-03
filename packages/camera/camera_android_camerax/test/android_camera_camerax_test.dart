@@ -166,6 +166,13 @@ void main() {
           when(mockPreview.getResolutionInfo()).thenAnswer((_) async => testResolutionInfo);
           return mockPreview;
         };
+    PigeonOverrides.previewView_new = () {
+      final mockPreviewView = MockPreviewView();
+      when(mockPreviewView.registerPreviewView()).thenAnswer((_) async {});
+      when(mockPreviewView.setImplementationMode(any)).thenAnswer((_) async {});
+      when(mockPreviewView.getSurfaceProvider()).thenAnswer((_) async => MockSurfaceProvider());
+      return mockPreviewView;
+    };
     PigeonOverrides.imageCapture_new =
         ({
           int? targetRotation,
@@ -627,6 +634,10 @@ void main() {
       when(
         mockPreview.setSurfaceProvider(mockSurfaceProvider),
       ).thenAnswer((_) async => testSurfaceTextureId);
+      PigeonOverrides.previewView_new = () => mockPreviewView;
+      when(mockPreviewView.registerPreviewView()).thenAnswer((_) async {});
+      when(mockPreviewView.setImplementationMode(any)).thenAnswer((_) async {});
+      when(mockPreviewView.getSurfaceProvider()).thenAnswer((_) async => mockSurfaceProvider);
       when(
         mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector, <UseCase>[
           mockPreview,
@@ -5753,6 +5764,15 @@ void main() {
       verifyNoMoreInteractions(camera.camera);
     },
   );
+
+  test('setPreviewMode sets previewMode on AndroidCameraCameraX', () {
+    final camera = AndroidCameraCameraX();
+    expect(camera.previewMode, equals(ImplementationMode.performance));
+
+    camera.setPreviewMode(ImplementationMode.compatible);
+
+    expect(camera.previewMode, equals(ImplementationMode.compatible));
+  });
 }
 
 class TestMeteringPoint extends MeteringPoint {

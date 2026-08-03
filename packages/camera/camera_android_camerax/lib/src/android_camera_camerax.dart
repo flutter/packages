@@ -57,6 +57,20 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   Preview? preview;
 
+  /// The [ImplementationMode] of the [PreviewView].
+  ///
+  /// Defaults to [ImplementationMode.performance].
+  @visibleForTesting
+  ImplementationMode previewMode = ImplementationMode.performance;
+
+  /// Sets the implementation mode of the [PreviewView].
+  ///
+  /// Must be called before [createCameraWithSettings].
+  // ignore: use_setters_to_change_properties
+  void setPreviewMode(ImplementationMode mode) {
+    previewMode = mode;
+  }
+
   /// The [VideoCapture] instance that can be instantiated and configured to
   /// handle video recording
   @visibleForTesting
@@ -412,6 +426,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       _previewView = PreviewView();
       await _previewView!.registerPreviewView();
     }
+    await _previewView!.setImplementationMode(previewMode);
 
     final SurfaceProvider surfaceProvider = await _previewView!.getSurfaceProvider();
     await preview!.setSurfaceProvider(surfaceProvider);
@@ -576,7 +591,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     await imageCapture!.setTargetRotation(targetLockedRotation);
     await imageAnalysis!.setTargetRotation(targetLockedRotation);
     await videoCapture!.setTargetRotation(targetLockedRotation);
-    
+
     // Fall back to COMPATIBLE mode and set target rotation to visually lock the preview.
     if (preview != null) {
       await preview!.setTargetRotation(targetLockedRotation);
@@ -596,10 +611,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Flag that default rotation should be set for UseCases as needed.
     captureOrientationLocked = false;
     _lockedCaptureOrientation = null;
-    
-    // Restore preview to PERFORMANCE mode so it acts as a natively rotating viewfinder again.
+
+    // Restore preview to configured previewMode so it acts as a natively rotating viewfinder again.
     if (_previewView != null) {
-      await _previewView!.setImplementationMode(ImplementationMode.performance);
+      await _previewView!.setImplementationMode(previewMode);
       if (preview != null) {
         final SurfaceProvider surfaceProvider = await _previewView!.getSurfaceProvider();
         await preview!.setSurfaceProvider(surfaceProvider);
