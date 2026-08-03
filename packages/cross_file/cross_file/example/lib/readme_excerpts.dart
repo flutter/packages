@@ -34,15 +34,16 @@ Future<XFile> accessPlatformFeatures() async {
   // #docregion platform_features
   late final XFile file;
 
-  if (CrossFileWeb.isCurrentImplementation()) {
-    final params = WebScopedStorageXFileCreationParams.fromObjectUrl(
-      objectUrl: 'blob:https://some/url:for/file',
-    );
-    file = XFile.fromCreationParams(params);
-  } else if (CrossFileDarwin.isCurrentImplementation()) {
-    file = ScopedStorageXFile.fromUri(Uri.file('/my/file.txt'));
-  } else {
-    file = XFile.fromUri(Uri.file('/my/file.txt'));
+  switch (CrossFile.implementation) {
+    case CrossFileWeb():
+      final params = WebScopedStorageXFileCreationParams.fromObjectUrl(
+        objectUrl: 'blob:https://some/url:for/file',
+      );
+      file = XFile.fromCreationParams(params);
+    case CrossFileDarwin():
+      file = ScopedStorageXFile.fromUri(Uri.file('/my/file.txt'));
+    default:
+      file = XFile.fromUri(Uri.file('/my/file.txt'));
   }
 
   await file

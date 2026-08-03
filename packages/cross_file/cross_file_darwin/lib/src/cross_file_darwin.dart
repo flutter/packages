@@ -18,10 +18,6 @@ base class CrossFileDarwin extends CrossFileIO {
     ffi.DynamicLibrary.open('/System/Library/Frameworks/Photos.framework/Photos');
   }
 
-  /// Whether the current implementation of `cross_file` is [CrossFileDarwin].
-  static bool isCurrentImplementation() =>
-      CrossFilePlatform.instance.runtimeType == CrossFileDarwin;
-
   @override
   DarwinScopedStorageXFile createPlatformScopedStorageXFile(
     PlatformScopedStorageXFileCreationParams params,
