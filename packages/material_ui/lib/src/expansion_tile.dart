@@ -171,6 +171,7 @@ class ExpansionTile extends StatefulWidget {
     this.expansionAnimationStyle,
     this.internalAddSemanticForOnTap = false,
     this.statesController,
+    this.lazyLoadChildren = false,
   }) : assert(
          expandedCrossAxisAlignment != CrossAxisAlignment.baseline,
          'CrossAxisAlignment.baseline is not supported since the expanded children '
@@ -255,6 +256,13 @@ class ExpansionTile extends StatefulWidget {
   /// When false (default), the children are removed from the tree when the tile is
   /// collapsed and recreated upon expansion.
   final bool maintainState;
+
+  /// If [maintainState] is true, whether to delay building the children until
+  /// the tile is expanded for the first time.
+  ///
+  /// Defaults to false, meaning the children are built at the same time as the
+  /// header.
+  final bool lazyLoadChildren;
 
   /// Specifies padding for the [ListTile].
   ///
@@ -521,6 +529,15 @@ class ExpansionTile extends StatefulWidget {
 
   @override
   State<ExpansionTile> createState() => _ExpansionTileState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(FlagProperty('maintainState', value: maintainState, ifTrue: 'maintainState'));
+    properties.add(
+      FlagProperty('lazyLoadChildren', value: lazyLoadChildren, ifTrue: 'lazyLoadChildren'),
+    );
+  }
 }
 
 class _ExpansionTileState extends State<ExpansionTile> {
@@ -893,6 +910,7 @@ class _ExpansionTileState extends State<ExpansionTile> {
       duration: _duration,
       reverseCurve: _reverseCurve,
       maintainState: widget.maintainState,
+      lazyLoadChildren: widget.lazyLoadChildren,
       headerBuilder: _buildHeader,
       bodyBuilder: _buildBody,
       expansibleBuilder: _buildExpansible,

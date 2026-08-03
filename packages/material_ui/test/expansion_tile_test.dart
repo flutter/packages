@@ -279,6 +279,92 @@ void main() {
     expect(find.text('Discarding State'), findsNothing);
   });
 
+  testWidgets('ExpansionTile lazyLoadChildren defers child build until first expansion', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Material(
+          child: SingleChildScrollView(
+            child: ExpansionTile(
+              title: Text('Title'),
+              lazyLoadChildren: true,
+              maintainState: true,
+              children: <Widget>[Text('Lazy Child')],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Child is not in the tree at all before first expansion, even with
+    // maintainState: true.
+    expect(find.text('Lazy Child', skipOffstage: false), findsNothing);
+
+    await tester.tap(find.text('Title'));
+    await tester.pumpAndSettle();
+    expect(find.text('Lazy Child'), findsOneWidget);
+
+    // After collapsing, the child remains in the tree (offstage) because
+    // maintainState is true and the tile has been expanded once.
+    await tester.tap(find.text('Title'));
+    await tester.pumpAndSettle();
+    expect(find.text('Lazy Child'), findsNothing);
+    expect(find.text('Lazy Child', skipOffstage: false), findsOneWidget);
+  });
+
+  testWidgets('ExpansionTile lazyLoadChildren builds children when initiallyExpanded is true', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Material(
+          child: SingleChildScrollView(
+            child: ExpansionTile(
+              title: Text('Title'),
+              lazyLoadChildren: true,
+              initiallyExpanded: true,
+              children: <Widget>[Text('Lazy Child')],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Initially expanded, so the children are built right away.
+    expect(find.text('Lazy Child'), findsOneWidget);
+  });
+
+  testWidgets(
+    'ExpansionTile lazyLoadChildren with maintainState false still removes children when collapsed',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Material(
+            child: SingleChildScrollView(
+              child: ExpansionTile(
+                title: Text('Title'),
+                lazyLoadChildren: true,
+                maintainState: false,
+                children: <Widget>[Text('Lazy Child')],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Lazy Child', skipOffstage: false), findsNothing);
+
+      await tester.tap(find.text('Title'));
+      await tester.pumpAndSettle();
+      expect(find.text('Lazy Child'), findsOneWidget);
+
+      await tester.tap(find.text('Title'));
+      await tester.pumpAndSettle();
+      expect(find.text('Lazy Child', skipOffstage: false), findsNothing);
+    },
+  );
+
   testWidgets('ExpansionTile padding test', (WidgetTester tester) async {
     await tester.pumpWidget(
       const MaterialApp(
