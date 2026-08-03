@@ -116,5 +116,5 @@ void main() {
     await showMagnifier(tester, text.indexOf(textToTapOn));
 
     expect(find.byType(example.CustomMagnifier), findsOneWidget);
-  });
+  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 }
