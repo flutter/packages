@@ -27,6 +27,8 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  path: ^1.9.1
+  path_provider: ^2.1.6
 
 flutter:
   uses-material-design: true
