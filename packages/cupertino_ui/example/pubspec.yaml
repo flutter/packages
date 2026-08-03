@@ -7,8 +7,6 @@ version: 1.0.0
 environment:
   sdk: ^3.12.0
 
-resolution: workspace
-
 dependencies:
   flutter:
     sdk: flutter

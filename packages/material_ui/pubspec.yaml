@@ -8,9 +8,6 @@ environment:
   sdk: ^3.12.0
   flutter: ">=3.44.0"
 
-workspace:
-  - example
-
 dependencies:
   collection: ^1.19.1
   cupertino_ui: ^0.0.2
