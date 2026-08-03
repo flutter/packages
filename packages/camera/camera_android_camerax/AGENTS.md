@@ -23,4 +23,6 @@
 - Maintain high test coverage using [dart-add-unit-test](.agents/skills/dart-add-unit-test/SKILL.md)
   and [dart-collect-coverage](.agents/skills/dart-collect-coverage/SKILL.md).
 - Avoid duplicating constant strings; reuse existing ones from adjacent code.
+- **Testing Guidelines**: You MUST read and follow all rules in [TESTING.md](TESTING.md) BEFORE writing or modifying any tests. This is CRITICAL for preventing CI flakiness.
 - **CRITICAL**: When spawning subagents, NEVER provide absolute file paths in prompts. ALWAYS use relative paths. Passing absolute paths breaks `Workspace: branch` isolation and causes state bleed into the active workspace.
+- **Validation**: Never run `.ci/scripts/*` or `script/tool_runner.sh` globally to validate local changes. They are slow and modify the entire repository. Always use targeted skills (like `dart-run-static-analysis` or `pre-push-skill`) to run the repo tool scoped to this package.
