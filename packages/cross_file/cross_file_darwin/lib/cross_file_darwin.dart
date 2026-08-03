@@ -6,8 +6,7 @@ export 'package:cross_file_platform_interface/cross_file_platform_interface.dart
     show
         ListParams,
         PlatformScopedStorageXDirectoryCreationParams,
-        PlatformScopedStorageXFileCreationParams,
-        PlatformXEntity;
+        PlatformScopedStorageXFileCreationParams;
 
 export 'src/cross_file_darwin.dart';
 export 'src/darwin_scoped_storage_cross_directory.dart'

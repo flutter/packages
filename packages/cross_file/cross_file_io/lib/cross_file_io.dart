@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 export 'package:cross_file_platform_interface/cross_file_platform_interface.dart'
-    show ListParams, PlatformXDirectoryCreationParams, PlatformXEntity, PlatformXFileCreationParams;
+    show ListParams, PlatformXDirectoryCreationParams, PlatformXFileCreationParams;
 
 export 'src/cross_file_io.dart';
-export 'src/io_cross_directory.dart' show IOXDirectoryExtension;
-export 'src/io_cross_file.dart' show IOXFileExtension;
+export 'src/io_cross_directory.dart' show IOXDirectoryCreationParams, IOXDirectoryExtension;
+export 'src/io_cross_file.dart' show IOXFileCreationParams, IOXFileExtension;
