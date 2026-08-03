@@ -83,50 +83,12 @@ The builder reports that too, since it cannot tell a deliberate grouping from an
 accidental duplicate. Set the option to `ignore` if you want the pattern without
 the warning.
 
-Sometimes there is no other way to write it. Two teams may each need to extend
-`/cart` with their own children. They cannot share one `CartRoute` class,
-because a `@TypedGoRoute` annotation has to sit on the class it names, so
-`CartRoute` can be annotated only once, in the file that declares it. That
-leaves each team declaring its own route at the same path:
-
-```dart
-// team_a/cart_routes.dart
-@TypedGoRoute<CartRoute>(
-  path: '/cart',
-  routes: <TypedGoRoute<GoRouteData>>[TypedGoRoute<CartItemsRoute>(path: 'items')],
-)
-class CartRoute extends GoRouteData with $CartRoute {/* ... */}
-
-// team_b/checkout_routes.dart
-@TypedGoRoute<CartCheckoutRoute>(
-  path: '/cart',
-  routes: <TypedGoRoute<GoRouteData>>[TypedGoRoute<PaymentRoute>(path: 'payment')],
-)
-class CartCheckoutRoute extends GoRouteData with $CartCheckoutRoute {/* ... */}
-```
-
-`/cart/items` and `/cart/payment` both work. Only `/cart` itself is ambiguous:
-it renders whichever route comes first in the combined route list, and the other
-class's page is unreachable even though its `location` getter returns `/cart`.
-Prefer giving the deeper routes absolute paths, which keeps each team
-independent with no ambiguity and no warning:
-
-```dart
-// team_b/checkout_routes.dart
-@TypedGoRoute<CartCheckoutRoute>(path: '/cart/checkout')
-```
-
-That is not an option when the nested routes need the parent route on the
-navigation stack, or a shell around them. Then duplicating the parent is the
-only shape the API offers, and `ignore` silences the report.
-
-Note that the example above is *not* reported, because the two declarations live
-in different files. The builder generates one file at a time, so it only
-compares routes it can see together. Within a single file it compares
-everything: shell routes and `StatefulShellRoute` branches own no path of their
-own, so the routes inside them compete with the routes around them, and separate
-annotations compete with each other because the generated `$appRoutes` collects
-them into one list.
+Routes are compared across a whole library, which includes any `part` files, so
+splitting a large route table across parts does not hide anything. Within that
+library everything competes: shell routes and `StatefulShellRoute` branches own
+no path of their own, so the routes inside them compete with the routes around
+them, and separate annotations compete with each other because the generated
+`$appRoutes` collects them into one list.
 
 To fail the build instead of warning, set the option in `build.yaml`:
 
@@ -142,9 +104,9 @@ targets:
 Accepted values are `warning` (the default), `error`, and `ignore`.
 
 The severity applies to the whole package, and there is no per-route escape
-hatch. So `error` will also fail the builds of the sound shapes above. Reach for
-it when every duplicate path in your app is a mistake, and stay on `warning`
-when some of them are deliberate.
+hatch, so `error` fails the build on a deliberate grouping too. Reach for it when
+every duplicate path in your app is a mistake, and stay on `warning` when some of
+them are intentional.
 
 ## Migration Guides
 - [Migrating to 4.0.0](https://flutter.dev/go/go-router-builder-v4-breaking-changes).
