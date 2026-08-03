@@ -13,30 +13,19 @@ dependencies:
     # See https://dart.dev/tools/pub/dependencies#version-constraints
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
-    git:
-      url: https://github.com/bparrishMines/packages
-      ref: new_crossfile
-      path: packages/cross_file/cross_file
+    path: ../
+  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_android` is released.
+  cross_file_android:
+    path: ../../cross_file_android
+  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_darwin` is released.
   cross_file_darwin:
-    git:
-      url: https://github.com/bparrishMines/packages
-      ref: new_crossfile
-      path: packages/cross_file/cross_file_darwin
+    path: ../../cross_file_darwin
+  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_io` is released.
   cross_file_io:
-    git:
-      url: https://github.com/bparrishMines/packages
-      ref: new_crossfile
-      path: packages/cross_file/cross_file_io
+    path: ../../cross_file_io
+  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_web` is released.
   cross_file_web:
-    git:
-      url: https://github.com/bparrishMines/packages
-      ref: new_crossfile
-      path: packages/cross_file/cross_file_web
-  file_selector:
-    git:
-      url: https://github.com/bparrishMines/packages
-      ref: new_file_selector
-      path: packages/file_selector/file_selector
+    path: ../../cross_file_web
   flutter:
     sdk: flutter
   mime: ^2.0.0
@@ -54,15 +43,3 @@ flutter:
   uses-material-design: true
   assets:
     - assets/hello.txt
-
-dependency_overrides:
-  # TODO(bparrishMines): This should be moved to dependencies. This is currently placed here because
-  # the updated file_selector branch depends on cross_file from git and this overrides its
-  # dependency.
-  cross_file:
-    # When depending on this package from a real application you should use:
-    #   cross_file: ^x.y.z
-    # See https://dart.dev/tools/pub/dependencies#version-constraints
-    # The example app is bundled with the plugin so we use a path dependency on
-    # the parent directory to use the current plugin's version.
-    path: ../

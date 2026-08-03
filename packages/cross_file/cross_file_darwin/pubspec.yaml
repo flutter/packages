@@ -23,16 +23,13 @@ flutter:
         sharedDarwinSource: true
 
 dependencies:
+  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_io` is released.
   cross_file_io:
-    git:
-      url: https://github.com/bparrishMines/packages
-      ref: new_crossfile
-      path: packages/cross_file/cross_file_io
+    path: ../cross_file_io
+  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_platform_interface` is
+  # released.
   cross_file_platform_interface:
-    git:
-      url: https://github.com/bparrishMines/packages
-      ref: new_crossfile
-      path: packages/cross_file/cross_file_platform_interface
+    path: ../cross_file_platform_interface
   ffi: ^2.2.0
   flutter:
     sdk: flutter

@@ -2,8 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:cross_file_darwin/cross_file_darwin.dart';
-import 'package:file_selector/file_selector.dart';
+import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:mime/mime.dart' as mime;
 
@@ -16,11 +15,21 @@ class FileOpenScreen extends StatelessWidget {
   /// Constructs a [FileOpenScreen].
   const FileOpenScreen({super.key});
 
-  Future<void> _openFile(BuildContext context) async {
-    final XFile? file = await openFile();
+  Future<PlatformXFile?> _getTextFile() async {
+    // Implement this method to retrieve a text file.
+    return null;
+  }
 
-    if (file case final XFile file) {
-      final String filename = await file.name() ?? file.uri;
+  Future<PlatformXDirectory?> _getDirectory() async {
+    // Implement this method to retrieve a directory.
+    return null;
+  }
+
+  Future<void> _openTextFile(BuildContext context) async {
+    final PlatformXFile? file = await _getTextFile();
+
+    if (file != null) {
+      final String filename = await file.name() ?? file.params.uri;
 
       switch (mime.lookupMimeType(filename)) {
         case final String mimeType when mimeType.startsWith('text'):
@@ -30,18 +39,11 @@ class FileOpenScreen extends StatelessWidget {
               context: context,
               builder: (BuildContext context) =>
                   TextDisplay(filename: filename, fileContents: fileContents),
-            ).then((_) {
-              file
-                  .getExtension<SecurityScopedDarwinScopedStorageXFileExtension>()
-                  .stopAccessingSecurityScopedResource();
-            });
+            );
           }
         case _:
-          debugPrint('File Uri: ${file.uri}');
+          debugPrint('File Uri: ${file.params.uri}');
           debugPrint('Filename: $filename');
-          if (file is ScopedStorageXFile) {
-            debugPrint('Can Read File: ${await file.canRead()}');
-          }
           debugPrint('File Length: ${await file.length()}');
           debugPrint('File Last Modified: ${await file.lastModified()}');
           return;
@@ -52,21 +54,20 @@ class FileOpenScreen extends StatelessWidget {
   }
 
   Future<void> _openDirectory() async {
-    final XDirectory? directory = await getDirectoryPath();
+    final PlatformXDirectory? directory = await _getDirectory();
 
     if (directory != null) {
-      debugPrint('Directory Uri: ${directory.uri}');
+      debugPrint('Directory Uri: ${directory.params.uri}');
       debugPrint('Directory exists: ${await directory.exists()}');
 
       debugPrint('List of Entities:');
-      await for (final XEntity entity in directory.list()) {
+      await for (final PlatformXEntity entity in directory.list(ListParams())) {
         switch (entity) {
-          case final XFile file:
-            final String filename = await file.name() ?? file.uri;
+          case final PlatformXFile file:
+            final String filename = await file.name() ?? file.params.uri;
             debugPrint('\tFile: $filename');
-            debugPrint('\t\tFile Length: ${await file.length()}');
-          case final XDirectory directory:
-            debugPrint('\tDirectory: ${directory.uri}');
+          case final PlatformXDirectory directory:
+            debugPrint('\tDirectory: ${directory.params.uri}');
         }
       }
     } else {
@@ -77,7 +78,7 @@ class FileOpenScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Open a File'), backgroundColor: Colors.blue),
+      appBar: AppBar(title: const Text('Open a Text File'), backgroundColor: Colors.blue),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -87,8 +88,8 @@ class FileOpenScreen extends StatelessWidget {
                 foregroundColor: Colors.blue,
                 backgroundColor: Colors.white,
               ),
-              child: const Text('Open File'),
-              onPressed: () => _openFile(context),
+              child: const Text('Open Text File'),
+              onPressed: () => _openTextFile(context),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
