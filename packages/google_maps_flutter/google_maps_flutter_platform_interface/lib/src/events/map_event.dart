@@ -160,6 +160,15 @@ class GroundOverlayTapEvent extends MapEvent<GroundOverlayId> {
   GroundOverlayTapEvent(super.mapId, super.croundOverlayId);
 }
 
+/// An event fired when a point of interest is tapped.
+class PointOfInterestTapEvent extends MapEvent<PointOfInterestId> {
+  /// Build a PointOfInterestTap Event triggered from the map represented by `mapId`.
+  ///
+  /// The `value` of this event is a [PointOfInterestId] object that represents the
+  /// tapped point of interest.
+  PointOfInterestTapEvent(super.mapId, super.pointOfInterestId);
+}
+
 /// An event fired when a Map is tapped.
 class MapTapEvent extends _PositionedMapEvent<void> {
   /// Build an MapTap Event triggered from the map represented by `mapId`.

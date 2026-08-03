@@ -183,6 +183,11 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<PointOfInterestTapEvent> onPointOfInterestTap({required int mapId}) {
+    return _events(mapId).whereType<PointOfInterestTapEvent>();
+  }
+
+  @override
   Stream<GroundOverlayTapEvent> onGroundOverlayTap({required int mapId}) {
     return _events(mapId).whereType<GroundOverlayTapEvent>();
   }
@@ -987,6 +992,11 @@ class HostMapMessageHandler implements MapsCallbackApi {
   @override
   void onCircleTap(String circleId) {
     streamController.add(CircleTapEvent(mapId, CircleId(circleId)));
+  }
+
+  @override
+  void onPointOfInterestTap(String placeId) {
+    streamController.add(PointOfInterestTapEvent(mapId, PointOfInterestId(placeId)));
   }
 
   @override

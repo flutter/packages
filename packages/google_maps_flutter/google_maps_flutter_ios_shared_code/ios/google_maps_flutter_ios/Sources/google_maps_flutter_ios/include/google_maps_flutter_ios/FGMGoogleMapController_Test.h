@@ -8,6 +8,7 @@
 #import "FGMAssetProvider.h"
 #import "FGMCATransactionWrapper.h"
 #import "FGMGoogleMapController.h"
+#import "FGMMapsCallbackApiProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -48,11 +49,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param creationParameters Parameters for initialising the map view.
 /// @param assetProvider The asset provider to use for looking up assets.
 /// @param binaryMessenger The binary messenger to use for sending messages to Dart.
+/// @param callbackHandler The callback API to use for sending events to Dart.
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                  viewIdentifier:(int64_t)viewId
              creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters
                   assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
-                binaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger;
+                binaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger
+                callbackHandler:(id<FGMMapsCallbackApiProtocol>)callbackHandler;
 
 // The main Pigeon API implementation.
 @property(nonatomic, strong, readonly) FGMMapCallHandler *callHandler;

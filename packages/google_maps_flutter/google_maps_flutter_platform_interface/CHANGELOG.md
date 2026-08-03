@@ -1,3 +1,7 @@
+## 2.17.0
+
+* Adds support for tapping points of interest on the map.
+
 ## 2.16.0
 
 * Adds support for `mapTypeControlEnabled`, `fullscreenControlEnabled`, and `streetViewControlEnabled` for web.
