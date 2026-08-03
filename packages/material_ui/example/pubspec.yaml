@@ -20,6 +20,10 @@ dependencies:
     path: ..
   cupertino_ui: ^0.0.2
 
+dependency_overrides:
+  material_ui:
+    path: ..
+
 dev_dependencies:
   integration_test:
     sdk: flutter
