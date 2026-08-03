@@ -1,3 +1,9 @@
+## 0.0.3
+
+- Fix API doc by clearing unsupported directives introduced by macros.
+- Fix API doc references.
+- Adds MaterialUiCompatibilityBridge for legacy flutter/material.dart compatibility.
+
 ## 0.0.2
 
 - Copies over all Material code from flutter/flutter.
