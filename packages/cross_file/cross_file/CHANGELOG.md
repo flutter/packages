@@ -1,6 +1,11 @@
 ## 0.4.0
 
 * Updates `cross_file` to a package-separated federated plugin.
+* Adds `XDirectory` to access file containers.
+* Adds file implementation for scoped storage APIs that use ephemeral URLS. See `ScopedStorageXFile`
+  and `ScopedStorageXDirector`.
+* **Breaking Change** Removes `XFile.saveTo` because not all platform implementations support this
+  feature. gSee `README` for accessing platform-specific features.
 
 ## 0.3.5+4
 
