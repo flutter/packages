@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <application android:usesCleartextTraffic="true">
         <activity
-            android:name="dev.flutter.packages.cross_file_example.DriverExtensionActivity"
+            android:name="dev.flutter.packages.crossfileexample.DriverExtensionActivity"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
