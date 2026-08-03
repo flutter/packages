@@ -121,6 +121,6 @@ base class XFile extends XEntity {
   /// doesn't exist or information is not available.
   ///
   /// If the file is identified by a path, only the base name of the file will
-  /// gbe included in the name.
+  /// be included in the name.
   Future<String?> name() => platform.name();
 }
