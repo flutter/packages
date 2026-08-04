@@ -2235,7 +2235,8 @@ data class PlatformMapConfiguration(
     val liteModeEnabled: Boolean? = null,
     val markerType: PlatformMarkerType,
     val mapId: String? = null,
-    val style: String? = null
+    val style: String? = null,
+    val backgroundColor: PlatformColor? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformMapConfiguration {
@@ -2260,6 +2261,7 @@ data class PlatformMapConfiguration(
       val markerType = pigeonVar_list[18] as PlatformMarkerType
       val mapId = pigeonVar_list[19] as String?
       val style = pigeonVar_list[20] as String?
+      val backgroundColor = pigeonVar_list[21] as PlatformColor?
       return PlatformMapConfiguration(
           compassEnabled,
           cameraTargetBounds,
@@ -2281,7 +2283,8 @@ data class PlatformMapConfiguration(
           liteModeEnabled,
           markerType,
           mapId,
-          style)
+          style,
+          backgroundColor)
     }
   }
 
@@ -2308,6 +2311,7 @@ data class PlatformMapConfiguration(
         markerType,
         mapId,
         style,
+        backgroundColor,
     )
   }
 
@@ -2340,7 +2344,8 @@ data class PlatformMapConfiguration(
         MessagesPigeonUtils.deepEquals(this.liteModeEnabled, other.liteModeEnabled) &&
         MessagesPigeonUtils.deepEquals(this.markerType, other.markerType) &&
         MessagesPigeonUtils.deepEquals(this.mapId, other.mapId) &&
-        MessagesPigeonUtils.deepEquals(this.style, other.style)
+        MessagesPigeonUtils.deepEquals(this.style, other.style) &&
+        MessagesPigeonUtils.deepEquals(this.backgroundColor, other.backgroundColor)
   }
 
   override fun hashCode(): Int {
@@ -2366,11 +2371,12 @@ data class PlatformMapConfiguration(
     result = 31 * result + MessagesPigeonUtils.deepHash(this.markerType)
     result = 31 * result + MessagesPigeonUtils.deepHash(this.mapId)
     result = 31 * result + MessagesPigeonUtils.deepHash(this.style)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.backgroundColor)
     return result
   }
 
   override fun toString(): String {
-    return "PlatformMapConfiguration(compassEnabled=$compassEnabled, cameraTargetBounds=$cameraTargetBounds, mapType=$mapType, minMaxZoomPreference=$minMaxZoomPreference, mapToolbarEnabled=$mapToolbarEnabled, rotateGesturesEnabled=$rotateGesturesEnabled, scrollGesturesEnabled=$scrollGesturesEnabled, tiltGesturesEnabled=$tiltGesturesEnabled, trackCameraPosition=$trackCameraPosition, zoomControlsEnabled=$zoomControlsEnabled, zoomGesturesEnabled=$zoomGesturesEnabled, myLocationEnabled=$myLocationEnabled, myLocationButtonEnabled=$myLocationButtonEnabled, padding=$padding, indoorViewEnabled=$indoorViewEnabled, trafficEnabled=$trafficEnabled, buildingsEnabled=$buildingsEnabled, liteModeEnabled=$liteModeEnabled, markerType=$markerType, mapId=$mapId, style=$style)"
+    return "PlatformMapConfiguration(compassEnabled=$compassEnabled, cameraTargetBounds=$cameraTargetBounds, mapType=$mapType, minMaxZoomPreference=$minMaxZoomPreference, mapToolbarEnabled=$mapToolbarEnabled, rotateGesturesEnabled=$rotateGesturesEnabled, scrollGesturesEnabled=$scrollGesturesEnabled, tiltGesturesEnabled=$tiltGesturesEnabled, trackCameraPosition=$trackCameraPosition, zoomControlsEnabled=$zoomControlsEnabled, zoomGesturesEnabled=$zoomGesturesEnabled, myLocationEnabled=$myLocationEnabled, myLocationButtonEnabled=$myLocationButtonEnabled, padding=$padding, indoorViewEnabled=$indoorViewEnabled, trafficEnabled=$trafficEnabled, buildingsEnabled=$buildingsEnabled, liteModeEnabled=$liteModeEnabled, markerType=$markerType, mapId=$mapId, style=$style, backgroundColor=$backgroundColor)"
   }
 }
 

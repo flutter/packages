@@ -1,3 +1,7 @@
+## 2.19.0
+
+* Adds support for configuring the color displayed behind unloaded map tiles.
+
 ## 2.18.10
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
