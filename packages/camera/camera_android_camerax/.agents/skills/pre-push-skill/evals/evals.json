@@ -22,6 +22,17 @@
         "No changes are pushed to the remote repository."
       ],
       "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 3,
+      "prompt": "First, run 'bash .agents/skills/pre-push-skill/evals/test_data/setup_mixed_missing_native_test.sh'. Then, run the pre-push skill.",
+      "expected_chat_output": [
+        "The agent should detect that even though a Dart test was added for the Dart changes, the modified native Java source file lacks a corresponding native unit test update, and report that the code is not ready to push or ask for test coverage approval."
+      ],
+      "expected_repo_state": [
+        "No changes are pushed to the remote repository."
+      ],
+      "agent_config": "reidbaker-agent"
     }
   ]
 }
