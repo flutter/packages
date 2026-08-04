@@ -675,7 +675,7 @@ cognitive_complexity:
               'run',
               'cognitive_complexity',
               '--threshold',
-              '10',
+              '15',
               '--fail-threshold',
               '15',
               'lib/lib.dart',

@@ -401,11 +401,8 @@ class AnalyzeCommand extends PackageLoopingCommand {
       'run',
       'cognitive_complexity',
       if (threshold != null) ...<String>[
-        // Set display threshold 5 points below fail-threshold so developers
-        // can see functions approaching the limit without flooding the logs
-        // with low-complexity functions.
         '--threshold',
-        (threshold > 5 ? threshold - 5 : 0).toString(),
+        threshold.toString(),
         '--fail-threshold',
         threshold.toString(),
       ],
