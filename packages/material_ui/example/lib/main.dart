@@ -49,7 +49,7 @@ class _ExampleHome extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text(ExampleApp.title)),
       body: Center(
-        child: Column(
+        child: ListView(
           children: _examples
               .map((_Example example) => _ExampleListItem(example: example))
               .toList(),
