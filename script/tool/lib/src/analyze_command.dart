@@ -368,7 +368,6 @@ class AnalyzeCommand extends PackageLoopingCommand {
 
   bool _isGeneratedDartFile(String filePath) {
     return filePath.endsWith('.g.dart') ||
-        filePath.endsWith('.freezed.dart') ||
         filePath.endsWith('.mocks.dart') ||
         filePath.endsWith('.gen.dart');
   }
@@ -402,6 +401,9 @@ class AnalyzeCommand extends PackageLoopingCommand {
       'run',
       'cognitive_complexity',
       if (threshold != null) ...<String>[
+        // Set display threshold 5 points below fail-threshold so developers
+        // can see functions approaching the limit without flooding the logs
+        // with low-complexity functions.
         '--threshold',
         (threshold > 5 ? threshold - 5 : 0).toString(),
         '--fail-threshold',

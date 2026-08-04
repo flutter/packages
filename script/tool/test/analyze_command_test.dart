@@ -582,7 +582,8 @@ void main() {
         );
         _writeFakePubspecWithLinter(package, inDevDependencies: true);
         package.libDirectory.childFile('foo.g.dart').createSync();
-        package.libDirectory.childFile('bar.freezed.dart').createSync();
+        package.libDirectory.childFile('bar.mocks.dart').createSync();
+        package.libDirectory.childFile('baz.gen.dart').createSync();
 
         _mockCallsForFlutterAnalyze(processRunner);
 
