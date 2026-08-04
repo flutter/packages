@@ -180,6 +180,35 @@ version: patch
       expect(changelogContent, contains('A new feature'));
       expect(gitProcessRunner.recordedCalls, orderedEquals(getExpectedGitCalls('1.0.1')));
     });
+
+    test('bumps major version when promoting to 1.0', () async {
+      final RepositoryPackage package = createTestPackage(version: '0.1.0');
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
+changelog: The big release
+version: promote
+''');
+
+      final List<String> output = await runBatchCommand();
+
+      expect(
+        output,
+        containsAllInOrder(<String>[
+          'Parsing package "a_package"...',
+          '  Creating new branch "release-branch"...',
+          '  Pushing branch release-branch to remote origin...',
+        ]),
+      );
+
+      expect(package.pubspecFile.readAsStringSync(), contains('version: 1.0.0'));
+      final String changelogContent = package.changelogFile.readAsStringSync();
+      expect(changelogContent, startsWith('## 1.0.0'));
+      expect(changelogContent, contains('The big release'));
+      expect(gitProcessRunner.recordedCalls, orderedEquals(getExpectedGitCalls('1.0.0')));
+    });
+
     test('bumps "patch" version for minor pre-1.0', () async {
       final RepositoryPackage package = createTestPackage(version: '0.1.0');
       addTearDown(() {
@@ -677,6 +706,26 @@ version: major
       );
 
       expect(output.last, contains('Failed to push to release-a_package-2.0.0: error'));
+    });
+
+    test('throws for "promote" when version >= 1.0.0', () async {
+      final RepositoryPackage package = createTestPackage();
+      addTearDown(() {
+        package.directory.deleteSync(recursive: true);
+      });
+      createPendingChangelogFile(package, 'a.yaml', '''
+changelog: Try to release 1.0 again
+version: promote
+''');
+
+      final List<String> output = await runBatchCommand(
+        errorHandler: (Error e) {
+          expect(e, isA<ToolExit>());
+          expect((e as ToolExit).exitCode, 3);
+        },
+      );
+
+      expect(output.last, contains('"promote" is only valid for pre-1.0 packages.'));
     });
   });
 }
