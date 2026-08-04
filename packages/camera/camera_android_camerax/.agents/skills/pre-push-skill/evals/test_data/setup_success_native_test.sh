@@ -11,11 +11,9 @@ PACKAGE_DIR="$(cd "$SCRIPT_DIR/../../../../.." && pwd)"
 JAVA_FILE="$PACKAGE_DIR/android/src/main/java/io/flutter/plugins/camerax/CameraProxyApi.java"
 TEST_FILE="$PACKAGE_DIR/android/src/test/java/io/flutter/plugins/camerax/CameraTest.java"
 
-# Modify CameraProxyApi.java
-sed -i.bak 's/super(pigeonRegistrar);/super(pigeonRegistrar); \/\/ Eval comment/' "$JAVA_FILE" && rm -f "${JAVA_FILE}.bak"
-
-# Modify CameraTest.java
-sed -i.bak 's/assertEquals(value, api.getCameraInfo(instance));/assertEquals(value, api.getCameraInfo(instance)); \/\/ Eval test comment/' "$TEST_FILE" && rm -f "${TEST_FILE}.bak"
+# Modify CameraProxyApi.java and CameraTest.java
+echo "// Eval comment" >> "$JAVA_FILE"
+echo "// Eval test comment" >> "$TEST_FILE"
 
 # Commit so git status is clean and git diff against origin/main shows both files
 cd "$PACKAGE_DIR" || exit 1

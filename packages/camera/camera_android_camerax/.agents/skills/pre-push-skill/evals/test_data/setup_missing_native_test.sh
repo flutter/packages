@@ -10,8 +10,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PACKAGE_DIR="$(cd "$SCRIPT_DIR/../../../../.." && pwd)"
 JAVA_FILE="$PACKAGE_DIR/android/src/main/java/io/flutter/plugins/camerax/CameraProxyApi.java"
 
-# Add a harmless comment inside CameraProxyApi.java
-sed -i.bak 's/super(pigeonRegistrar);/super(pigeonRegistrar); \/\/ Eval comment/' "$JAVA_FILE" && rm -f "${JAVA_FILE}.bak"
+# Add a harmless comment to CameraProxyApi.java
+echo "// Eval comment" >> "$JAVA_FILE"
 
 # Commit so git status is clean and git diff against origin/main shows the Java change
 cd "$PACKAGE_DIR" || exit 1
