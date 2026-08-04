@@ -1,3 +1,7 @@
+## 17.3.1
+
+- Fixes a duplicate page key assertion when imperatively re-entering a shell route that is still in the navigation stack (e.g. pushing into a shell after a `pushReplacement`).
+
 ## 17.3.0
 
 - Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
