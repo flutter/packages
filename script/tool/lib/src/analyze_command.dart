@@ -401,6 +401,9 @@ class AnalyzeCommand extends PackageLoopingCommand {
       'run',
       'cognitive_complexity',
       if (threshold != null) ...<String>[
+        // --fail-threshold only controls the exit code, while --threshold
+        // controls which functions are printed in the output table (default 0).
+        // Pass both so that only failing functions are printed in CI logs.
         '--threshold',
         threshold.toString(),
         '--fail-threshold',
