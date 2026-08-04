@@ -178,6 +178,20 @@ void main() {
     final completer1 = Completer<void>();
     final completer2 = Completer<void>();
 
+    test('complete is idempotent and does not throw when called twice', () async {
+      // Regression test for https://github.com/flutter/flutter/issues/156809:
+      // the pushed route's completer could be completed more than once
+      // (e.g. a rapid double-pop), throwing "Bad state: Future already
+      // completed".
+      final completer = Completer<Object?>();
+      final match = ImperativeRouteMatch(pageKey: key1, matches: matchList1, completer: completer);
+
+      match.complete('result');
+      // A second completion must be a no-op rather than a crash.
+      expect(() => match.complete('ignored'), returnsNormally);
+      expect(await completer.future, 'result');
+    });
+
     test('can equal and has', () async {
       var match1 = ImperativeRouteMatch(pageKey: key1, matches: matchList1, completer: completer1);
       var match2 = ImperativeRouteMatch(pageKey: key1, matches: matchList1, completer: completer1);
