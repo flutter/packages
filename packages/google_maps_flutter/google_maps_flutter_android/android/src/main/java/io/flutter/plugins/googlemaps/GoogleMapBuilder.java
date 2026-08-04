@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Rect;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -15,7 +16,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import java.util.List;
 
 class GoogleMapBuilder implements GoogleMapOptionsSink {
-  private final @NonNull GoogleMapOptions options = new GoogleMapOptions();
+  private final @NonNull GoogleMapOptions options;
   private boolean trackCameraPosition = false;
   private boolean myLocationEnabled = false;
   private boolean myLocationButtonEnabled = false;
@@ -32,6 +33,15 @@ class GoogleMapBuilder implements GoogleMapOptionsSink {
   private List<PlatformGroundOverlay> initialGroundOverlays;
   private Rect padding = new Rect(0, 0, 0, 0);
   private @Nullable String style;
+
+  GoogleMapBuilder() {
+    this(new GoogleMapOptions());
+  }
+
+  @VisibleForTesting
+  GoogleMapBuilder(@NonNull GoogleMapOptions options) {
+    this.options = options;
+  }
 
   GoogleMapController build(
       int id,
@@ -68,6 +78,10 @@ class GoogleMapBuilder implements GoogleMapOptionsSink {
 
   public void setMapId(String mapId) {
     options.mapId(mapId);
+  }
+
+  public void setBackgroundColor(int backgroundColor) {
+    options.backgroundColor(backgroundColor);
   }
 
   @Override

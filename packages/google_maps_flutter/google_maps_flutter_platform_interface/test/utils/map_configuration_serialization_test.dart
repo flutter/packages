@@ -42,6 +42,7 @@ void main() {
       buildingsEnabled: false,
       mapId: _kMapId,
       cloudMapId: _kMapId,
+      backgroundColor: const Color(0xFF123456),
     );
 
     final Map<String, Object> json = jsonForMapConfiguration(config);
@@ -77,6 +78,7 @@ void main() {
       'buildingsEnabled': false,
       'mapId': _kMapId,
       'cloudMapId': _kMapId,
+      'backgroundColor': 0xFF123456,
     });
   });
 

@@ -859,6 +859,7 @@ public class ConvertTest {
     private @Nullable PlatformMarkerType markerType;
     private @Nullable String mapId;
     private @Nullable String style;
+    private @Nullable PlatformColor backgroundColor;
 
     public @NonNull PlatformMapConfigurationBuilder setCompassEnabled(@Nullable Boolean setterArg) {
       this.compassEnabled = setterArg;
@@ -982,6 +983,12 @@ public class ConvertTest {
       return this;
     }
 
+    public @NonNull PlatformMapConfigurationBuilder setBackgroundColor(
+        @Nullable PlatformColor setterArg) {
+      this.backgroundColor = setterArg;
+      return this;
+    }
+
     public @NonNull PlatformMapConfiguration build() {
       return new PlatformMapConfiguration(
           compassEnabled,
@@ -1004,7 +1011,8 @@ public class ConvertTest {
           liteModeEnabled,
           Objects.requireNonNull(markerType),
           mapId,
-          style);
+          style,
+          backgroundColor);
     }
   }
 }

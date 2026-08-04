@@ -1,3 +1,7 @@
+## 2.19.0
+
+* Adds support for configuring the color displayed behind unloaded map tiles.
+
 ## 2.18.5
 
 * Fixes a potential compilation issue in tile downscaling.
