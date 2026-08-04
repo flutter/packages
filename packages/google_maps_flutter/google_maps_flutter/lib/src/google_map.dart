@@ -96,6 +96,7 @@ class GoogleMap extends StatefulWidget {
     super.key,
     required this.initialCameraPosition,
     this.style,
+    this.backgroundColor,
     this.onMapCreated,
     this.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
     this.webGestureHandling,
@@ -166,6 +167,14 @@ class GoogleMap extends StatefulWidget {
   /// The style string can be generated using the
   /// [map style tool](https://mapstyle.withgoogle.com/).
   final String? style;
+
+  /// The color displayed behind the map while map tiles load.
+  ///
+  /// This option can only be set when the map is initialized; setting this
+  /// option after the map is created will have no effect.
+  ///
+  /// May not be supported on all platforms.
+  final Color? backgroundColor;
 
   /// True if the map should show a compass when rotated.
   final bool compassEnabled;
@@ -770,5 +779,6 @@ MapConfiguration _configurationFromMapWidget(GoogleMap map) {
     // A null style in the widget means no style, which is expressed as '' in
     // the configuration to distinguish from no change (null).
     style: map.style ?? '',
+    backgroundColor: map.backgroundColor,
   );
 }
