@@ -7,6 +7,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    cooldown-period: 5
     groups:
       all-github-actions:
         patterns: [ "*" ]
@@ -50,6 +51,7 @@ updates:
       - /packages/path_provider/path_provider/example/android/app
       - /packages/path_provider/path_provider_android/example/android/app
       - /packages/pigeon/example/app/android/app
+      - /packages/pigeon/example/native_interop_app/android/app
       - /packages/pigeon/platform_tests/test_plugin/example/android/app
       - /packages/pigeon/platform_tests/alternate_language_test_plugin/example/android/app
       - /packages/quick_actions/quick_actions_android/example/android/app
@@ -71,6 +73,7 @@ updates:
       prefix: "[dependabot]"
     schedule:
       interval: "weekly"
+    cooldown-period: 5
     labels:
       - "autosubmit"
       - "triage-android"
@@ -105,6 +108,7 @@ updates:
       prefix: "[dependabot]"
     schedule:
       interval: "weekly"
+    cooldown-period: 5
     open-pull-requests-limit: 10
     labels:
       - "autosubmit"
