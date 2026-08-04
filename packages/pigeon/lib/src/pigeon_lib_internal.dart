@@ -1312,13 +1312,13 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   Object _expressionToMap(dart_ast.Expression expression) {
     if (expression is dart_ast.MethodInvocation) {
       final result = <String, Object>{};
-      for (final dart_ast.Expression argument in expression.argumentList.arguments) {
-        if (argument is dart_ast.NamedExpression) {
-          result[argument.name.label.name] = _expressionToMap(argument.expression);
+      for (final dart_ast.Argument argument in expression.argumentList.arguments) {
+        if (argument is dart_ast.NamedArgument) {
+          result[argument.name.lexeme] = _expressionToMap(argument.argumentExpression);
         } else {
           _errors.add(
             Error(
-              message: 'expected NamedExpression but found $expression',
+              message: 'expected NamedArgument but found $expression',
               lineNumber: calculateLineNumber(source, argument.offset),
             ),
           );
@@ -1527,7 +1527,8 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         );
       }
       final pigeonOptionsMap =
-          _expressionToMap(node.arguments!.arguments.first) as Map<String, Object>;
+          _expressionToMap(node.arguments!.arguments.first.argumentExpression)
+              as Map<String, Object>;
       _pigeonOptions = pigeonOptionsMap;
     }
     node.visitChildren(this);
@@ -1556,10 +1557,11 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         );
         String? dartHostTestHandler;
         if (hostApi.arguments != null) {
-          for (final dart_ast.Expression expression in hostApi.arguments!.arguments) {
-            if (expression is dart_ast.NamedExpression) {
-              if (expression.name.label.name == 'dartHostTestHandler') {
-                final dart_ast.Expression dartHostTestHandlerExpression = expression.expression;
+          for (final dart_ast.Argument argument in hostApi.arguments!.arguments) {
+            if (argument is dart_ast.NamedArgument) {
+              if (argument.name.lexeme == 'dartHostTestHandler') {
+                final dart_ast.Expression dartHostTestHandlerExpression =
+                    argument.argumentExpression;
                 if (dartHostTestHandlerExpression is dart_ast.SimpleStringLiteral) {
                   dartHostTestHandler = dartHostTestHandlerExpression.value;
                 }
@@ -1586,9 +1588,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         );
 
         final annotationMap = <String, Object?>{};
-        for (final dart_ast.Expression expression in proxyApiAnnotation.arguments!.arguments) {
-          if (expression is dart_ast.NamedExpression) {
-            annotationMap[expression.name.label.name] = _expressionToMap(expression.expression);
+        for (final dart_ast.Argument argument in proxyApiAnnotation.arguments!.arguments) {
+          if (argument is dart_ast.NamedArgument) {
+            annotationMap[argument.name.lexeme] = _expressionToMap(argument.argumentExpression);
           }
         }
 
@@ -1677,9 +1679,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         );
 
         final annotationMap = <String, Object?>{};
-        for (final dart_ast.Expression expression in annotation.arguments!.arguments) {
-          if (expression is dart_ast.NamedExpression) {
-            annotationMap[expression.name.label.name] = _expressionToMap(expression.expression);
+        for (final dart_ast.Argument argument in annotation.arguments!.arguments) {
+          if (argument is dart_ast.NamedArgument) {
+            annotationMap[argument.name.lexeme] = _expressionToMap(argument.argumentExpression);
           }
         }
 
@@ -1744,8 +1746,6 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     String? defaultValue,
   }) {
     final dart_ast.NamedType? parameter = _getFirstChildOfType<dart_ast.NamedType>(formalParameter);
-    final dart_ast.SimpleFormalParameter? simpleFormalParameter =
-        _getFirstChildOfType<dart_ast.SimpleFormalParameter>(formalParameter);
     if (parameter != null) {
       final String argTypeBaseName = _getNamedTypeQualifiedName(parameter);
       final isNullable = parameter.question != null;
@@ -1764,21 +1764,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         isOptional: isOptional ?? formalParameter.isOptional,
         isPositional: isPositional ?? formalParameter.isPositional,
         isRequired: isRequired ?? formalParameter.isRequired,
-        defaultValue: defaultValue,
-      );
-    } else if (simpleFormalParameter != null) {
-      String? defaultValue;
-      if (formalParameter is dart_ast.DefaultFormalParameter) {
-        defaultValue = formalParameter.defaultValue?.toString();
-      }
-
-      return _formalParameterToPigeonParameter(
-        simpleFormalParameter,
-        isNamed: simpleFormalParameter.isNamed,
-        isOptional: simpleFormalParameter.isOptional,
-        isPositional: simpleFormalParameter.isPositional,
-        isRequired: simpleFormalParameter.isRequired,
-        defaultValue: defaultValue,
+        defaultValue: defaultValue ?? formalParameter.defaultClause?.value.toString(),
       );
     } else {
       return Parameter(
@@ -1836,9 +1822,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     )?.arguments;
     final String? taskQueueTypeName = taskQueueArguments == null
         ? null
-        : _getFirstChildOfType<dart_ast.NamedExpression>(
+        : _getFirstChildOfType<dart_ast.NamedArgument>(
             taskQueueArguments,
-          )?.expression.asNullable<dart_ast.PrefixedIdentifier>()?.name;
+          )?.argumentExpression.asNullable<dart_ast.PrefixedIdentifier>()?.name;
     final TaskQueueType taskQueueType =
         _stringToEnum(TaskQueueType.values, taskQueueTypeName) ?? TaskQueueType.serial;
 
@@ -2077,10 +2063,8 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         );
       } else {
         for (final dart_ast.FormalParameter param in node.parameters.parameters) {
-          if (param is dart_ast.DefaultFormalParameter) {
-            if (param.name != null && param.defaultValue != null) {
-              _currentClassDefaultValues[param.name!.toString()] = param.defaultValue!.toString();
-            }
+          if (param.name != null && param.defaultClause != null) {
+            _currentClassDefaultValues[param.name!.lexeme] = param.defaultClause!.value.toString();
           }
         }
       }
@@ -2115,9 +2099,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       )?.arguments;
       final String? taskQueueTypeName = taskQueueArguments == null
           ? null
-          : _getFirstChildOfType<dart_ast.NamedExpression>(
+          : _getFirstChildOfType<dart_ast.NamedArgument>(
               taskQueueArguments,
-            )?.expression.asNullable<dart_ast.PrefixedIdentifier>()?.name;
+            )?.argumentExpression.asNullable<dart_ast.PrefixedIdentifier>()?.name;
       final TaskQueueType taskQueueType =
           _stringToEnum(TaskQueueType.values, taskQueueTypeName) ?? TaskQueueType.serial;
 

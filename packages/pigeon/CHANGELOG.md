@@ -1,3 +1,7 @@
+## 27.3.1
+
+* Updates `analyzer` dependency to support versions 13 and 14.
+
 ## 27.3.0
 
 * Adds support for sharing constants across platforms.
