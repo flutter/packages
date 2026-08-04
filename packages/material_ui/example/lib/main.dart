@@ -5,62 +5,94 @@
 import 'package:material_ui/material_ui.dart';
 
 import 'about/about_list_tile.0.dart';
+import 'action_buttons/action_icon_theme.0.dart';
 
 void main() {
-  runApp(const ExampleApp());
+  runApp(ExampleApp());
 }
 
-/// A sample application that utilizes the TableView and TreeView APIs.
 class ExampleApp extends StatelessWidget {
-  /// Creates an instance of the example app.
-  const ExampleApp({super.key});
+  ExampleApp({super.key});
+
+  static const title = 'Material Examples';
+
+  final _examples = <_Example>[
+    _Example(
+      'about/about_list_tile.0.dart',
+      (BuildContext context) => AboutListTileExample(),
+    ),
+    _Example(
+      'action_buttons/action_icon_theme.0.dart',
+      (BuildContext context) => ActionIconThemeExampleApp(),
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Material Example',
-      home: const ExampleHome(),
+      title: title,
+      home: _ExampleHome(examples: _examples),
       routes: <String, WidgetBuilder>{
-        '/about/about_list_tile/0': (BuildContext context) => const AboutListTileExample(),
+        for (_Example example in _examples) example.url: example.builder,
       },
     );
   }
 }
 
-/// The home page of the application, which directs to the tree or table
-/// explorer.
-class ExampleHome extends StatelessWidget {
-  /// Creates a screen that demonstrates the TableView widget.
-  const ExampleHome({super.key});
+class _ExampleHome extends StatelessWidget {
+  const _ExampleHome({required this._examples});
+
+  final List<_Example> _examples;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Tables & Trees')),
+      appBar: AppBar(title: const Text(ExampleApp.title)),
       body: Center(
         child: Column(
-          children: <Widget>[
-            const Spacer(flex: 3),
-            FilledButton(
-              onPressed: () {
-                // Go to table explorer
-                Navigator.of(context).pushNamed('/about/about_list_tile/0');
-              },
-              child: const Text('about/about_list_tile.0.dart'),
-            ),
-            const Spacer(),
-            FilledButton(
-              onPressed: () {
-                // Go to tree explorer
-                Navigator.of(context).pushNamed('/tree');
-              },
-              child: const Text('TreeView Explorer'),
-            ),
-            const Spacer(flex: 3),
-          ],
+          children: _examples
+              .map((_Example example) => _ExampleListItem(example: example))
+              .toList(),
         ),
       ),
     );
   }
 }
 
+/// One item that opens its example when tapped.
+class _ExampleListItem extends StatelessWidget {
+  const _ExampleListItem({required this._example});
+
+  final _Example _example;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: () {
+        Navigator.of(context).pushNamed(_example.url);
+      },
+      title: Text(_example.filepath),
+    );
+  }
+}
+
+/// A self-contained Material example.
+class _Example {
+  const _Example(this.filepath, this.builder);
+
+  final String filepath;
+  final WidgetBuilder builder;
+
+  String get url {
+    final segments = filepath.split('/');
+    assert(segments.length == 2);
+    final directory = segments.first;
+    final filename = segments.last;
+
+    final filenameSegments = filename.split('.');
+    assert(filenameSegments.length == 3);
+    final number = filenameSegments[1];
+
+    return '/$directory/$filename/$number';
+  }
+}
