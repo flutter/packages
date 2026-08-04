@@ -1,0 +1,49 @@
+{
+  "repo_criteria": [],
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "First, run 'bash .agents/skills/pre-push-skill/evals/test_data/setup_missing_native_test.sh'. Then, run the pre-push skill.",
+      "expected_chat_output": [
+        "The agent should detect that a native Java source file was modified without a corresponding native unit test being added or updated, and report that the code is not ready to push or ask for test coverage approval."
+      ],
+      "expected_repo_state": [
+        "No changes are pushed to the remote repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 2,
+      "prompt": "First, run 'bash .agents/skills/pre-push-skill/evals/test_data/setup_success_native_test.sh'. Then, run the pre-push skill.",
+      "expected_chat_output": [
+        "The agent should run both Dart and native unit tests, verify that corresponding native unit test files were updated for the Java source changes, and report whether the branch is ready to push."
+      ],
+      "expected_repo_state": [
+        "No changes are pushed to the remote repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 3,
+      "prompt": "First, run 'bash .agents/skills/pre-push-skill/evals/test_data/setup_mixed_missing_native_test.sh'. Then, run the pre-push skill.",
+      "expected_chat_output": [
+        "The agent should detect that even though a Dart test was added for the Dart changes, the modified native Java source file lacks a corresponding native unit test update, and report that the code is not ready to push or ask for test coverage approval."
+      ],
+      "expected_repo_state": [
+        "No changes are pushed to the remote repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 4,
+      "prompt": "First, run 'bash .agents/skills/pre-push-skill/evals/test_data/setup_behind_upstream.sh'. Then, run the pre-push skill.",
+      "expected_chat_output": [
+        "The agent should detect that the branch is behind upstream/main, stop immediately, report that the code is not ready to push (# NO, you are not ready to push), and instruct the user to pull upstream/main first."
+      ],
+      "expected_repo_state": [
+        "The agent did not run update-release-info, and pubspec.yaml and CHANGELOG.md were not modified."
+      ],
+      "agent_config": "reidbaker-agent"
+    }
+  ]
+}
