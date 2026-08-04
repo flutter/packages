@@ -168,4 +168,17 @@ public class TextureExoPlayerEventListenerTest {
     eventListener.onPlaybackStateChanged(Player.STATE_READY);
     verify(mockCallbacks).onInitialized(405, 720, 10L, rotationCorrection);
   }
+
+  @Test
+  public void onPlaybackStateChangedReadyReportsAtLeastOnePixel_whenPixelAspectRatioIsDegenerate() {
+    TextureExoPlayerEventListener eventListener =
+        new TextureExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
+    // A malformed ratio would otherwise round the width down to zero.
+    VideoSize size = new VideoSize(800, 400, 0.0001f);
+    when(mockExoPlayer.getVideoSize()).thenReturn(size);
+    when(mockExoPlayer.getDuration()).thenReturn(10L);
+
+    eventListener.onPlaybackStateChanged(Player.STATE_READY);
+    verify(mockCallbacks).onInitialized(1, 400, 10L, 0);
+  }
 }

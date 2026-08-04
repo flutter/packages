@@ -35,9 +35,10 @@ public final class TextureExoPlayerEventListener extends ExoPlayerEventListener 
       // scaled by the pixel aspect ratio to obtain the display width. ExoPlayer reports a
       // pixelWidthHeightRatio that already accounts for any applied rotation, so this is
       // correct regardless of the rotation correction computed below.
+      // Clamped to at least one pixel so that a malformed ratio cannot report a zero width.
       float pixelWidthHeightRatio = videoSize.pixelWidthHeightRatio;
       if (pixelWidthHeightRatio > 0 && pixelWidthHeightRatio != 1f) {
-        width = Math.round(width * pixelWidthHeightRatio);
+        width = Math.max(1, Math.round(width * pixelWidthHeightRatio));
       }
 
       // When the SurfaceTexture backend for Impeller is used, the preview should already
