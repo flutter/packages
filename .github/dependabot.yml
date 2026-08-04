@@ -7,7 +7,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    cooldown: 5 # days
+    cooldown:
+      default-days: 5 # days
     groups:
       all-github-actions:
         patterns: [ "*" ]
@@ -72,7 +73,8 @@ updates:
       prefix: "[dependabot]"
     schedule:
       interval: "weekly"
-    cooldown: 5 # days
+    cooldown:
+      default-days: 5 # days
     labels:
       - "autosubmit"
       - "triage-android"
@@ -107,7 +109,8 @@ updates:
       prefix: "[dependabot]"
     schedule:
       interval: "weekly"
-    cooldown: 5 # days
+    cooldown:
+      default-days: 5 # days
     open-pull-requests-limit: 10
     labels:
       - "autosubmit"
