@@ -5,14 +5,25 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui_examples/main.dart';
 
+import 'package:material_ui_examples/about/about_list_tile.0.dart';
+import 'package:material_ui_examples/action_buttons/action_icon_theme.0.dart';
+
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const ExampleApp());
+  testWidgets('about_list_tile.0', (WidgetTester tester) async {
+    await tester.pumpWidget(ExampleApp());
 
     await tester.tap(find.text('about/about_list_tile.0.dart'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Show About Example'), findsNWidgets(2));
+    expect(find.byType(AboutListTileExample), findsOneWidget);
+  });
+
+  testWidgets('action_icon_theme.0', (WidgetTester tester) async {
+    await tester.pumpWidget(ExampleApp());
+
+    await tester.tap(find.text('action_buttons/action_icon_theme.0.dart'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ActionIconThemeExampleApp), findsOneWidget);
   });
 }
