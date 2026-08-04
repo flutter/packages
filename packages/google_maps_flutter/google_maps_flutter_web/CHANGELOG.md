@@ -1,6 +1,7 @@
-## NEXT
+## 0.6.3+2
 
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Fixes AdvancedMarker anchor handling.
 
 ## 0.6.3+1
 
