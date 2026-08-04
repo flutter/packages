@@ -1277,6 +1277,9 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(MapConfig
     markerType: _platformMarkerTypeFromMarkerType(config.markerType ?? MarkerType.marker),
     mapId: config.mapId,
     style: config.style,
+    backgroundColor: config.backgroundColor == null
+        ? null
+        : PlatformColor(argbValue: config.backgroundColor!.toARGB32()),
   );
 }
 
@@ -1320,6 +1323,9 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(Map<String, Ob
     markerType: PlatformMarkerType.marker,
     mapId: options['mapId'] as String?,
     style: options['style'] as String?,
+    backgroundColor: options['backgroundColor'] == null
+        ? null
+        : PlatformColor(argbValue: options['backgroundColor']! as int),
   );
 }
 
