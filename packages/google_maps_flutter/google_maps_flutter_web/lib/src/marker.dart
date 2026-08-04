@@ -312,6 +312,7 @@ class AdvancedMarkerController
     marker.position = options.position;
     marker.title = options.title ?? '';
     marker.zIndex = options.zIndex;
+    _copyAdvancedMarkerOptionsAnchor(marker, options);
 
     if (_infoWindow != null && newInfoWindowContent != null) {
       _infoWindow.content = newInfoWindowContent;
