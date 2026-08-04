@@ -29,8 +29,8 @@ You must verify that there are actually changed files to test.
 Command to run:
 
 ```bash
-git fetch origin main
-git diff --name-only origin/main...HEAD | grep '^packages/camera/camera_android_camerax'
+git fetch upstream main
+git diff --name-only upstream/main...HEAD | grep '^packages/camera/camera_android_camerax'
 ```
 
 If this command outputs nothing,
@@ -51,15 +51,14 @@ is an ancestor of your current `HEAD`.
 Command to run:
 
 ```bash
-git fetch origin main
-git merge-base --is-ancestor origin/main HEAD
+git fetch upstream main
+git merge-base --is-ancestor upstream/main HEAD
 ```
 
 If this command fails (exits with a non-zero code),
-the branch is behind `origin/main`.
+the branch is behind `upstream/main`.
 The code is NOT ready to push.
-The latest changes from `main` must be pulled first,
-and then merge conflicts must be resolved.
+**STOP IMMEDIATELY.** Do not proceed to any subsequent checks and do not run `update-release-info`. Output `# NO, you are not ready to push` and instruct the user to pull `upstream/main` first.
 
 ## 4. Check Unit Tests Pass
 
