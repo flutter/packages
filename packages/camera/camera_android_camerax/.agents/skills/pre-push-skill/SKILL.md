@@ -65,7 +65,9 @@ and then merge conflicts must be resolved.
 
 Tests ensure that your changes do not break existing functionality
 and that new features work as expected.
-All unit tests must pass before code can be merged.
+All unit tests (both Dart and native Android) must pass before code can be merged.
+
+### Dart Unit Tests
 Command to run:
 
 ```bash
@@ -74,7 +76,16 @@ dart run script/tool/bin/flutter_plugin_tools.dart \
   dart-test --packages camera_android_camerax
 ```
 
-If this command fails, the code is likely not ready to push.
+### Native Unit Tests
+Command to run:
+
+```bash
+cd $(git rev-parse --show-toplevel)
+dart run script/tool/bin/flutter_plugin_tools.dart \
+  native-test --packages camera_android_camerax --no-integration
+```
+
+If either command fails, the code is not ready to push.
 The tests might have been failing prior to any changes being made,
 so prompt the user to review all found errors
 and fix the newly introduced failures before pushing any code.
@@ -122,6 +133,10 @@ be pushed.
 Virtually all changes require a test.
 See [Test Documentation](https://github.com/flutter/flutter/blob/master/docs/ecosystem/testing/Plugin-Tests.md).
 Evaluate the change against that testing rubric.
+
+Specifically check:
+- **Dart changes**: If Dart source files in `lib/` were modified or added, verify that corresponding Dart tests in `test/` were added or updated.
+- **Native Android changes**: If native Android source files (`.java` in `android/src/main/`) were modified or added, verify that corresponding native unit tests in `android/src/test/` were added or updated.
 
 Based on the rubric, if the change requires a test,
 give the user a quote from the testing documentation
