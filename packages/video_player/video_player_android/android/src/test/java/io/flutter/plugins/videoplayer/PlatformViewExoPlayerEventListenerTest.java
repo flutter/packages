@@ -77,4 +77,37 @@ public final class PlatformViewExoPlayerEventListenerTest {
     eventListener.onPlaybackStateChanged(Player.STATE_READY);
     verify(mockCallbacks).onInitialized(400, 800, 10L, 0);
   }
+
+  @Test
+  public void onPlaybackStateChangedReadyScalesWidthByPixelAspectRatio_whenContentIsAnamorphic() {
+    eventListener = new PlatformViewExoPlayerEventListener(mockExoPlayer, mockCallbacks);
+
+    // Anamorphic content: 1080x720 coded pixels with a 3:8 pixel aspect ratio displays as 405x720.
+    Format format =
+        new Format.Builder().setWidth(1080).setHeight(720).setPixelWidthHeightRatio(0.375f).build();
+    when(mockExoPlayer.getVideoFormat()).thenReturn(format);
+    when(mockExoPlayer.getDuration()).thenReturn(10L);
+
+    eventListener.onPlaybackStateChanged(Player.STATE_READY);
+    verify(mockCallbacks).onInitialized(405, 720, 10L, 0);
+  }
+
+  @Test
+  public void onPlaybackStateChangedReadyScalesThenSwaps_whenAnamorphicAndRotated90Degrees() {
+    eventListener = new PlatformViewExoPlayerEventListener(mockExoPlayer, mockCallbacks);
+
+    // The display size of the unrotated frame is 405x720, so rotating it yields 720x405.
+    Format format =
+        new Format.Builder()
+            .setWidth(1080)
+            .setHeight(720)
+            .setPixelWidthHeightRatio(0.375f)
+            .setRotationDegrees(90)
+            .build();
+    when(mockExoPlayer.getVideoFormat()).thenReturn(format);
+    when(mockExoPlayer.getDuration()).thenReturn(10L);
+
+    eventListener.onPlaybackStateChanged(Player.STATE_READY);
+    verify(mockCallbacks).onInitialized(720, 405, 10L, 0);
+  }
 }
