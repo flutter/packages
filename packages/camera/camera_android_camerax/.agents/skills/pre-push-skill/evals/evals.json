@@ -1,0 +1,27 @@
+{
+  "repo_criteria": [],
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "First, run 'bash .agents/skills/pre-push-skill/evals/test_data/setup_missing_native_test.sh'. Then, run the pre-push skill.",
+      "expected_chat_output": [
+        "The agent should detect that a native Java source file was modified without a corresponding native unit test being added or updated, and report that the code is not ready to push or ask for test coverage approval."
+      ],
+      "expected_repo_state": [
+        "No changes are pushed to the remote repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 2,
+      "prompt": "First, run 'bash .agents/skills/pre-push-skill/evals/test_data/setup_success_native_test.sh'. Then, run the pre-push skill.",
+      "expected_chat_output": [
+        "The agent should run both Dart and native unit tests, verify that corresponding native unit test files were updated for the Java source changes, and report whether the branch is ready to push."
+      ],
+      "expected_repo_state": [
+        "No changes are pushed to the remote repository."
+      ],
+      "agent_config": "reidbaker-agent"
+    }
+  ]
+}
