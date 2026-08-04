@@ -41,7 +41,7 @@ jobs:
     # because there doesn't appear to be anything to wait for. To avoid that,
     # explicitly wait for one LUCI test by name first.
     - name: Wait for test check-in
-      uses: lewagon/wait-on-check-action@96d9100b431964d10e0136aff8b9ccb92470505e
+      uses: lewagon/wait-on-check-action@2271c86c146b96545b4e871b855e10ffa6f50773
       with:
         ref: ${{ github.sha }}
         check-name: 'Linux ci_yaml packages roller'
@@ -53,7 +53,7 @@ jobs:
 
     # This workflow should be the last to run. So wait for all the other tests to succeed.
     - name: Wait on all tests
-      uses: lewagon/wait-on-check-action@96d9100b431964d10e0136aff8b9ccb92470505e
+      uses: lewagon/wait-on-check-action@2271c86c146b96545b4e871b855e10ffa6f50773
       with:
         ref: ${{ github.sha }}
         running-workflow-name: 'release'
