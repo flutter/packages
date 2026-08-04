@@ -1,3 +1,0 @@
-changelog: |
-  - Refactors examples to not cross-import material_ui.
-version: patch
