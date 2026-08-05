@@ -1318,7 +1318,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         } else {
           _errors.add(
             Error(
-              message: 'expected NamedArgument but found $expression',
+              message: 'expected NamedArgument but found $argument',
               lineNumber: calculateLineNumber(source, argument.offset),
             ),
           );
@@ -1518,18 +1518,19 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   @override
   Object? visitAnnotation(dart_ast.Annotation node) {
     if (node.name.name == 'ConfigurePigeon') {
-      if (node.arguments == null) {
+      final dart_ast.ArgumentList? arguments = node.arguments;
+      if (arguments == null) {
         _errors.add(
           Error(
             message: 'ConfigurePigeon expects a PigeonOptions() call.',
             lineNumber: calculateLineNumber(source, node.offset),
           ),
         );
+      } else {
+        final pigeonOptionsMap =
+            _expressionToMap(arguments.arguments.first.argumentExpression) as Map<String, Object>;
+        _pigeonOptions = pigeonOptionsMap;
       }
-      final pigeonOptionsMap =
-          _expressionToMap(node.arguments!.arguments.first.argumentExpression)
-              as Map<String, Object>;
-      _pigeonOptions = pigeonOptionsMap;
     }
     node.visitChildren(this);
     return null;
@@ -1556,8 +1557,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           (dart_ast.Annotation element) => element.name.name == 'HostApi',
         );
         String? dartHostTestHandler;
-        if (hostApi.arguments != null) {
-          for (final dart_ast.Argument argument in hostApi.arguments!.arguments) {
+        final dart_ast.ArgumentList? arguments = hostApi.arguments;
+        if (arguments != null) {
+          for (final dart_ast.Argument argument in arguments.arguments) {
             if (argument is dart_ast.NamedArgument) {
               if (argument.name.lexeme == 'dartHostTestHandler') {
                 final dart_ast.Expression dartHostTestHandlerExpression =
@@ -1588,9 +1590,12 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         );
 
         final annotationMap = <String, Object?>{};
-        for (final dart_ast.Argument argument in proxyApiAnnotation.arguments!.arguments) {
-          if (argument is dart_ast.NamedArgument) {
-            annotationMap[argument.name.lexeme] = _expressionToMap(argument.argumentExpression);
+        final dart_ast.ArgumentList? arguments = proxyApiAnnotation.arguments;
+        if (arguments != null) {
+          for (final dart_ast.Argument argument in arguments.arguments) {
+            if (argument is dart_ast.NamedArgument) {
+              annotationMap[argument.name.lexeme] = _expressionToMap(argument.argumentExpression);
+            }
           }
         }
 
@@ -1679,9 +1684,12 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         );
 
         final annotationMap = <String, Object?>{};
-        for (final dart_ast.Argument argument in annotation.arguments!.arguments) {
-          if (argument is dart_ast.NamedArgument) {
-            annotationMap[argument.name.lexeme] = _expressionToMap(argument.argumentExpression);
+        final dart_ast.ArgumentList? arguments = annotation.arguments;
+        if (arguments != null) {
+          for (final dart_ast.Argument argument in arguments.arguments) {
+            if (argument is dart_ast.NamedArgument) {
+              annotationMap[argument.name.lexeme] = _expressionToMap(argument.argumentExpression);
+            }
           }
         }
 
