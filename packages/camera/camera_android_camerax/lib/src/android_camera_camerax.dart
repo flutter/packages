@@ -518,6 +518,12 @@ class AndroidCameraCameraX extends CameraPlatform {
     await processCameraProvider?.unbindAll();
     await imageAnalysis?.clearAnalyzer();
     await deviceOrientationManager.stopListeningForDeviceOrientationChange();
+
+    // `processCameraProvider.unbindAll()` implicitly finalizes active recordings natively.
+    // Clear the Dart state here to prevent an exception on resume.
+    recording = null;
+    pendingRecording = null;
+    videoOutputPath = null;
   }
 
   /// The camera with ID [cameraId] has been initialized.
