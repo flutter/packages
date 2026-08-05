@@ -64,6 +64,9 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
   func setImageFileFormat(_ fileFormat: PlatformImageFileFormat)
   func setJpegImageQuality(_ quality: Int64)
 
+  func isZeroShutterLagSupported() -> Bool
+  func setZeroShutterLagEnabled(_ enabled: Bool)
+
   func setExposureMode(_ mode: PlatformExposureMode)
   func setExposureOffset(_ offset: Double)
 
