@@ -33,6 +33,9 @@ protocol AuthContext {
     localizedReason: String,
     reply: @escaping @Sendable (Bool, Error?) -> Void
   )
+
+  /// Direct passthrough to LAContext's invalidate.
+  func invalidate()
 }
 
 /// AuthContext is intentionally a direct passthroguh to LAContext.

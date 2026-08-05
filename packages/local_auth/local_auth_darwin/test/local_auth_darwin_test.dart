@@ -52,8 +52,14 @@ void main() {
   });
 
   group('stopAuthentication', () {
-    test('always returns false', () async {
+    test('handles false', () async {
+      when(api.stopAuthentication()).thenAnswer((_) async => false);
       expect(await plugin.stopAuthentication(), false);
+    });
+
+    test('handles true', () async {
+      when(api.stopAuthentication()).thenAnswer((_) async => true);
+      expect(await plugin.stopAuthentication(), true);
     });
   });
 

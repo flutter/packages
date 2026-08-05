@@ -48,6 +48,9 @@ final class StubAuthContext: NSObject, AuthContext, @unchecked Sendable {
   var biometryType: LABiometryType = .none
   var localizedFallbackTitle: String?
 
+  /// Tracks if invalidate() was called during the test.
+  var invalidated = false
+
   func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
     #expect(
       policy
@@ -75,6 +78,8 @@ final class StubAuthContext: NSObject, AuthContext, @unchecked Sendable {
       reply(self.evaluateResponse, self.evaluateError)
     }
   }
+
+  func invalidate() { invalidated = true }
 }
 
 // MARK: -
@@ -452,6 +457,53 @@ struct LocalAuthPluginTests {
 
     let result = try plugin.isDeviceSupported()
     #expect(!result)
+  }
+
+  @Test
+  func stopAuthenticationHandlesNoActiveContext() async {
+    let stubAuthContext = StubAuthContext()
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
+
+    let result = await withCheckedContinuation { continuation in
+      plugin.stopAuthentication { response in
+        switch response {
+        case .success(let val):
+          continuation.resume(returning: val)
+        case .failure:
+          continuation.resume(returning: false)
+        }
+      }
+    }
+
+    #expect(!result)
+    #expect(!stubAuthContext.invalidated)
+  }
+
+  @Test
+  func stopAuthenticationHandlesActiveContext() async {
+    let stubAuthContext = StubAuthContext()
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
+
+    plugin.authenticate(
+      options: AuthOptions(biometricOnly: false, sticky: false),
+      strings: createAuthStrings()
+    ) { _ in }
+
+    let result = await withCheckedContinuation { continuation in
+      plugin.stopAuthentication { response in
+        switch response {
+        case .success(let val):
+          continuation.resume(returning: val)
+        case .failure:
+          continuation.resume(returning: false)
+        }
+      }
+    }
+
+    #expect(result)
+    #expect(stubAuthContext.invalidated)
   }
 
   // Creates an AuthStrings with placeholder values.
