@@ -1,3 +1,8 @@
+## 2.14.0
+
+* Adds `isZeroShutterLagSupported` and `setZeroShutterLagEnabled` for
+  zero-shutter-lag still image capture on platforms that support it.
+
 ## 2.13.1
 
 * Changes the default implementation of `setJpegImageQuality` to a no-op so that

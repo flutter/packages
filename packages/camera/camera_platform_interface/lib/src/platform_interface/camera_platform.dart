@@ -345,4 +345,27 @@ abstract class CameraPlatform extends PlatformInterface {
     // No-op by default. Platforms that support setting the JPEG quality
     // override this method.
   }
+
+  /// Returns whether the selected camera supports zero-shutter-lag capture.
+  ///
+  /// The default implementation returns `false`.
+  Future<bool> isZeroShutterLagSupported(int cameraId) async => false;
+
+  /// Enables or disables zero-shutter-lag capture for still image capture.
+  ///
+  /// When enabled, [takePicture] returns the buffered frame closest to the
+  /// moment it was called instead of waiting for a new frame to be captured,
+  /// reducing shutter latency on devices that support it.
+  ///
+  /// Some platforms enable zero-shutter-lag by default on devices that
+  /// support it; this setter provides explicit control in either direction.
+  ///
+  /// This is a best-effort setting; platforms and devices that do not support
+  /// zero-shutter-lag capture ignore it and fall back to the regular capture
+  /// pipeline. The default implementation is a no-op so that calling it is
+  /// always safe.
+  Future<void> setZeroShutterLagEnabled(int cameraId, bool enabled) async {
+    // No-op by default. Platforms that support zero-shutter-lag capture
+    // override this method.
+  }
 }
