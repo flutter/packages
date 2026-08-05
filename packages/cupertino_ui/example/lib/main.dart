@@ -69,15 +69,15 @@ import 'text_form_field_row/cupertino_text_form_field_row.1.dart'
     as cupertino_text_form_field_row_1;
 
 void main() {
-  runApp(ExampleApp());
+  runApp(const ExampleApp());
 }
 
 class ExampleApp extends StatelessWidget {
-  ExampleApp({super.key});
+  const ExampleApp({super.key});
 
   static const title = 'Cupertino Examples';
 
-  final _examples = <_Example>[
+  static final _examples = <_Example>[
     _Example(
       'activity_indicator/cupertino_activity_indicator.0.dart',
       (BuildContext context) =>
