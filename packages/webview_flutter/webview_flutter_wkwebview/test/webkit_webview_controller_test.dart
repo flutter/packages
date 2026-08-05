@@ -1125,6 +1125,12 @@ void main() {
             onMessageReceived: (JavaScriptMessage message) {},
           ),
         );
+        await controller.addJavaScriptChannel(
+          WebKitJavaScriptChannelParams(
+            name: 'keep',
+            onMessageReceived: (JavaScriptMessage message) {},
+          ),
+        );
         await controller.addDocumentStartJavaScript(
           const WebKitDocumentStartJavaScriptParams(source: 'window.injected = true;'),
         );
@@ -1133,9 +1139,14 @@ void main() {
         await controller.removeJavaScriptChannel('name');
 
         verify(mockUserContentController.removeAllUserScripts());
-        final userScript =
-            verify(mockUserContentController.addUserScript(captureAny)).captured.single
-                as WKUserScript;
+        final List<dynamic> addedScripts = verify(
+          mockUserContentController.addUserScript(captureAny),
+        ).captured;
+        // The channel wrapper script is re-registered before user scripts so
+        // that scripts that run at document start can rely on the channel.
+        final channelScript = addedScripts[0] as WKUserScript;
+        expect(channelScript.source, 'window.keep = webkit.messageHandlers.keep;');
+        final userScript = addedScripts[1] as WKUserScript;
         expect(userScript.source, 'window.injected = true;');
         expect(userScript.injectionTime, UserScriptInjectionTime.atDocumentStart);
       });

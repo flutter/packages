@@ -869,8 +869,13 @@ class WebKitWebViewController extends PlatformWebViewController {
     await Future.wait(<Future<void>>[
       for (final JavaScriptChannelParams params in remainingChannelParams.values)
         addJavaScriptChannel(params),
+    ]);
+
+    await Future.wait(<Future<void>>[
       // User scripts are removed with `removeAllUserScripts`, so this adds
-      // back the scripts registered with `addDocumentStartJavaScript`.
+      // back the scripts registered with `addDocumentStartJavaScript`. This
+      // runs after the JavaScript channels are re-registered above, so that
+      // scripts that run at document start can rely on the channels.
       for (final WebKitDocumentStartJavaScriptParams params in userScripts)
         addDocumentStartJavaScript(params),
       // Zoom is disabled with a WKUserScript, so this adds it back if it was
