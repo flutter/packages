@@ -321,10 +321,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
     ];
 
     final customCheckRunners = <_CustomLinter>[
-      _CustomLinter(
-        dependencyName: 'cognitive_complexity',
-        run: _runCognitiveComplexityForPackage,
-      ),
+      _CustomLinter(dependencyName: 'cognitive_complexity', run: _runCognitiveComplexityForPackage),
     ];
 
     // Skip custom linters during downgrade as metrics are redundant and vulnerable to dependency issues.
@@ -353,8 +350,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
       if (yaml is YamlMap) {
         final Object? linter = yaml['cognitive_complexity'];
         if (linter is YamlMap) {
-          final Object? threshold =
-              linter['fail-threshold'] ?? linter['fail_threshold'];
+          final Object? threshold = linter['fail-threshold'] ?? linter['fail_threshold'];
           if (threshold is int) {
             return threshold;
           }
@@ -380,13 +376,9 @@ class AnalyzeCommand extends PackageLoopingCommand {
       return <String>[];
     }
     final filesToAnalyze = <String>[];
-    for (final FileSystemEntity entity
-        in package.libDirectory.listSync(recursive: true)) {
-      if (entity is File &&
-          entity.path.endsWith('.dart') &&
-          !_isGeneratedDartFile(entity.path)) {
-        final String relativePath =
-            path.relative(entity.path, from: package.directory.path);
+    for (final FileSystemEntity entity in package.libDirectory.listSync(recursive: true)) {
+      if (entity is File && entity.path.endsWith('.dart') && !_isGeneratedDartFile(entity.path)) {
+        final String relativePath = path.relative(entity.path, from: package.directory.path);
         filesToAnalyze.add(relativePath.replaceAll(r'\', '/'));
       }
     }
@@ -417,8 +409,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
       workingDir: package.directory,
     );
     if (linterExitCode != 0) {
-      final thresholdMessage =
-          threshold != null ? ' (configured threshold: $threshold)' : '';
+      final thresholdMessage = threshold != null ? ' (configured threshold: $threshold)' : '';
       return <String>[
         'Metrics violations found$thresholdMessage. See the package\'s local "analysis_options.yaml" for configured thresholds.',
       ];
