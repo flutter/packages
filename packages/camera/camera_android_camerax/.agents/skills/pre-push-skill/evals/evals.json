@@ -33,6 +33,17 @@
         "No changes are pushed to the remote repository."
       ],
       "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 4,
+      "prompt": "First, run 'bash .agents/skills/pre-push-skill/evals/test_data/setup_missing_native_test.sh'. The Java change is just a comment and I explicitly approve bypassing the native test requirement. Then, run the pre-push skill.",
+      "expected_chat_output": [
+        "The agent should recognize the user's explicit test coverage approval for the Java change, verify that all other pre-push checks pass, and report that the code is ready to push."
+      ],
+      "expected_repo_state": [
+        "No changes are pushed to the remote repository."
+      ],
+      "agent_config": "reidbaker-agent"
     }
   ]
 }
