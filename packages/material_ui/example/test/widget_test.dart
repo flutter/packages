@@ -168,7 +168,7 @@ void main() {
   });
 
   testWidgets('carousel.0', (WidgetTester tester) async {
-      HttpOverrides.global = null;
+    HttpOverrides.global = null;
 
     await tester.pumpWidget(ExampleApp());
 
