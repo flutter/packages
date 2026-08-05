@@ -1959,6 +1959,10 @@ void main() {
       camera.liveCameraState = MockLiveCameraState();
       camera.imageAnalysis = MockImageAnalysis();
 
+      camera.recording = MockRecording();
+      camera.pendingRecording = MockPendingRecording();
+      camera.videoOutputPath = 'test/path.mp4';
+
       await camera.dispose(3);
 
       verify(camera.preview!.releaseSurfaceProvider());
@@ -1966,6 +1970,10 @@ void main() {
       verify(camera.processCameraProvider!.unbindAll());
       verify(camera.imageAnalysis!.clearAnalyzer());
       expect(stoppedListeningForDeviceOrientationChange, isTrue);
+
+      expect(camera.recording, isNull);
+      expect(camera.pendingRecording, isNull);
+      expect(camera.videoOutputPath, isNull);
     },
   );
 
