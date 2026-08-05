@@ -202,6 +202,14 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   int? _lockedCaptureOrientation;
 
+  /// Whether zero-shutter-lag capture was requested via
+  /// [setZeroShutterLagEnabled].
+  bool _zeroShutterLagEnabled = false;
+
+  /// The JPEG compression quality requested via [setJpegImageQuality], if
+  /// any.
+  int? _jpegQuality;
+
   /// Whether or not the default rotation for [UseCase]s needs to be set
   /// manually because the capture orientation was previously locked.
   ///
@@ -414,6 +422,8 @@ class AndroidCameraCameraX extends CameraPlatform {
       resolutionSelector: _presetResolutionSelector,
       /* use CameraX default target rotation */ targetRotation: await deviceOrientationManager
           .getDefaultDisplayRotation(),
+      jpegQuality: _jpegQuality,
+      zeroShutterLagEnabled: _zeroShutterLagEnabled,
     );
 
     // Configure VideoCapture and Recorder instances.
@@ -1092,19 +1102,60 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// the new instance automatically.
   @override
   Future<void> setJpegImageQuality(int cameraId, int quality) async {
-    // Unbind the current ImageCapture if it exists and is bound.
-    if (imageCapture != null) {
-      await _unbindUseCaseFromLifecycle(imageCapture!);
+    _jpegQuality = quality;
+    await _recreateImageCapture();
+  }
+
+  /// Returns whether the selected camera supports zero-shutter-lag capture.
+  ///
+  /// The default implementation returns `false`.
+  @override
+  Future<bool> isZeroShutterLagSupported(int cameraId) async {
+    return cameraInfo?.isZslSupported() ?? false;
+  }
+
+  /// Enables or disables zero-shutter-lag capture for still image capture.
+  ///
+  /// CameraX only supports setting the capture mode via `ImageCapture.Builder`
+  /// at construction time, so this recreates the `ImageCapture` use case with
+  /// the requested mode. The next call to [takePicture] will bind the new
+  /// instance automatically.
+  ///
+  /// This is a no-op on devices that do not support zero-shutter-lag; CameraX
+  /// falls back to the regular capture pipeline on its own.
+  @override
+  Future<void> setZeroShutterLagEnabled(int cameraId, bool enabled) async {
+    _zeroShutterLagEnabled = enabled;
+    await _recreateImageCapture();
+  }
+
+  /// Recreates [imageCapture] from the currently requested settings
+  /// ([_jpegQuality], [_zeroShutterLagEnabled]).
+  ///
+  /// CameraX only supports several `ImageCapture` settings via
+  /// `ImageCapture.Builder` at construction time, so any change to one of
+  /// them requires unbinding and recreating the whole use case. The next
+  /// call to [takePicture] will bind the new instance automatically.
+  ///
+  /// If no camera has been created yet, this only updates the requested
+  /// settings; [createCamera] applies them when the camera is created.
+  Future<void> _recreateImageCapture() async {
+    if (imageCapture == null) {
+      return;
     }
 
-    // Recreate ImageCapture with the requested JPEG quality.
+    // Unbind the current ImageCapture if it exists and is bound.
+    await _unbindUseCaseFromLifecycle(imageCapture!);
+
+    // Recreate ImageCapture with the requested settings.
     // Preserve locked orientation if set, otherwise use default display rotation.
     final int targetRotation =
         _lockedCaptureOrientation ?? await deviceOrientationManager.getDefaultDisplayRotation();
     imageCapture = ImageCapture(
       resolutionSelector: _presetResolutionSelector,
       targetRotation: targetRotation,
-      jpegQuality: quality,
+      jpegQuality: _jpegQuality,
+      zeroShutterLagEnabled: _zeroShutterLagEnabled,
     );
   }
 

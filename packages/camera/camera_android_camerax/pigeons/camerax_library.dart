@@ -241,6 +241,11 @@ abstract class CameraInfo {
 
   /// A LiveData of ZoomState.
   LiveData getZoomState();
+
+  /// Returns whether the camera supports zero-shutter-lag capture.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/CameraInfo#isZslSupported().
+  bool isZslSupported();
 }
 
 /// Direction of lens of a camera.
@@ -533,7 +538,12 @@ enum CameraXFlashMode {
 /// See https://developer.android.com/reference/kotlin/androidx/camera/core/ImageCapture.
 @ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'androidx.camera.core.ImageCapture'))
 abstract class ImageCapture extends UseCase {
-  ImageCapture(int? targetRotation, CameraXFlashMode? flashMode, int? jpegQuality);
+  ImageCapture(
+    int? targetRotation,
+    CameraXFlashMode? flashMode,
+    int? jpegQuality,
+    bool? zeroShutterLagEnabled,
+  );
 
   late final ResolutionSelector? resolutionSelector;
 
