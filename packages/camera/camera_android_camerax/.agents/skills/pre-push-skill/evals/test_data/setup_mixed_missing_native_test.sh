@@ -22,4 +22,4 @@ echo "// Eval comment" >> "$JAVA_FILE"
 # Commit so git status is clean and git diff against origin/main shows all three files
 cd "$PACKAGE_DIR" || exit 1
 git add "$DART_FILE" "$DART_TEST" "$JAVA_FILE"
-git commit -m "eval: mixed Dart and Java changes without native unit test"
+git -c user.name="Author" -c user.email="author@example.com" commit -m "eval: mixed Dart and Java changes without native unit test"

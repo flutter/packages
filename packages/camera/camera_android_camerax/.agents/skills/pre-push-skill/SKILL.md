@@ -71,7 +71,7 @@ All unit tests (both Dart and native Android) must pass before code can be merge
 Command to run:
 
 ```bash
-cd $(git rev-parse --show-toplevel)
+cd "$(git rev-parse --show-toplevel)"
 dart run script/tool/bin/flutter_plugin_tools.dart \
   dart-test --packages camera_android_camerax
 ```
@@ -80,7 +80,7 @@ dart run script/tool/bin/flutter_plugin_tools.dart \
 Command to run:
 
 ```bash
-cd $(git rev-parse --show-toplevel)
+cd "$(git rev-parse --show-toplevel)"
 dart run script/tool/bin/flutter_plugin_tools.dart \
   native-test --packages camera_android_camerax --no-integration
 ```
@@ -99,7 +99,7 @@ and add a corresponding entry describing the change in `CHANGELOG.md`.
 Command to run:
 
 ```bash
-cd $(git rev-parse --show-toplevel)
+cd "$(git rev-parse --show-toplevel)"
 dart run script/tool/bin/flutter_plugin_tools.dart \
   publish-check --packages camera_android_camerax
 ```
@@ -115,7 +115,7 @@ the standard copyright and license header.
 Command to run:
 
 ```bash
-cd $(git rev-parse --show-toplevel)
+cd "$(git rev-parse --show-toplevel)"
 dart run script/tool/bin/flutter_plugin_tools.dart license-check --packages camera_android_camerax
 ```
 

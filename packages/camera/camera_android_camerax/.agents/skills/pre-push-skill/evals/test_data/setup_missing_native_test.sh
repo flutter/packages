@@ -16,4 +16,4 @@ echo "// Eval comment" >> "$JAVA_FILE"
 # Commit so git status is clean and git diff against origin/main shows the Java change
 cd "$PACKAGE_DIR" || exit 1
 git add "$JAVA_FILE"
-git commit -m "eval: temporary commit with Java change and no test update"
+git -c user.name="Author" -c user.email="author@example.com" commit -m "eval: temporary commit with Java change and no test update"
