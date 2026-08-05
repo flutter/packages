@@ -63,510 +63,63 @@ import 'package:material_ui_examples/text_field/text_field.2.dart'
     as text_field_2;
 import 'package:material_ui_examples/tooltip/tooltip.0.dart' as tooltip_0;
 
+const Map<String, Type> _examples = <String, Type>{
+  'App bars': app_bar_1.AppBarApp,
+  'Badges': badge_0.BadgeExampleApp,
+  'Common buttons': button_style_0.ButtonApp,
+  'FABs': floating_action_button_1.FloatingActionButtonExampleApp,
+  'Icon buttons': icon_button_3.IconButtonToggleApp,
+  'Segmented buttons': segmented_button_0.SegmentedButtonApp,
+  'Cards': card_2.CardExamplesApp,
+  'Carousel': carousel_0.CarouselExampleApp,
+  'Checkbox': checkbox_1.CheckboxExampleApp,
+  'ActionChip': action_chip_0.ChipApp,
+  'ChoiceChip': choice_chip_0.ChipApp,
+  'FilterChip': filter_chip_0.ChipApp,
+  'InputChip': input_chip_0.ChipApp,
+  'Date pickers': show_date_picker_0.DatePickerApp,
+  'Time pickers': show_time_picker_0.ShowTimePickerApp,
+  'Dialogs': alert_dialog_1.AlertDialogExampleApp,
+  'Divider': divider_1.DividerExampleApp,
+  'Lists': list_tile_2.ListTileApp,
+  'Linear progress indicators':
+      linear_progress_indicator_0.ProgressIndicatorExampleApp,
+  'Circular progress indicators':
+      circular_progress_indicator_0.ProgressIndicatorExampleApp,
+  'MenuAnchor': dropdown_menu_1.DropdownMenuApp,
+  'Navigation bar': navigation_bar_1.NavigationBarApp,
+  'Navigation rail': navigation_rail_0.NavigationRailExampleApp,
+  'Navigation drawer': navigation_drawer_0.NavigationDrawerApp,
+  'Radio button': radio_1.RadioExampleApp,
+  'SearchAnchor': search_anchor_0.SearchBarApp,
+  'Bottom sheets': show_modal_bottom_sheet_2.ModalBottomSheetApp,
+  'Sliders': slider_0.SliderExampleApp,
+  'Range sliders': range_slider_0.RangeSliderExampleApp,
+  'Snackbar': snack_bar_2.SnackBarExampleApp,
+  'Switch': switch_2.SwitchApp,
+  'TabBar': tab_bar_0.TabBarApp,
+  'Text fields': text_field_2.TextFieldExamplesApp,
+  'Tooltip': tooltip_0.TooltipExampleApp,
+};
+
 void main() {
-  testWidgets('app_bar.1', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('app_bar/app_bar.1.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(app_bar_1.AppBarApp), findsOneWidget);
-  });
-
-  testWidgets('badge.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('badge/badge.0.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(badge_0.BadgeExampleApp), findsOneWidget);
-  });
-
-  testWidgets('button_style.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('button_style/button_style.0.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(button_style_0.ButtonApp), findsOneWidget);
-  });
-
-  testWidgets('floating_action_button.1', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text(
-      'floating_action_button/floating_action_button.1.dart',
-    );
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(
-      find.byType(floating_action_button_1.FloatingActionButtonExampleApp),
-      findsOneWidget,
-    );
-  });
-
-  testWidgets('icon_button.3', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('icon_button/icon_button.3.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(icon_button_3.IconButtonToggleApp), findsOneWidget);
-  });
-
-  testWidgets('segmented_button.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('segmented_button/segmented_button.0.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(segmented_button_0.SegmentedButtonApp), findsOneWidget);
-  });
-
-  testWidgets('card.2', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('card/card.2.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(card_2.CardExamplesApp), findsOneWidget);
-  });
-
-  testWidgets('carousel.0', (WidgetTester tester) async {
+  setUpAll(() {
+    // This is needed for the carousel.1 example, which uses a NetworkImage.
     HttpOverrides.global = null;
-
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('carousel/carousel.0.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(carousel_0.CarouselExampleApp), findsOneWidget);
   });
-
-  testWidgets('checkbox.1', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('checkbox/checkbox.1.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(checkbox_1.CheckboxExampleApp), findsOneWidget);
-  });
-
-  testWidgets('action_chip.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('action_chip/action_chip.0.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(action_chip_0.ChipApp), findsOneWidget);
-  });
-
-  testWidgets('choice_chip.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('choice_chip/choice_chip.0.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(choice_chip_0.ChipApp), findsOneWidget);
-  });
-
-  testWidgets('filter_chip.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('filter_chip/filter_chip.0.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(filter_chip_0.ChipApp), findsOneWidget);
-  });
-
-  testWidgets('input_chip.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('input_chip/input_chip.0.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(input_chip_0.ChipApp), findsOneWidget);
-  });
-
-  testWidgets('show_date_picker.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('date_picker/show_date_picker.0.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(show_date_picker_0.DatePickerApp), findsOneWidget);
-  });
-
-  testWidgets('show_time_picker.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('time_picker/show_time_picker.0.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(show_time_picker_0.ShowTimePickerApp), findsOneWidget);
-  });
-
-  testWidgets('alert_dialog.1', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('dialog/alert_dialog.1.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(alert_dialog_1.AlertDialogExampleApp), findsOneWidget);
-  });
-
-  testWidgets('divider.1', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('divider/divider.1.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(divider_1.DividerExampleApp), findsOneWidget);
-  });
-
-  testWidgets('list_tile.2', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('list_tile/list_tile.2.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(list_tile_2.ListTileApp), findsOneWidget);
-  });
-
-  testWidgets('linear_progress_indicator.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text(
-      'progress_indicator/linear_progress_indicator.0.dart',
-    );
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(
-      find.byType(linear_progress_indicator_0.ProgressIndicatorExampleApp),
-      findsOneWidget,
-    );
-  });
-
-  testWidgets('circular_progress_indicator.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text(
-      'progress_indicator/circular_progress_indicator.0.dart',
-    );
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(
-      find.byType(circular_progress_indicator_0.ProgressIndicatorExampleApp),
-      findsOneWidget,
-    );
-  });
-
-  testWidgets('dropdown_menu.1', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('dropdown_menu/dropdown_menu.1.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(dropdown_menu_1.DropdownMenuApp), findsOneWidget);
-  });
-
-  testWidgets('navigation_bar.1', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('navigation_bar/navigation_bar.1.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(navigation_bar_1.NavigationBarApp), findsOneWidget);
-  });
-
-  testWidgets('navigation_rail.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('navigation_rail/navigation_rail.0.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(
-      find.byType(navigation_rail_0.NavigationRailExampleApp),
-      findsOneWidget,
-    );
-  });
-
-  testWidgets('navigation_drawer.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text(
-      'navigation_drawer/navigation_drawer.0.dart',
-    );
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(
-      find.byType(navigation_drawer_0.NavigationDrawerApp),
-      findsOneWidget,
-    );
-  });
-
-  testWidgets('radio.1', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('radio/radio.1.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(radio_1.RadioExampleApp), findsOneWidget);
-  });
-
-  testWidgets('search_anchor.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('search_anchor/search_anchor.0.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(search_anchor_0.SearchBarApp), findsOneWidget);
-  });
-
-  testWidgets('show_modal_bottom_sheet.2', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text(
-      'bottom_sheet/show_modal_bottom_sheet.2.dart',
-    );
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(
-      find.byType(show_modal_bottom_sheet_2.ModalBottomSheetApp),
-      findsOneWidget,
-    );
-  });
-
-  testWidgets('slider.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('slider/slider.0.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(slider_0.SliderExampleApp), findsOneWidget);
-  });
-
-  testWidgets('range_slider.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('range_slider/range_slider.0.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(range_slider_0.RangeSliderExampleApp), findsOneWidget);
-  });
-
-  testWidgets('snack_bar.2', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('snack_bar/snack_bar.2.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(snack_bar_2.SnackBarExampleApp), findsOneWidget);
-  });
-
-  testWidgets('switch.2', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('switch/switch.2.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(switch_2.SwitchApp), findsOneWidget);
-  });
-
-  testWidgets('tab_bar.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('tabs/tab_bar.0.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(tab_bar_0.TabBarApp), findsOneWidget);
-  });
-
-  testWidgets('text_field.2', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('text_field/text_field.2.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(text_field_2.TextFieldExamplesApp), findsOneWidget);
-  });
-
-  testWidgets('tooltip.0', (WidgetTester tester) async {
-    await tester.pumpWidget(ExampleApp());
-
-    final Finder finder = find.text('tooltip/tooltip.0.dart');
-    await tester.scrollUntilVisible(finder, 200.0);
-    await tester.ensureVisible(finder);
-    await tester.pumpAndSettle();
-    await tester.tap(finder);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-
-    expect(find.byType(tooltip_0.TooltipExampleApp), findsOneWidget);
-  });
+  for (final MapEntry<String, Type> entry in _examples.entries) {
+    testWidgets(entry.key, (WidgetTester tester) async {
+      await tester.pumpWidget(ExampleApp());
+
+      final Finder finder = find.text(entry.key);
+      await tester.scrollUntilVisible(finder, 200.0);
+      await tester.ensureVisible(finder);
+      await tester.pumpAndSettle();
+      await tester.tap(finder);
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(find.byType(entry.value), findsOneWidget);
+    });
+  }
 }

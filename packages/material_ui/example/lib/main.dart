@@ -54,145 +54,189 @@ class ExampleApp extends StatelessWidget {
 
   final _examples = <_Example>[
     _Example(
-      'app_bar/app_bar.1.dart',
-      (BuildContext context) => const app_bar_1.AppBarApp(),
+      filepath: 'app_bar/app_bar.1.dart',
+      title: 'App bars',
+      builder: (BuildContext context) => const app_bar_1.AppBarApp(),
     ),
     _Example(
-      'badge/badge.0.dart',
-      (BuildContext context) => const badge_0.BadgeExampleApp(),
+      filepath: 'badge/badge.0.dart',
+      title: 'Badges',
+      builder: (BuildContext context) => const badge_0.BadgeExampleApp(),
     ),
     _Example(
-      'button_style/button_style.0.dart',
-      (BuildContext context) => const button_style_0.ButtonApp(),
+      filepath: 'button_style/button_style.0.dart',
+      title: 'Common buttons',
+      builder: (BuildContext context) => const button_style_0.ButtonApp(),
     ),
     _Example(
-      'floating_action_button/floating_action_button.1.dart',
-      (BuildContext context) =>
+      filepath: 'floating_action_button/floating_action_button.1.dart',
+      title: 'FABs',
+      builder: (BuildContext context) =>
           const floating_action_button_1.FloatingActionButtonExampleApp(),
     ),
     _Example(
-      'icon_button/icon_button.3.dart',
-      (BuildContext context) => const icon_button_3.IconButtonToggleApp(),
+      filepath: 'icon_button/icon_button.3.dart',
+      title: 'Icon buttons',
+      builder: (BuildContext context) =>
+          const icon_button_3.IconButtonToggleApp(),
     ),
     _Example(
-      'segmented_button/segmented_button.0.dart',
-      (BuildContext context) => const segmented_button_0.SegmentedButtonApp(),
+      filepath: 'segmented_button/segmented_button.0.dart',
+      title: 'Segmented buttons',
+      builder: (BuildContext context) =>
+          const segmented_button_0.SegmentedButtonApp(),
     ),
     _Example(
-      'card/card.2.dart',
-      (BuildContext context) => const card_2.CardExamplesApp(),
+      filepath: 'card/card.2.dart',
+      title: 'Cards',
+      builder: (BuildContext context) => const card_2.CardExamplesApp(),
     ),
     _Example(
-      'carousel/carousel.0.dart',
-      (BuildContext context) => const carousel_0.CarouselExampleApp(),
+      filepath: 'carousel/carousel.0.dart',
+      title: 'Carousel',
+      builder: (BuildContext context) => const carousel_0.CarouselExampleApp(),
     ),
     _Example(
-      'checkbox/checkbox.1.dart',
-      (BuildContext context) => const checkbox_1.CheckboxExampleApp(),
+      filepath: 'checkbox/checkbox.1.dart',
+      title: 'Checkbox',
+      builder: (BuildContext context) => const checkbox_1.CheckboxExampleApp(),
     ),
     _Example(
-      'action_chip/action_chip.0.dart',
-      (BuildContext context) => const action_chip_0.ChipApp(),
+      filepath: 'action_chip/action_chip.0.dart',
+      title: 'ActionChip',
+      builder: (BuildContext context) => const action_chip_0.ChipApp(),
     ),
     _Example(
-      'choice_chip/choice_chip.0.dart',
-      (BuildContext context) => const choice_chip_0.ChipApp(),
+      filepath: 'choice_chip/choice_chip.0.dart',
+      title: 'ChoiceChip',
+      builder: (BuildContext context) => const choice_chip_0.ChipApp(),
     ),
     _Example(
-      'filter_chip/filter_chip.0.dart',
-      (BuildContext context) => const filter_chip_0.ChipApp(),
+      filepath: 'filter_chip/filter_chip.0.dart',
+      title: 'FilterChip',
+      builder: (BuildContext context) => const filter_chip_0.ChipApp(),
     ),
     _Example(
-      'input_chip/input_chip.0.dart',
-      (BuildContext context) => const input_chip_0.ChipApp(),
+      filepath: 'input_chip/input_chip.0.dart',
+      title: 'InputChip',
+      builder: (BuildContext context) => const input_chip_0.ChipApp(),
     ),
     _Example(
-      'date_picker/show_date_picker.0.dart',
-      (BuildContext context) => const show_date_picker_0.DatePickerApp(),
+      filepath: 'date_picker/show_date_picker.0.dart',
+      title: 'Date pickers',
+      builder: (BuildContext context) =>
+          const show_date_picker_0.DatePickerApp(),
     ),
     _Example(
-      'time_picker/show_time_picker.0.dart',
-      (BuildContext context) => const show_time_picker_0.ShowTimePickerApp(),
+      filepath: 'time_picker/show_time_picker.0.dart',
+      title: 'Time pickers',
+      builder: (BuildContext context) =>
+          const show_time_picker_0.ShowTimePickerApp(),
     ),
     _Example(
-      'dialog/alert_dialog.1.dart',
-      (BuildContext context) => const alert_dialog_1.AlertDialogExampleApp(),
+      filepath: 'dialog/alert_dialog.1.dart',
+      title: 'Dialogs',
+      builder: (BuildContext context) =>
+          const alert_dialog_1.AlertDialogExampleApp(),
     ),
     _Example(
-      'divider/divider.1.dart',
-      (BuildContext context) => const divider_1.DividerExampleApp(),
+      filepath: 'divider/divider.1.dart',
+      title: 'Divider',
+      builder: (BuildContext context) => const divider_1.DividerExampleApp(),
     ),
     _Example(
-      'list_tile/list_tile.2.dart',
-      (BuildContext context) => const list_tile_2.ListTileApp(),
+      filepath: 'list_tile/list_tile.2.dart',
+      title: 'Lists',
+      builder: (BuildContext context) => const list_tile_2.ListTileApp(),
     ),
     _Example(
-      'progress_indicator/linear_progress_indicator.0.dart',
-      (BuildContext context) =>
+      filepath: 'progress_indicator/linear_progress_indicator.0.dart',
+      title: 'Linear progress indicators',
+      builder: (BuildContext context) =>
           const linear_progress_indicator_0.ProgressIndicatorExampleApp(),
     ),
     _Example(
-      'progress_indicator/circular_progress_indicator.0.dart',
-      (BuildContext context) =>
+      filepath: 'progress_indicator/circular_progress_indicator.0.dart',
+      title: 'Circular progress indicators',
+      builder: (BuildContext context) =>
           const circular_progress_indicator_0.ProgressIndicatorExampleApp(),
     ),
     _Example(
-      'dropdown_menu/dropdown_menu.1.dart',
-      (BuildContext context) => const dropdown_menu_1.DropdownMenuApp(),
+      filepath: 'dropdown_menu/dropdown_menu.1.dart',
+      title: 'MenuAnchor',
+      builder: (BuildContext context) =>
+          const dropdown_menu_1.DropdownMenuApp(),
     ),
     _Example(
-      'navigation_bar/navigation_bar.1.dart',
-      (BuildContext context) => const navigation_bar_1.NavigationBarApp(),
+      filepath: 'navigation_bar/navigation_bar.1.dart',
+      title: 'Navigation bar',
+      builder: (BuildContext context) =>
+          const navigation_bar_1.NavigationBarApp(),
     ),
     _Example(
-      'navigation_rail/navigation_rail.0.dart',
-      (BuildContext context) =>
+      filepath: 'navigation_rail/navigation_rail.0.dart',
+      title: 'Navigation rail',
+      builder: (BuildContext context) =>
           const navigation_rail_0.NavigationRailExampleApp(),
     ),
     _Example(
-      'navigation_drawer/navigation_drawer.0.dart',
-      (BuildContext context) => const navigation_drawer_0.NavigationDrawerApp(),
+      filepath: 'navigation_drawer/navigation_drawer.0.dart',
+      title: 'Navigation drawer',
+      builder: (BuildContext context) =>
+          const navigation_drawer_0.NavigationDrawerApp(),
     ),
     _Example(
-      'radio/radio.1.dart',
-      (BuildContext context) => const radio_1.RadioExampleApp(),
+      filepath: 'radio/radio.1.dart',
+      title: 'Radio button',
+      builder: (BuildContext context) => const radio_1.RadioExampleApp(),
     ),
     _Example(
-      'search_anchor/search_anchor.0.dart',
-      (BuildContext context) => const search_anchor_0.SearchBarApp(),
+      filepath: 'search_anchor/search_anchor.0.dart',
+      title: 'SearchAnchor',
+      builder: (BuildContext context) => const search_anchor_0.SearchBarApp(),
     ),
     _Example(
-      'bottom_sheet/show_modal_bottom_sheet.2.dart',
-      (BuildContext context) =>
+      filepath: 'bottom_sheet/show_modal_bottom_sheet.2.dart',
+      title: 'Bottom sheets',
+      builder: (BuildContext context) =>
           const show_modal_bottom_sheet_2.ModalBottomSheetApp(),
     ),
     _Example(
-      'slider/slider.0.dart',
-      (BuildContext context) => const slider_0.SliderExampleApp(),
+      filepath: 'slider/slider.0.dart',
+      title: 'Sliders',
+      builder: (BuildContext context) => const slider_0.SliderExampleApp(),
     ),
     _Example(
-      'range_slider/range_slider.0.dart',
-      (BuildContext context) => const range_slider_0.RangeSliderExampleApp(),
+      filepath: 'range_slider/range_slider.0.dart',
+      title: 'Range sliders',
+      builder: (BuildContext context) =>
+          const range_slider_0.RangeSliderExampleApp(),
     ),
     _Example(
-      'snack_bar/snack_bar.2.dart',
-      (BuildContext context) => const snack_bar_2.SnackBarExampleApp(),
+      filepath: 'snack_bar/snack_bar.2.dart',
+      title: 'Snackbar',
+      builder: (BuildContext context) => const snack_bar_2.SnackBarExampleApp(),
     ),
     _Example(
-      'switch/switch.2.dart',
-      (BuildContext context) => const switch_2.SwitchApp(),
+      filepath: 'switch/switch.2.dart',
+      title: 'Switch',
+      builder: (BuildContext context) => const switch_2.SwitchApp(),
     ),
     _Example(
-      'tabs/tab_bar.0.dart',
-      (BuildContext context) => const tab_bar_0.TabBarApp(),
+      filepath: 'tabs/tab_bar.0.dart',
+      title: 'TabBar',
+      builder: (BuildContext context) => const tab_bar_0.TabBarApp(),
     ),
     _Example(
-      'text_field/text_field.2.dart',
-      (BuildContext context) => const text_field_2.TextFieldExamplesApp(),
+      filepath: 'text_field/text_field.2.dart',
+      title: 'Text fields',
+      builder: (BuildContext context) =>
+          const text_field_2.TextFieldExamplesApp(),
     ),
     _Example(
-      'tooltip/tooltip.0.dart',
-      (BuildContext context) => const tooltip_0.TooltipExampleApp(),
+      filepath: 'tooltip/tooltip.0.dart',
+      title: 'Tooltip',
+      builder: (BuildContext context) => const tooltip_0.TooltipExampleApp(),
     ),
   ];
 
@@ -240,17 +284,22 @@ class _ExampleListItem extends StatelessWidget {
       onTap: () {
         Navigator.of(context).pushNamed(_example.url);
       },
-      title: Text(_example.filepath),
+      title: Text(_example.title),
     );
   }
 }
 
 /// A self-contained Material example.
 class _Example {
-  const _Example(this.filepath, this.builder);
+  const _Example({
+    required this.filepath,
+    required this.title,
+    required this.builder,
+  });
 
-  final String filepath;
   final WidgetBuilder builder;
+  final String filepath;
+  final String title;
 
   String get url {
     final segments = filepath.split('/');
