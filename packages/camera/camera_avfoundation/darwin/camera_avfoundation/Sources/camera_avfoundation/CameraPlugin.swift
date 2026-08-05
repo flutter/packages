@@ -21,6 +21,11 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
   /// An internal camera object that manages camera's state and performs camera operations.
   var camera: Camera?
 
+  /// The zero-shutter-lag state last requested via `setZeroShutterLagEnabled`,
+  /// if any. Kept here so it survives camera recreation (e.g. switching
+  /// cameras) and is applied to newly created cameras.
+  private var zeroShutterLagRequested: Bool?
+
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = CameraPlugin(
       registry: registrar.textures(),
@@ -261,6 +266,11 @@ extension CameraPlugin: CameraApi {
 
       camera?.close()
       camera = newCamera
+
+      // Apply the zero-shutter-lag state requested before this camera existed.
+      if let zeroShutterLagRequested = zeroShutterLagRequested {
+        newCamera.setZeroShutterLagEnabled(zeroShutterLagRequested)
+      }
 
       ensureToRunOnMainQueue { [weak self] in
         guard let strongSelf = self else { return }
@@ -561,6 +571,22 @@ extension CameraPlugin: CameraApi {
   ) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.setJpegImageQuality(quality)
+      completion(.success(()))
+    }
+  }
+
+  func isZeroShutterLagSupported(completion: @escaping (Result<Bool, any Error>) -> Void) {
+    captureSessionQueue.async { [weak self] in
+      completion(.success(self?.camera?.isZeroShutterLagSupported() ?? false))
+    }
+  }
+
+  func setZeroShutterLagEnabled(
+    enabled: Bool, completion: @escaping (Result<Void, any Error>) -> Void
+  ) {
+    captureSessionQueue.async { [weak self] in
+      self?.zeroShutterLagRequested = enabled
+      self?.camera?.setZeroShutterLagEnabled(enabled)
       completion(.success(()))
     }
   }

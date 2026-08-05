@@ -724,8 +724,12 @@ protocol CameraApi {
   func setImageFileFormat(
     format: PlatformImageFileFormat, completion: @escaping (Result<Void, Error>) -> Void)
   /// Sets the JPEG compression quality for still image capture.
-  func setJpegImageQuality(
-    quality: Int64, completion: @escaping (Result<Void, Error>) -> Void)
+  func setJpegImageQuality(quality: Int64, completion: @escaping (Result<Void, Error>) -> Void)
+  /// Returns whether the current session configuration supports
+  /// zero-shutter-lag capture.
+  func isZeroShutterLagSupported(completion: @escaping (Result<Bool, Error>) -> Void)
+  /// Enables or disables zero-shutter-lag capture.
+  func setZeroShutterLagEnabled(enabled: Bool, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -1373,7 +1377,7 @@ class CameraApiSetup {
     if let api = api {
       setJpegImageQualityChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let qualityArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+        let qualityArg = args[0] as! Int64
         api.setJpegImageQuality(quality: qualityArg) { result in
           switch result {
           case .success:
@@ -1385,6 +1389,47 @@ class CameraApiSetup {
       }
     } else {
       setJpegImageQualityChannel.setMessageHandler(nil)
+    }
+    /// Returns whether the current session configuration supports
+    /// zero-shutter-lag capture.
+    let isZeroShutterLagSupportedChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.camera_avfoundation.CameraApi.isZeroShutterLagSupported\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      isZeroShutterLagSupportedChannel.setMessageHandler { _, reply in
+        api.isZeroShutterLagSupported { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      isZeroShutterLagSupportedChannel.setMessageHandler(nil)
+    }
+    /// Enables or disables zero-shutter-lag capture.
+    let setZeroShutterLagEnabledChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.camera_avfoundation.CameraApi.setZeroShutterLagEnabled\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setZeroShutterLagEnabledChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let enabledArg = args[0] as! Bool
+        api.setZeroShutterLagEnabled(enabled: enabledArg) { result in
+          switch result {
+          case .success:
+            reply(wrapResult(nil))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      setZeroShutterLagEnabledChannel.setMessageHandler(nil)
     }
   }
 }
