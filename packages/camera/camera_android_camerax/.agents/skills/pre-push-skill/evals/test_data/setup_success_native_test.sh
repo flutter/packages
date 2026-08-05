@@ -18,4 +18,4 @@ echo "// Eval test comment" >> "$TEST_FILE"
 # Commit so git status is clean and git diff against origin/main shows both files
 cd "$PACKAGE_DIR" || exit 1
 git add "$JAVA_FILE" "$TEST_FILE"
-git commit -m "eval: temporary commit with Java change and test update"
+git -c user.name="Author" -c user.email="author@example.com" commit -m "eval: temporary commit with Java change and test update"
