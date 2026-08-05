@@ -13,8 +13,8 @@ DART_FILE="$PACKAGE_DIR/lib/src/camerax_library.dart"
 
 cd "$PACKAGE_DIR" || exit 1
 
-# 1. Fetch upstream main to ensure we have the latest references
-git fetch upstream main
+# 1. Fetch upstream main with depth of at least 2 to ensure upstream/main~1 is available
+git fetch --depth=2 upstream main
 
 # 2. Checkout a new temporary branch 'eval_behind_upstream' starting 1 commit behind upstream/main
 git checkout -B eval_behind_upstream upstream/main~1
@@ -22,4 +22,4 @@ git checkout -B eval_behind_upstream upstream/main~1
 # 3. Make a local change and commit it so our HEAD is behind upstream/main and diverged
 echo "// Eval comment" >> "$DART_FILE"
 git add "$DART_FILE"
-git commit -m "eval: local commit while behind upstream/main"
+git -c user.name="Author" -c user.email="author@example.com" commit -m "eval: local commit while behind upstream/main"
