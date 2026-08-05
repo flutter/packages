@@ -361,6 +361,22 @@ void main() {
       expect(cameraPlatform.setJpegImageQuality(1, 50), completes);
     });
 
+    test('Default implementation of isZeroShutterLagSupported() should return false', () async {
+      // Arrange
+      final cameraPlatform = ExtendsCameraPlatform();
+
+      // Act & Assert
+      expect(await cameraPlatform.isZeroShutterLagSupported(1), isFalse);
+    });
+
+    test('Default implementation of setZeroShutterLagEnabled() is a no-op', () {
+      // Arrange
+      final cameraPlatform = ExtendsCameraPlatform();
+
+      // Act & Assert
+      expect(cameraPlatform.setZeroShutterLagEnabled(1, true), completes);
+    });
+
     test('Default implementation of supportsImageStreaming() should return false', () {
       // Arrange
       final cameraPlatform = ExtendsCameraPlatform();
