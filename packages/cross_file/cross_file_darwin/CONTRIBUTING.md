@@ -13,6 +13,6 @@ dart run tool/ffigen.dart
 ### Configuration philosophy
 
 This package intentionally uses very strict filtering rules to include only the
-necessary methods andg functions. This is partially to keep the package small,
+necessary methods and functions. This is partially to keep the package small,
 but mostly to avoid unnecessarily generating anything that requires additional
 native code helpers.
