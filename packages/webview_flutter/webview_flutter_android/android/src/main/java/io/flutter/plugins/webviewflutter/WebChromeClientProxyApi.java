@@ -274,13 +274,18 @@ public class WebChromeClientProxyApi extends PigeonApiWebChromeClient {
         return false;
       }
 
+      // Forward new-window navigations (`target=_blank` / `window.open`) to Dart
+      // via onCreateWindow — same role as WebChromeClient.onCreateWindow.
       final WebViewClient windowWebViewClient =
           new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(
                 @NonNull WebView windowWebView, @NonNull WebResourceRequest request) {
-              if (!webViewClient.shouldOverrideUrlLoading(view, request)) {
-                view.loadUrl(request.getUrl().toString());
+              final String url = request.getUrl().toString();
+              if (webViewClient instanceof WebViewClientProxyApi.WebViewClientImpl) {
+                ((WebViewClientProxyApi.WebViewClientImpl) webViewClient).notifyCreateWindow(url);
+              } else if (!webViewClient.shouldOverrideUrlLoading(view, request)) {
+                view.loadUrl(url);
               }
               return true;
             }

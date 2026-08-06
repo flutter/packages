@@ -15,6 +15,14 @@ import 'webview_platform.dart' show WebViewPlatform;
 typedef NavigationRequestCallback =
     FutureOr<NavigationDecision> Function(NavigationRequest navigationRequest);
 
+/// Signature for callbacks when the page requests a new window
+/// (`target=_blank` / `window.open`).
+///
+/// Corresponds to platform APIs like iOS `WKUIDelegate.createWebViewWith` and
+/// Android `WebChromeClient.onCreateWindow`. The host should open [url]
+/// externally (or otherwise handle it); the WebView will not load it.
+typedef CreateWindowCallback = void Function(String url);
+
 /// Signature for callbacks that report page events triggered by the native web view.
 typedef PageEventCallback = void Function(String url);
 
@@ -80,6 +88,13 @@ abstract class PlatformNavigationDelegate extends PlatformInterface {
   /// See [PlatformWebViewController.setPlatformNavigationDelegate].
   Future<void> setOnNavigationRequest(NavigationRequestCallback onNavigationRequest) {
     throw UnimplementedError('setOnNavigationRequest is not implemented on the current platform.');
+  }
+
+  /// Invoked when the page requests a new window (`target=_blank` / `window.open`).
+  ///
+  /// See [PlatformWebViewController.setPlatformNavigationDelegate].
+  Future<void> setOnCreateWindow(CreateWindowCallback onCreateWindow) {
+    throw UnimplementedError('setOnCreateWindow is not implemented on the current platform.');
   }
 
   /// Invoked when a page has started loading.

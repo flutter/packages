@@ -1,3 +1,7 @@
+## 3.27.0
+
+* Adds NavigationDelegate.onCreateWindow for target=_blank / window.open.
+
 ## 3.26.0
 
 * Adds new method for accessing a native `WKWebView` from a `FlutterPluginRegistrar`.
