@@ -224,7 +224,7 @@ class ExampleApp extends StatelessWidget {
     ),
     _Example(
       filepath: 'tabs/tab_bar.0.dart',
-      title: 'TabBar',
+      title: 'Tabs,
       builder: (BuildContext context) => const tab_bar_0.TabBarApp(),
     ),
     _Example(
