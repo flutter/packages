@@ -22,7 +22,7 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
   var isPreviewPaused: Bool { get }
   var isStreamingImages: Bool { get }
 
-  var deviceOrientation: UIDeviceOrientation { get set }
+  var deviceOrientation: PlatformDeviceOrientation { get set }
 
   var minimumAvailableZoomFactor: CGFloat { get }
   var maximumAvailableZoomFactor: CGFloat { get }
