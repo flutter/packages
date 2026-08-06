@@ -551,7 +551,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         continue;
       }
       final Rect cellRect = cellParentData.paintOffset! & cell.size;
-      if (cellRect.contains(position)) {
+      // Intersect with the section clip rect for this cell to prevent
+      // scrollable cells from stealing hits inside the trailing pinned area.
+      // This mirrors the pushClipRect applied to each section during painting.
+      if (cellRect.contains(position) &&
+          _sectionClipRectFor(cellParentData.tableVicinity).contains(position)) {
         result.addWithPaintOffset(
           offset: cellParentData.paintOffset,
           position: position,
@@ -575,6 +579,89 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       cell = childAfter(cell);
     }
     return false;
+  }
+
+  // Returns the viewport-space clip rect that painting applies to the section
+  // a cell belongs to (leading-pinned, non-pinned, or trailing-pinned for each
+  // axis). Intersecting the raw cell rect with this rect in hitTestChildren
+  // prevents scrollable cells from capturing taps inside pinned areas.
+  //
+  // Alignment offsets must be factored in:
+  //   * Leading-pinned cells are laid out with _hAlignmentOffset /
+  //     _vAlignmentOffset applied, so their paint position (and section
+  //     boundary) shifts by those values.
+  //   * Trailing-pinned cells are always placed at the absolute viewport edge
+  //     via -(viewportDimension - trailingExtent), independent of alignment.
+  //   * Non-pinned boundaries that border the leading-pinned section inherit
+  //     the same shift; boundaries that border the trailing-pinned section
+  //     do not.
+  Rect _sectionClipRectFor(TableVicinity vicinity) {
+    final bool reversedH = axisDirectionIsReversed(horizontalAxisDirection);
+    final bool reversedV = axisDirectionIsReversed(verticalAxisDirection);
+    final Size viewportSize = viewportDimension;
+
+    final double colLeft, colRight;
+    if (vicinity.column < delegate.pinnedColumnCount) {
+      // Leading pinned column.
+      if (reversedH) {
+        colLeft = viewportSize.width - _leadingPinnedColumnsExtent - _hAlignmentOffset;
+        colRight = viewportSize.width - _hAlignmentOffset;
+      } else {
+        colLeft = _hAlignmentOffset;
+        colRight = _hAlignmentOffset + _leadingPinnedColumnsExtent;
+      }
+    } else if (_firstTrailingPinnedColumn != null &&
+        vicinity.column >= _firstTrailingPinnedColumn!) {
+      // Trailing pinned column.
+      if (reversedH) {
+        colLeft = 0.0;
+        colRight = _trailingPinnedColumnsExtent;
+      } else {
+        colLeft = viewportSize.width - _trailingPinnedColumnsExtent;
+        colRight = viewportSize.width;
+      }
+    } else {
+      // Non-pinned column.
+      if (reversedH) {
+        colLeft = _trailingPinnedColumnsExtent;
+        colRight = viewportSize.width - _leadingPinnedColumnsExtent - _hAlignmentOffset;
+      } else {
+        colLeft = _leadingPinnedColumnsExtent + _hAlignmentOffset;
+        colRight = viewportSize.width - _trailingPinnedColumnsExtent;
+      }
+    }
+
+    final double rowTop, rowBottom;
+    if (vicinity.row < delegate.pinnedRowCount) {
+      // Leading pinned row.
+      if (reversedV) {
+        rowTop = viewportSize.height - _leadingPinnedRowsExtent - _vAlignmentOffset;
+        rowBottom = viewportSize.height - _vAlignmentOffset;
+      } else {
+        rowTop = _vAlignmentOffset;
+        rowBottom = _vAlignmentOffset + _leadingPinnedRowsExtent;
+      }
+    } else if (_firstTrailingPinnedRow != null && vicinity.row >= _firstTrailingPinnedRow!) {
+      // Trailing pinned row.
+      if (reversedV) {
+        rowTop = 0.0;
+        rowBottom = _trailingPinnedRowsExtent;
+      } else {
+        rowTop = viewportSize.height - _trailingPinnedRowsExtent;
+        rowBottom = viewportSize.height;
+      }
+    } else {
+      // Non-pinned row.
+      if (reversedV) {
+        rowTop = _trailingPinnedRowsExtent;
+        rowBottom = viewportSize.height - _leadingPinnedRowsExtent - _vAlignmentOffset;
+      } else {
+        rowTop = _leadingPinnedRowsExtent + _vAlignmentOffset;
+        rowBottom = viewportSize.height - _trailingPinnedRowsExtent;
+      }
+    }
+
+    return Rect.fromLTRB(colLeft, rowTop, colRight, rowBottom);
   }
 
   // Updates the cached column metrics for the table.
