@@ -33,7 +33,7 @@ dependencies:
   ffi: ^2.2.0
   flutter:
     sdk: flutter
-  objective_c: ^9.4.1
+  objective_c: ^9.5.0
   path: ^1.9.1
 
 dev_dependencies:
