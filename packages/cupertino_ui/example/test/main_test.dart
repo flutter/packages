@@ -108,94 +108,73 @@ import 'package:cupertino_ui_examples/text_form_field_row/cupertino_text_form_fi
 import 'package:flutter_test/flutter_test.dart';
 
 const Map<String, Type> examples = <String, Type>{
-  'activity_indicator/cupertino_activity_indicator.0.dart':
+  'CupertinoActivityIndicator':
       cupertino_activity_indicator_0.CupertinoIndicatorApp,
-  'activity_indicator/cupertino_linear_activity_indicator.0.dart':
+  'CupertinoLinearActivityIndicator':
       cupertino_linear_activity_indicator_0.CupertinoLinearActivityIndicatorApp,
-  'bottom_tab_bar/cupertino_tab_bar.0.dart':
-      cupertino_tab_bar_0.CupertinoTabBarApp,
-  'button/cupertino_button.0.dart': cupertino_button_0.CupertinoButtonApp,
-  'checkbox/cupertino_checkbox.0.dart':
-      cupertino_checkbox_0.CupertinoCheckboxApp,
-  'context_menu/cupertino_context_menu.0.dart':
-      cupertino_context_menu_0.ContextMenuApp,
-  'context_menu/cupertino_context_menu.1.dart':
-      cupertino_context_menu_1.ContextMenuApp,
-  'date_picker/cupertino_date_picker.0.dart':
-      cupertino_date_picker_0.DatePickerApp,
-  'date_picker/cupertino_timer_picker.0.dart':
-      cupertino_timer_picker_0.TimerPickerApp,
-  'dialog/cupertino_action_sheet.0.dart':
-      cupertino_action_sheet_0.ActionSheetApp,
-  'dialog/cupertino_alert_dialog.0.dart':
-      cupertino_alert_dialog_0.AlertDialogApp,
-  'dialog/cupertino_popup_surface.0.dart':
-      cupertino_popup_surface_0.PopupSurfaceApp,
-  'expansion_tile/cupertino_expansion_tile.0.dart':
+  'CupertinoTabBar': cupertino_tab_bar_0.CupertinoTabBarApp,
+  'CupertinoButton': cupertino_button_0.CupertinoButtonApp,
+  'CupertinoCheckbox': cupertino_checkbox_0.CupertinoCheckboxApp,
+  'CupertinoContextMenu': cupertino_context_menu_0.ContextMenuApp,
+  'CupertinoContextMenu.builder': cupertino_context_menu_1.ContextMenuApp,
+  'CupertinoDatePicker': cupertino_date_picker_0.DatePickerApp,
+  'CupertinoTimerPicker': cupertino_timer_picker_0.TimerPickerApp,
+  'CupertinoActionSheet': cupertino_action_sheet_0.ActionSheetApp,
+  'CupertinoAlertDialog': cupertino_alert_dialog_0.AlertDialogApp,
+  'CupertinoPopupSurface': cupertino_popup_surface_0.PopupSurfaceApp,
+  'CupertinoExpansionTile':
       cupertino_expansion_tile_0.CupertinoExpansionTileApp,
-  'form_row/cupertino_form_row.0.dart':
-      cupertino_form_row_0.CupertinoFormRowApp,
-  'list_section/list_section_base.0.dart':
-      list_section_base_0.CupertinoListSectionBaseApp,
-  'list_section/list_section_inset.0.dart':
+  'CupertinoFormRow': cupertino_form_row_0.CupertinoFormRowApp,
+  'CupertinoListSection': list_section_base_0.CupertinoListSectionBaseApp,
+  'CupertinoListSection.insetGrouped':
       list_section_inset_0.CupertinoListSectionInsetApp,
-  'list_tile/cupertino_list_tile.0.dart':
-      cupertino_list_tile_0.CupertinoListTileApp,
-  'magnifier/cupertino_magnifier.0.dart':
-      cupertino_magnifier_0.CupertinoMagnifierApp,
-  'magnifier/cupertino_text_magnifier.0.dart':
+  'CupertinoListTile': cupertino_list_tile_0.CupertinoListTileApp,
+  'CupertinoMagnifier': cupertino_magnifier_0.CupertinoMagnifierApp,
+  'CupertinoTextMagnifier':
       cupertino_text_magnifier_0.CupertinoTextMagnifierApp,
-  'magnifier/text_magnifier.0.dart': text_magnifier_0.TextMagnifierExampleApp,
-  'menu_anchor/menu_anchor.0.dart': menu_anchor_0.CupertinoMenuAnchorApp,
-  'menu_anchor/menu_anchor.1.dart': menu_anchor_1.CupertinoMenuAnchorApp,
-  'nav_bar/cupertino_navigation_bar.0.dart':
-      cupertino_navigation_bar_0.NavBarApp,
-  'nav_bar/cupertino_navigation_bar.1.dart':
+  'TextMagnifier': text_magnifier_0.TextMagnifierExampleApp,
+  'CupertinoMenuAnchor': menu_anchor_0.CupertinoMenuAnchorApp,
+  'CupertinoMenuAnchor with multiple items':
+      menu_anchor_1.CupertinoMenuAnchorApp,
+  'CupertinoNavigationBar': cupertino_navigation_bar_0.NavBarApp,
+  'CupertinoNavigationBar with search field':
       cupertino_navigation_bar_1.NavBarApp,
-  'nav_bar/cupertino_navigation_bar.2.dart':
-      cupertino_navigation_bar_2.NavBarApp,
-  'nav_bar/cupertino_sliver_nav_bar.0.dart':
-      cupertino_sliver_nav_bar_0.SliverNavBarApp,
-  'nav_bar/cupertino_sliver_nav_bar.1.dart':
+  'CupertinoNavigationBar.large': cupertino_navigation_bar_2.NavBarApp,
+  'CupertinoSliverNavigationBar': cupertino_sliver_nav_bar_0.SliverNavBarApp,
+  'CupertinoSliverNavigationBar.search':
       cupertino_sliver_nav_bar_1.SliverNavBarApp,
-  'nav_bar/cupertino_sliver_nav_bar.2.dart':
+  'CupertinoSliverNavigationBar with bottom widget':
       cupertino_sliver_nav_bar_2.SliverNavBarApp,
-  'page_scaffold/cupertino_page_scaffold.0.dart':
-      cupertino_page_scaffold_0.PageScaffoldApp,
-  'picker/cupertino_picker.0.dart': cupertino_picker_0.CupertinoPickerApp,
-  'radio/cupertino_radio.0.dart': cupertino_radio_0.CupertinoRadioApp,
-  'radio/cupertino_radio.toggleable.0.dart':
-      cupertino_radio_toggleable_0.CupertinoRadioApp,
-  'refresh/cupertino_sliver_refresh_control.0.dart':
+  'CupertinoPageScaffold': cupertino_page_scaffold_0.PageScaffoldApp,
+  'CupertinoPicker': cupertino_picker_0.CupertinoPickerApp,
+  'CupertinoRadio': cupertino_radio_0.CupertinoRadioApp,
+  'CupertinoRadio.toggleable': cupertino_radio_toggleable_0.CupertinoRadioApp,
+  'CupertinoSliverRefreshControl':
       cupertino_sliver_refresh_control_0.RefreshControlApp,
-  'route/show_cupertino_dialog.0.dart':
-      show_cupertino_dialog_0.CupertinoDialogApp,
-  'route/show_cupertino_modal_popup.0.dart':
-      show_cupertino_modal_popup_0.ModalPopupApp,
-  'scrollbar/cupertino_scrollbar.0.dart': cupertino_scrollbar_0.ScrollbarApp,
-  'scrollbar/cupertino_scrollbar.1.dart': cupertino_scrollbar_1.ScrollbarApp,
-  'search_field/cupertino_search_field.0.dart':
-      cupertino_search_field_0.SearchTextFieldApp,
-  'search_field/cupertino_search_field.1.dart':
+  'showCupertinoDialog': show_cupertino_dialog_0.CupertinoDialogApp,
+  'showCupertinoModalPopup': show_cupertino_modal_popup_0.ModalPopupApp,
+  'CupertinoScrollbar': cupertino_scrollbar_0.ScrollbarApp,
+  'CupertinoScrollbar with ScrollController':
+      cupertino_scrollbar_1.ScrollbarApp,
+  'CupertinoSearchTextField': cupertino_search_field_0.SearchTextFieldApp,
+  'CupertinoSearchTextField with callbacks':
       cupertino_search_field_1.SearchTextFieldApp,
-  'segmented_control/cupertino_segmented_control.0.dart':
+  'CupertinoSegmentedControl':
       cupertino_segmented_control_0.SegmentedControlApp,
-  'segmented_control/cupertino_sliding_segmented_control.0.dart':
+  'CupertinoSlidingSegmentedControl':
       cupertino_sliding_segmented_control_0.SegmentedControlApp,
-  'sheet/cupertino_sheet.0.dart': cupertino_sheet_0.CupertinoSheetApp,
-  'sheet/cupertino_sheet.1.dart': cupertino_sheet_1.CupertinoSheetApp,
-  'sheet/cupertino_sheet.2.dart': cupertino_sheet_2.RestorableSheetExampleApp,
-  'sheet/cupertino_sheet.3.dart': cupertino_sheet_3.CupertinoSheetApp,
-  'slider/cupertino_slider.0.dart': cupertino_slider_0.CupertinoSliderApp,
-  'switch/cupertino_switch.0.dart': cupertino_switch_0.CupertinoSwitchApp,
-  'tab_scaffold/cupertino_tab_controller.0.dart':
-      cupertino_tab_controller_0.TabControllerApp,
-  'tab_scaffold/cupertino_tab_scaffold.0.dart':
-      cupertino_tab_scaffold_0.TabScaffoldApp,
-  'text_field/cupertino_text_field.0.dart':
-      cupertino_text_field_0.CupertinoTextFieldApp,
-  'text_form_field_row/cupertino_text_form_field_row.1.dart':
-      cupertino_text_form_field_row_1.FormSectionApp,
+  'CupertinoSheetRoute': cupertino_sheet_0.CupertinoSheetApp,
+  'showCupertinoSheet': cupertino_sheet_1.CupertinoSheetApp,
+  'CupertinoSheetRoute with restorable state':
+      cupertino_sheet_2.RestorableSheetExampleApp,
+  'CupertinoSheetRoute with ScrollController':
+      cupertino_sheet_3.CupertinoSheetApp,
+  'CupertinoSlider': cupertino_slider_0.CupertinoSliderApp,
+  'CupertinoSwitch': cupertino_switch_0.CupertinoSwitchApp,
+  'CupertinoTabController': cupertino_tab_controller_0.TabControllerApp,
+  'CupertinoTabScaffold': cupertino_tab_scaffold_0.TabScaffoldApp,
+  'CupertinoTextField': cupertino_text_field_0.CupertinoTextFieldApp,
+  'CupertinoTextFormFieldRow': cupertino_text_form_field_row_1.FormSectionApp,
 };
 
 void main() {
