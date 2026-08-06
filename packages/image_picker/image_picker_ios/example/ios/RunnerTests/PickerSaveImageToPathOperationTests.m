@@ -229,6 +229,44 @@
   [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
+- (void)testUndecodableImageDataReturnsErrorAndFinishes API_AVAILABLE(ios(14)) {
+  NSData *undecodableImageData = [@"not an image" dataUsingEncoding:NSUTF8StringEncoding];
+
+  id mockItemProvider = OCMClassMock([NSItemProvider class]);
+  OCMStub([mockItemProvider hasItemConformingToTypeIdentifier:UTTypeImage.identifier])
+      .andReturn(YES);
+  [[mockItemProvider stub]
+      loadDataRepresentationForTypeIdentifier:UTTypeImage.identifier
+                            completionHandler:[OCMArg invokeBlockWithArgs:undecodableImageData,
+                                                                          [NSNull null], nil]];
+
+  id pickerResult = OCMClassMock([PHPickerResult class]);
+  OCMStub([pickerResult itemProvider]).andReturn(mockItemProvider);
+
+  XCTestExpectation *errorExpectation = [self expectationWithDescription:@"invalid image error"];
+  XCTestExpectation *operationExpectation =
+      [self expectationWithDescription:@"Operation completed"];
+
+  FLTPHPickerSaveImageToPathOperation *operation = [[FLTPHPickerSaveImageToPathOperation alloc]
+           initWithResult:pickerResult
+                maxHeight:@100
+                 maxWidth:@100
+      desiredImageQuality:@100
+             fullMetadata:YES
+           savedPathBlock:^(NSString *savedPath, FlutterError *error) {
+             XCTAssertNil(savedPath);
+             XCTAssertEqualObjects(error.code, @"invalid_image");
+             [errorExpectation fulfill];
+           }];
+  operation.completionBlock = ^{
+    [operationExpectation fulfill];
+  };
+
+  [operation start];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+  XCTAssertTrue(operation.isFinished);
+}
+
 - (void)testSavePNGImageWithoutFullMetadata API_AVAILABLE(ios(14)) {
   id photoAssetUtil = OCMClassMock([PHAsset class]);
 
