@@ -76,11 +76,41 @@ void main() {
         expect(CameraErrorCode.notStarted.toString(), equals('cameraNotStarted'));
       });
 
+      testWidgets('noVideoTrack', (WidgetTester tester) async {
+        expect(CameraErrorCode.noVideoTrack.toString(), equals('noVideoTrack'));
+      });
+
+      testWidgets('cameraFrameDimensionsZero', (WidgetTester tester) async {
+        expect(
+          CameraErrorCode.cameraFrameDimensionsZero.toString(),
+          equals('cameraFrameDimensionsZero'),
+        );
+      });
+
+      testWidgets('videoTrackReaderClosed', (WidgetTester tester) async {
+        expect(CameraErrorCode.videoTrackReaderClosed.toString(), equals('videoTrackReaderClosed'));
+      });
+
+      testWidgets('videoTrackReaderNotInitialized', (WidgetTester tester) async {
+        expect(
+          CameraErrorCode.videoTrackReaderNotInitialized.toString(),
+          equals('videoTrackReaderNotInitialized'),
+        );
+      });
+
       testWidgets('videoRecordingNotStarted', (WidgetTester tester) async {
         expect(
           CameraErrorCode.videoRecordingNotStarted.toString(),
           equals('videoRecordingNotStarted'),
         );
+      });
+
+      testWidgets('missingPlaneLayout', (WidgetTester tester) async {
+        expect(CameraErrorCode.missingPlaneLayout.toString(), equals('missingPlaneLayout'));
+      });
+
+      testWidgets('unableToCloneFrame', (WidgetTester tester) async {
+        expect(CameraErrorCode.unableToCloneFrame.toString(), equals('unableToCloneFrame'));
       });
 
       testWidgets('unknown', (WidgetTester tester) async {

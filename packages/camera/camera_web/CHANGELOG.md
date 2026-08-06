@@ -1,3 +1,7 @@
+## 0.3.6
+
+* Adds support for camera image stream on web.
+
 ## 0.3.5+4
 
 * Fixes a `TypeError` in `availableCameras()` caused by browsers (e.g. Firefox) returning
