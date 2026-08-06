@@ -1,0 +1,16 @@
+{
+  "repo_criteria": [],
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "First, run 'bash .agents/skills/pre-push-skill/evals/test_data/setup_behind_upstream.sh'. Then, run the pre-push skill.",
+      "expected_chat_output": [
+        "The agent should detect that the branch is behind upstream/main, stop immediately, report that the code is not ready to push (# NO, you are not ready to push), and instruct the user to pull upstream/main first."
+      ],
+      "expected_repo_state": [
+        "The agent did not run update-release-info, and pubspec.yaml and CHANGELOG.md were not modified."
+      ],
+      "agent_config": "reidbaker-agent"
+    }
+  ]
+}
