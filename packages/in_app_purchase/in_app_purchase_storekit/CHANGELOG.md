@@ -1,3 +1,7 @@
+## 0.4.12
+
+* Exposes the underlying `SK2Transaction` object on `SK2PurchaseDetails` (via a new `sk2Transaction` property) to enable checking of native properties like `originalId` and `expirationDate`.
+
 ## 0.4.11
 
 * Fixes StoreKit 2 date format does not match in_app_purchase_platform_interface PurchaseDetails.transactionDate format.
