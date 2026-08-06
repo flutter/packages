@@ -8,6 +8,7 @@ import 'package:test/test.dart';
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
 import '../templates/app_bar_template.dart';
+import '../templates/bottom_sheet_template.dart';
 import '../templates/template.dart';
 import 'test_fixtures/test_templates.dart';
 
@@ -181,8 +182,21 @@ void main() {
     });
 
     test('BottomSheetTemplateM3 emits M3 BottomSheet defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = const BottomSheetTemplateM3().generateContents(
+        '_BottomSheetDefaultsM3',
+      );
+      expect(contents, contains('class _BottomSheetDefaultsM3 extends BottomSheetThemeData'));
+      expect(contents, contains('elevation: 1.0'));
+      expect(contents, contains('modalElevation: 1.0'));
+      expect(
+        contents,
+        contains(
+          'shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28.0)))',
+        ),
+      );
+      expect(contents, contains('Color? get backgroundColor => _colors.surfaceContainerLow'));
+      expect(contents, contains('Color? get dragHandleColor => _colors.onSurfaceVariant'));
+      expect(contents, contains('Size? get dragHandleSize => const Size(32.0, 4.0)'));
     });
 
     test('ButtonTemplateM3 emits M3 Button defaults from tokens', () {
