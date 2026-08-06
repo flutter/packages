@@ -25,6 +25,10 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
   /// InputStream.
   ///
   /// Only visible for testing.
+  ///
+  /// This can be set to any arbitrary size, but 4KB was chosen because it seems
+  /// like a good size that balances between minimizing disk size use and
+  /// minimizing I/O operations.
   @visibleForTesting
   static const int maxByteArrayLen = 4 * 1024;
 
