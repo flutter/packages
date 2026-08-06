@@ -350,7 +350,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
       if (yaml is YamlMap) {
         final Object? linter = yaml['cognitive_complexity'];
         if (linter is YamlMap) {
-          final Object? threshold = linter['fail-threshold'] ?? linter['fail_threshold'];
+          final Object? threshold = linter['fail-threshold'];
           if (threshold is int) {
             return threshold;
           }
