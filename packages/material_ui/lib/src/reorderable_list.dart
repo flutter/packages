@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 /// @docImport 'card.dart';
+/// @docImport 'paginated_data_table.dart';
 library;
 
 import 'dart:ui' show lerpDouble;
