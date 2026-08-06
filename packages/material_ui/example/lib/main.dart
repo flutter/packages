@@ -108,7 +108,7 @@ class ExampleApp extends StatelessWidget {
     ),
     _Example(
       filepath: 'choice_chip/choice_chip.0.dart',
-      title: 'ChoiceChip',
+      title: 'Single select filter chip',
       builder: (BuildContext context) => const choice_chip_0.ChipApp(),
     ),
     _Example(
