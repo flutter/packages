@@ -192,7 +192,7 @@ class ExampleApp extends StatelessWidget {
     ),
     _Example(
       filepath: 'search_anchor/search_anchor.0.dart',
-      title: 'SearchAnchor',
+      title: 'Search',
       builder: (BuildContext context) => const search_anchor_0.SearchBarApp(),
     ),
     _Example(
