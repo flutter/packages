@@ -163,7 +163,7 @@ class ExampleApp extends StatelessWidget {
     ),
     _Example(
       filepath: 'dropdown_menu/dropdown_menu.1.dart',
-      title: 'MenuAnchor',
+      title: 'Menu',
       builder: (BuildContext context) =>
           const dropdown_menu_1.DropdownMenuApp(),
     ),
