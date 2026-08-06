@@ -10,7 +10,6 @@ import 'package:flutter/services.dart';
 import 'package:web/web.dart' as web;
 
 import 'camera.dart';
-import 'pkg_web_tweaks.dart';
 import 'shims/dart_js_util.dart';
 import 'types/types.dart';
 
@@ -110,7 +109,7 @@ class CameraService {
     final web.MediaDevices mediaDevices = window.navigator.mediaDevices;
     final web.MediaTrackSupportedConstraints supportedConstraints = mediaDevices
         .getSupportedConstraints();
-    final bool zoomLevelSupported = supportedConstraints.zoomNullable ?? false;
+    final bool zoomLevelSupported = supportedConstraints.zoom;
 
     if (!zoomLevelSupported) {
       throw CameraWebException(
@@ -128,23 +127,13 @@ class CameraService {
 
       /// The zoom level capability is represented by MediaSettingsRange.
       /// See: https://developer.mozilla.org/en-US/docs/Web/API/MediaSettingsRange
-      final WebTweakMediaSettingsRange? zoomLevelCapability = defaultVideoTrack
-          .getCapabilities()
-          .zoomNullable;
+      final web.MediaSettingsRange zoomLevelCapability = defaultVideoTrack.getCapabilities().zoom;
 
-      if (zoomLevelCapability != null) {
-        return ZoomLevelCapability(
-          minimum: zoomLevelCapability.min,
-          maximum: zoomLevelCapability.max,
-          videoTrack: defaultVideoTrack,
-        );
-      } else {
-        throw CameraWebException(
-          camera.textureId,
-          CameraErrorCode.zoomLevelNotSupported,
-          'The zoom level is not supported by the current camera.',
-        );
-      }
+      return ZoomLevelCapability(
+        minimum: zoomLevelCapability.min,
+        maximum: zoomLevelCapability.max,
+        videoTrack: defaultVideoTrack,
+      );
     } else {
       throw CameraWebException(
         camera.textureId,
@@ -175,9 +164,9 @@ class CameraService {
     // MediaTrackSettings:
     // https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings
     final web.MediaTrackSettings videoTrackSettings = videoTrack.getSettings();
-    final String? facingMode = videoTrackSettings.facingModeNullable;
+    final String facingMode = videoTrackSettings.facingMode;
 
-    if (facingMode == null || facingMode.isEmpty) {
+    if (facingMode.isEmpty) {
       // If the facing mode does not exist in the video track settings,
       // check for the facing mode in the video track capabilities.
       //

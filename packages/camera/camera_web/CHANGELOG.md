@@ -1,3 +1,7 @@
+## 0.3.5+5
+
+* Bumps minimum package:web dependency to 1.0.0 and removes pkg_web_tweaks.dart.
+
 ## 0.3.5+4
 
 * Fixes a `TypeError` in `availableCameras()` caused by browsers (e.g. Firefox) returning

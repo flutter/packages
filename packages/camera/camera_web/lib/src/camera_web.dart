@@ -15,7 +15,6 @@ import 'package:web/web.dart' as web;
 
 import 'camera.dart';
 import 'camera_service.dart';
-import 'pkg_web_tweaks.dart';
 import 'types/types.dart';
 
 // The default error message, when the error is an empty string.
@@ -388,7 +387,7 @@ class CameraPlugin extends CameraPlatform {
         // See: https://w3c.github.io/screen-orientation/#interaction-with-fullscreen-api
         // Recent versions of Dart changed requestFullscreen to return a Future instead of void.
         // This wrapper allows use of both the old and new APIs.
-        dynamic fullScreen() => documentElement.requestFullScreenTweak();
+        dynamic fullScreen() => documentElement.requestFullscreen();
         await fullScreen();
         await screenOrientation.lock(orientationType).toDart;
       } else {

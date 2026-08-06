@@ -13,7 +13,6 @@ import 'package:web/web.dart' as web;
 import 'package:web/web.dart';
 
 import 'camera_service.dart';
-import 'pkg_web_tweaks.dart';
 import 'types/types.dart';
 
 String _getViewType(int cameraId) => 'plugins.flutter.io/camera_$cameraId';
@@ -306,7 +305,7 @@ class Camera {
     final web.MediaDevices mediaDevices = window.navigator.mediaDevices;
     final web.MediaTrackSupportedConstraints supportedConstraints = mediaDevices
         .getSupportedConstraints();
-    final bool torchModeSupported = supportedConstraints.torchNullable ?? false;
+    final bool torchModeSupported = supportedConstraints.torch;
 
     if (!torchModeSupported) {
       throw CameraWebException(
@@ -333,13 +332,10 @@ class Camera {
 
     if (videoTracks.isNotEmpty) {
       final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
-      final bool canEnableTorchMode =
-          defaultVideoTrack.getCapabilities().torchNullable?.toDart.first.toDart ?? false;
+      final bool canEnableTorchMode = defaultVideoTrack.getCapabilities().torch.toDart.first.toDart;
 
       if (canEnableTorchMode) {
-        defaultVideoTrack.applyWebTweakConstraints(
-          WebTweakMediaTrackConstraints(torch: enabled.toJS),
-        );
+        defaultVideoTrack.applyConstraints(MediaTrackConstraints(torch: enabled.toJS));
       } else {
         throw CameraWebException(
           textureId,
@@ -385,9 +381,7 @@ class Camera {
       );
     }
 
-    zoomLevelCapability.videoTrack.applyWebTweakConstraints(
-      WebTweakMediaTrackConstraints(zoom: zoom.toJS),
-    );
+    zoomLevelCapability.videoTrack.applyConstraints(MediaTrackConstraints(zoom: zoom.toJS));
   }
 
   /// Returns a lens direction of this camera.
@@ -406,9 +400,9 @@ class Camera {
     final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
     final web.MediaTrackSettings defaultVideoTrackSettings = defaultVideoTrack.getSettings();
 
-    final String? facingMode = defaultVideoTrackSettings.facingModeNullable;
+    final String facingMode = defaultVideoTrackSettings.facingMode;
 
-    if (facingMode != null && facingMode.isNotEmpty) {
+    if (facingMode.isNotEmpty) {
       return _cameraService.mapFacingModeToLensDirection(facingMode);
     } else {
       return null;
