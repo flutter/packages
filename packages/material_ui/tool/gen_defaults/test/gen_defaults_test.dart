@@ -7,6 +7,8 @@ import 'dart:io';
 import 'package:test/test.dart';
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
+import '../data/typescale.dart';
+import '../data/typescale_emphasized.dart';
 import '../templates/action_chip_template.dart';
 import '../templates/app_bar_template.dart';
 import '../templates/bottom_sheet_template.dart';
@@ -74,6 +76,12 @@ void main() {
     test('color generates color expression', () {
       final template = IconButtonTemplateM3(testPath());
       expect(template.color(TokenColorRole.onSurface, '_colors'), '_colors.onSurface');
+    });
+
+    test('textStyle generates text name', () {
+      final template = IconButtonTemplateM3(testPath());
+      expect(template.textStyle(TokenTypescale.titleMedium, '_textTheme'), '_textTheme.titleMedium');
+      expect(template.textStyle(TokenTypescaleEmphasized.titleMedium, '_textTheme'), '_textTheme.titleMediumEmphasized');
     });
 
     test('colorWithOpacity generates color expression with opacity', () {

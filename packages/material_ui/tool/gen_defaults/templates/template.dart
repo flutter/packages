@@ -8,6 +8,7 @@ import 'package:meta/meta.dart';
 
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
+import '../data/typescale_struct.dart';
 
 enum _MaterialVersion { material3, material3Expressive }
 
@@ -80,7 +81,7 @@ abstract class TokenTemplate {
       _nameRegExp.hasMatch(name),
       'The template name "$name" must use spaces and capitalized words (e.g., "Typography" or "Icon Button").',
     );
-    final String camelName = name.replaceAll(' ', '');
+    final String camelName = _joinAsCamelCase(name.split(' '), lowerCamelCase: false);
     return switch (_version) {
       _MaterialVersion.material3 => '_${camelName}DefaultsM3',
       _MaterialVersion.material3Expressive => '_${camelName}DefaultsM3E',
@@ -154,6 +155,32 @@ abstract class TokenTemplate {
         return '${prefix}StadiumBorder()';
     }
     throw UnsupportedError('Unsupported shape family type: ${shape.family}');
+  }
+
+  /// Generate a [TextTheme] text style name for the given component token.
+  String textStyle(TypescaleStruct token, String prefix) {
+    final List<String> nameAttributes = token.name.split('.');
+    final String baseName = _joinAsCamelCase(nameAttributes.last.split('-'));
+    final bool isEmphasized = nameAttributes.contains('emphasized');
+    return '$prefix.$baseName${isEmphasized ? 'Emphasized' : ''}';
+  }
+
+  /// Converts a list of sub-strings into a single camelcased string.
+  String _joinAsCamelCase(List<String> subStrings, {bool lowerCamelCase = true}) {
+    if (subStrings.isEmpty) {
+      return '';
+    }
+    var camelCased = '';
+    for (var i = 0; i < subStrings.length; i++) {
+      final String subString = subStrings[i];
+      if (subString.isEmpty) {
+        continue;
+      }
+      camelCased += (lowerCamelCase && i == 0)
+          ? subString.toLowerCase()
+          : subString[0].toUpperCase() + subString.substring(1).toLowerCase();
+    }
+    return camelCased;
   }
 
   /// Generates the file under the target path [materialLib] and formats it.

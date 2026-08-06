@@ -6,17 +6,16 @@ import '../data/assist_chip.dart';
 import 'template.dart';
 
 class ActionChipTemplateM3 extends TokenTemplateM3 {
-  const ActionChipTemplateM3({
-    this.colorSchemePrefix = '_colors',
-  });
-
-  final String colorSchemePrefix;
-
+  const ActionChipTemplateM3();
   @override
   String get name => 'Action Chip';
 
   @override
   String get parentFilePath => 'action_chip.dart';
+  
+  String get _colorSchemePrefix => '_colors';
+
+  String get _textThemePrefix => '_textTheme';
 
   @override
   String generateContents(String className) =>
@@ -31,8 +30,8 @@ class $className extends ChipThemeData {
   final BuildContext context;
   final bool isEnabled;
   final _ChipVariant _chipVariant;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-  late final TextTheme _textTheme = Theme.of(context).textTheme;
+  late final ColorScheme $_colorSchemePrefix = Theme.of(context).colorScheme;
+  late final TextTheme $_textThemePrefix = Theme.of(context).textTheme;
 
   @override
   double? get elevation => _chipVariant == _ChipVariant.flat
@@ -43,10 +42,10 @@ class $className extends ChipThemeData {
   double? get pressElevation => ${TokenAssistChip.elevatedPressedContainerElevation};
 
   @override
-  TextStyle? get labelStyle => _textTheme.labelLarge?.copyWith(
+  TextStyle? get labelStyle => ${textStyle(TokenAssistChip.labelTextType, _textThemePrefix)}?.copyWith(
     color: isEnabled
-      ? ${color(TokenAssistChip.labelTextColor, colorSchemePrefix)}
-      : ${color(TokenAssistChip.disabledLabelTextColor, colorSchemePrefix)},
+      ? ${color(TokenAssistChip.labelTextColor, _colorSchemePrefix)}
+      : ${color(TokenAssistChip.disabledLabelTextColor, _colorSchemePrefix)},
   );
 
   @override
@@ -55,17 +54,17 @@ class $className extends ChipThemeData {
       if (states.contains(WidgetState.disabled)) {
         return _chipVariant == _ChipVariant.flat
           ? null
-          : ${colorWithOpacity(TokenAssistChip.elevatedDisabledContainerColor, TokenAssistChip.elevatedDisabledContainerOpacity, colorSchemePrefix)};
+          : ${colorWithOpacity(TokenAssistChip.elevatedDisabledContainerColor, TokenAssistChip.elevatedDisabledContainerOpacity, _colorSchemePrefix)};
       }
       return _chipVariant == _ChipVariant.flat
         ? null
-        : ${color(TokenAssistChip.elevatedContainerColor, colorSchemePrefix)};
+        : ${color(TokenAssistChip.elevatedContainerColor, _colorSchemePrefix)};
     });
 
   @override
   Color? get shadowColor => _chipVariant == _ChipVariant.flat
     ? Colors.transparent
-    : ${color(TokenAssistChip.elevatedContainerShadowColor, colorSchemePrefix)};
+    : ${color(TokenAssistChip.elevatedContainerShadowColor, _colorSchemePrefix)};
 
   @override
   Color? get surfaceTintColor => Colors.transparent;
@@ -79,15 +78,15 @@ class $className extends ChipThemeData {
   @override
   BorderSide? get side => _chipVariant == _ChipVariant.flat
     ? isEnabled
-        ? ${border(color(TokenAssistChip.flatOutlineColor, colorSchemePrefix), width: TokenAssistChip.flatOutlineWidth)}
-        : ${border(colorWithOpacity(TokenAssistChip.flatDisabledOutlineColor, TokenAssistChip.flatDisabledOutlineOpacity, colorSchemePrefix))}
+        ? ${border(color(TokenAssistChip.flatOutlineColor, _colorSchemePrefix), width: TokenAssistChip.flatOutlineWidth)}
+        : ${border(colorWithOpacity(TokenAssistChip.flatDisabledOutlineColor, TokenAssistChip.flatDisabledOutlineOpacity, _colorSchemePrefix))}
     : const BorderSide(color: Colors.transparent);
 
   @override
   IconThemeData? get iconTheme => IconThemeData(
     color: isEnabled
-      ? ${color(TokenAssistChip.withIconIconColor, colorSchemePrefix)}
-      : ${color(TokenAssistChip.withIconDisabledIconColor, colorSchemePrefix)},
+      ? ${color(TokenAssistChip.withIconIconColor, _colorSchemePrefix)}
+      : ${color(TokenAssistChip.withIconDisabledIconColor, _colorSchemePrefix)},
     size: ${TokenAssistChip.withIconIconSize},
   );
 
