@@ -12,7 +12,8 @@
 
 #import "CoreTests.gen.h"
 
-@interface AlternateLanguageTestPlugin : NSObject <FlutterPlugin, FLTHostIntegrationCoreApi>
+@interface AlternateLanguageTestPlugin
+    : NSObject <FlutterPlugin, FLTHostIntegrationCoreApi, FLTHostCallbackCoreApi>
 @end
 
 @interface AlternateLanguageTestAPIWithSuffix : NSObject <FLTHostSmallApi>

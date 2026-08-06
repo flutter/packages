@@ -10,6 +10,7 @@
 @property(nonatomic) FLTFlutterSmallApi *flutterSmallApiOne;
 @property(nonatomic) FLTFlutterSmallApi *flutterSmallApiTwo;
 @property(nonatomic) FLTFlutterIntegrationCoreApi *flutterAPI;
+@property(nonatomic) FLTFlutterCallbackCoreApi *flutterCallbackAPI;
 @end
 
 /// This plugin handles the native side of the integration tests in example/integration_test/.
@@ -17,16 +18,53 @@
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   AlternateLanguageTestPlugin *plugin = [[AlternateLanguageTestPlugin alloc] init];
   SetUpFLTHostIntegrationCoreApi([registrar messenger], plugin);
+  SetUpFLTHostCallbackCoreApi([registrar messenger], plugin);
   [AlternateLanguageTestAPIWithSuffix registerWithRegistrar:registrar suffix:@"suffixOne"];
   [AlternateLanguageTestAPIWithSuffix registerWithRegistrar:registrar suffix:@"suffixTwo"];
   plugin.flutterAPI =
       [[FLTFlutterIntegrationCoreApi alloc] initWithBinaryMessenger:[registrar messenger]];
+  plugin.flutterCallbackAPI =
+      [[FLTFlutterCallbackCoreApi alloc] initWithBinaryMessenger:[registrar messenger]];
   plugin.flutterSmallApiOne =
       [[FLTFlutterSmallApi alloc] initWithBinaryMessenger:[registrar messenger]
                                      messageChannelSuffix:@"suffixOne"];
   plugin.flutterSmallApiTwo =
       [[FLTFlutterSmallApi alloc] initWithBinaryMessenger:[registrar messenger]
                                      messageChannelSuffix:@"suffixTwo"];
+}
+
+#pragma mark FLTHostCallbackCoreApi implementation
+
+- (void)noopWithCompletion:(void (^)(FlutterError *_Nullable))completion {
+  completion(nil);
+}
+
+- (void)echoString:(NSString *)aString
+        completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
+  completion(aString, nil);
+}
+
+- (void)echoAllTypes:(FLTAllTypes *)everything
+          completion:(void (^)(FLTAllTypes *_Nullable, FlutterError *_Nullable))completion {
+  completion(everything, nil);
+}
+
+- (void)echoNullableString:(nullable NSString *)aString
+                completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
+  completion(aString, nil);
+}
+
+- (void)throwErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion {
+  completion(nil, [FlutterError errorWithCode:@"code" message:@"message" details:@"details"]);
+}
+
+- (void)throwErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion {
+  completion([FlutterError errorWithCode:@"code" message:@"message" details:@"details"]);
+}
+
+- (void)taskQueueIsBackgroundThreadWithCompletion:(void (^)(NSNumber *_Nullable,
+                                                            FlutterError *_Nullable))completion {
+  completion(@(![NSThread isMainThread]), nil);
 }
 
 #pragma mark HostIntegrationCoreApi implementation
@@ -1180,6 +1218,26 @@
 
 - (FLTUnusedClass *)checkIfUnusedClassGenerated {
   return [[FLTUnusedClass alloc] init];
+}
+
+- (void)callFlutterCallbackNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion {
+  [self.flutterCallbackAPI noopWithCompletion:completion];
+}
+
+- (void)callFlutterCallbackEchoString:(NSString *)aString
+                           completion:
+                               (void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
+  [self.flutterCallbackAPI echoString:aString completion:completion];
+}
+
+- (void)callFlutterCallbackThrowErrorWithCompletion:(void (^)(id _Nullable,
+                                                              FlutterError *_Nullable))completion {
+  [self.flutterCallbackAPI throwErrorWithCompletion:completion];
+}
+
+- (void)callFlutterCallbackThrowErrorFromVoidWithCompletion:
+    (void (^)(FlutterError *_Nullable))completion {
+  [self.flutterCallbackAPI throwErrorFromVoidWithCompletion:completion];
 }
 
 @end

@@ -1,3 +1,8 @@
+## 28.0.0
+
+* **Breaking Change** Updates Kotlin and Swift generators to generate `suspend` functions and `async throws` signatures for `@FlutterApi` methods by default. 
+  * Use `@asyncCallback` if callback-style signatures are required.
+
 ## 27.3.0
 
 * Adds support for sharing constants across platforms.

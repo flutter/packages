@@ -493,8 +493,8 @@ void main() {
     const generator = KotlinGenerator();
     generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    expect(code, contains('callback: (Result<Unit>) -> Unit'));
-    expect(code, contains('callback(Result.success(Unit))'));
+    expect(code, contains('suspend fun doSomething(arg0Arg: Input)'));
+    expect(code, contains('continuation.resume(Unit)'));
     // Lines should not end in semicolons.
     expect(code, isNot(contains(RegExp(r';\n'))));
   });
@@ -579,7 +579,7 @@ void main() {
     const generator = KotlinGenerator();
     generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    expect(code, contains('fun doSomething(callback: (Result<Output>) -> Unit)'));
+    expect(code, contains('suspend fun doSomething(): Output'));
     expect(code, contains('channel.send(null)'));
   });
 
@@ -727,8 +727,9 @@ void main() {
     generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
     expect(code, contains('interface Api'));
-    expect(code, contains('api.doSomething(argArg) {'));
-    expect(code, contains('reply.reply(PigeonUtils.wrapResult(data))'));
+    expect(code, contains('suspend fun doSomething(arg: Input): Output'));
+    expect(code, contains('CoroutineScope(Dispatchers.Main).launch {'));
+    expect(code, contains('listOf(api.doSomething(argArg))'));
   });
 
   test('gen one async Flutter Api', () {
@@ -788,7 +789,7 @@ void main() {
     generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
     expect(code, contains('class Api'));
-    expect(code, matches('fun doSomething.*Input.*callback.*Output.*Unit'));
+    expect(code, matches('suspend fun doSomething.*Input.*: Output'));
   });
 
   test('gen one enum class', () {
@@ -1061,9 +1062,9 @@ void main() {
     const generator = KotlinGenerator();
     generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    expect(code, contains('fun doit(callback: (Result<List<Long?>>) -> Unit)'));
+    expect(code, contains('suspend fun doit()'));
     expect(code, contains('val output = it[0] as List<Long?>'));
-    expect(code, contains('callback(Result.success(output))'));
+    expect(code, contains('continuation.resume(output)'));
   });
 
   test('host multiple args', () {
@@ -1137,8 +1138,8 @@ void main() {
     generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
     expect(code, contains('val channel = BasicMessageChannel'));
-    expect(code, contains('callback(Result.success(output))'));
-    expect(code, contains('fun add(xArg: Long, yArg: Long, callback: (Result<Long>) -> Unit)'));
+    expect(code, contains('continuation.resume(output)'));
+    expect(code, contains('suspend fun add(xArg: Long, yArg: Long)'));
     expect(code, contains('channel.send(listOf(xArg, yArg)) {'));
   });
 
@@ -1192,7 +1193,7 @@ void main() {
     const generator = KotlinGenerator();
     generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    expect(code, contains('fun doit(callback: (Result<Long?>) -> Unit'));
+    expect(code, contains('suspend fun doit(): Long?'));
   });
 
   test('nullable argument host', () {
@@ -1254,7 +1255,7 @@ void main() {
     const generator = KotlinGenerator();
     generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    expect(code, contains('fun doit(fooArg: Long?, callback: (Result<Unit>) -> Unit)'));
+    expect(code, contains('suspend fun doit(fooArg: Long?)'));
   });
 
   test('nonnull fields', () {
@@ -1500,7 +1501,7 @@ void main() {
     );
     expect(
       code,
-      contains('callback(Result.failure(PigeonUtils.createConnectionError(channelName)))'),
+      contains('continuation.resumeWithException(PigeonUtils.createConnectionError(channelName))'),
     );
   });
 
@@ -1877,5 +1878,33 @@ void main() {
     expect(code, contains('const val boolConst: Boolean = true'));
     expect(code, contains(r'const val stringWithBackslashDollar: String = "\\\$"'));
     expect(code, contains(r'const val stringWithTwoBackslashesDollar: String = "\\\\\$"'));
+  });
+
+  test('asyncCallback emits callback-based host api method', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doit',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration(baseName: 'int', isNullable: true),
+              isAsynchronous: true,
+              isAsynchronousCallback: true,
+              parameters: <Parameter>[],
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
+    const generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('fun doit(callback: (Result<Long?>) -> Unit'));
   });
 }

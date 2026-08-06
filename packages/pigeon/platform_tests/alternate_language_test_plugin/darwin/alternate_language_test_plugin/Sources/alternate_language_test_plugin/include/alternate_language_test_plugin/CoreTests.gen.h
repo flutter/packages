@@ -927,6 +927,14 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 - (void)callFlutterSmallApiEchoString:(NSString *)aString
                            completion:
                                (void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterCallbackNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)callFlutterCallbackEchoString:(NSString *)aString
+                           completion:
+                               (void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterCallbackThrowErrorWithCompletion:(void (^)(id _Nullable,
+                                                              FlutterError *_Nullable))completion;
+- (void)callFlutterCallbackThrowErrorFromVoidWithCompletion:
+    (void (^)(FlutterError *_Nullable))completion;
 @end
 
 extern void SetUpFLTHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
@@ -935,6 +943,18 @@ extern void SetUpFLTHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMess
 extern void SetUpFLTHostIntegrationCoreApiWithSuffix(
     id<FlutterBinaryMessenger> binaryMessenger, NSObject<FLTHostIntegrationCoreApi> *_Nullable api,
     NSString *messageChannelSuffix);
+
+/// A Flutter API using callback-based asynchronous methods (@asyncCallback).
+@interface FLTFlutterCallbackCoreApi : NSObject
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix;
+- (void)noopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)echoString:(NSString *)aString
+        completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)throwErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
+- (void)throwErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+@end
 
 /// The core interface that the Dart platform_test code implements for host
 /// integration tests to call into.
@@ -1143,6 +1163,28 @@ extern void SetUpFLTHostIntegrationCoreApiWithSuffix(
 - (void)echoAsyncString:(NSString *)aString
              completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
+
+/// A Host API using callback-based asynchronous methods (@asyncCallback).
+@protocol FLTHostCallbackCoreApi
+- (void)noopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)echoString:(NSString *)aString
+        completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)echoAllTypes:(FLTAllTypes *)everything
+          completion:(void (^)(FLTAllTypes *_Nullable, FlutterError *_Nullable))completion;
+- (void)echoNullableString:(nullable NSString *)aString
+                completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)throwErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
+- (void)throwErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)taskQueueIsBackgroundThreadWithCompletion:(void (^)(NSNumber *_Nullable,
+                                                            FlutterError *_Nullable))completion;
+@end
+
+extern void SetUpFLTHostCallbackCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                        NSObject<FLTHostCallbackCoreApi> *_Nullable api);
+
+extern void SetUpFLTHostCallbackCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                                  NSObject<FLTHostCallbackCoreApi> *_Nullable api,
+                                                  NSString *messageChannelSuffix);
 
 /// An API that can be implemented for minimal, compile-only tests.
 @protocol FLTHostTrivialApi

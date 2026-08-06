@@ -32,12 +32,11 @@ private class PigeonApiImplementation : ExampleHostApi {
     return a + b
   }
 
-  override fun sendMessage(message: MessageData, callback: (Result<Boolean>) -> Unit) {
+  override suspend fun sendMessage(message: MessageData): Boolean {
     if (message.code == Code.ONE) {
-      callback(Result.failure(FlutterError("code", "message", "details")))
-      return
+      throw FlutterError("code", "message", "details")
     }
-    callback(Result.success(true))
+    return true
   }
 }
 // #enddocregion kotlin-class
