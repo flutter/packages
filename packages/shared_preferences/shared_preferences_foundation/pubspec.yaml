@@ -22,14 +22,18 @@ flutter:
         sharedDarwinSource: true
 
 dependencies:
+  ffi: ^2.1.4
   flutter:
     sdk: flutter
+  objective_c: ^9.2.1
   shared_preferences_platform_interface: ^2.4.0
 
 dev_dependencies:
+  ffigen: ^21.0.0
   flutter_test:
     sdk: flutter
-  pigeon: ^26.1.0
+  pigeon:
+    path: ../../pigeon
 
 topics:
   - persistence

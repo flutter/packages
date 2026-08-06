@@ -1,3 +1,8 @@
+## 27.4.0
+
+* [swift] [kotlin] Adds experimental support for FFI and JNI.
+* Exposes missing PigeonOptions and language-specific configurations as command-line arguments.
+
 ## 27.3.0
 
 * Adds support for sharing constants across platforms.
