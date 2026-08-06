@@ -80,8 +80,14 @@ void main() {
 
     test('textStyle generates text name', () {
       final template = IconButtonTemplateM3(testPath());
-      expect(template.textStyle(TokenTypescale.titleMedium, '_textTheme'), '_textTheme.titleMedium');
-      expect(template.textStyle(TokenTypescaleEmphasized.titleMedium, '_textTheme'), '_textTheme.titleMediumEmphasized');
+      expect(
+        template.textStyle(TokenTypescale.titleMedium, '_textTheme'),
+        '_textTheme.titleMedium',
+      );
+      expect(
+        template.textStyle(TokenTypescaleEmphasized.titleMedium, '_textTheme'),
+        '_textTheme.titleMediumEmphasized',
+      );
     });
 
     test('colorWithOpacity generates color expression with opacity', () {
@@ -94,6 +100,16 @@ void main() {
         template.colorWithOpacity(TokenColorRole.onSurface, 1.0, '_colors'),
         '_colors.onSurface',
       );
+    });
+    
+    test('border generates border expression', () {
+      final template = IconButtonTemplateM3(testPath());
+      expect(template.border('_colors.outline'), 'BorderSide(color: _colors.outline)');
+      expect(
+        template.border('_colors.outline', width: 2.0),
+        'BorderSide(color: _colors.outline, width: 2.0)',
+      );
+      expect(template.border('_colors.outline', width: 1.0), 'BorderSide(color: _colors.outline)');
     });
 
     test('shape generates shape expressions', () {
@@ -159,9 +175,7 @@ void main() {
     });
 
     test('ActionChipTemplateM3 emits M3 ActionChip defaults from tokens', () {
-      final String contents = const ActionChipTemplateM3().generateContents(
-        '_ActionChipDefaultsM3',
-      );
+      final String contents = _generateContents(const ActionChipTemplateM3());
       expect(contents, contains('class _ActionChipDefaultsM3 extends ChipThemeData'));
       expect(
         contents,
@@ -179,7 +193,7 @@ void main() {
     });
 
     test('AppBarTemplateM3 emits M3 AppBar defaults from tokens', () {
-      final String contents = const AppBarTemplateM3().generateContents('_AppBarDefaultsM3');
+      final String contents = _generateContents(const AppBarTemplateM3());
       expect(contents, contains('class _AppBarDefaultsM3 extends AppBarThemeData'));
       expect(contents, contains('scrolledUnderElevation: 3.0'));
       expect(contents, contains('toolbarHeight: 64.0'));
@@ -206,9 +220,7 @@ void main() {
     });
 
     test('BottomSheetTemplateM3 emits M3 BottomSheet defaults from tokens', () {
-      final String contents = const BottomSheetTemplateM3().generateContents(
-        '_BottomSheetDefaultsM3',
-      );
+      final String contents = _generateContents(const BottomSheetTemplateM3());
       expect(contents, contains('class _BottomSheetDefaultsM3 extends BottomSheetThemeData'));
       expect(contents, contains('elevation: 1.0'));
       expect(contents, contains('modalElevation: 1.0'));
@@ -440,6 +452,8 @@ void main() {
     });
   });
 }
+
+String _generateContents(TokenTemplate template) => template.generateContents(template.className);
 
 const _fileHeader = '''
 // Copyright 2013 The Flutter Authors

@@ -76,7 +76,8 @@ abstract class TokenTemplate {
 
   /// The name of the class that will be generated (e.g. `_IconButtonDefaultsM3`
   /// or `_IconButtonDefaultsM3E`).
-  String get _className {
+  @visibleForTesting
+  String get className {
     assert(
       _nameRegExp.hasMatch(name),
       'The template name "$name" must use spaces and capitalized words (e.g., "Typography" or "Icon Button").',
@@ -90,7 +91,7 @@ abstract class TokenTemplate {
 
   /// The regular expression used to verify that the generated contents declare
   /// the class.
-  RegExp get _classRegExp => RegExp('class\\s+$_className\\b');
+  RegExp get _classRegExp => RegExp('class\\s+$className\\b');
 
   /// Returns the body of the generated file as a string.
   ///
@@ -110,7 +111,7 @@ abstract class TokenTemplate {
     }
     return '${color(role, prefix)}.withOpacity(${number(opacity)})';
   }
-  
+
   /// Generate a [BorderSide] for the given component.
   String border(String color, {double? width}) {
     final widthString = (width != null && width != 1.0) ? ', width: $width' : '';
@@ -210,10 +211,10 @@ abstract class TokenTemplate {
     if (verbose) {
       stdout.writeln('Generating contents...');
     }
-    final String contents = generateContents(_className);
+    final String contents = generateContents(className);
     assert(
       contents.contains(_classRegExp),
-      'The generated contents for "$name" must define the class "$_className". '
+      'The generated contents for "$name" must define the class "$className". '
       'Make sure you are utilizing the passed `className` parameter.',
     );
 
