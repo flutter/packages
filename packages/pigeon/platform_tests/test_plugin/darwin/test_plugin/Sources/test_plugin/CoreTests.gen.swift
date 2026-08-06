@@ -2787,7 +2787,7 @@ class HostIntegrationCoreApiSetup {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       noopAsyncChannel.setMessageHandler { _, reply in
-        Task {
+        Task { @MainActor in
           do {
             try await api.noopAsync()
             reply(wrapResult(nil))
@@ -2808,7 +2808,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let anIntArg = args[0] as! Int64
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(anIntArg)
             reply(wrapResult(result))
@@ -2829,7 +2829,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncDoubleChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aDoubleArg = args[0] as! Double
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(aDoubleArg)
             reply(wrapResult(result))
@@ -2850,7 +2850,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncBoolChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aBoolArg = args[0] as! Bool
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(aBoolArg)
             reply(wrapResult(result))
@@ -2871,7 +2871,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(aStringArg)
             reply(wrapResult(result))
@@ -2892,7 +2892,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncUint8ListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aUint8ListArg = args[0] as! FlutterStandardTypedData
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(aUint8ListArg)
             reply(wrapResult(result))
@@ -2913,7 +2913,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncObjectChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let anObjectArg = args[0]!
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(anObjectArg)
             reply(wrapResult(result))
@@ -2934,7 +2934,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let listArg = args[0] as! [Any?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(listArg)
             reply(wrapResult(result))
@@ -2955,7 +2955,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncEnumListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let enumListArg = args[0] as! [AnEnum?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(enumList: enumListArg)
             reply(wrapResult(result))
@@ -2976,7 +2976,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncClassListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let classListArg = args[0] as! [AllNullableTypes?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(classList: classListArg)
             reply(wrapResult(result))
@@ -2997,7 +2997,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let mapArg = args[0] as! [AnyHashable?: Any?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(mapArg)
             reply(wrapResult(result))
@@ -3018,7 +3018,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncStringMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let stringMapArg = args[0] as! [String?: String?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(stringMap: stringMapArg)
             reply(wrapResult(result))
@@ -3039,7 +3039,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncIntMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let intMapArg = args[0] as! [Int64?: Int64?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(intMap: intMapArg)
             reply(wrapResult(result))
@@ -3060,7 +3060,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncEnumMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let enumMapArg = args[0] as? [AnEnum?: AnEnum?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(enumMap: enumMapArg!)
             reply(wrapResult(result))
@@ -3081,7 +3081,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncClassMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let classMapArg = args[0] as! [Int64?: AllNullableTypes?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(classMap: classMapArg)
             reply(wrapResult(result))
@@ -3102,7 +3102,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let anEnumArg = args[0] as! AnEnum
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(anEnumArg)
             reply(wrapResult(result))
@@ -3123,7 +3123,7 @@ class HostIntegrationCoreApiSetup {
       echoAnotherAsyncEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let anotherEnumArg = args[0] as! AnotherEnum
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(anotherEnumArg)
             reply(wrapResult(result))
@@ -3142,7 +3142,7 @@ class HostIntegrationCoreApiSetup {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       throwAsyncErrorChannel.setMessageHandler { _, reply in
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.throwAsyncError()
             reply(wrapResult(result))
@@ -3161,7 +3161,7 @@ class HostIntegrationCoreApiSetup {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       throwAsyncErrorFromVoidChannel.setMessageHandler { _, reply in
-        Task {
+        Task { @MainActor in
           do {
             try await api.throwAsyncErrorFromVoid()
             reply(wrapResult(nil))
@@ -3180,7 +3180,7 @@ class HostIntegrationCoreApiSetup {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       throwAsyncFlutterErrorChannel.setMessageHandler { _, reply in
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.throwAsyncFlutterError()
             reply(wrapResult(result))
@@ -3201,7 +3201,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncAllTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let everythingArg = args[0] as! AllTypes
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(everythingArg)
             reply(wrapResult(result))
@@ -3222,7 +3222,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableAllNullableTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let everythingArg: AllNullableTypes? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(everythingArg)
             reply(wrapResult(result))
@@ -3243,7 +3243,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableAllNullableTypesWithoutRecursionChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let everythingArg: AllNullableTypesWithoutRecursion? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsync(everythingArg)
             reply(wrapResult(result))
@@ -3264,7 +3264,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let anIntArg: Int64? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsyncNullable(anIntArg)
             reply(wrapResult(result))
@@ -3285,7 +3285,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableDoubleChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aDoubleArg: Double? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsyncNullable(aDoubleArg)
             reply(wrapResult(result))
@@ -3306,7 +3306,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableBoolChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aBoolArg: Bool? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsyncNullable(aBoolArg)
             reply(wrapResult(result))
@@ -3327,7 +3327,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aStringArg: String? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsyncNullable(aStringArg)
             reply(wrapResult(result))
@@ -3348,7 +3348,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableUint8ListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aUint8ListArg: FlutterStandardTypedData? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsyncNullable(aUint8ListArg)
             reply(wrapResult(result))
@@ -3369,7 +3369,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableObjectChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let anObjectArg: Any? = args[0]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsyncNullable(anObjectArg)
             reply(wrapResult(result))
@@ -3390,7 +3390,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let listArg: [Any?]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsyncNullable(listArg)
             reply(wrapResult(result))
@@ -3411,7 +3411,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableEnumListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let enumListArg: [AnEnum?]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsyncNullable(enumList: enumListArg)
             reply(wrapResult(result))
@@ -3432,7 +3432,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableClassListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let classListArg: [AllNullableTypes?]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsyncNullable(classList: classListArg)
             reply(wrapResult(result))
@@ -3453,7 +3453,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let mapArg: [AnyHashable?: Any?]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsyncNullable(mapArg)
             reply(wrapResult(result))
@@ -3474,7 +3474,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableStringMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let stringMapArg: [String?: String?]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsyncNullable(stringMap: stringMapArg)
             reply(wrapResult(result))
@@ -3495,7 +3495,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableIntMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let intMapArg: [Int64?: Int64?]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsyncNullable(intMap: intMapArg)
             reply(wrapResult(result))
@@ -3516,7 +3516,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableEnumMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let enumMapArg: [AnEnum?: AnEnum?]? = args[0] as? [AnEnum?: AnEnum?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsyncNullable(enumMap: enumMapArg!)
             reply(wrapResult(result))
@@ -3537,7 +3537,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableClassMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let classMapArg: [Int64?: AllNullableTypes?]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsyncNullable(classMap: classMapArg)
             reply(wrapResult(result))
@@ -3558,7 +3558,7 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let anEnumArg: AnEnum? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsyncNullable(anEnumArg)
             reply(wrapResult(result))
@@ -3579,7 +3579,7 @@ class HostIntegrationCoreApiSetup {
       echoAnotherAsyncNullableEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let anotherEnumArg: AnotherEnum? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echoAsyncNullable(anotherEnumArg)
             reply(wrapResult(result))
@@ -3639,7 +3639,7 @@ class HostIntegrationCoreApiSetup {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterNoopChannel.setMessageHandler { _, reply in
-        Task {
+        Task { @MainActor in
           do {
             try await api.callFlutterNoop()
             reply(wrapResult(nil))
@@ -3657,7 +3657,7 @@ class HostIntegrationCoreApiSetup {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterThrowErrorChannel.setMessageHandler { _, reply in
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterThrowError()
             reply(wrapResult(result))
@@ -3675,7 +3675,7 @@ class HostIntegrationCoreApiSetup {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterThrowErrorFromVoidChannel.setMessageHandler { _, reply in
-        Task {
+        Task { @MainActor in
           do {
             try await api.callFlutterThrowErrorFromVoid()
             reply(wrapResult(nil))
@@ -3695,7 +3695,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoAllTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let everythingArg = args[0] as! AllTypes
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(everythingArg)
             reply(wrapResult(result))
@@ -3715,7 +3715,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoAllNullableTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let everythingArg: AllNullableTypes? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(everythingArg)
             reply(wrapResult(result))
@@ -3737,7 +3737,7 @@ class HostIntegrationCoreApiSetup {
         let aNullableBoolArg: Bool? = nilOrValue(args[0])
         let aNullableIntArg: Int64? = nilOrValue(args[1])
         let aNullableStringArg: String? = nilOrValue(args[2])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterSendMultipleNullableTypes(
               aBool: aNullableBoolArg, anInt: aNullableIntArg, aString: aNullableStringArg)
@@ -3758,7 +3758,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoAllNullableTypesWithoutRecursionChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let everythingArg: AllNullableTypesWithoutRecursion? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(everythingArg)
             reply(wrapResult(result))
@@ -3781,7 +3781,7 @@ class HostIntegrationCoreApiSetup {
         let aNullableBoolArg: Bool? = nilOrValue(args[0])
         let aNullableIntArg: Int64? = nilOrValue(args[1])
         let aNullableStringArg: String? = nilOrValue(args[2])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterSendMultipleNullableTypesWithoutRecursion(
               aBool: aNullableBoolArg, anInt: aNullableIntArg, aString: aNullableStringArg)
@@ -3802,7 +3802,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoBoolChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aBoolArg = args[0] as! Bool
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(aBoolArg)
             reply(wrapResult(result))
@@ -3822,7 +3822,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let anIntArg = args[0] as! Int64
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(anIntArg)
             reply(wrapResult(result))
@@ -3842,7 +3842,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoDoubleChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aDoubleArg = args[0] as! Double
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(aDoubleArg)
             reply(wrapResult(result))
@@ -3862,7 +3862,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(aStringArg)
             reply(wrapResult(result))
@@ -3882,7 +3882,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoUint8ListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let listArg = args[0] as! FlutterStandardTypedData
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(listArg)
             reply(wrapResult(result))
@@ -3902,7 +3902,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let listArg = args[0] as! [Any?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(listArg)
             reply(wrapResult(result))
@@ -3922,7 +3922,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoEnumListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let enumListArg = args[0] as! [AnEnum?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(enumList: enumListArg)
             reply(wrapResult(result))
@@ -3942,7 +3942,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoClassListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let classListArg = args[0] as! [AllNullableTypes?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(classList: classListArg)
             reply(wrapResult(result))
@@ -3962,7 +3962,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNonNullEnumListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let enumListArg = args[0] as! [AnEnum]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNonNull(enumList: enumListArg)
             reply(wrapResult(result))
@@ -3982,7 +3982,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNonNullClassListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let classListArg = args[0] as! [AllNullableTypes]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNonNull(classList: classListArg)
             reply(wrapResult(result))
@@ -4002,7 +4002,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let mapArg = args[0] as! [AnyHashable?: Any?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(mapArg)
             reply(wrapResult(result))
@@ -4022,7 +4022,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoStringMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let stringMapArg = args[0] as! [String?: String?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(stringMap: stringMapArg)
             reply(wrapResult(result))
@@ -4042,7 +4042,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoIntMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let intMapArg = args[0] as! [Int64?: Int64?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(intMap: intMapArg)
             reply(wrapResult(result))
@@ -4062,7 +4062,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoEnumMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let enumMapArg = args[0] as? [AnEnum?: AnEnum?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(enumMap: enumMapArg!)
             reply(wrapResult(result))
@@ -4082,7 +4082,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoClassMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let classMapArg = args[0] as! [Int64?: AllNullableTypes?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(classMap: classMapArg)
             reply(wrapResult(result))
@@ -4102,7 +4102,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNonNullStringMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let stringMapArg = args[0] as! [String: String]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNonNull(stringMap: stringMapArg)
             reply(wrapResult(result))
@@ -4122,7 +4122,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNonNullIntMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let intMapArg = args[0] as! [Int64: Int64]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNonNull(intMap: intMapArg)
             reply(wrapResult(result))
@@ -4142,7 +4142,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNonNullEnumMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let enumMapArg = args[0] as? [AnEnum: AnEnum]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNonNull(enumMap: enumMapArg!)
             reply(wrapResult(result))
@@ -4162,7 +4162,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNonNullClassMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let classMapArg = args[0] as! [Int64: AllNullableTypes]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNonNull(classMap: classMapArg)
             reply(wrapResult(result))
@@ -4182,7 +4182,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let anEnumArg = args[0] as! AnEnum
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(anEnumArg)
             reply(wrapResult(result))
@@ -4202,7 +4202,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoAnotherEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let anotherEnumArg = args[0] as! AnotherEnum
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEcho(anotherEnumArg)
             reply(wrapResult(result))
@@ -4222,7 +4222,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableBoolChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aBoolArg: Bool? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullable(aBoolArg)
             reply(wrapResult(result))
@@ -4242,7 +4242,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let anIntArg: Int64? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullable(anIntArg)
             reply(wrapResult(result))
@@ -4262,7 +4262,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableDoubleChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aDoubleArg: Double? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullable(aDoubleArg)
             reply(wrapResult(result))
@@ -4282,7 +4282,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aStringArg: String? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullable(aStringArg)
             reply(wrapResult(result))
@@ -4302,7 +4302,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableUint8ListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let listArg: FlutterStandardTypedData? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullable(listArg)
             reply(wrapResult(result))
@@ -4322,7 +4322,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let listArg: [Any?]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullable(listArg)
             reply(wrapResult(result))
@@ -4342,7 +4342,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableEnumListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let enumListArg: [AnEnum?]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullable(enumList: enumListArg)
             reply(wrapResult(result))
@@ -4362,7 +4362,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableClassListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let classListArg: [AllNullableTypes?]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullable(classList: classListArg)
             reply(wrapResult(result))
@@ -4382,7 +4382,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableNonNullEnumListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let enumListArg: [AnEnum]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullableNonNull(enumList: enumListArg)
             reply(wrapResult(result))
@@ -4402,7 +4402,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableNonNullClassListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let classListArg: [AllNullableTypes]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullableNonNull(classList: classListArg)
             reply(wrapResult(result))
@@ -4422,7 +4422,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let mapArg: [AnyHashable?: Any?]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullable(mapArg)
             reply(wrapResult(result))
@@ -4442,7 +4442,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableStringMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let stringMapArg: [String?: String?]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullable(stringMap: stringMapArg)
             reply(wrapResult(result))
@@ -4462,7 +4462,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableIntMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let intMapArg: [Int64?: Int64?]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullable(intMap: intMapArg)
             reply(wrapResult(result))
@@ -4482,7 +4482,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableEnumMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let enumMapArg: [AnEnum?: AnEnum?]? = args[0] as? [AnEnum?: AnEnum?]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullable(enumMap: enumMapArg!)
             reply(wrapResult(result))
@@ -4502,7 +4502,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableClassMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let classMapArg: [Int64?: AllNullableTypes?]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullable(classMap: classMapArg)
             reply(wrapResult(result))
@@ -4522,7 +4522,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableNonNullStringMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let stringMapArg: [String: String]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullableNonNull(stringMap: stringMapArg)
             reply(wrapResult(result))
@@ -4542,7 +4542,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableNonNullIntMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let intMapArg: [Int64: Int64]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullableNonNull(intMap: intMapArg)
             reply(wrapResult(result))
@@ -4562,7 +4562,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableNonNullEnumMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let enumMapArg: [AnEnum: AnEnum]? = args[0] as? [AnEnum: AnEnum]
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullableNonNull(enumMap: enumMapArg!)
             reply(wrapResult(result))
@@ -4582,7 +4582,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableNonNullClassMapChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let classMapArg: [Int64: AllNullableTypes]? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullableNonNull(classMap: classMapArg)
             reply(wrapResult(result))
@@ -4602,7 +4602,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoNullableEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let anEnumArg: AnEnum? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullable(anEnumArg)
             reply(wrapResult(result))
@@ -4622,7 +4622,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterEchoAnotherNullableEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let anotherEnumArg: AnotherEnum? = nilOrValue(args[0])
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterEchoNullable(anotherEnumArg)
             reply(wrapResult(result))
@@ -4642,7 +4642,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterSmallApiEchoStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterSmallApiEcho(aStringArg)
             reply(wrapResult(result))
@@ -4660,7 +4660,7 @@ class HostIntegrationCoreApiSetup {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterCallbackNoopChannel.setMessageHandler { _, reply in
-        Task {
+        Task { @MainActor in
           do {
             try await api.callFlutterCallbackNoop()
             reply(wrapResult(nil))
@@ -4680,7 +4680,7 @@ class HostIntegrationCoreApiSetup {
       callFlutterCallbackEchoStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterCallbackEcho(aStringArg)
             reply(wrapResult(result))
@@ -4698,7 +4698,7 @@ class HostIntegrationCoreApiSetup {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterCallbackThrowErrorChannel.setMessageHandler { _, reply in
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.callFlutterCallbackThrowError()
             reply(wrapResult(result))
@@ -4716,7 +4716,7 @@ class HostIntegrationCoreApiSetup {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterCallbackThrowErrorFromVoidChannel.setMessageHandler { _, reply in
-        Task {
+        Task { @MainActor in
           do {
             try await api.callFlutterCallbackThrowErrorFromVoid()
             reply(wrapResult(nil))
@@ -6606,7 +6606,7 @@ class HostSmallApiSetup {
       echoChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.echo(aString: aStringArg)
             reply(wrapResult(result))
@@ -6623,7 +6623,7 @@ class HostSmallApiSetup {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       voidVoidChannel.setMessageHandler { _, reply in
-        Task {
+        Task { @MainActor in
           do {
             try await api.voidVoid()
             reply(wrapResult(nil))

@@ -356,7 +356,7 @@ class ExampleHostApiSetup {
       sendMessageChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let messageArg = args[0] as! MessageData
-        Task {
+        Task { @MainActor in
           do {
             let result = try await api.sendMessage(message: messageArg)
             reply(wrapResult(result))

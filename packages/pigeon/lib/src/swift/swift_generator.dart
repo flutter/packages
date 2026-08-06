@@ -1891,7 +1891,8 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
           call = onCreateCall(methodArgument, apiVarName: 'api');
         }
         if (useAsync) {
-          indent.writeln('Task {');
+          final taskDeclaration = serialBackgroundQueue == null ? 'Task { @MainActor in' : 'Task {';
+          indent.writeln(taskDeclaration);
           indent.nest(1, () {
             indent.write('do ');
             indent.addScoped('{', '}', () {

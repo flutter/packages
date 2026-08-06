@@ -647,7 +647,7 @@ void main() {
     expect(
       code,
       contains(
-        'Task {\n          do {\n            let result = try await api.doSomething(arg: argArg)\n            reply(wrapResult(result))',
+        'Task { @MainActor in\n          do {\n            let result = try await api.doSomething(arg: argArg)\n            reply(wrapResult(result))',
       ),
     );
   });
