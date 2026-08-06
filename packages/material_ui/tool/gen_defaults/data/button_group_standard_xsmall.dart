@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.2.0
+// Version: 38.2.6
 
 class TokenButtonGroupStandardXsmall {
   /// md.comp.button-group.standard.xsmall.between-space

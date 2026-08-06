@@ -4,6 +4,7 @@
 
 class TypescaleStruct {
   const TypescaleStruct({
+    required this.name,
     required this.fontFamily,
     required this.fontSize,
     required this.fontWeight,
@@ -11,6 +12,7 @@ class TypescaleStruct {
     required this.letterSpacing,
   });
 
+  final String name;
   final String fontFamily;
   final double fontSize;
   final double fontWeight;
