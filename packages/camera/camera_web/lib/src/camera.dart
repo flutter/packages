@@ -305,7 +305,9 @@ class Camera {
     final web.MediaDevices mediaDevices = window.navigator.mediaDevices;
     final web.MediaTrackSupportedConstraints supportedConstraints = mediaDevices
         .getSupportedConstraints();
-    final bool torchModeSupported = supportedConstraints.torch;
+    final bool torchModeSupported =
+        _cameraService.jsUtil.hasProperty(supportedConstraints, 'torch'.toJS) &&
+        supportedConstraints.torch;
 
     if (!torchModeSupported) {
       throw CameraWebException(
@@ -332,7 +334,11 @@ class Camera {
 
     if (videoTracks.isNotEmpty) {
       final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
-      final bool canEnableTorchMode = defaultVideoTrack.getCapabilities().torch.toDart.first.toDart;
+      final web.MediaTrackCapabilities capabilities = defaultVideoTrack.getCapabilities();
+      final bool canEnableTorchMode =
+          _cameraService.jsUtil.hasProperty(capabilities, 'torch'.toJS) &&
+          capabilities.torch.toDart.isNotEmpty &&
+          capabilities.torch.toDart.first.toDart;
 
       if (canEnableTorchMode) {
         defaultVideoTrack.applyConstraints(MediaTrackConstraints(torch: enabled.toJS));
@@ -399,6 +405,10 @@ class Camera {
 
     final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
     final web.MediaTrackSettings defaultVideoTrackSettings = defaultVideoTrack.getSettings();
+
+    if (!_cameraService.jsUtil.hasProperty(defaultVideoTrackSettings, 'facingMode'.toJS)) {
+      return null;
+    }
 
     final String facingMode = defaultVideoTrackSettings.facingMode;
 

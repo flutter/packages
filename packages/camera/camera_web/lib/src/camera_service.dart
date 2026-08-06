@@ -21,7 +21,6 @@ class CameraService {
   web.Window window = web.window;
 
   /// The utility to manipulate JavaScript interop objects.
-  @visibleForTesting
   JsUtil jsUtil = JsUtil();
 
   /// Returns a media stream associated with the camera device
@@ -109,7 +108,8 @@ class CameraService {
     final web.MediaDevices mediaDevices = window.navigator.mediaDevices;
     final web.MediaTrackSupportedConstraints supportedConstraints = mediaDevices
         .getSupportedConstraints();
-    final bool zoomLevelSupported = supportedConstraints.zoom;
+    final bool zoomLevelSupported =
+        jsUtil.hasProperty(supportedConstraints, 'zoom'.toJS) && supportedConstraints.zoom;
 
     if (!zoomLevelSupported) {
       throw CameraWebException(
@@ -125,9 +125,18 @@ class CameraService {
     if (videoTracks.isNotEmpty) {
       final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
 
+      final web.MediaTrackCapabilities capabilities = defaultVideoTrack.getCapabilities();
+      if (!jsUtil.hasProperty(capabilities, 'zoom'.toJS)) {
+        throw CameraWebException(
+          camera.textureId,
+          CameraErrorCode.zoomLevelNotSupported,
+          'The zoom level is not supported by the current camera.',
+        );
+      }
+
       /// The zoom level capability is represented by MediaSettingsRange.
       /// See: https://developer.mozilla.org/en-US/docs/Web/API/MediaSettingsRange
-      final web.MediaSettingsRange zoomLevelCapability = defaultVideoTrack.getCapabilities().zoom;
+      final web.MediaSettingsRange zoomLevelCapability = capabilities.zoom;
 
       return ZoomLevelCapability(
         minimum: zoomLevelCapability.min,
@@ -153,7 +162,8 @@ class CameraService {
         .getSupportedConstraints();
 
     // Return null if the facing mode is not supported.
-    if (!supportedConstraints.facingMode) {
+    if (!jsUtil.hasProperty(supportedConstraints, 'facingMode'.toJS) ||
+        !supportedConstraints.facingMode) {
       return null;
     }
 
@@ -164,7 +174,9 @@ class CameraService {
     // MediaTrackSettings:
     // https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings
     final web.MediaTrackSettings videoTrackSettings = videoTrack.getSettings();
-    final String facingMode = videoTrackSettings.facingMode;
+    final String facingMode = jsUtil.hasProperty(videoTrackSettings, 'facingMode'.toJS)
+        ? videoTrackSettings.facingMode
+        : '';
 
     if (facingMode.isEmpty) {
       // If the facing mode does not exist in the video track settings,
