@@ -13,6 +13,7 @@ import 'package:web/web.dart' as web;
 import 'package:web/web.dart';
 
 import 'camera_service.dart';
+import 'pkg_web_tweaks.dart';
 import 'types/types.dart';
 
 String _getViewType(int cameraId) => 'plugins.flutter.io/camera_$cameraId';
@@ -305,9 +306,7 @@ class Camera {
     final web.MediaDevices mediaDevices = window.navigator.mediaDevices;
     final web.MediaTrackSupportedConstraints supportedConstraints = mediaDevices
         .getSupportedConstraints();
-    final bool torchModeSupported =
-        _cameraService.jsUtil.hasProperty(supportedConstraints, 'torch'.toJS) &&
-        supportedConstraints.torch;
+    final bool torchModeSupported = supportedConstraints.torchNullable ?? false;
 
     if (!torchModeSupported) {
       throw CameraWebException(
@@ -334,11 +333,11 @@ class Camera {
 
     if (videoTracks.isNotEmpty) {
       final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
-      final web.MediaTrackCapabilities capabilities = defaultVideoTrack.getCapabilities();
+      final JSArray<JSBoolean>? torchCapability = defaultVideoTrack.getCapabilities().torchNullable;
       final bool canEnableTorchMode =
-          _cameraService.jsUtil.hasProperty(capabilities, 'torch'.toJS) &&
-          capabilities.torch.toDart.isNotEmpty &&
-          capabilities.torch.toDart.first.toDart;
+          torchCapability != null &&
+          torchCapability.toDart.isNotEmpty &&
+          torchCapability.toDart.first.toDart;
 
       if (canEnableTorchMode) {
         defaultVideoTrack.applyConstraints(MediaTrackConstraints(torch: enabled.toJS));
@@ -406,13 +405,9 @@ class Camera {
     final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
     final web.MediaTrackSettings defaultVideoTrackSettings = defaultVideoTrack.getSettings();
 
-    if (!_cameraService.jsUtil.hasProperty(defaultVideoTrackSettings, 'facingMode'.toJS)) {
-      return null;
-    }
+    final String? facingMode = defaultVideoTrackSettings.facingModeNullable;
 
-    final String facingMode = defaultVideoTrackSettings.facingMode;
-
-    if (facingMode.isNotEmpty) {
+    if (facingMode != null && facingMode.isNotEmpty) {
       return _cameraService.mapFacingModeToLensDirection(facingMode);
     } else {
       return null;

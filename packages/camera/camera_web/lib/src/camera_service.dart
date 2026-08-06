@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:web/web.dart' as web;
 
 import 'camera.dart';
+import 'pkg_web_tweaks.dart';
 import 'shims/dart_js_util.dart';
 import 'types/types.dart';
 
@@ -108,8 +109,7 @@ class CameraService {
     final web.MediaDevices mediaDevices = window.navigator.mediaDevices;
     final web.MediaTrackSupportedConstraints supportedConstraints = mediaDevices
         .getSupportedConstraints();
-    final bool zoomLevelSupported =
-        jsUtil.hasProperty(supportedConstraints, 'zoom'.toJS) && supportedConstraints.zoom;
+    final bool zoomLevelSupported = supportedConstraints.zoomNullable ?? false;
 
     if (!zoomLevelSupported) {
       throw CameraWebException(
@@ -125,24 +125,25 @@ class CameraService {
     if (videoTracks.isNotEmpty) {
       final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
 
-      final web.MediaTrackCapabilities capabilities = defaultVideoTrack.getCapabilities();
-      if (!jsUtil.hasProperty(capabilities, 'zoom'.toJS)) {
+      /// The zoom level capability is represented by MediaSettingsRange.
+      /// See: https://developer.mozilla.org/en-US/docs/Web/API/MediaSettingsRange
+      final web.MediaSettingsRange? zoomLevelCapability = defaultVideoTrack
+          .getCapabilities()
+          .zoomNullable;
+
+      if (zoomLevelCapability != null) {
+        return ZoomLevelCapability(
+          minimum: zoomLevelCapability.min,
+          maximum: zoomLevelCapability.max,
+          videoTrack: defaultVideoTrack,
+        );
+      } else {
         throw CameraWebException(
           camera.textureId,
           CameraErrorCode.zoomLevelNotSupported,
           'The zoom level is not supported by the current camera.',
         );
       }
-
-      /// The zoom level capability is represented by MediaSettingsRange.
-      /// See: https://developer.mozilla.org/en-US/docs/Web/API/MediaSettingsRange
-      final web.MediaSettingsRange zoomLevelCapability = capabilities.zoom;
-
-      return ZoomLevelCapability(
-        minimum: zoomLevelCapability.min,
-        maximum: zoomLevelCapability.max,
-        videoTrack: defaultVideoTrack,
-      );
     } else {
       throw CameraWebException(
         camera.textureId,
@@ -162,8 +163,7 @@ class CameraService {
         .getSupportedConstraints();
 
     // Return null if the facing mode is not supported.
-    if (!jsUtil.hasProperty(supportedConstraints, 'facingMode'.toJS) ||
-        !supportedConstraints.facingMode) {
+    if (!(supportedConstraints.facingModeNullable ?? false)) {
       return null;
     }
 
@@ -174,11 +174,9 @@ class CameraService {
     // MediaTrackSettings:
     // https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings
     final web.MediaTrackSettings videoTrackSettings = videoTrack.getSettings();
-    final String facingMode = jsUtil.hasProperty(videoTrackSettings, 'facingMode'.toJS)
-        ? videoTrackSettings.facingMode
-        : '';
+    final String? facingMode = videoTrackSettings.facingModeNullable;
 
-    if (facingMode.isEmpty) {
+    if (facingMode == null || facingMode.isEmpty) {
       // If the facing mode does not exist in the video track settings,
       // check for the facing mode in the video track capabilities.
       //
@@ -204,15 +202,13 @@ class CameraService {
       // We use jsUtil.getProperty to safely read the raw JS value, then explicitly
       // validate it is a JSArray before accessing its elements to prevent a TypeError.
 
-      final JSAny? facingModeCapabilities = jsUtil.getProperty(
-        videoTrackCapabilities,
-        'facingMode'.toJS,
-      );
-      if (facingModeCapabilities == null || !facingModeCapabilities.isA<JSArray>()) {
+      final JSArray<JSString>? facingModeCapabilities = videoTrackCapabilities.facingModeNullable;
+
+      if (facingModeCapabilities == null) {
         return null;
       }
 
-      final List<JSAny?> facingModes = (facingModeCapabilities as JSArray).toDart;
+      final List<JSAny?> facingModes = facingModeCapabilities.toDart;
 
       if (facingModes.isNotEmpty && facingModes.first.isA<JSString>()) {
         return (facingModes.first! as JSString).toDart;
