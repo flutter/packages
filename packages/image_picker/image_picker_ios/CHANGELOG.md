@@ -1,3 +1,7 @@
+## 0.8.13+7
+
+* Fixes early dismissal of image picker.
+
 ## 0.8.13+6
 
 * Replaces deprecated `kUTTypeGIF` with `UTTypeGIF` to fix iOS 15+ deprecation warnings.
