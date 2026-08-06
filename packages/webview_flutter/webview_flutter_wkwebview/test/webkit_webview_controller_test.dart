@@ -1012,6 +1012,160 @@ void main() {
       verifyNoMoreInteractions(mockUserContentController);
     });
 
+    test('removeJavaScriptChannel calls do not interleave when not awaited', () async {
+      // Regression test for
+      // https://github.com/flutter/flutter/issues/165287.
+      PigeonOverrides.wKScriptMessageHandler_new =
+          ({
+            required void Function(WKScriptMessageHandler, WKUserContentController, WKScriptMessage)
+            didReceiveScriptMessage,
+            dynamic observeValue,
+          }) {
+            return WKScriptMessageHandler.pigeon_detached(
+              didReceiveScriptMessage: didReceiveScriptMessage,
+            );
+          };
+
+      final mockUserContentController = MockWKUserContentController();
+
+      // Simulate the native `WKUserContentController`, which raises a fatal
+      // exception when a script message handler is added with a name that is
+      // already registered.
+      final registeredHandlerNames = <String>{};
+      when(mockUserContentController.addScriptMessageHandler(any, any)).thenAnswer((
+        Invocation invocation,
+      ) async {
+        await Future<void>.delayed(Duration.zero);
+        final name = invocation.positionalArguments[1] as String;
+        if (!registeredHandlerNames.add(name)) {
+          throw StateError(
+            'Attempt to add script message handler with name `$name` when it already exists.',
+          );
+        }
+      });
+      when(mockUserContentController.removeScriptMessageHandler(any)).thenAnswer((
+        Invocation invocation,
+      ) async {
+        await Future<void>.delayed(Duration.zero);
+        registeredHandlerNames.remove(invocation.positionalArguments[0] as String);
+      });
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockUserContentController: mockUserContentController,
+      );
+
+      const channelNames = ['channel1', 'channel2', 'channel3', 'channel4'];
+      for (final name in channelNames) {
+        await controller.addJavaScriptChannel(
+          WebKitJavaScriptChannelParams(name: name, onMessageReceived: (JavaScriptMessage m) {}),
+        );
+      }
+
+      // Remove every channel without awaiting each call, as an app would when
+      // cleaning up from a synchronous method like `State.dispose`.
+      await Future.wait(<Future<void>>[
+        for (final name in channelNames) controller.removeJavaScriptChannel(name),
+      ]);
+
+      // Allow the unawaited `removeScriptMessageHandler` calls made by the
+      // last reset to complete.
+      await Future<void>.delayed(Duration.zero);
+
+      expect(registeredHandlerNames, isEmpty);
+    });
+
+    test('a failed JavaScript channel operation does not block later operations', () async {
+      PigeonOverrides.wKScriptMessageHandler_new =
+          ({
+            required void Function(WKScriptMessageHandler, WKUserContentController, WKScriptMessage)
+            didReceiveScriptMessage,
+            dynamic observeValue,
+          }) {
+            return WKScriptMessageHandler.pigeon_detached(
+              didReceiveScriptMessage: didReceiveScriptMessage,
+            );
+          };
+
+      final mockUserContentController = MockWKUserContentController();
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockUserContentController: mockUserContentController,
+      );
+
+      await controller.addJavaScriptChannel(
+        WebKitJavaScriptChannelParams(name: 'name', onMessageReceived: (JavaScriptMessage m) {}),
+      );
+
+      await expectLater(
+        controller.addJavaScriptChannel(
+          JavaScriptChannelParams(name: 'name', onMessageReceived: (_) {}),
+        ),
+        throwsArgumentError,
+      );
+
+      reset(mockUserContentController);
+
+      await controller.removeJavaScriptChannel('name');
+      verify(mockUserContentController.removeScriptMessageHandler('name'));
+    });
+
+    test('setOnConsoleMessage does not inject the console override script twice when '
+        'interleaved with removeJavaScriptChannel', () async {
+      PigeonOverrides.wKScriptMessageHandler_new =
+          ({
+            required void Function(WKScriptMessageHandler, WKUserContentController, WKScriptMessage)
+            didReceiveScriptMessage,
+            dynamic observeValue,
+          }) {
+            return WKScriptMessageHandler.pigeon_detached(
+              didReceiveScriptMessage: didReceiveScriptMessage,
+            );
+          };
+
+      final mockUserContentController = MockWKUserContentController();
+
+      // Track the user scripts currently added to the user content controller.
+      final addedScriptSources = <String>[];
+      when(mockUserContentController.addUserScript(any)).thenAnswer((Invocation invocation) async {
+        await Future<void>.delayed(Duration.zero);
+        addedScriptSources.add((invocation.positionalArguments[0] as WKUserScript).source);
+      });
+      when(mockUserContentController.removeAllUserScripts()).thenAnswer((
+        Invocation invocation,
+      ) async {
+        await Future<void>.delayed(Duration.zero);
+        addedScriptSources.clear();
+      });
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockUserContentController: mockUserContentController,
+      );
+
+      await controller.addJavaScriptChannel(
+        WebKitJavaScriptChannelParams(
+          name: 'channel1',
+          onMessageReceived: (JavaScriptMessage m) {},
+        ),
+      );
+
+      // Set the console callback and remove a channel without awaiting, so the
+      // reset from `removeJavaScriptChannel` runs between the operations
+      // queued by `setOnConsoleMessage`.
+      await Future.wait(<Future<void>>[
+        controller.setOnConsoleMessage((JavaScriptConsoleMessage message) {}),
+        controller.removeJavaScriptChannel('channel1'),
+      ]);
+
+      // Allow the unawaited calls made by the last reset to complete.
+      await Future<void>.delayed(Duration.zero);
+
+      expect(
+        addedScriptSources.where(
+          (String source) => source.contains('_flutter_webview_plugin_overrides'),
+        ),
+        hasLength(1),
+      );
+    });
+
     test('removeJavaScriptChannel with zoom disabled', () async {
       PigeonOverrides.wKScriptMessageHandler_new =
           ({

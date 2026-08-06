@@ -320,8 +320,19 @@ class WebKitWebViewController extends PlatformWebViewController {
   bool _zoomEnabled = true;
   WebKitNavigationDelegate? _currentNavigationDelegate;
 
+  // The last queued operation that modifies the user scripts or script
+  // message handlers of the user content controller. See
+  // [_enqueueUserContentOperation].
+  Future<void> _userContentOperations = Future<void>.value();
+
   void Function(bool)? _onCanGoBackChangeCallback;
   void Function(JavaScriptConsoleMessage)? _onConsoleMessageCallback;
+
+  // Whether the console override script from [_injectConsoleOverride] is
+  // currently added to the user content controller. This prevents the script
+  // from being added more than once, which would cause console messages to be
+  // forwarded multiple times.
+  bool _isConsoleOverrideScriptInjected = false;
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
   Future<void> Function(JavaScriptAlertDialogRequest request)? _onJavaScriptAlertDialog;
@@ -417,12 +428,18 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   @override
-  Future<void> addJavaScriptChannel(JavaScriptChannelParams javaScriptChannelParams) async {
-    final String channelName = javaScriptChannelParams.name;
-    if (_javaScriptChannelParams.containsKey(channelName)) {
-      throw ArgumentError('A JavaScriptChannel with name `$channelName` already exists.');
-    }
+  Future<void> addJavaScriptChannel(JavaScriptChannelParams javaScriptChannelParams) {
+    return _enqueueUserContentOperation(() async {
+      final String channelName = javaScriptChannelParams.name;
+      if (_javaScriptChannelParams.containsKey(channelName)) {
+        throw ArgumentError('A JavaScriptChannel with name `$channelName` already exists.');
+      }
 
+      await _addJavaScriptChannel(javaScriptChannelParams);
+    });
+  }
+
+  Future<void> _addJavaScriptChannel(JavaScriptChannelParams javaScriptChannelParams) async {
     final WebKitJavaScriptChannelParams webKitParams =
         javaScriptChannelParams is WebKitJavaScriptChannelParams
         ? javaScriptChannelParams
@@ -448,12 +465,14 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   @override
-  Future<void> removeJavaScriptChannel(String javaScriptChannelName) async {
+  Future<void> removeJavaScriptChannel(String javaScriptChannelName) {
     assert(javaScriptChannelName.isNotEmpty);
-    if (!_javaScriptChannelParams.containsKey(javaScriptChannelName)) {
-      return;
-    }
-    await _resetUserScripts(removedJavaScriptChannel: javaScriptChannelName);
+    return _enqueueUserContentOperation(() async {
+      if (!_javaScriptChannelParams.containsKey(javaScriptChannelName)) {
+        return;
+      }
+      await _resetUserScripts(removedJavaScriptChannel: javaScriptChannelName);
+    });
   }
 
   @override
@@ -636,9 +655,9 @@ class WebKitWebViewController extends PlatformWebViewController {
 
     _zoomEnabled = enabled;
     if (enabled) {
-      await _resetUserScripts();
+      await _enqueueUserContentOperation(_resetUserScripts);
     } else {
-      await _disableZoom();
+      await _enqueueUserContentOperation(_disableZoom);
     }
   }
 
@@ -697,8 +716,16 @@ class WebKitWebViewController extends PlatformWebViewController {
       },
     );
 
-    await addJavaScriptChannel(channelParams);
-    return _injectConsoleOverride();
+    // Registering the channel and injecting the console override must run as
+    // a single queued operation. Otherwise another queued operation could run
+    // in between, call [_resetUserScripts], and inject the console override
+    // itself, resulting in the override script being added twice.
+    return _enqueueUserContentOperation(() async {
+      if (!_javaScriptChannelParams.containsKey(_onConsoleMessageChannelName)) {
+        await _addJavaScriptChannel(channelParams);
+      }
+      await _injectConsoleOverride();
+    });
   }
 
   @override
@@ -787,15 +814,36 @@ class WebKitWebViewController extends PlatformWebViewController {
     _onJavaScriptTextInputDialog = onJavaScriptTextInputDialog;
   }
 
+  // Enqueues an operation that modifies the user scripts or script message
+  // handlers of the user content controller, ensuring it doesn't run until
+  // every previously enqueued operation has finished.
+  //
+  // Removing a JavaScript channel is implemented by removing every script
+  // message handler and re-adding the ones that should remain (see
+  // [_resetUserScripts]). Allowing these multistep operations to interleave
+  // can attempt to register a script message handler with a name that is
+  // already registered, which causes a fatal native exception. See
+  // https://github.com/flutter/flutter/issues/165287.
+  Future<void> _enqueueUserContentOperation(Future<void> Function() operation) {
+    final Future<void> result = _userContentOperations.then((_) => operation());
+    // Errors are exposed through `result`; ignore them here so a failed
+    // operation doesn't prevent later operations from running.
+    _userContentOperations = result.then<void>((_) {}, onError: (_) {});
+    return result;
+  }
+
   // WKWebView does not support removing a single user script, so all user
   // scripts and all message handlers are removed instead. And the JavaScript
   // channels that shouldn't be removed are re-registered. Note that this
   // workaround could interfere with exposing support for custom scripts from
   // applications.
+  //
+  // This must only be called through [_enqueueUserContentOperation].
   Future<void> _resetUserScripts({String? removedJavaScriptChannel}) async {
     final WKUserContentController controller = await _webView.configuration
         .getUserContentController();
     unawaited(controller.removeAllUserScripts());
+    _isConsoleOverrideScriptInjected = false;
     // TODO(bparrishMines): This can be replaced with
     // `removeAllScriptMessageHandlers` once Dart supports runtime version
     // checking. (e.g. The equivalent to @availability in Objective-C.)
@@ -808,7 +856,7 @@ class WebKitWebViewController extends PlatformWebViewController {
 
     await Future.wait(<Future<void>>[
       for (final JavaScriptChannelParams params in remainingChannelParams.values)
-        addJavaScriptChannel(params),
+        _addJavaScriptChannel(params),
       // Zoom is disabled with a WKUserScript, so this adds it back if it was
       // removed above.
       if (!_zoomEnabled) _disableZoom(),
@@ -835,6 +883,11 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   Future<void> _injectConsoleOverride() async {
+    if (_isConsoleOverrideScriptInjected) {
+      return;
+    }
+    _isConsoleOverrideScriptInjected = true;
+
     // Within overrideScript, a series of console output methods such as
     // console.log will be rewritten to pass the output content to the Flutter
     // end.
