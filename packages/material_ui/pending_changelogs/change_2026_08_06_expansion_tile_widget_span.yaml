@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes an Android semantics assertion when an ExpansionTile title contains a nested WidgetSpan.
+version: patch
