@@ -70,7 +70,7 @@ class ExampleApp extends StatelessWidget {
     ),
     _Example(
       filepath: 'floating_action_button/floating_action_button.1.dart',
-      title: 'FABs',
+      title: 'Floating action buttons',
       builder: (BuildContext context) =>
           const floating_action_button_1.FloatingActionButtonExampleApp(),
     ),
@@ -103,7 +103,7 @@ class ExampleApp extends StatelessWidget {
     ),
     _Example(
       filepath: 'action_chip/action_chip.0.dart',
-      title: 'ActionChip',
+      title: 'Assist chip',
       builder: (BuildContext context) => const action_chip_0.ChipApp(),
     ),
     _Example(
@@ -224,7 +224,7 @@ class ExampleApp extends StatelessWidget {
     ),
     _Example(
       filepath: 'tabs/tab_bar.0.dart',
-      title: 'Tabs,
+      title: 'Tabs',
       builder: (BuildContext context) => const tab_bar_0.TabBarApp(),
     ),
     _Example(
