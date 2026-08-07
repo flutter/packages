@@ -9,10 +9,24 @@ import 'darwin_scoped_storage_cross_directory.dart';
 import 'darwin_scoped_storage_cross_file.dart';
 
 /// Implementation of [CrossFilePlatform] for iOS and macOS.
-base class CrossFileDarwin extends CrossFileIO {
+base class CrossFileDarwin extends CrossFilePlatform {
   /// Registers this class as the default instance of [CrossFilePlatform].
   static void registerWith() {
     CrossFilePlatform.instance = CrossFileDarwin();
+  }
+
+  @override
+  PlatformFileSystemXFile createPlatformFileSystemXFile(
+    PlatformFileSystemXFileCreationParams params,
+  ) {
+    return CrossFileIO().createPlatformFileSystemXFile(params);
+  }
+
+  @override
+  PlatformFileSystemXDirectory createPlatformFileSystemXDirectory(
+    PlatformFileSystemXDirectoryCreationParams params,
+  ) {
+    return CrossFileIO().createPlatformFileSystemXDirectory(params);
   }
 
   @override
