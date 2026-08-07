@@ -9,6 +9,8 @@ import 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 import 'package:flutter/foundation.dart' show immutable, internal, protected;
 
 import 'cross_entity.dart';
+import 'file_system/file_system_cross_file.dart';
+import 'scoped_storage/scoped_storage_cross_file.dart';
 
 /// A reference to a local data resource.
 @immutable
@@ -17,6 +19,18 @@ abstract base class XFile extends XEntity {
   @internal
   @protected
   const XFile(PlatformXFile super.platform);
+
+  /// Instantiates a [FileSystemXFile] as a reference to a local data resource
+  /// on the file system.
+  factory XFile.fileSystem({required String path}) {
+    return FileSystemXFile(path);
+  }
+
+  /// Instantiates a [ScopedStorageXFile] as a reference to a local data
+  /// resource within a device's scoped storage.
+  factory XFile.scopedStorage({required String uri}) {
+    return ScopedStorageXFile(uri: uri);
+  }
 
   /// Implementation of [XFile] for the current platform.
   @internal

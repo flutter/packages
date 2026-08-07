@@ -6,6 +6,8 @@ import 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 import 'package:flutter/foundation.dart' show immutable, internal, protected;
 
 import 'cross_entity.dart';
+import 'file_system/file_system_cross_directory.dart';
+import 'file_system/file_system_cross_file.dart';
 import 'scoped_storage/scoped_storage_cross_directory.dart';
 import 'scoped_storage/scoped_storage_cross_file.dart';
 
@@ -18,6 +20,18 @@ abstract base class XDirectory extends XEntity {
   @internal
   @protected
   const XDirectory(PlatformXDirectory super.platform);
+
+  /// Instantiates a [FileSystemXDirectory] as a reference to a directory
+  /// (or folder) on the file system.
+  factory XDirectory.fileSystem(String path) {
+    return FileSystemXDirectory(path);
+  }
+
+  /// Instantiates a [ScopedStorageXFile] as a reference to a directory
+  /// (or folder) on the file system within a devices scoped storage.
+  factory XDirectory.scopedStorage({required String uri}) {
+    return ScopedStorageXDirectory(uri: uri);
+  }
 
   /// Implementation of [PlatformXDirectory] for the current platform.
   @internal
@@ -33,6 +47,10 @@ abstract base class XDirectory extends XEntity {
           return ScopedStorageXFile.fromPlatform(entity);
         case PlatformScopedStorageXDirectory():
           return ScopedStorageXDirectory.fromPlatform(entity);
+        case PlatformFileSystemXFile():
+          return FileSystemXFile.fromPlatform(entity);
+        case PlatformFileSystemXDirectory():
+          return FileSystemXDirectory.fromPlatform(entity);
       }
 
       return XEntity(entity);

@@ -14,7 +14,7 @@ import 'package:flutter/foundation.dart' show debugPrint;
 /// Demonstrate instantiating an XFile for the README.
 Future<XFile> instantiateXFile() async {
   // #docregion Instantiate
-  final file = XFile.fromUri(Uri.file('assets/hello.txt'));
+  final file = XFile.fileSystem(path: 'assets/hello.txt');
 
   debugPrint('File information:');
   debugPrint('- URI: ${file.uri}');
@@ -39,11 +39,11 @@ Future<XFile> accessPlatformFeatures() async {
       final params = WebScopedStorageXFileCreationParams.fromObjectUrl(
         objectUrl: 'blob:https://some/url:for/file',
       );
-      file = XFile.fromCreationParams(params);
+      file = ScopedStorageXFile.fromCreationParams(params);
     case CrossFileDarwin():
       file = ScopedStorageXFile.fromUri(Uri.file('/my/file.txt'));
     default:
-      file = XFile.fromUri(Uri.file('/my/file.txt'));
+      file = XFile.fileSystem(path: '/my/file.txt');
   }
 
   await file

@@ -7,6 +7,8 @@ import 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 export 'src/cross_directory.dart';
 export 'src/cross_entity.dart';
 export 'src/cross_file.dart';
+export 'src/file_system/file_system_cross_directory.dart';
+export 'src/file_system/file_system_cross_file.dart';
 export 'src/scoped_storage/scoped_storage_cross_directory.dart';
 export 'src/scoped_storage/scoped_storage_cross_file.dart';
 
