@@ -8,6 +8,7 @@ import 'package:test/test.dart';
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
 import '../templates/app_bar_template.dart';
+import '../templates/bottom_app_bar_template.dart';
 import '../templates/bottom_sheet_template.dart';
 import '../templates/template.dart';
 import 'test_fixtures/test_templates.dart';
@@ -177,8 +178,15 @@ void main() {
     });
 
     test('BottomAppBarTemplateM3 emits M3 BottomAppBar defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = const BottomAppBarTemplateM3().generateContents(
+        '_BottomAppBarDefaultsM3',
+      );
+      expect(contents, contains('class _BottomAppBarDefaultsM3 extends BottomAppBarThemeData'));
+      expect(contents, contains('elevation: 3.0'));
+      expect(contents, contains('height: 80.0'));
+      expect(contents, contains('shape: const AutomaticNotchedShape(RoundedRectangleBorder())'));
+      expect(contents, contains('Color? get color => _colors.surfaceContainer'));
+      expect(contents, contains('Color? get surfaceTintColor => Colors.transparent'));
     });
 
     test('BottomSheetTemplateM3 emits M3 BottomSheet defaults from tokens', () {
