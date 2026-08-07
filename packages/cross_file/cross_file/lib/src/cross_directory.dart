@@ -100,4 +100,7 @@ base class XDirectory extends XEntity {
       return XEntity(entity);
     });
   }
+
+  @override
+  String toString() => platform.params.uri;
 }

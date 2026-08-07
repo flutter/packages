@@ -31,7 +31,7 @@ base class IOXDirectoryCreationParams extends PlatformXDirectoryCreationParams {
 /// Implementation of [PlatformXDirectory] for dart:io.
 base class IOXDirectory extends PlatformXDirectory with IOXDirectoryExtension {
   /// Constructs an [IOXDirectory].
-  IOXDirectory(super.params) : super.implementation();
+  IOXDirectory(super.params);
 
   @override
   late final IOXDirectoryCreationParams params = super.params is IOXDirectoryCreationParams

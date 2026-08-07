@@ -13,9 +13,7 @@ void main() {
 
         expect(
           await platform
-              .createPlatformFileSystemXFile(
-                const PlatformFileSystemXFileCreationParams(uri: 'test'),
-              )
+              .createPlatformFileSystemXFile(const PlatformFileSystemXFileCreationParams('test'))
               .exists(),
           false,
         );
@@ -25,7 +23,7 @@ void main() {
         final platform = TestCrossFilePlatform();
 
         final PlatformFileSystemXFile file = platform.createPlatformFileSystemXFile(
-          const PlatformFileSystemXFileCreationParams(uri: 'test'),
+          const PlatformFileSystemXFileCreationParams('test'),
         );
 
         // Ensures the error is caught and added to the stream.
@@ -38,27 +36,23 @@ void main() {
         expect(
           await platform
               .createPlatformFileSystemXDirectory(
-                const PlatformFileSystemXDirectoryCreationParams(uri: 'test'),
+                const PlatformFileSystemXDirectoryCreationParams('test'),
               )
               .exists(),
           false,
         );
       });
 
-      test(
-        '_DefaultFileSystemXDirectory.list should throw error by adding it to stream',
-            () async {
-          final platform = TestCrossFilePlatform();
+      test('_DefaultFileSystemXDirectory.list should throw error by adding it to stream', () async {
+        final platform = TestCrossFilePlatform();
 
-          final PlatformFileSystemXDirectory dir = platform
-              .createPlatformFileSystemXDirectory(
-            const PlatformFileSystemXDirectoryCreationParams(uri: 'test'),
-          );
+        final PlatformFileSystemXDirectory dir = platform.createPlatformFileSystemXDirectory(
+          const PlatformFileSystemXDirectoryCreationParams('test'),
+        );
 
-          // Ensures the error is caught and added to the stream.
-          await expectLater(dir.list(ListParams()).drain, throwsUnsupportedError);
-        },
-      );
+        // Ensures the error is caught and added to the stream.
+        await expectLater(dir.list(ListParams()).drain, throwsUnsupportedError);
+      });
     });
 
     group('ScopedStorage', () {

@@ -124,4 +124,7 @@ base class XFile extends XEntity {
   /// If the file is identified by a path, only the base name of the file will
   /// be included in the name.
   Future<String?> name() => platform.name();
+
+  @override
+  String toString() => platform.params.uri;
 }

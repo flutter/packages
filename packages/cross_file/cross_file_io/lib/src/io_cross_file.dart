@@ -10,33 +10,35 @@ import 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:path/path.dart' as path;
 
-/// Implementation of [PlatformXFileCreationParams] for dart:io.
+/// Implementation of [PlatformFileSystemXFileCreationParams] for dart:io.
 @immutable
-base class IOXFileCreationParams extends PlatformXFileCreationParams {
-  /// Constructs an [IOXFileCreationParams].
-  IOXFileCreationParams({required String uri}) : this.fromFile(File.fromUri(Uri.parse(uri)));
+base class IOFileSystemXFileCreationParams extends PlatformFileSystemXFileCreationParams {
+  /// Constructs an [IOFileSystemXFileCreationParams].
+  IOFileSystemXFileCreationParams({required String uri})
+    : this.fromFile(File.fromUri(Uri.parse(uri)));
 
-  /// Constructs an [IOXFileCreationParams] from a [File].
-  IOXFileCreationParams.fromFile(this.file) : super(uri: file.uri.toString());
+  /// Constructs an [IOFileSystemXFileCreationParams] from a [File].
+  IOFileSystemXFileCreationParams.fromFile(this.file) : super(uri: file.uri.toString());
 
-  /// Constructs an [IOXFileCreationParams] from a [PlatformXFileCreationParams].
-  factory IOXFileCreationParams.fromCreationParams(PlatformXFileCreationParams params) {
-    return IOXFileCreationParams(uri: params.uri);
+  /// Constructs an [IOFileSystemXFileCreationParams] from a [PlatformXFileCreationParams].
+  factory IOFileSystemXFileCreationParams.fromCreationParams(PlatformXFileCreationParams params) {
+    return IOFileSystemXFileCreationParams(uri: params.uri);
   }
 
-  /// The underlying [File] for [IOXFile].
+  /// The underlying [File] for [IOFileSystemXFile].
   final File file;
 }
 
 /// Implementation of [PlatformXFile] for dart:io.
-base class IOXFile extends PlatformXFile with IOXFileExtension {
-  /// Constructs an [IOXFile].
-  IOXFile(super.params) : super.implementation();
+base class IOFileSystemXFile extends PlatformXFile with IOFileSystemXFileExtension {
+  /// Constructs an [IOFileSystemXFile].
+  IOFileSystemXFile(super.params);
 
   @override
-  late final IOXFileCreationParams params = super.params is IOXFileCreationParams
-      ? super.params as IOXFileCreationParams
-      : IOXFileCreationParams.fromCreationParams(super.params);
+  late final IOFileSystemXFileCreationParams params =
+      super.params is IOFileSystemXFileCreationParams
+      ? super.params as IOFileSystemXFileCreationParams
+      : IOFileSystemXFileCreationParams.fromCreationParams(super.params);
 
   @override
   File get file => params.file;
@@ -78,8 +80,8 @@ base class IOXFile extends PlatformXFile with IOXFileExtension {
   Future<String?> name() async => path.basename(file.path);
 }
 
-/// Provides platform-specific features for [IOXFile].
-mixin IOXFileExtension implements PlatformXFileExtension {
+/// Provides platform-specific features for [IOFileSystemXFile].
+mixin IOFileSystemXFileExtension implements PlatformFileSystemXFileExtension {
   /// The underlying file.
   File get file;
 }
