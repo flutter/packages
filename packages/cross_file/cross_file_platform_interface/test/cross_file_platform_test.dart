@@ -36,7 +36,7 @@ void main() {
         expect(
           await platform
               .createPlatformFileSystemXDirectory(
-                const PlatformFileSystemXDirectoryCreationParams('test'),
+                PlatformFileSystemXDirectoryCreationParams('test'),
               )
               .exists(),
           false,
@@ -47,7 +47,7 @@ void main() {
         final platform = TestCrossFilePlatform();
 
         final PlatformFileSystemXDirectory dir = platform.createPlatformFileSystemXDirectory(
-          const PlatformFileSystemXDirectoryCreationParams('test'),
+          PlatformFileSystemXDirectoryCreationParams('test'),
         );
 
         // Ensures the error is caught and added to the stream.
