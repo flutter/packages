@@ -71,17 +71,17 @@ mixin PlatformXDirectoryExtension implements PlatformXEntityExtension {}
 
 /// Interface for a reference to a directory (or folder) on the file system.
 abstract base class PlatformXDirectory extends PlatformXEntity {
-  /// Creates a new [PlatformXDirectory].
-  factory PlatformXDirectory(PlatformXDirectoryCreationParams params) {
-    assert(
-      CrossFilePlatform.instance != null,
-      'A platform implementation for `cross_file` has not been set. Please '
-      'ensure that an implementation of `CrossFilePlatform` has been set to '
-      '`CrossFilePlatform.instance` before use. For unit testing, '
-      '`CrossFilePlatform.instance` can be set with your own test implementation.',
-    );
-    return CrossFilePlatform.instance!.createPlatformXDirectory(params);
-  }
+  // /// Creates a new [PlatformXDirectory].
+  // factory PlatformXDirectory(PlatformXDirectoryCreationParams params) {
+  //   assert(
+  //     CrossFilePlatform.instance != null,
+  //     'A platform implementation for `cross_file` has not been set. Please '
+  //     'ensure that an implementation of `CrossFilePlatform` has been set to '
+  //     '`CrossFilePlatform.instance` before use. For unit testing, '
+  //     '`CrossFilePlatform.instance` can be set with your own test implementation.',
+  //   );
+  //   return CrossFilePlatform.instance!.createPlatformXDirectory(params);
+  // }
 
   /// Used by the platform implementation to create a new [PlatformXDirectory].
   ///

@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 export 'src/cross_file_platform.dart';
+export 'src/file_system/platform_file_system_cross_directory.dart';
+export 'src/file_system/platform_file_system_cross_file.dart';
 export 'src/platform_cross_directory.dart';
 export 'src/platform_cross_entity.dart';
 export 'src/platform_cross_file.dart';

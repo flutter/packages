@@ -7,37 +7,62 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('CrossFilePlatform', () {
-    test(
-      'Default implementation of createPlatformXFile should return an implementation that returns false for exists()',
-      () async {
+    group('FileSystem', () {
+      test('_DefaultFileSystemXFile.exists() returns false', () async {
         final platform = TestCrossFilePlatform();
 
         expect(
           await platform
-              .createPlatformXFile(const PlatformXFileCreationParams(uri: 'test'))
+              .createPlatformFileSystemXFile(
+                const PlatformFileSystemXFileCreationParams(uri: 'test'),
+              )
               .exists(),
           false,
         );
-      },
-    );
+      });
 
-    test(
-      'Default implementation of createPlatformXDirectory should return an implementation that returns false for exists()',
-      () async {
+      test('_DefaultFileSystemXFile.openRead should throw error by adding it to stream', () async {
+        final platform = TestCrossFilePlatform();
+
+        final PlatformFileSystemXFile file = platform.createPlatformFileSystemXFile(
+          const PlatformFileSystemXFileCreationParams(uri: 'test'),
+        );
+
+        // Ensures the error is caught and added to the stream.
+        await expectLater(file.openRead().drain, throwsUnsupportedError);
+      });
+
+      test('_DefaultFileSystemXDirectory.exists() returns false', () async {
         final platform = TestCrossFilePlatform();
 
         expect(
           await platform
-              .createPlatformXDirectory(const PlatformXDirectoryCreationParams(uri: 'test'))
+              .createPlatformFileSystemXDirectory(
+                const PlatformFileSystemXDirectoryCreationParams(uri: 'test'),
+              )
               .exists(),
           false,
         );
-      },
-    );
+      });
 
-    test(
-      'Default implementation of createPlatformScopedStorageXFile should return an implementation that returns false for exists()',
-      () async {
+      test(
+        '_DefaultFileSystemXDirectory.list should throw error by adding it to stream',
+            () async {
+          final platform = TestCrossFilePlatform();
+
+          final PlatformFileSystemXDirectory dir = platform
+              .createPlatformFileSystemXDirectory(
+            const PlatformFileSystemXDirectoryCreationParams(uri: 'test'),
+          );
+
+          // Ensures the error is caught and added to the stream.
+          await expectLater(dir.list(ListParams()).drain, throwsUnsupportedError);
+        },
+      );
+    });
+
+    group('ScopedStorage', () {
+      test('_DefaultScopedStorageXFile.exists() returns false', () async {
         final platform = TestCrossFilePlatform();
 
         expect(
@@ -48,12 +73,23 @@ void main() {
               .exists(),
           false,
         );
-      },
-    );
+      });
 
-    test(
-      'Default implementation of createPlatformScopedStorageXDirectory should return an implementation that returns false for exists()',
-      () async {
+      test(
+        '_DefaultScopedStorageXFile.openRead should throw error by adding it to stream',
+        () async {
+          final platform = TestCrossFilePlatform();
+
+          final PlatformScopedStorageXFile file = platform.createPlatformScopedStorageXFile(
+            const PlatformScopedStorageXFileCreationParams(uri: 'test'),
+          );
+
+          // Ensures the error is caught and added to the stream.
+          await expectLater(file.openRead().drain, throwsUnsupportedError);
+        },
+      );
+
+      test('_DefaultScopedStorageXDirectory.exists() returns false', () async {
         final platform = TestCrossFilePlatform();
 
         expect(
@@ -64,8 +100,23 @@ void main() {
               .exists(),
           false,
         );
-      },
-    );
+      });
+
+      test(
+        '_DefaultScopedStorageXDirectory.list should throw error by adding it to stream',
+        () async {
+          final platform = TestCrossFilePlatform();
+
+          final PlatformScopedStorageXDirectory dir = platform
+              .createPlatformScopedStorageXDirectory(
+                const PlatformScopedStorageXDirectoryCreationParams(uri: 'test'),
+              );
+
+          // Ensures the error is caught and added to the stream.
+          await expectLater(dir.list(ListParams()).drain, throwsUnsupportedError);
+        },
+      );
+    });
   });
 }
 

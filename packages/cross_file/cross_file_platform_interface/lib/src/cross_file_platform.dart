@@ -5,6 +5,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'file_system/platform_file_system_cross_directory.dart';
+import 'file_system/platform_file_system_cross_file.dart';
 import 'platform_cross_directory.dart';
 import 'platform_cross_entity.dart';
 import 'platform_cross_file.dart';
@@ -20,13 +22,17 @@ abstract base class CrossFilePlatform {
   static CrossFilePlatform? instance;
 
   /// Creates a new [PlatformXFile].
-  PlatformXFile createPlatformXFile(PlatformXFileCreationParams params) {
-    return _DefaultXFile(params);
+  PlatformFileSystemXFile createPlatformFileSystemXFile(
+    PlatformFileSystemXFileCreationParams params,
+  ) {
+    return _DefaultFileSystemXFile(params);
   }
 
-  /// Creates a new [PlatformXDirectory].
-  PlatformXDirectory createPlatformXDirectory(PlatformXDirectoryCreationParams params) {
-    return _DefaultXDirectory(params);
+  /// Creates a new [PlatformFileSystemXDirectory].
+  PlatformFileSystemXDirectory createPlatformFileSystemXDirectory(
+    PlatformFileSystemXDirectoryCreationParams params,
+  ) {
+    return _DefaultFileSystemXDirectory(params);
   }
 
   /// Creates a new [PlatformScopedStorageXDirectory].
@@ -44,10 +50,10 @@ abstract base class CrossFilePlatform {
   }
 }
 
-/// Implementation of [PlatformXFile} that represents a resource that does not
-/// exist.
-final class _DefaultXFile extends PlatformXFile {
-  _DefaultXFile(super.params) : super.implementation();
+/// Implementation of [PlatformFileSystemXFile} that represents a resource that
+/// does not exist.
+final class _DefaultFileSystemXFile extends PlatformFileSystemXFile {
+  _DefaultFileSystemXFile(super.params) : super.implementation();
 
   @override
   Future<bool> exists() async => false;
@@ -62,7 +68,7 @@ final class _DefaultXFile extends PlatformXFile {
   Future<String?> name() async => null;
 
   @override
-  Stream<Uint8List> openRead([int? start, int? end]) {
+  Stream<Uint8List> openRead([int? start, int? end]) async* {
     throw UnsupportedError('This instance does not represent any resource.');
   }
 
@@ -77,16 +83,16 @@ final class _DefaultXFile extends PlatformXFile {
   }
 }
 
-/// Implementation of [PlatformXDirectory} that represents a directory that does
-/// not exist.
-final class _DefaultXDirectory extends PlatformXDirectory {
-  _DefaultXDirectory(super.params) : super.implementation();
+/// Implementation of [PlatformFileSystemXDirectory} that represents a directory
+/// that does not exist.
+final class _DefaultFileSystemXDirectory extends PlatformFileSystemXDirectory {
+  _DefaultFileSystemXDirectory(super.params) : super.implementation();
 
   @override
   Future<bool> exists() async => false;
 
   @override
-  Stream<PlatformXEntity> list(ListParams params) {
+  Stream<PlatformXEntity> list(ListParams params) async* {
     throw UnsupportedError('This instance does not represent any directory.');
   }
 }
@@ -112,7 +118,7 @@ final class _DefaultScopedStorageXFile extends PlatformScopedStorageXFile {
   Future<String?> name() async => null;
 
   @override
-  Stream<Uint8List> openRead([int? start, int? end]) {
+  Stream<Uint8List> openRead([int? start, int? end]) async* {
     throw UnsupportedError('This instance does not represent any resource.');
   }
 
@@ -127,7 +133,7 @@ final class _DefaultScopedStorageXFile extends PlatformScopedStorageXFile {
   }
 
   @override
-  Future<void> dispose() async => null;
+  Future<void> dispose() async {}
 }
 
 /// Implementation of [PlatformScopedStorageXDirectory} that represents a
@@ -142,10 +148,10 @@ final class _DefaultScopedStorageXDirectory extends PlatformScopedStorageXDirect
   Future<bool> canRead() async => false;
 
   @override
-  Stream<PlatformXEntity> list(ListParams params) {
+  Stream<PlatformXEntity> list(ListParams params) async* {
     throw UnsupportedError('This instance does not represent any directory.');
   }
 
   @override
-  Future<void> dispose() async => null;
+  Future<void> dispose() async {}
 }
