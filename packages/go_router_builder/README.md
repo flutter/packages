@@ -59,29 +59,13 @@ the second class's `location` lands on the first class's page instead. That is
 almost always a mistake.
 
 Matching backtracks, though: when a route matches only a prefix and none of its
-children complete the URL, matching moves on to the next sibling. Declaring one
-route class twice with different children is therefore sound, and is one way to
-group children by feature area rather than listing them all in one place:
-
-```dart
-@TypedGoRoute<HomeRoute>(
-  path: '/home',
-  routes: <TypedGoRoute<GoRouteData>>[
-    // Both declarations name the same class, so `/home/details` is
-    // unambiguous and both children stay reachable.
-    TypedGoRoute<DetailsRoute>(path: 'details', routes: <TypedGoRoute<GoRouteData>>[
-      TypedGoRoute<InvoicesRoute>(path: 'invoices'),
-    ]),
-    TypedGoRoute<DetailsRoute>(path: 'details', routes: <TypedGoRoute<GoRouteData>>[
-      TypedGoRoute<ShipmentsRoute>(path: 'shipments'),
-    ]),
-  ],
-)
-```
-
-The builder reports that too, since it cannot tell a deliberate grouping from an
-accidental duplicate. Set the option to `ignore` if you want the pattern without
-the warning.
+children complete the URL, matching moves on to the next sibling. So naming one
+route class twice at the same path, each declaration carrying different children,
+is sound. That URL stays unambiguous because both declarations resolve to the
+same class, every child stays reachable, and it is one way to group children by
+feature area rather than listing them all in one place. The builder reports it
+anyway, since it cannot tell a deliberate grouping from an accidental duplicate.
+Set the option to `ignore` if you want the pattern without the warning.
 
 Routes are compared across a whole library, which includes any `part` files, so
 splitting a large route table across parts does not hide anything. Within that
