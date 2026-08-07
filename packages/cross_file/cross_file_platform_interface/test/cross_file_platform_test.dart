@@ -13,7 +13,7 @@ void main() {
 
         expect(
           await platform
-              .createPlatformFileSystemXFile(const PlatformFileSystemXFileCreationParams('test'))
+              .createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams('test'))
               .exists(),
           false,
         );
@@ -23,7 +23,7 @@ void main() {
         final platform = TestCrossFilePlatform();
 
         final PlatformFileSystemXFile file = platform.createPlatformFileSystemXFile(
-          const PlatformFileSystemXFileCreationParams('test'),
+          PlatformFileSystemXFileCreationParams('test'),
         );
 
         // Ensures the error is caught and added to the stream.

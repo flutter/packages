@@ -14,8 +14,8 @@ import 'package:path/path.dart' as path;
 @immutable
 base class IOFileSystemXFileCreationParams extends PlatformFileSystemXFileCreationParams {
   /// Constructs an [IOFileSystemXFileCreationParams].
-  IOFileSystemXFileCreationParams({required String uri})
-    : this.fromFile(File.fromUri(Uri.parse(uri)));
+  IOFileSystemXFileCreationParams(String path)
+    : this.fromFile(File(path));
 
   /// Constructs an [IOFileSystemXFileCreationParams] from a [File].
   IOFileSystemXFileCreationParams.fromFile(this.file) : super(uri: file.uri.toString());

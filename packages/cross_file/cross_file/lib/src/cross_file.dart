@@ -10,6 +10,8 @@ import 'package:flutter/foundation.dart' show immutable, internal;
 
 import 'cross_entity.dart';
 
+// TODO: Ensure filesytem handles file:// and output consistently
+
 /// A reference to a local data resource.
 ///
 /// ## Platform-Specific Features
