@@ -10,14 +10,10 @@ mixin $FavoritesRoute {}
 @TypedStatefulShellRoute<AppShellRouteData>(
   branches: <TypedStatefulShellBranch<StatefulShellBranchData>>[
     TypedStatefulShellBranch<BranchAData>(
-      routes: <TypedRoute<RouteData>>[
-        TypedGoRoute<IdeasRoute>(path: '/ideas'),
-      ],
+      routes: <TypedRoute<RouteData>>[TypedGoRoute<IdeasRoute>(path: '/ideas')],
     ),
     TypedStatefulShellBranch<BranchBData>(
-      routes: <TypedRoute<RouteData>>[
-        TypedGoRoute<FavoritesRoute>(path: '/ideas'),
-      ],
+      routes: <TypedRoute<RouteData>>[TypedGoRoute<FavoritesRoute>(path: '/ideas')],
     ),
   ],
 )
