@@ -4,3 +4,4 @@
 
 export 'src/google_fonts_all_parts.dart';
 export 'src/google_fonts_config.dart';
+export 'src/google_fonts_lite.dart';
