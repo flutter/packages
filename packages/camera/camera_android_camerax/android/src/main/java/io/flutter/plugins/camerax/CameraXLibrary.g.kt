@@ -361,7 +361,7 @@ private class CameraXLibraryPigeonInstanceManagerApi(val binaryMessenger: Binary
         }
       } else {
         callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
 }
@@ -1747,7 +1747,7 @@ abstract class PigeonApiCameraSize(open val pigeonRegistrar: CameraXLibraryPigeo
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -1790,7 +1790,7 @@ abstract class PigeonApiResolutionInfo(open val pigeonRegistrar: CameraXLibraryP
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -1867,7 +1867,7 @@ abstract class PigeonApiCameraIntegerRange(open val pigeonRegistrar: CameraXLibr
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -1905,7 +1905,7 @@ open class PigeonApiVideoRecordEvent(open val pigeonRegistrar: CameraXLibraryPig
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -1943,7 +1943,7 @@ open class PigeonApiVideoRecordEventStart(open val pigeonRegistrar: CameraXLibra
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -1988,7 +1988,7 @@ open class PigeonApiVideoRecordEventFinalize(open val pigeonRegistrar: CameraXLi
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -2066,7 +2066,7 @@ abstract class PigeonApiMeteringPoint(open val pigeonRegistrar: CameraXLibraryPi
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -2150,7 +2150,7 @@ abstract class PigeonApiObserver(open val pigeonRegistrar: CameraXLibraryPigeonP
         }
       } else {
         callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
 
@@ -2249,7 +2249,7 @@ abstract class PigeonApiCameraInfo(open val pigeonRegistrar: CameraXLibraryPigeo
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -2383,7 +2383,7 @@ abstract class PigeonApiCameraSelector(open val pigeonRegistrar: CameraXLibraryP
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -2559,7 +2559,7 @@ abstract class PigeonApiProcessCameraProvider(open val pigeonRegistrar: CameraXL
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -2597,7 +2597,7 @@ open class PigeonApiUseCase(open val pigeonRegistrar: CameraXLibraryPigeonProxyA
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -2668,7 +2668,7 @@ abstract class PigeonApiCamera(open val pigeonRegistrar: CameraXLibraryPigeonPro
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -2795,7 +2795,7 @@ abstract class PigeonApiSystemServicesManager(open val pigeonRegistrar: CameraXL
         }
       } else {
         callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
 
@@ -2834,7 +2834,7 @@ abstract class PigeonApiCameraPermissionsError(open val pigeonRegistrar: CameraX
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -2994,7 +2994,7 @@ abstract class PigeonApiDeviceOrientationManager(open val pigeonRegistrar: Camer
         }
       } else {
         callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
 
@@ -3183,7 +3183,7 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -3300,7 +3300,7 @@ abstract class PigeonApiVideoCapture(open val pigeonRegistrar: CameraXLibraryPig
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -3345,7 +3345,7 @@ open class PigeonApiVideoOutput(open val pigeonRegistrar: CameraXLibraryPigeonPr
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -3495,7 +3495,7 @@ abstract class PigeonApiRecorder(open val pigeonRegistrar: CameraXLibraryPigeonP
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -3581,7 +3581,7 @@ abstract class PigeonApiVideoRecordEventListener(open val pigeonRegistrar: Camer
         }
       } else {
         callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
 
@@ -3697,7 +3697,7 @@ abstract class PigeonApiPendingRecording(open val pigeonRegistrar: CameraXLibrar
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -3830,7 +3830,7 @@ abstract class PigeonApiRecording(open val pigeonRegistrar: CameraXLibraryPigeon
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -3970,7 +3970,7 @@ abstract class PigeonApiImageCapture(open val pigeonRegistrar: CameraXLibraryPig
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -4109,7 +4109,7 @@ abstract class PigeonApiResolutionStrategy(open val pigeonRegistrar: CameraXLibr
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -4123,13 +4123,22 @@ abstract class PigeonApiResolutionStrategy(open val pigeonRegistrar: CameraXLibr
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiResolutionSelector(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
-  abstract fun pigeon_defaultConstructor(resolutionFilter: androidx.camera.core.resolutionselector.ResolutionFilter?, resolutionStrategy: androidx.camera.core.resolutionselector.ResolutionStrategy?, aspectRatioStrategy: androidx.camera.core.resolutionselector.AspectRatioStrategy?): androidx.camera.core.resolutionselector.ResolutionSelector
+  abstract fun pigeon_defaultConstructor(resolutionFilter: androidx.camera.core.resolutionselector.ResolutionFilter?, resolutionStrategy: androidx.camera.core.resolutionselector.ResolutionStrategy?,allowedResolutionMode: Long?, aspectRatioStrategy: androidx.camera.core.resolutionselector.AspectRatioStrategy?): androidx.camera.core.resolutionselector.ResolutionSelector
 
   /** The resolution filter to output the final desired sizes list. */
   abstract fun resolutionFilter(pigeon_instance: androidx.camera.core.resolutionselector.ResolutionSelector): androidx.camera.core.resolutionselector.ResolutionFilter?
 
   /** The resolution selection strategy for the `UseCase`. */
   abstract fun resolutionStrategy(pigeon_instance: androidx.camera.core.resolutionselector.ResolutionSelector): androidx.camera.core.resolutionselector.ResolutionStrategy?
+
+  /**
+   * The allowed resolution mode for the `UseCase`.
+   *
+   * See [ResolutionSelectorAllowedResolutionMode].
+   */
+  abstract fun allowedResolutionMode(
+      pigeon_instance: androidx.camera.core.resolutionselector.ResolutionSelector
+  ): Long?
 
   /**
    * Returns the specified `AspectRatioStrategy`, or
@@ -4150,9 +4159,10 @@ abstract class PigeonApiResolutionSelector(open val pigeonRegistrar: CameraXLibr
             val pigeon_identifierArg = args[0] as Long
             val resolutionFilterArg = args[1] as androidx.camera.core.resolutionselector.ResolutionFilter?
             val resolutionStrategyArg = args[2] as androidx.camera.core.resolutionselector.ResolutionStrategy?
-            val aspectRatioStrategyArg = args[3] as androidx.camera.core.resolutionselector.AspectRatioStrategy?
+            val allowedResolutionModeArg = args[3] as Long?
+            valaspectRatioStrategyArg = args[4] as androidx.camera.core.resolutionselector.AspectRatioStrategy?
             val wrapped: List<Any?> = try {
-              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(resolutionFilterArg,resolutionStrategyArg,aspectRatioStrategyArg), pigeon_identifierArg)
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(resolutionFilterArg,resolutionStrategyArg,allowedResolutionModeArg,aspectRatioStrategyArg), pigeon_identifierArg)
               listOf(null)
             } catch (exception: Throwable) {
               CameraXLibraryPigeonUtils.wrapError(exception)
@@ -4197,12 +4207,17 @@ abstract class PigeonApiResolutionSelector(open val pigeonRegistrar: CameraXLibr
       val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
       val resolutionFilterArg = resolutionFilter(pigeon_instanceArg)
       val resolutionStrategyArg = resolutionStrategy(pigeon_instanceArg)
+      val allowedResolutionModeArg = allowedResolutionMode(pigeon_instanceArg)
       val binaryMessenger = pigeonRegistrar.binaryMessenger
       val codec = pigeonRegistrar.codec
       val channelName = "dev.flutter.pigeon.camera_android_camerax.ResolutionSelector.pigeon_newInstance"
       val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-      channel.send(listOf(pigeon_identifierArg, resolutionFilterArg, resolutionStrategyArg)) {
-        if (it is List<*>) {
+      channel.send(
+          listOf(
+              pigeon_identifierArg,
+              resolutionFilterArg,
+              resolutionStrategyArg,
+              allowedResolutionModeArg)) {if (it is List<*>) {
           if (it.size > 1) {
             callback(Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
           } else {
@@ -4210,7 +4225,7 @@ abstract class PigeonApiResolutionSelector(open val pigeonRegistrar: CameraXLibr
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -4373,7 +4388,7 @@ abstract class PigeonApiAspectRatioStrategy(open val pigeonRegistrar: CameraXLib
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -4419,7 +4434,7 @@ abstract class PigeonApiCameraState(open val pigeonRegistrar: CameraXLibraryPige
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -4468,7 +4483,7 @@ abstract class PigeonApiExposureState(open val pigeonRegistrar: CameraXLibraryPi
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -4514,7 +4529,7 @@ abstract class PigeonApiZoomState(open val pigeonRegistrar: CameraXLibraryPigeon
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -4652,7 +4667,7 @@ abstract class PigeonApiImageAnalysis(open val pigeonRegistrar: CameraXLibraryPi
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -4743,7 +4758,7 @@ abstract class PigeonApiAnalyzer(open val pigeonRegistrar: CameraXLibraryPigeonP
         }
       } else {
         callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
 
@@ -4784,7 +4799,7 @@ abstract class PigeonApiCameraStateStateError(open val pigeonRegistrar: CameraXL
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -4903,7 +4918,7 @@ abstract class PigeonApiLiveData(open val pigeonRegistrar: CameraXLibraryPigeonP
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -5001,7 +5016,7 @@ abstract class PigeonApiImageProxy(open val pigeonRegistrar: CameraXLibraryPigeo
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -5064,7 +5079,7 @@ abstract class PigeonApiImageProxyUtils(open val pigeonRegistrar: CameraXLibrary
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -5115,7 +5130,7 @@ abstract class PigeonApiPlaneProxy(open val pigeonRegistrar: CameraXLibraryPigeo
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -5228,7 +5243,7 @@ abstract class PigeonApiQualitySelector(open val pigeonRegistrar: CameraXLibrary
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -5375,7 +5390,7 @@ abstract class PigeonApiFallbackStrategy(open val pigeonRegistrar: CameraXLibrar
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -5541,7 +5556,7 @@ abstract class PigeonApiCameraControl(open val pigeonRegistrar: CameraXLibraryPi
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -5720,7 +5735,7 @@ abstract class PigeonApiFocusMeteringActionBuilder(open val pigeonRegistrar: Cam
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -5774,7 +5789,7 @@ abstract class PigeonApiFocusMeteringAction(open val pigeonRegistrar: CameraXLib
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -5816,7 +5831,7 @@ abstract class PigeonApiFocusMeteringResult(open val pigeonRegistrar: CameraXLib
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -5917,7 +5932,7 @@ abstract class PigeonApiCaptureRequest(open val pigeonRegistrar: CameraXLibraryP
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -5956,7 +5971,7 @@ open class PigeonApiCaptureRequestKey(open val pigeonRegistrar: CameraXLibraryPi
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -6046,7 +6061,7 @@ abstract class PigeonApiCaptureRequestOptions(open val pigeonRegistrar: CameraXL
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -6140,7 +6155,7 @@ abstract class PigeonApiCamera2CameraControl(open val pigeonRegistrar: CameraXLi
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -6207,7 +6222,7 @@ abstract class PigeonApiResolutionFilter(open val pigeonRegistrar: CameraXLibrar
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -6246,7 +6261,7 @@ open class PigeonApiCameraCharacteristicsKey(open val pigeonRegistrar: CameraXLi
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -6374,7 +6389,7 @@ abstract class PigeonApiCameraCharacteristics(open val pigeonRegistrar: CameraXL
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -6482,7 +6497,7 @@ abstract class PigeonApiCamera2CameraInfo(open val pigeonRegistrar: CameraXLibra
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -6572,7 +6587,7 @@ abstract class PigeonApiMeteringPointFactory(open val pigeonRegistrar: CameraXLi
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }
@@ -6647,7 +6662,7 @@ abstract class PigeonApiDisplayOrientedMeteringPointFactory(open val pigeonRegis
           }
         } else {
           callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
+        }
       }
     }
   }

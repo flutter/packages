@@ -139,6 +139,7 @@ class PigeonOverrides {
   static ResolutionSelector Function({
     ResolutionFilter? resolutionFilter,
     ResolutionStrategy? resolutionStrategy,
+    int? allowedResolutionMode,
     AspectRatioStrategy? aspectRatioStrategy,
   })?
   resolutionSelector_new;
@@ -4470,12 +4471,14 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     ResolutionFilter? resolutionFilter,
     ResolutionStrategy? resolutionStrategy,
+    int? allowedResolutionMode,
     AspectRatioStrategy? aspectRatioStrategy,
   }) {
     if (PigeonOverrides.resolutionSelector_new != null) {
       return PigeonOverrides.resolutionSelector_new!(
         resolutionFilter: resolutionFilter,
         resolutionStrategy: resolutionStrategy,
+        allowedResolutionMode: allowedResolutionMode,
         aspectRatioStrategy: aspectRatioStrategy,
       );
     }
@@ -4484,6 +4487,7 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
       pigeon_instanceManager: pigeon_instanceManager,
       resolutionFilter: resolutionFilter,
       resolutionStrategy: resolutionStrategy,
+      allowedResolutionMode: allowedResolutionMode,
       aspectRatioStrategy: aspectRatioStrategy,
     );
   }
@@ -4494,6 +4498,7 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
     super.pigeon_instanceManager,
     this.resolutionFilter,
     this.resolutionStrategy,
+    this.allowedResolutionMode,
     AspectRatioStrategy? aspectRatioStrategy,
   }) {
     final int pigeonVar_instanceIdentifier = pigeon_instanceManager.addDartCreatedInstance(this);
@@ -4510,6 +4515,7 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
       pigeonVar_instanceIdentifier,
       resolutionFilter,
       resolutionStrategy,
+      allowedResolutionMode,
       aspectRatioStrategy,
     ]);
     () async {
@@ -4529,6 +4535,7 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
     super.pigeon_instanceManager,
     this.resolutionFilter,
     this.resolutionStrategy,
+    this.allowedResolutionMode,
   });
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecResolutionSelector =
@@ -4540,6 +4547,11 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
   /// The resolution selection strategy for the `UseCase`.
   final ResolutionStrategy? resolutionStrategy;
 
+  /// The allowed resolution mode for the `UseCase`.
+  ///
+  /// See [ResolutionSelectorAllowedResolutionMode].
+  final int? allowedResolutionMode;
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
@@ -4547,6 +4559,7 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
     ResolutionSelector Function(
       ResolutionFilter? resolutionFilter,
       ResolutionStrategy? resolutionStrategy,
+      int? allowedResolutionMode,
     )?
     pigeon_newInstance,
   }) {
@@ -4568,14 +4581,20 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           final ResolutionFilter? arg_resolutionFilter = args[1] as ResolutionFilter?;
           final ResolutionStrategy? arg_resolutionStrategy = args[2] as ResolutionStrategy?;
+          final int? arg_allowedResolutionMode = args[3] as int?;
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_resolutionFilter, arg_resolutionStrategy) ??
+              pigeon_newInstance?.call(
+                    arg_resolutionFilter,
+                    arg_resolutionStrategy,
+                    arg_allowedResolutionMode,
+                  ) ??
                   ResolutionSelector.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                     resolutionFilter: arg_resolutionFilter,
                     resolutionStrategy: arg_resolutionStrategy,
+                    allowedResolutionMode: arg_allowedResolutionMode,
                   ),
               arg_pigeon_instanceIdentifier,
             );
@@ -4623,6 +4642,7 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
       pigeon_instanceManager: pigeon_instanceManager,
       resolutionFilter: resolutionFilter,
       resolutionStrategy: resolutionStrategy,
+      allowedResolutionMode: allowedResolutionMode,
     );
   }
 }

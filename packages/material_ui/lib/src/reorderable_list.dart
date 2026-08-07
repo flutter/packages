@@ -2,9 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:flutter_test/flutter_test.dart';
-///
 /// @docImport 'card.dart';
+/// @docImport 'paginated_data_table.dart';
 library;
 
 import 'dart:ui' show lerpDouble;
@@ -20,7 +19,7 @@ import 'theme.dart';
 
 /// A list whose items the user can interactively reorder by dragging.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=3fB1mxOsqJE}
+/// Learn more about [ReorderableListView] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=3fB1mxOsqJE).
 ///
 /// This sample shows by dragging the user can reorder the items of the list.
 /// The [onReorderItem] parameter will be called when a child
@@ -37,9 +36,9 @@ import 'theme.dart';
 ///
 /// </callout-box>
 ///
-/// By default, on [TargetPlatformVariant.desktop] platforms each item will
+/// By default, on desktop platforms each item will
 /// have a drag handle added on top of it that will allow the user to grab it
-/// to move the item. On [TargetPlatformVariant.mobile], no drag handle will be
+/// to move the item. On mobile platforms, no drag handle will be
 /// added, but when the user long presses anywhere on the item it will start
 /// moving the item. Displaying drag handles can be controlled with
 /// [ReorderableListView.buildDefaultDragHandles].
@@ -321,8 +320,8 @@ class ReorderableListView extends StatefulWidget {
   /// {@macro flutter.widgets.scroll_view.controller}
   final ScrollController? scrollController;
 
-  /// {@macro flutter.widgets.scroll_view.primary}
-
+  /// {@macro material_ui.paginated_data_table.primary}
+  ///
   /// Defaults to true when [scrollDirection] is [Axis.vertical] and
   /// [scrollController] is null.
   final bool? primary;
@@ -333,7 +332,12 @@ class ReorderableListView extends StatefulWidget {
   /// {@macro flutter.widgets.scroll_view.shrinkWrap}
   final bool shrinkWrap;
 
-  /// {@macro flutter.widgets.scroll_view.anchor}
+  /// The relative position of the zero scroll offset.
+  ///
+  /// For more information, see [ScrollView.anchor].
+  // TODO(dkwingsmt): Migrate the doc back to macro
+  // flutter.widgets.scroll_view.anchor
+  // https://github.com/flutter/flutter/issues/189629
   final double anchor;
 
   /// {@macro flutter.rendering.RenderViewportBase.cacheExtent}
