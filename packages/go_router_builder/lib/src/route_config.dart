@@ -1015,11 +1015,7 @@ void _reportDuplicatePathsAmongSiblings(
       seen[normalized] = route;
       continue;
     }
-    final message =
-        'Duplicate route path detected: '
-        '"${existing.path}" from ${existing._className} and '
-        '"${route.path}" from ${route._className} '
-        'both match the same URL pattern.';
+    final String message = _duplicatePathMessage(existing, route);
     if (severity == DuplicatePathSeverity.error) {
       throw InvalidGenerationSourceError(message, element: route.routeDataClass);
     }
@@ -1031,6 +1027,23 @@ void _reportDuplicatePathsAmongSiblings(
   for (final route in siblings) {
     _reportDuplicatePathsAmongSiblings(route._children, severity);
   }
+}
+
+/// Describes the conflict between two routes that resolve to the same URL.
+///
+/// One route class declared twice at the same path gets its own wording, since
+/// naming that class on both sides of an "and" reads as though two classes were
+/// involved. Any other pair names both sides, which stays clear even when the
+/// class repeats, because the two paths differ.
+String _duplicatePathMessage(_GoRouteMixin existing, _GoRouteMixin route) {
+  if (existing.routeDataClass == route.routeDataClass && existing.path == route.path) {
+    return 'Duplicate route path detected: ${route._className} is declared more '
+        'than once at "${route.path}".';
+  }
+  return 'Duplicate route path detected: '
+      '"${existing.path}" from ${existing._className} and '
+      '"${route.path}" from ${route._className} '
+      'both match the same URL pattern.';
 }
 
 /// Collects the routes in [children] that own a path of their own.

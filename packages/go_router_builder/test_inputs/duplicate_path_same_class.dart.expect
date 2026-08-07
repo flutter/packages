@@ -1,1 +1,1 @@
-Duplicate route path detected: "details" from DetailsRoute and "details" from DetailsRoute both match the same URL pattern.
+Duplicate route path detected: DetailsRoute is declared more than once at "details".
