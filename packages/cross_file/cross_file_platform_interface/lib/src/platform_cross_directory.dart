@@ -69,26 +69,11 @@ base class PlatformXDirectoryCreationParams extends PlatformXEntityCreationParam
 /// ```
 mixin PlatformXDirectoryExtension implements PlatformXEntityExtension {}
 
-/// Interface for a reference to a directory (or folder) on the file system.
+/// Interface for a reference to a container of local data resources.
 abstract base class PlatformXDirectory extends PlatformXEntity {
-  // /// Creates a new [PlatformXDirectory].
-  // factory PlatformXDirectory(PlatformXDirectoryCreationParams params) {
-  //   assert(
-  //     CrossFilePlatform.instance != null,
-  //     'A platform implementation for `cross_file` has not been set. Please '
-  //     'ensure that an implementation of `CrossFilePlatform` has been set to '
-  //     '`CrossFilePlatform.instance` before use. For unit testing, '
-  //     '`CrossFilePlatform.instance` can be set with your own test implementation.',
-  //   );
-  //   return CrossFilePlatform.instance!.createPlatformXDirectory(params);
-  // }
-
-  /// Used by the platform implementation to create a new [PlatformXDirectory].
-  ///
-  /// Should only be used by platform implementations because they can't extend
-  /// a class that only contains a factory constructor.
+  /// Constructs a [PlatformXDirectory].
   @protected
-  PlatformXDirectory.implementation(PlatformXDirectoryCreationParams super.params);
+  PlatformXDirectory(PlatformXDirectoryCreationParams super.params);
 
   @override
   PlatformXDirectoryCreationParams get params => super.params as PlatformXDirectoryCreationParams;

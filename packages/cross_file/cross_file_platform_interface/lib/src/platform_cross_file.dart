@@ -7,7 +7,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show immutable, protected;
 
-import 'cross_file_platform.dart';
 import 'platform_cross_entity.dart';
 
 /// Object specifying creation parameters for creating a [PlatformXFile].
@@ -72,24 +71,9 @@ mixin PlatformXFileExtension implements PlatformXEntityExtension {}
 
 /// Interface for a reference to a local data resource.
 abstract base class PlatformXFile extends PlatformXEntity {
-  // /// Creates a new [PlatformXFile].
-  // factory PlatformXFile(PlatformXFileCreationParams params) {
-  //   assert(
-  //     CrossFilePlatform.instance != null,
-  //     'A platform implementation for `cross_file` has not been set. Please '
-  //     'ensure that an implementation of `CrossFilePlatform` has been set to '
-  //     '`CrossFilePlatform.instance` before use. For unit testing, '
-  //     '`CrossFilePlatform.instance` can be set with your own test implementation.',
-  //   );
-  //   return CrossFilePlatform.instance!.createPlatformXFile(params);
-  // }
-
-  /// Used by the platform implementation to create a new [PlatformXFile].
-  ///
-  /// Should only be used by platform implementations because they can't extend
-  /// a class that only contains a factory constructor.
+  /// Constructs a [PlatformXFile].
   @protected
-  PlatformXFile.implementation(PlatformXFileCreationParams super.params);
+  PlatformXFile(PlatformXFileCreationParams super.params);
 
   @override
   PlatformXFileCreationParams get params => super.params as PlatformXFileCreationParams;

@@ -88,7 +88,7 @@ abstract base class PlatformFileSystemXDirectory extends PlatformXDirectory {
   /// a class that only contains a factory constructor.
   PlatformFileSystemXDirectory.implementation(
     PlatformFileSystemXDirectoryCreationParams super.params,
-  ) : super.implementation();
+  );
 
   @override
   PlatformFileSystemXDirectoryCreationParams get params =>

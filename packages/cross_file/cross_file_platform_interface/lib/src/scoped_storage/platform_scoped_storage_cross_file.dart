@@ -88,8 +88,7 @@ abstract base class PlatformScopedStorageXFile extends PlatformXFile {
   /// Should only be used by platform implementations because they can't extend
   /// a class that only contains a factory constructor.
   @protected
-  PlatformScopedStorageXFile.implementation(PlatformScopedStorageXFileCreationParams super.params)
-    : super.implementation();
+  PlatformScopedStorageXFile.implementation(PlatformScopedStorageXFileCreationParams super.params);
 
   @override
   PlatformScopedStorageXFileCreationParams get params =>

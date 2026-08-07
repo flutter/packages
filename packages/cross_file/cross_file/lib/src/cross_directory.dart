@@ -10,9 +10,9 @@ import 'cross_file.dart';
 import 'scoped_storage_cross_directory.dart';
 import 'scoped_storage_cross_file.dart';
 
-/// A reference to a directory (or folder) on the file system.
+/// A reference to a container of local data resources.
 ///
-/// Note: Not all platforms support directories.
+/// Note: Not all platforms support accessing directories.
 ///
 /// ## Platform-Specific Features
 /// This class contains an underlying implementation provided by the current

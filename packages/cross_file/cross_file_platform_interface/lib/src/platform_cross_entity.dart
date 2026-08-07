@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart' show immutable;
+import 'package:flutter/foundation.dart' show immutable, protected;
 
 /// The common superclass for [PlatformXFileCreationParams] and
 /// [PlatformXDirectoryCreationParams].
@@ -22,6 +22,7 @@ mixin PlatformXEntityExtension {}
 /// The common superclass for [PlatformXFile] and [PlatformXDirectory].
 abstract base class PlatformXEntity {
   /// Constructs a [PlatformCrossFileEntity].
+  @protected
   PlatformXEntity(this.params);
 
   /// The parameters used to initialize the [PlatformXEntity].

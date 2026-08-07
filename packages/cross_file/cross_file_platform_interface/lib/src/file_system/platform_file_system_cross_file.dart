@@ -87,8 +87,7 @@ abstract base class PlatformFileSystemXFile extends PlatformXFile {
   /// Should only be used by platform implementations because they can't extend
   /// a class that only contains a factory constructor.
   @protected
-  PlatformFileSystemXFile.implementation(PlatformFileSystemXFileCreationParams super.params)
-    : super.implementation();
+  PlatformFileSystemXFile.implementation(PlatformFileSystemXFileCreationParams super.params);
 
   @override
   PlatformFileSystemXFileCreationParams get params =>

@@ -89,7 +89,7 @@ abstract base class PlatformScopedStorageXDirectory extends PlatformXDirectory {
   /// a class that only contains a factory constructor.
   PlatformScopedStorageXDirectory.implementation(
     PlatformScopedStorageXDirectoryCreationParams super.params,
-  ) : super.implementation();
+  );
 
   @override
   PlatformScopedStorageXDirectoryCreationParams get params =>
