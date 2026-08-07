@@ -4,8 +4,8 @@
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 
-import 'io_cross_directory.dart';
-import 'io_cross_file.dart';
+import 'io_file_system_cross_directory.dart';
+import 'io_file_system_cross_file.dart';
 
 /// Implementation of [CrossFilePlatform] for dart:io.
 base class CrossFileIO extends CrossFilePlatform {
@@ -15,12 +15,14 @@ base class CrossFileIO extends CrossFilePlatform {
   }
 
   @override
-  IOXFile createPlatformXFile(PlatformXFileCreationParams params) {
-    return IOXFile(params);
+  IOFileSystemXFile createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams params) {
+    return IOFileSystemXFile(params);
   }
 
   @override
-  IOXDirectory createPlatformXDirectory(PlatformXDirectoryCreationParams params) {
-    return IOXDirectory(params);
+  IOFileSystemXDirectory createPlatformFileSystemXDirectory(
+    PlatformFileSystemXDirectoryCreationParams params,
+  ) {
+    return IOFileSystemXDirectory(params);
   }
 }

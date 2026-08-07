@@ -18,16 +18,16 @@ void main() {
     });
 
     test('exists', () async {
-      final directory = PlatformXDirectory(
-        PlatformXDirectoryCreationParams(uri: testDirectory.uri.toString()),
+      final directory = PlatformFileSystemXDirectory(
+        PlatformFileSystemXDirectoryCreationParams(testDirectory.path),
       );
 
       expect(await directory.exists(), testDirectory.existsSync());
     });
 
     test('list', () async {
-      final directory = PlatformXDirectory(
-        PlatformXDirectoryCreationParams(uri: testDirectory.uri.toString()),
+      final directory = PlatformFileSystemXDirectory(
+        PlatformFileSystemXDirectoryCreationParams(testDirectory.path),
       );
 
       expect(

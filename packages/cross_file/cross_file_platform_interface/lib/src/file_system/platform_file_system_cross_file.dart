@@ -40,7 +40,10 @@ import '../platform_cross_file.dart';
 @immutable
 base class PlatformFileSystemXFileCreationParams extends PlatformXFileCreationParams {
   /// Constructs a [PlatformFileSystemXFileCreationParams].
-  PlatformFileSystemXFileCreationParams(String path) : super(uri: Uri.file(path).toString());
+  PlatformFileSystemXFileCreationParams(this.path) : super(uri: Uri.file(path).toString());
+
+  /// The path of the file.
+  final String path;
 }
 
 /// Base mixin used to provide platform-specific features for implementations of
@@ -92,7 +95,4 @@ abstract base class PlatformFileSystemXFile extends PlatformXFile {
   @override
   PlatformFileSystemXFileCreationParams get params =>
       super.params as PlatformFileSystemXFileCreationParams;
-
-  /// The path of the file.
-  String get path => Uri.parse(params.uri).path;
 }

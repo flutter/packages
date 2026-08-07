@@ -14,25 +14,26 @@ import 'package:path/path.dart' as path;
 @immutable
 base class IOFileSystemXFileCreationParams extends PlatformFileSystemXFileCreationParams {
   /// Constructs an [IOFileSystemXFileCreationParams].
-  IOFileSystemXFileCreationParams(String path)
-    : this.fromFile(File(path));
+  IOFileSystemXFileCreationParams(String path) : this.fromFile(File(path));
 
   /// Constructs an [IOFileSystemXFileCreationParams] from a [File].
-  IOFileSystemXFileCreationParams.fromFile(this.file) : super(uri: file.uri.toString());
+  IOFileSystemXFileCreationParams.fromFile(this.file) : super(file.path);
 
-  /// Constructs an [IOFileSystemXFileCreationParams] from a [PlatformXFileCreationParams].
-  factory IOFileSystemXFileCreationParams.fromCreationParams(PlatformXFileCreationParams params) {
-    return IOFileSystemXFileCreationParams(uri: params.uri);
+  /// Constructs an [IOFileSystemXFileCreationParams] from a [PlatformFileSystemXFileCreationParams].
+  factory IOFileSystemXFileCreationParams.fromCreationParams(
+    PlatformFileSystemXFileCreationParams params,
+  ) {
+    return IOFileSystemXFileCreationParams(params.path);
   }
 
   /// The underlying [File] for [IOFileSystemXFile].
   final File file;
 }
 
-/// Implementation of [PlatformXFile] for dart:io.
-base class IOFileSystemXFile extends PlatformXFile with IOFileSystemXFileExtension {
+/// Implementation of [PlatformFileSystemXFile] for dart:io.
+base class IOFileSystemXFile extends PlatformFileSystemXFile with IOFileSystemXFileExtension {
   /// Constructs an [IOFileSystemXFile].
-  IOFileSystemXFile(super.params);
+  IOFileSystemXFile(super.params) : super.implementation();
 
   @override
   late final IOFileSystemXFileCreationParams params =
@@ -44,7 +45,7 @@ base class IOFileSystemXFile extends PlatformXFile with IOFileSystemXFileExtensi
   File get file => params.file;
 
   @override
-  PlatformXFileExtension? get extension => this;
+  PlatformFileSystemXFileExtension? get extension => this;
 
   @override
   Future<DateTime?> lastModified() async {

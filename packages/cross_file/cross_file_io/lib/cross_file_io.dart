@@ -6,5 +6,7 @@ export 'package:cross_file_platform_interface/cross_file_platform_interface.dart
     show ListParams, PlatformXDirectoryCreationParams, PlatformXFileCreationParams;
 
 export 'src/cross_file_io.dart';
-export 'src/io_cross_directory.dart' show IOXDirectoryCreationParams, IOXDirectoryExtension;
-export 'src/io_cross_file.dart' show IOXFileCreationParams, IOXFileExtension;
+export 'src/io_file_system_cross_directory.dart'
+    show IOFileSystemXDirectoryCreationParams, IOFileSystemXDirectoryExtension;
+export 'src/io_file_system_cross_file.dart'
+    show IOFileSystemXFileCreationParams, IOFileSystemXFileExtension;

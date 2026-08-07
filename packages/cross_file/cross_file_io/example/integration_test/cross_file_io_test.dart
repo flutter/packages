@@ -17,13 +17,13 @@ void main() {
   testWidgets('Can read from file using dart:io implementation', (WidgetTester tester) async {
     final Directory dir = await getApplicationCacheDirectory();
 
-    final xDir = PlatformXDirectory(PlatformXDirectoryCreationParams(uri: dir.uri.toString()));
+    final xDir = PlatformFileSystemXDirectory(PlatformFileSystemXDirectoryCreationParams(dir.path));
     expect(await xDir.exists(), isTrue);
 
-    final file = PlatformXFile(
-      PlatformXFileCreationParams(uri: path.join(dir.uri.toString(), 'hello.txt')),
+    final file = PlatformFileSystemXFile(
+      PlatformFileSystemXFileCreationParams(path.join(dir.path, 'hello.txt')),
     );
-    (file.extension! as IOXFileExtension).file
+    (file.extension! as IOFileSystemXFileExtension).file
       ..createSync()
       ..writeAsStringSync('Hello, World!');
 
