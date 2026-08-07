@@ -48,13 +48,16 @@ class TestDartFixes extends PackageLoopingCommand {
       return PackageResult.skip('No ${package.dartFixTestDirectory} directory.');
     }
 
-    // Create a temporary directory to run the tests in.
-    const fileSystem = LocalFileSystem();
-    final Directory testTempDir = await fileSystem.systemTempDirectory.createTemp();
+    final Directory testDirectory;
+    try {
+      testDirectory = await _createTestDirectory(package);
+    } catch (error) {
+      return PackageResult.fail(['Failed to create temporary test directory: $error}']);
+    }
 
     late final PackageResult result;
     try {
-      final int statusCode = await _runDartFixTests(package, testTempDir);
+      final int statusCode = await _runDartFixTests(package, testDirectory);
       if (statusCode != 0) {
         throw Exception('Status code $statusCode');
       }
@@ -62,74 +65,70 @@ class TestDartFixes extends PackageLoopingCommand {
     } catch (error) {
       result = PackageResult.fail(['Dart fix tests failed: $error}']);
     }
-    if (testTempDir.existsSync()) {
-      await testTempDir.delete(recursive: true);
+    if (testDirectory.existsSync()) {
+      await testDirectory.delete(recursive: true);
     }
     return result;
+  }
+
+  /// Create and prepare a temporary directory in which to run the dart fix
+  /// tests.
+  ///
+  /// It is the responsibility of the caller to delete this directory and its
+  /// contents when done.
+  static Future<Directory> _createTestDirectory(RepositoryPackage package) async {
+    const fileSystem = LocalFileSystem();
+    final Directory testTempDirectory = await fileSystem.systemTempDirectory.createTemp();
+
+    // Copy from `test_fixes/` to the temp directory.
+    await io.copyPath(package.dartFixTestDirectory.path, testTempDirectory.path);
+
+    // The pubspec.yaml file to create.
+    final File targetPubspecFile = fileSystem.file(p.join(testTempDirectory.path, 'pubspec.yaml'));
+
+    final targetYaml =
+        '''
+name: test_fixes
+publish_to: "none"
+version: 1.0.0
+
+environment:
+  sdk: ">=2.18.0 <4.0.0"
+  flutter: ">=3.3.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  ${package.directory.basename}:
+    path: ${package.directory.path}
+''';
+
+    await targetPubspecFile.writeAsString(targetYaml);
+    return testTempDirectory;
   }
 
   /// Run the dart fix tests for the package in the given temporary directory.
   ///
   /// Resolves with the status code of the command.
-  Future<int> _runDartFixTests(RepositoryPackage package, Directory testTempDir) async {
-    // Copy the test_fixes folder to the temporary testTempDir.
-    //
-    // This also creates the proper pubspec.yaml in the temp directory.
-    await _prepareTemplate(package: package, testTempDir: testTempDir);
-
+  static Future<int> _runDartFixTests(RepositoryPackage package, Directory testDirectory) async {
     // Run dart pub get in the temp directory to set it up.
     final int pubGetStatusCode = await _runProcess('dart', <String>[
       'pub',
       'get',
-    ], workingDirectory: testTempDir.path);
+    ], workingDirectory: testDirectory.path);
 
     if (pubGetStatusCode != 0) {
-      await testTempDir.delete(recursive: true);
       return pubGetStatusCode;
     }
 
     // Run dart fix --compare-to-golden in the temp directory.
-    final int dartFixStatusCode = await _runProcess('dart', <String>[
+    return _runProcess('dart', <String>[
       'fix',
       '--compare-to-golden',
-    ], workingDirectory: testTempDir.path);
-
-    await testTempDir.delete(recursive: true);
-    return dartFixStatusCode;
+    ], workingDirectory: testDirectory.path);
   }
 
-  Future<void> _prepareTemplate({
-    required RepositoryPackage package,
-    required Directory testTempDir,
-  }) async {
-    // Copy from src `test_fixes/` to the temp directory.
-    await io.copyPath(package.dartFixTestDirectory.path, testTempDir.path);
-
-    // The pubspec.yaml file to create.
-    const fileSystem = LocalFileSystem();
-    final File targetPubspecFile = fileSystem.file(p.join(testTempDir.path, 'pubspec.yaml'));
-
-    final targetYaml =
-        '''
-  name: test_fixes
-  publish_to: "none"
-  version: 1.0.0
-
-  environment:
-    sdk: ">=2.18.0 <4.0.0"
-    flutter: ">=3.3.0"
-
-  dependencies:
-    flutter:
-      sdk: flutter
-    ${package.directory.basename}:
-      path: ${package.directory.path}
-  ''';
-
-    await targetPubspecFile.writeAsString(targetYaml);
-  }
-
-  Future<int> _runProcess(
+  static Future<int> _runProcess(
     String command,
     List<String> arguments, {
     String? workingDirectory,
@@ -140,7 +139,7 @@ class TestDartFixes extends PackageLoopingCommand {
     return process.exitCode;
   }
 
-  Future<Process> _streamOutput(Future<Process> processFuture) async {
+  static Future<Process> _streamOutput(Future<Process> processFuture) async {
     final Process process = await processFuture;
     unawaited(stdout.addStream(process.stdout));
     unawaited(stderr.addStream(process.stderr));
