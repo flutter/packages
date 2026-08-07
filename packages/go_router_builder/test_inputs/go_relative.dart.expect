@@ -1,13 +1,16 @@
 RouteBase get $route1 => GoRouteData.$route(
       path: 'route-1',
+      hasOverriddenOnExit: false,
       factory: $Route1._fromState,
       routes: [
         RelativeGoRouteData.$route(
           path: 'relative-route',
+          hasOverriddenOnExit: false,
           factory: $RelativeRoute._fromState,
           routes: [
             RelativeGoRouteData.$route(
               path: 'inner-relative-route',
+              hasOverriddenOnExit: false,
               factory: $InnerRelativeRoute._fromState,
             ),
           ],
@@ -94,14 +97,17 @@ mixin $InnerRelativeRoute on RelativeGoRouteData {
 
 RouteBase get $route2 => GoRouteData.$route(
       path: 'route-2',
+      hasOverriddenOnExit: false,
       factory: $Route2._fromState,
       routes: [
         RelativeGoRouteData.$route(
           path: 'relative-route',
+          hasOverriddenOnExit: false,
           factory: $RelativeRoute._fromState,
           routes: [
             RelativeGoRouteData.$route(
               path: 'inner-relative-route',
+              hasOverriddenOnExit: false,
               factory: $InnerRelativeRoute._fromState,
             ),
           ],

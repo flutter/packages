@@ -1,5 +1,6 @@
 RouteBase get $iterableDefaultValueRoute => GoRouteData.$route(
       path: '/iterable-default-value-route',
+      hasOverriddenOnExit: false,
       factory: $IterableDefaultValueRoute._fromState,
     );
 
