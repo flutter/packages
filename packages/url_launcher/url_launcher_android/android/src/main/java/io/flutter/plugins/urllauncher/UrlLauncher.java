@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.browser.customtabs.CustomTabsClient;
 import androidx.browser.customtabs.CustomTabsIntent;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
@@ -64,8 +65,17 @@ final class UrlLauncher implements UrlLauncherApi {
 
   @Override
   public boolean canLaunchUrl(@NonNull String url) {
-    Intent launchIntent = new Intent(Intent.ACTION_VIEW);
-    launchIntent.setData(Uri.parse(url));
+    Intent launchIntent;
+    if (url.startsWith("intent://")) {
+      try {
+        launchIntent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+      } catch (URISyntaxException e) {
+        return false;
+      }
+    } else {
+      launchIntent = new Intent(Intent.ACTION_VIEW);
+      launchIntent.setData(Uri.parse(url));
+    }
     String componentName = intentResolver.getHandlerComponentName(launchIntent);
     if (BuildConfig.DEBUG) {
       Log.i(TAG, "component name for " + url + " is " + componentName);
@@ -84,10 +94,19 @@ final class UrlLauncher implements UrlLauncherApi {
     ensureActivity();
     assert activity != null;
 
-    Intent launchIntent =
-        new Intent(Intent.ACTION_VIEW)
-            .setData(Uri.parse(url))
-            .putExtra(Browser.EXTRA_HEADERS, extractBundle(headers));
+    Intent launchIntent;
+    if (url.startsWith("intent://")) {
+      try {
+        launchIntent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+      } catch (URISyntaxException e) {
+        return false;
+      }
+    } else {
+      launchIntent =
+          new Intent(Intent.ACTION_VIEW)
+              .setData(Uri.parse(url))
+              .putExtra(Browser.EXTRA_HEADERS, extractBundle(headers));
+    }
     if (requireNonBrowser && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
       launchIntent.addFlags(Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER);
     }

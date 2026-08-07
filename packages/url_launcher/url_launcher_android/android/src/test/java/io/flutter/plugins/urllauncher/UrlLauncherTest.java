@@ -66,6 +66,35 @@ public class UrlLauncherTest {
     assertFalse(result);
   }
 
+  @Test
+  public void canLaunch_parsesIntentSchemeUri() {
+    UrlLauncher.IntentResolver resolver = mock(UrlLauncher.IntentResolver.class);
+    UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext(), resolver);
+    String intentUrl =
+        "intent://details?id=com.example.app"
+            + "#Intent;scheme=bazaar;package=com.example.store;"
+            + "action=android.intent.action.EDIT;end";
+    when(resolver.getHandlerComponentName(any())).thenReturn(null);
+
+    api.canLaunchUrl(intentUrl);
+
+    final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+    verify(resolver).getHandlerComponentName(intentCaptor.capture());
+    assertEquals(Intent.ACTION_EDIT, intentCaptor.getValue().getAction());
+    assertEquals(
+        Uri.parse("bazaar://details?id=com.example.app"), intentCaptor.getValue().getData());
+    assertEquals("com.example.store", intentCaptor.getValue().getPackage());
+  }
+
+  @Test
+  public void canLaunch_returnsFalseForMalformedIntentSchemeUri() {
+    UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext(), intent -> null);
+
+    boolean result = api.canLaunchUrl("intent://[malformed");
+
+    assertFalse(result);
+  }
+
   // Integration testing on emulators won't work as expected without the workaround this tests
   // for, since it will be returned even for intentionally bogus schemes.
   @Test
@@ -145,6 +174,38 @@ public class UrlLauncherTest {
     boolean result = api.launchUrl("https://flutter.dev", new HashMap<>(), false);
 
     assertTrue(result);
+  }
+
+  @Test
+  public void launch_parsesIntentSchemeUri() {
+    Activity activity = mock(Activity.class);
+    UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
+    api.setActivity(activity);
+    String intentUrl =
+        "intent://details?id=com.example.app"
+            + "#Intent;scheme=bazaar;package=com.example.store;"
+            + "action=android.intent.action.EDIT;end";
+    doThrow(new ActivityNotFoundException()).when(activity).startActivity(any());
+
+    api.launchUrl(intentUrl, new HashMap<>(), false);
+
+    final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+    verify(activity).startActivity(intentCaptor.capture());
+    assertEquals(Intent.ACTION_EDIT, intentCaptor.getValue().getAction());
+    assertEquals(
+        Uri.parse("bazaar://details?id=com.example.app"), intentCaptor.getValue().getData());
+    assertEquals("com.example.store", intentCaptor.getValue().getPackage());
+  }
+
+  @Test
+  public void launch_returnsFalseForMalformedIntentSchemeUri() {
+    Activity activity = mock(Activity.class);
+    UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
+    api.setActivity(activity);
+
+    boolean result = api.launchUrl("intent://[malformed", new HashMap<>(), false);
+
+    assertFalse(result);
   }
 
   @Test
