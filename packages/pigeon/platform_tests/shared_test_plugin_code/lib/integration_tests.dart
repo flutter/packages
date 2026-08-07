@@ -2813,6 +2813,14 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(await api.taskQueueIsBackgroundThread(), taskQueuesSupported);
   });
 
+  testWidgets('async task queue handlers run on a background thread', (_) async {
+    final api = HostIntegrationCoreApi();
+    final bool taskQueuesSupported =
+        defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.iOS;
+    expect(await api.asyncTaskQueueIsBackgroundThread(), taskQueuesSupported);
+  });
+
   /// Event channels
 
   const eventChannelSupported = <TargetGenerator>[TargetGenerator.kotlin, TargetGenerator.swift];

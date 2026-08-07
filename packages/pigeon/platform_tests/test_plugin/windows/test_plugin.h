@@ -445,6 +445,9 @@ class TestPlugin : public flutter::Plugin,
           result) override;
   core_tests_pigeontest::ErrorOr<bool> DefaultIsMainThread() override;
   core_tests_pigeontest::ErrorOr<bool> TaskQueueIsBackgroundThread() override;
+  void AsyncTaskQueueIsBackgroundThread(
+      std::function<void(core_tests_pigeontest::ErrorOr<bool> reply)> result)
+      override;
   void CallFlutterNoop(
       std::function<
           void(std::optional<core_tests_pigeontest::FlutterError> reply)>

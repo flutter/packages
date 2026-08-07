@@ -756,6 +756,10 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable NSNumber *)taskQueueIsBackgroundThreadWithError:
     (FlutterError *_Nullable *_Nonnull)error;
+/// Returns true if the handler is run on a non-main thread, which should be
+/// true for any platform with TaskQueue support.
+- (void)asyncTaskQueueIsBackgroundThreadWithCompletion:
+    (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)callFlutterThrowErrorWithCompletion:(void (^)(id _Nullable,
                                                       FlutterError *_Nullable))completion;

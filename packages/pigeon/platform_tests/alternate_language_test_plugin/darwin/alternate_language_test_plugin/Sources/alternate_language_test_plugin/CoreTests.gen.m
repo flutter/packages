@@ -4043,6 +4043,37 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
       [channel setMessageHandler:nil];
     }
   }
+  /// Returns true if the handler is run on a non-main thread, which should be
+  /// true for any platform with TaskQueue support.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:
+                                      @"%@%@",
+                                      @"dev.flutter.pigeon.pigeon_integration_tests."
+                                      @"HostIntegrationCoreApi.asyncTaskQueueIsBackgroundThread",
+                                      messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()
+#ifdef TARGET_OS_IOS
+              taskQueue:taskQueue
+#endif
+    ];
+
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(asyncTaskQueueIsBackgroundThreadWithCompletion:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(asyncTaskQueueIsBackgroundThreadWithCompletion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api asyncTaskQueueIsBackgroundThreadWithCompletion:^(NSNumber *_Nullable output,
+                                                              FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",

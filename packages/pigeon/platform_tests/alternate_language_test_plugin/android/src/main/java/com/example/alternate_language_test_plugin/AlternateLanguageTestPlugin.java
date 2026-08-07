@@ -707,6 +707,11 @@ public class AlternateLanguageTestPlugin
   }
 
   @Override
+  public void asyncTaskQueueIsBackgroundThread(@NonNull Result<Boolean> result) {
+    result.success(Thread.currentThread() != Looper.getMainLooper().getThread());
+  }
+
+  @Override
   public void callFlutterNoop(@NonNull VoidResult result) {
     assert flutterApi != null;
     flutterApi.noop(result);

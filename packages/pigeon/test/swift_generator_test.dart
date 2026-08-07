@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:pigeon/pigeon.dart' show TaskQueueType;
 import 'package:pigeon/src/ast.dart';
 import 'package:pigeon/src/swift/swift_generator.dart';
 import 'package:test/test.dart';
@@ -650,6 +651,66 @@ void main() {
         'Task { @MainActor in\n          do {\n            let result = try await api.doSomething(arg: argArg)\n            reply(wrapResult(result))',
       ),
     );
+  });
+
+  test('async method with TaskQueue generates Task without @MainActor', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration(baseName: 'Output', isNullable: false),
+              isAsynchronous: true,
+              taskQueueType: TaskQueueType.serialBackgroundThread,
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'arg',
+                  type: const TypeDeclaration(baseName: 'Input', isNullable: false),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Input',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'input',
+            ),
+          ],
+        ),
+        Class(
+          name: 'Output',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'output',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('protocol Api'));
+    expect(code, contains('func doSomething(arg: Input) async throws -> Output'));
+    expect(
+      code,
+      contains(
+        'Task {\n          do {\n            let result = try await api.doSomething(arg: argArg)\n            reply(wrapResult(result))',
+      ),
+    );
+    expect(code, isNot(contains('Task { @MainActor in')));
   });
 
   test('asyncCallback emits callback-based host api method', () {

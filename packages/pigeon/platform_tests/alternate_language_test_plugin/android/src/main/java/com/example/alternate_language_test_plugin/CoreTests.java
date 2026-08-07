@@ -3877,6 +3877,12 @@ public class CoreTests {
     @NonNull
     Boolean taskQueueIsBackgroundThread();
 
+    /**
+     * Returns true if the handler is run on a non-main thread, which should be true for any
+     * platform with TaskQueue support.
+     */
+    void asyncTaskQueueIsBackgroundThread(@NonNull Result<Boolean> result);
+
     void callFlutterNoop(@NonNull VoidResult result);
 
     void callFlutterThrowError(@NonNull NullableResult<Object> result);
@@ -7048,6 +7054,37 @@ public class CoreTests {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.asyncTaskQueueIsBackgroundThread"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                Result<Boolean> resultCallback =
+                    new Result<Boolean>() {
+                      public void success(Boolean result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.asyncTaskQueueIsBackgroundThread(resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

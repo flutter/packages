@@ -689,6 +689,13 @@
   return [NSNumber numberWithBool:!NSThread.isMainThread];
 }
 
+- (void)asyncTaskQueueIsBackgroundThreadWithCompletion:
+    (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  // Using boxing on an inline expression results in the Dart side receiving an int, so
+  // force the right type via numberWithBool.
+  completion([NSNumber numberWithBool:!NSThread.isMainThread], nil);
+}
+
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   [self.flutterAPI noopWithCompletion:^(FlutterError *error) {
     completion(error);

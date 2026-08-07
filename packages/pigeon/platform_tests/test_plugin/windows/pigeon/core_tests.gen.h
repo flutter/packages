@@ -1303,6 +1303,10 @@ class HostIntegrationCoreApi {
   // Returns true if the handler is run on a non-main thread, which should be
   // true for any platform with TaskQueue support.
   virtual ErrorOr<bool> TaskQueueIsBackgroundThread() = 0;
+  // Returns true if the handler is run on a non-main thread, which should be
+  // true for any platform with TaskQueue support.
+  virtual void AsyncTaskQueueIsBackgroundThread(
+      std::function<void(ErrorOr<bool> reply)> result) = 0;
   virtual void CallFlutterNoop(
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
   virtual void CallFlutterThrowError(

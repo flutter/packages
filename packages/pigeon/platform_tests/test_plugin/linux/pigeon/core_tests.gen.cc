@@ -12474,6 +12474,81 @@ core_tests_pigeon_test_host_integration_core_api_task_queue_is_background_thread
 }
 
 G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiAsyncTaskQueueIsBackgroundThreadResponse,
+    core_tests_pigeon_test_host_integration_core_api_async_task_queue_is_background_thread_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_ASYNC_TASK_QUEUE_IS_BACKGROUND_THREAD_RESPONSE,
+    GObject)
+
+struct
+    _CoreTestsPigeonTestHostIntegrationCoreApiAsyncTaskQueueIsBackgroundThreadResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiAsyncTaskQueueIsBackgroundThreadResponse,
+    core_tests_pigeon_test_host_integration_core_api_async_task_queue_is_background_thread_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_async_task_queue_is_background_thread_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiAsyncTaskQueueIsBackgroundThreadResponse*
+      self =
+          CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ASYNC_TASK_QUEUE_IS_BACKGROUND_THREAD_RESPONSE(
+              object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_async_task_queue_is_background_thread_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_async_task_queue_is_background_thread_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiAsyncTaskQueueIsBackgroundThreadResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_async_task_queue_is_background_thread_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiAsyncTaskQueueIsBackgroundThreadResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_async_task_queue_is_background_thread_response_dispose;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiAsyncTaskQueueIsBackgroundThreadResponse*
+core_tests_pigeon_test_host_integration_core_api_async_task_queue_is_background_thread_response_new(
+    gboolean return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiAsyncTaskQueueIsBackgroundThreadResponse*
+      self = CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ASYNC_TASK_QUEUE_IS_BACKGROUND_THREAD_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_async_task_queue_is_background_thread_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_bool(return_value));
+  return self;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiAsyncTaskQueueIsBackgroundThreadResponse*
+core_tests_pigeon_test_host_integration_core_api_async_task_queue_is_background_thread_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiAsyncTaskQueueIsBackgroundThreadResponse*
+      self = CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ASYNC_TASK_QUEUE_IS_BACKGROUND_THREAD_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_async_task_queue_is_background_thread_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+G_DECLARE_FINAL_TYPE(
     CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterNoopResponse,
     core_tests_pigeon_test_host_integration_core_api_call_flutter_noop_response,
     CORE_TESTS_PIGEON_TEST,
@@ -19669,6 +19744,24 @@ core_tests_pigeon_test_host_integration_core_api_task_queue_is_background_thread
 }
 
 static void
+core_tests_pigeon_test_host_integration_core_api_async_task_queue_is_background_thread_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->async_task_queue_is_background_thread == nullptr) {
+    return;
+  }
+
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle) handle =
+      core_tests_pigeon_test_host_integration_core_api_response_handle_new(
+          channel, response_handle);
+  self->vtable->async_task_queue_is_background_thread(handle, self->user_data);
+}
+
+static void
 core_tests_pigeon_test_host_integration_core_api_call_flutter_noop_cb(
     FlBasicMessageChannel* channel, FlValue* message_,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
@@ -22166,6 +22259,20 @@ void core_tests_pigeon_test_host_integration_core_api_set_method_handlers(
       task_queue_is_background_thread_channel,
       core_tests_pigeon_test_host_integration_core_api_task_queue_is_background_thread_cb,
       g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* async_task_queue_is_background_thread_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "asyncTaskQueueIsBackgroundThread%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel)
+      async_task_queue_is_background_thread_channel =
+          fl_basic_message_channel_new(
+              messenger, async_task_queue_is_background_thread_channel_name,
+              FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      async_task_queue_is_background_thread_channel,
+      core_tests_pigeon_test_host_integration_core_api_async_task_queue_is_background_thread_cb,
+      g_object_ref(api_data), g_object_unref);
   g_autofree gchar* call_flutter_noop_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
       "callFlutterNoop%s",
@@ -23986,6 +24093,18 @@ void core_tests_pigeon_test_host_integration_core_api_clear_method_handlers(
                                    FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       task_queue_is_background_thread_channel, nullptr, nullptr, nullptr);
+  g_autofree gchar* async_task_queue_is_background_thread_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "asyncTaskQueueIsBackgroundThread%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel)
+      async_task_queue_is_background_thread_channel =
+          fl_basic_message_channel_new(
+              messenger, async_task_queue_is_background_thread_channel_name,
+              FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      async_task_queue_is_background_thread_channel, nullptr, nullptr, nullptr);
   g_autofree gchar* call_flutter_noop_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
       "callFlutterNoop%s",
@@ -25908,6 +26027,40 @@ void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_another
                                         response->value, &error)) {
     g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
               "echoAnotherAsyncNullableEnum", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_async_task_queue_is_background_thread(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    gboolean return_value) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiAsyncTaskQueueIsBackgroundThreadResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_async_task_queue_is_background_thread_response_new(
+              return_value);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "asyncTaskQueueIsBackgroundThread", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_error_async_task_queue_is_background_thread(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiAsyncTaskQueueIsBackgroundThreadResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_async_task_queue_is_background_thread_response_new_error(
+              code, message, details);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "asyncTaskQueueIsBackgroundThread", error->message);
   }
 }
 

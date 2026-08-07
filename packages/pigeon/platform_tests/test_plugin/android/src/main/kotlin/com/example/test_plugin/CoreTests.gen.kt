@@ -1411,6 +1411,11 @@ interface HostIntegrationCoreApi {
    * with TaskQueue support.
    */
   fun taskQueueIsBackgroundThread(): Boolean
+  /**
+   * Returns true if the handler is run on a non-main thread, which should be true for any platform
+   * with TaskQueue support.
+   */
+  suspend fun asyncTaskQueueIsBackgroundThread(): Boolean
 
   suspend fun callFlutterNoop()
 
@@ -4035,6 +4040,29 @@ interface HostIntegrationCoreApi {
                   CoreTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.asyncTaskQueueIsBackgroundThread$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            CoroutineScope(Dispatchers.Unconfined).launch {
+              val wrapped: List<Any?> =
+                  try {
+                    listOf(api.asyncTaskQueueIsBackgroundThread())
+                  } catch (exception: Throwable) {
+                    CoreTestsPigeonUtils.wrapError(exception)
+                  }
+              reply.reply(wrapped)
+            }
           }
         } else {
           channel.setMessageHandler(null)

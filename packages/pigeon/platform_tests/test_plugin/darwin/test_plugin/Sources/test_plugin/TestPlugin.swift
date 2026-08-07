@@ -10,6 +10,8 @@ import Foundation
   import FlutterMacOS
 #endif
 
+/// Helper to adapt callback-based Flutter API calls into Swift async/await,
+/// allowing integration tests and host handlers to `await` Flutter API calls.
 private func awaitFlutterApi<T>(
   _ block: @escaping (@escaping (Result<T, PigeonError>) -> Void) -> Void
 ) async throws -> T {
@@ -562,6 +564,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
   }
 
   func taskQueueIsBackgroundThread() -> Bool {
+    return !Thread.isMainThread
+  }
+
+  func asyncTaskQueueIsBackgroundThread() async throws -> Bool {
     return !Thread.isMainThread
   }
 

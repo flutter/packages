@@ -873,6 +873,12 @@ abstract class HostIntegrationCoreApi {
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool taskQueueIsBackgroundThread();
 
+  /// Returns true if the handler is run on a non-main thread, which should be
+  /// true for any platform with TaskQueue support.
+  @async
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+  bool asyncTaskQueueIsBackgroundThread();
+
   // ========== Flutter API test wrappers ==========
 
   @async

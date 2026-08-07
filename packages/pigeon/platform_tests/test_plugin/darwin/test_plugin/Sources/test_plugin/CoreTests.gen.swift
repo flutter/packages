@@ -1404,6 +1404,9 @@ protocol HostIntegrationCoreApi {
   /// Returns true if the handler is run on a non-main thread, which should be
   /// true for any platform with TaskQueue support.
   func taskQueueIsBackgroundThread() throws -> Bool
+  /// Returns true if the handler is run on a non-main thread, which should be
+  /// true for any platform with TaskQueue support.
+  func asyncTaskQueueIsBackgroundThread() async throws -> Bool
   func callFlutterNoop() async throws
   func callFlutterThrowError() async throws -> Any?
   func callFlutterThrowErrorFromVoid() async throws
@@ -3632,6 +3635,32 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       taskQueueIsBackgroundThreadChannel.setMessageHandler(nil)
+    }
+    /// Returns true if the handler is run on a non-main thread, which should be
+    /// true for any platform with TaskQueue support.
+    let asyncTaskQueueIsBackgroundThreadChannel =
+      taskQueue == nil
+      ? FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.asyncTaskQueueIsBackgroundThread\(channelSuffix)",
+        binaryMessenger: binaryMessenger, codec: codec)
+      : FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.asyncTaskQueueIsBackgroundThread\(channelSuffix)",
+        binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
+    if let api = api {
+      asyncTaskQueueIsBackgroundThreadChannel.setMessageHandler { _, reply in
+        Task {
+          do {
+            let result = try await api.asyncTaskQueueIsBackgroundThread()
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      asyncTaskQueueIsBackgroundThreadChannel.setMessageHandler(nil)
     }
     let callFlutterNoopChannel = FlutterBasicMessageChannel(
       name:

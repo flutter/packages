@@ -4379,6 +4379,9 @@ typedef struct {
       *default_is_main_thread)(gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiTaskQueueIsBackgroundThreadResponse* (
       *task_queue_is_background_thread)(gpointer user_data);
+  void (*async_task_queue_is_background_thread)(
+      CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+      gpointer user_data);
   void (*call_flutter_noop)(
       CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
       gpointer user_data);
@@ -5562,6 +5565,31 @@ void core_tests_pigeon_test_host_integration_core_api_respond_echo_another_async
  * HostIntegrationCoreApi.echoAnotherAsyncNullableEnum.
  */
 void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_another_async_nullable_enum(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_async_task_queue_is_background_thread:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @return_value: location to write the value returned by this method.
+ *
+ * Responds to HostIntegrationCoreApi.asyncTaskQueueIsBackgroundThread.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_async_task_queue_is_background_thread(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    gboolean return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_error_async_task_queue_is_background_thread:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Responds with an error to
+ * HostIntegrationCoreApi.asyncTaskQueueIsBackgroundThread.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_error_async_task_queue_is_background_thread(
     CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
     const gchar* code, const gchar* message, FlValue* details);
 

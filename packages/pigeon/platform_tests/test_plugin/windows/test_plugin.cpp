@@ -813,6 +813,11 @@ ErrorOr<bool> TestPlugin::TaskQueueIsBackgroundThread() {
   return std::this_thread::get_id() != main_thread_id_;
 }
 
+void TestPlugin::AsyncTaskQueueIsBackgroundThread(
+    std::function<void(ErrorOr<bool> reply)> result) {
+  result(std::this_thread::get_id() != main_thread_id_);
+}
+
 void TestPlugin::CallFlutterNoop(
     std::function<void(std::optional<FlutterError> reply)> result) {
   flutter_api_->Noop([result]() { result(std::nullopt); },

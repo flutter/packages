@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:pigeon/pigeon.dart' show TaskQueueType;
 import 'package:pigeon/src/ast.dart';
 import 'package:pigeon/src/kotlin/kotlin_generator.dart';
 import 'package:test/test.dart';
@@ -1906,5 +1907,35 @@ void main() {
     generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
     expect(code, contains('fun doit(callback: (Result<Long?>) -> Unit'));
+  });
+
+  test('async method with TaskQueue generates CoroutineScope(Dispatchers.Unconfined)', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doit',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration(baseName: 'int', isNullable: true),
+              isAsynchronous: true,
+              taskQueueType: TaskQueueType.serialBackgroundThread,
+              parameters: <Parameter>[],
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
+    const generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('suspend fun doit(): Long?'));
+    expect(code, contains('CoroutineScope(Dispatchers.Unconfined).launch'));
+    expect(code, isNot(contains('CoroutineScope(Dispatchers.Main).launch')));
   });
 }
