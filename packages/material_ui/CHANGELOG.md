@@ -1,3 +1,7 @@
+## 0.0.4
+
+- Fix bottom sheet dismissal when its extent is within floating-point precision of its minimum extent.
+
 ## 0.0.3
 
 - Fix API doc by clearing unsupported directives introduced by macros.
