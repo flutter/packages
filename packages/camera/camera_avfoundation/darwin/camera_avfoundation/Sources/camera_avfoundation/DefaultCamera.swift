@@ -552,7 +552,6 @@ final class DefaultCamera: NSObject, Camera {
         return
       }
     }
-    self.videoRecordingPath = videoRecordingPath
 
     guard setupWriter(forPath: videoRecordingPath) else {
       completion(
