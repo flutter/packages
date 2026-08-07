@@ -56,6 +56,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
   Future<bool> popRoute() async {
     final Iterable<NavigatorState> states = _findCurrentNavigators();
     for (final state in states) {
+      if (!state.mounted) {
+        continue;
+      }
       final bool didPop = await state.maybePop(); // Call maybePop() directly
       if (didPop) {
         return true; // Return true if maybePop handled the pop
@@ -78,7 +81,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     return false;
   }
 
-  /// Returns `true` if the active Navigator can pop.
+  /// Returns `true` if any navigator in the current route stack can pop.
+  ///
+  /// This does not evaluate pop vetoes such as [PopScope]. See [maybePop].
   bool canPop() {
     if (navigatorKey.currentState?.canPop() ?? false) {
       return true;
@@ -105,6 +110,35 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
       throw GoError('There is nothing to pop');
     }
     states.first.pop(result);
+  }
+
+  /// Attempts to pop the top-most poppable route in the current stack.
+  ///
+  /// Walks [_findCurrentNavigators] from innermost to outermost and calls
+  /// [NavigatorState.maybePop] on each mounted navigator so [PopScope] / route
+  /// pop disposition is consulted even when [NavigatorState.canPop] is false
+  /// (for example a shell leaf that is the only route on its navigator).
+  ///
+  /// Returns `true` if a navigator handled the request (including when a
+  /// [PopScope] blocks the pop) and `false` when every navigator bubbles.
+  /// Unlike [pop], this method does not throw when there is nothing to pop, and
+  /// unlike filtering on [NavigatorState.canPop] first, a leaf [PopScope] veto
+  /// is not skipped in favor of popping a parent navigator.
+  ///
+  /// Fallthrough happens only when a navigator returns `false` (bubble). After
+  /// a navigator returns `true` (popped or `doNotPop`), parents are not tried.
+  /// Unlike [popRoute], this method does not consult [GoRoute.onExit] for
+  /// app-exit behavior when nothing can pop.
+  Future<bool> maybePop<T extends Object?>([T? result]) async {
+    for (final NavigatorState state in _findCurrentNavigators()) {
+      if (!state.mounted) {
+        continue;
+      }
+      if (await state.maybePop<T>(result)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /// Get a prioritized list of NavigatorStates,
