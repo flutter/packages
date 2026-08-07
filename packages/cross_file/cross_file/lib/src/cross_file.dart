@@ -6,70 +6,17 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart' show immutable, internal;
+import 'package:flutter/foundation.dart' show immutable, internal, protected;
 
 import 'cross_entity.dart';
 
-// TODO: Ensure filesytem handles file:// and output consistently
-
 /// A reference to a local data resource.
-///
-/// ## Platform-Specific Features
-/// This class contains an underlying implementation provided by the current
-/// platform. Once a platform implementation is imported, the examples below
-/// can be followed to use features provided by a platform's implementation.
-///
-/// {@macro cross_file.XFile.fromCreationParams}
-///
-/// Below is an example of accessing the platform-specific extension for
-/// the dart:io implementation of `cross_file`:
-///
-/// ```dart
-/// final XFile file = XFile.fromUri(Uri.file('/my/file.txt'));
-///
-/// final IOXFileExtension? ioExtension = file.maybeGetExtension<IOXFileExtension>();
-/// if (ioExtension != null) {
-///   print(ioExtension.file.path);
-/// }
-/// ```
 @immutable
-base class XFile extends XEntity {
-  /// Constructs a [XFile].
-  ///
-  /// See [XFile.fromCreationParams] for setting parameters for a specific
-  /// platform.
-  XFile({required String uri}) : this.fromCreationParams(PlatformXFileCreationParams(uri: uri));
-
-  /// Constructs a [XFile] from a [Uri].
-  XFile.fromUri(Uri uri) : this(uri: uri.toString());
-
-  /// Constructs a [XFile] from a file path.
-  XFile.fromPath(String path) : this.fromUri(Uri.file(path));
-
-  /// Constructs a [XFile] from creation params for a specific platform.
-  ///
-  /// {@template cross_file.XFile.fromCreationParams}
-  /// Below is an example of setting platform-specific creation parameters for
-  /// the dart:io implementation of `cross_file`:
-  ///
-  /// ```dart
-  /// var params = const PlatformXFileCreationParams(uri: 'file:///my/file.txt');
-  ///
-  /// if (CrossFilePlatform.instance is CrossFileIO) {
-  ///   params = IOXFileCreationParams.fromCreationParams(
-  ///     params,
-  ///   );
-  /// }
-  ///
-  /// final file = XFile.fromCreationParams(params);
-  /// ```
-  /// {@endtemplate}
-  XFile.fromCreationParams(PlatformXFileCreationParams params)
-    : this.fromPlatform(PlatformXFile(params));
-
+abstract base class XFile extends XEntity {
   /// Constructs a [XFile] from a specific platform implementation.
   @internal
-  const XFile.fromPlatform(PlatformXFile super.platform);
+  @protected
+  const XFile(PlatformXFile super.platform);
 
   /// Implementation of [XFile] for the current platform.
   @internal
@@ -126,7 +73,4 @@ base class XFile extends XEntity {
   /// If the file is identified by a path, only the base name of the file will
   /// be included in the name.
   Future<String?> name() => platform.name();
-
-  @override
-  String toString() => platform.params.uri;
 }

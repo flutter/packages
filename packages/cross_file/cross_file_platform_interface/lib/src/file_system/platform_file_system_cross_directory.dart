@@ -70,7 +70,7 @@ base class PlatformFileSystemXDirectoryCreationParams extends PlatformXDirectory
 /// ```
 mixin PlatformFileSystemXDirectoryExtension implements PlatformXDirectoryExtension {}
 
-/// A reference to a directory (or folder) on the file system.
+/// Interface for a reference to a directory (or folder) on the file system.
 abstract base class PlatformFileSystemXDirectory extends PlatformXDirectory {
   /// Creates a new [PlatformFileSystemXDirectory]
   factory PlatformFileSystemXDirectory(PlatformFileSystemXDirectoryCreationParams params) {

@@ -5,7 +5,7 @@
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter/foundation.dart' show immutable, internal;
 
-import 'cross_directory.dart';
+import '../cross_directory.dart';
 
 /// A reference to a directory (or folder) on the file system within a devices
 /// scoped storage.
@@ -27,7 +27,7 @@ import 'cross_directory.dart';
 /// final ScopedStorageXDirectory directory = ScopedStorageXDirectory(uri: 'content://my/dir');
 ///
 /// final AndroidScopedStorageXDirectoryExtension? androidExtension =
-///     file.maybeGetExtension<AndroidScopedStorageXDirectoryExtension>();
+///     file.getExtension<AndroidScopedStorageXDirectoryExtension>();
 /// if (androidExtension != null) {
 ///   print(androidExtension.name());
 /// }
@@ -55,15 +55,21 @@ base class ScopedStorageXDirectory extends XDirectory {
   /// the Android implementation of `cross_file`:
   ///
   /// ```dart
-  /// var params = const PlatformScopedStorageXDirectoryCreationParams(uri: 'content://my/docs');
+  /// late final PlatformScopedStorageXDirectoryCreationParams params;
   ///
-  /// if (CrossFilePlatform.instance is CrossFileAndroid) {
-  ///   params = AndroidScopedStorageXDirectoryCreationParams.fromCreationParams(
-  ///     params,
-  ///   );
+  /// switch(CrossFile.implementation) {
+  ///   case CrossFileAndroid():
+  ///     params = PlatformScopedStorageXDirectoryCreationParams(
+  ///       uri: 'content://my/file.txt'
+  ///     );
+  ///   default:
+  ///     params = PlatformScopedStorageXFileCreationParams(
+  ///       uri: 'my/dir/'
+  ///     );
   /// }
   ///
-  /// final file = ScopedStorageXDirectory.fromCreationParams(params);
+  ///
+  /// final dir = ScopedStorageXDirectory.fromCreationParams(params);
   /// ```
   /// {@endtemplate}
   ScopedStorageXDirectory.fromCreationParams(PlatformScopedStorageXDirectoryCreationParams params)
@@ -72,8 +78,7 @@ base class ScopedStorageXDirectory extends XDirectory {
   /// Constructs a [ScopedStorageXDirectory] from a specific platform
   /// implementation.
   @internal
-  const ScopedStorageXDirectory.fromPlatform(PlatformScopedStorageXDirectory super.platform)
-    : super.fromPlatform();
+  const ScopedStorageXDirectory.fromPlatform(PlatformScopedStorageXDirectory super.platform);
 
   @internal
   @override

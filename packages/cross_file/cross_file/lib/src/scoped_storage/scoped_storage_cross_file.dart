@@ -5,7 +5,10 @@
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter/foundation.dart' show immutable, internal;
 
-import 'cross_file.dart';
+import '../cross_file.dart';
+
+// TODO: What is scoped storage? in readme. This plugin provides to implementaiton:
+// Filesystem vs scoped storage.
 
 /// A reference to a local data resource within a device's scoped storage.
 ///
@@ -26,7 +29,7 @@ import 'cross_file.dart';
 /// final ScopedStorageXFile file = ScopedStorageXFile(uri: 'content://my/file.txt');
 ///
 /// final AndroidScopedStorageXFileExtension? androidExtension =
-///     file.maybeGetExtension<AndroidScopedStorageXFileExtension>();
+///     file.getExtension<AndroidScopedStorageXFileExtension>();
 /// if (androidExtension != null) {
 ///   print(androidExtension.name());
 /// }
@@ -54,12 +57,21 @@ base class ScopedStorageXFile extends XFile {
   /// the Android implementation of `cross_file`:
   ///
   /// ```dart
-  /// var params = const PlatformScopedStorageXFileCreationParams(uri: 'content://my/file.txt');
+  /// late final PlatformScopedStorageCreationParams params;
   ///
-  /// if (CrossFilePlatform.instance is CrossFileAndroid) {
-  ///   params = AndroidScopedStorageXFileCreationParams.fromCreationParams(
-  ///     params,
-  ///   );
+  /// switch(CrossFile.implementation) {
+  ///   case CrossFileWeb():
+  ///     params = WebScopedStorageXFileCreationParams.fromObjectUrl(
+  ///       objectUrl: 'blob:https://some/url:for/file',
+  ///     );
+  ///   case CrossFileAndroid():
+  ///     params = PlatformScopedStorageXFileCreationParams(
+  ///       uri: 'content://my/file.txt'
+  ///     );
+  ///   default:
+  ///     params = PlatformScopedStorageXFileCreationParams(
+  ///       uri: 'my/file.txt'
+  ///     );
   /// }
   ///
   /// final file = ScopedStorageXFile.fromCreationParams(params);
@@ -70,8 +82,7 @@ base class ScopedStorageXFile extends XFile {
 
   /// Constructs a [ScopedStorageXFile] from a specific platform implementation.
   @internal
-  const ScopedStorageXFile.fromPlatform(PlatformScopedStorageXFile super.platform)
-    : super.fromPlatform();
+  const ScopedStorageXFile.fromPlatform(PlatformScopedStorageXFile super.platform);
 
   @internal
   @override

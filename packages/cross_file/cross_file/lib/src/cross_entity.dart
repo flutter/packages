@@ -9,8 +9,8 @@ import 'package:flutter/foundation.dart' show immutable, internal, protected;
 @immutable
 base class XEntity {
   /// Constructs a [XEntity].
-  @protected
   @internal
+  @protected
   const XEntity(this.platform);
 
   /// Implementation of [XEntity] for the current platform.
@@ -29,4 +29,7 @@ base class XEntity {
 
   /// Whether the resource represented by this reference exists.
   Future<bool> exists() => platform.exists();
+
+  @override
+  String toString() => platform.params.uri;
 }
