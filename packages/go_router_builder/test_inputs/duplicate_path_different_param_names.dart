@@ -5,24 +5,24 @@
 import 'package:go_router/go_router.dart';
 
 mixin $HomeRoute {}
-mixin $MealRoute {}
-mixin $DrinkRoute {}
+mixin $ProductRoute {}
+mixin $VariantRoute {}
 
 @TypedGoRoute<HomeRoute>(
   path: '/home',
   routes: <TypedGoRoute<GoRouteData>>[
-    TypedGoRoute<MealRoute>(path: 'item/:mealId'),
-    TypedGoRoute<DrinkRoute>(path: 'item/:drinkId'),
+    TypedGoRoute<ProductRoute>(path: 'item/:productId'),
+    TypedGoRoute<VariantRoute>(path: 'item/:variantId'),
   ],
 )
 class HomeRoute extends GoRouteData with $HomeRoute {}
 
-class MealRoute extends GoRouteData with $MealRoute {
-  const MealRoute({required this.mealId});
-  final String mealId;
+class ProductRoute extends GoRouteData with $ProductRoute {
+  const ProductRoute({required this.productId});
+  final String productId;
 }
 
-class DrinkRoute extends GoRouteData with $DrinkRoute {
-  const DrinkRoute({required this.drinkId});
-  final String drinkId;
+class VariantRoute extends GoRouteData with $VariantRoute {
+  const VariantRoute({required this.variantId});
+  final String variantId;
 }

@@ -48,8 +48,8 @@ Read more about using
 
 Sibling routes can end up matching the same URL pattern, either because their
 paths are identical or because they differ only in the name of a path parameter,
-such as `meal/:id` and `meal/:mealId`. The builder reports these as warnings by
-default.
+such as `product/:id` and `product/:productId`. The builder reports these as
+warnings by default.
 
 Warnings rather than errors, because a duplicate path is legal at runtime and is
 not always dead code. `go_router` tries sibling routes in declaration order and
