@@ -6,7 +6,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:file/file.dart';
-import 'package:file/local.dart';
 import 'package:io/io.dart' as io;
 import 'package:path/path.dart' as p;
 
@@ -52,7 +51,7 @@ class TestDartFixes extends PackageLoopingCommand {
     try {
       testDirectory = await _createTestDirectory(package);
     } catch (error) {
-      return PackageResult.fail(['Failed to create temporary test directory: $error}']);
+      return PackageResult.fail(['Failed to create temporary test directory: $error']);
     }
 
     late final PackageResult result;
@@ -63,7 +62,7 @@ class TestDartFixes extends PackageLoopingCommand {
       }
       result = PackageResult.success();
     } catch (error) {
-      result = PackageResult.fail(['Dart fix tests failed: $error}']);
+      result = PackageResult.fail(['Dart fix tests failed: $error']);
     }
     if (testDirectory.existsSync()) {
       await testDirectory.delete(recursive: true);
@@ -77,7 +76,7 @@ class TestDartFixes extends PackageLoopingCommand {
   /// It is the responsibility of the caller to delete this directory and its
   /// contents when done.
   static Future<Directory> _createTestDirectory(RepositoryPackage package) async {
-    const fileSystem = LocalFileSystem();
+    final FileSystem fileSystem = package.directory.fileSystem;
     final Directory testTempDirectory = await fileSystem.systemTempDirectory.createTemp();
 
     // Copy from `test_fixes/` to the temp directory.
@@ -110,12 +109,12 @@ dependencies:
   /// Run the dart fix tests for the package in the given temporary directory.
   ///
   /// Resolves with the status code of the command.
-  static Future<int> _runDartFixTests(RepositoryPackage package, Directory testDirectory) async {
+  Future<int> _runDartFixTests(RepositoryPackage package, Directory testDirectory) async {
     // Run dart pub get in the temp directory to set it up.
     final int pubGetStatusCode = await _runProcess('dart', <String>[
       'pub',
       'get',
-    ], workingDirectory: testDirectory.path);
+    ], workingDirectory: testDirectory);
 
     if (pubGetStatusCode != 0) {
       return pubGetStatusCode;
@@ -125,16 +124,16 @@ dependencies:
     return _runProcess('dart', <String>[
       'fix',
       '--compare-to-golden',
-    ], workingDirectory: testDirectory.path);
+    ], workingDirectory: testDirectory);
   }
 
-  static Future<int> _runProcess(
+  Future<int> _runProcess(
     String command,
     List<String> arguments, {
-    String? workingDirectory,
+    Directory? workingDirectory,
   }) async {
     final Process process = await _streamOutput(
-      Process.start(command, arguments, workingDirectory: workingDirectory),
+      processRunner.start(command, arguments, workingDirectory: workingDirectory),
     );
     return process.exitCode;
   }
