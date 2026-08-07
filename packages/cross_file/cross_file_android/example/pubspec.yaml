@@ -23,11 +23,16 @@ dependencies:
   mime: ^2.0.0
 
 dev_dependencies:
+  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_io` is released.
+  cross_file_io:
+    path: ../../../cross_file/cross_file_io
   espresso: ^0.4.0
   flutter_test:
     sdk: flutter
   integration_test:
     sdk: flutter
+  path: ^1.9.1
+  path_provider: ^2.1.6
 
 flutter:
   uses-material-design: true

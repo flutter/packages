@@ -4,6 +4,7 @@
 
 import 'dart:io';
 
+import 'package:cross_file_io/cross_file_io.dart';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
