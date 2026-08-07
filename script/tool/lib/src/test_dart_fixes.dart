@@ -2,42 +2,23 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+import 'dart:io';
+
 import 'package:file/file.dart';
+import 'package:file/local.dart';
+import 'package:io/io.dart' as io;
+import 'package:path/path.dart' as p;
 
-import 'common/core.dart';
 import 'common/file_filters.dart';
-import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
-import 'common/plugin_utils.dart';
-import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
-
-// TODO(justinmc): Possibly not relevant.
-const int _exitUnknownTestPlatform = 3;
-
-// TODO(justinmc): Possibly not relevant.
-enum _TestPlatform {
-  // Must run in the command-line VM.
-  vm,
-  // Must run in a browser.
-  browser,
-}
 
 /// A command to run dart fix tests for packages that have a test_fixes
 /// directory.
 class TestDartFixes extends PackageLoopingCommand {
   /// Creates an instance of the test dart fixes command.
-  TestDartFixes(super.packagesDir, {super.processRunner, super.platform, super.gitDir}) {
-    // TODO(justinmc): Possibly not relevant.
-    argParser.addOption(
-      _platformFlag,
-      help:
-          'Runs tests on the given platform instead of the default platform '
-          '("vm" in most cases, "chrome" for web plugin implementations).',
-    );
-  }
-
-  static const String _platformFlag = 'platform';
+  TestDartFixes(super.packagesDir, {super.processRunner, super.platform, super.gitDir});
 
   @override
   final String name = 'test-dart-fixes';
@@ -53,7 +34,6 @@ class TestDartFixes extends PackageLoopingCommand {
   @override
   PackageLoopingType get packageLoopingType => PackageLoopingType.includeAllSubpackages;
 
-  // TODO(justinmc): Revisit.
   @override
   bool shouldIgnoreFile(String path) {
     return isRepoLevelNonCodeImpactingFile(path) ||
@@ -63,143 +43,107 @@ class TestDartFixes extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    // TODO(justinmc): Should check for test_fix directory.
-    if (!package.testDirectory.existsSync()) {
-      return PackageResult.skip('No test/ directory.');
+    // Only run for packages that have a fix_tests directory.
+    if (!package.dartFixTestDirectory.existsSync()) {
+      return PackageResult.skip('No ${package.dartFixTestDirectory} directory.');
     }
 
-    return PackageResult.skip('Not yet implemented.');
-    // TODO(justinmc): See packages/go_router/tool/run_tests.dart.
-    String? platform = getNullableStringArg(_platformFlag);
+    // Create a temporary directory to run the tests in.
+    const fileSystem = LocalFileSystem();
+    final Directory testTempDir = await fileSystem.systemTempDirectory.createTemp();
 
-    // Skip running plugin tests for non-web-supporting plugins (or non-web
-    // federated plugin implementations) on web, since there's no reason to
-    // expect them to work.
-    final bool webPlatform = platform != null && platform != 'vm';
-    final explicitVMPlatform = platform == 'vm';
-    final bool isWebOnlyPluginImplementation =
-        pluginSupportsPlatform(platformWeb, package, requiredMode: PlatformSupport.inline) &&
-        package.directory.basename.endsWith('_web');
-    if (webPlatform) {
-      if (isFlutterPlugin(package) && !pluginSupportsPlatform(platformWeb, package)) {
-        return PackageResult.skip("Non-web plugin tests don't need web testing.");
+    late final PackageResult result;
+    try {
+      final int statusCode = await _runDartFixTests(package, testTempDir);
+      if (statusCode != 0) {
+        throw Exception('Status code $statusCode');
       }
-      if (_testOnTarget(package) == _TestPlatform.vm) {
-        // This explict skip is necessary because trying to run tests in a mode
-        // that the package has opted out of returns a non-zero exit code.
-        return PackageResult.skip('Package has opted out of non-vm testing.');
-      }
-    } else if (explicitVMPlatform) {
-      if (isWebOnlyPluginImplementation) {
-        return PackageResult.skip("Web plugin tests don't need vm testing.");
-      }
-      final _TestPlatform? target = _testOnTarget(package);
-      if (target != null && _testOnTarget(package) != _TestPlatform.vm) {
-        // This explict skip is necessary because trying to run tests in a mode
-        // that the package has opted out of returns a non-zero exit code.
-        return PackageResult.skip('Package has opted out of vm testing.');
-      }
-    } else if (platform == null && isWebOnlyPluginImplementation) {
-      // If no explicit mode is requested, run web plugin implementations in
-      // Chrome since their tests are not expected to work in vm mode. This
-      // allows easily running all unit tests locally, without having to run
-      // both modes.
-      platform = 'chrome';
+      result = PackageResult.success();
+    } catch (error) {
+      result = PackageResult.fail(['Dart fix tests failed: $error}']);
     }
-
-    // Whether to run web tests compiled to wasm.
-    final bool wasm = platform != 'vm' && getBoolArg(kWebWasmFlag);
-
-    bool passed;
-    if (package.requiresFlutter()) {
-      passed = await _runFlutterTests(package, platform: platform, wasm: wasm);
-    } else {
-      passed = await _runDartTests(package, platform: platform, wasm: wasm);
+    if (testTempDir.existsSync()) {
+      await testTempDir.delete(recursive: true);
     }
-    return passed ? PackageResult.success() : PackageResult.fail();
+    return result;
   }
 
-  /// Runs the Dart tests for a Flutter package, returning true on success.
-  Future<bool> _runFlutterTests(
-    RepositoryPackage package, {
-    String? platform,
-    bool wasm = false,
-  }) async {
-    final String experiment = getStringArg(kEnableExperiment);
-
-    final int exitCode = await processRunner.runAndStream(flutterCommand, <String>[
-      'test',
-      '--color',
-      if (experiment.isNotEmpty) '--enable-experiment=$experiment',
-      // Flutter defaults to VM mode (under a different name) and explicitly
-      // setting it is deprecated, so pass nothing in that case.
-      if (platform != null && platform != 'vm') '--platform=$platform',
-      if (wasm) '--wasm',
-    ], workingDir: package.directory);
-    return exitCode == 0;
-  }
-
-  /// Runs the Dart tests for a non-Flutter package, returning true on success.
-  Future<bool> _runDartTests(
-    RepositoryPackage package, {
-    String? platform,
-    bool wasm = false,
-  }) async {
-    // Unlike `flutter test`, `dart run test` does not automatically get
-    // packages
-    if (!await runPubGet(package, processRunner, super.platform)) {
-      printError('Unable to fetch dependencies.');
-      return false;
-    }
-
-    final String experiment = getStringArg(kEnableExperiment);
-
-    final int exitCode = await processRunner.runAndStream('dart', <String>[
-      'run',
-      if (experiment.isNotEmpty) '--enable-experiment=$experiment',
-      'test',
-      if (platform != null) '--platform=$platform',
-      if (wasm) '--compiler=dart2wasm',
-    ], workingDir: package.directory);
-
-    return exitCode == 0;
-  }
-
-  /// Returns the required test environment, or null if none is specified.
+  /// Run the dart fix tests for the package in the given temporary directory.
   ///
-  /// Throws if the target is not recognized.
-  _TestPlatform? _testOnTarget(RepositoryPackage package) {
-    final File testConfig = package.directory.childFile('dart_test.yaml');
-    if (!testConfig.existsSync()) {
-      return null;
+  /// Resolves with the status code of the command.
+  Future<int> _runDartFixTests(RepositoryPackage package, Directory testTempDir) async {
+    // Copy the test_fixes folder to the temporary testTempDir.
+    //
+    // This also creates the proper pubspec.yaml in the temp directory.
+    await _prepareTemplate(package: package, testTempDir: testTempDir);
+
+    // Run dart pub get in the temp directory to set it up.
+    final int pubGetStatusCode = await _runProcess('dart', <String>[
+      'pub',
+      'get',
+    ], workingDirectory: testTempDir.path);
+
+    if (pubGetStatusCode != 0) {
+      await testTempDir.delete(recursive: true);
+      return pubGetStatusCode;
     }
-    final testOnRegex = RegExp(r'^test_on:\s*([a-z].*[a-z])\s*$');
-    for (final String line in testConfig.readAsLinesSync()) {
-      final RegExpMatch? match = testOnRegex.firstMatch(line);
-      if (match != null) {
-        final String targetFilter = match.group(1)!;
-        // test_on lines can be very complex, but in pratice the packages in
-        // this repo currently only need the ability to require vm or not, so a
-        // simple one-target directive is all that's supported currently.
-        // Making it deliberately strict avoids the possibility of accidentally
-        // skipping vm coverage due to a complex expression that's not handled
-        // correctly.
-        switch (targetFilter) {
-          case 'vm':
-            return _TestPlatform.vm;
-          case 'browser':
-            return _TestPlatform.browser;
-          default:
-            printError(
-              'Unknown "test_on" value: "$targetFilter"\n'
-              "If this value needs to be supported for this package's tests, "
-              'please update the repository tooling to support more test_on '
-              'modes.',
-            );
-            throw ToolExit(_exitUnknownTestPlatform);
-        }
-      }
-    }
-    return null;
+
+    // Run dart fix --compare-to-golden in the temp directory.
+    final int dartFixStatusCode = await _runProcess('dart', <String>[
+      'fix',
+      '--compare-to-golden',
+    ], workingDirectory: testTempDir.path);
+
+    await testTempDir.delete(recursive: true);
+    return dartFixStatusCode;
+  }
+
+  Future<void> _prepareTemplate({
+    required RepositoryPackage package,
+    required Directory testTempDir,
+  }) async {
+    // Copy from src `test_fixes/` to the temp directory.
+    await io.copyPath(package.dartFixTestDirectory.path, testTempDir.path);
+
+    // The pubspec.yaml file to create.
+    const fileSystem = LocalFileSystem();
+    final File targetPubspecFile = fileSystem.file(p.join(testTempDir.path, 'pubspec.yaml'));
+
+    final targetYaml =
+        '''
+  name: test_fixes
+  publish_to: "none"
+  version: 1.0.0
+
+  environment:
+    sdk: ">=2.18.0 <4.0.0"
+    flutter: ">=3.3.0"
+
+  dependencies:
+    flutter:
+      sdk: flutter
+    ${package.directory.basename}:
+      path: ${package.directory.path}
+  ''';
+
+    await targetPubspecFile.writeAsString(targetYaml);
+  }
+
+  Future<int> _runProcess(
+    String command,
+    List<String> arguments, {
+    String? workingDirectory,
+  }) async {
+    final Process process = await _streamOutput(
+      Process.start(command, arguments, workingDirectory: workingDirectory),
+    );
+    return process.exitCode;
+  }
+
+  Future<Process> _streamOutput(Future<Process> processFuture) async {
+    final Process process = await processFuture;
+    unawaited(stdout.addStream(process.stdout));
+    unawaited(stderr.addStream(process.stderr));
+    return process;
   }
 }
