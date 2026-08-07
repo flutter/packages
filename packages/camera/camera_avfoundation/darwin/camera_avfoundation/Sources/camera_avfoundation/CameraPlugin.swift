@@ -379,11 +379,13 @@ extension CameraPlugin: CameraApi {
   }
 
   func startVideoRecording(
-    enableStream: Bool, completion: @escaping (Result<Void, any Error>) -> Void
+    enableStream: Bool, videoOutputPath: String?,
+    completion: @escaping (Result<Void, any Error>) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
       guard let strongSelf = self else { return }
       strongSelf.camera?.startVideoRecording(
+        videoOutputPath: videoOutputPath,
         completion: completion,
         messengerForStreaming: enableStream ? strongSelf.messenger : nil)
     }

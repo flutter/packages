@@ -80,4 +80,33 @@ public class RecorderTest {
 
     assertEquals(mockPendingRecording, api.prepareRecording(mockRecorder, "myFile.mp4"));
   }
+
+  @Test(expected = GeneratedCameraXLibrary.FlutterError.class)
+  public void prepareRecording_errorsOnDirectoryPath() {
+    final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
+    final Recorder mockRecorder = mock(Recorder.class);
+
+    // Pass a path that is a directory (e.g. root "/")
+    api.prepareRecording(mockRecorder, "/");
+  }
+
+  @Test(expected = GeneratedCameraXLibrary.FlutterError.class)
+  public void prepareRecording_errorsOnNonExistentParent() {
+    final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
+    final Recorder mockRecorder = mock(Recorder.class);
+
+    api.prepareRecording(mockRecorder, "/non/existent/parent/file.mp4");
+  }
+
+  @Test(expected = GeneratedCameraXLibrary.FlutterError.class)
+  public void prepareRecording_errorsOnInvalidExtension() {
+    final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
+    final Recorder mockRecorder = mock(Recorder.class);
+
+    // A path that has an invalid extension, but whose parent exists (we can just use an empty
+    // parent or relative path if needed, but since it checks parent existence, let's use a known
+    // valid parent like current directory, or mock it. Actually, `new
+    // File("file.txt").getParentFile()` is null, which bypasses the parent existence check!)
+    api.prepareRecording(mockRecorder, "file.txt");
+  }
 }

@@ -501,6 +501,43 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path) {
                            "disposed and reinitialized.");
   }
 
+  if (!file_path.empty()) {
+    std::wstring wpath = Utf16FromUtf8(file_path);
+    DWORD dwAttrib = GetFileAttributesW(wpath.c_str());
+    if (dwAttrib != INVALID_FILE_ATTRIBUTES &&
+        (dwAttrib & FILE_ATTRIBUTE_DIRECTORY)) {
+      return OnRecordStarted(CameraResult::kError,
+                             "The output path is a directory.");
+    }
+
+    size_t last_slash = file_path.find_last_of("\\/");
+    if (last_slash != std::string::npos) {
+      std::string parent_path = file_path.substr(0, last_slash);
+      if (!parent_path.empty()) {
+        DWORD dwParentAttrib =
+            GetFileAttributesW(Utf16FromUtf8(parent_path).c_str());
+        if (dwParentAttrib == INVALID_FILE_ATTRIBUTES ||
+            !(dwParentAttrib & FILE_ATTRIBUTE_DIRECTORY)) {
+          return OnRecordStarted(CameraResult::kError,
+                                 "The parent directory does not exist.");
+        }
+      }
+    }
+
+    size_t last_dot = file_path.find_last_of(".");
+    if (last_dot == std::string::npos ||
+        (last_slash != std::string::npos && last_dot < last_slash)) {
+      return OnRecordStarted(CameraResult::kError,
+                             "The output path has no extension.");
+    }
+    std::string ext = file_path.substr(last_dot);
+    for (auto& c : ext) c = (char)tolower(c);
+    if (ext != ".mp4") {
+      return OnRecordStarted(CameraResult::kError,
+                             "Invalid video extension. Supported: .mp4");
+    }
+  }
+
   HRESULT hr = S_OK;
 
   if (!base_capture_media_type_) {

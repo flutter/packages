@@ -58,6 +58,21 @@ Camera errors can be listened using the platform's `onCameraError` method.
 Listening to errors is important, and in certain situations,
 disposing of the camera is the only way to reset the situation.
 
+## Custom Video Recording Path
+
+Ensure you use the [path_provider](https://pub.dev/packages/path_provider) package to resolve a valid system path (such as `getApplicationDocumentsDirectory()` or `getApplicationSupportDirectory()`). This helps avoid OS permission issues (`Access Denied`) when writing files directly to protected directories like the root drive.
+
+```dart
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+
+final directory = await getApplicationDocumentsDirectory();
+final videoPath = p.join(directory.path, 'my_video.mp4');
+
+await controller.startVideoRecording(videoOutputPath: videoPath);
+```
+
+
 <!-- Links -->
 
 [camera]: https://pub.dev/packages/camera

@@ -1,3 +1,7 @@
+## 0.7.5
+
+* Adds support for custom video output path in video recording.
+
 ## 0.7.4+4
 
 * Fix `NullPointerException` when disposing camera during active video recording.
