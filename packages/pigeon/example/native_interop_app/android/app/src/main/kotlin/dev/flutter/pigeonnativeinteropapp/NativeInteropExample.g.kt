@@ -46,12 +46,12 @@ val NativeInteropExampleApiInstances: MutableMap<String, NativeInteropExampleApi
     mutableMapOf()
 
 @Keep
-abstract class NativeInteropExampleApi {
-  abstract fun doSomething()
+interface NativeInteropExampleApi {
+  fun doSomething()
 }
 
 @Keep
-class NativeInteropExampleApiRegistrar : NativeInteropExampleApi() {
+class NativeInteropExampleApiRegistrar : NativeInteropExampleApi {
   private var api: NativeInteropExampleApi? = null
 
   fun register(

@@ -231,6 +231,1764 @@ extension type NativeInteropHostIntegrationCoreApi._(jni$_.JObject _$this)
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<NativeInteropHostIntegrationCoreApi> type =
       $NativeInteropHostIntegrationCoreApi$Type$();
+
+  /// Maps a specific port to the implemented interface.
+  static final core$_.Map<core$_.int, $NativeInteropHostIntegrationCoreApi> _$impls = {};
+  static jni$_.JObjectPtr _$invoke(
+    core$_.int port,
+    jni$_.JObjectPtr descriptor,
+    jni$_.JObjectPtr args,
+  ) {
+    return _$invokeMethod(
+      port,
+      jni$_.MethodInvocation.fromAddresses(0, descriptor.address, args.address),
+    );
+  }
+
+  static final jni$_.Pointer<
+    jni$_.NativeFunction<jni$_.JObjectPtr Function(jni$_.Int64, jni$_.JObjectPtr, jni$_.JObjectPtr)>
+  >
+  _$invokePointer = jni$_.Pointer.fromFunction(_$invoke);
+
+  static jni$_.Pointer<jni$_.Void> _$invokeMethod(core$_.int $p, jni$_.MethodInvocation $i) {
+    try {
+      final $d = $i.methodDescriptor.toDartString(releaseOriginal: true);
+      final $a = $i.args;
+      if ($d == r'noop()V') {
+        _$impls[$p]!.noop();
+        return jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAllTypes(Lcom/example/test_plugin/NativeInteropAllTypes;)Lcom/example/test_plugin/NativeInteropAllTypes;') {
+        final $r = _$impls[$p]!.echoAllTypes(($a![0] as NativeInteropAllTypes));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'throwError()Ljava/lang/Object;') {
+        final $r = _$impls[$p]!.throwError();
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'throwErrorFromVoid()V') {
+        _$impls[$p]!.throwErrorFromVoid();
+        return jni$_.nullptr;
+      }
+      if ($d == r'throwFlutterError()Ljava/lang/Object;') {
+        final $r = _$impls[$p]!.throwFlutterError();
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoInt(J)J') {
+        final $r = _$impls[$p]!.echoInt(($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true));
+        return $r.toJLong().reference.toPointer();
+      }
+      if ($d == r'echoDouble(D)D') {
+        final $r = _$impls[$p]!.echoDouble(
+          ($a![0] as jni$_.JDouble).toDartDouble(releaseOriginal: true),
+        );
+        return $r.toJDouble().reference.toPointer();
+      }
+      if ($d == r'echoBool(Z)Z') {
+        final $r = _$impls[$p]!.echoBool(
+          ($a![0] as jni$_.JBoolean).toDartBool(releaseOriginal: true),
+        );
+        return $r.toJBoolean().reference.toPointer();
+      }
+      if ($d == r'echoString(Ljava/lang/String;)Ljava/lang/String;') {
+        final $r = _$impls[$p]!.echoString(($a![0] as jni$_.JString));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoUint8List([B)[B') {
+        final $r = _$impls[$p]!.echoUint8List(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoInt32List([I)[I') {
+        final $r = _$impls[$p]!.echoInt32List(($a![0] as jni$_.JIntArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoInt64List([J)[J') {
+        final $r = _$impls[$p]!.echoInt64List(($a![0] as jni$_.JLongArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoFloat64List([D)[D') {
+        final $r = _$impls[$p]!.echoFloat64List(($a![0] as jni$_.JDoubleArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoObject(Ljava/lang/Object;)Ljava/lang/Object;') {
+        final $r = _$impls[$p]!.echoObject(($a![0] as jni$_.JObject));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.echoList(($a![0] as jni$_.JList<jni$_.JObject?>));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoStringList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.echoStringList(($a![0] as jni$_.JList<jni$_.JString?>));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoIntList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.echoIntList(($a![0] as jni$_.JList<jni$_.JLong?>));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoDoubleList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.echoDoubleList(($a![0] as jni$_.JList<jni$_.JDouble?>));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoBoolList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.echoBoolList(($a![0] as jni$_.JList<jni$_.JBoolean?>));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoEnumList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.echoEnumList(($a![0] as jni$_.JList<NativeInteropAnEnum?>));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoClassList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.echoClassList(
+          ($a![0] as jni$_.JList<NativeInteropAllNullableTypes?>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNonNullEnumList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.echoNonNullEnumList(($a![0] as jni$_.JList<NativeInteropAnEnum>));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNonNullClassList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.echoNonNullClassList(
+          ($a![0] as jni$_.JList<NativeInteropAllNullableTypes>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoMap(($a![0] as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoStringMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoStringMap(
+          ($a![0] as jni$_.JMap<jni$_.JString?, jni$_.JString?>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoIntMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoIntMap(($a![0] as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoEnumMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoEnumMap(
+          ($a![0] as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoClassMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoClassMap(
+          ($a![0] as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNonNullStringMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoNonNullStringMap(
+          ($a![0] as jni$_.JMap<jni$_.JString, jni$_.JString>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNonNullIntMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoNonNullIntMap(($a![0] as jni$_.JMap<jni$_.JLong, jni$_.JLong>));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNonNullEnumMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoNonNullEnumMap(
+          ($a![0] as jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNonNullClassMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoNonNullClassMap(
+          ($a![0] as jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoClassWrapper(Lcom/example/test_plugin/NativeInteropAllClassesWrapper;)Lcom/example/test_plugin/NativeInteropAllClassesWrapper;') {
+        final $r = _$impls[$p]!.echoClassWrapper(($a![0] as NativeInteropAllClassesWrapper));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoEnum(Lcom/example/test_plugin/NativeInteropAnEnum;)Lcom/example/test_plugin/NativeInteropAnEnum;') {
+        final $r = _$impls[$p]!.echoEnum(($a![0] as NativeInteropAnEnum));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAnotherEnum(Lcom/example/test_plugin/NativeInteropAnotherEnum;)Lcom/example/test_plugin/NativeInteropAnotherEnum;') {
+        final $r = _$impls[$p]!.echoAnotherEnum(($a![0] as NativeInteropAnotherEnum));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNamedDefaultString(Ljava/lang/String;)Ljava/lang/String;') {
+        final $r = _$impls[$p]!.echoNamedDefaultString(($a![0] as jni$_.JString));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoOptionalDefaultDouble(D)D') {
+        final $r = _$impls[$p]!.echoOptionalDefaultDouble(
+          ($a![0] as jni$_.JDouble).toDartDouble(releaseOriginal: true),
+        );
+        return $r.toJDouble().reference.toPointer();
+      }
+      if ($d == r'echoRequiredInt(J)J') {
+        final $r = _$impls[$p]!.echoRequiredInt(
+          ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
+        );
+        return $r.toJLong().reference.toPointer();
+      }
+      if ($d ==
+          r'echoAllNullableTypes(Lcom/example/test_plugin/NativeInteropAllNullableTypes;)Lcom/example/test_plugin/NativeInteropAllNullableTypes;') {
+        final $r = _$impls[$p]!.echoAllNullableTypes(($a![0] as NativeInteropAllNullableTypes?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAllNullableTypesWithoutRecursion(Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;)Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;') {
+        final $r = _$impls[$p]!.echoAllNullableTypesWithoutRecursion(
+          ($a![0] as NativeInteropAllNullableTypesWithoutRecursion?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'extractNestedNullableString(Lcom/example/test_plugin/NativeInteropAllClassesWrapper;)Ljava/lang/String;') {
+        final $r = _$impls[$p]!.extractNestedNullableString(
+          ($a![0] as NativeInteropAllClassesWrapper),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'createNestedNullableString(Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropAllClassesWrapper;') {
+        final $r = _$impls[$p]!.createNestedNullableString(($a![0] as jni$_.JString?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'sendMultipleNullableTypes(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropAllNullableTypes;') {
+        final $r = _$impls[$p]!.sendMultipleNullableTypes(
+          ($a![0] as jni$_.JBoolean?),
+          ($a![1] as jni$_.JLong?),
+          ($a![2] as jni$_.JString?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'sendMultipleNullableTypesWithoutRecursion(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;') {
+        final $r = _$impls[$p]!.sendMultipleNullableTypesWithoutRecursion(
+          ($a![0] as jni$_.JBoolean?),
+          ($a![1] as jni$_.JLong?),
+          ($a![2] as jni$_.JString?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableInt(Ljava/lang/Long;)Ljava/lang/Long;') {
+        final $r = _$impls[$p]!.echoNullableInt(($a![0] as jni$_.JLong?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableDouble(Ljava/lang/Double;)Ljava/lang/Double;') {
+        final $r = _$impls[$p]!.echoNullableDouble(($a![0] as jni$_.JDouble?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableBool(Ljava/lang/Boolean;)Ljava/lang/Boolean;') {
+        final $r = _$impls[$p]!.echoNullableBool(($a![0] as jni$_.JBoolean?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableString(Ljava/lang/String;)Ljava/lang/String;') {
+        final $r = _$impls[$p]!.echoNullableString(($a![0] as jni$_.JString?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableUint8List([B)[B') {
+        final $r = _$impls[$p]!.echoNullableUint8List(($a![0] as jni$_.JByteArray?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableInt32List([I)[I') {
+        final $r = _$impls[$p]!.echoNullableInt32List(($a![0] as jni$_.JIntArray?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableInt64List([J)[J') {
+        final $r = _$impls[$p]!.echoNullableInt64List(($a![0] as jni$_.JLongArray?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableFloat64List([D)[D') {
+        final $r = _$impls[$p]!.echoNullableFloat64List(($a![0] as jni$_.JDoubleArray?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableObject(Ljava/lang/Object;)Ljava/lang/Object;') {
+        final $r = _$impls[$p]!.echoNullableObject(($a![0] as jni$_.JObject?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.echoNullableList(($a![0] as jni$_.JList<jni$_.JObject?>?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableEnumList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.echoNullableEnumList(
+          ($a![0] as jni$_.JList<NativeInteropAnEnum?>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableClassList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.echoNullableClassList(
+          ($a![0] as jni$_.JList<NativeInteropAllNullableTypes?>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullEnumList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.echoNullableNonNullEnumList(
+          ($a![0] as jni$_.JList<NativeInteropAnEnum>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullClassList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.echoNullableNonNullClassList(
+          ($a![0] as jni$_.JList<NativeInteropAllNullableTypes>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoNullableMap(
+          ($a![0] as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableStringMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoNullableStringMap(
+          ($a![0] as jni$_.JMap<jni$_.JString?, jni$_.JString?>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableIntMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoNullableIntMap(
+          ($a![0] as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableEnumMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoNullableEnumMap(
+          ($a![0] as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableClassMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoNullableClassMap(
+          ($a![0] as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullStringMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoNullableNonNullStringMap(
+          ($a![0] as jni$_.JMap<jni$_.JString, jni$_.JString>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullIntMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoNullableNonNullIntMap(
+          ($a![0] as jni$_.JMap<jni$_.JLong, jni$_.JLong>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullEnumMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoNullableNonNullEnumMap(
+          ($a![0] as jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullClassMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.echoNullableNonNullClassMap(
+          ($a![0] as jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoNullableEnum(Lcom/example/test_plugin/NativeInteropAnEnum;)Lcom/example/test_plugin/NativeInteropAnEnum;') {
+        final $r = _$impls[$p]!.echoNullableEnum(($a![0] as NativeInteropAnEnum?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAnotherNullableEnum(Lcom/example/test_plugin/NativeInteropAnotherEnum;)Lcom/example/test_plugin/NativeInteropAnotherEnum;') {
+        final $r = _$impls[$p]!.echoAnotherNullableEnum(($a![0] as NativeInteropAnotherEnum?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoOptionalNullableInt(Ljava/lang/Long;)Ljava/lang/Long;') {
+        final $r = _$impls[$p]!.echoOptionalNullableInt(($a![0] as jni$_.JLong?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNamedNullableString(Ljava/lang/String;)Ljava/lang/String;') {
+        final $r = _$impls[$p]!.echoNamedNullableString(($a![0] as jni$_.JString?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'noopAsync(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![0] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithVoidFuture(_$impls[$p]!.noopAsync());
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncInt(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncInt(($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncDouble(DLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncDouble(
+            ($a![0] as jni$_.JDouble).toDartDouble(releaseOriginal: true),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncBool(ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncBool(($a![0] as jni$_.JBoolean).toDartBool(releaseOriginal: true)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncString(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncString(($a![0] as jni$_.JString)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncUint8List([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncUint8List(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncInt32List([ILkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncInt32List(($a![0] as jni$_.JIntArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncInt64List([JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncInt64List(($a![0] as jni$_.JLongArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncFloat64List([DLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncFloat64List(($a![0] as jni$_.JDoubleArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncObject(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncObject(($a![0] as jni$_.JObject)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncList(($a![0] as jni$_.JList<jni$_.JObject?>)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncEnumList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncEnumList(($a![0] as jni$_.JList<NativeInteropAnEnum?>)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncClassList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncClassList(($a![0] as jni$_.JList<NativeInteropAllNullableTypes?>)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncMap(($a![0] as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncStringMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncStringMap(($a![0] as jni$_.JMap<jni$_.JString?, jni$_.JString?>)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncIntMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncIntMap(($a![0] as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncEnumMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncEnumMap(
+            ($a![0] as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncClassMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncClassMap(
+            ($a![0] as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncEnum(Lcom/example/test_plugin/NativeInteropAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncEnum(($a![0] as NativeInteropAnEnum)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAnotherAsyncEnum(Lcom/example/test_plugin/NativeInteropAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAnotherAsyncEnum(($a![0] as NativeInteropAnotherEnum)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'throwAsyncError(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![0] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.throwAsyncError());
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'throwAsyncErrorFromVoid(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![0] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithVoidFuture(_$impls[$p]!.throwAsyncErrorFromVoid());
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'throwAsyncFlutterError(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![0] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.throwAsyncFlutterError());
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNativeInteropAllTypes(Lcom/example/test_plugin/NativeInteropAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNativeInteropAllTypes(($a![0] as NativeInteropAllTypes)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableNativeInteropAllNullableTypes(Lcom/example/test_plugin/NativeInteropAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNullableNativeInteropAllNullableTypes(
+            ($a![0] as NativeInteropAllNullableTypes?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+            ($a![0] as NativeInteropAllNullableTypesWithoutRecursion?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableInt(Ljava/lang/Long;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableInt(($a![0] as jni$_.JLong?)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableDouble(Ljava/lang/Double;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableDouble(($a![0] as jni$_.JDouble?)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableBool(Ljava/lang/Boolean;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableBool(($a![0] as jni$_.JBoolean?)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableString(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableString(($a![0] as jni$_.JString?)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableUint8List([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableUint8List(($a![0] as jni$_.JByteArray?)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableInt32List([ILkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableInt32List(($a![0] as jni$_.JIntArray?)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableInt64List([JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableInt64List(($a![0] as jni$_.JLongArray?)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableFloat64List([DLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNullableFloat64List(($a![0] as jni$_.JDoubleArray?)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableObject(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableObject(($a![0] as jni$_.JObject?)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNullableList(($a![0] as jni$_.JList<jni$_.JObject?>?)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableEnumList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNullableEnumList(($a![0] as jni$_.JList<NativeInteropAnEnum?>?)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableClassList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNullableClassList(
+            ($a![0] as jni$_.JList<NativeInteropAllNullableTypes?>?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNullableMap(
+            ($a![0] as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableStringMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNullableStringMap(
+            ($a![0] as jni$_.JMap<jni$_.JString?, jni$_.JString?>?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableIntMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNullableIntMap(($a![0] as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableEnumMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNullableEnumMap(
+            ($a![0] as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableClassMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNullableClassMap(
+            ($a![0] as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableEnum(Lcom/example/test_plugin/NativeInteropAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableEnum(($a![0] as NativeInteropAnEnum?)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAnotherAsyncNullableEnum(Lcom/example/test_plugin/NativeInteropAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAnotherAsyncNullableEnum(($a![0] as NativeInteropAnotherEnum?)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterNoop()V') {
+        _$impls[$p]!.callFlutterNoop();
+        return jni$_.nullptr;
+      }
+      if ($d == r'callFlutterThrowError()Ljava/lang/Object;') {
+        final $r = _$impls[$p]!.callFlutterThrowError();
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterThrowErrorFromVoid()V') {
+        _$impls[$p]!.callFlutterThrowErrorFromVoid();
+        return jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoNativeInteropAllTypes(Lcom/example/test_plugin/NativeInteropAllTypes;)Lcom/example/test_plugin/NativeInteropAllTypes;') {
+        final $r = _$impls[$p]!.callFlutterEchoNativeInteropAllTypes(
+          ($a![0] as NativeInteropAllTypes),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoNativeInteropAllNullableTypes(Lcom/example/test_plugin/NativeInteropAllNullableTypes;)Lcom/example/test_plugin/NativeInteropAllNullableTypes;') {
+        final $r = _$impls[$p]!.callFlutterEchoNativeInteropAllNullableTypes(
+          ($a![0] as NativeInteropAllNullableTypes?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterSendMultipleNullableTypes(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropAllNullableTypes;') {
+        final $r = _$impls[$p]!.callFlutterSendMultipleNullableTypes(
+          ($a![0] as jni$_.JBoolean?),
+          ($a![1] as jni$_.JLong?),
+          ($a![2] as jni$_.JString?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;)Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;') {
+        final $r = _$impls[$p]!.callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
+          ($a![0] as NativeInteropAllNullableTypesWithoutRecursion?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterSendMultipleNullableTypesWithoutRecursion(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;') {
+        final $r = _$impls[$p]!.callFlutterSendMultipleNullableTypesWithoutRecursion(
+          ($a![0] as jni$_.JBoolean?),
+          ($a![1] as jni$_.JLong?),
+          ($a![2] as jni$_.JString?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoBool(Z)Z') {
+        final $r = _$impls[$p]!.callFlutterEchoBool(
+          ($a![0] as jni$_.JBoolean).toDartBool(releaseOriginal: true),
+        );
+        return $r.toJBoolean().reference.toPointer();
+      }
+      if ($d == r'callFlutterEchoInt(J)J') {
+        final $r = _$impls[$p]!.callFlutterEchoInt(
+          ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
+        );
+        return $r.toJLong().reference.toPointer();
+      }
+      if ($d == r'callFlutterEchoDouble(D)D') {
+        final $r = _$impls[$p]!.callFlutterEchoDouble(
+          ($a![0] as jni$_.JDouble).toDartDouble(releaseOriginal: true),
+        );
+        return $r.toJDouble().reference.toPointer();
+      }
+      if ($d == r'callFlutterEchoString(Ljava/lang/String;)Ljava/lang/String;') {
+        final $r = _$impls[$p]!.callFlutterEchoString(($a![0] as jni$_.JString));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoUint8List([B)[B') {
+        final $r = _$impls[$p]!.callFlutterEchoUint8List(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoInt32List([I)[I') {
+        final $r = _$impls[$p]!.callFlutterEchoInt32List(($a![0] as jni$_.JIntArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoInt64List([J)[J') {
+        final $r = _$impls[$p]!.callFlutterEchoInt64List(($a![0] as jni$_.JLongArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoFloat64List([D)[D') {
+        final $r = _$impls[$p]!.callFlutterEchoFloat64List(($a![0] as jni$_.JDoubleArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.callFlutterEchoList(($a![0] as jni$_.JList<jni$_.JObject?>));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoEnumList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.callFlutterEchoEnumList(
+          ($a![0] as jni$_.JList<NativeInteropAnEnum?>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoClassList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.callFlutterEchoClassList(
+          ($a![0] as jni$_.JList<NativeInteropAllNullableTypes?>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNonNullEnumList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.callFlutterEchoNonNullEnumList(
+          ($a![0] as jni$_.JList<NativeInteropAnEnum>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNonNullClassList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.callFlutterEchoNonNullClassList(
+          ($a![0] as jni$_.JList<NativeInteropAllNullableTypes>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoMap(
+          ($a![0] as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoStringMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoStringMap(
+          ($a![0] as jni$_.JMap<jni$_.JString?, jni$_.JString?>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoIntMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoIntMap(
+          ($a![0] as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoEnumMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoEnumMap(
+          ($a![0] as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoClassMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoClassMap(
+          ($a![0] as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNonNullStringMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoNonNullStringMap(
+          ($a![0] as jni$_.JMap<jni$_.JString, jni$_.JString>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNonNullIntMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoNonNullIntMap(
+          ($a![0] as jni$_.JMap<jni$_.JLong, jni$_.JLong>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNonNullEnumMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoNonNullEnumMap(
+          ($a![0] as jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNonNullClassMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoNonNullClassMap(
+          ($a![0] as jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoEnum(Lcom/example/test_plugin/NativeInteropAnEnum;)Lcom/example/test_plugin/NativeInteropAnEnum;') {
+        final $r = _$impls[$p]!.callFlutterEchoEnum(($a![0] as NativeInteropAnEnum));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoNativeInteropAnotherEnum(Lcom/example/test_plugin/NativeInteropAnotherEnum;)Lcom/example/test_plugin/NativeInteropAnotherEnum;') {
+        final $r = _$impls[$p]!.callFlutterEchoNativeInteropAnotherEnum(
+          ($a![0] as NativeInteropAnotherEnum),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableBool(Ljava/lang/Boolean;)Ljava/lang/Boolean;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableBool(($a![0] as jni$_.JBoolean?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableInt(Ljava/lang/Long;)Ljava/lang/Long;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableInt(($a![0] as jni$_.JLong?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableDouble(Ljava/lang/Double;)Ljava/lang/Double;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableDouble(($a![0] as jni$_.JDouble?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableString(Ljava/lang/String;)Ljava/lang/String;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableString(($a![0] as jni$_.JString?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableUint8List([B)[B') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableUint8List(($a![0] as jni$_.JByteArray?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableInt32List([I)[I') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableInt32List(($a![0] as jni$_.JIntArray?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableInt64List([J)[J') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableInt64List(($a![0] as jni$_.JLongArray?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableFloat64List([D)[D') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableFloat64List(($a![0] as jni$_.JDoubleArray?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableList(
+          ($a![0] as jni$_.JList<jni$_.JObject?>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableEnumList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableEnumList(
+          ($a![0] as jni$_.JList<NativeInteropAnEnum?>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableClassList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableClassList(
+          ($a![0] as jni$_.JList<NativeInteropAllNullableTypes?>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableNonNullEnumList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableNonNullEnumList(
+          ($a![0] as jni$_.JList<NativeInteropAnEnum>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableNonNullClassList(Ljava/util/List;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableNonNullClassList(
+          ($a![0] as jni$_.JList<NativeInteropAllNullableTypes>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableMap(
+          ($a![0] as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableStringMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableStringMap(
+          ($a![0] as jni$_.JMap<jni$_.JString?, jni$_.JString?>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableIntMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableIntMap(
+          ($a![0] as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableEnumMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableEnumMap(
+          ($a![0] as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableClassMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableClassMap(
+          ($a![0] as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableNonNullStringMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableNonNullStringMap(
+          ($a![0] as jni$_.JMap<jni$_.JString, jni$_.JString>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableNonNullIntMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableNonNullIntMap(
+          ($a![0] as jni$_.JMap<jni$_.JLong, jni$_.JLong>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableNonNullEnumMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableNonNullEnumMap(
+          ($a![0] as jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoNullableNonNullClassMap(Ljava/util/Map;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableNonNullClassMap(
+          ($a![0] as jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoNullableEnum(Lcom/example/test_plugin/NativeInteropAnEnum;)Lcom/example/test_plugin/NativeInteropAnEnum;') {
+        final $r = _$impls[$p]!.callFlutterEchoNullableEnum(($a![0] as NativeInteropAnEnum?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAnotherNullableEnum(Lcom/example/test_plugin/NativeInteropAnotherEnum;)Lcom/example/test_plugin/NativeInteropAnotherEnum;') {
+        final $r = _$impls[$p]!.callFlutterEchoAnotherNullableEnum(
+          ($a![0] as NativeInteropAnotherEnum?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterNoopAsync(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![0] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithVoidFuture(_$impls[$p]!.callFlutterNoopAsync());
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNativeInteropAllTypes(Lcom/example/test_plugin/NativeInteropAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNativeInteropAllTypes(($a![0] as NativeInteropAllTypes)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(Lcom/example/test_plugin/NativeInteropAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
+            ($a![0] as NativeInteropAllNullableTypes?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+            ($a![0] as NativeInteropAllNullableTypesWithoutRecursion?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoAsyncBool(ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncBool(
+            ($a![0] as jni$_.JBoolean).toDartBool(releaseOriginal: true),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'callFlutterEchoAsyncInt(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncInt(
+            ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncDouble(DLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncDouble(
+            ($a![0] as jni$_.JDouble).toDartDouble(releaseOriginal: true),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncString(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.callFlutterEchoAsyncString(($a![0] as jni$_.JString)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncUint8List([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncUint8List(($a![0] as jni$_.JByteArray)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncInt32List([ILkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.callFlutterEchoAsyncInt32List(($a![0] as jni$_.JIntArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncInt64List([JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncInt64List(($a![0] as jni$_.JLongArray)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncFloat64List([DLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncFloat64List(($a![0] as jni$_.JDoubleArray)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncObject(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.callFlutterEchoAsyncObject(($a![0] as jni$_.JObject)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncList(($a![0] as jni$_.JList<jni$_.JObject?>)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncEnumList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncEnumList(($a![0] as jni$_.JList<NativeInteropAnEnum?>)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncClassList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncClassList(
+            ($a![0] as jni$_.JList<NativeInteropAllNullableTypes?>),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNonNullEnumList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNonNullEnumList(
+            ($a![0] as jni$_.JList<NativeInteropAnEnum?>),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNonNullClassList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNonNullClassList(
+            ($a![0] as jni$_.JList<NativeInteropAllNullableTypes?>),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncMap(
+            ($a![0] as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncStringMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncStringMap(
+            ($a![0] as jni$_.JMap<jni$_.JString?, jni$_.JString?>),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncIntMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncIntMap(
+            ($a![0] as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncEnumMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncEnumMap(
+            ($a![0] as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncClassMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncClassMap(
+            ($a![0] as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncEnum(Lcom/example/test_plugin/NativeInteropAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.callFlutterEchoAsyncEnum(($a![0] as NativeInteropAnEnum)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAnotherAsyncEnum(Lcom/example/test_plugin/NativeInteropAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAnotherAsyncEnum(($a![0] as NativeInteropAnotherEnum)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableBool(Ljava/lang/Boolean;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableBool(($a![0] as jni$_.JBoolean?)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableInt(Ljava/lang/Long;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.callFlutterEchoAsyncNullableInt(($a![0] as jni$_.JLong?)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableDouble(Ljava/lang/Double;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableDouble(($a![0] as jni$_.JDouble?)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableString(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableString(($a![0] as jni$_.JString?)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableUint8List([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableUint8List(($a![0] as jni$_.JByteArray?)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableInt32List([ILkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableInt32List(($a![0] as jni$_.JIntArray?)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableInt64List([JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableInt64List(($a![0] as jni$_.JLongArray?)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableFloat64List([DLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableFloat64List(($a![0] as jni$_.JDoubleArray?)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterThrowFlutterErrorAsync(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![0] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.callFlutterThrowFlutterErrorAsync());
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableObject(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableObject(($a![0] as jni$_.JObject?)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableList(($a![0] as jni$_.JList<jni$_.JObject?>?)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableEnumList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableEnumList(
+            ($a![0] as jni$_.JList<NativeInteropAnEnum?>?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableClassList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableClassList(
+            ($a![0] as jni$_.JList<NativeInteropAllNullableTypes?>?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableNonNullEnumList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableNonNullEnumList(
+            ($a![0] as jni$_.JList<NativeInteropAnEnum?>?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableNonNullClassList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableNonNullClassList(
+            ($a![0] as jni$_.JList<NativeInteropAllNullableTypes?>?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableMap(
+            ($a![0] as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableStringMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableStringMap(
+            ($a![0] as jni$_.JMap<jni$_.JString?, jni$_.JString?>?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableIntMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableIntMap(
+            ($a![0] as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableEnumMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableEnumMap(
+            ($a![0] as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableClassMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableClassMap(
+            ($a![0] as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAsyncNullableEnum(Lcom/example/test_plugin/NativeInteropAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAsyncNullableEnum(($a![0] as NativeInteropAnEnum?)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'callFlutterEchoAnotherAsyncNullableEnum(Lcom/example/test_plugin/NativeInteropAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.callFlutterEchoAnotherAsyncNullableEnum(
+            ($a![0] as NativeInteropAnotherEnum?),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'defaultIsMainThread()Z') {
+        final $r = _$impls[$p]!.defaultIsMainThread();
+        return $r.toJBoolean().reference.toPointer();
+      }
+      if ($d ==
+          r'callFlutterNoopOnBackgroundThread(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![0] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.callFlutterNoopOnBackgroundThread());
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'testDeregisterHostApi()Z') {
+        final $r = _$impls[$p]!.testDeregisterHostApi();
+        return $r.toJBoolean().reference.toPointer();
+      }
+      if ($d == r'testDeregisterFlutterApi()Z') {
+        final $r = _$impls[$p]!.testDeregisterFlutterApi();
+        return $r.toJBoolean().reference.toPointer();
+      }
+      if ($d == r'registerAndImmediatelyDeregisterHostApi(Ljava/lang/String;)V') {
+        _$impls[$p]!.registerAndImmediatelyDeregisterHostApi(($a![0] as jni$_.JString));
+        return jni$_.nullptr;
+      }
+      if ($d == r'testCallDeregisteredFlutterApi(Ljava/lang/String;)Z') {
+        final $r = _$impls[$p]!.testCallDeregisteredFlutterApi(($a![0] as jni$_.JString));
+        return $r.toJBoolean().reference.toPointer();
+      }
+    } catch (e) {
+      return jni$_.ProtectedJniExtensions.newDartException(e);
+    }
+    return jni$_.nullptr;
+  }
+
+  static void implementIn(
+    jni$_.JImplementer implementer,
+    $NativeInteropHostIntegrationCoreApi $impl,
+  ) {
+    late final jni$_.RawReceivePort $p;
+    $p = jni$_.RawReceivePort(($m) {
+      if ($m == null) {
+        _$impls.remove($p.sendPort.nativePort);
+        $p.close();
+        return;
+      }
+      final $i = jni$_.MethodInvocation.fromMessage($m);
+      final $r = _$invokeMethod($p.sendPort.nativePort, $i);
+      $i.args?.release();
+      jni$_.ProtectedJniExtensions.returnResult($i.result, $r);
+    });
+    implementer
+        .add(r'com.example.test_plugin.NativeInteropHostIntegrationCoreApi', $p, _$invokePointer, [
+          if ($impl.noop$async) r'noop()V',
+          if ($impl.throwErrorFromVoid$async) r'throwErrorFromVoid()V',
+          if ($impl.callFlutterNoop$async) r'callFlutterNoop()V',
+          if ($impl.callFlutterThrowErrorFromVoid$async) r'callFlutterThrowErrorFromVoid()V',
+          if ($impl.registerAndImmediatelyDeregisterHostApi$async)
+            r'registerAndImmediatelyDeregisterHostApi(Ljava/lang/String;)V',
+        ]);
+    final $a = $p.sendPort.nativePort;
+    _$impls[$a] = $impl;
+  }
+
+  factory NativeInteropHostIntegrationCoreApi.implement(
+    $NativeInteropHostIntegrationCoreApi $impl,
+  ) {
+    final $i = jni$_.JImplementer();
+    implementIn($i, $impl);
+    return $i.implement<NativeInteropHostIntegrationCoreApi>();
+  }
 }
 
 extension NativeInteropHostIntegrationCoreApi$$Methods on NativeInteropHostIntegrationCoreApi {
@@ -10237,6 +11995,3521 @@ extension NativeInteropHostIntegrationCoreApi$$Methods on NativeInteropHostInteg
   }
 }
 
+abstract base mixin class $NativeInteropHostIntegrationCoreApi {
+  factory $NativeInteropHostIntegrationCoreApi({
+    required void Function() noop,
+    core$_.bool noop$async,
+    required NativeInteropAllTypes Function(NativeInteropAllTypes nativeInteropAllTypes)
+    echoAllTypes,
+    required jni$_.JObject? Function() throwError,
+    required void Function() throwErrorFromVoid,
+    core$_.bool throwErrorFromVoid$async,
+    required jni$_.JObject? Function() throwFlutterError,
+    required core$_.int Function(core$_.int j) echoInt,
+    required core$_.double Function(core$_.double d) echoDouble,
+    required core$_.bool Function(core$_.bool z) echoBool,
+    required jni$_.JString Function(jni$_.JString string) echoString,
+    required jni$_.JByteArray Function(jni$_.JByteArray bs) echoUint8List,
+    required jni$_.JIntArray Function(jni$_.JIntArray is$) echoInt32List,
+    required jni$_.JLongArray Function(jni$_.JLongArray js) echoInt64List,
+    required jni$_.JDoubleArray Function(jni$_.JDoubleArray ds) echoFloat64List,
+    required jni$_.JObject Function(jni$_.JObject object) echoObject,
+    required jni$_.JList<jni$_.JObject?> Function(jni$_.JList<jni$_.JObject?> list) echoList,
+    required jni$_.JList<jni$_.JString?> Function(jni$_.JList<jni$_.JString?> list) echoStringList,
+    required jni$_.JList<jni$_.JLong?> Function(jni$_.JList<jni$_.JLong?> list) echoIntList,
+    required jni$_.JList<jni$_.JDouble?> Function(jni$_.JList<jni$_.JDouble?> list) echoDoubleList,
+    required jni$_.JList<jni$_.JBoolean?> Function(jni$_.JList<jni$_.JBoolean?> list) echoBoolList,
+    required jni$_.JList<NativeInteropAnEnum?> Function(jni$_.JList<NativeInteropAnEnum?> list)
+    echoEnumList,
+    required jni$_.JList<NativeInteropAllNullableTypes?> Function(
+      jni$_.JList<NativeInteropAllNullableTypes?> list,
+    )
+    echoClassList,
+    required jni$_.JList<NativeInteropAnEnum> Function(jni$_.JList<NativeInteropAnEnum> list)
+    echoNonNullEnumList,
+    required jni$_.JList<NativeInteropAllNullableTypes> Function(
+      jni$_.JList<NativeInteropAllNullableTypes> list,
+    )
+    echoNonNullClassList,
+    required jni$_.JMap<jni$_.JObject?, jni$_.JObject?> Function(
+      jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+    )
+    echoMap,
+    required jni$_.JMap<jni$_.JString?, jni$_.JString?> Function(
+      jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+    )
+    echoStringMap,
+    required jni$_.JMap<jni$_.JLong?, jni$_.JLong?> Function(
+      jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
+    )
+    echoIntMap,
+    required jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> Function(
+      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+    )
+    echoEnumMap,
+    required jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> Function(
+      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+    )
+    echoClassMap,
+    required jni$_.JMap<jni$_.JString, jni$_.JString> Function(
+      jni$_.JMap<jni$_.JString, jni$_.JString> map,
+    )
+    echoNonNullStringMap,
+    required jni$_.JMap<jni$_.JLong, jni$_.JLong> Function(jni$_.JMap<jni$_.JLong, jni$_.JLong> map)
+    echoNonNullIntMap,
+    required jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> Function(
+      jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
+    )
+    echoNonNullEnumMap,
+    required jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> Function(
+      jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
+    )
+    echoNonNullClassMap,
+    required NativeInteropAllClassesWrapper Function(
+      NativeInteropAllClassesWrapper nativeInteropAllClassesWrapper,
+    )
+    echoClassWrapper,
+    required NativeInteropAnEnum Function(NativeInteropAnEnum nativeInteropAnEnum) echoEnum,
+    required NativeInteropAnotherEnum Function(NativeInteropAnotherEnum nativeInteropAnotherEnum)
+    echoAnotherEnum,
+    required jni$_.JString Function(jni$_.JString string) echoNamedDefaultString,
+    required core$_.double Function(core$_.double d) echoOptionalDefaultDouble,
+    required core$_.int Function(core$_.int j) echoRequiredInt,
+    required NativeInteropAllNullableTypes? Function(
+      NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+    )
+    echoAllNullableTypes,
+    required NativeInteropAllNullableTypesWithoutRecursion? Function(
+      NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+    )
+    echoAllNullableTypesWithoutRecursion,
+    required jni$_.JString? Function(NativeInteropAllClassesWrapper nativeInteropAllClassesWrapper)
+    extractNestedNullableString,
+    required NativeInteropAllClassesWrapper Function(jni$_.JString? string)
+    createNestedNullableString,
+    required NativeInteropAllNullableTypes Function(
+      jni$_.JBoolean? boolean,
+      jni$_.JLong? long,
+      jni$_.JString? string,
+    )
+    sendMultipleNullableTypes,
+    required NativeInteropAllNullableTypesWithoutRecursion Function(
+      jni$_.JBoolean? boolean,
+      jni$_.JLong? long,
+      jni$_.JString? string,
+    )
+    sendMultipleNullableTypesWithoutRecursion,
+    required jni$_.JLong? Function(jni$_.JLong? long) echoNullableInt,
+    required jni$_.JDouble? Function(jni$_.JDouble? double) echoNullableDouble,
+    required jni$_.JBoolean? Function(jni$_.JBoolean? boolean) echoNullableBool,
+    required jni$_.JString? Function(jni$_.JString? string) echoNullableString,
+    required jni$_.JByteArray? Function(jni$_.JByteArray? bs) echoNullableUint8List,
+    required jni$_.JIntArray? Function(jni$_.JIntArray? is$) echoNullableInt32List,
+    required jni$_.JLongArray? Function(jni$_.JLongArray? js) echoNullableInt64List,
+    required jni$_.JDoubleArray? Function(jni$_.JDoubleArray? ds) echoNullableFloat64List,
+    required jni$_.JObject? Function(jni$_.JObject? object) echoNullableObject,
+    required jni$_.JList<jni$_.JObject?>? Function(jni$_.JList<jni$_.JObject?>? list)
+    echoNullableList,
+    required jni$_.JList<NativeInteropAnEnum?>? Function(jni$_.JList<NativeInteropAnEnum?>? list)
+    echoNullableEnumList,
+    required jni$_.JList<NativeInteropAllNullableTypes?>? Function(
+      jni$_.JList<NativeInteropAllNullableTypes?>? list,
+    )
+    echoNullableClassList,
+    required jni$_.JList<NativeInteropAnEnum>? Function(jni$_.JList<NativeInteropAnEnum>? list)
+    echoNullableNonNullEnumList,
+    required jni$_.JList<NativeInteropAllNullableTypes>? Function(
+      jni$_.JList<NativeInteropAllNullableTypes>? list,
+    )
+    echoNullableNonNullClassList,
+    required jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? Function(
+      jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+    )
+    echoNullableMap,
+    required jni$_.JMap<jni$_.JString?, jni$_.JString?>? Function(
+      jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+    )
+    echoNullableStringMap,
+    required jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? Function(
+      jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+    )
+    echoNullableIntMap,
+    required jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? Function(
+      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+    )
+    echoNullableEnumMap,
+    required jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? Function(
+      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+    )
+    echoNullableClassMap,
+    required jni$_.JMap<jni$_.JString, jni$_.JString>? Function(
+      jni$_.JMap<jni$_.JString, jni$_.JString>? map,
+    )
+    echoNullableNonNullStringMap,
+    required jni$_.JMap<jni$_.JLong, jni$_.JLong>? Function(
+      jni$_.JMap<jni$_.JLong, jni$_.JLong>? map,
+    )
+    echoNullableNonNullIntMap,
+    required jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? Function(
+      jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
+    )
+    echoNullableNonNullEnumMap,
+    required jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? Function(
+      jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
+    )
+    echoNullableNonNullClassMap,
+    required NativeInteropAnEnum? Function(NativeInteropAnEnum? nativeInteropAnEnum)
+    echoNullableEnum,
+    required NativeInteropAnotherEnum? Function(NativeInteropAnotherEnum? nativeInteropAnotherEnum)
+    echoAnotherNullableEnum,
+    required jni$_.JLong? Function(jni$_.JLong? long) echoOptionalNullableInt,
+    required jni$_.JString? Function(jni$_.JString? string) echoNamedNullableString,
+    required core$_.Future<void> Function() noopAsync,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAsyncInt,
+    required core$_.Future<jni$_.JDouble> Function(core$_.double d) echoAsyncDouble,
+    required core$_.Future<jni$_.JBoolean> Function(core$_.bool z) echoAsyncBool,
+    required core$_.Future<jni$_.JString> Function(jni$_.JString string) echoAsyncString,
+    required core$_.Future<jni$_.JByteArray> Function(jni$_.JByteArray bs) echoAsyncUint8List,
+    required core$_.Future<jni$_.JIntArray> Function(jni$_.JIntArray is$) echoAsyncInt32List,
+    required core$_.Future<jni$_.JLongArray> Function(jni$_.JLongArray js) echoAsyncInt64List,
+    required core$_.Future<jni$_.JDoubleArray> Function(jni$_.JDoubleArray ds) echoAsyncFloat64List,
+    required core$_.Future<jni$_.JObject> Function(jni$_.JObject object) echoAsyncObject,
+    required core$_.Future<jni$_.JList<jni$_.JObject?>> Function(jni$_.JList<jni$_.JObject?> list)
+    echoAsyncList,
+    required core$_.Future<jni$_.JList<NativeInteropAnEnum?>> Function(
+      jni$_.JList<NativeInteropAnEnum?> list,
+    )
+    echoAsyncEnumList,
+    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> Function(
+      jni$_.JList<NativeInteropAllNullableTypes?> list,
+    )
+    echoAsyncClassList,
+    required core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> Function(
+      jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+    )
+    echoAsyncMap,
+    required core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> Function(
+      jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+    )
+    echoAsyncStringMap,
+    required core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> Function(
+      jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
+    )
+    echoAsyncIntMap,
+    required core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> Function(
+      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+    )
+    echoAsyncEnumMap,
+    required core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>> Function(
+      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+    )
+    echoAsyncClassMap,
+    required core$_.Future<NativeInteropAnEnum> Function(NativeInteropAnEnum nativeInteropAnEnum)
+    echoAsyncEnum,
+    required core$_.Future<NativeInteropAnotherEnum> Function(
+      NativeInteropAnotherEnum nativeInteropAnotherEnum,
+    )
+    echoAnotherAsyncEnum,
+    required core$_.Future<jni$_.JObject?> Function() throwAsyncError,
+    required core$_.Future<void> Function() throwAsyncErrorFromVoid,
+    required core$_.Future<jni$_.JObject?> Function() throwAsyncFlutterError,
+    required core$_.Future<NativeInteropAllTypes> Function(
+      NativeInteropAllTypes nativeInteropAllTypes,
+    )
+    echoAsyncNativeInteropAllTypes,
+    required core$_.Future<NativeInteropAllNullableTypes?> Function(
+      NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+    )
+    echoAsyncNullableNativeInteropAllNullableTypes,
+    required core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?> Function(
+      NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+    )
+    echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion,
+    required core$_.Future<jni$_.JLong?> Function(jni$_.JLong? long) echoAsyncNullableInt,
+    required core$_.Future<jni$_.JDouble?> Function(jni$_.JDouble? double) echoAsyncNullableDouble,
+    required core$_.Future<jni$_.JBoolean?> Function(jni$_.JBoolean? boolean) echoAsyncNullableBool,
+    required core$_.Future<jni$_.JString?> Function(jni$_.JString? string) echoAsyncNullableString,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray? bs)
+    echoAsyncNullableUint8List,
+    required core$_.Future<jni$_.JIntArray?> Function(jni$_.JIntArray? is$)
+    echoAsyncNullableInt32List,
+    required core$_.Future<jni$_.JLongArray?> Function(jni$_.JLongArray? js)
+    echoAsyncNullableInt64List,
+    required core$_.Future<jni$_.JDoubleArray?> Function(jni$_.JDoubleArray? ds)
+    echoAsyncNullableFloat64List,
+    required core$_.Future<jni$_.JObject?> Function(jni$_.JObject? object) echoAsyncNullableObject,
+    required core$_.Future<jni$_.JList<jni$_.JObject?>?> Function(jni$_.JList<jni$_.JObject?>? list)
+    echoAsyncNullableList,
+    required core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> Function(
+      jni$_.JList<NativeInteropAnEnum?>? list,
+    )
+    echoAsyncNullableEnumList,
+    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> Function(
+      jni$_.JList<NativeInteropAllNullableTypes?>? list,
+    )
+    echoAsyncNullableClassList,
+    required core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> Function(
+      jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+    )
+    echoAsyncNullableMap,
+    required core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> Function(
+      jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+    )
+    echoAsyncNullableStringMap,
+    required core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> Function(
+      jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+    )
+    echoAsyncNullableIntMap,
+    required core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?> Function(
+      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+    )
+    echoAsyncNullableEnumMap,
+    required core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?> Function(
+      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+    )
+    echoAsyncNullableClassMap,
+    required core$_.Future<NativeInteropAnEnum?> Function(NativeInteropAnEnum? nativeInteropAnEnum)
+    echoAsyncNullableEnum,
+    required core$_.Future<NativeInteropAnotherEnum?> Function(
+      NativeInteropAnotherEnum? nativeInteropAnotherEnum,
+    )
+    echoAnotherAsyncNullableEnum,
+    required void Function() callFlutterNoop,
+    core$_.bool callFlutterNoop$async,
+    required jni$_.JObject? Function() callFlutterThrowError,
+    required void Function() callFlutterThrowErrorFromVoid,
+    core$_.bool callFlutterThrowErrorFromVoid$async,
+    required NativeInteropAllTypes Function(NativeInteropAllTypes nativeInteropAllTypes)
+    callFlutterEchoNativeInteropAllTypes,
+    required NativeInteropAllNullableTypes? Function(
+      NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+    )
+    callFlutterEchoNativeInteropAllNullableTypes,
+    required NativeInteropAllNullableTypes Function(
+      jni$_.JBoolean? boolean,
+      jni$_.JLong? long,
+      jni$_.JString? string,
+    )
+    callFlutterSendMultipleNullableTypes,
+    required NativeInteropAllNullableTypesWithoutRecursion? Function(
+      NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+    )
+    callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion,
+    required NativeInteropAllNullableTypesWithoutRecursion Function(
+      jni$_.JBoolean? boolean,
+      jni$_.JLong? long,
+      jni$_.JString? string,
+    )
+    callFlutterSendMultipleNullableTypesWithoutRecursion,
+    required core$_.bool Function(core$_.bool z) callFlutterEchoBool,
+    required core$_.int Function(core$_.int j) callFlutterEchoInt,
+    required core$_.double Function(core$_.double d) callFlutterEchoDouble,
+    required jni$_.JString Function(jni$_.JString string) callFlutterEchoString,
+    required jni$_.JByteArray Function(jni$_.JByteArray bs) callFlutterEchoUint8List,
+    required jni$_.JIntArray Function(jni$_.JIntArray is$) callFlutterEchoInt32List,
+    required jni$_.JLongArray Function(jni$_.JLongArray js) callFlutterEchoInt64List,
+    required jni$_.JDoubleArray Function(jni$_.JDoubleArray ds) callFlutterEchoFloat64List,
+    required jni$_.JList<jni$_.JObject?> Function(jni$_.JList<jni$_.JObject?> list)
+    callFlutterEchoList,
+    required jni$_.JList<NativeInteropAnEnum?> Function(jni$_.JList<NativeInteropAnEnum?> list)
+    callFlutterEchoEnumList,
+    required jni$_.JList<NativeInteropAllNullableTypes?> Function(
+      jni$_.JList<NativeInteropAllNullableTypes?> list,
+    )
+    callFlutterEchoClassList,
+    required jni$_.JList<NativeInteropAnEnum> Function(jni$_.JList<NativeInteropAnEnum> list)
+    callFlutterEchoNonNullEnumList,
+    required jni$_.JList<NativeInteropAllNullableTypes> Function(
+      jni$_.JList<NativeInteropAllNullableTypes> list,
+    )
+    callFlutterEchoNonNullClassList,
+    required jni$_.JMap<jni$_.JObject?, jni$_.JObject?> Function(
+      jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+    )
+    callFlutterEchoMap,
+    required jni$_.JMap<jni$_.JString?, jni$_.JString?> Function(
+      jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+    )
+    callFlutterEchoStringMap,
+    required jni$_.JMap<jni$_.JLong?, jni$_.JLong?> Function(
+      jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
+    )
+    callFlutterEchoIntMap,
+    required jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> Function(
+      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+    )
+    callFlutterEchoEnumMap,
+    required jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> Function(
+      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+    )
+    callFlutterEchoClassMap,
+    required jni$_.JMap<jni$_.JString, jni$_.JString> Function(
+      jni$_.JMap<jni$_.JString, jni$_.JString> map,
+    )
+    callFlutterEchoNonNullStringMap,
+    required jni$_.JMap<jni$_.JLong, jni$_.JLong> Function(jni$_.JMap<jni$_.JLong, jni$_.JLong> map)
+    callFlutterEchoNonNullIntMap,
+    required jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> Function(
+      jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
+    )
+    callFlutterEchoNonNullEnumMap,
+    required jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> Function(
+      jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
+    )
+    callFlutterEchoNonNullClassMap,
+    required NativeInteropAnEnum Function(NativeInteropAnEnum nativeInteropAnEnum)
+    callFlutterEchoEnum,
+    required NativeInteropAnotherEnum Function(NativeInteropAnotherEnum nativeInteropAnotherEnum)
+    callFlutterEchoNativeInteropAnotherEnum,
+    required jni$_.JBoolean? Function(jni$_.JBoolean? boolean) callFlutterEchoNullableBool,
+    required jni$_.JLong? Function(jni$_.JLong? long) callFlutterEchoNullableInt,
+    required jni$_.JDouble? Function(jni$_.JDouble? double) callFlutterEchoNullableDouble,
+    required jni$_.JString? Function(jni$_.JString? string) callFlutterEchoNullableString,
+    required jni$_.JByteArray? Function(jni$_.JByteArray? bs) callFlutterEchoNullableUint8List,
+    required jni$_.JIntArray? Function(jni$_.JIntArray? is$) callFlutterEchoNullableInt32List,
+    required jni$_.JLongArray? Function(jni$_.JLongArray? js) callFlutterEchoNullableInt64List,
+    required jni$_.JDoubleArray? Function(jni$_.JDoubleArray? ds)
+    callFlutterEchoNullableFloat64List,
+    required jni$_.JList<jni$_.JObject?>? Function(jni$_.JList<jni$_.JObject?>? list)
+    callFlutterEchoNullableList,
+    required jni$_.JList<NativeInteropAnEnum?>? Function(jni$_.JList<NativeInteropAnEnum?>? list)
+    callFlutterEchoNullableEnumList,
+    required jni$_.JList<NativeInteropAllNullableTypes?>? Function(
+      jni$_.JList<NativeInteropAllNullableTypes?>? list,
+    )
+    callFlutterEchoNullableClassList,
+    required jni$_.JList<NativeInteropAnEnum>? Function(jni$_.JList<NativeInteropAnEnum>? list)
+    callFlutterEchoNullableNonNullEnumList,
+    required jni$_.JList<NativeInteropAllNullableTypes>? Function(
+      jni$_.JList<NativeInteropAllNullableTypes>? list,
+    )
+    callFlutterEchoNullableNonNullClassList,
+    required jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? Function(
+      jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+    )
+    callFlutterEchoNullableMap,
+    required jni$_.JMap<jni$_.JString?, jni$_.JString?>? Function(
+      jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+    )
+    callFlutterEchoNullableStringMap,
+    required jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? Function(
+      jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+    )
+    callFlutterEchoNullableIntMap,
+    required jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? Function(
+      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+    )
+    callFlutterEchoNullableEnumMap,
+    required jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? Function(
+      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+    )
+    callFlutterEchoNullableClassMap,
+    required jni$_.JMap<jni$_.JString, jni$_.JString>? Function(
+      jni$_.JMap<jni$_.JString, jni$_.JString>? map,
+    )
+    callFlutterEchoNullableNonNullStringMap,
+    required jni$_.JMap<jni$_.JLong, jni$_.JLong>? Function(
+      jni$_.JMap<jni$_.JLong, jni$_.JLong>? map,
+    )
+    callFlutterEchoNullableNonNullIntMap,
+    required jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? Function(
+      jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
+    )
+    callFlutterEchoNullableNonNullEnumMap,
+    required jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? Function(
+      jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
+    )
+    callFlutterEchoNullableNonNullClassMap,
+    required NativeInteropAnEnum? Function(NativeInteropAnEnum? nativeInteropAnEnum)
+    callFlutterEchoNullableEnum,
+    required NativeInteropAnotherEnum? Function(NativeInteropAnotherEnum? nativeInteropAnotherEnum)
+    callFlutterEchoAnotherNullableEnum,
+    required core$_.Future<void> Function() callFlutterNoopAsync,
+    required core$_.Future<NativeInteropAllTypes> Function(
+      NativeInteropAllTypes nativeInteropAllTypes,
+    )
+    callFlutterEchoAsyncNativeInteropAllTypes,
+    required core$_.Future<NativeInteropAllNullableTypes?> Function(
+      NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+    )
+    callFlutterEchoAsyncNullableNativeInteropAllNullableTypes,
+    required core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?> Function(
+      NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+    )
+    callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion,
+    required core$_.Future<jni$_.JBoolean> Function(core$_.bool z) callFlutterEchoAsyncBool,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) callFlutterEchoAsyncInt,
+    required core$_.Future<jni$_.JDouble> Function(core$_.double d) callFlutterEchoAsyncDouble,
+    required core$_.Future<jni$_.JString> Function(jni$_.JString string) callFlutterEchoAsyncString,
+    required core$_.Future<jni$_.JByteArray> Function(jni$_.JByteArray bs)
+    callFlutterEchoAsyncUint8List,
+    required core$_.Future<jni$_.JIntArray> Function(jni$_.JIntArray is$)
+    callFlutterEchoAsyncInt32List,
+    required core$_.Future<jni$_.JLongArray> Function(jni$_.JLongArray js)
+    callFlutterEchoAsyncInt64List,
+    required core$_.Future<jni$_.JDoubleArray> Function(jni$_.JDoubleArray ds)
+    callFlutterEchoAsyncFloat64List,
+    required core$_.Future<jni$_.JObject> Function(jni$_.JObject object) callFlutterEchoAsyncObject,
+    required core$_.Future<jni$_.JList<jni$_.JObject?>> Function(jni$_.JList<jni$_.JObject?> list)
+    callFlutterEchoAsyncList,
+    required core$_.Future<jni$_.JList<NativeInteropAnEnum?>> Function(
+      jni$_.JList<NativeInteropAnEnum?> list,
+    )
+    callFlutterEchoAsyncEnumList,
+    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> Function(
+      jni$_.JList<NativeInteropAllNullableTypes?> list,
+    )
+    callFlutterEchoAsyncClassList,
+    required core$_.Future<jni$_.JList<NativeInteropAnEnum>> Function(
+      jni$_.JList<NativeInteropAnEnum?> list,
+    )
+    callFlutterEchoAsyncNonNullEnumList,
+    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>> Function(
+      jni$_.JList<NativeInteropAllNullableTypes?> list,
+    )
+    callFlutterEchoAsyncNonNullClassList,
+    required core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> Function(
+      jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+    )
+    callFlutterEchoAsyncMap,
+    required core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> Function(
+      jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+    )
+    callFlutterEchoAsyncStringMap,
+    required core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> Function(
+      jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
+    )
+    callFlutterEchoAsyncIntMap,
+    required core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> Function(
+      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+    )
+    callFlutterEchoAsyncEnumMap,
+    required core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>> Function(
+      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+    )
+    callFlutterEchoAsyncClassMap,
+    required core$_.Future<NativeInteropAnEnum> Function(NativeInteropAnEnum nativeInteropAnEnum)
+    callFlutterEchoAsyncEnum,
+    required core$_.Future<NativeInteropAnotherEnum> Function(
+      NativeInteropAnotherEnum nativeInteropAnotherEnum,
+    )
+    callFlutterEchoAnotherAsyncEnum,
+    required core$_.Future<jni$_.JBoolean?> Function(jni$_.JBoolean? boolean)
+    callFlutterEchoAsyncNullableBool,
+    required core$_.Future<jni$_.JLong?> Function(jni$_.JLong? long)
+    callFlutterEchoAsyncNullableInt,
+    required core$_.Future<jni$_.JDouble?> Function(jni$_.JDouble? double)
+    callFlutterEchoAsyncNullableDouble,
+    required core$_.Future<jni$_.JString?> Function(jni$_.JString? string)
+    callFlutterEchoAsyncNullableString,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray? bs)
+    callFlutterEchoAsyncNullableUint8List,
+    required core$_.Future<jni$_.JIntArray?> Function(jni$_.JIntArray? is$)
+    callFlutterEchoAsyncNullableInt32List,
+    required core$_.Future<jni$_.JLongArray?> Function(jni$_.JLongArray? js)
+    callFlutterEchoAsyncNullableInt64List,
+    required core$_.Future<jni$_.JDoubleArray?> Function(jni$_.JDoubleArray? ds)
+    callFlutterEchoAsyncNullableFloat64List,
+    required core$_.Future<jni$_.JObject?> Function() callFlutterThrowFlutterErrorAsync,
+    required core$_.Future<jni$_.JObject?> Function(jni$_.JObject? object)
+    callFlutterEchoAsyncNullableObject,
+    required core$_.Future<jni$_.JList<jni$_.JObject?>?> Function(jni$_.JList<jni$_.JObject?>? list)
+    callFlutterEchoAsyncNullableList,
+    required core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> Function(
+      jni$_.JList<NativeInteropAnEnum?>? list,
+    )
+    callFlutterEchoAsyncNullableEnumList,
+    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> Function(
+      jni$_.JList<NativeInteropAllNullableTypes?>? list,
+    )
+    callFlutterEchoAsyncNullableClassList,
+    required core$_.Future<jni$_.JList<NativeInteropAnEnum>?> Function(
+      jni$_.JList<NativeInteropAnEnum?>? list,
+    )
+    callFlutterEchoAsyncNullableNonNullEnumList,
+    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>?> Function(
+      jni$_.JList<NativeInteropAllNullableTypes?>? list,
+    )
+    callFlutterEchoAsyncNullableNonNullClassList,
+    required core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> Function(
+      jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+    )
+    callFlutterEchoAsyncNullableMap,
+    required core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> Function(
+      jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+    )
+    callFlutterEchoAsyncNullableStringMap,
+    required core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> Function(
+      jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+    )
+    callFlutterEchoAsyncNullableIntMap,
+    required core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?> Function(
+      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+    )
+    callFlutterEchoAsyncNullableEnumMap,
+    required core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?> Function(
+      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+    )
+    callFlutterEchoAsyncNullableClassMap,
+    required core$_.Future<NativeInteropAnEnum?> Function(NativeInteropAnEnum? nativeInteropAnEnum)
+    callFlutterEchoAsyncNullableEnum,
+    required core$_.Future<NativeInteropAnotherEnum?> Function(
+      NativeInteropAnotherEnum? nativeInteropAnotherEnum,
+    )
+    callFlutterEchoAnotherAsyncNullableEnum,
+    required core$_.bool Function() defaultIsMainThread,
+    required core$_.Future<jni$_.JBoolean> Function() callFlutterNoopOnBackgroundThread,
+    required core$_.bool Function() testDeregisterHostApi,
+    required core$_.bool Function() testDeregisterFlutterApi,
+    required void Function(jni$_.JString string) registerAndImmediatelyDeregisterHostApi,
+    core$_.bool registerAndImmediatelyDeregisterHostApi$async,
+    required core$_.bool Function(jni$_.JString string) testCallDeregisteredFlutterApi,
+  }) = _$NativeInteropHostIntegrationCoreApi;
+
+  void noop();
+  core$_.bool get noop$async => false;
+  NativeInteropAllTypes echoAllTypes(NativeInteropAllTypes nativeInteropAllTypes);
+  jni$_.JObject? throwError();
+  void throwErrorFromVoid();
+  core$_.bool get throwErrorFromVoid$async => false;
+  jni$_.JObject? throwFlutterError();
+  core$_.int echoInt(core$_.int j);
+  core$_.double echoDouble(core$_.double d);
+  core$_.bool echoBool(core$_.bool z);
+  jni$_.JString echoString(jni$_.JString string);
+  jni$_.JByteArray echoUint8List(jni$_.JByteArray bs);
+  jni$_.JIntArray echoInt32List(jni$_.JIntArray is$);
+  jni$_.JLongArray echoInt64List(jni$_.JLongArray js);
+  jni$_.JDoubleArray echoFloat64List(jni$_.JDoubleArray ds);
+  jni$_.JObject echoObject(jni$_.JObject object);
+  jni$_.JList<jni$_.JObject?> echoList(jni$_.JList<jni$_.JObject?> list);
+  jni$_.JList<jni$_.JString?> echoStringList(jni$_.JList<jni$_.JString?> list);
+  jni$_.JList<jni$_.JLong?> echoIntList(jni$_.JList<jni$_.JLong?> list);
+  jni$_.JList<jni$_.JDouble?> echoDoubleList(jni$_.JList<jni$_.JDouble?> list);
+  jni$_.JList<jni$_.JBoolean?> echoBoolList(jni$_.JList<jni$_.JBoolean?> list);
+  jni$_.JList<NativeInteropAnEnum?> echoEnumList(jni$_.JList<NativeInteropAnEnum?> list);
+  jni$_.JList<NativeInteropAllNullableTypes?> echoClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?> list,
+  );
+  jni$_.JList<NativeInteropAnEnum> echoNonNullEnumList(jni$_.JList<NativeInteropAnEnum> list);
+  jni$_.JList<NativeInteropAllNullableTypes> echoNonNullClassList(
+    jni$_.JList<NativeInteropAllNullableTypes> list,
+  );
+  jni$_.JMap<jni$_.JObject?, jni$_.JObject?> echoMap(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+  );
+  jni$_.JMap<jni$_.JString?, jni$_.JString?> echoStringMap(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+  );
+  jni$_.JMap<jni$_.JLong?, jni$_.JLong?> echoIntMap(jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map);
+  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> echoEnumMap(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+  );
+  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> echoClassMap(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+  );
+  jni$_.JMap<jni$_.JString, jni$_.JString> echoNonNullStringMap(
+    jni$_.JMap<jni$_.JString, jni$_.JString> map,
+  );
+  jni$_.JMap<jni$_.JLong, jni$_.JLong> echoNonNullIntMap(jni$_.JMap<jni$_.JLong, jni$_.JLong> map);
+  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> echoNonNullEnumMap(
+    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
+  );
+  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> echoNonNullClassMap(
+    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
+  );
+  NativeInteropAllClassesWrapper echoClassWrapper(
+    NativeInteropAllClassesWrapper nativeInteropAllClassesWrapper,
+  );
+  NativeInteropAnEnum echoEnum(NativeInteropAnEnum nativeInteropAnEnum);
+  NativeInteropAnotherEnum echoAnotherEnum(NativeInteropAnotherEnum nativeInteropAnotherEnum);
+  jni$_.JString echoNamedDefaultString(jni$_.JString string);
+  core$_.double echoOptionalDefaultDouble(core$_.double d);
+  core$_.int echoRequiredInt(core$_.int j);
+  NativeInteropAllNullableTypes? echoAllNullableTypes(
+    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+  );
+  NativeInteropAllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
+    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  );
+  jni$_.JString? extractNestedNullableString(
+    NativeInteropAllClassesWrapper nativeInteropAllClassesWrapper,
+  );
+  NativeInteropAllClassesWrapper createNestedNullableString(jni$_.JString? string);
+  NativeInteropAllNullableTypes sendMultipleNullableTypes(
+    jni$_.JBoolean? boolean,
+    jni$_.JLong? long,
+    jni$_.JString? string,
+  );
+  NativeInteropAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
+    jni$_.JBoolean? boolean,
+    jni$_.JLong? long,
+    jni$_.JString? string,
+  );
+  jni$_.JLong? echoNullableInt(jni$_.JLong? long);
+  jni$_.JDouble? echoNullableDouble(jni$_.JDouble? double);
+  jni$_.JBoolean? echoNullableBool(jni$_.JBoolean? boolean);
+  jni$_.JString? echoNullableString(jni$_.JString? string);
+  jni$_.JByteArray? echoNullableUint8List(jni$_.JByteArray? bs);
+  jni$_.JIntArray? echoNullableInt32List(jni$_.JIntArray? is$);
+  jni$_.JLongArray? echoNullableInt64List(jni$_.JLongArray? js);
+  jni$_.JDoubleArray? echoNullableFloat64List(jni$_.JDoubleArray? ds);
+  jni$_.JObject? echoNullableObject(jni$_.JObject? object);
+  jni$_.JList<jni$_.JObject?>? echoNullableList(jni$_.JList<jni$_.JObject?>? list);
+  jni$_.JList<NativeInteropAnEnum?>? echoNullableEnumList(jni$_.JList<NativeInteropAnEnum?>? list);
+  jni$_.JList<NativeInteropAllNullableTypes?>? echoNullableClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?>? list,
+  );
+  jni$_.JList<NativeInteropAnEnum>? echoNullableNonNullEnumList(
+    jni$_.JList<NativeInteropAnEnum>? list,
+  );
+  jni$_.JList<NativeInteropAllNullableTypes>? echoNullableNonNullClassList(
+    jni$_.JList<NativeInteropAllNullableTypes>? list,
+  );
+  jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? echoNullableMap(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+  );
+  jni$_.JMap<jni$_.JString?, jni$_.JString?>? echoNullableStringMap(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+  );
+  jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? echoNullableIntMap(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+  );
+  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? echoNullableEnumMap(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+  );
+  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? echoNullableClassMap(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+  );
+  jni$_.JMap<jni$_.JString, jni$_.JString>? echoNullableNonNullStringMap(
+    jni$_.JMap<jni$_.JString, jni$_.JString>? map,
+  );
+  jni$_.JMap<jni$_.JLong, jni$_.JLong>? echoNullableNonNullIntMap(
+    jni$_.JMap<jni$_.JLong, jni$_.JLong>? map,
+  );
+  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? echoNullableNonNullEnumMap(
+    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
+  );
+  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? echoNullableNonNullClassMap(
+    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
+  );
+  NativeInteropAnEnum? echoNullableEnum(NativeInteropAnEnum? nativeInteropAnEnum);
+  NativeInteropAnotherEnum? echoAnotherNullableEnum(
+    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
+  );
+  jni$_.JLong? echoOptionalNullableInt(jni$_.JLong? long);
+  jni$_.JString? echoNamedNullableString(jni$_.JString? string);
+  core$_.Future<void> noopAsync();
+  core$_.Future<jni$_.JLong> echoAsyncInt(core$_.int j);
+  core$_.Future<jni$_.JDouble> echoAsyncDouble(core$_.double d);
+  core$_.Future<jni$_.JBoolean> echoAsyncBool(core$_.bool z);
+  core$_.Future<jni$_.JString> echoAsyncString(jni$_.JString string);
+  core$_.Future<jni$_.JByteArray> echoAsyncUint8List(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JIntArray> echoAsyncInt32List(jni$_.JIntArray is$);
+  core$_.Future<jni$_.JLongArray> echoAsyncInt64List(jni$_.JLongArray js);
+  core$_.Future<jni$_.JDoubleArray> echoAsyncFloat64List(jni$_.JDoubleArray ds);
+  core$_.Future<jni$_.JObject> echoAsyncObject(jni$_.JObject object);
+  core$_.Future<jni$_.JList<jni$_.JObject?>> echoAsyncList(jni$_.JList<jni$_.JObject?> list);
+  core$_.Future<jni$_.JList<NativeInteropAnEnum?>> echoAsyncEnumList(
+    jni$_.JList<NativeInteropAnEnum?> list,
+  );
+  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> echoAsyncClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?> list,
+  );
+  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> echoAsyncMap(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+  );
+  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> echoAsyncStringMap(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+  );
+  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> echoAsyncIntMap(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
+  );
+  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> echoAsyncEnumMap(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+  );
+  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>> echoAsyncClassMap(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+  );
+  core$_.Future<NativeInteropAnEnum> echoAsyncEnum(NativeInteropAnEnum nativeInteropAnEnum);
+  core$_.Future<NativeInteropAnotherEnum> echoAnotherAsyncEnum(
+    NativeInteropAnotherEnum nativeInteropAnotherEnum,
+  );
+  core$_.Future<jni$_.JObject?> throwAsyncError();
+  core$_.Future<void> throwAsyncErrorFromVoid();
+  core$_.Future<jni$_.JObject?> throwAsyncFlutterError();
+  core$_.Future<NativeInteropAllTypes> echoAsyncNativeInteropAllTypes(
+    NativeInteropAllTypes nativeInteropAllTypes,
+  );
+  core$_.Future<NativeInteropAllNullableTypes?> echoAsyncNullableNativeInteropAllNullableTypes(
+    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+  );
+  core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?>
+  echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  );
+  core$_.Future<jni$_.JLong?> echoAsyncNullableInt(jni$_.JLong? long);
+  core$_.Future<jni$_.JDouble?> echoAsyncNullableDouble(jni$_.JDouble? double);
+  core$_.Future<jni$_.JBoolean?> echoAsyncNullableBool(jni$_.JBoolean? boolean);
+  core$_.Future<jni$_.JString?> echoAsyncNullableString(jni$_.JString? string);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableUint8List(jni$_.JByteArray? bs);
+  core$_.Future<jni$_.JIntArray?> echoAsyncNullableInt32List(jni$_.JIntArray? is$);
+  core$_.Future<jni$_.JLongArray?> echoAsyncNullableInt64List(jni$_.JLongArray? js);
+  core$_.Future<jni$_.JDoubleArray?> echoAsyncNullableFloat64List(jni$_.JDoubleArray? ds);
+  core$_.Future<jni$_.JObject?> echoAsyncNullableObject(jni$_.JObject? object);
+  core$_.Future<jni$_.JList<jni$_.JObject?>?> echoAsyncNullableList(
+    jni$_.JList<jni$_.JObject?>? list,
+  );
+  core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> echoAsyncNullableEnumList(
+    jni$_.JList<NativeInteropAnEnum?>? list,
+  );
+  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> echoAsyncNullableClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?>? list,
+  );
+  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> echoAsyncNullableMap(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+  );
+  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> echoAsyncNullableStringMap(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+  );
+  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> echoAsyncNullableIntMap(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+  );
+  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?> echoAsyncNullableEnumMap(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+  );
+  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?>
+  echoAsyncNullableClassMap(jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map);
+  core$_.Future<NativeInteropAnEnum?> echoAsyncNullableEnum(
+    NativeInteropAnEnum? nativeInteropAnEnum,
+  );
+  core$_.Future<NativeInteropAnotherEnum?> echoAnotherAsyncNullableEnum(
+    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
+  );
+  void callFlutterNoop();
+  core$_.bool get callFlutterNoop$async => false;
+  jni$_.JObject? callFlutterThrowError();
+  void callFlutterThrowErrorFromVoid();
+  core$_.bool get callFlutterThrowErrorFromVoid$async => false;
+  NativeInteropAllTypes callFlutterEchoNativeInteropAllTypes(
+    NativeInteropAllTypes nativeInteropAllTypes,
+  );
+  NativeInteropAllNullableTypes? callFlutterEchoNativeInteropAllNullableTypes(
+    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+  );
+  NativeInteropAllNullableTypes callFlutterSendMultipleNullableTypes(
+    jni$_.JBoolean? boolean,
+    jni$_.JLong? long,
+    jni$_.JString? string,
+  );
+  NativeInteropAllNullableTypesWithoutRecursion?
+  callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
+    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  );
+  NativeInteropAllNullableTypesWithoutRecursion
+  callFlutterSendMultipleNullableTypesWithoutRecursion(
+    jni$_.JBoolean? boolean,
+    jni$_.JLong? long,
+    jni$_.JString? string,
+  );
+  core$_.bool callFlutterEchoBool(core$_.bool z);
+  core$_.int callFlutterEchoInt(core$_.int j);
+  core$_.double callFlutterEchoDouble(core$_.double d);
+  jni$_.JString callFlutterEchoString(jni$_.JString string);
+  jni$_.JByteArray callFlutterEchoUint8List(jni$_.JByteArray bs);
+  jni$_.JIntArray callFlutterEchoInt32List(jni$_.JIntArray is$);
+  jni$_.JLongArray callFlutterEchoInt64List(jni$_.JLongArray js);
+  jni$_.JDoubleArray callFlutterEchoFloat64List(jni$_.JDoubleArray ds);
+  jni$_.JList<jni$_.JObject?> callFlutterEchoList(jni$_.JList<jni$_.JObject?> list);
+  jni$_.JList<NativeInteropAnEnum?> callFlutterEchoEnumList(jni$_.JList<NativeInteropAnEnum?> list);
+  jni$_.JList<NativeInteropAllNullableTypes?> callFlutterEchoClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?> list,
+  );
+  jni$_.JList<NativeInteropAnEnum> callFlutterEchoNonNullEnumList(
+    jni$_.JList<NativeInteropAnEnum> list,
+  );
+  jni$_.JList<NativeInteropAllNullableTypes> callFlutterEchoNonNullClassList(
+    jni$_.JList<NativeInteropAllNullableTypes> list,
+  );
+  jni$_.JMap<jni$_.JObject?, jni$_.JObject?> callFlutterEchoMap(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+  );
+  jni$_.JMap<jni$_.JString?, jni$_.JString?> callFlutterEchoStringMap(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+  );
+  jni$_.JMap<jni$_.JLong?, jni$_.JLong?> callFlutterEchoIntMap(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
+  );
+  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> callFlutterEchoEnumMap(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+  );
+  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> callFlutterEchoClassMap(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+  );
+  jni$_.JMap<jni$_.JString, jni$_.JString> callFlutterEchoNonNullStringMap(
+    jni$_.JMap<jni$_.JString, jni$_.JString> map,
+  );
+  jni$_.JMap<jni$_.JLong, jni$_.JLong> callFlutterEchoNonNullIntMap(
+    jni$_.JMap<jni$_.JLong, jni$_.JLong> map,
+  );
+  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> callFlutterEchoNonNullEnumMap(
+    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
+  );
+  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> callFlutterEchoNonNullClassMap(
+    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
+  );
+  NativeInteropAnEnum callFlutterEchoEnum(NativeInteropAnEnum nativeInteropAnEnum);
+  NativeInteropAnotherEnum callFlutterEchoNativeInteropAnotherEnum(
+    NativeInteropAnotherEnum nativeInteropAnotherEnum,
+  );
+  jni$_.JBoolean? callFlutterEchoNullableBool(jni$_.JBoolean? boolean);
+  jni$_.JLong? callFlutterEchoNullableInt(jni$_.JLong? long);
+  jni$_.JDouble? callFlutterEchoNullableDouble(jni$_.JDouble? double);
+  jni$_.JString? callFlutterEchoNullableString(jni$_.JString? string);
+  jni$_.JByteArray? callFlutterEchoNullableUint8List(jni$_.JByteArray? bs);
+  jni$_.JIntArray? callFlutterEchoNullableInt32List(jni$_.JIntArray? is$);
+  jni$_.JLongArray? callFlutterEchoNullableInt64List(jni$_.JLongArray? js);
+  jni$_.JDoubleArray? callFlutterEchoNullableFloat64List(jni$_.JDoubleArray? ds);
+  jni$_.JList<jni$_.JObject?>? callFlutterEchoNullableList(jni$_.JList<jni$_.JObject?>? list);
+  jni$_.JList<NativeInteropAnEnum?>? callFlutterEchoNullableEnumList(
+    jni$_.JList<NativeInteropAnEnum?>? list,
+  );
+  jni$_.JList<NativeInteropAllNullableTypes?>? callFlutterEchoNullableClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?>? list,
+  );
+  jni$_.JList<NativeInteropAnEnum>? callFlutterEchoNullableNonNullEnumList(
+    jni$_.JList<NativeInteropAnEnum>? list,
+  );
+  jni$_.JList<NativeInteropAllNullableTypes>? callFlutterEchoNullableNonNullClassList(
+    jni$_.JList<NativeInteropAllNullableTypes>? list,
+  );
+  jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? callFlutterEchoNullableMap(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+  );
+  jni$_.JMap<jni$_.JString?, jni$_.JString?>? callFlutterEchoNullableStringMap(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+  );
+  jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? callFlutterEchoNullableIntMap(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+  );
+  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? callFlutterEchoNullableEnumMap(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+  );
+  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? callFlutterEchoNullableClassMap(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+  );
+  jni$_.JMap<jni$_.JString, jni$_.JString>? callFlutterEchoNullableNonNullStringMap(
+    jni$_.JMap<jni$_.JString, jni$_.JString>? map,
+  );
+  jni$_.JMap<jni$_.JLong, jni$_.JLong>? callFlutterEchoNullableNonNullIntMap(
+    jni$_.JMap<jni$_.JLong, jni$_.JLong>? map,
+  );
+  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? callFlutterEchoNullableNonNullEnumMap(
+    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
+  );
+  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? callFlutterEchoNullableNonNullClassMap(
+    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
+  );
+  NativeInteropAnEnum? callFlutterEchoNullableEnum(NativeInteropAnEnum? nativeInteropAnEnum);
+  NativeInteropAnotherEnum? callFlutterEchoAnotherNullableEnum(
+    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
+  );
+  core$_.Future<void> callFlutterNoopAsync();
+  core$_.Future<NativeInteropAllTypes> callFlutterEchoAsyncNativeInteropAllTypes(
+    NativeInteropAllTypes nativeInteropAllTypes,
+  );
+  core$_.Future<NativeInteropAllNullableTypes?>
+  callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
+    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+  );
+  core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?>
+  callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  );
+  core$_.Future<jni$_.JBoolean> callFlutterEchoAsyncBool(core$_.bool z);
+  core$_.Future<jni$_.JLong> callFlutterEchoAsyncInt(core$_.int j);
+  core$_.Future<jni$_.JDouble> callFlutterEchoAsyncDouble(core$_.double d);
+  core$_.Future<jni$_.JString> callFlutterEchoAsyncString(jni$_.JString string);
+  core$_.Future<jni$_.JByteArray> callFlutterEchoAsyncUint8List(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JIntArray> callFlutterEchoAsyncInt32List(jni$_.JIntArray is$);
+  core$_.Future<jni$_.JLongArray> callFlutterEchoAsyncInt64List(jni$_.JLongArray js);
+  core$_.Future<jni$_.JDoubleArray> callFlutterEchoAsyncFloat64List(jni$_.JDoubleArray ds);
+  core$_.Future<jni$_.JObject> callFlutterEchoAsyncObject(jni$_.JObject object);
+  core$_.Future<jni$_.JList<jni$_.JObject?>> callFlutterEchoAsyncList(
+    jni$_.JList<jni$_.JObject?> list,
+  );
+  core$_.Future<jni$_.JList<NativeInteropAnEnum?>> callFlutterEchoAsyncEnumList(
+    jni$_.JList<NativeInteropAnEnum?> list,
+  );
+  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> callFlutterEchoAsyncClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?> list,
+  );
+  core$_.Future<jni$_.JList<NativeInteropAnEnum>> callFlutterEchoAsyncNonNullEnumList(
+    jni$_.JList<NativeInteropAnEnum?> list,
+  );
+  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>> callFlutterEchoAsyncNonNullClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?> list,
+  );
+  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> callFlutterEchoAsyncMap(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+  );
+  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> callFlutterEchoAsyncStringMap(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+  );
+  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> callFlutterEchoAsyncIntMap(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
+  );
+  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> callFlutterEchoAsyncEnumMap(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+  );
+  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>>
+  callFlutterEchoAsyncClassMap(jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map);
+  core$_.Future<NativeInteropAnEnum> callFlutterEchoAsyncEnum(
+    NativeInteropAnEnum nativeInteropAnEnum,
+  );
+  core$_.Future<NativeInteropAnotherEnum> callFlutterEchoAnotherAsyncEnum(
+    NativeInteropAnotherEnum nativeInteropAnotherEnum,
+  );
+  core$_.Future<jni$_.JBoolean?> callFlutterEchoAsyncNullableBool(jni$_.JBoolean? boolean);
+  core$_.Future<jni$_.JLong?> callFlutterEchoAsyncNullableInt(jni$_.JLong? long);
+  core$_.Future<jni$_.JDouble?> callFlutterEchoAsyncNullableDouble(jni$_.JDouble? double);
+  core$_.Future<jni$_.JString?> callFlutterEchoAsyncNullableString(jni$_.JString? string);
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableUint8List(jni$_.JByteArray? bs);
+  core$_.Future<jni$_.JIntArray?> callFlutterEchoAsyncNullableInt32List(jni$_.JIntArray? is$);
+  core$_.Future<jni$_.JLongArray?> callFlutterEchoAsyncNullableInt64List(jni$_.JLongArray? js);
+  core$_.Future<jni$_.JDoubleArray?> callFlutterEchoAsyncNullableFloat64List(
+    jni$_.JDoubleArray? ds,
+  );
+  core$_.Future<jni$_.JObject?> callFlutterThrowFlutterErrorAsync();
+  core$_.Future<jni$_.JObject?> callFlutterEchoAsyncNullableObject(jni$_.JObject? object);
+  core$_.Future<jni$_.JList<jni$_.JObject?>?> callFlutterEchoAsyncNullableList(
+    jni$_.JList<jni$_.JObject?>? list,
+  );
+  core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> callFlutterEchoAsyncNullableEnumList(
+    jni$_.JList<NativeInteropAnEnum?>? list,
+  );
+  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> callFlutterEchoAsyncNullableClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?>? list,
+  );
+  core$_.Future<jni$_.JList<NativeInteropAnEnum>?> callFlutterEchoAsyncNullableNonNullEnumList(
+    jni$_.JList<NativeInteropAnEnum?>? list,
+  );
+  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>?>
+  callFlutterEchoAsyncNullableNonNullClassList(jni$_.JList<NativeInteropAllNullableTypes?>? list);
+  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> callFlutterEchoAsyncNullableMap(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+  );
+  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> callFlutterEchoAsyncNullableStringMap(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+  );
+  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> callFlutterEchoAsyncNullableIntMap(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+  );
+  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?>
+  callFlutterEchoAsyncNullableEnumMap(jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map);
+  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?>
+  callFlutterEchoAsyncNullableClassMap(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+  );
+  core$_.Future<NativeInteropAnEnum?> callFlutterEchoAsyncNullableEnum(
+    NativeInteropAnEnum? nativeInteropAnEnum,
+  );
+  core$_.Future<NativeInteropAnotherEnum?> callFlutterEchoAnotherAsyncNullableEnum(
+    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
+  );
+  core$_.bool defaultIsMainThread();
+  core$_.Future<jni$_.JBoolean> callFlutterNoopOnBackgroundThread();
+  core$_.bool testDeregisterHostApi();
+  core$_.bool testDeregisterFlutterApi();
+  void registerAndImmediatelyDeregisterHostApi(jni$_.JString string);
+  core$_.bool get registerAndImmediatelyDeregisterHostApi$async => false;
+  core$_.bool testCallDeregisteredFlutterApi(jni$_.JString string);
+}
+
+final class _$NativeInteropHostIntegrationCoreApi with $NativeInteropHostIntegrationCoreApi {
+  _$NativeInteropHostIntegrationCoreApi({
+    required void Function() noop,
+    this.noop$async = false,
+    required NativeInteropAllTypes Function(NativeInteropAllTypes nativeInteropAllTypes)
+    echoAllTypes,
+    required jni$_.JObject? Function() throwError,
+    required void Function() throwErrorFromVoid,
+    this.throwErrorFromVoid$async = false,
+    required jni$_.JObject? Function() throwFlutterError,
+    required core$_.int Function(core$_.int j) echoInt,
+    required core$_.double Function(core$_.double d) echoDouble,
+    required core$_.bool Function(core$_.bool z) echoBool,
+    required jni$_.JString Function(jni$_.JString string) echoString,
+    required jni$_.JByteArray Function(jni$_.JByteArray bs) echoUint8List,
+    required jni$_.JIntArray Function(jni$_.JIntArray is$) echoInt32List,
+    required jni$_.JLongArray Function(jni$_.JLongArray js) echoInt64List,
+    required jni$_.JDoubleArray Function(jni$_.JDoubleArray ds) echoFloat64List,
+    required jni$_.JObject Function(jni$_.JObject object) echoObject,
+    required jni$_.JList<jni$_.JObject?> Function(jni$_.JList<jni$_.JObject?> list) echoList,
+    required jni$_.JList<jni$_.JString?> Function(jni$_.JList<jni$_.JString?> list) echoStringList,
+    required jni$_.JList<jni$_.JLong?> Function(jni$_.JList<jni$_.JLong?> list) echoIntList,
+    required jni$_.JList<jni$_.JDouble?> Function(jni$_.JList<jni$_.JDouble?> list) echoDoubleList,
+    required jni$_.JList<jni$_.JBoolean?> Function(jni$_.JList<jni$_.JBoolean?> list) echoBoolList,
+    required jni$_.JList<NativeInteropAnEnum?> Function(jni$_.JList<NativeInteropAnEnum?> list)
+    echoEnumList,
+    required jni$_.JList<NativeInteropAllNullableTypes?> Function(
+      jni$_.JList<NativeInteropAllNullableTypes?> list,
+    )
+    echoClassList,
+    required jni$_.JList<NativeInteropAnEnum> Function(jni$_.JList<NativeInteropAnEnum> list)
+    echoNonNullEnumList,
+    required jni$_.JList<NativeInteropAllNullableTypes> Function(
+      jni$_.JList<NativeInteropAllNullableTypes> list,
+    )
+    echoNonNullClassList,
+    required jni$_.JMap<jni$_.JObject?, jni$_.JObject?> Function(
+      jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+    )
+    echoMap,
+    required jni$_.JMap<jni$_.JString?, jni$_.JString?> Function(
+      jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+    )
+    echoStringMap,
+    required jni$_.JMap<jni$_.JLong?, jni$_.JLong?> Function(
+      jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
+    )
+    echoIntMap,
+    required jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> Function(
+      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+    )
+    echoEnumMap,
+    required jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> Function(
+      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+    )
+    echoClassMap,
+    required jni$_.JMap<jni$_.JString, jni$_.JString> Function(
+      jni$_.JMap<jni$_.JString, jni$_.JString> map,
+    )
+    echoNonNullStringMap,
+    required jni$_.JMap<jni$_.JLong, jni$_.JLong> Function(jni$_.JMap<jni$_.JLong, jni$_.JLong> map)
+    echoNonNullIntMap,
+    required jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> Function(
+      jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
+    )
+    echoNonNullEnumMap,
+    required jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> Function(
+      jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
+    )
+    echoNonNullClassMap,
+    required NativeInteropAllClassesWrapper Function(
+      NativeInteropAllClassesWrapper nativeInteropAllClassesWrapper,
+    )
+    echoClassWrapper,
+    required NativeInteropAnEnum Function(NativeInteropAnEnum nativeInteropAnEnum) echoEnum,
+    required NativeInteropAnotherEnum Function(NativeInteropAnotherEnum nativeInteropAnotherEnum)
+    echoAnotherEnum,
+    required jni$_.JString Function(jni$_.JString string) echoNamedDefaultString,
+    required core$_.double Function(core$_.double d) echoOptionalDefaultDouble,
+    required core$_.int Function(core$_.int j) echoRequiredInt,
+    required NativeInteropAllNullableTypes? Function(
+      NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+    )
+    echoAllNullableTypes,
+    required NativeInteropAllNullableTypesWithoutRecursion? Function(
+      NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+    )
+    echoAllNullableTypesWithoutRecursion,
+    required jni$_.JString? Function(NativeInteropAllClassesWrapper nativeInteropAllClassesWrapper)
+    extractNestedNullableString,
+    required NativeInteropAllClassesWrapper Function(jni$_.JString? string)
+    createNestedNullableString,
+    required NativeInteropAllNullableTypes Function(
+      jni$_.JBoolean? boolean,
+      jni$_.JLong? long,
+      jni$_.JString? string,
+    )
+    sendMultipleNullableTypes,
+    required NativeInteropAllNullableTypesWithoutRecursion Function(
+      jni$_.JBoolean? boolean,
+      jni$_.JLong? long,
+      jni$_.JString? string,
+    )
+    sendMultipleNullableTypesWithoutRecursion,
+    required jni$_.JLong? Function(jni$_.JLong? long) echoNullableInt,
+    required jni$_.JDouble? Function(jni$_.JDouble? double) echoNullableDouble,
+    required jni$_.JBoolean? Function(jni$_.JBoolean? boolean) echoNullableBool,
+    required jni$_.JString? Function(jni$_.JString? string) echoNullableString,
+    required jni$_.JByteArray? Function(jni$_.JByteArray? bs) echoNullableUint8List,
+    required jni$_.JIntArray? Function(jni$_.JIntArray? is$) echoNullableInt32List,
+    required jni$_.JLongArray? Function(jni$_.JLongArray? js) echoNullableInt64List,
+    required jni$_.JDoubleArray? Function(jni$_.JDoubleArray? ds) echoNullableFloat64List,
+    required jni$_.JObject? Function(jni$_.JObject? object) echoNullableObject,
+    required jni$_.JList<jni$_.JObject?>? Function(jni$_.JList<jni$_.JObject?>? list)
+    echoNullableList,
+    required jni$_.JList<NativeInteropAnEnum?>? Function(jni$_.JList<NativeInteropAnEnum?>? list)
+    echoNullableEnumList,
+    required jni$_.JList<NativeInteropAllNullableTypes?>? Function(
+      jni$_.JList<NativeInteropAllNullableTypes?>? list,
+    )
+    echoNullableClassList,
+    required jni$_.JList<NativeInteropAnEnum>? Function(jni$_.JList<NativeInteropAnEnum>? list)
+    echoNullableNonNullEnumList,
+    required jni$_.JList<NativeInteropAllNullableTypes>? Function(
+      jni$_.JList<NativeInteropAllNullableTypes>? list,
+    )
+    echoNullableNonNullClassList,
+    required jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? Function(
+      jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+    )
+    echoNullableMap,
+    required jni$_.JMap<jni$_.JString?, jni$_.JString?>? Function(
+      jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+    )
+    echoNullableStringMap,
+    required jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? Function(
+      jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+    )
+    echoNullableIntMap,
+    required jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? Function(
+      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+    )
+    echoNullableEnumMap,
+    required jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? Function(
+      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+    )
+    echoNullableClassMap,
+    required jni$_.JMap<jni$_.JString, jni$_.JString>? Function(
+      jni$_.JMap<jni$_.JString, jni$_.JString>? map,
+    )
+    echoNullableNonNullStringMap,
+    required jni$_.JMap<jni$_.JLong, jni$_.JLong>? Function(
+      jni$_.JMap<jni$_.JLong, jni$_.JLong>? map,
+    )
+    echoNullableNonNullIntMap,
+    required jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? Function(
+      jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
+    )
+    echoNullableNonNullEnumMap,
+    required jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? Function(
+      jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
+    )
+    echoNullableNonNullClassMap,
+    required NativeInteropAnEnum? Function(NativeInteropAnEnum? nativeInteropAnEnum)
+    echoNullableEnum,
+    required NativeInteropAnotherEnum? Function(NativeInteropAnotherEnum? nativeInteropAnotherEnum)
+    echoAnotherNullableEnum,
+    required jni$_.JLong? Function(jni$_.JLong? long) echoOptionalNullableInt,
+    required jni$_.JString? Function(jni$_.JString? string) echoNamedNullableString,
+    required core$_.Future<void> Function() noopAsync,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAsyncInt,
+    required core$_.Future<jni$_.JDouble> Function(core$_.double d) echoAsyncDouble,
+    required core$_.Future<jni$_.JBoolean> Function(core$_.bool z) echoAsyncBool,
+    required core$_.Future<jni$_.JString> Function(jni$_.JString string) echoAsyncString,
+    required core$_.Future<jni$_.JByteArray> Function(jni$_.JByteArray bs) echoAsyncUint8List,
+    required core$_.Future<jni$_.JIntArray> Function(jni$_.JIntArray is$) echoAsyncInt32List,
+    required core$_.Future<jni$_.JLongArray> Function(jni$_.JLongArray js) echoAsyncInt64List,
+    required core$_.Future<jni$_.JDoubleArray> Function(jni$_.JDoubleArray ds) echoAsyncFloat64List,
+    required core$_.Future<jni$_.JObject> Function(jni$_.JObject object) echoAsyncObject,
+    required core$_.Future<jni$_.JList<jni$_.JObject?>> Function(jni$_.JList<jni$_.JObject?> list)
+    echoAsyncList,
+    required core$_.Future<jni$_.JList<NativeInteropAnEnum?>> Function(
+      jni$_.JList<NativeInteropAnEnum?> list,
+    )
+    echoAsyncEnumList,
+    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> Function(
+      jni$_.JList<NativeInteropAllNullableTypes?> list,
+    )
+    echoAsyncClassList,
+    required core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> Function(
+      jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+    )
+    echoAsyncMap,
+    required core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> Function(
+      jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+    )
+    echoAsyncStringMap,
+    required core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> Function(
+      jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
+    )
+    echoAsyncIntMap,
+    required core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> Function(
+      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+    )
+    echoAsyncEnumMap,
+    required core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>> Function(
+      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+    )
+    echoAsyncClassMap,
+    required core$_.Future<NativeInteropAnEnum> Function(NativeInteropAnEnum nativeInteropAnEnum)
+    echoAsyncEnum,
+    required core$_.Future<NativeInteropAnotherEnum> Function(
+      NativeInteropAnotherEnum nativeInteropAnotherEnum,
+    )
+    echoAnotherAsyncEnum,
+    required core$_.Future<jni$_.JObject?> Function() throwAsyncError,
+    required core$_.Future<void> Function() throwAsyncErrorFromVoid,
+    required core$_.Future<jni$_.JObject?> Function() throwAsyncFlutterError,
+    required core$_.Future<NativeInteropAllTypes> Function(
+      NativeInteropAllTypes nativeInteropAllTypes,
+    )
+    echoAsyncNativeInteropAllTypes,
+    required core$_.Future<NativeInteropAllNullableTypes?> Function(
+      NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+    )
+    echoAsyncNullableNativeInteropAllNullableTypes,
+    required core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?> Function(
+      NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+    )
+    echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion,
+    required core$_.Future<jni$_.JLong?> Function(jni$_.JLong? long) echoAsyncNullableInt,
+    required core$_.Future<jni$_.JDouble?> Function(jni$_.JDouble? double) echoAsyncNullableDouble,
+    required core$_.Future<jni$_.JBoolean?> Function(jni$_.JBoolean? boolean) echoAsyncNullableBool,
+    required core$_.Future<jni$_.JString?> Function(jni$_.JString? string) echoAsyncNullableString,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray? bs)
+    echoAsyncNullableUint8List,
+    required core$_.Future<jni$_.JIntArray?> Function(jni$_.JIntArray? is$)
+    echoAsyncNullableInt32List,
+    required core$_.Future<jni$_.JLongArray?> Function(jni$_.JLongArray? js)
+    echoAsyncNullableInt64List,
+    required core$_.Future<jni$_.JDoubleArray?> Function(jni$_.JDoubleArray? ds)
+    echoAsyncNullableFloat64List,
+    required core$_.Future<jni$_.JObject?> Function(jni$_.JObject? object) echoAsyncNullableObject,
+    required core$_.Future<jni$_.JList<jni$_.JObject?>?> Function(jni$_.JList<jni$_.JObject?>? list)
+    echoAsyncNullableList,
+    required core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> Function(
+      jni$_.JList<NativeInteropAnEnum?>? list,
+    )
+    echoAsyncNullableEnumList,
+    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> Function(
+      jni$_.JList<NativeInteropAllNullableTypes?>? list,
+    )
+    echoAsyncNullableClassList,
+    required core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> Function(
+      jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+    )
+    echoAsyncNullableMap,
+    required core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> Function(
+      jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+    )
+    echoAsyncNullableStringMap,
+    required core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> Function(
+      jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+    )
+    echoAsyncNullableIntMap,
+    required core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?> Function(
+      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+    )
+    echoAsyncNullableEnumMap,
+    required core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?> Function(
+      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+    )
+    echoAsyncNullableClassMap,
+    required core$_.Future<NativeInteropAnEnum?> Function(NativeInteropAnEnum? nativeInteropAnEnum)
+    echoAsyncNullableEnum,
+    required core$_.Future<NativeInteropAnotherEnum?> Function(
+      NativeInteropAnotherEnum? nativeInteropAnotherEnum,
+    )
+    echoAnotherAsyncNullableEnum,
+    required void Function() callFlutterNoop,
+    this.callFlutterNoop$async = false,
+    required jni$_.JObject? Function() callFlutterThrowError,
+    required void Function() callFlutterThrowErrorFromVoid,
+    this.callFlutterThrowErrorFromVoid$async = false,
+    required NativeInteropAllTypes Function(NativeInteropAllTypes nativeInteropAllTypes)
+    callFlutterEchoNativeInteropAllTypes,
+    required NativeInteropAllNullableTypes? Function(
+      NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+    )
+    callFlutterEchoNativeInteropAllNullableTypes,
+    required NativeInteropAllNullableTypes Function(
+      jni$_.JBoolean? boolean,
+      jni$_.JLong? long,
+      jni$_.JString? string,
+    )
+    callFlutterSendMultipleNullableTypes,
+    required NativeInteropAllNullableTypesWithoutRecursion? Function(
+      NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+    )
+    callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion,
+    required NativeInteropAllNullableTypesWithoutRecursion Function(
+      jni$_.JBoolean? boolean,
+      jni$_.JLong? long,
+      jni$_.JString? string,
+    )
+    callFlutterSendMultipleNullableTypesWithoutRecursion,
+    required core$_.bool Function(core$_.bool z) callFlutterEchoBool,
+    required core$_.int Function(core$_.int j) callFlutterEchoInt,
+    required core$_.double Function(core$_.double d) callFlutterEchoDouble,
+    required jni$_.JString Function(jni$_.JString string) callFlutterEchoString,
+    required jni$_.JByteArray Function(jni$_.JByteArray bs) callFlutterEchoUint8List,
+    required jni$_.JIntArray Function(jni$_.JIntArray is$) callFlutterEchoInt32List,
+    required jni$_.JLongArray Function(jni$_.JLongArray js) callFlutterEchoInt64List,
+    required jni$_.JDoubleArray Function(jni$_.JDoubleArray ds) callFlutterEchoFloat64List,
+    required jni$_.JList<jni$_.JObject?> Function(jni$_.JList<jni$_.JObject?> list)
+    callFlutterEchoList,
+    required jni$_.JList<NativeInteropAnEnum?> Function(jni$_.JList<NativeInteropAnEnum?> list)
+    callFlutterEchoEnumList,
+    required jni$_.JList<NativeInteropAllNullableTypes?> Function(
+      jni$_.JList<NativeInteropAllNullableTypes?> list,
+    )
+    callFlutterEchoClassList,
+    required jni$_.JList<NativeInteropAnEnum> Function(jni$_.JList<NativeInteropAnEnum> list)
+    callFlutterEchoNonNullEnumList,
+    required jni$_.JList<NativeInteropAllNullableTypes> Function(
+      jni$_.JList<NativeInteropAllNullableTypes> list,
+    )
+    callFlutterEchoNonNullClassList,
+    required jni$_.JMap<jni$_.JObject?, jni$_.JObject?> Function(
+      jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+    )
+    callFlutterEchoMap,
+    required jni$_.JMap<jni$_.JString?, jni$_.JString?> Function(
+      jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+    )
+    callFlutterEchoStringMap,
+    required jni$_.JMap<jni$_.JLong?, jni$_.JLong?> Function(
+      jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
+    )
+    callFlutterEchoIntMap,
+    required jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> Function(
+      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+    )
+    callFlutterEchoEnumMap,
+    required jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> Function(
+      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+    )
+    callFlutterEchoClassMap,
+    required jni$_.JMap<jni$_.JString, jni$_.JString> Function(
+      jni$_.JMap<jni$_.JString, jni$_.JString> map,
+    )
+    callFlutterEchoNonNullStringMap,
+    required jni$_.JMap<jni$_.JLong, jni$_.JLong> Function(jni$_.JMap<jni$_.JLong, jni$_.JLong> map)
+    callFlutterEchoNonNullIntMap,
+    required jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> Function(
+      jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
+    )
+    callFlutterEchoNonNullEnumMap,
+    required jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> Function(
+      jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
+    )
+    callFlutterEchoNonNullClassMap,
+    required NativeInteropAnEnum Function(NativeInteropAnEnum nativeInteropAnEnum)
+    callFlutterEchoEnum,
+    required NativeInteropAnotherEnum Function(NativeInteropAnotherEnum nativeInteropAnotherEnum)
+    callFlutterEchoNativeInteropAnotherEnum,
+    required jni$_.JBoolean? Function(jni$_.JBoolean? boolean) callFlutterEchoNullableBool,
+    required jni$_.JLong? Function(jni$_.JLong? long) callFlutterEchoNullableInt,
+    required jni$_.JDouble? Function(jni$_.JDouble? double) callFlutterEchoNullableDouble,
+    required jni$_.JString? Function(jni$_.JString? string) callFlutterEchoNullableString,
+    required jni$_.JByteArray? Function(jni$_.JByteArray? bs) callFlutterEchoNullableUint8List,
+    required jni$_.JIntArray? Function(jni$_.JIntArray? is$) callFlutterEchoNullableInt32List,
+    required jni$_.JLongArray? Function(jni$_.JLongArray? js) callFlutterEchoNullableInt64List,
+    required jni$_.JDoubleArray? Function(jni$_.JDoubleArray? ds)
+    callFlutterEchoNullableFloat64List,
+    required jni$_.JList<jni$_.JObject?>? Function(jni$_.JList<jni$_.JObject?>? list)
+    callFlutterEchoNullableList,
+    required jni$_.JList<NativeInteropAnEnum?>? Function(jni$_.JList<NativeInteropAnEnum?>? list)
+    callFlutterEchoNullableEnumList,
+    required jni$_.JList<NativeInteropAllNullableTypes?>? Function(
+      jni$_.JList<NativeInteropAllNullableTypes?>? list,
+    )
+    callFlutterEchoNullableClassList,
+    required jni$_.JList<NativeInteropAnEnum>? Function(jni$_.JList<NativeInteropAnEnum>? list)
+    callFlutterEchoNullableNonNullEnumList,
+    required jni$_.JList<NativeInteropAllNullableTypes>? Function(
+      jni$_.JList<NativeInteropAllNullableTypes>? list,
+    )
+    callFlutterEchoNullableNonNullClassList,
+    required jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? Function(
+      jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+    )
+    callFlutterEchoNullableMap,
+    required jni$_.JMap<jni$_.JString?, jni$_.JString?>? Function(
+      jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+    )
+    callFlutterEchoNullableStringMap,
+    required jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? Function(
+      jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+    )
+    callFlutterEchoNullableIntMap,
+    required jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? Function(
+      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+    )
+    callFlutterEchoNullableEnumMap,
+    required jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? Function(
+      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+    )
+    callFlutterEchoNullableClassMap,
+    required jni$_.JMap<jni$_.JString, jni$_.JString>? Function(
+      jni$_.JMap<jni$_.JString, jni$_.JString>? map,
+    )
+    callFlutterEchoNullableNonNullStringMap,
+    required jni$_.JMap<jni$_.JLong, jni$_.JLong>? Function(
+      jni$_.JMap<jni$_.JLong, jni$_.JLong>? map,
+    )
+    callFlutterEchoNullableNonNullIntMap,
+    required jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? Function(
+      jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
+    )
+    callFlutterEchoNullableNonNullEnumMap,
+    required jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? Function(
+      jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
+    )
+    callFlutterEchoNullableNonNullClassMap,
+    required NativeInteropAnEnum? Function(NativeInteropAnEnum? nativeInteropAnEnum)
+    callFlutterEchoNullableEnum,
+    required NativeInteropAnotherEnum? Function(NativeInteropAnotherEnum? nativeInteropAnotherEnum)
+    callFlutterEchoAnotherNullableEnum,
+    required core$_.Future<void> Function() callFlutterNoopAsync,
+    required core$_.Future<NativeInteropAllTypes> Function(
+      NativeInteropAllTypes nativeInteropAllTypes,
+    )
+    callFlutterEchoAsyncNativeInteropAllTypes,
+    required core$_.Future<NativeInteropAllNullableTypes?> Function(
+      NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+    )
+    callFlutterEchoAsyncNullableNativeInteropAllNullableTypes,
+    required core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?> Function(
+      NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+    )
+    callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion,
+    required core$_.Future<jni$_.JBoolean> Function(core$_.bool z) callFlutterEchoAsyncBool,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) callFlutterEchoAsyncInt,
+    required core$_.Future<jni$_.JDouble> Function(core$_.double d) callFlutterEchoAsyncDouble,
+    required core$_.Future<jni$_.JString> Function(jni$_.JString string) callFlutterEchoAsyncString,
+    required core$_.Future<jni$_.JByteArray> Function(jni$_.JByteArray bs)
+    callFlutterEchoAsyncUint8List,
+    required core$_.Future<jni$_.JIntArray> Function(jni$_.JIntArray is$)
+    callFlutterEchoAsyncInt32List,
+    required core$_.Future<jni$_.JLongArray> Function(jni$_.JLongArray js)
+    callFlutterEchoAsyncInt64List,
+    required core$_.Future<jni$_.JDoubleArray> Function(jni$_.JDoubleArray ds)
+    callFlutterEchoAsyncFloat64List,
+    required core$_.Future<jni$_.JObject> Function(jni$_.JObject object) callFlutterEchoAsyncObject,
+    required core$_.Future<jni$_.JList<jni$_.JObject?>> Function(jni$_.JList<jni$_.JObject?> list)
+    callFlutterEchoAsyncList,
+    required core$_.Future<jni$_.JList<NativeInteropAnEnum?>> Function(
+      jni$_.JList<NativeInteropAnEnum?> list,
+    )
+    callFlutterEchoAsyncEnumList,
+    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> Function(
+      jni$_.JList<NativeInteropAllNullableTypes?> list,
+    )
+    callFlutterEchoAsyncClassList,
+    required core$_.Future<jni$_.JList<NativeInteropAnEnum>> Function(
+      jni$_.JList<NativeInteropAnEnum?> list,
+    )
+    callFlutterEchoAsyncNonNullEnumList,
+    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>> Function(
+      jni$_.JList<NativeInteropAllNullableTypes?> list,
+    )
+    callFlutterEchoAsyncNonNullClassList,
+    required core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> Function(
+      jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+    )
+    callFlutterEchoAsyncMap,
+    required core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> Function(
+      jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+    )
+    callFlutterEchoAsyncStringMap,
+    required core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> Function(
+      jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
+    )
+    callFlutterEchoAsyncIntMap,
+    required core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> Function(
+      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+    )
+    callFlutterEchoAsyncEnumMap,
+    required core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>> Function(
+      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+    )
+    callFlutterEchoAsyncClassMap,
+    required core$_.Future<NativeInteropAnEnum> Function(NativeInteropAnEnum nativeInteropAnEnum)
+    callFlutterEchoAsyncEnum,
+    required core$_.Future<NativeInteropAnotherEnum> Function(
+      NativeInteropAnotherEnum nativeInteropAnotherEnum,
+    )
+    callFlutterEchoAnotherAsyncEnum,
+    required core$_.Future<jni$_.JBoolean?> Function(jni$_.JBoolean? boolean)
+    callFlutterEchoAsyncNullableBool,
+    required core$_.Future<jni$_.JLong?> Function(jni$_.JLong? long)
+    callFlutterEchoAsyncNullableInt,
+    required core$_.Future<jni$_.JDouble?> Function(jni$_.JDouble? double)
+    callFlutterEchoAsyncNullableDouble,
+    required core$_.Future<jni$_.JString?> Function(jni$_.JString? string)
+    callFlutterEchoAsyncNullableString,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray? bs)
+    callFlutterEchoAsyncNullableUint8List,
+    required core$_.Future<jni$_.JIntArray?> Function(jni$_.JIntArray? is$)
+    callFlutterEchoAsyncNullableInt32List,
+    required core$_.Future<jni$_.JLongArray?> Function(jni$_.JLongArray? js)
+    callFlutterEchoAsyncNullableInt64List,
+    required core$_.Future<jni$_.JDoubleArray?> Function(jni$_.JDoubleArray? ds)
+    callFlutterEchoAsyncNullableFloat64List,
+    required core$_.Future<jni$_.JObject?> Function() callFlutterThrowFlutterErrorAsync,
+    required core$_.Future<jni$_.JObject?> Function(jni$_.JObject? object)
+    callFlutterEchoAsyncNullableObject,
+    required core$_.Future<jni$_.JList<jni$_.JObject?>?> Function(jni$_.JList<jni$_.JObject?>? list)
+    callFlutterEchoAsyncNullableList,
+    required core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> Function(
+      jni$_.JList<NativeInteropAnEnum?>? list,
+    )
+    callFlutterEchoAsyncNullableEnumList,
+    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> Function(
+      jni$_.JList<NativeInteropAllNullableTypes?>? list,
+    )
+    callFlutterEchoAsyncNullableClassList,
+    required core$_.Future<jni$_.JList<NativeInteropAnEnum>?> Function(
+      jni$_.JList<NativeInteropAnEnum?>? list,
+    )
+    callFlutterEchoAsyncNullableNonNullEnumList,
+    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>?> Function(
+      jni$_.JList<NativeInteropAllNullableTypes?>? list,
+    )
+    callFlutterEchoAsyncNullableNonNullClassList,
+    required core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> Function(
+      jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+    )
+    callFlutterEchoAsyncNullableMap,
+    required core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> Function(
+      jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+    )
+    callFlutterEchoAsyncNullableStringMap,
+    required core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> Function(
+      jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+    )
+    callFlutterEchoAsyncNullableIntMap,
+    required core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?> Function(
+      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+    )
+    callFlutterEchoAsyncNullableEnumMap,
+    required core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?> Function(
+      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+    )
+    callFlutterEchoAsyncNullableClassMap,
+    required core$_.Future<NativeInteropAnEnum?> Function(NativeInteropAnEnum? nativeInteropAnEnum)
+    callFlutterEchoAsyncNullableEnum,
+    required core$_.Future<NativeInteropAnotherEnum?> Function(
+      NativeInteropAnotherEnum? nativeInteropAnotherEnum,
+    )
+    callFlutterEchoAnotherAsyncNullableEnum,
+    required core$_.bool Function() defaultIsMainThread,
+    required core$_.Future<jni$_.JBoolean> Function() callFlutterNoopOnBackgroundThread,
+    required core$_.bool Function() testDeregisterHostApi,
+    required core$_.bool Function() testDeregisterFlutterApi,
+    required void Function(jni$_.JString string) registerAndImmediatelyDeregisterHostApi,
+    this.registerAndImmediatelyDeregisterHostApi$async = false,
+    required core$_.bool Function(jni$_.JString string) testCallDeregisteredFlutterApi,
+  }) : _noop = noop,
+       _echoAllTypes = echoAllTypes,
+       _throwError = throwError,
+       _throwErrorFromVoid = throwErrorFromVoid,
+       _throwFlutterError = throwFlutterError,
+       _echoInt = echoInt,
+       _echoDouble = echoDouble,
+       _echoBool = echoBool,
+       _echoString = echoString,
+       _echoUint8List = echoUint8List,
+       _echoInt32List = echoInt32List,
+       _echoInt64List = echoInt64List,
+       _echoFloat64List = echoFloat64List,
+       _echoObject = echoObject,
+       _echoList = echoList,
+       _echoStringList = echoStringList,
+       _echoIntList = echoIntList,
+       _echoDoubleList = echoDoubleList,
+       _echoBoolList = echoBoolList,
+       _echoEnumList = echoEnumList,
+       _echoClassList = echoClassList,
+       _echoNonNullEnumList = echoNonNullEnumList,
+       _echoNonNullClassList = echoNonNullClassList,
+       _echoMap = echoMap,
+       _echoStringMap = echoStringMap,
+       _echoIntMap = echoIntMap,
+       _echoEnumMap = echoEnumMap,
+       _echoClassMap = echoClassMap,
+       _echoNonNullStringMap = echoNonNullStringMap,
+       _echoNonNullIntMap = echoNonNullIntMap,
+       _echoNonNullEnumMap = echoNonNullEnumMap,
+       _echoNonNullClassMap = echoNonNullClassMap,
+       _echoClassWrapper = echoClassWrapper,
+       _echoEnum = echoEnum,
+       _echoAnotherEnum = echoAnotherEnum,
+       _echoNamedDefaultString = echoNamedDefaultString,
+       _echoOptionalDefaultDouble = echoOptionalDefaultDouble,
+       _echoRequiredInt = echoRequiredInt,
+       _echoAllNullableTypes = echoAllNullableTypes,
+       _echoAllNullableTypesWithoutRecursion = echoAllNullableTypesWithoutRecursion,
+       _extractNestedNullableString = extractNestedNullableString,
+       _createNestedNullableString = createNestedNullableString,
+       _sendMultipleNullableTypes = sendMultipleNullableTypes,
+       _sendMultipleNullableTypesWithoutRecursion = sendMultipleNullableTypesWithoutRecursion,
+       _echoNullableInt = echoNullableInt,
+       _echoNullableDouble = echoNullableDouble,
+       _echoNullableBool = echoNullableBool,
+       _echoNullableString = echoNullableString,
+       _echoNullableUint8List = echoNullableUint8List,
+       _echoNullableInt32List = echoNullableInt32List,
+       _echoNullableInt64List = echoNullableInt64List,
+       _echoNullableFloat64List = echoNullableFloat64List,
+       _echoNullableObject = echoNullableObject,
+       _echoNullableList = echoNullableList,
+       _echoNullableEnumList = echoNullableEnumList,
+       _echoNullableClassList = echoNullableClassList,
+       _echoNullableNonNullEnumList = echoNullableNonNullEnumList,
+       _echoNullableNonNullClassList = echoNullableNonNullClassList,
+       _echoNullableMap = echoNullableMap,
+       _echoNullableStringMap = echoNullableStringMap,
+       _echoNullableIntMap = echoNullableIntMap,
+       _echoNullableEnumMap = echoNullableEnumMap,
+       _echoNullableClassMap = echoNullableClassMap,
+       _echoNullableNonNullStringMap = echoNullableNonNullStringMap,
+       _echoNullableNonNullIntMap = echoNullableNonNullIntMap,
+       _echoNullableNonNullEnumMap = echoNullableNonNullEnumMap,
+       _echoNullableNonNullClassMap = echoNullableNonNullClassMap,
+       _echoNullableEnum = echoNullableEnum,
+       _echoAnotherNullableEnum = echoAnotherNullableEnum,
+       _echoOptionalNullableInt = echoOptionalNullableInt,
+       _echoNamedNullableString = echoNamedNullableString,
+       _noopAsync = noopAsync,
+       _echoAsyncInt = echoAsyncInt,
+       _echoAsyncDouble = echoAsyncDouble,
+       _echoAsyncBool = echoAsyncBool,
+       _echoAsyncString = echoAsyncString,
+       _echoAsyncUint8List = echoAsyncUint8List,
+       _echoAsyncInt32List = echoAsyncInt32List,
+       _echoAsyncInt64List = echoAsyncInt64List,
+       _echoAsyncFloat64List = echoAsyncFloat64List,
+       _echoAsyncObject = echoAsyncObject,
+       _echoAsyncList = echoAsyncList,
+       _echoAsyncEnumList = echoAsyncEnumList,
+       _echoAsyncClassList = echoAsyncClassList,
+       _echoAsyncMap = echoAsyncMap,
+       _echoAsyncStringMap = echoAsyncStringMap,
+       _echoAsyncIntMap = echoAsyncIntMap,
+       _echoAsyncEnumMap = echoAsyncEnumMap,
+       _echoAsyncClassMap = echoAsyncClassMap,
+       _echoAsyncEnum = echoAsyncEnum,
+       _echoAnotherAsyncEnum = echoAnotherAsyncEnum,
+       _throwAsyncError = throwAsyncError,
+       _throwAsyncErrorFromVoid = throwAsyncErrorFromVoid,
+       _throwAsyncFlutterError = throwAsyncFlutterError,
+       _echoAsyncNativeInteropAllTypes = echoAsyncNativeInteropAllTypes,
+       _echoAsyncNullableNativeInteropAllNullableTypes =
+           echoAsyncNullableNativeInteropAllNullableTypes,
+       _echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
+           echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion,
+       _echoAsyncNullableInt = echoAsyncNullableInt,
+       _echoAsyncNullableDouble = echoAsyncNullableDouble,
+       _echoAsyncNullableBool = echoAsyncNullableBool,
+       _echoAsyncNullableString = echoAsyncNullableString,
+       _echoAsyncNullableUint8List = echoAsyncNullableUint8List,
+       _echoAsyncNullableInt32List = echoAsyncNullableInt32List,
+       _echoAsyncNullableInt64List = echoAsyncNullableInt64List,
+       _echoAsyncNullableFloat64List = echoAsyncNullableFloat64List,
+       _echoAsyncNullableObject = echoAsyncNullableObject,
+       _echoAsyncNullableList = echoAsyncNullableList,
+       _echoAsyncNullableEnumList = echoAsyncNullableEnumList,
+       _echoAsyncNullableClassList = echoAsyncNullableClassList,
+       _echoAsyncNullableMap = echoAsyncNullableMap,
+       _echoAsyncNullableStringMap = echoAsyncNullableStringMap,
+       _echoAsyncNullableIntMap = echoAsyncNullableIntMap,
+       _echoAsyncNullableEnumMap = echoAsyncNullableEnumMap,
+       _echoAsyncNullableClassMap = echoAsyncNullableClassMap,
+       _echoAsyncNullableEnum = echoAsyncNullableEnum,
+       _echoAnotherAsyncNullableEnum = echoAnotherAsyncNullableEnum,
+       _callFlutterNoop = callFlutterNoop,
+       _callFlutterThrowError = callFlutterThrowError,
+       _callFlutterThrowErrorFromVoid = callFlutterThrowErrorFromVoid,
+       _callFlutterEchoNativeInteropAllTypes = callFlutterEchoNativeInteropAllTypes,
+       _callFlutterEchoNativeInteropAllNullableTypes = callFlutterEchoNativeInteropAllNullableTypes,
+       _callFlutterSendMultipleNullableTypes = callFlutterSendMultipleNullableTypes,
+       _callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion =
+           callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion,
+       _callFlutterSendMultipleNullableTypesWithoutRecursion =
+           callFlutterSendMultipleNullableTypesWithoutRecursion,
+       _callFlutterEchoBool = callFlutterEchoBool,
+       _callFlutterEchoInt = callFlutterEchoInt,
+       _callFlutterEchoDouble = callFlutterEchoDouble,
+       _callFlutterEchoString = callFlutterEchoString,
+       _callFlutterEchoUint8List = callFlutterEchoUint8List,
+       _callFlutterEchoInt32List = callFlutterEchoInt32List,
+       _callFlutterEchoInt64List = callFlutterEchoInt64List,
+       _callFlutterEchoFloat64List = callFlutterEchoFloat64List,
+       _callFlutterEchoList = callFlutterEchoList,
+       _callFlutterEchoEnumList = callFlutterEchoEnumList,
+       _callFlutterEchoClassList = callFlutterEchoClassList,
+       _callFlutterEchoNonNullEnumList = callFlutterEchoNonNullEnumList,
+       _callFlutterEchoNonNullClassList = callFlutterEchoNonNullClassList,
+       _callFlutterEchoMap = callFlutterEchoMap,
+       _callFlutterEchoStringMap = callFlutterEchoStringMap,
+       _callFlutterEchoIntMap = callFlutterEchoIntMap,
+       _callFlutterEchoEnumMap = callFlutterEchoEnumMap,
+       _callFlutterEchoClassMap = callFlutterEchoClassMap,
+       _callFlutterEchoNonNullStringMap = callFlutterEchoNonNullStringMap,
+       _callFlutterEchoNonNullIntMap = callFlutterEchoNonNullIntMap,
+       _callFlutterEchoNonNullEnumMap = callFlutterEchoNonNullEnumMap,
+       _callFlutterEchoNonNullClassMap = callFlutterEchoNonNullClassMap,
+       _callFlutterEchoEnum = callFlutterEchoEnum,
+       _callFlutterEchoNativeInteropAnotherEnum = callFlutterEchoNativeInteropAnotherEnum,
+       _callFlutterEchoNullableBool = callFlutterEchoNullableBool,
+       _callFlutterEchoNullableInt = callFlutterEchoNullableInt,
+       _callFlutterEchoNullableDouble = callFlutterEchoNullableDouble,
+       _callFlutterEchoNullableString = callFlutterEchoNullableString,
+       _callFlutterEchoNullableUint8List = callFlutterEchoNullableUint8List,
+       _callFlutterEchoNullableInt32List = callFlutterEchoNullableInt32List,
+       _callFlutterEchoNullableInt64List = callFlutterEchoNullableInt64List,
+       _callFlutterEchoNullableFloat64List = callFlutterEchoNullableFloat64List,
+       _callFlutterEchoNullableList = callFlutterEchoNullableList,
+       _callFlutterEchoNullableEnumList = callFlutterEchoNullableEnumList,
+       _callFlutterEchoNullableClassList = callFlutterEchoNullableClassList,
+       _callFlutterEchoNullableNonNullEnumList = callFlutterEchoNullableNonNullEnumList,
+       _callFlutterEchoNullableNonNullClassList = callFlutterEchoNullableNonNullClassList,
+       _callFlutterEchoNullableMap = callFlutterEchoNullableMap,
+       _callFlutterEchoNullableStringMap = callFlutterEchoNullableStringMap,
+       _callFlutterEchoNullableIntMap = callFlutterEchoNullableIntMap,
+       _callFlutterEchoNullableEnumMap = callFlutterEchoNullableEnumMap,
+       _callFlutterEchoNullableClassMap = callFlutterEchoNullableClassMap,
+       _callFlutterEchoNullableNonNullStringMap = callFlutterEchoNullableNonNullStringMap,
+       _callFlutterEchoNullableNonNullIntMap = callFlutterEchoNullableNonNullIntMap,
+       _callFlutterEchoNullableNonNullEnumMap = callFlutterEchoNullableNonNullEnumMap,
+       _callFlutterEchoNullableNonNullClassMap = callFlutterEchoNullableNonNullClassMap,
+       _callFlutterEchoNullableEnum = callFlutterEchoNullableEnum,
+       _callFlutterEchoAnotherNullableEnum = callFlutterEchoAnotherNullableEnum,
+       _callFlutterNoopAsync = callFlutterNoopAsync,
+       _callFlutterEchoAsyncNativeInteropAllTypes = callFlutterEchoAsyncNativeInteropAllTypes,
+       _callFlutterEchoAsyncNullableNativeInteropAllNullableTypes =
+           callFlutterEchoAsyncNullableNativeInteropAllNullableTypes,
+       _callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
+           callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion,
+       _callFlutterEchoAsyncBool = callFlutterEchoAsyncBool,
+       _callFlutterEchoAsyncInt = callFlutterEchoAsyncInt,
+       _callFlutterEchoAsyncDouble = callFlutterEchoAsyncDouble,
+       _callFlutterEchoAsyncString = callFlutterEchoAsyncString,
+       _callFlutterEchoAsyncUint8List = callFlutterEchoAsyncUint8List,
+       _callFlutterEchoAsyncInt32List = callFlutterEchoAsyncInt32List,
+       _callFlutterEchoAsyncInt64List = callFlutterEchoAsyncInt64List,
+       _callFlutterEchoAsyncFloat64List = callFlutterEchoAsyncFloat64List,
+       _callFlutterEchoAsyncObject = callFlutterEchoAsyncObject,
+       _callFlutterEchoAsyncList = callFlutterEchoAsyncList,
+       _callFlutterEchoAsyncEnumList = callFlutterEchoAsyncEnumList,
+       _callFlutterEchoAsyncClassList = callFlutterEchoAsyncClassList,
+       _callFlutterEchoAsyncNonNullEnumList = callFlutterEchoAsyncNonNullEnumList,
+       _callFlutterEchoAsyncNonNullClassList = callFlutterEchoAsyncNonNullClassList,
+       _callFlutterEchoAsyncMap = callFlutterEchoAsyncMap,
+       _callFlutterEchoAsyncStringMap = callFlutterEchoAsyncStringMap,
+       _callFlutterEchoAsyncIntMap = callFlutterEchoAsyncIntMap,
+       _callFlutterEchoAsyncEnumMap = callFlutterEchoAsyncEnumMap,
+       _callFlutterEchoAsyncClassMap = callFlutterEchoAsyncClassMap,
+       _callFlutterEchoAsyncEnum = callFlutterEchoAsyncEnum,
+       _callFlutterEchoAnotherAsyncEnum = callFlutterEchoAnotherAsyncEnum,
+       _callFlutterEchoAsyncNullableBool = callFlutterEchoAsyncNullableBool,
+       _callFlutterEchoAsyncNullableInt = callFlutterEchoAsyncNullableInt,
+       _callFlutterEchoAsyncNullableDouble = callFlutterEchoAsyncNullableDouble,
+       _callFlutterEchoAsyncNullableString = callFlutterEchoAsyncNullableString,
+       _callFlutterEchoAsyncNullableUint8List = callFlutterEchoAsyncNullableUint8List,
+       _callFlutterEchoAsyncNullableInt32List = callFlutterEchoAsyncNullableInt32List,
+       _callFlutterEchoAsyncNullableInt64List = callFlutterEchoAsyncNullableInt64List,
+       _callFlutterEchoAsyncNullableFloat64List = callFlutterEchoAsyncNullableFloat64List,
+       _callFlutterThrowFlutterErrorAsync = callFlutterThrowFlutterErrorAsync,
+       _callFlutterEchoAsyncNullableObject = callFlutterEchoAsyncNullableObject,
+       _callFlutterEchoAsyncNullableList = callFlutterEchoAsyncNullableList,
+       _callFlutterEchoAsyncNullableEnumList = callFlutterEchoAsyncNullableEnumList,
+       _callFlutterEchoAsyncNullableClassList = callFlutterEchoAsyncNullableClassList,
+       _callFlutterEchoAsyncNullableNonNullEnumList = callFlutterEchoAsyncNullableNonNullEnumList,
+       _callFlutterEchoAsyncNullableNonNullClassList = callFlutterEchoAsyncNullableNonNullClassList,
+       _callFlutterEchoAsyncNullableMap = callFlutterEchoAsyncNullableMap,
+       _callFlutterEchoAsyncNullableStringMap = callFlutterEchoAsyncNullableStringMap,
+       _callFlutterEchoAsyncNullableIntMap = callFlutterEchoAsyncNullableIntMap,
+       _callFlutterEchoAsyncNullableEnumMap = callFlutterEchoAsyncNullableEnumMap,
+       _callFlutterEchoAsyncNullableClassMap = callFlutterEchoAsyncNullableClassMap,
+       _callFlutterEchoAsyncNullableEnum = callFlutterEchoAsyncNullableEnum,
+       _callFlutterEchoAnotherAsyncNullableEnum = callFlutterEchoAnotherAsyncNullableEnum,
+       _defaultIsMainThread = defaultIsMainThread,
+       _callFlutterNoopOnBackgroundThread = callFlutterNoopOnBackgroundThread,
+       _testDeregisterHostApi = testDeregisterHostApi,
+       _testDeregisterFlutterApi = testDeregisterFlutterApi,
+       _registerAndImmediatelyDeregisterHostApi = registerAndImmediatelyDeregisterHostApi,
+       _testCallDeregisteredFlutterApi = testCallDeregisteredFlutterApi;
+
+  final void Function() _noop;
+  final core$_.bool noop$async;
+  final NativeInteropAllTypes Function(NativeInteropAllTypes nativeInteropAllTypes) _echoAllTypes;
+  final jni$_.JObject? Function() _throwError;
+  final void Function() _throwErrorFromVoid;
+  final core$_.bool throwErrorFromVoid$async;
+  final jni$_.JObject? Function() _throwFlutterError;
+  final core$_.int Function(core$_.int j) _echoInt;
+  final core$_.double Function(core$_.double d) _echoDouble;
+  final core$_.bool Function(core$_.bool z) _echoBool;
+  final jni$_.JString Function(jni$_.JString string) _echoString;
+  final jni$_.JByteArray Function(jni$_.JByteArray bs) _echoUint8List;
+  final jni$_.JIntArray Function(jni$_.JIntArray is$) _echoInt32List;
+  final jni$_.JLongArray Function(jni$_.JLongArray js) _echoInt64List;
+  final jni$_.JDoubleArray Function(jni$_.JDoubleArray ds) _echoFloat64List;
+  final jni$_.JObject Function(jni$_.JObject object) _echoObject;
+  final jni$_.JList<jni$_.JObject?> Function(jni$_.JList<jni$_.JObject?> list) _echoList;
+  final jni$_.JList<jni$_.JString?> Function(jni$_.JList<jni$_.JString?> list) _echoStringList;
+  final jni$_.JList<jni$_.JLong?> Function(jni$_.JList<jni$_.JLong?> list) _echoIntList;
+  final jni$_.JList<jni$_.JDouble?> Function(jni$_.JList<jni$_.JDouble?> list) _echoDoubleList;
+  final jni$_.JList<jni$_.JBoolean?> Function(jni$_.JList<jni$_.JBoolean?> list) _echoBoolList;
+  final jni$_.JList<NativeInteropAnEnum?> Function(jni$_.JList<NativeInteropAnEnum?> list)
+  _echoEnumList;
+  final jni$_.JList<NativeInteropAllNullableTypes?> Function(
+    jni$_.JList<NativeInteropAllNullableTypes?> list,
+  )
+  _echoClassList;
+  final jni$_.JList<NativeInteropAnEnum> Function(jni$_.JList<NativeInteropAnEnum> list)
+  _echoNonNullEnumList;
+  final jni$_.JList<NativeInteropAllNullableTypes> Function(
+    jni$_.JList<NativeInteropAllNullableTypes> list,
+  )
+  _echoNonNullClassList;
+  final jni$_.JMap<jni$_.JObject?, jni$_.JObject?> Function(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+  )
+  _echoMap;
+  final jni$_.JMap<jni$_.JString?, jni$_.JString?> Function(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+  )
+  _echoStringMap;
+  final jni$_.JMap<jni$_.JLong?, jni$_.JLong?> Function(jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map)
+  _echoIntMap;
+  final jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> Function(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+  )
+  _echoEnumMap;
+  final jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> Function(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+  )
+  _echoClassMap;
+  final jni$_.JMap<jni$_.JString, jni$_.JString> Function(
+    jni$_.JMap<jni$_.JString, jni$_.JString> map,
+  )
+  _echoNonNullStringMap;
+  final jni$_.JMap<jni$_.JLong, jni$_.JLong> Function(jni$_.JMap<jni$_.JLong, jni$_.JLong> map)
+  _echoNonNullIntMap;
+  final jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> Function(
+    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
+  )
+  _echoNonNullEnumMap;
+  final jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> Function(
+    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
+  )
+  _echoNonNullClassMap;
+  final NativeInteropAllClassesWrapper Function(
+    NativeInteropAllClassesWrapper nativeInteropAllClassesWrapper,
+  )
+  _echoClassWrapper;
+  final NativeInteropAnEnum Function(NativeInteropAnEnum nativeInteropAnEnum) _echoEnum;
+  final NativeInteropAnotherEnum Function(NativeInteropAnotherEnum nativeInteropAnotherEnum)
+  _echoAnotherEnum;
+  final jni$_.JString Function(jni$_.JString string) _echoNamedDefaultString;
+  final core$_.double Function(core$_.double d) _echoOptionalDefaultDouble;
+  final core$_.int Function(core$_.int j) _echoRequiredInt;
+  final NativeInteropAllNullableTypes? Function(
+    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+  )
+  _echoAllNullableTypes;
+  final NativeInteropAllNullableTypesWithoutRecursion? Function(
+    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  )
+  _echoAllNullableTypesWithoutRecursion;
+  final jni$_.JString? Function(NativeInteropAllClassesWrapper nativeInteropAllClassesWrapper)
+  _extractNestedNullableString;
+  final NativeInteropAllClassesWrapper Function(jni$_.JString? string) _createNestedNullableString;
+  final NativeInteropAllNullableTypes Function(
+    jni$_.JBoolean? boolean,
+    jni$_.JLong? long,
+    jni$_.JString? string,
+  )
+  _sendMultipleNullableTypes;
+  final NativeInteropAllNullableTypesWithoutRecursion Function(
+    jni$_.JBoolean? boolean,
+    jni$_.JLong? long,
+    jni$_.JString? string,
+  )
+  _sendMultipleNullableTypesWithoutRecursion;
+  final jni$_.JLong? Function(jni$_.JLong? long) _echoNullableInt;
+  final jni$_.JDouble? Function(jni$_.JDouble? double) _echoNullableDouble;
+  final jni$_.JBoolean? Function(jni$_.JBoolean? boolean) _echoNullableBool;
+  final jni$_.JString? Function(jni$_.JString? string) _echoNullableString;
+  final jni$_.JByteArray? Function(jni$_.JByteArray? bs) _echoNullableUint8List;
+  final jni$_.JIntArray? Function(jni$_.JIntArray? is$) _echoNullableInt32List;
+  final jni$_.JLongArray? Function(jni$_.JLongArray? js) _echoNullableInt64List;
+  final jni$_.JDoubleArray? Function(jni$_.JDoubleArray? ds) _echoNullableFloat64List;
+  final jni$_.JObject? Function(jni$_.JObject? object) _echoNullableObject;
+  final jni$_.JList<jni$_.JObject?>? Function(jni$_.JList<jni$_.JObject?>? list) _echoNullableList;
+  final jni$_.JList<NativeInteropAnEnum?>? Function(jni$_.JList<NativeInteropAnEnum?>? list)
+  _echoNullableEnumList;
+  final jni$_.JList<NativeInteropAllNullableTypes?>? Function(
+    jni$_.JList<NativeInteropAllNullableTypes?>? list,
+  )
+  _echoNullableClassList;
+  final jni$_.JList<NativeInteropAnEnum>? Function(jni$_.JList<NativeInteropAnEnum>? list)
+  _echoNullableNonNullEnumList;
+  final jni$_.JList<NativeInteropAllNullableTypes>? Function(
+    jni$_.JList<NativeInteropAllNullableTypes>? list,
+  )
+  _echoNullableNonNullClassList;
+  final jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? Function(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+  )
+  _echoNullableMap;
+  final jni$_.JMap<jni$_.JString?, jni$_.JString?>? Function(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+  )
+  _echoNullableStringMap;
+  final jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? Function(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+  )
+  _echoNullableIntMap;
+  final jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? Function(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+  )
+  _echoNullableEnumMap;
+  final jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? Function(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+  )
+  _echoNullableClassMap;
+  final jni$_.JMap<jni$_.JString, jni$_.JString>? Function(
+    jni$_.JMap<jni$_.JString, jni$_.JString>? map,
+  )
+  _echoNullableNonNullStringMap;
+  final jni$_.JMap<jni$_.JLong, jni$_.JLong>? Function(jni$_.JMap<jni$_.JLong, jni$_.JLong>? map)
+  _echoNullableNonNullIntMap;
+  final jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? Function(
+    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
+  )
+  _echoNullableNonNullEnumMap;
+  final jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? Function(
+    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
+  )
+  _echoNullableNonNullClassMap;
+  final NativeInteropAnEnum? Function(NativeInteropAnEnum? nativeInteropAnEnum) _echoNullableEnum;
+  final NativeInteropAnotherEnum? Function(NativeInteropAnotherEnum? nativeInteropAnotherEnum)
+  _echoAnotherNullableEnum;
+  final jni$_.JLong? Function(jni$_.JLong? long) _echoOptionalNullableInt;
+  final jni$_.JString? Function(jni$_.JString? string) _echoNamedNullableString;
+  final core$_.Future<void> Function() _noopAsync;
+  final core$_.Future<jni$_.JLong> Function(core$_.int j) _echoAsyncInt;
+  final core$_.Future<jni$_.JDouble> Function(core$_.double d) _echoAsyncDouble;
+  final core$_.Future<jni$_.JBoolean> Function(core$_.bool z) _echoAsyncBool;
+  final core$_.Future<jni$_.JString> Function(jni$_.JString string) _echoAsyncString;
+  final core$_.Future<jni$_.JByteArray> Function(jni$_.JByteArray bs) _echoAsyncUint8List;
+  final core$_.Future<jni$_.JIntArray> Function(jni$_.JIntArray is$) _echoAsyncInt32List;
+  final core$_.Future<jni$_.JLongArray> Function(jni$_.JLongArray js) _echoAsyncInt64List;
+  final core$_.Future<jni$_.JDoubleArray> Function(jni$_.JDoubleArray ds) _echoAsyncFloat64List;
+  final core$_.Future<jni$_.JObject> Function(jni$_.JObject object) _echoAsyncObject;
+  final core$_.Future<jni$_.JList<jni$_.JObject?>> Function(jni$_.JList<jni$_.JObject?> list)
+  _echoAsyncList;
+  final core$_.Future<jni$_.JList<NativeInteropAnEnum?>> Function(
+    jni$_.JList<NativeInteropAnEnum?> list,
+  )
+  _echoAsyncEnumList;
+  final core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> Function(
+    jni$_.JList<NativeInteropAllNullableTypes?> list,
+  )
+  _echoAsyncClassList;
+  final core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> Function(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+  )
+  _echoAsyncMap;
+  final core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> Function(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+  )
+  _echoAsyncStringMap;
+  final core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> Function(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
+  )
+  _echoAsyncIntMap;
+  final core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> Function(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+  )
+  _echoAsyncEnumMap;
+  final core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>> Function(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+  )
+  _echoAsyncClassMap;
+  final core$_.Future<NativeInteropAnEnum> Function(NativeInteropAnEnum nativeInteropAnEnum)
+  _echoAsyncEnum;
+  final core$_.Future<NativeInteropAnotherEnum> Function(
+    NativeInteropAnotherEnum nativeInteropAnotherEnum,
+  )
+  _echoAnotherAsyncEnum;
+  final core$_.Future<jni$_.JObject?> Function() _throwAsyncError;
+  final core$_.Future<void> Function() _throwAsyncErrorFromVoid;
+  final core$_.Future<jni$_.JObject?> Function() _throwAsyncFlutterError;
+  final core$_.Future<NativeInteropAllTypes> Function(NativeInteropAllTypes nativeInteropAllTypes)
+  _echoAsyncNativeInteropAllTypes;
+  final core$_.Future<NativeInteropAllNullableTypes?> Function(
+    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+  )
+  _echoAsyncNullableNativeInteropAllNullableTypes;
+  final core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?> Function(
+    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  )
+  _echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion;
+  final core$_.Future<jni$_.JLong?> Function(jni$_.JLong? long) _echoAsyncNullableInt;
+  final core$_.Future<jni$_.JDouble?> Function(jni$_.JDouble? double) _echoAsyncNullableDouble;
+  final core$_.Future<jni$_.JBoolean?> Function(jni$_.JBoolean? boolean) _echoAsyncNullableBool;
+  final core$_.Future<jni$_.JString?> Function(jni$_.JString? string) _echoAsyncNullableString;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray? bs) _echoAsyncNullableUint8List;
+  final core$_.Future<jni$_.JIntArray?> Function(jni$_.JIntArray? is$) _echoAsyncNullableInt32List;
+  final core$_.Future<jni$_.JLongArray?> Function(jni$_.JLongArray? js) _echoAsyncNullableInt64List;
+  final core$_.Future<jni$_.JDoubleArray?> Function(jni$_.JDoubleArray? ds)
+  _echoAsyncNullableFloat64List;
+  final core$_.Future<jni$_.JObject?> Function(jni$_.JObject? object) _echoAsyncNullableObject;
+  final core$_.Future<jni$_.JList<jni$_.JObject?>?> Function(jni$_.JList<jni$_.JObject?>? list)
+  _echoAsyncNullableList;
+  final core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> Function(
+    jni$_.JList<NativeInteropAnEnum?>? list,
+  )
+  _echoAsyncNullableEnumList;
+  final core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> Function(
+    jni$_.JList<NativeInteropAllNullableTypes?>? list,
+  )
+  _echoAsyncNullableClassList;
+  final core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> Function(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+  )
+  _echoAsyncNullableMap;
+  final core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> Function(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+  )
+  _echoAsyncNullableStringMap;
+  final core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> Function(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+  )
+  _echoAsyncNullableIntMap;
+  final core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?> Function(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+  )
+  _echoAsyncNullableEnumMap;
+  final core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?> Function(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+  )
+  _echoAsyncNullableClassMap;
+  final core$_.Future<NativeInteropAnEnum?> Function(NativeInteropAnEnum? nativeInteropAnEnum)
+  _echoAsyncNullableEnum;
+  final core$_.Future<NativeInteropAnotherEnum?> Function(
+    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
+  )
+  _echoAnotherAsyncNullableEnum;
+  final void Function() _callFlutterNoop;
+  final core$_.bool callFlutterNoop$async;
+  final jni$_.JObject? Function() _callFlutterThrowError;
+  final void Function() _callFlutterThrowErrorFromVoid;
+  final core$_.bool callFlutterThrowErrorFromVoid$async;
+  final NativeInteropAllTypes Function(NativeInteropAllTypes nativeInteropAllTypes)
+  _callFlutterEchoNativeInteropAllTypes;
+  final NativeInteropAllNullableTypes? Function(
+    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+  )
+  _callFlutterEchoNativeInteropAllNullableTypes;
+  final NativeInteropAllNullableTypes Function(
+    jni$_.JBoolean? boolean,
+    jni$_.JLong? long,
+    jni$_.JString? string,
+  )
+  _callFlutterSendMultipleNullableTypes;
+  final NativeInteropAllNullableTypesWithoutRecursion? Function(
+    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  )
+  _callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion;
+  final NativeInteropAllNullableTypesWithoutRecursion Function(
+    jni$_.JBoolean? boolean,
+    jni$_.JLong? long,
+    jni$_.JString? string,
+  )
+  _callFlutterSendMultipleNullableTypesWithoutRecursion;
+  final core$_.bool Function(core$_.bool z) _callFlutterEchoBool;
+  final core$_.int Function(core$_.int j) _callFlutterEchoInt;
+  final core$_.double Function(core$_.double d) _callFlutterEchoDouble;
+  final jni$_.JString Function(jni$_.JString string) _callFlutterEchoString;
+  final jni$_.JByteArray Function(jni$_.JByteArray bs) _callFlutterEchoUint8List;
+  final jni$_.JIntArray Function(jni$_.JIntArray is$) _callFlutterEchoInt32List;
+  final jni$_.JLongArray Function(jni$_.JLongArray js) _callFlutterEchoInt64List;
+  final jni$_.JDoubleArray Function(jni$_.JDoubleArray ds) _callFlutterEchoFloat64List;
+  final jni$_.JList<jni$_.JObject?> Function(jni$_.JList<jni$_.JObject?> list) _callFlutterEchoList;
+  final jni$_.JList<NativeInteropAnEnum?> Function(jni$_.JList<NativeInteropAnEnum?> list)
+  _callFlutterEchoEnumList;
+  final jni$_.JList<NativeInteropAllNullableTypes?> Function(
+    jni$_.JList<NativeInteropAllNullableTypes?> list,
+  )
+  _callFlutterEchoClassList;
+  final jni$_.JList<NativeInteropAnEnum> Function(jni$_.JList<NativeInteropAnEnum> list)
+  _callFlutterEchoNonNullEnumList;
+  final jni$_.JList<NativeInteropAllNullableTypes> Function(
+    jni$_.JList<NativeInteropAllNullableTypes> list,
+  )
+  _callFlutterEchoNonNullClassList;
+  final jni$_.JMap<jni$_.JObject?, jni$_.JObject?> Function(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+  )
+  _callFlutterEchoMap;
+  final jni$_.JMap<jni$_.JString?, jni$_.JString?> Function(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+  )
+  _callFlutterEchoStringMap;
+  final jni$_.JMap<jni$_.JLong?, jni$_.JLong?> Function(jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map)
+  _callFlutterEchoIntMap;
+  final jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> Function(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+  )
+  _callFlutterEchoEnumMap;
+  final jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> Function(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+  )
+  _callFlutterEchoClassMap;
+  final jni$_.JMap<jni$_.JString, jni$_.JString> Function(
+    jni$_.JMap<jni$_.JString, jni$_.JString> map,
+  )
+  _callFlutterEchoNonNullStringMap;
+  final jni$_.JMap<jni$_.JLong, jni$_.JLong> Function(jni$_.JMap<jni$_.JLong, jni$_.JLong> map)
+  _callFlutterEchoNonNullIntMap;
+  final jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> Function(
+    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
+  )
+  _callFlutterEchoNonNullEnumMap;
+  final jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> Function(
+    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
+  )
+  _callFlutterEchoNonNullClassMap;
+  final NativeInteropAnEnum Function(NativeInteropAnEnum nativeInteropAnEnum) _callFlutterEchoEnum;
+  final NativeInteropAnotherEnum Function(NativeInteropAnotherEnum nativeInteropAnotherEnum)
+  _callFlutterEchoNativeInteropAnotherEnum;
+  final jni$_.JBoolean? Function(jni$_.JBoolean? boolean) _callFlutterEchoNullableBool;
+  final jni$_.JLong? Function(jni$_.JLong? long) _callFlutterEchoNullableInt;
+  final jni$_.JDouble? Function(jni$_.JDouble? double) _callFlutterEchoNullableDouble;
+  final jni$_.JString? Function(jni$_.JString? string) _callFlutterEchoNullableString;
+  final jni$_.JByteArray? Function(jni$_.JByteArray? bs) _callFlutterEchoNullableUint8List;
+  final jni$_.JIntArray? Function(jni$_.JIntArray? is$) _callFlutterEchoNullableInt32List;
+  final jni$_.JLongArray? Function(jni$_.JLongArray? js) _callFlutterEchoNullableInt64List;
+  final jni$_.JDoubleArray? Function(jni$_.JDoubleArray? ds) _callFlutterEchoNullableFloat64List;
+  final jni$_.JList<jni$_.JObject?>? Function(jni$_.JList<jni$_.JObject?>? list)
+  _callFlutterEchoNullableList;
+  final jni$_.JList<NativeInteropAnEnum?>? Function(jni$_.JList<NativeInteropAnEnum?>? list)
+  _callFlutterEchoNullableEnumList;
+  final jni$_.JList<NativeInteropAllNullableTypes?>? Function(
+    jni$_.JList<NativeInteropAllNullableTypes?>? list,
+  )
+  _callFlutterEchoNullableClassList;
+  final jni$_.JList<NativeInteropAnEnum>? Function(jni$_.JList<NativeInteropAnEnum>? list)
+  _callFlutterEchoNullableNonNullEnumList;
+  final jni$_.JList<NativeInteropAllNullableTypes>? Function(
+    jni$_.JList<NativeInteropAllNullableTypes>? list,
+  )
+  _callFlutterEchoNullableNonNullClassList;
+  final jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? Function(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+  )
+  _callFlutterEchoNullableMap;
+  final jni$_.JMap<jni$_.JString?, jni$_.JString?>? Function(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+  )
+  _callFlutterEchoNullableStringMap;
+  final jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? Function(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+  )
+  _callFlutterEchoNullableIntMap;
+  final jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? Function(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+  )
+  _callFlutterEchoNullableEnumMap;
+  final jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? Function(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+  )
+  _callFlutterEchoNullableClassMap;
+  final jni$_.JMap<jni$_.JString, jni$_.JString>? Function(
+    jni$_.JMap<jni$_.JString, jni$_.JString>? map,
+  )
+  _callFlutterEchoNullableNonNullStringMap;
+  final jni$_.JMap<jni$_.JLong, jni$_.JLong>? Function(jni$_.JMap<jni$_.JLong, jni$_.JLong>? map)
+  _callFlutterEchoNullableNonNullIntMap;
+  final jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? Function(
+    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
+  )
+  _callFlutterEchoNullableNonNullEnumMap;
+  final jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? Function(
+    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
+  )
+  _callFlutterEchoNullableNonNullClassMap;
+  final NativeInteropAnEnum? Function(NativeInteropAnEnum? nativeInteropAnEnum)
+  _callFlutterEchoNullableEnum;
+  final NativeInteropAnotherEnum? Function(NativeInteropAnotherEnum? nativeInteropAnotherEnum)
+  _callFlutterEchoAnotherNullableEnum;
+  final core$_.Future<void> Function() _callFlutterNoopAsync;
+  final core$_.Future<NativeInteropAllTypes> Function(NativeInteropAllTypes nativeInteropAllTypes)
+  _callFlutterEchoAsyncNativeInteropAllTypes;
+  final core$_.Future<NativeInteropAllNullableTypes?> Function(
+    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+  )
+  _callFlutterEchoAsyncNullableNativeInteropAllNullableTypes;
+  final core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?> Function(
+    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  )
+  _callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion;
+  final core$_.Future<jni$_.JBoolean> Function(core$_.bool z) _callFlutterEchoAsyncBool;
+  final core$_.Future<jni$_.JLong> Function(core$_.int j) _callFlutterEchoAsyncInt;
+  final core$_.Future<jni$_.JDouble> Function(core$_.double d) _callFlutterEchoAsyncDouble;
+  final core$_.Future<jni$_.JString> Function(jni$_.JString string) _callFlutterEchoAsyncString;
+  final core$_.Future<jni$_.JByteArray> Function(jni$_.JByteArray bs)
+  _callFlutterEchoAsyncUint8List;
+  final core$_.Future<jni$_.JIntArray> Function(jni$_.JIntArray is$) _callFlutterEchoAsyncInt32List;
+  final core$_.Future<jni$_.JLongArray> Function(jni$_.JLongArray js)
+  _callFlutterEchoAsyncInt64List;
+  final core$_.Future<jni$_.JDoubleArray> Function(jni$_.JDoubleArray ds)
+  _callFlutterEchoAsyncFloat64List;
+  final core$_.Future<jni$_.JObject> Function(jni$_.JObject object) _callFlutterEchoAsyncObject;
+  final core$_.Future<jni$_.JList<jni$_.JObject?>> Function(jni$_.JList<jni$_.JObject?> list)
+  _callFlutterEchoAsyncList;
+  final core$_.Future<jni$_.JList<NativeInteropAnEnum?>> Function(
+    jni$_.JList<NativeInteropAnEnum?> list,
+  )
+  _callFlutterEchoAsyncEnumList;
+  final core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> Function(
+    jni$_.JList<NativeInteropAllNullableTypes?> list,
+  )
+  _callFlutterEchoAsyncClassList;
+  final core$_.Future<jni$_.JList<NativeInteropAnEnum>> Function(
+    jni$_.JList<NativeInteropAnEnum?> list,
+  )
+  _callFlutterEchoAsyncNonNullEnumList;
+  final core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>> Function(
+    jni$_.JList<NativeInteropAllNullableTypes?> list,
+  )
+  _callFlutterEchoAsyncNonNullClassList;
+  final core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> Function(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+  )
+  _callFlutterEchoAsyncMap;
+  final core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> Function(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+  )
+  _callFlutterEchoAsyncStringMap;
+  final core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> Function(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
+  )
+  _callFlutterEchoAsyncIntMap;
+  final core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> Function(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+  )
+  _callFlutterEchoAsyncEnumMap;
+  final core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>> Function(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+  )
+  _callFlutterEchoAsyncClassMap;
+  final core$_.Future<NativeInteropAnEnum> Function(NativeInteropAnEnum nativeInteropAnEnum)
+  _callFlutterEchoAsyncEnum;
+  final core$_.Future<NativeInteropAnotherEnum> Function(
+    NativeInteropAnotherEnum nativeInteropAnotherEnum,
+  )
+  _callFlutterEchoAnotherAsyncEnum;
+  final core$_.Future<jni$_.JBoolean?> Function(jni$_.JBoolean? boolean)
+  _callFlutterEchoAsyncNullableBool;
+  final core$_.Future<jni$_.JLong?> Function(jni$_.JLong? long) _callFlutterEchoAsyncNullableInt;
+  final core$_.Future<jni$_.JDouble?> Function(jni$_.JDouble? double)
+  _callFlutterEchoAsyncNullableDouble;
+  final core$_.Future<jni$_.JString?> Function(jni$_.JString? string)
+  _callFlutterEchoAsyncNullableString;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray? bs)
+  _callFlutterEchoAsyncNullableUint8List;
+  final core$_.Future<jni$_.JIntArray?> Function(jni$_.JIntArray? is$)
+  _callFlutterEchoAsyncNullableInt32List;
+  final core$_.Future<jni$_.JLongArray?> Function(jni$_.JLongArray? js)
+  _callFlutterEchoAsyncNullableInt64List;
+  final core$_.Future<jni$_.JDoubleArray?> Function(jni$_.JDoubleArray? ds)
+  _callFlutterEchoAsyncNullableFloat64List;
+  final core$_.Future<jni$_.JObject?> Function() _callFlutterThrowFlutterErrorAsync;
+  final core$_.Future<jni$_.JObject?> Function(jni$_.JObject? object)
+  _callFlutterEchoAsyncNullableObject;
+  final core$_.Future<jni$_.JList<jni$_.JObject?>?> Function(jni$_.JList<jni$_.JObject?>? list)
+  _callFlutterEchoAsyncNullableList;
+  final core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> Function(
+    jni$_.JList<NativeInteropAnEnum?>? list,
+  )
+  _callFlutterEchoAsyncNullableEnumList;
+  final core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> Function(
+    jni$_.JList<NativeInteropAllNullableTypes?>? list,
+  )
+  _callFlutterEchoAsyncNullableClassList;
+  final core$_.Future<jni$_.JList<NativeInteropAnEnum>?> Function(
+    jni$_.JList<NativeInteropAnEnum?>? list,
+  )
+  _callFlutterEchoAsyncNullableNonNullEnumList;
+  final core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>?> Function(
+    jni$_.JList<NativeInteropAllNullableTypes?>? list,
+  )
+  _callFlutterEchoAsyncNullableNonNullClassList;
+  final core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> Function(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+  )
+  _callFlutterEchoAsyncNullableMap;
+  final core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> Function(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+  )
+  _callFlutterEchoAsyncNullableStringMap;
+  final core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> Function(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+  )
+  _callFlutterEchoAsyncNullableIntMap;
+  final core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?> Function(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+  )
+  _callFlutterEchoAsyncNullableEnumMap;
+  final core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?> Function(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+  )
+  _callFlutterEchoAsyncNullableClassMap;
+  final core$_.Future<NativeInteropAnEnum?> Function(NativeInteropAnEnum? nativeInteropAnEnum)
+  _callFlutterEchoAsyncNullableEnum;
+  final core$_.Future<NativeInteropAnotherEnum?> Function(
+    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
+  )
+  _callFlutterEchoAnotherAsyncNullableEnum;
+  final core$_.bool Function() _defaultIsMainThread;
+  final core$_.Future<jni$_.JBoolean> Function() _callFlutterNoopOnBackgroundThread;
+  final core$_.bool Function() _testDeregisterHostApi;
+  final core$_.bool Function() _testDeregisterFlutterApi;
+  final void Function(jni$_.JString string) _registerAndImmediatelyDeregisterHostApi;
+  final core$_.bool registerAndImmediatelyDeregisterHostApi$async;
+  final core$_.bool Function(jni$_.JString string) _testCallDeregisteredFlutterApi;
+
+  void noop() {
+    return _noop();
+  }
+
+  NativeInteropAllTypes echoAllTypes(NativeInteropAllTypes nativeInteropAllTypes) {
+    return _echoAllTypes(nativeInteropAllTypes);
+  }
+
+  jni$_.JObject? throwError() {
+    return _throwError();
+  }
+
+  void throwErrorFromVoid() {
+    return _throwErrorFromVoid();
+  }
+
+  jni$_.JObject? throwFlutterError() {
+    return _throwFlutterError();
+  }
+
+  core$_.int echoInt(core$_.int j) {
+    return _echoInt(j);
+  }
+
+  core$_.double echoDouble(core$_.double d) {
+    return _echoDouble(d);
+  }
+
+  core$_.bool echoBool(core$_.bool z) {
+    return _echoBool(z);
+  }
+
+  jni$_.JString echoString(jni$_.JString string) {
+    return _echoString(string);
+  }
+
+  jni$_.JByteArray echoUint8List(jni$_.JByteArray bs) {
+    return _echoUint8List(bs);
+  }
+
+  jni$_.JIntArray echoInt32List(jni$_.JIntArray is$) {
+    return _echoInt32List(is$);
+  }
+
+  jni$_.JLongArray echoInt64List(jni$_.JLongArray js) {
+    return _echoInt64List(js);
+  }
+
+  jni$_.JDoubleArray echoFloat64List(jni$_.JDoubleArray ds) {
+    return _echoFloat64List(ds);
+  }
+
+  jni$_.JObject echoObject(jni$_.JObject object) {
+    return _echoObject(object);
+  }
+
+  jni$_.JList<jni$_.JObject?> echoList(jni$_.JList<jni$_.JObject?> list) {
+    return _echoList(list);
+  }
+
+  jni$_.JList<jni$_.JString?> echoStringList(jni$_.JList<jni$_.JString?> list) {
+    return _echoStringList(list);
+  }
+
+  jni$_.JList<jni$_.JLong?> echoIntList(jni$_.JList<jni$_.JLong?> list) {
+    return _echoIntList(list);
+  }
+
+  jni$_.JList<jni$_.JDouble?> echoDoubleList(jni$_.JList<jni$_.JDouble?> list) {
+    return _echoDoubleList(list);
+  }
+
+  jni$_.JList<jni$_.JBoolean?> echoBoolList(jni$_.JList<jni$_.JBoolean?> list) {
+    return _echoBoolList(list);
+  }
+
+  jni$_.JList<NativeInteropAnEnum?> echoEnumList(jni$_.JList<NativeInteropAnEnum?> list) {
+    return _echoEnumList(list);
+  }
+
+  jni$_.JList<NativeInteropAllNullableTypes?> echoClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?> list,
+  ) {
+    return _echoClassList(list);
+  }
+
+  jni$_.JList<NativeInteropAnEnum> echoNonNullEnumList(jni$_.JList<NativeInteropAnEnum> list) {
+    return _echoNonNullEnumList(list);
+  }
+
+  jni$_.JList<NativeInteropAllNullableTypes> echoNonNullClassList(
+    jni$_.JList<NativeInteropAllNullableTypes> list,
+  ) {
+    return _echoNonNullClassList(list);
+  }
+
+  jni$_.JMap<jni$_.JObject?, jni$_.JObject?> echoMap(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+  ) {
+    return _echoMap(map);
+  }
+
+  jni$_.JMap<jni$_.JString?, jni$_.JString?> echoStringMap(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+  ) {
+    return _echoStringMap(map);
+  }
+
+  jni$_.JMap<jni$_.JLong?, jni$_.JLong?> echoIntMap(jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map) {
+    return _echoIntMap(map);
+  }
+
+  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> echoEnumMap(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+  ) {
+    return _echoEnumMap(map);
+  }
+
+  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> echoClassMap(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+  ) {
+    return _echoClassMap(map);
+  }
+
+  jni$_.JMap<jni$_.JString, jni$_.JString> echoNonNullStringMap(
+    jni$_.JMap<jni$_.JString, jni$_.JString> map,
+  ) {
+    return _echoNonNullStringMap(map);
+  }
+
+  jni$_.JMap<jni$_.JLong, jni$_.JLong> echoNonNullIntMap(jni$_.JMap<jni$_.JLong, jni$_.JLong> map) {
+    return _echoNonNullIntMap(map);
+  }
+
+  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> echoNonNullEnumMap(
+    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
+  ) {
+    return _echoNonNullEnumMap(map);
+  }
+
+  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> echoNonNullClassMap(
+    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
+  ) {
+    return _echoNonNullClassMap(map);
+  }
+
+  NativeInteropAllClassesWrapper echoClassWrapper(
+    NativeInteropAllClassesWrapper nativeInteropAllClassesWrapper,
+  ) {
+    return _echoClassWrapper(nativeInteropAllClassesWrapper);
+  }
+
+  NativeInteropAnEnum echoEnum(NativeInteropAnEnum nativeInteropAnEnum) {
+    return _echoEnum(nativeInteropAnEnum);
+  }
+
+  NativeInteropAnotherEnum echoAnotherEnum(NativeInteropAnotherEnum nativeInteropAnotherEnum) {
+    return _echoAnotherEnum(nativeInteropAnotherEnum);
+  }
+
+  jni$_.JString echoNamedDefaultString(jni$_.JString string) {
+    return _echoNamedDefaultString(string);
+  }
+
+  core$_.double echoOptionalDefaultDouble(core$_.double d) {
+    return _echoOptionalDefaultDouble(d);
+  }
+
+  core$_.int echoRequiredInt(core$_.int j) {
+    return _echoRequiredInt(j);
+  }
+
+  NativeInteropAllNullableTypes? echoAllNullableTypes(
+    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+  ) {
+    return _echoAllNullableTypes(nativeInteropAllNullableTypes);
+  }
+
+  NativeInteropAllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
+    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  ) {
+    return _echoAllNullableTypesWithoutRecursion(nativeInteropAllNullableTypesWithoutRecursion);
+  }
+
+  jni$_.JString? extractNestedNullableString(
+    NativeInteropAllClassesWrapper nativeInteropAllClassesWrapper,
+  ) {
+    return _extractNestedNullableString(nativeInteropAllClassesWrapper);
+  }
+
+  NativeInteropAllClassesWrapper createNestedNullableString(jni$_.JString? string) {
+    return _createNestedNullableString(string);
+  }
+
+  NativeInteropAllNullableTypes sendMultipleNullableTypes(
+    jni$_.JBoolean? boolean,
+    jni$_.JLong? long,
+    jni$_.JString? string,
+  ) {
+    return _sendMultipleNullableTypes(boolean, long, string);
+  }
+
+  NativeInteropAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
+    jni$_.JBoolean? boolean,
+    jni$_.JLong? long,
+    jni$_.JString? string,
+  ) {
+    return _sendMultipleNullableTypesWithoutRecursion(boolean, long, string);
+  }
+
+  jni$_.JLong? echoNullableInt(jni$_.JLong? long) {
+    return _echoNullableInt(long);
+  }
+
+  jni$_.JDouble? echoNullableDouble(jni$_.JDouble? double) {
+    return _echoNullableDouble(double);
+  }
+
+  jni$_.JBoolean? echoNullableBool(jni$_.JBoolean? boolean) {
+    return _echoNullableBool(boolean);
+  }
+
+  jni$_.JString? echoNullableString(jni$_.JString? string) {
+    return _echoNullableString(string);
+  }
+
+  jni$_.JByteArray? echoNullableUint8List(jni$_.JByteArray? bs) {
+    return _echoNullableUint8List(bs);
+  }
+
+  jni$_.JIntArray? echoNullableInt32List(jni$_.JIntArray? is$) {
+    return _echoNullableInt32List(is$);
+  }
+
+  jni$_.JLongArray? echoNullableInt64List(jni$_.JLongArray? js) {
+    return _echoNullableInt64List(js);
+  }
+
+  jni$_.JDoubleArray? echoNullableFloat64List(jni$_.JDoubleArray? ds) {
+    return _echoNullableFloat64List(ds);
+  }
+
+  jni$_.JObject? echoNullableObject(jni$_.JObject? object) {
+    return _echoNullableObject(object);
+  }
+
+  jni$_.JList<jni$_.JObject?>? echoNullableList(jni$_.JList<jni$_.JObject?>? list) {
+    return _echoNullableList(list);
+  }
+
+  jni$_.JList<NativeInteropAnEnum?>? echoNullableEnumList(jni$_.JList<NativeInteropAnEnum?>? list) {
+    return _echoNullableEnumList(list);
+  }
+
+  jni$_.JList<NativeInteropAllNullableTypes?>? echoNullableClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?>? list,
+  ) {
+    return _echoNullableClassList(list);
+  }
+
+  jni$_.JList<NativeInteropAnEnum>? echoNullableNonNullEnumList(
+    jni$_.JList<NativeInteropAnEnum>? list,
+  ) {
+    return _echoNullableNonNullEnumList(list);
+  }
+
+  jni$_.JList<NativeInteropAllNullableTypes>? echoNullableNonNullClassList(
+    jni$_.JList<NativeInteropAllNullableTypes>? list,
+  ) {
+    return _echoNullableNonNullClassList(list);
+  }
+
+  jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? echoNullableMap(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+  ) {
+    return _echoNullableMap(map);
+  }
+
+  jni$_.JMap<jni$_.JString?, jni$_.JString?>? echoNullableStringMap(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+  ) {
+    return _echoNullableStringMap(map);
+  }
+
+  jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? echoNullableIntMap(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+  ) {
+    return _echoNullableIntMap(map);
+  }
+
+  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? echoNullableEnumMap(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+  ) {
+    return _echoNullableEnumMap(map);
+  }
+
+  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? echoNullableClassMap(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+  ) {
+    return _echoNullableClassMap(map);
+  }
+
+  jni$_.JMap<jni$_.JString, jni$_.JString>? echoNullableNonNullStringMap(
+    jni$_.JMap<jni$_.JString, jni$_.JString>? map,
+  ) {
+    return _echoNullableNonNullStringMap(map);
+  }
+
+  jni$_.JMap<jni$_.JLong, jni$_.JLong>? echoNullableNonNullIntMap(
+    jni$_.JMap<jni$_.JLong, jni$_.JLong>? map,
+  ) {
+    return _echoNullableNonNullIntMap(map);
+  }
+
+  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? echoNullableNonNullEnumMap(
+    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
+  ) {
+    return _echoNullableNonNullEnumMap(map);
+  }
+
+  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? echoNullableNonNullClassMap(
+    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
+  ) {
+    return _echoNullableNonNullClassMap(map);
+  }
+
+  NativeInteropAnEnum? echoNullableEnum(NativeInteropAnEnum? nativeInteropAnEnum) {
+    return _echoNullableEnum(nativeInteropAnEnum);
+  }
+
+  NativeInteropAnotherEnum? echoAnotherNullableEnum(
+    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
+  ) {
+    return _echoAnotherNullableEnum(nativeInteropAnotherEnum);
+  }
+
+  jni$_.JLong? echoOptionalNullableInt(jni$_.JLong? long) {
+    return _echoOptionalNullableInt(long);
+  }
+
+  jni$_.JString? echoNamedNullableString(jni$_.JString? string) {
+    return _echoNamedNullableString(string);
+  }
+
+  core$_.Future<void> noopAsync() {
+    return _noopAsync();
+  }
+
+  core$_.Future<jni$_.JLong> echoAsyncInt(core$_.int j) {
+    return _echoAsyncInt(j);
+  }
+
+  core$_.Future<jni$_.JDouble> echoAsyncDouble(core$_.double d) {
+    return _echoAsyncDouble(d);
+  }
+
+  core$_.Future<jni$_.JBoolean> echoAsyncBool(core$_.bool z) {
+    return _echoAsyncBool(z);
+  }
+
+  core$_.Future<jni$_.JString> echoAsyncString(jni$_.JString string) {
+    return _echoAsyncString(string);
+  }
+
+  core$_.Future<jni$_.JByteArray> echoAsyncUint8List(jni$_.JByteArray bs) {
+    return _echoAsyncUint8List(bs);
+  }
+
+  core$_.Future<jni$_.JIntArray> echoAsyncInt32List(jni$_.JIntArray is$) {
+    return _echoAsyncInt32List(is$);
+  }
+
+  core$_.Future<jni$_.JLongArray> echoAsyncInt64List(jni$_.JLongArray js) {
+    return _echoAsyncInt64List(js);
+  }
+
+  core$_.Future<jni$_.JDoubleArray> echoAsyncFloat64List(jni$_.JDoubleArray ds) {
+    return _echoAsyncFloat64List(ds);
+  }
+
+  core$_.Future<jni$_.JObject> echoAsyncObject(jni$_.JObject object) {
+    return _echoAsyncObject(object);
+  }
+
+  core$_.Future<jni$_.JList<jni$_.JObject?>> echoAsyncList(jni$_.JList<jni$_.JObject?> list) {
+    return _echoAsyncList(list);
+  }
+
+  core$_.Future<jni$_.JList<NativeInteropAnEnum?>> echoAsyncEnumList(
+    jni$_.JList<NativeInteropAnEnum?> list,
+  ) {
+    return _echoAsyncEnumList(list);
+  }
+
+  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> echoAsyncClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?> list,
+  ) {
+    return _echoAsyncClassList(list);
+  }
+
+  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> echoAsyncMap(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+  ) {
+    return _echoAsyncMap(map);
+  }
+
+  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> echoAsyncStringMap(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+  ) {
+    return _echoAsyncStringMap(map);
+  }
+
+  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> echoAsyncIntMap(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
+  ) {
+    return _echoAsyncIntMap(map);
+  }
+
+  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> echoAsyncEnumMap(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+  ) {
+    return _echoAsyncEnumMap(map);
+  }
+
+  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>> echoAsyncClassMap(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+  ) {
+    return _echoAsyncClassMap(map);
+  }
+
+  core$_.Future<NativeInteropAnEnum> echoAsyncEnum(NativeInteropAnEnum nativeInteropAnEnum) {
+    return _echoAsyncEnum(nativeInteropAnEnum);
+  }
+
+  core$_.Future<NativeInteropAnotherEnum> echoAnotherAsyncEnum(
+    NativeInteropAnotherEnum nativeInteropAnotherEnum,
+  ) {
+    return _echoAnotherAsyncEnum(nativeInteropAnotherEnum);
+  }
+
+  core$_.Future<jni$_.JObject?> throwAsyncError() {
+    return _throwAsyncError();
+  }
+
+  core$_.Future<void> throwAsyncErrorFromVoid() {
+    return _throwAsyncErrorFromVoid();
+  }
+
+  core$_.Future<jni$_.JObject?> throwAsyncFlutterError() {
+    return _throwAsyncFlutterError();
+  }
+
+  core$_.Future<NativeInteropAllTypes> echoAsyncNativeInteropAllTypes(
+    NativeInteropAllTypes nativeInteropAllTypes,
+  ) {
+    return _echoAsyncNativeInteropAllTypes(nativeInteropAllTypes);
+  }
+
+  core$_.Future<NativeInteropAllNullableTypes?> echoAsyncNullableNativeInteropAllNullableTypes(
+    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+  ) {
+    return _echoAsyncNullableNativeInteropAllNullableTypes(nativeInteropAllNullableTypes);
+  }
+
+  core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?>
+  echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  ) {
+    return _echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      nativeInteropAllNullableTypesWithoutRecursion,
+    );
+  }
+
+  core$_.Future<jni$_.JLong?> echoAsyncNullableInt(jni$_.JLong? long) {
+    return _echoAsyncNullableInt(long);
+  }
+
+  core$_.Future<jni$_.JDouble?> echoAsyncNullableDouble(jni$_.JDouble? double) {
+    return _echoAsyncNullableDouble(double);
+  }
+
+  core$_.Future<jni$_.JBoolean?> echoAsyncNullableBool(jni$_.JBoolean? boolean) {
+    return _echoAsyncNullableBool(boolean);
+  }
+
+  core$_.Future<jni$_.JString?> echoAsyncNullableString(jni$_.JString? string) {
+    return _echoAsyncNullableString(string);
+  }
+
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableUint8List(jni$_.JByteArray? bs) {
+    return _echoAsyncNullableUint8List(bs);
+  }
+
+  core$_.Future<jni$_.JIntArray?> echoAsyncNullableInt32List(jni$_.JIntArray? is$) {
+    return _echoAsyncNullableInt32List(is$);
+  }
+
+  core$_.Future<jni$_.JLongArray?> echoAsyncNullableInt64List(jni$_.JLongArray? js) {
+    return _echoAsyncNullableInt64List(js);
+  }
+
+  core$_.Future<jni$_.JDoubleArray?> echoAsyncNullableFloat64List(jni$_.JDoubleArray? ds) {
+    return _echoAsyncNullableFloat64List(ds);
+  }
+
+  core$_.Future<jni$_.JObject?> echoAsyncNullableObject(jni$_.JObject? object) {
+    return _echoAsyncNullableObject(object);
+  }
+
+  core$_.Future<jni$_.JList<jni$_.JObject?>?> echoAsyncNullableList(
+    jni$_.JList<jni$_.JObject?>? list,
+  ) {
+    return _echoAsyncNullableList(list);
+  }
+
+  core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> echoAsyncNullableEnumList(
+    jni$_.JList<NativeInteropAnEnum?>? list,
+  ) {
+    return _echoAsyncNullableEnumList(list);
+  }
+
+  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> echoAsyncNullableClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?>? list,
+  ) {
+    return _echoAsyncNullableClassList(list);
+  }
+
+  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> echoAsyncNullableMap(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+  ) {
+    return _echoAsyncNullableMap(map);
+  }
+
+  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> echoAsyncNullableStringMap(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+  ) {
+    return _echoAsyncNullableStringMap(map);
+  }
+
+  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> echoAsyncNullableIntMap(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+  ) {
+    return _echoAsyncNullableIntMap(map);
+  }
+
+  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?> echoAsyncNullableEnumMap(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+  ) {
+    return _echoAsyncNullableEnumMap(map);
+  }
+
+  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?>
+  echoAsyncNullableClassMap(jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map) {
+    return _echoAsyncNullableClassMap(map);
+  }
+
+  core$_.Future<NativeInteropAnEnum?> echoAsyncNullableEnum(
+    NativeInteropAnEnum? nativeInteropAnEnum,
+  ) {
+    return _echoAsyncNullableEnum(nativeInteropAnEnum);
+  }
+
+  core$_.Future<NativeInteropAnotherEnum?> echoAnotherAsyncNullableEnum(
+    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
+  ) {
+    return _echoAnotherAsyncNullableEnum(nativeInteropAnotherEnum);
+  }
+
+  void callFlutterNoop() {
+    return _callFlutterNoop();
+  }
+
+  jni$_.JObject? callFlutterThrowError() {
+    return _callFlutterThrowError();
+  }
+
+  void callFlutterThrowErrorFromVoid() {
+    return _callFlutterThrowErrorFromVoid();
+  }
+
+  NativeInteropAllTypes callFlutterEchoNativeInteropAllTypes(
+    NativeInteropAllTypes nativeInteropAllTypes,
+  ) {
+    return _callFlutterEchoNativeInteropAllTypes(nativeInteropAllTypes);
+  }
+
+  NativeInteropAllNullableTypes? callFlutterEchoNativeInteropAllNullableTypes(
+    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+  ) {
+    return _callFlutterEchoNativeInteropAllNullableTypes(nativeInteropAllNullableTypes);
+  }
+
+  NativeInteropAllNullableTypes callFlutterSendMultipleNullableTypes(
+    jni$_.JBoolean? boolean,
+    jni$_.JLong? long,
+    jni$_.JString? string,
+  ) {
+    return _callFlutterSendMultipleNullableTypes(boolean, long, string);
+  }
+
+  NativeInteropAllNullableTypesWithoutRecursion?
+  callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
+    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  ) {
+    return _callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
+      nativeInteropAllNullableTypesWithoutRecursion,
+    );
+  }
+
+  NativeInteropAllNullableTypesWithoutRecursion
+  callFlutterSendMultipleNullableTypesWithoutRecursion(
+    jni$_.JBoolean? boolean,
+    jni$_.JLong? long,
+    jni$_.JString? string,
+  ) {
+    return _callFlutterSendMultipleNullableTypesWithoutRecursion(boolean, long, string);
+  }
+
+  core$_.bool callFlutterEchoBool(core$_.bool z) {
+    return _callFlutterEchoBool(z);
+  }
+
+  core$_.int callFlutterEchoInt(core$_.int j) {
+    return _callFlutterEchoInt(j);
+  }
+
+  core$_.double callFlutterEchoDouble(core$_.double d) {
+    return _callFlutterEchoDouble(d);
+  }
+
+  jni$_.JString callFlutterEchoString(jni$_.JString string) {
+    return _callFlutterEchoString(string);
+  }
+
+  jni$_.JByteArray callFlutterEchoUint8List(jni$_.JByteArray bs) {
+    return _callFlutterEchoUint8List(bs);
+  }
+
+  jni$_.JIntArray callFlutterEchoInt32List(jni$_.JIntArray is$) {
+    return _callFlutterEchoInt32List(is$);
+  }
+
+  jni$_.JLongArray callFlutterEchoInt64List(jni$_.JLongArray js) {
+    return _callFlutterEchoInt64List(js);
+  }
+
+  jni$_.JDoubleArray callFlutterEchoFloat64List(jni$_.JDoubleArray ds) {
+    return _callFlutterEchoFloat64List(ds);
+  }
+
+  jni$_.JList<jni$_.JObject?> callFlutterEchoList(jni$_.JList<jni$_.JObject?> list) {
+    return _callFlutterEchoList(list);
+  }
+
+  jni$_.JList<NativeInteropAnEnum?> callFlutterEchoEnumList(
+    jni$_.JList<NativeInteropAnEnum?> list,
+  ) {
+    return _callFlutterEchoEnumList(list);
+  }
+
+  jni$_.JList<NativeInteropAllNullableTypes?> callFlutterEchoClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?> list,
+  ) {
+    return _callFlutterEchoClassList(list);
+  }
+
+  jni$_.JList<NativeInteropAnEnum> callFlutterEchoNonNullEnumList(
+    jni$_.JList<NativeInteropAnEnum> list,
+  ) {
+    return _callFlutterEchoNonNullEnumList(list);
+  }
+
+  jni$_.JList<NativeInteropAllNullableTypes> callFlutterEchoNonNullClassList(
+    jni$_.JList<NativeInteropAllNullableTypes> list,
+  ) {
+    return _callFlutterEchoNonNullClassList(list);
+  }
+
+  jni$_.JMap<jni$_.JObject?, jni$_.JObject?> callFlutterEchoMap(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+  ) {
+    return _callFlutterEchoMap(map);
+  }
+
+  jni$_.JMap<jni$_.JString?, jni$_.JString?> callFlutterEchoStringMap(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+  ) {
+    return _callFlutterEchoStringMap(map);
+  }
+
+  jni$_.JMap<jni$_.JLong?, jni$_.JLong?> callFlutterEchoIntMap(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
+  ) {
+    return _callFlutterEchoIntMap(map);
+  }
+
+  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> callFlutterEchoEnumMap(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+  ) {
+    return _callFlutterEchoEnumMap(map);
+  }
+
+  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> callFlutterEchoClassMap(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
+  ) {
+    return _callFlutterEchoClassMap(map);
+  }
+
+  jni$_.JMap<jni$_.JString, jni$_.JString> callFlutterEchoNonNullStringMap(
+    jni$_.JMap<jni$_.JString, jni$_.JString> map,
+  ) {
+    return _callFlutterEchoNonNullStringMap(map);
+  }
+
+  jni$_.JMap<jni$_.JLong, jni$_.JLong> callFlutterEchoNonNullIntMap(
+    jni$_.JMap<jni$_.JLong, jni$_.JLong> map,
+  ) {
+    return _callFlutterEchoNonNullIntMap(map);
+  }
+
+  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> callFlutterEchoNonNullEnumMap(
+    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
+  ) {
+    return _callFlutterEchoNonNullEnumMap(map);
+  }
+
+  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> callFlutterEchoNonNullClassMap(
+    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
+  ) {
+    return _callFlutterEchoNonNullClassMap(map);
+  }
+
+  NativeInteropAnEnum callFlutterEchoEnum(NativeInteropAnEnum nativeInteropAnEnum) {
+    return _callFlutterEchoEnum(nativeInteropAnEnum);
+  }
+
+  NativeInteropAnotherEnum callFlutterEchoNativeInteropAnotherEnum(
+    NativeInteropAnotherEnum nativeInteropAnotherEnum,
+  ) {
+    return _callFlutterEchoNativeInteropAnotherEnum(nativeInteropAnotherEnum);
+  }
+
+  jni$_.JBoolean? callFlutterEchoNullableBool(jni$_.JBoolean? boolean) {
+    return _callFlutterEchoNullableBool(boolean);
+  }
+
+  jni$_.JLong? callFlutterEchoNullableInt(jni$_.JLong? long) {
+    return _callFlutterEchoNullableInt(long);
+  }
+
+  jni$_.JDouble? callFlutterEchoNullableDouble(jni$_.JDouble? double) {
+    return _callFlutterEchoNullableDouble(double);
+  }
+
+  jni$_.JString? callFlutterEchoNullableString(jni$_.JString? string) {
+    return _callFlutterEchoNullableString(string);
+  }
+
+  jni$_.JByteArray? callFlutterEchoNullableUint8List(jni$_.JByteArray? bs) {
+    return _callFlutterEchoNullableUint8List(bs);
+  }
+
+  jni$_.JIntArray? callFlutterEchoNullableInt32List(jni$_.JIntArray? is$) {
+    return _callFlutterEchoNullableInt32List(is$);
+  }
+
+  jni$_.JLongArray? callFlutterEchoNullableInt64List(jni$_.JLongArray? js) {
+    return _callFlutterEchoNullableInt64List(js);
+  }
+
+  jni$_.JDoubleArray? callFlutterEchoNullableFloat64List(jni$_.JDoubleArray? ds) {
+    return _callFlutterEchoNullableFloat64List(ds);
+  }
+
+  jni$_.JList<jni$_.JObject?>? callFlutterEchoNullableList(jni$_.JList<jni$_.JObject?>? list) {
+    return _callFlutterEchoNullableList(list);
+  }
+
+  jni$_.JList<NativeInteropAnEnum?>? callFlutterEchoNullableEnumList(
+    jni$_.JList<NativeInteropAnEnum?>? list,
+  ) {
+    return _callFlutterEchoNullableEnumList(list);
+  }
+
+  jni$_.JList<NativeInteropAllNullableTypes?>? callFlutterEchoNullableClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?>? list,
+  ) {
+    return _callFlutterEchoNullableClassList(list);
+  }
+
+  jni$_.JList<NativeInteropAnEnum>? callFlutterEchoNullableNonNullEnumList(
+    jni$_.JList<NativeInteropAnEnum>? list,
+  ) {
+    return _callFlutterEchoNullableNonNullEnumList(list);
+  }
+
+  jni$_.JList<NativeInteropAllNullableTypes>? callFlutterEchoNullableNonNullClassList(
+    jni$_.JList<NativeInteropAllNullableTypes>? list,
+  ) {
+    return _callFlutterEchoNullableNonNullClassList(list);
+  }
+
+  jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? callFlutterEchoNullableMap(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+  ) {
+    return _callFlutterEchoNullableMap(map);
+  }
+
+  jni$_.JMap<jni$_.JString?, jni$_.JString?>? callFlutterEchoNullableStringMap(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+  ) {
+    return _callFlutterEchoNullableStringMap(map);
+  }
+
+  jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? callFlutterEchoNullableIntMap(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+  ) {
+    return _callFlutterEchoNullableIntMap(map);
+  }
+
+  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? callFlutterEchoNullableEnumMap(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
+  ) {
+    return _callFlutterEchoNullableEnumMap(map);
+  }
+
+  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? callFlutterEchoNullableClassMap(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+  ) {
+    return _callFlutterEchoNullableClassMap(map);
+  }
+
+  jni$_.JMap<jni$_.JString, jni$_.JString>? callFlutterEchoNullableNonNullStringMap(
+    jni$_.JMap<jni$_.JString, jni$_.JString>? map,
+  ) {
+    return _callFlutterEchoNullableNonNullStringMap(map);
+  }
+
+  jni$_.JMap<jni$_.JLong, jni$_.JLong>? callFlutterEchoNullableNonNullIntMap(
+    jni$_.JMap<jni$_.JLong, jni$_.JLong>? map,
+  ) {
+    return _callFlutterEchoNullableNonNullIntMap(map);
+  }
+
+  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? callFlutterEchoNullableNonNullEnumMap(
+    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
+  ) {
+    return _callFlutterEchoNullableNonNullEnumMap(map);
+  }
+
+  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? callFlutterEchoNullableNonNullClassMap(
+    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
+  ) {
+    return _callFlutterEchoNullableNonNullClassMap(map);
+  }
+
+  NativeInteropAnEnum? callFlutterEchoNullableEnum(NativeInteropAnEnum? nativeInteropAnEnum) {
+    return _callFlutterEchoNullableEnum(nativeInteropAnEnum);
+  }
+
+  NativeInteropAnotherEnum? callFlutterEchoAnotherNullableEnum(
+    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
+  ) {
+    return _callFlutterEchoAnotherNullableEnum(nativeInteropAnotherEnum);
+  }
+
+  core$_.Future<void> callFlutterNoopAsync() {
+    return _callFlutterNoopAsync();
+  }
+
+  core$_.Future<NativeInteropAllTypes> callFlutterEchoAsyncNativeInteropAllTypes(
+    NativeInteropAllTypes nativeInteropAllTypes,
+  ) {
+    return _callFlutterEchoAsyncNativeInteropAllTypes(nativeInteropAllTypes);
+  }
+
+  core$_.Future<NativeInteropAllNullableTypes?>
+  callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
+    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+  ) {
+    return _callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
+      nativeInteropAllNullableTypes,
+    );
+  }
+
+  core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?>
+  callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  ) {
+    return _callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      nativeInteropAllNullableTypesWithoutRecursion,
+    );
+  }
+
+  core$_.Future<jni$_.JBoolean> callFlutterEchoAsyncBool(core$_.bool z) {
+    return _callFlutterEchoAsyncBool(z);
+  }
+
+  core$_.Future<jni$_.JLong> callFlutterEchoAsyncInt(core$_.int j) {
+    return _callFlutterEchoAsyncInt(j);
+  }
+
+  core$_.Future<jni$_.JDouble> callFlutterEchoAsyncDouble(core$_.double d) {
+    return _callFlutterEchoAsyncDouble(d);
+  }
+
+  core$_.Future<jni$_.JString> callFlutterEchoAsyncString(jni$_.JString string) {
+    return _callFlutterEchoAsyncString(string);
+  }
+
+  core$_.Future<jni$_.JByteArray> callFlutterEchoAsyncUint8List(jni$_.JByteArray bs) {
+    return _callFlutterEchoAsyncUint8List(bs);
+  }
+
+  core$_.Future<jni$_.JIntArray> callFlutterEchoAsyncInt32List(jni$_.JIntArray is$) {
+    return _callFlutterEchoAsyncInt32List(is$);
+  }
+
+  core$_.Future<jni$_.JLongArray> callFlutterEchoAsyncInt64List(jni$_.JLongArray js) {
+    return _callFlutterEchoAsyncInt64List(js);
+  }
+
+  core$_.Future<jni$_.JDoubleArray> callFlutterEchoAsyncFloat64List(jni$_.JDoubleArray ds) {
+    return _callFlutterEchoAsyncFloat64List(ds);
+  }
+
+  core$_.Future<jni$_.JObject> callFlutterEchoAsyncObject(jni$_.JObject object) {
+    return _callFlutterEchoAsyncObject(object);
+  }
+
+  core$_.Future<jni$_.JList<jni$_.JObject?>> callFlutterEchoAsyncList(
+    jni$_.JList<jni$_.JObject?> list,
+  ) {
+    return _callFlutterEchoAsyncList(list);
+  }
+
+  core$_.Future<jni$_.JList<NativeInteropAnEnum?>> callFlutterEchoAsyncEnumList(
+    jni$_.JList<NativeInteropAnEnum?> list,
+  ) {
+    return _callFlutterEchoAsyncEnumList(list);
+  }
+
+  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> callFlutterEchoAsyncClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?> list,
+  ) {
+    return _callFlutterEchoAsyncClassList(list);
+  }
+
+  core$_.Future<jni$_.JList<NativeInteropAnEnum>> callFlutterEchoAsyncNonNullEnumList(
+    jni$_.JList<NativeInteropAnEnum?> list,
+  ) {
+    return _callFlutterEchoAsyncNonNullEnumList(list);
+  }
+
+  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>> callFlutterEchoAsyncNonNullClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?> list,
+  ) {
+    return _callFlutterEchoAsyncNonNullClassList(list);
+  }
+
+  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> callFlutterEchoAsyncMap(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+  ) {
+    return _callFlutterEchoAsyncMap(map);
+  }
+
+  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> callFlutterEchoAsyncStringMap(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
+  ) {
+    return _callFlutterEchoAsyncStringMap(map);
+  }
+
+  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> callFlutterEchoAsyncIntMap(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
+  ) {
+    return _callFlutterEchoAsyncIntMap(map);
+  }
+
+  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> callFlutterEchoAsyncEnumMap(
+    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
+  ) {
+    return _callFlutterEchoAsyncEnumMap(map);
+  }
+
+  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>>
+  callFlutterEchoAsyncClassMap(jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map) {
+    return _callFlutterEchoAsyncClassMap(map);
+  }
+
+  core$_.Future<NativeInteropAnEnum> callFlutterEchoAsyncEnum(
+    NativeInteropAnEnum nativeInteropAnEnum,
+  ) {
+    return _callFlutterEchoAsyncEnum(nativeInteropAnEnum);
+  }
+
+  core$_.Future<NativeInteropAnotherEnum> callFlutterEchoAnotherAsyncEnum(
+    NativeInteropAnotherEnum nativeInteropAnotherEnum,
+  ) {
+    return _callFlutterEchoAnotherAsyncEnum(nativeInteropAnotherEnum);
+  }
+
+  core$_.Future<jni$_.JBoolean?> callFlutterEchoAsyncNullableBool(jni$_.JBoolean? boolean) {
+    return _callFlutterEchoAsyncNullableBool(boolean);
+  }
+
+  core$_.Future<jni$_.JLong?> callFlutterEchoAsyncNullableInt(jni$_.JLong? long) {
+    return _callFlutterEchoAsyncNullableInt(long);
+  }
+
+  core$_.Future<jni$_.JDouble?> callFlutterEchoAsyncNullableDouble(jni$_.JDouble? double) {
+    return _callFlutterEchoAsyncNullableDouble(double);
+  }
+
+  core$_.Future<jni$_.JString?> callFlutterEchoAsyncNullableString(jni$_.JString? string) {
+    return _callFlutterEchoAsyncNullableString(string);
+  }
+
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableUint8List(jni$_.JByteArray? bs) {
+    return _callFlutterEchoAsyncNullableUint8List(bs);
+  }
+
+  core$_.Future<jni$_.JIntArray?> callFlutterEchoAsyncNullableInt32List(jni$_.JIntArray? is$) {
+    return _callFlutterEchoAsyncNullableInt32List(is$);
+  }
+
+  core$_.Future<jni$_.JLongArray?> callFlutterEchoAsyncNullableInt64List(jni$_.JLongArray? js) {
+    return _callFlutterEchoAsyncNullableInt64List(js);
+  }
+
+  core$_.Future<jni$_.JDoubleArray?> callFlutterEchoAsyncNullableFloat64List(
+    jni$_.JDoubleArray? ds,
+  ) {
+    return _callFlutterEchoAsyncNullableFloat64List(ds);
+  }
+
+  core$_.Future<jni$_.JObject?> callFlutterThrowFlutterErrorAsync() {
+    return _callFlutterThrowFlutterErrorAsync();
+  }
+
+  core$_.Future<jni$_.JObject?> callFlutterEchoAsyncNullableObject(jni$_.JObject? object) {
+    return _callFlutterEchoAsyncNullableObject(object);
+  }
+
+  core$_.Future<jni$_.JList<jni$_.JObject?>?> callFlutterEchoAsyncNullableList(
+    jni$_.JList<jni$_.JObject?>? list,
+  ) {
+    return _callFlutterEchoAsyncNullableList(list);
+  }
+
+  core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> callFlutterEchoAsyncNullableEnumList(
+    jni$_.JList<NativeInteropAnEnum?>? list,
+  ) {
+    return _callFlutterEchoAsyncNullableEnumList(list);
+  }
+
+  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> callFlutterEchoAsyncNullableClassList(
+    jni$_.JList<NativeInteropAllNullableTypes?>? list,
+  ) {
+    return _callFlutterEchoAsyncNullableClassList(list);
+  }
+
+  core$_.Future<jni$_.JList<NativeInteropAnEnum>?> callFlutterEchoAsyncNullableNonNullEnumList(
+    jni$_.JList<NativeInteropAnEnum?>? list,
+  ) {
+    return _callFlutterEchoAsyncNullableNonNullEnumList(list);
+  }
+
+  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>?>
+  callFlutterEchoAsyncNullableNonNullClassList(jni$_.JList<NativeInteropAllNullableTypes?>? list) {
+    return _callFlutterEchoAsyncNullableNonNullClassList(list);
+  }
+
+  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> callFlutterEchoAsyncNullableMap(
+    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+  ) {
+    return _callFlutterEchoAsyncNullableMap(map);
+  }
+
+  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> callFlutterEchoAsyncNullableStringMap(
+    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+  ) {
+    return _callFlutterEchoAsyncNullableStringMap(map);
+  }
+
+  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> callFlutterEchoAsyncNullableIntMap(
+    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
+  ) {
+    return _callFlutterEchoAsyncNullableIntMap(map);
+  }
+
+  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?>
+  callFlutterEchoAsyncNullableEnumMap(jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map) {
+    return _callFlutterEchoAsyncNullableEnumMap(map);
+  }
+
+  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?>
+  callFlutterEchoAsyncNullableClassMap(
+    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
+  ) {
+    return _callFlutterEchoAsyncNullableClassMap(map);
+  }
+
+  core$_.Future<NativeInteropAnEnum?> callFlutterEchoAsyncNullableEnum(
+    NativeInteropAnEnum? nativeInteropAnEnum,
+  ) {
+    return _callFlutterEchoAsyncNullableEnum(nativeInteropAnEnum);
+  }
+
+  core$_.Future<NativeInteropAnotherEnum?> callFlutterEchoAnotherAsyncNullableEnum(
+    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
+  ) {
+    return _callFlutterEchoAnotherAsyncNullableEnum(nativeInteropAnotherEnum);
+  }
+
+  core$_.bool defaultIsMainThread() {
+    return _defaultIsMainThread();
+  }
+
+  core$_.Future<jni$_.JBoolean> callFlutterNoopOnBackgroundThread() {
+    return _callFlutterNoopOnBackgroundThread();
+  }
+
+  core$_.bool testDeregisterHostApi() {
+    return _testDeregisterHostApi();
+  }
+
+  core$_.bool testDeregisterFlutterApi() {
+    return _testDeregisterFlutterApi();
+  }
+
+  void registerAndImmediatelyDeregisterHostApi(jni$_.JString string) {
+    return _registerAndImmediatelyDeregisterHostApi(string);
+  }
+
+  core$_.bool testCallDeregisteredFlutterApi(jni$_.JString string) {
+    return _testCallDeregisteredFlutterApi(string);
+  }
+}
+
 final class $NativeInteropHostIntegrationCoreApi$Type$
     extends jni$_.JType<NativeInteropHostIntegrationCoreApi> {
   @jni$_.internal
@@ -10249,7 +15522,7 @@ final class $NativeInteropHostIntegrationCoreApi$Type$
 
 /// from: `com.example.test_plugin.NativeInteropHostIntegrationCoreApiRegistrar`
 extension type NativeInteropHostIntegrationCoreApiRegistrar._(jni$_.JObject _$this)
-    implements NativeInteropHostIntegrationCoreApi {
+    implements jni$_.JObject, NativeInteropHostIntegrationCoreApi {
   static final _class = jni$_.JClass.forName(
     r'com/example/test_plugin/NativeInteropHostIntegrationCoreApiRegistrar',
   );

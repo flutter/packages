@@ -1921,6 +1921,8 @@ void main() {
     const generator = KotlinGenerator();
     generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
+    expect(code, contains('interface HostApi {'));
+    expect(code, contains('class HostApiRegistrar : HostApi {'));
     expect(code, contains('api: HostApi?,'));
     expect(code, contains('HostApiInstances.remove(name)'));
     expect(
