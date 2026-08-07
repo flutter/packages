@@ -889,7 +889,7 @@ class ${api.name}Registrar() {
       'val ${api.name}Instances: MutableMap<String, ${api.name}Registrar> = mutableMapOf()',
     );
     indent.writeln('@Keep');
-    indent.writeScoped('abstract class ${api.name} {', '}', () {
+    indent.writeScoped('interface ${api.name} {', '}', () {
       for (final Method method in api.methods) {
         _writeMethodDeclaration(
           indent,
@@ -899,13 +899,12 @@ class ${api.name}Registrar() {
           parameters: method.parameters,
           isAsynchronous: method.isAsynchronous,
           useJni: true,
-          isAbstract: true,
         );
       }
     });
 
     indent.writeln('@Keep');
-    indent.writeScoped('class ${api.name}Registrar : ${api.name}() {', '}', () {
+    indent.writeScoped('class ${api.name}Registrar : ${api.name} {', '}', () {
       indent.writeln('private var api: ${api.name}? = null');
 
       indent.writeScoped('fun register(', '):', () {

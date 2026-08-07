@@ -922,7 +922,7 @@ class TestPluginWithSuffix : HostSmallApi {
   }
 }
 
-class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi() {
+class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
   override fun noop() {}
 
   override fun echoAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes {

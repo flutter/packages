@@ -1003,640 +1003,610 @@ val NativeInteropHostIntegrationCoreApiInstances:
     mutableMapOf()
 
 @Keep
-abstract class NativeInteropHostIntegrationCoreApi {
+interface NativeInteropHostIntegrationCoreApi {
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
-  abstract fun noop()
+  fun noop()
   /** Returns the passed object, to test serialization and deserialization. */
-  abstract fun echoAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes
+  fun echoAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes
   /** Returns an error, to test error handling. */
-  abstract fun throwError(): Any?
+  fun throwError(): Any?
   /** Returns an error from a void function, to test error handling. */
-  abstract fun throwErrorFromVoid()
+  fun throwErrorFromVoid()
   /** Returns a Flutter error, to test error handling. */
-  abstract fun throwFlutterError(): Any?
+  fun throwFlutterError(): Any?
   /** Returns passed in int. */
-  abstract fun echoInt(anInt: Long): Long
+  fun echoInt(anInt: Long): Long
   /** Returns passed in double. */
-  abstract fun echoDouble(aDouble: Double): Double
+  fun echoDouble(aDouble: Double): Double
   /** Returns the passed in boolean. */
-  abstract fun echoBool(aBool: Boolean): Boolean
+  fun echoBool(aBool: Boolean): Boolean
   /** Returns the passed in string. */
-  abstract fun echoString(aString: String): String
+  fun echoString(aString: String): String
   /** Returns the passed in Uint8List. */
-  abstract fun echoUint8List(aUint8List: ByteArray): ByteArray
+  fun echoUint8List(aUint8List: ByteArray): ByteArray
   /** Returns the passed in Int32List. */
-  abstract fun echoInt32List(aInt32List: IntArray): IntArray
+  fun echoInt32List(aInt32List: IntArray): IntArray
   /** Returns the passed in Int64List. */
-  abstract fun echoInt64List(aInt64List: LongArray): LongArray
+  fun echoInt64List(aInt64List: LongArray): LongArray
   /** Returns the passed in Float64List. */
-  abstract fun echoFloat64List(aFloat64List: DoubleArray): DoubleArray
+  fun echoFloat64List(aFloat64List: DoubleArray): DoubleArray
   /** Returns the passed in generic Object. */
-  abstract fun echoObject(anObject: Any): Any
+  fun echoObject(anObject: Any): Any
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoList(list: List<Any?>): List<Any?>
+  fun echoList(list: List<Any?>): List<Any?>
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoStringList(stringList: List<String?>): List<String?>
+  fun echoStringList(stringList: List<String?>): List<String?>
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoIntList(intList: List<Long?>): List<Long?>
+  fun echoIntList(intList: List<Long?>): List<Long?>
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoDoubleList(doubleList: List<Double?>): List<Double?>
+  fun echoDoubleList(doubleList: List<Double?>): List<Double?>
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoBoolList(boolList: List<Boolean?>): List<Boolean?>
+  fun echoBoolList(boolList: List<Boolean?>): List<Boolean?>
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?>
+  fun echoEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?>
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoClassList(
+  fun echoClassList(
       classList: List<NativeInteropAllNullableTypes?>
   ): List<NativeInteropAllNullableTypes?>
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum>
+  fun echoNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum>
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoNonNullClassList(
+  fun echoNonNullClassList(
       classList: List<NativeInteropAllNullableTypes>
   ): List<NativeInteropAllNullableTypes>
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
+  fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
+  fun echoStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
+  fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoEnumMap(
+  fun echoEnumMap(
       enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
   ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoClassMap(
+  fun echoClassMap(
       classMap: Map<Long?, NativeInteropAllNullableTypes?>
   ): Map<Long?, NativeInteropAllNullableTypes?>
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String>
+  fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String>
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long>
+  fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long>
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoNonNullEnumMap(
+  fun echoNonNullEnumMap(
       enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>
   ): Map<NativeInteropAnEnum, NativeInteropAnEnum>
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoNonNullClassMap(
+  fun echoNonNullClassMap(
       classMap: Map<Long, NativeInteropAllNullableTypes>
   ): Map<Long, NativeInteropAllNullableTypes>
   /** Returns the passed class to test nested class serialization and deserialization. */
-  abstract fun echoClassWrapper(
-      wrapper: NativeInteropAllClassesWrapper
-  ): NativeInteropAllClassesWrapper
+  fun echoClassWrapper(wrapper: NativeInteropAllClassesWrapper): NativeInteropAllClassesWrapper
   /** Returns the passed enum to test serialization and deserialization. */
-  abstract fun echoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
+  fun echoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
   /** Returns the passed enum to test serialization and deserialization. */
-  abstract fun echoAnotherEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum
+  fun echoAnotherEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum
   /** Returns the default string. */
-  abstract fun echoNamedDefaultString(aString: String): String
+  fun echoNamedDefaultString(aString: String): String
   /** Returns passed in double. */
-  abstract fun echoOptionalDefaultDouble(aDouble: Double): Double
+  fun echoOptionalDefaultDouble(aDouble: Double): Double
   /** Returns passed in int. */
-  abstract fun echoRequiredInt(anInt: Long): Long
+  fun echoRequiredInt(anInt: Long): Long
   /** Returns the passed object, to test serialization and deserialization. */
-  abstract fun echoAllNullableTypes(
+  fun echoAllNullableTypes(
       everything: NativeInteropAllNullableTypes?
   ): NativeInteropAllNullableTypes?
   /** Returns the passed object, to test serialization and deserialization. */
-  abstract fun echoAllNullableTypesWithoutRecursion(
+  fun echoAllNullableTypesWithoutRecursion(
       everything: NativeInteropAllNullableTypesWithoutRecursion?
   ): NativeInteropAllNullableTypesWithoutRecursion?
   /**
    * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
    */
-  abstract fun extractNestedNullableString(wrapper: NativeInteropAllClassesWrapper): String?
+  fun extractNestedNullableString(wrapper: NativeInteropAllClassesWrapper): String?
   /**
    * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
    */
-  abstract fun createNestedNullableString(nullableString: String?): NativeInteropAllClassesWrapper
+  fun createNestedNullableString(nullableString: String?): NativeInteropAllClassesWrapper
 
-  abstract fun sendMultipleNullableTypes(
+  fun sendMultipleNullableTypes(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
   ): NativeInteropAllNullableTypes
   /** Returns passed in arguments of multiple types. */
-  abstract fun sendMultipleNullableTypesWithoutRecursion(
+  fun sendMultipleNullableTypesWithoutRecursion(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
   ): NativeInteropAllNullableTypesWithoutRecursion
   /** Returns passed in int. */
-  abstract fun echoNullableInt(aNullableInt: Long?): Long?
+  fun echoNullableInt(aNullableInt: Long?): Long?
   /** Returns passed in double. */
-  abstract fun echoNullableDouble(aNullableDouble: Double?): Double?
+  fun echoNullableDouble(aNullableDouble: Double?): Double?
   /** Returns the passed in boolean. */
-  abstract fun echoNullableBool(aNullableBool: Boolean?): Boolean?
+  fun echoNullableBool(aNullableBool: Boolean?): Boolean?
   /** Returns the passed in string. */
-  abstract fun echoNullableString(aNullableString: String?): String?
+  fun echoNullableString(aNullableString: String?): String?
   /** Returns the passed in Uint8List. */
-  abstract fun echoNullableUint8List(aNullableUint8List: ByteArray?): ByteArray?
+  fun echoNullableUint8List(aNullableUint8List: ByteArray?): ByteArray?
   /** Returns the passed in Int32List. */
-  abstract fun echoNullableInt32List(aNullableInt32List: IntArray?): IntArray?
+  fun echoNullableInt32List(aNullableInt32List: IntArray?): IntArray?
   /** Returns the passed in Int64List. */
-  abstract fun echoNullableInt64List(aNullableInt64List: LongArray?): LongArray?
+  fun echoNullableInt64List(aNullableInt64List: LongArray?): LongArray?
   /** Returns the passed in Float64List. */
-  abstract fun echoNullableFloat64List(aNullableFloat64List: DoubleArray?): DoubleArray?
+  fun echoNullableFloat64List(aNullableFloat64List: DoubleArray?): DoubleArray?
   /** Returns the passed in generic Object. */
-  abstract fun echoNullableObject(aNullableObject: Any?): Any?
+  fun echoNullableObject(aNullableObject: Any?): Any?
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoNullableList(aNullableList: List<Any?>?): List<Any?>?
+  fun echoNullableList(aNullableList: List<Any?>?): List<Any?>?
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoNullableEnumList(
-      enumList: List<NativeInteropAnEnum?>?
-  ): List<NativeInteropAnEnum?>?
+  fun echoNullableEnumList(enumList: List<NativeInteropAnEnum?>?): List<NativeInteropAnEnum?>?
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoNullableClassList(
+  fun echoNullableClassList(
       classList: List<NativeInteropAllNullableTypes?>?
   ): List<NativeInteropAllNullableTypes?>?
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoNullableNonNullEnumList(
-      enumList: List<NativeInteropAnEnum>?
-  ): List<NativeInteropAnEnum>?
+  fun echoNullableNonNullEnumList(enumList: List<NativeInteropAnEnum>?): List<NativeInteropAnEnum>?
   /** Returns the passed list, to test serialization and deserialization. */
-  abstract fun echoNullableNonNullClassList(
+  fun echoNullableNonNullClassList(
       classList: List<NativeInteropAllNullableTypes>?
   ): List<NativeInteropAllNullableTypes>?
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
+  fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>?
+  fun echoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>?
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
+  fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoNullableEnumMap(
+  fun echoNullableEnumMap(
       enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
   ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoNullableClassMap(
+  fun echoNullableClassMap(
       classMap: Map<Long?, NativeInteropAllNullableTypes?>?
   ): Map<Long?, NativeInteropAllNullableTypes?>?
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>?
+  fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>?
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>?
+  fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>?
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoNullableNonNullEnumMap(
+  fun echoNullableNonNullEnumMap(
       enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?
   ): Map<NativeInteropAnEnum, NativeInteropAnEnum>?
   /** Returns the passed map, to test serialization and deserialization. */
-  abstract fun echoNullableNonNullClassMap(
+  fun echoNullableNonNullClassMap(
       classMap: Map<Long, NativeInteropAllNullableTypes>?
   ): Map<Long, NativeInteropAllNullableTypes>?
 
-  abstract fun echoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
+  fun echoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
 
-  abstract fun echoAnotherNullableEnum(
-      anotherEnum: NativeInteropAnotherEnum?
-  ): NativeInteropAnotherEnum?
+  fun echoAnotherNullableEnum(anotherEnum: NativeInteropAnotherEnum?): NativeInteropAnotherEnum?
   /** Returns passed in int. */
-  abstract fun echoOptionalNullableInt(aNullableInt: Long?): Long?
+  fun echoOptionalNullableInt(aNullableInt: Long?): Long?
   /** Returns the passed in string. */
-  abstract fun echoNamedNullableString(aNullableString: String?): String?
+  fun echoNamedNullableString(aNullableString: String?): String?
   /**
    * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
    * calling.
    */
-  abstract suspend fun noopAsync()
+  suspend fun noopAsync()
   /** Returns passed in int asynchronously. */
-  abstract suspend fun echoAsyncInt(anInt: Long): Long
+  suspend fun echoAsyncInt(anInt: Long): Long
   /** Returns passed in double asynchronously. */
-  abstract suspend fun echoAsyncDouble(aDouble: Double): Double
+  suspend fun echoAsyncDouble(aDouble: Double): Double
   /** Returns the passed in boolean asynchronously. */
-  abstract suspend fun echoAsyncBool(aBool: Boolean): Boolean
+  suspend fun echoAsyncBool(aBool: Boolean): Boolean
   /** Returns the passed string asynchronously. */
-  abstract suspend fun echoAsyncString(aString: String): String
+  suspend fun echoAsyncString(aString: String): String
   /** Returns the passed in Uint8List asynchronously. */
-  abstract suspend fun echoAsyncUint8List(aUint8List: ByteArray): ByteArray
+  suspend fun echoAsyncUint8List(aUint8List: ByteArray): ByteArray
   /** Returns the passed in Int32List asynchronously. */
-  abstract suspend fun echoAsyncInt32List(aInt32List: IntArray): IntArray
+  suspend fun echoAsyncInt32List(aInt32List: IntArray): IntArray
   /** Returns the passed in Int64List asynchronously. */
-  abstract suspend fun echoAsyncInt64List(aInt64List: LongArray): LongArray
+  suspend fun echoAsyncInt64List(aInt64List: LongArray): LongArray
   /** Returns the passed in Float64List asynchronously. */
-  abstract suspend fun echoAsyncFloat64List(aFloat64List: DoubleArray): DoubleArray
+  suspend fun echoAsyncFloat64List(aFloat64List: DoubleArray): DoubleArray
   /** Returns the passed in generic Object asynchronously. */
-  abstract suspend fun echoAsyncObject(anObject: Any): Any
+  suspend fun echoAsyncObject(anObject: Any): Any
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncList(list: List<Any?>): List<Any?>
+  suspend fun echoAsyncList(list: List<Any?>): List<Any?>
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncEnumList(
-      enumList: List<NativeInteropAnEnum?>
-  ): List<NativeInteropAnEnum?>
+  suspend fun echoAsyncEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?>
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncClassList(
+  suspend fun echoAsyncClassList(
       classList: List<NativeInteropAllNullableTypes?>
   ): List<NativeInteropAllNullableTypes?>
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?>
+  suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?>
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
+  suspend fun echoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
+  suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncEnumMap(
+  suspend fun echoAsyncEnumMap(
       enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
   ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncClassMap(
+  suspend fun echoAsyncClassMap(
       classMap: Map<Long?, NativeInteropAllNullableTypes?>
   ): Map<Long?, NativeInteropAllNullableTypes?>
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
+  suspend fun echoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAnotherAsyncEnum(
-      anotherEnum: NativeInteropAnotherEnum
-  ): NativeInteropAnotherEnum
+  suspend fun echoAnotherAsyncEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum
   /** Responds with an error from an async function returning a value. */
-  abstract suspend fun throwAsyncError(): Any?
+  suspend fun throwAsyncError(): Any?
   /** Responds with an error from an async void function. */
-  abstract suspend fun throwAsyncErrorFromVoid()
+  suspend fun throwAsyncErrorFromVoid()
   /** Responds with a Flutter error from an async function returning a value. */
-  abstract suspend fun throwAsyncFlutterError(): Any?
+  suspend fun throwAsyncFlutterError(): Any?
   /** Returns the passed object, to test async serialization and deserialization. */
-  abstract suspend fun echoAsyncNativeInteropAllTypes(
+  suspend fun echoAsyncNativeInteropAllTypes(
       everything: NativeInteropAllTypes
   ): NativeInteropAllTypes
   /** Returns the passed object, to test serialization and deserialization. */
-  abstract suspend fun echoAsyncNullableNativeInteropAllNullableTypes(
+  suspend fun echoAsyncNullableNativeInteropAllNullableTypes(
       everything: NativeInteropAllNullableTypes?
   ): NativeInteropAllNullableTypes?
   /** Returns the passed object, to test serialization and deserialization. */
-  abstract suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+  suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
       everything: NativeInteropAllNullableTypesWithoutRecursion?
   ): NativeInteropAllNullableTypesWithoutRecursion?
   /** Returns passed in int asynchronously. */
-  abstract suspend fun echoAsyncNullableInt(anInt: Long?): Long?
+  suspend fun echoAsyncNullableInt(anInt: Long?): Long?
   /** Returns passed in double asynchronously. */
-  abstract suspend fun echoAsyncNullableDouble(aDouble: Double?): Double?
+  suspend fun echoAsyncNullableDouble(aDouble: Double?): Double?
   /** Returns the passed in boolean asynchronously. */
-  abstract suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean?
+  suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean?
   /** Returns the passed string asynchronously. */
-  abstract suspend fun echoAsyncNullableString(aString: String?): String?
+  suspend fun echoAsyncNullableString(aString: String?): String?
   /** Returns the passed in Uint8List asynchronously. */
-  abstract suspend fun echoAsyncNullableUint8List(aUint8List: ByteArray?): ByteArray?
+  suspend fun echoAsyncNullableUint8List(aUint8List: ByteArray?): ByteArray?
   /** Returns the passed in Int32List asynchronously. */
-  abstract suspend fun echoAsyncNullableInt32List(aInt32List: IntArray?): IntArray?
+  suspend fun echoAsyncNullableInt32List(aInt32List: IntArray?): IntArray?
   /** Returns the passed in Int64List asynchronously. */
-  abstract suspend fun echoAsyncNullableInt64List(aInt64List: LongArray?): LongArray?
+  suspend fun echoAsyncNullableInt64List(aInt64List: LongArray?): LongArray?
   /** Returns the passed in Float64List asynchronously. */
-  abstract suspend fun echoAsyncNullableFloat64List(aFloat64List: DoubleArray?): DoubleArray?
+  suspend fun echoAsyncNullableFloat64List(aFloat64List: DoubleArray?): DoubleArray?
   /** Returns the passed in generic Object asynchronously. */
-  abstract suspend fun echoAsyncNullableObject(anObject: Any?): Any?
+  suspend fun echoAsyncNullableObject(anObject: Any?): Any?
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>?
+  suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>?
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncNullableEnumList(
+  suspend fun echoAsyncNullableEnumList(
       enumList: List<NativeInteropAnEnum?>?
   ): List<NativeInteropAnEnum?>?
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncNullableClassList(
+  suspend fun echoAsyncNullableClassList(
       classList: List<NativeInteropAllNullableTypes?>?
   ): List<NativeInteropAllNullableTypes?>?
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
+  suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncNullableStringMap(
-      stringMap: Map<String?, String?>?
-  ): Map<String?, String?>?
+  suspend fun echoAsyncNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>?
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
+  suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncNullableEnumMap(
+  suspend fun echoAsyncNullableEnumMap(
       enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
   ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncNullableClassMap(
+  suspend fun echoAsyncNullableClassMap(
       classMap: Map<Long?, NativeInteropAllNullableTypes?>?
   ): Map<Long?, NativeInteropAllNullableTypes?>?
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAsyncNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
+  suspend fun echoAsyncNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  abstract suspend fun echoAnotherAsyncNullableEnum(
+  suspend fun echoAnotherAsyncNullableEnum(
       anotherEnum: NativeInteropAnotherEnum?
   ): NativeInteropAnotherEnum?
 
-  abstract fun callFlutterNoop()
+  fun callFlutterNoop()
 
-  abstract fun callFlutterThrowError(): Any?
+  fun callFlutterThrowError(): Any?
 
-  abstract fun callFlutterThrowErrorFromVoid()
+  fun callFlutterThrowErrorFromVoid()
 
-  abstract fun callFlutterEchoNativeInteropAllTypes(
-      everything: NativeInteropAllTypes
-  ): NativeInteropAllTypes
+  fun callFlutterEchoNativeInteropAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes
 
-  abstract fun callFlutterEchoNativeInteropAllNullableTypes(
+  fun callFlutterEchoNativeInteropAllNullableTypes(
       everything: NativeInteropAllNullableTypes?
   ): NativeInteropAllNullableTypes?
 
-  abstract fun callFlutterSendMultipleNullableTypes(
+  fun callFlutterSendMultipleNullableTypes(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
   ): NativeInteropAllNullableTypes
 
-  abstract fun callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
+  fun callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
       everything: NativeInteropAllNullableTypesWithoutRecursion?
   ): NativeInteropAllNullableTypesWithoutRecursion?
 
-  abstract fun callFlutterSendMultipleNullableTypesWithoutRecursion(
+  fun callFlutterSendMultipleNullableTypesWithoutRecursion(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
   ): NativeInteropAllNullableTypesWithoutRecursion
 
-  abstract fun callFlutterEchoBool(aBool: Boolean): Boolean
+  fun callFlutterEchoBool(aBool: Boolean): Boolean
 
-  abstract fun callFlutterEchoInt(anInt: Long): Long
+  fun callFlutterEchoInt(anInt: Long): Long
 
-  abstract fun callFlutterEchoDouble(aDouble: Double): Double
+  fun callFlutterEchoDouble(aDouble: Double): Double
 
-  abstract fun callFlutterEchoString(aString: String): String
+  fun callFlutterEchoString(aString: String): String
 
-  abstract fun callFlutterEchoUint8List(list: ByteArray): ByteArray
+  fun callFlutterEchoUint8List(list: ByteArray): ByteArray
 
-  abstract fun callFlutterEchoInt32List(list: IntArray): IntArray
+  fun callFlutterEchoInt32List(list: IntArray): IntArray
 
-  abstract fun callFlutterEchoInt64List(list: LongArray): LongArray
+  fun callFlutterEchoInt64List(list: LongArray): LongArray
 
-  abstract fun callFlutterEchoFloat64List(list: DoubleArray): DoubleArray
+  fun callFlutterEchoFloat64List(list: DoubleArray): DoubleArray
 
-  abstract fun callFlutterEchoList(list: List<Any?>): List<Any?>
+  fun callFlutterEchoList(list: List<Any?>): List<Any?>
 
-  abstract fun callFlutterEchoEnumList(
-      enumList: List<NativeInteropAnEnum?>
-  ): List<NativeInteropAnEnum?>
+  fun callFlutterEchoEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?>
 
-  abstract fun callFlutterEchoClassList(
+  fun callFlutterEchoClassList(
       classList: List<NativeInteropAllNullableTypes?>
   ): List<NativeInteropAllNullableTypes?>
 
-  abstract fun callFlutterEchoNonNullEnumList(
-      enumList: List<NativeInteropAnEnum>
-  ): List<NativeInteropAnEnum>
+  fun callFlutterEchoNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum>
 
-  abstract fun callFlutterEchoNonNullClassList(
+  fun callFlutterEchoNonNullClassList(
       classList: List<NativeInteropAllNullableTypes>
   ): List<NativeInteropAllNullableTypes>
 
-  abstract fun callFlutterEchoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
+  fun callFlutterEchoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
 
-  abstract fun callFlutterEchoStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
+  fun callFlutterEchoStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
 
-  abstract fun callFlutterEchoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
+  fun callFlutterEchoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
 
-  abstract fun callFlutterEchoEnumMap(
+  fun callFlutterEchoEnumMap(
       enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
   ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
 
-  abstract fun callFlutterEchoClassMap(
+  fun callFlutterEchoClassMap(
       classMap: Map<Long?, NativeInteropAllNullableTypes?>
   ): Map<Long?, NativeInteropAllNullableTypes?>
 
-  abstract fun callFlutterEchoNonNullStringMap(stringMap: Map<String, String>): Map<String, String>
+  fun callFlutterEchoNonNullStringMap(stringMap: Map<String, String>): Map<String, String>
 
-  abstract fun callFlutterEchoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long>
+  fun callFlutterEchoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long>
 
-  abstract fun callFlutterEchoNonNullEnumMap(
+  fun callFlutterEchoNonNullEnumMap(
       enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>
   ): Map<NativeInteropAnEnum, NativeInteropAnEnum>
 
-  abstract fun callFlutterEchoNonNullClassMap(
+  fun callFlutterEchoNonNullClassMap(
       classMap: Map<Long, NativeInteropAllNullableTypes>
   ): Map<Long, NativeInteropAllNullableTypes>
 
-  abstract fun callFlutterEchoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
+  fun callFlutterEchoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
 
-  abstract fun callFlutterEchoNativeInteropAnotherEnum(
+  fun callFlutterEchoNativeInteropAnotherEnum(
       anotherEnum: NativeInteropAnotherEnum
   ): NativeInteropAnotherEnum
 
-  abstract fun callFlutterEchoNullableBool(aBool: Boolean?): Boolean?
+  fun callFlutterEchoNullableBool(aBool: Boolean?): Boolean?
 
-  abstract fun callFlutterEchoNullableInt(anInt: Long?): Long?
+  fun callFlutterEchoNullableInt(anInt: Long?): Long?
 
-  abstract fun callFlutterEchoNullableDouble(aDouble: Double?): Double?
+  fun callFlutterEchoNullableDouble(aDouble: Double?): Double?
 
-  abstract fun callFlutterEchoNullableString(aString: String?): String?
+  fun callFlutterEchoNullableString(aString: String?): String?
 
-  abstract fun callFlutterEchoNullableUint8List(list: ByteArray?): ByteArray?
+  fun callFlutterEchoNullableUint8List(list: ByteArray?): ByteArray?
 
-  abstract fun callFlutterEchoNullableInt32List(list: IntArray?): IntArray?
+  fun callFlutterEchoNullableInt32List(list: IntArray?): IntArray?
 
-  abstract fun callFlutterEchoNullableInt64List(list: LongArray?): LongArray?
+  fun callFlutterEchoNullableInt64List(list: LongArray?): LongArray?
 
-  abstract fun callFlutterEchoNullableFloat64List(list: DoubleArray?): DoubleArray?
+  fun callFlutterEchoNullableFloat64List(list: DoubleArray?): DoubleArray?
 
-  abstract fun callFlutterEchoNullableList(list: List<Any?>?): List<Any?>?
+  fun callFlutterEchoNullableList(list: List<Any?>?): List<Any?>?
 
-  abstract fun callFlutterEchoNullableEnumList(
+  fun callFlutterEchoNullableEnumList(
       enumList: List<NativeInteropAnEnum?>?
   ): List<NativeInteropAnEnum?>?
 
-  abstract fun callFlutterEchoNullableClassList(
+  fun callFlutterEchoNullableClassList(
       classList: List<NativeInteropAllNullableTypes?>?
   ): List<NativeInteropAllNullableTypes?>?
 
-  abstract fun callFlutterEchoNullableNonNullEnumList(
+  fun callFlutterEchoNullableNonNullEnumList(
       enumList: List<NativeInteropAnEnum>?
   ): List<NativeInteropAnEnum>?
 
-  abstract fun callFlutterEchoNullableNonNullClassList(
+  fun callFlutterEchoNullableNonNullClassList(
       classList: List<NativeInteropAllNullableTypes>?
   ): List<NativeInteropAllNullableTypes>?
 
-  abstract fun callFlutterEchoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
+  fun callFlutterEchoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
 
-  abstract fun callFlutterEchoNullableStringMap(
-      stringMap: Map<String?, String?>?
-  ): Map<String?, String?>?
+  fun callFlutterEchoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>?
 
-  abstract fun callFlutterEchoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
+  fun callFlutterEchoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
 
-  abstract fun callFlutterEchoNullableEnumMap(
+  fun callFlutterEchoNullableEnumMap(
       enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
   ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
 
-  abstract fun callFlutterEchoNullableClassMap(
+  fun callFlutterEchoNullableClassMap(
       classMap: Map<Long?, NativeInteropAllNullableTypes?>?
   ): Map<Long?, NativeInteropAllNullableTypes?>?
 
-  abstract fun callFlutterEchoNullableNonNullStringMap(
-      stringMap: Map<String, String>?
-  ): Map<String, String>?
+  fun callFlutterEchoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>?
 
-  abstract fun callFlutterEchoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>?
+  fun callFlutterEchoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>?
 
-  abstract fun callFlutterEchoNullableNonNullEnumMap(
+  fun callFlutterEchoNullableNonNullEnumMap(
       enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?
   ): Map<NativeInteropAnEnum, NativeInteropAnEnum>?
 
-  abstract fun callFlutterEchoNullableNonNullClassMap(
+  fun callFlutterEchoNullableNonNullClassMap(
       classMap: Map<Long, NativeInteropAllNullableTypes>?
   ): Map<Long, NativeInteropAllNullableTypes>?
 
-  abstract fun callFlutterEchoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
+  fun callFlutterEchoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
 
-  abstract fun callFlutterEchoAnotherNullableEnum(
+  fun callFlutterEchoAnotherNullableEnum(
       anotherEnum: NativeInteropAnotherEnum?
   ): NativeInteropAnotherEnum?
 
-  abstract suspend fun callFlutterNoopAsync()
+  suspend fun callFlutterNoopAsync()
 
-  abstract suspend fun callFlutterEchoAsyncNativeInteropAllTypes(
+  suspend fun callFlutterEchoAsyncNativeInteropAllTypes(
       everything: NativeInteropAllTypes
   ): NativeInteropAllTypes
 
-  abstract suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
+  suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
       everything: NativeInteropAllNullableTypes?
   ): NativeInteropAllNullableTypes?
 
-  abstract suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+  suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
       everything: NativeInteropAllNullableTypesWithoutRecursion?
   ): NativeInteropAllNullableTypesWithoutRecursion?
 
-  abstract suspend fun callFlutterEchoAsyncBool(aBool: Boolean): Boolean
+  suspend fun callFlutterEchoAsyncBool(aBool: Boolean): Boolean
 
-  abstract suspend fun callFlutterEchoAsyncInt(anInt: Long): Long
+  suspend fun callFlutterEchoAsyncInt(anInt: Long): Long
 
-  abstract suspend fun callFlutterEchoAsyncDouble(aDouble: Double): Double
+  suspend fun callFlutterEchoAsyncDouble(aDouble: Double): Double
 
-  abstract suspend fun callFlutterEchoAsyncString(aString: String): String
+  suspend fun callFlutterEchoAsyncString(aString: String): String
 
-  abstract suspend fun callFlutterEchoAsyncUint8List(list: ByteArray): ByteArray
+  suspend fun callFlutterEchoAsyncUint8List(list: ByteArray): ByteArray
 
-  abstract suspend fun callFlutterEchoAsyncInt32List(list: IntArray): IntArray
+  suspend fun callFlutterEchoAsyncInt32List(list: IntArray): IntArray
 
-  abstract suspend fun callFlutterEchoAsyncInt64List(list: LongArray): LongArray
+  suspend fun callFlutterEchoAsyncInt64List(list: LongArray): LongArray
 
-  abstract suspend fun callFlutterEchoAsyncFloat64List(list: DoubleArray): DoubleArray
+  suspend fun callFlutterEchoAsyncFloat64List(list: DoubleArray): DoubleArray
 
-  abstract suspend fun callFlutterEchoAsyncObject(anObject: Any): Any
+  suspend fun callFlutterEchoAsyncObject(anObject: Any): Any
 
-  abstract suspend fun callFlutterEchoAsyncList(list: List<Any?>): List<Any?>
+  suspend fun callFlutterEchoAsyncList(list: List<Any?>): List<Any?>
 
-  abstract suspend fun callFlutterEchoAsyncEnumList(
+  suspend fun callFlutterEchoAsyncEnumList(
       enumList: List<NativeInteropAnEnum?>
   ): List<NativeInteropAnEnum?>
 
-  abstract suspend fun callFlutterEchoAsyncClassList(
+  suspend fun callFlutterEchoAsyncClassList(
       classList: List<NativeInteropAllNullableTypes?>
   ): List<NativeInteropAllNullableTypes?>
 
-  abstract suspend fun callFlutterEchoAsyncNonNullEnumList(
+  suspend fun callFlutterEchoAsyncNonNullEnumList(
       enumList: List<NativeInteropAnEnum>
   ): List<NativeInteropAnEnum>
 
-  abstract suspend fun callFlutterEchoAsyncNonNullClassList(
+  suspend fun callFlutterEchoAsyncNonNullClassList(
       classList: List<NativeInteropAllNullableTypes>
   ): List<NativeInteropAllNullableTypes>
 
-  abstract suspend fun callFlutterEchoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?>
+  suspend fun callFlutterEchoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?>
 
-  abstract suspend fun callFlutterEchoAsyncStringMap(
-      stringMap: Map<String?, String?>
-  ): Map<String?, String?>
+  suspend fun callFlutterEchoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
 
-  abstract suspend fun callFlutterEchoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
+  suspend fun callFlutterEchoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
 
-  abstract suspend fun callFlutterEchoAsyncEnumMap(
+  suspend fun callFlutterEchoAsyncEnumMap(
       enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
   ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
 
-  abstract suspend fun callFlutterEchoAsyncClassMap(
+  suspend fun callFlutterEchoAsyncClassMap(
       classMap: Map<Long?, NativeInteropAllNullableTypes?>
   ): Map<Long?, NativeInteropAllNullableTypes?>
 
-  abstract suspend fun callFlutterEchoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
+  suspend fun callFlutterEchoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
 
-  abstract suspend fun callFlutterEchoAnotherAsyncEnum(
+  suspend fun callFlutterEchoAnotherAsyncEnum(
       anotherEnum: NativeInteropAnotherEnum
   ): NativeInteropAnotherEnum
 
-  abstract suspend fun callFlutterEchoAsyncNullableBool(aBool: Boolean?): Boolean?
+  suspend fun callFlutterEchoAsyncNullableBool(aBool: Boolean?): Boolean?
 
-  abstract suspend fun callFlutterEchoAsyncNullableInt(anInt: Long?): Long?
+  suspend fun callFlutterEchoAsyncNullableInt(anInt: Long?): Long?
 
-  abstract suspend fun callFlutterEchoAsyncNullableDouble(aDouble: Double?): Double?
+  suspend fun callFlutterEchoAsyncNullableDouble(aDouble: Double?): Double?
 
-  abstract suspend fun callFlutterEchoAsyncNullableString(aString: String?): String?
+  suspend fun callFlutterEchoAsyncNullableString(aString: String?): String?
 
-  abstract suspend fun callFlutterEchoAsyncNullableUint8List(list: ByteArray?): ByteArray?
+  suspend fun callFlutterEchoAsyncNullableUint8List(list: ByteArray?): ByteArray?
 
-  abstract suspend fun callFlutterEchoAsyncNullableInt32List(list: IntArray?): IntArray?
+  suspend fun callFlutterEchoAsyncNullableInt32List(list: IntArray?): IntArray?
 
-  abstract suspend fun callFlutterEchoAsyncNullableInt64List(list: LongArray?): LongArray?
+  suspend fun callFlutterEchoAsyncNullableInt64List(list: LongArray?): LongArray?
 
-  abstract suspend fun callFlutterEchoAsyncNullableFloat64List(list: DoubleArray?): DoubleArray?
+  suspend fun callFlutterEchoAsyncNullableFloat64List(list: DoubleArray?): DoubleArray?
 
-  abstract suspend fun callFlutterThrowFlutterErrorAsync(): Any?
+  suspend fun callFlutterThrowFlutterErrorAsync(): Any?
 
-  abstract suspend fun callFlutterEchoAsyncNullableObject(anObject: Any?): Any?
+  suspend fun callFlutterEchoAsyncNullableObject(anObject: Any?): Any?
 
-  abstract suspend fun callFlutterEchoAsyncNullableList(list: List<Any?>?): List<Any?>?
+  suspend fun callFlutterEchoAsyncNullableList(list: List<Any?>?): List<Any?>?
 
-  abstract suspend fun callFlutterEchoAsyncNullableEnumList(
+  suspend fun callFlutterEchoAsyncNullableEnumList(
       enumList: List<NativeInteropAnEnum?>?
   ): List<NativeInteropAnEnum?>?
 
-  abstract suspend fun callFlutterEchoAsyncNullableClassList(
+  suspend fun callFlutterEchoAsyncNullableClassList(
       classList: List<NativeInteropAllNullableTypes?>?
   ): List<NativeInteropAllNullableTypes?>?
 
-  abstract suspend fun callFlutterEchoAsyncNullableNonNullEnumList(
+  suspend fun callFlutterEchoAsyncNullableNonNullEnumList(
       enumList: List<NativeInteropAnEnum>?
   ): List<NativeInteropAnEnum>?
 
-  abstract suspend fun callFlutterEchoAsyncNullableNonNullClassList(
+  suspend fun callFlutterEchoAsyncNullableNonNullClassList(
       classList: List<NativeInteropAllNullableTypes>?
   ): List<NativeInteropAllNullableTypes>?
 
-  abstract suspend fun callFlutterEchoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
+  suspend fun callFlutterEchoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
 
-  abstract suspend fun callFlutterEchoAsyncNullableStringMap(
+  suspend fun callFlutterEchoAsyncNullableStringMap(
       stringMap: Map<String?, String?>?
   ): Map<String?, String?>?
 
-  abstract suspend fun callFlutterEchoAsyncNullableIntMap(
-      intMap: Map<Long?, Long?>?
-  ): Map<Long?, Long?>?
+  suspend fun callFlutterEchoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
 
-  abstract suspend fun callFlutterEchoAsyncNullableEnumMap(
+  suspend fun callFlutterEchoAsyncNullableEnumMap(
       enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
   ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
 
-  abstract suspend fun callFlutterEchoAsyncNullableClassMap(
+  suspend fun callFlutterEchoAsyncNullableClassMap(
       classMap: Map<Long?, NativeInteropAllNullableTypes?>?
   ): Map<Long?, NativeInteropAllNullableTypes?>?
 
-  abstract suspend fun callFlutterEchoAsyncNullableEnum(
-      anEnum: NativeInteropAnEnum?
-  ): NativeInteropAnEnum?
+  suspend fun callFlutterEchoAsyncNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum?
 
-  abstract suspend fun callFlutterEchoAnotherAsyncNullableEnum(
+  suspend fun callFlutterEchoAnotherAsyncNullableEnum(
       anotherEnum: NativeInteropAnotherEnum?
   ): NativeInteropAnotherEnum?
   /** Returns true if the handler is run on a main thread. */
-  abstract fun defaultIsMainThread(): Boolean
+  fun defaultIsMainThread(): Boolean
   /**
    * Spawns a background thread and calls `noop` on the [NativeInteropFlutterIntegrationCoreApi].
    *
    * Returns the result of whether the flutter call was successful.
    */
-  abstract suspend fun callFlutterNoopOnBackgroundThread(): Boolean
+  suspend fun callFlutterNoopOnBackgroundThread(): Boolean
   /** Tests deregistering a Host API natively. */
-  abstract fun testDeregisterHostApi(): Boolean
+  fun testDeregisterHostApi(): Boolean
   /** Tests deregistering a Flutter API natively. */
-  abstract fun testDeregisterFlutterApi(): Boolean
+  fun testDeregisterFlutterApi(): Boolean
   /** Registers and immediately deregisters a Host API under [name]. */
-  abstract fun registerAndImmediatelyDeregisterHostApi(name: String)
+  fun registerAndImmediatelyDeregisterHostApi(name: String)
   /** Tests that calling a deregistered Flutter API under [name] fails / returns null. */
-  abstract fun testCallDeregisteredFlutterApi(name: String): Boolean
+  fun testCallDeregisteredFlutterApi(name: String): Boolean
 }
 
 @Keep
-class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegrationCoreApi() {
+class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegrationCoreApi {
   private var api: NativeInteropHostIntegrationCoreApi? = null
 
   fun register(

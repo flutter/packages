@@ -7,7 +7,7 @@ package dev.flutter.pigeonnativeinteropapp
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 
-private class PigeonApiImplementation : NativeInteropExampleApi() {
+private class PigeonApiImplementation : NativeInteropExampleApi {
   override fun doSomething() {
     // In a real application, native platform logic (e.g., accessing Android system APIs,
     // hardware features, or third-party native SDKs) would be implemented here.

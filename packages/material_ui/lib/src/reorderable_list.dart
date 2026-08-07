@@ -20,7 +20,7 @@ import 'theme.dart';
 
 /// A list whose items the user can interactively reorder by dragging.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=3fB1mxOsqJE}
+/// Learn more about [ReorderableListView] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=3fB1mxOsqJE).
 ///
 /// This sample shows by dragging the user can reorder the items of the list.
 /// The [onReorderItem] parameter will be called when a child
@@ -333,7 +333,12 @@ class ReorderableListView extends StatefulWidget {
   /// {@macro flutter.widgets.scroll_view.shrinkWrap}
   final bool shrinkWrap;
 
-  /// {@macro flutter.widgets.scroll_view.anchor}
+  /// The relative position of the zero scroll offset.
+  ///
+  /// For more information, see [ScrollView.anchor].
+  // TODO(dkwingsmt): Migrate the doc back to macro
+  // flutter.widgets.scroll_view.anchor
+  // https://github.com/flutter/flutter/issues/189629
   final double anchor;
 
   /// {@macro flutter.rendering.RenderViewportBase.cacheExtent}
