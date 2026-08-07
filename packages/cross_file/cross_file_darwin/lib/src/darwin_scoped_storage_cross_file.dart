@@ -203,25 +203,25 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
   @override
   Stream<Uint8List> openRead([int? start, int? end]) {
     if (start != null && start < 0) {
-      throw ArgumentError('`start` must be greater than 0. start: $start');
+      return Stream.error(RangeError('`start` must be greater than 0. start: $start'));
     } else if (end != null && end <= (start ?? 0)) {
-      throw ArgumentError(
-        '`end` must be greater than 0 and greater than `start`. start: $start, end: $end',
+      return Stream.error(
+        RangeError(
+          '`end` must be greater than 0 and greater than `start`. start: $start, end: $end',
+        ),
+      );
+    }
+
+    final PHAssetResource? resource = _tryGetAssetResource(identifier: params.uri);
+    if (resource == null) {
+      return Stream.error(
+        Exception('Failed to start reading bytes from asset with identifier: ${params.uri}'),
       );
     }
 
     final streamController = StreamController<Uint8List>();
 
     final filter = ByteRangeFilter(start: 0, end: end);
-
-    final PHAssetResource? resource = _tryGetAssetResource(identifier: params.uri);
-    if (resource == null) {
-      streamController.addError(
-        Exception('Failed to start reading bytes from asset with identifier: ${params.uri}'),
-      );
-      streamController.close();
-      return streamController.stream;
-    }
 
     void dataReceivedHandler(NSData data) {
       final Uint8List bytes = _extractBytesToUint8List(data);

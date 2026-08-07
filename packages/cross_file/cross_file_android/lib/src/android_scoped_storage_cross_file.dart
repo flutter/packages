@@ -55,9 +55,9 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
   @override
   Stream<Uint8List> openRead([int? start, int? end]) async* {
     if (start != null && start < 0) {
-      throw ArgumentError('`start` must be greater than 0. start: $start');
+      throw RangeError('`start` must be greater than 0. start: $start');
     } else if (end != null && end <= (start ?? 0)) {
-      throw ArgumentError(
+      throw RangeError(
         '`end` must be greater than 0 and greater than `start`. start: $start, end: $end',
       );
     }
