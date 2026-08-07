@@ -119,6 +119,9 @@ base class SecurityScopedDarwinScopedStorageXDirectory extends DarwinScopedStora
       url.stopAccessingSecurityScopedResource();
     }
   }
+
+  @override
+  Future<void> dispose() => stopAccessingSecurityScopedResource();
 }
 
 /// Provides platform-specific features for

@@ -139,6 +139,7 @@ final class TestScopedStorageXFile extends PlatformScopedStorageXFile {
     this.onOpenRead,
     this.onReadAsBytes,
     this.onReadAsString,
+    this.onDispose,
   }) : super.implementation();
 
   Future<bool> Function()? onCanRead;
@@ -149,6 +150,7 @@ final class TestScopedStorageXFile extends PlatformScopedStorageXFile {
   Stream<Uint8List> Function()? onOpenRead;
   Future<Uint8List> Function()? onReadAsBytes;
   Future<String> Function({required Encoding encoding})? onReadAsString;
+  Future<void> Function()? onDispose;
 
   @override
   Future<bool> canRead() async {
@@ -191,15 +193,26 @@ final class TestScopedStorageXFile extends PlatformScopedStorageXFile {
   Future<String> readAsString({Encoding encoding = utf8}) async {
     return await onReadAsString?.call(encoding: encoding) ?? '';
   }
+
+  @override
+  Future<void> dispose() async {
+    return await onDispose?.call();
+  }
 }
 
 final class TestScopedStorageXDirectory extends PlatformScopedStorageXDirectory {
-  TestScopedStorageXDirectory(super.params, {this.onExists, this.onList, this.onCanRead})
-    : super.implementation();
+  TestScopedStorageXDirectory(
+    super.params, {
+    this.onExists,
+    this.onList,
+    this.onCanRead,
+    this.onDispose,
+  }) : super.implementation();
 
   Future<bool> Function()? onExists;
   Stream<PlatformXEntity> Function(ListParams params)? onList;
   Future<bool> Function()? onCanRead;
+  Future<void> Function()? onDispose;
 
   @override
   Future<bool> exists() async {
@@ -216,6 +229,11 @@ final class TestScopedStorageXDirectory extends PlatformScopedStorageXDirectory 
     if (onList != null) {
       yield* onList!.call(params);
     }
+  }
+
+  @override
+  Future<void> dispose() async {
+    return await onDispose?.call();
   }
 }
 

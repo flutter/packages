@@ -97,4 +97,7 @@ abstract base class PlatformScopedStorageXFile extends PlatformXFile {
 
   /// Whether the resource represented by this reference can be read.
   Future<bool> canRead();
+
+  /// Release the reference this represents.
+  Future<void> dispose();
 }

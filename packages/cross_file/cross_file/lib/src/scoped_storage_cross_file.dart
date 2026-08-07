@@ -79,4 +79,7 @@ base class ScopedStorageXFile extends XFile {
 
   /// Whether the resource represented by this reference can be read.
   Future<bool> canRead() => platform.canRead();
+
+  /// Release the reference this represents.
+  Future<void> dispose() => platform.dispose();
 }

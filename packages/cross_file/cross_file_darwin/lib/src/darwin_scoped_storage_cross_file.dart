@@ -154,6 +154,9 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
       url.stopAccessingSecurityScopedResource();
     }
   }
+
+  @override
+  Future<void> dispose() => stopAccessingSecurityScopedResource();
 }
 
 /// Implementation of [DarwinScopedStorageXFile] as a representation of a
@@ -337,6 +340,11 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     final Pointer<Uint8> uint8Pointer = data.bytes.cast<Uint8>();
     final Uint8List byteView = uint8Pointer.asTypedList(data.length);
     return Uint8List.fromList(byteView);
+  }
+
+  @override
+  Future<void> dispose() async {
+    // Reference to the asset does not need to be released.
   }
 }
 

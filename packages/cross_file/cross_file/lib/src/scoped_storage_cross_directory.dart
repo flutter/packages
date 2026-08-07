@@ -82,4 +82,7 @@ base class ScopedStorageXDirectory extends XDirectory {
   /// Whether the files in this directory represented by this reference can be
   /// viewed.
   Future<bool> canRead() => platform.canRead();
+
+  /// Release the reference this represents.
+  Future<void> dispose() => platform.dispose();
 }

@@ -111,6 +111,11 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
 
   @override
   Future<String?> name() => _documentFile.getName();
+
+  @override
+  Future<void> dispose() async {
+    // Reference to the resource does not need to be released.
+  }
 }
 
 /// Error thrown when the native [android.InputStream] is not accessible.

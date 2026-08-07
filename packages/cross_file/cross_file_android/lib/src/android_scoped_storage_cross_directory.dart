@@ -35,4 +35,9 @@ base class AndroidScopedStorageXDirectory extends PlatformScopedStorageXDirector
       }
     }
   }
+
+  @override
+  Future<void> dispose() async {
+    // Reference to the resource does not need to be released.
+  }
 }

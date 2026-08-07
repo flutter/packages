@@ -171,6 +171,11 @@ base class WebScopedStorageXFile extends PlatformScopedStorageXFile
     final Blob blob = await getBlob();
     return blob.isA<File>() ? (blob as File).name : null;
   }
+
+  @override
+  Future<void> dispose() async {
+    URL.revokeObjectURL(params.uri);
+  }
 }
 
 /// Provides platform-specific features for [WebScopedStorageXFile].

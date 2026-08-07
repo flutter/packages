@@ -125,6 +125,9 @@ final class _DefaultScopedStorageXFile extends PlatformScopedStorageXFile {
   Future<String> readAsString({Encoding encoding = utf8}) {
     throw UnsupportedError('This instance does not represent any resource.');
   }
+
+  @override
+  Future<void> dispose() async => null;
 }
 
 /// Implementation of [PlatformScopedStorageXDirectory} that represents a
@@ -142,4 +145,7 @@ final class _DefaultScopedStorageXDirectory extends PlatformScopedStorageXDirect
   Stream<PlatformXEntity> list(ListParams params) {
     throw UnsupportedError('This instance does not represent any directory.');
   }
+
+  @override
+  Future<void> dispose() async => null;
 }
