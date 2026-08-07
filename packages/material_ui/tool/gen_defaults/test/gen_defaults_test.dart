@@ -7,6 +7,9 @@ import 'dart:io';
 import 'package:test/test.dart';
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
+import '../data/typescale.dart';
+import '../data/typescale_emphasized.dart';
+import '../templates/action_chip_template.dart';
 import '../templates/app_bar_template.dart';
 import '../templates/template.dart';
 import 'test_fixtures/test_templates.dart';
@@ -74,6 +77,18 @@ void main() {
       expect(template.color(TokenColorRole.onSurface, '_colors'), '_colors.onSurface');
     });
 
+    test('textStyle generates text name', () {
+      final template = IconButtonTemplateM3(testPath());
+      expect(
+        template.textStyle(TokenTypescale.titleMedium, '_textTheme'),
+        '_textTheme.titleMedium',
+      );
+      expect(
+        template.textStyle(TokenTypescaleEmphasized.titleMedium, '_textTheme'),
+        '_textTheme.titleMediumEmphasized',
+      );
+    });
+
     test('colorWithOpacity generates color expression with opacity', () {
       final template = IconButtonTemplateM3(testPath());
       expect(
@@ -84,6 +99,16 @@ void main() {
         template.colorWithOpacity(TokenColorRole.onSurface, 1.0, '_colors'),
         '_colors.onSurface',
       );
+    });
+    
+    test('border generates border expression', () {
+      final template = IconButtonTemplateM3(testPath());
+      expect(template.border('_colors.outline'), 'BorderSide(color: _colors.outline)');
+      expect(
+        template.border('_colors.outline', width: 2.0),
+        'BorderSide(color: _colors.outline, width: 2.0)',
+      );
+      expect(template.border('_colors.outline', width: 1.0), 'BorderSide(color: _colors.outline)');
     });
 
     test('shape generates shape expressions', () {
@@ -149,12 +174,25 @@ void main() {
     });
 
     test('ActionChipTemplateM3 emits M3 ActionChip defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const ActionChipTemplateM3());
+      expect(contents, contains('class _ActionChipDefaultsM3 extends ChipThemeData'));
+      expect(
+        contents,
+        contains(
+          'shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)))',
+        ),
+      );
+      expect(contents, contains('showCheckmark: true'));
+      expect(contents, contains('double? get elevation => _chipVariant == _ChipVariant.flat'));
+      expect(contents, contains('? 0.0'));
+      expect(contents, contains(': isEnabled ? 1.0 : 0.0;'));
+      expect(contents, contains('double? get pressElevation => 1.0;'));
+      expect(contents, contains('_colors.onSurface.withOpacity(0.12)'));
+      expect(contents, contains('size: 18.0'));
     });
 
     test('AppBarTemplateM3 emits M3 AppBar defaults from tokens', () {
-      final String contents = const AppBarTemplateM3().generateContents('_AppBarDefaultsM3');
+      final String contents = _generateContents(const AppBarTemplateM3());
       expect(contents, contains('class _AppBarDefaultsM3 extends AppBarThemeData'));
       expect(contents, contains('scrolledUnderElevation: 3.0'));
       expect(contents, contains('toolbarHeight: 64.0'));
@@ -402,6 +440,8 @@ void main() {
     });
   });
 }
+
+String _generateContents(TokenTemplate template) => template.generateContents(template.className);
 
 const _fileHeader = '''
 // Copyright 2013 The Flutter Authors
