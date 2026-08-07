@@ -1,3 +1,7 @@
+## 0.6.4
+
+* Adds support for my location button.
+
 ## 0.6.3
 
 * Adds support for mapTypeControlEnabled, fullscreenControlEnabled, and streetViewControlEnabled.
