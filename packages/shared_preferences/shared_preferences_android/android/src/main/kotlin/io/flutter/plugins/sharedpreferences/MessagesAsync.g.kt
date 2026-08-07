@@ -294,65 +294,52 @@ val SharedPreferencesAsyncApiInstances: MutableMap<String, SharedPreferencesAsyn
     mutableMapOf()
 
 @Keep
-abstract class SharedPreferencesAsyncApi {
+interface SharedPreferencesAsyncApi {
   /** Adds property to shared preferences data set of type `bool`. */
-  abstract fun setBool(key: String, value: Boolean, options: SharedPreferencesPigeonOptions)
+  fun setBool(key: String, value: Boolean, options: SharedPreferencesPigeonOptions)
   /** Adds property to shared preferences data set of type `String`. */
-  abstract fun setString(key: String, value: String, options: SharedPreferencesPigeonOptions)
+  fun setString(key: String, value: String, options: SharedPreferencesPigeonOptions)
   /** Adds property to shared preferences data set of type `int`. */
-  abstract fun setInt(key: String, value: Long, options: SharedPreferencesPigeonOptions)
+  fun setInt(key: String, value: Long, options: SharedPreferencesPigeonOptions)
   /** Adds property to shared preferences data set of type `double`. */
-  abstract fun setDouble(key: String, value: Double, options: SharedPreferencesPigeonOptions)
+  fun setDouble(key: String, value: Double, options: SharedPreferencesPigeonOptions)
   /** Adds property to shared preferences data set of type `List<String>`. */
-  abstract fun setEncodedStringList(
-      key: String,
-      value: String,
-      options: SharedPreferencesPigeonOptions
-  )
+  fun setEncodedStringList(key: String, value: String, options: SharedPreferencesPigeonOptions)
   /**
    * Adds property to shared preferences data set of type `List<String>`.
    *
    * Deprecated, this is only here for testing purposes.
    */
-  abstract fun setDeprecatedStringList(
+  fun setDeprecatedStringList(
       key: String,
       value: List<String>,
       options: SharedPreferencesPigeonOptions
   )
   /** Gets individual String value stored with [key], if any. */
-  abstract fun getString(key: String, options: SharedPreferencesPigeonOptions): String?
+  fun getString(key: String, options: SharedPreferencesPigeonOptions): String?
   /** Gets individual void value stored with [key], if any. */
-  abstract fun getBool(key: String, options: SharedPreferencesPigeonOptions): Boolean?
+  fun getBool(key: String, options: SharedPreferencesPigeonOptions): Boolean?
   /** Gets individual double value stored with [key], if any. */
-  abstract fun getDouble(key: String, options: SharedPreferencesPigeonOptions): Double?
+  fun getDouble(key: String, options: SharedPreferencesPigeonOptions): Double?
   /** Gets individual int value stored with [key], if any. */
-  abstract fun getInt(key: String, options: SharedPreferencesPigeonOptions): Long?
+  fun getInt(key: String, options: SharedPreferencesPigeonOptions): Long?
   /** Gets individual `List<String>` value stored with [key], if any. */
-  abstract fun getPlatformEncodedStringList(
+  fun getPlatformEncodedStringList(
       key: String,
       options: SharedPreferencesPigeonOptions
   ): List<String>?
   /** Gets the JSON-encoded `List<String>` value stored with [key], if any. */
-  abstract fun getStringList(
-      key: String,
-      options: SharedPreferencesPigeonOptions
-  ): StringListResult?
+  fun getStringList(key: String, options: SharedPreferencesPigeonOptions): StringListResult?
   /** Removes all properties from shared preferences data set with matching prefix. */
-  abstract fun clear(allowList: List<String>?, options: SharedPreferencesPigeonOptions)
+  fun clear(allowList: List<String>?, options: SharedPreferencesPigeonOptions)
   /** Gets all properties from shared preferences data set with matching prefix. */
-  abstract fun getAll(
-      allowList: List<String>?,
-      options: SharedPreferencesPigeonOptions
-  ): Map<String, Any>
+  fun getAll(allowList: List<String>?, options: SharedPreferencesPigeonOptions): Map<String, Any>
   /** Gets all properties from shared preferences data set with matching prefix. */
-  abstract fun getKeys(
-      allowList: List<String>?,
-      options: SharedPreferencesPigeonOptions
-  ): List<String>
+  fun getKeys(allowList: List<String>?, options: SharedPreferencesPigeonOptions): List<String>
 }
 
 @Keep
-class SharedPreferencesAsyncApiRegistrar : SharedPreferencesAsyncApi() {
+class SharedPreferencesAsyncApiRegistrar : SharedPreferencesAsyncApi {
   private var api: SharedPreferencesAsyncApi? = null
 
   fun register(

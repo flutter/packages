@@ -41,7 +41,7 @@ const val DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu"
     preferencesDataStore(SHARED_PREFERENCES_NAME)
 
 /// SharedPreferencesPlugin
-class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi() {
+class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   private lateinit var context: Context
   private var backend: SharedPreferencesBackend? = null
 
@@ -280,7 +280,7 @@ class SharedPreferencesBackend(
     private var messenger: BinaryMessenger,
     private var context: Context,
     private var listEncoder: SharedPreferencesListEncoder = ListEncoder()
-) : SharedPreferencesAsyncApi() {
+) : SharedPreferencesAsyncApi {
 
   init {
     try {

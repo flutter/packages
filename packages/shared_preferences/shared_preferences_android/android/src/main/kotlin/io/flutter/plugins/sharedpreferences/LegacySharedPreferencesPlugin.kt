@@ -27,7 +27,7 @@ import java.math.BigInteger
 class LegacySharedPreferencesPlugin
 @VisibleForTesting
 internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
-    FlutterPlugin, SharedPreferencesApi() {
+    FlutterPlugin, SharedPreferencesApi {
   private lateinit var preferences: SharedPreferences
 
   constructor() : this(ListEncoder())

@@ -231,6 +231,207 @@ extension type SharedPreferencesAsyncApi._(jni$_.JObject _$this) implements jni$
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<SharedPreferencesAsyncApi> type = $SharedPreferencesAsyncApi$Type$();
+
+  /// Maps a specific port to the implemented interface.
+  static final core$_.Map<core$_.int, $SharedPreferencesAsyncApi> _$impls = {};
+  static jni$_.JObjectPtr _$invoke(
+    core$_.int port,
+    jni$_.JObjectPtr descriptor,
+    jni$_.JObjectPtr args,
+  ) {
+    return _$invokeMethod(
+      port,
+      jni$_.MethodInvocation.fromAddresses(0, descriptor.address, args.address),
+    );
+  }
+
+  static final jni$_.Pointer<
+    jni$_.NativeFunction<jni$_.JObjectPtr Function(jni$_.Int64, jni$_.JObjectPtr, jni$_.JObjectPtr)>
+  >
+  _$invokePointer = jni$_.Pointer.fromFunction(_$invoke);
+
+  static jni$_.Pointer<jni$_.Void> _$invokeMethod(core$_.int $p, jni$_.MethodInvocation $i) {
+    try {
+      final $d = $i.methodDescriptor.toDartString(releaseOriginal: true);
+      final $a = $i.args;
+      if ($d ==
+          r'setBool(Ljava/lang/String;ZLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V') {
+        _$impls[$p]!.setBool(
+          ($a![0] as jni$_.JString),
+          ($a![1] as jni$_.JBoolean).toDartBool(releaseOriginal: true),
+          ($a![2] as SharedPreferencesPigeonOptions),
+        );
+        return jni$_.nullptr;
+      }
+      if ($d ==
+          r'setString(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V') {
+        _$impls[$p]!.setString(
+          ($a![0] as jni$_.JString),
+          ($a![1] as jni$_.JString),
+          ($a![2] as SharedPreferencesPigeonOptions),
+        );
+        return jni$_.nullptr;
+      }
+      if ($d ==
+          r'setInt(Ljava/lang/String;JLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V') {
+        _$impls[$p]!.setInt(
+          ($a![0] as jni$_.JString),
+          ($a![1] as jni$_.JLong).toDartInt(releaseOriginal: true),
+          ($a![2] as SharedPreferencesPigeonOptions),
+        );
+        return jni$_.nullptr;
+      }
+      if ($d ==
+          r'setDouble(Ljava/lang/String;DLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V') {
+        _$impls[$p]!.setDouble(
+          ($a![0] as jni$_.JString),
+          ($a![1] as jni$_.JDouble).toDartDouble(releaseOriginal: true),
+          ($a![2] as SharedPreferencesPigeonOptions),
+        );
+        return jni$_.nullptr;
+      }
+      if ($d ==
+          r'setEncodedStringList(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V') {
+        _$impls[$p]!.setEncodedStringList(
+          ($a![0] as jni$_.JString),
+          ($a![1] as jni$_.JString),
+          ($a![2] as SharedPreferencesPigeonOptions),
+        );
+        return jni$_.nullptr;
+      }
+      if ($d ==
+          r'setDeprecatedStringList(Ljava/lang/String;Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V') {
+        _$impls[$p]!.setDeprecatedStringList(
+          ($a![0] as jni$_.JString),
+          ($a![1] as jni$_.JList<jni$_.JString>),
+          ($a![2] as SharedPreferencesPigeonOptions),
+        );
+        return jni$_.nullptr;
+      }
+      if ($d ==
+          r'getString(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/lang/String;') {
+        final $r = _$impls[$p]!.getString(
+          ($a![0] as jni$_.JString),
+          ($a![1] as SharedPreferencesPigeonOptions),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'getBool(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/lang/Boolean;') {
+        final $r = _$impls[$p]!.getBool(
+          ($a![0] as jni$_.JString),
+          ($a![1] as SharedPreferencesPigeonOptions),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'getDouble(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/lang/Double;') {
+        final $r = _$impls[$p]!.getDouble(
+          ($a![0] as jni$_.JString),
+          ($a![1] as SharedPreferencesPigeonOptions),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'getInt(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/lang/Long;') {
+        final $r = _$impls[$p]!.getInt(
+          ($a![0] as jni$_.JString),
+          ($a![1] as SharedPreferencesPigeonOptions),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'getPlatformEncodedStringList(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.getPlatformEncodedStringList(
+          ($a![0] as jni$_.JString),
+          ($a![1] as SharedPreferencesPigeonOptions),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'getStringList(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Lio/flutter/plugins/sharedpreferences/StringListResult;') {
+        final $r = _$impls[$p]!.getStringList(
+          ($a![0] as jni$_.JString),
+          ($a![1] as SharedPreferencesPigeonOptions),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'clear(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V') {
+        _$impls[$p]!.clear(
+          ($a![0] as jni$_.JList<jni$_.JString>?),
+          ($a![1] as SharedPreferencesPigeonOptions),
+        );
+        return jni$_.nullptr;
+      }
+      if ($d ==
+          r'getAll(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.getAll(
+          ($a![0] as jni$_.JList<jni$_.JString>?),
+          ($a![1] as SharedPreferencesPigeonOptions),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'getKeys(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/util/List;') {
+        final $r = _$impls[$p]!.getKeys(
+          ($a![0] as jni$_.JList<jni$_.JString>?),
+          ($a![1] as SharedPreferencesPigeonOptions),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+    } catch (e) {
+      return jni$_.ProtectedJniExtensions.newDartException(e);
+    }
+    return jni$_.nullptr;
+  }
+
+  static void implementIn(jni$_.JImplementer implementer, $SharedPreferencesAsyncApi $impl) {
+    late final jni$_.RawReceivePort $p;
+    $p = jni$_.RawReceivePort(($m) {
+      if ($m == null) {
+        _$impls.remove($p.sendPort.nativePort);
+        $p.close();
+        return;
+      }
+      final $i = jni$_.MethodInvocation.fromMessage($m);
+      final $r = _$invokeMethod($p.sendPort.nativePort, $i);
+      $i.args?.release();
+      jni$_.ProtectedJniExtensions.returnResult($i.result, $r);
+    });
+    implementer.add(r'io.flutter.plugins.sharedpreferences.SharedPreferencesAsyncApi', $p, _$invokePointer, [
+      if ($impl.setBool$async)
+        r'setBool(Ljava/lang/String;ZLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+      if ($impl.setString$async)
+        r'setString(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+      if ($impl.setInt$async)
+        r'setInt(Ljava/lang/String;JLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+      if ($impl.setDouble$async)
+        r'setDouble(Ljava/lang/String;DLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+      if ($impl.setEncodedStringList$async)
+        r'setEncodedStringList(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+      if ($impl.setDeprecatedStringList$async)
+        r'setDeprecatedStringList(Ljava/lang/String;Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+      if ($impl.clear$async)
+        r'clear(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+    ]);
+    final $a = $p.sendPort.nativePort;
+    _$impls[$a] = $impl;
+  }
+
+  factory SharedPreferencesAsyncApi.implement($SharedPreferencesAsyncApi $impl) {
+    final $i = jni$_.JImplementer();
+    implementIn($i, $impl);
+    return $i.implement<SharedPreferencesAsyncApi>();
+  }
 }
 
 extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
@@ -870,6 +1071,480 @@ extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
   }
 }
 
+abstract base mixin class $SharedPreferencesAsyncApi {
+  factory $SharedPreferencesAsyncApi({
+    required void Function(
+      jni$_.JString string,
+      core$_.bool z,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    setBool,
+    core$_.bool setBool$async,
+    required void Function(
+      jni$_.JString string,
+      jni$_.JString string1,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    setString,
+    core$_.bool setString$async,
+    required void Function(
+      jni$_.JString string,
+      core$_.int j,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    setInt,
+    core$_.bool setInt$async,
+    required void Function(
+      jni$_.JString string,
+      core$_.double d,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    setDouble,
+    core$_.bool setDouble$async,
+    required void Function(
+      jni$_.JString string,
+      jni$_.JString string1,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    setEncodedStringList,
+    core$_.bool setEncodedStringList$async,
+    required void Function(
+      jni$_.JString string,
+      jni$_.JList<jni$_.JString> list,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    setDeprecatedStringList,
+    core$_.bool setDeprecatedStringList$async,
+    required jni$_.JString? Function(
+      jni$_.JString string,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    getString,
+    required jni$_.JBoolean? Function(
+      jni$_.JString string,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    getBool,
+    required jni$_.JDouble? Function(
+      jni$_.JString string,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    getDouble,
+    required jni$_.JLong? Function(
+      jni$_.JString string,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    getInt,
+    required jni$_.JList<jni$_.JString>? Function(
+      jni$_.JString string,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    getPlatformEncodedStringList,
+    required StringListResult? Function(
+      jni$_.JString string,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    getStringList,
+    required void Function(
+      jni$_.JList<jni$_.JString>? list,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    clear,
+    core$_.bool clear$async,
+    required jni$_.JMap<jni$_.JString, jni$_.JObject> Function(
+      jni$_.JList<jni$_.JString>? list,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    getAll,
+    required jni$_.JList<jni$_.JString> Function(
+      jni$_.JList<jni$_.JString>? list,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    getKeys,
+  }) = _$SharedPreferencesAsyncApi;
+
+  void setBool(
+    jni$_.JString string,
+    core$_.bool z,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  );
+  core$_.bool get setBool$async => false;
+  void setString(
+    jni$_.JString string,
+    jni$_.JString string1,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  );
+  core$_.bool get setString$async => false;
+  void setInt(
+    jni$_.JString string,
+    core$_.int j,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  );
+  core$_.bool get setInt$async => false;
+  void setDouble(
+    jni$_.JString string,
+    core$_.double d,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  );
+  core$_.bool get setDouble$async => false;
+  void setEncodedStringList(
+    jni$_.JString string,
+    jni$_.JString string1,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  );
+  core$_.bool get setEncodedStringList$async => false;
+  void setDeprecatedStringList(
+    jni$_.JString string,
+    jni$_.JList<jni$_.JString> list,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  );
+  core$_.bool get setDeprecatedStringList$async => false;
+  jni$_.JString? getString(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  );
+  jni$_.JBoolean? getBool(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  );
+  jni$_.JDouble? getDouble(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  );
+  jni$_.JLong? getInt(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  );
+  jni$_.JList<jni$_.JString>? getPlatformEncodedStringList(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  );
+  StringListResult? getStringList(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  );
+  void clear(
+    jni$_.JList<jni$_.JString>? list,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  );
+  core$_.bool get clear$async => false;
+  jni$_.JMap<jni$_.JString, jni$_.JObject> getAll(
+    jni$_.JList<jni$_.JString>? list,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  );
+  jni$_.JList<jni$_.JString> getKeys(
+    jni$_.JList<jni$_.JString>? list,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  );
+}
+
+final class _$SharedPreferencesAsyncApi with $SharedPreferencesAsyncApi {
+  _$SharedPreferencesAsyncApi({
+    required void Function(
+      jni$_.JString string,
+      core$_.bool z,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    setBool,
+    this.setBool$async = false,
+    required void Function(
+      jni$_.JString string,
+      jni$_.JString string1,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    setString,
+    this.setString$async = false,
+    required void Function(
+      jni$_.JString string,
+      core$_.int j,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    setInt,
+    this.setInt$async = false,
+    required void Function(
+      jni$_.JString string,
+      core$_.double d,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    setDouble,
+    this.setDouble$async = false,
+    required void Function(
+      jni$_.JString string,
+      jni$_.JString string1,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    setEncodedStringList,
+    this.setEncodedStringList$async = false,
+    required void Function(
+      jni$_.JString string,
+      jni$_.JList<jni$_.JString> list,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    setDeprecatedStringList,
+    this.setDeprecatedStringList$async = false,
+    required jni$_.JString? Function(
+      jni$_.JString string,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    getString,
+    required jni$_.JBoolean? Function(
+      jni$_.JString string,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    getBool,
+    required jni$_.JDouble? Function(
+      jni$_.JString string,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    getDouble,
+    required jni$_.JLong? Function(
+      jni$_.JString string,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    getInt,
+    required jni$_.JList<jni$_.JString>? Function(
+      jni$_.JString string,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    getPlatformEncodedStringList,
+    required StringListResult? Function(
+      jni$_.JString string,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    getStringList,
+    required void Function(
+      jni$_.JList<jni$_.JString>? list,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    clear,
+    this.clear$async = false,
+    required jni$_.JMap<jni$_.JString, jni$_.JObject> Function(
+      jni$_.JList<jni$_.JString>? list,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    getAll,
+    required jni$_.JList<jni$_.JString> Function(
+      jni$_.JList<jni$_.JString>? list,
+      SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+    )
+    getKeys,
+  }) : _setBool = setBool,
+       _setString = setString,
+       _setInt = setInt,
+       _setDouble = setDouble,
+       _setEncodedStringList = setEncodedStringList,
+       _setDeprecatedStringList = setDeprecatedStringList,
+       _getString = getString,
+       _getBool = getBool,
+       _getDouble = getDouble,
+       _getInt = getInt,
+       _getPlatformEncodedStringList = getPlatformEncodedStringList,
+       _getStringList = getStringList,
+       _clear = clear,
+       _getAll = getAll,
+       _getKeys = getKeys;
+
+  final void Function(
+    jni$_.JString string,
+    core$_.bool z,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  )
+  _setBool;
+  final core$_.bool setBool$async;
+  final void Function(
+    jni$_.JString string,
+    jni$_.JString string1,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  )
+  _setString;
+  final core$_.bool setString$async;
+  final void Function(
+    jni$_.JString string,
+    core$_.int j,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  )
+  _setInt;
+  final core$_.bool setInt$async;
+  final void Function(
+    jni$_.JString string,
+    core$_.double d,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  )
+  _setDouble;
+  final core$_.bool setDouble$async;
+  final void Function(
+    jni$_.JString string,
+    jni$_.JString string1,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  )
+  _setEncodedStringList;
+  final core$_.bool setEncodedStringList$async;
+  final void Function(
+    jni$_.JString string,
+    jni$_.JList<jni$_.JString> list,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  )
+  _setDeprecatedStringList;
+  final core$_.bool setDeprecatedStringList$async;
+  final jni$_.JString? Function(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  )
+  _getString;
+  final jni$_.JBoolean? Function(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  )
+  _getBool;
+  final jni$_.JDouble? Function(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  )
+  _getDouble;
+  final jni$_.JLong? Function(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  )
+  _getInt;
+  final jni$_.JList<jni$_.JString>? Function(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  )
+  _getPlatformEncodedStringList;
+  final StringListResult? Function(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  )
+  _getStringList;
+  final void Function(
+    jni$_.JList<jni$_.JString>? list,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  )
+  _clear;
+  final core$_.bool clear$async;
+  final jni$_.JMap<jni$_.JString, jni$_.JObject> Function(
+    jni$_.JList<jni$_.JString>? list,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  )
+  _getAll;
+  final jni$_.JList<jni$_.JString> Function(
+    jni$_.JList<jni$_.JString>? list,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  )
+  _getKeys;
+
+  void setBool(
+    jni$_.JString string,
+    core$_.bool z,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  ) {
+    return _setBool(string, z, sharedPreferencesPigeonOptions);
+  }
+
+  void setString(
+    jni$_.JString string,
+    jni$_.JString string1,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  ) {
+    return _setString(string, string1, sharedPreferencesPigeonOptions);
+  }
+
+  void setInt(
+    jni$_.JString string,
+    core$_.int j,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  ) {
+    return _setInt(string, j, sharedPreferencesPigeonOptions);
+  }
+
+  void setDouble(
+    jni$_.JString string,
+    core$_.double d,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  ) {
+    return _setDouble(string, d, sharedPreferencesPigeonOptions);
+  }
+
+  void setEncodedStringList(
+    jni$_.JString string,
+    jni$_.JString string1,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  ) {
+    return _setEncodedStringList(string, string1, sharedPreferencesPigeonOptions);
+  }
+
+  void setDeprecatedStringList(
+    jni$_.JString string,
+    jni$_.JList<jni$_.JString> list,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  ) {
+    return _setDeprecatedStringList(string, list, sharedPreferencesPigeonOptions);
+  }
+
+  jni$_.JString? getString(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  ) {
+    return _getString(string, sharedPreferencesPigeonOptions);
+  }
+
+  jni$_.JBoolean? getBool(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  ) {
+    return _getBool(string, sharedPreferencesPigeonOptions);
+  }
+
+  jni$_.JDouble? getDouble(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  ) {
+    return _getDouble(string, sharedPreferencesPigeonOptions);
+  }
+
+  jni$_.JLong? getInt(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  ) {
+    return _getInt(string, sharedPreferencesPigeonOptions);
+  }
+
+  jni$_.JList<jni$_.JString>? getPlatformEncodedStringList(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  ) {
+    return _getPlatformEncodedStringList(string, sharedPreferencesPigeonOptions);
+  }
+
+  StringListResult? getStringList(
+    jni$_.JString string,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  ) {
+    return _getStringList(string, sharedPreferencesPigeonOptions);
+  }
+
+  void clear(
+    jni$_.JList<jni$_.JString>? list,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  ) {
+    return _clear(list, sharedPreferencesPigeonOptions);
+  }
+
+  jni$_.JMap<jni$_.JString, jni$_.JObject> getAll(
+    jni$_.JList<jni$_.JString>? list,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  ) {
+    return _getAll(list, sharedPreferencesPigeonOptions);
+  }
+
+  jni$_.JList<jni$_.JString> getKeys(
+    jni$_.JList<jni$_.JString>? list,
+    SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
+  ) {
+    return _getKeys(list, sharedPreferencesPigeonOptions);
+  }
+}
+
 final class $SharedPreferencesAsyncApi$Type$ extends jni$_.JType<SharedPreferencesAsyncApi> {
   @jni$_.internal
   const $SharedPreferencesAsyncApi$Type$();
@@ -881,7 +1556,7 @@ final class $SharedPreferencesAsyncApi$Type$ extends jni$_.JType<SharedPreferenc
 
 /// from: `io.flutter.plugins.sharedpreferences.SharedPreferencesAsyncApiRegistrar`
 extension type SharedPreferencesAsyncApiRegistrar._(jni$_.JObject _$this)
-    implements SharedPreferencesAsyncApi {
+    implements jni$_.JObject, SharedPreferencesAsyncApi {
   static final _class = jni$_.JClass.forName(
     r'io/flutter/plugins/sharedpreferences/SharedPreferencesAsyncApiRegistrar',
   );

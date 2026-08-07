@@ -225,6 +225,121 @@ extension type SharedPreferencesApi._(jni$_.JObject _$this) implements jni$_.JOb
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<SharedPreferencesApi> type = $SharedPreferencesApi$Type$();
+
+  /// Maps a specific port to the implemented interface.
+  static final core$_.Map<core$_.int, $SharedPreferencesApi> _$impls = {};
+  static jni$_.JObjectPtr _$invoke(
+    core$_.int port,
+    jni$_.JObjectPtr descriptor,
+    jni$_.JObjectPtr args,
+  ) {
+    return _$invokeMethod(
+      port,
+      jni$_.MethodInvocation.fromAddresses(0, descriptor.address, args.address),
+    );
+  }
+
+  static final jni$_.Pointer<
+    jni$_.NativeFunction<jni$_.JObjectPtr Function(jni$_.Int64, jni$_.JObjectPtr, jni$_.JObjectPtr)>
+  >
+  _$invokePointer = jni$_.Pointer.fromFunction(_$invoke);
+
+  static jni$_.Pointer<jni$_.Void> _$invokeMethod(core$_.int $p, jni$_.MethodInvocation $i) {
+    try {
+      final $d = $i.methodDescriptor.toDartString(releaseOriginal: true);
+      final $a = $i.args;
+      if ($d == r'remove(Ljava/lang/String;)Z') {
+        final $r = _$impls[$p]!.remove(($a![0] as jni$_.JString));
+        return $r.toJBoolean().reference.toPointer();
+      }
+      if ($d == r'setBool(Ljava/lang/String;Z)Z') {
+        final $r = _$impls[$p]!.setBool(
+          ($a![0] as jni$_.JString),
+          ($a![1] as jni$_.JBoolean).toDartBool(releaseOriginal: true),
+        );
+        return $r.toJBoolean().reference.toPointer();
+      }
+      if ($d == r'setString(Ljava/lang/String;Ljava/lang/String;)Z') {
+        final $r = _$impls[$p]!.setString(($a![0] as jni$_.JString), ($a![1] as jni$_.JString));
+        return $r.toJBoolean().reference.toPointer();
+      }
+      if ($d == r'setInt(Ljava/lang/String;J)Z') {
+        final $r = _$impls[$p]!.setInt(
+          ($a![0] as jni$_.JString),
+          ($a![1] as jni$_.JLong).toDartInt(releaseOriginal: true),
+        );
+        return $r.toJBoolean().reference.toPointer();
+      }
+      if ($d == r'setDouble(Ljava/lang/String;D)Z') {
+        final $r = _$impls[$p]!.setDouble(
+          ($a![0] as jni$_.JString),
+          ($a![1] as jni$_.JDouble).toDartDouble(releaseOriginal: true),
+        );
+        return $r.toJBoolean().reference.toPointer();
+      }
+      if ($d == r'setEncodedStringList(Ljava/lang/String;Ljava/lang/String;)Z') {
+        final $r = _$impls[$p]!.setEncodedStringList(
+          ($a![0] as jni$_.JString),
+          ($a![1] as jni$_.JString),
+        );
+        return $r.toJBoolean().reference.toPointer();
+      }
+      if ($d == r'setDeprecatedStringList(Ljava/lang/String;Ljava/util/List;)Z') {
+        final $r = _$impls[$p]!.setDeprecatedStringList(
+          ($a![0] as jni$_.JString),
+          ($a![1] as jni$_.JList<jni$_.JString>),
+        );
+        return $r.toJBoolean().reference.toPointer();
+      }
+      if ($d == r'clear(Ljava/lang/String;Ljava/util/List;)Z') {
+        final $r = _$impls[$p]!.clear(
+          ($a![0] as jni$_.JString),
+          ($a![1] as jni$_.JList<jni$_.JString>?),
+        );
+        return $r.toJBoolean().reference.toPointer();
+      }
+      if ($d == r'getAll(Ljava/lang/String;Ljava/util/List;)Ljava/util/Map;') {
+        final $r = _$impls[$p]!.getAll(
+          ($a![0] as jni$_.JString),
+          ($a![1] as jni$_.JList<jni$_.JString>?),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+    } catch (e) {
+      return jni$_.ProtectedJniExtensions.newDartException(e);
+    }
+    return jni$_.nullptr;
+  }
+
+  static void implementIn(jni$_.JImplementer implementer, $SharedPreferencesApi $impl) {
+    late final jni$_.RawReceivePort $p;
+    $p = jni$_.RawReceivePort(($m) {
+      if ($m == null) {
+        _$impls.remove($p.sendPort.nativePort);
+        $p.close();
+        return;
+      }
+      final $i = jni$_.MethodInvocation.fromMessage($m);
+      final $r = _$invokeMethod($p.sendPort.nativePort, $i);
+      $i.args?.release();
+      jni$_.ProtectedJniExtensions.returnResult($i.result, $r);
+    });
+    implementer.add(
+      r'io.flutter.plugins.sharedpreferences.SharedPreferencesApi',
+      $p,
+      _$invokePointer,
+      [],
+    );
+    final $a = $p.sendPort.nativePort;
+    _$impls[$a] = $impl;
+  }
+
+  factory SharedPreferencesApi.implement($SharedPreferencesApi $impl) {
+    final $i = jni$_.JImplementer();
+    implementIn($i, $impl);
+    return $i.implement<SharedPreferencesApi>();
+  }
 }
 
 extension SharedPreferencesApi$$Methods on SharedPreferencesApi {
@@ -536,6 +651,119 @@ extension SharedPreferencesApi$$Methods on SharedPreferencesApi {
   }
 }
 
+abstract base mixin class $SharedPreferencesApi {
+  factory $SharedPreferencesApi({
+    required core$_.bool Function(jni$_.JString string) remove,
+    required core$_.bool Function(jni$_.JString string, core$_.bool z) setBool,
+    required core$_.bool Function(jni$_.JString string, jni$_.JString string1) setString,
+    required core$_.bool Function(jni$_.JString string, core$_.int j) setInt,
+    required core$_.bool Function(jni$_.JString string, core$_.double d) setDouble,
+    required core$_.bool Function(jni$_.JString string, jni$_.JString string1) setEncodedStringList,
+    required core$_.bool Function(jni$_.JString string, jni$_.JList<jni$_.JString> list)
+    setDeprecatedStringList,
+    required core$_.bool Function(jni$_.JString string, jni$_.JList<jni$_.JString>? list) clear,
+    required jni$_.JMap<jni$_.JString, jni$_.JObject> Function(
+      jni$_.JString string,
+      jni$_.JList<jni$_.JString>? list,
+    )
+    getAll,
+  }) = _$SharedPreferencesApi;
+
+  core$_.bool remove(jni$_.JString string);
+  core$_.bool setBool(jni$_.JString string, core$_.bool z);
+  core$_.bool setString(jni$_.JString string, jni$_.JString string1);
+  core$_.bool setInt(jni$_.JString string, core$_.int j);
+  core$_.bool setDouble(jni$_.JString string, core$_.double d);
+  core$_.bool setEncodedStringList(jni$_.JString string, jni$_.JString string1);
+  core$_.bool setDeprecatedStringList(jni$_.JString string, jni$_.JList<jni$_.JString> list);
+  core$_.bool clear(jni$_.JString string, jni$_.JList<jni$_.JString>? list);
+  jni$_.JMap<jni$_.JString, jni$_.JObject> getAll(
+    jni$_.JString string,
+    jni$_.JList<jni$_.JString>? list,
+  );
+}
+
+final class _$SharedPreferencesApi with $SharedPreferencesApi {
+  _$SharedPreferencesApi({
+    required core$_.bool Function(jni$_.JString string) remove,
+    required core$_.bool Function(jni$_.JString string, core$_.bool z) setBool,
+    required core$_.bool Function(jni$_.JString string, jni$_.JString string1) setString,
+    required core$_.bool Function(jni$_.JString string, core$_.int j) setInt,
+    required core$_.bool Function(jni$_.JString string, core$_.double d) setDouble,
+    required core$_.bool Function(jni$_.JString string, jni$_.JString string1) setEncodedStringList,
+    required core$_.bool Function(jni$_.JString string, jni$_.JList<jni$_.JString> list)
+    setDeprecatedStringList,
+    required core$_.bool Function(jni$_.JString string, jni$_.JList<jni$_.JString>? list) clear,
+    required jni$_.JMap<jni$_.JString, jni$_.JObject> Function(
+      jni$_.JString string,
+      jni$_.JList<jni$_.JString>? list,
+    )
+    getAll,
+  }) : _remove = remove,
+       _setBool = setBool,
+       _setString = setString,
+       _setInt = setInt,
+       _setDouble = setDouble,
+       _setEncodedStringList = setEncodedStringList,
+       _setDeprecatedStringList = setDeprecatedStringList,
+       _clear = clear,
+       _getAll = getAll;
+
+  final core$_.bool Function(jni$_.JString string) _remove;
+  final core$_.bool Function(jni$_.JString string, core$_.bool z) _setBool;
+  final core$_.bool Function(jni$_.JString string, jni$_.JString string1) _setString;
+  final core$_.bool Function(jni$_.JString string, core$_.int j) _setInt;
+  final core$_.bool Function(jni$_.JString string, core$_.double d) _setDouble;
+  final core$_.bool Function(jni$_.JString string, jni$_.JString string1) _setEncodedStringList;
+  final core$_.bool Function(jni$_.JString string, jni$_.JList<jni$_.JString> list)
+  _setDeprecatedStringList;
+  final core$_.bool Function(jni$_.JString string, jni$_.JList<jni$_.JString>? list) _clear;
+  final jni$_.JMap<jni$_.JString, jni$_.JObject> Function(
+    jni$_.JString string,
+    jni$_.JList<jni$_.JString>? list,
+  )
+  _getAll;
+
+  core$_.bool remove(jni$_.JString string) {
+    return _remove(string);
+  }
+
+  core$_.bool setBool(jni$_.JString string, core$_.bool z) {
+    return _setBool(string, z);
+  }
+
+  core$_.bool setString(jni$_.JString string, jni$_.JString string1) {
+    return _setString(string, string1);
+  }
+
+  core$_.bool setInt(jni$_.JString string, core$_.int j) {
+    return _setInt(string, j);
+  }
+
+  core$_.bool setDouble(jni$_.JString string, core$_.double d) {
+    return _setDouble(string, d);
+  }
+
+  core$_.bool setEncodedStringList(jni$_.JString string, jni$_.JString string1) {
+    return _setEncodedStringList(string, string1);
+  }
+
+  core$_.bool setDeprecatedStringList(jni$_.JString string, jni$_.JList<jni$_.JString> list) {
+    return _setDeprecatedStringList(string, list);
+  }
+
+  core$_.bool clear(jni$_.JString string, jni$_.JList<jni$_.JString>? list) {
+    return _clear(string, list);
+  }
+
+  jni$_.JMap<jni$_.JString, jni$_.JObject> getAll(
+    jni$_.JString string,
+    jni$_.JList<jni$_.JString>? list,
+  ) {
+    return _getAll(string, list);
+  }
+}
+
 final class $SharedPreferencesApi$Type$ extends jni$_.JType<SharedPreferencesApi> {
   @jni$_.internal
   const $SharedPreferencesApi$Type$();
@@ -547,7 +775,7 @@ final class $SharedPreferencesApi$Type$ extends jni$_.JType<SharedPreferencesApi
 
 /// from: `io.flutter.plugins.sharedpreferences.SharedPreferencesApiRegistrar`
 extension type SharedPreferencesApiRegistrar._(jni$_.JObject _$this)
-    implements SharedPreferencesApi {
+    implements jni$_.JObject, SharedPreferencesApi {
   static final _class = jni$_.JClass.forName(
     r'io/flutter/plugins/sharedpreferences/SharedPreferencesApiRegistrar',
   );

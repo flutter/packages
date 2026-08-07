@@ -46,33 +46,33 @@ val SharedPreferencesApiInstances: MutableMap<String, SharedPreferencesApiRegist
     mutableMapOf()
 
 @Keep
-abstract class SharedPreferencesApi {
+interface SharedPreferencesApi {
   /** Removes property from shared preferences data set. */
-  abstract fun remove(key: String): Boolean
+  fun remove(key: String): Boolean
   /** Adds property to shared preferences data set of type `bool`. */
-  abstract fun setBool(key: String, value: Boolean): Boolean
+  fun setBool(key: String, value: Boolean): Boolean
   /** Adds property to shared preferences data set of type `String`. */
-  abstract fun setString(key: String, value: String): Boolean
+  fun setString(key: String, value: String): Boolean
   /** Adds property to shared preferences data set of type `int`. */
-  abstract fun setInt(key: String, value: Long): Boolean
+  fun setInt(key: String, value: Long): Boolean
   /** Adds property to shared preferences data set of type `double`. */
-  abstract fun setDouble(key: String, value: Double): Boolean
+  fun setDouble(key: String, value: Double): Boolean
   /** Adds property to shared preferences data set of type `List<String>`. */
-  abstract fun setEncodedStringList(key: String, value: String): Boolean
+  fun setEncodedStringList(key: String, value: String): Boolean
   /**
    * Adds property to shared preferences data set of type `List<String>`.
    *
    * Deprecated, this is only here for testing purposes.
    */
-  abstract fun setDeprecatedStringList(key: String, value: List<String>): Boolean
+  fun setDeprecatedStringList(key: String, value: List<String>): Boolean
   /** Removes all properties from shared preferences data set with matching prefix. */
-  abstract fun clear(prefix: String, allowList: List<String>?): Boolean
+  fun clear(prefix: String, allowList: List<String>?): Boolean
   /** Gets all properties from shared preferences data set with matching prefix. */
-  abstract fun getAll(prefix: String, allowList: List<String>?): Map<String, Any>
+  fun getAll(prefix: String, allowList: List<String>?): Map<String, Any>
 }
 
 @Keep
-class SharedPreferencesApiRegistrar : SharedPreferencesApi() {
+class SharedPreferencesApiRegistrar : SharedPreferencesApi {
   private var api: SharedPreferencesApi? = null
 
   fun register(
