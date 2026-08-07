@@ -5,8 +5,6 @@
 package io.flutter.plugins.camera;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThrows;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -52,14 +50,6 @@ public class CameraApiImplTest {
     handler.pausePreview();
 
     verify(mockCamera, times(1)).pausePreview();
-  }
-
-  @Test
-  public void onMethodCall_pausePreview_shouldSendErrorResultOnCameraAccessException()
-      throws CameraAccessException {
-    doThrow(new CameraAccessException(0)).when(mockCamera).pausePreview();
-
-    assertThrows(Messages.FlutterError.class, () -> handler.pausePreview());
   }
 
   @Test

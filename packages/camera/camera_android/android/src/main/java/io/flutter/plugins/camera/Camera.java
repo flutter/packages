@@ -120,7 +120,13 @@ class Camera
   private HandlerThread backgroundHandlerThread;
 
   CameraDeviceWrapper cameraDevice;
-  CameraCaptureSession captureSession;
+
+  /**
+   * Written from the background handler thread (via {@link CameraCaptureSession.StateCallback}) and
+   * read from both that thread and the platform thread.
+   */
+  volatile CameraCaptureSession captureSession;
+
   @VisibleForTesting ImageReader pictureImageReader;
   ImageStreamReader imageStreamReader;
 
@@ -135,7 +141,7 @@ class Camera
   /** True when the preview is paused. */
   @VisibleForTesting boolean pausedPreview;
 
-  private File captureFile;
+  @VisibleForTesting File captureFile;
 
   /** Holds the current capture timeouts */
   private CaptureTimeoutsWrapper captureTimeouts;
@@ -520,7 +526,9 @@ class Camera
             updateBuilderSettings(previewRequestBuilder);
 
             refreshPreviewCaptureSession(
-                onSuccessCallback, (code, message) -> dartMessenger.sendCameraErrorEvent(message));
+                session,
+                onSuccessCallback,
+                (code, message) -> dartMessenger.sendCameraErrorEvent(message));
           }
 
           @Override
@@ -574,12 +582,13 @@ class Camera
     cameraDevice.createCaptureSession(surfaces, callback, backgroundHandler);
   }
 
-  // Send a repeating request to refresh  capture session.
+  // Send a repeating request to refresh capture session.
   void refreshPreviewCaptureSession(
       @Nullable Runnable onSuccessCallback, @NonNull ErrorCallback onErrorCallback) {
-    Log.i(TAG, "refreshPreviewCaptureSession");
+    // captureSession might be modified in another thread during this method's run
+    CameraCaptureSession session = captureSession;
 
-    if (captureSession == null) {
+    if (session == null) {
       Log.i(
           TAG,
           "refreshPreviewCaptureSession: captureSession not yet initialized, "
@@ -587,9 +596,19 @@ class Camera
       return;
     }
 
+    refreshPreviewCaptureSession(session, onSuccessCallback, onErrorCallback);
+  }
+
+  // Send a repeating request to refresh capture session, using a specific local copy of a session.
+  void refreshPreviewCaptureSession(
+      @NonNull CameraCaptureSession session,
+      @Nullable Runnable onSuccessCallback,
+      @NonNull ErrorCallback onErrorCallback) {
+    Log.i(TAG, "refreshPreviewCaptureSession");
+
     try {
       if (!pausedPreview) {
-        captureSession.setRepeatingRequest(
+        session.setRepeatingRequest(
             previewRequestBuilder.build(), cameraCaptureCallback, backgroundHandler);
       }
 
@@ -667,11 +686,18 @@ class Camera
       previewRequestBuilder.set(
           CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
           CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
-      captureSession.capture(
-          previewRequestBuilder.build(), cameraCaptureCallback, backgroundHandler);
+
+      // captureSession might be modified in another thread during this method's run
+      CameraCaptureSession session = captureSession;
+      if (session == null) {
+        Log.i(TAG, "[runPrecaptureSequence] captureSession null, returning");
+        return;
+      }
+      session.capture(previewRequestBuilder.build(), cameraCaptureCallback, backgroundHandler);
 
       // Repeating request to refresh preview session.
       refreshPreviewCaptureSession(
+          session,
           null,
           (code, message) -> dartMessenger.error(flutterResult, "cameraAccess", message, null));
 
@@ -683,7 +709,7 @@ class Camera
           CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
 
       // Trigger one capture to start AE sequence.
-      captureSession.capture(
+      session.capture(
           previewRequestBuilder.build(),
           createTriggerResetCallback(
               CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
@@ -691,6 +717,8 @@ class Camera
           backgroundHandler);
 
     } catch (CameraAccessException e) {
+      e.printStackTrace();
+    } catch (IllegalStateException e) {
       e.printStackTrace();
     }
   }
@@ -762,15 +790,35 @@ class Camera
               @NonNull CameraCaptureSession session,
               @NonNull CaptureRequest request,
               @NonNull TotalCaptureResult result) {
-            unlockAutoFocus();
+            // Ignore completions from a session that has since been replaced or torn down;
+            // acting on it here would run autofocus operations against the wrong session.
+            if (session != captureSession) {
+              Log.i(TAG, "Ignoring completion callback from a stale capture session.");
+              return;
+            }
+            unlockAutoFocus(session);
           }
         };
 
+    // captureSession might be modified in another thread during this method's run
+    CameraCaptureSession session = captureSession;
+    if (session == null) {
+      Log.i(TAG, "[takePictureAfterPrecapture] captureSession null, returning");
+      dartMessenger.error(
+          flutterResult,
+          "cameraAccess",
+          "The camera capture session is no longer available.",
+          null);
+      return;
+    }
     try {
       Log.i(TAG, "sending capture request");
-      captureSession.capture(stillBuilder.build(), captureCallback, backgroundHandler);
+      session.capture(stillBuilder.build(), captureCallback, backgroundHandler);
     } catch (CameraAccessException e) {
       dartMessenger.error(flutterResult, "cameraAccess", e.getMessage(), null);
+    } catch (IllegalStateException e) {
+      dartMessenger.error(
+          flutterResult, "cameraAccess", "Camera is closed: " + e.getMessage(), null);
     }
   }
 
@@ -813,17 +861,24 @@ class Camera
 
   private void lockAutoFocus() {
     Log.i(TAG, "lockAutoFocus");
-    if (captureSession == null) {
-      Log.i(TAG, "[unlockAutoFocus] captureSession null, returning");
+
+    // captureSession might be modified in another thread during this method's run
+    CameraCaptureSession session = captureSession;
+    if (session == null) {
+      Log.i(TAG, "[lockAutoFocus] captureSession null, returning");
       return;
     }
+    lockAutoFocus(session);
+  }
 
+  /** Locks autofocus, using a specific local copy of a session. */
+  private void lockAutoFocus(@NonNull CameraCaptureSession session) {
     // Trigger AF to start.
     previewRequestBuilder.set(
         CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_START);
 
     try {
-      captureSession.capture(
+      session.capture(
           previewRequestBuilder.build(),
           createTriggerResetCallback(
               CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_IDLE),
@@ -834,27 +889,47 @@ class Camera
               ? "CameraAccessException occurred while locking autofocus."
               : e.getMessage();
       dartMessenger.sendCameraErrorEvent(message);
+    } catch (IllegalStateException e) {
+      if (BuildConfig.DEBUG) {
+        Log.i(TAG, "[lockAutoFocus] capture() failed, capture session no longer valid: " + e);
+      }
+      String message =
+          (e.getMessage() == null)
+              ? "IllegalStateException occurred while locking autofocus."
+              : e.getMessage();
+      dartMessenger.sendCameraErrorEvent(message);
     }
   }
 
   /** Cancel and reset auto focus state and refresh the preview session. */
   void unlockAutoFocus() {
     Log.i(TAG, "unlockAutoFocus");
-    if (captureSession == null) {
+
+    // captureSession might be modified in another thread during this method's run
+    CameraCaptureSession session = captureSession;
+    if (session == null) {
       Log.i(TAG, "[unlockAutoFocus] captureSession null, returning");
       return;
     }
+    unlockAutoFocus(session);
+  }
+
+  /**
+   * Cancels and resets auto focus state and refreshes the preview session, using a specific local
+   * copy of a session.
+   */
+  void unlockAutoFocus(@NonNull CameraCaptureSession session) {
     try {
       // Cancel existing AF state.
       previewRequestBuilder.set(
           CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
-      captureSession.capture(previewRequestBuilder.build(), null, backgroundHandler);
+      session.capture(previewRequestBuilder.build(), null, backgroundHandler);
 
       // Set AF state to idle again.
       previewRequestBuilder.set(
           CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_IDLE);
 
-      captureSession.capture(previewRequestBuilder.build(), null, backgroundHandler);
+      session.capture(previewRequestBuilder.build(), null, backgroundHandler);
     } catch (CameraAccessException e) {
       String message =
           (e.getMessage() == null)
@@ -862,9 +937,20 @@ class Camera
               : e.getMessage();
       dartMessenger.sendCameraErrorEvent(message);
       return;
+    } catch (IllegalStateException e) {
+      if (BuildConfig.DEBUG) {
+        Log.i(TAG, "[unlockAutoFocus] capture() failed, capture session no longer valid: " + e);
+      }
+      String message =
+          (e.getMessage() == null)
+              ? "IllegalStateException occurred while unlocking autofocus."
+              : e.getMessage();
+      dartMessenger.sendCameraErrorEvent(message);
+      return;
     }
 
     refreshPreviewCaptureSession(
+        session,
         null,
         (errorCode, errorMessage) ->
             dartMessenger.error(flutterResult, errorCode, errorMessage, null));
@@ -907,7 +993,10 @@ class Camera
     recordingVideo = false;
     try {
       closeRenderer();
-      captureSession.abortCaptures();
+      CameraCaptureSession session = captureSession;
+      if (session != null) {
+        session.abortCaptures();
+      }
       mediaRecorder.stop();
     } catch (CameraAccessException | IllegalStateException e) {
       // Ignore exceptions and try to continue (changes are camera session already aborted capture).
@@ -1040,22 +1129,25 @@ class Camera
       switch (newMode) {
         case locked:
           // Perform a single focus trigger.
-          if (captureSession == null) {
-            Log.i(TAG, "[unlockAutoFocus] captureSession null, returning");
+          CameraCaptureSession session = captureSession;
+          if (session == null) {
+            Log.i(TAG, "[setFocusMode] captureSession null, returning");
             return;
           }
-          lockAutoFocus();
+          lockAutoFocus(session);
 
           // Set AF state to idle again.
           previewRequestBuilder.set(
               CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_IDLE);
 
           try {
-            captureSession.setRepeatingRequest(
-                previewRequestBuilder.build(), null, backgroundHandler);
+            session.setRepeatingRequest(previewRequestBuilder.build(), null, backgroundHandler);
           } catch (CameraAccessException e) {
             throw new Messages.FlutterError(
                 "setFocusModeFailed", "Error setting focus mode: " + e.getMessage(), null);
+          } catch (IllegalStateException e) {
+            throw new Messages.FlutterError(
+                "setFocusModeFailed", "Camera is closed: " + e.getMessage(), null);
           }
           break;
         case auto:
@@ -1177,12 +1269,20 @@ class Camera
   }
 
   /** Pause the preview from dart. */
-  public void pausePreview() throws CameraAccessException {
+  public void pausePreview() {
     if (!this.pausedPreview) {
       this.pausedPreview = true;
 
-      if (this.captureSession != null) {
-        this.captureSession.stopRepeating();
+      CameraCaptureSession session = captureSession;
+      if (session != null) {
+        try {
+          session.stopRepeating();
+        } catch (CameraAccessException e) {
+          throw new Messages.FlutterError("CameraAccessException", e.getMessage(), null);
+        } catch (IllegalStateException e) {
+          throw new Messages.FlutterError(
+              "CameraAccessException", "Camera is closed: " + e.getMessage(), null);
+        }
       }
     }
   }
@@ -1346,11 +1446,12 @@ class Camera
   }
 
   void closeCaptureSession() {
-    if (captureSession != null) {
+    CameraCaptureSession session = captureSession;
+    captureSession = null;
+    if (session != null) {
       Log.i(TAG, "closeCaptureSession");
 
-      captureSession.close();
-      captureSession = null;
+      session.close();
     }
   }
 

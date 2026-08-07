@@ -1,3 +1,7 @@
+## 0.10.11+1
+
+* Fixes crashes (`NullPointerException`, `CameraDevice was already closed`) due to a race condition.
+
 ## 0.10.11
 
 * Adds `setJpegImageQuality` for controlling JPEG compression quality.
