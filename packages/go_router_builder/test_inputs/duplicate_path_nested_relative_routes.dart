@@ -17,9 +17,7 @@ mixin $SiblingEditRoute {}
   routes: <TypedRoute<RouteData>>[
     TypedRelativeGoRoute<DetailsRoute>(
       path: 'details',
-      routes: <TypedRoute<RouteData>>[
-        TypedRelativeGoRoute<NestedEditRoute>(path: 'edit'),
-      ],
+      routes: <TypedRoute<RouteData>>[TypedRelativeGoRoute<NestedEditRoute>(path: 'edit')],
     ),
     TypedGoRoute<SiblingEditRoute>(path: 'edit'),
   ],
