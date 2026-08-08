@@ -14,8 +14,8 @@ import '../data/icon_button_xlarge.dart';
 import '../data/icon_button_xsmall.dart';
 import 'template.dart';
 
-class IconButtonTemplate extends TokenTemplateM3E {
-  const IconButtonTemplate();
+class IconButtonTemplateM3E extends TokenTemplateM3E {
+  const IconButtonTemplateM3E();
 
   @override
   String get name => 'Icon Button';
