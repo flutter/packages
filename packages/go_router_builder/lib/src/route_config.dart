@@ -1061,6 +1061,9 @@ void _collectRoutesOwningPaths(List<RouteBaseConfig> children, List<_GoRouteMixi
   }
 }
 
+/// Matches a named path parameter, such as `:id` or `:userId`.
+final RegExp _pathParameterPattern = RegExp(r':\w+');
+
 /// Normalizes a route path for structural comparison by replacing named
 /// parameters, such as `:id` and `:userId`, with a placeholder.
-String _normalizePath(String path) => path.replaceAll(RegExp(r':\w+'), ':_');
+String _normalizePath(String path) => path.replaceAll(_pathParameterPattern, ':_');
