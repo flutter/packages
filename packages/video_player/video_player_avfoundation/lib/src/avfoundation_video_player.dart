@@ -301,9 +301,16 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   @override
   Widget buildViewWithOptions(VideoViewOptions options) {
     final int playerId = options.playerId;
-    final VideoPlayerViewState viewState = _playerWith(id: playerId).viewState;
+    // Disposal and the next frame are not synchronized: a widget holding this player can be rebuilt
+    // after the player is gone (an AnimatedSwitcher transition, or a rebuild triggered by a
+    // configuration change once the platform has reclaimed the player). Build an empty view rather
+    // than throwing, since a build method that throws leaves the widget permanently broken.
+    final _PlayerInstance? player = _players[playerId];
+    if (player == null) {
+      return const SizedBox.shrink();
+    }
 
-    return switch (viewState) {
+    return switch (player.viewState) {
       VideoPlayerTextureViewState(:final int textureId) => Texture(textureId: textureId),
       VideoPlayerPlatformViewState() => _buildPlatformView(playerId),
     };

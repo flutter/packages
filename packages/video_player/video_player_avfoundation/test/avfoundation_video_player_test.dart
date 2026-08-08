@@ -60,6 +60,16 @@ void main() {
       verify(playerApi.dispose());
     });
 
+    test('buildViewWithOptions returns an empty widget after the player is disposed', () async {
+      final (AVFoundationVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1, textureId: 101);
+      await player.dispose(1);
+
+      // A disposed player can still be built: the widget stays mounted through the frame that
+      // follows disposal (an AnimatedSwitcher transition, or a rebuild from a configuration
+      // change), so building must degrade to an empty view rather than throw.
+      expect(player.buildViewWithOptions(const VideoViewOptions(playerId: 1)), isA<SizedBox>());
+    });
+
     test('create with asset', () async {
       final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 101);

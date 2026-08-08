@@ -1,3 +1,7 @@
+## 2.11.1
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/190739) where building the view for a disposed player threw a `StateError` instead of building an empty view.
+
 ## 2.11.0
 
 * Implements `setPreventsDisplaySleepDuringVideoPlayback` using

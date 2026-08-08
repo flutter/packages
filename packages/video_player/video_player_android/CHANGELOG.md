@@ -1,3 +1,7 @@
+## 2.12.1
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/190739) where building the view for a disposed player threw a `StateError` instead of building an empty view.
+
 ## 2.12.0
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/176575) where some videos report an incorrect duration when initialized without a video duration.
