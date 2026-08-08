@@ -1930,6 +1930,7 @@ class PlatformMapConfiguration {
     required this.markerType,
     this.mapId,
     this.style,
+    this.backgroundColor,
   });
 
   bool? compassEnabled;
@@ -1974,6 +1975,8 @@ class PlatformMapConfiguration {
 
   String? style;
 
+  PlatformColor? backgroundColor;
+
   List<Object?> _toList() {
     return <Object?>[
       compassEnabled,
@@ -1997,6 +2000,7 @@ class PlatformMapConfiguration {
       markerType,
       mapId,
       style,
+      backgroundColor,
     ];
   }
 
@@ -2028,6 +2032,7 @@ class PlatformMapConfiguration {
       markerType: result[18]! as PlatformMarkerType,
       mapId: result[19] as String?,
       style: result[20] as String?,
+      backgroundColor: result[21] as PlatformColor?,
     );
   }
 
@@ -2060,7 +2065,8 @@ class PlatformMapConfiguration {
         _deepEquals(liteModeEnabled, other.liteModeEnabled) &&
         _deepEquals(markerType, other.markerType) &&
         _deepEquals(mapId, other.mapId) &&
-        _deepEquals(style, other.style);
+        _deepEquals(style, other.style) &&
+        _deepEquals(backgroundColor, other.backgroundColor);
   }
 
   @override

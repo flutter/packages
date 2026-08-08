@@ -551,6 +551,26 @@ void main() {
           expect(capturedOptions!.streetViewControl, isTrue);
         });
 
+        testWidgets('translates backgroundColor option', (WidgetTester tester) async {
+          gmaps.MapOptions? capturedOptions;
+          controller = createController(
+            mapConfiguration: const MapConfiguration(
+              backgroundColor: Color.fromARGB(128, 18, 52, 86),
+            ),
+          );
+          controller.debugSetOverrides(
+            createMap: (_, gmaps.MapOptions options) {
+              capturedOptions = options;
+              return map;
+            },
+          );
+
+          controller.init();
+
+          expect(capturedOptions, isNotNull);
+          expect(capturedOptions!.backgroundColor, 'rgba(18, 52, 86, 0.50)');
+        });
+
         testWidgets('translates webCameraControlPosition option', (WidgetTester tester) async {
           gmaps.MapOptions? capturedOptions;
           controller = createController(
