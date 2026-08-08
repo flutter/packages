@@ -15,11 +15,16 @@ class GroundOverlayController implements GroundOverlaySink {
   private final GroundOverlay groundOverlay;
   private final String googleMapsGroundOverlayId;
   private final boolean isCreatedWithBounds;
+  private @NonNull PlatformBitmap platformBitmap;
 
-  GroundOverlayController(@NonNull GroundOverlay groundOverlay, boolean isCreatedWithBounds) {
+  GroundOverlayController(
+      @NonNull GroundOverlay groundOverlay,
+      boolean isCreatedWithBounds,
+      @NonNull PlatformBitmap platformBitmap) {
     this.groundOverlay = groundOverlay;
     this.googleMapsGroundOverlayId = groundOverlay.getId();
     this.isCreatedWithBounds = isCreatedWithBounds;
+    this.platformBitmap = platformBitmap;
   }
 
   void remove() {
@@ -84,5 +89,13 @@ class GroundOverlayController implements GroundOverlaySink {
 
   public boolean isCreatedWithBounds() {
     return isCreatedWithBounds;
+  }
+
+  boolean hasImage(@NonNull PlatformBitmap platformBitmap) {
+    return this.platformBitmap.equals(platformBitmap);
+  }
+
+  void setPlatformBitmap(@NonNull PlatformBitmap platformBitmap) {
+    this.platformBitmap = platformBitmap;
   }
 }

@@ -821,6 +821,7 @@ class Convert {
    *     asset files stored in the application's assets directory.
    * @param density the density of the display, used to calculate pixel dimensions.
    * @param wrapper the BitmapDescriptorFactoryWrapper to create BitmapDescriptor.
+   * @param updateImage whether to convert and set the ground overlay image.
    * @return the identifier of the ground overlay. The identifier is valid as long as the ground
    *     overlay exists.
    * @throws IllegalArgumentException if required fields are missing or invalid.
@@ -830,7 +831,8 @@ class Convert {
       @NonNull GroundOverlaySink sink,
       @NonNull AssetManager assetManager,
       float density,
-      @NonNull BitmapDescriptorFactoryWrapper wrapper) {
+      @NonNull BitmapDescriptorFactoryWrapper wrapper,
+      boolean updateImage) {
     sink.setTransparency((float) groundOverlay.getTransparency());
     sink.setZIndex((float) groundOverlay.getZIndex());
     sink.setVisible(groundOverlay.getVisible());
@@ -840,7 +842,9 @@ class Convert {
     }
     sink.setBearing((float) groundOverlay.getBearing());
     sink.setClickable(groundOverlay.getClickable());
-    sink.setImage(toBitmapDescriptor(groundOverlay.getImage(), assetManager, density, wrapper));
+    if (updateImage) {
+      sink.setImage(toBitmapDescriptor(groundOverlay.getImage(), assetManager, density, wrapper));
+    }
     if (groundOverlay.getPosition() != null) {
       if (groundOverlay.getWidth() == null) {
         throw new FlutterError(
