@@ -42,6 +42,56 @@ dart run build_runner build
 Read more about using
 [`build_runner` on pub.dev](https://pub.dev/packages/build_runner).
 
+### Builder options
+
+#### `duplicate_route_paths`
+
+Sibling routes can end up matching the same URL pattern, either because their
+paths are identical or because they differ only in the name of a path parameter,
+such as `product/:id` and `product/:productId`. The builder reports these as
+warnings by default.
+
+Warnings rather than errors, because a duplicate path is legal at runtime and is
+not always dead code. `go_router` tries sibling routes in declaration order and
+takes the first one that matches the whole URL. So when two different route
+classes share a path, only the first is reachable at that URL, and navigating to
+the second class's `location` lands on the first class's page instead. That is
+almost always a mistake.
+
+Matching backtracks, though: when a route matches only a prefix and none of its
+children complete the URL, matching moves on to the next sibling. So naming one
+route class twice at the same path, each declaration carrying different children,
+is sound. That URL stays unambiguous because both declarations resolve to the
+same class, every child stays reachable, and it is one way to group children by
+feature area rather than listing them all in one place. The builder reports it
+anyway, since it cannot tell a deliberate grouping from an accidental duplicate.
+Set the option to `ignore` if you want the pattern without the warning.
+
+Routes are compared across a whole library, which includes any `part` files, so
+splitting a large route table across parts does not hide anything. Within that
+library everything competes: shell routes and `StatefulShellRoute` branches own
+no path of their own, so the routes inside them compete with the routes around
+them, and separate annotations compete with each other because the generated
+`$appRoutes` collects them into one list.
+
+To fail the build instead of warning, set the option in `build.yaml`:
+
+```yaml
+targets:
+  $default:
+    builders:
+      go_router_builder:
+        options:
+          duplicate_route_paths: error
+```
+
+Accepted values are `warning` (the default), `error`, and `ignore`.
+
+The severity applies to the whole package, and there is no per-route escape
+hatch, so `error` fails the build on a deliberate grouping too. Reach for it when
+every duplicate path in your app is a mistake, and stay on `warning` when some of
+them are intentional.
+
 ## Migration Guides
 - [Migrating to 4.0.0](https://flutter.dev/go/go-router-builder-v4-breaking-changes).
 
@@ -504,5 +554,14 @@ Relative routing methods are not idempotent and will cause an error when the rel
 ## Run tests
 
 To run unit tests, run command `dart tool/run_tests.dart` from `packages/go_router_builder/`.
+
+Each `.dart` file in `test_inputs/` is a test case, paired with a `.expect` file
+holding either the generated output or the error message the builder must
+produce. Two optional companion files tune a case:
+
+* `<name>.dart.options` holds a JSON map of builder options, matching what
+  `build.yaml` would pass to the builder.
+* `<name>.dart.warnings` holds the warnings the builder must log, one per line.
+  An empty file asserts that the builder logs nothing.
 
 To run tests in examples, run `flutter test` from `packages/go_router_builder/example`.

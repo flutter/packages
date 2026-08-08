@@ -9,12 +9,14 @@ import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
+import 'package:build/build.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 import 'package:source_gen/source_gen.dart';
 import 'package:source_helper/source_helper.dart';
 
+import 'duplicate_path_severity.dart';
 import 'path_utils.dart';
 import 'type_helpers.dart';
 
@@ -187,6 +189,12 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
 /// A mixin that provides common functionality for GoRoute-based configurations.
 mixin _GoRouteMixin on RouteBaseConfig {
   String get _basePathForLocation;
+
+  /// The path this route contributes to the URL, without any parent path.
+  ///
+  /// Unlike [_basePathForLocation], this is the path exactly as written in the
+  /// annotation, which is what sibling routes compete over.
+  String get path;
 
   late final Set<String> _pathParams = pathParametersFromPattern(_basePathForLocation);
 
@@ -400,6 +408,7 @@ class GoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   }) : super._();
 
   /// The path of the GoRoute to be created by this configuration.
+  @override
   final String path;
 
   /// The name of the GoRoute to be created by this configuration.
@@ -501,6 +510,7 @@ class RelativeGoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   }) : super._();
 
   /// The path of the GoRoute to be created by this configuration.
+  @override
   final String path;
 
   /// The case sensitivity of the GoRoute to be created by this configuration.
@@ -970,3 +980,90 @@ bool $iterablesEqualHelperName<T>(Iterable<T>? iterable1, Iterable<T>? iterable2
     if (iterator1.current != iterator2.current) return false;
   }
 }''';
+
+/// Reports routes that resolve to the same URL pattern, with the severity
+/// selected by the `duplicate_route_paths` builder option.
+///
+/// [roots] holds every top-level route config in a library. Those compete for
+/// the root URL namespace, because the generated `$appRoutes` collects them all
+/// into one list. The walk then descends one level at a time.
+///
+/// Shell routes and branches are transparent: their children compete in the
+/// parent's URL namespace instead of owning one of their own.
+///
+/// Path parameters are normalized, so `:id` and `:userId` are treated as
+/// equivalent, since they match the same URL segments at runtime.
+void reportDuplicateRoutePaths(List<RouteBaseConfig> roots, DuplicatePathSeverity severity) {
+  if (severity == DuplicatePathSeverity.ignore) {
+    return;
+  }
+  _reportDuplicatePathsAmongSiblings(roots, severity);
+}
+
+void _reportDuplicatePathsAmongSiblings(
+  List<RouteBaseConfig> children,
+  DuplicatePathSeverity severity,
+) {
+  final siblings = <_GoRouteMixin>[];
+  _collectRoutesOwningPaths(children, siblings);
+
+  final seen = <String, _GoRouteMixin>{};
+  for (final route in siblings) {
+    final String normalized = _normalizePath(route.path);
+    final _GoRouteMixin? existing = seen[normalized];
+    if (existing == null) {
+      seen[normalized] = route;
+      continue;
+    }
+    final String message = _duplicatePathMessage(existing, route);
+    if (severity == DuplicatePathSeverity.error) {
+      throw InvalidGenerationSourceError(message, element: route.routeDataClass);
+    }
+    log.warning(message);
+  }
+
+  // Only the collected routes own a URL namespace, so recursing into them
+  // visits every level of the tree exactly once.
+  for (final route in siblings) {
+    _reportDuplicatePathsAmongSiblings(route._children, severity);
+  }
+}
+
+/// Describes the conflict between two routes that resolve to the same URL.
+///
+/// One route class declared twice at the same path gets its own wording, since
+/// naming that class on both sides of an "and" reads as though two classes were
+/// involved. Any other pair names both sides, which stays clear even when the
+/// class repeats, because the two paths differ.
+String _duplicatePathMessage(_GoRouteMixin existing, _GoRouteMixin route) {
+  if (existing.routeDataClass == route.routeDataClass && existing.path == route.path) {
+    return 'Duplicate route path detected: ${route._className} is declared more '
+        'than once at "${route.path}".';
+  }
+  return 'Duplicate route path detected: '
+      '"${existing.path}" from ${existing._className} and '
+      '"${route.path}" from ${route._className} '
+      'both match the same URL pattern.';
+}
+
+/// Collects the routes in [children] that own a path of their own.
+///
+/// Both `GoRoute` and relative `GoRoute` configs own a path. Shell routes and
+/// branches do not, so we look through them to the routes inside, which compete
+/// with the routes at this level.
+void _collectRoutesOwningPaths(List<RouteBaseConfig> children, List<_GoRouteMixin> result) {
+  for (final child in children) {
+    if (child is _GoRouteMixin) {
+      result.add(child);
+    } else {
+      _collectRoutesOwningPaths(child._children, result);
+    }
+  }
+}
+
+/// Matches a named path parameter, such as `:id` or `:userId`.
+final RegExp _pathParameterPattern = RegExp(r':\w+');
+
+/// Normalizes a route path for structural comparison by replacing named
+/// parameters, such as `:id` and `:userId`, with a placeholder.
+String _normalizePath(String path) => path.replaceAll(_pathParameterPattern, ':_');
