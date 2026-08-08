@@ -46,50 +46,22 @@ Read more about using
 
 #### `duplicate_route_paths`
 
-Two routes can end up matching the same URL pattern. The builder reports these as
-warnings by default.
+When two routes resolve to the same URL, `go_router` matches the first and the
+second becomes unreachable. Navigating to the second one's `location` shows the
+first one's page. The builder warns about this at build time.
 
-Routes are compared by the whole URL each one resolves to, not by the path each
-one declares, so a collision is caught wherever the two routes sit in the tree.
-These all count:
+Routes are compared by the URL they resolve to, not by the path they declare, so
+depth in the route tree does not matter. A route at `section/detail` collides with
+a route at `section` holding a child at `detail`. Parameter names are ignored, so
+`product/:id` and `product/:productId` are the same URL, though a parameter's
+regex constraint still counts, so `product/:id(\d+)` and `product/:id(\w+)` are
+not. Casing is ignored when the earlier route sets `caseSensitive: false`, since
+it then matches any casing.
 
-* Identical paths, such as two routes at `details`.
-* Paths differing only in a parameter name, such as `product/:id` and
-  `product/:productId`, since both match the same URL segments. A parameter's
-  regex constraint is kept, so `product/:id(\d+)` stays distinct from
-  `product/:id(\w+)`.
-* A multi-segment path against the equivalent nesting, so a route at
-  `section/detail` collides with a route at `section` holding a child at
-  `detail`.
-* Paths differing only in casing, when the earlier route sets
-  `caseSensitive: false` and so matches any casing. Two case sensitive routes
-  differing in case match different URLs and are left alone.
+The whole library is compared, `part` files included. Shell routes and
+`StatefulShellRoute` branches contribute nothing to the URLs beneath them.
 
-Warnings rather than errors, because a duplicate path is legal at runtime and is
-not always dead code. `go_router` tries routes in declaration order and takes the
-first one that matches the whole URL. So when two different route classes share a
-URL, only the first is reachable there, and navigating to the second class's
-`location` lands on the first class's page instead. That is almost always a
-mistake.
-
-Matching backtracks, though: when a route matches only a prefix and none of its
-children complete the URL, matching moves on to the next sibling. So naming one
-route class twice at the same path, each declaration carrying different children,
-is sound. That URL stays unambiguous because both declarations resolve to the
-same class, every child stays reachable, and it is one way to group children by
-feature area rather than listing them all in one place. The builder reports it
-anyway, since it cannot tell a deliberate grouping from an accidental duplicate.
-Set the option to `ignore` if you want the pattern without the warning. Note that
-the children of those declarations do share a URL namespace, so a child path
-repeated across them is reported separately, and that one is a real collision.
-
-Routes are compared across a whole library, which includes any `part` files, so
-splitting a large route table across parts does not hide anything. Shell routes
-and `StatefulShellRoute` branches own no path of their own, so they add nothing
-to the URL of the routes inside them, and separate annotations are compared with
-each other because the generated `$appRoutes` collects them into one list.
-
-To fail the build instead of warning, set the option in `build.yaml`:
+Use `build.yaml` to change what a duplicate does:
 
 ```yaml
 targets:
@@ -102,10 +74,16 @@ targets:
 
 Accepted values are `warning` (the default), `error`, and `ignore`.
 
-The severity applies to the whole package, and there is no per-route escape
-hatch, so `error` fails the build on a deliberate grouping too. Reach for it when
-every duplicate path in your app is a mistake, and stay on `warning` when some of
-them are intentional.
+Warning is the default because some duplicates work. Matching backtracks, so
+naming one route class twice at the same path, each declaration carrying
+different children, is fine. Both resolve to the same class and every child stays
+reachable, which makes it a way to group children by feature. The builder still
+warns, because it cannot tell that from a mistake, so use `ignore` if you write
+it deliberately. Their children are a different story: a child path repeated
+across the two declarations is a genuine collision and is reported on its own.
+
+`error` applies to the whole package with no per-route exception, so it fails on
+the deliberate grouping too.
 
 ## Migration Guides
 - [Migrating to 4.0.0](https://flutter.dev/go/go-router-builder-v4-breaking-changes).
