@@ -84,6 +84,7 @@ dependencies {
     implementation("com.google.guava:guava:33.5.0-android")
     // camera-core's compiled classes reference CallbackToFutureAdapter type annotations;
     // without this explicit dependency, javac fails to resolve them during compilation.
+    // Upstream: https://issuetracker.google.com/issues/543937345
     implementation("androidx.concurrent:concurrent-futures:1.2.0")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.23.0")
