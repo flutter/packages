@@ -1,3 +1,10 @@
+## 4.14.0
+
+* Adds support for `PlatformWebViewController.addDocumentStartJavaScript` and
+  `PlatformWebViewController.supportsAddDocumentStartJavaScript`.
+* Introduces `AndroidDocumentStartJavaScriptParams`, a platform-specific extension of
+  `DocumentStartJavaScriptParams` for Android that adds support for `allowedOriginRules`.
+
 ## 4.13.0
 
 * Adds new method for accessing a native `WebView` from a `FlutterPluginBinding`.

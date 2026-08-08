@@ -1055,6 +1055,109 @@ void main() {
       );
     });
 
+    group('addDocumentStartJavaScript', () {
+      test('Using WebKitDocumentStartJavaScriptParams model', () async {
+        final mockUserContentController = MockWKUserContentController();
+
+        final WebKitWebViewController controller = createControllerWithMocks(
+          mockUserContentController: mockUserContentController,
+        );
+
+        await controller.addDocumentStartJavaScript(
+          const WebKitDocumentStartJavaScriptParams(
+            source: 'window.injected = true;',
+            forMainFrameOnly: false,
+          ),
+        );
+
+        final userScript =
+            verify(mockUserContentController.addUserScript(captureAny)).captured.single
+                as WKUserScript;
+        expect(userScript.source, 'window.injected = true;');
+        expect(userScript.injectionTime, UserScriptInjectionTime.atDocumentStart);
+        expect(userScript.isForMainFrameOnly, isFalse);
+      });
+
+      test('Using DocumentStartJavaScriptParams model defaults to main frame only', () async {
+        final mockUserContentController = MockWKUserContentController();
+
+        final WebKitWebViewController controller = createControllerWithMocks(
+          mockUserContentController: mockUserContentController,
+        );
+
+        await controller.addDocumentStartJavaScript(
+          const DocumentStartJavaScriptParams(source: 'window.injected = true;'),
+        );
+
+        final userScript =
+            verify(mockUserContentController.addUserScript(captureAny)).captured.single
+                as WKUserScript;
+        expect(userScript.source, 'window.injected = true;');
+        expect(userScript.injectionTime, UserScriptInjectionTime.atDocumentStart);
+        expect(userScript.isForMainFrameOnly, isTrue);
+      });
+
+      test('scripts are added back after removeJavaScriptChannel', () async {
+        PigeonOverrides.wKScriptMessageHandler_new =
+            ({
+              required void Function(
+                WKScriptMessageHandler,
+                WKUserContentController,
+                WKScriptMessage,
+              )
+              didReceiveScriptMessage,
+              dynamic observeValue,
+            }) {
+              return WKScriptMessageHandler.pigeon_detached(
+                didReceiveScriptMessage: didReceiveScriptMessage,
+              );
+            };
+
+        final mockUserContentController = MockWKUserContentController();
+
+        final WebKitWebViewController controller = createControllerWithMocks(
+          mockUserContentController: mockUserContentController,
+        );
+
+        await controller.addJavaScriptChannel(
+          WebKitJavaScriptChannelParams(
+            name: 'name',
+            onMessageReceived: (JavaScriptMessage message) {},
+          ),
+        );
+        await controller.addJavaScriptChannel(
+          WebKitJavaScriptChannelParams(
+            name: 'keep',
+            onMessageReceived: (JavaScriptMessage message) {},
+          ),
+        );
+        await controller.addDocumentStartJavaScript(
+          const WebKitDocumentStartJavaScriptParams(source: 'window.injected = true;'),
+        );
+        clearInteractions(mockUserContentController);
+
+        await controller.removeJavaScriptChannel('name');
+
+        verify(mockUserContentController.removeAllUserScripts());
+        final List<dynamic> addedScripts = verify(
+          mockUserContentController.addUserScript(captureAny),
+        ).captured;
+        // The channel wrapper script is re-registered before user scripts so
+        // that scripts that run at document start can rely on the channel.
+        final channelScript = addedScripts[0] as WKUserScript;
+        expect(channelScript.source, 'window.keep = webkit.messageHandlers.keep;');
+        final userScript = addedScripts[1] as WKUserScript;
+        expect(userScript.source, 'window.injected = true;');
+        expect(userScript.injectionTime, UserScriptInjectionTime.atDocumentStart);
+      });
+    });
+
+    test('supportsAddDocumentStartJavaScript', () async {
+      final WebKitWebViewController controller = createControllerWithMocks();
+
+      await expectLater(controller.supportsAddDocumentStartJavaScript(), completion(isTrue));
+    });
+
     test('getUserAgent', () {
       final mockWebView = MockUIViewWKWebView();
 
