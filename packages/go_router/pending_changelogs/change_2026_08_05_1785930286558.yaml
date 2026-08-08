@@ -1,0 +1,3 @@
+changelog: |
+  - Adds route `metadata` support, including inheritance and override behavior with exposure on `GoRouterState`.
+version: minor

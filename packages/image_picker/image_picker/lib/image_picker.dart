@@ -129,7 +129,23 @@ class ImagePicker {
     int? imageQuality,
     int? limit,
     bool requestFullMetadata = true,
-  }) {
+  }) async {
+    if (limit != null && limit < 1) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 1');
+    }
+    // limit: 1 would fail MultiImagePickerOptions validation (requires >= 2),
+    // so delegate to pickImage which already handles single-image selection.
+    if (limit == 1) {
+      final XFile? image = await pickImage(
+        source: ImageSource.gallery,
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+        imageQuality: imageQuality,
+        requestFullMetadata: requestFullMetadata,
+      );
+      return <XFile>[if (image != null) image];
+    }
+
     final imageOptions = ImageOptions.createAndValidate(
       maxWidth: maxWidth,
       maxHeight: maxHeight,
@@ -242,7 +258,22 @@ class ImagePicker {
     int? imageQuality,
     int? limit,
     bool requestFullMetadata = true,
-  }) {
+  }) async {
+    if (limit != null && limit < 1) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 1');
+    }
+    // limit: 1 would fail MediaOptions validation (requires >= 2),
+    // so delegate to pickMedia which already handles single-item selection.
+    if (limit == 1) {
+      final XFile? media = await pickMedia(
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+        imageQuality: imageQuality,
+        requestFullMetadata: requestFullMetadata,
+      );
+      return <XFile>[if (media != null) media];
+    }
+
     return platform.getMedia(
       options: MediaOptions.createAndValidate(
         allowMultiple: true,

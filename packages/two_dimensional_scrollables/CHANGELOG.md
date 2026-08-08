@@ -1,5 +1,6 @@
-## NEXT
+## 0.5.3
 
+* Fixes hit testing for `TreeView` row content and gestures after horizontal scrolling.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.5.2

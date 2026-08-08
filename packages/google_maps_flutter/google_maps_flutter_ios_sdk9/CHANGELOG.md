@@ -1,3 +1,7 @@
+## 2.18.6
+
+* Fixes a potential compilation issue in tile downscaling.
+
 ## 2.18.5
 
 * Corrects the README header.

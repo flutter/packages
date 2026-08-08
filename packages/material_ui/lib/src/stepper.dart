@@ -190,12 +190,18 @@ class Step {
 /// to this widget based on some logic triggered by the three callbacks that it
 /// provides.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// An example the shows how to use the [Stepper], and the [Stepper] UI
 /// appearance.
 ///
-/// ** See code in examples/api/lib/material/stepper/stepper.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/stepper/stepper.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -299,7 +305,8 @@ class Stepper extends StatefulWidget {
   /// [ControlsDetails.currentStep] value within the callback can change the text
   /// of the continue or cancel button depending on which step users are at.
   ///
-  /// {@tool dartpad}
+  /// <callout-box>
+  ///
   /// Creates a stepper control with custom buttons.
   ///
   /// ```dart
@@ -339,8 +346,13 @@ class Stepper extends StatefulWidget {
   ///   );
   /// }
   /// ```
-  /// ** See code in examples/api/lib/material/stepper/stepper.controls_builder.0.dart **
-  /// {@end-tool}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/stepper/stepper.controls_builder.0.dart#body}
+  ///
+  /// </callout-box>
   final ControlsWidgetBuilder? controlsBuilder;
 
   /// The elevation of this stepper's [Material] when [type] is [StepperType.horizontal].
@@ -1041,11 +1053,17 @@ class _TrianglePainter extends CustomPainter {
 /// )
 /// ```
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// An example that uses [StepStyle] to customize the appearance of each [Step] in a [Stepper].
 ///
-/// ** See code in examples/api/lib/material/stepper/step_style.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/stepper/step_style.0.dart#body}
+///
+/// </callout-box>
 
 @immutable
 class StepStyle with Diagnosticable {

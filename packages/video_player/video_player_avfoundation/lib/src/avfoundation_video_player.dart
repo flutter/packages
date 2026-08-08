@@ -172,6 +172,16 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> setPreventsDisplaySleepDuringVideoPlayback(
+    int playerId,
+    bool preventsDisplaySleepDuringVideoPlayback,
+  ) {
+    return _playerWith(
+      id: playerId,
+    ).setPreventsDisplaySleepDuringVideoPlayback(preventsDisplaySleepDuringVideoPlayback);
+  }
+
+  @override
   Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
     final List<MediaSelectionAudioTrackData> nativeData = await _playerWith(
       id: playerId,
@@ -202,6 +212,84 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   @override
   bool isAudioTrackSupportAvailable() {
     // iOS/macOS with AVFoundation supports audio track selection
+    return true;
+  }
+
+  @override
+  Future<List<VideoTrack>> getVideoTracks(int playerId) async {
+    final NativeVideoTrackData nativeData = await _playerWith(id: playerId).getVideoTracks();
+    final tracks = <VideoTrack>[];
+
+    // Convert HLS variant tracks (iOS 15+)
+    if (nativeData.mediaSelectionTracks != null) {
+      for (final MediaSelectionVideoTrackData track in nativeData.mediaSelectionTracks!) {
+        // Use bitrate as the track ID for HLS variants
+        final trackId = 'variant_${track.bitrate ?? track.variantIndex}';
+        // Generate label from resolution if not provided
+        final String? label =
+            track.label ??
+            (track.width != null && track.height != null ? '${track.height}p' : null);
+        tracks.add(
+          VideoTrack(
+            id: trackId,
+            isSelected: track.isSelected,
+            label: label,
+            bitrate: track.bitrate,
+            width: track.width,
+            height: track.height,
+            frameRate: track.frameRate,
+            codec: track.codec,
+          ),
+        );
+      }
+    }
+
+    // Convert asset tracks (for regular videos)
+    if (nativeData.assetTracks != null) {
+      for (final AssetVideoTrackData track in nativeData.assetTracks!) {
+        final trackId = 'asset_${track.trackId}';
+        // Generate label from resolution if not provided
+        final String? label =
+            track.label ??
+            (track.width != null && track.height != null ? '${track.height}p' : null);
+        tracks.add(
+          VideoTrack(
+            id: trackId,
+            isSelected: track.isSelected,
+            label: label,
+            width: track.width,
+            height: track.height,
+            frameRate: track.frameRate,
+            codec: track.codec,
+          ),
+        );
+      }
+    }
+
+    return tracks;
+  }
+
+  @override
+  Future<void> selectVideoTrack(int playerId, VideoTrack? track) async {
+    if (track == null) {
+      // Auto quality - pass 0 to clear preferredPeakBitRate
+      await _playerWith(id: playerId).selectVideoTrack(0);
+      return;
+    }
+
+    // Use bitrate directly from the track for HLS quality selection
+    if (track.bitrate != null) {
+      await _playerWith(id: playerId).selectVideoTrack(track.bitrate!);
+      return;
+    }
+
+    // For asset tracks without bitrate, we can't really select them differently
+    // Just ignore the selection for non-HLS content
+  }
+
+  @override
+  bool isVideoTrackSupportAvailable() {
+    // iOS with AVFoundation supports video track selection
     return true;
   }
 
@@ -263,6 +351,10 @@ class _PlayerInstance {
 
   Future<void> setPlaybackSpeed(double speed) => _api.setPlaybackSpeed(speed);
 
+  Future<void> setPreventsDisplaySleepDuringVideoPlayback(
+    bool preventsDisplaySleepDuringVideoPlayback,
+  ) => _api.setPreventsDisplaySleepDuringVideoPlayback(preventsDisplaySleepDuringVideoPlayback);
+
   Future<void> seekTo(Duration position) {
     return _api.seekTo(position.inMilliseconds);
   }
@@ -284,6 +376,14 @@ class _PlayerInstance {
     );
 
     return _eventStreamController.stream;
+  }
+
+  Future<NativeVideoTrackData> getVideoTracks() {
+    return _api.getVideoTracks();
+  }
+
+  Future<void> selectVideoTrack(int bitrate) {
+    return _api.selectVideoTrack(bitrate);
   }
 
   Future<void> dispose() async {

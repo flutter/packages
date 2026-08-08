@@ -36,7 +36,7 @@ const double _kMaxLabelTextScaleFactor = 1.3;
 
 /// Material 3 Navigation Bar component.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=DVGYddFaLv0}
+/// Learn more about [NavigationBar] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=DVGYddFaLv0).
 ///
 /// Navigation bars offer a persistent and convenient way to switch between
 /// primary destinations in an app.
@@ -54,25 +54,38 @@ const double _kMaxLabelTextScaleFactor = 1.3;
 /// This widget holds a collection of destinations (usually
 /// [NavigationDestination]s).
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows a [NavigationBar] as it is used within a [Scaffold]
 /// widget. The [NavigationBar] has three [NavigationDestination] widgets and
 /// the initial [selectedIndex] is set to index 0. The [onDestinationSelected]
 /// callback changes the selected item's index and displays a corresponding
 /// widget in the body of the [Scaffold].
 ///
-/// ** See code in examples/api/lib/material/navigation_bar/navigation_bar.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/navigation_bar/navigation_bar.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example showcases [NavigationBar] label behaviors. When tapping on one
 /// of the label behavior options, the [labelBehavior] of the [NavigationBar]
 /// will be updated.
 ///
-/// ** See code in examples/api/lib/material/navigation_bar/navigation_bar.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/navigation_bar/navigation_bar.1.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example shows a [NavigationBar] within a main [Scaffold]
 /// widget that's used to control the visibility of destination pages.
 /// Each destination has its own scaffold and a nested navigator that
@@ -86,8 +99,14 @@ const double _kMaxLabelTextScaleFactor = 1.3;
 /// fades in the new one. Destinations that aren't visible or animating
 /// are kept [Offstage].
 ///
-/// ** See code in examples/api/lib/material/navigation_bar/navigation_bar.2.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/navigation_bar/navigation_bar.2.dart#body}
+///
+/// </callout-box>
+///
 /// See also:
 ///
 ///  * [NavigationDestination]
@@ -231,7 +250,7 @@ class NavigationBar extends StatelessWidget {
   /// the [NavigationDestination] is focused, hovered, or pressed.
   final WidgetStateProperty<Color?>? overlayColor;
 
-  //// The text style of the label.
+  /// The text style of the label.
   ///
   /// If null, [NavigationBarThemeData.labelTextStyle] is used. If that
   /// is also null, the default text style is [TextTheme.labelMedium] with

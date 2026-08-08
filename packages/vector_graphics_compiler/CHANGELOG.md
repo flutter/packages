@@ -1,3 +1,17 @@
+## 1.3.0
+
+* An unrecognized `font-weight` value is now ignored with a warning (and still
+  throws when `warningsAsErrors` is set) instead of always throwing. This
+  preserves an inherited weight, or the initial normal weight at the root, and
+  lets the compiler tolerate non-standard values such as `regular` emitted by
+  some SVG generators.
+
+## 1.2.6
+
+* Fixes `linux-arm64` host support by selecting the Flutter engine
+  artifact directory from `Abi.current()` instead of a hardcoded
+  `linux-x64`.
+
 ## 1.2.5
 
 * Updates allowed version range of `xml` to include up to 7.0.1.
