@@ -1,1 +1,1 @@
-Duplicate route path detected: "details/:id" from SettingsRoute and "details/:id" from DuplicateRoute both match the same URL pattern.
+Duplicate route path detected: "/home/details/:id" from SettingsRoute and "/home/details/:id" from DuplicateRoute both match the same URL pattern.

@@ -49,12 +49,13 @@ Future<void> main() async {
       duplicatePathSeverity: duplicatePathSeverityFromOptions(builderOptions),
     );
 
-    // A test input may assert the warnings the builder logs by adding a
-    // `.warnings` file, one warning per line. An empty file asserts silence.
+    // A test input declares the warnings the builder must log in a `.warnings`
+    // file, one per line. Inputs that log nothing need no file, so an input that
+    // starts logging a warning fails until the warning is declared.
     final warningsFile = File(p.join('${file.path}.warnings'));
-    final String? expectedWarnings = warningsFile.existsSync()
+    final String expectedWarnings = warningsFile.existsSync()
         ? warningsFile.readAsStringSync().trim()
-        : null;
+        : '';
 
     test('verify $fileName', () async {
       // Normalize path separators for cross-platform compatibility
@@ -87,15 +88,16 @@ Future<void> main() async {
         await logs.cancel();
       }
 
-      if (expectedWarnings != null) {
-        expect(warnings.join('\n'), expectedWarnings);
-      }
+      expect(warnings.join('\n'), expectedWarnings);
 
       // Apply consistent formatting to both generated and expected code for comparison.
       final String generated = formatter.format(results.join('\n\n').trim());
       final String expected = formatter.format(expectResult);
       _expectWithNormalizedNewlines(generated, expected);
-    }, timeout: const Timeout(Duration(seconds: 100)));
+      // Each case resolves its input against the real SDK and package sources,
+      // which takes seconds on an idle machine but far longer on a loaded one.
+      // The generous timeout keeps a busy bot from reporting a false failure.
+    }, timeout: const Timeout(Duration(minutes: 5)));
   }
 }
 

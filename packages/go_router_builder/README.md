@@ -46,17 +46,31 @@ Read more about using
 
 #### `duplicate_route_paths`
 
-Sibling routes can end up matching the same URL pattern, either because their
-paths are identical or because they differ only in the name of a path parameter,
-such as `product/:id` and `product/:productId`. The builder reports these as
+Two routes can end up matching the same URL pattern. The builder reports these as
 warnings by default.
 
+Routes are compared by the whole URL each one resolves to, not by the path each
+one declares, so a collision is caught wherever the two routes sit in the tree.
+These all count:
+
+* Identical paths, such as two routes at `details`.
+* Paths differing only in a parameter name, such as `product/:id` and
+  `product/:productId`, since both match the same URL segments. A parameter's
+  regex constraint is kept, so `product/:id(\d+)` stays distinct from
+  `product/:id(\w+)`.
+* A multi-segment path against the equivalent nesting, so a route at
+  `section/detail` collides with a route at `section` holding a child at
+  `detail`.
+* Paths differing only in casing, when the earlier route sets
+  `caseSensitive: false` and so matches any casing. Two case sensitive routes
+  differing in case match different URLs and are left alone.
+
 Warnings rather than errors, because a duplicate path is legal at runtime and is
-not always dead code. `go_router` tries sibling routes in declaration order and
-takes the first one that matches the whole URL. So when two different route
-classes share a path, only the first is reachable at that URL, and navigating to
-the second class's `location` lands on the first class's page instead. That is
-almost always a mistake.
+not always dead code. `go_router` tries routes in declaration order and takes the
+first one that matches the whole URL. So when two different route classes share a
+URL, only the first is reachable there, and navigating to the second class's
+`location` lands on the first class's page instead. That is almost always a
+mistake.
 
 Matching backtracks, though: when a route matches only a prefix and none of its
 children complete the URL, matching moves on to the next sibling. So naming one
@@ -65,14 +79,15 @@ is sound. That URL stays unambiguous because both declarations resolve to the
 same class, every child stays reachable, and it is one way to group children by
 feature area rather than listing them all in one place. The builder reports it
 anyway, since it cannot tell a deliberate grouping from an accidental duplicate.
-Set the option to `ignore` if you want the pattern without the warning.
+Set the option to `ignore` if you want the pattern without the warning. Note that
+the children of those declarations do share a URL namespace, so a child path
+repeated across them is reported separately, and that one is a real collision.
 
 Routes are compared across a whole library, which includes any `part` files, so
-splitting a large route table across parts does not hide anything. Within that
-library everything competes: shell routes and `StatefulShellRoute` branches own
-no path of their own, so the routes inside them compete with the routes around
-them, and separate annotations compete with each other because the generated
-`$appRoutes` collects them into one list.
+splitting a large route table across parts does not hide anything. Shell routes
+and `StatefulShellRoute` branches own no path of their own, so they add nothing
+to the URL of the routes inside them, and separate annotations are compared with
+each other because the generated `$appRoutes` collects them into one list.
 
 To fail the build instead of warning, set the option in `build.yaml`:
 

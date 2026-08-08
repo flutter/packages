@@ -1,1 +1,1 @@
-Duplicate route path detected: "item/:productId" from ProductRoute and "item/:variantId" from VariantRoute both match the same URL pattern.
+Duplicate route path detected: "/home/item/:productId" from ProductRoute and "/home/item/:variantId" from VariantRoute both match the same URL pattern.

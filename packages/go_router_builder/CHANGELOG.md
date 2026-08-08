@@ -1,9 +1,12 @@
 ## 4.5.0
 
-- Detects routes that resolve to the same URL pattern, including relative
-  routes, routes across `StatefulShellRoute` branches, routes inside shell route
-  containers, and routes declared by separate annotations in the same library.
-  These are reported as build warnings by default. The new
+- Detects routes that resolve to the same URL pattern. Routes are compared by
+  the whole URL each one resolves to, so a collision is caught wherever the two
+  routes sit in the route tree, including across shell routes and
+  `StatefulShellRoute` branches, between relative routes, and between separate
+  annotations in one library. Paths that differ only in a parameter name, or
+  only in casing where the earlier route sets `caseSensitive: false`, count as
+  the same pattern. These are reported as build warnings by default. The new
   `duplicate_route_paths` builder option raises them to build errors with
   `error`, or silences them with `ignore`.
 
