@@ -854,6 +854,14 @@ task_queue_is_background_thread(gpointer user_data) {
       std::this_thread::get_id() != self->main_thread_id);
 }
 
+static void async_task_queue_is_background_thread(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    gpointer user_data) {
+  TestPlugin* self = TEST_PLUGIN(user_data);
+  core_tests_pigeon_test_host_integration_core_api_respond_async_task_queue_is_background_thread(
+      response_handle, std::this_thread::get_id() != self->main_thread_id);
+}
+
 static void noop_cb(GObject* object, GAsyncResult* result, gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
@@ -3355,6 +3363,8 @@ static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
     .echo_another_async_nullable_enum = echo_another_async_nullable_enum,
     .default_is_main_thread = default_is_main_thread,
     .task_queue_is_background_thread = task_queue_is_background_thread,
+    .async_task_queue_is_background_thread =
+        async_task_queue_is_background_thread,
     .call_flutter_noop = call_flutter_noop,
     .call_flutter_throw_error = call_flutter_throw_error,
     .call_flutter_throw_error_from_void = call_flutter_throw_error_from_void,

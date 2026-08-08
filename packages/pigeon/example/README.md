@@ -136,12 +136,11 @@ private class PigeonApiImplementation: ExampleHostApi {
     return a + b
   }
 
-  func sendMessage(message: MessageData, completion: @escaping (Result<Bool, Error>) -> Void) {
+  func sendMessage(message: MessageData) async throws -> Bool {
     if message.code == Code.one {
-      completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
-      return
+      throw PigeonError(code: "code", message: "message", details: "details")
     }
-    completion(.success(true))
+    return true
   }
 }
 ```
@@ -161,12 +160,11 @@ private class PigeonApiImplementation : ExampleHostApi {
     return a + b
   }
 
-  override fun sendMessage(message: MessageData, callback: (Result<Boolean>) -> Unit) {
+  override suspend fun sendMessage(message: MessageData): Boolean {
     if (message.code == Code.ONE) {
-      callback(Result.failure(FlutterError("code", "message", "details")))
-      return
+      throw FlutterError("code", "message", "details")
     }
-    callback(Result.success(true))
+    return true
   }
 }
 ```

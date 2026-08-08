@@ -802,6 +802,7 @@ if (wrapped == nil) {
             returnType: func.returnType,
             errorTypeName: _getErrorClassName(generatorOptions),
             isAsynchronous: true,
+            isAsynchronousCallback: func.isAsynchronousCallback,
             swiftFunction: func.swiftFunction,
             getParameterName: _getSafeArgumentName,
           ),
@@ -837,6 +838,7 @@ if (wrapped == nil) {
           channelName: '${makeChannelName(api, func, dartPackageName)}\\(messageChannelSuffix)',
           parameters: func.parameters,
           returnType: func.returnType,
+          isAsynchronousCallback: func.isAsynchronousCallback,
           swiftFunction: func.swiftFunction,
         );
       }
@@ -879,6 +881,7 @@ if (wrapped == nil) {
             returnType: method.returnType,
             errorTypeName: 'Error',
             isAsynchronous: method.isAsynchronous,
+            isAsynchronousCallback: method.isAsynchronousCallback,
             swiftFunction: method.swiftFunction,
           ),
         );
@@ -928,6 +931,7 @@ if (wrapped == nil) {
             parameters: method.parameters,
             returnType: method.returnType,
             isAsynchronous: method.isAsynchronous,
+            isAsynchronousCallback: method.isAsynchronousCallback,
             swiftFunction: method.swiftFunction,
             documentationComments: method.documentationComments,
             serialBackgroundQueue: method.taskQueueType == TaskQueueType.serialBackgroundThread
@@ -1041,6 +1045,7 @@ if (wrapped == nil) {
         ],
         returnType: const TypeDeclaration.voidDeclaration(),
         channelName: removeStrongReferenceName,
+        isAsynchronousCallback: true,
         swiftFunction: null,
       );
     });
@@ -1669,6 +1674,8 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
     required String channelName,
     required List<Parameter> parameters,
     required TypeDeclaration returnType,
+    bool isAsynchronous = true,
+    bool isAsynchronousCallback = false,
     required String? swiftFunction,
   }) {
     final String methodSignature = _getMethodSignature(
@@ -1676,7 +1683,8 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
       parameters: parameters,
       returnType: returnType,
       errorTypeName: _getErrorClassName(generatorOptions),
-      isAsynchronous: true,
+      isAsynchronous: isAsynchronous,
+      isAsynchronousCallback: isAsynchronousCallback,
       swiftFunction: swiftFunction,
       getParameterName: _getSafeArgumentName,
     );
@@ -1688,6 +1696,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
         parameters: parameters,
         returnType: returnType,
         channelName: channelName,
+        isAsynchronousCallback: isAsynchronousCallback,
       );
     });
   }
@@ -1698,6 +1707,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
     required List<Parameter> parameters,
     required TypeDeclaration returnType,
     required String channelName,
+    bool isAsynchronousCallback = false,
   }) {
     /// Returns an argument name that can be used in a context where it is possible to collide.
     String getEnumSafeArgumentExpression(int count, NamedType argument) {
@@ -1708,55 +1718,82 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
       (MapEntry<int, NamedType> e) => getEnumSafeArgumentExpression(e.key, e.value),
     );
     final sendArgument = parameters.isEmpty ? 'nil' : '[${enumSafeArgNames.join(', ')}] as [Any?]';
-    const channel = 'channel';
-    indent.writeln('let channelName: String = "$channelName"');
-    indent.writeln(
-      'let $channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)',
-    );
-    indent.write('$channel.sendMessage($sendArgument) ');
 
-    indent.addScoped('{ response in', '}', () {
-      indent.writeScoped('guard let listResponse = response as? [Any?] else {', '}', () {
-        indent.writeln('completion(.failure(createConnectionError(withChannelName: channelName)))');
-        indent.writeln('return');
-      });
-      indent.writeScoped('if listResponse.count > 1 {', '} ', () {
-        indent.writeln('let code: String = listResponse[0] as! String');
-        indent.writeln('let message: String? = nilOrValue(listResponse[1])');
-        indent.writeln('let details: String? = nilOrValue(listResponse[2])');
-        indent.writeln(
-          'completion(.failure(${_getErrorClassName(generatorOptions)}(code: code, message: message, details: details)))',
-        );
-      }, addTrailingNewline: false);
-      if (!returnType.isNullable && !returnType.isVoid) {
-        indent.addScoped('else if listResponse[0] == nil {', '} ', () {
+    String resumeSuccess(String valStr) => isAsynchronousCallback
+        ? 'completion(.success($valStr))'
+        : (returnType.isVoid ? 'continuation.resume()' : 'continuation.resume(returning: $valStr)');
+
+    String resumeError(String errorExpr) => isAsynchronousCallback
+        ? 'completion(.failure($errorExpr))'
+        : 'continuation.resume(throwing: $errorExpr)';
+
+    void sendBlock() {
+      const channel = 'channel';
+      indent.writeln('let channelName: String = "$channelName"');
+      indent.writeln(
+        'let $channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)',
+      );
+      indent.write('$channel.sendMessage($sendArgument) ');
+
+      indent.addScoped('{ response in', '}', () {
+        indent.writeScoped('guard let listResponse = response as? [Any?] else {', '}', () {
+          indent.writeln(resumeError('createConnectionError(withChannelName: channelName)'));
+          indent.writeln('return');
+        });
+        indent.writeScoped('if listResponse.count > 1 {', '} ', () {
+          indent.writeln('let code: String = listResponse[0] as! String');
+          indent.writeln('let message: String? = nilOrValue(listResponse[1])');
+          indent.writeln('let details: String? = nilOrValue(listResponse[2])');
           indent.writeln(
-            'completion(.failure(${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))',
+            resumeError(
+              '${_getErrorClassName(generatorOptions)}(code: code, message: message, details: details)',
+            ),
           );
         }, addTrailingNewline: false);
-      }
-      indent.addScoped('else {', '}', () {
-        if (returnType.isVoid) {
-          indent.writeln('completion(.success(()))');
-        } else {
-          final String fieldType = _swiftTypeForDartType(returnType);
-          _writeGenericCasting(
-            indent: indent,
-            value: 'listResponse[0]',
-            variableName: 'result',
-            fieldType: fieldType,
-            type: returnType,
-          );
-          // There is a swift bug with unwrapping maps of nullable Enums;
-          final enumMapForceUnwrap =
-              returnType.baseName == 'Map' &&
-                  returnType.typeArguments.any((TypeDeclaration type) => type.isEnum)
-              ? '!'
-              : '';
-          indent.writeln('completion(.success(result$enumMapForceUnwrap))');
+        if (!returnType.isNullable && !returnType.isVoid) {
+          indent.addScoped('else if listResponse[0] == nil {', '} ', () {
+            indent.writeln(
+              resumeError(
+                '${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")',
+              ),
+            );
+          }, addTrailingNewline: false);
         }
+        indent.addScoped('else {', '}', () {
+          if (returnType.isVoid) {
+            indent.writeln(resumeSuccess('()'));
+          } else {
+            final String fieldType = _swiftTypeForDartType(returnType);
+            _writeGenericCasting(
+              indent: indent,
+              value: 'listResponse[0]',
+              variableName: 'result',
+              fieldType: fieldType,
+              type: returnType,
+            );
+            // There is a swift bug with unwrapping maps of nullable Enums;
+            final enumMapForceUnwrap =
+                returnType.baseName == 'Map' &&
+                    returnType.typeArguments.any((TypeDeclaration type) => type.isEnum)
+                ? '!'
+                : '';
+            indent.writeln(resumeSuccess('result$enumMapForceUnwrap'));
+          }
+        });
       });
-    });
+    }
+
+    if (isAsynchronousCallback) {
+      sendBlock();
+    } else {
+      indent.writeScoped(
+        'return try await withCheckedThrowingContinuation { continuation in',
+        '}',
+        () {
+          sendBlock();
+        },
+      );
+    }
   }
 
   void _writeHostMethodMessageHandler(
@@ -1766,6 +1803,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
     required Iterable<Parameter> parameters,
     required TypeDeclaration returnType,
     required bool isAsynchronous,
+    bool isAsynchronousCallback = false,
     required String? swiftFunction,
     String? serialBackgroundQueue,
     String setHandlerCondition = 'let api = api',
@@ -1839,19 +1877,39 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
             }
           });
         }
+        final bool useAsync = isAsynchronous && !isAsynchronousCallback;
         final tryStatement = isAsynchronous ? '' : 'try ';
         late final String call;
         if (onCreateCall == null) {
           // Empty parens are not required when calling a method whose only
           // argument is a trailing closure.
-          final argumentString = methodArgument.isEmpty && isAsynchronous
+          final argumentString = methodArgument.isEmpty && isAsynchronousCallback
               ? ''
               : '(${methodArgument.join(', ')})';
           call = '${tryStatement}api.${components.name}$argumentString';
         } else {
           call = onCreateCall(methodArgument, apiVarName: 'api');
         }
-        if (isAsynchronous) {
+        if (useAsync) {
+          final taskDeclaration = serialBackgroundQueue == null ? 'Task { @MainActor in' : 'Task {';
+          indent.writeln(taskDeclaration);
+          indent.nest(1, () {
+            indent.write('do ');
+            indent.addScoped('{', '}', () {
+              if (returnType.isVoid) {
+                indent.writeln('try await $call');
+                indent.writeln('reply(wrapResult(nil))');
+              } else {
+                indent.writeln('let result = try await $call');
+                indent.writeln('reply(wrapResult(result))');
+              }
+            }, addTrailingNewline: false);
+            indent.addScoped(' catch {', '}', () {
+              indent.writeln('reply(wrapError(error))');
+            });
+          });
+          indent.writeln('}');
+        } else if (isAsynchronous) {
           final resultName = returnType.isVoid ? 'nil' : 'res';
           final successVariableInit = returnType.isVoid ? '' : '(let res)';
           indent.write('$call ');
@@ -2178,6 +2236,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
         ],
         returnType: method.returnType,
         isAsynchronous: method.isAsynchronous,
+        isAsynchronousCallback: true,
         errorTypeName: 'Error',
       );
       indent.writeln(methodSignature);
@@ -2378,6 +2437,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
                 channelName: makeChannelName(api, method, dartPackageName),
                 returnType: method.returnType,
                 isAsynchronous: method.isAsynchronous,
+                isAsynchronousCallback: true,
                 swiftFunction: null,
                 onCreateCall: (List<String> methodParameters, {required String apiVarName}) {
                   final tryStatement = method.isAsynchronous ? '' : 'try ';
@@ -2435,6 +2495,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
       parameters: <Parameter>[Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration)],
       returnType: const TypeDeclaration.voidDeclaration(),
       isAsynchronous: true,
+      isAsynchronousCallback: true,
       errorTypeName: _getErrorClassName(generatorOptions),
     );
     indent.writeScoped('$methodSignature {', '}', () {
@@ -2486,6 +2547,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
               methodName: newInstanceMethodName,
               dartPackageName: dartPackageName,
             ),
+            isAsynchronousCallback: true,
           );
         } else {
           indent.format(
@@ -2541,6 +2603,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
         ],
         returnType: method.returnType,
         isAsynchronous: true,
+        isAsynchronousCallback: true,
         errorTypeName: _getErrorClassName(generatorOptions),
         getParameterName: _getSafeArgumentName,
       );
@@ -2588,6 +2651,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
             ],
             returnType: method.returnType,
             channelName: makeChannelName(api, method, dartPackageName),
+            isAsynchronousCallback: true,
           );
         });
       }
@@ -2845,6 +2909,7 @@ String _getMethodSignature({
   required TypeDeclaration returnType,
   required String errorTypeName,
   bool isAsynchronous = false,
+  bool isAsynchronousCallback = false,
   String? swiftFunction,
   String Function(int index, NamedType argument) getParameterName = _getArgumentName,
 }) {
@@ -2876,19 +2941,19 @@ String _getMethodSignature({
     return '${label != name ? '$label ' : ''}$name: $type';
   }).join(', ');
 
-  if (isAsynchronous) {
-    if (parameters.isEmpty) {
-      return 'func ${components.name}(completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void)';
-    } else {
-      return 'func ${components.name}($parameterSignature, completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void)';
-    }
-  } else {
-    if (returnType.isVoid) {
-      return 'func ${components.name}($parameterSignature) throws';
-    } else {
-      return 'func ${components.name}($parameterSignature) throws -> $returnTypeString';
-    }
+  if (isAsynchronous && !isAsynchronousCallback) {
+    final returnTypeSuffix = returnType.isVoid ? '' : ' -> $returnTypeString';
+    return 'func ${components.name}($parameterSignature) async throws$returnTypeSuffix';
   }
+
+  if (isAsynchronous) {
+    final completion = 'completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void';
+    final params = parameters.isEmpty ? completion : '$parameterSignature, $completion';
+    return 'func ${components.name}($params)';
+  }
+
+  final returnTypeSuffix = returnType.isVoid ? '' : ' -> $returnTypeString';
+  return 'func ${components.name}($parameterSignature) throws$returnTypeSuffix';
 }
 
 /// A class that represents a Swift function argument.

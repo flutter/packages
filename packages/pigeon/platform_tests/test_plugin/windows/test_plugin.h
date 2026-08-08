@@ -38,7 +38,8 @@ class TestSmallApi : public core_tests_pigeontest::HostSmallApi {
 // This plugin handles the native side of the integration tests in
 // example/integration_test/
 class TestPlugin : public flutter::Plugin,
-                   public core_tests_pigeontest::HostIntegrationCoreApi {
+                   public core_tests_pigeontest::HostIntegrationCoreApi,
+                   public core_tests_pigeontest::HostCallbackCoreApi {
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
 
@@ -51,6 +52,37 @@ class TestPlugin : public flutter::Plugin,
   // Disallow copy and assign.
   TestPlugin(const TestPlugin&) = delete;
   TestPlugin& operator=(const TestPlugin&) = delete;
+
+  // HostCallbackCoreApi.
+  void Noop(std::function<
+            void(std::optional<core_tests_pigeontest::FlutterError> reply)>
+                result) override;
+  void EchoString(
+      const std::string& a_string,
+      std::function<void(core_tests_pigeontest::ErrorOr<std::string> reply)>
+          result) override;
+  void EchoAllTypes(
+      const core_tests_pigeontest::AllTypes& everything,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypes>
+                   reply)>
+          result) override;
+  void EchoNullableString(
+      const std::string* a_string,
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<std::optional<std::string>> reply)>
+          result) override;
+  void ThrowError(std::function<void(core_tests_pigeontest::ErrorOr<
+                                     std::optional<::flutter::EncodableValue>>
+                                         reply)>
+                      result) override;
+  void ThrowErrorFromVoid(
+      std::function<
+          void(std::optional<core_tests_pigeontest::FlutterError> reply)>
+          result) override;
+  void TaskQueueIsBackgroundThread(
+      std::function<void(core_tests_pigeontest::ErrorOr<bool> reply)> result)
+      override;
 
   // HostIntegrationCoreApi.
   std::optional<core_tests_pigeontest::FlutterError> Noop() override;
@@ -413,6 +445,9 @@ class TestPlugin : public flutter::Plugin,
           result) override;
   core_tests_pigeontest::ErrorOr<bool> DefaultIsMainThread() override;
   core_tests_pigeontest::ErrorOr<bool> TaskQueueIsBackgroundThread() override;
+  void AsyncTaskQueueIsBackgroundThread(
+      std::function<void(core_tests_pigeontest::ErrorOr<bool> reply)> result)
+      override;
   void CallFlutterNoop(
       std::function<
           void(std::optional<core_tests_pigeontest::FlutterError> reply)>
@@ -688,11 +723,30 @@ class TestPlugin : public flutter::Plugin,
       const std::string& a_string,
       std::function<void(core_tests_pigeontest::ErrorOr<std::string> reply)>
           result) override;
+  void CallFlutterCallbackNoop(
+      std::function<
+          void(std::optional<core_tests_pigeontest::FlutterError> reply)>
+          result) override;
+  void CallFlutterCallbackEchoString(
+      const std::string& a_string,
+      std::function<void(core_tests_pigeontest::ErrorOr<std::string> reply)>
+          result) override;
+  void CallFlutterCallbackThrowError(
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
+              reply)>
+          result) override;
+  void CallFlutterCallbackThrowErrorFromVoid(
+      std::function<
+          void(std::optional<core_tests_pigeontest::FlutterError> reply)>
+          result) override;
   core_tests_pigeontest::UnusedClass TestUnusedClassGenerates();
 
  private:
   std::unique_ptr<core_tests_pigeontest::FlutterIntegrationCoreApi>
       flutter_api_;
+  std::unique_ptr<core_tests_pigeontest::FlutterCallbackCoreApi>
+      flutter_callback_api_;
   std::unique_ptr<core_tests_pigeontest::FlutterSmallApi>
       flutter_small_api_one_;
   std::unique_ptr<core_tests_pigeontest::FlutterSmallApi>
