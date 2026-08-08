@@ -87,6 +87,18 @@ public class WebSettingsProxyApi extends PigeonApiWebSettings {
   }
 
   @Override
+  public void setAllowFileAccessFromFileURLs(
+      @NonNull WebSettings pigeon_instance, boolean enabled) {
+    pigeon_instance.setAllowFileAccessFromFileURLs(enabled);
+  }
+
+  @Override
+  public void setAllowUniversalAccessFromFileURLs(
+      @NonNull WebSettings pigeon_instance, boolean enabled) {
+    pigeon_instance.setAllowUniversalAccessFromFileURLs(enabled);
+  }
+
+  @Override
   public void setGeolocationEnabled(@NonNull WebSettings pigeon_instance, boolean enabled) {
     pigeon_instance.setGeolocationEnabled(enabled);
   }

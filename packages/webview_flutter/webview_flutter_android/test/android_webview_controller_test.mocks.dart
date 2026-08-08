@@ -611,6 +611,24 @@ class MockAndroidWebViewController extends _i1.Mock implements _i7.AndroidWebVie
           as _i8.Future<void>);
 
   @override
+  _i8.Future<void> setAllowFileAccessFromFileURLs(bool? enabled) =>
+      (super.noSuchMethod(
+            Invocation.method(#setAllowFileAccessFromFileURLs, [enabled]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
+
+  @override
+  _i8.Future<void> setAllowUniversalAccessFromFileURLs(bool? enabled) =>
+      (super.noSuchMethod(
+            Invocation.method(#setAllowUniversalAccessFromFileURLs, [enabled]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
+
+  @override
   _i8.Future<void> setGeolocationEnabled(bool? enabled) =>
       (super.noSuchMethod(
             Invocation.method(#setGeolocationEnabled, [enabled]),
@@ -782,6 +800,15 @@ class MockAndroidWebViewController extends _i1.Mock implements _i7.AndroidWebVie
   _i8.Future<void> setPaymentRequestEnabled(bool? enabled) =>
       (super.noSuchMethod(
             Invocation.method(#setPaymentRequestEnabled, [enabled]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
+
+  @override
+  _i8.Future<void> setInsetsForWebContentToIgnore(List<_i7.AndroidWebViewInsets>? insets) =>
+      (super.noSuchMethod(
+            Invocation.method(#setInsetsForWebContentToIgnore, [insets]),
             returnValue: _i8.Future<void>.value(),
             returnValueForMissingStub: _i8.Future<void>.value(),
           )
@@ -1713,6 +1740,24 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
   _i8.Future<void> setAllowContentAccess(bool? enabled) =>
       (super.noSuchMethod(
             Invocation.method(#setAllowContentAccess, [enabled]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
+
+  @override
+  _i8.Future<void> setAllowUniversalAccessFromFileURLs(bool? enabled) =>
+      (super.noSuchMethod(
+            Invocation.method(#setAllowUniversalAccessFromFileURLs, [enabled]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
+
+  @override
+  _i8.Future<void> setAllowFileAccessFromFileURLs(bool? enabled) =>
+      (super.noSuchMethod(
+            Invocation.method(#setAllowFileAccessFromFileURLs, [enabled]),
             returnValue: _i8.Future<void>.value(),
             returnValueForMissingStub: _i8.Future<void>.value(),
           )

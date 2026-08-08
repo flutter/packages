@@ -1,3 +1,9 @@
+## 4.14.0
+
+* Adds support for configuring file URL access permissions. See
+  `AndroidWebViewController.setAllowFileAccessFromFileURLs` and
+  `AndroidWebViewController.setAllowUniversalAccessFromFileURLs`.
+
 ## 4.13.0
 
 * Adds new method for accessing a native `WebView` from a `FlutterPluginBinding`.
