@@ -192,9 +192,34 @@ mixin _GoRouteMixin on RouteBaseConfig {
 
   /// The path this route contributes to the URL, without any parent path.
   ///
-  /// Unlike [_basePathForLocation], this is the path exactly as written in the
-  /// annotation, which is what sibling routes compete over.
+  /// This is the path exactly as written in the annotation.
   String get path;
+
+  /// Whether this route only matches a URL that matches its path's casing.
+  bool get caseSensitive;
+
+  /// The path this route matches, joined with the paths of its ancestors.
+  ///
+  /// Shell routes and branches contribute nothing, since they own no path, so
+  /// this is the URL pattern the route resolves to at runtime. Two routes with
+  /// the same pattern compete for the same URL no matter where they sit in the
+  /// tree, which is what [reportDuplicateRoutePaths] compares.
+  ///
+  /// [_basePathForLocation] cannot serve here, because a relative route
+  /// deliberately reports only its own path.
+  String get _joinedPath {
+    final pathSegments = <String>[];
+
+    RouteBaseConfig? config = this;
+    while (config != null) {
+      if (config case _GoRouteMixin(:final String path)) {
+        pathSegments.add(path);
+      }
+      config = config.parent;
+    }
+
+    return p.url.joinAll(pathSegments.reversed);
+  }
 
   late final Set<String> _pathParams = pathParametersFromPattern(_basePathForLocation);
 
@@ -415,6 +440,7 @@ class GoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   final String? name;
 
   /// The case sensitivity of the GoRoute to be created by this configuration.
+  @override
   final bool caseSensitive;
 
   /// Whether to enable the onExit callback for this route.
@@ -427,23 +453,8 @@ class GoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   /// The parent navigator key.
   final String? parentNavigatorKey;
 
-  String get _rawJoinedPath {
-    final pathSegments = <String>[];
-
-    RouteBaseConfig? config = this;
-    while (config != null) {
-      if (config
-          case GoRouteConfig(:final String path) || RelativeGoRouteConfig(:final String path)) {
-        pathSegments.add(path);
-      }
-      config = config.parent;
-    }
-
-    return p.url.joinAll(pathSegments.reversed);
-  }
-
   @override
-  String get _basePathForLocation => _rawJoinedPath;
+  String get _basePathForLocation => _joinedPath;
 
   @override
   String get _mixinDefinition {
@@ -514,6 +525,7 @@ class RelativeGoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   final String path;
 
   /// The case sensitivity of the GoRoute to be created by this configuration.
+  @override
   final bool caseSensitive;
 
   /// Whether to enable the onExit callback for this route.
@@ -984,86 +996,85 @@ bool $iterablesEqualHelperName<T>(Iterable<T>? iterable1, Iterable<T>? iterable2
 /// Reports routes that resolve to the same URL pattern, with the severity
 /// selected by the `duplicate_route_paths` builder option.
 ///
-/// [roots] holds every top-level route config in a library. Those compete for
-/// the root URL namespace, because the generated `$appRoutes` collects them all
-/// into one list. The walk then descends one level at a time.
+/// [roots] holds every top-level route config in a library, which is the widest
+/// scope the builder can see, since it generates one library at a time.
 ///
-/// Shell routes and branches are transparent: their children compete in the
-/// parent's URL namespace instead of owning one of their own.
+/// Routes are compared by the whole URL pattern they resolve to, their
+/// [_GoRouteMixin._joinedPath], rather than by the path each one declares. Two
+/// routes at different depths can still land on one URL: a route nested as `a`
+/// then `b` resolves to the same place as a route declared at `a/b`. Comparing
+/// declared paths level by level misses that, and misses a collision between the
+/// children of two declarations that themselves share a path.
 ///
-/// Path parameters are normalized, so `:id` and `:userId` are treated as
-/// equivalent, since they match the same URL segments at runtime.
+/// `go_router` tries routes in declaration order and takes the first whose
+/// pattern matches the whole URL, so of two routes sharing a pattern the later
+/// can never be the match for it.
+///
+/// Parameter names are normalized, since `:id` and `:userId` match the same URL
+/// segments. A route that is not case sensitive also shadows a later route whose
+/// pattern differs from it only in casing.
 void reportDuplicateRoutePaths(List<RouteBaseConfig> roots, DuplicatePathSeverity severity) {
   if (severity == DuplicatePathSeverity.ignore) {
     return;
   }
-  _reportDuplicatePathsAmongSiblings(roots, severity);
-}
 
-void _reportDuplicatePathsAmongSiblings(
-  List<RouteBaseConfig> children,
-  DuplicatePathSeverity severity,
-) {
-  final siblings = <_GoRouteMixin>[];
-  _collectRoutesOwningPaths(children, siblings);
+  final routes = <_GoRouteMixin>[];
+  _collectRoutes(roots, routes);
 
+  // Keyed by exact pattern, then again by folded pattern for the routes that
+  // match any casing. Both keep their first entry, which is the route
+  // `go_router` matches, because the walk above is in declaration order.
   final seen = <String, _GoRouteMixin>{};
-  for (final route in siblings) {
-    final String normalized = _normalizePath(route.path);
-    final _GoRouteMixin? existing = seen[normalized];
-    if (existing == null) {
-      seen[normalized] = route;
-      continue;
-    }
-    final String message = _duplicatePathMessage(existing, route);
-    if (severity == DuplicatePathSeverity.error) {
-      throw InvalidGenerationSourceError(message, element: route.routeDataClass);
-    }
-    log.warning(message);
-  }
+  final seenIgnoringCase = <String, _GoRouteMixin>{};
+  for (final route in routes) {
+    final String pattern = normalizePathParameters(route._joinedPath);
+    final String folded = pattern.toLowerCase();
 
-  // Only the collected routes own a URL namespace, so recursing into them
-  // visits every level of the tree exactly once.
-  for (final route in siblings) {
-    _reportDuplicatePathsAmongSiblings(route._children, severity);
+    final _GoRouteMixin? existing = seen[pattern] ?? seenIgnoringCase[folded];
+    if (existing != null) {
+      final String message = _duplicatePathMessage(existing, route);
+      if (severity == DuplicatePathSeverity.error) {
+        throw InvalidGenerationSourceError(message, element: route.routeDataClass);
+      }
+      log.warning(message);
+    }
+
+    seen.putIfAbsent(pattern, () => route);
+    if (!route.caseSensitive) {
+      seenIgnoringCase.putIfAbsent(folded, () => route);
+    }
   }
 }
 
 /// Describes the conflict between two routes that resolve to the same URL.
 ///
-/// One route class declared twice at the same path gets its own wording, since
-/// naming that class on both sides of an "and" reads as though two classes were
+/// One route class declared twice at one URL gets its own wording, since naming
+/// that class on both sides of an "and" reads as though two classes were
 /// involved. Any other pair names both sides, which stays clear even when the
-/// class repeats, because the two paths differ.
+/// class repeats, because the two patterns differ.
 String _duplicatePathMessage(_GoRouteMixin existing, _GoRouteMixin route) {
-  if (existing.routeDataClass == route.routeDataClass && existing.path == route.path) {
+  final String existingPattern = existing._joinedPath;
+  final String pattern = route._joinedPath;
+  if (existing.routeDataClass == route.routeDataClass && existingPattern == pattern) {
     return 'Duplicate route path detected: ${route._className} is declared more '
-        'than once at "${route.path}".';
+        'than once at "$pattern".';
   }
   return 'Duplicate route path detected: '
-      '"${existing.path}" from ${existing._className} and '
-      '"${route.path}" from ${route._className} '
+      '"$existingPattern" from ${existing._className} and '
+      '"$pattern" from ${route._className} '
       'both match the same URL pattern.';
 }
 
-/// Collects the routes in [children] that own a path of their own.
+/// Collects every route in the tree that resolves to a URL of its own, in
+/// declaration order.
 ///
-/// Both `GoRoute` and relative `GoRoute` configs own a path. Shell routes and
-/// branches do not, so we look through them to the routes inside, which compete
-/// with the routes at this level.
-void _collectRoutesOwningPaths(List<RouteBaseConfig> children, List<_GoRouteMixin> result) {
+/// Shell routes and branches own no path, so they contribute nothing themselves,
+/// but the routes inside them do and are collected all the same.
+void _collectRoutes(List<RouteBaseConfig> children, List<_GoRouteMixin> result) {
   for (final child in children) {
     if (child is _GoRouteMixin) {
       result.add(child);
-    } else {
-      _collectRoutesOwningPaths(child._children, result);
     }
+    _collectRoutes(child._children, result);
   }
 }
-
-/// Matches a named path parameter, such as `:id` or `:userId`.
-final RegExp _pathParameterPattern = RegExp(r':\w+');
-
-/// Normalizes a route path for structural comparison by replacing named
-/// parameters, such as `:id` and `:userId`, with a placeholder.
-String _normalizePath(String path) => path.replaceAll(_pathParameterPattern, ':_');

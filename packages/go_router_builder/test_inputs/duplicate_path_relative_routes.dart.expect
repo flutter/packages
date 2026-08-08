@@ -1,1 +1,1 @@
-Duplicate route path detected: "details" from FirstRoute and "details" from SecondRoute both match the same URL pattern.
+Duplicate route path detected: "/home/details" from FirstRoute and "/home/details" from SecondRoute both match the same URL pattern.

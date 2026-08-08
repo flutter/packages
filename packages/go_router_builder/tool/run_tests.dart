@@ -49,12 +49,13 @@ Future<void> main() async {
       duplicatePathSeverity: duplicatePathSeverityFromOptions(builderOptions),
     );
 
-    // A test input may assert the warnings the builder logs by adding a
-    // `.warnings` file, one warning per line. An empty file asserts silence.
+    // A test input declares the warnings the builder must log in a `.warnings`
+    // file, one per line. Inputs that log nothing need no file, so an input that
+    // starts logging a warning fails until the warning is declared.
     final warningsFile = File(p.join('${file.path}.warnings'));
-    final String? expectedWarnings = warningsFile.existsSync()
+    final String expectedWarnings = warningsFile.existsSync()
         ? warningsFile.readAsStringSync().trim()
-        : null;
+        : '';
 
     test('verify $fileName', () async {
       // Normalize path separators for cross-platform compatibility
@@ -81,21 +82,24 @@ Future<void> main() async {
       try {
         generator.generateForAnnotation(reader, results, <String>{});
       } on InvalidGenerationSourceError catch (e) {
-        expect(expectResult, e.message.trim());
+        // The generated message is the value under test, so it goes first.
+        // Reversing these labels the diff backwards on failure.
+        expect(e.message.trim(), expectResult);
         return;
       } finally {
         await logs.cancel();
       }
 
-      if (expectedWarnings != null) {
-        expect(warnings.join('\n'), expectedWarnings);
-      }
+      expect(warnings.join('\n'), expectedWarnings);
 
       // Apply consistent formatting to both generated and expected code for comparison.
       final String generated = formatter.format(results.join('\n\n').trim());
       final String expected = formatter.format(expectResult.trim());
       expect(generated, equals(expected));
-    }, timeout: const Timeout(Duration(seconds: 100)));
+      // Each case resolves its input against the real SDK and package sources,
+      // which takes seconds on an idle machine but far longer on a loaded one.
+      // The generous timeout keeps a busy bot from reporting a false failure.
+    }, timeout: const Timeout(Duration(minutes: 5)));
   }
 }
 
