@@ -407,19 +407,20 @@ void main() {
       });
     });
 
-    group('dart_code_linter', () {
-      test('runs dart_code_linter if present in dev_dependencies', () async {
+    group('cognitive_complexity', () {
+      test('runs cognitive_complexity if present in dev_dependencies', () async {
         final RepositoryPackage package = createFakePackage(
           'a_package',
           packagesDir,
           isFlutter: true,
         );
         _writeFakePubspecWithLinter(package, inDevDependencies: true);
+        package.libDirectory.childFile('lib.dart').createSync();
 
         _mockCallsForFlutterAnalyze(
           processRunner,
           extraDartCalls: [
-            FakeProcessInfo(MockProcess(), <String>['run', 'dart_code_linter:metrics']),
+            FakeProcessInfo(MockProcess(), <String>['run', 'cognitive_complexity']),
           ],
         );
 
@@ -432,23 +433,22 @@ void main() {
             ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
             ProcessCall('dart', const <String>[
               'run',
-              'dart_code_linter:metrics',
-              'analyze',
-              'lib',
-              '--set-exit-on-violation-level=warning',
+              'cognitive_complexity',
+              'lib/lib.dart',
             ], package.path),
           ]),
         );
-        expect(output, contains('Running dart_code_linter:metrics analysis...'));
+        expect(output, contains('Running cognitive_complexity analysis...'));
       });
 
-      test('does not run dart_code_linter when --downgrade is specified', () async {
+      test('does not run cognitive_complexity when --downgrade is specified', () async {
         final RepositoryPackage package = createFakePackage(
           'a_package',
           packagesDir,
           isFlutter: true,
         );
         _writeFakePubspecWithLinter(package, inDevDependencies: true);
+        package.libDirectory.childFile('lib.dart').createSync();
 
         processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(), <String>['pub', 'downgrade']),
@@ -472,17 +472,17 @@ void main() {
           ]),
         );
         final String combinedOutput = output.join('\n').toLowerCase();
-        expect(combinedOutput, isNot(contains('dart_code_linter')));
-        expect(combinedOutput, isNot(contains('metrics')));
+        expect(combinedOutput, isNot(contains('cognitive_complexity')));
       });
 
-      test('does not run dart_code_linter if present in dependencies', () async {
+      test('does not run cognitive_complexity if present in dependencies', () async {
         final RepositoryPackage package = createFakePackage(
           'a_package',
           packagesDir,
           isFlutter: true,
         );
         _writeFakePubspecWithLinter(package, inDependencies: true);
+        package.libDirectory.childFile('lib.dart').createSync();
 
         _mockCallsForFlutterAnalyze(processRunner);
 
@@ -496,16 +496,16 @@ void main() {
           ]),
         );
         final String combinedOutput = output.join('\n').toLowerCase();
-        expect(combinedOutput, isNot(contains('dart_code_linter')));
-        expect(combinedOutput, isNot(contains('metrics')));
+        expect(combinedOutput, isNot(contains('cognitive_complexity')));
       });
 
-      test('does not run dart_code_linter if not present', () async {
+      test('does not run cognitive_complexity if not present', () async {
         final RepositoryPackage package = createFakePackage(
           'a_package',
           packagesDir,
           isFlutter: true,
         );
+        package.libDirectory.childFile('lib.dart').createSync();
 
         _mockCallsForFlutterAnalyze(processRunner);
 
@@ -519,18 +519,18 @@ void main() {
           ]),
         );
         final String combinedOutput = output.join('\n').toLowerCase();
-        expect(combinedOutput, isNot(contains('dart_code_linter')));
-        expect(combinedOutput, isNot(contains('metrics')));
+        expect(combinedOutput, isNot(contains('cognitive_complexity')));
       });
 
-      test('runs dart_code_linter using dart for pure Dart packages', () async {
+      test('runs cognitive_complexity using dart for pure Dart packages', () async {
         final RepositoryPackage package = createFakePackage('a_package', packagesDir);
         _writeFakePubspecWithLinter(package, inDevDependencies: true, includeFlutter: false);
+        package.libDirectory.childFile('lib.dart').createSync();
 
         processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
           FakeProcessInfo(MockProcess(), <String>['analyze']),
-          FakeProcessInfo(MockProcess(), <String>['run', 'dart_code_linter:metrics']),
+          FakeProcessInfo(MockProcess(), <String>['run', 'cognitive_complexity']),
         ];
 
         final List<String> output = await runCapturingPrint(runner, <String>['analyze']);
@@ -542,17 +542,15 @@ void main() {
             ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
             ProcessCall('dart', const <String>[
               'run',
-              'dart_code_linter:metrics',
-              'analyze',
-              'lib',
-              '--set-exit-on-violation-level=warning',
+              'cognitive_complexity',
+              'lib/lib.dart',
             ], package.path),
           ]),
         );
-        expect(output, contains('Running dart_code_linter:metrics analysis...'));
+        expect(output, contains('Running cognitive_complexity analysis...'));
       });
 
-      test('skips dart_code_linter if lib/ does not exist', () async {
+      test('skips cognitive_complexity if lib/ does not exist', () async {
         final RepositoryPackage package = createFakePackage(
           'a_package',
           packagesDir,
@@ -573,22 +571,48 @@ void main() {
           ]),
         );
         final String combinedOutput = output.join('\n').toLowerCase();
-        expect(combinedOutput, isNot(contains('dart_code_linter')));
-        expect(combinedOutput, isNot(contains('metrics')));
+        expect(combinedOutput, isNot(contains('cognitive_complexity')));
       });
 
-      test('fails if dart_code_linter analysis fails', () async {
+      test('skips cognitive_complexity if lib/ only contains generated files', () async {
         final RepositoryPackage package = createFakePackage(
           'a_package',
           packagesDir,
           isFlutter: true,
         );
         _writeFakePubspecWithLinter(package, inDevDependencies: true);
+        package.libDirectory.childFile('foo.g.dart').createSync();
+        package.libDirectory.childFile('bar.mocks.dart').createSync();
+        package.libDirectory.childFile('baz.gen.dart').createSync();
+
+        _mockCallsForFlutterAnalyze(processRunner);
+
+        final List<String> output = await runCapturingPrint(runner, <String>['analyze']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+          ]),
+        );
+        final String combinedOutput = output.join('\n').toLowerCase();
+        expect(combinedOutput, isNot(contains('cognitive_complexity')));
+      });
+
+      test('fails if cognitive_complexity analysis fails', () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
+        _writeFakePubspecWithLinter(package, inDevDependencies: true);
+        package.libDirectory.childFile('lib.dart').createSync();
 
         _mockCallsForFlutterAnalyze(
           processRunner,
           extraDartCalls: [
-            FakeProcessInfo(MockProcess(exitCode: 1), <String>['run', 'dart_code_linter:metrics']),
+            FakeProcessInfo(MockProcess(exitCode: 1), <String>['run', 'cognitive_complexity']),
           ],
         );
 
@@ -619,17 +643,17 @@ void main() {
           isFlutter: true,
         );
         _writeFakePubspecWithLinter(package, inDevDependencies: true);
+        package.libDirectory.childFile('lib.dart').createSync();
         package.ciConfigFile.writeAsStringSync('allow_custom_analysis_options: true');
         package.directory.childFile('analysis_options.yaml').writeAsStringSync('''
-dart_code_linter:
-  metrics:
-    cyclomatic-complexity: 15
+cognitive_complexity:
+  fail-threshold: 15
 ''');
 
         _mockCallsForFlutterAnalyze(
           processRunner,
           extraDartCalls: [
-            FakeProcessInfo(MockProcess(exitCode: 1), <String>['run', 'dart_code_linter:metrics']),
+            FakeProcessInfo(MockProcess(exitCode: 1), <String>['run', 'cognitive_complexity']),
           ],
         );
 
@@ -642,6 +666,22 @@ dart_code_linter:
           },
         );
 
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+            ProcessCall('dart', const <String>[
+              'run',
+              'cognitive_complexity',
+              '--threshold',
+              '15',
+              '--fail-threshold',
+              '15',
+              'lib/lib.dart',
+            ], package.path),
+          ]),
+        );
         expect(commandError, isA<ToolExit>());
         expect(
           output,
@@ -773,6 +813,7 @@ dart_code_linter:
             isFlutter: true,
           );
           _writeFakePubspecWithLinter(package, inDevDependencies: true);
+          package.libDirectory.childFile('lib.dart').createSync();
           package.ciConfigFile.writeAsStringSync('analyze_skills: true');
 
           package.directory
@@ -789,7 +830,7 @@ dart_code_linter:
             FakeProcessInfo(MockProcess(exitCode: 1), <String>['analyze']), // skills package
             FakeProcessInfo(MockProcess(exitCode: 1), <String>[
               'run',
-              'dart_code_linter:metrics',
+              'cognitive_complexity',
             ]), // custom linter
           ];
 
@@ -1914,8 +1955,8 @@ environment:
   ${includeFlutter ? 'flutter: ">=2.5.0"' : ''}
 dependencies:
   ${includeFlutter ? 'flutter:\n    sdk: flutter' : ''}
-${inDependencies ? '  dart_code_linter: 4.1.5' : ''}
-${inDevDependencies ? 'dev_dependencies:\n  dart_code_linter: 4.1.5' : ''}
+${inDependencies ? '  cognitive_complexity: 0.2.0' : ''}
+${inDevDependencies ? 'dev_dependencies:\n  cognitive_complexity: 0.2.0' : ''}
 ''');
 }
 

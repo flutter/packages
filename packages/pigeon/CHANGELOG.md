@@ -2,6 +2,12 @@
 
 * **Breaking Change** Updates Kotlin and Swift generators to generate `suspend` functions and `async throws` signatures for `@FlutterApi` methods by default. 
   * Use `@asyncCallback` if callback-style signatures are required.
+  
+## 27.3.1
+
+* Updates `analyzer` dependency to support versions 13 and 14.
+* Updates minimum Dart SDK constraint to 3.11.0.
+
 
 ## 27.3.0
 
