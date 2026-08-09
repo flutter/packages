@@ -10,7 +10,7 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		33A341B8291ECCA100D34E0F /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A341B7291ECCA100D34E0F /* RunnerTests.swift */; };
 		33A341CB291ECDFD00D34E0F /* MultipleArityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A341BF291ECDFD00D34E0F /* MultipleArityTests.swift */; };
-		33A341CC291ECDFD00D34E0F /* AllDatatypesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A341C0291ECDFD00D34E0F /* AllDatatypesTests.swift */; };
+		33A341CC291ECDFD00D34E0F /* DataClassMethodsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A341C0291ECDFD00D34E0F /* DataClassMethodsTests.swift */; };
 		33A341CD291ECDFD00D34E0F /* ListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A341C1291ECDFD00D34E0F /* ListTests.swift */; };
 		33A341CE291ECDFD00D34E0F /* EnumTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A341C2291ECDFD00D34E0F /* EnumTests.swift */; };
 		33A341CF291ECDFD00D34E0F /* NonNullFieldsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A341C3291ECDFD00D34E0F /* NonNullFieldsTest.swift */; };
@@ -61,7 +61,7 @@
 		33A341B5291ECCA100D34E0F /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		33A341B7291ECCA100D34E0F /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
 		33A341BF291ECDFD00D34E0F /* MultipleArityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipleArityTests.swift; sourceTree = "<group>"; };
-		33A341C0291ECDFD00D34E0F /* AllDatatypesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AllDatatypesTests.swift; sourceTree = "<group>"; };
+		33A341C0291ECDFD00D34E0F /* DataClassMethodsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataClassMethodsTests.swift; sourceTree = "<group>"; };
 		33A341C1291ECDFD00D34E0F /* ListTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListTests.swift; sourceTree = "<group>"; };
 		33A341C2291ECDFD00D34E0F /* EnumTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnumTests.swift; sourceTree = "<group>"; };
 		33A341C3291ECDFD00D34E0F /* NonNullFieldsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonNullFieldsTest.swift; sourceTree = "<group>"; };
@@ -113,7 +113,7 @@
 		33A341B6291ECCA100D34E0F /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				33A341C0291ECDFD00D34E0F /* AllDatatypesTests.swift */,
+				33A341C0291ECDFD00D34E0F /* DataClassMethodsTests.swift */,
 				33A341C9291ECDFD00D34E0F /* AsyncHandlersTest.swift */,
 				33A341C4291ECDFD00D34E0F /* EchoBinaryMessenger.swift */,
 				33A341C2291ECDFD00D34E0F /* EnumTests.swift */,
@@ -350,7 +350,7 @@
 				33A341CF291ECDFD00D34E0F /* NonNullFieldsTest.swift in Sources */,
 				F750BDEE2F28844900E3DB39 /* ProxyApiTests.swift in Sources */,
 				33A341CB291ECDFD00D34E0F /* MultipleArityTests.swift in Sources */,
-				33A341CC291ECDFD00D34E0F /* AllDatatypesTests.swift in Sources */,
+				33A341CC291ECDFD00D34E0F /* DataClassMethodsTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

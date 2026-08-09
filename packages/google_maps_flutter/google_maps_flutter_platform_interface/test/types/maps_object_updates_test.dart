@@ -10,8 +10,7 @@ import 'package:google_maps_flutter_platform_interface/src/types/utils/maps_obje
 import 'test_maps_object.dart';
 
 class TestMapsObjectUpdate extends MapsObjectUpdates<TestMapsObject> {
-  TestMapsObjectUpdate.from(super.previous, super.current)
-    : super.from(objectName: 'testObject');
+  TestMapsObjectUpdate.from(super.previous, super.current) : super.from(objectName: 'testObject');
 }
 
 void main() {
@@ -22,18 +21,13 @@ void main() {
       const to1 = TestMapsObject(MapsObjectId<TestMapsObject>('id1'));
       const to2 = TestMapsObject(MapsObjectId<TestMapsObject>('id2'));
       const to3 = TestMapsObject(MapsObjectId<TestMapsObject>('id3'));
-      const to3Changed = TestMapsObject(
-        MapsObjectId<TestMapsObject>('id3'),
-        data: 2,
-      );
+      const to3Changed = TestMapsObject(MapsObjectId<TestMapsObject>('id3'), data: 2);
       const to4 = TestMapsObject(MapsObjectId<TestMapsObject>('id4'));
       final previous = <TestMapsObject>{to1, to2, to3};
       final current = <TestMapsObject>{to2, to3Changed, to4};
       final updates = TestMapsObjectUpdate.from(previous, current);
 
-      final toRemove = <MapsObjectId<TestMapsObject>>{
-        const MapsObjectId<TestMapsObject>('id1'),
-      };
+      final toRemove = <MapsObjectId<TestMapsObject>>{const MapsObjectId<TestMapsObject>('id1')};
       expect(updates.objectIdsToRemove, toRemove);
 
       final toAdd = <TestMapsObject>{to4};
@@ -47,10 +41,7 @@ void main() {
       const to1 = TestMapsObject(MapsObjectId<TestMapsObject>('id1'));
       const to2 = TestMapsObject(MapsObjectId<TestMapsObject>('id2'));
       const to3 = TestMapsObject(MapsObjectId<TestMapsObject>('id3'));
-      const to3Changed = TestMapsObject(
-        MapsObjectId<TestMapsObject>('id3'),
-        data: 2,
-      );
+      const to3Changed = TestMapsObject(MapsObjectId<TestMapsObject>('id3'), data: 2);
       const to4 = TestMapsObject(MapsObjectId<TestMapsObject>('id4'));
       final previous = <TestMapsObject>{to1, to2, to3};
       final current = <TestMapsObject>{to2, to3Changed, to4};
@@ -70,10 +61,7 @@ void main() {
       const to1 = TestMapsObject(MapsObjectId<TestMapsObject>('id1'));
       const to2 = TestMapsObject(MapsObjectId<TestMapsObject>('id2'));
       const to3 = TestMapsObject(MapsObjectId<TestMapsObject>('id3'));
-      const to3Changed = TestMapsObject(
-        MapsObjectId<TestMapsObject>('id3'),
-        data: 2,
-      );
+      const to3Changed = TestMapsObject(MapsObjectId<TestMapsObject>('id3'), data: 2);
       const to4 = TestMapsObject(MapsObjectId<TestMapsObject>('id4'));
       final previous = <TestMapsObject>{to1, to2, to3};
       final current1 = <TestMapsObject>{to2, to3Changed, to4};
@@ -90,10 +78,7 @@ void main() {
       const to1 = TestMapsObject(MapsObjectId<TestMapsObject>('id1'));
       const to2 = TestMapsObject(MapsObjectId<TestMapsObject>('id2'));
       const to3 = TestMapsObject(MapsObjectId<TestMapsObject>('id3'));
-      const to3Changed = TestMapsObject(
-        MapsObjectId<TestMapsObject>('id3'),
-        data: 2,
-      );
+      const to3Changed = TestMapsObject(MapsObjectId<TestMapsObject>('id3'), data: 2);
       const to4 = TestMapsObject(MapsObjectId<TestMapsObject>('id4'));
       final previous = <TestMapsObject>{to1, to2, to3};
       final current = <TestMapsObject>{to2, to3Changed, to4};
@@ -112,10 +97,7 @@ void main() {
       const to1 = TestMapsObject(MapsObjectId<TestMapsObject>('id1'));
       const to2 = TestMapsObject(MapsObjectId<TestMapsObject>('id2'));
       const to3 = TestMapsObject(MapsObjectId<TestMapsObject>('id3'));
-      const to3Changed = TestMapsObject(
-        MapsObjectId<TestMapsObject>('id3'),
-        data: 2,
-      );
+      const to3Changed = TestMapsObject(MapsObjectId<TestMapsObject>('id3'), data: 2);
       const to4 = TestMapsObject(MapsObjectId<TestMapsObject>('id4'));
       final previous = <TestMapsObject>{to1, to2, to3};
       final current = <TestMapsObject>{to2, to3Changed, to4};

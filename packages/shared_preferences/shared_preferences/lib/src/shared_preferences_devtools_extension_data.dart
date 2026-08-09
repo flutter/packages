@@ -13,8 +13,7 @@ const String _eventPrefix = 'shared_preferences.';
 
 /// A typedef for the post event function.
 @visibleForTesting
-typedef PostEvent =
-    void Function(String eventKind, Map<String, Object?> eventData);
+typedef PostEvent = void Function(String eventKind, Map<String, Object?> eventData);
 
 /// A helper class that provides data to the DevTools extension.
 ///
@@ -24,9 +23,7 @@ class SharedPreferencesDevToolsExtensionData {
   /// The default constructor for [SharedPreferencesDevToolsExtensionData].
   ///
   /// Accepts an optional [PostEvent] that should only be overwritten when testing.
-  const SharedPreferencesDevToolsExtensionData([
-    this._postEvent = developer.postEvent,
-  ]);
+  const SharedPreferencesDevToolsExtensionData([this._postEvent = developer.postEvent]);
 
   final PostEvent _postEvent;
 
@@ -46,8 +43,7 @@ class SharedPreferencesDevToolsExtensionData {
   Future<void> requestValue(String key, bool legacy) async {
     final Object? value;
     if (legacy) {
-      final SharedPreferences legacyPrefs =
-          await SharedPreferences.getInstance();
+      final SharedPreferences legacyPrefs = await SharedPreferences.getInstance();
       value = legacyPrefs.get(key);
     } else {
       value = await SharedPreferencesAsync()
@@ -72,8 +68,7 @@ class SharedPreferencesDevToolsExtensionData {
   ) async {
     final Object? value = jsonDecode(serializedValue);
     if (legacy) {
-      final SharedPreferences legacyPrefs =
-          await SharedPreferences.getInstance();
+      final SharedPreferences legacyPrefs = await SharedPreferences.getInstance();
       // we need to check the kind because sometimes a double
       // gets interpreted as an int. If this was not an issue
       // we'd only need to do a simple pattern matching on value.
@@ -87,10 +82,7 @@ class SharedPreferencesDevToolsExtensionData {
         case 'String':
           await legacyPrefs.setString(key, value! as String);
         case 'List<String>':
-          await legacyPrefs.setStringList(
-            key,
-            (value! as List<Object?>).cast(),
-          );
+          await legacyPrefs.setStringList(key, (value! as List<Object?>).cast());
       }
     } else {
       final prefs = SharedPreferencesAsync();
@@ -116,8 +108,7 @@ class SharedPreferencesDevToolsExtensionData {
   /// Requests a key removal and posts an empty event when removed.
   Future<void> requestRemoveKey(String key, bool legacy) async {
     if (legacy) {
-      final SharedPreferences legacyPrefs =
-          await SharedPreferences.getInstance();
+      final SharedPreferences legacyPrefs = await SharedPreferences.getInstance();
       await legacyPrefs.remove(key);
     } else {
       await SharedPreferencesAsync().remove(key);

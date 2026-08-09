@@ -11,7 +11,7 @@
 		33A341A5291EBA9100D34E0F /* AsyncHandlersTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 33A34196291EBA9000D34E0F /* AsyncHandlersTest.m */; };
 		33A341A6291EBA9100D34E0F /* HandlerBinaryMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 33A34197291EBA9000D34E0F /* HandlerBinaryMessenger.m */; };
 		33A341A7291EBA9100D34E0F /* ListTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 33A34198291EBA9000D34E0F /* ListTest.m */; };
-		33A341A8291EBA9100D34E0F /* AllDatatypesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 33A34199291EBA9000D34E0F /* AllDatatypesTest.m */; };
+		33A341A8291EBA9100D34E0F /* DataClassMethodsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 33A34199291EBA9000D34E0F /* DataClassMethodsTest.m */; };
 		33A341A9291EBA9100D34E0F /* NonNullFieldsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 33A3419B291EBA9000D34E0F /* NonNullFieldsTest.m */; };
 		33A341AA291EBA9100D34E0F /* NullableReturnsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 33A3419D291EBA9000D34E0F /* NullableReturnsTest.m */; };
 		33A341AB291EBA9100D34E0F /* EnumTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 33A3419E291EBA9000D34E0F /* EnumTest.m */; };
@@ -59,7 +59,7 @@
 		33A34196291EBA9000D34E0F /* AsyncHandlersTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncHandlersTest.m; sourceTree = "<group>"; };
 		33A34197291EBA9000D34E0F /* HandlerBinaryMessenger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HandlerBinaryMessenger.m; sourceTree = "<group>"; };
 		33A34198291EBA9000D34E0F /* ListTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListTest.m; sourceTree = "<group>"; };
-		33A34199291EBA9000D34E0F /* AllDatatypesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllDatatypesTest.m; sourceTree = "<group>"; };
+		33A34199291EBA9000D34E0F /* DataClassMethodsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataClassMethodsTest.m; sourceTree = "<group>"; };
 		33A3419A291EBA9000D34E0F /* MockBinaryMessenger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockBinaryMessenger.h; sourceTree = "<group>"; };
 		33A3419B291EBA9000D34E0F /* NonNullFieldsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NonNullFieldsTest.m; sourceTree = "<group>"; };
 		33A3419C291EBA9000D34E0F /* EchoMessenger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EchoMessenger.h; sourceTree = "<group>"; };
@@ -112,7 +112,7 @@
 		33AA1660291EB8B600ECBEEB /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				33A34199291EBA9000D34E0F /* AllDatatypesTest.m */,
+				33A34199291EBA9000D34E0F /* DataClassMethodsTest.m */,
 				33A34196291EBA9000D34E0F /* AsyncHandlersTest.m */,
 				33A3419C291EBA9000D34E0F /* EchoMessenger.h */,
 				33A341A1291EBA9000D34E0F /* EchoMessenger.m */,
@@ -341,7 +341,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33A341A8291EBA9100D34E0F /* AllDatatypesTest.m in Sources */,
+				33A341A8291EBA9100D34E0F /* DataClassMethodsTest.m in Sources */,
 				33A341AC291EBA9100D34E0F /* MultipleArityTest.m in Sources */,
 				33AA1662291EB8B600ECBEEB /* RunnerTests.m in Sources */,
 				33A341AE291EBA9100D34E0F /* NullFieldsTest.m in Sources */,

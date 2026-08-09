@@ -11,8 +11,7 @@ class FadeScaleTransitionDemo extends StatefulWidget {
   const FadeScaleTransitionDemo({super.key});
 
   @override
-  State<FadeScaleTransitionDemo> createState() =>
-      _FadeScaleTransitionDemoState();
+  State<FadeScaleTransitionDemo> createState() => _FadeScaleTransitionDemoState();
 }
 
 class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
@@ -65,10 +64,7 @@ class _FadeScaleTransitionDemoState extends State<FadeScaleTransitionDemo>
         },
         child: Visibility(
           visible: _controller.status != AnimationStatus.dismissed,
-          child: FloatingActionButton(
-            child: const Icon(Icons.add),
-            onPressed: () {},
-          ),
+          child: FloatingActionButton(child: const Icon(Icons.add), onPressed: () {}),
         ),
       ),
       bottomNavigationBar: Column(

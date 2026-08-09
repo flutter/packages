@@ -15,10 +15,7 @@ class Vertices {
   /// [Float32List], interpreted as x,y pairs.
   factory Vertices.fromFloat32List(Float32List vertices) {
     if (vertices.length.isOdd) {
-      throw ArgumentError(
-        'must be an even number of vertex points',
-        'vertices',
-      );
+      throw ArgumentError('must be an even number of vertex points', 'vertices');
     }
     final vertexPoints = <Point>[];
     for (var index = 0; index < vertices.length; index += 2) {
@@ -53,15 +50,11 @@ class Vertices {
     }
 
     final List<Point> compressedPoints = pointMap.keys.toList();
-    if (compressedPoints.length * 2 + indices.length >
-        vertexPoints.length * 2) {
+    if (compressedPoints.length * 2 + indices.length > vertexPoints.length * 2) {
       return IndexedVertices(pointsToFloat32List(vertexPoints), null);
     }
 
-    return IndexedVertices(
-      pointsToFloat32List(compressedPoints),
-      Uint16List.fromList(indices),
-    );
+    return IndexedVertices(pointsToFloat32List(compressedPoints), Uint16List.fromList(indices));
   }
 }
 

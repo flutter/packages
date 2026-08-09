@@ -55,10 +55,5 @@ class AuthenticationOptions {
           biometricOnly == other.biometricOnly;
 
   @override
-  int get hashCode => Object.hash(
-    useErrorDialogs,
-    stickyAuth,
-    sensitiveTransaction,
-    biometricOnly,
-  );
+  int get hashCode => Object.hash(useErrorDialogs, stickyAuth, sensitiveTransaction, biometricOnly);
 }

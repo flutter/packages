@@ -20,12 +20,7 @@ enum _ExcerptParseMode { normal, pragma, injecting }
 /// A command to update .md code excerpts from code files.
 class UpdateExcerptsCommand extends PackageLoopingCommand {
   /// Creates a excerpt updater command instance.
-  UpdateExcerptsCommand(
-    super.packagesDir, {
-    super.processRunner,
-    super.platform,
-    super.gitDir,
-  }) {
+  UpdateExcerptsCommand(super.packagesDir, {super.processRunner, super.platform, super.gitDir}) {
     argParser.addFlag(
       _failOnChangeFlag,
       help:
@@ -63,10 +58,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
     for (final file in markdownFiles) {
       final _UpdateResult result = _updateExcerptsIn(file);
       if (result.snippetCount > 0) {
-        final String displayPath = getRelativePosixPath(
-          file,
-          from: package.directory,
-        );
+        final String displayPath = getRelativePosixPath(file, from: package.directory);
         print(
           '${indentation}Checked ${result.snippetCount} snippet(s) in '
           '$displayPath.',
@@ -107,9 +99,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
   }
 
   static const String _pragma = '<?code-excerpt';
-  static final RegExp _basePattern = RegExp(
-    r'^ *<\?code-excerpt path-base="([^"]+)"\?>$',
-  );
+  static final RegExp _basePattern = RegExp(r'^ *<\?code-excerpt path-base="([^"]+)"\?>$');
   static final RegExp _injectPattern = RegExp(
     r'^ *<\?code-excerpt "(?<path>[^ ]+) \((?<section>[^)]+)\)"(?: plaster="(?<plaster>[^"]*)")?\?>$',
   );
@@ -132,16 +122,12 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
           if (line.contains(_pragma)) {
             RegExpMatch? match = _basePattern.firstMatch(line);
             if (match != null) {
-              pathBase = file.parent.childDirectory(
-                path.normalize(match.group(1)!),
-              );
+              pathBase = file.parent.childDirectory(path.normalize(match.group(1)!));
             } else {
               match = _injectPattern.firstMatch(line);
               if (match != null) {
                 snippetCount++;
-                final String excerptPath = path.normalize(
-                  match.namedGroup('path')!,
-                );
+                final String excerptPath = path.normalize(match.namedGroup('path')!);
                 final File excerptSourceFile = pathBase.childFile(excerptPath);
                 final String extension = path.extension(excerptSourceFile.path);
                 switch (extension) {
@@ -167,13 +153,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
                     '${file.path}:$lineNumber: specified file "$excerptPath" (resolved to "${excerptSourceFile.path}") does not exist',
                   );
                 } else {
-                  excerpt = _extractExcerpt(
-                    excerptSourceFile,
-                    section,
-                    plaster,
-                    language,
-                    errors,
-                  );
+                  excerpt = _extractExcerpt(excerptSourceFile, section, plaster, language, errors);
                 }
                 mode = _ExcerptParseMode.pragma;
               } else {
@@ -186,9 +166,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
           output.writeln(line);
         case _ExcerptParseMode.pragma:
           if (!line.startsWith('```')) {
-            errors.add(
-              '${file.path}:$lineNumber: expected code block but did not find one',
-            );
+            errors.add('${file.path}:$lineNumber: expected code block but did not find one');
             mode = _ExcerptParseMode.normal;
           } else {
             if (line.startsWith('``` ')) {
@@ -196,14 +174,10 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
                 '${file.path}:$lineNumber: code block was followed by a space character instead of the language (expected "$language")',
               );
               mode = _ExcerptParseMode.injecting;
-            } else if (line != '```$language' &&
-                line != '```rfwtxt' &&
-                line != '```json') {
+            } else if (line != '```$language' && line != '```rfwtxt' && line != '```json') {
               // We special-case rfwtxt and json because the rfw package extracts such sections from Dart files.
               // If we get more special cases we should think about a more general solution.
-              errors.add(
-                '${file.path}:$lineNumber: code block has wrong language',
-              );
+              errors.add('${file.path}:$lineNumber: code block has wrong language');
             }
             mode = _ExcerptParseMode.injecting;
           }
@@ -231,9 +205,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         try {
           file.writeAsStringSync(output.toString());
         } catch (e) {
-          errors.add(
-            '${file.path}: failed to update file (${e.runtimeType}: $e)',
-          );
+          errors.add('${file.path}: failed to update file (${e.runtimeType}: $e)');
         }
       }
     }
@@ -318,14 +290,10 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
       }
     }
     if (extracting) {
-      errors.add(
-        '${excerptSourceFile.path}: missing "$endRegionMarker" pragma',
-      );
+      errors.add('${excerptSourceFile.path}: missing "$endRegionMarker" pragma');
     }
     if (!found) {
-      errors.add(
-        '${excerptSourceFile.path}: did not find a "$startRegionMarker" pragma',
-      );
+      errors.add('${excerptSourceFile.path}: did not find a "$startRegionMarker" pragma');
       return '';
     }
     if (buffer.isEmpty) {

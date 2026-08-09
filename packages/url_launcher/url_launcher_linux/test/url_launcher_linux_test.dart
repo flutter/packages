@@ -84,10 +84,7 @@ void main() {
         final launcher = UrlLauncherLinux(api: api);
         const url = 'http://example.com/';
 
-        final bool launched = await launcher.launchUrl(
-          url,
-          const LaunchOptions(),
-        );
+        final bool launched = await launcher.launchUrl(url, const LaunchOptions());
 
         expect(launched, true);
         expect(api.argument, url);
@@ -115,53 +112,29 @@ void main() {
     group('supportsMode', () {
       test('returns true for platformDefault', () async {
         final launcher = UrlLauncherLinux();
-        expect(
-          await launcher.supportsMode(PreferredLaunchMode.platformDefault),
-          true,
-        );
+        expect(await launcher.supportsMode(PreferredLaunchMode.platformDefault), true);
       });
 
       test('returns true for external application', () async {
         final launcher = UrlLauncherLinux();
-        expect(
-          await launcher.supportsMode(PreferredLaunchMode.externalApplication),
-          true,
-        );
+        expect(await launcher.supportsMode(PreferredLaunchMode.externalApplication), true);
       });
 
       test('returns false for other modes', () async {
         final launcher = UrlLauncherLinux();
         expect(
-          await launcher.supportsMode(
-            PreferredLaunchMode.externalNonBrowserApplication,
-          ),
+          await launcher.supportsMode(PreferredLaunchMode.externalNonBrowserApplication),
           false,
         );
-        expect(
-          await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView),
-          false,
-        );
-        expect(
-          await launcher.supportsMode(PreferredLaunchMode.inAppWebView),
-          false,
-        );
+        expect(await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView), false);
+        expect(await launcher.supportsMode(PreferredLaunchMode.inAppWebView), false);
       });
     });
 
     test('supportsCloseForMode returns false', () async {
       final launcher = UrlLauncherLinux();
-      expect(
-        await launcher.supportsCloseForMode(
-          PreferredLaunchMode.platformDefault,
-        ),
-        false,
-      );
-      expect(
-        await launcher.supportsCloseForMode(
-          PreferredLaunchMode.externalApplication,
-        ),
-        false,
-      );
+      expect(await launcher.supportsCloseForMode(PreferredLaunchMode.platformDefault), false);
+      expect(await launcher.supportsCloseForMode(PreferredLaunchMode.externalApplication), false);
     });
   });
 }

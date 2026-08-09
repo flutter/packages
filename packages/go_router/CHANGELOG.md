@@ -1,3 +1,13 @@
+## 17.4.0
+
+- Fixes onExit ignored for GoRoute nested inside ShellRoute
+- Adds `BlockedInitialNavigationException` (a `GoException` subtype), raised when the initial navigation is blocked by `onEnter` with no prior route to restore, so apps can distinguish this case in `onException` without string matching.
+
+## 17.3.0
+
+- Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+- Adds `hasOverriddenOnExit` parameter to `GoRouteData.$route` and `RelativeGoRouteData.$route` helper methods for type-safe routes. When set to `true`, enables custom `onExit` callback invocation from route data classes extending `GoRouteData` or `RelativeGoRouteData` when the route is removed from the navigation stack.
+
 ## 17.2.3
 
 - Fixes an assertion failure when navigating to URLs with hash fragments missing a leading slash.

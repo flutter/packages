@@ -11,6 +11,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -49,6 +50,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowLog;
 
 @RunWith(RobolectricTestRunner.class)
 public class ImagePickerDelegateTest {
@@ -385,6 +387,36 @@ public class ImagePickerDelegateTest {
 
     mockStaticFile.verify(
         () -> File.createTempFile(any(), eq(".jpg"), eq(externalDirectory)), times(1));
+  }
+
+  @Test
+  @Config(sdk = 30)
+  public void takeImageWithCamera_whenQueryIntentActivitiesThrows_doesNotCrashAndLogsError() {
+    when(mockPermissionManager.isPermissionGranted(Manifest.permission.CAMERA)).thenReturn(true);
+
+    PackageManager mockPackageManager = mockActivity.getPackageManager();
+
+    when(mockPackageManager.queryIntentActivities(
+            any(Intent.class), eq(PackageManager.MATCH_DEFAULT_ONLY)))
+        .thenThrow(new RuntimeException("Simulated Package Visibility Exception"));
+
+    ImagePickerDelegate delegate = createDelegate();
+    delegate.takeImageWithCamera(
+        DEFAULT_IMAGE_OPTIONS, ResultCompat.asCompatCallback(reply -> null));
+
+    List<ShadowLog.LogItem> logs = ShadowLog.getLogsForTag("ImagePickerDelegate");
+    assertFalse("Expected an error log to be generated", logs.isEmpty());
+    ShadowLog.LogItem errorLog = logs.get(0);
+    assertEquals(android.util.Log.ERROR, errorLog.type);
+    assertTrue(
+        "Log message did not match expected output",
+        errorLog.msg.contains("Fallback query for intent activities failed"));
+
+    verify(mockActivity, never()).grantUriPermission(anyString(), any(Uri.class), anyInt());
+
+    verify(mockActivity)
+        .startActivityForResult(
+            any(Intent.class), eq(ImagePickerDelegate.REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA));
   }
 
   @Test

@@ -16,9 +16,7 @@ Future<int> runProcess(
     command,
     arguments,
     workingDirectory: workingDirectory,
-    mode: streamOutput
-        ? ProcessStartMode.inheritStdio
-        : ProcessStartMode.normal,
+    mode: streamOutput ? ProcessStartMode.inheritStdio : ProcessStartMode.normal,
   );
 
   if (streamOutput) {

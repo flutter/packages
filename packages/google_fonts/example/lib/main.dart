@@ -32,9 +32,7 @@ class MyApp extends StatelessWidget {
               ],
             ),
           ),
-          body: const TabBarView(
-            children: <Widget>[ExampleSimple(), ExampleFontSelection()],
-          ),
+          body: const TabBarView(children: <Widget>[ExampleSimple(), ExampleFontSelection()]),
         ),
       ),
     );

@@ -34,10 +34,7 @@ void main() {
 
       test('invalid URL returns a PlatformException', () async {
         final launcher = UrlLauncherMacOS(api: api);
-        await expectLater(
-          launcher.canLaunch('invalid://u r l'),
-          throwsA(isA<PlatformException>()),
-        );
+        await expectLater(launcher.canLaunch('invalid://u r l'), throwsA(isA<PlatformException>()));
       });
 
       test('passes unexpected PlatformExceptions through', () async {
@@ -118,53 +115,29 @@ void main() {
     group('supportsMode', () {
       test('returns true for platformDefault', () async {
         final launcher = UrlLauncherMacOS(api: api);
-        expect(
-          await launcher.supportsMode(PreferredLaunchMode.platformDefault),
-          true,
-        );
+        expect(await launcher.supportsMode(PreferredLaunchMode.platformDefault), true);
       });
 
       test('returns true for external application', () async {
         final launcher = UrlLauncherMacOS(api: api);
-        expect(
-          await launcher.supportsMode(PreferredLaunchMode.externalApplication),
-          true,
-        );
+        expect(await launcher.supportsMode(PreferredLaunchMode.externalApplication), true);
       });
 
       test('returns false for other modes', () async {
         final launcher = UrlLauncherMacOS(api: api);
         expect(
-          await launcher.supportsMode(
-            PreferredLaunchMode.externalNonBrowserApplication,
-          ),
+          await launcher.supportsMode(PreferredLaunchMode.externalNonBrowserApplication),
           false,
         );
-        expect(
-          await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView),
-          false,
-        );
-        expect(
-          await launcher.supportsMode(PreferredLaunchMode.inAppWebView),
-          false,
-        );
+        expect(await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView), false);
+        expect(await launcher.supportsMode(PreferredLaunchMode.inAppWebView), false);
       });
     });
 
     test('supportsCloseForMode returns false', () async {
       final launcher = UrlLauncherMacOS(api: api);
-      expect(
-        await launcher.supportsCloseForMode(
-          PreferredLaunchMode.platformDefault,
-        ),
-        false,
-      );
-      expect(
-        await launcher.supportsCloseForMode(
-          PreferredLaunchMode.externalApplication,
-        ),
-        false,
-      );
+      expect(await launcher.supportsCloseForMode(PreferredLaunchMode.platformDefault), false);
+      expect(await launcher.supportsCloseForMode(PreferredLaunchMode.externalApplication), false);
     });
   });
 }
@@ -190,10 +163,7 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
       case 'https':
         return UrlLauncherBoolResult(value: true);
       case 'invalid':
-        return UrlLauncherBoolResult(
-          value: false,
-          error: UrlLauncherError.invalidUrl,
-        );
+        return UrlLauncherBoolResult(value: false, error: UrlLauncherError.invalidUrl);
       case 'unexpectedthrow':
         throw PlatformException(code: 'argument_error');
       default:

@@ -71,15 +71,9 @@ void main() {
   test('Adding beyond max with synchronous futures', () async {
     final cache = Cache();
     cache.maximumSize = 2;
-    final Future<ByteData> completerA = SynchronousFuture<ByteData>(
-      ByteData(1),
-    );
-    final Future<ByteData> completerB = SynchronousFuture<ByteData>(
-      ByteData(2),
-    );
-    final Future<ByteData> completerC = SynchronousFuture<ByteData>(
-      ByteData(3),
-    );
+    final Future<ByteData> completerA = SynchronousFuture<ByteData>(ByteData(1));
+    final Future<ByteData> completerB = SynchronousFuture<ByteData>(ByteData(2));
+    final Future<ByteData> completerC = SynchronousFuture<ByteData>(ByteData(3));
 
     expect(cache.count, 0);
 

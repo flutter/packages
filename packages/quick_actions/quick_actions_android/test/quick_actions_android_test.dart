@@ -14,11 +14,7 @@ const String LAUNCH_ACTION_STRING = 'aString';
 
 /// Conversion tool to change [ShortcutItemMessage] back to [ShortcutItem]
 ShortcutItem shortcutItemMessageToShortcutItem(ShortcutItemMessage item) {
-  return ShortcutItem(
-    type: item.type,
-    localizedTitle: item.localizedTitle,
-    icon: item.icon,
-  );
+  return ShortcutItem(type: item.type, localizedTitle: item.localizedTitle, icon: item.icon);
 }
 
 void main() {
@@ -49,11 +45,7 @@ void main() {
 
   test('setShortCutItems', () async {
     await quickActions.initialize((String type) {});
-    const item = ShortcutItem(
-      type: 'test',
-      localizedTitle: 'title',
-      icon: 'icon.svg',
-    );
+    const item = ShortcutItem(type: 'test', localizedTitle: 'title', icon: 'icon.svg');
     await quickActions.setShortcutItems(<ShortcutItem>[item]);
 
     expect(api.items.first.type, item.type);
@@ -63,11 +55,7 @@ void main() {
 
   test('clearShortCutItems', () {
     quickActions.initialize((String type) {});
-    const item = ShortcutItem(
-      type: 'test',
-      localizedTitle: 'title',
-      icon: 'icon.svg',
-    );
+    const item = ShortcutItem(type: 'test', localizedTitle: 'title', icon: 'icon.svg');
     quickActions.setShortcutItems(<ShortcutItem>[item]);
     quickActions.clearShortcutItems();
 
@@ -79,11 +67,7 @@ void main() {
     const localizedTitle = 'title';
     const icon = 'foo';
 
-    const item = ShortcutItem(
-      type: type,
-      localizedTitle: localizedTitle,
-      icon: icon,
-    );
+    const item = ShortcutItem(type: type, localizedTitle: localizedTitle, icon: icon);
 
     expect(item.type, type);
     expect(item.localizedTitle, localizedTitle);

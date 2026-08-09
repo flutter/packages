@@ -158,6 +158,25 @@ ErrorOr<EncodableList> TestPlugin::EchoList(const EncodableList& a_list) {
   return a_list;
 }
 
+ErrorOr<EncodableList> TestPlugin::EchoStringList(
+    const EncodableList& string_list) {
+  return string_list;
+}
+
+ErrorOr<EncodableList> TestPlugin::EchoIntList(const EncodableList& int_list) {
+  return int_list;
+}
+
+ErrorOr<EncodableList> TestPlugin::EchoDoubleList(
+    const EncodableList& double_list) {
+  return double_list;
+}
+
+ErrorOr<EncodableList> TestPlugin::EchoBoolList(
+    const EncodableList& bool_list) {
+  return bool_list;
+}
+
 ErrorOr<EncodableList> TestPlugin::EchoEnumList(
     const EncodableList& enum_list) {
   return enum_list;

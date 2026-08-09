@@ -20,10 +20,7 @@ Future<void> _runCommand({
   final ProcessResult pubGetResult = await Process.run(
     executable,
     arguments,
-    workingDirectory: p.join(
-      sharedPreferencesToolParent.path,
-      'shared_preferences_tool',
-    ),
+    workingDirectory: p.join(sharedPreferencesToolParent.path, 'shared_preferences_tool'),
   );
 
   stdout.write(pubGetResult.stdout);

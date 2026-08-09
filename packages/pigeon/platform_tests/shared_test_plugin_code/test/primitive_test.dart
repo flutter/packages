@@ -66,9 +66,7 @@ void main() {
       PrimitiveHostApi.pigeonChannelCodec,
     );
     final api = PrimitiveHostApi(binaryMessenger: mockMessenger);
-    final Map<String?, int?> result = await api.aStringIntMap(<String?, int?>{
-      'hello': 1,
-    });
+    final Map<String?, int?> result = await api.aStringIntMap(<String?, int?>{'hello': 1});
     expect(result['hello'], 1);
   });
 }

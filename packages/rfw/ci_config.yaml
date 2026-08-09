@@ -1,0 +1,2 @@
+# Has some constructions that are currently handled poorly by dart format.
+allow_custom_analysis_options: true

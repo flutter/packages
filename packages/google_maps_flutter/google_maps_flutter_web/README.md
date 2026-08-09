@@ -14,41 +14,35 @@ to your `pubspec.yaml`.
 However, if you `import` this package to use any of its APIs directly, you
 should add it to your `pubspec.yaml` as usual.
 
-### Modify web/index.html
+## Setup
 
-Get an API Key for Google Maps JavaScript API. Get started [here](https://developers.google.com/maps/documentation/javascript/get-api-key).
+1. Get an API Key for Google Maps JavaScript API. Get started [here](https://developers.google.com/maps/documentation/javascript/get-api-key).
 
-Modify the `<head>` tag of your `web/index.html` to load the Google Maps JavaScript API, like so:
+2. Add the following to the `<head>` section of `web/index.html`:
 
-```html
-<head>
+   ```html
+   <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
+   ```
 
-  <!-- // Other stuff -->
+   The Google Maps Web SDK splits some of its functionality into
+   [separate libraries](https://developers.google.com/maps/documentation/javascript/libraries#libraries-for-dynamic-library-import):
 
-  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
-</head>
-```
+   * If your app needs the `drawing` library (to draw polygons, rectangles, polylines,
+     circles or legacy markers on a map), include it like this:
 
-The Google Maps Web SDK splits some of its functionality in [separate libraries](https://developers.google.com/maps/documentation/javascript/libraries#libraries-for-dynamic-library-import).
+     ```html
+     <script
+       src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing">
+     </script>
+     ```
 
-If your app needs the `drawing` library (to draw polygons, rectangles, polylines,
-circles or legacy markers on a map), include it like this:
+   * To request multiple libraries, separate them with commas:
 
-```html
-<script
-  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing">
-</script>
-```
-
-To request multiple libraries, separate them with commas:
-
-```html
-<script
-  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing,marker,visualization,places">
-</script>
-```
-
-Now you should be able to use the Google Maps plugin normally.
+     ```html
+     <script
+       src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing,marker,visualization,places">
+     </script>
+     ```
 
 ## Advanced Markers
 
@@ -77,9 +71,24 @@ If you need marker clustering support, modify the <head> tag to load the [js-mar
 </head>
 ```
 
-## Heatmaps
+## Heatmaps (Deprecated)
 
-To use heatmaps, add `&libraries=visualization` to the end of the URL. See [the documentation](https://developers.google.com/maps/documentation/javascript/libraries) for more information.
+Heatmap support [has been deprecated](https://developers.google.com/maps/deprecations#heatmap-layer-js-deprecation)
+in the JavaScript Google Maps API, and was removed in version 3.65 of the SDK. To use
+heatmaps, you must pin the SDK to 3.64. This means that you may be missing bug fixes or
+newer features.
+
+To use heatmaps, add `&libraries=visualization&v=3.64` to the end of the URL. See [the documentation](https://developers.google.com/maps/documentation/javascript/libraries) for more information.
+
+### Supported Heatmap Options (in 3.64)
+
+| Field                        | Supported |
+| ---------------------------- | :-------: |
+| Heatmap.dissipating          |     ✓     |
+| Heatmap.maxIntensity         |     ✓     |
+| Heatmap.minimumZoomIntensity |     x     |
+| Heatmap.maximumZoomIntensity |     x     |
+| HeatmapGradient.colorMapSize |     x     |
 
 ## Limitations of the web version
 
@@ -103,13 +112,3 @@ Indoor and building layers are still not available on the web. Traffic is.
 Only Android supports "[Lite Mode](https://developers.google.com/maps/documentation/android-sdk/lite)", so the `liteModeEnabled` constructor argument can't be set to `true` on web apps.
 
 Google Maps for web uses `HtmlElementView` to render maps. When a `GoogleMap` is stacked below other widgets, [`package:pointer_interceptor`](https://www.pub.dev/packages/pointer_interceptor) must be used to capture mouse events on the Flutter overlays. See issue [#73830](https://github.com/flutter/flutter/issues/73830).
-
-## Supported Heatmap Options
-
-| Field                        | Supported |
-| ---------------------------- | :-------: |
-| Heatmap.dissipating          |     ✓     |
-| Heatmap.maxIntensity         |     ✓     |
-| Heatmap.minimumZoomIntensity |     x     |
-| Heatmap.maximumZoomIntensity |     x     |
-| HeatmapGradient.colorMapSize |     x     |

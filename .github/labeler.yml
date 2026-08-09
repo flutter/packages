@@ -21,7 +21,7 @@
 'p: cupertino_ui':
   - changed-files:
     - any-glob-to-any-file:
-      - third_party/packages/cupertino_ui/**/*
+      - packages/cupertino_ui/**/*
 
 'p: espresso':
   - changed-files:
@@ -53,11 +53,6 @@
     - any-glob-to-any-file:
       - third_party/packages/flutter_svg/**/*
       - third_party/packages/flutter_svg_test/**/*
-
-'p: flutter_template_images':
-  - changed-files:
-    - any-glob-to-any-file:
-      - packages/flutter_template_images/**/*
 
 'p: go_router':
   - changed-files:
@@ -124,16 +119,6 @@
     - any-glob-to-any-file:
       - packages/metrics_center/**/*
 
-'p: multicast_dns':
-  - changed-files:
-    - any-glob-to-any-file:
-      - packages/multicast_dns/**/*
-
-'p: mustache_template':
-  - changed-files:
-    - any-glob-to-any-file:
-      - third_party/packages/mustache_template/**/*
-
 'p: path_parsing':
   - changed-files:
     - any-glob-to-any-file:
@@ -173,11 +158,6 @@
   - changed-files:
     - any-glob-to-any-file:
       - packages/shared_preferences/**/*
-
-'p: standard_message_codec':
-  - changed-files:
-    - any-glob-to-any-file:
-      - packages/standard_message_codec/**/*
 
 'p: two_dimensional_scrollables':
   - changed-files:

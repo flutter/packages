@@ -20,7 +20,7 @@ class GioUtils {
   /// Creates a default instance that uses the real libgio.
   GioUtils() {
     try {
-      _gio = DynamicLibrary.open('libgio-2.0.so');
+      _gio = DynamicLibrary.open('libgio-2.0.so.0');
     } on ArgumentError {
       _gio = null;
     }
@@ -49,10 +49,9 @@ class GioUtils {
       return nullptr;
     }
     final _GApplicationGetApplicationIdDart gApplicationGetApplicationId = _gio!
-        .lookupFunction<
-          _GApplicationGetApplicationIdC,
-          _GApplicationGetApplicationIdDart
-        >('g_application_get_application_id');
+        .lookupFunction<_GApplicationGetApplicationIdC, _GApplicationGetApplicationIdDart>(
+          'g_application_get_application_id',
+        );
     return gApplicationGetApplicationId(app);
   }
 }

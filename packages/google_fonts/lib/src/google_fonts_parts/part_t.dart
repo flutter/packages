@@ -3586,9 +3586,7 @@ class PartT {
       displayMedium: tiroDevanagariMarathi(textStyle: textTheme.displayMedium),
       displaySmall: tiroDevanagariMarathi(textStyle: textTheme.displaySmall),
       headlineLarge: tiroDevanagariMarathi(textStyle: textTheme.headlineLarge),
-      headlineMedium: tiroDevanagariMarathi(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: tiroDevanagariMarathi(textStyle: textTheme.headlineMedium),
       headlineSmall: tiroDevanagariMarathi(textStyle: textTheme.headlineSmall),
       titleLarge: tiroDevanagariMarathi(textStyle: textTheme.titleLarge),
       titleMedium: tiroDevanagariMarathi(textStyle: textTheme.titleMedium),
@@ -3682,9 +3680,7 @@ class PartT {
       displayMedium: tiroDevanagariSanskrit(textStyle: textTheme.displayMedium),
       displaySmall: tiroDevanagariSanskrit(textStyle: textTheme.displaySmall),
       headlineLarge: tiroDevanagariSanskrit(textStyle: textTheme.headlineLarge),
-      headlineMedium: tiroDevanagariSanskrit(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: tiroDevanagariSanskrit(textStyle: textTheme.headlineMedium),
       headlineSmall: tiroDevanagariSanskrit(textStyle: textTheme.headlineSmall),
       titleLarge: tiroDevanagariSanskrit(textStyle: textTheme.titleLarge),
       titleMedium: tiroDevanagariSanskrit(textStyle: textTheme.titleMedium),

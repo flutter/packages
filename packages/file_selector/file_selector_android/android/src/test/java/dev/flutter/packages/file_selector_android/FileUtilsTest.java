@@ -61,7 +61,7 @@ public class FileUtilsTest {
       // present already.
       //noinspection deprecation
       var mimeTypeMap = shadowOf(MimeTypeMap.getSingleton());
-      mimeTypeMap.addExtensionMimeTypeMapping("txt", "document/txt");
+      mimeTypeMap.addExtensionMimeTypeMapping("txt", "text/plain");
       mimeTypeMap.addExtensionMimeTypeMapping("jpg", "image/jpeg");
       mimeTypeMap.addExtensionMimeTypeMapping("png", "image/png");
       mimeTypeMap.addExtensionMimeTypeMapping("webp", "image/webp");
@@ -225,7 +225,7 @@ public class FileUtilsTest {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-      if (uri.equals(TXT_URI)) return "document/txt";
+      if (uri.equals(TXT_URI)) return "text/plain";
       if (uri.equals(PNG_URI)) return "image/png";
       if (uri.equals(WEBP_URI)) return "image/webp";
       if (uri.equals(NO_EXTENSION_URI)) return "image/png";

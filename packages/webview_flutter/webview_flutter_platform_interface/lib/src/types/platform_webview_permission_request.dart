@@ -39,12 +39,12 @@ class WebViewPermissionResourceType {
   final String name;
 
   /// A media device that can capture video.
-  static const WebViewPermissionResourceType camera =
-      WebViewPermissionResourceType('camera');
+  static const WebViewPermissionResourceType camera = WebViewPermissionResourceType('camera');
 
   /// A media device that can capture audio.
-  static const WebViewPermissionResourceType microphone =
-      WebViewPermissionResourceType('microphone');
+  static const WebViewPermissionResourceType microphone = WebViewPermissionResourceType(
+    'microphone',
+  );
 }
 
 /// Permissions request when web content requests access to protected resources.

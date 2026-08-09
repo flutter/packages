@@ -83,8 +83,7 @@ abstract class UrlLauncherPlatform extends PlatformInterface {
       useWebView: useWebView,
       enableJavaScript: options.webViewConfiguration.enableJavaScript,
       enableDomStorage: options.webViewConfiguration.enableDomStorage,
-      universalLinksOnly:
-          options.mode == PreferredLaunchMode.externalNonBrowserApplication,
+      universalLinksOnly: options.mode == PreferredLaunchMode.externalNonBrowserApplication,
       headers: options.webViewConfiguration.headers,
       webOnlyWindowName: options.webOnlyWindowName,
     );

@@ -27,20 +27,13 @@ class BookDetailsScreen extends StatelessWidget {
       body: Center(
         child: Column(
           children: <Widget>[
-            Text(
-              book!.title,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            Text(
-              book!.author.name,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+            Text(book!.title, style: Theme.of(context).textTheme.headlineMedium),
+            Text(book!.author.name, style: Theme.of(context).textTheme.titleMedium),
             TextButton(
               onPressed: () {
                 Navigator.of(context).push<void>(
                   MaterialPageRoute<void>(
-                    builder: (BuildContext context) =>
-                        AuthorDetailsScreen(author: book!.author),
+                    builder: (BuildContext context) => AuthorDetailsScreen(author: book!.author),
                   ),
                 );
               },
@@ -49,10 +42,7 @@ class BookDetailsScreen extends StatelessWidget {
             Link(
               uri: Uri.parse('/author/${book!.author.id}'),
               builder: (BuildContext context, FollowLink? followLink) =>
-                  TextButton(
-                    onPressed: followLink,
-                    child: const Text('View author (Link)'),
-                  ),
+                  TextButton(onPressed: followLink, child: const Text('View author (Link)')),
             ),
             TextButton(
               onPressed: () {

@@ -37,16 +37,14 @@ void main() {
           'some/path/',
           argThat(
             isA<FileTypes>()
-                .having(
-                  (FileTypes types) => types.mimeTypes,
-                  'mimeTypes',
-                  <String>['text/plain', 'image/jpg'],
-                )
-                .having(
-                  (FileTypes types) => types.extensions,
-                  'extensions',
-                  <String>['txt', 'jpg'],
-                ),
+                .having((FileTypes types) => types.mimeTypes, 'mimeTypes', <String>[
+                  'text/plain',
+                  'image/jpg',
+                ])
+                .having((FileTypes types) => types.extensions, 'extensions', <String>[
+                  'txt',
+                  'jpg',
+                ]),
           ),
         ),
       ).thenAnswer(
@@ -61,15 +59,9 @@ void main() {
         ),
       );
 
-      const group = XTypeGroup(
-        extensions: <String>['txt'],
-        mimeTypes: <String>['text/plain'],
-      );
+      const group = XTypeGroup(extensions: <String>['txt'], mimeTypes: <String>['text/plain']);
 
-      const group2 = XTypeGroup(
-        extensions: <String>['jpg'],
-        mimeTypes: <String>['image/jpg'],
-      );
+      const group2 = XTypeGroup(extensions: <String>['jpg'], mimeTypes: <String>['image/jpg']);
 
       final XFile? file = await plugin.openFile(
         acceptedTypeGroups: <XTypeGroup>[group, group2],
@@ -90,16 +82,14 @@ void main() {
           'some/path/',
           argThat(
             isA<FileTypes>()
-                .having(
-                  (FileTypes types) => types.mimeTypes,
-                  'mimeTypes',
-                  <String>['text/plain', 'image/jpg'],
-                )
-                .having(
-                  (FileTypes types) => types.extensions,
-                  'extensions',
-                  <String>['txt', 'jpg'],
-                ),
+                .having((FileTypes types) => types.mimeTypes, 'mimeTypes', <String>[
+                  'text/plain',
+                  'image/jpg',
+                ])
+                .having((FileTypes types) => types.extensions, 'extensions', <String>[
+                  'txt',
+                  'jpg',
+                ]),
           ),
         ),
       ).thenAnswer(
@@ -111,24 +101,13 @@ void main() {
             name: 'name',
             mimeType: 'text/plain',
           ),
-          FileResponse(
-            path: 'other/dir.jpg',
-            size: 40,
-            bytes: Uint8List(0),
-            mimeType: 'image/jpg',
-          ),
+          FileResponse(path: 'other/dir.jpg', size: 40, bytes: Uint8List(0), mimeType: 'image/jpg'),
         ]),
       );
 
-      const group = XTypeGroup(
-        extensions: <String>['txt'],
-        mimeTypes: <String>['text/plain'],
-      );
+      const group = XTypeGroup(extensions: <String>['txt'], mimeTypes: <String>['text/plain']);
 
-      const group2 = XTypeGroup(
-        extensions: <String>['jpg'],
-        mimeTypes: <String>['image/jpg'],
-      );
+      const group2 = XTypeGroup(extensions: <String>['jpg'], mimeTypes: <String>['image/jpg']);
 
       final List<XFile> files = await plugin.openFiles(
         acceptedTypeGroups: <XTypeGroup>[group, group2],
@@ -152,9 +131,7 @@ void main() {
       mockApi.getDirectoryPath('some/path'),
     ).thenAnswer((_) => Future<String?>.value('some/path/chosen/'));
 
-    final String? path = await plugin.getDirectoryPath(
-      initialDirectory: 'some/path',
-    );
+    final String? path = await plugin.getDirectoryPath(initialDirectory: 'some/path');
 
     expect(path, 'some/path/chosen/');
   });

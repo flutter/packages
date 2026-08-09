@@ -37,8 +37,7 @@ abstract class SharedPreferencesStorePlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  static SharedPreferencesStorePlatform _instance =
-      MethodChannelSharedPreferencesStore();
+  static SharedPreferencesStorePlatform _instance = MethodChannelSharedPreferencesStore();
 
   /// Only mock implementations should set this to true.
   ///
@@ -95,9 +94,7 @@ abstract class SharedPreferencesStorePlatform extends PlatformInterface {
   }
 
   /// Returns all key/value pairs persisting in this store that match [options].
-  Future<Map<String, Object>> getAllWithParameters(
-    GetAllParameters parameters,
-  ) {
+  Future<Map<String, Object>> getAllWithParameters(GetAllParameters parameters) {
     throw UnimplementedError('getAllWithParameters is not implemented.');
   }
 }
@@ -118,16 +115,12 @@ class InMemorySharedPreferencesStore extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> clear() async {
-    return clearWithParameters(
-      ClearParameters(filter: PreferencesFilter(prefix: _defaultPrefix)),
-    );
+    return clearWithParameters(ClearParameters(filter: PreferencesFilter(prefix: _defaultPrefix)));
   }
 
   @override
   Future<bool> clearWithPrefix(String prefix) async {
-    return clearWithParameters(
-      ClearParameters(filter: PreferencesFilter(prefix: prefix)),
-    );
+    return clearWithParameters(ClearParameters(filter: PreferencesFilter(prefix: prefix)));
   }
 
   @override
@@ -135,8 +128,7 @@ class InMemorySharedPreferencesStore extends SharedPreferencesStorePlatform {
     final PreferencesFilter filter = parameters.filter;
     if (filter.allowList != null) {
       _data.removeWhere(
-        (String key, _) =>
-            key.startsWith(filter.prefix) && filter.allowList!.contains(key),
+        (String key, _) => key.startsWith(filter.prefix) && filter.allowList!.contains(key),
       );
     } else {
       _data.removeWhere((String key, _) => key.startsWith(filter.prefix));
@@ -153,15 +145,11 @@ class InMemorySharedPreferencesStore extends SharedPreferencesStorePlatform {
 
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
-    return getAllWithParameters(
-      GetAllParameters(filter: PreferencesFilter(prefix: prefix)),
-    );
+    return getAllWithParameters(GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
   }
 
   @override
-  Future<Map<String, Object>> getAllWithParameters(
-    GetAllParameters parameters,
-  ) async {
+  Future<Map<String, Object>> getAllWithParameters(GetAllParameters parameters) async {
     final PreferencesFilter filter = parameters.filter;
     final preferences = Map<String, Object>.from(_data);
     preferences.removeWhere(

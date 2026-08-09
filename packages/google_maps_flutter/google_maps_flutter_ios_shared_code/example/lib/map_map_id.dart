@@ -11,8 +11,7 @@ import 'example_google_map.dart';
 import 'page.dart';
 
 class MapIdPage extends GoogleMapExampleAppPage {
-  const MapIdPage({super.key})
-    : super(const Icon(Icons.map), 'Cloud-based maps styling');
+  const MapIdPage({super.key}) : super(const Icon(Icons.map), 'Cloud-based maps styling');
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +48,7 @@ class MapIdBodyState extends State<MapIdBody> {
   Widget build(BuildContext context) {
     final googleMap = ExampleGoogleMap(
       onMapCreated: _onMapCreated,
-      initialCameraPosition: const CameraPosition(
-        target: _kMapCenter,
-        zoom: 7.0,
-      ),
+      initialCameraPosition: const CameraPosition(target: _kMapCenter, zoom: 7.0),
       key: _key,
       mapId: _mapId,
     );
@@ -60,9 +56,7 @@ class MapIdBodyState extends State<MapIdBody> {
     final columnChildren = <Widget>[
       Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Center(
-          child: SizedBox(width: 300.0, height: 200.0, child: googleMap),
-        ),
+        child: Center(child: SizedBox(width: 300.0, height: 200.0, child: googleMap)),
       ),
       Padding(
         padding: const EdgeInsets.all(10.0),
@@ -80,10 +74,7 @@ class MapIdBodyState extends State<MapIdBody> {
       ),
     ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: columnChildren,
-    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: columnChildren);
   }
 
   @override

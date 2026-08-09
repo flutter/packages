@@ -34,9 +34,7 @@ class FileSelectorWeb extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final List<XFile> files = await _openFiles(
-      acceptedTypeGroups: acceptedTypeGroups,
-    );
+    final List<XFile> files = await _openFiles(acceptedTypeGroups: acceptedTypeGroups);
     return files.isNotEmpty ? files.first : null;
   }
 
@@ -71,10 +69,8 @@ class FileSelectorWeb extends FileSelectorPlatform {
   }
 
   @override
-  Future<String?> getDirectoryPath({
-    String? initialDirectory,
-    String? confirmButtonText,
-  }) async => null;
+  Future<String?> getDirectoryPath({String? initialDirectory, String? confirmButtonText}) async =>
+      null;
 
   Future<List<XFile>> _openFiles({
     List<XTypeGroup>? acceptedTypeGroups,

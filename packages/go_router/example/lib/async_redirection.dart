@@ -29,23 +29,18 @@ class App extends StatelessWidget {
 
   // add the login info into the tree as app state that can change over time
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-    routerConfig: _router,
-    title: title,
-    debugShowCheckedModeBanner: false,
-  );
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router, title: title, debugShowCheckedModeBanner: false);
 
   late final GoRouter _router = GoRouter(
     routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder: (BuildContext context, GoRouterState state) =>
-            const HomeScreen(),
+        builder: (BuildContext context, GoRouterState state) => const HomeScreen(),
       ),
       GoRoute(
         path: '/login',
-        builder: (BuildContext context, GoRouterState state) =>
-            const LoginScreen(),
+        builder: (BuildContext context, GoRouterState state) => const LoginScreen(),
       ),
     ],
 
@@ -81,19 +76,17 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
-    with TickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin {
   bool loggingIn = false;
   late final AnimationController controller;
 
   @override
   void initState() {
     super.initState();
-    controller =
-        AnimationController(vsync: this, duration: const Duration(seconds: 1))
-          ..addListener(() {
-            setState(() {});
-          });
+    controller = AnimationController(vsync: this, duration: const Duration(seconds: 1))
+      ..addListener(() {
+        setState(() {});
+      });
     controller.repeat();
   }
 
@@ -155,15 +148,11 @@ class HomeScreen extends StatelessWidget {
 /// A scope that provides [StreamAuth] for the subtree.
 class StreamAuthScope extends InheritedNotifier<StreamAuthNotifier> {
   /// Creates a [StreamAuthScope] sign in scope.
-  StreamAuthScope({super.key, required super.child})
-    : super(notifier: StreamAuthNotifier());
+  StreamAuthScope({super.key, required super.child}) : super(notifier: StreamAuthNotifier());
 
   /// Gets the [StreamAuth].
   static StreamAuth of(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<StreamAuthScope>()!
-        .notifier!
-        .streamAuth;
+    return context.dependOnInheritedWidgetOfExactType<StreamAuthScope>()!.notifier!.streamAuth;
   }
 }
 

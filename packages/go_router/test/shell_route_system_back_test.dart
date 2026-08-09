@@ -138,9 +138,7 @@ class _TestAppState extends State<_TestApp> {
                   GoRoute(
                     path: 'comment',
                     builder: (BuildContext context, GoRouterState state) {
-                      return Scaffold(
-                        appBar: AppBar(title: const Text('Comment')),
-                      );
+                      return Scaffold(appBar: AppBar(title: const Text('Comment')));
                     },
                   ),
                 ],

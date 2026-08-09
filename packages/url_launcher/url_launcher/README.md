@@ -23,10 +23,7 @@ void main() => runApp(
   const MaterialApp(
     home: Material(
       child: Center(
-        child: ElevatedButton(
-          onPressed: _launchUrl,
-          child: Text('Show Flutter homepage'),
-        ),
+        child: ElevatedButton(onPressed: _launchUrl, child: Text('Show Flutter homepage')),
       ),
     ),
   ),

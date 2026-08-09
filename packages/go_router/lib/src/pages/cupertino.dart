@@ -12,8 +12,7 @@ bool isCupertinoApp(BuildContext context) =>
     context.findAncestorWidgetOfExactType<CupertinoApp>() != null;
 
 /// Creates a Cupertino HeroController.
-HeroController createCupertinoHeroController() =>
-    CupertinoApp.createCupertinoHeroController();
+HeroController createCupertinoHeroController() => CupertinoApp.createCupertinoHeroController();
 
 /// Builds a Cupertino page.
 CupertinoPage<void> pageBuilderForCupertinoApp({
@@ -46,10 +45,7 @@ class CupertinoErrorScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(error?.toString() ?? 'page not found'),
-          CupertinoButton(
-            onPressed: () => context.go('/'),
-            child: const Text('Home'),
-          ),
+          CupertinoButton(onPressed: () => context.go('/'), child: const Text('Home')),
         ],
       ),
     ),

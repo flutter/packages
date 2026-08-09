@@ -76,10 +76,7 @@ void main() {
       expect(
         VideoPlayerPlatform.instance.createWithOptions(
           VideoCreationOptions(
-            dataSource: DataSource(
-              sourceType: DataSourceType.file,
-              uri: '/videos/bee.mp4',
-            ),
+            dataSource: DataSource(sourceType: DataSourceType.file, uri: '/videos/bee.mp4'),
             viewType: VideoViewType.platformView,
           ),
         ),
@@ -91,10 +88,7 @@ void main() {
       expect(
         VideoPlayerPlatform.instance.createWithOptions(
           VideoCreationOptions(
-            dataSource: DataSource(
-              sourceType: DataSourceType.contentUri,
-              uri: 'content://video',
-            ),
+            dataSource: DataSource(sourceType: DataSourceType.contentUri, uri: 'content://video'),
             viewType: VideoViewType.platformView,
           ),
         ),
@@ -107,10 +101,7 @@ void main() {
     });
 
     testWidgets('can set looping', (WidgetTester tester) async {
-      expect(
-        VideoPlayerPlatform.instance.setLooping(await playerId, true),
-        completes,
-      );
+      expect(VideoPlayerPlatform.instance.setLooping(await playerId, true), completes);
     });
 
     testWidgets('can play', (WidgetTester tester) async {
@@ -119,24 +110,20 @@ void main() {
       expect(VideoPlayerPlatform.instance.play(await playerId), completes);
     });
 
-    testWidgets('throws PlatformException when playing bad media', (
-      WidgetTester tester,
-    ) async {
-      final int videoPlayerId = (await VideoPlayerPlatform.instance
-          .createWithOptions(
-            VideoCreationOptions(
-              dataSource: DataSource(
-                sourceType: DataSourceType.network,
-                uri: getUrlForAssetAsNetworkSource(
-                  'assets/__non_existent.webm',
-                ),
-              ),
-              viewType: VideoViewType.platformView,
-            ),
-          ))!;
+    testWidgets('throws PlatformException when playing bad media', (WidgetTester tester) async {
+      final int videoPlayerId = (await VideoPlayerPlatform.instance.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.network,
+            uri: getUrlForAssetAsNetworkSource('assets/__non_existent.webm'),
+          ),
+          viewType: VideoViewType.platformView,
+        ),
+      ))!;
 
-      final Stream<VideoEvent> eventStream = VideoPlayerPlatform.instance
-          .videoEventsFor(videoPlayerId);
+      final Stream<VideoEvent> eventStream = VideoPlayerPlatform.instance.videoEventsFor(
+        videoPlayerId,
+      );
 
       // Mute video to allow autoplay (See https://goo.gl/xX8pDD)
       await VideoPlayerPlatform.instance.setVolume(videoPlayerId, 0);
@@ -152,25 +139,16 @@ void main() {
     });
 
     testWidgets('can set volume', (WidgetTester tester) async {
-      expect(
-        VideoPlayerPlatform.instance.setVolume(await playerId, 0.8),
-        completes,
-      );
+      expect(VideoPlayerPlatform.instance.setVolume(await playerId, 0.8), completes);
     });
 
     testWidgets('can set playback speed', (WidgetTester tester) async {
-      expect(
-        VideoPlayerPlatform.instance.setPlaybackSpeed(await playerId, 2.0),
-        completes,
-      );
+      expect(VideoPlayerPlatform.instance.setPlaybackSpeed(await playerId, 2.0), completes);
     });
 
     testWidgets('can seek to position', (WidgetTester tester) async {
       expect(
-        VideoPlayerPlatform.instance.seekTo(
-          await playerId,
-          const Duration(seconds: 1),
-        ),
+        VideoPlayerPlatform.instance.seekTo(await playerId, const Duration(seconds: 1)),
         completes,
       );
     });
@@ -207,8 +185,9 @@ void main() {
       'double call to play will emit a single isPlayingStateUpdate event',
       (WidgetTester tester) async {
         final int videoPlayerId = await playerId;
-        final Stream<VideoEvent> eventStream = VideoPlayerPlatform.instance
-            .videoEventsFor(videoPlayerId);
+        final Stream<VideoEvent> eventStream = VideoPlayerPlatform.instance.videoEventsFor(
+          videoPlayerId,
+        );
 
         final Future<List<VideoEvent>> stream = eventStream
             .timeout(
@@ -229,15 +208,9 @@ void main() {
         await VideoPlayerPlatform.instance.pause(videoPlayerId);
 
         expect(
-          events.where(
-            (VideoEvent e) =>
-                e.eventType == VideoEventType.isPlayingStateUpdate,
-          ),
+          events.where((VideoEvent e) => e.eventType == VideoEventType.isPlayingStateUpdate),
           equals(<VideoEvent>[
-            VideoEvent(
-              eventType: VideoEventType.isPlayingStateUpdate,
-              isPlaying: true,
-            ),
+            VideoEvent(eventType: VideoEventType.isPlayingStateUpdate, isPlaying: true),
           ]),
         );
       },
@@ -249,8 +222,9 @@ void main() {
       'video playback lifecycle',
       (WidgetTester tester) async {
         final int videoPlayerId = await playerId;
-        final Stream<VideoEvent> eventStream = VideoPlayerPlatform.instance
-            .videoEventsFor(videoPlayerId);
+        final Stream<VideoEvent> eventStream = VideoPlayerPlatform.instance.videoEventsFor(
+          videoPlayerId,
+        );
 
         final Future<List<VideoEvent>> stream = eventStream
             .timeout(
@@ -292,10 +266,7 @@ void main() {
 
     testWidgets('can set web options', (WidgetTester tester) async {
       expect(
-        VideoPlayerPlatform.instance.setWebOptions(
-          await playerId,
-          const VideoPlayerWebOptions(),
-        ),
+        VideoPlayerPlatform.instance.setWebOptions(await playerId, const VideoPlayerWebOptions()),
         completes,
       );
     });

@@ -12,17 +12,12 @@ void main() {
     test('FixedTreeRowExtent', () {
       var extent = const FixedTreeRowExtent(150);
       expect(
-        extent.calculateExtent(
-          const TreeRowExtentDelegate(precedingExtent: 0, viewportExtent: 0),
-        ),
+        extent.calculateExtent(const TreeRowExtentDelegate(precedingExtent: 0, viewportExtent: 0)),
         150,
       );
       expect(
         extent.calculateExtent(
-          const TreeRowExtentDelegate(
-            precedingExtent: 100,
-            viewportExtent: 1000,
-          ),
+          const TreeRowExtentDelegate(precedingExtent: 100, viewportExtent: 1000),
         ),
         150,
       );
@@ -44,17 +39,12 @@ void main() {
     test('FractionalTreeRowExtent', () {
       var extent = const FractionalTreeRowExtent(0.5);
       expect(
-        extent.calculateExtent(
-          const TreeRowExtentDelegate(precedingExtent: 0, viewportExtent: 0),
-        ),
+        extent.calculateExtent(const TreeRowExtentDelegate(precedingExtent: 0, viewportExtent: 0)),
         0.0,
       );
       expect(
         extent.calculateExtent(
-          const TreeRowExtentDelegate(
-            precedingExtent: 100,
-            viewportExtent: 1000,
-          ),
+          const TreeRowExtentDelegate(precedingExtent: 100, viewportExtent: 1000),
         ),
         500,
       );
@@ -76,17 +66,12 @@ void main() {
     test('RemainingTreeRowExtent', () {
       const extent = RemainingTreeRowExtent();
       expect(
-        extent.calculateExtent(
-          const TreeRowExtentDelegate(precedingExtent: 0, viewportExtent: 0),
-        ),
+        extent.calculateExtent(const TreeRowExtentDelegate(precedingExtent: 0, viewportExtent: 0)),
         0.0,
       );
       expect(
         extent.calculateExtent(
-          const TreeRowExtentDelegate(
-            precedingExtent: 100,
-            viewportExtent: 1000,
-          ),
+          const TreeRowExtentDelegate(precedingExtent: 100, viewportExtent: 1000),
         ),
         900,
       );
@@ -101,61 +86,40 @@ void main() {
         },
       );
       expect(
-        extent.calculateExtent(
-          const TreeRowExtentDelegate(precedingExtent: 0, viewportExtent: 0),
-        ),
+        extent.calculateExtent(const TreeRowExtentDelegate(precedingExtent: 0, viewportExtent: 0)),
         100,
       );
       expect(
         extent.calculateExtent(
-          const TreeRowExtentDelegate(
-            precedingExtent: 100,
-            viewportExtent: 1000,
-          ),
+          const TreeRowExtentDelegate(precedingExtent: 100, viewportExtent: 1000),
         ),
         1000,
       );
     });
 
     test('MaxTreeRowExtent', () {
-      const extent = MaxTreeRowExtent(
-        FixedTreeRowExtent(100),
-        RemainingTreeRowExtent(),
-      );
+      const extent = MaxTreeRowExtent(FixedTreeRowExtent(100), RemainingTreeRowExtent());
       expect(
-        extent.calculateExtent(
-          const TreeRowExtentDelegate(precedingExtent: 0, viewportExtent: 0),
-        ),
+        extent.calculateExtent(const TreeRowExtentDelegate(precedingExtent: 0, viewportExtent: 0)),
         100,
       );
       expect(
         extent.calculateExtent(
-          const TreeRowExtentDelegate(
-            precedingExtent: 100,
-            viewportExtent: 1000,
-          ),
+          const TreeRowExtentDelegate(precedingExtent: 100, viewportExtent: 1000),
         ),
         900,
       );
     });
 
     test('MinTreeRowExtent', () {
-      const extent = MinTreeRowExtent(
-        FixedTreeRowExtent(100),
-        RemainingTreeRowExtent(),
-      );
+      const extent = MinTreeRowExtent(FixedTreeRowExtent(100), RemainingTreeRowExtent());
       expect(
-        extent.calculateExtent(
-          const TreeRowExtentDelegate(precedingExtent: 0, viewportExtent: 0),
-        ),
+        extent.calculateExtent(const TreeRowExtentDelegate(precedingExtent: 0, viewportExtent: 0)),
         0,
       );
       expect(
         extent.calculateExtent(
-          const TreeRowExtentDelegate(
-            precedingExtent: 100,
-            viewportExtent: 1000,
-          ),
+          const TreeRowExtentDelegate(precedingExtent: 100, viewportExtent: 1000),
         ),
         100,
       );

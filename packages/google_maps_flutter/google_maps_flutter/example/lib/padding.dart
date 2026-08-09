@@ -9,8 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'page.dart';
 
 class PaddingPage extends GoogleMapExampleAppPage {
-  const PaddingPage({super.key})
-    : super(const Icon(Icons.map), 'Add padding to the map');
+  const PaddingPage({super.key}) : super(const Icon(Icons.map), 'Add padding to the map');
 
   @override
   Widget build(BuildContext context) {
@@ -36,19 +35,14 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
   Widget build(BuildContext context) {
     final googleMap = GoogleMap(
       onMapCreated: _onMapCreated,
-      initialCameraPosition: const CameraPosition(
-        target: _kMapCenter,
-        zoom: 7.0,
-      ),
+      initialCameraPosition: const CameraPosition(target: _kMapCenter, zoom: 7.0),
       padding: _padding,
     );
 
     final columnChildren = <Widget>[
       Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Center(
-          child: SizedBox(width: 300.0, height: 200.0, child: googleMap),
-        ),
+        child: Center(child: SizedBox(width: 300.0, height: 200.0, child: googleMap)),
       ),
       const Padding(
         padding: EdgeInsets.only(top: 20),
@@ -63,10 +57,7 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
 
     columnChildren.addAll(<Widget>[_paddingInput(), _buttons()]);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: columnChildren,
-    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: columnChildren);
   }
 
   void _onMapCreated(GoogleMapController controllerParam) {

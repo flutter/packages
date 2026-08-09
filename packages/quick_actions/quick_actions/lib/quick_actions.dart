@@ -25,6 +25,5 @@ class QuickActions {
       QuickActionsPlatform.instance.setShortcutItems(items);
 
   /// Removes all [ShortcutItem]s registered for the app.
-  Future<void> clearShortcutItems() =>
-      QuickActionsPlatform.instance.clearShortcutItems();
+  Future<void> clearShortcutItems() => QuickActionsPlatform.instance.clearShortcutItems();
 }

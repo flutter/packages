@@ -12,8 +12,7 @@ import 'types/native_illegal_argument_exception.dart';
 
 /// An implementation of [FileSelectorPlatform] for Android.
 class FileSelectorAndroid extends FileSelectorPlatform {
-  FileSelectorAndroid({@visibleForTesting FileSelectorApi? api})
-    : _api = api ?? FileSelectorApi();
+  FileSelectorAndroid({@visibleForTesting FileSelectorApi? api}) : _api = api ?? FileSelectorApi();
 
   final FileSelectorApi _api;
 
@@ -49,10 +48,7 @@ class FileSelectorAndroid extends FileSelectorPlatform {
   }
 
   @override
-  Future<String?> getDirectoryPath({
-    String? initialDirectory,
-    String? confirmButtonText,
-  }) async {
+  Future<String?> getDirectoryPath({String? initialDirectory, String? confirmButtonText}) async {
     return _api.getDirectoryPath(initialDirectory);
   }
 
@@ -80,9 +76,7 @@ class FileSelectorAndroid extends FileSelectorPlatform {
     final extensions = <String>{};
 
     for (final XTypeGroup group in typeGroups) {
-      if (!group.allowsAny &&
-          group.mimeTypes == null &&
-          group.extensions == null) {
+      if (!group.allowsAny && group.mimeTypes == null && group.extensions == null) {
         throw ArgumentError(
           'Provided type group $group does not allow all files, but does not '
           'set any of the Android supported filter categories. At least one of '
@@ -94,22 +88,15 @@ class FileSelectorAndroid extends FileSelectorPlatform {
       extensions.addAll(group.extensions ?? <String>{});
     }
 
-    return FileTypes(
-      mimeTypes: mimeTypes.toList(),
-      extensions: extensions.toList(),
-    );
+    return FileTypes(mimeTypes: mimeTypes.toList(), extensions: extensions.toList());
   }
 
   /// Translates a [FileSelectorExceptionCode] to its corresponding error and
   /// handles throwing.
-  void _resolveErrorCodeAndMaybeThrow(
-    FileSelectorNativeException fileSelectorNativeException,
-  ) {
+  void _resolveErrorCodeAndMaybeThrow(FileSelectorNativeException fileSelectorNativeException) {
     switch (fileSelectorNativeException.fileSelectorExceptionCode) {
       case FileSelectorExceptionCode.illegalArgumentException:
-        throw NativeIllegalArgumentException(
-          fileSelectorNativeException.message,
-        );
+        throw NativeIllegalArgumentException(fileSelectorNativeException.message);
       case (FileSelectorExceptionCode.illegalStateException ||
           FileSelectorExceptionCode.ioException ||
           FileSelectorExceptionCode.securityException):

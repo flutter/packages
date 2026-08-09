@@ -23,8 +23,7 @@ final class AndroidAdDisplayContainerCreationParams
     required super.onContainerAdded,
     super.companionSlots,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
-  }) : _platformViewsProxy =
-           platformViewsProxy ?? const PlatformViewsServiceProxy(),
+  }) : _platformViewsProxy = platformViewsProxy ?? const PlatformViewsServiceProxy(),
        super();
 
   /// Creates a [AndroidAdDisplayContainerCreationParams] from an instance of
@@ -85,8 +84,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   /// Methods that must be triggered to update the IMA SDK of the state of
   /// playback of an ad.
   @internal
-  final Set<ima.VideoAdPlayerCallback> videoAdPlayerCallbacks =
-      <ima.VideoAdPlayerCallback>{};
+  final Set<ima.VideoAdPlayerCallback> videoAdPlayerCallbacks = <ima.VideoAdPlayerCallback>{};
 
   // Handles ad playback callbacks from the IMA SDK. For a player to be used for
   // ad playback, the callbacks in this class must be implemented. This also
@@ -104,8 +102,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   ima.AdDisplayContainer? adDisplayContainer;
 
   // Queue of ads to be played.
-  final Queue<ima.AdMediaInfo> _loadedAdMediaInfoQueue =
-      Queue<ima.AdMediaInfo>();
+  final Queue<ima.AdMediaInfo> _loadedAdMediaInfoQueue = Queue<ima.AdMediaInfo>();
 
   // The saved ad position, used to resume ad playback following an ad
   // click-through.
@@ -158,9 +155,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     // The `VideoView` is replaced to clear the last frame of the last loaded
     // ad. See https://stackoverflow.com/questions/25660994/clear-video-frame-from-surfaceview-on-video-complete.
     _frameLayout.removeView(_videoView);
-    _videoView = _setUpVideoView(
-      WeakReference<AndroidAdDisplayContainer>(this),
-    );
+    _videoView = _setUpVideoView(WeakReference<AndroidAdDisplayContainer>(this));
     _frameLayout.addView(_videoView);
 
     _clearMediaPlayer();
@@ -178,29 +173,27 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   void _startAdProgressTracking() {
     // Stop any previous ad tracking.
     _stopAdProgressTracking();
-    _adProgressTimer = Timer.periodic(
-      const Duration(milliseconds: _progressPollingMs),
-      (Timer timer) async {
-        final int videoCurrentPosition = await _videoView.getCurrentPosition();
-        if (_adDuration case final int adDuration) {
-          final currentProgress = ima.VideoProgressUpdate(
-            currentTimeMs: videoCurrentPosition,
-            durationMs: adDuration,
-          );
+    _adProgressTimer = Timer.periodic(const Duration(milliseconds: _progressPollingMs), (
+      Timer timer,
+    ) async {
+      final int videoCurrentPosition = await _videoView.getCurrentPosition();
+      if (_adDuration case final int adDuration) {
+        final currentProgress = ima.VideoProgressUpdate(
+          currentTimeMs: videoCurrentPosition,
+          durationMs: adDuration,
+        );
 
-          await Future.wait(<Future<void>>[
-            _videoAdPlayer.setAdProgress(currentProgress),
+        await Future.wait(<Future<void>>[
+          _videoAdPlayer.setAdProgress(currentProgress),
 
-            if (_loadedAdMediaInfoQueue.firstOrNull
-                case final ima.AdMediaInfo loadedAdMediaInfo)
-              ...videoAdPlayerCallbacks.map(
-                (ima.VideoAdPlayerCallback callback) =>
-                    callback.onAdProgress(loadedAdMediaInfo, currentProgress),
-              ),
-          ]);
-        }
-      },
-    );
+          if (_loadedAdMediaInfoQueue.firstOrNull case final ima.AdMediaInfo loadedAdMediaInfo)
+            ...videoAdPlayerCallbacks.map(
+              (ima.VideoAdPlayerCallback callback) =>
+                  callback.onAdProgress(loadedAdMediaInfo, currentProgress),
+            ),
+        ]);
+      }
+    });
   }
 
   // Stops updating the IMA SDK the progress of the currently playing ad.
@@ -223,17 +216,14 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   // This value is created in a static method because the callback methods for
   // any wrapped classes must not reference the encapsulating object. This is to
   // prevent a circular reference that prevents garbage collection.
-  static ima.VideoView _setUpVideoView(
-    WeakReference<AndroidAdDisplayContainer> weakThis,
-  ) {
+  static ima.VideoView _setUpVideoView(WeakReference<AndroidAdDisplayContainer> weakThis) {
     return ima.VideoView(
-      onCompletion: (_, __) {
+      onCompletion: (_, _) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
           container._clearMediaPlayer();
           container._stopAdProgressTracking();
-          for (final ima.VideoAdPlayerCallback callback
-              in container.videoAdPlayerCallbacks) {
+          for (final ima.VideoAdPlayerCallback callback in container.videoAdPlayerCallbacks) {
             callback.onEnded(container._loadedAdMediaInfoQueue.first);
           }
         }
@@ -253,12 +243,11 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           }
         }
       },
-      onError: (_, __, ___, ____) {
+      onError: (_, _, _, _) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
           container._clearMediaPlayer();
-          for (final ima.VideoAdPlayerCallback callback
-              in container.videoAdPlayerCallbacks) {
+          for (final ima.VideoAdPlayerCallback callback in container.videoAdPlayerCallbacks) {
             callback.onError(container._loadedAdMediaInfoQueue.first);
           }
         }
@@ -269,9 +258,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   // This value is created in a static method because the callback methods for
   // any wrapped classes must not reference the encapsulating object. This is to
   // prevent a circular reference that prevents garbage collection.
-  static ima.VideoAdPlayer _setUpVideoAdPlayer(
-    WeakReference<AndroidAdDisplayContainer> weakThis,
-  ) {
+  static ima.VideoAdPlayer _setUpVideoAdPlayer(WeakReference<AndroidAdDisplayContainer> weakThis) {
     return ima.VideoAdPlayer(
       addCallback: (_, ima.VideoAdPlayerCallback callback) {
         weakThis.target?.videoAdPlayerCallbacks.add(callback);
@@ -279,7 +266,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       removeCallback: (_, ima.VideoAdPlayerCallback callback) {
         weakThis.target?.videoAdPlayerCallbacks.remove(callback);
       },
-      loadAd: (_, ima.AdMediaInfo adMediaInfo, __) {
+      loadAd: (_, ima.AdMediaInfo adMediaInfo, _) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
           container._loadedAdMediaInfoQueue.add(adMediaInfo);
@@ -288,7 +275,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           }
         }
       },
-      pauseAd: (_, __) async {
+      pauseAd: (_, _) async {
         final AndroidAdDisplayContainer? container = weakThis.target;
         final ima.MediaPlayer? player = container?._mediaPlayer;
         if (container != null && player != null) {
@@ -296,12 +283,10 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           // app is returned to the foreground.
           container._startPlayerWhenVideoIsPrepared = false;
           await player.pause();
-          container._savedAdPosition = await container._videoView
-              .getCurrentPosition();
+          container._savedAdPosition = await container._videoView.getCurrentPosition();
           container._stopAdProgressTracking();
           await Future.wait(<Future<void>>[
-            for (final ima.VideoAdPlayerCallback callback
-                in container.videoAdPlayerCallbacks)
+            for (final ima.VideoAdPlayerCallback callback in container.videoAdPlayerCallbacks)
               callback.onPause(container._loadedAdMediaInfoQueue.first),
           ]);
         }
@@ -311,19 +296,14 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         if (container != null) {
           assert(container._loadedAdMediaInfoQueue.first == adMediaInfo);
 
-          container._videoView.setAudioFocusRequest(
-            ima.AudioManagerAudioFocus.gain,
-          );
+          container._videoView.setAudioFocusRequest(ima.AudioManagerAudioFocus.gain);
 
           if (container._mediaPlayer != null) {
-            container._mediaPlayer!.start().then(
-              (_) => container._startAdProgressTracking(),
-            );
+            container._mediaPlayer!.start().then((_) => container._startAdProgressTracking());
           }
           container._startPlayerWhenVideoIsPrepared = true;
 
-          for (final ima.VideoAdPlayerCallback callback
-              in container.videoAdPlayerCallbacks) {
+          for (final ima.VideoAdPlayerCallback callback in container.videoAdPlayerCallbacks) {
             if (container._savedAdPosition == 0) {
               callback.onPlay(adMediaInfo);
             } else {
@@ -333,7 +313,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         }
       },
       release: (_) => weakThis.target?._release(),
-      stopAd: (_, __) {
+      stopAd: (_, _) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
           container._resetStateForNextAd();
@@ -393,8 +373,7 @@ class _AdPlayerState extends State<_AdPlayer> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return AndroidViewWidget(
       view: widget.container._frameLayout,
-      platformViewsServiceProxy:
-          widget.container._androidParams._platformViewsProxy,
+      platformViewsServiceProxy: widget.container._androidParams._platformViewsProxy,
       layoutDirection: widget.container._androidParams.layoutDirection,
       onPlatformViewCreated: () async {
         final ima.AdDisplayContainer nativeContainer =
@@ -402,15 +381,11 @@ class _AdPlayerState extends State<_AdPlayer> with WidgetsBindingObserver {
               widget.container._frameLayout,
               widget.container._videoAdPlayer,
             );
-        final Iterable<ima.CompanionAdSlot> nativeCompanionSlots =
-            await Future.wait(
-              widget.container._androidParams.companionSlots.map((
-                PlatformCompanionAdSlot slot,
-              ) {
-                return (slot as AndroidCompanionAdSlot)
-                    .getNativeCompanionAdSlot();
-              }),
-            );
+        final Iterable<ima.CompanionAdSlot> nativeCompanionSlots = await Future.wait(
+          widget.container._androidParams.companionSlots.map((PlatformCompanionAdSlot slot) {
+            return (slot as AndroidCompanionAdSlot).getNativeCompanionAdSlot();
+          }),
+        );
         await nativeContainer.setCompanionSlots(nativeCompanionSlots.toList());
 
         widget.container.adDisplayContainer = nativeContainer;

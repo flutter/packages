@@ -24,11 +24,10 @@ Future<String?> getDeviceForPlatform(String platform) async {
   // can be removed once that is fixed.
   output = output.substring(output.indexOf('['));
 
-  final List<Map<String, dynamic>> devices =
-      (jsonDecode(output) as List<dynamic>).cast<Map<String, dynamic>>();
+  final List<Map<String, dynamic>> devices = (jsonDecode(output) as List<dynamic>)
+      .cast<Map<String, dynamic>>();
   for (final deviceInfo in devices) {
-    final String targetPlatform =
-        (deviceInfo['targetPlatform'] as String?) ?? '';
+    final String targetPlatform = (deviceInfo['targetPlatform'] as String?) ?? '';
     if (targetPlatform.startsWith(platform)) {
       final deviceId = deviceInfo['id'] as String?;
       if (deviceId != null) {

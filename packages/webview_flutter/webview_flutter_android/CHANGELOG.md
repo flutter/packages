@@ -1,6 +1,15 @@
-## NEXT
+## 4.13.0
 
-* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Adds new method for accessing a native `WebView` from a `FlutterPluginBinding`.
+
+## 4.12.2
+
+* Bumps the androidx group across 10 directories with 1 update.
+
+## 4.12.1
+
+* Migrates to Built-in Kotlin to support AGP 9.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 4.12.0
 

@@ -26,10 +26,7 @@ void main() {
       expect(cluster.position, equals(const LatLng(55.0, 66.0)));
       expect(
         cluster.bounds,
-        LatLngBounds(
-          northeast: const LatLng(88.0, 22.0),
-          southwest: const LatLng(11.0, 99.0),
-        ),
+        LatLngBounds(northeast: const LatLng(88.0, 22.0), southwest: const LatLng(11.0, 99.0)),
       );
     });
 

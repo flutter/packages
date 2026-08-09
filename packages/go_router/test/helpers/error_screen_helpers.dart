@@ -35,8 +35,8 @@ WidgetTesterCallback testClickingTheButtonRedirectsToRoot({
     final router = GoRouter(
       initialLocation: '/error',
       routes: <GoRoute>[
-        GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
-        GoRoute(path: '/error', builder: (_, __) => widget),
+        GoRoute(path: '/', builder: (_, _) => const DummyStatefulWidget()),
+        GoRoute(path: '/error', builder: (_, _) => widget),
       ],
     );
     addTearDown(router.dispose);

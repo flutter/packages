@@ -30,10 +30,7 @@ void main() => runApp(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          ElevatedButton(
-            onPressed: _composeMail,
-            child: Text('Compose an email'),
-          ),
+          ElevatedButton(onPressed: _composeMail, child: Text('Compose an email')),
         ],
       ),
     ),

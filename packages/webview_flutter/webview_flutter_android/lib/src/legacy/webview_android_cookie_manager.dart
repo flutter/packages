@@ -11,9 +11,8 @@ import '../android_webkit.g.dart' as android_webview;
 /// Handles all cookie operations for the current platform.
 class WebViewAndroidCookieManager extends WebViewCookieManagerPlatform {
   /// Constructs a [WebViewAndroidCookieManager].
-  WebViewAndroidCookieManager({
-    @visibleForTesting android_webview.CookieManager? cookieManager,
-  }) : _cookieManager = cookieManager ?? android_webview.CookieManager.instance;
+  WebViewAndroidCookieManager({@visibleForTesting android_webview.CookieManager? cookieManager})
+    : _cookieManager = cookieManager ?? android_webview.CookieManager.instance;
 
   final android_webview.CookieManager _cookieManager;
 
@@ -23,9 +22,7 @@ class WebViewAndroidCookieManager extends WebViewCookieManagerPlatform {
   @override
   Future<void> setCookie(WebViewCookie cookie) {
     if (!_isValidPath(cookie.path)) {
-      throw ArgumentError(
-        'The path property for the provided cookie was not given a legal value.',
-      );
+      throw ArgumentError('The path property for the provided cookie was not given a legal value.');
     }
     return _cookieManager.setCookie(
       cookie.domain,

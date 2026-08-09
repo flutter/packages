@@ -2,8 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart'
-    show immutable, listEquals, objectRuntimeType;
+import 'package:flutter/foundation.dart' show immutable, listEquals, objectRuntimeType;
 import 'types.dart';
 
 /// A cluster containing multiple markers.
@@ -47,6 +46,5 @@ class Cluster {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(clusterManagerId, position, bounds, markerIds);
+  int get hashCode => Object.hash(clusterManagerId, position, bounds, markerIds);
 }

@@ -5,8 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 
-final class TestInteractiveMediaAdsPlatform
-    extends InteractiveMediaAdsPlatform {
+final class TestInteractiveMediaAdsPlatform extends InteractiveMediaAdsPlatform {
   TestInteractiveMediaAdsPlatform({
     required this.onCreatePlatformAdsLoader,
     required this.onCreatePlatformAdsManagerDelegate,
@@ -16,41 +15,28 @@ final class TestInteractiveMediaAdsPlatform
     this.onCreatePlatformCompanionAdSlot,
   });
 
-  PlatformAdsLoader Function(PlatformAdsLoaderCreationParams params)
-  onCreatePlatformAdsLoader;
+  PlatformAdsLoader Function(PlatformAdsLoaderCreationParams params) onCreatePlatformAdsLoader;
 
-  PlatformAdsManagerDelegate Function(
-    PlatformAdsManagerDelegateCreationParams params,
-  )
+  PlatformAdsManagerDelegate Function(PlatformAdsManagerDelegateCreationParams params)
   onCreatePlatformAdsManagerDelegate;
 
-  PlatformAdDisplayContainer Function(
-    PlatformAdDisplayContainerCreationParams params,
-  )
+  PlatformAdDisplayContainer Function(PlatformAdDisplayContainerCreationParams params)
   onCreatePlatformAdDisplayContainer;
 
-  PlatformContentProgressProvider Function(
-    PlatformContentProgressProviderCreationParams params,
-  )
+  PlatformContentProgressProvider Function(PlatformContentProgressProviderCreationParams params)
   onCreatePlatformContentProgressProvider;
 
-  PlatformAdsRenderingSettings Function(
-    PlatformAdsRenderingSettingsCreationParams params,
-  )?
+  PlatformAdsRenderingSettings Function(PlatformAdsRenderingSettingsCreationParams params)?
   onCreatePlatformAdsRenderingSettings;
 
-  PlatformCompanionAdSlot Function(
-    PlatformCompanionAdSlotCreationParams params,
-  )?
+  PlatformCompanionAdSlot Function(PlatformCompanionAdSlotCreationParams params)?
   onCreatePlatformCompanionAdSlot;
 
   PlatformImaSettings Function(PlatformImaSettingsCreationParams params)?
   onCreatePlatformImaSettings;
 
   @override
-  PlatformAdsLoader createPlatformAdsLoader(
-    PlatformAdsLoaderCreationParams params,
-  ) {
+  PlatformAdsLoader createPlatformAdsLoader(PlatformAdsLoaderCreationParams params) {
     return onCreatePlatformAdsLoader(params);
   }
 
@@ -79,8 +65,7 @@ final class TestInteractiveMediaAdsPlatform
   PlatformAdsRenderingSettings createPlatformAdsRenderingSettings(
     PlatformAdsRenderingSettingsCreationParams params,
   ) {
-    return onCreatePlatformAdsRenderingSettings?.call(params) ??
-        TestAdsRenderingSettings(params);
+    return onCreatePlatformAdsRenderingSettings?.call(params) ?? TestAdsRenderingSettings(params);
   }
 
   @override
@@ -92,16 +77,13 @@ final class TestInteractiveMediaAdsPlatform
   }
 
   @override
-  PlatformImaSettings createPlatformImaSettings(
-    PlatformImaSettingsCreationParams params,
-  ) {
+  PlatformImaSettings createPlatformImaSettings(PlatformImaSettingsCreationParams params) {
     return onCreatePlatformImaSettings?.call(params) ?? TestImaSettings(params);
   }
 }
 
 final class TestPlatformAdDisplayContainer extends PlatformAdDisplayContainer {
-  TestPlatformAdDisplayContainer(super.params, {required this.onBuild})
-    : super.implementation();
+  TestPlatformAdDisplayContainer(super.params, {required this.onBuild}) : super.implementation();
 
   Widget Function(BuildContext context) onBuild;
 
@@ -112,11 +94,8 @@ final class TestPlatformAdDisplayContainer extends PlatformAdDisplayContainer {
 }
 
 final class TestPlatformAdsLoader extends PlatformAdsLoader {
-  TestPlatformAdsLoader(
-    super.params, {
-    required this.onContentComplete,
-    required this.onRequestAds,
-  }) : super.implementation();
+  TestPlatformAdsLoader(super.params, {required this.onContentComplete, required this.onRequestAds})
+    : super.implementation();
 
   Future<void> Function() onContentComplete;
 
@@ -152,8 +131,7 @@ class TestAdsManager extends PlatformAdsManager {
 
   Future<void> Function({PlatformAdsRenderingSettings? settings})? onInit;
 
-  Future<void> Function(PlatformAdsManagerDelegate delegate)?
-  onSetAdsManagerDelegate;
+  Future<void> Function(PlatformAdsManagerDelegate delegate)? onSetAdsManagerDelegate;
 
   Future<void> Function(AdsManagerStartParams params)? onStart;
 
@@ -173,9 +151,7 @@ class TestAdsManager extends PlatformAdsManager {
   }
 
   @override
-  Future<void> setAdsManagerDelegate(
-    PlatformAdsManagerDelegate delegate,
-  ) async {
+  Future<void> setAdsManagerDelegate(PlatformAdsManagerDelegate delegate) async {
     return onSetAdsManagerDelegate?.call(delegate);
   }
 
@@ -211,20 +187,12 @@ class TestAdsManager extends PlatformAdsManager {
 }
 
 class TestContentProgressProvider extends PlatformContentProgressProvider {
-  TestContentProgressProvider(super.params, {this.onSetProgress})
-    : super.implementation();
+  TestContentProgressProvider(super.params, {this.onSetProgress}) : super.implementation();
 
-  Future<void> Function({
-    required Duration progress,
-    required Duration duration,
-  })?
-  onSetProgress;
+  Future<void> Function({required Duration progress, required Duration duration})? onSetProgress;
 
   @override
-  Future<void> setProgress({
-    required Duration progress,
-    required Duration duration,
-  }) async {
+  Future<void> setProgress({required Duration progress, required Duration duration}) async {
     return onSetProgress?.call(progress: progress, duration: duration);
   }
 }
@@ -234,8 +202,7 @@ final class TestAdsRenderingSettings extends PlatformAdsRenderingSettings {
 }
 
 final class TestCompanionAdSlot extends PlatformCompanionAdSlot {
-  TestCompanionAdSlot(super.params, {required this.onBuildWidget})
-    : super.implementation();
+  TestCompanionAdSlot(super.params, {required this.onBuildWidget}) : super.implementation();
 
   Widget Function(BuildWidgetCreationParams params) onBuildWidget;
 

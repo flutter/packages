@@ -59,16 +59,12 @@ final class IOSInteractiveMediaAds extends InteractiveMediaAdsPlatform {
   }
 
   @override
-  IOSCompanionAdSlot createPlatformCompanionAdSlot(
-    PlatformCompanionAdSlotCreationParams params,
-  ) {
+  IOSCompanionAdSlot createPlatformCompanionAdSlot(PlatformCompanionAdSlotCreationParams params) {
     return IOSCompanionAdSlot(params);
   }
 
   @override
-  IOSImaSettings createPlatformImaSettings(
-    PlatformImaSettingsCreationParams params,
-  ) {
+  IOSImaSettings createPlatformImaSettings(PlatformImaSettingsCreationParams params) {
     return IOSImaSettings(params);
   }
 }

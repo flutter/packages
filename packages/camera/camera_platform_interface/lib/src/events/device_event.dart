@@ -34,9 +34,7 @@ class DeviceOrientationChangedEvent extends DeviceEvent {
   /// Converts the supplied [Map] to an instance of the [DeviceOrientationChangedEvent]
   /// class.
   DeviceOrientationChangedEvent.fromJson(Map<String, dynamic> json)
-    : orientation = deserializeDeviceOrientation(
-        json['orientation']! as String,
-      );
+    : orientation = deserializeDeviceOrientation(json['orientation']! as String);
 
   /// The new orientation of the device
   final DeviceOrientation orientation;

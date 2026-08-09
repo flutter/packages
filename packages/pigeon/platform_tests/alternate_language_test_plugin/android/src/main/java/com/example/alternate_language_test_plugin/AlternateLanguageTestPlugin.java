@@ -135,6 +135,26 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public @NonNull List<String> echoStringList(@NonNull List<String> stringList) {
+    return stringList;
+  }
+
+  @Override
+  public @NonNull List<Long> echoIntList(@NonNull List<Long> intList) {
+    return intList;
+  }
+
+  @Override
+  public @NonNull List<Double> echoDoubleList(@NonNull List<Double> doubleList) {
+    return doubleList;
+  }
+
+  @Override
+  public @NonNull List<Boolean> echoBoolList(@NonNull List<Boolean> boolList) {
+    return boolList;
+  }
+
+  @Override
   public @NonNull List<AnEnum> echoEnumList(@NonNull List<AnEnum> enumList) {
     return enumList;
   }

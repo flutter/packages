@@ -11,8 +11,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 void main() {
   // Require Hybrid Composition mode on Android.
-  final GoogleMapsFlutterPlatform mapsImplementation =
-      GoogleMapsFlutterPlatform.instance;
+  final GoogleMapsFlutterPlatform mapsImplementation = GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
     // Force Hybrid Composition mode.
     mapsImplementation.useAndroidViewSurface = true;
@@ -48,13 +47,10 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initializeLatestMapRenderer() async {
     // #docregion MapRenderer
-    final GoogleMapsFlutterPlatform mapsImplementation =
-        GoogleMapsFlutterPlatform.instance;
+    final GoogleMapsFlutterPlatform mapsImplementation = GoogleMapsFlutterPlatform.instance;
     if (mapsImplementation is GoogleMapsFlutterAndroid) {
       WidgetsFlutterBinding.ensureInitialized();
-      mapRenderer = await mapsImplementation.initializeWithRenderer(
-        AndroidMapRenderer.latest,
-      );
+      mapRenderer = await mapsImplementation.initializeWithRenderer(AndroidMapRenderer.latest);
     }
     // #enddocregion MapRenderer
   }

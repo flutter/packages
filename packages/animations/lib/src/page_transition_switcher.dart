@@ -56,8 +56,7 @@ class _ChildEntry {
 /// The builder should return a widget which contains the given children, laid
 /// out as desired. It must not return null. The builder should be able to
 /// handle an empty list of `entries`.
-typedef PageTransitionSwitcherLayoutBuilder =
-    Widget Function(List<Widget> entries);
+typedef PageTransitionSwitcherLayoutBuilder = Widget Function(List<Widget> entries);
 
 /// Signature for builders used to generate custom transitions for
 /// [PageTransitionSwitcher].
@@ -296,8 +295,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     final hasNewChild = widget.child != null;
     final hasOldChild = _currentEntry != null;
     if (hasNewChild != hasOldChild ||
-        hasNewChild &&
-            !Widget.canUpdate(widget.child!, _currentEntry!.widgetChild)) {
+        hasNewChild && !Widget.canUpdate(widget.child!, _currentEntry!.widgetChild)) {
       // Child has changed, fade current entry out and add new entry.
       _childNumber += 1;
       _addEntryForNewChild(shouldAnimate: true);
@@ -327,14 +325,8 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     if (widget.child == null) {
       return;
     }
-    final primaryController = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
-    final secondaryController = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
+    final primaryController = AnimationController(duration: widget.duration, vsync: this);
+    final secondaryController = AnimationController(duration: widget.duration, vsync: this);
     if (shouldAnimate) {
       if (widget.reverse) {
         primaryController.value = 1.0;
@@ -368,11 +360,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     required AnimationController primaryController,
     required AnimationController secondaryController,
   }) {
-    final Widget transition = builder(
-      child,
-      primaryController,
-      secondaryController,
-    );
+    final Widget transition = builder(child, primaryController, secondaryController);
     final entry = _ChildEntry(
       widgetChild: child,
       transition: KeyedSubtree.wrap(transition, _childNumber),
@@ -408,10 +396,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
       entry.primaryController,
       entry.secondaryController,
     );
-    entry.transition = KeyedSubtree(
-      key: entry.transition.key,
-      child: transition,
-    );
+    entry.transition = KeyedSubtree(key: entry.transition.key, child: transition);
   }
 
   @override
@@ -425,9 +410,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
   @override
   Widget build(BuildContext context) {
     return widget.layoutBuilder(
-      _activeEntries
-          .map<Widget>((_ChildEntry entry) => entry.transition)
-          .toList(),
+      _activeEntries.map<Widget>((_ChildEntry entry) => entry.transition).toList(),
     );
   }
 }

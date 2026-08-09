@@ -612,9 +612,7 @@ class PartI {
       displayMedium: ibmPlexSansDevanagari(textStyle: textTheme.displayMedium),
       displaySmall: ibmPlexSansDevanagari(textStyle: textTheme.displaySmall),
       headlineLarge: ibmPlexSansDevanagari(textStyle: textTheme.headlineLarge),
-      headlineMedium: ibmPlexSansDevanagari(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: ibmPlexSansDevanagari(textStyle: textTheme.headlineMedium),
       headlineSmall: ibmPlexSansDevanagari(textStyle: textTheme.headlineSmall),
       titleLarge: ibmPlexSansDevanagari(textStyle: textTheme.titleLarge),
       titleMedium: ibmPlexSansDevanagari(textStyle: textTheme.titleMedium),
@@ -1259,9 +1257,7 @@ class PartI {
       displayMedium: ibmPlexSansThaiLooped(textStyle: textTheme.displayMedium),
       displaySmall: ibmPlexSansThaiLooped(textStyle: textTheme.displaySmall),
       headlineLarge: ibmPlexSansThaiLooped(textStyle: textTheme.headlineLarge),
-      headlineMedium: ibmPlexSansThaiLooped(
-        textStyle: textTheme.headlineMedium,
-      ),
+      headlineMedium: ibmPlexSansThaiLooped(textStyle: textTheme.headlineMedium),
       headlineSmall: ibmPlexSansThaiLooped(textStyle: textTheme.headlineSmall),
       titleLarge: ibmPlexSansThaiLooped(textStyle: textTheme.titleLarge),
       titleMedium: ibmPlexSansThaiLooped(textStyle: textTheme.titleMedium),

@@ -28,8 +28,7 @@ const String kMapId = '000000000000000'; // Dummy map ID.
 final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS;
 
 /// True if the test is running in an Android device
-final bool isAndroid =
-    defaultTargetPlatform == TargetPlatform.android && !kIsWeb;
+final bool isAndroid = defaultTargetPlatform == TargetPlatform.android && !kIsWeb;
 
 /// True if the test is running in a web browser.
 const bool isWeb = kIsWeb;

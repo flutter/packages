@@ -16,14 +16,10 @@ void main() {
 
   setUp(() {
     final GitDir gitDir;
-    (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) =
-        configureBaseCommandMocks();
+    (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks();
 
     final command = UpdateMinSdkCommand(packagesDir, gitDir: gitDir);
-    runner = CommandRunner<void>(
-      'update_min_sdk_command',
-      'Test for update_min_sdk_command',
-    );
+    runner = CommandRunner<void>('update_min_sdk_command', 'Test for update_min_sdk_command');
     runner.addCommand(command);
   });
 
@@ -107,10 +103,7 @@ void main() {
     ]);
 
     final dartVersion = package.parsePubspec().environment['sdk'].toString();
-    final flutterVersion = package
-        .parsePubspec()
-        .environment['flutter']
-        .toString();
+    final flutterVersion = package.parsePubspec().environment['flutter'].toString();
     expect(dartVersion, '^3.1.0');
     expect(flutterVersion, '>=3.13.0');
   });
@@ -131,10 +124,7 @@ void main() {
     ]);
 
     final dartVersion = package.parsePubspec().environment['sdk'].toString();
-    final flutterVersion = package
-        .parsePubspec()
-        .environment['flutter']
-        .toString();
+    final flutterVersion = package.parsePubspec().environment['flutter'].toString();
     expect(dartVersion, '^3.2.0');
     expect(flutterVersion, '>=3.16.0');
   });

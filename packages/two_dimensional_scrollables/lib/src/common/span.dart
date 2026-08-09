@@ -167,10 +167,7 @@ class SpanExtentDelegate {
   /// Creates a [SpanExtentDelegate].
   ///
   /// Usually, only [TableView]s need to create instances of this class.
-  const SpanExtentDelegate({
-    required this.viewportExtent,
-    required this.precedingExtent,
-  });
+  const SpanExtentDelegate({required this.viewportExtent, required this.precedingExtent});
 
   /// The size of the viewport in the axis-direction of the span.
   ///
@@ -233,8 +230,7 @@ class FractionalSpanExtent extends SpanExtent {
   final double fraction;
 
   @override
-  double calculateExtent(SpanExtentDelegate delegate) =>
-      delegate.viewportExtent * fraction;
+  double calculateExtent(SpanExtentDelegate delegate) => delegate.viewportExtent * fraction;
 }
 
 /// Specifies that the span should occupy the remaining space in the viewport.
@@ -280,25 +276,20 @@ class CombiningSpanExtent extends SpanExtent {
 
   @override
   double calculateExtent(SpanExtentDelegate delegate) {
-    return _combiner(
-      _extent1.calculateExtent(delegate),
-      _extent2.calculateExtent(delegate),
-    );
+    return _combiner(_extent1.calculateExtent(delegate), _extent2.calculateExtent(delegate));
   }
 }
 
 /// Returns the larger pixel extent of the two provided [SpanExtent].
 class MaxSpanExtent extends CombiningSpanExtent {
   /// Creates a [MaxSpanExtent].
-  const MaxSpanExtent(SpanExtent extent1, SpanExtent extent2)
-    : super(extent1, extent2, math.max);
+  const MaxSpanExtent(SpanExtent extent1, SpanExtent extent2) : super(extent1, extent2, math.max);
 }
 
 /// Returns the smaller pixel extent of the two provided [SpanExtent].
 class MinSpanExtent extends CombiningSpanExtent {
   /// Creates a [MinSpanExtent].
-  const MinSpanExtent(SpanExtent extent1, SpanExtent extent2)
-    : super(extent1, extent2, math.min);
+  const MinSpanExtent(SpanExtent extent1, SpanExtent extent2) : super(extent1, extent2, math.min);
 }
 
 /// A decoration for a [Span].
@@ -401,10 +392,7 @@ class SpanDecoration {
 /// Describes the border for a [Span].
 class SpanBorder {
   /// Creates a [SpanBorder].
-  const SpanBorder({
-    this.trailing = BorderSide.none,
-    this.leading = BorderSide.none,
-  });
+  const SpanBorder({this.trailing = BorderSide.none, this.leading = BorderSide.none});
 
   /// The border to draw on the trailing side of the span, based on the
   /// [AxisDirection].
@@ -443,8 +431,7 @@ class SpanBorder {
     switch (axisDirectionToAxis(axisDirection)) {
       case Axis.horizontal:
         final bool isLeadingTop =
-            crossAxisDirection == null ||
-            crossAxisDirection == AxisDirection.down;
+            crossAxisDirection == null || crossAxisDirection == AxisDirection.down;
         final border = Border(
           top: isLeadingTop ? leading : trailing,
           bottom: isLeadingTop ? trailing : leading,
@@ -452,8 +439,7 @@ class SpanBorder {
         border.paint(details.canvas, details.rect, borderRadius: borderRadius);
       case Axis.vertical:
         final bool isLeadingLeft =
-            crossAxisDirection == null ||
-            crossAxisDirection == AxisDirection.right;
+            crossAxisDirection == null || crossAxisDirection == AxisDirection.right;
         final border = Border(
           left: isLeadingLeft ? leading : trailing,
           right: isLeadingLeft ? trailing : leading,

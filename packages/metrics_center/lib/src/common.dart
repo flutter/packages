@@ -19,8 +19,7 @@ class MetricPoint {
   final double? value;
 
   /// Test name, unit, timestamp, configs, git revision, ..., in sorted order.
-  UnmodifiableMapView<String, String> get tags =>
-      UnmodifiableMapView<String, String>(_tags);
+  UnmodifiableMapView<String, String> get tags => UnmodifiableMapView<String, String>(_tags);
   final SplayTreeMap<String, String> _tags;
 
   /// Unique identifier for updating existing data point.
@@ -41,11 +40,7 @@ class MetricPoint {
 /// Interface to write [MetricPoint].
 abstract class MetricDestination {
   /// Insert new data points or modify old ones with matching id.
-  Future<void> update(
-    List<MetricPoint> points,
-    DateTime commitTime,
-    String taskName,
-  );
+  Future<void> update(List<MetricPoint> points, DateTime commitTime, String taskName);
 }
 
 /// Create `AuthClient` in case we only have an access token without the full

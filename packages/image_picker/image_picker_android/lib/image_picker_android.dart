@@ -12,8 +12,7 @@ import 'src/messages.g.dart';
 /// An Android implementation of [ImagePickerPlatform].
 class ImagePickerAndroid extends ImagePickerPlatform {
   /// Creates a new plugin implementation instance.
-  ImagePickerAndroid({@visibleForTesting ImagePickerApi? api})
-    : _hostApi = api ?? ImagePickerApi();
+  ImagePickerAndroid({@visibleForTesting ImagePickerApi? api}) : _hostApi = api ?? ImagePickerApi();
 
   final ImagePickerApi _hostApi;
 
@@ -70,11 +69,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     int? limit,
   }) {
     if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
-      throw ArgumentError.value(
-        imageQuality,
-        'imageQuality',
-        'must be between 0 and 100',
-      );
+      throw ArgumentError.value(imageQuality, 'imageQuality', 'must be between 0 and 100');
     }
 
     if (maxWidth != null && maxWidth < 0) {
@@ -91,16 +86,8 @@ class ImagePickerAndroid extends ImagePickerPlatform {
 
     return _hostApi.pickImages(
       SourceSpecification(type: SourceType.gallery),
-      ImageSelectionOptions(
-        maxWidth: maxWidth,
-        maxHeight: maxHeight,
-        quality: imageQuality ?? 100,
-      ),
-      GeneralOptions(
-        allowMultiple: true,
-        usePhotoPicker: useAndroidPhotoPicker,
-        limit: limit,
-      ),
+      ImageSelectionOptions(maxWidth: maxWidth, maxHeight: maxHeight, quality: imageQuality ?? 100),
+      GeneralOptions(allowMultiple: true, usePhotoPicker: useAndroidPhotoPicker, limit: limit),
     );
   }
 
@@ -113,11 +100,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     bool requestFullMetadata = true,
   }) async {
     if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
-      throw ArgumentError.value(
-        imageQuality,
-        'imageQuality',
-        'must be between 0 and 100',
-      );
+      throw ArgumentError.value(imageQuality, 'imageQuality', 'must be between 0 and 100');
     }
 
     if (maxWidth != null && maxWidth < 0) {
@@ -130,15 +113,8 @@ class ImagePickerAndroid extends ImagePickerPlatform {
 
     final List<String> paths = await _hostApi.pickImages(
       _buildSourceSpec(source, preferredCameraDevice),
-      ImageSelectionOptions(
-        maxWidth: maxWidth,
-        maxHeight: maxHeight,
-        quality: imageQuality ?? 100,
-      ),
-      GeneralOptions(
-        allowMultiple: false,
-        usePhotoPicker: useAndroidPhotoPicker,
-      ),
+      ImageSelectionOptions(maxWidth: maxWidth, maxHeight: maxHeight, quality: imageQuality ?? 100),
+      GeneralOptions(allowMultiple: false, usePhotoPicker: useAndroidPhotoPicker),
     );
     return paths.isEmpty ? null : paths.first;
   }
@@ -165,10 +141,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     final List<String> paths = await _hostApi.pickVideos(
       _buildSourceSpec(source, preferredCameraDevice),
       VideoSelectionOptions(maxDurationSeconds: maxDuration?.inSeconds),
-      GeneralOptions(
-        allowMultiple: false,
-        usePhotoPicker: useAndroidPhotoPicker,
-      ),
+      GeneralOptions(allowMultiple: false, usePhotoPicker: useAndroidPhotoPicker),
     );
     return paths.isEmpty ? null : paths.first;
   }
@@ -286,13 +259,9 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     return paths.map((String path) => XFile(path)).toList();
   }
 
-  MediaSelectionOptions _mediaOptionsToMediaSelectionOptions(
-    MediaOptions mediaOptions,
-  ) {
+  MediaSelectionOptions _mediaOptionsToMediaSelectionOptions(MediaOptions mediaOptions) {
     final ImageSelectionOptions imageSelectionOptions =
-        _imageOptionsToImageSelectionOptionsWithValidator(
-          mediaOptions.imageOptions,
-        );
+        _imageOptionsToImageSelectionOptionsWithValidator(mediaOptions.imageOptions);
 
     return MediaSelectionOptions(imageSelectionOptions: imageSelectionOptions);
   }
@@ -305,11 +274,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     final int? imageQuality = imageOptions?.imageQuality;
 
     if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
-      throw ArgumentError.value(
-        imageQuality,
-        'imageQuality',
-        'must be between 0 and 100',
-      );
+      throw ArgumentError.value(imageQuality, 'imageQuality', 'must be between 0 and 100');
     }
 
     if (maxWidth != null && maxWidth < 0) {
@@ -382,9 +347,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
 
     // Entries are guaranteed not to be null, even though that's not currently
     // expressible in Pigeon.
-    final List<XFile> pickedFileList = result.paths
-        .map((String? path) => XFile(path!))
-        .toList();
+    final List<XFile> pickedFileList = result.paths.map((String? path) => XFile(path!)).toList();
 
     return LostDataResponse(
       file: pickedFileList.isEmpty ? null : pickedFileList.last,
@@ -394,10 +357,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     );
   }
 
-  SourceSpecification _buildSourceSpec(
-    ImageSource source,
-    CameraDevice device,
-  ) {
+  SourceSpecification _buildSourceSpec(ImageSource source, CameraDevice device) {
     return SourceSpecification(
       type: _sourceSpecTypeForSource(source),
       camera: _sourceSpecCameraForDevice(device),

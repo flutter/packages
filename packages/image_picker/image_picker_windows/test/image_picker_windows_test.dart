@@ -30,15 +30,11 @@ void main() {
       mockFileSelectorPlatform = MockFileSelectorPlatform();
 
       when(
-        mockFileSelectorPlatform.openFile(
-          acceptedTypeGroups: anyNamed('acceptedTypeGroups'),
-        ),
+        mockFileSelectorPlatform.openFile(acceptedTypeGroups: anyNamed('acceptedTypeGroups')),
       ).thenAnswer((_) async => null);
 
       when(
-        mockFileSelectorPlatform.openFiles(
-          acceptedTypeGroups: anyNamed('acceptedTypeGroups'),
-        ),
+        mockFileSelectorPlatform.openFiles(acceptedTypeGroups: anyNamed('acceptedTypeGroups')),
       ).thenAnswer((_) async => List<XFile>.empty());
 
       ImagePickerWindows.fileSelector = mockFileSelectorPlatform;
@@ -58,10 +54,7 @@ void main() {
             acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups'),
           ),
         );
-        expect(
-          capturedTypeGroups(result)[0].extensions,
-          ImagePickerWindows.imageFormats,
-        );
+        expect(capturedTypeGroups(result)[0].extensions, ImagePickerWindows.imageFormats);
       });
 
       test('getImage passes the accepted type groups correctly', () async {
@@ -72,10 +65,7 @@ void main() {
             acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups'),
           ),
         );
-        expect(
-          capturedTypeGroups(result)[0].extensions,
-          ImagePickerWindows.imageFormats,
-        );
+        expect(capturedTypeGroups(result)[0].extensions, ImagePickerWindows.imageFormats);
       });
 
       test('getMultiImage passes the accepted type groups correctly', () async {
@@ -86,21 +76,12 @@ void main() {
             acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups'),
           ),
         );
-        expect(
-          capturedTypeGroups(result)[0].extensions,
-          ImagePickerWindows.imageFormats,
-        );
+        expect(capturedTypeGroups(result)[0].extensions, ImagePickerWindows.imageFormats);
       });
 
-      test(
-        'getImageFromSource throws StateError when source is camera with no delegate',
-        () async {
-          await expectLater(
-            plugin.getImageFromSource(source: ImageSource.camera),
-            throwsStateError,
-          );
-        },
-      );
+      test('getImageFromSource throws StateError when source is camera with no delegate', () async {
+        await expectLater(plugin.getImageFromSource(source: ImageSource.camera), throwsStateError);
+      });
 
       test('getMultiImage passes the accepted type groups correctly', () async {
         await plugin.getMultiImage();
@@ -110,10 +91,7 @@ void main() {
             acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups'),
           ),
         );
-        expect(
-          capturedTypeGroups(result)[0].extensions,
-          ImagePickerWindows.imageFormats,
-        );
+        expect(capturedTypeGroups(result)[0].extensions, ImagePickerWindows.imageFormats);
       });
     });
 
@@ -126,10 +104,7 @@ void main() {
             acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups'),
           ),
         );
-        expect(
-          capturedTypeGroups(result)[0].extensions,
-          ImagePickerWindows.videoFormats,
-        );
+        expect(capturedTypeGroups(result)[0].extensions, ImagePickerWindows.videoFormats);
       });
 
       test('getVideo passes the accepted type groups correctly', () async {
@@ -140,47 +115,29 @@ void main() {
             acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups'),
           ),
         );
-        expect(
-          capturedTypeGroups(result)[0].extensions,
-          ImagePickerWindows.videoFormats,
-        );
+        expect(capturedTypeGroups(result)[0].extensions, ImagePickerWindows.videoFormats);
       });
 
       test('getVideo calls delegate when source is camera', () async {
         const fakePath = '/tmp/foo';
         plugin.cameraDelegate = FakeCameraDelegate(result: XFile(fakePath));
-        expect(
-          (await plugin.getVideo(source: ImageSource.camera))!.path,
-          fakePath,
-        );
+        expect((await plugin.getVideo(source: ImageSource.camera))!.path, fakePath);
       });
 
-      test(
-        'getVideo throws StateError when source is camera with no delegate',
-        () async {
-          await expectLater(
-            plugin.getVideo(source: ImageSource.camera),
-            throwsStateError,
-          );
-        },
-      );
+      test('getVideo throws StateError when source is camera with no delegate', () async {
+        await expectLater(plugin.getVideo(source: ImageSource.camera), throwsStateError);
+      });
 
-      test(
-        'getMultiVideoWithOptions passes the accepted type groups correctly',
-        () async {
-          await plugin.getMultiVideoWithOptions();
+      test('getMultiVideoWithOptions passes the accepted type groups correctly', () async {
+        await plugin.getMultiVideoWithOptions();
 
-          final VerificationResult result = verify(
-            mockFileSelectorPlatform.openFiles(
-              acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups'),
-            ),
-          );
-          expect(
-            capturedTypeGroups(result)[0].extensions,
-            ImagePickerWindows.videoFormats,
-          );
-        },
-      );
+        final VerificationResult result = verify(
+          mockFileSelectorPlatform.openFiles(
+            acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups'),
+          ),
+        );
+        expect(capturedTypeGroups(result)[0].extensions, ImagePickerWindows.videoFormats);
+      });
     });
 
     group('media', () {
@@ -198,23 +155,13 @@ void main() {
         ]);
       });
 
-      test(
-        'multiple media handles an empty path response gracefully',
-        () async {
-          expect(
-            await plugin.getMedia(
-              options: const MediaOptions(allowMultiple: true),
-            ),
-            <String>[],
-          );
-        },
-      );
+      test('multiple media handles an empty path response gracefully', () async {
+        expect(await plugin.getMedia(options: const MediaOptions(allowMultiple: true)), <String>[]);
+      });
 
       test('single media handles an empty path response gracefully', () async {
         expect(
-          await plugin.getMedia(
-            options: const MediaOptions(allowMultiple: false),
-          ),
+          await plugin.getMedia(options: const MediaOptions(allowMultiple: false)),
           <String>[],
         );
       });
@@ -229,16 +176,14 @@ class FakeCameraDelegate extends ImagePickerCameraDelegate {
 
   @override
   Future<XFile?> takePhoto({
-    ImagePickerCameraDelegateOptions options =
-        const ImagePickerCameraDelegateOptions(),
+    ImagePickerCameraDelegateOptions options = const ImagePickerCameraDelegateOptions(),
   }) async {
     return result;
   }
 
   @override
   Future<XFile?> takeVideo({
-    ImagePickerCameraDelegateOptions options =
-        const ImagePickerCameraDelegateOptions(),
+    ImagePickerCameraDelegateOptions options = const ImagePickerCameraDelegateOptions(),
   }) async {
     return result;
   }

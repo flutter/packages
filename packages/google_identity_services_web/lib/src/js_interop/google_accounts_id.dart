@@ -110,10 +110,7 @@ extension type GoogleAccountsId._(JSObject _) implements JSObject {
   @JS('renderButton')
   external void _renderButton(JSObject parent);
   @JS('renderButton')
-  external void _renderButtonWithOptions(
-    JSObject parent,
-    GsiButtonConfiguration options,
-  );
+  external void _renderButtonWithOptions(JSObject parent, GsiButtonConfiguration options);
 
   /// Record when the user signs out of your website in cookies.
   ///
@@ -141,10 +138,7 @@ extension type GoogleAccountsId._(JSObject _) implements JSObject {
   @JS('storeCredential')
   external void _jsStoreCredential(Credential credential);
   @JS('storeCredential')
-  external void _jsStoreCredentialWithCallback(
-    Credential credential,
-    JSFunction callback,
-  );
+  external void _jsStoreCredentialWithCallback(Credential credential, JSFunction callback);
 
   /// Cancels the One Tap flow.
   ///
@@ -310,12 +304,8 @@ extension type IdConfiguration._(JSObject _) implements JSObject {
       context: context?.toString().toJS,
       state_cookie_domain: state_cookie_domain?.toJS,
       ux_mode: ux_mode?.toString().toJS,
-      allowed_parent_origin: allowed_parent_origin
-          ?.map((String s) => s.toJS)
-          .toList()
-          .toJS,
-      intermediate_iframe_close_callback:
-          intermediate_iframe_close_callback?.toJS,
+      allowed_parent_origin: allowed_parent_origin?.map((String s) => s.toJS).toList().toJS,
+      intermediate_iframe_close_callback: intermediate_iframe_close_callback?.toJS,
       itp_support: itp_support?.toJS,
       login_hint: login_hint?.toJS,
       hd: hd?.toJS,
@@ -379,16 +369,13 @@ extension type PromptMomentNotification._(JSObject _) implements JSObject {
   external JSBoolean _isDismissedMoment();
 
   /// The moment type.
-  MomentType getMomentType() =>
-      MomentType.values.byName(_getMomentType().toDart);
+  MomentType getMomentType() => MomentType.values.byName(_getMomentType().toDart);
   @JS('getMomentType')
   external JSString _getMomentType();
 
   /// The detailed reason why the UI isn't displayed.
-  MomentNotDisplayedReason? getNotDisplayedReason() => maybeEnum(
-    _getNotDisplayedReason()?.toDart,
-    MomentNotDisplayedReason.values,
-  );
+  MomentNotDisplayedReason? getNotDisplayedReason() =>
+      maybeEnum(_getNotDisplayedReason()?.toDart, MomentNotDisplayedReason.values);
   @JS('getNotDisplayedReason')
   external JSString? _getNotDisplayedReason();
 
@@ -439,8 +426,7 @@ extension type CredentialResponse._(JSObject _) implements JSObject {
   /// to set the value.
   ///
   /// See more: https://developers.google.com/identity/gsi/web/reference/js-reference#select_by
-  CredentialSelectBy? get select_by =>
-      maybeEnum(_select_by?.toDart, CredentialSelectBy.values);
+  CredentialSelectBy? get select_by => maybeEnum(_select_by?.toDart, CredentialSelectBy.values);
   @JS('select_by')
   external JSString? get _select_by;
 }
@@ -581,8 +567,7 @@ typedef NativeCallbackFn = void Function(Credential credential);
 
 /// The type of the `callback` function passed to [revoke], to be notified of
 /// the success of the revocation operation.
-typedef RevocationResponseHandlerFn =
-    void Function(RevocationResponse revocationResponse);
+typedef RevocationResponseHandlerFn = void Function(RevocationResponse revocationResponse);
 
 /// The parameter passed to the `callback` of the [revoke] function.
 ///

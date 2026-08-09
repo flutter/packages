@@ -22,8 +22,9 @@ void main() {
     mockPlatform = MockPlatform();
     final RecordingProcessRunner processRunner;
     final GitDir gitDir;
-    (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
-        configureBaseCommandMocks(platform: mockPlatform);
+    (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
+      platform: mockPlatform,
+    );
     final command = ValidateCommand(
       packagesDir,
       processRunner: processRunner,
@@ -32,10 +33,7 @@ void main() {
       targetedValidators: {Validator.readme},
     );
 
-    runner = CommandRunner<void>(
-      'readme_check_command',
-      'Test for readme_check_command',
-    );
+    runner = CommandRunner<void>('readme_check_command', 'Test for readme_check_command');
     runner.addCommand(command);
   });
 
@@ -50,9 +48,7 @@ void main() {
     }
     getExampleDir(package).childFile('README.md').writeAsStringSync('A readme');
 
-    final List<String> output = await runCapturingPrint(runner, <String>[
-      'validate',
-    ]);
+    final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
     expect(
       output,
@@ -66,10 +62,7 @@ void main() {
   });
 
   test('fails when package README is missing', () async {
-    final RepositoryPackage package = createFakePackage(
-      'a_package',
-      packagesDir,
-    );
+    final RepositoryPackage package = createFakePackage('a_package', packagesDir);
     package.readmeFile.deleteSync();
 
     Error? commandError;
@@ -82,40 +75,24 @@ void main() {
     );
 
     expect(commandError, isA<ToolExit>());
-    expect(
-      output,
-      containsAllInOrder(<Matcher>[contains('Missing README.md')]),
-    );
+    expect(output, containsAllInOrder(<Matcher>[contains('Missing README.md')]));
   });
 
   test('passes when example README is missing', () async {
     createFakePackage('a_package', packagesDir);
 
-    final List<String> output = await runCapturingPrint(runner, <String>[
-      'validate',
-    ]);
+    final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
-    expect(
-      output,
-      containsAllInOrder(<Matcher>[contains('No README for example')]),
-    );
+    expect(output, containsAllInOrder(<Matcher>[contains('No README for example')]));
   });
 
   test('does not inculde non-example subpackages', () async {
-    final RepositoryPackage package = createFakePackage(
-      'a_package',
-      packagesDir,
-    );
+    final RepositoryPackage package = createFakePackage('a_package', packagesDir);
     const subpackageName = 'special_test';
-    final RepositoryPackage miscSubpackage = createFakePackage(
-      subpackageName,
-      package.directory,
-    );
+    final RepositoryPackage miscSubpackage = createFakePackage(subpackageName, package.directory);
     miscSubpackage.readmeFile.deleteSync();
 
-    final List<String> output = await runCapturingPrint(runner, <String>[
-      'validate',
-    ]);
+    final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
     expect(output, isNot(contains(subpackageName)));
   });
@@ -157,14 +134,9 @@ samples, guidance on mobile development, and a full API reference.
     );
   });
 
-  test(
-    'fails when example README still has application template boilerplate',
-    () async {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
-      package.getExamples().first.readmeFile.writeAsStringSync('''
+  test('fails when example README still has application template boilerplate', () async {
+    final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+    package.getExamples().first.readmeFile.writeAsStringSync('''
 ## Getting Started
 
 This project is a starting point for a Flutter application.
@@ -179,28 +151,27 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 ''');
 
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-        runner,
-        <String>['validate'],
-        errorHandler: (Error e) {
-          commandError = e;
-        },
-      );
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+      runner,
+      <String>['validate'],
+      errorHandler: (Error e) {
+        commandError = e;
+      },
+    );
 
-      expect(commandError, isA<ToolExit>());
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains(
-            'The boilerplate section about getting started with Flutter '
-            'should not be left in.',
-          ),
-          contains('Contains template boilerplate'),
-        ]),
-      );
-    },
-  );
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains(
+          'The boilerplate section about getting started with Flutter '
+          'should not be left in.',
+        ),
+        contains('Contains template boilerplate'),
+      ]),
+    );
+  });
 
   test('fails when a plugin implementation package example README has the '
       'template boilerplate', () async {
@@ -262,9 +233,7 @@ A great plugin.
 Demonstrates how to use the a_plugin plugin.
 ''');
 
-    final List<String> output = await runCapturingPrint(runner, <String>[
-      'validate',
-    ]);
+    final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
     expect(
       output,
@@ -275,58 +244,53 @@ Demonstrates how to use the a_plugin plugin.
     );
   });
 
-  test(
-    'fails when a plugin implementation package example README does not have '
-    'the repo-standard message',
-    () async {
-      final RepositoryPackage package = createFakePlugin(
-        'a_plugin_ios',
-        packagesDir.childDirectory('a_plugin'),
-      );
-      package.getExamples().first.readmeFile.writeAsStringSync('''
+  test('fails when a plugin implementation package example README does not have '
+      'the repo-standard message', () async {
+    final RepositoryPackage package = createFakePlugin(
+      'a_plugin_ios',
+      packagesDir.childDirectory('a_plugin'),
+    );
+    package.getExamples().first.readmeFile.writeAsStringSync('''
 # a_plugin_ios_example
 
 Some random description.
 ''');
 
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-        runner,
-        <String>['validate'],
-        errorHandler: (Error e) {
-          commandError = e;
-        },
-      );
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+      runner,
+      <String>['validate'],
+      errorHandler: (Error e) {
+        commandError = e;
+      },
+    );
 
-      expect(commandError, isA<ToolExit>());
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains(
-            'The example README for a platform implementation package '
-            'should warn readers about its intended use. Please copy the '
-            'example README from another implementation package in this '
-            'repository.',
-          ),
-          contains('Missing implementation package example warning'),
-        ]),
-      );
-    },
-  );
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains(
+          'The example README for a platform implementation package '
+          'should warn readers about its intended use. Please copy the '
+          'example README from another implementation package in this '
+          'repository.',
+        ),
+        contains('Missing implementation package example warning'),
+      ]),
+    );
+  });
 
-  test(
-    'passes for a plugin implementation package with the expected content',
-    () async {
-      final RepositoryPackage package = createFakePlugin(
-        'a_plugin',
-        packagesDir.childDirectory('a_plugin'),
-        platformSupport: <String, PlatformDetails>{
-          platformAndroid: const PlatformDetails(PlatformSupport.inline),
-        },
-      );
-      // Write a README with an OS support table so that the main README check
-      // passes.
-      package.readmeFile.writeAsStringSync('''
+  test('passes for a plugin implementation package with the expected content', () async {
+    final RepositoryPackage package = createFakePlugin(
+      'a_plugin',
+      packagesDir.childDirectory('a_plugin'),
+      platformSupport: <String, PlatformDetails>{
+        platformAndroid: const PlatformDetails(PlatformSupport.inline),
+      },
+    );
+    // Write a README with an OS support table so that the main README check
+    // passes.
+    package.readmeFile.writeAsStringSync('''
 # a_plugin
 
 |                | Android |
@@ -335,7 +299,7 @@ Some random description.
 
 A great plugin.
 ''');
-      package.getExamples().first.readmeFile.writeAsStringSync('''
+    package.getExamples().first.readmeFile.writeAsStringSync('''
 # Platform Implementation Test App
 
 This is a test app for manual testing and automated integration testing
@@ -347,19 +311,16 @@ Unless you are making changes to this implementation package, this example is
 very unlikely to be relevant.
 ''');
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'validate',
-      ]);
+    final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
-      expect(
-        output,
-        containsAll(<Matcher>[
-          contains('  Validating README.md...'),
-          contains('  Validating example/README.md...'),
-        ]),
-      );
-    },
-  );
+    expect(
+      output,
+      containsAll(<Matcher>[
+        contains('  Validating README.md...'),
+        contains('  Validating example/README.md...'),
+      ]),
+    );
+  });
 
   test('fails when multi-example top-level example directory README still has '
       'application template boilerplate', () async {
@@ -368,10 +329,7 @@ very unlikely to be relevant.
       packagesDir,
       examples: <String>['example1', 'example2'],
     );
-    package.directory
-        .childDirectory('example')
-        .childFile('README.md')
-        .writeAsStringSync('''
+    package.directory.childDirectory('example').childFile('README.md').writeAsStringSync('''
 ## Getting Started
 
 This project is a starting point for a Flutter application.
@@ -413,21 +371,14 @@ samples, guidance on mobile development, and a full API reference.
       'does not check support table for anything other than app-facing plugin packages',
       () async {
         const federatedPluginName = 'a_federated_plugin';
-        final Directory federatedDir = packagesDir.childDirectory(
-          federatedPluginName,
-        );
+        final Directory federatedDir = packagesDir.childDirectory(federatedPluginName);
         // A non-plugin package.
         createFakePackage('a_package', packagesDir);
         // Non-app-facing parts of a federated plugin.
-        createFakePlugin(
-          '${federatedPluginName}_platform_interface',
-          federatedDir,
-        );
+        createFakePlugin('${federatedPluginName}_platform_interface', federatedDir);
         createFakePlugin('${federatedPluginName}_android', federatedDir);
 
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'validate',
-        ]);
+        final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
         expect(
           output,
@@ -441,27 +392,21 @@ samples, guidance on mobile development, and a full API reference.
       },
     );
 
-    test(
-      'fails when non-federated plugin is missing an OS support table',
-      () async {
-        createFakePlugin('a_plugin', packagesDir);
+    test('fails when non-federated plugin is missing an OS support table', () async {
+      createFakePlugin('a_plugin', packagesDir);
 
-        Error? commandError;
-        final List<String> output = await runCapturingPrint(
-          runner,
-          <String>['validate'],
-          errorHandler: (Error e) {
-            commandError = e;
-          },
-        );
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['validate'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
-        expect(commandError, isA<ToolExit>());
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[contains('No OS support table found')]),
-        );
-      },
-    );
+      expect(commandError, isA<ToolExit>());
+      expect(output, containsAllInOrder(<Matcher>[contains('No OS support table found')]));
+    });
 
     test(
       'fails when app-facing part of a federated plugin is missing an OS support table',
@@ -478,18 +423,12 @@ samples, guidance on mobile development, and a full API reference.
         );
 
         expect(commandError, isA<ToolExit>());
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[contains('No OS support table found')]),
-        );
+        expect(output, containsAllInOrder(<Matcher>[contains('No OS support table found')]));
       },
     );
 
     test('fails the OS support table is missing the header', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-        'a_plugin',
-        packagesDir,
-      );
+      final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir);
 
       plugin.readmeFile.writeAsStringSync('''
 A very useful plugin.
@@ -643,10 +582,7 @@ A very useful plugin.
 
   group('code blocks', () {
     test('fails on missing info string', () async {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
 
       package.readmeFile.writeAsStringSync('''
 Example:
@@ -678,10 +614,7 @@ void main() {
     });
 
     test('allows unknown info strings', () async {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
 
       package.readmeFile.writeAsStringSync('''
 Example:
@@ -691,24 +624,16 @@ A B C
 ```
 ''');
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'validate',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
       expect(
         output,
-        containsAll(<Matcher>[
-          contains('Running for a_package...'),
-          contains('No issues found!'),
-        ]),
+        containsAll(<Matcher>[contains('Running for a_package...'), contains('No issues found!')]),
       );
     });
 
     test('allows space around info strings', () async {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
 
       package.readmeFile.writeAsStringSync('''
 Example:
@@ -719,24 +644,16 @@ A B C
 ```
 ''');
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'validate',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
       expect(
         output,
-        containsAll(<Matcher>[
-          contains('Running for a_package...'),
-          contains('No issues found!'),
-        ]),
+        containsAll(<Matcher>[contains('Running for a_package...'), contains('No issues found!')]),
       );
     });
 
     test('passes when excerpt requirement is met', () async {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
 
       package.readmeFile.writeAsStringSync('''
 Example:
@@ -747,24 +664,16 @@ A B C
 ```
 ''');
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'validate',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
       expect(
         output,
-        containsAll(<Matcher>[
-          contains('Running for a_package...'),
-          contains('No issues found!'),
-        ]),
+        containsAll(<Matcher>[contains('Running for a_package...'), contains('No issues found!')]),
       );
     });
 
     test('fails on missing excerpt tag', () async {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
 
       package.readmeFile.writeAsStringSync('''
 Example:
@@ -798,10 +707,7 @@ A B C
     });
 
     test('passes and warns for missing excerpt tag when opted out', () async {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
 
       package.readmeFile.writeAsStringSync('''
 Example:
@@ -812,9 +718,7 @@ A B C
 ''');
       package.ciConfigFile.writeAsStringSync('exempt_from_excerpts: true');
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'validate',
-      ]);
+      final List<String> output = await runCapturingPrint(runner, <String>['validate']);
 
       expect(
         output,

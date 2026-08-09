@@ -12,6 +12,7 @@ import 'analyze_command.dart';
 import 'branches_for_batch_release_command.dart';
 import 'build_examples_command.dart';
 import 'common/core.dart';
+import 'coverage_check_command.dart';
 import 'create_all_packages_app_command.dart';
 import 'custom_test_command.dart';
 import 'dart_test_command.dart';
@@ -57,6 +58,7 @@ void main(List<String> args) {
         ..addCommand(BranchesForBatchReleaseCommand(packagesDir))
         ..addCommand(BuildExamplesCommand(packagesDir))
         ..addCommand(CreateAllPackagesAppCommand(packagesDir))
+        ..addCommand(CoverageCheckCommand(packagesDir))
         ..addCommand(CustomTestCommand(packagesDir))
         ..addCommand(DartTestCommand(packagesDir))
         ..addCommand(DriveExamplesCommand(packagesDir))
@@ -101,8 +103,7 @@ Directory? _findRepositoryRoot() {
     // directory, so use that as the heuristic. If this heuristic proves
     // insufficient, we could instead require the tool config to be present
     // to even try to run, and look for that.
-    if ((current.childDirectory('.git').existsSync() ||
-            current.childFile('.git').existsSync()) &&
+    if ((current.childDirectory('.git').existsSync() || current.childFile('.git').existsSync()) &&
         current.childDirectory('packages').existsSync()) {
       return current;
     }

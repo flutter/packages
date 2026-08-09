@@ -96,6 +96,19 @@ class Surface {
   static const int rotation270 = 3;
 }
 
+/// Allowed resolution mode constants for [ResolutionSelector].
+class ResolutionSelectorAllowedResolutionMode {
+  /// CameraX prefers capture rate over higher resolution.
+  ///
+  /// See https://developer.android.com/reference/kotlin/androidx/camera/core/resolutionselector/ResolutionSelector#PREFER_CAPTURE_RATE_OVER_HIGHER_RESOLUTION().
+  static const int preferCaptureRateOverHigherResolution = 0;
+
+  /// CameraX prefers higher resolution over capture rate.
+  ///
+  /// See https://developer.android.com/reference/kotlin/androidx/camera/core/resolutionselector/ResolutionSelector#PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE().
+  static const int preferHigherResolutionOverCaptureRate = 1;
+}
+
 /// An interface for retrieving camera information.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/CameraInfo.
@@ -166,10 +179,7 @@ class LiveData<T> extends camerax.LiveData {
   @override
   // ignore: non_constant_identifier_names
   LiveData<T> pigeon_copy() {
-    return LiveData<T>.detached(
-      type: type,
-      pigeon_binaryMessenger: pigeon_binaryMessenger,
-    );
+    return LiveData<T>.detached(type: type, pigeon_binaryMessenger: pigeon_binaryMessenger);
   }
 }
 
@@ -185,10 +195,7 @@ class Observer<T> extends camerax.Observer {
     if (GenericsPigeonOverrides.observerNew != null) {
       return GenericsPigeonOverrides.observerNew!(onChanged: onChanged);
     }
-    return Observer<T>.pigeonNew(
-      pigeon_binaryMessenger: binaryMessenger,
-      onChanged: onChanged,
-    );
+    return Observer<T>.pigeonNew(pigeon_binaryMessenger: binaryMessenger, onChanged: onChanged);
   }
 
   /// Constructs an [Observer].

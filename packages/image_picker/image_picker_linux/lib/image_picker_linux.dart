@@ -103,10 +103,7 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
       case ImageSource.camera:
         return super.getImageFromSource(source: source);
       case ImageSource.gallery:
-        const typeGroup = XTypeGroup(
-          label: 'Images',
-          mimeTypes: <String>['image/*'],
-        );
+        const typeGroup = XTypeGroup(label: 'Images', mimeTypes: <String>['image/*']);
         final XFile? file = await fileSelector.openFile(
           acceptedTypeGroups: <XTypeGroup>[typeGroup],
         );
@@ -137,10 +134,7 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
           maxDuration: maxDuration,
         );
       case ImageSource.gallery:
-        const typeGroup = XTypeGroup(
-          label: 'Videos',
-          mimeTypes: <String>['video/*'],
-        );
+        const typeGroup = XTypeGroup(label: 'Videos', mimeTypes: <String>['video/*']);
         final XFile? file = await fileSelector.openFile(
           acceptedTypeGroups: <XTypeGroup>[typeGroup],
         );
@@ -160,10 +154,7 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
     double? maxHeight,
     int? imageQuality,
   }) async {
-    const typeGroup = XTypeGroup(
-      label: 'Images',
-      mimeTypes: <String>['image/*'],
-    );
+    const typeGroup = XTypeGroup(label: 'Images', mimeTypes: <String>['image/*']);
     final List<XFile> files = await fileSelector.openFiles(
       acceptedTypeGroups: <XTypeGroup>[typeGroup],
     );
@@ -174,10 +165,7 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
   Future<List<XFile>> getMultiVideoWithOptions({
     MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
   }) async {
-    const typeGroup = XTypeGroup(
-      label: 'Videos',
-      mimeTypes: <String>['video/*'],
-    );
+    const typeGroup = XTypeGroup(label: 'Videos', mimeTypes: <String>['video/*']);
     final List<XFile> files = await fileSelector.openFiles(
       acceptedTypeGroups: <XTypeGroup>[typeGroup],
     );
@@ -197,13 +185,9 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
     List<XFile> files;
 
     if (options.allowMultiple) {
-      files = await fileSelector.openFiles(
-        acceptedTypeGroups: <XTypeGroup>[typeGroup],
-      );
+      files = await fileSelector.openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
     } else {
-      final XFile? file = await fileSelector.openFile(
-        acceptedTypeGroups: <XTypeGroup>[typeGroup],
-      );
+      final XFile? file = await fileSelector.openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
       files = <XFile>[if (file != null) file];
     }
     return files;

@@ -39,26 +39,18 @@ void main() {
         });
 
         test('returns null when font family does not match (web: $isWeb)', () {
-          final String? result = findFamilyWithVariantAssetPath(
-            familyWithVariant,
-            <String>[
-              'google_fonts/Lato-Regular.ttf',
-              'google_fonts/OpenSans-Regular.ttf',
-            ],
-            isWeb: isWeb,
-          );
+          final String? result = findFamilyWithVariantAssetPath(familyWithVariant, <String>[
+            'google_fonts/Lato-Regular.ttf',
+            'google_fonts/OpenSans-Regular.ttf',
+          ], isWeb: isWeb);
           expect(result, isNull);
         });
 
         test('returns null when variant does not match (web: $isWeb)', () {
-          final String? result = findFamilyWithVariantAssetPath(
-            familyWithVariant,
-            <String>[
-              'google_fonts/Roboto-Bold.ttf',
-              'google_fonts/Roboto-Italic.ttf',
-            ],
-            isWeb: isWeb,
-          );
+          final String? result = findFamilyWithVariantAssetPath(familyWithVariant, <String>[
+            'google_fonts/Roboto-Bold.ttf',
+            'google_fonts/Roboto-Italic.ttf',
+          ], isWeb: isWeb);
           expect(result, isNull);
         });
 
@@ -70,13 +62,12 @@ void main() {
               fontStyle: FontStyle.italic,
             ),
           );
-          final String? result =
-              findFamilyWithVariantAssetPath(boldItalicVariant, <String>[
-                'google_fonts/Roboto-Regular.ttf',
-                'google_fonts/Roboto-Bold.ttf',
-                'google_fonts/Roboto-BoldItalic.ttf',
-                'google_fonts/Roboto-Italic.ttf',
-              ], isWeb: isWeb);
+          final String? result = findFamilyWithVariantAssetPath(boldItalicVariant, <String>[
+            'google_fonts/Roboto-Regular.ttf',
+            'google_fonts/Roboto-Bold.ttf',
+            'google_fonts/Roboto-BoldItalic.ttf',
+            'google_fonts/Roboto-Italic.ttf',
+          ], isWeb: isWeb);
           expect(result, equals('google_fonts/Roboto-BoldItalic.ttf'));
         });
       }
@@ -84,104 +75,82 @@ void main() {
 
     group('on web', () {
       test('supports woff2 format', () {
-        final String? result = findFamilyWithVariantAssetPath(
-          familyWithVariant,
-          <String>['google_fonts/Roboto-Regular.woff2'],
-          isWeb: true,
-        );
+        final String? result = findFamilyWithVariantAssetPath(familyWithVariant, <String>[
+          'google_fonts/Roboto-Regular.woff2',
+        ], isWeb: true);
         expect(result, equals('google_fonts/Roboto-Regular.woff2'));
       });
 
       test('supports woff format', () {
-        final String? result = findFamilyWithVariantAssetPath(
-          familyWithVariant,
-          <String>['google_fonts/Roboto-Regular.woff'],
-          isWeb: true,
-        );
+        final String? result = findFamilyWithVariantAssetPath(familyWithVariant, <String>[
+          'google_fonts/Roboto-Regular.woff',
+        ], isWeb: true);
         expect(result, equals('google_fonts/Roboto-Regular.woff'));
       });
 
       test('supports ttf format', () {
-        final String? result = findFamilyWithVariantAssetPath(
-          familyWithVariant,
-          <String>['google_fonts/Roboto-Regular.ttf'],
-          isWeb: true,
-        );
+        final String? result = findFamilyWithVariantAssetPath(familyWithVariant, <String>[
+          'google_fonts/Roboto-Regular.ttf',
+        ], isWeb: true);
         expect(result, equals('google_fonts/Roboto-Regular.ttf'));
       });
 
       test('supports otf format', () {
-        final String? result = findFamilyWithVariantAssetPath(
-          familyWithVariant,
-          <String>['google_fonts/Roboto-Regular.otf'],
-          isWeb: true,
-        );
+        final String? result = findFamilyWithVariantAssetPath(familyWithVariant, <String>[
+          'google_fonts/Roboto-Regular.otf',
+        ], isWeb: true);
         expect(result, equals('google_fonts/Roboto-Regular.otf'));
       });
 
       test('prefers woff2 over other formats regardless of manifest order', () {
         // Returns the highest priority file type regardless of the order in
         // which assets appear in the manifest.
-        final String? result =
-            findFamilyWithVariantAssetPath(familyWithVariant, <String>[
-              'google_fonts/Roboto-Regular.ttf',
-              'google_fonts/Roboto-Regular.woff2',
-              'google_fonts/Roboto-Regular.woff',
-            ], isWeb: true);
+        final String? result = findFamilyWithVariantAssetPath(familyWithVariant, <String>[
+          'google_fonts/Roboto-Regular.ttf',
+          'google_fonts/Roboto-Regular.woff2',
+          'google_fonts/Roboto-Regular.woff',
+        ], isWeb: true);
         expect(result, equals('google_fonts/Roboto-Regular.woff2'));
       });
 
       test('ignores unsupported file extensions', () {
-        final String? result =
-            findFamilyWithVariantAssetPath(familyWithVariant, <String>[
-              'google_fonts/Roboto-Regular.eot',
-              'google_fonts/Roboto-Regular.svg',
-              'google_fonts/Roboto-Regular.woff2',
-            ], isWeb: true);
+        final String? result = findFamilyWithVariantAssetPath(familyWithVariant, <String>[
+          'google_fonts/Roboto-Regular.eot',
+          'google_fonts/Roboto-Regular.svg',
+          'google_fonts/Roboto-Regular.woff2',
+        ], isWeb: true);
         expect(result, equals('google_fonts/Roboto-Regular.woff2'));
       });
     });
 
     group('on non-web', () {
       test('supports ttf format', () {
-        final String? result = findFamilyWithVariantAssetPath(
-          familyWithVariant,
-          <String>['google_fonts/Roboto-Regular.ttf'],
-          isWeb: false,
-        );
+        final String? result = findFamilyWithVariantAssetPath(familyWithVariant, <String>[
+          'google_fonts/Roboto-Regular.ttf',
+        ], isWeb: false);
         expect(result, equals('google_fonts/Roboto-Regular.ttf'));
       });
 
       test('supports otf format', () {
-        final String? result = findFamilyWithVariantAssetPath(
-          familyWithVariant,
-          <String>['google_fonts/Roboto-Regular.otf'],
-          isWeb: false,
-        );
+        final String? result = findFamilyWithVariantAssetPath(familyWithVariant, <String>[
+          'google_fonts/Roboto-Regular.otf',
+        ], isWeb: false);
         expect(result, equals('google_fonts/Roboto-Regular.otf'));
       });
 
       test('does not select woff2 format', () {
-        final String? result = findFamilyWithVariantAssetPath(
-          familyWithVariant,
-          <String>[
-            'google_fonts/Roboto-Regular.woff2',
-            'google_fonts/Roboto-Regular.ttf',
-          ],
-          isWeb: false,
-        );
+        final String? result = findFamilyWithVariantAssetPath(familyWithVariant, <String>[
+          'google_fonts/Roboto-Regular.woff2',
+          'google_fonts/Roboto-Regular.ttf',
+        ], isWeb: false);
         expect(result, equals('google_fonts/Roboto-Regular.ttf'));
       });
 
       test('does not select woff format', () {
-        final String? result = findFamilyWithVariantAssetPath(
-          familyWithVariant,
-          <String>[
-            'google_fonts/Roboto-Regular.woff',
-            'google_fonts/Roboto-Regular.otf',
-          ],
-          isWeb: false,
-        );
+        final String? result = findFamilyWithVariantAssetPath(familyWithVariant, <String>[
+          'google_fonts/Roboto-Regular.woff',
+          'google_fonts/Roboto-Regular.otf',
+        ], isWeb: false);
         expect(result, equals('google_fonts/Roboto-Regular.otf'));
       });
     });

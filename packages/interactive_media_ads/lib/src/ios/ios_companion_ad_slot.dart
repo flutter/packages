@@ -12,21 +12,16 @@ import '../platform_interface/platform_companion_ad_slot.dart';
 import 'interactive_media_ads.g.dart';
 
 /// Implementation of [PlatformCompanionAdSlotCreationParams] for iOS.
-final class IOSCompanionAdSlotCreationParams
-    extends PlatformCompanionAdSlotCreationParams {
+final class IOSCompanionAdSlotCreationParams extends PlatformCompanionAdSlotCreationParams {
   /// Constructs an [IOSCompanionAdSlotCreationParams].
-  const IOSCompanionAdSlotCreationParams({required super.size, super.onClicked})
-    : super();
+  const IOSCompanionAdSlotCreationParams({required super.size, super.onClicked}) : super();
 
   /// Creates an [IOSCompanionAdSlotCreationParams] from an instance of
   /// [PlatformCompanionAdSlotCreationParams].
   factory IOSCompanionAdSlotCreationParams.fromPlatformCompanionAdSlotCreationParamsSize(
     PlatformCompanionAdSlotCreationParams params,
   ) {
-    return IOSCompanionAdSlotCreationParams(
-      size: params.size,
-      onClicked: params.onClicked,
-    );
+    return IOSCompanionAdSlotCreationParams(size: params.size, onClicked: params.onClicked);
   }
 }
 
@@ -77,11 +72,9 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
   // This value is created in a static method because the callback methods for
   // any wrapped classes must not reference the encapsulating object. This is to
   // prevent a circular reference that prevents garbage collection.
-  static IMACompanionDelegate _createCompanionDelegate(
-    WeakReference<IOSCompanionAdSlot> weakThis,
-  ) {
+  static IMACompanionDelegate _createCompanionDelegate(WeakReference<IOSCompanionAdSlot> weakThis) {
     return IMACompanionDelegate(
-      companionSlotWasClicked: (_, __) {
+      companionSlotWasClicked: (_, _) {
         weakThis.target?.params.onClicked!.call();
       },
     );

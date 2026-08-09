@@ -3,7 +3,7 @@
 ## Description
 
 Pigeon is a code generation tool that adds type safety to Flutter’s Platform
-Channels.  This document serves as an overview of how it functions to help
+Channels. This document serves as an overview of how it functions to help
 people who would like to contribute to the project.
 
 ## Source Index
@@ -32,15 +32,15 @@ Pigeon has 3 types of tests; you'll find them all in
 
 * Unit tests - These are the fastest tests that are just typical unit tests,
   they may be generating code and checking it against a regular expression to
-  see if it's correct.  Example:
+  see if it's correct. Example:
   [dart_generator_test.dart](./test/dart_generator_test.dart)
 * Compilation tests -  These tests generate code, then attempt to compile that
-  code.  These are tests are much slower than unit tests, but not as slow as
-  integration tests.  These tests are typically run against the Pigeon files in
+  code. These are tests are much slower than unit tests, but not as slow as
+  integration tests. These tests are typically run against the Pigeon files in
   [pigeons](./pigeons).
 * Integration tests - These tests generate code, then compile the generated
-  code, then execute the generated code.  It can be thought of as unit-tests run
-  against the generated code.  Examples: [platform_tests](./platform_tests)
+  code, then execute the generated code. It can be thought of as unit-tests run
+  against the generated code. Examples: [platform_tests](./platform_tests)
 
 For local testing, always use `test.dart` rather than `run_tests.dart`, as
 `run_tests.dart` is specifically a CI entrypoint. When iterating on a specific

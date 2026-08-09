@@ -25,8 +25,7 @@ void main() async {
       await adSense.initialize(testClient);
 
       // Then
-      final injected =
-          web.document.head?.lastElementChild as web.HTMLScriptElement?;
+      final injected = web.document.head?.lastElementChild as web.HTMLScriptElement?;
 
       expect(injected, isNotNull);
       expect(injected!.src, expectedScriptUrl);

@@ -40,9 +40,7 @@ const typeGroup = XTypeGroup(
   extensions: <String>['jpg', 'png'],
   uniformTypeIdentifiers: <String>['public.jpeg', 'public.png'],
 );
-final XFile? file = await openFile(
-  acceptedTypeGroups: <XTypeGroup>[typeGroup],
-);
+final XFile? file = await openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
 ```
 
 #### Open multiple files at once
@@ -69,9 +67,7 @@ final List<XFile> files = await openFiles(
 <?code-excerpt "readme_standalone_excerpts.dart (Save)"?>
 ```dart
 const fileName = 'suggested_name.txt';
-final FileSaveLocation? result = await getSaveLocation(
-  suggestedName: fileName,
-);
+final FileSaveLocation? result = await getSaveLocation(suggestedName: fileName);
 if (result == null) {
   // Operation was canceled by the user.
   return;
@@ -79,11 +75,7 @@ if (result == null) {
 
 final fileData = Uint8List.fromList('Hello World!'.codeUnits);
 const mimeType = 'text/plain';
-final textFile = XFile.fromData(
-  fileData,
-  mimeType: mimeType,
-  name: fileName,
-);
+final textFile = XFile.fromData(fileData, mimeType: mimeType, name: fileName);
 await textFile.saveTo(result.path);
 ```
 

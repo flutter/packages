@@ -11,8 +11,7 @@ import 'package:path_provider_windows/path_provider_windows.dart';
 ///
 /// Note that this should only be used with an in-memory filesystem, as the
 /// path it returns is a root path that does not actually exist on Windows.
-class FakePathProviderWindows extends PathProviderPlatform
-    implements PathProviderWindows {
+class FakePathProviderWindows extends PathProviderPlatform implements PathProviderWindows {
   @override
   late VersionInfoQuerier versionInfoQuerier;
 

@@ -9,11 +9,7 @@ import 'package:flutter/foundation.dart';
 @immutable
 class LocalAuthException implements Exception {
   /// Creates a new exception with the given information.
-  const LocalAuthException({
-    required this.code,
-    this.description,
-    this.details,
-  });
+  const LocalAuthException({required this.code, this.description, this.details});
 
   /// The type of failure.
   final LocalAuthExceptionCode code;

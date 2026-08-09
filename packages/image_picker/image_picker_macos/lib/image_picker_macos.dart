@@ -104,9 +104,7 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
         // TODO(stuartmorgan): Add a native implementation that can use
         // PHPickerViewController on macOS 13+, with this as a fallback for
         // older OS versions: https://github.com/flutter/flutter/issues/125829.
-        const typeGroup = XTypeGroup(
-          uniformTypeIdentifiers: <String>['public.image'],
-        );
+        const typeGroup = XTypeGroup(uniformTypeIdentifiers: <String>['public.image']);
         final XFile? file = await fileSelector.openFile(
           acceptedTypeGroups: <XTypeGroup>[typeGroup],
         );
@@ -137,9 +135,7 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
           maxDuration: maxDuration,
         );
       case ImageSource.gallery:
-        const typeGroup = XTypeGroup(
-          uniformTypeIdentifiers: <String>['public.movie'],
-        );
+        const typeGroup = XTypeGroup(uniformTypeIdentifiers: <String>['public.movie']);
         final XFile? file = await fileSelector.openFile(
           acceptedTypeGroups: <XTypeGroup>[typeGroup],
         );
@@ -162,9 +158,7 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
     // TODO(stuartmorgan): Add a native implementation that can use
     // PHPickerViewController on macOS 13+, with this as a fallback for
     // older OS versions: https://github.com/flutter/flutter/issues/125829.
-    const typeGroup = XTypeGroup(
-      uniformTypeIdentifiers: <String>['public.image'],
-    );
+    const typeGroup = XTypeGroup(uniformTypeIdentifiers: <String>['public.image']);
     final List<XFile> files = await fileSelector.openFiles(
       acceptedTypeGroups: <XTypeGroup>[typeGroup],
     );
@@ -178,9 +172,7 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
     // TODO(stuartmorgan): Add a native implementation that can use
     // PHPickerViewController on macOS 13+, with this as a fallback for
     // older OS versions: https://github.com/flutter/flutter/issues/125829.
-    const typeGroup = XTypeGroup(
-      uniformTypeIdentifiers: <String>['public.movie'],
-    );
+    const typeGroup = XTypeGroup(uniformTypeIdentifiers: <String>['public.movie']);
     final List<XFile> files = await fileSelector.openFiles(
       acceptedTypeGroups: <XTypeGroup>[typeGroup],
     );
@@ -200,13 +192,9 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
     List<XFile> files;
 
     if (options.allowMultiple) {
-      files = await fileSelector.openFiles(
-        acceptedTypeGroups: <XTypeGroup>[typeGroup],
-      );
+      files = await fileSelector.openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
     } else {
-      final XFile? file = await fileSelector.openFile(
-        acceptedTypeGroups: <XTypeGroup>[typeGroup],
-      );
+      final XFile? file = await fileSelector.openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
       files = <XFile>[if (file != null) file];
     }
     return files;

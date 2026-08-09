@@ -45,9 +45,7 @@ extension type GoogleAccountsOauth2._(JSObject _) implements JSObject {
   /// Method: google.accounts.oauth2.hasGrantedAllScopes
   /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAllScopes
   bool hasGrantedAllScopes(TokenResponse tokenResponse, List<String> scopes) {
-    return scopes.every(
-      (String scope) => _hasGrantedScope(tokenResponse, scope.toJS),
-    );
+    return scopes.every((String scope) => _hasGrantedScope(tokenResponse, scope.toJS));
   }
 
   /// Checks if hte user has granted **all** the specified [scopes].
@@ -57,9 +55,7 @@ extension type GoogleAccountsOauth2._(JSObject _) implements JSObject {
   /// Method: google.accounts.oauth2.hasGrantedAllScopes
   /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAllScopes
   bool hasGrantedAnyScopes(TokenResponse tokenResponse, List<String> scopes) {
-    return scopes.any(
-      (String scope) => _hasGrantedScope(tokenResponse, scope.toJS),
-    );
+    return scopes.any((String scope) => _hasGrantedScope(tokenResponse, scope.toJS));
   }
 
   /// Revokes all of the scopes that the user granted to the app.
@@ -100,8 +96,7 @@ extension type CodeClientConfig._(JSObject _) implements JSObject {
     CodeClientCallbackFn? callback,
     String? state,
     bool? enable_granular_consent,
-    @Deprecated('Use `enable_granular_consent` instead.')
-    bool? enable_serial_consent,
+    @Deprecated('Use `enable_granular_consent` instead.') bool? enable_serial_consent,
     String? login_hint,
     String? hd,
     UxMode? ux_mode,
@@ -212,8 +207,7 @@ extension type TokenClientConfig._(JSObject _) implements JSObject {
     bool? include_granted_scopes,
     String? prompt,
     bool? enable_granular_consent,
-    @Deprecated('Use `enable_granular_consent` instead.')
-    bool? enable_serial_consent,
+    @Deprecated('Use `enable_granular_consent` instead.') bool? enable_serial_consent,
     String? login_hint,
     String? hd,
     String? state,
@@ -268,9 +262,7 @@ extension type TokenClient._(JSObject _) implements JSObject {
   @JS('requestAccessToken')
   external void _requestAccessToken();
   @JS('requestAccessToken')
-  external void _requestAccessTokenWithConfig(
-    OverridableTokenClientConfig config,
-  );
+  external void _requestAccessTokenWithConfig(OverridableTokenClientConfig config);
 }
 
 /// The overridable configuration object for the [TokenClientExtension.requestAccessToken] method.
@@ -314,8 +306,7 @@ extension type OverridableTokenClientConfig._(JSObject _) implements JSObject {
     /// in your next application update.
     ///
     /// See: https://developers.googleblog.com/2018/10/more-granular-google-account.html
-    @Deprecated('Use `enable_granular_consent` instead.')
-    bool? enable_serial_consent,
+    @Deprecated('Use `enable_granular_consent` instead.') bool? enable_serial_consent,
 
     /// When your app knows which user it is trying to authenticate, it can
     /// provide this parameter as a hint to the authentication server. Passing

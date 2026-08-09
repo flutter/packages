@@ -14,6 +14,7 @@
 
 #include <map>
 #include <optional>
+#include <ostream>
 #include <string>
 
 namespace core_tests_pigeontest {
@@ -21,6 +22,13 @@ namespace core_tests_pigeontest {
 class CoreTestsTest;
 
 // Generated class from Pigeon.
+
+inline constexpr const char* aStringConstant = "stringConstantValue";
+inline constexpr const char* aStringConstantWithEscapes =
+    "string\\'\\\"\\$ConstantValue";
+inline constexpr int64_t anIntConstant = 42;
+inline constexpr double aDoubleConstant = 3.14;
+inline constexpr bool aBoolConstant = true;
 
 class FlutterError {
  public:
@@ -93,6 +101,8 @@ class UnusedClass {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os, const UnusedClass& obj);
 
  private:
   static UnusedClass FromEncodableList(const ::flutter::EncodableList& list);
@@ -227,6 +237,8 @@ class AllTypes {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os, const AllTypes& obj);
 
  private:
   static AllTypes FromEncodableList(const ::flutter::EncodableList& list);
@@ -442,6 +454,9 @@ class AllNullableTypes {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os,
+                                  const AllNullableTypes& obj);
 
  private:
   static AllNullableTypes FromEncodableList(
@@ -643,6 +658,9 @@ class AllNullableTypesWithoutRecursion {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os,
+                                  const AllNullableTypesWithoutRecursion& obj);
 
  private:
   static AllNullableTypesWithoutRecursion FromEncodableList(
@@ -686,6 +704,35 @@ class AllNullableTypesWithoutRecursion {
   std::optional<::flutter::EncodableMap> map_map_;
 };
 
+// A data class without fields for testing empty classes.
+//
+// Generated class from Pigeon that represents data sent in messages.
+class AnEmptyClass {
+ public:
+  // Constructs an object setting all fields.
+  AnEmptyClass();
+
+  bool operator==(const AnEmptyClass& other) const;
+  bool operator!=(const AnEmptyClass& other) const;
+  /// Returns a hash code value for the object. This method is supported for the
+  /// benefit of hash tables.
+  size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os, const AnEmptyClass& obj);
+
+ private:
+  static AnEmptyClass FromEncodableList(const ::flutter::EncodableList& list);
+  ::flutter::EncodableList ToEncodableList() const;
+  friend class AllClassesWrapper;
+  friend class HostIntegrationCoreApi;
+  friend class FlutterIntegrationCoreApi;
+  friend class HostTrivialApi;
+  friend class HostSmallApi;
+  friend class FlutterSmallApi;
+  friend class PigeonInternalCodecSerializer;
+  friend class CoreTestsTest;
+};
+
 // A class for testing nested class handling.
 //
 // This is needed to test nested nullable and non-nullable classes,
@@ -708,7 +755,8 @@ class AllClassesWrapper {
       const AllTypes* all_types, const ::flutter::EncodableList& class_list,
       const ::flutter::EncodableList* nullable_class_list,
       const ::flutter::EncodableMap& class_map,
-      const ::flutter::EncodableMap* nullable_class_map);
+      const ::flutter::EncodableMap* nullable_class_map,
+      const AnEmptyClass* an_empty_class);
 
   ~AllClassesWrapper() = default;
   AllClassesWrapper(const AllClassesWrapper& other);
@@ -743,11 +791,18 @@ class AllClassesWrapper {
   void set_nullable_class_map(const ::flutter::EncodableMap* value_arg);
   void set_nullable_class_map(const ::flutter::EncodableMap& value_arg);
 
+  const AnEmptyClass* an_empty_class() const;
+  void set_an_empty_class(const AnEmptyClass* value_arg);
+  void set_an_empty_class(const AnEmptyClass& value_arg);
+
   bool operator==(const AllClassesWrapper& other) const;
   bool operator!=(const AllClassesWrapper& other) const;
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os,
+                                  const AllClassesWrapper& obj);
 
  private:
   static AllClassesWrapper FromEncodableList(
@@ -768,6 +823,7 @@ class AllClassesWrapper {
   std::optional<::flutter::EncodableList> nullable_class_list_;
   ::flutter::EncodableMap class_map_;
   std::optional<::flutter::EncodableMap> nullable_class_map_;
+  std::unique_ptr<AnEmptyClass> an_empty_class_;
 };
 
 // A data class containing a List, used in unit tests.
@@ -790,6 +846,8 @@ class TestMessage {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  /// Stream output operator for formatted string representation.
+  friend std::ostream& operator<<(std::ostream& os, const TestMessage& obj);
 
  private:
   static TestMessage FromEncodableList(const ::flutter::EncodableList& list);
@@ -860,6 +918,18 @@ class HostIntegrationCoreApi {
   // Returns the passed list, to test serialization and deserialization.
   virtual ErrorOr<::flutter::EncodableList> EchoList(
       const ::flutter::EncodableList& list) = 0;
+  // Returns the passed list, to test serialization and deserialization.
+  virtual ErrorOr<::flutter::EncodableList> EchoStringList(
+      const ::flutter::EncodableList& string_list) = 0;
+  // Returns the passed list, to test serialization and deserialization.
+  virtual ErrorOr<::flutter::EncodableList> EchoIntList(
+      const ::flutter::EncodableList& int_list) = 0;
+  // Returns the passed list, to test serialization and deserialization.
+  virtual ErrorOr<::flutter::EncodableList> EchoDoubleList(
+      const ::flutter::EncodableList& double_list) = 0;
+  // Returns the passed list, to test serialization and deserialization.
+  virtual ErrorOr<::flutter::EncodableList> EchoBoolList(
+      const ::flutter::EncodableList& bool_list) = 0;
   // Returns the passed list, to test serialization and deserialization.
   virtual ErrorOr<::flutter::EncodableList> EchoEnumList(
       const ::flutter::EncodableList& enum_list) = 0;

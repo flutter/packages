@@ -9,15 +9,9 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 void main() {
   test('Vertices.fromFloat32List', () {
-    final vertices = Vertices.fromFloat32List(
-      Float32List.fromList(<double>[1, 2, 3, 4, 5, 6]),
-    );
+    final vertices = Vertices.fromFloat32List(Float32List.fromList(<double>[1, 2, 3, 4, 5, 6]));
 
-    expect(vertices.vertexPoints, const <Point>[
-      Point(1, 2),
-      Point(3, 4),
-      Point(5, 6),
-    ]);
+    expect(vertices.vertexPoints, const <Point>[Point(1, 2), Point(3, 4), Point(5, 6)]);
 
     expect(
       () => Vertices.fromFloat32List(Float32List.fromList(<double>[1])),
@@ -59,20 +53,7 @@ void main() {
     expect(indexedVertices.vertices.length, 10);
     expect(indexedVertices.indices!.length, 12);
     expect(indexedVertices.vertices, <double>[1, 1, 2, 2, 3, 3, 4, 4, 5, 5]);
-    expect(indexedVertices.indices, <double>[
-      0,
-      1,
-      2,
-      0,
-      3,
-      1,
-      2,
-      4,
-      3,
-      0,
-      1,
-      2,
-    ]);
+    expect(indexedVertices.indices, <double>[0, 1, 2, 0, 3, 1, 2, 4, 3, 0, 1, 2]);
   });
 
   test('IndexedVertices - does not index if index is larger', () {

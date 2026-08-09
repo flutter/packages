@@ -12,8 +12,7 @@ import 'src/messages.g.dart';
 /// An implementation of [UrlLauncherPlatform] for iOS.
 class UrlLauncherIOS extends UrlLauncherPlatform {
   /// Creates a new plugin implementation instance.
-  UrlLauncherIOS({@visibleForTesting UrlLauncherApi? api})
-    : _hostApi = api ?? UrlLauncherApi();
+  UrlLauncherIOS({@visibleForTesting UrlLauncherApi? api}) : _hostApi = api ?? UrlLauncherApi();
 
   final UrlLauncherApi _hostApi;
 
@@ -91,10 +90,7 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
     }
 
     if (inApp) {
-      return _mapInAppLoadResult(
-        await _hostApi.openUrlInSafariViewController(url),
-        url: url,
-      );
+      return _mapInAppLoadResult(await _hostApi.openUrlInSafariViewController(url), url: url);
     } else {
       return _mapLaunchResult(
         await _hostApi.launchUrl(
@@ -125,8 +121,7 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
 
   @override
   Future<bool> supportsCloseForMode(PreferredLaunchMode mode) async {
-    return mode == PreferredLaunchMode.inAppWebView ||
-        mode == PreferredLaunchMode.inAppBrowserView;
+    return mode == PreferredLaunchMode.inAppWebView || mode == PreferredLaunchMode.inAppBrowserView;
   }
 
   bool _mapLaunchResult(LaunchResult result) {
@@ -162,10 +157,7 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
   // are a defacto part of the API) is for compatibility with the previous
   // native implementation.
   PlatformException _invalidUrlException() {
-    throw PlatformException(
-      code: 'argument_error',
-      message: 'Unable to parse URL',
-    );
+    throw PlatformException(code: 'argument_error', message: 'Unable to parse URL');
   }
 
   // TODO(stuartmorgan): Remove this as part of standardizing error handling.
@@ -175,10 +167,7 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
   // are a defacto part of the API) is for compatibility with the previous
   // native implementation.
   PlatformException _failedSafariViewControllerLoadException(String url) {
-    throw PlatformException(
-      code: 'Error',
-      message: 'Error while launching $url',
-    );
+    throw PlatformException(code: 'Error', message: 'Error while launching $url');
   }
 
   // TODO(stuartmorgan): Remove this as part of standardizing error handling.
@@ -187,9 +176,6 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
   // This PlatformException is designed to match the pattern of the pre-existing
   // exceptions above.
   PlatformException _noUIException() {
-    throw PlatformException(
-      code: 'no_ui_available',
-      message: 'No view controller available',
-    );
+    throw PlatformException(code: 'no_ui_available', message: 'No view controller available');
   }
 }

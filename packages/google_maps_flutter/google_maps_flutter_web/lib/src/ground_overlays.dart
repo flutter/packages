@@ -10,14 +10,11 @@ class GroundOverlaysController extends GeometryController {
   ///
   /// The [stream] parameter is a required [StreamController] used for
   /// emitting ground overlay tap events.
-  GroundOverlaysController({
-    required StreamController<MapEvent<Object?>> stream,
-  }) : _streamController = stream,
-       _groundOverlayIdToController =
-           <GroundOverlayId, GroundOverlayController>{};
+  GroundOverlaysController({required StreamController<MapEvent<Object?>> stream})
+    : _streamController = stream,
+      _groundOverlayIdToController = <GroundOverlayId, GroundOverlayController>{};
 
-  final Map<GroundOverlayId, GroundOverlayController>
-  _groundOverlayIdToController;
+  final Map<GroundOverlayId, GroundOverlayController> _groundOverlayIdToController;
 
   // The stream over which ground overlays broadcast their events
   final StreamController<MapEvent<Object?>> _streamController;
@@ -35,9 +32,7 @@ class GroundOverlaysController extends GeometryController {
       'On Web platform, bounds must be provided for GroundOverlay',
     );
 
-    final gmaps.LatLngBounds bounds = latLngBoundsToGmlatLngBounds(
-      groundOverlay.bounds!,
-    );
+    final gmaps.LatLngBounds bounds = latLngBoundsToGmlatLngBounds(groundOverlay.bounds!);
 
     final groundOverlayOptions = gmaps.GroundOverlayOptions()
       ..opacity = 1.0 - groundOverlay.transparency
@@ -89,8 +84,9 @@ class GroundOverlaysController extends GeometryController {
   }
 
   void _removeGroundOverlay(GroundOverlayId groundOverlayId) {
-    final GroundOverlayController? controller = _groundOverlayIdToController
-        .remove(groundOverlayId);
+    final GroundOverlayController? controller = _groundOverlayIdToController.remove(
+      groundOverlayId,
+    );
     if (controller != null) {
       controller.remove();
     }
@@ -103,8 +99,9 @@ class GroundOverlaysController extends GeometryController {
   /// Returns the [GroundOverlay] with the given [GroundOverlayId].
   /// Only used for testing.
   gmaps.GroundOverlay? getGroundOverlay(GroundOverlayId groundOverlayId) {
-    final GroundOverlayController? controller = _groundOverlayIdToController
-        .remove(groundOverlayId);
+    final GroundOverlayController? controller = _groundOverlayIdToController.remove(
+      groundOverlayId,
+    );
     return controller?.groundOverlay;
   }
 }

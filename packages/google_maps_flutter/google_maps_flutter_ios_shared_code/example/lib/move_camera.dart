@@ -11,8 +11,7 @@ import 'example_google_map.dart';
 import 'page.dart';
 
 class MoveCameraPage extends GoogleMapExampleAppPage {
-  const MoveCameraPage({super.key})
-    : super(const Icon(Icons.map), 'Camera control');
+  const MoveCameraPage({super.key}) : super(const Icon(Icons.map), 'Camera control');
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +45,7 @@ class MoveCameraState extends State<MoveCamera> {
             height: 200.0,
             child: ExampleGoogleMap(
               onMapCreated: _onMapCreated,
-              initialCameraPosition: const CameraPosition(
-                target: LatLng(0.0, 0.0),
-              ),
+              initialCameraPosition: const CameraPosition(target: LatLng(0.0, 0.0)),
             ),
           ),
         ),
@@ -75,9 +72,7 @@ class MoveCameraState extends State<MoveCamera> {
                 TextButton(
                   onPressed: () {
                     mapController?.moveCamera(
-                      CameraUpdate.newLatLng(
-                        const LatLng(56.1725505, 10.1850512),
-                      ),
+                      CameraUpdate.newLatLng(const LatLng(56.1725505, 10.1850512)),
                     );
                   },
                   child: const Text('newLatLng'),
@@ -99,19 +94,14 @@ class MoveCameraState extends State<MoveCamera> {
                 TextButton(
                   onPressed: () {
                     mapController?.moveCamera(
-                      CameraUpdate.newLatLngZoom(
-                        const LatLng(37.4231613, -122.087159),
-                        11.0,
-                      ),
+                      CameraUpdate.newLatLngZoom(const LatLng(37.4231613, -122.087159), 11.0),
                     );
                   },
                   child: const Text('newLatLngZoom'),
                 ),
                 TextButton(
                   onPressed: () {
-                    mapController?.moveCamera(
-                      CameraUpdate.scrollBy(150.0, -225.0),
-                    );
+                    mapController?.moveCamera(CameraUpdate.scrollBy(150.0, -225.0));
                   },
                   child: const Text('scrollBy'),
                 ),
@@ -121,9 +111,7 @@ class MoveCameraState extends State<MoveCamera> {
               children: <Widget>[
                 TextButton(
                   onPressed: () {
-                    mapController?.moveCamera(
-                      CameraUpdate.zoomBy(-0.5, const Offset(30.0, 20.0)),
-                    );
+                    mapController?.moveCamera(CameraUpdate.zoomBy(-0.5, const Offset(30.0, 20.0)));
                   },
                   child: const Text('zoomBy with focus'),
                 ),

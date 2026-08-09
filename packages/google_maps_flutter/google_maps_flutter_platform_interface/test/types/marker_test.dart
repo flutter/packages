@@ -42,8 +42,9 @@ void main() {
     });
 
     test('toJson', () {
-      final BitmapDescriptor testDescriptor =
-          BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan);
+      final BitmapDescriptor testDescriptor = BitmapDescriptor.defaultMarkerWithHue(
+        BitmapDescriptor.hueCyan,
+      );
       final marker = Marker(
         markerId: const MarkerId('ABC123'),
         alpha: 0.12345,
@@ -100,8 +101,9 @@ void main() {
       const markerId = MarkerId('ABC123');
       const marker = Marker(markerId: markerId);
 
-      final BitmapDescriptor testDescriptor =
-          BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan);
+      final BitmapDescriptor testDescriptor = BitmapDescriptor.defaultMarkerWithHue(
+        BitmapDescriptor.hueCyan,
+      );
       const testAlphaParam = 0.12345;
       const testAnchorParam = Offset(100, 100);
       final bool testConsumeTapEventsParam = !marker.consumeTapEvents;
@@ -172,11 +174,7 @@ void main() {
 
     test("Assert that both zIndex and zIndex int aren't passed in", () {
       expect(
-        () => Marker(
-          markerId: const MarkerId('ABC123'),
-          zIndex: 5,
-          zIndexInt: 10,
-        ),
+        () => Marker(markerId: const MarkerId('ABC123'), zIndex: 5, zIndexInt: 10),
         throwsAssertionError,
       );
     });

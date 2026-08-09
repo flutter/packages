@@ -4,17 +4,12 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:webview_flutter_platform_interface/src/platform_navigation_delegate.dart'
-    as _i3;
-import 'package:webview_flutter_platform_interface/src/platform_webview_controller.dart'
-    as _i4;
-import 'package:webview_flutter_platform_interface/src/platform_webview_cookie_manager.dart'
-    as _i2;
-import 'package:webview_flutter_platform_interface/src/platform_webview_widget.dart'
-    as _i5;
+import 'package:webview_flutter_platform_interface/src/platform_navigation_delegate.dart' as _i3;
+import 'package:webview_flutter_platform_interface/src/platform_webview_controller.dart' as _i4;
+import 'package:webview_flutter_platform_interface/src/platform_webview_cookie_manager.dart' as _i2;
+import 'package:webview_flutter_platform_interface/src/platform_webview_widget.dart' as _i5;
 import 'package:webview_flutter_platform_interface/src/types/types.dart' as _i7;
-import 'package:webview_flutter_platform_interface/src/webview_platform.dart'
-    as _i6;
+import 'package:webview_flutter_platform_interface/src/webview_platform.dart' as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -31,10 +26,8 @@ import 'package:webview_flutter_platform_interface/src/webview_platform.dart'
 
 class _FakePlatformWebViewCookieManager_0 extends _i1.SmartFake
     implements _i2.PlatformWebViewCookieManager {
-  _FakePlatformWebViewCookieManager_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(parent, parentInvocation);
+  _FakePlatformWebViewCookieManager_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakePlatformNavigationDelegate_1 extends _i1.SmartFake
@@ -49,8 +42,7 @@ class _FakePlatformWebViewController_2 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
-class _FakePlatformWebViewWidget_3 extends _i1.SmartFake
-    implements _i5.PlatformWebViewWidget {
+class _FakePlatformWebViewWidget_3 extends _i1.SmartFake implements _i5.PlatformWebViewWidget {
   _FakePlatformWebViewWidget_3(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }

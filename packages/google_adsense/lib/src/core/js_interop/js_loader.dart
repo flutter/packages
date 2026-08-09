@@ -11,8 +11,7 @@ import 'adsbygoogle.dart' show adsbygooglePresent;
 import 'package_web_tweaks.dart';
 
 // The URL of the ads by google client.
-const String _URL =
-    'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+const String _URL = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
 
 /// Loads the JS SDK for [adClient].
 ///
@@ -42,9 +41,7 @@ Future<void> loadJsSdk(
     try {
       final web.TrustedTypePolicy policy = web.window.trustedTypes.createPolicy(
         trustedTypePolicyName,
-        web.TrustedTypePolicyOptions(
-          createScriptURL: ((JSString url) => url).toJS,
-        ),
+        web.TrustedTypePolicyOptions(createScriptURL: ((JSString url) => url).toJS),
       );
       script.trustedSrc = policy.createScriptURLNoArgs(scriptUrl);
     } catch (e) {
@@ -61,10 +58,7 @@ Future<void> loadJsSdk(
 }
 
 // Applies a map of [attributes] to the `dataset` of [element].
-void _applyDataAttributes(
-  web.HTMLElement element,
-  Map<String, String>? attributes,
-) {
+void _applyDataAttributes(web.HTMLElement element, Map<String, String>? attributes) {
   attributes?.forEach((String key, String value) {
     element.dataset.setProperty(key.toJS, value.toJS);
   });

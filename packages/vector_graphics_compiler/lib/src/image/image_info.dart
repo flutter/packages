@@ -28,12 +28,9 @@ enum ImageFormat {
 /// of an image.
 abstract class ImageSizeData {
   /// Allows subclasses to be const.
-  const ImageSizeData({
-    required this.format,
-    required this.width,
-    required this.height,
-  }) : assert(width >= 0),
-       assert(height >= 0);
+  const ImageSizeData({required this.format, required this.width, required this.height})
+    : assert(width >= 0),
+      assert(height >= 0);
 
   /// Creates an appropriate [ImageSizeData] for the source `bytes`, if possible.
   ///
@@ -89,11 +86,7 @@ abstract class ImageSizeData {
 /// The [ImageSizeData] for a PNG image.
 class PngImageSizeData extends ImageSizeData {
   PngImageSizeData._(ByteData data)
-    : super(
-        format: ImageFormat.png,
-        width: data.getUint32(16),
-        height: data.getUint32(20),
-      );
+    : super(format: ImageFormat.png, width: data.getUint32(16), height: data.getUint32(20));
 
   /// Returns true if `bytes` starts with the expected header for a PNG image.
   static bool matches(Uint8List bytes) {
@@ -161,10 +154,7 @@ class JpegImageSizeData extends ImageSizeData {
 
   /// Returns true if `bytes` starts with the expected header for a JPEG image.
   static bool matches(Uint8List bytes) {
-    return bytes.lengthInBytes > 12 &&
-        bytes[0] == 0xFF &&
-        bytes[1] == 0xD8 &&
-        bytes[2] == 0xFF;
+    return bytes.lengthInBytes > 12 && bytes[0] == 0xFF && bytes[1] == 0xD8 && bytes[2] == 0xFF;
   }
 }
 

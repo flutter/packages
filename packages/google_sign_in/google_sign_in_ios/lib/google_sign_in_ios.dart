@@ -12,8 +12,7 @@ import 'src/messages.g.dart';
 /// iOS implementation of [GoogleSignInPlatform].
 class GoogleSignInIOS extends GoogleSignInPlatform {
   /// Creates a new plugin implementation instance.
-  GoogleSignInIOS({@visibleForTesting GoogleSignInApi? api})
-    : _api = api ?? GoogleSignInApi();
+  GoogleSignInIOS({@visibleForTesting GoogleSignInApi? api}) : _api = api ?? GoogleSignInApi();
 
   final GoogleSignInApi _api;
 
@@ -85,9 +84,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   bool supportsAuthenticate() => true;
 
   @override
-  Future<AuthenticationResults> authenticate(
-    AuthenticateParameters params,
-  ) async {
+  Future<AuthenticationResults> authenticate(AuthenticateParameters params) async {
     final SignInResult result = await _signIn(params.scopeHint, _nonce);
 
     // This should never happen; the corresponding native error code is
@@ -135,35 +132,28 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
     ClientAuthorizationTokensForScopesParameters params,
   ) async {
-    final String? accessToken = (await _getAuthorizationTokens(
-      params.request,
-    )).accessToken;
-    return accessToken == null
-        ? null
-        : ClientAuthorizationTokenData(accessToken: accessToken);
+    final String? accessToken = (await _getAuthorizationTokens(params.request)).accessToken;
+    return accessToken == null ? null : ClientAuthorizationTokenData(accessToken: accessToken);
   }
 
   @override
   Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
     ServerAuthorizationTokensForScopesParameters params,
   ) async {
-    final String? serverAuthCode = (await _getAuthorizationTokens(
-      params.request,
-    )).serverAuthCode;
+    final String? serverAuthCode = (await _getAuthorizationTokens(params.request)).serverAuthCode;
     return serverAuthCode == null
         ? null
         : ServerAuthorizationTokenData(serverAuthCode: serverAuthCode);
   }
 
   @override
-  Future<void> clearAuthorizationToken(
-    ClearAuthorizationTokenParams params,
-  ) async {
+  Future<void> clearAuthorizationToken(ClearAuthorizationTokenParams params) async {
     // No-op; the iOS SDK handles token invalidation internally.
   }
 
-  Future<({String? accessToken, String? serverAuthCode})>
-  _getAuthorizationTokens(AuthorizationRequestDetails request) async {
+  Future<({String? accessToken, String? serverAuthCode})> _getAuthorizationTokens(
+    AuthorizationRequestDetails request,
+  ) async {
     String? userId = request.userId;
 
     // The Google Sign In SDK requires authentication before authorization, so
@@ -221,8 +211,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
       if (success != null) {
         if (request.scopes.any(
           (String scope) =>
-              !openIdConnectScopes.contains(scope) &&
-              !success.grantedScopes.contains(scope),
+              !openIdConnectScopes.contains(scope) && !success.grantedScopes.contains(scope),
         )) {
           return (accessToken: null, serverAuthCode: null);
         }
@@ -232,8 +221,9 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     return _processAuthorizationResult(result);
   }
 
-  Future<({String? accessToken, String? serverAuthCode})>
-  _processAuthorizationResult(SignInResult result) async {
+  Future<({String? accessToken, String? serverAuthCode})> _processAuthorizationResult(
+    SignInResult result,
+  ) async {
     final SignInFailure? failure = result.error;
     if (failure != null) {
       throw GoogleSignInException(
@@ -268,9 +258,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     _cachedServerAuthCodeUserId = success?.user.userId;
   }
 
-  AuthenticationResults _authenticationResultsFromSignInSuccess(
-    SignInSuccess result,
-  ) {
+  AuthenticationResults _authenticationResultsFromSignInSuccess(SignInSuccess result) {
     final UserData userData = result.user;
     final user = GoogleSignInUserData(
       email: userData.email,
@@ -284,8 +272,9 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     );
   }
 
-  ({String? accessToken, String? serverAuthCode})
-  _authorizationTokenDataFromSignInSuccess(SignInSuccess? result) {
+  ({String? accessToken, String? serverAuthCode}) _authorizationTokenDataFromSignInSuccess(
+    SignInSuccess? result,
+  ) {
     // Check for a relevant cached auth code to add if needed.
     final String? cachedAuthCode =
         result != null && result.user.userId == _cachedServerAuthCodeUserId
@@ -298,18 +287,13 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     );
   }
 
-  GoogleSignInExceptionCode _exceptionCodeForErrorPlatformErrorCode(
-    GoogleSignInErrorCode code,
-  ) {
+  GoogleSignInExceptionCode _exceptionCodeForErrorPlatformErrorCode(GoogleSignInErrorCode code) {
     return switch (code) {
       GoogleSignInErrorCode.unknown => GoogleSignInExceptionCode.unknownError,
-      GoogleSignInErrorCode.keychainError =>
-        GoogleSignInExceptionCode.providerConfigurationError,
+      GoogleSignInErrorCode.keychainError => GoogleSignInExceptionCode.providerConfigurationError,
       GoogleSignInErrorCode.canceled => GoogleSignInExceptionCode.canceled,
-      GoogleSignInErrorCode.eemError =>
-        GoogleSignInExceptionCode.providerConfigurationError,
-      GoogleSignInErrorCode.userMismatch =>
-        GoogleSignInExceptionCode.userMismatch,
+      GoogleSignInErrorCode.eemError => GoogleSignInExceptionCode.providerConfigurationError,
+      GoogleSignInErrorCode.userMismatch => GoogleSignInExceptionCode.userMismatch,
       // These should never be mapped to a GoogleSignInException; the caller
       // should handle them.
       GoogleSignInErrorCode.noAuthInKeychain => throw StateError(

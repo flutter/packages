@@ -9,22 +9,16 @@ import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platf
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test(
-    'Default implementation of PointerInterceptorPlatform should throw unimplemented error',
-    () {
-      final PointerInterceptorPlatform unimplementedPointerInterceptorPlatform =
-          UnimplementedPointerInterceptorPlatform();
+  test('Default implementation of PointerInterceptorPlatform should throw unimplemented error', () {
+    final PointerInterceptorPlatform unimplementedPointerInterceptorPlatform =
+        UnimplementedPointerInterceptorPlatform();
 
-      final testChild = Container();
-      expect(
-        () => unimplementedPointerInterceptorPlatform.buildWidget(
-          child: testChild,
-        ),
-        throwsUnimplementedError,
-      );
-    },
-  );
+    final testChild = Container();
+    expect(
+      () => unimplementedPointerInterceptorPlatform.buildWidget(child: testChild),
+      throwsUnimplementedError,
+    );
+  });
 }
 
-class UnimplementedPointerInterceptorPlatform
-    extends PointerInterceptorPlatform {}
+class UnimplementedPointerInterceptorPlatform extends PointerInterceptorPlatform {}

@@ -14,8 +14,7 @@ import './messages.g.dart';
 const String _argumentErrorCode = 'Argument Error';
 
 /// iOS and macOS implementation of shared_preferences.
-base class SharedPreferencesAsyncFoundation
-    extends SharedPreferencesAsyncPlatform {
+base class SharedPreferencesAsyncFoundation extends SharedPreferencesAsyncPlatform {
   /// Creates a new plugin implementation instance.
   SharedPreferencesAsyncFoundation({@visibleForTesting UserDefaultsApi? api})
     : _api = api ?? UserDefaultsApi();
@@ -24,14 +23,11 @@ base class SharedPreferencesAsyncFoundation
 
   /// Registers this class as the default instance of [SharedPreferencesAsyncPlatform].
   static void registerWith() {
-    SharedPreferencesAsyncPlatform.instance =
-        SharedPreferencesAsyncFoundation();
+    SharedPreferencesAsyncPlatform.instance = SharedPreferencesAsyncFoundation();
   }
 
   /// Returns a SharedPreferencesPigeonOptions for sending to platform.
-  SharedPreferencesPigeonOptions _convertOptionsToPigeonOptions(
-    SharedPreferencesOptions options,
-  ) {
+  SharedPreferencesPigeonOptions _convertOptionsToPigeonOptions(SharedPreferencesOptions options) {
     if (options is SharedPreferencesAsyncFoundationOptions) {
       final String? suiteName = options.suiteName;
       return SharedPreferencesPigeonOptions(suiteName: suiteName);
@@ -46,38 +42,23 @@ base class SharedPreferencesAsyncFoundation
   ) async {
     final PreferencesFilters filter = parameters.filter;
     return (await _convertKnownExceptions<List<String>>(
-      () async => _api.getKeys(
-        filter.allowList?.toList(),
-        _convertOptionsToPigeonOptions(options),
-      ),
+      () async => _api.getKeys(filter.allowList?.toList(), _convertOptionsToPigeonOptions(options)),
     ))!.toSet();
   }
 
-  Future<void> _setValue(
-    String key,
-    Object value,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<void> _setValue(String key, Object value, SharedPreferencesOptions options) async {
     return _convertKnownExceptions<void>(
       () async => _api.set(key, value, _convertOptionsToPigeonOptions(options)),
     );
   }
 
   @override
-  Future<void> setString(
-    String key,
-    String value,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<void> setString(String key, String value, SharedPreferencesOptions options) async {
     await _setValue(key, value, options);
   }
 
   @override
-  Future<void> setInt(
-    String key,
-    int value,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<void> setInt(String key, int value, SharedPreferencesOptions options) async {
     await _setValue(key, value, options);
   }
 
@@ -91,76 +72,50 @@ base class SharedPreferencesAsyncFoundation
   }
 
   @override
-  Future<void> setBool(
-    String key,
-    bool value,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<void> setBool(String key, bool value, SharedPreferencesOptions options) async {
     await _api.set(key, value, _convertOptionsToPigeonOptions(options));
   }
 
   @override
-  Future<void> setDouble(
-    String key,
-    double value,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<void> setDouble(String key, double value, SharedPreferencesOptions options) async {
     await _api.set(key, value, _convertOptionsToPigeonOptions(options));
   }
 
   @override
-  Future<String?> getString(
-    String key,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<String?> getString(String key, SharedPreferencesOptions options) async {
     return _convertKnownExceptions<String>(
-      () async =>
-          (await _api.getValue(key, _convertOptionsToPigeonOptions(options)))
-              as String?,
+      () async => (await _api.getValue(key, _convertOptionsToPigeonOptions(options))) as String?,
     );
   }
 
   @override
   Future<bool?> getBool(String key, SharedPreferencesOptions options) async {
     return _convertKnownExceptions<bool>(
-      () async =>
-          await _api.getValue(key, _convertOptionsToPigeonOptions(options))
-              as bool?,
+      () async => await _api.getValue(key, _convertOptionsToPigeonOptions(options)) as bool?,
     );
   }
 
   @override
-  Future<double?> getDouble(
-    String key,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<double?> getDouble(String key, SharedPreferencesOptions options) async {
     return _convertKnownExceptions<double>(
-      () async =>
-          await _api.getValue(key, _convertOptionsToPigeonOptions(options))
-              as double?,
+      () async => await _api.getValue(key, _convertOptionsToPigeonOptions(options)) as double?,
     );
   }
 
   @override
   Future<int?> getInt(String key, SharedPreferencesOptions options) async {
     return _convertKnownExceptions<int>(
-      () async =>
-          await _api.getValue(key, _convertOptionsToPigeonOptions(options))
-              as int?,
+      () async => await _api.getValue(key, _convertOptionsToPigeonOptions(options)) as int?,
     );
   }
 
   @override
-  Future<List<String>?> getStringList(
-    String key,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<List<String>?> getStringList(String key, SharedPreferencesOptions options) async {
     // Since `getValue` is not strongly typed, the array type won't be set
     // during deserialization, and needs to be manually cast.
     return _convertKnownExceptions<List<String>>(
       () async =>
-          ((await _api.getValue(key, _convertOptionsToPigeonOptions(options)))
-                  as List<Object?>?)
+          ((await _api.getValue(key, _convertOptionsToPigeonOptions(options))) as List<Object?>?)
               ?.cast<String>()
               .toList(),
     );
@@ -173,10 +128,7 @@ base class SharedPreferencesAsyncFoundation
   ) async {
     final PreferencesFilters filter = parameters.filter;
     return _convertKnownExceptions<void>(
-      () async => _api.clear(
-        filter.allowList?.toList(),
-        _convertOptionsToPigeonOptions(options),
-      ),
+      () async => _api.clear(filter.allowList?.toList(), _convertOptionsToPigeonOptions(options)),
     );
   }
 
@@ -187,10 +139,7 @@ base class SharedPreferencesAsyncFoundation
   ) async {
     final PreferencesFilters filter = parameters.filter;
     return (await _convertKnownExceptions<Map<String, Object>>(
-      () async => _api.getAll(
-        filter.allowList?.toList(),
-        _convertOptionsToPigeonOptions(options),
-      ),
+      () async => _api.getAll(filter.allowList?.toList(), _convertOptionsToPigeonOptions(options)),
     ))!;
   }
 
@@ -200,9 +149,7 @@ base class SharedPreferencesAsyncFoundation
       return value;
     } on PlatformException catch (e) {
       if (e.code == _argumentErrorCode) {
-        throw ArgumentError(
-          'shared_preferences_foundation argument error ${e.message ?? ''}',
-        );
+        throw ArgumentError('shared_preferences_foundation argument error ${e.message ?? ''}');
       } else {
         rethrow;
       }

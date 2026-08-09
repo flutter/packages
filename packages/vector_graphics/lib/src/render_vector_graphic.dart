@@ -87,8 +87,7 @@ class RenderVectorGraphic extends RenderBox {
     _updateOpacity();
   }
 
-  static final Map<RasterKey, RasterData> _liveRasterCache =
-      <RasterKey, RasterData>{};
+  static final Map<RasterKey, RasterData> _liveRasterCache = <RasterKey, RasterData>{};
 
   /// A key that uniquely identifies the [pictureInfo] used for this vg.
   Object get assetKey => _assetKey;
@@ -195,11 +194,7 @@ class RenderVectorGraphic extends RenderBox {
     return constraints.smallest;
   }
 
-  static RasterData _createRaster(
-    RasterKey key,
-    double scaleFactor,
-    PictureInfo info,
-  ) {
+  static RasterData _createRaster(RasterKey key, double scaleFactor, PictureInfo info) {
     final int scaledWidth = key.width;
     final int scaledHeight = key.height;
     // In order to scale a picture, it must be placed in a new picture
@@ -214,10 +209,7 @@ class RenderVectorGraphic extends RenderBox {
     canvas.drawPicture(info.picture);
     final ui.Picture rasterPicture = recorder.endRecording();
 
-    final ui.Image pending = rasterPicture.toImageSync(
-      scaledWidth,
-      scaledHeight,
-    );
+    final ui.Image pending = rasterPicture.toImageSync(scaledWidth, scaledHeight);
     return RasterData(pending, 0, key);
   }
 
@@ -236,10 +228,8 @@ class RenderVectorGraphic extends RenderBox {
   // is sufficiently different. Returns `null` if rasterData has been
   // updated immediately.
   void _maybeUpdateRaster() {
-    final int scaledWidth = (pictureInfo.size.width * devicePixelRatio / scale)
-        .round();
-    final int scaledHeight =
-        (pictureInfo.size.height * devicePixelRatio / scale).round();
+    final int scaledWidth = (pictureInfo.size.width * devicePixelRatio / scale).round();
+    final int scaledHeight = (pictureInfo.size.height * devicePixelRatio / scale).round();
     final key = RasterKey(assetKey, scaledWidth, scaledHeight);
 
     // First check if the raster is available synchronously. This also handles
@@ -253,11 +243,7 @@ class RenderVectorGraphic extends RenderBox {
       _rasterData = data;
       return;
     }
-    final RasterData data = _createRaster(
-      key,
-      devicePixelRatio / scale,
-      pictureInfo,
-    );
+    final RasterData data = _createRaster(key, devicePixelRatio / scale, pictureInfo);
     data.count += 1;
 
     assert(!_liveRasterCache.containsKey(key));
@@ -295,10 +281,7 @@ class RenderVectorGraphic extends RenderBox {
   void paint(PaintingContext context, ui.Offset offset) {
     assert(size == pictureInfo.size);
     if (kDebugMode && debugSkipRaster) {
-      context.canvas.drawRect(
-        offset & size,
-        Paint()..color = const Color(0xFFFF00FF),
-      );
+      context.canvas.drawRect(offset & size, Paint()..color = const Color(0xFFFF00FF));
       return;
     }
 
@@ -333,11 +316,7 @@ class RenderVectorGraphic extends RenderBox {
 /// A render object which draws a vector graphic instance as a picture.
 class RenderPictureVectorGraphic extends RenderBox {
   /// Create a new [RenderPictureVectorGraphic].
-  RenderPictureVectorGraphic(
-    this._pictureInfo,
-    this._colorFilter,
-    this._opacity,
-  ) {
+  RenderPictureVectorGraphic(this._pictureInfo, this._colorFilter, this._opacity) {
     _opacity?.addListener(_updateOpacity);
     _updateOpacity();
   }

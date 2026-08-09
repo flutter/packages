@@ -102,10 +102,7 @@ class CMakeProject {
   bool isConfigured() => _cacheFile.existsSync();
 
   /// Runs a `cmake` command with the given parameters.
-  Future<int> runBuild(
-    String target, {
-    List<String> arguments = const <String>[],
-  }) {
+  Future<int> runBuild(String target, {List<String> arguments = const <String>[]}) {
     return processRunner.runAndStream(getCmakeCommand(), <String>[
       '--build',
       buildDirectory.path,

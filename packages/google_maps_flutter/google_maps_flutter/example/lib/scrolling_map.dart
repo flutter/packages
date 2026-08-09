@@ -14,8 +14,7 @@ import 'page.dart';
 const LatLng _center = LatLng(32.080664, 34.9563837);
 
 class ScrollingMapPage extends GoogleMapExampleAppPage {
-  const ScrollingMapPage({super.key})
-    : super(const Icon(Icons.map), 'Scrolling map');
+  const ScrollingMapPage({super.key}) : super(const Icon(Icons.map), 'Scrolling map');
 
   @override
   Widget build(BuildContext context) {
@@ -44,15 +43,10 @@ class ScrollingMapBody extends StatelessWidget {
                     width: 300.0,
                     height: 300.0,
                     child: GoogleMap(
-                      initialCameraPosition: const CameraPosition(
-                        target: _center,
-                        zoom: 11.0,
-                      ),
+                      initialCameraPosition: const CameraPosition(target: _center, zoom: 11.0),
                       gestureRecognizers: //
                       <Factory<OneSequenceGestureRecognizer>>{
-                        Factory<OneSequenceGestureRecognizer>(
-                          () => EagerGestureRecognizer(),
-                        ),
+                        Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
                       },
                     ),
                   ),
@@ -69,19 +63,14 @@ class ScrollingMapBody extends StatelessWidget {
                 const Text("This map doesn't consume the vertical drags."),
                 const Padding(
                   padding: EdgeInsets.only(bottom: 12.0),
-                  child: Text(
-                    'It still gets other gestures (e.g scale or tap).',
-                  ),
+                  child: Text('It still gets other gestures (e.g scale or tap).'),
                 ),
                 Center(
                   child: SizedBox(
                     width: 300.0,
                     height: 300.0,
                     child: GoogleMap(
-                      initialCameraPosition: const CameraPosition(
-                        target: _center,
-                        zoom: 11.0,
-                      ),
+                      initialCameraPosition: const CameraPosition(target: _center, zoom: 11.0),
                       markers: <Marker>{
                         Marker(
                           markerId: const MarkerId('test_marker_id'),
@@ -92,12 +81,9 @@ class ScrollingMapBody extends StatelessWidget {
                           ),
                         ),
                       },
-                      gestureRecognizers:
-                          <Factory<OneSequenceGestureRecognizer>>{
-                            Factory<OneSequenceGestureRecognizer>(
-                              () => ScaleGestureRecognizer(),
-                            ),
-                          },
+                      gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                        Factory<OneSequenceGestureRecognizer>(() => ScaleGestureRecognizer()),
+                      },
                     ),
                   ),
                 ),

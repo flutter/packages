@@ -45,22 +45,15 @@ class MockUrlLauncherApi extends _i1.Mock implements _i2.UrlLauncherApi {
   _i4.Future<_i2.LaunchResult> canLaunchUrl(String? url) =>
       (super.noSuchMethod(
             Invocation.method(#canLaunchUrl, [url]),
-            returnValue: _i4.Future<_i2.LaunchResult>.value(
-              _i2.LaunchResult.success,
-            ),
+            returnValue: _i4.Future<_i2.LaunchResult>.value(_i2.LaunchResult.success),
           )
           as _i4.Future<_i2.LaunchResult>);
 
   @override
-  _i4.Future<_i2.LaunchResult> launchUrl(
-    String? url,
-    bool? universalLinksOnly,
-  ) =>
+  _i4.Future<_i2.LaunchResult> launchUrl(String? url, bool? universalLinksOnly) =>
       (super.noSuchMethod(
             Invocation.method(#launchUrl, [url, universalLinksOnly]),
-            returnValue: _i4.Future<_i2.LaunchResult>.value(
-              _i2.LaunchResult.success,
-            ),
+            returnValue: _i4.Future<_i2.LaunchResult>.value(_i2.LaunchResult.success),
           )
           as _i4.Future<_i2.LaunchResult>);
 
@@ -68,9 +61,7 @@ class MockUrlLauncherApi extends _i1.Mock implements _i2.UrlLauncherApi {
   _i4.Future<_i2.InAppLoadResult> openUrlInSafariViewController(String? url) =>
       (super.noSuchMethod(
             Invocation.method(#openUrlInSafariViewController, [url]),
-            returnValue: _i4.Future<_i2.InAppLoadResult>.value(
-              _i2.InAppLoadResult.success,
-            ),
+            returnValue: _i4.Future<_i2.InAppLoadResult>.value(_i2.InAppLoadResult.success),
           )
           as _i4.Future<_i2.InAppLoadResult>);
 

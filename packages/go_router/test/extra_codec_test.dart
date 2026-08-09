@@ -12,9 +12,7 @@ import 'package:leak_tracker_flutter_testing/leak_tracker_flutter_testing.dart';
 import 'test_helpers.dart';
 
 void main() {
-  testWidgets('router rebuild with extra codec works', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('router rebuild with extra codec works', (WidgetTester tester) async {
     const initialString = 'some string';
     const empty = 'empty';
     final router = GoRouter(

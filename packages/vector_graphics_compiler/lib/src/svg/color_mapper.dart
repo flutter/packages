@@ -9,10 +9,5 @@ abstract class ColorMapper {
   /// Returns a new color to use in place of [color] during SVG parsing.
   ///
   /// The SVG parser will call this method every time it parses a color
-  Color substitute(
-    String? id,
-    String elementName,
-    String attributeName,
-    Color color,
-  );
+  Color substitute(String? id, String elementName, String attributeName, Color color);
 }

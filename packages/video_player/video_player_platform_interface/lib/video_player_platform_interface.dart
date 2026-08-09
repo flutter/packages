@@ -119,10 +119,17 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
 
   /// Sets whether the video should continue to play in the background.
   Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) {
-    throw UnimplementedError(
-      'setAllowBackgroundPlayback() has not been implemented.',
-    );
+    throw UnimplementedError('setAllowBackgroundPlayback() has not been implemented.');
   }
+
+  /// Sets whether the screen is prevented from sleeping during video playback.
+  ///
+  /// The default implementation is a no-op, so platforms that do not support
+  /// controlling display sleep will silently use their default behavior.
+  Future<void> setPreventsDisplaySleepDuringVideoPlayback(
+    int playerId,
+    bool preventsDisplaySleepDuringVideoPlayback,
+  ) async {}
 
   /// Sets additional options on web.
   Future<void> setWebOptions(int playerId, VideoPlayerWebOptions options) {
@@ -352,14 +359,8 @@ class VideoEvent {
   }
 
   @override
-  int get hashCode => Object.hash(
-    eventType,
-    duration,
-    size,
-    rotationCorrection,
-    buffered,
-    isPlaying,
-  );
+  int get hashCode =>
+      Object.hash(eventType, duration, size, rotationCorrection, buffered, isPlaying);
 }
 
 /// Type of the event.
@@ -444,8 +445,7 @@ class DurationRange {
   }
 
   @override
-  String toString() =>
-      '${objectRuntimeType(this, 'DurationRange')}(start: $start, end: $end)';
+  String toString() => '${objectRuntimeType(this, 'DurationRange')}(start: $start, end: $end)';
 
   @override
   bool operator ==(Object other) =>
@@ -470,8 +470,13 @@ class VideoPlayerOptions {
   VideoPlayerOptions({
     this.mixWithOthers = false,
     this.allowBackgroundPlayback = false,
+    this.preventsDisplaySleepDuringVideoPlayback = true,
     this.webOptions,
-  });
+    this.backBufferDurationMs,
+  }) : assert(
+         backBufferDurationMs == null || backBufferDurationMs >= 0,
+         'backBufferDurationMs must be zero or greater',
+       );
 
   /// Set this to true to keep playing video in background, when app goes in background.
   /// The default value is false.
@@ -484,8 +489,21 @@ class VideoPlayerOptions {
   /// currently no way to implement this feature in this platform).
   final bool mixWithOthers;
 
+  /// Whether the screen is prevented from sleeping during video playback.
+  ///
+  /// Defaults to `true`.
+  ///
+  /// This option may not be supported on all platforms.
+  final bool preventsDisplaySleepDuringVideoPlayback;
+
   /// Additional web controls
   final VideoPlayerWebOptions? webOptions;
+
+  /// The duration, in milliseconds, of media to retain in the buffer prior to
+  /// the current playback position.
+  ///
+  /// Ignored on platforms that do not support controlling the back buffer.
+  final int? backBufferDurationMs;
 }
 
 /// [VideoPlayerWebOptions] can be optionally used to set additional web settings
@@ -588,6 +606,7 @@ class VideoCreationOptions {
   const VideoCreationOptions({
     required this.dataSource,
     required this.viewType,
+    this.videoPlayerOptions,
   });
 
   /// The data source used to create the player.
@@ -595,6 +614,9 @@ class VideoCreationOptions {
 
   /// The type of view to be used for displaying the video player
   final VideoViewType viewType;
+
+  /// Additional configuration options for the video player.
+  final VideoPlayerOptions? videoPlayerOptions;
 }
 
 /// Represents an audio track in a video with its metadata.
@@ -664,16 +686,8 @@ class VideoAudioTrack {
   }
 
   @override
-  int get hashCode => Object.hash(
-    id,
-    label,
-    language,
-    isSelected,
-    bitrate,
-    sampleRate,
-    channelCount,
-    codec,
-  );
+  int get hashCode =>
+      Object.hash(id, label, language, isSelected, bitrate, sampleRate, channelCount, codec);
 
   @override
   String toString() =>
@@ -763,16 +777,7 @@ class VideoTrack {
   }
 
   @override
-  int get hashCode => Object.hash(
-    id,
-    isSelected,
-    label,
-    bitrate,
-    width,
-    height,
-    frameRate,
-    codec,
-  );
+  int get hashCode => Object.hash(id, isSelected, label, bitrate, width, height, frameRate, codec);
 
   @override
   String toString() =>

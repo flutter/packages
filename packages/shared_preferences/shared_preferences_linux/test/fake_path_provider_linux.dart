@@ -10,8 +10,7 @@ import 'package:path_provider_platform_interface/path_provider_platform_interfac
 ///
 /// Note that this should only be used with an in-memory filesystem, as the
 /// path it returns is a root path that does not actually exist on Linux.
-class FakePathProviderLinux extends PathProviderPlatform
-    implements PathProviderLinux {
+class FakePathProviderLinux extends PathProviderPlatform implements PathProviderLinux {
   @override
   Future<String?> getApplicationSupportPath() async => r'/appsupport';
 

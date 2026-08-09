@@ -11,9 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
 import 'package:http/http.dart' as http;
 
-const List<String> _scopes = <String>[
-  'https://www.googleapis.com/auth/contacts.readonly',
-];
+const List<String> _scopes = <String>['https://www.googleapis.com/auth/contacts.readonly'];
 
 void main() {
   runApp(const MaterialApp(title: 'Google Sign In', home: SignInDemo()));
@@ -43,11 +41,10 @@ class SignInDemoState extends State<SignInDemo> {
   Future<void> _ensureInitialized() {
     // The example app uses the parsing of values from google-services.json
     // to provide the serverClientId, otherwise it would be required here.
-    return _initialization ??=
-        GoogleSignInPlatform.instance.init(const InitParameters())
-          ..catchError((dynamic _) {
-            _initialization = null;
-          });
+    return _initialization ??= GoogleSignInPlatform.instance.init(const InitParameters())
+      ..catchError((dynamic _) {
+        _initialization = null;
+      });
   }
 
   void _setUser(GoogleSignInUserData? user) {
@@ -64,9 +61,7 @@ class SignInDemoState extends State<SignInDemo> {
     await _ensureInitialized();
     try {
       final AuthenticationResults? result = await GoogleSignInPlatform.instance
-          .attemptLightweightAuthentication(
-            const AttemptLightweightAuthenticationParameters(),
-          );
+          .attemptLightweightAuthentication(const AttemptLightweightAuthenticationParameters());
       _setUser(result?.user);
     } on GoogleSignInException catch (e) {
       setState(() {
@@ -79,8 +74,7 @@ class SignInDemoState extends State<SignInDemo> {
 
   Future<void> _handleAuthorizeScopes(GoogleSignInUserData user) async {
     try {
-      final ClientAuthorizationTokenData? tokens = await GoogleSignInPlatform
-          .instance
+      final ClientAuthorizationTokenData? tokens = await GoogleSignInPlatform.instance
           .clientAuthorizationTokensForScopes(
             ClientAuthorizationTokensForScopesParameters(
               request: AuthorizationRequestDetails(
@@ -106,11 +100,8 @@ class SignInDemoState extends State<SignInDemo> {
     }
   }
 
-  Future<Map<String, String>?> _getAuthHeaders(
-    GoogleSignInUserData user,
-  ) async {
-    final ClientAuthorizationTokenData? tokens = await GoogleSignInPlatform
-        .instance
+  Future<Map<String, String>?> _getAuthHeaders(GoogleSignInUserData user) async {
+    final ClientAuthorizationTokenData? tokens = await GoogleSignInPlatform.instance
         .clientAuthorizationTokensForScopes(
           ClientAuthorizationTokensForScopesParameters(
             request: AuthorizationRequestDetails(
@@ -161,8 +152,7 @@ class SignInDemoState extends State<SignInDemo> {
       return;
     }
     final data = json.decode(response.body) as Map<String, dynamic>;
-    final int contactCount =
-        (data['connections'] as List<dynamic>?)?.length ?? 0;
+    final int contactCount = (data['connections'] as List<dynamic>?)?.length ?? 0;
     setState(() {
       _contactText = '$contactCount contacts found';
     });
@@ -171,8 +161,9 @@ class SignInDemoState extends State<SignInDemo> {
   Future<void> _handleSignIn() async {
     try {
       await _ensureInitialized();
-      final AuthenticationResults result = await GoogleSignInPlatform.instance
-          .authenticate(const AuthenticateParameters());
+      final AuthenticationResults result = await GoogleSignInPlatform.instance.authenticate(
+        const AuthenticateParameters(),
+      );
       _setUser(result.user);
     } on GoogleSignInException catch (e) {
       setState(() {
@@ -194,22 +185,13 @@ class SignInDemoState extends State<SignInDemo> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
         if (user != null) ...<Widget>[
-          ListTile(
-            title: Text(user.displayName ?? ''),
-            subtitle: Text(user.email),
-          ),
+          ListTile(title: Text(user.displayName ?? ''), subtitle: Text(user.email)),
           const Text('Signed in successfully.'),
-          ElevatedButton(
-            onPressed: _handleSignOut,
-            child: const Text('SIGN OUT'),
-          ),
+          ElevatedButton(onPressed: _handleSignOut, child: const Text('SIGN OUT')),
           if (_isAuthorized) ...<Widget>[
             // The user has Authorized all required scopes.
             if (_contactText.isNotEmpty) Text(_contactText),
-            ElevatedButton(
-              child: const Text('REFRESH'),
-              onPressed: () => _handleGetContact(user),
-            ),
+            ElevatedButton(child: const Text('REFRESH'), onPressed: () => _handleGetContact(user)),
           ] else ...<Widget>[
             // The user has NOT Authorized all required scopes.
             const Text('Authorization needed to read your contacts.'),
@@ -220,10 +202,7 @@ class SignInDemoState extends State<SignInDemo> {
           ],
         ] else ...<Widget>[
           const Text('You are not currently signed in.'),
-          ElevatedButton(
-            onPressed: _handleSignIn,
-            child: const Text('SIGN IN'),
-          ),
+          ElevatedButton(onPressed: _handleSignIn, child: const Text('SIGN IN')),
         ],
         if (_errorMessage.isNotEmpty) Text(_errorMessage),
       ],
@@ -234,10 +213,7 @@ class SignInDemoState extends State<SignInDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Google Sign In')),
-      body: ConstrainedBox(
-        constraints: const BoxConstraints.expand(),
-        child: _buildBody(),
-      ),
+      body: ConstrainedBox(constraints: const BoxConstraints.expand(), child: _buildBody()),
     );
   }
 }

@@ -16,16 +16,14 @@ import 'src/link.dart';
 const Set<String> _safariTargetTopSchemes = <String>{'mailto', 'tel', 'sms'};
 String? _getUrlScheme(String url) => Uri.tryParse(url)?.scheme;
 
-bool _isSafariTargetTopScheme(String? scheme) =>
-    _safariTargetTopSchemes.contains(scheme);
+bool _isSafariTargetTopScheme(String? scheme) => _safariTargetTopSchemes.contains(scheme);
 
 // The set of schemes that are explicitly disallowed by the plugin.
 const Set<String> _disallowedSchemes = <String>{'javascript'};
 bool _isDisallowedScheme(String? scheme) => _disallowedSchemes.contains(scheme);
 
 bool _navigatorIsSafari(html.Navigator navigator) =>
-    navigator.userAgent.contains('Safari') &&
-    !navigator.userAgent.contains('Chrome');
+    navigator.userAgent.contains('Safari') && !navigator.userAgent.contains('Chrome');
 
 /// The web implementation of [UrlLauncherPlatform].
 ///
@@ -81,8 +79,7 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
     // Some schemes need to be opened on the _top window context on Safari.
     // See https://github.com/flutter/flutter/issues/51461
     final String target =
-        webOnlyWindowName ??
-        ((_isSafari && _isSafariTargetTopScheme(scheme)) ? '_top' : '');
+        webOnlyWindowName ?? ((_isSafari && _isSafariTargetTopScheme(scheme)) ? '_top' : '');
 
     _window.open(url, target, 'noopener,noreferrer');
 

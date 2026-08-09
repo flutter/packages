@@ -25,19 +25,11 @@ class ApiSwitch extends StatelessWidget {
         child: DevToolsToggleButtonGroup(
           selectedStates: <bool>[legacyApi, !legacyApi],
           onPressed: (int index) {
-            context.sharedPreferencesStateNotifier.selectApi(
-              legacyApi: index == 0,
-            );
+            context.sharedPreferencesStateNotifier.selectApi(legacyApi: index == 0);
           },
           children: const <Widget>[
-            Padding(
-              padding: EdgeInsets.all(densePadding),
-              child: Text('Legacy API'),
-            ),
-            Padding(
-              padding: EdgeInsets.all(densePadding),
-              child: Text('Async API'),
-            ),
+            Padding(padding: EdgeInsets.all(densePadding), child: Text('Legacy API')),
+            Padding(padding: EdgeInsets.all(densePadding), child: Text('Async API')),
           ],
         ),
       ),

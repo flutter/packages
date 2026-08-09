@@ -47,12 +47,7 @@ class _MyColorMapper extends ColorMapper {
   const _MyColorMapper();
 
   @override
-  Color substitute(
-    String? id,
-    String elementName,
-    String attributeName,
-    Color color,
-  ) {
+  Color substitute(String? id, String elementName, String attributeName, Color color) {
     if (color == const Color(0xFFFF0000)) {
       return Colors.blue;
     }
@@ -70,10 +65,7 @@ class _MyColorMapper extends ColorMapper {
   <circle cx="75" cy="75" r="25" fill="#00FF00" />
 </svg>
 ''';
-  final Widget svgIcon = SvgPicture.string(
-    svgString,
-    colorMapper: const _MyColorMapper(),
-  );
+  final Widget svgIcon = SvgPicture.string(svgString, colorMapper: const _MyColorMapper());
 ```
 
 In this example, all red colors in the SVG will be rendered as blue, and all green colors will be rendered as yellow. You can customize the `substitute` method to implement more complex color mapping logic based on your requirements.
@@ -99,10 +91,8 @@ final Widget svg = SvgPicture.asset(assetName);
 final Widget networkSvg = SvgPicture.network(
   'https://site-that-takes-a-while.com/image.svg',
   semanticsLabel: 'A shark?!',
-  placeholderBuilder: (BuildContext context) => Container(
-    padding: const EdgeInsets.all(30.0),
-    child: const CircularProgressIndicator(),
-  ),
+  placeholderBuilder: (BuildContext context) =>
+      Container(padding: const EdgeInsets.all(30.0), child: const CircularProgressIndicator()),
 );
 ```
 
@@ -114,10 +104,7 @@ import 'dart:ui' as ui;
 
 // ···
   const rawSvg = '''<svg ...>...</svg>''';
-  final PictureInfo pictureInfo = await vg.loadPicture(
-    const SvgStringLoader(rawSvg),
-    null,
-  );
+  final PictureInfo pictureInfo = await vg.loadPicture(const SvgStringLoader(rawSvg), null);
 
   // You can scale the canvas to achieve lossless scaling:
   canvas.scale(1.2, 1.2);

@@ -15,9 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Sample flutter_plugin_android_lifecycle usage'),
-        ),
+        appBar: AppBar(title: const Text('Sample flutter_plugin_android_lifecycle usage')),
         body: const Center(
           child: Text(
             'This plugin only provides Android Lifecycle API\n for other Android plugins.',

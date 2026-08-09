@@ -48,10 +48,7 @@ class DomHelper {
 
     inputElement.onError.first.then((Event event) {
       final error = event as ErrorEvent;
-      final platformException = PlatformException(
-        code: error.type,
-        message: error.message,
-      );
+      final platformException = PlatformException(code: error.type, message: error.message);
       inputElement.remove();
       completer.completeError(platformException);
     });
@@ -71,6 +68,7 @@ class DomHelper {
   }
 
   XFile _convertFileToXFile(File file) => XFile(
+    mimeType: file.type,
     URL.createObjectURL(file),
     name: file.name,
     length: file.size,

@@ -70,10 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(toLaunch),
-              ),
+              const Padding(padding: EdgeInsets.all(16.0), child: Text(toLaunch)),
               ElevatedButton(
                 onPressed: () => setState(() {
                   _launched = _launchInBrowser(toLaunch);

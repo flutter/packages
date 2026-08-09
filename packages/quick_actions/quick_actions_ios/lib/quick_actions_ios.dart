@@ -33,9 +33,7 @@ class QuickActionsIos extends QuickActionsPlatform {
 
   @override
   Future<void> setShortcutItems(List<ShortcutItem> items) async {
-    await _hostApi.setShortcutItems(
-      items.map(_shortcutItemToShortcutItemMessage).toList(),
-    );
+    await _hostApi.setShortcutItems(items.map(_shortcutItemToShortcutItemMessage).toList());
   }
 
   @override

@@ -39,10 +39,7 @@ Future<void> main() async {
   ]);
   print('Starting test.');
   final FlutterDriver driver = await FlutterDriver.connect();
-  final String data = await driver.requestData(
-    null,
-    timeout: const Duration(minutes: 1),
-  );
+  final String data = await driver.requestData(null, timeout: const Duration(minutes: 1));
   await driver.close();
   print('Test finished. Revoking camera permissions...');
   Process.runSync('adb', <String>[

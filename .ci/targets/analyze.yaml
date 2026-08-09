@@ -12,9 +12,7 @@ tasks:
     infra_step: true
   - name: analyze
     script: .ci/scripts/tool_runner.sh
-    # DO NOT change the custom-analysis argument here without changing the Dart repo.
-    # See the comment in script/configs/custom_analysis.yaml for details.
-    args: ["analyze", "--custom-analysis=script/configs/custom_analysis.yaml"]
+    args: ["analyze"]
     # Re-run analysis with path-based dependencies to ensure that publishing
     # the changes won't break analysis of other packages in the respository
     # that depend on it.

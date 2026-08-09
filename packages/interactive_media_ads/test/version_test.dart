@@ -12,14 +12,9 @@ void main() {
 
     final adsRequestProxyApiPath =
         '${Directory.current.path}/android/src/main/kotlin/dev/flutter/packages/interactive_media_ads/AdsRequestProxyApi.kt';
-    final String apiFileAsString = File(
-      adsRequestProxyApiPath,
-    ).readAsStringSync();
+    final String apiFileAsString = File(adsRequestProxyApiPath).readAsStringSync();
 
-    expect(
-      apiFileAsString,
-      contains('const val pluginVersion = "$pubspecVersion"'),
-    );
+    expect(apiFileAsString, contains('const val pluginVersion = "$pubspecVersion"'));
   });
 
   test('AdsRequestProxyAPIDelegate.pluginVersion matches pubspec version', () {
@@ -27,14 +22,9 @@ void main() {
 
     final adsRequestProxyApiDelegatePath =
         '${Directory.current.path}/ios/interactive_media_ads/Sources/interactive_media_ads/AdsRequestProxyAPIDelegate.swift';
-    final String apiFileAsString = File(
-      adsRequestProxyApiDelegatePath,
-    ).readAsStringSync();
+    final String apiFileAsString = File(adsRequestProxyApiDelegatePath).readAsStringSync();
 
-    expect(
-      apiFileAsString,
-      contains('static let pluginVersion = "$pubspecVersion"'),
-    );
+    expect(apiFileAsString, contains('static let pluginVersion = "$pubspecVersion"'));
   });
 }
 

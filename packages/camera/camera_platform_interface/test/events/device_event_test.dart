@@ -17,9 +17,9 @@ void main() {
     });
 
     test('fromJson should initialize all properties', () {
-      final event = DeviceOrientationChangedEvent.fromJson(
-        const <String, dynamic>{'orientation': 'portraitUp'},
-      );
+      final event = DeviceOrientationChangedEvent.fromJson(const <String, dynamic>{
+        'orientation': 'portraitUp',
+      });
 
       expect(event.orientation, DeviceOrientation.portraitUp);
     });
@@ -34,23 +34,15 @@ void main() {
     });
 
     test('equals should return true if objects are the same', () {
-      const firstEvent = DeviceOrientationChangedEvent(
-        DeviceOrientation.portraitUp,
-      );
-      const secondEvent = DeviceOrientationChangedEvent(
-        DeviceOrientation.portraitUp,
-      );
+      const firstEvent = DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
+      const secondEvent = DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
 
       expect(firstEvent == secondEvent, true);
     });
 
     test('equals should return false if orientation is different', () {
-      const firstEvent = DeviceOrientationChangedEvent(
-        DeviceOrientation.portraitUp,
-      );
-      const secondEvent = DeviceOrientationChangedEvent(
-        DeviceOrientation.landscapeLeft,
-      );
+      const firstEvent = DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
+      const secondEvent = DeviceOrientationChangedEvent(DeviceOrientation.landscapeLeft);
 
       expect(firstEvent == secondEvent, false);
     });

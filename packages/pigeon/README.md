@@ -1,3 +1,4 @@
+<?code-excerpt path-base="example/app"?>
 # Pigeon
 
 Pigeon is a code generator tool to make communication between Flutter and the
@@ -82,6 +83,20 @@ the threading model for handling HostApi methods can be selected with the
 Host and Flutter APIs now support the ability to provide a unique message channel suffix string
 to the api to allow for multiple instances to be created and operate in parallel.
 
+### Constants
+
+Pigeon supports generating top-level constants in the generated files. Constants can be defined at the top level of the Pigeon file:
+
+<?code-excerpt "pigeons/messages.dart (constants)"?>
+```dart
+const String aStringConstant = 'stringConstantValue';
+const int anIntConstant = 42;
+const double aDoubleConstant = 3.14;
+const bool aBoolConstant = true;
+```
+
+These constants will be translated into static constants or final variables in the target languages (e.g., `public static final` in Java, `let` in Swift, `const` in Dart, etc.). Only `String`, `int`, `double`, and `bool` constant types are supported.
+
 ## Usage
 
 1) Add pigeon as a `dev_dependency`.
@@ -101,7 +116,7 @@ to the api to allow for multiple instances to be created and operate in parallel
 1) Custom classes used by APIs are defined as classes with fields of the
    supported datatypes (see the supported Datatypes section).
 1) APIs should be defined as an `abstract class` with either `@HostApi()` or
-   `@FlutterApi()` as metadata.  `@HostApi()` being for procedures that are defined
+   `@FlutterApi()` as metadata. `@HostApi()` being for procedures that are defined
    on the host platform and the `@FlutterApi()` for procedures that are defined in Dart.
 1) Method declarations on the API classes should have arguments and a return
    value whose types are defined in the file, are supported datatypes, or are
@@ -150,7 +165,7 @@ to the api to allow for multiple instances to be created and operate in parallel
 ### Calling into Flutter from the host platform
 
 Pigeon also supports calling in the opposite direction. The steps are similar
-but reversed.  For more information look at the annotation `@FlutterApi()` which
+but reversed. For more information look at the annotation `@FlutterApi()` which
 denotes APIs that live in Flutter but are invoked from the host platform.
 [Example](./example/README.md#FlutterApi_Example).
 

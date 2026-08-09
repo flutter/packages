@@ -8,11 +8,7 @@ mixin $SetRoute {}
 
 @TypedGoRoute<SetRoute>(path: '/set-route')
 class SetRoute extends GoRouteData with $SetRoute {
-  SetRoute({
-    required this.ids,
-    this.nullableIds,
-    this.idsWithDefaultValue = const <int>{0},
-  });
+  SetRoute({required this.ids, this.nullableIds, this.idsWithDefaultValue = const <int>{0}});
   final Set<int> ids;
   final Set<int>? nullableIds;
   final Set<int> idsWithDefaultValue;

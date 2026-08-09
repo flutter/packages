@@ -16,14 +16,10 @@ class Translator {
     UserChoiceDetailsWrapper detailsWrapper,
   ) {
     return GooglePlayUserChoiceDetails(
-      originalExternalTransactionId:
-          detailsWrapper.originalExternalTransactionId,
+      originalExternalTransactionId: detailsWrapper.originalExternalTransactionId,
       externalTransactionToken: detailsWrapper.externalTransactionToken,
       products: detailsWrapper.products
-          .map(
-            (UserChoiceDetailsProductWrapper e) =>
-                convertToUserChoiceDetailsProduct(e),
-          )
+          .map((UserChoiceDetailsProductWrapper e) => convertToUserChoiceDetailsProduct(e))
           .toList(),
     );
   }

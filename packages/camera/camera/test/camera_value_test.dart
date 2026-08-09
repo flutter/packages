@@ -43,10 +43,7 @@ void main() {
       expect(cameraValue.exposureMode, ExposureMode.auto);
       expect(cameraValue.exposurePointSupported, true);
       expect(cameraValue.deviceOrientation, DeviceOrientation.portraitUp);
-      expect(
-        cameraValue.lockedCaptureOrientation,
-        DeviceOrientation.portraitUp,
-      );
+      expect(cameraValue.lockedCaptureOrientation, DeviceOrientation.portraitUp);
       expect(cameraValue.recordingOrientation, DeviceOrientation.portraitUp);
       expect(cameraValue.isPreviewPaused, false);
       expect(cameraValue.previewPauseOrientation, DeviceOrientation.portraitUp);
@@ -54,9 +51,7 @@ void main() {
     });
 
     test('Can be created as uninitialized', () {
-      const cameraValue = CameraValue.uninitialized(
-        FakeController.fakeDescription,
-      );
+      const cameraValue = CameraValue.uninitialized(FakeController.fakeDescription);
 
       expect(cameraValue, isA<CameraValue>());
       expect(cameraValue.isInitialized, isFalse);

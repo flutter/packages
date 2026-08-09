@@ -35,9 +35,7 @@ class ContentProgressProvider {
   /// See [ContentProgressProvider.fromPlatformCreationParams] for setting
   /// parameters for a specific platform.
   ContentProgressProvider()
-    : this.fromPlatformCreationParams(
-        const PlatformContentProgressProviderCreationParams(),
-      );
+    : this.fromPlatformCreationParams(const PlatformContentProgressProviderCreationParams());
 
   /// Constructs an [ContentProgressProvider] from creation params for a
   /// specific platform.
@@ -83,10 +81,7 @@ class ContentProgressProvider {
   ///
   /// When using a `Timer` to periodically send updates through this method, an
   /// interval of 200ms is recommended.
-  Future<void> setProgress({
-    required Duration progress,
-    required Duration duration,
-  }) {
+  Future<void> setProgress({required Duration progress, required Duration duration}) {
     return platform.setProgress(progress: progress, duration: duration);
   }
 }

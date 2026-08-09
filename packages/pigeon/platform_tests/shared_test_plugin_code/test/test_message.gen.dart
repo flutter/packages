@@ -77,9 +77,7 @@ abstract class TestHostApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty
-        ? '.$messageChannelSuffix'
-        : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.initialize$messageChannelSuffix',
@@ -87,27 +85,26 @@ abstract class TestHostApi {
         binaryMessenger: binaryMessenger,
       );
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(
+          pigeonVar_channel,
+          null,
+        );
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, (
-              Object? message,
-            ) async {
-              try {
-                api.initialize();
-                return wrapResponse(empty: true);
-              } on PlatformException catch (e) {
-                return wrapResponse(error: e);
-              } catch (e) {
-                return wrapResponse(
-                  error: PlatformException(
-                    code: 'error',
-                    message: e.toString(),
-                  ),
-                );
-              }
-            });
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(
+          pigeonVar_channel,
+          (Object? message) async {
+            try {
+              api.initialize();
+              return wrapResponse(empty: true);
+            } on PlatformException catch (e) {
+              return wrapResponse(error: e);
+            } catch (e) {
+              return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()),
+              );
+            }
+          },
+        );
       }
     }
     {
@@ -117,30 +114,28 @@ abstract class TestHostApi {
         binaryMessenger: binaryMessenger,
       );
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(
+          pigeonVar_channel,
+          null,
+        );
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, (
-              Object? message,
-            ) async {
-              final List<Object?> args = message! as List<Object?>;
-              final MessageSearchRequest arg_request =
-                  args[0]! as MessageSearchRequest;
-              try {
-                final MessageSearchReply output = api.search(arg_request);
-                return <Object?>[output];
-              } on PlatformException catch (e) {
-                return wrapResponse(error: e);
-              } catch (e) {
-                return wrapResponse(
-                  error: PlatformException(
-                    code: 'error',
-                    message: e.toString(),
-                  ),
-                );
-              }
-            });
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(
+          pigeonVar_channel,
+          (Object? message) async {
+            final List<Object?> args = message! as List<Object?>;
+            final MessageSearchRequest arg_request = args[0]! as MessageSearchRequest;
+            try {
+              final MessageSearchReply output = api.search(arg_request);
+              return <Object?>[output];
+            } on PlatformException catch (e) {
+              return wrapResponse(error: e);
+            } catch (e) {
+              return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()),
+              );
+            }
+          },
+        );
       }
     }
   }
@@ -162,9 +157,7 @@ abstract class TestNestedApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty
-        ? '.$messageChannelSuffix'
-        : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search$messageChannelSuffix',
@@ -172,29 +165,28 @@ abstract class TestNestedApi {
         binaryMessenger: binaryMessenger,
       );
       if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(
+          pigeonVar_channel,
+          null,
+        );
       } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, (
-              Object? message,
-            ) async {
-              final List<Object?> args = message! as List<Object?>;
-              final MessageNested arg_nested = args[0]! as MessageNested;
-              try {
-                final MessageSearchReply output = api.search(arg_nested);
-                return <Object?>[output];
-              } on PlatformException catch (e) {
-                return wrapResponse(error: e);
-              } catch (e) {
-                return wrapResponse(
-                  error: PlatformException(
-                    code: 'error',
-                    message: e.toString(),
-                  ),
-                );
-              }
-            });
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(
+          pigeonVar_channel,
+          (Object? message) async {
+            final List<Object?> args = message! as List<Object?>;
+            final MessageNested arg_nested = args[0]! as MessageNested;
+            try {
+              final MessageSearchReply output = api.search(arg_nested);
+              return <Object?>[output];
+            } on PlatformException catch (e) {
+              return wrapResponse(error: e);
+            } catch (e) {
+              return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()),
+              );
+            }
+          },
+        );
       }
     }
   }

@@ -23,19 +23,14 @@ void main() {
       expect(exception.description, equals(description));
     });
 
-    testWidgets('toString includes all properties', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('toString includes all properties', (WidgetTester tester) async {
       const cameraId = 2;
       const CameraErrorCode code = CameraErrorCode.notReadable;
       const description = 'The camera is not readable.';
 
       final exception = CameraWebException(cameraId, code, description);
 
-      expect(
-        exception.toString(),
-        equals('CameraWebException($cameraId, $code, $description)'),
-      );
+      expect(exception.toString(), equals('CameraWebException($cameraId, $code, $description)'));
     });
   });
 }

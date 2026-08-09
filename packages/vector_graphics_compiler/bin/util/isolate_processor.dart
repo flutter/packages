@@ -99,9 +99,7 @@ class IsolateProcessor {
     try {
       resource = await _pool.request();
       await Isolate.run(() {
-        if (maskingOptimizerEnabled ||
-            clippingOptimizerEnabled ||
-            overdrawOptimizerEnabled) {
+        if (maskingOptimizerEnabled || clippingOptimizerEnabled || overdrawOptimizerEnabled) {
           _loadPathOps(libpathops);
         }
         if (tessellate) {

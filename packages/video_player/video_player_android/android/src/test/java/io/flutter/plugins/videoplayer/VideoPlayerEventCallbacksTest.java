@@ -88,4 +88,28 @@ public final class VideoPlayerEventCallbacksTest {
     IsPlayingStateEvent expected = new IsPlayingStateEvent(true);
     assertEquals(expected, actual);
   }
+
+  @Test
+  public void onAudioTrackChanged() {
+    String trackId = "0_1";
+    eventCallbacks.onAudioTrackChanged(trackId);
+
+    verify(mockEventSink).success(eventCaptor.capture());
+
+    PlatformVideoEvent actual = eventCaptor.getValue();
+    AudioTrackChangedEvent expected = new AudioTrackChangedEvent(trackId);
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void onVideoTrackChanged() {
+    String trackId = "0_2";
+    eventCallbacks.onVideoTrackChanged(trackId);
+
+    verify(mockEventSink).success(eventCaptor.capture());
+
+    PlatformVideoEvent actual = eventCaptor.getValue();
+    VideoTrackChangedEvent expected = new VideoTrackChangedEvent(trackId);
+    assertEquals(expected, actual);
+  }
 }

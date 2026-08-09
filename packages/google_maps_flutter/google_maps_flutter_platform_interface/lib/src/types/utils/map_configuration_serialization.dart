@@ -21,8 +21,7 @@ Map<String, Object> jsonForMapConfiguration(MapConfiguration config) {
   final EdgeInsets? padding = config.padding;
   return <String, Object>{
     if (config.compassEnabled != null) 'compassEnabled': config.compassEnabled!,
-    if (config.mapToolbarEnabled != null)
-      'mapToolbarEnabled': config.mapToolbarEnabled!,
+    if (config.mapToolbarEnabled != null) 'mapToolbarEnabled': config.mapToolbarEnabled!,
     if (config.cameraTargetBounds != null)
       'cameraTargetBounds': config.cameraTargetBounds!.toJson(),
     if (config.mapType != null) 'mapType': config.mapType!.index,
@@ -32,32 +31,19 @@ Map<String, Object> jsonForMapConfiguration(MapConfiguration config) {
       'rotateGesturesEnabled': config.rotateGesturesEnabled!,
     if (config.scrollGesturesEnabled != null)
       'scrollGesturesEnabled': config.scrollGesturesEnabled!,
-    if (config.tiltGesturesEnabled != null)
-      'tiltGesturesEnabled': config.tiltGesturesEnabled!,
-    if (config.zoomControlsEnabled != null)
-      'zoomControlsEnabled': config.zoomControlsEnabled!,
-    if (config.zoomGesturesEnabled != null)
-      'zoomGesturesEnabled': config.zoomGesturesEnabled!,
-    if (config.liteModeEnabled != null)
-      'liteModeEnabled': config.liteModeEnabled!,
-    if (config.trackCameraPosition != null)
-      'trackCameraPosition': config.trackCameraPosition!,
-    if (config.myLocationEnabled != null)
-      'myLocationEnabled': config.myLocationEnabled!,
+    if (config.tiltGesturesEnabled != null) 'tiltGesturesEnabled': config.tiltGesturesEnabled!,
+    if (config.zoomControlsEnabled != null) 'zoomControlsEnabled': config.zoomControlsEnabled!,
+    if (config.zoomGesturesEnabled != null) 'zoomGesturesEnabled': config.zoomGesturesEnabled!,
+    if (config.liteModeEnabled != null) 'liteModeEnabled': config.liteModeEnabled!,
+    if (config.trackCameraPosition != null) 'trackCameraPosition': config.trackCameraPosition!,
+    if (config.myLocationEnabled != null) 'myLocationEnabled': config.myLocationEnabled!,
     if (config.myLocationButtonEnabled != null)
       'myLocationButtonEnabled': config.myLocationButtonEnabled!,
     if (padding != null)
-      'padding': <double>[
-        padding.top,
-        padding.left,
-        padding.bottom,
-        padding.right,
-      ],
-    if (config.indoorViewEnabled != null)
-      'indoorEnabled': config.indoorViewEnabled!,
+      'padding': <double>[padding.top, padding.left, padding.bottom, padding.right],
+    if (config.indoorViewEnabled != null) 'indoorEnabled': config.indoorViewEnabled!,
     if (config.trafficEnabled != null) 'trafficEnabled': config.trafficEnabled!,
-    if (config.buildingsEnabled != null)
-      'buildingsEnabled': config.buildingsEnabled!,
+    if (config.buildingsEnabled != null) 'buildingsEnabled': config.buildingsEnabled!,
     if (config.cloudMapId != null) 'cloudMapId': config.cloudMapId!,
     if (config.mapId != null) 'mapId': config.mapId!,
     if (config.style != null) 'style': config.style!,

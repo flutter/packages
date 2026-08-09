@@ -12,8 +12,7 @@ class SubRipCaptionFile extends ClosedCaptionFile {
   /// Parses a string into a [ClosedCaptionFile], assuming [fileContents] is in
   /// the SubRip file format.
   /// * See: https://en.wikipedia.org/wiki/SubRip
-  SubRipCaptionFile(this.fileContents)
-    : _captions = _parseCaptionsFromSubRipString(fileContents);
+  SubRipCaptionFile(this.fileContents) : _captions = _parseCaptionsFromSubRipString(fileContents);
 
   /// The entire body of the SubRip file.
   // TODO(cyanglaz): Remove this public member as it doesn't seem need to exist.
@@ -34,9 +33,7 @@ List<Caption> _parseCaptionsFromSubRipString(String file) {
     }
 
     final int captionNumber = int.parse(captionLines[0]);
-    final _CaptionRange captionRange = _CaptionRange.fromSubRipString(
-      captionLines[1],
-    );
+    final _CaptionRange captionRange = _CaptionRange.fromSubRipString(captionLines[1]);
 
     final String text = captionLines.sublist(2).join('\n');
 
@@ -98,12 +95,7 @@ Duration _parseSubRipTimestamp(String timestampString) {
   final int seconds = int.parse(hoursMinutesSeconds[2]);
   final int milliseconds = int.parse(commaSections[1]);
 
-  return Duration(
-    hours: hours,
-    minutes: minutes,
-    seconds: seconds,
-    milliseconds: milliseconds,
-  );
+  return Duration(hours: hours, minutes: minutes, seconds: seconds, milliseconds: milliseconds);
 }
 
 // Reads on SubRip file and splits it into Lists of strings where each list is one

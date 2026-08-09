@@ -56,19 +56,15 @@ base class AndroidAdsRenderingSettings extends PlatformAdsRenderingSettings {
       ima.AdsRenderingSettings nativeSettings,
     ) async {
       await Future.wait(<Future<void>>[
-        if (_androidParams.bitrate != null)
-          nativeSettings.setBitrateKbps(params.bitrate!),
+        if (_androidParams.bitrate != null) nativeSettings.setBitrateKbps(params.bitrate!),
         if (_androidParams.enablePreloading != null)
           nativeSettings.setEnablePreloading(_androidParams.enablePreloading!),
-        nativeSettings.setLoadVideoTimeout(
-          _androidParams.loadVideoTimeout.inMilliseconds,
-        ),
+        nativeSettings.setLoadVideoTimeout(_androidParams.loadVideoTimeout.inMilliseconds),
         if (_androidParams.mimeTypes != null)
           nativeSettings.setMimeTypes(_androidParams.mimeTypes!),
         if (_androidParams.playAdsAfterTime != null)
           nativeSettings.setPlayAdsAfterTime(
-            _androidParams.playAdsAfterTime!.inMicroseconds /
-                Duration.microsecondsPerSecond,
+            _androidParams.playAdsAfterTime!.inMicroseconds / Duration.microsecondsPerSecond,
           ),
         if (_androidParams.uiElements != null)
           nativeSettings.setUiElements(

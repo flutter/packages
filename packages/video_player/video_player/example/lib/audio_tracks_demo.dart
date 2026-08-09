@@ -128,9 +128,9 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to select audio track: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to select audio track: $e')));
     }
   }
 
@@ -182,17 +182,10 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
             child: DropdownMenu<int>(
               initialSelection: _selectedVideoIndex,
               label: const Text('Select Video'),
-              inputDecorationTheme: const InputDecorationTheme(
-                border: OutlineInputBorder(),
-              ),
-              dropdownMenuEntries: _sampleVideos.indexed.map((
-                (int, String) record,
-              ) {
+              inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder()),
+              dropdownMenuEntries: _sampleVideos.indexed.map(((int, String) record) {
                 final (int index, _) = record;
-                return DropdownMenuEntry<int>(
-                  value: index,
-                  label: 'Video ${index + 1}',
-                );
+                return DropdownMenuEntry<int>(value: index, label: 'Video ${index + 1}');
               }).toList(),
               onSelected: (int? value) {
                 // value is null when the menu is dismissed without selection
@@ -242,10 +235,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _initializeVideo,
-              child: const Text('Retry'),
-            ),
+            ElevatedButton(onPressed: _initializeVideo, child: const Text('Retry')),
           ],
         ),
       );
@@ -256,10 +246,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
       return Stack(
         alignment: Alignment.center,
         children: <Widget>[
-          AspectRatio(
-            aspectRatio: controller!.value.aspectRatio,
-            child: VideoPlayer(controller),
-          ),
+          AspectRatio(aspectRatio: controller!.value.aspectRatio, child: VideoPlayer(controller)),
           _buildPlayPauseButton(),
         ],
       );
@@ -277,10 +264,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
     }
 
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.black54,
-        borderRadius: BorderRadius.circular(30),
-      ),
+      decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(30)),
       child: IconButton(
         iconSize: 48,
         color: Colors.white,
@@ -345,16 +329,11 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: track.isSelected ? Colors.green : Colors.grey,
-          child: Icon(
-            track.isSelected ? Icons.check : Icons.audiotrack,
-            color: Colors.white,
-          ),
+          child: Icon(track.isSelected ? Icons.check : Icons.audiotrack, color: Colors.white),
         ),
         title: Text(
           track.label?.isNotEmpty ?? false ? track.label! : 'Track ${track.id}',
-          style: TextStyle(
-            fontWeight: track.isSelected ? FontWeight.bold : FontWeight.normal,
-          ),
+          style: TextStyle(fontWeight: track.isSelected ? FontWeight.bold : FontWeight.normal),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -363,10 +342,8 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
             if (track.language != null) Text('Language: ${track.language}'),
             if (track.codec != null) Text('Codec: ${track.codec}'),
             if (track.bitrate != null) Text('Bitrate: ${track.bitrate} bps'),
-            if (track.sampleRate != null)
-              Text('Sample Rate: ${track.sampleRate} Hz'),
-            if (track.channelCount != null)
-              Text('Channels: ${track.channelCount}'),
+            if (track.sampleRate != null) Text('Sample Rate: ${track.sampleRate} Hz'),
+            if (track.channelCount != null) Text('Channels: ${track.channelCount}'),
           ],
         ),
         trailing: track.isSelected
