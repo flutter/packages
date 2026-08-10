@@ -924,10 +924,19 @@ String getNullabilitySymbol(bool nullable) => nullable ? '?' : '';
 /// Returns '!' if [force] is true, otherwise empty string.
 String getForceNonNullSymbol(bool force) => force ? '!' : '';
 
-/// Compares [TypeDeclaration]s by how generic they are.
+/// A comparator that orders [TypeDeclaration]s from most specific to most generic.
 ///
-/// Generic-ness is approximated by counting the number of "Objects" and "?" in the
-/// type name, with "Object" being strongly weighted and "?" less so.
+/// This is used when generating code where more specific types (e.g., `List<int>`)
+/// need to be handled before broader fallback types (e.g., `List<Object?>`).
+///
+/// Generic-ness is calculated recursively by scoring type components based on depth,
+/// where occurrences of `Object` are heavily weighted, nullability is lightly weighted,
+/// and nested type arguments are scored with decreasing weight by depth.
+///
+/// For example:
+/// * `int` is more specific (lower score) than `Object?` (higher score).
+/// * `List<int>` is more specific than `List<Object?>`.
+/// * `Map<String, int>` is more specific than `Map<Object?, Object?>`.
 int compareTypeDeclarationGenericness(TypeDeclaration a, TypeDeclaration b) {
   return _calculateGenericScore(a, 0).compareTo(_calculateGenericScore(b, 0));
 }

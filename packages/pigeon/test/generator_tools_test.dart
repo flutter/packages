@@ -571,4 +571,101 @@ void myMethod() {
       expect(getForceNonNullSymbol(false), '');
     });
   });
+
+  group('compareTypeDeclarationGenericness', () {
+    test('non-nullable is more specific than nullable', () {
+      const nonNullInt = TypeDeclaration(baseName: 'int', isNullable: false);
+      const nullInt = TypeDeclaration(baseName: 'int', isNullable: true);
+      expect(compareTypeDeclarationGenericness(nonNullInt, nullInt), lessThan(0));
+      expect(compareTypeDeclarationGenericness(nullInt, nonNullInt), greaterThan(0));
+      expect(compareTypeDeclarationGenericness(nonNullInt, nonNullInt), equals(0));
+    });
+
+    test('specific type is more specific than Object', () {
+      const intType = TypeDeclaration(baseName: 'int', isNullable: false);
+      const objectType = TypeDeclaration(baseName: 'Object', isNullable: true);
+      expect(compareTypeDeclarationGenericness(intType, objectType), lessThan(0));
+    });
+
+    test('typed list is more specific than untyped list', () {
+      const typedList = TypeDeclaration(
+        baseName: 'List',
+        isNullable: false,
+        typeArguments: <TypeDeclaration>[TypeDeclaration(baseName: 'int', isNullable: false)],
+      );
+      const untypedList = TypeDeclaration(baseName: 'List', isNullable: false);
+      expect(compareTypeDeclarationGenericness(typedList, untypedList), lessThan(0));
+    });
+
+    test('typed map is more specific than untyped map', () {
+      const typedMap = TypeDeclaration(
+        baseName: 'Map',
+        isNullable: false,
+        typeArguments: <TypeDeclaration>[
+          TypeDeclaration(baseName: 'String', isNullable: false),
+          TypeDeclaration(baseName: 'int', isNullable: false),
+        ],
+      );
+      const untypedMap = TypeDeclaration(baseName: 'Map', isNullable: false);
+      expect(compareTypeDeclarationGenericness(typedMap, untypedMap), lessThan(0));
+    });
+
+    test('nested generics are ordered correctly', () {
+      const nestedTypedList = TypeDeclaration(
+        baseName: 'List',
+        isNullable: false,
+        typeArguments: <TypeDeclaration>[
+          TypeDeclaration(
+            baseName: 'List',
+            isNullable: false,
+            typeArguments: <TypeDeclaration>[TypeDeclaration(baseName: 'int', isNullable: false)],
+          ),
+        ],
+      );
+      const nestedObjectList = TypeDeclaration(
+        baseName: 'List',
+        isNullable: false,
+        typeArguments: <TypeDeclaration>[
+          TypeDeclaration(
+            baseName: 'List',
+            isNullable: false,
+            typeArguments: <TypeDeclaration>[TypeDeclaration(baseName: 'Object', isNullable: true)],
+          ),
+        ],
+      );
+      const nestedUntypedList = TypeDeclaration(
+        baseName: 'List',
+        isNullable: false,
+        typeArguments: <TypeDeclaration>[TypeDeclaration(baseName: 'List', isNullable: false)],
+      );
+      expect(compareTypeDeclarationGenericness(nestedTypedList, nestedObjectList), lessThan(0));
+      expect(compareTypeDeclarationGenericness(nestedTypedList, nestedUntypedList), lessThan(0));
+
+      const nestedTypedMap = TypeDeclaration(
+        baseName: 'Map',
+        isNullable: false,
+        typeArguments: <TypeDeclaration>[
+          TypeDeclaration(baseName: 'String', isNullable: false),
+          TypeDeclaration(
+            baseName: 'List',
+            isNullable: false,
+            typeArguments: <TypeDeclaration>[TypeDeclaration(baseName: 'int', isNullable: false)],
+          ),
+        ],
+      );
+      const nestedObjectMap = TypeDeclaration(
+        baseName: 'Map',
+        isNullable: false,
+        typeArguments: <TypeDeclaration>[
+          TypeDeclaration(baseName: 'String', isNullable: false),
+          TypeDeclaration(
+            baseName: 'List',
+            isNullable: false,
+            typeArguments: <TypeDeclaration>[TypeDeclaration(baseName: 'Object', isNullable: true)],
+          ),
+        ],
+      );
+      expect(compareTypeDeclarationGenericness(nestedTypedMap, nestedObjectMap), lessThan(0));
+    });
+  });
 }

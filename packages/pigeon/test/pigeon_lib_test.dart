@@ -2279,7 +2279,7 @@ dev_dependencies:
         );
 
         adapter.generate(sink, options, root, FileType.na);
-        final String code = sink.toString();
+        final code = sink.toString();
 
         expect(code, contains("path: Uri.file('../lib/src/messages.g.jni.dart')"));
       },
@@ -2301,11 +2301,73 @@ dev_dependencies:
         );
 
         adapter.generate(sink, options, root, FileType.na);
-        final String code = sink.toString();
+        final code = sink.toString();
 
         expect(code, contains("dartFile: Uri.file('../lib/src/messages.g.ffi.dart')"));
       },
     );
+
+    test('SwiftGeneratorAdapter errors on TaskQueue when useFfi is true', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'Api',
+            methods: <Method>[
+              Method(
+                name: 'foo',
+                returnType: const TypeDeclaration.voidDeclaration(),
+                parameters: <Parameter>[],
+                taskQueueType: TaskQueueType.serialBackgroundThread,
+                location: ApiLocation.host,
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      const adapter = SwiftGeneratorAdapter();
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          swiftOut: 'darwin/Messages.g.swift',
+          swiftOptions: SwiftOptions(useFfi: true),
+        ),
+      );
+      final List<Error> errors = adapter.validate(options, root);
+      expect(errors, hasLength(1));
+      expect(errors[0].message, contains('Swift FFI does not support TaskQueue'));
+    });
+
+    test('KotlinGeneratorAdapter errors on TaskQueue when useJni is true', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'Api',
+            methods: <Method>[
+              Method(
+                name: 'foo',
+                returnType: const TypeDeclaration.voidDeclaration(),
+                parameters: <Parameter>[],
+                taskQueueType: TaskQueueType.serialBackgroundThread,
+                location: ApiLocation.host,
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      const adapter = KotlinGeneratorAdapter();
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          kotlinOut: 'android/Messages.g.kt',
+          kotlinOptions: KotlinOptions(useJni: true),
+        ),
+      );
+      final List<Error> errors = adapter.validate(options, root);
+      expect(errors, hasLength(1));
+      expect(errors[0].message, contains('Kotlin JNI does not support TaskQueue'));
+    });
   });
 
   group('constants parsing', () {

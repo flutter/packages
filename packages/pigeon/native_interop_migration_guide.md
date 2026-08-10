@@ -12,6 +12,7 @@ For a comprehensive walkthrough on setting up Native Interop from scratch, see t
 | Feature | Method Channels | Native Interop (FFI / JNI) |
 | :--- | :--- | :--- |
 | **Data Serialization** | Serialized to binary format (`StandardMessageCodec`) | Direct memory mapping or native references |
+| **Threading Model** | Main UI thread or custom background `TaskQueue` | Always runs on the main thread (`TaskQueue` is not supported) |
 | **Synchronous Calls** | Asynchronous only | Supports both true synchronous and asynchronous calls |
 | **Swift Concurrency** | Callback-based completion handlers | Modern `async/await` syntax |
 | **Kotlin Concurrency** | Callback-based interfaces | Kotlin Coroutines (`suspend` functions) |

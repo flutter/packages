@@ -262,6 +262,21 @@ void _errorOnInheritedClass(List<Error> errors, String generator, Root root) {
   }
 }
 
+void _errorOnTaskQueueInNativeInterop(List<Error> errors, String generator, Root root) {
+  for (final Api api in root.apis) {
+    for (final Method method in api.methods) {
+      if (method.taskQueueType != TaskQueueType.serial) {
+        errors.add(
+          Error(
+            message:
+                '$generator does not support TaskQueue because native interop calls always run on the main thread (in method "${method.name}" in API "${api.name}").',
+          ),
+        );
+      }
+    }
+  }
+}
+
 /// A [GeneratorAdapter] that generates the AST.
 class AstGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [AstGeneratorAdapter].
@@ -467,6 +482,9 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
         }
       }
     }
+    if (options.swiftOptions?.useFfi ?? false) {
+      _errorOnTaskQueueInNativeInterop(errors, 'Swift FFI', root);
+    }
     return errors;
   }
 }
@@ -513,13 +531,18 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
     if (!(options.swiftOptions?.useFfi ?? false)) {
       return <Error>[];
     }
-    return _validateDependencies(
-      appDirectory: options.swiftOptions?.appDirectory ?? options.appDirectory,
-      dartOutPath: options.dartOptions?.dartOut,
-      apiName: 'Swift FFI',
-      requiredDeps: const <String>['ffi', 'objective_c'],
-      requiredDevDeps: const <String>['ffigen'],
+    final errors = <Error>[];
+    _errorOnTaskQueueInNativeInterop(errors, 'Swift FFI', root);
+    errors.addAll(
+      _validateDependencies(
+        appDirectory: options.swiftOptions?.appDirectory ?? options.appDirectory,
+        dartOutPath: options.dartOptions?.dartOut,
+        apiName: 'Swift FFI',
+        requiredDeps: const <String>['ffi', 'objective_c'],
+        requiredDevDeps: const <String>['ffigen'],
+      ),
     );
+    return errors;
   }
 }
 
@@ -647,7 +670,13 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
       _openSink(options.kotlinOptions?.kotlinOut, basePath: options.basePath ?? '');
 
   @override
-  List<Error> validate(InternalPigeonOptions options, Root root) => <Error>[];
+  List<Error> validate(InternalPigeonOptions options, Root root) {
+    final errors = <Error>[];
+    if (options.kotlinOptions?.useJni ?? false) {
+      _errorOnTaskQueueInNativeInterop(errors, 'Kotlin JNI', root);
+    }
+    return errors;
+  }
 }
 
 /// A [GeneratorAdapter] that generates JNIgen config source code.
@@ -688,13 +717,18 @@ class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
     if (!(options.kotlinOptions?.useJni ?? false)) {
       return <Error>[];
     }
-    return _validateDependencies(
-      appDirectory: options.kotlinOptions?.appDirectory ?? options.appDirectory,
-      dartOutPath: options.dartOptions?.dartOut,
-      apiName: 'Kotlin JNI',
-      requiredDeps: const <String>['jni'],
-      requiredDevDeps: const <String>['jnigen'],
+    final errors = <Error>[];
+    _errorOnTaskQueueInNativeInterop(errors, 'Kotlin JNI', root);
+    errors.addAll(
+      _validateDependencies(
+        appDirectory: options.kotlinOptions?.appDirectory ?? options.appDirectory,
+        dartOutPath: options.dartOptions?.dartOut,
+        apiName: 'Kotlin JNI',
+        requiredDeps: const <String>['jni'],
+        requiredDevDeps: const <String>['jnigen'],
+      ),
     );
+    return errors;
   }
 }
 

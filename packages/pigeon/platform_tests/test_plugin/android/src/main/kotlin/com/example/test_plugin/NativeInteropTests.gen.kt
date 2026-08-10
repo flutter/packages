@@ -1635,7 +1635,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed object, to test serialization and deserialization. */
   override fun echoAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes {
@@ -1646,7 +1646,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns an error, to test error handling. */
   override fun throwError(): Any? {
@@ -1657,7 +1657,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns an error from a void function, to test error handling. */
   override fun throwErrorFromVoid() {
@@ -1668,7 +1668,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns a Flutter error, to test error handling. */
   override fun throwFlutterError(): Any? {
@@ -1679,7 +1679,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns passed in int. */
   override fun echoInt(anInt: Long): Long {
@@ -1690,7 +1690,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns passed in double. */
   override fun echoDouble(aDouble: Double): Double {
@@ -1701,7 +1701,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in boolean. */
   override fun echoBool(aBool: Boolean): Boolean {
@@ -1712,7 +1712,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in string. */
   override fun echoString(aString: String): String {
@@ -1723,7 +1723,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in Uint8List. */
   override fun echoUint8List(aUint8List: ByteArray): ByteArray {
@@ -1734,7 +1734,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in Int32List. */
   override fun echoInt32List(aInt32List: IntArray): IntArray {
@@ -1745,7 +1745,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in Int64List. */
   override fun echoInt64List(aInt64List: LongArray): LongArray {
@@ -1756,7 +1756,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in Float64List. */
   override fun echoFloat64List(aFloat64List: DoubleArray): DoubleArray {
@@ -1767,7 +1767,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in generic Object. */
   override fun echoObject(anObject: Any): Any {
@@ -1778,7 +1778,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoList(list: List<Any?>): List<Any?> {
@@ -1789,7 +1789,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoStringList(stringList: List<String?>): List<String?> {
@@ -1800,7 +1800,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoIntList(intList: List<Long?>): List<Long?> {
@@ -1811,7 +1811,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoDoubleList(doubleList: List<Double?>): List<Double?> {
@@ -1822,7 +1822,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoBoolList(boolList: List<Boolean?>): List<Boolean?> {
@@ -1833,7 +1833,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?> {
@@ -1844,7 +1844,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoClassList(
@@ -1857,7 +1857,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum> {
@@ -1868,7 +1868,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoNonNullClassList(
@@ -1881,7 +1881,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
@@ -1892,7 +1892,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
@@ -1903,7 +1903,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
@@ -1914,7 +1914,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoEnumMap(
@@ -1927,7 +1927,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoClassMap(
@@ -1940,7 +1940,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String> {
@@ -1951,7 +1951,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long> {
@@ -1962,7 +1962,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNonNullEnumMap(
@@ -1975,7 +1975,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNonNullClassMap(
@@ -1988,7 +1988,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed class to test nested class serialization and deserialization. */
   override fun echoClassWrapper(
@@ -2001,7 +2001,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed enum to test serialization and deserialization. */
   override fun echoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
@@ -2012,7 +2012,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed enum to test serialization and deserialization. */
   override fun echoAnotherEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum {
@@ -2023,7 +2023,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the default string. */
   override fun echoNamedDefaultString(aString: String): String {
@@ -2034,7 +2034,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns passed in double. */
   override fun echoOptionalDefaultDouble(aDouble: Double): Double {
@@ -2045,7 +2045,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns passed in int. */
   override fun echoRequiredInt(anInt: Long): Long {
@@ -2056,7 +2056,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed object, to test serialization and deserialization. */
   override fun echoAllNullableTypes(
@@ -2069,7 +2069,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed object, to test serialization and deserialization. */
   override fun echoAllNullableTypesWithoutRecursion(
@@ -2082,7 +2082,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /**
    * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
@@ -2095,7 +2095,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /**
    * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
@@ -2108,7 +2108,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun sendMultipleNullableTypes(
@@ -2123,7 +2123,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns passed in arguments of multiple types. */
   override fun sendMultipleNullableTypesWithoutRecursion(
@@ -2139,7 +2139,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns passed in int. */
   override fun echoNullableInt(aNullableInt: Long?): Long? {
@@ -2150,7 +2150,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns passed in double. */
   override fun echoNullableDouble(aNullableDouble: Double?): Double? {
@@ -2161,7 +2161,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in boolean. */
   override fun echoNullableBool(aNullableBool: Boolean?): Boolean? {
@@ -2172,7 +2172,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in string. */
   override fun echoNullableString(aNullableString: String?): String? {
@@ -2183,7 +2183,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in Uint8List. */
   override fun echoNullableUint8List(aNullableUint8List: ByteArray?): ByteArray? {
@@ -2194,7 +2194,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in Int32List. */
   override fun echoNullableInt32List(aNullableInt32List: IntArray?): IntArray? {
@@ -2205,7 +2205,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in Int64List. */
   override fun echoNullableInt64List(aNullableInt64List: LongArray?): LongArray? {
@@ -2216,7 +2216,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in Float64List. */
   override fun echoNullableFloat64List(aNullableFloat64List: DoubleArray?): DoubleArray? {
@@ -2227,7 +2227,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in generic Object. */
   override fun echoNullableObject(aNullableObject: Any?): Any? {
@@ -2238,7 +2238,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoNullableList(aNullableList: List<Any?>?): List<Any?>? {
@@ -2249,7 +2249,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoNullableEnumList(
@@ -2262,7 +2262,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoNullableClassList(
@@ -2275,7 +2275,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoNullableNonNullEnumList(
@@ -2288,7 +2288,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test serialization and deserialization. */
   override fun echoNullableNonNullClassList(
@@ -2301,7 +2301,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
@@ -2312,7 +2312,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>? {
@@ -2323,7 +2323,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
@@ -2334,7 +2334,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableEnumMap(
@@ -2347,7 +2347,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableClassMap(
@@ -2360,7 +2360,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>? {
@@ -2371,7 +2371,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>? {
@@ -2382,7 +2382,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableNonNullEnumMap(
@@ -2395,7 +2395,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test serialization and deserialization. */
   override fun echoNullableNonNullClassMap(
@@ -2408,7 +2408,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun echoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum? {
@@ -2419,7 +2419,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun echoAnotherNullableEnum(
@@ -2432,7 +2432,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns passed in int. */
   override fun echoOptionalNullableInt(aNullableInt: Long?): Long? {
@@ -2443,7 +2443,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in string. */
   override fun echoNamedNullableString(aNullableString: String?): String? {
@@ -2454,7 +2454,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /**
    * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
@@ -2468,7 +2468,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns passed in int asynchronously. */
   override suspend fun echoAsyncInt(anInt: Long): Long {
@@ -2479,7 +2479,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns passed in double asynchronously. */
   override suspend fun echoAsyncDouble(aDouble: Double): Double {
@@ -2490,7 +2490,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in boolean asynchronously. */
   override suspend fun echoAsyncBool(aBool: Boolean): Boolean {
@@ -2501,7 +2501,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed string asynchronously. */
   override suspend fun echoAsyncString(aString: String): String {
@@ -2512,7 +2512,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in Uint8List asynchronously. */
   override suspend fun echoAsyncUint8List(aUint8List: ByteArray): ByteArray {
@@ -2523,7 +2523,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in Int32List asynchronously. */
   override suspend fun echoAsyncInt32List(aInt32List: IntArray): IntArray {
@@ -2534,7 +2534,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in Int64List asynchronously. */
   override suspend fun echoAsyncInt64List(aInt64List: LongArray): LongArray {
@@ -2545,7 +2545,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in Float64List asynchronously. */
   override suspend fun echoAsyncFloat64List(aFloat64List: DoubleArray): DoubleArray {
@@ -2556,7 +2556,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in generic Object asynchronously. */
   override suspend fun echoAsyncObject(anObject: Any): Any {
@@ -2567,7 +2567,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncList(list: List<Any?>): List<Any?> {
@@ -2578,7 +2578,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncEnumList(
@@ -2591,7 +2591,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncClassList(
@@ -2604,7 +2604,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
@@ -2615,7 +2615,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
@@ -2626,7 +2626,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
@@ -2637,7 +2637,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncEnumMap(
@@ -2650,7 +2650,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncClassMap(
@@ -2663,7 +2663,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
@@ -2674,7 +2674,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
   override suspend fun echoAnotherAsyncEnum(
@@ -2687,7 +2687,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Responds with an error from an async function returning a value. */
   override suspend fun throwAsyncError(): Any? {
@@ -2698,7 +2698,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Responds with an error from an async void function. */
   override suspend fun throwAsyncErrorFromVoid() {
@@ -2709,7 +2709,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Responds with a Flutter error from an async function returning a value. */
   override suspend fun throwAsyncFlutterError(): Any? {
@@ -2720,7 +2720,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed object, to test async serialization and deserialization. */
   override suspend fun echoAsyncNativeInteropAllTypes(
@@ -2733,7 +2733,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed object, to test serialization and deserialization. */
   override suspend fun echoAsyncNullableNativeInteropAllNullableTypes(
@@ -2746,7 +2746,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed object, to test serialization and deserialization. */
   override suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
@@ -2759,7 +2759,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns passed in int asynchronously. */
   override suspend fun echoAsyncNullableInt(anInt: Long?): Long? {
@@ -2770,7 +2770,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns passed in double asynchronously. */
   override suspend fun echoAsyncNullableDouble(aDouble: Double?): Double? {
@@ -2781,7 +2781,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in boolean asynchronously. */
   override suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean? {
@@ -2792,7 +2792,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed string asynchronously. */
   override suspend fun echoAsyncNullableString(aString: String?): String? {
@@ -2803,7 +2803,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in Uint8List asynchronously. */
   override suspend fun echoAsyncNullableUint8List(aUint8List: ByteArray?): ByteArray? {
@@ -2814,7 +2814,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in Int32List asynchronously. */
   override suspend fun echoAsyncNullableInt32List(aInt32List: IntArray?): IntArray? {
@@ -2825,7 +2825,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in Int64List asynchronously. */
   override suspend fun echoAsyncNullableInt64List(aInt64List: LongArray?): LongArray? {
@@ -2836,7 +2836,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in Float64List asynchronously. */
   override suspend fun echoAsyncNullableFloat64List(aFloat64List: DoubleArray?): DoubleArray? {
@@ -2847,7 +2847,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed in generic Object asynchronously. */
   override suspend fun echoAsyncNullableObject(anObject: Any?): Any? {
@@ -2858,7 +2858,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>? {
@@ -2869,7 +2869,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncNullableEnumList(
@@ -2882,7 +2882,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncNullableClassList(
@@ -2895,7 +2895,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
@@ -2906,7 +2906,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncNullableStringMap(
@@ -2919,7 +2919,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
@@ -2930,7 +2930,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncNullableEnumMap(
@@ -2943,7 +2943,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncNullableClassMap(
@@ -2956,7 +2956,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum? {
@@ -2967,7 +2967,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
   override suspend fun echoAnotherAsyncNullableEnum(
@@ -2980,7 +2980,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterNoop() {
@@ -2991,7 +2991,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterThrowError(): Any? {
@@ -3002,7 +3002,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterThrowErrorFromVoid() {
@@ -3013,7 +3013,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNativeInteropAllTypes(
@@ -3026,7 +3026,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNativeInteropAllNullableTypes(
@@ -3039,7 +3039,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterSendMultipleNullableTypes(
@@ -3054,7 +3054,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
@@ -3067,7 +3067,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterSendMultipleNullableTypesWithoutRecursion(
@@ -3083,7 +3083,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoBool(aBool: Boolean): Boolean {
@@ -3094,7 +3094,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoInt(anInt: Long): Long {
@@ -3105,7 +3105,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoDouble(aDouble: Double): Double {
@@ -3116,7 +3116,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoString(aString: String): String {
@@ -3127,7 +3127,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoUint8List(list: ByteArray): ByteArray {
@@ -3138,7 +3138,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoInt32List(list: IntArray): IntArray {
@@ -3149,7 +3149,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoInt64List(list: LongArray): LongArray {
@@ -3160,7 +3160,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoFloat64List(list: DoubleArray): DoubleArray {
@@ -3171,7 +3171,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoList(list: List<Any?>): List<Any?> {
@@ -3182,7 +3182,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoEnumList(
@@ -3195,7 +3195,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoClassList(
@@ -3208,7 +3208,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNonNullEnumList(
@@ -3221,7 +3221,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNonNullClassList(
@@ -3234,7 +3234,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
@@ -3245,7 +3245,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
@@ -3256,7 +3256,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
@@ -3267,7 +3267,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoEnumMap(
@@ -3280,7 +3280,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoClassMap(
@@ -3293,7 +3293,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNonNullStringMap(
@@ -3306,7 +3306,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long> {
@@ -3317,7 +3317,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNonNullEnumMap(
@@ -3330,7 +3330,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNonNullClassMap(
@@ -3343,7 +3343,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
@@ -3354,7 +3354,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNativeInteropAnotherEnum(
@@ -3367,7 +3367,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableBool(aBool: Boolean?): Boolean? {
@@ -3378,7 +3378,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableInt(anInt: Long?): Long? {
@@ -3389,7 +3389,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableDouble(aDouble: Double?): Double? {
@@ -3400,7 +3400,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableString(aString: String?): String? {
@@ -3411,7 +3411,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableUint8List(list: ByteArray?): ByteArray? {
@@ -3422,7 +3422,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableInt32List(list: IntArray?): IntArray? {
@@ -3433,7 +3433,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableInt64List(list: LongArray?): LongArray? {
@@ -3444,7 +3444,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableFloat64List(list: DoubleArray?): DoubleArray? {
@@ -3455,7 +3455,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableList(list: List<Any?>?): List<Any?>? {
@@ -3466,7 +3466,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableEnumList(
@@ -3479,7 +3479,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableClassList(
@@ -3492,7 +3492,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableNonNullEnumList(
@@ -3505,7 +3505,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableNonNullClassList(
@@ -3518,7 +3518,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
@@ -3529,7 +3529,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableStringMap(
@@ -3542,7 +3542,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
@@ -3553,7 +3553,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableEnumMap(
@@ -3566,7 +3566,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableClassMap(
@@ -3579,7 +3579,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableNonNullStringMap(
@@ -3592,7 +3592,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>? {
@@ -3603,7 +3603,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableNonNullEnumMap(
@@ -3616,7 +3616,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableNonNullClassMap(
@@ -3629,7 +3629,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum? {
@@ -3640,7 +3640,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override fun callFlutterEchoAnotherNullableEnum(
@@ -3653,7 +3653,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterNoopAsync() {
@@ -3664,7 +3664,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNativeInteropAllTypes(
@@ -3677,7 +3677,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
@@ -3690,7 +3690,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
@@ -3704,7 +3704,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncBool(aBool: Boolean): Boolean {
@@ -3715,7 +3715,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncInt(anInt: Long): Long {
@@ -3726,7 +3726,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncDouble(aDouble: Double): Double {
@@ -3737,7 +3737,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncString(aString: String): String {
@@ -3748,7 +3748,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncUint8List(list: ByteArray): ByteArray {
@@ -3759,7 +3759,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncInt32List(list: IntArray): IntArray {
@@ -3770,7 +3770,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncInt64List(list: LongArray): LongArray {
@@ -3781,7 +3781,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncFloat64List(list: DoubleArray): DoubleArray {
@@ -3792,7 +3792,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncObject(anObject: Any): Any {
@@ -3803,7 +3803,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncList(list: List<Any?>): List<Any?> {
@@ -3814,7 +3814,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncEnumList(
@@ -3827,7 +3827,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncClassList(
@@ -3840,7 +3840,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNonNullEnumList(
@@ -3853,7 +3853,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNonNullClassList(
@@ -3866,7 +3866,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
@@ -3877,7 +3877,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncStringMap(
@@ -3890,7 +3890,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
@@ -3901,7 +3901,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncEnumMap(
@@ -3914,7 +3914,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncClassMap(
@@ -3927,7 +3927,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
@@ -3938,7 +3938,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAnotherAsyncEnum(
@@ -3951,7 +3951,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableBool(aBool: Boolean?): Boolean? {
@@ -3962,7 +3962,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableInt(anInt: Long?): Long? {
@@ -3973,7 +3973,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableDouble(aDouble: Double?): Double? {
@@ -3984,7 +3984,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableString(aString: String?): String? {
@@ -3995,7 +3995,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableUint8List(list: ByteArray?): ByteArray? {
@@ -4006,7 +4006,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableInt32List(list: IntArray?): IntArray? {
@@ -4017,7 +4017,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableInt64List(list: LongArray?): LongArray? {
@@ -4028,7 +4028,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableFloat64List(list: DoubleArray?): DoubleArray? {
@@ -4039,7 +4039,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterThrowFlutterErrorAsync(): Any? {
@@ -4050,7 +4050,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableObject(anObject: Any?): Any? {
@@ -4061,7 +4061,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableList(list: List<Any?>?): List<Any?>? {
@@ -4072,7 +4072,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableEnumList(
@@ -4085,7 +4085,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableClassList(
@@ -4098,7 +4098,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableNonNullEnumList(
@@ -4111,7 +4111,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableNonNullClassList(
@@ -4124,7 +4124,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
@@ -4135,7 +4135,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableStringMap(
@@ -4148,7 +4148,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableIntMap(
@@ -4161,7 +4161,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableEnumMap(
@@ -4174,7 +4174,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableClassMap(
@@ -4187,7 +4187,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAsyncNullableEnum(
@@ -4200,7 +4200,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
   override suspend fun callFlutterEchoAnotherAsyncNullableEnum(
@@ -4213,7 +4213,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns true if the handler is run on a main thread. */
   override fun defaultIsMainThread(): Boolean {
@@ -4224,7 +4224,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /**
    * Spawns a background thread and calls `noop` on the [NativeInteropFlutterIntegrationCoreApi].
@@ -4239,7 +4239,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Tests deregistering a Host API natively. */
   override fun testDeregisterHostApi(): Boolean {
@@ -4250,7 +4250,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Tests deregistering a Flutter API natively. */
   override fun testDeregisterFlutterApi(): Boolean {
@@ -4261,7 +4261,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Registers and immediately deregisters a Host API under [name]. */
   override fun registerAndImmediatelyDeregisterHostApi(name: String) {
@@ -4272,7 +4272,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Tests that calling a deregistered Flutter API under [name] fails / returns null. */
   override fun testCallDeregisteredFlutterApi(name: String): Boolean {
@@ -4283,7 +4283,7 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
         throw e
       }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been set")
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 }
 /**

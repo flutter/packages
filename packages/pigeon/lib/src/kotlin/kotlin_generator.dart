@@ -949,7 +949,7 @@ class ${api.name}Registrar() {
             });
           });
 
-          indent.writeln('error("${api.name} has not been set")');
+          indent.writeln('error("${api.name} has not been registered")');
         });
       }
     });

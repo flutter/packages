@@ -80,6 +80,6 @@ class NativeInteropExampleApiRegistrar : NativeInteropExampleApi {
         throw e
       }
     }
-    error("NativeInteropExampleApi has not been set")
+    error("NativeInteropExampleApi has not been registered")
   }
 }

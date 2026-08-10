@@ -72,6 +72,9 @@ In your Pigeon Dart definition file (`pigeons/<messages_file>.dart`), update `@C
 - **`kotlinOptions: KotlinOptions(useJni: true)`**: Enables Kotlin JNI code generation.
 - **`appDirectory`**: Root path of the compiled Flutter **application** context required by `ffigen` and `jnigen` (use `'example/'` for plugins with an example app, or `'./'` for standalone Flutter apps).
 
+> [!WARNING]
+> **Threading & TaskQueue**: Native Interop (FFI/JNI) calls execute directly in-process and always run on the main UI thread. `@TaskQueue` annotations are not supported with Native Interop and must be removed from your Pigeon file before generating code.
+
 ---
 
 ## 3. iOS/macOS Build System Configurations (Swift FFI)

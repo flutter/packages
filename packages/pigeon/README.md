@@ -78,6 +78,8 @@ When targeting a Flutter version that supports the
 the threading model for handling HostApi methods can be selected with the
 `TaskQueue` annotation.
 
+> **Note**: `TaskQueue` is only supported with Method Channels. Native Interop (FFI/JNI) calls execute directly in-process and always run on the main thread; specifying `@TaskQueue` with Native Interop will result in a code generation error.
+
 ### Multi-Instance Support
 
 Host and Flutter APIs support the ability to provide a unique message channel suffix string
@@ -96,6 +98,7 @@ Pigeon supports two distinct models for communication between Dart and native co
 | :--- | :--- | :--- |
 | **Communication Mechanism** | Asynchronous message passing over platform channels | Direct memory-bound function calls (Dart FFI / JNI) |
 | **Platform Support** | All supported platforms (Android, iOS, macOS, Windows, Linux) | Android, iOS, and macOS |
+| **Threading Model** | Main UI thread or custom background `TaskQueue` | Always runs on the main thread (`TaskQueue` is not supported) |
 | **Serialization Overhead** | High (serialization and multiple copies) | Low (minimal copying) |
 | **Latency** | Higher (requires message loop scheduling) | Extremely low (direct execution) |
 | **Synchronous Host Calls** | Not supported | Fully supported |
