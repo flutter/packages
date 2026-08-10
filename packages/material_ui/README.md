@@ -1,25 +1,125 @@
-# material\_ui
+# material_ui
 
-**Coming soon \- the official Material Design widget library for Flutter as its own standalone package\!**
+The official Flutter Material Design library, implementing Google's [Material
+Design](https://m3.material.io/) design system for Flutter applications.
 
-`material_ui` will contain the standard collection of visual components (Buttons, Cards, AppBars, etc.) that implement Google's latest Material Design specification.
+`material_ui` provides a complete, modern suite of visual components, motion,
+typography, color systems, and theming tools to build beautiful and accessible
+user interfaces on all screen sizes.
 
-**Note:** This package will contain the material library previously part of the Flutter framework itself (`package:flutter/material.dart`). It is being decoupled to allow for faster iteration and a more modular ecosystem.
+See also the
+[`cupertino_ui`](https://github.com/flutter/packages/tree/main/packages/cupertino_ui)
+package, which is Flutter's official iOS- and macOS-style design library.
 
-## What's (going to be) inside?
+## Migrating existing code to this package
 
-This package will provide the Material widgets you know and love, including but not limited to:
+`material_ui` was previously built directly into the core Flutter framework as
+`package:flutter/material.dart`. It has been decoupled from the
+[flutter/flutter](https://github.com/flutter/flutter) repository into its new
+home here in `flutter/packages`. Follow the steps below to migrate:
 
-* **Structure:** `Scaffold`, `AppBar`, `Drawer`  
-* **Inputs:** `FloatingActionButton`, `TextField`, `Slider`  
-* **Display:** `Card`, `Chip`, `ListTile`  
-* **Theming:** `ThemeData`, `ColorScheme`
+### Step 1: Migrate imports
 
-Once landed and published, look forward to updates from [Material 3 Expressive](https://github.com/flutter/flutter/issues/168813)\! 🚀
+We've included a data driven Dart fix to help users migrate. Simply run the
+following command:
 
-## Feedback & roadmap
+```sh
+dart fix --apply --code=migrate_design_widgets
+```
 
-We are currently migrating the Material library out of the core framework.
+This performs the equivalent of adding `material_ui` to your project and
+changing imports of `package:flutter/material.dart` to
+`package:material_ui/material_ui.dart`.
 
-* **Follow the progress:** [Decoupling Github Project](https://github.com/orgs/flutter/projects/220)  
-* **Report bugs:** [Material issues in Flutter](https://github.com/flutter/flutter/issues?q=is%3Aopen%20is%3Aissue%20label%3A%22f%3A%20material%20design%22)
+### Step 2: Migrate localization
+
+Don't use the `GlobalMaterialLocalizations` or `GlobalCupertinoLocalizations`
+classes from flutter/flutter's `flutter_localizations` package. Instead, use the
+new versions of these classes from `material_ui` and `cupertino_ui`,
+respectively.
+
+### Step 3: Bridge legacy dependencies (if needed)
+
+If your app uses third-party packages or subtrees that still import and rely on
+`package:flutter/material.dart`, use `MaterialUiCompatibilityBridge` to bridge
+`ThemeData` and `MaterialLocalizations` so legacy widgets resolve correctly
+within modern widget trees.
+
+Wrap your app using `MaterialApp.builder`:
+
+```dart
+import 'package:material_ui/material_ui.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4)),
+      ),
+      builder: (BuildContext context, Widget? child) {
+        return MaterialUiCompatibilityBridge(child: child!);
+      },
+      home: const HomeScreen(),
+    );
+  }
+}
+```
+
+You can also wrap individual subtrees that contain legacy package widgets:
+
+```dart
+Scaffold(
+  appBar: AppBar(title: const Text('Modern Screen')),
+  body: MaterialUiCompatibilityBridge(
+    child: LegacyPackageWidget(),
+  ),
+)
+```
+
+---
+
+## Getting Started
+
+See Flutter's main [getting started guide](https://flutter.dev/getting-started/)
+for information about using Flutter and `material_ui`.
+
+## Features & Included Components
+
+`material_ui` contains the full set of Flutter Material widgets and services:
+
+* **App Structure & Navigation**: `MaterialApp`, `Scaffold`, `AppBar`,
+`SliverAppBar`, `Drawer`, `NavigationDrawer`, `NavigationBar`, `NavigationRail`,
+`BottomSheet`, `TabBar`, `SearchAnchor`, `SearchBar`
+* **Buttons & Interaction**: `ElevatedButton`, `FilledButton`, `OutlinedButton`,
+`TextButton`, `IconButton`, `FloatingActionButton`, `SegmentedButton`,
+`ToggleButtons`, `PopupMenuButton`, `InkWell`
+* **Inputs & Selection**: `TextField`, `TextFormField`, `Checkbox`, `Radio`,
+`Switch`, `Slider`, `RangeSlider`, `DropdownMenu`, `DatePicker`, `TimePicker`,
+`InputDecoration`
+* **Display & Feedback**: `Card`, `Chip`, `ListTile`, `Badge`, `Divider`,
+`DataTable`, `PaginatedDataTable`, `ProgressIndicator`, `SnackBar`, `Tooltip`,
+`CarouselView`
+* **Theming & Color**: `ThemeData`, `ColorScheme`, `TextTheme`, dynamic color
+generation, Material 3 design tokens, typography, and motion easing curves
+* **Internationalization**: `MaterialLocalizations` and
+`GlobalMaterialLocalizations` for multi-locale support
+
+## Changelog
+See the
+[Changelog](https://github.com/flutter/packages/blob/main/packages/material_ui/CHANGELOG.md)
+for a list of new features and breaking changes.
+
+## Documentation & Resources
+
+* [Material Design 3 Specification](https://m3.material.io/)
+* [Flutter Material Widget Catalog](https://docs.flutter.dev/ui/widgets/material)
+* [API Reference](https://pub.dev/documentation/material_ui/latest/)
+* [Issue Tracker](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A%20material%20design%22)
+* [Decoupling GitHub Project](https://github.com/orgs/flutter/projects/220)
