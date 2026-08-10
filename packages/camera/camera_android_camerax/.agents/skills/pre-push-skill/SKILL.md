@@ -82,7 +82,7 @@ Command to run:
 ```bash
 cd "$(git rev-parse --show-toplevel)"
 dart run script/tool/bin/flutter_plugin_tools.dart \
-  native-test --packages camera_android_camerax --no-integration
+  native-test --android --packages camera_android_camerax --no-integration
 ```
 
 If either command fails, the code is not ready to push.

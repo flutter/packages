@@ -3,45 +3,57 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "First, run 'bash .agents/skills/pre-push-skill/evals/test_data/setup_missing_native_test.sh'. Then, run the pre-push skill.",
+      "prompt": "First, run 'dart run .agents/skills/pre-push-skill/evals/test_data/setup_missing_native_test.dart'. Then, run the /pre-push skill. Do not attempt to fix any issues you find, only report the output of the skill.",
       "expected_chat_output": [
-        "The agent should detect that a native Java source file was modified without a corresponding native unit test being added or updated, and report that the code is not ready to push or ask for test coverage approval."
+        "Agent explicitly states that the code is not ready to push.",
+        "Agent points out that a native Java file was modified.",
+        "Agent points out that a corresponding native unit test was not added or updated."
       ],
       "expected_repo_state": [
-        "No changes are pushed to the remote repository."
+        "No changes are pushed to the remote repository.",
+        "The agent does not create any new commits or modify the working tree."
       ],
       "agent_config": "reidbaker-agent"
     },
     {
       "id": 2,
-      "prompt": "First, run 'bash .agents/skills/pre-push-skill/evals/test_data/setup_success_native_test.sh'. Then, run the pre-push skill.",
+      "prompt": "First, run 'dart run .agents/skills/pre-push-skill/evals/test_data/setup_success_native_test.dart'. Then, run the /pre-push skill. Do not attempt to fix any issues you find, only report the output of the skill.",
       "expected_chat_output": [
-        "The agent should run both Dart and native unit tests, verify that corresponding native unit test files were updated for the Java source changes, and report whether the branch is ready to push."
+        "Agent explicitly states whether the code is ready to push.",
+        "Agent confirms that native unit tests pass.",
+        "Agent confirms that a native unit test was updated for the Java changes."
       ],
       "expected_repo_state": [
-        "No changes are pushed to the remote repository."
+        "No changes are pushed to the remote repository.",
+        "The agent does not create any new commits or modify the working tree."
       ],
       "agent_config": "reidbaker-agent"
     },
     {
       "id": 3,
-      "prompt": "First, run 'bash .agents/skills/pre-push-skill/evals/test_data/setup_mixed_missing_native_test.sh'. Then, run the pre-push skill.",
+      "prompt": "First, run 'dart run .agents/skills/pre-push-skill/evals/test_data/setup_mixed_missing_native_test.dart'. Then, run the /pre-push skill. Do not attempt to fix any issues you find, only report the output of the skill.",
       "expected_chat_output": [
-        "The agent should detect that even though a Dart test was added for the Dart changes, the modified native Java source file lacks a corresponding native unit test update, and report that the code is not ready to push or ask for test coverage approval."
+        "Agent explicitly states that the code is not ready to push.",
+        "Agent acknowledges the Dart test was updated.",
+        "Agent points out that the native Java file lacks a corresponding native unit test update."
       ],
       "expected_repo_state": [
-        "No changes are pushed to the remote repository."
+        "No changes are pushed to the remote repository.",
+        "The agent does not create any new commits or modify the working tree."
       ],
       "agent_config": "reidbaker-agent"
     },
     {
       "id": 4,
-      "prompt": "First, run 'bash .agents/skills/pre-push-skill/evals/test_data/setup_missing_native_test.sh'. The Java change is just a comment and I explicitly approve bypassing the native test requirement. Then, run the pre-push skill.",
+      "prompt": "First, run 'dart run .agents/skills/pre-push-skill/evals/test_data/setup_missing_native_test.dart'. The Java change is just a comment and I explicitly approve bypassing the native test requirement. Then, run the /pre-push skill. Do not attempt to fix any issues you find, only report the output of the skill.",
       "expected_chat_output": [
-        "The agent should recognize the user's explicit test coverage approval for the Java change, verify that all other pre-push checks pass, and report that the code is ready to push."
+        "Agent acknowledges the user's explicit approval to bypass the native test requirement.",
+        "Agent states that the code is ready to push.",
+        "Agent lists the steps that passed or were explicitly bypassed."
       ],
       "expected_repo_state": [
-        "No changes are pushed to the remote repository."
+        "No changes are pushed to the remote repository.",
+        "The agent does not create any new commits or modify the working tree."
       ],
       "agent_config": "reidbaker-agent"
     }
