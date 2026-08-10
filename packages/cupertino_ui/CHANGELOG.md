@@ -1,3 +1,7 @@
+## 0.0.3+1
+
+- Remove unresolvable doc import for flutter_test
+
 ## 0.0.3
 
 - Fix API doc by clearing unsupported directives introduced by macros.
