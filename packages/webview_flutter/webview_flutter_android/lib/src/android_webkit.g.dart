@@ -100,6 +100,7 @@ class PigeonOverrides {
     void Function(WebViewClient pigeon_instance, WebView webView, WebResourceRequest request)?
     requestLoading,
     void Function(WebViewClient pigeon_instance, WebView webView, String url)? urlLoading,
+    void Function(WebViewClient pigeon_instance, String url)? onCreateWindow,
     void Function(WebViewClient pigeon_instance, WebView webView, String url, bool isReload)?
     doUpdateVisitedHistory,
     void Function(
@@ -2717,6 +2718,7 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     void Function(WebViewClient pigeon_instance, WebView webView, WebResourceRequest request)?
     requestLoading,
     void Function(WebViewClient pigeon_instance, WebView webView, String url)? urlLoading,
+    void Function(WebViewClient pigeon_instance, String url)? onCreateWindow,
     void Function(WebViewClient pigeon_instance, WebView webView, String url, bool isReload)?
     doUpdateVisitedHistory,
     void Function(
@@ -2765,6 +2767,7 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
         onReceivedRequestErrorCompat: onReceivedRequestErrorCompat,
         requestLoading: requestLoading,
         urlLoading: urlLoading,
+        onCreateWindow: onCreateWindow,
         doUpdateVisitedHistory: doUpdateVisitedHistory,
         onReceivedHttpAuthRequest: onReceivedHttpAuthRequest,
         onFormResubmission: onFormResubmission,
@@ -2786,6 +2789,7 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
       onReceivedRequestErrorCompat: onReceivedRequestErrorCompat,
       requestLoading: requestLoading,
       urlLoading: urlLoading,
+      onCreateWindow: onCreateWindow,
       doUpdateVisitedHistory: doUpdateVisitedHistory,
       onReceivedHttpAuthRequest: onReceivedHttpAuthRequest,
       onFormResubmission: onFormResubmission,
@@ -2809,6 +2813,7 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     this.onReceivedRequestErrorCompat,
     this.requestLoading,
     this.urlLoading,
+    this.onCreateWindow,
     this.doUpdateVisitedHistory,
     this.onReceivedHttpAuthRequest,
     this.onFormResubmission,
@@ -2854,6 +2859,7 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     this.onReceivedRequestErrorCompat,
     this.requestLoading,
     this.urlLoading,
+    this.onCreateWindow,
     this.doUpdateVisitedHistory,
     this.onReceivedHttpAuthRequest,
     this.onFormResubmission,
@@ -3036,6 +3042,28 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(WebViewClient pigeon_instance, WebView webView, String url)? urlLoading;
+
+  /// Notifies the host that the page requested a new window
+  /// (`target=_blank` / `window.open`).
+  ///
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// with a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final WebViewClient instance = WebViewClient(
+  ///  onCreateWindow: (WebViewClient pigeon_instance, ...) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
+  /// release the associated Native object manually.
+  final void Function(WebViewClient pigeon_instance, String url)? onCreateWindow;
 
   /// Notify the host application to update its visited links database.
   ///
@@ -3298,6 +3326,7 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     void Function(WebViewClient pigeon_instance, WebView webView, WebResourceRequest request)?
     requestLoading,
     void Function(WebViewClient pigeon_instance, WebView webView, String url)? urlLoading,
+    void Function(WebViewClient pigeon_instance, String url)? onCreateWindow,
     void Function(WebViewClient pigeon_instance, WebView webView, String url, bool isReload)?
     doUpdateVisitedHistory,
     void Function(
@@ -3586,6 +3615,36 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
             (urlLoading ?? arg_pigeon_instance.urlLoading)?.call(
               arg_pigeon_instance,
               arg_webView,
+              arg_url,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onCreateWindow',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final WebViewClient arg_pigeon_instance = args[0]! as WebViewClient;
+          final String arg_url = args[1]! as String;
+          try {
+            (onCreateWindow ?? arg_pigeon_instance.onCreateWindow)?.call(
+              arg_pigeon_instance,
               arg_url,
             );
             return wrapResponse(empty: true);
@@ -3945,6 +4004,7 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
       onReceivedRequestErrorCompat: onReceivedRequestErrorCompat,
       requestLoading: requestLoading,
       urlLoading: urlLoading,
+      onCreateWindow: onCreateWindow,
       doUpdateVisitedHistory: doUpdateVisitedHistory,
       onReceivedHttpAuthRequest: onReceivedHttpAuthRequest,
       onFormResubmission: onFormResubmission,

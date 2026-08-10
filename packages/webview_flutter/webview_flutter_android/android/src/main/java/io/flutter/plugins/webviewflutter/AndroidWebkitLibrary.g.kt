@@ -3566,6 +3566,45 @@ abstract class PigeonApiWebViewClient(
     }
   }
 
+  /** Notifies the host that the page requested a new window (`target=_blank` / `window.open`). */
+  fun onCreateWindow(
+      pigeon_instanceArg: android.webkit.WebViewClient,
+      urlArg: String,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    } else if (!pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      callback(
+          Result.failure(
+              AndroidWebKitError(
+                  "missing-instance-error",
+                  "Callback to `WebViewClient.onCreateWindow` failed because native instance was not in the instance manager.",
+                  "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.webview_flutter_android.WebViewClient.onCreateWindow"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, urlArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(AndroidWebkitLibraryPigeonUtils.createConnectionError(channelName)))
+      }
+    }
+  }
+
   /** Notify the host application to update its visited links database. */
   fun doUpdateVisitedHistory(
       pigeon_instanceArg: android.webkit.WebViewClient,
