@@ -157,7 +157,8 @@ class MakeDepsPathBasedCommand extends PackageCommand {
       return RepositoryPackage(thirdPartyCandidate);
     }
     for (final FileSystemEntity entity in packagesDir.listSync()) {
-      if (entity is Directory && packageName.startsWith(entity.basename)) {
+      if (entity is Directory &&
+          (packageName == entity.basename || packageName.startsWith('${entity.basename}_'))) {
         final Directory subPackageCandidate = entity.childDirectory(packageName);
         if (subPackageCandidate.childFile('pubspec.yaml').existsSync()) {
           return RepositoryPackage(subPackageCandidate);
@@ -294,10 +295,7 @@ ${newOverrideLines.join('\n')}
         example,
         localDependencies,
         versions,
-        additionalPackagesToOverride: <String>{
-          ...packagesToOverride,
-          package.directory.basename,
-        },
+        additionalPackagesToOverride: <String>{...packagesToOverride, package.parsePubspec().name},
       );
     }
 
