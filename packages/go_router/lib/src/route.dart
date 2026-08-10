@@ -1490,9 +1490,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
   /// route.
   ///
   /// Switching to a branch without preserved state must not drop pages the
-  /// parent Navigators have below the shell route, so the shell match for the
-  /// initial branch location is grafted into the current match list instead
-  /// of navigating from scratch. See
+  /// parent Navigators have below the shell route. This grafts the shell match
+  /// for the initial branch location into the current match list instead of
+  /// navigating from scratch. See
   /// https://github.com/flutter/flutter/issues/188295.
   RouteMatchList? _initialMatchListForBranch(int index) {
     final RouteMatchList initialMatchList = _router.configuration.findMatch(
@@ -1527,7 +1527,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
       matches: matches,
       uri: initialMatchList.uri,
       // The branch is navigated to as if by [GoRouter.go], which carries no
-      // extra, so the object the outer location was given must not leak into it.
+      // extra. The object the outer location was given must not leak into it.
       extra: initialMatchList.extra,
       pathParameters: <String, String>{
         ...currentMatchList.pathParameters,
