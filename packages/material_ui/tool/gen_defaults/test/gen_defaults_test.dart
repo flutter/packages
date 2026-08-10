@@ -87,6 +87,16 @@ void main() {
       );
     });
 
+    test('border generates border expression', () {
+      final template = IconButtonTemplateM3(testPath());
+      expect(template.border('_colors.outline'), 'BorderSide(color: _colors.outline)');
+      expect(
+        template.border('_colors.outline', width: 2.0),
+        'BorderSide(color: _colors.outline, width: 2.0)',
+      );
+      expect(template.border('_colors.outline', width: 1.0), 'BorderSide(color: _colors.outline)');
+    });
+
     test('shape generates shape expressions', () {
       final template = IconButtonTemplateM3(testPath());
       expect(
