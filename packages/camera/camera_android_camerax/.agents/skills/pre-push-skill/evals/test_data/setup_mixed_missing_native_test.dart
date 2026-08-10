@@ -25,6 +25,10 @@ void main() {
 
   dartFile.createSync(recursive: true);
   dartFile.writeAsStringSync('''
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 class DummyEvalFeature {
   void doNothing() {}
 }
@@ -32,6 +36,10 @@ class DummyEvalFeature {
 
   dartTest.createSync(recursive: true);
   dartTest.writeAsStringSync('''
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:camera_android_camerax/src/dummy_eval_feature.dart';
 
@@ -45,9 +53,17 @@ void main() {
 
   javaFile.createSync(recursive: true);
   javaFile.writeAsStringSync('''
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 package io.flutter.plugins.camerax;
 
-public class DummyEvalFeature {
+public // Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+class DummyEvalFeature {
     public void doNothing() {}
 }
 ''');
