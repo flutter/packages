@@ -1503,7 +1503,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
       newShellMatch = match is ShellRouteMatch && match.route == route ? match : newShellMatch;
       return newShellMatch == null;
     });
-    if (newShellMatch == null || initialMatchList.error != null) {
+    if (newShellMatch == null) {
       return null;
     }
 
