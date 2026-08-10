@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:intl/intl.dart';
-library;
-
 import 'package:cupertino_ui/cupertino_ui.dart' show GlobalCupertinoLocalizations;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -314,7 +311,6 @@ abstract class GlobalMaterialLocalizations implements MaterialLocalizations {
   ///
   /// See also:
   ///
-  ///  * [Intl.plural], to which this form is passed.
   ///  * [selectedRowCountTitleOne], the "one" form
   ///  * [selectedRowCountTitleTwo], the "two" form
   ///  * [selectedRowCountTitleFew], the "few" form
@@ -329,7 +325,6 @@ abstract class GlobalMaterialLocalizations implements MaterialLocalizations {
   ///
   /// See also:
   ///
-  ///  * [Intl.plural], to which this form is passed.
   ///  * [selectedRowCountTitleZero], the "zero" form
   ///  * [selectedRowCountTitleTwo], the "two" form
   ///  * [selectedRowCountTitleFew], the "few" form
@@ -344,7 +339,6 @@ abstract class GlobalMaterialLocalizations implements MaterialLocalizations {
   ///
   /// See also:
   ///
-  ///  * [Intl.plural], to which this form is passed.
   ///  * [selectedRowCountTitleZero], the "zero" form
   ///  * [selectedRowCountTitleOne], the "one" form
   ///  * [selectedRowCountTitleFew], the "few" form
@@ -359,7 +353,6 @@ abstract class GlobalMaterialLocalizations implements MaterialLocalizations {
   ///
   /// See also:
   ///
-  ///  * [Intl.plural], to which this form is passed.
   ///  * [selectedRowCountTitleZero], the "zero" form
   ///  * [selectedRowCountTitleOne], the "one" form
   ///  * [selectedRowCountTitleTwo], the "two" form
@@ -374,7 +367,6 @@ abstract class GlobalMaterialLocalizations implements MaterialLocalizations {
   ///
   /// See also:
   ///
-  ///  * [Intl.plural], to which this form is passed.
   ///  * [selectedRowCountTitleZero], the "zero" form
   ///  * [selectedRowCountTitleOne], the "one" form
   ///  * [selectedRowCountTitleTwo], the "two" form
@@ -389,7 +381,6 @@ abstract class GlobalMaterialLocalizations implements MaterialLocalizations {
   ///
   /// See also:
   ///
-  ///  * [Intl.plural], to which this form is passed.
   ///  * [selectedRowCountTitleZero], the "zero" form
   ///  * [selectedRowCountTitleOne], the "one" form
   ///  * [selectedRowCountTitleTwo], the "two" form
@@ -446,7 +437,6 @@ abstract class GlobalMaterialLocalizations implements MaterialLocalizations {
   ///
   /// See also:
   ///
-  ///  * [Intl.plural], to which this form is passed.
   ///  * [licensesPackageDetailTextZero], the "zero" form
   ///  * [licensesPackageDetailTextOne], the "one" form
   ///  * [licensesPackageDetailTextTwo], the "two" form
@@ -477,7 +467,6 @@ abstract class GlobalMaterialLocalizations implements MaterialLocalizations {
   ///
   /// See also:
   ///
-  ///  * [Intl.plural], to which this form is passed.
   ///  * [licensesPackageDetailTextZero], the "zero" form
   ///  * [licensesPackageDetailTextOne], the "one" form
   ///  * [licensesPackageDetailTextTwo], the "two" form
@@ -493,7 +482,6 @@ abstract class GlobalMaterialLocalizations implements MaterialLocalizations {
   ///
   /// See also:
   ///
-  ///  * [Intl.plural], to which this form is passed.
   ///  * [licensesPackageDetailTextZero], the "zero" form
   ///  * [licensesPackageDetailTextOne], the "one" form
   ///  * [licensesPackageDetailTextTwo], the "two" form
@@ -509,7 +497,6 @@ abstract class GlobalMaterialLocalizations implements MaterialLocalizations {
   ///
   /// See also:
   ///
-  ///  * [Intl.plural], to which this form is passed.
   ///  * [licensesPackageDetailTextZero], the "zero" form
   ///  * [licensesPackageDetailTextOne], the "one" form
   ///  * [licensesPackageDetailTextTwo], the "two" form
@@ -525,7 +512,6 @@ abstract class GlobalMaterialLocalizations implements MaterialLocalizations {
   ///
   /// See also:
   ///
-  ///  * [Intl.plural], to which this form is passed.
   ///  * [licensesPackageDetailTextZero], the "zero" form
   ///  * [licensesPackageDetailTextOne], the "one" form
   ///  * [licensesPackageDetailTextTwo], the "two" form
@@ -555,7 +541,6 @@ abstract class GlobalMaterialLocalizations implements MaterialLocalizations {
   ///
   /// See also:
   ///
-  ///  * [Intl.plural], to which this form is passed.
   ///  * [remainingTextFieldCharacterCountZero], the "zero" form
   ///  * [remainingTextFieldCharacterCountOne], the "one" form
   ///  * [remainingTextFieldCharacterCountTwo], the "two" form
@@ -586,7 +571,6 @@ abstract class GlobalMaterialLocalizations implements MaterialLocalizations {
   ///
   /// See also:
   ///
-  ///  * [Intl.plural], to which this form is passed.
   ///  * [remainingTextFieldCharacterCountZero], the "zero" form
   ///  * [remainingTextFieldCharacterCountOne], the "one" form
   ///  * [remainingTextFieldCharacterCountTwo], the "two" form
@@ -602,7 +586,6 @@ abstract class GlobalMaterialLocalizations implements MaterialLocalizations {
   ///
   /// See also:
   ///
-  ///  * [Intl.plural], to which this form is passed.
   ///  * [remainingTextFieldCharacterCountZero], the "zero" form
   ///  * [remainingTextFieldCharacterCountOne], the "one" form
   ///  * [remainingTextFieldCharacterCountTwo], the "two" form
@@ -618,7 +601,6 @@ abstract class GlobalMaterialLocalizations implements MaterialLocalizations {
   ///
   /// See also:
   ///
-  ///  * [Intl.plural], to which this form is passed.
   ///  * [remainingTextFieldCharacterCountZero], the "zero" form
   ///  * [remainingTextFieldCharacterCountOne], the "one" form
   ///  * [remainingTextFieldCharacterCountTwo], the "two" form
@@ -634,7 +616,6 @@ abstract class GlobalMaterialLocalizations implements MaterialLocalizations {
   ///
   /// See also:
   ///
-  ///  * [Intl.plural], to which this form is passed.
   ///  * [remainingTextFieldCharacterCountZero], the "zero" form
   ///  * [remainingTextFieldCharacterCountOne], the "one" form
   ///  * [remainingTextFieldCharacterCountTwo], the "two" form

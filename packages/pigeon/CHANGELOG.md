@@ -3,6 +3,12 @@
 * [swift] [kotlin] Adds experimental support for FFI and JNI.
 * Exposes missing PigeonOptions and language-specific configurations as command-line arguments.
 
+## 27.3.1
+
+* Updates `analyzer` dependency to support versions 13 and 14.
+* Updates minimum Dart SDK constraint to 3.11.0.
+
+
 ## 27.3.0
 
 * Adds support for sharing constants across platforms.

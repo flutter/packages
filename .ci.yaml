@@ -7,9 +7,9 @@
 #  * https://github.com/flutter/cocoon/blob/main/CI_YAML.md
 enabled_branches:
   - main
-  - release-go_router-\d+\.\d+\.\d+
-  - release-cupertino_ui-\d+\.\d+\.\d+
-  - release-material_ui-\d+\.\d+\.\d+
+  - release-go_router-\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)?
+  - release-cupertino_ui-\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)?
+  - release-material_ui-\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)?
 
 platform_properties:
   linux:
