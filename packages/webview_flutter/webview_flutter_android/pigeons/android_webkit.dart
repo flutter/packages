@@ -490,6 +490,10 @@ abstract class WebViewClient {
   /// be loaded in the current WebView.
   late void Function(WebView webView, String url)? urlLoading;
 
+  /// Notifies the host that the page requested a new window
+  /// (`target=_blank` / `window.open`).
+  late void Function(String url)? onCreateWindow;
+
   /// Notify the host application to update its visited links database.
   late void Function(WebView webView, String url, bool isReload)? doUpdateVisitedHistory;
 

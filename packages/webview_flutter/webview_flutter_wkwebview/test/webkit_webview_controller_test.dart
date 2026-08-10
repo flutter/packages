@@ -1140,7 +1140,7 @@ void main() {
       expect(callbackProgress, 0);
     });
 
-    test('Requests to open a new window loads request in same window', () {
+    test('Requests to open a new window loads request in same window', () async {
       // Reset last created delegate.
       CapturingUIDelegate.lastCreatedDelegate = CapturingUIDelegate(
         requestMediaCapturePermission: (_, _, _, _, _) async {
@@ -1168,7 +1168,93 @@ void main() {
           navigationType: NavigationType.linkActivated,
         ),
       );
+      await pumpEventQueue();
 
+      verify(mockWebView.load(mockRequest));
+      verifyNever(mockRequest.getUrl());
+    });
+
+    test('Requests to open a new window call onCreateWindow when set', () async {
+      CapturingUIDelegate.lastCreatedDelegate = CapturingUIDelegate(
+        requestMediaCapturePermission: (_, _, _, _, _) async {
+          return PermissionDecision.deny;
+        },
+        runJavaScriptConfirmPanel: (_, _, _, _) async {
+          return false;
+        },
+      );
+
+      final WebKitWebViewController controller = createControllerWithMocks();
+
+      PigeonOverrides.wKNavigationDelegate_new = CapturingNavigationDelegate.new;
+      final navigationDelegate = WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(),
+      );
+
+      late final String callbackUrl;
+      await navigationDelegate.setOnCreateWindow((String url) => callbackUrl = url);
+      await controller.setPlatformNavigationDelegate(navigationDelegate);
+
+      final mockWebView = MockUIViewWKWebView();
+      final mockRequest = MockURLRequest();
+      when(mockRequest.getUrl()).thenAnswer((_) => Future<String>.value('https://www.google.com'));
+
+      CapturingUIDelegate.lastCreatedDelegate.onCreateWebView!(
+        CapturingUIDelegate.lastCreatedDelegate,
+        mockWebView,
+        MockWKWebViewConfiguration(),
+        WKNavigationAction.pigeon_detached(
+          request: mockRequest,
+          targetFrame: WKFrameInfo.pigeon_detached(isMainFrame: false, request: MockURLRequest()),
+          navigationType: NavigationType.linkActivated,
+        ),
+      );
+      await pumpEventQueue();
+
+      expect(callbackUrl, 'https://www.google.com');
+      verifyNever(mockWebView.load(any));
+    });
+
+    test('Requests to open a new window with empty URL load in same window', () async {
+      CapturingUIDelegate.lastCreatedDelegate = CapturingUIDelegate(
+        requestMediaCapturePermission: (_, _, _, _, _) async {
+          return PermissionDecision.deny;
+        },
+        runJavaScriptConfirmPanel: (_, _, _, _) async {
+          return false;
+        },
+      );
+
+      final WebKitWebViewController controller = createControllerWithMocks();
+
+      PigeonOverrides.wKNavigationDelegate_new = CapturingNavigationDelegate.new;
+      final navigationDelegate = WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(),
+      );
+
+      var onCreateWindowCalled = false;
+      await navigationDelegate.setOnCreateWindow((_) {
+        onCreateWindowCalled = true;
+      });
+      await controller.setPlatformNavigationDelegate(navigationDelegate);
+
+      final mockWebView = MockUIViewWKWebView();
+      final mockRequest = MockURLRequest();
+      when(mockRequest.getUrl()).thenAnswer((_) => Future<String?>.value());
+
+      CapturingUIDelegate.lastCreatedDelegate.onCreateWebView!(
+        CapturingUIDelegate.lastCreatedDelegate,
+        mockWebView,
+        MockWKWebViewConfiguration(),
+        WKNavigationAction.pigeon_detached(
+          request: mockRequest,
+          targetFrame: WKFrameInfo.pigeon_detached(isMainFrame: false, request: MockURLRequest()),
+          navigationType: NavigationType.linkActivated,
+        ),
+      );
+      await pumpEventQueue();
+
+      expect(onCreateWindowCalled, isFalse);
       verify(mockWebView.load(mockRequest));
     });
 
