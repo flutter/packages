@@ -26,6 +26,16 @@ void main() {
       verify(delegate.platform.setOnNavigationRequest(onNavigationRequest));
     });
 
+    test('onCreateWindow', () async {
+      WebViewPlatform.instance = TestWebViewPlatform();
+
+      void onCreateWindow(String url) {}
+
+      final delegate = NavigationDelegate(onCreateWindow: onCreateWindow);
+
+      verify(delegate.platform.setOnCreateWindow(onCreateWindow));
+    });
+
     test('onPageStarted', () async {
       WebViewPlatform.instance = TestWebViewPlatform();
 
