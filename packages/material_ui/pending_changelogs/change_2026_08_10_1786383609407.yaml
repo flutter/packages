@@ -1,0 +1,3 @@
+changelog: |
+  - Exposes ink_sparkle shader asset in pubspec.yaml and removes stretch_effect shader.
+version: minor
