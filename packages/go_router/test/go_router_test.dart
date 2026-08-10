@@ -3266,6 +3266,57 @@ void main() {
       expect(find.text('Home'), findsOneWidget);
     });
 
+    testWidgets('StatefulShellRoute does not carry extra into an unloaded branch', (
+      WidgetTester tester,
+    ) async {
+      StatefulNavigationShell? routeState;
+      Object? extraOnB;
+      final routes = <RouteBase>[
+        StatefulShellRoute.indexedStack(
+          builder:
+              (BuildContext context, GoRouterState state, StatefulNavigationShell navigationShell) {
+                routeState = navigationShell;
+                return navigationShell;
+              },
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/a',
+                  builder: (BuildContext context, GoRouterState state) => const Text('Screen A'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/b',
+                  builder: (BuildContext context, GoRouterState state) {
+                    extraOnB = state.extra;
+                    return const Text('Screen B');
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/a',
+        initialExtra: Object(),
+      );
+      expect(find.text('Screen A'), findsOneWidget);
+
+      routeState!.goBranch(1);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen B'), findsOneWidget);
+      expect(extraOnB, isNull);
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/b');
+    });
+
     testWidgets('StatefulShellRoute preserve extra when switching branch', (
       WidgetTester tester,
     ) async {

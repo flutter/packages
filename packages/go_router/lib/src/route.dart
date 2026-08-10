@@ -1523,9 +1523,12 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
       widget.shellRouteContext.routeMatchList,
     );
     final List<RouteMatchBase> matches = replaceShellMatch(currentMatchList.matches);
-    return currentMatchList.copyWith(
+    return RouteMatchList(
       matches: matches,
       uri: initialMatchList.uri,
+      // The branch is navigated to as if by [GoRouter.go], which carries no
+      // extra, so the object the outer location was given must not leak into it.
+      extra: initialMatchList.extra,
       pathParameters: <String, String>{
         ...currentMatchList.pathParameters,
         ...initialMatchList.pathParameters,
