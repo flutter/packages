@@ -170,19 +170,21 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
     expect(output, isNot(contains('  Modified packages/bar/bar_platform_interface/pubspec.yaml')));
 
     final Map<String, String?> simplePackageOverrides = getDependencyOverrides(simplePackage);
-    expect(simplePackageOverrides.length, 2);
+    expect(simplePackageOverrides.length, 3);
     expect(simplePackageOverrides['bar'], '../../packages/bar/bar');
     expect(
       simplePackageOverrides['bar_platform_interface'],
       '../../packages/bar/bar_platform_interface',
     );
+    expect(simplePackageOverrides['bar_android'], '../../packages/bar/bar_android');
 
     final Map<String, String?> appFacingPackageOverrides = getDependencyOverrides(pluginAppFacing);
-    expect(appFacingPackageOverrides.length, 1);
+    expect(appFacingPackageOverrides.length, 2);
     expect(
       appFacingPackageOverrides['bar_platform_interface'],
       '../../../packages/bar/bar_platform_interface',
     );
+    expect(appFacingPackageOverrides['bar_android'], '../../../packages/bar/bar_android');
   });
 
   test('rewrites "dev_dependencies" references', () async {
@@ -226,8 +228,12 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
     final Map<String, String?> exampleOverrides = getDependencyOverrides(
       pluginAppFacing.getExamples().first,
     );
-    expect(exampleOverrides.length, 1);
+    expect(exampleOverrides.length, 2);
     expect(exampleOverrides['bar_android'], '../../../../packages/bar/bar_android');
+    expect(
+      exampleOverrides['bar_platform_interface'],
+      '../../../../packages/bar/bar_platform_interface',
+    );
   });
 
   test('example overrides include both local and main-package dependencies', () async {
@@ -263,6 +269,28 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
     final Map<String, String?> exampleOverrides = getDependencyOverrides(example);
     expect(exampleOverrides.length, 0);
   });
+
+  test(
+    'overrides co-dependent packages when target dependencies depend on local packages',
+    () async {
+      final RepositoryPackage materialUi = createFakePackage('material_ui', packagesDir);
+      final RepositoryPackage cupertinoUi = createFakePackage('cupertino_ui', packagesDir);
+
+      addDependencies(materialUi, <String>['cupertino_ui']);
+      addDevDependenciesSection(cupertinoUi, <String>['material_ui']);
+
+      await runCapturingPrint(runner, <String>[
+        'make-deps-path-based',
+        '--target-dependencies=material_ui',
+      ]);
+
+      final Map<String, String?> materialOverrides = getDependencyOverrides(materialUi);
+      expect(materialOverrides['cupertino_ui'], '../../packages/cupertino_ui');
+
+      final Map<String, String?> cupertinoOverrides = getDependencyOverrides(cupertinoUi);
+      expect(cupertinoOverrides['material_ui'], '../../packages/material_ui');
+    },
+  );
 
   test(
     'alphabetizes overrides from different sections to avoid lint warnings in analysis',

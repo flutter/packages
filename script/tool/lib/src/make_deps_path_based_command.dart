@@ -110,43 +110,61 @@ class MakeDepsPathBasedCommand extends PackageCommand {
 
   Map<String, RepositoryPackage> _findLocalPackages(Set<String> packageNames) {
     final targets = <String, RepositoryPackage>{};
-    for (final packageName in packageNames) {
-      final Directory topLevelCandidate = packagesDir.childDirectory(packageName);
-      // If packages/<packageName>/ exists, then either that directory is the
-      // package, or packages/<packageName>/<packageName>/ exists and is the
-      // package (in the case of a federated plugin).
-      if (topLevelCandidate.existsSync()) {
-        final Directory appFacingCandidate = topLevelCandidate.childDirectory(packageName);
-        targets[packageName] = RepositoryPackage(
-          appFacingCandidate.existsSync() ? appFacingCandidate : topLevelCandidate,
-        );
-        continue;
-      }
-      // Check for a match in the third-party packages directory.
-      final Directory thirdPartyCandidate = thirdPartyPackagesDir.childDirectory(packageName);
-      if (thirdPartyCandidate.existsSync()) {
-        targets[packageName] = RepositoryPackage(thirdPartyCandidate);
-        continue;
-      }
-      // If there is no packages/<packageName> directory, then either the
-      // packages doesn't exist, or it is a sub-package of a federated plugin.
-      // If it's the latter, it will be a directory whose name is a prefix.
-      for (final FileSystemEntity entity in packagesDir.listSync()) {
-        if (entity is Directory && packageName.startsWith(entity.basename)) {
-          final Directory subPackageCandidate = entity.childDirectory(packageName);
-          if (subPackageCandidate.existsSync()) {
-            targets[packageName] = RepositoryPackage(subPackageCandidate);
-            break;
-          }
-        }
-      }
+    final queue = List<String>.from(packageNames);
 
-      if (!targets.containsKey(packageName)) {
-        printError('Unable to find package "$packageName"');
-        throw ToolExit(_exitPackageNotFound);
+    while (queue.isNotEmpty) {
+      final packageName = queue.removeLast();
+      if (targets.containsKey(packageName)) {
+        continue;
+      }
+      final RepositoryPackage? package = _findLocalPackage(packageName);
+      if (package == null) {
+        if (packageNames.contains(packageName)) {
+          printError('Unable to find package "$packageName"');
+          throw ToolExit(_exitPackageNotFound);
+        }
+        continue;
+      }
+      targets[packageName] = package;
+
+      // Expand to include local in-repo dependencies of target packages to prevent
+      // pub version solving conflicts when co-dependent packages are tested with path dependencies.
+      final Pubspec pubspec = package.parsePubspec();
+      for (final String depName in <String>[
+        ...pubspec.dependencies.keys,
+        ...pubspec.devDependencies.keys,
+      ]) {
+        if (!targets.containsKey(depName)) {
+          queue.add(depName);
+        }
       }
     }
     return targets;
+  }
+
+  RepositoryPackage? _findLocalPackage(String packageName) {
+    final Directory topLevelCandidate = packagesDir.childDirectory(packageName);
+    if (topLevelCandidate.childFile('pubspec.yaml').existsSync()) {
+      final Directory appFacingCandidate = topLevelCandidate.childDirectory(packageName);
+      return RepositoryPackage(
+        appFacingCandidate.childFile('pubspec.yaml').existsSync()
+            ? appFacingCandidate
+            : topLevelCandidate,
+      );
+    }
+    final Directory thirdPartyCandidate = thirdPartyPackagesDir.childDirectory(packageName);
+    if (thirdPartyCandidate.childFile('pubspec.yaml').existsSync()) {
+      return RepositoryPackage(thirdPartyCandidate);
+    }
+    for (final FileSystemEntity entity in packagesDir.listSync()) {
+      if (entity is Directory && packageName.startsWith(entity.basename)) {
+        final Directory subPackageCandidate = entity.childDirectory(packageName);
+        if (subPackageCandidate.childFile('pubspec.yaml').existsSync()) {
+          return RepositoryPackage(subPackageCandidate);
+        }
+      }
+    }
+    return null;
   }
 
   /// If [pubspecFile] has any non-path dependencies on packages in
@@ -276,7 +294,10 @@ ${newOverrideLines.join('\n')}
         example,
         localDependencies,
         versions,
-        additionalPackagesToOverride: packagesToOverride,
+        additionalPackagesToOverride: <String>{
+          ...packagesToOverride,
+          package.directory.basename,
+        },
       );
     }
 
