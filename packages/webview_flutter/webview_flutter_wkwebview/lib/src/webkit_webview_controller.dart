@@ -175,11 +175,28 @@ class WebKitWebViewController extends PlatformWebViewController {
             WKWebView webView,
             WKWebViewConfiguration configuration,
             WKNavigationAction navigationAction,
-          ) {
+          ) async {
+            // New-window requests (`target=_blank` / `window.open`) map to
+            // onCreateWindow — same role as WKUIDelegate.createWebViewWith.
             final bool isForMainFrame = navigationAction.targetFrame?.isMainFrame ?? false;
-            if (!isForMainFrame) {
-              PlatformWebView.fromNativeWebView(webView).load(navigationAction.request);
+            if (isForMainFrame) {
+              return;
             }
+
+            final CreateWindowCallback? onCreateWindow =
+                weakThis.target?._currentNavigationDelegate?._onCreateWindow;
+            if (onCreateWindow != null) {
+              // Only pay the pigeon IPC cost for getUrl when the host opted in.
+              final String? url = await navigationAction.request.getUrl();
+              if (url != null && url.isNotEmpty) {
+                onCreateWindow(url);
+                return;
+              }
+            }
+
+            // Upstream default when no host callback is registered, or when the
+            // URL is unavailable — load the request in the same WebView.
+            await PlatformWebView.fromNativeWebView(webView).load(navigationAction.request);
           },
       requestMediaCapturePermission:
           (
@@ -1232,6 +1249,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
   ProgressCallback? _onProgress;
   WebResourceErrorCallback? _onWebResourceError;
   NavigationRequestCallback? _onNavigationRequest;
+  CreateWindowCallback? _onCreateWindow;
   UrlChangeCallback? _onUrlChange;
   HttpAuthRequestCallback? _onHttpAuthRequest;
   SslAuthErrorCallback? _onSslAuthError;
@@ -1264,6 +1282,11 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
   @override
   Future<void> setOnNavigationRequest(NavigationRequestCallback onNavigationRequest) async {
     _onNavigationRequest = onNavigationRequest;
+  }
+
+  @override
+  Future<void> setOnCreateWindow(CreateWindowCallback onCreateWindow) async {
+    _onCreateWindow = onCreateWindow;
   }
 
   @override
