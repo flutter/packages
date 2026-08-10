@@ -135,14 +135,17 @@ When Native Interop options (`useJni` or `useFfi`) are enabled, Pigeon automatic
 
 ### Step 4: iOS/macOS Build System Configuration (FFI)
 
-Because Dart FFI cannot directly call Swift symbols, the FFI toolchain generates an intermediate Objective-C bridging file (`.m` file) in a subdirectory named `<swift_output_dir>_objc_gen`. 
+Because Dart FFI cannot directly call Swift symbols, the FFI toolchain generates intermediate Objective-C bridging files in a subdirectory named `<swift_output_dir>_objc_gen`:
+- **`.h` (Headers)**: Always generated to declare module interfaces and types.
+- **`.m` (Bridging Implementation)**: Generated when the schema contains callbacks, closures, Flutter APIs, or Objective-C blocks requiring trampoline implementations.
+- **`.o` (Temporary Object Files)**: Intermediate binary files generated during `ffigen`/`swiftgen` AST extraction. These are **not** needed after code generation and must **not** be committed to version control.
 
 To compile the generated Objective-C files alongside your Swift code, you must configure your iOS/macOS build systems (both CocoaPods and Swift Package Manager (SwiftPM) are expected to be supported by Flutter plugins):
 
 #### CocoaPods Configuration
-Ensure your `.podspec` file matches both Swift and Objective-C source files:
+Ensure your `.podspec` file matches Swift, Objective-C implementations (`.m`), and headers (`.h`):
 ```ruby
-s.source_files = 'Sources/**/*.{swift,m}'
+s.source_files = 'Sources/**/*.{swift,m,h}'
 ```
 This allows CocoaPods to automatically compile the generated Objective-C bridging files into the framework.
 

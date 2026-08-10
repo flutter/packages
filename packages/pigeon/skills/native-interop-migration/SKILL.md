@@ -79,7 +79,12 @@ In your Pigeon Dart definition file (`pigeons/<messages_file>.dart`), update `@C
 
 ## 3. iOS/macOS Build System Configurations (Swift FFI)
 
-Swift FFI generates Objective-C bridging headers/files under `<swift_output_dir>_objc_gen`. Both CocoaPods and Swift Package Manager (SPM) must be configured to compile these Objective-C sources:
+Swift FFI generates Objective-C bridging files under `<swift_output_dir>_objc_gen`:
+- **`.h` (Headers)**: Always generated to declare module interfaces and types.
+- **`.m` (Bridging Implementation)**: Generated when the schema includes callbacks, closures, Flutter APIs, or Objective-C blocks requiring trampoline implementations.
+- **`.o` (Temporary Object Files)**: Intermediate binary files generated during `ffigen`/`swiftgen` AST parsing. These are **not** needed after code generation and must **not** be committed to version control (they can be deleted or added to `.gitignore`).
+
+Both CocoaPods and Swift Package Manager (SPM) must be configured to compile these Objective-C sources:
 
 ### 3.1 CocoaPods (`<plugin_name>.podspec`)
 Ensure `s.source_files` includes `.m` and `.h` files alongside `.swift`:
