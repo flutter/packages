@@ -95,7 +95,8 @@ for information about using Flutter and `cupertino_ui`.
 
 ## Features & Included Components
 
-`cupertino_ui` contains the full set of Flutter Cupertino widgets and services:
+`cupertino_ui` contains a fully featured set of Flutter Cupertino widgets and
+services, such as:
 
 * **App Structure & Navigation**: `CupertinoApp`, `CupertinoPageScaffold`,
 `CupertinoTabScaffold`, `CupertinoTabView`, `CupertinoNavigationBar`,
