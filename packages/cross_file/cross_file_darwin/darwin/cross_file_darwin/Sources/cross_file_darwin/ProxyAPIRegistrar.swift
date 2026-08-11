@@ -52,8 +52,11 @@ class ProxyAPIDelegate: CrossFileDarwinApisPigeonProxyApiDelegate {
     return PigeonApiAssetResourceReader(
       pigeonRegistrar: registrar, delegate: AssetResourceReaderAPIDelegate())
   }
-    
-    func pigeonApiAssetResourceReaderDelegate(_ registrar: CrossFileDarwinApisPigeonProxyApiRegistrar) -> PigeonApiAssetResourceReaderDelegate {
-        return PigeonApiAssetResourceReaderDelegate(pigeonRegistrar: registrar, delegate: AssetResourceReaderDelegateAPIDelegate())
-    }
+
+  func pigeonApiAssetResourceReaderDelegate(_ registrar: CrossFileDarwinApisPigeonProxyApiRegistrar)
+    -> PigeonApiAssetResourceReaderDelegate
+  {
+    return PigeonApiAssetResourceReaderDelegate(
+      pigeonRegistrar: registrar, delegate: AssetResourceReaderDelegateAPIDelegate())
+  }
 }

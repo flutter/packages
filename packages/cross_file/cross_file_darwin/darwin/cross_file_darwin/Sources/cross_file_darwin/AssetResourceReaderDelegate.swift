@@ -26,16 +26,19 @@ class AssetResourceReaderAPIDelegate: PigeonApiDelegateAssetResourceReader {
   ) throws -> Bool {
     return pigeonInstance.openRead(localIdentifier: localIdentifier, delegate: delegate)
   }
-    
-    func readBytes(pigeonApi: PigeonApiAssetResourceReader, pigeonInstance: AssetResourceReader, localIdentifier: String, completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void) {
-        pigeonInstance.readBytes(localIdentifier: localIdentifier) { result in
-            switch(result) {
-            case .failure(let error):
-                completion(.failure(error))
-            case .success(let bytes):
-                completion(.success(FlutterStandardTypedData(bytes: bytes)))
-            }
-        }
-        
+
+  func readBytes(
+    pigeonApi: PigeonApiAssetResourceReader, pigeonInstance: AssetResourceReader,
+    localIdentifier: String, completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void
+  ) {
+    pigeonInstance.readBytes(localIdentifier: localIdentifier) { result in
+      switch result {
+      case .failure(let error):
+        completion(.failure(error))
+      case .success(let bytes):
+        completion(.success(FlutterStandardTypedData(bytes: bytes)))
+      }
     }
+
+  }
 }

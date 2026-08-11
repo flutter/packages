@@ -59,7 +59,9 @@ private func wrapError(_ error: Any) -> [Any?] {
 }
 
 private func createConnectionError(withChannelName channelName: String) -> PigeonError {
-  return PigeonError(code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.", details: "")
+  return PigeonError(
+    code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.",
+    details: "")
 }
 
 enum CrossFileDarwinApisPigeonInternal {
@@ -87,7 +89,6 @@ protocol CrossFileDarwinApisPigeonInternalFinalizerDelegate: AnyObject {
   func onDeinit(identifier: Int64)
 }
 
-
 // Attaches to an object to receive a callback when the object is deallocated.
 internal final class CrossFileDarwinApisPigeonInternalFinalizer {
   internal static let associatedObjectKey = malloc(1)!
@@ -103,14 +104,18 @@ internal final class CrossFileDarwinApisPigeonInternalFinalizer {
   }
 
   internal static func attach(
-    to instance: AnyObject, identifier: Int64, delegate: CrossFileDarwinApisPigeonInternalFinalizerDelegate
+    to instance: AnyObject, identifier: Int64,
+    delegate: CrossFileDarwinApisPigeonInternalFinalizerDelegate
   ) {
-    let finalizer = CrossFileDarwinApisPigeonInternalFinalizer(identifier: identifier, delegate: delegate)
+    let finalizer = CrossFileDarwinApisPigeonInternalFinalizer(
+      identifier: identifier, delegate: delegate)
     objc_setAssociatedObject(instance, associatedObjectKey, finalizer, .OBJC_ASSOCIATION_RETAIN)
   }
 
   static func detach(from instance: AnyObject) {
-    let finalizer = objc_getAssociatedObject(instance, associatedObjectKey) as? CrossFileDarwinApisPigeonInternalFinalizer
+    let finalizer =
+      objc_getAssociatedObject(instance, associatedObjectKey)
+      as? CrossFileDarwinApisPigeonInternalFinalizer
     if let finalizer = finalizer {
       finalizer.delegate = nil
       objc_setAssociatedObject(instance, associatedObjectKey, nil, .OBJC_ASSOCIATION_ASSIGN)
@@ -121,7 +126,6 @@ internal final class CrossFileDarwinApisPigeonInternalFinalizer {
     delegate?.onDeinit(identifier: identifier)
   }
 }
-
 
 /// Maintains instances used to communicate with the corresponding objects in Dart.
 ///
@@ -226,7 +230,8 @@ final class CrossFileDarwinApisPigeonInstanceManager {
     identifiers.setObject(NSNumber(value: identifier), forKey: instance)
     weakInstances.setObject(instance, forKey: NSNumber(value: identifier))
     strongInstances.setObject(instance, forKey: NSNumber(value: identifier))
-    CrossFileDarwinApisPigeonInternalFinalizer.attach(to: instance, identifier: identifier, delegate: finalizerDelegate)
+    CrossFileDarwinApisPigeonInternalFinalizer.attach(
+      to: instance, identifier: identifier, delegate: finalizerDelegate)
   }
 
   /// Retrieves the identifier paired with an instance.
@@ -307,7 +312,6 @@ final class CrossFileDarwinApisPigeonInstanceManager {
   }
 }
 
-
 private class CrossFileDarwinApisPigeonInstanceManagerApi {
   /// The codec used for serializing messages.
   var codec: FlutterStandardMessageCodec { CrossFileDarwinApisPigeonCodec.shared }
@@ -320,9 +324,15 @@ private class CrossFileDarwinApisPigeonInstanceManagerApi {
   }
 
   /// Sets up an instance of `CrossFileDarwinApisPigeonInstanceManagerApi` to handle messages through the `binaryMessenger`.
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, instanceManager: CrossFileDarwinApisPigeonInstanceManager?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger,
+    instanceManager: CrossFileDarwinApisPigeonInstanceManager?
+  ) {
     let codec = CrossFileDarwinApisPigeonCodec.shared
-    let removeStrongReferenceChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.removeStrongReference", binaryMessenger: binaryMessenger, codec: codec)
+    let removeStrongReferenceChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.removeStrongReference",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let instanceManager = instanceManager {
       removeStrongReferenceChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -337,7 +347,9 @@ private class CrossFileDarwinApisPigeonInstanceManagerApi {
     } else {
       removeStrongReferenceChannel.setMessageHandler(nil)
     }
-    let clearChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.clear", binaryMessenger: binaryMessenger, codec: codec)
+    let clearChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.clear",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let instanceManager = instanceManager {
       clearChannel.setMessageHandler { _, reply in
         do {
@@ -353,9 +365,13 @@ private class CrossFileDarwinApisPigeonInstanceManagerApi {
   }
 
   /// Sends a message to the Dart `InstanceManager` to remove the strong reference of the instance associated with `identifier`.
-  func removeStrongReference(identifier identifierArg: Int64, completion: @escaping (Result<Void, PigeonError>) -> Void) {
-    let channelName: String = "dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.removeStrongReference"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+  func removeStrongReference(
+    identifier identifierArg: Int64, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.removeStrongReference"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([identifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -375,10 +391,12 @@ private class CrossFileDarwinApisPigeonInstanceManagerApi {
 protocol CrossFileDarwinApisPigeonProxyApiDelegate {
   /// An implementation of [PigeonApiAssetResourceReader] used to add a new Dart instance of
   /// `AssetResourceReader` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiAssetResourceReader(_ registrar: CrossFileDarwinApisPigeonProxyApiRegistrar) -> PigeonApiAssetResourceReader
+  func pigeonApiAssetResourceReader(_ registrar: CrossFileDarwinApisPigeonProxyApiRegistrar)
+    -> PigeonApiAssetResourceReader
   /// An implementation of [PigeonApiAssetResourceReaderDelegate] used to add a new Dart instance of
   /// `AssetResourceReaderDelegate` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiAssetResourceReaderDelegate(_ registrar: CrossFileDarwinApisPigeonProxyApiRegistrar) -> PigeonApiAssetResourceReaderDelegate
+  func pigeonApiAssetResourceReaderDelegate(_ registrar: CrossFileDarwinApisPigeonProxyApiRegistrar)
+    -> PigeonApiAssetResourceReaderDelegate
 }
 
 open class CrossFileDarwinApisPigeonProxyApiRegistrar {
@@ -391,12 +409,15 @@ open class CrossFileDarwinApisPigeonProxyApiRegistrar {
   var codec: FlutterStandardMessageCodec {
     if _codec == nil {
       _codec = FlutterStandardMessageCodec(
-        readerWriter: CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: self))
+        readerWriter: CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: self))
     }
     return _codec!
   }
 
-  private class InstanceManagerApiFinalizerDelegate: CrossFileDarwinApisPigeonInternalFinalizerDelegate {
+  private class InstanceManagerApiFinalizerDelegate:
+    CrossFileDarwinApisPigeonInternalFinalizerDelegate
+  {
     let api: CrossFileDarwinApisPigeonInstanceManagerApi
 
     init(_ api: CrossFileDarwinApisPigeonInstanceManagerApi) {
@@ -410,7 +431,9 @@ open class CrossFileDarwinApisPigeonProxyApiRegistrar {
     }
   }
 
-  init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: CrossFileDarwinApisPigeonProxyApiDelegate) {
+  init(
+    binaryMessenger: FlutterBinaryMessenger, apiDelegate: CrossFileDarwinApisPigeonProxyApiDelegate
+  ) {
     self.binaryMessenger = binaryMessenger
     self.apiDelegate = apiDelegate
     self.instanceManager = CrossFileDarwinApisPigeonInstanceManager(
@@ -419,20 +442,29 @@ open class CrossFileDarwinApisPigeonProxyApiRegistrar {
   }
 
   func setUp() {
-    CrossFileDarwinApisPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: instanceManager)
-    PigeonApiAssetResourceReader.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiAssetResourceReader(self))
-    PigeonApiAssetResourceReaderDelegate.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiAssetResourceReaderDelegate(self))
+    CrossFileDarwinApisPigeonInstanceManagerApi.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, instanceManager: instanceManager)
+    PigeonApiAssetResourceReader.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiAssetResourceReader(self))
+    PigeonApiAssetResourceReaderDelegate.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiAssetResourceReaderDelegate(self))
   }
   func tearDown() {
-    CrossFileDarwinApisPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: nil)
+    CrossFileDarwinApisPigeonInstanceManagerApi.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, instanceManager: nil)
     PigeonApiAssetResourceReader.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
-    PigeonApiAssetResourceReaderDelegate.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiAssetResourceReaderDelegate.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: nil)
   }
 }
-private class CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
+private class CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter:
+  FlutterStandardReaderWriter
+{
   unowned let pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar
 
-  private class CrossFileDarwinApisPigeonInternalProxyApiCodecReader: CrossFileDarwinApisPigeonCodecReader {
+  private class CrossFileDarwinApisPigeonInternalProxyApiCodecReader:
+    CrossFileDarwinApisPigeonCodecReader
+  {
     unowned let pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar
 
     init(data: Data, pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar) {
@@ -456,7 +488,9 @@ private class CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter: Flutte
     }
   }
 
-  private class CrossFileDarwinApisPigeonInternalProxyApiCodecWriter: CrossFileDarwinApisPigeonCodecWriter {
+  private class CrossFileDarwinApisPigeonInternalProxyApiCodecWriter:
+    CrossFileDarwinApisPigeonCodecWriter
+  {
     unowned let pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar
 
     init(data: NSMutableData, pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar) {
@@ -465,11 +499,12 @@ private class CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter: Flutte
     }
 
     override func writeValue(_ value: Any) {
-      if value is [Any] || value is Bool || value is Data || value is [AnyHashable: Any] || value is Double || value is FlutterStandardTypedData || value is Int64 || value is String {
+      if value is [Any] || value is Bool || value is Data || value is [AnyHashable: Any]
+        || value is Double || value is FlutterStandardTypedData || value is Int64 || value is String
+      {
         super.writeValue(value)
         return
       }
-
 
       if let instance = value as? AssetResourceReader {
         pigeonRegistrar.apiDelegate.pigeonApiAssetResourceReader(pigeonRegistrar).pigeonNewInstance(
@@ -477,23 +512,25 @@ private class CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter: Flutte
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? AssetResourceReaderDelegate {
-        pigeonRegistrar.apiDelegate.pigeonApiAssetResourceReaderDelegate(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
+        pigeonRegistrar.apiDelegate.pigeonApiAssetResourceReaderDelegate(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
 
-
-      if let instance = value as AnyObject?, pigeonRegistrar.instanceManager.containsInstance(instance)
+      if let instance = value as AnyObject?,
+        pigeonRegistrar.instanceManager.containsInstance(instance)
       {
         super.writeByte(128)
         super.writeValue(
@@ -511,11 +548,13 @@ private class CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter: Flutte
   }
 
   override func reader(with data: Data) -> FlutterStandardReader {
-    return CrossFileDarwinApisPigeonInternalProxyApiCodecReader(data: data, pigeonRegistrar: pigeonRegistrar)
+    return CrossFileDarwinApisPigeonInternalProxyApiCodecReader(
+      data: data, pigeonRegistrar: pigeonRegistrar)
   }
 
   override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-    return CrossFileDarwinApisPigeonInternalProxyApiCodecWriter(data: data, pigeonRegistrar: pigeonRegistrar)
+    return CrossFileDarwinApisPigeonInternalProxyApiCodecWriter(
+      data: data, pigeonRegistrar: pigeonRegistrar)
   }
 }
 
@@ -536,12 +575,14 @@ private class CrossFileDarwinApisPigeonCodecReaderWriter: FlutterStandardReaderW
 }
 
 class CrossFileDarwinApisPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
-  static let shared = CrossFileDarwinApisPigeonCodec(readerWriter: CrossFileDarwinApisPigeonCodecReaderWriter())
+  static let shared = CrossFileDarwinApisPigeonCodec(
+    readerWriter: CrossFileDarwinApisPigeonCodecReaderWriter())
 }
 
 protocol PigeonApiDelegateAssetResourceReader {
   /// Constructs a [AssetResourceReader].
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiAssetResourceReader) throws -> AssetResourceReader
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiAssetResourceReader) throws
+    -> AssetResourceReader
   /// Start reading bytes from the asset with the given identifier.
   ///
   /// Returns false if the resource for the identifier could not be accessed or
@@ -551,38 +592,52 @@ protocol PigeonApiDelegateAssetResourceReader {
   /// `onCompletion` is called.
   ///
   /// See [PHAssetResourceManager.requestDataForAssetResource](https://developer.apple.com/documentation/photos/phassetresourcemanager/requestdata(for:options:datareceivedhandler:completionhandler:)?language=objc).
-  func openRead(pigeonApi: PigeonApiAssetResourceReader, pigeonInstance: AssetResourceReader, localIdentifier: String, delegate: AssetResourceReaderDelegate) throws -> Bool
+  func openRead(
+    pigeonApi: PigeonApiAssetResourceReader, pigeonInstance: AssetResourceReader,
+    localIdentifier: String, delegate: AssetResourceReaderDelegate
+  ) throws -> Bool
   /// Reads the entire asset contents as a list of bytes.
   ///
   /// See [AssetResourceReader.requestImageDataAndOrientationForAsset](https://developer.apple.com/documentation/photos/phimagemanager/requestimagedataandorientation(for:options:resulthandler:)?changes=_6_4_2).
-  func readBytes(pigeonApi: PigeonApiAssetResourceReader, pigeonInstance: AssetResourceReader, localIdentifier: String, completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void)
+  func readBytes(
+    pigeonApi: PigeonApiAssetResourceReader, pigeonInstance: AssetResourceReader,
+    localIdentifier: String, completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void
+  )
 }
 
 protocol PigeonApiProtocolAssetResourceReader {
 }
 
-final class PigeonApiAssetResourceReader: PigeonApiProtocolAssetResourceReader  {
+final class PigeonApiAssetResourceReader: PigeonApiProtocolAssetResourceReader {
   unowned let pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateAssetResourceReader
-  init(pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar, delegate: PigeonApiDelegateAssetResourceReader) {
+  init(
+    pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateAssetResourceReader
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiAssetResourceReader?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiAssetResourceReader?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.AssetResourceReader.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.cross_file_darwin.AssetResourceReader.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -591,7 +646,9 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       pigeonDefaultConstructorChannel.setMessageHandler(nil)
     }
-    let openReadChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.AssetResourceReader.openRead", binaryMessenger: binaryMessenger, codec: codec)
+    let openReadChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.cross_file_darwin.AssetResourceReader.openRead",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       openReadChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -599,7 +656,9 @@ withIdentifier: pigeonIdentifierArg)
         let localIdentifierArg = args[1] as! String
         let delegateArg = args[2] as! AssetResourceReaderDelegate
         do {
-          let result = try api.pigeonDelegate.openRead(pigeonApi: api, pigeonInstance: pigeonInstanceArg, localIdentifier: localIdentifierArg, delegate: delegateArg)
+          let result = try api.pigeonDelegate.openRead(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, localIdentifier: localIdentifierArg,
+            delegate: delegateArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -608,13 +667,17 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       openReadChannel.setMessageHandler(nil)
     }
-    let readBytesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.AssetResourceReader.readBytes", binaryMessenger: binaryMessenger, codec: codec)
+    let readBytesChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.cross_file_darwin.AssetResourceReader.readBytes",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       readBytesChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! AssetResourceReader
         let localIdentifierArg = args[1] as! String
-        api.pigeonDelegate.readBytes(pigeonApi: api, pigeonInstance: pigeonInstanceArg, localIdentifier: localIdentifierArg) { result in
+        api.pigeonDelegate.readBytes(
+          pigeonApi: api, pigeonInstance: pigeonInstanceArg, localIdentifier: localIdentifierArg
+        ) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -629,21 +692,26 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of AssetResourceReader and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: AssetResourceReader, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: AssetResourceReader, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.cross_file_darwin.AssetResourceReader.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.cross_file_darwin.AssetResourceReader.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -663,7 +731,8 @@ withIdentifier: pigeonIdentifierArg)
 }
 protocol PigeonApiDelegateAssetResourceReaderDelegate {
   /// Constructs a `ByteHandler`.
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiAssetResourceReaderDelegate) throws -> AssetResourceReaderDelegate
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiAssetResourceReaderDelegate) throws
+    -> AssetResourceReaderDelegate
 }
 
 protocol PigeonApiProtocolAssetResourceReaderDelegate {
@@ -673,38 +742,52 @@ protocol PigeonApiProtocolAssetResourceReaderDelegate {
   ///
   /// Corresponds to the `dataReceivedHandler` parameter for
   /// `PHAssetResourceManager.requestDataForAssetResource`.
-  func onDataReceived(pigeonInstance pigeonInstanceArg: AssetResourceReaderDelegate, bytes bytesArg: FlutterStandardTypedData, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func onDataReceived(
+    pigeonInstance pigeonInstanceArg: AssetResourceReaderDelegate,
+    bytes bytesArg: FlutterStandardTypedData,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Indicates the request for data has completed.
   ///
   /// Called once after the request has been fulfilled or has failed.
   ///
   /// Corresponds to the `completionHandler` parameter for
   /// `PHAssetResourceManager.requestDataForAssetResource`.
-  func onCompletion(pigeonInstance pigeonInstanceArg: AssetResourceReaderDelegate, error errorArg: String?, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func onCompletion(
+    pigeonInstance pigeonInstanceArg: AssetResourceReaderDelegate, error errorArg: String?,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 
-final class PigeonApiAssetResourceReaderDelegate: PigeonApiProtocolAssetResourceReaderDelegate  {
+final class PigeonApiAssetResourceReaderDelegate: PigeonApiProtocolAssetResourceReaderDelegate {
   unowned let pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateAssetResourceReaderDelegate
-  init(pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar, delegate: PigeonApiDelegateAssetResourceReaderDelegate) {
+  init(
+    pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateAssetResourceReaderDelegate
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiAssetResourceReaderDelegate?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiAssetResourceReaderDelegate?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.AssetResourceReaderDelegate.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.cross_file_darwin.AssetResourceReaderDelegate.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -716,21 +799,26 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of AssetResourceReaderDelegate and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: AssetResourceReaderDelegate, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: AssetResourceReaderDelegate,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
+    } else {
       completion(
         .failure(
           PigeonError(
             code: "new-instance-error",
-            message: "Error: Attempting to create a new Dart instance of AssetResourceReaderDelegate, but the class has a nonnull callback method.", details: "")))
+            message:
+              "Error: Attempting to create a new Dart instance of AssetResourceReaderDelegate, but the class has a nonnull callback method.",
+            details: "")))
     }
   }
   /// Provides the requested data.
@@ -739,7 +827,11 @@ withIdentifier: pigeonIdentifierArg)
   ///
   /// Corresponds to the `dataReceivedHandler` parameter for
   /// `PHAssetResourceManager.requestDataForAssetResource`.
-  func onDataReceived(pigeonInstance pigeonInstanceArg: AssetResourceReaderDelegate, bytes bytesArg: FlutterStandardTypedData, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func onDataReceived(
+    pigeonInstance pigeonInstanceArg: AssetResourceReaderDelegate,
+    bytes bytesArg: FlutterStandardTypedData,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -747,18 +839,22 @@ withIdentifier: pigeonIdentifierArg)
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
       return
-    }     else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
       completion(
         .failure(
           PigeonError(
             code: "missing-instance-error",
-            message: "Callback to `AssetResourceReaderDelegate.onDataReceived` failed because native instance was not in the instance manager.", details: "")))
+            message:
+              "Callback to `AssetResourceReaderDelegate.onDataReceived` failed because native instance was not in the instance manager.",
+            details: "")))
       return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.cross_file_darwin.AssetResourceReaderDelegate.onDataReceived"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.cross_file_darwin.AssetResourceReaderDelegate.onDataReceived"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, bytesArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -781,7 +877,10 @@ withIdentifier: pigeonIdentifierArg)
   ///
   /// Corresponds to the `completionHandler` parameter for
   /// `PHAssetResourceManager.requestDataForAssetResource`.
-  func onCompletion(pigeonInstance pigeonInstanceArg: AssetResourceReaderDelegate, error errorArg: String?, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func onCompletion(
+    pigeonInstance pigeonInstanceArg: AssetResourceReaderDelegate, error errorArg: String?,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -789,18 +888,22 @@ withIdentifier: pigeonIdentifierArg)
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
       return
-    }     else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
       completion(
         .failure(
           PigeonError(
             code: "missing-instance-error",
-            message: "Callback to `AssetResourceReaderDelegate.onCompletion` failed because native instance was not in the instance manager.", details: "")))
+            message:
+              "Callback to `AssetResourceReaderDelegate.onCompletion` failed because native instance was not in the instance manager.",
+            details: "")))
       return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.cross_file_darwin.AssetResourceReaderDelegate.onCompletion"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.cross_file_darwin.AssetResourceReaderDelegate.onCompletion"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, errorArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))

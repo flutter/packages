@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import Photos
 import Foundation
+import Photos
 
 /// Class for handling an instance of asynchronously reading bytes from an asset.
 class AssetResourceReader {
@@ -40,21 +40,31 @@ class AssetResourceReader {
 
   /// Read all bytes from asset with identifier.
   func readBytes(localIdentifier: String, completion: @escaping (Result<Data, Error>) -> Void) {
-      let assets = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil)
-      if let asset = assets.firstObject {
-          let manager = PHImageManager.default()
-          let options = PHImageRequestOptions()
-          options.isNetworkAccessAllowed = true
-          manager.requestImageDataAndOrientation(for: asset, options: options) { (data, _, _, _) in
-              if (data != nil) {
-                  completion(.success(data!))
-              } else {
-                  completion(.failure(PigeonError(code: "XFileNullDataError", message: "Failed to read byes from asset with identifier: \(localIdentifier)", details: nil)))
-              }
-          }
-      } else {
-          completion(.failure(PigeonError(code: "XFileMissingAssetError", message: "Failed to read byes from asset with identifier: \(localIdentifier)", details: nil)))
+    let assets = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil)
+    if let asset = assets.firstObject {
+      let manager = PHImageManager.default()
+      let options = PHImageRequestOptions()
+      options.isNetworkAccessAllowed = true
+      manager.requestImageDataAndOrientation(for: asset, options: options) { (data, _, _, _) in
+        if data != nil {
+          completion(.success(data!))
+        } else {
+          completion(
+            .failure(
+              PigeonError(
+                code: "XFileNullDataError",
+                message: "Failed to read bytes from asset with identifier: \(localIdentifier)",
+                details: nil)))
+        }
       }
+    } else {
+      completion(
+        .failure(
+          PigeonError(
+            code: "XFileMissingAssetError",
+            message: "Failed to find asset with identifier: \(localIdentifier)",
+            details: nil)))
+    }
   }
 }
 

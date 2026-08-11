@@ -15,9 +15,9 @@ import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-    List<Object?>? replyList,
-    String channelName, {
-    required bool isNullValid,
+  List<Object?>? replyList,
+  String channelName, {
+  required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -39,7 +39,6 @@ Object? _extractReplyValueOrThrow(
   return replyList.firstOrNull;
 }
 
-
 List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
@@ -49,6 +48,7 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
   }
   return <Object?>[error.code, error.message, error.details];
 }
+
 /// Provides overrides for the constructors and static members of each
 /// Dart proxy class.
 ///
@@ -63,15 +63,11 @@ class PigeonOverrides {
 
   /// Overrides [AssetResourceReaderDelegate.new].
   static AssetResourceReaderDelegate Function({
-    required void Function(
-      AssetResourceReaderDelegate pigeon_instance,
-      Uint8List bytes,
-    ) onDataReceived,
-    required void Function(
-      AssetResourceReaderDelegate pigeon_instance,
-      String? error,
-    ) onCompletion,
-  })? assetResourceReaderDelegate_new;
+    required void Function(AssetResourceReaderDelegate pigeon_instance, Uint8List bytes)
+    onDataReceived,
+    required void Function(AssetResourceReaderDelegate pigeon_instance, String? error) onCompletion,
+  })?
+  assetResourceReaderDelegate_new;
 
   /// Sets all overridden ProxyApi class members to null.
   static void pigeon_reset() {
@@ -91,8 +87,7 @@ abstract class PigeonInternalProxyApiBaseClass {
   PigeonInternalProxyApiBaseClass({
     this.pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  }) : pigeon_instanceManager =
-            pigeon_instanceManager ?? PigeonInstanceManager.instance;
+  }) : pigeon_instanceManager = pigeon_instanceManager ?? PigeonInstanceManager.instance;
 
   /// Sends and receives binary data across the Flutter platform barrier.
   ///
@@ -164,7 +159,8 @@ class PigeonInstanceManager {
   final Expando<int> _identifiers = Expando<int>();
   final Map<int, WeakReference<PigeonInternalProxyApiBaseClass>> _weakInstances =
       <int, WeakReference<PigeonInternalProxyApiBaseClass>>{};
-  final Map<int, PigeonInternalProxyApiBaseClass> _strongInstances = <int, PigeonInternalProxyApiBaseClass>{};
+  final Map<int, PigeonInternalProxyApiBaseClass> _strongInstances =
+      <int, PigeonInternalProxyApiBaseClass>{};
   late final Finalizer<int> _finalizer;
   int _nextIdentifier = 0;
 
@@ -187,7 +183,9 @@ class PigeonInstanceManager {
     );
     _PigeonInternalInstanceManagerApi.setUpMessageHandlers(instanceManager: instanceManager);
     AssetResourceReader.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    AssetResourceReaderDelegate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AssetResourceReaderDelegate.pigeon_setUpMessageHandlers(
+      pigeon_instanceManager: instanceManager,
+    );
     return instanceManager;
   }
 
@@ -204,8 +202,7 @@ class PigeonInstanceManager {
 
     final int identifier = _nextUniqueIdentifier();
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] =
-        WeakReference<PigeonInternalProxyApiBaseClass>(instance);
+    _weakInstances[identifier] = WeakReference<PigeonInternalProxyApiBaseClass>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
 
     final PigeonInternalProxyApiBaseClass copy = instance.pigeon_copy();
@@ -307,8 +304,7 @@ class PigeonInstanceManager {
 
   /// Whether this manager contains the given [identifier].
   bool containsIdentifier(int identifier) {
-    return _weakInstances.containsKey(identifier) ||
-        _strongInstances.containsKey(identifier);
+    return _weakInstances.containsKey(identifier) || _strongInstances.containsKey(identifier);
   }
 
   int _nextUniqueIdentifier() {
@@ -325,7 +321,7 @@ class PigeonInstanceManager {
 class _PigeonInternalInstanceManagerApi {
   /// Constructor for [_PigeonInternalInstanceManagerApi].
   _PigeonInternalInstanceManagerApi({BinaryMessenger? binaryMessenger})
-      : pigeonVar_binaryMessenger = binaryMessenger;
+    : pigeonVar_binaryMessenger = binaryMessenger;
 
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
@@ -338,9 +334,10 @@ class _PigeonInternalInstanceManagerApi {
   }) {
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.removeStrongReference',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.removeStrongReference',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -348,14 +345,14 @@ class _PigeonInternalInstanceManagerApi {
           final List<Object?> args = message! as List<Object?>;
           final int arg_identifier = args[0]! as int;
           try {
-            (instanceManager ?? PigeonInstanceManager.instance)
-                .remove(arg_identifier);
+            (instanceManager ?? PigeonInstanceManager.instance).remove(arg_identifier);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -370,15 +367,10 @@ class _PigeonInternalInstanceManagerApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[identifier]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[identifier]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Clear the native `PigeonInstanceManager`.
@@ -395,39 +387,33 @@ class _PigeonInternalInstanceManagerApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 }
 
 class _PigeonInternalProxyApiBaseCodec extends _PigeonCodec {
- const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
- final PigeonInstanceManager instanceManager;
- @override
- void writeValue(WriteBuffer buffer, Object? value) {
-   if (value is PigeonInternalProxyApiBaseClass) {
-     buffer.putUint8(128);
-     writeValue(buffer, instanceManager.getIdentifier(value));
-   } else {
-     super.writeValue(buffer, value);
-   }
- }
- @override
- Object? readValueOfType(int type, ReadBuffer buffer) {
-   switch (type) {
-     case 128:
-       return instanceManager
-           .getInstanceWithWeakReference(readValue(buffer)! as int);
-     default:
-       return super.readValueOfType(type, buffer);
-   }
- }
+  const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
+  final PigeonInstanceManager instanceManager;
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is PigeonInternalProxyApiBaseClass) {
+      buffer.putUint8(128);
+      writeValue(buffer, instanceManager.getIdentifier(value));
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return instanceManager.getInstanceWithWeakReference(readValue(buffer)! as int);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
 }
-
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -449,6 +435,7 @@ class _PigeonCodec extends StandardMessageCodec {
     }
   }
 }
+
 /// Class for handling an instance of asynchronously reading bytes from
 /// a [PHAssetResourceManager](https://developer.apple.com/documentation/photos/phassetresourcemanager).
 class AssetResourceReader extends PigeonInternalProxyApiBaseClass {
@@ -468,14 +455,9 @@ class AssetResourceReader extends PigeonInternalProxyApiBaseClass {
 
   /// Constructs a [AssetResourceReader].
   @protected
-  AssetResourceReader.pigeon_new({
-    super.pigeon_binaryMessenger,
-    super.pigeon_instanceManager,
-  }) {
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(this);
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecAssetResourceReader;
+  AssetResourceReader.pigeon_new({super.pigeon_binaryMessenger, super.pigeon_instanceManager}) {
+    final int pigeonVar_instanceIdentifier = pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAssetResourceReader;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.cross_file_darwin.AssetResourceReader.pigeon_defaultConstructor';
@@ -484,16 +466,13 @@ class AssetResourceReader extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      pigeonVar_instanceIdentifier,
+    ]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -502,13 +481,9 @@ class AssetResourceReader extends PigeonInternalProxyApiBaseClass {
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  AssetResourceReader.pigeon_detached({
-    super.pigeon_binaryMessenger,
-    super.pigeon_instanceManager,
-  });
+  AssetResourceReader.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager});
 
-  late final _PigeonInternalProxyApiBaseCodec
-      _pigeonVar_codecAssetResourceReader =
+  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecAssetResourceReader =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
   static void pigeon_setUpMessageHandlers({
@@ -517,15 +492,16 @@ class AssetResourceReader extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     AssetResourceReader Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
+      pigeon_instanceManager ?? PigeonInstanceManager.instance,
+    );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.cross_file_darwin.AssetResourceReader.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.cross_file_darwin.AssetResourceReader.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -533,8 +509,7 @@ class AssetResourceReader extends PigeonInternalProxyApiBaseClass {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
-                .addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   AssetResourceReader.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -547,7 +522,8 @@ class AssetResourceReader extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -563,12 +539,8 @@ class AssetResourceReader extends PigeonInternalProxyApiBaseClass {
   /// `onCompletion` is called.
   ///
   /// See [PHAssetResourceManager.requestDataForAssetResource](https://developer.apple.com/documentation/photos/phassetresourcemanager/requestdata(for:options:datareceivedhandler:completionhandler:)?language=objc).
-  Future<bool> openRead(
-    String localIdentifier,
-    AssetResourceReaderDelegate delegate,
-  ) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecAssetResourceReader;
+  Future<bool> openRead(String localIdentifier, AssetResourceReaderDelegate delegate) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAssetResourceReader;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.cross_file_darwin.AssetResourceReader.openRead';
@@ -577,8 +549,11 @@ class AssetResourceReader extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, localIdentifier, delegate]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      this,
+      localIdentifier,
+      delegate,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -593,8 +568,7 @@ class AssetResourceReader extends PigeonInternalProxyApiBaseClass {
   ///
   /// See [AssetResourceReader.requestImageDataAndOrientationForAsset](https://developer.apple.com/documentation/photos/phimagemanager/requestimagedataandorientation(for:options:resulthandler:)?changes=_6_4_2).
   Future<Uint8List> readBytes(String localIdentifier) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecAssetResourceReader;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAssetResourceReader;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.cross_file_darwin.AssetResourceReader.readBytes';
@@ -603,8 +577,10 @@ class AssetResourceReader extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, localIdentifier]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      this,
+      localIdentifier,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -630,14 +606,9 @@ class AssetResourceReaderDelegate extends PigeonInternalProxyApiBaseClass {
   factory AssetResourceReaderDelegate({
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    required void Function(
-      AssetResourceReaderDelegate pigeon_instance,
-      Uint8List bytes,
-    ) onDataReceived,
-    required void Function(
-      AssetResourceReaderDelegate pigeon_instance,
-      String? error,
-    ) onCompletion,
+    required void Function(AssetResourceReaderDelegate pigeon_instance, Uint8List bytes)
+    onDataReceived,
+    required void Function(AssetResourceReaderDelegate pigeon_instance, String? error) onCompletion,
   }) {
     if (PigeonOverrides.assetResourceReaderDelegate_new != null) {
       return PigeonOverrides.assetResourceReaderDelegate_new!(
@@ -661,8 +632,7 @@ class AssetResourceReaderDelegate extends PigeonInternalProxyApiBaseClass {
     required this.onDataReceived,
     required this.onCompletion,
   }) {
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(this);
+    final int pigeonVar_instanceIdentifier = pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecAssetResourceReaderDelegate;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -673,16 +643,13 @@ class AssetResourceReaderDelegate extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      pigeonVar_instanceIdentifier,
+    ]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-      );
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
     }();
   }
 
@@ -698,8 +665,7 @@ class AssetResourceReaderDelegate extends PigeonInternalProxyApiBaseClass {
     required this.onCompletion,
   });
 
-  late final _PigeonInternalProxyApiBaseCodec
-      _pigeonVar_codecAssetResourceReaderDelegate =
+  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecAssetResourceReaderDelegate =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
   /// Provides the requested data.
@@ -726,10 +692,7 @@ class AssetResourceReaderDelegate extends PigeonInternalProxyApiBaseClass {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(
-    AssetResourceReaderDelegate pigeon_instance,
-    Uint8List bytes,
-  ) onDataReceived;
+  final void Function(AssetResourceReaderDelegate pigeon_instance, Uint8List bytes) onDataReceived;
 
   /// Indicates the request for data has completed.
   ///
@@ -755,33 +718,25 @@ class AssetResourceReaderDelegate extends PigeonInternalProxyApiBaseClass {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(
-    AssetResourceReaderDelegate pigeon_instance,
-    String? error,
-  ) onCompletion;
+  final void Function(AssetResourceReaderDelegate pigeon_instance, String? error) onCompletion;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    void Function(
-      AssetResourceReaderDelegate pigeon_instance,
-      Uint8List bytes,
-    )? onDataReceived,
-    void Function(
-      AssetResourceReaderDelegate pigeon_instance,
-      String? error,
-    )? onCompletion,
+    void Function(AssetResourceReaderDelegate pigeon_instance, Uint8List bytes)? onDataReceived,
+    void Function(AssetResourceReaderDelegate pigeon_instance, String? error)? onCompletion,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
+      pigeon_instanceManager ?? PigeonInstanceManager.instance,
+    );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.cross_file_darwin.AssetResourceReaderDelegate.onDataReceived',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.cross_file_darwin.AssetResourceReaderDelegate.onDataReceived',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -791,14 +746,17 @@ class AssetResourceReaderDelegate extends PigeonInternalProxyApiBaseClass {
               args[0]! as AssetResourceReaderDelegate;
           final Uint8List arg_bytes = args[1]! as Uint8List;
           try {
-            (onDataReceived ?? arg_pigeon_instance.onDataReceived)
-                .call(arg_pigeon_instance, arg_bytes);
+            (onDataReceived ?? arg_pigeon_instance.onDataReceived).call(
+              arg_pigeon_instance,
+              arg_bytes,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -806,9 +764,10 @@ class AssetResourceReaderDelegate extends PigeonInternalProxyApiBaseClass {
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.cross_file_darwin.AssetResourceReaderDelegate.onCompletion',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.cross_file_darwin.AssetResourceReaderDelegate.onCompletion',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -818,14 +777,14 @@ class AssetResourceReaderDelegate extends PigeonInternalProxyApiBaseClass {
               args[0]! as AssetResourceReaderDelegate;
           final String? arg_error = args[1] as String?;
           try {
-            (onCompletion ?? arg_pigeon_instance.onCompletion)
-                .call(arg_pigeon_instance, arg_error);
+            (onCompletion ?? arg_pigeon_instance.onCompletion).call(arg_pigeon_instance, arg_error);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -842,4 +801,3 @@ class AssetResourceReaderDelegate extends PigeonInternalProxyApiBaseClass {
     );
   }
 }
-
