@@ -27,5 +27,13 @@ public class DummyEvalFeature {
 ''');
 
   Process.runSync('git', ['add', javaFile.path]);
-  Process.runSync('git', ['-c', 'user.name=Author', '-c', 'user.email=author@example.com', 'commit', '-m', 'Add DummyEvalFeature.java without tests']);
+  Process.runSync('git', [
+    '-c',
+    'user.name=Author',
+    '-c',
+    'user.email=author@example.com',
+    'commit',
+    '-m',
+    'Add DummyEvalFeature.java without tests',
+  ]);
 }

@@ -59,5 +59,13 @@ void main() {
 ''');
 
   Process.runSync('git', ['add', javaFile.path, dartFile.path, dartTestFile.path]);
-  Process.runSync('git', ['-c', 'user.name=Author', '-c', 'user.email=author@example.com', 'commit', '-m', 'Add DummyEvalFeature with Dart test but missing Java test']);
+  Process.runSync('git', [
+    '-c',
+    'user.name=Author',
+    '-c',
+    'user.email=author@example.com',
+    'commit',
+    '-m',
+    'Add DummyEvalFeature with Dart test but missing Java test',
+  ]);
 }

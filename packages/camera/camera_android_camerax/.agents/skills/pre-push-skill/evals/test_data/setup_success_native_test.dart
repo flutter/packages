@@ -26,7 +26,9 @@ public class DummyEvalFeature {
 }
 ''');
 
-  final javaTestFile = File('android/src/test/java/io/flutter/plugins/camerax/DummyEvalFeatureTest.java');
+  final javaTestFile = File(
+    'android/src/test/java/io/flutter/plugins/camerax/DummyEvalFeatureTest.java',
+  );
   javaTestFile.createSync(recursive: true);
   javaTestFile.writeAsStringSync('''
 // Copyright 2013 The Flutter Authors
@@ -49,5 +51,13 @@ public class DummyEvalFeatureTest {
 ''');
 
   Process.runSync('git', ['add', javaFile.path, javaTestFile.path]);
-  Process.runSync('git', ['-c', 'user.name=Author', '-c', 'user.email=author@example.com', 'commit', '-m', 'Add DummyEvalFeature.java and tests']);
+  Process.runSync('git', [
+    '-c',
+    'user.name=Author',
+    '-c',
+    'user.email=author@example.com',
+    'commit',
+    '-m',
+    'Add DummyEvalFeature.java and tests',
+  ]);
 }
