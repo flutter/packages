@@ -77,13 +77,13 @@ class ReadinessChecker {
   }
 
   String? _findRepoRoot(String startPath) {
-    var dir = _fileSystem.directory(startPath);
+    Directory dir = _fileSystem.directory(startPath);
     while (true) {
-      final gitPath = _fileSystem.path.join(dir.path, '.git');
+      final String gitPath = _fileSystem.path.join(dir.path, '.git');
       if (_fileSystem.typeSync(gitPath) != FileSystemEntityType.notFound) {
         return dir.path;
       }
-      final parent = dir.parent;
+      final Directory parent = dir.parent;
       if (parent.path == dir.path) {
         break;
       }
