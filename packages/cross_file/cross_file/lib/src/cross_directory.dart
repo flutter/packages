@@ -23,7 +23,7 @@ abstract base class XDirectory extends XEntity {
 
   /// Instantiates a [FileSystemXDirectory] as a reference to a directory
   /// (or folder) on the file system.
-  factory XDirectory.fileSystem(String path) {
+  factory XDirectory.fileSystem({required String path}) {
     return FileSystemXDirectory(path);
   }
 
@@ -41,7 +41,7 @@ abstract base class XDirectory extends XEntity {
   /// Lists the sub-directories and files of this directory.
   Stream<XEntity> list() {
     // Converts PlatformXEntities to XEntities.
-    return platform.list(ListParams()).map<XEntity>((PlatformXEntity entity) {
+    return platform.list(const PlatformListParams()).map<XEntity>((PlatformXEntity entity) {
       switch (entity) {
         case PlatformScopedStorageXFile():
           return ScopedStorageXFile.fromPlatform(entity);

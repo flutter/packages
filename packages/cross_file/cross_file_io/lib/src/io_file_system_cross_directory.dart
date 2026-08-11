@@ -52,7 +52,7 @@ base class IOFileSystemXDirectory extends PlatformFileSystemXDirectory
   Future<bool> exists() async => directory.existsSync();
 
   @override
-  Stream<PlatformXEntity> list(ListParams params) async* {
+  Stream<PlatformXEntity> list(PlatformListParams params) async* {
     await for (final FileSystemEntity entity in directory.list()) {
       switch (entity) {
         case final Directory directory:

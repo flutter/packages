@@ -79,6 +79,12 @@ base class IOFileSystemXFile extends PlatformFileSystemXFile with IOFileSystemXF
 
   @override
   Future<String?> name() async => path.basename(file.path);
+
+  @override
+  Future<PlatformFileSystemXFile> writeAsBytes(PlatformWriteAsBytesParams params) async {
+    final File ioFile = await file.writeAsBytes(params.bytes);
+    return IOFileSystemXFile(IOFileSystemXFileCreationParams.fromFile(ioFile));
+  }
 }
 
 /// Provides platform-specific features for [IOFileSystemXFile].

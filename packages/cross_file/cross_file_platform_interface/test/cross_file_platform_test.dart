@@ -51,7 +51,7 @@ void main() {
         );
 
         // Ensures the error is caught and added to the stream.
-        await expectLater(dir.list(ListParams()).drain, throwsUnsupportedError);
+        await expectLater(dir.list(const PlatformListParams()).drain, throwsUnsupportedError);
       });
     });
 
@@ -107,7 +107,7 @@ void main() {
               );
 
           // Ensures the error is caught and added to the stream.
-          await expectLater(dir.list(ListParams()).drain, throwsUnsupportedError);
+          await expectLater(dir.list(const PlatformListParams()).drain, throwsUnsupportedError);
         },
       );
     });

@@ -81,6 +81,11 @@ final class _DefaultFileSystemXFile extends PlatformFileSystemXFile {
   Future<String> readAsString({Encoding encoding = utf8}) {
     throw UnsupportedError('This instance does not represent any resource.');
   }
+
+  @override
+  Future<PlatformFileSystemXFile> writeAsBytes(PlatformWriteAsBytesParams params) {
+    throw UnsupportedError('This instance does not represent any resource.');
+  }
 }
 
 /// Implementation of [PlatformFileSystemXDirectory} that represents a directory
@@ -92,7 +97,7 @@ final class _DefaultFileSystemXDirectory extends PlatformFileSystemXDirectory {
   Future<bool> exists() async => false;
 
   @override
-  Stream<PlatformXEntity> list(ListParams params) async* {
+  Stream<PlatformXEntity> list(PlatformListParams params) async* {
     throw UnsupportedError('This instance does not represent any directory.');
   }
 }
@@ -148,7 +153,7 @@ final class _DefaultScopedStorageXDirectory extends PlatformScopedStorageXDirect
   Future<bool> canRead() async => false;
 
   @override
-  Stream<PlatformXEntity> list(ListParams params) async* {
+  Stream<PlatformXEntity> list(PlatformListParams params) async* {
     throw UnsupportedError('This instance does not represent any directory.');
   }
 

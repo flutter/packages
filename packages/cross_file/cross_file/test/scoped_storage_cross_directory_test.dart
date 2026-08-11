@@ -35,7 +35,7 @@ void main() {
         onCreatePlatformScopedStorageXDirectory:
             (PlatformScopedStorageXDirectoryCreationParams params) => TestScopedStorageXDirectory(
               params,
-              onList: (ListParams params) => Stream.fromIterable(entities),
+              onList: (PlatformListParams params) => Stream.fromIterable(entities),
             ),
       );
 

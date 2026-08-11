@@ -13,27 +13,30 @@ void main() {
     test('exists', () async {
       const exists = true;
       CrossFilePlatform.instance = TestCrossFilePlatform(
-        onCreatePlatformXDirectory: (PlatformXDirectoryCreationParams params) =>
-            TestXDirectory(params, onExists: () async => exists),
+        onCreatePlatformFileSystemXDirectory: (PlatformFileSystemXDirectoryCreationParams params) =>
+            TestFileSystemXDirectory(params, onExists: () async => exists),
       );
 
-      final directory = XDirectory(uri: 'uri');
+      final directory = XDirectory.fileSystem(path: 'my/dir/');
 
       expect(await directory.exists(), exists);
     });
 
     test('list', () async {
       final entities = <PlatformXEntity>[
-        TestXFile(const PlatformXFileCreationParams(uri: 'uri1')),
-        TestXDirectory(const PlatformXDirectoryCreationParams(uri: 'uri2')),
+        TestFileSystemXFile(PlatformFileSystemXFileCreationParams('to/myFile.txt')),
+        TestFileSystemXDirectory(PlatformFileSystemXDirectoryCreationParams('files/')),
         TestXEntity(const PlatformXFileCreationParams(uri: 'uri3')),
       ];
       CrossFilePlatform.instance = TestCrossFilePlatform(
-        onCreatePlatformXDirectory: (PlatformXDirectoryCreationParams params) =>
-            TestXDirectory(params, onList: (ListParams params) => Stream.fromIterable(entities)),
+        onCreatePlatformFileSystemXDirectory: (PlatformFileSystemXDirectoryCreationParams params) =>
+            TestFileSystemXDirectory(
+              params,
+              onList: (PlatformListParams params) => Stream.fromIterable(entities),
+            ),
       );
 
-      final directory = XDirectory(uri: 'uri');
+      final directory = XDirectory.fileSystem(path: 'my/dir/');
 
       final List<XEntity> directoryEntities = await directory.list().toList();
       expect(directoryEntities.length, entities.length);

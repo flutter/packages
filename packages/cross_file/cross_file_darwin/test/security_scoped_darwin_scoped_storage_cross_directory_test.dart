@@ -30,7 +30,7 @@ void main() {
     );
 
     expect(
-      (await directory.list(ListParams()).toList()).map(
+      (await directory.list(const PlatformListParams()).toList()).map(
         (PlatformXEntity entity) => entity.params.uri,
       ),
       (await testDirectory.list().toList()).map((FileSystemEntity entity) => entity.uri.toString()),

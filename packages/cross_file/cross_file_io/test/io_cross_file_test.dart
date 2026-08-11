@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cross_file_io/cross_file_io.dart';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
@@ -57,6 +58,17 @@ void main() {
       final file = PlatformFileSystemXFile(PlatformFileSystemXFileCreationParams(testFile.path));
 
       expect(await file.name(), 'test_file.txt');
+    });
+
+    test('writeAsBytes', () async {
+      final Directory tempDir = Directory.systemTemp;
+      final tempFile = File(path.join(tempDir.path, 'test_file.txt'));
+
+      final bytes = Uint8List.fromList([0, 1, 2, 3]);
+      final file = PlatformFileSystemXFile(PlatformFileSystemXFileCreationParams(tempFile.path));
+      await file.writeAsBytes(PlatformWriteAsBytesParams(bytes));
+
+      expect(await file.readAsBytes(), bytes);
     });
   });
 }

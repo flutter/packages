@@ -95,4 +95,20 @@ abstract base class PlatformFileSystemXFile extends PlatformXFile {
   @override
   PlatformFileSystemXFileCreationParams get params =>
       super.params as PlatformFileSystemXFileCreationParams;
+
+  /// Writes a list of bytes to a file.
+  ///
+  /// Platforms may throw an exception if there is an error opening or writing
+  /// to the file.
+  Future<PlatformFileSystemXFile> writeAsBytes(PlatformWriteAsBytesParams params);
+}
+
+/// Base class for parameters passed to [PlatformFileSystemXFile.writeAsBytes].
+@immutable
+base class PlatformWriteAsBytesParams {
+  /// Constructs a [PlatformWriteAsBytesParams].
+  const PlatformWriteAsBytesParams(this.bytes);
+
+  /// List of bytes to write to the file.
+  final Uint8List bytes;
 }

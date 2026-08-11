@@ -82,9 +82,12 @@ abstract base class PlatformXDirectory extends PlatformXEntity {
   ///
   /// Platforms may throw an exception if there is an error listing entities in
   /// the directory
-  Stream<PlatformXEntity> list(ListParams params);
+  Stream<PlatformXEntity> list(PlatformListParams params);
 }
 
 /// Base class for parameters passed to [PlatformXDirectory.list].
 @immutable
-base class ListParams {}
+base class PlatformListParams {
+  /// Constructs a [PlatformListParams];
+  const PlatformListParams();
+}

@@ -81,7 +81,7 @@ void main() {
     );
 
     final List<String> entityUris = await dir
-        .list(ListParams())
+        .list(const PlatformListParams())
         .map((PlatformXEntity entity) => entity.params.uri)
         .toList();
 

@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:typed_data';
+
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform, immutable, internal;
@@ -77,4 +79,15 @@ base class FileSystemXFile extends XFile {
   @internal
   @override
   PlatformFileSystemXFile get platform => super.platform as PlatformFileSystemXFile;
+
+  /// Writes a list of bytes to a file.
+  ///
+  /// Platforms may throw an exception if there is an error opening or writing
+  /// to the file.
+  Future<XFile> writeAsBytes(Uint8List bytes) async {
+    final PlatformFileSystemXFile platformFile = await platform.writeAsBytes(
+      PlatformWriteAsBytesParams(bytes),
+    );
+    return FileSystemXFile.fromPlatform(platformFile);
+  }
 }

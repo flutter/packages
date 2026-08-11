@@ -9,15 +9,17 @@ import 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 
 final class TestCrossFilePlatform extends CrossFilePlatform {
   TestCrossFilePlatform({
-    this.onCreatePlatformXFile,
-    this.onCreatePlatformXDirectory,
+    this.onCreatePlatformFileSystemXFile,
+    this.onCreatePlatformFileSystemXDirectory,
     this.onCreatePlatformScopedStorageXFile,
     this.onCreatePlatformScopedStorageXDirectory,
   });
 
-  PlatformXFile Function(PlatformXFileCreationParams params)? onCreatePlatformXFile;
+  PlatformFileSystemXFile Function(PlatformFileSystemXFileCreationParams params)?
+  onCreatePlatformFileSystemXFile;
 
-  PlatformXDirectory Function(PlatformXDirectoryCreationParams params)? onCreatePlatformXDirectory;
+  PlatformFileSystemXDirectory Function(PlatformFileSystemXDirectoryCreationParams params)?
+  onCreatePlatformFileSystemXDirectory;
 
   PlatformScopedStorageXFile Function(PlatformScopedStorageXFileCreationParams params)?
   onCreatePlatformScopedStorageXFile;
@@ -26,13 +28,17 @@ final class TestCrossFilePlatform extends CrossFilePlatform {
   onCreatePlatformScopedStorageXDirectory;
 
   @override
-  PlatformXFile createPlatformXFile(PlatformXFileCreationParams params) {
-    return onCreatePlatformXFile?.call(params) ?? TestXFile(params);
+  PlatformFileSystemXFile createPlatformFileSystemXFile(
+    PlatformFileSystemXFileCreationParams params,
+  ) {
+    return onCreatePlatformFileSystemXFile?.call(params) ?? TestFileSystemXFile(params);
   }
 
   @override
-  PlatformXDirectory createPlatformXDirectory(PlatformXDirectoryCreationParams params) {
-    return onCreatePlatformXDirectory?.call(params) ?? TestXDirectory(params);
+  PlatformFileSystemXDirectory createPlatformFileSystemXDirectory(
+    PlatformFileSystemXDirectoryCreationParams params,
+  ) {
+    return onCreatePlatformFileSystemXDirectory?.call(params) ?? TestFileSystemXDirectory(params);
   }
 
   @override
@@ -51,8 +57,8 @@ final class TestCrossFilePlatform extends CrossFilePlatform {
   }
 }
 
-final class TestXFile extends PlatformXFile {
-  TestXFile(
+final class TestFileSystemXFile extends PlatformFileSystemXFile {
+  TestFileSystemXFile(
     super.params, {
     this.onExists,
     this.onLastModified,
@@ -61,6 +67,7 @@ final class TestXFile extends PlatformXFile {
     this.onOpenRead,
     this.onReadAsBytes,
     this.onReadAsString,
+    this.onWriteAsBytes,
   }) : super.implementation();
 
   Future<bool> Function()? onExists;
@@ -70,6 +77,7 @@ final class TestXFile extends PlatformXFile {
   Stream<Uint8List> Function()? onOpenRead;
   Future<Uint8List> Function()? onReadAsBytes;
   Future<String> Function({required Encoding encoding})? onReadAsString;
+  Future<TestFileSystemXFile> Function(Uint8List bytes)? onWriteAsBytes;
 
   @override
   Future<bool> exists() async {
@@ -107,13 +115,22 @@ final class TestXFile extends PlatformXFile {
   Future<String> readAsString({Encoding encoding = utf8}) async {
     return await onReadAsString?.call(encoding: encoding) ?? '';
   }
+
+  @override
+  Future<PlatformFileSystemXFile> writeAsBytes(PlatformWriteAsBytesParams params) async {
+    if (onWriteAsBytes != null) {
+      return onWriteAsBytes!.call(params.bytes);
+    }
+
+    throw UnimplementedError();
+  }
 }
 
-final class TestXDirectory extends PlatformXDirectory {
-  TestXDirectory(super.params, {this.onExists, this.onList}) : super.implementation();
+final class TestFileSystemXDirectory extends PlatformFileSystemXDirectory {
+  TestFileSystemXDirectory(super.params, {this.onExists, this.onList}) : super.implementation();
 
   Future<bool> Function()? onExists;
-  Stream<PlatformXEntity> Function(ListParams params)? onList;
+  Stream<PlatformXEntity> Function(PlatformListParams params)? onList;
 
   @override
   Future<bool> exists() async {
@@ -121,7 +138,7 @@ final class TestXDirectory extends PlatformXDirectory {
   }
 
   @override
-  Stream<PlatformXEntity> list(ListParams params) async* {
+  Stream<PlatformXEntity> list(PlatformListParams params) async* {
     if (onList != null) {
       yield* onList!.call(params);
     }
@@ -210,7 +227,7 @@ final class TestScopedStorageXDirectory extends PlatformScopedStorageXDirectory 
   }) : super.implementation();
 
   Future<bool> Function()? onExists;
-  Stream<PlatformXEntity> Function(ListParams params)? onList;
+  Stream<PlatformXEntity> Function(PlatformListParams params)? onList;
   Future<bool> Function()? onCanRead;
   Future<void> Function()? onDispose;
 
@@ -225,7 +242,7 @@ final class TestScopedStorageXDirectory extends PlatformScopedStorageXDirectory 
   }
 
   @override
-  Stream<PlatformXEntity> list(ListParams params) async* {
+  Stream<PlatformXEntity> list(PlatformListParams params) async* {
     if (onList != null) {
       yield* onList!.call(params);
     }
