@@ -45,12 +45,39 @@ class ReadinessChecker {
       if (!await _checkDependencies(workspaceRoot)) {
         isReady = false;
       }
+      if (!await _activateFlutterPluginTools(workspaceRoot)) {
+        isReady = false;
+      }
     }
 
     if (isReady) {
       _log('Environment is fully ready!');
     }
     return isReady;
+  }
+
+  Future<bool> _activateFlutterPluginTools(String workspaceRoot) async {
+    _log('5. Activating flutter_plugin_tools...');
+    final ProcessResult gitRootResult = await _processManager.run(
+      ['git', 'rev-parse', '--show-toplevel'],
+      workingDirectory: workspaceRoot,
+    );
+    if (gitRootResult.exitCode != 0) {
+      _log('Error: Failed to find git repository root.');
+      return false;
+    }
+    final String repoRoot = (gitRootResult.stdout as String).trim();
+    final ProcessResult activateResult = await _processManager.run(
+      ['dart', 'pub', 'global', 'activate', '--source', 'path', '$repoRoot/script/tool'],
+      workingDirectory: workspaceRoot,
+    );
+    if (activateResult.exitCode != 0) {
+      _log('Error: Failed to globally activate flutter_plugin_tools.');
+      _log(activateResult.stderr);
+      return false;
+    }
+    _log('flutter_plugin_tools activated successfully.');
+    return true;
   }
 
   Future<bool> _checkSymlinks(String workspaceRoot) async {

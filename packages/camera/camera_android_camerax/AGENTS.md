@@ -12,7 +12,7 @@
 - **Verify Tests**: All tests must pass before landing. Add or update tests for
   any new logic.
   - **Dart Unit Tests**: See [dart-add-unit-test](.agents/skills/dart-add-unit-test/SKILL.md).
-  - **Native Unit Tests**: Run `cd "$(git rev-parse --show-toplevel)" && dart run script/tool/bin/flutter_plugin_tools.dart native-test --android --packages camera_android_camerax --no-integration`.
+  - **Native Unit Tests**: Run `dart pub global run flutter_plugin_tools native-test --android --packages camera_android_camerax --no-integration`.
   - **Integration Tests**: See [flutter-add-integration-test](.agents/skills/flutter-add-integration-test/SKILL.md).
 - **Run Pre-Push Checks**: Run [pre-push-skill](.agents/skills/pre-push-skill/SKILL.md)
   before pushing to prevent CI failures and code review blocks.
