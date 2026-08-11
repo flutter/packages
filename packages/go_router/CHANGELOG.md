@@ -1,3 +1,8 @@
+## 17.5.0
+
+- Adds route `metadata` support, including inheritance and override behavior with exposure on `GoRouterState`.
+- Documents support for regular expression constraints in GoRoute path parameters.
+
 ## 17.4.0
 
 - Fixes onExit ignored for GoRoute nested inside ShellRoute
