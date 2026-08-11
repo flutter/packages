@@ -2408,11 +2408,11 @@ List<Error> _validateDependencies({
   final errors = <Error>[];
 
   String? pubspecPath;
-  if (appDirectory != null && appDirectory.isNotEmpty) {
-    pubspecPath = findPubspecPath(Directory(appDirectory));
-  }
-  if (pubspecPath == null && dartOutPath != null && dartOutPath.isNotEmpty) {
+  if (dartOutPath != null && dartOutPath.isNotEmpty) {
     pubspecPath = findPubspecPath(File(dartOutPath).parent);
+  }
+  if (pubspecPath == null && appDirectory != null && appDirectory.isNotEmpty) {
+    pubspecPath = findPubspecPath(Directory(appDirectory));
   }
   if (pubspecPath == null &&
       (appDirectory == null || appDirectory.isEmpty) &&
