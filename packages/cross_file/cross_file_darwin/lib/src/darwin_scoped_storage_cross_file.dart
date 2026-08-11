@@ -272,6 +272,12 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
           runOnPlatformThread(() {
             bytesCompleter.complete(bytes);
           });
+        } else {
+          runOnPlatformThread(() {
+            bytesCompleter.completeError(
+              Exception('Failed to read byes from asset with identifier: ${params.uri}'),
+            );
+          });
         }
       }
 
@@ -286,7 +292,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
       return bytesCompleter.future;
     }
 
-    throw Error();
+    throw Exception('Failed to read byes from asset with identifier: ${params.uri}');
   }
 
   @override
