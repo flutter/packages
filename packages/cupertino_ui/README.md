@@ -128,5 +128,5 @@ for a list of new features and breaking changes.
 * [Apple Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/)
 * [Flutter Cupertino Widget Catalog](https://docs.flutter.dev/ui/widgets/cupertino)
 * [API Reference](https://pub.dev/documentation/cupertino_ui/latest/)
-* [Issue Tracker](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A%20cupertino%22)
+* [Issue Tracker](https://github.com/flutter/flutter/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22p%3A%20cupertino_ui%22)
 * [Decoupling GitHub Project](https://github.com/orgs/flutter/projects/220)

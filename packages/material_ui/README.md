@@ -121,5 +121,5 @@ for a list of new features and breaking changes.
 * [Material Design 3 Specification](https://m3.material.io/)
 * [Flutter Material Widget Catalog](https://docs.flutter.dev/ui/widgets/material)
 * [API Reference](https://pub.dev/documentation/material_ui/latest/)
-* [Issue Tracker](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A%20material%20design%22)
+* [Issue Tracker](https://github.com/flutter/flutter/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22p%3A%20material_ui%22)
 * [Decoupling GitHub Project](https://github.com/orgs/flutter/projects/220)
