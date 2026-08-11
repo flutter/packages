@@ -12,12 +12,16 @@ See also the
 [`material_ui`](https://github.com/flutter/packages/tree/main/packages/material_ui)
 package, which is Flutter's official Material Design library.
 
+## New to the package?
+
+The standalone `cupertino_ui` package was previously built directly into the
+core Flutter framework as `package:flutter/cupertino.dart`. It has been
+decoupled from the [flutter/flutter](https://github.com/flutter/flutter)
+repository into its new home here in `flutter/packages`.
+
 ## Migrating existing code to this package
 
-`cupertino_ui` was previously built directly into the core Flutter framework as
-`package:flutter/cupertino.dart`. It has been decoupled from the
-[flutter/flutter](https://github.com/flutter/flutter) repository into its new
-home here in `flutter/packages`. Follow the steps below to migrate:
+Follow the steps below to migrate:
 
 ### Step 1: Migrate imports
 
@@ -92,8 +96,8 @@ for information about using Flutter and `cupertino_ui`.
 
 ## Features
 
-`cupertino_ui` contains everything you need to create a fully-featured iOS app,
-such as:
+The `cupertino_ui` package contains everything you need to create a
+fully-featured iOS app, such as:
 
 * **App Structure & Navigation**: `CupertinoApp`, `CupertinoPageScaffold`,
 `CupertinoTabScaffold`, `CupertinoTabView`, `CupertinoNavigationBar`,
@@ -127,4 +131,3 @@ for a list of new features and breaking changes.
 * [Flutter Cupertino Widget Catalog](https://docs.flutter.dev/ui/widgets/cupertino)
 * [API Reference](https://pub.dev/documentation/cupertino_ui/latest/)
 * [Issue Tracker](https://github.com/flutter/flutter/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22p%3A%20cupertino_ui%22)
-* [Decoupling GitHub Project](https://github.com/orgs/flutter/projects/220)
