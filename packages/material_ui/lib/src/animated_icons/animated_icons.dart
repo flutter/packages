@@ -14,7 +14,7 @@ part of material_animated_icons; // ignore: use_string_in_part_of_directives
 ///
 /// The available icons are specified in [AnimatedIcons].
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=pJcbh8pbvJs}
+/// Learn more about [AnimatedIcon] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=pJcbh8pbvJs).
 ///
 /// <callout-box>
 ///

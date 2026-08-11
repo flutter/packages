@@ -76,7 +76,7 @@ enum SliderInteraction {
 ///
 /// Used to select from a range of values.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=ufb4gIPDmEs}
+/// Learn more about [Slider] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=ufb4gIPDmEs).
 ///
 /// <callout-box>
 ///
