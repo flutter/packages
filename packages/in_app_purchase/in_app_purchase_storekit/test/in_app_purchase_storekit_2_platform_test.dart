@@ -184,6 +184,8 @@ void main() {
         expect(result.first.verificationData.serverVerificationData, 'receiptData');
         expect(result.first.verificationData.localVerificationData, 'jsonRepresentation');
         expect((result.first as SK2PurchaseDetails).appAccountToken, 'appAccountToken');
+        expect((result.first as SK2PurchaseDetails).sk2Transaction, isNotNull);
+        expect((result.first as SK2PurchaseDetails).sk2Transaction!.originalId, '2');
       },
     );
 

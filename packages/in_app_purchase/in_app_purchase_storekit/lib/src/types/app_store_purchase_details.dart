@@ -5,6 +5,7 @@
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 
 import '../../in_app_purchase_storekit.dart';
+import '../../store_kit_2_wrappers.dart';
 import '../../store_kit_wrappers.dart';
 import '../store_kit_wrappers/enum_converters.dart';
 
@@ -92,11 +93,15 @@ class SK2PurchaseDetails extends PurchaseDetails {
     required super.transactionDate,
     required super.status,
     this.appAccountToken,
+    this.sk2Transaction,
   });
 
   /// A UUID that associates the transaction with a user on your own service.
   /// This is the value set when making the purchase via appAccountToken option.
   final String? appAccountToken;
+
+  /// The underlying StoreKit 2 transaction.
+  final SK2Transaction? sk2Transaction;
 
   @override
   bool get pendingCompletePurchase => status == PurchaseStatus.purchased;
