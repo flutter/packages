@@ -5,6 +5,13 @@
 import 'dart:io';
 
 void main() {
+  final branchResult = Process.runSync('git', ['branch', '--show-current']);
+  final branch = branchResult.stdout.toString().trim();
+  if (branch == 'main') {
+    stdout.writeln('Error: Cannot run setup scripts on main branch.');
+    exit(1);
+  }
+
   final javaFile = File('android/src/main/java/io/flutter/plugins/camerax/DummyEvalFeature.java');
   javaFile.createSync(recursive: true);
   javaFile.writeAsStringSync('''
