@@ -280,6 +280,8 @@ ${newOverrideLines.join('\n')}
         example,
         <String, RepositoryPackage>{...localDependencies, parentPackageName: package},
         versions,
+        // Add an override to the parent package in case a transitive dependency has a dependency on it,
+        // since that (non-path) dependency would conflict with the path-based dependency in the example.
         additionalPackagesToOverride: <String>{...packagesToOverride, parentPackageName},
       );
     }
