@@ -226,7 +226,8 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
     final Map<String, String?> exampleOverrides = getDependencyOverrides(
       pluginAppFacing.getExamples().first,
     );
-    expect(exampleOverrides.length, 1);
+    expect(exampleOverrides.length, 2);
+    expect(exampleOverrides['bar'], '../../../../packages/bar/bar');
     expect(exampleOverrides['bar_android'], '../../../../packages/bar/bar_android');
   });
 
@@ -248,8 +249,9 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
     final Map<String, String?> exampleOverrides = getDependencyOverrides(
       pluginAppFacing.getExamples().first,
     );
-    expect(exampleOverrides.length, 2);
+    expect(exampleOverrides.length, 3);
     expect(exampleOverrides['another_package'], '../../../../packages/another_package');
+    expect(exampleOverrides['bar'], '../../../../packages/bar/bar');
     expect(exampleOverrides['bar_android'], '../../../../packages/bar/bar_android');
   });
 
@@ -263,6 +265,50 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
     final Map<String, String?> exampleOverrides = getDependencyOverrides(example);
     expect(exampleOverrides.length, 0);
   });
+
+  test(
+    'example overrides include parent package to resolve dependency overrides cleanly',
+    () async {
+      createFakePackage('material_ui', packagesDir);
+      final RepositoryPackage cupertinoUi = createFakePlugin('cupertino_ui', packagesDir);
+
+      addDevDependenciesSection(cupertinoUi, <String>['material_ui']);
+
+      await runCapturingPrint(runner, <String>[
+        'make-deps-path-based',
+        '--target-dependencies=material_ui',
+      ]);
+
+      final Map<String, String?> exampleOverrides = getDependencyOverrides(
+        cupertinoUi.getExamples().first,
+      );
+      expect(exampleOverrides['material_ui'], '../../../packages/material_ui');
+      expect(exampleOverrides['cupertino_ui'], '../../../packages/cupertino_ui');
+    },
+  );
+
+  test(
+    'does not recursively override dependencies of target packages to preserve safety net',
+    () async {
+      final RepositoryPackage clientPkg = createFakePackage('pkg_client', packagesDir);
+      final RepositoryPackage targetPkg = createFakePackage('pkg_target', packagesDir);
+      createFakePackage('pkg_dependency', packagesDir);
+
+      addDependencies(clientPkg, <String>['pkg_target', 'pkg_dependency']);
+      addDependencies(targetPkg, <String>['pkg_dependency']);
+
+      await runCapturingPrint(runner, <String>[
+        'make-deps-path-based',
+        '--target-dependencies=pkg_target',
+      ]);
+
+      final Map<String, String?> clientOverrides = getDependencyOverrides(clientPkg);
+      expect(clientOverrides['pkg_target'], '../../packages/pkg_target');
+      // Dependencies of target packages must not be recursively pathified,
+      // ensuring clients are tested against published versions to preserve safety.
+      expect(clientOverrides['pkg_dependency'], isNull);
+    },
+  );
 
   test(
     'alphabetizes overrides from different sections to avoid lint warnings in analysis',
