@@ -113,7 +113,7 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     final queue = List<String>.from(packageNames);
 
     while (queue.isNotEmpty) {
-      final packageName = queue.removeLast();
+      final String packageName = queue.removeLast();
       if (targets.containsKey(packageName)) {
         continue;
       }
@@ -130,7 +130,7 @@ class MakeDepsPathBasedCommand extends PackageCommand {
       // Expand to include local in-repo dependencies of target packages to prevent
       // pub version solving conflicts when co-dependent packages are tested with path dependencies.
       final Pubspec pubspec = package.parsePubspec();
-      for (final String depName in <String>[
+      for (final depName in <String>[
         ...pubspec.dependencies.keys,
         ...pubspec.devDependencies.keys,
       ]) {
