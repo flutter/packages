@@ -60,9 +60,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4)),
-      ),
       builder: (BuildContext context, Widget? child) {
         return MaterialUiCompatibilityBridge(child: child!);
       },
@@ -99,7 +96,7 @@ for information about using Flutter and `material_ui`.
 `BottomSheet`, `TabBar`, `SearchAnchor`, `SearchBar`
 * **Buttons & Interaction**: `ElevatedButton`, `FilledButton`, `OutlinedButton`,
 `TextButton`, `IconButton`, `FloatingActionButton`, `SegmentedButton`,
-`ToggleButtons`, `PopupMenuButton`, `InkWell`
+`PopupMenuButton`, `InkWell`
 * **Inputs & Selection**: `TextField`, `TextFormField`, `Checkbox`, `Radio`,
 `Switch`, `Slider`, `RangeSlider`, `DropdownMenu`, `DatePicker`, `TimePicker`,
 `InputDecoration`

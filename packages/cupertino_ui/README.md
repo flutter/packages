@@ -61,9 +61,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoApp(
-      theme: const CupertinoThemeData(
-        primaryColor: CupertinoColors.systemIndigo,
-      ),
       builder: (BuildContext context, Widget? child) {
         return CupertinoUiCompatibilityBridge(child: child!);
       },
