@@ -5,8 +5,8 @@
 import 'dart:io';
 
 void main() {
-  final branchResult = Process.runSync('git', ['branch', '--show-current']);
-  final branch = branchResult.stdout.toString().trim();
+  final ProcessResult branchResult = Process.runSync('git', ['branch', '--show-current']);
+  final String branch = branchResult.stdout.toString().trim();
   if (branch == 'main') {
     stdout.writeln('Error: Cannot run setup scripts on main branch.');
     exit(1);
