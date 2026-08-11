@@ -13,12 +13,22 @@ package, which is Flutter's official iOS- and macOS-style design library.
 
 ## New to the package?
 
+Install the package with the following command:
+
+```dart
+flutter add material_ui
+```
+
+See Flutter's main [getting started
+guide](https://flutter.dev/getting-started/) for information about using Flutter
+and `material_ui`.
+
+## Migrating existing code to this package
+
 The standalone `material_ui` package was previously built directly into the core
 Flutter framework as `package:flutter/material.dart`. It has been decoupled from
 the [flutter/flutter](https://github.com/flutter/flutter) repository into its
 new home here in `flutter/packages`.
-
-## Migrating existing code to this package
 
 Follow the steps below to migrate:
 
