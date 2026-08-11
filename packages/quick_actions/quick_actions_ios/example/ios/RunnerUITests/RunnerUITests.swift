@@ -37,9 +37,6 @@ class RunnerUITests: XCTestCase {
   }
 
   func testQuickActionWithFreshStart() throws {
-    // See https://github.com/flutter/flutter/issues/169928
-    throw XCTSkip("Temporarily disabled")
-
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     let quickActionsAppIcon = springboard.icons["quick_actions_example"]
 
@@ -57,9 +54,6 @@ class RunnerUITests: XCTestCase {
   }
 
   func testQuickActionWhenAppIsInBackground() throws {
-    // See https://github.com/flutter/flutter/issues/169928
-    throw XCTSkip("Temporarily disabled")
-
     exampleApp.launch()
 
     let actionsReady = exampleApp.otherElements["actions ready"]
