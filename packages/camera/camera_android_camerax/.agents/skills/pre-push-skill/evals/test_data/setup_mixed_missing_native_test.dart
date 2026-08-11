@@ -7,7 +7,8 @@ import 'dart:io';
 void main() {
   final javaFile = File('android/src/main/java/io/flutter/plugins/camerax/DummyEvalFeature.java');
   javaFile.createSync(recursive: true);
-  javaFile.writeAsStringSync('''// Copyright 2013 The Flutter Authors
+  javaFile.writeAsStringSync('''
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,11 +17,12 @@ package io.flutter.plugins.camerax;
 public class DummyEvalFeature {
     public void doNothing() {}
 }
-''');
+'''.replaceFirst('\n', ''));
 
   final dartFile = File('lib/src/dummy_eval_feature.dart');
   dartFile.createSync(recursive: true);
-  dartFile.writeAsStringSync('''// Copyright 2013 The Flutter Authors
+  dartFile.writeAsStringSync('''
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -29,11 +31,12 @@ class DummyEvalFeature {
   /// Do nothing
   void doNothing() {}
 }
-''');
+'''.replaceFirst('\n', ''));
 
   final dartTestFile = File('test/dummy_eval_feature_test.dart');
   dartTestFile.createSync(recursive: true);
-  dartTestFile.writeAsStringSync('''// Copyright 2013 The Flutter Authors
+  dartTestFile.writeAsStringSync('''
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -46,7 +49,7 @@ void main() {
     feature.doNothing();
   });
 }
-''');
+'''.replaceFirst('\n', ''));
 
   Process.runSync('git', ['add', javaFile.path, dartFile.path, dartTestFile.path]);
   Process.runSync('git', ['-c', 'user.name=Author', '-c', 'user.email=author@example.com', 'commit', '-m', 'Add DummyEvalFeature with Dart test but missing Java test']);
