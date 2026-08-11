@@ -19,7 +19,7 @@ import 'strings.dart';
 class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
   /// Creates a new plugin implementation instance.
   SharedPreferencesAndroid({@visibleForTesting SharedPreferencesApi? api})
-    : api = api ?? SharedPreferencesApi();
+    : api = api ?? SharedPreferencesApi.createWithNativeInteropApi();
 
   /// The pigeon API used to send messages to the platform.
   @visibleForTesting

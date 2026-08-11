@@ -16,9 +16,9 @@ import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 import './messages.g.jni.dart' as jni_bridge;
 
 Object? _extractReplyValueOrThrow(
-  List<Object?>? replyList,
-  String channelName, {
-  required bool isNullValid,
+    List<Object?>? replyList,
+    String channelName, {
+    required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -40,11 +40,14 @@ Object? _extractReplyValueOrThrow(
   return replyList.firstOrNull;
 }
 
+
 class _PigeonJniCodec {
   static JObject get _kotlinUnit {
     final JClass unitClass = JClass.forName('kotlin/Unit');
     try {
-      return unitClass.staticFieldId('INSTANCE', 'Lkotlin/Unit;').get(unitClass, JObject.type);
+      return unitClass
+          .staticFieldId('INSTANCE', 'Lkotlin/Unit;')
+          .get(unitClass, JObject.type);
     } finally {
       unitClass.release();
     }
@@ -83,15 +86,19 @@ class _PigeonJniCodec {
         res.add(readValue(list[i]));
       }
       return res;
-    } else if (value.isA<JMap<JObject, JObject>>(JMap.type as JType<JMap<JObject, JObject>>)) {
-      final Map<JObject?, JObject?> map = value.as(JMap.type).asDart();
+    } else if (value.isA<JMap<JObject, JObject>>(
+        JMap.type as JType<JMap<JObject, JObject>>)) {
+      final Map<JObject?, JObject?> map =
+          value.as(JMap.type).asDart();
       final res = <Object?, Object?>{};
       for (final MapEntry<JObject?, JObject?> entry in map.entries) {
         res[readValue(entry.key)] = readValue(entry.value);
       }
       return res;
+    
+    
     } else {
-      throw ArgumentError.value(value);
+    throw ArgumentError.value(value);
     }
   }
 
@@ -110,11 +117,7 @@ class _PigeonJniCodec {
       return value.toJString() as T;
     } else if (value is Uint8List) {
       final JByteArray array = JByteArray(value.length);
-      array.setRange(
-        0,
-        value.length,
-        Int8List.view(value.buffer, value.offsetInBytes, value.length),
-      );
+      array.setRange(0, value.length, Int8List.view(value.buffer, value.offsetInBytes, value.length));
       return array as T;
     } else if (value is Int32List) {
       final JIntArray array = JIntArray(value.length);
@@ -128,46 +131,44 @@ class _PigeonJniCodec {
       final JDoubleArray array = JDoubleArray(value.length);
       array.setRange(0, value.length, value);
       return array as T;
-    } else if (value is List<String>) {
-      return value.map<JString>((e) => writeValue<JString>(e)).toJList() as T;
+        } else if (value is List<String>) {
+      return value
+          .map<JString>((e) => writeValue<JString>(e))
+          .toJList() as T;
+        
     } else if (value is List<Object>) {
       return value.map<JObject>((e) => writeValue<JObject>(e)).toJList() as T;
     } else if (value is List) {
       return value.map<JObject?>((e) => writeValue<JObject?>(e)).toJList() as T;
-    } else if (value is Map<String, Object>) {
+        } else if (value is Map<String, Object>) {
       return value
-              .map<JString, JObject>(
-                (k, v) => MapEntry(writeValue<JString>(k), writeValue<JObject>(v)),
-              )
-              .toJMap()
-          as T;
+          .map<JString, JObject>(
+              (k, v) => MapEntry(writeValue<JString>(k), writeValue<JObject>(v)))
+          .toJMap() as T;
+        
     } else if (value is Map<Object, Object>) {
       return value
-              .map<JObject, JObject>(
-                (k, v) => MapEntry(writeValue<JObject>(k), writeValue<JObject>(v)),
-              )
-              .toJMap()
-          as T;
+          .map<JObject, JObject>((k, v) =>
+              MapEntry(writeValue<JObject>(k), writeValue<JObject>(v)))
+          .toJMap() as T;
     } else if (value is Map<Object, Object?>) {
       return value
-              .map<JObject, JObject?>(
-                (k, v) => MapEntry(writeValue<JObject>(k), writeValue<JObject?>(v)),
-              )
-              .toJMap()
-          as T;
+          .map<JObject, JObject?>((k, v) =>
+              MapEntry(writeValue<JObject>(k), writeValue<JObject?>(v)))
+          .toJMap() as T;
     } else if (value is Map) {
       return value
-              .map<JObject?, JObject?>(
-                (k, v) => MapEntry(writeValue<JObject?>(k), writeValue<JObject?>(v)),
-              )
-              .toJMap()
-          as T;
+          .map<JObject?, JObject?>((k, v) =>
+              MapEntry(writeValue<JObject?>(k), writeValue<JObject?>(v)))
+          .toJMap() as T;
+    
+    
     } else {
-      throw ArgumentError.value(value);
+    throw ArgumentError.value(value);
     }
   }
 }
-
+    
 bool _isType<T>(Type t) => T == t;
 bool _isTypeOrNullableType<T>(Type t) => _isType<T>(t) || _isType<T?>(t);
 
@@ -200,6 +201,9 @@ PlatformException _wrapJniException(JThrowable e) {
   );
 }
 
+
+
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -220,18 +224,13 @@ class _PigeonCodec extends StandardMessageCodec {
     }
   }
 }
-
 const String defaultInstanceName = 'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
 
 class SharedPreferencesApiForNativeInterop {
-  SharedPreferencesApiForNativeInterop._withRegistrar({
-    jni_bridge.SharedPreferencesApiRegistrar? jniApi,
-  }) : _jniApi = jniApi;
+  SharedPreferencesApiForNativeInterop._withRegistrar({jni_bridge.SharedPreferencesApiRegistrar? jniApi}) : _jniApi = jniApi;
 
   /// Returns instance of SharedPreferencesApiForNativeInterop with specified [channelName] if one has been registered.
-  static SharedPreferencesApiForNativeInterop? getInstance({
-    String channelName = defaultInstanceName,
-  }) {
+  static SharedPreferencesApiForNativeInterop? getInstance({String channelName = defaultInstanceName}) {
     final SharedPreferencesApiForNativeInterop res;
     if (Platform.isAndroid) {
       final jni_bridge.SharedPreferencesApiRegistrar? link =
@@ -241,9 +240,7 @@ class SharedPreferencesApiForNativeInterop {
       }
       res = SharedPreferencesApiForNativeInterop._withRegistrar(jniApi: link);
     } else {
-      throw UnsupportedError(
-        'Native Interop is not supported on this platform. Use SharedPreferencesApi instead.',
-      );
+      throw UnsupportedError('Native Interop is not supported on this platform. Use SharedPreferencesApi instead.');
     }
     return res;
   }
@@ -277,10 +274,7 @@ class SharedPreferencesApiForNativeInterop {
   bool setString(String key, String value) {
     try {
       if (_jniApi != null) {
-        return _jniApi.setString(
-          _PigeonJniCodec.writeValue<JString>(key),
-          _PigeonJniCodec.writeValue<JString>(value),
-        );
+        return _jniApi.setString(_PigeonJniCodec.writeValue<JString>(key), _PigeonJniCodec.writeValue<JString>(value));
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -316,10 +310,7 @@ class SharedPreferencesApiForNativeInterop {
   bool setEncodedStringList(String key, String value) {
     try {
       if (_jniApi != null) {
-        return _jniApi.setEncodedStringList(
-          _PigeonJniCodec.writeValue<JString>(key),
-          _PigeonJniCodec.writeValue<JString>(value),
-        );
+        return _jniApi.setEncodedStringList(_PigeonJniCodec.writeValue<JString>(key), _PigeonJniCodec.writeValue<JString>(value));
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -331,10 +322,7 @@ class SharedPreferencesApiForNativeInterop {
   bool setDeprecatedStringList(String key, List<String> value) {
     try {
       if (_jniApi != null) {
-        return _jniApi.setDeprecatedStringList(
-          _PigeonJniCodec.writeValue<JString>(key),
-          _PigeonJniCodec.writeValue<JList<JString>>(value),
-        );
+        return _jniApi.setDeprecatedStringList(_PigeonJniCodec.writeValue<JString>(key), _PigeonJniCodec.writeValue<JList<JString>>(value));
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -346,10 +334,7 @@ class SharedPreferencesApiForNativeInterop {
   bool clear(String prefix, List<String>? allowList) {
     try {
       if (_jniApi != null) {
-        return _jniApi.clear(
-          _PigeonJniCodec.writeValue<JString>(prefix),
-          _PigeonJniCodec.writeValue<JList<JString>?>(allowList),
-        );
+        return _jniApi.clear(_PigeonJniCodec.writeValue<JString>(prefix), _PigeonJniCodec.writeValue<JList<JString>?>(allowList));
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -361,12 +346,8 @@ class SharedPreferencesApiForNativeInterop {
   Map<String, Object> getAll(String prefix, List<String>? allowList) {
     try {
       if (_jniApi != null) {
-        final JMap<JString, JObject> res = _jniApi.getAll(
-          _PigeonJniCodec.writeValue<JString>(prefix),
-          _PigeonJniCodec.writeValue<JList<JString>?>(allowList),
-        );
-        final Map<String, Object> dartTypeRes =
-            (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>).cast<String, Object>();
+        final JMap<JString, JObject> res = _jniApi.getAll(_PigeonJniCodec.writeValue<JString>(prefix), _PigeonJniCodec.writeValue<JList<JString>?>(allowList));
+        final Map<String, Object> dartTypeRes = (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>).cast<String, Object>();
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -375,6 +356,7 @@ class SharedPreferencesApiForNativeInterop {
       throw _wrapJniException(e);
     }
   }
+
 }
 
 class SharedPreferencesApi {
@@ -382,14 +364,14 @@ class SharedPreferencesApi {
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   SharedPreferencesApi({
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-    SharedPreferencesApiForNativeInterop? nativeInteropApi,
-  }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-           ? '.$messageChannelSuffix'
-           : '',
-       _nativeInteropApi = nativeInteropApi;
+      BinaryMessenger? binaryMessenger, 
+      String messageChannelSuffix = '', 
+      SharedPreferencesApiForNativeInterop? nativeInteropApi,
+  })
+      : pigeonVar_binaryMessenger = binaryMessenger,
+        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '',
+  _nativeInteropApi = nativeInteropApi;
+
 
   /// Creates an instance of [SharedPreferencesApi] that requests an instance of
   /// [SharedPreferencesApiForNativeInterop] from the host platform with a matching instance name
@@ -408,18 +390,15 @@ class SharedPreferencesApi {
       } else {
         nativeInteropApiInstanceName = messageChannelSuffix;
         nativeInteropApi = SharedPreferencesApiForNativeInterop.getInstance(
-          channelName: messageChannelSuffix,
-        );
+            channelName: messageChannelSuffix);
       }
     } else {
       throw UnsupportedError(
-        'Native Interop is not supported on this platform. Use the default constructor of SharedPreferencesApi instead.',
-      );
+          'Native Interop is not supported on this platform. Use the default constructor of SharedPreferencesApi instead.');
     }
     if (nativeInteropApi == null) {
       throw ArgumentError(
-        'No SharedPreferencesApi instance with ${nativeInteropApiInstanceName.isEmpty ? 'no ' : ''} instance name ${nativeInteropApiInstanceName.isNotEmpty ? '"$nativeInteropApiInstanceName" ' : ''}found.',
-      );
+          'No SharedPreferencesApi instance with ${nativeInteropApiInstanceName.isEmpty ? 'no ' : ''} instance name ${nativeInteropApiInstanceName.isNotEmpty ? '"$nativeInteropApiInstanceName" ' : ''}found.');
     }
     return SharedPreferencesApi(
       binaryMessenger: binaryMessenger,
@@ -440,8 +419,7 @@ class SharedPreferencesApi {
     if (_nativeInteropApi != null) {
       return _nativeInteropApi.remove(key);
     }
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.remove$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.remove$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -451,10 +429,11 @@ class SharedPreferencesApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as bool;
   }
 
@@ -463,8 +442,7 @@ class SharedPreferencesApi {
     if (_nativeInteropApi != null) {
       return _nativeInteropApi.setBool(key, value);
     }
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setBool$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setBool$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -474,10 +452,11 @@ class SharedPreferencesApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as bool;
   }
 
@@ -486,8 +465,7 @@ class SharedPreferencesApi {
     if (_nativeInteropApi != null) {
       return _nativeInteropApi.setString(key, value);
     }
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setString$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setString$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -497,10 +475,11 @@ class SharedPreferencesApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as bool;
   }
 
@@ -509,8 +488,7 @@ class SharedPreferencesApi {
     if (_nativeInteropApi != null) {
       return _nativeInteropApi.setInt(key, value);
     }
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setInt$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setInt$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -520,10 +498,11 @@ class SharedPreferencesApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as bool;
   }
 
@@ -532,8 +511,7 @@ class SharedPreferencesApi {
     if (_nativeInteropApi != null) {
       return _nativeInteropApi.setDouble(key, value);
     }
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setDouble$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setDouble$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -543,10 +521,11 @@ class SharedPreferencesApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as bool;
   }
 
@@ -555,8 +534,7 @@ class SharedPreferencesApi {
     if (_nativeInteropApi != null) {
       return _nativeInteropApi.setEncodedStringList(key, value);
     }
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setEncodedStringList$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setEncodedStringList$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -566,10 +544,11 @@ class SharedPreferencesApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as bool;
   }
 
@@ -580,8 +559,7 @@ class SharedPreferencesApi {
     if (_nativeInteropApi != null) {
       return _nativeInteropApi.setDeprecatedStringList(key, value);
     }
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setDeprecatedStringList$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setDeprecatedStringList$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -591,10 +569,11 @@ class SharedPreferencesApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as bool;
   }
 
@@ -603,24 +582,21 @@ class SharedPreferencesApi {
     if (_nativeInteropApi != null) {
       return _nativeInteropApi.clear(prefix, allowList);
     }
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.clear$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.clear$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      prefix,
-      allowList,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[prefix, allowList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as bool;
   }
 
@@ -629,24 +605,21 @@ class SharedPreferencesApi {
     if (_nativeInteropApi != null) {
       return _nativeInteropApi.getAll(prefix, allowList);
     }
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.getAll$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.getAll$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      prefix,
-      allowList,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[prefix, allowList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<String, Object>();
   }
 }

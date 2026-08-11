@@ -9,7 +9,6 @@ package io.flutter.plugins.sharedpreferences
 
 import android.util.Log
 import androidx.annotation.Keep
-
 private object MessagesPigeonUtils {
 
   fun wrapResult(result: Any?): List<Any?> {
@@ -18,33 +17,34 @@ private object MessagesPigeonUtils {
 
   fun wrapError(exception: Throwable): List<Any?> {
     return if (exception is FlutterError) {
-      listOf(exception.code, exception.message, exception.details)
+      listOf(
+        exception.code,
+        exception.message,
+        exception.details
+      )
     } else {
       listOf(
-          exception.javaClass.simpleName,
-          exception.toString(),
-          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
+        exception.javaClass.simpleName,
+        exception.toString(),
+        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
+      )
     }
   }
 }
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
- *
  * @property code The error code.
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
-class FlutterError(
-    val code: String,
-    override val message: String? = null,
-    val details: Any? = null
+class FlutterError (
+  val code: String,
+  override val message: String? = null,
+  val details: Any? = null
 ) : RuntimeException()
-
 private const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
-val SharedPreferencesApiInstances: MutableMap<String, SharedPreferencesApiRegistrar> =
-    mutableMapOf()
-
+val SharedPreferencesApiInstances: MutableMap<String, SharedPreferencesApiRegistrar> = mutableMapOf()
 @Keep
 interface SharedPreferencesApi {
   /** Removes property from shared preferences data set. */
@@ -70,15 +70,13 @@ interface SharedPreferencesApi {
   /** Gets all properties from shared preferences data set with matching prefix. */
   fun getAll(prefix: String, allowList: List<String>?): Map<String, Any>
 }
-
 @Keep
 class SharedPreferencesApiRegistrar : SharedPreferencesApi {
   private var api: SharedPreferencesApi? = null
-
   fun register(
-      api: SharedPreferencesApi?,
-      name: String = defaultInstanceName
-  ): SharedPreferencesApiRegistrar {
+    api: SharedPreferencesApi?,
+    name: String = defaultInstanceName
+  ):   SharedPreferencesApiRegistrar {
     if (api != null) {
       this.api = api
       SharedPreferencesApiInstances[name] = this
@@ -87,13 +85,13 @@ class SharedPreferencesApiRegistrar : SharedPreferencesApi {
     }
     return this
   }
-
   @Keep
   fun getInstance(name: String): SharedPreferencesApiRegistrar? {
     return SharedPreferencesApiInstances[name]
   }
   /** Removes property from shared preferences data set. */
-  override fun remove(key: String): Boolean {
+  override fun remove(key: String): Boolean
+ {
     api?.let {
       try {
         return it.remove(key)
@@ -104,7 +102,8 @@ class SharedPreferencesApiRegistrar : SharedPreferencesApi {
     error("SharedPreferencesApi has not been registered")
   }
   /** Adds property to shared preferences data set of type `bool`. */
-  override fun setBool(key: String, value: Boolean): Boolean {
+  override fun setBool(key: String, value: Boolean): Boolean
+ {
     api?.let {
       try {
         return it.setBool(key, value)
@@ -115,7 +114,8 @@ class SharedPreferencesApiRegistrar : SharedPreferencesApi {
     error("SharedPreferencesApi has not been registered")
   }
   /** Adds property to shared preferences data set of type `String`. */
-  override fun setString(key: String, value: String): Boolean {
+  override fun setString(key: String, value: String): Boolean
+ {
     api?.let {
       try {
         return it.setString(key, value)
@@ -126,7 +126,8 @@ class SharedPreferencesApiRegistrar : SharedPreferencesApi {
     error("SharedPreferencesApi has not been registered")
   }
   /** Adds property to shared preferences data set of type `int`. */
-  override fun setInt(key: String, value: Long): Boolean {
+  override fun setInt(key: String, value: Long): Boolean
+ {
     api?.let {
       try {
         return it.setInt(key, value)
@@ -137,7 +138,8 @@ class SharedPreferencesApiRegistrar : SharedPreferencesApi {
     error("SharedPreferencesApi has not been registered")
   }
   /** Adds property to shared preferences data set of type `double`. */
-  override fun setDouble(key: String, value: Double): Boolean {
+  override fun setDouble(key: String, value: Double): Boolean
+ {
     api?.let {
       try {
         return it.setDouble(key, value)
@@ -148,7 +150,8 @@ class SharedPreferencesApiRegistrar : SharedPreferencesApi {
     error("SharedPreferencesApi has not been registered")
   }
   /** Adds property to shared preferences data set of type `List<String>`. */
-  override fun setEncodedStringList(key: String, value: String): Boolean {
+  override fun setEncodedStringList(key: String, value: String): Boolean
+ {
     api?.let {
       try {
         return it.setEncodedStringList(key, value)
@@ -163,7 +166,8 @@ class SharedPreferencesApiRegistrar : SharedPreferencesApi {
    *
    * Deprecated, this is only here for testing purposes.
    */
-  override fun setDeprecatedStringList(key: String, value: List<String>): Boolean {
+  override fun setDeprecatedStringList(key: String, value: List<String>): Boolean
+ {
     api?.let {
       try {
         return it.setDeprecatedStringList(key, value)
@@ -174,7 +178,8 @@ class SharedPreferencesApiRegistrar : SharedPreferencesApi {
     error("SharedPreferencesApi has not been registered")
   }
   /** Removes all properties from shared preferences data set with matching prefix. */
-  override fun clear(prefix: String, allowList: List<String>?): Boolean {
+  override fun clear(prefix: String, allowList: List<String>?): Boolean
+ {
     api?.let {
       try {
         return it.clear(prefix, allowList)
@@ -185,7 +190,8 @@ class SharedPreferencesApiRegistrar : SharedPreferencesApi {
     error("SharedPreferencesApi has not been registered")
   }
   /** Gets all properties from shared preferences data set with matching prefix. */
-  override fun getAll(prefix: String, allowList: List<String>?): Map<String, Any> {
+  override fun getAll(prefix: String, allowList: List<String>?): Map<String, Any>
+ {
     api?.let {
       try {
         return it.getAll(prefix, allowList)

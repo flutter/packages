@@ -23,6 +23,8 @@ analyzer:
     # Ignore generated files
     - '**/*.pb.dart'
     - '**/*.g.dart'
+    - '**/*.g.jni.dart'
+    - '**/*.g.ffi.dart'
     - '**/*.mocks.dart' # Mockito @GenerateMocks
 
 formatter:

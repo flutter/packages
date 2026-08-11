@@ -10,11 +10,11 @@ void main() async {
   Directory.current = Platform.script.resolve('../..').toFilePath();
   await generateJniBindings(
     Config(
-      androidSdkConfig: AndroidSdkConfig(addGradleDeps: true, androidExample: './'),
+      androidSdkConfig: AndroidSdkConfig(addGradleDeps: true, androidExample: './example/'),
       summarizerOptions: SummarizerOptions(backend: SummarizerBackend.asm),
       outputConfig: OutputConfig(
         dartConfig: DartCodeOutputConfig(
-          path: Uri.file('../lib/src/messages.g.jni.dart'),
+          path: Uri.file('lib/src/messages_async.g.jni.dart'),
           structure: OutputStructure.singleFile,
         ),
       ),
@@ -22,9 +22,12 @@ void main() async {
       classPath: [Uri.directory('build/app/tmp/kotlin-classes/release')],
 
       classes: [
-        'io.flutter.plugins.sharedpreferences.FlutterError',
-        'io.flutter.plugins.sharedpreferences.SharedPreferencesApi',
-        'io.flutter.plugins.sharedpreferences.SharedPreferencesApiRegistrar',
+        'io.flutter.plugins.sharedpreferences.SharedPreferencesError',
+        'io.flutter.plugins.sharedpreferences.SharedPreferencesAsyncApi',
+        'io.flutter.plugins.sharedpreferences.SharedPreferencesAsyncApiRegistrar',
+        'io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions',
+        'io.flutter.plugins.sharedpreferences.StringListResult',
+        'io.flutter.plugins.sharedpreferences.StringListLookupResultType',
       ],
     ),
   );
