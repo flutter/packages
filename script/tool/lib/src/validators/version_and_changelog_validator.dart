@@ -634,6 +634,18 @@ ${_indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
         errors.add('pubspec.yaml version changed');
       }
     }
+
+    final bool hasPromote = allChangelogs.any(
+      (PendingChangelogEntry entry) => entry.version == VersionChange.promote,
+    );
+    if (hasPromote) {
+      final Pubspec? pubspec = _tryParsePubspec(package);
+      if (pubspec != null && pubspec.version != null && pubspec.version!.major != 0) {
+        printError('"promote" is only valid for pre-1.0 packages.');
+        errors.add('Invalid promote version change for post-1.0 package');
+      }
+    }
+
     return versionChanged;
   }
 
