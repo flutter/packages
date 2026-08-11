@@ -5,7 +5,7 @@ Guidelines](https://developer.apple.com/design/human-interface-guidelines/) for
 Flutter applications.
 
 `cupertino_ui` provides a complete, high-fidelity suite of visual components,
-motion, typography, color systems, and theming tools to build authentic
+motion, typography, color system, and theming tools to build authentic
 iOS- and macOS-style user interfaces on all screen sizes.
 
 See also the
@@ -32,7 +32,7 @@ This performs the equivalent of adding `cupertino_ui` to your project and
 changing imports of `package:flutter/cupertino.dart` to
 `package:cupertino_ui/cupertino_ui.dart`.
 
-### Step 2: Migrate localization
+### Step 2: Migrate localizations (if needed)
 
 Don't use the `GlobalMaterialLocalizations` or `GlobalCupertinoLocalizations`
 classes from flutter/flutter's `flutter_localizations` package. Instead, use the
@@ -90,10 +90,10 @@ CupertinoPageScaffold(
 See Flutter's main [getting started guide](https://flutter.dev/getting-started/)
 for information about using Flutter and `cupertino_ui`.
 
-## Features & Included Components
+## Features
 
-`cupertino_ui` contains a fully featured set of Flutter Cupertino widgets and
-services, such as:
+`cupertino_ui` contains everything you need to create a fully-featured iOS app,
+such as:
 
 * **App Structure & Navigation**: `CupertinoApp`, `CupertinoPageScaffold`,
 `CupertinoTabScaffold`, `CupertinoTabView`, `CupertinoNavigationBar`,

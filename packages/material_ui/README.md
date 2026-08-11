@@ -4,7 +4,7 @@ The official Flutter Material Design library, implementing Google's [Material
 Design](https://m3.material.io/) design system for Flutter applications.
 
 `material_ui` provides a complete, modern suite of visual components, motion,
-typography, color systems, and theming tools to build beautiful and accessible
+typography, color system, and theming tools to build beautiful and accessible
 user interfaces on all screen sizes.
 
 See also the
@@ -31,12 +31,20 @@ This performs the equivalent of adding `material_ui` to your project and
 changing imports of `package:flutter/material.dart` to
 `package:material_ui/material_ui.dart`.
 
-### Step 2: Migrate localization
+### Step 2: Migrate localizations (if needed)
 
-Don't use the `GlobalMaterialLocalizations` or `GlobalCupertinoLocalizations`
-classes from flutter/flutter's `flutter_localizations` package. Instead, use the
-new versions of these classes from `material_ui` and `cupertino_ui`,
-respectively.
+If you are not currently using the GlobalMaterialLocalizations` or
+`GlobalCupertinoLocalizations` classes from flutter/flutter's
+`flutter_localizations` package, then you are already good to go. For those that
+do need to migrate off of these classes, simply use the new versions of these
+classes from `material_ui` and `cupertino_ui`, respectively.
+
+A typical app can use the following localization delegate from `material_ui` to
+cover all of the localization strings in Flutter, Material, and Cupertino:
+
+```dart
+  localizationDelegates: GlobalMaterialLocalizations.delegates,
+```
 
 ### Step 3: Bridge legacy dependencies (if needed)
 
@@ -87,22 +95,19 @@ Scaffold(
 See Flutter's main [getting started guide](https://flutter.dev/getting-started/)
 for information about using Flutter and `material_ui`.
 
-## Features & Included Components
+## Features
 
-`material_ui` contains the full set of Flutter Material widgets and services:
+`material_ui` contains everything you need to create a fully-featured Material
+app, such as:
 
 * **App Structure & Navigation**: `MaterialApp`, `Scaffold`, `AppBar`,
-`SliverAppBar`, `Drawer`, `NavigationDrawer`, `NavigationBar`, `NavigationRail`,
-`BottomSheet`, `TabBar`, `SearchAnchor`, `SearchBar`
-* **Buttons & Interaction**: `ElevatedButton`, `FilledButton`, `OutlinedButton`,
-`TextButton`, `IconButton`, `FloatingActionButton`, `SegmentedButton`,
-`PopupMenuButton`, `InkWell`
-* **Inputs & Selection**: `TextField`, `TextFormField`, `Checkbox`, `Radio`,
-`Switch`, `Slider`, `RangeSlider`, `DropdownMenu`, `DatePicker`, `TimePicker`,
-`InputDecoration`
+`NavigationBar`, `BottomSheet`, `TabBar`, `SearchAnchor`, `SearchBar`, `Dialog`
+* **Buttons & Interaction**: `ElevatedButton`, `TextButton`, `IconButton`,
+`FloatingActionButton`, `SegmentedButton`, `InkWell`, `MenuBar`
+* **Inputs & Selection**: `TextField`, `Checkbox`, `Radio`, `Switch`, `Slider`,
+`DropdownMenu`, `DatePicker`, `TimePicker`
 * **Display & Feedback**: `Card`, `Chip`, `ListTile`, `Badge`, `Divider`,
-`DataTable`, `PaginatedDataTable`, `ProgressIndicator`, `SnackBar`, `Tooltip`,
-`CarouselView`
+`ProgressIndicator`, `SnackBar`, `Tooltip`, `CarouselView`, `VerticalDivider`
 * **Theming & Color**: `ThemeData`, `ColorScheme`, `TextTheme`, dynamic color
 generation, Material 3 design tokens, typography, and motion easing curves
 * **Internationalization**: `MaterialLocalizations` and
