@@ -14,6 +14,7 @@ import 'package:objective_c/objective_c.dart';
 import 'package:path/path.dart' as path;
 
 import 'byte_range_filter.dart';
+import 'cross_file_darwin_apis.g.dart';
 import 'ffi_bindings.g.dart';
 import 'security_scoped_resource.dart';
 
@@ -212,87 +213,26 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
       );
     }
 
-    final PHAssetResource? resource = _tryGetAssetResource(identifier: params.uri);
-    if (resource == null) {
-      return Stream.error(
-        Exception('Failed to start reading bytes from asset with identifier: ${params.uri}'),
-      );
+    // TODO(bparrishMines): Thread merging is optional on macOS, so the FFI
+    // implementation is not guaranteed to work when it needs to switch to the
+    // platform thread from a native callback.
+    if (defaultTargetPlatform == TargetPlatform.macOS) {
+      return _openReadWithPigeon();
     }
 
-    final streamController = StreamController<Uint8List>();
-
-    final filter = ByteRangeFilter(start: 0, end: end);
-
-    void dataReceivedHandler(NSData data) {
-      final Uint8List bytes = _extractBytesToUint8List(data);
-
-      runOnPlatformThread(() {
-        final Uint8List inRangeBytes = filter.addBytes(bytes);
-        if (inRangeBytes.isNotEmpty) {
-          streamController.add(inRangeBytes);
-        }
-      });
-    }
-
-    void completionHandler(NSError? error) {
-      runOnPlatformThread(() {
-        if (error != null) {
-          streamController.addError(Exception(error.localizedDescription.toDartString()));
-        }
-
-        return streamController.close();
-      });
-    }
-
-    PHAssetResourceManager.defaultManager().requestDataForAssetResource(
-      resource,
-      dataReceivedHandler: ObjCBlock_ffiVoid_NSData.blocking(dataReceivedHandler),
-      completionHandler: ObjCBlock_ffiVoid_NSError.blocking(completionHandler),
-    );
-
-    return streamController.stream;
+    return _openReadWithFFI();
   }
 
   @override
   Future<Uint8List> readAsBytes() {
-    if (_tryGetAsset(identifier: params.uri) case final PHAsset asset) {
-      final PHImageManager manager = PHImageManager.defaultManager();
-      final PHImageRequestOptions options = PHImageRequestOptions.new$();
-      options.isNetworkAccessAllowed = true;
-
-      final bytesCompleter = Completer<Uint8List>();
-      void resultHandler(
-        NSData? imageData,
-        NSString? dataUti,
-        CGImagePropertyOrientation orientation,
-        NSDictionary? info,
-      ) {
-        if (imageData != null) {
-          final Uint8List bytes = _extractBytesToUint8List(imageData);
-          runOnPlatformThread(() {
-            bytesCompleter.complete(bytes);
-          });
-        } else {
-          runOnPlatformThread(() {
-            bytesCompleter.completeError(
-              Exception('Failed to read byes from asset with identifier: ${params.uri}'),
-            );
-          });
-        }
-      }
-
-      manager.requestImageDataAndOrientationForAsset(
-        asset,
-        options: options,
-        resultHandler:
-            ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientation_NSDictionary.listener(
-              resultHandler,
-            ),
-      );
-      return bytesCompleter.future;
+    // TODO(bparrishMines): Thread merging is optional on macOS, so the FFI
+    // implementation is not guaranteed to work when it needs to switch to the
+    // platform thread from a native callback.
+    if (defaultTargetPlatform == TargetPlatform.macOS) {
+      return _readBytesWithPigeon();
     }
 
-    throw Exception('Failed to read byes from asset with identifier: ${params.uri}');
+    return _readBytesWithFFI();
   }
 
   @override
@@ -311,6 +251,11 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     }
 
     return null;
+  }
+
+  @override
+  Future<void> dispose() async {
+    // Reference to the asset does not need to be released.
   }
 
   PHAsset? _tryGetAsset({required String identifier}) {
@@ -348,9 +293,119 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     return Uint8List.fromList(byteView);
   }
 
-  @override
-  Future<void> dispose() async {
-    // Reference to the asset does not need to be released.
+  Future<Uint8List> _readBytesWithPigeon() {
+    return AssetResourceReader().readBytes(params.uri);
+  }
+
+  Future<Uint8List> _readBytesWithFFI() {
+    if (_tryGetAsset(identifier: params.uri) case final PHAsset asset) {
+      final PHImageManager manager = PHImageManager.defaultManager();
+      final PHImageRequestOptions options = PHImageRequestOptions.new$();
+      options.isNetworkAccessAllowed = true;
+
+      final bytesCompleter = Completer<Uint8List>();
+      void resultHandler(
+        NSData? imageData,
+        NSString? dataUti,
+        CGImagePropertyOrientation orientation,
+        NSDictionary? info,
+      ) {
+        if (imageData != null) {
+          final Uint8List bytes = _extractBytesToUint8List(imageData);
+          runOnPlatformThread(() {
+            bytesCompleter.complete(bytes);
+          });
+        } else {
+          runOnPlatformThread(() {
+            bytesCompleter.completeError(
+              Exception('Failed to read bytes from asset with identifier: ${params.uri}'),
+            );
+          });
+        }
+      }
+
+      manager.requestImageDataAndOrientationForAsset(
+        asset,
+        options: options,
+        resultHandler:
+            ObjCBlock_ffiVoid_NSData_NSString_CGImagePropertyOrientation_NSDictionary.listener(
+              resultHandler,
+            ),
+      );
+      return bytesCompleter.future;
+    }
+
+    throw Exception('Failed to read bytes from asset with identifier: ${params.uri}');
+  }
+
+  Stream<Uint8List> _openReadWithPigeon([int? start, int? end]) async* {
+    final resourceReader = AssetResourceReader();
+
+    final streamController = StreamController<Uint8List>();
+    final filter = ByteRangeFilter(start: start ?? 0, end: end);
+
+    final delegate = AssetResourceReaderDelegate(
+      onDataReceived: (_, Uint8List bytes) {
+        final Uint8List inRangeBytes = filter.addBytes(bytes);
+        if (inRangeBytes.isNotEmpty) {
+          streamController.add(inRangeBytes);
+        }
+      },
+      onCompletion: (_, String? error) {
+        if (error != null) {
+          streamController.addError(Exception(error));
+        }
+
+        streamController.close();
+      },
+    );
+
+    final bool success = await resourceReader.openRead(params.uri, delegate);
+    if (!success) {
+      throw Exception('Failed to find asset with identifier: ${params.uri}');
+    }
+
+    yield* streamController.stream;
+  }
+
+  Stream<Uint8List> _openReadWithFFI([int? start, int? end]) {
+    final PHAssetResource? resource = _tryGetAssetResource(identifier: params.uri);
+    if (resource == null) {
+      return Stream.error(Exception('Failed to find resource with identifier: ${params.uri}'));
+    }
+
+    final streamController = StreamController<Uint8List>();
+
+    final filter = ByteRangeFilter(start: start ?? 0, end: end);
+
+    void dataReceivedHandler(NSData data) {
+      final Uint8List bytes = _extractBytesToUint8List(data);
+
+      runOnPlatformThread(() {
+        final Uint8List inRangeBytes = filter.addBytes(bytes);
+        if (inRangeBytes.isNotEmpty) {
+          streamController.add(inRangeBytes);
+        }
+      });
+    }
+
+    void completionHandler(NSError? error) {
+      runOnPlatformThread(() {
+        if (error != null) {
+          streamController.addError(Exception(error.localizedDescription.toDartString()));
+        }
+
+        return streamController.close();
+      });
+    }
+
+    PHAssetResourceManager.defaultManager().requestDataForAssetResource(
+      resource,
+      dataReceivedHandler: ObjCBlock_ffiVoid_NSData.blocking(dataReceivedHandler),
+      completionHandler: ObjCBlock_ffiVoid_NSError.blocking(completionHandler),
+    );
+
+    return streamController.stream;
   }
 }
 
