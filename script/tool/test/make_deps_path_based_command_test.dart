@@ -170,21 +170,19 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
     expect(output, isNot(contains('  Modified packages/bar/bar_platform_interface/pubspec.yaml')));
 
     final Map<String, String?> simplePackageOverrides = getDependencyOverrides(simplePackage);
-    expect(simplePackageOverrides.length, 3);
+    expect(simplePackageOverrides.length, 2);
     expect(simplePackageOverrides['bar'], '../../packages/bar/bar');
     expect(
       simplePackageOverrides['bar_platform_interface'],
       '../../packages/bar/bar_platform_interface',
     );
-    expect(simplePackageOverrides['bar_android'], '../../packages/bar/bar_android');
 
     final Map<String, String?> appFacingPackageOverrides = getDependencyOverrides(pluginAppFacing);
-    expect(appFacingPackageOverrides.length, 2);
+    expect(appFacingPackageOverrides.length, 1);
     expect(
       appFacingPackageOverrides['bar_platform_interface'],
       '../../../packages/bar/bar_platform_interface',
     );
-    expect(appFacingPackageOverrides['bar_android'], '../../../packages/bar/bar_android');
   });
 
   test('rewrites "dev_dependencies" references', () async {
@@ -229,11 +227,8 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       pluginAppFacing.getExamples().first,
     );
     expect(exampleOverrides.length, 2);
+    expect(exampleOverrides['bar'], '../../../../packages/bar/bar');
     expect(exampleOverrides['bar_android'], '../../../../packages/bar/bar_android');
-    expect(
-      exampleOverrides['bar_platform_interface'],
-      '../../../../packages/bar/bar_platform_interface',
-    );
   });
 
   test('example overrides include both local and main-package dependencies', () async {
@@ -254,8 +249,9 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
     final Map<String, String?> exampleOverrides = getDependencyOverrides(
       pluginAppFacing.getExamples().first,
     );
-    expect(exampleOverrides.length, 2);
+    expect(exampleOverrides.length, 3);
     expect(exampleOverrides['another_package'], '../../../../packages/another_package');
+    expect(exampleOverrides['bar'], '../../../../packages/bar/bar');
     expect(exampleOverrides['bar_android'], '../../../../packages/bar/bar_android');
   });
 
@@ -271,12 +267,11 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
   });
 
   test(
-    'overrides co-dependent packages when target dependencies depend on local packages',
+    'example overrides include parent package to resolve dependency overrides cleanly',
     () async {
-      final RepositoryPackage materialUi = createFakePackage('material_ui', packagesDir);
-      final RepositoryPackage cupertinoUi = createFakePackage('cupertino_ui', packagesDir);
+      createFakePackage('material_ui', packagesDir);
+      final RepositoryPackage cupertinoUi = createFakePlugin('cupertino_ui', packagesDir);
 
-      addDependencies(materialUi, <String>['cupertino_ui']);
       addDevDependenciesSection(cupertinoUi, <String>['material_ui']);
 
       await runCapturingPrint(runner, <String>[
@@ -284,11 +279,34 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
         '--target-dependencies=material_ui',
       ]);
 
-      final Map<String, String?> materialOverrides = getDependencyOverrides(materialUi);
-      expect(materialOverrides['cupertino_ui'], '../../packages/cupertino_ui');
+      final Map<String, String?> exampleOverrides = getDependencyOverrides(
+        cupertinoUi.getExamples().first,
+      );
+      expect(exampleOverrides['material_ui'], '../../../packages/material_ui');
+      expect(exampleOverrides['cupertino_ui'], '../../../packages/cupertino_ui');
+    },
+  );
 
-      final Map<String, String?> cupertinoOverrides = getDependencyOverrides(cupertinoUi);
-      expect(cupertinoOverrides['material_ui'], '../../packages/material_ui');
+  test(
+    'does not recursively override dependencies of target packages to preserve safety net',
+    () async {
+      final RepositoryPackage clientPkg = createFakePackage('pkg_client', packagesDir);
+      final RepositoryPackage targetPkg = createFakePackage('pkg_target', packagesDir);
+      createFakePackage('pkg_dependency', packagesDir);
+
+      addDependencies(clientPkg, <String>['pkg_target', 'pkg_dependency']);
+      addDependencies(targetPkg, <String>['pkg_dependency']);
+
+      await runCapturingPrint(runner, <String>[
+        'make-deps-path-based',
+        '--target-dependencies=pkg_target',
+      ]);
+
+      final Map<String, String?> clientOverrides = getDependencyOverrides(clientPkg);
+      expect(clientOverrides['pkg_target'], '../../packages/pkg_target');
+      // Dependencies of target packages must not be recursively pathified,
+      // ensuring clients are tested against published versions to preserve safety.
+      expect(clientOverrides['pkg_dependency'], isNull);
     },
   );
 

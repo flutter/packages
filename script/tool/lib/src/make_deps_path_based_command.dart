@@ -110,62 +110,43 @@ class MakeDepsPathBasedCommand extends PackageCommand {
 
   Map<String, RepositoryPackage> _findLocalPackages(Set<String> packageNames) {
     final targets = <String, RepositoryPackage>{};
-    final queue = List<String>.from(packageNames);
-
-    while (queue.isNotEmpty) {
-      final String packageName = queue.removeLast();
-      if (targets.containsKey(packageName)) {
+    for (final packageName in packageNames) {
+      final Directory topLevelCandidate = packagesDir.childDirectory(packageName);
+      // If packages/<packageName>/ exists, then either that directory is the
+      // package, or packages/<packageName>/<packageName>/ exists and is the
+      // package (in the case of a federated plugin).
+      if (topLevelCandidate.existsSync()) {
+        final Directory appFacingCandidate = topLevelCandidate.childDirectory(packageName);
+        targets[packageName] = RepositoryPackage(
+          appFacingCandidate.existsSync() ? appFacingCandidate : topLevelCandidate,
+        );
         continue;
       }
-      final RepositoryPackage? package = _findLocalPackage(packageName);
-      if (package == null) {
-        if (packageNames.contains(packageName)) {
-          printError('Unable to find package "$packageName"');
-          throw ToolExit(_exitPackageNotFound);
-        }
+      // Check for a match in the third-party packages directory.
+      final Directory thirdPartyCandidate = thirdPartyPackagesDir.childDirectory(packageName);
+      if (thirdPartyCandidate.existsSync()) {
+        targets[packageName] = RepositoryPackage(thirdPartyCandidate);
         continue;
       }
-      targets[packageName] = package;
-
-      // Expand to include local in-repo dependencies of target packages to prevent
-      // pub version solving conflicts when co-dependent packages are tested with path dependencies.
-      final Pubspec pubspec = package.parsePubspec();
-      for (final depName in <String>[
-        ...pubspec.dependencies.keys,
-        ...pubspec.devDependencies.keys,
-      ]) {
-        if (!targets.containsKey(depName)) {
-          queue.add(depName);
+      // If there is no packages/<packageName> directory, then either the
+      // packages doesn't exist, or it is a sub-package of a federated plugin.
+      // If it's the latter, it will be a directory whose name is a prefix.
+      for (final FileSystemEntity entity in packagesDir.listSync()) {
+        if (entity is Directory && packageName.startsWith(entity.basename)) {
+          final Directory subPackageCandidate = entity.childDirectory(packageName);
+          if (subPackageCandidate.existsSync()) {
+            targets[packageName] = RepositoryPackage(subPackageCandidate);
+            break;
+          }
         }
+      }
+
+      if (!targets.containsKey(packageName)) {
+        printError('Unable to find package "$packageName"');
+        throw ToolExit(_exitPackageNotFound);
       }
     }
     return targets;
-  }
-
-  RepositoryPackage? _findLocalPackage(String packageName) {
-    final Directory topLevelCandidate = packagesDir.childDirectory(packageName);
-    if (topLevelCandidate.childFile('pubspec.yaml').existsSync()) {
-      final Directory appFacingCandidate = topLevelCandidate.childDirectory(packageName);
-      return RepositoryPackage(
-        appFacingCandidate.childFile('pubspec.yaml').existsSync()
-            ? appFacingCandidate
-            : topLevelCandidate,
-      );
-    }
-    final Directory thirdPartyCandidate = thirdPartyPackagesDir.childDirectory(packageName);
-    if (thirdPartyCandidate.childFile('pubspec.yaml').existsSync()) {
-      return RepositoryPackage(thirdPartyCandidate);
-    }
-    for (final FileSystemEntity entity in packagesDir.listSync()) {
-      if (entity is Directory &&
-          (packageName == entity.basename || packageName.startsWith('${entity.basename}_'))) {
-        final Directory subPackageCandidate = entity.childDirectory(packageName);
-        if (subPackageCandidate.childFile('pubspec.yaml').existsSync()) {
-          return RepositoryPackage(subPackageCandidate);
-        }
-      }
-    }
-    return null;
   }
 
   /// If [pubspecFile] has any non-path dependencies on packages in
@@ -255,7 +236,10 @@ class MakeDepsPathBasedCommand extends PackageCommand {
 
         // Find the relative path from the common base to the local package.
         final List<String> repoRelativePathComponents = path.split(
-          path.relative(localDependencies[packageName]!.path, from: repoRootPath),
+          path.relative(
+            localDependencies[packageName]!.directory.absolute.path,
+            from: repoRootPath,
+          ),
         );
         final String pathValue = p.posix.joinAll(<String>[
           ...relativeBasePathComponents,
@@ -291,11 +275,12 @@ ${newOverrideLines.join('\n')}
     // example app doesn't. Since integration tests are run in the example app,
     // it needs the overrides in order for tests to pass.
     for (final RepositoryPackage example in package.getExamples()) {
+      final String parentPackageName = package.parsePubspec().name;
       await _addDependencyOverridesIfNecessary(
         example,
-        localDependencies,
+        <String, RepositoryPackage>{...localDependencies, parentPackageName: package},
         versions,
-        additionalPackagesToOverride: <String>{...packagesToOverride, package.parsePubspec().name},
+        additionalPackagesToOverride: <String>{...packagesToOverride, parentPackageName},
       );
     }
 
