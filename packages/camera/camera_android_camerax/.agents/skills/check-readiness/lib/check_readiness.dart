@@ -58,17 +58,13 @@ class ReadinessChecker {
 
   Future<bool> _activateFlutterPluginTools(String workspaceRoot) async {
     _log('5. Activating flutter_plugin_tools...');
-    final ProcessResult gitRootResult = await _processManager.run(
-      ['git', 'rev-parse', '--show-toplevel'],
-      workingDirectory: workspaceRoot,
-    );
-    if (gitRootResult.exitCode != 0) {
-      _log('Error: Failed to find git repository root.');
+    final String? repoRoot = _findRepoRoot(workspaceRoot);
+    if (repoRoot == null) {
+      _log('Error: Failed to find repository root (no .git directory found).');
       return false;
     }
-    final String repoRoot = (gitRootResult.stdout as String).trim();
     final ProcessResult activateResult = await _processManager.run(
-      ['dart', 'pub', 'global', 'activate', '--source', 'path', '$repoRoot/script/tool'],
+      ['dart', 'pub', 'global', 'activate', '--source', 'path', _fileSystem.path.join(repoRoot, 'script', 'tool')],
       workingDirectory: workspaceRoot,
     );
     if (activateResult.exitCode != 0) {
@@ -78,6 +74,22 @@ class ReadinessChecker {
     }
     _log('flutter_plugin_tools activated successfully.');
     return true;
+  }
+
+  String? _findRepoRoot(String startPath) {
+    var dir = _fileSystem.directory(startPath);
+    while (true) {
+      final gitPath = _fileSystem.path.join(dir.path, '.git');
+      if (_fileSystem.typeSync(gitPath) != FileSystemEntityType.notFound) {
+        return dir.path;
+      }
+      final parent = dir.parent;
+      if (parent.path == dir.path) {
+        break;
+      }
+      dir = parent;
+    }
+    return null;
   }
 
   Future<bool> _checkSymlinks(String workspaceRoot) async {

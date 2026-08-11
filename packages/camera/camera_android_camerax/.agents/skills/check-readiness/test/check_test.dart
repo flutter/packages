@@ -67,6 +67,9 @@ void main() {
       log: (Object? message) => printLogs.add(message.toString()),
     );
     workspaceRoot = fileSystem.path.absolute('workspace');
+    fileSystem
+        .file(fileSystem.path.join(workspaceRoot, '.git'))
+        .createSync(recursive: true);
     printLogs.clear();
   });
 
@@ -188,6 +191,9 @@ void main() {
         log: (Object? message) => printLogs.add(message.toString()),
       );
       winWorkspaceRoot = r'C:\workspace';
+      winFileSystem
+          .file(winFileSystem.path.join(winWorkspaceRoot, '.git'))
+          .createSync(recursive: true);
       printLogs.clear();
     });
 
