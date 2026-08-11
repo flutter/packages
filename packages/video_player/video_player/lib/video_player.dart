@@ -163,6 +163,7 @@ class VideoPlayerValue {
     this.rotationCorrection = 0,
     this.errorDescription,
     this.isCompleted = false,
+    this.preventsDisplaySleepDuringVideoPlayback = true,
   });
 
   /// Returns an instance for a video that hasn't been loaded.
@@ -224,6 +225,13 @@ class VideoPlayerValue {
   /// Does not update if video is looping.
   final bool isCompleted;
 
+  /// Whether the screen is prevented from sleeping during video playback.
+  ///
+  /// Defaults to `true`.
+  ///
+  /// This is currently only supported on iOS and macOS.
+  final bool preventsDisplaySleepDuringVideoPlayback;
+
   /// The [size] of the currently loaded video.
   final Size size;
 
@@ -272,6 +280,7 @@ class VideoPlayerValue {
     int? rotationCorrection,
     String? errorDescription = _defaultErrorDescription,
     bool? isCompleted,
+    bool? preventsDisplaySleepDuringVideoPlayback,
   }) {
     return VideoPlayerValue(
       duration: duration ?? this.duration,
@@ -291,6 +300,8 @@ class VideoPlayerValue {
           ? errorDescription
           : this.errorDescription,
       isCompleted: isCompleted ?? this.isCompleted,
+      preventsDisplaySleepDuringVideoPlayback:
+          preventsDisplaySleepDuringVideoPlayback ?? this.preventsDisplaySleepDuringVideoPlayback,
     );
   }
 
@@ -310,7 +321,8 @@ class VideoPlayerValue {
         'volume: $volume, '
         'playbackSpeed: $playbackSpeed, '
         'errorDescription: $errorDescription, '
-        'isCompleted: $isCompleted),';
+        'isCompleted: $isCompleted, '
+        'preventsDisplaySleepDuringVideoPlayback: $preventsDisplaySleepDuringVideoPlayback),';
   }
 
   @override
@@ -332,7 +344,8 @@ class VideoPlayerValue {
           size == other.size &&
           rotationCorrection == other.rotationCorrection &&
           isInitialized == other.isInitialized &&
-          isCompleted == other.isCompleted;
+          isCompleted == other.isCompleted &&
+          preventsDisplaySleepDuringVideoPlayback == other.preventsDisplaySleepDuringVideoPlayback;
 
   @override
   int get hashCode => Object.hash(
@@ -351,6 +364,7 @@ class VideoPlayerValue {
     rotationCorrection,
     isInitialized,
     isCompleted,
+    preventsDisplaySleepDuringVideoPlayback,
   );
 }
 
@@ -384,7 +398,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
        dataSourceType = platform_interface.DataSourceType.asset,
        formatHint = null,
        httpHeaders = const <String, String>{},
-       super(const VideoPlayerValue(duration: Duration.zero));
+       super(
+         VideoPlayerValue(
+           duration: Duration.zero,
+           preventsDisplaySleepDuringVideoPlayback:
+               videoPlayerOptions?.preventsDisplaySleepDuringVideoPlayback ?? true,
+         ),
+       );
 
   /// Constructs a [VideoPlayerController] playing a network video.
   ///
@@ -410,7 +430,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }) : _closedCaptionFileFuture = closedCaptionFile,
        dataSourceType = platform_interface.DataSourceType.network,
        package = null,
-       super(const VideoPlayerValue(duration: Duration.zero));
+       super(
+         VideoPlayerValue(
+           duration: Duration.zero,
+           preventsDisplaySleepDuringVideoPlayback:
+               videoPlayerOptions?.preventsDisplaySleepDuringVideoPlayback ?? true,
+         ),
+       );
 
   /// Constructs a [VideoPlayerController] playing a network video.
   ///
@@ -432,7 +458,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
        dataSource = url.toString(),
        dataSourceType = platform_interface.DataSourceType.network,
        package = null,
-       super(const VideoPlayerValue(duration: Duration.zero));
+       super(
+         VideoPlayerValue(
+           duration: Duration.zero,
+           preventsDisplaySleepDuringVideoPlayback:
+               videoPlayerOptions?.preventsDisplaySleepDuringVideoPlayback ?? true,
+         ),
+       );
 
   /// Constructs a [VideoPlayerController] playing a video from a file.
   ///
@@ -449,7 +481,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
        dataSourceType = platform_interface.DataSourceType.file,
        package = null,
        formatHint = null,
-       super(const VideoPlayerValue(duration: Duration.zero));
+       super(
+         VideoPlayerValue(
+           duration: Duration.zero,
+           preventsDisplaySleepDuringVideoPlayback:
+               videoPlayerOptions?.preventsDisplaySleepDuringVideoPlayback ?? true,
+         ),
+       );
 
   /// Constructs a [VideoPlayerController] playing a video from a contentUri.
   ///
@@ -470,7 +508,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
        package = null,
        formatHint = null,
        httpHeaders = const <String, String>{},
-       super(const VideoPlayerValue(duration: Duration.zero));
+       super(
+         VideoPlayerValue(
+           duration: Duration.zero,
+           preventsDisplaySleepDuringVideoPlayback:
+               videoPlayerOptions?.preventsDisplaySleepDuringVideoPlayback ?? true,
+         ),
+       );
 
   /// The URI to the video file. This will be in different formats depending on
   /// the [DataSourceType] of the original video.
@@ -560,6 +604,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     final creationOptions = platform_interface.VideoCreationOptions(
       dataSource: dataSourceDescription,
       viewType: viewType,
+      videoPlayerOptions: videoPlayerOptions,
     );
 
     if (videoPlayerOptions?.mixWithOthers != null) {
@@ -570,6 +615,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         (await _videoPlayerPlatform.createWithOptions(creationOptions)) ?? kUninitializedPlayerId;
     _creatingCompleter!.complete(null);
     final initializingCompleter = Completer<void>();
+
+    await _videoPlayerPlatform.setPreventsDisplaySleepDuringVideoPlayback(
+      _playerId,
+      value.preventsDisplaySleepDuringVideoPlayback,
+    );
 
     // Apply the web-specific options
     if (kIsWeb && videoPlayerOptions?.webOptions != null) {
@@ -690,6 +740,18 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     await _applyLooping();
   }
 
+  /// Sets whether the screen is prevented from sleeping during video playback.
+  ///
+  /// See also [VideoPlayerValue.preventsDisplaySleepDuringVideoPlayback].
+  Future<void> setPreventsDisplaySleepDuringVideoPlayback(
+    bool preventsDisplaySleepDuringVideoPlayback,
+  ) async {
+    value = value.copyWith(
+      preventsDisplaySleepDuringVideoPlayback: preventsDisplaySleepDuringVideoPlayback,
+    );
+    await _applyPreventsDisplaySleepDuringVideoPlayback();
+  }
+
   /// Pauses the video.
   Future<void> pause() async {
     value = value.copyWith(isPlaying: false);
@@ -701,6 +763,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       return;
     }
     await _videoPlayerPlatform.setLooping(_playerId, value.isLooping);
+  }
+
+  Future<void> _applyPreventsDisplaySleepDuringVideoPlayback() async {
+    if (_isDisposedOrNotInitialized) {
+      return;
+    }
+    await _videoPlayerPlatform.setPreventsDisplaySleepDuringVideoPlayback(
+      _playerId,
+      value.preventsDisplaySleepDuringVideoPlayback,
+    );
   }
 
   Future<void> _applyPlayPause() async {
@@ -986,6 +1058,72 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   bool get _isDisposedOrNotInitialized => _isDisposed || !value.isInitialized;
+
+  /// Gets the available video tracks for the video.
+  ///
+  /// The returned list contains a [VideoTrack] for each track available
+  /// for selection.
+  ///
+  /// For adaptive streams such as HLS or DASH, these often correspond to
+  /// different quality levels with different resolutions or bitrates.
+  /// For non-adaptive videos (MP4, MOV, etc.), platform implementations may
+  /// return one or more tracks, or an empty list, depending on the asset and
+  /// the metadata available.
+  ///
+  /// Note: On iOS 13-14, this returns an empty list as the AVAssetVariant API
+  /// requires iOS 15+. On web, this throws an [UnimplementedError].
+  ///
+  /// Check [isVideoTrackSupportAvailable] before calling this method to ensure
+  /// the platform supports video track selection.
+  Future<List<VideoTrack>> getVideoTracks() async {
+    if (_isDisposedOrNotInitialized) {
+      return <VideoTrack>[];
+    }
+    final List<platform_interface.VideoTrack> platformTracks = await _videoPlayerPlatform
+        .getVideoTracks(_playerId);
+    return platformTracks
+        .map((platform_interface.VideoTrack track) => VideoTrack._fromPlatform(track))
+        .toList();
+  }
+
+  /// Selects which video track is chosen for playback.
+  ///
+  /// Pass a [VideoTrack] to select a specific track.
+  /// Pass `null` to clear any manual selection and allow automatic selection.
+  ///
+  /// On iOS, this sets `preferredPeakBitRate` on the AVPlayerItem.
+  /// On Android, this uses ExoPlayer's track selection override.
+  /// On web, this throws an [UnimplementedError].
+  ///
+  /// Check [isVideoTrackSupportAvailable] before calling this method to ensure
+  /// the platform supports video track selection.
+  Future<void> selectVideoTrack(VideoTrack? track) async {
+    if (_isDisposedOrNotInitialized) {
+      return;
+    }
+    // Convert app-facing VideoTrack to platform interface VideoTrack
+    final platform_interface.VideoTrack? platformTrack = track != null
+        ? platform_interface.VideoTrack(
+            id: track.id,
+            isSelected: track.isSelected,
+            label: track.label,
+            bitrate: track.bitrate,
+            width: track.width,
+            height: track.height,
+            frameRate: track.frameRate,
+            codec: track.codec,
+          )
+        : null;
+    await _videoPlayerPlatform.selectVideoTrack(_playerId, platformTrack);
+  }
+
+  /// Whether video track selection is supported on this platform.
+  ///
+  /// Use this to check before calling [getVideoTracks] or [selectVideoTrack]
+  /// to avoid [UnimplementedError] exceptions on unsupported platforms.
+  bool isVideoTrackSupportAvailable() {
+    return _videoPlayerPlatform.isVideoTrackSupportAvailable();
+  }
 }
 
 class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {
@@ -1377,4 +1515,109 @@ class ClosedCaption extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Represents a video track in a video with its metadata.
+///
+/// For HLS/DASH adaptive streams, each [VideoTrack] represents a different
+/// quality level (e.g., 1080p, 720p, 480p). For non-adaptive videos, platform
+/// implementations may return a single track or no tracks, depending on the
+/// metadata that is available.
+@immutable
+class VideoTrack {
+  /// Constructs an instance of [VideoTrack].
+  const VideoTrack({
+    required this.id,
+    required this.isSelected,
+    this.label,
+    this.bitrate,
+    this.width,
+    this.height,
+    this.frameRate,
+    this.codec,
+  });
+
+  /// Creates a [VideoTrack] from a platform interface [VideoTrack].
+  factory VideoTrack._fromPlatform(platform_interface.VideoTrack track) {
+    return VideoTrack(
+      id: track.id,
+      isSelected: track.isSelected,
+      label: track.label,
+      bitrate: track.bitrate,
+      width: track.width,
+      height: track.height,
+      frameRate: track.frameRate,
+      codec: track.codec,
+    );
+  }
+
+  /// Unique identifier for the video track.
+  ///
+  /// The format is platform-specific:
+  /// - Android: `"{groupIndex}_{trackIndex}"` (e.g., `"0_2"`)
+  /// - iOS: `"variant_{bitrate}"` for HLS adaptive streams
+  final String id;
+
+  /// Whether this track is currently selected.
+  final bool isSelected;
+
+  /// Human-readable label for the track (e.g., "1080p", "720p").
+  ///
+  /// May be null if not available from the platform.
+  final String? label;
+
+  /// Bitrate of the video track in bits per second.
+  ///
+  /// May be null if not available from the platform.
+  final int? bitrate;
+
+  /// Video width in pixels.
+  ///
+  /// May be null if not available from the platform.
+  final int? width;
+
+  /// Video height in pixels.
+  ///
+  /// May be null if not available from the platform.
+  final int? height;
+
+  /// Frame rate in frames per second.
+  ///
+  /// May be null if not available from the platform.
+  final double? frameRate;
+
+  /// Video codec used (e.g., "avc1", "hevc", "vp9").
+  ///
+  /// May be null if not available from the platform.
+  final String? codec;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is VideoTrack &&
+            runtimeType == other.runtimeType &&
+            id == other.id &&
+            isSelected == other.isSelected &&
+            label == other.label &&
+            bitrate == other.bitrate &&
+            width == other.width &&
+            height == other.height &&
+            frameRate == other.frameRate &&
+            codec == other.codec;
+  }
+
+  @override
+  int get hashCode => Object.hash(id, isSelected, label, bitrate, width, height, frameRate, codec);
+
+  @override
+  String toString() =>
+      'VideoTrack('
+      'id: $id, '
+      'isSelected: $isSelected, '
+      'label: $label, '
+      'bitrate: $bitrate, '
+      'width: $width, '
+      'height: $height, '
+      'frameRate: $frameRate, '
+      'codec: $codec)';
 }

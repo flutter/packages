@@ -44,10 +44,10 @@ class DesktopTextSelectionToolbarButton extends StatelessWidget {
          ),
        );
 
-  /// {@macro flutter.material.TextSelectionToolbarTextButton.onPressed}
+  /// {@macro material_ui.TextSelectionToolbarTextButton.onPressed}
   final VoidCallback? onPressed;
 
-  /// {@macro flutter.material.TextSelectionToolbarTextButton.child}
+  /// {@macro material_ui.TextSelectionToolbarTextButton.child}
   final Widget child;
 
   @override

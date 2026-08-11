@@ -142,7 +142,7 @@ class FloatingActionButtonThemeData with Diagnosticable {
   /// The text style for an extended [FloatingActionButton]'s label.
   final TextStyle? extendedTextStyle;
 
-  /// {@macro flutter.material.RawMaterialButton.mouseCursor}
+  /// {@macro material_ui.RawMaterialButton.mouseCursor}
   ///
   /// If specified, overrides the default value of [FloatingActionButton.mouseCursor].
   final WidgetStateProperty<MouseCursor?>? mouseCursor;

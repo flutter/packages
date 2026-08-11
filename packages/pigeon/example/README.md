@@ -439,8 +439,7 @@ Register the handler with the generated method.
 <?code-excerpt "ios/Runner/AppDelegate.swift (swift-init-event)"?>
 ```swift
 let eventListener = EventListener()
-StreamEventsStreamHandler.register(
-  with: controller.binaryMessenger, streamHandler: eventListener)
+StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: eventListener)
 ```
 
 ### Kotlin

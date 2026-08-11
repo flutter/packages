@@ -63,7 +63,11 @@ enum _RadioType { material, adaptive }
 /// [RadioListTile] itself but by the [Material] widget ancestor. In this
 /// case, one can wrap a [Material] widget around the [RadioListTile], e.g.:
 ///
-/// {@tool snippet}
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 /// ```dart
 /// const ColoredBox(
 ///   color: Colors.green,
@@ -76,7 +80,8 @@ enum _RadioType { material, adaptive }
 ///   ),
 /// )
 /// ```
-/// {@end-tool}
+///
+/// </callout-box>
 ///
 /// ## Performance considerations when wrapping [RadioListTile] with [Material]
 ///
@@ -84,21 +89,33 @@ enum _RadioType { material, adaptive }
 /// is expensive. Consider only wrapping the [RadioListTile]s that require it
 /// or include a common [Material] ancestor where possible.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// ![RadioListTile sample](https://flutter.github.io/assets-for-api-docs/assets/material/radio_list_tile.png)
 ///
 /// This widget shows a pair of radio buttons that control the `_character`
 /// field. The field is of the type `SingingCharacter`, an enum.
 ///
-/// ** See code in examples/api/lib/material/radio_list_tile/radio_list_tile.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/radio_list_tile/radio_list_tile.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This sample demonstrates how [RadioListTile] positions the radio widget
 /// relative to the text in different configurations.
 ///
-/// ** See code in examples/api/lib/material/radio_list_tile/radio_list_tile.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/radio_list_tile/radio_list_tile.1.dart#body}
+///
+/// </callout-box>
 ///
 /// ## Semantics in RadioListTile
 ///
@@ -117,15 +134,21 @@ enum _RadioType { material, adaptive }
 /// into one. Therefore, it may be necessary to create a custom radio tile
 /// widget to accommodate similar use cases.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// ![Radio list tile semantics sample](https://flutter.github.io/assets-for-api-docs/assets/material/radio_list_tile_semantics.png)
 ///
 /// Here is an example of a custom labeled radio widget, called
 /// LinkedLabelRadio, that includes an interactive [RichText] widget that
 /// handles tap gestures.
 ///
-/// ** See code in examples/api/lib/material/radio_list_tile/custom_labeled_radio.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/radio_list_tile/custom_labeled_radio.0.dart#body}
+///
+/// </callout-box>
 ///
 /// ## RadioListTile isn't exactly what I want
 ///
@@ -134,14 +157,20 @@ enum _RadioType { material, adaptive }
 /// combining [Radio] with other widgets, such as [Text], [Padding] and
 /// [InkWell].
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// ![Custom radio list tile sample](https://flutter.github.io/assets-for-api-docs/assets/material/radio_list_tile_custom.png)
 ///
 /// Here is an example of a custom LabeledRadio widget, but you can easily
 /// make your own configurable widget.
 ///
-/// ** See code in examples/api/lib/material/radio_list_tile/custom_labeled_radio.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/radio_list_tile/custom_labeled_radio.1.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -351,12 +380,18 @@ class RadioListTile<T> extends StatefulWidget {
   ///
   /// The default is false.
   ///
-  /// {@tool dartpad}
+  /// <callout-box>
+  ///
   /// This example shows how to enable deselecting a radio button by setting the
   /// [toggleable] attribute.
   ///
-  /// ** See code in examples/api/lib/material/radio_list_tile/radio_list_tile.toggleable.0.dart **
-  /// {@end-tool}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/radio_list_tile/radio_list_tile.toggleable.0.dart#body}
+  ///
+  /// </callout-box>
   final bool toggleable;
 
   /// The color to use when this radio button is selected.
@@ -376,12 +411,12 @@ class RadioListTile<T> extends StatefulWidget {
   /// If that is also null, then the default value is used.
   final WidgetStateProperty<Color?>? fillColor;
 
-  /// {@macro flutter.material.radio.materialTapTargetSize}
+  /// {@macro material_ui.radio.materialTapTargetSize}
   ///
   /// Defaults to [MaterialTapTargetSize.shrinkWrap].
   final MaterialTapTargetSize? materialTapTargetSize;
 
-  /// {@macro flutter.material.radio.hoverColor}
+  /// {@macro material_ui.radio.hoverColor}
   final Color? hoverColor;
 
   /// The color for the radio's [Material].
@@ -397,7 +432,7 @@ class RadioListTile<T> extends StatefulWidget {
   /// also null, then the default value is used in the pressed and hovered state.
   final WidgetStateProperty<Color?>? overlayColor;
 
-  /// {@macro flutter.material.radio.splashRadius}
+  /// {@macro material_ui.radio.splashRadius}
   ///
   /// If null, then the value of [RadioThemeData.splashRadius] is used. If that
   /// is also null, then [kRadialReactionRadius] is used.
@@ -466,7 +501,7 @@ class RadioListTile<T> extends StatefulWidget {
 
   /// Defines how compact the list tile's layout will be.
   ///
-  /// {@macro flutter.material.themedata.visualDensity}
+  /// {@macro material_ui.themedata.visualDensity}
   final VisualDensity? visualDensity;
 
   /// {@macro flutter.widgets.Focus.focusNode}
@@ -475,26 +510,26 @@ class RadioListTile<T> extends StatefulWidget {
   /// Controls the interactive states of the backing [ListTile].
   final WidgetStatesController? statesController;
 
-  /// {@macro flutter.material.inkwell.onFocusChange}
+  /// {@macro cupertino_ui.inkwell.onFocusChange}
   final ValueChanged<bool>? onFocusChange;
 
-  /// {@macro flutter.material.ListTile.enableFeedback}
+  /// {@macro material_ui.ListTile.enableFeedback}
   ///
   /// See also:
   ///
   ///  * [Feedback] for providing platform-specific feedback to certain actions.
   final bool? enableFeedback;
 
-  /// {@macro flutter.material.ListTile.horizontalTitleGap}
+  /// {@macro material_ui.ListTile.horizontalTitleGap}
   final double? horizontalTitleGap;
 
-  /// {@macro flutter.material.ListTile.minVerticalPadding}
+  /// {@macro material_ui.ListTile.minVerticalPadding}
   final double? minVerticalPadding;
 
-  /// {@macro flutter.material.ListTile.minLeadingWidth}
+  /// {@macro material_ui.ListTile.minLeadingWidth}
   final double? minLeadingWidth;
 
-  /// {@macro flutter.material.ListTile.minTileHeight}
+  /// {@macro material_ui.ListTile.minTileHeight}
   final double? minTileHeight;
 
   final _RadioType _radioType;

@@ -1,0 +1,3 @@
+# Opts out of unawaited_futures, matching flutter/flutter's disabling due
+# to interactions with animation.
+allow_custom_analysis_options: true

@@ -73,4 +73,22 @@ void main() {
       reason: 'view type must be passed to the platform',
     );
   });
+
+  test('back buffer duration is forwarded to platform', () async {
+    const expectedBackBufferDurationMs = 20000;
+
+    final controller = VideoPlayerController.networkUrl(
+      Uri.parse('https://127.0.0.1'),
+      videoPlayerOptions: VideoPlayerOptions(backBufferDurationMs: expectedBackBufferDurationMs),
+    );
+
+    await controller.initialize();
+
+    expect(
+      fakeVideoPlayerPlatform.videoPlayerOptions.last?.backBufferDurationMs,
+      expectedBackBufferDurationMs,
+      reason:
+          'backBufferDurationMs must be forwarded to the platform via VideoCreationOptions.videoPlayerOptions',
+    );
+  });
 }

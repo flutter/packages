@@ -48,7 +48,11 @@ import 'text_field.dart';
 /// [CupertinoTextField] class and [CupertinoTextField.borderless],
 /// the constructor.
 ///
-/// {@tool snippet}
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
+///
 ///
 /// Creates a [CupertinoTextFormFieldRow] with a leading text and validator
 /// function.
@@ -71,14 +75,21 @@ import 'text_field.dart';
 ///   },
 /// )
 /// ```
-/// {@end-tool}
 ///
-/// {@tool dartpad}
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example shows how to move the focus to the next field when the user
 /// presses the SPACE key.
 ///
-/// ** See code in examples/api/lib/cupertino/text_form_field_row/cupertino_text_form_field_row.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/text_form_field_row/cupertino_text_form_field_row.1.dart#body}
+///
+/// </callout-box>
 class CupertinoTextFormFieldRow extends FormField<String> {
   /// Creates a [CupertinoFormRow] containing a [FormField] that wraps
   /// a [CupertinoTextField].
@@ -272,7 +283,10 @@ class CupertinoTextFormFieldRow extends FormField<String> {
   /// initialize its [TextEditingController.text] with [initialValue].
   final TextEditingController? controller;
 
-  /// {@macro flutter.material.TextFormField.onChanged}
+  /// {@template cupertino_ui.TextFormField.onChanged}
+  /// Called when the user initiates a change to the TextField's
+  /// value: when they have inserted or deleted text or reset the form.
+  /// {@endtemplate}
   final ValueChanged<String>? onChanged;
 
   static Widget _defaultContextMenuBuilder(

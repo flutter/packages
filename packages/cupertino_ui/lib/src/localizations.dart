@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO(justinmc): Consider aligning the file naming between Material and
+// Cupertino. Here it's called localizations.dart but there it's
+// material_localizations.dart.
+
 /// @docImport 'bottom_tab_bar.dart';
 /// @docImport 'date_picker.dart';
 /// @docImport 'expansion_tile.dart';

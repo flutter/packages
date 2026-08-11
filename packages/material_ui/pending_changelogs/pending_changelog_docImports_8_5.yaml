@@ -1,0 +1,3 @@
+changelog: |
+  - Replace unresolvable doc imports
+version: patch

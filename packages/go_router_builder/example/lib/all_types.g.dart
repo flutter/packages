@@ -12,58 +12,72 @@ List<RouteBase> get $appRoutes => [$allTypesBaseRoute];
 
 RouteBase get $allTypesBaseRoute => GoRouteData.$route(
   path: '/',
+  hasOverriddenOnExit: false,
   factory: $AllTypesBaseRoute._fromState,
   routes: [
     GoRouteData.$route(
       path: 'big-int-route/:requiredBigIntField',
+      hasOverriddenOnExit: false,
       factory: $BigIntRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'bool-route/:requiredBoolField',
+      hasOverriddenOnExit: false,
       factory: $BoolRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'date-time-route/:requiredDateTimeField',
+      hasOverriddenOnExit: false,
       factory: $DateTimeRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'double-route/:requiredDoubleField',
+      hasOverriddenOnExit: false,
       factory: $DoubleRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'int-route/:requiredIntField',
+      hasOverriddenOnExit: false,
       factory: $IntRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'num-route/:requiredNumField',
+      hasOverriddenOnExit: false,
       factory: $NumRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'double-route/:requiredDoubleField',
+      hasOverriddenOnExit: false,
       factory: $DoubleRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'enum-route/:requiredEnumField',
+      hasOverriddenOnExit: false,
       factory: $EnumRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'enhanced-enum-route/:requiredEnumField',
+      hasOverriddenOnExit: false,
       factory: $EnhancedEnumRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'string-route/:requiredStringField',
+      hasOverriddenOnExit: false,
       factory: $StringRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'uri-route/:requiredUriField',
+      hasOverriddenOnExit: false,
       factory: $UriRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'iterable-route',
+      hasOverriddenOnExit: false,
       factory: $IterableRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'iterable-route-with-default-values',
+      hasOverriddenOnExit: false,
       factory: $IterableRouteWithDefaultValues._fromState,
     ),
   ],

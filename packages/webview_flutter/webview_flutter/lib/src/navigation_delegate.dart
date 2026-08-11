@@ -38,9 +38,15 @@ class NavigationDelegate {
   /// Constructs a [NavigationDelegate].
   ///
   /// {@template webview_fluttter.NavigationDelegate.constructor}
-  /// **`onUrlChange`:** invoked when the underlying web view changes to a new url.
+  /// **`onNavigationRequest`:** invoked when a navigation request is pending.
+  /// **`onPageStarted`:** invoked when a page starts loading.
+  /// **`onPageFinished`:** invoked when a page finishes loading.
+  /// **`onProgress`:** invoked when page loading progress changes.
+  /// **`onWebResourceError`:** invoked when a web resource loading error occurs.
+  /// **`onUrlChange`:** invoked when the underlying web view changes to a new URL.
   /// **`onHttpAuthRequest`:** invoked when the web view is requesting authentication.
-  /// **`onSslAuthError`:** Invoked when the web view receives a recoverable SSL
+  /// **`onHttpError`:** invoked when an HTTP error status code is received.
+  /// **`onSslAuthError`:** invoked when the web view receives a recoverable SSL
   ///   error for a certificate. The host application must call either
   ///   [SslAuthError.cancel] or [SslAuthError.proceed].
   /// {@endtemplate}

@@ -7,7 +7,7 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    swiftOut: 'ios/camera_avfoundation/Sources/camera_avfoundation/Messages.swift',
+    swiftOut: 'darwin/camera_avfoundation/Sources/camera_avfoundation/Messages.swift',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
@@ -338,6 +338,11 @@ abstract class CameraApi {
   @async
   @ObjCSelector('setImageFileFormat:')
   void setImageFileFormat(PlatformImageFileFormat format);
+
+  /// Sets the JPEG compression quality for still image capture.
+  @async
+  @ObjCSelector('setJpegImageQuality:')
+  void setJpegImageQuality(int quality);
 }
 
 @EventChannelApi()

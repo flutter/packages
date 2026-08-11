@@ -7,6 +7,8 @@
 #import "FGMMapEventDelegate.h"
 #import "google_maps_flutter_pigeon_messages.g.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 // Defines polygon controllable by Flutter.
 @interface FGMPolygonController : NSObject
 - (instancetype)initWithPath:(GMSMutablePath *)path
@@ -24,3 +26,5 @@
 - (void)didTapPolygonWithIdentifier:(NSString *)identifier;
 - (bool)hasPolygonWithIdentifier:(NSString *)identifier;
 @end
+
+NS_ASSUME_NONNULL_END

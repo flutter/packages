@@ -128,34 +128,38 @@ class PopupMenuDivider extends PopupMenuEntry<Never> {
 
   /// The thickness of the line drawn within the [PopupMenuDivider].
   ///
-  /// {@macro flutter.material.Divider.thickness}
+  /// {@macro material_ui.Divider.thickness}
   final double? thickness;
 
   /// The amount of empty space to the leading edge of the [PopupMenuDivider].
   ///
-  /// {@macro flutter.material.Divider.indent}
+  /// {@macro material_ui.Divider.indent}
   final double? indent;
 
   /// The amount of empty space to the trailing edge of the [PopupMenuDivider].
   ///
-  /// {@macro flutter.material.Divider.endIndent}
+  /// {@macro material_ui.Divider.endIndent}
   final double? endIndent;
 
   /// The amount of radius for the border of the [PopupMenuDivider].
   ///
-  /// {@macro flutter.material.Divider.radius}
+  /// {@macro material_ui.Divider.radius}
   final BorderRadiusGeometry? radius;
 
-  /// {@macro flutter.material.Divider.color}
+  /// {@macro material_ui.Divider.color}
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
   ///
   /// ```dart
   /// const PopupMenuDivider(
   ///   color: Colors.deepOrange,
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   final Color? color;
 
   @override
@@ -241,7 +245,10 @@ class _RenderMenuItem extends RenderShiftedBox {
 /// [PopupMenuItem] is [kMinInteractiveDimension] pixels high. If you use a widget
 /// with a different height, it must be specified in the [height] property.
 ///
-/// {@tool snippet}
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// Here, a [Text] widget is used with a popup menu item. The `Menu` type
 /// is an enum, not shown here.
@@ -252,7 +259,8 @@ class _RenderMenuItem extends RenderShiftedBox {
 ///   child: Text('Item 1'),
 /// )
 /// ```
-/// {@end-tool}
+///
+/// </callout-box>
 ///
 /// See the example at [PopupMenuButton] for how this example could be used in a
 /// complete menu, and see the example at [CheckedPopupMenuItem] for one way to
@@ -332,7 +340,7 @@ class PopupMenuItem<T> extends PopupMenuEntry<T> {
   /// the [ColorScheme.onSurface] color with 0.38 opacity when the popup menu item is disabled.
   final WidgetStateProperty<TextStyle?>? labelTextStyle;
 
-  /// {@template flutter.material.popupmenu.mouseCursor}
+  /// {@template material_ui.popupmenu.mouseCursor}
   /// The cursor for a mouse pointer when it enters or is hovering over the
   /// widget.
   ///
@@ -494,7 +502,10 @@ class PopupMenuItemState<T, W extends PopupMenuItem<T>> extends State<W> {
 /// layout uses [ListTile]; the checkmark is an [Icons.done] icon, shown in the
 /// [ListTile.leading] position.
 ///
-/// {@tool snippet}
+/// <callout-box>
+///
+// TODO(framework): Add unit tests to this code snippet.
+// https://github.com/flutter/flutter/issues/188530
 ///
 /// Suppose a `Commands` enum exists that lists the possible commands from a
 /// particular popup menu, including `Commands.heroAndScholar` and
@@ -531,7 +542,8 @@ class PopupMenuItemState<T, W extends PopupMenuItem<T>> extends State<W> {
 ///   ],
 /// )
 /// ```
-/// {@end-tool}
+///
+/// </callout-box>
 ///
 /// In particular, observe how the second menu item uses a [ListTile] with a
 /// blank [Icon] in the [ListTile.leading] position to get the same alignment as
@@ -1291,32 +1303,56 @@ typedef PopupMenuItemBuilder<T> = List<PopupMenuEntry<T>> Function(BuildContext 
 /// Use the sample below for an example of migrating from [PopupMenuButton] to
 /// [MenuAnchor].
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows a menu with three items, selecting between an enum's
 /// values and setting a `selectedMenu` field based on the selection.
 ///
-/// ** See code in examples/api/lib/material/popup_menu/popup_menu.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/popup_menu/popup_menu.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This example shows how to migrate the above to a [MenuAnchor].
 ///
-/// ** See code in examples/api/lib/material/menu_anchor/menu_anchor.2.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/menu_anchor/menu_anchor.2.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This sample shows the creation of a popup menu, as described in:
 /// https://m3.material.io/components/menus/overview
 ///
-/// ** See code in examples/api/lib/material/popup_menu/popup_menu.1.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-/// {@tool dartpad}
+/// {@example /example/lib/popup_menu/popup_menu.1.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
+///
 /// This sample showcases how to override the [PopupMenuButton] animation
 /// curves and duration using [AnimationStyle].
 ///
-/// ** See code in examples/api/lib/material/popup_menu/popup_menu.2.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/popup_menu/popup_menu.2.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1531,7 +1567,7 @@ class PopupMenuButton<T> extends StatefulWidget {
   /// over the button that was used to create it.
   final PopupMenuPosition? position;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// The [clipBehavior] argument is used the clip shape of the menu.
   ///

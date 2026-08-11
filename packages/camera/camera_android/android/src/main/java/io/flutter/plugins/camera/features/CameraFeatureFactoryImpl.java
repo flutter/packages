@@ -15,6 +15,7 @@ import io.flutter.plugins.camera.features.exposurepoint.ExposurePointFeature;
 import io.flutter.plugins.camera.features.flash.FlashFeature;
 import io.flutter.plugins.camera.features.focuspoint.FocusPointFeature;
 import io.flutter.plugins.camera.features.fpsrange.FpsRangeFeature;
+import io.flutter.plugins.camera.features.jpegquality.JpegQualityFeature;
 import io.flutter.plugins.camera.features.noisereduction.NoiseReductionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
@@ -104,5 +105,11 @@ public class CameraFeatureFactoryImpl implements CameraFeatureFactory {
   public NoiseReductionFeature createNoiseReductionFeature(
       @NonNull CameraProperties cameraProperties) {
     return new NoiseReductionFeature(cameraProperties);
+  }
+
+  @NonNull
+  @Override
+  public JpegQualityFeature createJpegQualityFeature(@NonNull CameraProperties cameraProperties) {
+    return new JpegQualityFeature(cameraProperties);
   }
 }

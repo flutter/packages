@@ -296,9 +296,19 @@ abstract class PackageLoopingCommand extends PackageCommand {
     final runStart = DateTime.now();
 
     // Populate the list of changed files for subclasses to use.
-    final GitVersionFinder gitVersionFinder = await retrieveVersionFinder();
-    baseSha = await gitVersionFinder.getBaseSha();
-    changedFiles = await gitVersionFinder.getChangedFiles();
+    if (getBoolArg(PackageCommand.runOnDirtyPackagesArg)) {
+      baseSha = 'HEAD';
+      final gitVersionFinder = GitVersionFinder(await gitDir, baseSha: baseSha);
+      changedFiles = await gitVersionFinder.getChangedFiles(includeUncommitted: true);
+    } else if (getBoolArg(PackageCommand.runOnStagedPackagesArg)) {
+      baseSha = 'HEAD';
+      final gitVersionFinder = GitVersionFinder(await gitDir, baseSha: baseSha);
+      changedFiles = await gitVersionFinder.getStagedFiles();
+    } else {
+      final GitVersionFinder gitVersionFinder = await retrieveVersionFinder();
+      baseSha = await gitVersionFinder.getBaseSha();
+      changedFiles = await gitVersionFinder.getChangedFiles();
+    }
 
     // Check whether the command needs to run.
     if (changedFiles.isNotEmpty && changedFiles.every(shouldIgnoreFile)) {

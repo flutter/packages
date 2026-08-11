@@ -1,2 +1,6 @@
 release:
   batch: true
+
+# Has some test files that are intentionally broken to conduct dart fix tests.
+# Also opts out of unawaited_futures, matching flutter/flutter.
+allow_custom_analysis_options: true

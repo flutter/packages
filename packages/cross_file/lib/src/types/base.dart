@@ -46,6 +46,10 @@ abstract class XFileBase {
   }
 
   /// For web, it may be necessary for a file to know its MIME type.
+  ///
+  /// Native implementations do not infer this value from the file path or
+  /// contents. On those platforms, this returns the value passed to the
+  /// implementation's constructor, if any.
   String? get mimeType {
     throw UnimplementedError('.mimeType has not been implemented.');
   }

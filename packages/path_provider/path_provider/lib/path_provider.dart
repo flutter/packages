@@ -207,8 +207,13 @@ Future<List<Directory>?> getExternalStorageDirectories({
 /// The returned directory is not guaranteed to exist, so clients should verify
 /// that it does before using it, and potentially create it if necessary.
 ///
-/// Throws an [UnsupportedError] if this is not supported on the current
-/// platform.
+/// Returns `null` when the current platform supports the concept of a
+/// downloads directory but no such directory is currently available. For
+/// example, on Linux this can happen when `xdg-user-dir` is not installed
+/// or fails when called.
+///
+/// Throws an [UnsupportedError] when the current platform has no concept of
+/// a downloads directory at all.
 Future<Directory?> getDownloadsDirectory() async {
   final String? path = await _platform.getDownloadsPath();
   if (path == null) {

@@ -20,7 +20,7 @@ import 'theme.dart';
 
 /// The default context menu for text selection for the current platform.
 ///
-/// {@template flutter.material.AdaptiveTextSelectionToolbar.contextMenuBuilders}
+/// {@template material_ui.AdaptiveTextSelectionToolbar.contextMenuBuilders}
 /// Typically, this widget would be passed to `contextMenuBuilder` in a
 /// supported parent widget, such as:
 ///
@@ -50,19 +50,19 @@ class AdaptiveTextSelectionToolbar extends StatelessWidget {
   ///
   /// See also:
   ///
-  /// {@template flutter.material.AdaptiveTextSelectionToolbar.buttonItems}
+  /// {@template material_ui.AdaptiveTextSelectionToolbar.buttonItems}
   /// * [AdaptiveTextSelectionToolbar.buttonItems], which takes a list of
   ///   [ContextMenuButtonItem]s instead of [children] widgets.
   /// {@endtemplate}
-  /// {@template flutter.material.AdaptiveTextSelectionToolbar.editable}
+  /// {@template material_ui.AdaptiveTextSelectionToolbar.editable}
   /// * [AdaptiveTextSelectionToolbar.editable], which builds the default
   ///   children for an editable field.
   /// {@endtemplate}
-  /// {@template flutter.material.AdaptiveTextSelectionToolbar.editableText}
+  /// {@template material_ui.AdaptiveTextSelectionToolbar.editableText}
   /// * [AdaptiveTextSelectionToolbar.editableText], which builds the default
   ///   children for an [EditableText].
   /// {@endtemplate}
-  /// {@template flutter.material.AdaptiveTextSelectionToolbar.selectable}
+  /// {@template material_ui.AdaptiveTextSelectionToolbar.selectable}
   /// * [AdaptiveTextSelectionToolbar.selectable], which builds the default
   ///   children for content that is selectable but not editable.
   /// {@endtemplate}
@@ -74,13 +74,13 @@ class AdaptiveTextSelectionToolbar extends StatelessWidget {
   ///
   /// See also:
   ///
-  /// {@template flutter.material.AdaptiveTextSelectionToolbar.new}
+  /// {@template material_ui.AdaptiveTextSelectionToolbar.new}
   /// * [AdaptiveTextSelectionToolbar.new], which takes the children directly as
   ///   a list of widgets.
   /// {@endtemplate}
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.editable}
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.editableText}
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.selectable}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.editable}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.editableText}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.selectable}
   const AdaptiveTextSelectionToolbar.buttonItems({
     super.key,
     required this.buttonItems,
@@ -100,10 +100,10 @@ class AdaptiveTextSelectionToolbar extends StatelessWidget {
   ///
   /// See also:
   ///
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.new}
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.editableText}
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.buttonItems}
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.selectable}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.new}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.editableText}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.buttonItems}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.selectable}
   AdaptiveTextSelectionToolbar.editable({
     super.key,
     required ClipboardStatus clipboardStatus,
@@ -134,10 +134,10 @@ class AdaptiveTextSelectionToolbar extends StatelessWidget {
   ///
   /// See also:
   ///
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.new}
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.editable}
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.buttonItems}
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.selectable}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.new}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.editable}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.buttonItems}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.selectable}
   AdaptiveTextSelectionToolbar.editableText({
     super.key,
     required EditableTextState editableTextState,
@@ -150,10 +150,10 @@ class AdaptiveTextSelectionToolbar extends StatelessWidget {
   ///
   /// See also:
   ///
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.new}
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.buttonItems}
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.editable}
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.editableText}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.new}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.buttonItems}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.editable}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.editableText}
   AdaptiveTextSelectionToolbar.selectable({
     super.key,
     required VoidCallback onCopy,
@@ -174,11 +174,11 @@ class AdaptiveTextSelectionToolbar extends StatelessWidget {
   ///
   /// See also:
   ///
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.new}
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.buttonItems}
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.editable}
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.editableText}
-  /// {@macro flutter.material.AdaptiveTextSelectionToolbar.selectable}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.new}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.buttonItems}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.editable}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.editableText}
+  /// {@macro material_ui.AdaptiveTextSelectionToolbar.selectable}
   AdaptiveTextSelectionToolbar.selectableRegion({
     super.key,
     required SelectableRegionState selectableRegionState,
@@ -186,7 +186,7 @@ class AdaptiveTextSelectionToolbar extends StatelessWidget {
        buttonItems = selectableRegionState.contextMenuButtonItems,
        anchors = selectableRegionState.contextMenuAnchors;
 
-  /// {@template flutter.material.AdaptiveTextSelectionToolbar.buttonItems}
+  /// {@template material_ui.AdaptiveTextSelectionToolbar.buttonItems}
   /// The [ContextMenuButtonItem]s that will be turned into the correct button
   /// widgets for the current platform.
   /// {@endtemplate}
@@ -195,9 +195,7 @@ class AdaptiveTextSelectionToolbar extends StatelessWidget {
   /// The children of the toolbar, typically buttons.
   final List<Widget>? children;
 
-  /// {@template flutter.material.AdaptiveTextSelectionToolbar.anchors}
-  /// The location on which to anchor the menu.
-  /// {@endtemplate}
+  /// {@macro cupertino_ui.AdaptiveTextSelectionToolbar.anchors}
   final TextSelectionToolbarAnchors anchors;
 
   /// Returns the default button label String for the button of the given
@@ -239,12 +237,18 @@ class AdaptiveTextSelectionToolbar extends StatelessWidget {
   /// button appearance for the given platform, but where the toolbar and/or the
   /// button actions and labels may be custom.
   ///
-  /// {@tool dartpad}
+  /// <callout-box>
+  ///
   /// This sample demonstrates how to use `getAdaptiveButtons` to generate
   /// default button widgets in a custom toolbar.
   ///
-  /// ** See code in examples/api/lib/material/context_menu/editable_text_toolbar_builder.2.dart **
-  /// {@end-tool}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
+  ///
+  /// {@example /example/lib/context_menu/editable_text_toolbar_builder.2.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///

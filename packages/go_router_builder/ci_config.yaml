@@ -1,3 +1,7 @@
 release:
   # TODO(chunhtai): Opt in when ready.
   batch: false
+
+# Uses default formatter settings instead of custom repo settings since it
+# serves as a golden for builder output tests.
+allow_custom_analysis_options: true

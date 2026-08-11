@@ -81,12 +81,12 @@
 - (UIImage *)handleResultTile:(nullable UIImage *)tile {
   CGImageRef imageRef = tile.CGImage;
   CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(imageRef);
-  BOOL isFloat = bitmapInfo && kCGBitmapFloatComponents;
+  BOOL isFloat = bitmapInfo & kCGBitmapFloatComponents;
   size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
 
   // Engine use f16 pixel format for wide gamut images
   // If it is wide gamut, we want to downsample it
-  if (isFloat & (bitsPerComponent == 16)) {
+  if (isFloat && (bitsPerComponent == 16)) {
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef context =
         CGBitmapContextCreate(nil, tile.size.width, tile.size.height, 8, 0, colorSpace,

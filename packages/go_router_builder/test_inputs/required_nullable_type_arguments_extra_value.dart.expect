@@ -1,6 +1,7 @@
 RouteBase get $requiredNullableTypeArgumentsExtraValueRoute =>
     GoRouteData.$route(
       path: '/default-value-route',
+      hasOverriddenOnExit: false,
       factory: $RequiredNullableTypeArgumentsExtraValueRoute._fromState,
     );
 

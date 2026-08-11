@@ -868,6 +868,37 @@ void main() {
       expect(find.text('Fallback Page'), findsOneWidget);
     });
 
+    testWidgets('Should raise BlockedInitialNavigationException when the initial navigation '
+        'is blocked by onEnter with no prior route to restore', (WidgetTester tester) async {
+      Object? capturedError;
+
+      router = GoRouter(
+        initialLocation: '/protected',
+        onEnter:
+            (
+              BuildContext context,
+              GoRouterState current,
+              GoRouterState next,
+              GoRouter goRouter,
+            ) async {
+              if (next.uri.path == '/protected') {
+                return const Block.stop();
+              }
+              return const Allow();
+            },
+        onException: (BuildContext context, GoRouterState state, GoRouter goRouter) {
+          capturedError = state.error;
+        },
+        routes: <GoRoute>[GoRoute(path: '/protected', builder: (_, _) => const Placeholder())],
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      expect(capturedError, isA<BlockedInitialNavigationException>());
+      expect(capturedError, isA<GoException>());
+    });
+
     testWidgets('onEnter has priority over deprecated redirect', (WidgetTester tester) async {
       var redirectCallCount = 0;
       var onEnterCallCount = 0;

@@ -7,6 +7,11 @@ android {
     namespace = "io.flutter.plugins.pathproviderexample"
     compileSdk = flutter.compileSdkVersion
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
     defaultConfig {
         applicationId = "io.flutter.plugins.pathproviderexample"
         minSdk = flutter.minSdkVersion

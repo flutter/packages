@@ -528,4 +528,82 @@ void main() {
     expect(find.byKey(detailKey), findsOneWidget);
     expect(find.byKey(homeKey), findsNothing);
   });
+
+  // Regression test for https://github.com/flutter/flutter/issues/137829
+  testWidgets('back button works synchronously with ShellRoute', (WidgetTester tester) async {
+    var allow = false;
+    final home = UniqueKey();
+    final page = UniqueKey();
+    final routes = <RouteBase>[
+      GoRoute(
+        path: '/',
+        builder: (_, _) => DummyScreen(key: home),
+        routes: <RouteBase>[
+          ShellRoute(
+            builder: (_, _, Widget child) => child,
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'page',
+                builder: (_, _) => DummyScreen(key: page),
+                onExit: (BuildContext context, GoRouterState state) => allow,
+              ),
+            ],
+          ),
+        ],
+      ),
+    ];
+
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/page');
+    expect(find.byKey(page), findsOneWidget);
+
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(find.byKey(page), findsOneWidget);
+
+    allow = true;
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(find.byKey(home), findsOneWidget);
+  });
+
+  // Regression test for https://github.com/flutter/flutter/issues/137829
+  testWidgets('back button works asynchronously with ShellRoute', (WidgetTester tester) async {
+    var allow = Completer<bool>();
+    final home = UniqueKey();
+    final page = UniqueKey();
+    final routes = <RouteBase>[
+      GoRoute(
+        path: '/',
+        builder: (_, _) => DummyScreen(key: home),
+        routes: <RouteBase>[
+          ShellRoute(
+            builder: (_, _, Widget child) => child,
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'page',
+                builder: (_, _) => DummyScreen(key: page),
+                onExit: (BuildContext context, GoRouterState state) async => allow.future,
+              ),
+            ],
+          ),
+        ],
+      ),
+    ];
+
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/page');
+    expect(find.byKey(page), findsOneWidget);
+
+    router.pop();
+    await tester.pumpAndSettle();
+    allow.complete(false);
+    await tester.pumpAndSettle();
+    expect(find.byKey(page), findsOneWidget);
+
+    allow = Completer<bool>();
+    router.pop();
+    await tester.pumpAndSettle();
+    allow.complete(true);
+    await tester.pumpAndSettle();
+    expect(find.byKey(home), findsOneWidget);
+  });
 }

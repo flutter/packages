@@ -1,5 +1,6 @@
 RouteBase get $overriddenParameterNameRoute => GoRouteData.$route(
   path: '/typed-go-route-parameter',
+  hasOverriddenOnExit: false,
   factory: $OverriddenParameterNameRoute._fromState,
 );
 

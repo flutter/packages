@@ -610,13 +610,52 @@ void main() {
           expect(() => picker.pickMultiImage(maxHeight: -1.0), throwsArgumentError);
         });
 
-        test('does not accept a limit argument lower than 2', () {
+        test('does not accept a limit argument lower than 1', () {
           final picker = ImagePicker();
           expect(() => picker.pickMultiImage(limit: -1), throwsArgumentError);
 
           expect(() => picker.pickMultiImage(limit: 0), throwsArgumentError);
+        });
 
-          expect(() => picker.pickMultiImage(limit: 1), throwsArgumentError);
+        test('delegates to pickImage when limit is 1 and image is picked', () async {
+          when(
+            mockPlatform.getImageFromSource(
+              source: anyNamed('source'),
+              options: anyNamed('options'),
+            ),
+          ).thenAnswer((Invocation _) async => XFile('test_path', name: 'test.jpg'));
+
+          final picker = ImagePicker();
+          final List<XFile> result = await picker.pickMultiImage(limit: 1);
+
+          expect(result, hasLength(1));
+          expect(result.first.path, 'test_path');
+          verify(
+            mockPlatform.getImageFromSource(
+              source: ImageSource.gallery,
+              options: anyNamed('options'),
+            ),
+          );
+        });
+
+        test('delegates to pickImage when limit is 1 and no image is picked', () async {
+          when(
+            mockPlatform.getImageFromSource(
+              source: anyNamed('source'),
+              options: anyNamed('options'),
+            ),
+          ).thenAnswer((Invocation _) async => null);
+
+          final picker = ImagePicker();
+          final List<XFile> result = await picker.pickMultiImage(limit: 1);
+
+          expect(result, isEmpty);
+          verify(
+            mockPlatform.getImageFromSource(
+              source: ImageSource.gallery,
+              options: anyNamed('options'),
+            ),
+          );
         });
 
         test('handles an empty image file response gracefully', () async {
@@ -968,13 +1007,58 @@ void main() {
           expect(() => picker.pickMultipleMedia(maxHeight: -1.0), throwsArgumentError);
         });
 
-        test('does not accept a limit argument lower than 2', () {
+        test('does not accept a limit argument lower than 1', () {
           final picker = ImagePicker();
           expect(() => picker.pickMultipleMedia(limit: -1), throwsArgumentError);
 
           expect(() => picker.pickMultipleMedia(limit: 0), throwsArgumentError);
+        });
 
-          expect(() => picker.pickMultipleMedia(limit: 1), throwsArgumentError);
+        test('delegates to pickMedia when limit is 1 and media is picked', () async {
+          when(
+            mockPlatform.getMedia(options: anyNamed('options')),
+          ).thenAnswer((Invocation _) async => <XFile>[XFile('test_path')]);
+
+          final picker = ImagePicker();
+          final List<XFile> result = await picker.pickMultipleMedia(limit: 1);
+
+          expect(result, hasLength(1));
+          expect(result.first.path, 'test_path');
+          verify(
+            mockPlatform.getMedia(
+              options: argThat(
+                isInstanceOf<MediaOptions>().having(
+                  (MediaOptions options) => options.allowMultiple,
+                  'allowMultiple',
+                  isFalse,
+                ),
+                named: 'options',
+              ),
+            ),
+          );
+        });
+
+        test('delegates to pickMedia when limit is 1 and no media is picked', () async {
+          when(
+            mockPlatform.getMedia(options: anyNamed('options')),
+          ).thenAnswer((Invocation _) async => <XFile>[]);
+
+          final picker = ImagePicker();
+          final List<XFile> result = await picker.pickMultipleMedia(limit: 1);
+
+          expect(result, isEmpty);
+          verify(
+            mockPlatform.getMedia(
+              options: argThat(
+                isInstanceOf<MediaOptions>().having(
+                  (MediaOptions options) => options.allowMultiple,
+                  'allowMultiple',
+                  isFalse,
+                ),
+                named: 'options',
+              ),
+            ),
+          );
         });
 
         test('handles an empty image file response gracefully', () async {

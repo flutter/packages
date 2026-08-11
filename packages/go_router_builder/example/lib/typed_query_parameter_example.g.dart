@@ -10,8 +10,11 @@ part of 'typed_query_parameter_example.dart';
 
 List<RouteBase> get $appRoutes => [$intRoute];
 
-RouteBase get $intRoute =>
-    GoRouteData.$route(path: '/int-route', factory: $IntRoute._fromState);
+RouteBase get $intRoute => GoRouteData.$route(
+  path: '/int-route',
+  hasOverriddenOnExit: false,
+  factory: $IntRoute._fromState,
+);
 
 mixin $IntRoute on GoRouteData {
   static IntRoute _fromState(GoRouterState state) => IntRoute(

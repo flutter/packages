@@ -414,6 +414,45 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
     ]);
   });
 
+  test('Non-standard root font-weight="regular" uses initial weight', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <text x="10" y="20" font-size="12" font-weight="regular">Regular text</text>
+</svg>''');
+
+    expect(instructions.text.single.fontWeight, FontWeight.w400);
+  });
+
+  test('Unrecognized root font-weight uses initial weight', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <text x="10" y="20" font-size="12" font-weight="wobbly">Some text</text>
+</svg>''');
+
+    expect(instructions.text.single.fontWeight, FontWeight.w400);
+  });
+
+  test('Unrecognized font-weight preserves inherited weight', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <g font-weight="bold">
+    <text x="10" y="20" font-size="12" font-weight="wobbly">Some text</text>
+  </g>
+</svg>''');
+
+    expect(instructions.text.single.fontWeight, FontWeight.w700);
+  });
+
+  test('Unrecognized font-weight throws when warnings are errors', () {
+    expect(
+      () => parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <text x="10" y="20" font-size="12" font-weight="wobbly">Some text</text>
+</svg>''', warningsAsErrors: true),
+      throwsStateError,
+    );
+  });
+
   test('Fill rule inheritence', () {
     final VectorInstructions instructions = parseWithoutOptimizers(inheritFillRule);
 
