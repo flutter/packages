@@ -12,7 +12,7 @@ import org.junit.Test;
 /**
  * Regression test for https://github.com/flutter/flutter/issues/190505.
  *
- * <p>{@code camera-core}'s compiled classes carry jspecify {@code @NonNull} type annotations on
+ * <p>{@code camera-core}'s compiled classes carry Jspecify {@code @NonNull} type annotations on
  * members that reference {@link CallbackToFutureAdapter}. javac needs that class on the compile
  * classpath to process those annotations, even though this plugin never calls the annotated
  * members directly. Without an explicit {@code androidx.concurrent:concurrent-futures} dependency,

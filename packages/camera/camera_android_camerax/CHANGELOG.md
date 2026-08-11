@@ -3,7 +3,7 @@
 * Adds explicit `androidx.concurrent:concurrent-futures:1.2.0` dependency to fix
   `compileDebugJavaWithJavac` failing with "class file for
   androidx.concurrent.futures.CallbackToFutureAdapter not found" when
-  `camera-core`'s jspecify type annotations are resolved during compilation.
+  `camera-core`'s Jspecify type annotations are resolved during compilation.
 
 ## 0.7.4+4
 
