@@ -99,11 +99,6 @@ CupertinoPageScaffold(
 
 ---
 
-## Getting Started
-
-See Flutter's main [getting started guide](https://flutter.dev/getting-started/)
-for information about using Flutter and `cupertino_ui`.
-
 ## Features
 
 The `cupertino_ui` package contains everything you need to create a

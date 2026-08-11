@@ -104,11 +104,6 @@ Scaffold(
 
 ---
 
-## Getting Started
-
-See Flutter's main [getting started guide](https://flutter.dev/getting-started/)
-for information about using Flutter and `material_ui`.
-
 ## Features
 
 The `material_ui` packcage contains everything you need to create a
