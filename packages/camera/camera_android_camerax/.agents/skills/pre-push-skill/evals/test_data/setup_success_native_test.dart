@@ -17,7 +17,7 @@ package io.flutter.plugins.camerax;
 public class DummyEvalFeature {
     public void doNothing() {}
 }
-'''.replaceFirst('\n', ''));
+''');
 
   final javaTestFile = File('android/src/test/java/io/flutter/plugins/camerax/DummyEvalFeatureTest.java');
   javaTestFile.createSync(recursive: true);
@@ -39,7 +39,7 @@ public class DummyEvalFeatureTest {
         assertTrue(true);
     }
 }
-'''.replaceFirst('\n', ''));
+''');
 
   Process.runSync('git', ['add', javaFile.path, javaTestFile.path]);
   Process.runSync('git', ['-c', 'user.name=Author', '-c', 'user.email=author@example.com', 'commit', '-m', 'Add DummyEvalFeature.java and tests']);

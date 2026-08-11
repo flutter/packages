@@ -17,7 +17,7 @@ package io.flutter.plugins.camerax;
 public class DummyEvalFeature {
     public void doNothing() {}
 }
-'''.replaceFirst('\n', ''));
+''');
 
   Process.runSync('git', ['add', javaFile.path]);
   Process.runSync('git', ['-c', 'user.name=Author', '-c', 'user.email=author@example.com', 'commit', '-m', 'Add DummyEvalFeature.java without tests']);

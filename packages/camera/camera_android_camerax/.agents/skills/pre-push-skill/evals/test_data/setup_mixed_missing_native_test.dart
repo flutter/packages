@@ -17,7 +17,7 @@ package io.flutter.plugins.camerax;
 public class DummyEvalFeature {
     public void doNothing() {}
 }
-'''.replaceFirst('\n', ''));
+''');
 
   final dartFile = File('lib/src/dummy_eval_feature.dart');
   dartFile.createSync(recursive: true);
@@ -31,7 +31,7 @@ class DummyEvalFeature {
   /// Do nothing
   void doNothing() {}
 }
-'''.replaceFirst('\n', ''));
+''');
 
   final dartTestFile = File('test/dummy_eval_feature_test.dart');
   dartTestFile.createSync(recursive: true);
@@ -49,7 +49,7 @@ void main() {
     feature.doNothing();
   });
 }
-'''.replaceFirst('\n', ''));
+''');
 
   Process.runSync('git', ['add', javaFile.path, dartFile.path, dartTestFile.path]);
   Process.runSync('git', ['-c', 'user.name=Author', '-c', 'user.email=author@example.com', 'commit', '-m', 'Add DummyEvalFeature with Dart test but missing Java test']);
