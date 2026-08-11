@@ -64,7 +64,15 @@ class ReadinessChecker {
       return false;
     }
     final ProcessResult activateResult = await _processManager.run(
-      ['dart', 'pub', 'global', 'activate', '--source', 'path', _fileSystem.path.join(repoRoot, 'script', 'tool')],
+      [
+        'dart',
+        'pub',
+        'global',
+        'activate',
+        '--source',
+        'path',
+        _fileSystem.path.join(repoRoot, 'script', 'tool')
+      ],
       workingDirectory: workspaceRoot,
     );
     if (activateResult.exitCode != 0) {
