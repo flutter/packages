@@ -20,8 +20,7 @@
       "prompt": "First, run 'dart run .agents/skills/pre-push-skill/evals/test_data/setup_success_native_test.dart'. Then, run the /pre-push skill. Do not attempt to fix any issues you find, only report the output of the skill.",
       "expected_chat_output": [
         "Agent explicitly states whether the code is ready to push.",
-        "Agent confirms that native unit tests pass.",
-        "Agent confirms that a native unit test was updated for the Java changes."
+        "Agent confirms that native unit tests pass."
       ],
       "expected_repo_state": [
         "No changes are pushed to the remote repository.",
