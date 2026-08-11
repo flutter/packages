@@ -1,9 +1,13 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:io';
 
 void main() {
   final javaFile = File('android/src/main/java/io/flutter/plugins/camerax/DummyEvalFeature.java');
   javaFile.createSync(recursive: true);
-  javaFile.writeAsStringSync('''// Copyright 2013 The Flutter Authors. All rights reserved.
+  javaFile.writeAsStringSync('''// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,7 +20,7 @@ public class DummyEvalFeature {
 
   final javaTestFile = File('android/src/test/java/io/flutter/plugins/camerax/DummyEvalFeatureTest.java');
   javaTestFile.createSync(recursive: true);
-  javaTestFile.writeAsStringSync('''// Copyright 2013 The Flutter Authors. All rights reserved.
+  javaTestFile.writeAsStringSync('''// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
