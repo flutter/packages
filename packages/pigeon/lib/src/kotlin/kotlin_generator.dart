@@ -45,6 +45,7 @@ class KotlinOptions {
     this.copyrightHeader,
     this.useJni = false,
     this.appDirectory,
+    this.configDirectory,
     this.errorClassName,
     this.includeErrorClass = true,
     this.fileSpecificClassNameComponent,
@@ -65,6 +66,9 @@ class KotlinOptions {
   ///
   /// Defaults to './' if not specified.
   final String? appDirectory;
+
+  /// The directory where generated configuration files for JNIgen will be written.
+  final String? configDirectory;
 
   /// The name of the error class used for passing custom error parameters.
   final String? errorClassName;
@@ -94,6 +98,7 @@ class KotlinOptions {
       package: map['package'] as String?,
       useJni: map['useJni'] as bool? ?? false,
       appDirectory: map['appDirectory'] as String?,
+      configDirectory: map['configDirectory'] as String?,
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
       errorClassName: map['errorClassName'] as String?,
       includeErrorClass: map['includeErrorClass'] as bool? ?? true,
@@ -110,6 +115,7 @@ class KotlinOptions {
       if (package != null) 'package': package!,
       if (useJni) 'useJni': useJni,
       if (appDirectory != null) 'appDirectory': appDirectory!,
+      if (configDirectory != null) 'configDirectory': configDirectory!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (errorClassName != null) 'errorClassName': errorClassName!,
       'includeErrorClass': includeErrorClass,
@@ -139,6 +145,7 @@ class InternalKotlinOptions extends InternalOptions {
     this.includeErrorClass = true,
     this.useJni = false,
     this.appDirectory,
+    this.configDirectory,
     this.fileSpecificClassNameComponent,
     this.useGeneratedAnnotation = false,
     this.jniClassPaths,
@@ -156,6 +163,7 @@ class InternalKotlinOptions extends InternalOptions {
        includeErrorClass = options.includeErrorClass,
        useJni = options.useJni,
        appDirectory = options.appDirectory,
+       configDirectory = options.configDirectory,
        useGeneratedAnnotation = options.useGeneratedAnnotation,
        jniClassPaths = options.jniClassPaths,
        fileSpecificClassNameComponent = toUpperCamelCase(
@@ -189,6 +197,9 @@ class InternalKotlinOptions extends InternalOptions {
 
   /// The directory that the app exists in, this is required for JNI APIs.
   final String? appDirectory;
+
+  /// The directory where generated configuration files for JNIgen will be written.
+  final String? configDirectory;
 
   /// A String to augment class names to avoid cross file collisions.
   final String? fileSpecificClassNameComponent;

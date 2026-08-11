@@ -33,6 +33,7 @@ class SwiftOptions {
     this.useFfi = false,
     this.ffiModuleName,
     this.appDirectory,
+    this.configDirectory,
     this.appleSdkPath,
     this.appleSdkTriple,
   });
@@ -63,6 +64,9 @@ class SwiftOptions {
   /// Defaults to './' if not specified.
   final String? appDirectory;
 
+  /// The directory where generated configuration files for FFIgen will be written.
+  final String? configDirectory;
+
   /// The path to the Apple SDK to use for FFI generation.
   ///
   /// If not provided, Pigeon will attempt to find the iOS SDK path using
@@ -89,6 +93,7 @@ class SwiftOptions {
       useFfi: map['useFfi'] as bool? ?? false,
       ffiModuleName: map['ffiModuleName'] as String?,
       appDirectory: map['appDirectory'] as String?,
+      configDirectory: map['configDirectory'] as String?,
       appleSdkPath: map['appleSdkPath'] as String?,
       appleSdkTriple: map['appleSdkTriple'] as String?,
     );
@@ -106,6 +111,7 @@ class SwiftOptions {
       'useFfi': useFfi,
       if (ffiModuleName != null) 'ffiModuleName': ffiModuleName!,
       if (appDirectory != null) 'appDirectory': appDirectory!,
+      if (configDirectory != null) 'configDirectory': configDirectory!,
       if (appleSdkPath != null) 'appleSdkPath': appleSdkPath!,
       if (appleSdkTriple != null) 'appleSdkTriple': appleSdkTriple!,
     };
@@ -131,6 +137,7 @@ class InternalSwiftOptions extends InternalOptions {
     this.useFfi = false,
     this.ffiModuleName,
     this.appDirectory,
+    this.configDirectory,
     this.appleSdkPath,
     this.appleSdkTriple,
   });
@@ -153,6 +160,7 @@ class InternalSwiftOptions extends InternalOptions {
        useFfi = options.useFfi,
        ffiModuleName = options.ffiModuleName,
        appDirectory = options.appDirectory,
+       configDirectory = options.configDirectory,
        appleSdkPath = options.appleSdkPath,
        appleSdkTriple = options.appleSdkTriple,
        includeErrorClass = options.includeErrorClass;
@@ -183,6 +191,9 @@ class InternalSwiftOptions extends InternalOptions {
 
   /// The directory that the app exists in, this is required for FFI APIs.
   final String? appDirectory;
+
+  /// The directory where generated configuration files for FFIgen will be written.
+  final String? configDirectory;
 
   /// The path to the Apple SDK to use for FFI generation.
   ///

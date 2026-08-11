@@ -36,6 +36,7 @@ class InternalPigeonOptions {
   const InternalPigeonOptions({
     required this.input,
     required this.appDirectory,
+    this.configDirectory,
     required this.objcOptions,
     required this.javaOptions,
     required this.swiftOptions,
@@ -59,6 +60,11 @@ class InternalPigeonOptions {
                 ? path.posix.join(options.basePath!, options.appDirectory)
                 : options.basePath)
           : options.appDirectory,
+      configDirectory = (options.basePath != null && options.basePath!.isNotEmpty)
+          ? (options.configDirectory != null
+                ? path.posix.join(options.basePath!, options.configDirectory)
+                : options.basePath)
+          : options.configDirectory,
       objcOptions = (options.objcHeaderOut == null || options.objcSourceOut == null)
           ? null
           : InternalObjcOptions.fromObjcOptions(
@@ -164,6 +170,9 @@ class InternalPigeonOptions {
 
   /// Path to the app directory.
   final String? appDirectory;
+
+  /// The directory where generated configuration files for native interop tooling (such as JNIgen and FFIgen) will be written.
+  final String? configDirectory;
 
   /// Options that control how Dart will be generated.
   final InternalDartOptions? dartOptions;
@@ -512,19 +521,21 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
       options.basePath,
       dartOptions.dartOut,
       options.swiftOptions?.appDirectory ?? options.appDirectory,
+      configDirectory: options.swiftOptions?.configDirectory ?? options.configDirectory,
     );
 
     generator.generate(ffigenYamlOptions, root, sink, dartPackageName: options.dartPackageName);
   }
 
   @override
-  IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
-      (options.swiftOptions?.useFfi ?? false)
-      ? _openSink(
-          getFfigenConfigPath('', options.input),
-          basePath: options.swiftOptions?.appDirectory ?? options.appDirectory ?? '',
-        )
-      : null;
+  IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) {
+    if (!(options.swiftOptions?.useFfi ?? false)) {
+      return null;
+    }
+    final String targetDir =
+        options.swiftOptions?.configDirectory ?? options.configDirectory ?? options.basePath ?? '';
+    return _openSink(getFfigenConfigPath('', options.input), basePath: targetDir);
+  }
 
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) {
@@ -698,19 +709,21 @@ class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
       options.kotlinOptions!,
       options.basePath,
       options.kotlinOptions?.appDirectory ?? options.appDirectory,
+      configDirectory: options.kotlinOptions?.configDirectory ?? options.configDirectory,
     );
 
     generator.generate(jnigenYamlOptions, root, sink, dartPackageName: options.dartPackageName);
   }
 
   @override
-  IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
-      options.kotlinOptions?.kotlinOut != null && (options.kotlinOptions?.useJni ?? false)
-      ? _openSink(
-          getJnigenConfigPath('', options.input),
-          basePath: options.kotlinOptions?.appDirectory ?? options.appDirectory ?? '',
-        )
-      : null;
+  IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) {
+    if (options.kotlinOptions?.kotlinOut == null || !(options.kotlinOptions?.useJni ?? false)) {
+      return null;
+    }
+    final String targetDir =
+        options.kotlinOptions?.configDirectory ?? options.configDirectory ?? options.basePath ?? '';
+    return _openSink(getJnigenConfigPath('', options.input), basePath: targetDir);
+  }
 
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) {

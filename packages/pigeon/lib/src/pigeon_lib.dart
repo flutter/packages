@@ -240,6 +240,7 @@ class PigeonOptions {
   const PigeonOptions({
     this.input,
     this.appDirectory,
+    this.configDirectory,
     this.dartOut,
     @Deprecated('Mock/fake the generated Dart API instead.') this.dartTestOut,
     this.objcHeaderOut,
@@ -272,6 +273,9 @@ class PigeonOptions {
 
   /// The directory that the app exists in, this is required for JNI and FFI APIs.
   final String? appDirectory;
+
+  /// The directory where generated configuration files for native interop tooling (such as JNIgen and FFIgen) will be written.
+  final String? configDirectory;
 
   /// Path to the Dart file that will be generated.
   final String? dartOut;
@@ -355,6 +359,7 @@ class PigeonOptions {
     return PigeonOptions(
       input: map['input'] as String?,
       appDirectory: map['appDirectory'] as String?,
+      configDirectory: map['configDirectory'] as String?,
       dartOut: map['dartOut'] as String?,
       dartTestOut: map['dartTestOut'] as String?,
       objcHeaderOut: map['objcHeaderOut'] as String?,
@@ -402,6 +407,7 @@ class PigeonOptions {
     final result = <String, Object>{
       if (input != null) 'input': input!,
       if (appDirectory != null) 'appDirectory': appDirectory!,
+      if (configDirectory != null) 'configDirectory': configDirectory!,
       if (dartOut != null) 'dartOut': dartOut!,
       if (dartTestOut != null) 'dartTestOut': dartTestOut!,
       if (objcHeaderOut != null) 'objcHeaderOut': objcHeaderOut!,
@@ -513,6 +519,10 @@ ${_argParser.usage}''';
     ..addOption(
       'app_directory',
       help: 'The directory that the app exists in, this is required for JNI and FFI APIs.',
+    )
+    ..addOption(
+      'config_dir',
+      help: 'The directory where generated config files (JNIgen/FFIgen) will be written.',
     )
     ..addOption(
       'dart_out',
@@ -678,6 +688,7 @@ ${_argParser.usage}''';
     final opts = PigeonOptions(
       input: results['input'] as String?,
       appDirectory: results['app_directory'] as String?,
+      configDirectory: results['config_dir'] as String?,
       dartOut: results['dart_out'] as String?,
       dartTestOut: results['dart_test_out'] as String?,
       objcHeaderOut: results['objc_header_out'] as String?,
@@ -699,6 +710,7 @@ ${_argParser.usage}''';
         useFfi: results['swift_use_ffi'] as bool? ?? false,
         ffiModuleName: results['swift_ffi_module_name'] as String?,
         appDirectory: results['swift_app_directory'] as String?,
+        configDirectory: results['config_dir'] as String?,
         appleSdkPath: results['swift_apple_sdk_path'] as String?,
         appleSdkTriple: results['swift_apple_sdk_triple'] as String?,
       ),
@@ -708,6 +720,7 @@ ${_argParser.usage}''';
         useGeneratedAnnotation: results['kotlin_use_generated_annotation'] as bool? ?? false,
         useJni: results['kotlin_use_jni'] as bool? ?? false,
         appDirectory: results['kotlin_app_directory'] as String?,
+        configDirectory: results['config_dir'] as String?,
         errorClassName: results['kotlin_error_class_name'] as String?,
         includeErrorClass: results['kotlin_include_error_class'] as bool? ?? true,
         fileSpecificClassNameComponent:
@@ -850,11 +863,7 @@ ${_argParser.usage}''';
     }
 
     final bool useFfi = internalOptions.swiftOptions?.useFfi ?? false;
-    final String? swiftAppDir =
-        internalOptions.swiftOptions?.appDirectory ?? internalOptions.appDirectory;
     final bool useJni = internalOptions.kotlinOptions?.useJni ?? false;
-    final String? appDir =
-        internalOptions.kotlinOptions?.appDirectory ?? internalOptions.appDirectory;
 
     final String dartExecutable = Platform.resolvedExecutable;
     for (final adapter in safeGeneratorAdapters) {
@@ -868,16 +877,39 @@ ${_argParser.usage}''';
       }
     }
 
-    if (useFfi && swiftAppDir != null && swiftAppDir.isNotEmpty) {
-      final int exitCode = await _runFfigen(swiftAppDir, internalOptions.input, dartExecutable);
+    if (useFfi) {
+      final String? targetConfigDir =
+          internalOptions.swiftOptions?.configDirectory ?? internalOptions.configDirectory;
+      final String fullConfigDir =
+          (internalOptions.basePath != null &&
+              targetConfigDir != null &&
+              targetConfigDir.isNotEmpty &&
+              !targetConfigDir.startsWith(internalOptions.basePath!))
+          ? path.join(internalOptions.basePath!, targetConfigDir)
+          : (targetConfigDir ?? internalOptions.basePath ?? '');
+      final int exitCode = await _runFfigen(fullConfigDir, internalOptions.input, dartExecutable);
       if (exitCode != 0) {
         return exitCode;
       }
     }
 
-    if (useJni && appDir != null && appDir.isNotEmpty) {
+    if (useJni) {
+      final String? targetConfigDir =
+          internalOptions.kotlinOptions?.configDirectory ?? internalOptions.configDirectory;
+      final String fullConfigDir =
+          (internalOptions.basePath != null &&
+              targetConfigDir != null &&
+              targetConfigDir.isNotEmpty &&
+              !targetConfigDir.startsWith(internalOptions.basePath!))
+          ? path.join(internalOptions.basePath!, targetConfigDir)
+          : (targetConfigDir ?? internalOptions.basePath ?? '');
       final Map<String, String> env = await _getJniEnvironment(dartExecutable);
-      final bool success = await _runJnigen(appDir, internalOptions.input, dartExecutable, env);
+      final bool success = await _runJnigen(
+        fullConfigDir,
+        internalOptions.input,
+        dartExecutable,
+        env,
+      );
       if (!success) {
         return 1;
       }

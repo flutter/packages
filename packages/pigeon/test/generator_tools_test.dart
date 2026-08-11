@@ -668,4 +668,21 @@ void myMethod() {
       expect(compareTypeDeclarationGenericness(nestedTypedMap, nestedObjectMap), lessThan(0));
     });
   });
+
+  group('makeRelative', () {
+    test('computes relative path correctly from root', () {
+      expect(makeRelative('lib/src/messages.g.dart', '.'), equals('lib/src/messages.g.dart'));
+    });
+
+    test('computes relative path correctly with empty fromPath', () {
+      expect(makeRelative('lib/src/messages.g.dart', ''), equals('lib/src/messages.g.dart'));
+    });
+
+    test('computes relative path across directories', () {
+      expect(
+        makeRelative('lib/src/messages.g.dart', 'tool/pigeon'),
+        equals('../../lib/src/messages.g.dart'),
+      );
+    });
+  });
 }

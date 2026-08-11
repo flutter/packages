@@ -2281,7 +2281,7 @@ dev_dependencies:
         adapter.generate(sink, options, root, FileType.na);
         final code = sink.toString();
 
-        expect(code, contains("path: Uri.file('../lib/src/messages.g.jni.dart')"));
+        expect(code, contains("path: Uri.file('lib/src/messages.g.jni.dart')"));
       },
     );
 
@@ -2480,6 +2480,84 @@ const String myConst = 'hello ${1 + 2}';
         parseResult.errors[0].message,
         contains('String interpolation is not supported in Pigeon constants.'),
       );
+    });
+  });
+
+  group('Jnigen and Ffigen configDirectory placement', () {
+    test('JnigenConfigGeneratorAdapter defaults target to plugin pubspec root level', () {
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          input: 'pigeons/messages.dart',
+          kotlinOut: 'android/src/main/kotlin/com/example/Messages.kt',
+          kotlinOptions: KotlinOptions(useJni: true),
+          basePath: '.',
+        ),
+      );
+
+      final String targetDir =
+          options.kotlinOptions?.configDirectory ??
+          options.configDirectory ??
+          options.basePath ??
+          '';
+      final String configPath = getJnigenConfigPath(targetDir, options.input);
+      expect(configPath, equals('./tool/pigeon/messages_jnigen_config.dart'));
+    });
+
+    test('JnigenConfigGeneratorAdapter uses explicit configDirectory', () {
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          input: 'pigeons/messages.dart',
+          kotlinOut: 'android/src/main/kotlin/com/example/Messages.kt',
+          kotlinOptions: KotlinOptions(useJni: true, configDirectory: 'custom/config/dir'),
+          basePath: '.',
+        ),
+      );
+
+      final String targetDir =
+          options.kotlinOptions?.configDirectory ??
+          options.configDirectory ??
+          options.basePath ??
+          '';
+      final String configPath = getJnigenConfigPath(targetDir, options.input);
+      expect(configPath, equals('custom/config/dir/tool/pigeon/messages_jnigen_config.dart'));
+    });
+
+    test('FfigenConfigGeneratorAdapter defaults target to plugin pubspec root level', () {
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          input: 'pigeons/messages.dart',
+          swiftOut: 'ios/Classes/Messages.swift',
+          swiftOptions: SwiftOptions(useFfi: true),
+          basePath: '.',
+        ),
+      );
+
+      final String targetDir =
+          options.swiftOptions?.configDirectory ??
+          options.configDirectory ??
+          options.basePath ??
+          '';
+      final String configPath = getFfigenConfigPath(targetDir, options.input);
+      expect(configPath, equals('./tool/pigeon/messages_ffigen_config.dart'));
+    });
+
+    test('FfigenConfigGeneratorAdapter uses explicit configDirectory', () {
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          input: 'pigeons/messages.dart',
+          swiftOut: 'ios/Classes/Messages.swift',
+          swiftOptions: SwiftOptions(useFfi: true, configDirectory: 'example/'),
+          basePath: '.',
+        ),
+      );
+
+      final String targetDir =
+          options.swiftOptions?.configDirectory ??
+          options.configDirectory ??
+          options.basePath ??
+          '';
+      final String configPath = getFfigenConfigPath(targetDir, options.input);
+      expect(configPath, equals('example/tool/pigeon/messages_ffigen_config.dart'));
     });
   });
 }

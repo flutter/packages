@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:path/path.dart' as path;
 
 import '../ast.dart';
@@ -17,8 +19,9 @@ class InternalJnigenConfigOptions extends InternalOptions {
     this.dartOptions,
     this.kotlinOptions,
     this.basePath,
-    this.appDirectory,
-  );
+    this.appDirectory, {
+    this.configDirectory,
+  });
 
   /// Dart options.
   final InternalDartOptions dartOptions;
@@ -31,6 +34,9 @@ class InternalJnigenConfigOptions extends InternalOptions {
 
   /// App directory.
   final String? appDirectory;
+
+  /// The directory where generated configuration files for JNIgen will be written.
+  final String? configDirectory;
 }
 
 /// Generator for JNIgen configuration file.
@@ -51,9 +57,40 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
     indent.writeln("import 'package:jnigen/jnigen.dart';");
     indent.writeln("import 'package:logging/logging.dart';");
 
-    final String fullDartOut = generatorOptions.basePath != null
-        ? path.posix.join(generatorOptions.basePath!, generatorOptions.dartOptions.dartOut ?? '')
-        : (generatorOptions.dartOptions.dartOut ?? './lib/src/');
+    final String basePath = generatorOptions.basePath ?? '';
+    final String configDirSetting =
+        generatorOptions.kotlinOptions.configDirectory ?? generatorOptions.configDirectory ?? '';
+    final String rawConfigDir =
+        (basePath.isNotEmpty &&
+            configDirSetting.isNotEmpty &&
+            !configDirSetting.startsWith(basePath))
+        ? path.posix.join(basePath, configDirSetting)
+        : (configDirSetting.isNotEmpty ? configDirSetting : basePath);
+
+    final String appDir =
+        generatorOptions.kotlinOptions.appDirectory ?? generatorOptions.appDirectory ?? '';
+    final String rawAppDir =
+        (basePath.isNotEmpty && appDir.isNotEmpty && !appDir.startsWith(basePath))
+        ? path.posix.join(basePath, appDir)
+        : appDir;
+
+    String androidExample = rawConfigDir.isNotEmpty && rawAppDir.isNotEmpty
+        ? makeRelative(rawAppDir, rawConfigDir)
+        : rawAppDir;
+    if (androidExample.isEmpty) {
+      androidExample = './';
+    } else if (!androidExample.startsWith('.')) {
+      androidExample = './$androidExample';
+    }
+
+    final String dartOutPath = generatorOptions.dartOptions.dartOut ?? '';
+    final String rawDartOut =
+        (basePath.isNotEmpty && dartOutPath.isNotEmpty && !dartOutPath.startsWith(basePath))
+        ? path.posix.join(basePath, dartOutPath)
+        : dartOutPath;
+    final String fullDartOut = rawConfigDir.isNotEmpty
+        ? makeRelative(rawDartOut, rawConfigDir)
+        : rawDartOut;
 
     final List<String> jniClassPaths =
         generatorOptions.kotlinOptions.jniClassPaths ??
@@ -75,12 +112,12 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
           indent.format('''
             androidSdkConfig: AndroidSdkConfig(
               addGradleDeps: true,
-              androidExample: './',
+              androidExample: '$androidExample',
             ),
             summarizerOptions: SummarizerOptions(backend: SummarizerBackend.asm),
             outputConfig: OutputConfig(
               dartConfig: DartCodeOutputConfig(
-                path: Uri.file('${path.relative(path.withoutExtension(fullDartOut), from: generatorOptions.appDirectory ?? './')}.jni.dart'),
+                path: Uri.file('${path.withoutExtension(fullDartOut)}.jni.dart'),
               structure: OutputStructure.singleFile,
             ),
           ),

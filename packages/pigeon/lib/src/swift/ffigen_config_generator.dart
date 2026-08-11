@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:path/path.dart' as path;
 
 import '../ast.dart';
@@ -13,13 +15,15 @@ import 'swift_generator.dart' show InternalSwiftOptions;
 /// Options for [FfigenConfigGenerator].
 class InternalFfigenConfigOptions extends InternalOptions {
   /// Creates a [InternalFfigenConfigOptions].
+  /// Creates a [InternalFfigenConfigOptions].
   InternalFfigenConfigOptions(
     this.dartOptions,
     this.swiftOptions,
     this.basePath,
     this.dartOut,
-    this.exampleAppDirectory,
-  );
+    this.exampleAppDirectory, {
+    this.configDirectory,
+  });
 
   /// Dart options.
   final InternalDartOptions dartOptions;
@@ -35,6 +39,9 @@ class InternalFfigenConfigOptions extends InternalOptions {
 
   /// Android example app directory.
   final String? exampleAppDirectory;
+
+  /// The directory where generated configuration files for FFIgen will be written.
+  final String? configDirectory;
 }
 
 /// Generator for FFIgen configuration file.
@@ -69,12 +76,33 @@ import 'package:swiftgen/swiftgen.dart';
     final String? configuredSdkPath = generatorOptions.swiftOptions.appleSdkPath;
     final String? configuredSdkTriple = generatorOptions.swiftOptions.appleSdkTriple;
 
-    final String fullSwiftOut = generatorOptions.basePath != null
-        ? path.posix.join(generatorOptions.basePath!, generatorOptions.swiftOptions.swiftOut)
-        : generatorOptions.swiftOptions.swiftOut;
-    final String fullDartOut = generatorOptions.basePath != null
-        ? path.posix.join(generatorOptions.basePath!, generatorOptions.dartOut ?? '')
-        : (generatorOptions.dartOut ?? '');
+    final String basePath = generatorOptions.basePath ?? '';
+    final String configDirSetting =
+        generatorOptions.swiftOptions.configDirectory ?? generatorOptions.configDirectory ?? '';
+    final String rawConfigDir =
+        (basePath.isNotEmpty &&
+            configDirSetting.isNotEmpty &&
+            !configDirSetting.startsWith(basePath))
+        ? path.posix.join(basePath, configDirSetting)
+        : (configDirSetting.isNotEmpty ? configDirSetting : basePath);
+
+    final String swiftOutPath = generatorOptions.swiftOptions.swiftOut;
+    final String rawSwiftOut =
+        (basePath.isNotEmpty && swiftOutPath.isNotEmpty && !swiftOutPath.startsWith(basePath))
+        ? path.posix.join(basePath, swiftOutPath)
+        : swiftOutPath;
+    final String fullSwiftOut = rawConfigDir.isNotEmpty
+        ? makeRelative(rawSwiftOut, rawConfigDir)
+        : rawSwiftOut;
+
+    final String dartOutPath = generatorOptions.dartOut ?? '';
+    final String rawDartOut =
+        (basePath.isNotEmpty && dartOutPath.isNotEmpty && !dartOutPath.startsWith(basePath))
+        ? path.posix.join(basePath, dartOutPath)
+        : dartOutPath;
+    final String fullDartOut = rawConfigDir.isNotEmpty
+        ? makeRelative(rawDartOut, rawConfigDir)
+        : rawDartOut;
 
     final String objcDir = path.posix.join(
       path.posix.dirname(path.posix.dirname(fullSwiftOut)),

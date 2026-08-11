@@ -59,6 +59,18 @@ String getJnigenConfigPath(String appDirectory, [String? inputPath]) {
   return path.join(appDirectory, 'tool', 'pigeon', getJnigenConfigFileName(inputPath));
 }
 
+/// Computes a posix relative path from [fromPath] to [targetPath], safely
+/// handling empty strings, unnormalized paths, and cross-directory steps.
+String makeRelative(String targetPath, String fromPath) {
+  final String absTarget = path.posix.isAbsolute(targetPath)
+      ? path.posix.normalize(targetPath)
+      : path.posix.normalize(path.posix.join(Directory.current.path, targetPath));
+  final String absFrom = path.posix.isAbsolute(fromPath)
+      ? path.posix.normalize(fromPath)
+      : path.posix.normalize(path.posix.join(Directory.current.path, fromPath));
+  return path.posix.relative(absTarget, from: absFrom);
+}
+
 /// Read all the content from [stdin] to a String.
 String readStdin() {
   final bytes = <int>[];
