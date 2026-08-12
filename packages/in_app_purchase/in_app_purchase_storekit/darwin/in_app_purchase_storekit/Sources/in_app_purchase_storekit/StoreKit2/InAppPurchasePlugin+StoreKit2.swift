@@ -306,7 +306,6 @@ extension InAppPurchasePlugin: InAppPurchase2API {
                 details: unverifiedPurchases)))
           return
         }
-        self.sendTransactionUpdates(restoredTransactions)
         completion(.success(Void()))
       }
     }
