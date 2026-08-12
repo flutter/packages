@@ -217,10 +217,10 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     // implementation is not guaranteed to work when it needs to switch to the
     // platform thread from a native callback.
     if (defaultTargetPlatform == TargetPlatform.macOS) {
-      return _openReadWithPigeon();
+      return _openReadWithPigeon(start, end);
     }
 
-    return _openReadWithFFI();
+    return _openReadWithFFI(start, end);
   }
 
   @override
@@ -338,7 +338,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     throw Exception('Failed to read bytes from asset with identifier: ${params.uri}');
   }
 
-  Stream<Uint8List> _openReadWithPigeon([int? start, int? end]) async* {
+  Stream<Uint8List> _openReadWithPigeon([int? start, int? end]) {
     final resourceReader = AssetResourceReader();
 
     final streamController = StreamController<Uint8List>();
@@ -360,12 +360,14 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
       },
     );
 
-    final bool success = await resourceReader.openRead(params.uri, delegate);
-    if (!success) {
-      throw Exception('Failed to find asset with identifier: ${params.uri}');
-    }
+    resourceReader.openRead(params.uri, delegate).then((bool success) {
+      if (!success) {
+        streamController.addError(Exception('Failed to find asset with identifier: ${params.uri}'));
+        streamController.close();
+      }
+    });
 
-    yield* streamController.stream;
+    return streamController.stream;
   }
 
   Stream<Uint8List> _openReadWithFFI([int? start, int? end]) {

@@ -37,9 +37,11 @@ dependencies:
   path: ^1.9.1
 
 dev_dependencies:
+  build_runner: ^2.15.1
   ffigen: ^21.0.0
   flutter_test:
     sdk: flutter
+  mockito: ^5.6.4
   pigeon: ^27.3.0
 
 topics:
