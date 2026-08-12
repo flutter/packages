@@ -1,0 +1,3 @@
+changelog: |
+  - README updated for the full release of material_ui.
+version: patch
