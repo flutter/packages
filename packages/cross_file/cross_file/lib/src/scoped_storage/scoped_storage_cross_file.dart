@@ -7,9 +7,6 @@ import 'package:flutter/foundation.dart' show immutable, internal;
 
 import '../cross_file.dart';
 
-// TODO: What is scoped storage? in readme. This plugin provides to implementaiton:
-// Filesystem vs scoped storage.
-
 /// A reference to a local data resource within a device's scoped storage.
 ///
 /// Scoped storage limits app access to external storage and apps may lose

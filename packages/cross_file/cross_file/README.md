@@ -6,16 +6,14 @@ An abstraction to allow working with files across multiple platforms.
 
 [![pub package](https://img.shields.io/pub/v/cross_file.svg)](https://pub.dartlang.org/packages/cross_file)
 
-A Flutter plugin that manages files and interactions with file dialogs.
-
 |             | Android | iOS     | Linux | macOS  | Web | Windows     |
 |-------------|---------|---------|-------|--------|-----|-------------|
 | **Support** | SDK 24+ | iOS 13+ | Any   | 10.15+ | Any | Windows 10+ |
 
 ## Usage
 
-Instantiate a `XFile` using a uri or path and use its methods and properties to
-access the file and its metadata.
+Instantiate a `XFile` using a uri or path and use its methods and properties to access the file and
+its metadata.
 
 Example:
 
@@ -59,14 +57,14 @@ import 'package:cross_file_web/cross_file_web.dart';
 ```
 
 Now, additional features can be accessed through the platform implementations. Classes
-[XFile], [XDirectory], [ScopedStorageXFile], and [ScopedStorageXDirectory] pass their
-functionality to a class provided by the current platform. Below are a couple of ways to access
-additional functionality provided by the platform and is followed by an example.
+[FileSystemXFile], [FileSystemXDirectory], [ScopedStorageXFile], and [ScopedStorageXDirectory] pass
+their functionality to a class provided by the current platform. Below are a couple of ways to
+access additional functionality provided by the platform and is followed by an example.
 
 1. Pass a creation params class provided by a platform implementation to a `fromCreationParams`
    constructor (e.g. `XFile.fromCreationParams`, `XDirectory.fromCreationParams`, etc.).
-2. Call methods on an implementation of a class by using `getExtension`/`maybeGetExtension` methods (e.g.
-   `XFile.getExtension`, `XDirectory.maybeGetExtension`, etc.).
+2. Call methods on an implementation of a class by using `getExtension` method (e.g.
+   `XFile.getExtension`, `XDirectory.getExtension`, etc.).
 
 Below is an example of using additional iOS/macOS and Web features for a `XFile`.
 
