@@ -4,6 +4,8 @@
   `compileDebugJavaWithJavac` failing with "class file for
   androidx.concurrent.futures.CallbackToFutureAdapter not found" when
   `camera-core`'s Jspecify type annotations are resolved during compilation.
+* Fixes a leaked thread per capture by dispatching the `takePicture` result callback on the main
+  executor.
 
 ## 0.7.4+4
 
