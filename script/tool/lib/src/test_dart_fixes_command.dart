@@ -11,6 +11,7 @@ import 'package:path/path.dart' as p;
 
 import 'common/file_filters.dart';
 import 'common/package_looping_command.dart';
+import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 
 /// A command to run dart fix tests for packages that have a test_fixes
@@ -35,7 +36,7 @@ class TestDartFixesCommand extends PackageLoopingCommand {
       'This command requires "flutter" to be in your path.';
 
   @override
-  PackageLoopingType get packageLoopingType => PackageLoopingType.includeAllSubpackages;
+  PackageLoopingType get packageLoopingType => PackageLoopingType.topLevelOnly;
 
   @override
   bool shouldIgnoreFile(String path) {
@@ -58,11 +59,11 @@ class TestDartFixesCommand extends PackageLoopingCommand {
       return PackageResult.fail(['Failed to create temporary test directory: $error']);
     }
 
-    late final PackageResult result;
+    PackageResult result;
     try {
-      final int statusCode = await _runDartFixTests(package, testDirectory);
-      if (statusCode != 0) {
-        throw Exception('Status code $statusCode');
+      final bool success = await _runDartFixTests(testDirectory);
+      if (!success) {
+        throw Exception('Failed to run dart fix tests.');
       }
       result = PackageResult.success();
     } catch (error) {
@@ -123,39 +124,20 @@ dependencies:
   /// Run the dart fix tests for the package in the given temporary directory.
   ///
   /// Resolves with the status code of the command.
-  Future<int> _runDartFixTests(RepositoryPackage package, Directory testDirectory) async {
+  Future<bool> _runDartFixTests(Directory testDirectory) async {
     // Run flutter pub get in the temp directory to set it up.
-    final int pubGetStatusCode = await _runProcess('flutter', <String>[
-      'pub',
-      'get',
-    ], workingDirectory: testDirectory);
+    final bool success = await runPubGet(RepositoryPackage(testDirectory), processRunner, platform);
 
-    if (pubGetStatusCode != 0) {
-      return pubGetStatusCode;
+    if (!success) {
+      return success;
     }
 
     // Run dart fix --compare-to-golden in the temp directory.
-    return _runProcess('dart', <String>[
+    final int exitCode = await processRunner.runAndStream('dart', <String>[
       'fix',
       '--compare-to-golden',
-    ], workingDirectory: testDirectory);
-  }
+    ], workingDir: testDirectory);
 
-  Future<int> _runProcess(
-    String command,
-    List<String> arguments, {
-    Directory? workingDirectory,
-  }) async {
-    final Process process = await _streamOutput(
-      processRunner.start(command, arguments, workingDirectory: workingDirectory),
-    );
-    return process.exitCode;
-  }
-
-  static Future<Process> _streamOutput(Future<Process> processFuture) async {
-    final Process process = await processFuture;
-    unawaited(stdout.addStream(process.stdout));
-    unawaited(stderr.addStream(process.stderr));
-    return process;
+    return exitCode == 0;
   }
 }
