@@ -1815,7 +1815,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final bool isUseCallback =
         hasAsyncCallback ||
         (_findMetadata(node.metadata, 'async')?.arguments?.arguments.any(
-              (dart_ast.Expression arg) => arg.toSource().contains('useCallback: true'),
+              (arg) => arg.toSource().contains('useCallback: true'),
             ) ??
             false);
     final bool isAsynchronous = hasAsync || hasAsyncCallback;
