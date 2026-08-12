@@ -19,6 +19,25 @@ void main() {
     PigeonOverrides.pigeon_reset();
   });
 
+  test('readBytes', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+
+    final file = DarwinScopedStorageXFile(
+      DarwinScopedStorageXFileCreationParams.photoKit(localIdentifier: 'id'),
+    );
+
+    final reader = MockAssetResourceReader();
+    final bytes = Uint8List.fromList(<int>[1, 2, 3]);
+    when(reader.readBytes('id')).thenAnswer((_) => Future.value(bytes));
+    PigeonOverrides.assetResourceReader_new = () {
+      return reader;
+    };
+
+    expect(await file.readAsBytes(), bytes);
+
+    debugDefaultTargetPlatformOverride = null;
+  });
+
   group('openRead pigeon', () {
     test('correctly reads all bytes with null start and null end', () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
@@ -27,7 +46,7 @@ void main() {
         DarwinScopedStorageXFileCreationParams.photoKit(localIdentifier: 'id'),
       );
 
-      final MockAssetResourceReaderDelegate delegate = setUpReader();
+      final MockAssetResourceReaderDelegate delegate = setUpReaderDelegate();
 
       final Stream<Uint8List> stream = file.openRead();
 
@@ -52,7 +71,7 @@ void main() {
         DarwinScopedStorageXFileCreationParams.photoKit(localIdentifier: 'id'),
       );
 
-      final MockAssetResourceReaderDelegate delegate = setUpReader();
+      final MockAssetResourceReaderDelegate delegate = setUpReaderDelegate();
 
       final bytes = Uint8List.fromList(<int>[0, 1, 2, 3, 4]);
       final Stream<Uint8List> stream = file.openRead(1, 4);
@@ -81,7 +100,7 @@ void main() {
   });
 }
 
-MockAssetResourceReaderDelegate setUpReader() {
+MockAssetResourceReaderDelegate setUpReaderDelegate() {
   final reader = MockAssetResourceReader();
   final readerDelegate = MockAssetResourceReaderDelegate();
 
