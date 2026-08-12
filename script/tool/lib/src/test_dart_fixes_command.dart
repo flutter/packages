@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:file/file.dart';
+import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 
 import 'common/file_filters.dart';
@@ -17,6 +18,10 @@ import 'common/repository_package.dart';
 class TestDartFixesCommand extends PackageLoopingCommand {
   /// Creates an instance of the test dart fixes command.
   TestDartFixesCommand(super.packagesDir, {super.processRunner, super.platform, super.gitDir});
+
+  /// A map of the test directory used for each package passed to runForPackage.
+  @visibleForTesting
+  final testDirectories = <String, Directory>{};
 
   @override
   final String name = 'test-dart-fixes';
@@ -66,6 +71,7 @@ class TestDartFixesCommand extends PackageLoopingCommand {
     if (testDirectory.existsSync()) {
       await testDirectory.delete(recursive: true);
     }
+    testDirectories[package.displayName] = testDirectory;
     return result;
   }
 
