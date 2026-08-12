@@ -1,5 +1,7 @@
-## NEXT
+## 0.2.4
 
+* Adds `addDocumentStartJavaScript`, which throws an `UnsupportedError` since
+  document-start JavaScript injection is not supported on the web.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.2.3+4

@@ -1,3 +1,7 @@
+## 3.27.0
+
+* Adds support for `addDocumentStartJavaScript`.
+
 ## 3.26.0
 
 * Adds new method for accessing a native `WKWebView` from a `FlutterPluginRegistrar`.

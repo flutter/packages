@@ -1,5 +1,7 @@
-## NEXT
+## 2.16.0
 
+* Adds `addDocumentStartJavaScript` to `PlatformWebViewController` and the
+  `PlatformDocumentStartJavaScriptRegistration` class that it returns.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.15.1

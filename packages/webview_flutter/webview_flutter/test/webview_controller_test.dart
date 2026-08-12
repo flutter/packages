@@ -13,7 +13,11 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 
 import 'webview_controller_test.mocks.dart';
 
-@GenerateMocks(<Type>[PlatformWebViewController, PlatformNavigationDelegate])
+@GenerateMocks(<Type>[
+  PlatformWebViewController,
+  PlatformNavigationDelegate,
+  PlatformDocumentStartJavaScriptRegistration,
+])
 void main() {
   test('loadFile', () async {
     final mockPlatformWebViewController = MockPlatformWebViewController();
@@ -144,6 +148,40 @@ void main() {
 
     await webViewController.runJavaScript('1 + 1');
     verify(mockPlatformWebViewController.runJavaScript('1 + 1'));
+  });
+
+  test('addDocumentStartJavaScript', () async {
+    final mockPlatformWebViewController = MockPlatformWebViewController();
+    final mockPlatformDocumentStartJavaScriptRegistration =
+        MockPlatformDocumentStartJavaScriptRegistration();
+    when(
+      mockPlatformWebViewController.addDocumentStartJavaScript('window.test = true;'),
+    ).thenAnswer((_) async => mockPlatformDocumentStartJavaScriptRegistration);
+
+    final webViewController = WebViewController.fromPlatform(mockPlatformWebViewController);
+
+    final DocumentStartJavaScriptRegistration documentStartJavaScript = await webViewController
+        .addDocumentStartJavaScript('window.test = true;');
+
+    verify(mockPlatformWebViewController.addDocumentStartJavaScript('window.test = true;'));
+    expect(documentStartJavaScript.platform, mockPlatformDocumentStartJavaScriptRegistration);
+  });
+
+  test('DocumentStartJavaScriptRegistration.remove', () async {
+    final mockPlatformWebViewController = MockPlatformWebViewController();
+    final mockPlatformDocumentStartJavaScriptRegistration =
+        MockPlatformDocumentStartJavaScriptRegistration();
+    when(
+      mockPlatformWebViewController.addDocumentStartJavaScript('window.test = true;'),
+    ).thenAnswer((_) async => mockPlatformDocumentStartJavaScriptRegistration);
+
+    final webViewController = WebViewController.fromPlatform(mockPlatformWebViewController);
+
+    final DocumentStartJavaScriptRegistration documentStartJavaScript = await webViewController
+        .addDocumentStartJavaScript('window.test = true;');
+    await documentStartJavaScript.remove();
+
+    verify(mockPlatformDocumentStartJavaScriptRegistration.remove());
   });
 
   test('runJavaScriptReturningResult', () async {

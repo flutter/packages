@@ -59,83 +59,94 @@ class _FakePlatformWebViewControllerCreationParams_4 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
-class _FakeObject_5 extends _i1.SmartFake implements Object {
-  _FakeObject_5(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+class _FakePlatformDocumentStartJavaScript_5 extends _i1.SmartFake
+    implements _i3.PlatformDocumentStartJavaScriptRegistration {
+  _FakePlatformDocumentStartJavaScript_5(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeOffset_6 extends _i1.SmartFake implements _i4.Offset {
-  _FakeOffset_6(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+class _FakeObject_6 extends _i1.SmartFake implements Object {
+  _FakeObject_6(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
-class _FakePlatformViewsServiceProxy_7 extends _i1.SmartFake
+class _FakeOffset_7 extends _i1.SmartFake implements _i4.Offset {
+  _FakeOffset_7(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+}
+
+class _FakePlatformViewsServiceProxy_8 extends _i1.SmartFake
     implements _i5.PlatformViewsServiceProxy {
-  _FakePlatformViewsServiceProxy_7(Object parent, Invocation parentInvocation)
+  _FakePlatformViewsServiceProxy_8(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakePlatformWebViewController_8 extends _i1.SmartFake
+class _FakePlatformWebViewController_9 extends _i1.SmartFake
     implements _i3.PlatformWebViewController {
-  _FakePlatformWebViewController_8(Object parent, Invocation parentInvocation)
+  _FakePlatformWebViewController_9(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeSize_9 extends _i1.SmartFake implements _i4.Size {
-  _FakeSize_9(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+class _FakeSize_10 extends _i1.SmartFake implements _i4.Size {
+  _FakeSize_10(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
-class _FakePigeonInstanceManager_10 extends _i1.SmartFake implements _i2.PigeonInstanceManager {
-  _FakePigeonInstanceManager_10(Object parent, Invocation parentInvocation)
+class _FakePigeonInstanceManager_11 extends _i1.SmartFake implements _i2.PigeonInstanceManager {
+  _FakePigeonInstanceManager_11(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeFlutterAssetManager_11 extends _i1.SmartFake implements _i2.FlutterAssetManager {
-  _FakeFlutterAssetManager_11(Object parent, Invocation parentInvocation)
+class _FakeFlutterAssetManager_12 extends _i1.SmartFake implements _i2.FlutterAssetManager {
+  _FakeFlutterAssetManager_12(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeGeolocationPermissionsCallback_12 extends _i1.SmartFake
+class _FakeGeolocationPermissionsCallback_13 extends _i1.SmartFake
     implements _i2.GeolocationPermissionsCallback {
-  _FakeGeolocationPermissionsCallback_12(Object parent, Invocation parentInvocation)
+  _FakeGeolocationPermissionsCallback_13(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeJavaScriptChannel_13 extends _i1.SmartFake implements _i2.JavaScriptChannel {
-  _FakeJavaScriptChannel_13(Object parent, Invocation parentInvocation)
+class _FakeJavaScriptChannel_14 extends _i1.SmartFake implements _i2.JavaScriptChannel {
+  _FakeJavaScriptChannel_14(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakePermissionRequest_14 extends _i1.SmartFake implements _i2.PermissionRequest {
-  _FakePermissionRequest_14(Object parent, Invocation parentInvocation)
+class _FakePermissionRequest_15 extends _i1.SmartFake implements _i2.PermissionRequest {
+  _FakePermissionRequest_15(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeExpensiveAndroidViewController_15 extends _i1.SmartFake
+class _FakeExpensiveAndroidViewController_16 extends _i1.SmartFake
     implements _i6.ExpensiveAndroidViewController {
-  _FakeExpensiveAndroidViewController_15(Object parent, Invocation parentInvocation)
+  _FakeExpensiveAndroidViewController_16(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeSurfaceAndroidViewController_16 extends _i1.SmartFake
+class _FakeSurfaceAndroidViewController_17 extends _i1.SmartFake
     implements _i6.SurfaceAndroidViewController {
-  _FakeSurfaceAndroidViewController_16(Object parent, Invocation parentInvocation)
+  _FakeSurfaceAndroidViewController_17(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeWebSettings_17 extends _i1.SmartFake implements _i2.WebSettings {
-  _FakeWebSettings_17(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
-}
-
-class _FakeWebView_18 extends _i1.SmartFake implements _i2.WebView {
-  _FakeWebView_18(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
-}
-
-class _FakeWebViewPoint_19 extends _i1.SmartFake implements _i2.WebViewPoint {
-  _FakeWebViewPoint_19(Object parent, Invocation parentInvocation)
+class _FakeScriptHandler_18 extends _i1.SmartFake implements _i2.ScriptHandler {
+  _FakeScriptHandler_18(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeWebStorage_20 extends _i1.SmartFake implements _i2.WebStorage {
-  _FakeWebStorage_20(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+class _FakeWebSettings_19 extends _i1.SmartFake implements _i2.WebSettings {
+  _FakeWebSettings_19(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+}
+
+class _FakeWebView_20 extends _i1.SmartFake implements _i2.WebView {
+  _FakeWebView_20(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+}
+
+class _FakeWebViewPoint_21 extends _i1.SmartFake implements _i2.WebViewPoint {
+  _FakeWebViewPoint_21(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeWebStorage_22 extends _i1.SmartFake implements _i2.WebStorage {
+  _FakeWebStorage_22(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
 /// A class which mocks [AndroidNavigationDelegate].
@@ -457,14 +468,36 @@ class MockAndroidWebViewController extends _i1.Mock implements _i7.AndroidWebVie
           as _i8.Future<void>);
 
   @override
+  _i8.Future<_i3.PlatformDocumentStartJavaScriptRegistration> addDocumentStartJavaScript(
+    String? javaScript,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#addDocumentStartJavaScript, [javaScript]),
+            returnValue: _i8.Future<_i3.PlatformDocumentStartJavaScriptRegistration>.value(
+              _FakePlatformDocumentStartJavaScript_5(
+                this,
+                Invocation.method(#addDocumentStartJavaScript, [javaScript]),
+              ),
+            ),
+            returnValueForMissingStub:
+                _i8.Future<_i3.PlatformDocumentStartJavaScriptRegistration>.value(
+                  _FakePlatformDocumentStartJavaScript_5(
+                    this,
+                    Invocation.method(#addDocumentStartJavaScript, [javaScript]),
+                  ),
+                ),
+          )
+          as _i8.Future<_i3.PlatformDocumentStartJavaScriptRegistration>);
+
+  @override
   _i8.Future<Object> runJavaScriptReturningResult(String? javaScript) =>
       (super.noSuchMethod(
             Invocation.method(#runJavaScriptReturningResult, [javaScript]),
             returnValue: _i8.Future<Object>.value(
-              _FakeObject_5(this, Invocation.method(#runJavaScriptReturningResult, [javaScript])),
+              _FakeObject_6(this, Invocation.method(#runJavaScriptReturningResult, [javaScript])),
             ),
             returnValueForMissingStub: _i8.Future<Object>.value(
-              _FakeObject_5(this, Invocation.method(#runJavaScriptReturningResult, [javaScript])),
+              _FakeObject_6(this, Invocation.method(#runJavaScriptReturningResult, [javaScript])),
             ),
           )
           as _i8.Future<Object>);
@@ -519,10 +552,10 @@ class MockAndroidWebViewController extends _i1.Mock implements _i7.AndroidWebVie
       (super.noSuchMethod(
             Invocation.method(#getScrollPosition, []),
             returnValue: _i8.Future<_i4.Offset>.value(
-              _FakeOffset_6(this, Invocation.method(#getScrollPosition, [])),
+              _FakeOffset_7(this, Invocation.method(#getScrollPosition, [])),
             ),
             returnValueForMissingStub: _i8.Future<_i4.Offset>.value(
-              _FakeOffset_6(this, Invocation.method(#getScrollPosition, [])),
+              _FakeOffset_7(this, Invocation.method(#getScrollPosition, [])),
             ),
           )
           as _i8.Future<_i4.Offset>);
@@ -816,11 +849,11 @@ class MockAndroidWebViewWidgetCreationParams extends _i1.Mock
   _i5.PlatformViewsServiceProxy get platformViewsServiceProxy =>
       (super.noSuchMethod(
             Invocation.getter(#platformViewsServiceProxy),
-            returnValue: _FakePlatformViewsServiceProxy_7(
+            returnValue: _FakePlatformViewsServiceProxy_8(
               this,
               Invocation.getter(#platformViewsServiceProxy),
             ),
-            returnValueForMissingStub: _FakePlatformViewsServiceProxy_7(
+            returnValueForMissingStub: _FakePlatformViewsServiceProxy_8(
               this,
               Invocation.getter(#platformViewsServiceProxy),
             ),
@@ -840,8 +873,8 @@ class MockAndroidWebViewWidgetCreationParams extends _i1.Mock
   _i3.PlatformWebViewController get controller =>
       (super.noSuchMethod(
             Invocation.getter(#controller),
-            returnValue: _FakePlatformWebViewController_8(this, Invocation.getter(#controller)),
-            returnValueForMissingStub: _FakePlatformWebViewController_8(
+            returnValue: _FakePlatformWebViewController_9(this, Invocation.getter(#controller)),
+            returnValueForMissingStub: _FakePlatformWebViewController_9(
               this,
               Invocation.getter(#controller),
             ),
@@ -900,9 +933,9 @@ class MockExpensiveAndroidViewController extends _i1.Mock
       (super.noSuchMethod(
             Invocation.getter(#pointTransformer),
             returnValue: (_i4.Offset position) =>
-                _FakeOffset_6(this, Invocation.getter(#pointTransformer)),
+                _FakeOffset_7(this, Invocation.getter(#pointTransformer)),
             returnValueForMissingStub: (_i4.Offset position) =>
-                _FakeOffset_6(this, Invocation.getter(#pointTransformer)),
+                _FakeOffset_7(this, Invocation.getter(#pointTransformer)),
           )
           as _i6.PointTransformer);
 
@@ -953,10 +986,10 @@ class MockExpensiveAndroidViewController extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#setSize, [size]),
             returnValue: _i8.Future<_i4.Size>.value(
-              _FakeSize_9(this, Invocation.method(#setSize, [size])),
+              _FakeSize_10(this, Invocation.method(#setSize, [size])),
             ),
             returnValueForMissingStub: _i8.Future<_i4.Size>.value(
-              _FakeSize_9(this, Invocation.method(#setSize, [size])),
+              _FakeSize_10(this, Invocation.method(#setSize, [size])),
             ),
           )
           as _i8.Future<_i4.Size>);
@@ -1029,11 +1062,11 @@ class MockFlutterAssetManager extends _i1.Mock implements _i2.FlutterAssetManage
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_10(
+            returnValue: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_10(
+            returnValueForMissingStub: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -1066,8 +1099,8 @@ class MockFlutterAssetManager extends _i1.Mock implements _i2.FlutterAssetManage
   _i2.FlutterAssetManager pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeFlutterAssetManager_11(this, Invocation.method(#pigeon_copy, [])),
-            returnValueForMissingStub: _FakeFlutterAssetManager_11(
+            returnValue: _FakeFlutterAssetManager_12(this, Invocation.method(#pigeon_copy, [])),
+            returnValueForMissingStub: _FakeFlutterAssetManager_12(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -1084,11 +1117,11 @@ class MockGeolocationPermissionsCallback extends _i1.Mock
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_10(
+            returnValue: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_10(
+            returnValueForMissingStub: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -1108,11 +1141,11 @@ class MockGeolocationPermissionsCallback extends _i1.Mock
   _i2.GeolocationPermissionsCallback pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeGeolocationPermissionsCallback_12(
+            returnValue: _FakeGeolocationPermissionsCallback_13(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeGeolocationPermissionsCallback_12(
+            returnValueForMissingStub: _FakeGeolocationPermissionsCallback_13(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -1149,11 +1182,11 @@ class MockJavaScriptChannel extends _i1.Mock implements _i2.JavaScriptChannel {
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_10(
+            returnValue: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_10(
+            returnValueForMissingStub: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -1164,8 +1197,8 @@ class MockJavaScriptChannel extends _i1.Mock implements _i2.JavaScriptChannel {
   _i2.JavaScriptChannel pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeJavaScriptChannel_13(this, Invocation.method(#pigeon_copy, [])),
-            returnValueForMissingStub: _FakeJavaScriptChannel_13(
+            returnValue: _FakeJavaScriptChannel_14(this, Invocation.method(#pigeon_copy, [])),
+            returnValueForMissingStub: _FakeJavaScriptChannel_14(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -1190,11 +1223,11 @@ class MockPermissionRequest extends _i1.Mock implements _i2.PermissionRequest {
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_10(
+            returnValue: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_10(
+            returnValueForMissingStub: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -1223,8 +1256,8 @@ class MockPermissionRequest extends _i1.Mock implements _i2.PermissionRequest {
   _i2.PermissionRequest pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakePermissionRequest_14(this, Invocation.method(#pigeon_copy, [])),
-            returnValueForMissingStub: _FakePermissionRequest_14(
+            returnValue: _FakePermissionRequest_15(this, Invocation.method(#pigeon_copy, [])),
+            returnValueForMissingStub: _FakePermissionRequest_15(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -1255,7 +1288,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock implements _i5.PlatformView
               #creationParamsCodec: creationParamsCodec,
               #onFocus: onFocus,
             }),
-            returnValue: _FakeExpensiveAndroidViewController_15(
+            returnValue: _FakeExpensiveAndroidViewController_16(
               this,
               Invocation.method(#initExpensiveAndroidView, [], {
                 #id: id,
@@ -1266,7 +1299,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock implements _i5.PlatformView
                 #onFocus: onFocus,
               }),
             ),
-            returnValueForMissingStub: _FakeExpensiveAndroidViewController_15(
+            returnValueForMissingStub: _FakeExpensiveAndroidViewController_16(
               this,
               Invocation.method(#initExpensiveAndroidView, [], {
                 #id: id,
@@ -1298,7 +1331,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock implements _i5.PlatformView
               #creationParamsCodec: creationParamsCodec,
               #onFocus: onFocus,
             }),
-            returnValue: _FakeSurfaceAndroidViewController_16(
+            returnValue: _FakeSurfaceAndroidViewController_17(
               this,
               Invocation.method(#initSurfaceAndroidView, [], {
                 #id: id,
@@ -1309,7 +1342,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock implements _i5.PlatformView
                 #onFocus: onFocus,
               }),
             ),
-            returnValueForMissingStub: _FakeSurfaceAndroidViewController_16(
+            returnValueForMissingStub: _FakeSurfaceAndroidViewController_17(
               this,
               Invocation.method(#initSurfaceAndroidView, [], {
                 #id: id,
@@ -1322,6 +1355,47 @@ class MockPlatformViewsServiceProxy extends _i1.Mock implements _i5.PlatformView
             ),
           )
           as _i6.SurfaceAndroidViewController);
+}
+
+/// A class which mocks [ScriptHandler].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockScriptHandler extends _i1.Mock implements _i2.ScriptHandler {
+  @override
+  _i2.PigeonInstanceManager get pigeon_instanceManager =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeon_instanceManager),
+            returnValue: _FakePigeonInstanceManager_11(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+            returnValueForMissingStub: _FakePigeonInstanceManager_11(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+          )
+          as _i2.PigeonInstanceManager);
+
+  @override
+  _i8.Future<void> remove() =>
+      (super.noSuchMethod(
+            Invocation.method(#remove, []),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
+
+  @override
+  _i2.ScriptHandler pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeScriptHandler_18(this, Invocation.method(#pigeon_copy, [])),
+            returnValueForMissingStub: _FakeScriptHandler_18(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+          )
+          as _i2.ScriptHandler);
 }
 
 /// A class which mocks [SurfaceAndroidViewController].
@@ -1357,9 +1431,9 @@ class MockSurfaceAndroidViewController extends _i1.Mock
       (super.noSuchMethod(
             Invocation.getter(#pointTransformer),
             returnValue: (_i4.Offset position) =>
-                _FakeOffset_6(this, Invocation.getter(#pointTransformer)),
+                _FakeOffset_7(this, Invocation.getter(#pointTransformer)),
             returnValueForMissingStub: (_i4.Offset position) =>
-                _FakeOffset_6(this, Invocation.getter(#pointTransformer)),
+                _FakeOffset_7(this, Invocation.getter(#pointTransformer)),
           )
           as _i6.PointTransformer);
 
@@ -1410,10 +1484,10 @@ class MockSurfaceAndroidViewController extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#setSize, [size]),
             returnValue: _i8.Future<_i4.Size>.value(
-              _FakeSize_9(this, Invocation.method(#setSize, [size])),
+              _FakeSize_10(this, Invocation.method(#setSize, [size])),
             ),
             returnValueForMissingStub: _i8.Future<_i4.Size>.value(
-              _FakeSize_9(this, Invocation.method(#setSize, [size])),
+              _FakeSize_10(this, Invocation.method(#setSize, [size])),
             ),
           )
           as _i8.Future<_i4.Size>);
@@ -1531,11 +1605,11 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_10(
+            returnValue: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_10(
+            returnValueForMissingStub: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -1608,11 +1682,11 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_10(
+            returnValue: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_10(
+            returnValueForMissingStub: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -1780,8 +1854,8 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
   _i2.WebSettings pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWebSettings_17(this, Invocation.method(#pigeon_copy, [])),
-            returnValueForMissingStub: _FakeWebSettings_17(
+            returnValue: _FakeWebSettings_19(this, Invocation.method(#pigeon_copy, [])),
+            returnValueForMissingStub: _FakeWebSettings_19(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -1797,8 +1871,8 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   _i2.WebSettings get settings =>
       (super.noSuchMethod(
             Invocation.getter(#settings),
-            returnValue: _FakeWebSettings_17(this, Invocation.getter(#settings)),
-            returnValueForMissingStub: _FakeWebSettings_17(this, Invocation.getter(#settings)),
+            returnValue: _FakeWebSettings_19(this, Invocation.getter(#settings)),
+            returnValueForMissingStub: _FakeWebSettings_19(this, Invocation.getter(#settings)),
           )
           as _i2.WebSettings);
 
@@ -1806,11 +1880,11 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_10(
+            returnValue: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_10(
+            returnValueForMissingStub: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -1821,8 +1895,8 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   _i2.WebSettings pigeonVar_settings() =>
       (super.noSuchMethod(
             Invocation.method(#pigeonVar_settings, []),
-            returnValue: _FakeWebSettings_17(this, Invocation.method(#pigeonVar_settings, [])),
-            returnValueForMissingStub: _FakeWebSettings_17(
+            returnValue: _FakeWebSettings_19(this, Invocation.method(#pigeonVar_settings, [])),
+            returnValueForMissingStub: _FakeWebSettings_19(
               this,
               Invocation.method(#pigeonVar_settings, []),
             ),
@@ -1950,6 +2024,25 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
           as _i8.Future<String?>);
 
   @override
+  _i8.Future<_i2.ScriptHandler> addDocumentStartJavaScript(String? javaScript) =>
+      (super.noSuchMethod(
+            Invocation.method(#addDocumentStartJavaScript, [javaScript]),
+            returnValue: _i8.Future<_i2.ScriptHandler>.value(
+              _FakeScriptHandler_18(
+                this,
+                Invocation.method(#addDocumentStartJavaScript, [javaScript]),
+              ),
+            ),
+            returnValueForMissingStub: _i8.Future<_i2.ScriptHandler>.value(
+              _FakeScriptHandler_18(
+                this,
+                Invocation.method(#addDocumentStartJavaScript, [javaScript]),
+              ),
+            ),
+          )
+          as _i8.Future<_i2.ScriptHandler>);
+
+  @override
   _i8.Future<String?> getTitle() =>
       (super.noSuchMethod(
             Invocation.method(#getTitle, []),
@@ -2025,8 +2118,8 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   _i2.WebView pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWebView_18(this, Invocation.method(#pigeon_copy, [])),
-            returnValueForMissingStub: _FakeWebView_18(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeWebView_20(this, Invocation.method(#pigeon_copy, [])),
+            returnValueForMissingStub: _FakeWebView_20(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.WebView);
 
@@ -2053,10 +2146,10 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
       (super.noSuchMethod(
             Invocation.method(#getScrollPosition, []),
             returnValue: _i8.Future<_i2.WebViewPoint>.value(
-              _FakeWebViewPoint_19(this, Invocation.method(#getScrollPosition, [])),
+              _FakeWebViewPoint_21(this, Invocation.method(#getScrollPosition, [])),
             ),
             returnValueForMissingStub: _i8.Future<_i2.WebViewPoint>.value(
-              _FakeWebViewPoint_19(this, Invocation.method(#getScrollPosition, [])),
+              _FakeWebViewPoint_21(this, Invocation.method(#getScrollPosition, [])),
             ),
           )
           as _i8.Future<_i2.WebViewPoint>);
@@ -2106,11 +2199,11 @@ class MockWebViewClient extends _i1.Mock implements _i2.WebViewClient {
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_10(
+            returnValue: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_10(
+            returnValueForMissingStub: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -2147,11 +2240,11 @@ class MockWebStorage extends _i1.Mock implements _i2.WebStorage {
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_10(
+            returnValue: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_10(
+            returnValueForMissingStub: _FakePigeonInstanceManager_11(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -2171,8 +2264,8 @@ class MockWebStorage extends _i1.Mock implements _i2.WebStorage {
   _i2.WebStorage pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWebStorage_20(this, Invocation.method(#pigeon_copy, [])),
-            returnValueForMissingStub: _FakeWebStorage_20(
+            returnValue: _FakeWebStorage_22(this, Invocation.method(#pigeon_copy, [])),
+            returnValueForMissingStub: _FakeWebStorage_22(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
