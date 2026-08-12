@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 // #region body
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
 
 void main() => runApp(const TextMagnifierExampleApp(text: 'Hello world!'));
 
@@ -20,12 +20,12 @@ class TextMagnifierExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Padding(
+    return CupertinoApp(
+      home: CupertinoPageScaffold(
+        child: Padding(
           padding: const .symmetric(horizontal: 48.0),
           child: Center(
-            child: TextField(
+            child: CupertinoTextField(
               textDirection: textDirection,
               // Create a custom magnifier configuration that
               // this `TextField` will use to build a magnifier with.
@@ -96,7 +96,7 @@ class CustomMagnifier extends StatelessWidget {
             // Decorate it however we'd like!
             decoration: const MagnifierDecoration(
               shape: StarBorder(
-                side: BorderSide(color: Colors.green, width: 2),
+                side: BorderSide(color: CupertinoColors.activeGreen, width: 2),
               ),
             ),
             size: magnifierSize,
