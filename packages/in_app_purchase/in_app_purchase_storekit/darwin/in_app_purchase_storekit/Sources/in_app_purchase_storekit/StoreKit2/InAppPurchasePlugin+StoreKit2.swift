@@ -296,6 +296,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
             )
           }
         }
+        self.sendTransactionUpdates(restoredTransactions)
         if !unverifiedPurchases.isEmpty {
           completion(
             .failure(
