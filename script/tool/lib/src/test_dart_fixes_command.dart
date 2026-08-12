@@ -6,7 +6,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:file/file.dart';
-import 'package:io/io.dart' as io;
 import 'package:path/path.dart' as p;
 
 import 'common/file_filters.dart';
@@ -80,7 +79,16 @@ class TestDartFixesCommand extends PackageLoopingCommand {
     final Directory testTempDirectory = await fileSystem.systemTempDirectory.createTemp();
 
     // Copy from `test_fixes/` to the temp directory.
-    await io.copyPath(package.dartFixTestDirectory.path, testTempDirectory.path);
+    for (final FileSystemEntity entity in package.dartFixTestDirectory.listSync(recursive: true)) {
+      final String relativePath = p.relative(entity.path, from: package.dartFixTestDirectory.path);
+      final String destPath = p.join(testTempDirectory.path, relativePath);
+      if (entity is Directory) {
+        fileSystem.directory(destPath).createSync(recursive: true);
+      } else if (entity is File) {
+        fileSystem.file(destPath).parent.createSync(recursive: true);
+        entity.copySync(destPath);
+      }
+    }
 
     // The pubspec.yaml file to create.
     final File targetPubspecFile = fileSystem.file(p.join(testTempDirectory.path, 'pubspec.yaml'));
