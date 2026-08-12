@@ -17,6 +17,8 @@ import 'badge_theme.dart';
 import 'color_scheme.dart';
 import 'theme.dart';
 
+part 'generated/badge_defaults_m3.g.dart';
+
 /// A Material Design "badge".
 ///
 /// A badge's [label] conveys a small amount of information about its
@@ -476,36 +478,3 @@ class _RenderIntrinsicHorizontalStadium extends RenderProxyBox {
     size = _computeSize(layoutChild: ChildLayoutHelper.layoutChild, constraints: constraints);
   }
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - Badge
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _BadgeDefaultsM3 extends BadgeThemeData {
-  _BadgeDefaultsM3(this.context) : super(
-    smallSize: 6.0,
-    largeSize: 16.0,
-    padding: const EdgeInsets.symmetric(horizontal: 4),
-    alignment: AlignmentDirectional.topEnd,
-  );
-
-  final BuildContext context;
-  late final ThemeData _theme = Theme.of(context);
-  late final ColorScheme _colors = _theme.colorScheme;
-
-  @override
-  Color? get backgroundColor => _colors.error;
-
-  @override
-  Color? get textColor => _colors.onError;
-
-  @override
-  TextStyle? get textStyle => Theme.of(context).textTheme.labelSmall;
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - Badge
