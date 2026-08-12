@@ -93,6 +93,18 @@ abstract class TokenTemplate {
   /// the class.
   RegExp get _classRegExp => RegExp('class\\s+$className\\b');
 
+  /// The output file name generated under [materialLib].
+  String get outputFileName {
+    final String snakeName = name.toLowerCase().replaceAll(' ', '_');
+    return switch (_version) {
+      _MaterialVersion.material3 => '${snakeName}_defaults_m3.g.dart',
+      _MaterialVersion.material3Expressive => '${snakeName}_defaults_m3e.g.dart',
+    };
+  }
+
+  /// Whether the generated contents must declare the generated defaults class.
+  bool get requiresGeneratedClass => true;
+
   /// Returns the body of the generated file as a string.
   ///
   /// The [className] parameter must be used to declare the class.
@@ -186,11 +198,6 @@ abstract class TokenTemplate {
 
   /// Generates the file under the target path [materialLib] and formats it.
   void generateFile({bool verbose = false}) {
-    final String snakeName = name.toLowerCase().replaceAll(' ', '_');
-    final String outputFileName = switch (_version) {
-      _MaterialVersion.material3 => '${snakeName}_defaults_m3.g.dart',
-      _MaterialVersion.material3Expressive => '${snakeName}_defaults_m3e.g.dart',
-    };
     final fileName = '$materialLib/$outputFileName';
     if (verbose) {
       stdout.writeln('Generating file: $fileName');
@@ -211,9 +218,9 @@ abstract class TokenTemplate {
     if (verbose) {
       stdout.writeln('Generating contents...');
     }
-    final String contents = generateContents(className);
+    final String contents = generateContents(requiresGeneratedClass ? className : '');
     assert(
-      contents.contains(_classRegExp),
+      !requiresGeneratedClass || contents.contains(_classRegExp),
       'The generated contents for "$name" must define the class "$className". '
       'Make sure you are utilizing the passed `className` parameter.',
     );
