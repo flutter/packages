@@ -110,8 +110,8 @@ dependencies:
   ///
   /// Resolves with the status code of the command.
   Future<int> _runDartFixTests(RepositoryPackage package, Directory testDirectory) async {
-    // Run dart pub get in the temp directory to set it up.
-    final int pubGetStatusCode = await _runProcess('dart', <String>[
+    // Run flutter pub get in the temp directory to set it up.
+    final int pubGetStatusCode = await _runProcess('flutter', <String>[
       'pub',
       'get',
     ], workingDirectory: testDirectory);
