@@ -2969,6 +2969,7 @@ void main() {
   testWidgets('CarouselView.builder items customization', (WidgetTester tester) async {
     final Key key = UniqueKey();
     final theme = ThemeData();
+    int? tappedIndex;
 
     await tester.pumpWidget(
       MaterialApp(
@@ -2979,14 +2980,14 @@ void main() {
             backgroundColor: Colors.amber,
             elevation: 10.0,
             shape: const StadiumBorder(),
+            onTap: (int index) {
+              tappedIndex = index;
+            },
             itemExtent: 200,
             itemCount: 10,
             itemBuilder: (BuildContext context, int index) {
               if (index == 0) {
-                return Center(
-                  key: key,
-                  child: Center(child: Text('Item $index')),
-                );
+                return Center(key: key, child: Text('Item $index'));
               }
               return Center(child: Text('Item $index'));
             },
@@ -3008,11 +3009,15 @@ void main() {
     expect(material.elevation, 10.0);
     expect(material.shape, const StadiumBorder());
     expect(find.byKey(key), findsOneWidget);
+
+    await tester.tap(find.byKey(key), warnIfMissed: false);
+    expect(tappedIndex, 0);
   });
 
   testWidgets('CarouselView.weightedBuilder items customization', (WidgetTester tester) async {
     final Key key = UniqueKey();
     final theme = ThemeData();
+    int? tappedIndex;
 
     await tester.pumpWidget(
       MaterialApp(
@@ -3023,14 +3028,14 @@ void main() {
             backgroundColor: Colors.amber,
             elevation: 10.0,
             shape: const StadiumBorder(),
-            flexWeights: const <int>[1],
+            onTap: (int index) {
+              tappedIndex = index;
+            },
+            flexWeights: const <int>[1, 7, 1],
             itemCount: 10,
             itemBuilder: (BuildContext context, int index) {
               if (index == 0) {
-                return Center(
-                  key: key,
-                  child: Center(child: Text('Item $index')),
-                );
+                return Center(key: key, child: Text('Item $index'));
               }
               return Center(child: Text('Item $index'));
             },
@@ -3043,16 +3048,20 @@ void main() {
         .descendant(of: find.byType(CarouselView), matching: find.byType(Material))
         .first;
 
-    // Viewport width is 800. Weight 1 means full width.
+    // Viewport width is 800. The max weight is 7, and the sum of weights is 9.
+    // The first item should be placed at the slot with max weight.
     expect(
       tester.getSize(carouselViewMaterial).width,
-      800 - 20 - 20,
-    ); // Padding is 20 on both side.
+      (800 * 7 / 9) - 20 - 20,
+    ); // Padding is 20 on both sides.
     final Material material = tester.widget<Material>(carouselViewMaterial);
     expect(material.color, Colors.amber);
     expect(material.elevation, 10.0);
     expect(material.shape, const StadiumBorder());
     expect(find.byKey(key), findsOneWidget);
+
+    await tester.tap(find.byKey(key), warnIfMissed: false);
+    expect(tappedIndex, 0);
   });
 }
 
