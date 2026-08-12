@@ -1,6 +1,6 @@
 ## 0.4.11+1
 
-* Fixes StoreKi 2 restore transactions not grouping purchases into a single event.
+* Fixes StoreKit 2 restore transactions not grouping purchases into a single event.
   
 ## 0.4.11
 
