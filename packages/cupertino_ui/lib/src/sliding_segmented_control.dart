@@ -309,7 +309,7 @@ class _SegmentSeparatorState extends State<_SegmentSeparator>
 
 /// An iOS 13 style segmented control.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=esnBf6V4C34}
+/// Learn more about [CupertinoSlidingSegmentedControl] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=esnBf6V4C34).
 ///
 /// Displays the widgets provided in the [Map] of [children] in a horizontal list.
 /// It allows the user to select between a number of mutually exclusive options,
@@ -352,7 +352,7 @@ class _SegmentSeparatorState extends State<_SegmentSeparator>
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/segmented_control/cupertino_sliding_segmented_control.0.dart}
+/// {@example /example/lib/segmented_control/cupertino_sliding_segmented_control.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -522,7 +522,7 @@ class CupertinoSlidingSegmentedControl<T extends Object> extends StatefulWidget 
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro cupertino_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/segmented_control/cupertino_sliding_segmented_control.0.dart}
+  /// {@example /example/lib/segmented_control/cupertino_sliding_segmented_control.0.dart#body}
   ///
   /// </callout-box>
   final bool isMomentary;

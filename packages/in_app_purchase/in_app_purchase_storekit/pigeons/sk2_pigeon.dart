@@ -179,8 +179,8 @@ class SK2TransactionMessage {
   final int id;
   final int originalId;
   final String productId;
-  final String? purchaseDate;
-  final String? expirationDate;
+  final double? purchaseDate;
+  final double? expirationDate;
   final int purchasedQuantity;
   final String? appAccountToken;
   final String? receiptData;

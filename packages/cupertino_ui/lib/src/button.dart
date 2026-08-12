@@ -73,7 +73,7 @@ enum _CupertinoButtonStyle {
 /// </small>
 /// {@endtemplate}
 ///
-/// {@example /example/lib/button/cupertino_button.0.dart}
+/// {@example /example/lib/button/cupertino_button.0.dart#body}
 ///
 /// </callout-box>
 ///

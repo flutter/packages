@@ -72,16 +72,16 @@ class ProgressIndicatorThemeData with Diagnosticable {
   ///    a an animated color.
   final Color? color;
 
-  /// {@macro flutter.material.LinearProgressIndicator.trackColor}
+  /// {@macro material_ui.LinearProgressIndicator.trackColor}
   final Color? linearTrackColor;
 
-  /// {@macro flutter.material.LinearProgressIndicator.minHeight}
+  /// {@macro material_ui.LinearProgressIndicator.minHeight}
   final double? linearMinHeight;
 
-  /// {@macro flutter.material.CircularProgressIndicator.trackColor}
+  /// {@macro material_ui.CircularProgressIndicator.trackColor}
   final Color? circularTrackColor;
 
-  /// {@macro flutter.material.RefreshProgressIndicator.backgroundColor}
+  /// {@macro material_ui.RefreshProgressIndicator.backgroundColor}
   final Color? refreshBackgroundColor;
 
   /// Overrides the border radius of the [ProgressIndicator].

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// #region body
 import 'package:cupertino_ui/cupertino_ui.dart';
 
 /// Flutter code sample for [CupertinoSliverRefreshControl].
@@ -42,9 +43,6 @@ class _RefreshControlExampleState extends State<RefreshControlExample> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('CupertinoSliverRefreshControl Sample'),
-      ),
       child: CustomScrollView(
         physics: const BouncingScrollPhysics(
           parent: AlwaysScrollableScrollPhysics(),
@@ -71,3 +69,4 @@ class _RefreshControlExampleState extends State<RefreshControlExample> {
     );
   }
 }
+// #endregion body

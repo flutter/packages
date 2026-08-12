@@ -598,7 +598,7 @@ class OutlineInputBorder extends InputBorder {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/shaped_input_border/shaped_input_border.0.dart}
+/// {@example /example/lib/shaped_input_border/shaped_input_border.0.dart#body}
 ///
 /// </callout-box>
 ///

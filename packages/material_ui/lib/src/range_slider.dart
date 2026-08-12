@@ -45,7 +45,7 @@ typedef PaintRangeValueIndicator = void Function(PaintingContext context, Offset
 ///
 /// Used to select a range from a range of values.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=ufb4gIPDmEs}
+/// Learn more about [RangeSlider] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=ufb4gIPDmEs).
 ///
 /// <callout-box>
 ///
@@ -60,7 +60,7 @@ typedef PaintRangeValueIndicator = void Function(PaintingContext context, Offset
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/range_slider/range_slider.0.dart}
+/// {@example /example/lib/range_slider/range_slider.0.dart#body}
 ///
 /// </callout-box>
 ///

@@ -111,7 +111,7 @@ class DropdownMenuEntry<T> {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/dropdown_menu/dropdown_menu_entry_label_widget.0.dart}
+  /// {@example /example/lib/dropdown_menu/dropdown_menu_entry_label_widget.0.dart#body}
   ///
   /// </callout-box>
   final Widget? labelWidget;
@@ -150,7 +150,7 @@ enum DropdownMenuCloseBehavior {
 /// A dropdown menu that can be opened from a [TextField]. The selected
 /// menu item is displayed in that field.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=giV9AbM2gd8}
+/// Learn more about [DropdownMenu] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=giV9AbM2gd8).
 ///
 /// This widget is used to help people make a choice from a menu and put the
 /// selected item into the text input field. People can also filter the list based
@@ -175,7 +175,7 @@ enum DropdownMenuCloseBehavior {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/dropdown_menu/dropdown_menu.0.dart}
+/// {@example /example/lib/dropdown_menu/dropdown_menu.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -263,7 +263,7 @@ class DropdownMenu<T> extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/dropdown_menu/dropdown_menu.2.dart}
+  /// {@example /example/lib/dropdown_menu/dropdown_menu.2.dart#body}
   ///
   /// </callout-box>
   final bool enabled;
@@ -541,7 +541,7 @@ class DropdownMenu<T> extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/dropdown_menu/dropdown_menu.2.dart}
+  /// {@example /example/lib/dropdown_menu/dropdown_menu.2.dart#body}
   ///
   /// </callout-box>
   final bool? requestFocusOnTap;
@@ -670,7 +670,7 @@ class DropdownMenu<T> extends StatefulWidget {
   ///    and notifies its listeners on [TextEditingValue] changes.
   final List<TextInputFormatter>? inputFormatters;
 
-  /// {@macro flutter.material.MenuAnchor.alignmentOffset}
+  /// {@macro material_ui.MenuAnchor.alignmentOffset}
   final Offset? alignmentOffset;
 
   /// Defines the behavior for closing the dropdown menu when an item is selected.
@@ -706,13 +706,13 @@ class DropdownMenu<T> extends StatefulWidget {
   ///    the [TextField] can display.
   final int? maxLines;
 
-  /// {@macro flutter.widgets.TextField.textInputAction}
+  /// {@macro material_ui.TextField.textInputAction}
   final TextInputAction? textInputAction;
 
   /// {@macro flutter.widgets.editableText.cursorHeight}
   final double? cursorHeight;
 
-  /// {@macro flutter.material.textfield.restorationId}
+  /// {@macro cupertino_ui.textfield.restorationId}
   final String? restorationId;
 
   /// An optional controller that allows opening and closing of the menu from

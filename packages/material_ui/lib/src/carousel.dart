@@ -130,7 +130,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/carousel/carousel.0.dart}
+/// {@example /example/lib/carousel/carousel.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -247,7 +247,7 @@ class CarouselView extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/carousel/carousel.1.dart}
+  /// {@example /example/lib/carousel/carousel.1.dart#body}
   ///
   /// </callout-box>
   ///
@@ -480,7 +480,7 @@ class CarouselView extends StatefulWidget {
   /// The child widgets for the carousel.
   final List<Widget> children;
 
-  /// {@template flutter.material.CarouselView.onIndexChanged}
+  /// {@template material_ui.CarouselView.onIndexChanged}
   /// A callback invoked when the leading item changes.
   ///
   /// The leading item is the first visible item in the carousel view.
@@ -1927,7 +1927,7 @@ class CarouselController extends ScrollController {
 
   /// The current leading item index in the [CarouselView].
   ///
-  /// {@macro flutter.material.CarouselView.onIndexChanged}
+  /// {@macro material_ui.CarouselView.onIndexChanged}
   int get leadingItem {
     assert(
       positions.isNotEmpty,

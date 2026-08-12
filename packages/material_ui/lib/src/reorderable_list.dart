@@ -2,9 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:flutter_test/flutter_test.dart';
-///
 /// @docImport 'card.dart';
+/// @docImport 'paginated_data_table.dart';
 library;
 
 import 'dart:ui' show lerpDouble;
@@ -20,7 +19,7 @@ import 'theme.dart';
 
 /// A list whose items the user can interactively reorder by dragging.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=3fB1mxOsqJE}
+/// Learn more about [ReorderableListView] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=3fB1mxOsqJE).
 ///
 /// This sample shows by dragging the user can reorder the items of the list.
 /// The [onReorderItem] parameter will be called when a child
@@ -33,13 +32,13 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/reorderable_list/reorderable_list_view.0.dart}
+/// {@example /example/lib/reorderable_list/reorderable_list_view.0.dart#body}
 ///
 /// </callout-box>
 ///
-/// By default, on [TargetPlatformVariant.desktop] platforms each item will
+/// By default, on desktop platforms each item will
 /// have a drag handle added on top of it that will allow the user to grab it
-/// to move the item. On [TargetPlatformVariant.mobile], no drag handle will be
+/// to move the item. On mobile platforms, no drag handle will be
 /// added, but when the user long presses anywhere on the item it will start
 /// moving the item. Displaying drag handles can be controlled with
 /// [ReorderableListView.buildDefaultDragHandles].
@@ -61,7 +60,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/reorderable_list/reorderable_list_view.1.dart}
+/// {@example /example/lib/reorderable_list/reorderable_list_view.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -78,7 +77,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/reorderable_list/reorderable_list_view.2.dart}
+/// {@example /example/lib/reorderable_list/reorderable_list_view.2.dart#body}
 ///
 /// </callout-box>
 class ReorderableListView extends StatefulWidget {
@@ -179,7 +178,7 @@ class ReorderableListView extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/reorderable_list/reorderable_list_view.reorderable_list_view_builder.0.dart}
+  /// {@example /example/lib/reorderable_list/reorderable_list_view.reorderable_list_view_builder.0.dart#body}
   ///
   /// </callout-box>
   ///
@@ -294,7 +293,7 @@ class ReorderableListView extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/reorderable_list/reorderable_list_view.build_default_drag_handles.0.dart}
+  /// {@example /example/lib/reorderable_list/reorderable_list_view.build_default_drag_handles.0.dart#body}
   ///
   /// </callout-box>
   final bool buildDefaultDragHandles;
@@ -321,8 +320,8 @@ class ReorderableListView extends StatefulWidget {
   /// {@macro flutter.widgets.scroll_view.controller}
   final ScrollController? scrollController;
 
-  /// {@macro flutter.widgets.scroll_view.primary}
-
+  /// {@macro material_ui.paginated_data_table.primary}
+  ///
   /// Defaults to true when [scrollDirection] is [Axis.vertical] and
   /// [scrollController] is null.
   final bool? primary;
@@ -333,7 +332,12 @@ class ReorderableListView extends StatefulWidget {
   /// {@macro flutter.widgets.scroll_view.shrinkWrap}
   final bool shrinkWrap;
 
-  /// {@macro flutter.widgets.scroll_view.anchor}
+  /// The relative position of the zero scroll offset.
+  ///
+  /// For more information, see [ScrollView.anchor].
+  // TODO(dkwingsmt): Migrate the doc back to macro
+  // flutter.widgets.scroll_view.anchor
+  // https://github.com/flutter/flutter/issues/189629
   final double anchor;
 
   /// {@macro flutter.rendering.RenderViewportBase.cacheExtent}
@@ -358,7 +362,7 @@ class ReorderableListView extends StatefulWidget {
   /// {@macro flutter.widgets.scrollable.restorationId}
   final String? restorationId;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;

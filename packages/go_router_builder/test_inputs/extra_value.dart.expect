@@ -1,5 +1,6 @@
 RouteBase get $extraValueRoute => GoRouteData.$route(
       path: '/default-value-route',
+      hasOverriddenOnExit: false,
       factory: $ExtraValueRoute._fromState,
     );
 

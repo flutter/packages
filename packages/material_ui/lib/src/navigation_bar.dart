@@ -36,7 +36,7 @@ const double _kMaxLabelTextScaleFactor = 1.3;
 
 /// Material 3 Navigation Bar component.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=DVGYddFaLv0}
+/// Learn more about [NavigationBar] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=DVGYddFaLv0).
 ///
 /// Navigation bars offer a persistent and convenient way to switch between
 /// primary destinations in an app.
@@ -66,7 +66,7 @@ const double _kMaxLabelTextScaleFactor = 1.3;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/navigation_bar/navigation_bar.0.dart}
+/// {@example /example/lib/navigation_bar/navigation_bar.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -80,7 +80,7 @@ const double _kMaxLabelTextScaleFactor = 1.3;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/navigation_bar/navigation_bar.1.dart}
+/// {@example /example/lib/navigation_bar/navigation_bar.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -103,7 +103,7 @@ const double _kMaxLabelTextScaleFactor = 1.3;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/navigation_bar/navigation_bar.2.dart}
+/// {@example /example/lib/navigation_bar/navigation_bar.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -250,7 +250,7 @@ class NavigationBar extends StatelessWidget {
   /// the [NavigationDestination] is focused, hovered, or pressed.
   final WidgetStateProperty<Color?>? overlayColor;
 
-  //// The text style of the label.
+  /// The text style of the label.
   ///
   /// If null, [NavigationBarThemeData.labelTextStyle] is used. If that
   /// is also null, the default text style is [TextTheme.labelMedium] with

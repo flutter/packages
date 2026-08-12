@@ -103,7 +103,7 @@ import 'constants.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/tab_controller/tab_controller.1.dart}
+/// {@example /example/lib/tab_controller/tab_controller.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -318,7 +318,7 @@ class _TabControllerScope extends InheritedWidget {
 /// The [TabController] for descendant widgets that don't specify one
 /// explicitly.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=POtoEH-5l40}
+/// Learn more about [DefaultTabController] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=POtoEH-5l40).
 ///
 /// [DefaultTabController] is an inherited widget that is used to share a
 /// [TabController] with a [TabBar] or a [TabBarView]. It's used when sharing an

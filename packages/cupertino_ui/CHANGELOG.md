@@ -1,6 +1,21 @@
-## NEXT
+## 0.0.3+1
 
-* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+- Remove unresolvable doc import for flutter_test
+
+## 0.0.3
+
+- Fix API doc by clearing unsupported directives introduced by macros.
+- Fix API doc references.
+- Adds CupertinoUiCompatibilityBridge for legacy flutter/cupertino.dart compatibility.
+- Refactors examples to not cross-import material_ui.
+
+## 0.0.2
+
+- Copies over all Cupertino code from flutter/flutter.
+- Copies over Cupertino localizations from flutter/flutter's
+  flutter_localizations package.
+- Migrates API doc samples and formatting.
+- Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 0.0.1
 

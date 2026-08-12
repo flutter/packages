@@ -72,7 +72,7 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/icon_button/icon_button.0.dart}
+/// {@example /example/lib/icon_button/icon_button.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -132,7 +132,7 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/icon_button/icon_button.1.dart}
+/// {@example /example/lib/icon_button/icon_button.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -169,7 +169,7 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/icon_button/icon_button.2.dart}
+/// {@example /example/lib/icon_button/icon_button.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -183,7 +183,7 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/icon_button/icon_button.3.dart}
+/// {@example /example/lib/icon_button/icon_button.3.dart#body}
 ///
 /// </callout-box>
 ///
@@ -364,7 +364,7 @@ class IconButton extends StatelessWidget {
 
   /// Defines how compact the icon button's layout will be.
   ///
-  /// {@macro flutter.material.themedata.visualDensity}
+  /// {@macro material_ui.themedata.visualDensity}
   ///
   /// This property can be null. If null, it defaults to [VisualDensity.standard]
   /// in Material Design 3 to make sure the button will be circular on all platforms.
@@ -528,7 +528,7 @@ class IconButton extends StatelessWidget {
   /// If onPressed is set to null, the onLongPress callback is not called.
   final VoidCallback? onLongPress;
 
-  /// {@macro flutter.material.RawMaterialButton.mouseCursor}
+  /// {@macro material_ui.RawMaterialButton.mouseCursor}
   ///
   /// If set to null, will default to [SystemMouseCursors.basic] if [onPressed]
   /// is null, otherwise [WidgetStateMouseCursor.adaptiveClickable].
@@ -621,7 +621,7 @@ class IconButton extends StatelessWidget {
   /// * [ImageIcon], for showing icons from [AssetImage]s or other [ImageProvider]s.
   final Widget? selectedIcon;
 
-  /// {@macro flutter.material.inkwell.statesController}
+  /// {@macro material_ui.inkwell.statesController}
   final MaterialStatesController? statesController;
 
   final _IconButtonVariant _variant;

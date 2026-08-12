@@ -60,7 +60,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/about/about_list_tile.0.dart}
+/// {@example /example/lib/about/about_list_tile.0.dart#body}
 ///
 /// </callout-box>
 class AboutListTile extends StatelessWidget {
@@ -333,7 +333,7 @@ const double _textVerticalSeparation = 18.0;
 ///
 /// To show an [AboutDialog], use [showAboutDialog].
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=YFCSODyFxbE}
+/// Learn more about [AboutDialog] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=YFCSODyFxbE).
 ///
 /// If the application has a [Drawer], the [AboutListTile] widget can make the
 /// process of showing an about dialog simpler.

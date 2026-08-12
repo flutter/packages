@@ -59,7 +59,7 @@ const Curve _kCupertinoPickerTapToScrollCurve = Curves.easeInOut;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/picker/cupertino_picker.0.dart}
+/// {@example /example/lib/picker/cupertino_picker.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -181,7 +181,7 @@ class CupertinoPicker extends StatefulWidget {
   /// If null, an implicit one will be created internally.
   final FixedExtentScrollController? scrollController;
 
-  /// {@template flutter.cupertino.picker.itemExtent}
+  /// {@template cupertino_ui.picker.itemExtent}
   /// The uniform height of all children.
   ///
   /// All children will be given the [BoxConstraints] to match this exact

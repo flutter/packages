@@ -95,7 +95,7 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/search_anchor/search_anchor.2.dart}
+/// {@example /example/lib/search_anchor/search_anchor.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -108,7 +108,7 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/search_anchor/search_anchor.1.dart}
+/// {@example /example/lib/search_anchor/search_anchor.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -120,7 +120,7 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/search_anchor/search_anchor.3.dart}
+/// {@example /example/lib/search_anchor/search_anchor.3.dart#body}
 ///
 /// </callout-box>
 ///
@@ -133,7 +133,7 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/search_anchor/search_anchor.4.dart}
+/// {@example /example/lib/search_anchor/search_anchor.4.dart#body}
 ///
 /// </callout-box>
 ///
@@ -195,7 +195,7 @@ class SearchAnchor extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/search_anchor/search_anchor.0.dart}
+  /// {@example /example/lib/search_anchor/search_anchor.0.dart#body}
   ///
   /// </callout-box>
   factory SearchAnchor.bar({
@@ -429,7 +429,7 @@ class SearchAnchor extends StatefulWidget {
   /// To get a different layout, use [viewBuilder] to override.
   final SuggestionsBuilder suggestionsBuilder;
 
-  /// {@macro flutter.widgets.TextField.textInputAction}
+  /// {@macro material_ui.TextField.textInputAction}
   final TextInputAction? textInputAction;
 
   /// The type of action button to use for the keyboard.
@@ -1427,7 +1427,7 @@ class SearchController extends TextEditingController {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/search_anchor/search_bar.0.dart}
+/// {@example /example/lib/search_anchor/search_bar.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1608,7 +1608,7 @@ class SearchBar extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.autofocus}
   final bool autoFocus;
 
-  /// {@macro flutter.widgets.TextField.textInputAction}
+  /// {@macro material_ui.TextField.textInputAction}
   final TextInputAction? textInputAction;
 
   /// The type of action button to use for the keyboard.

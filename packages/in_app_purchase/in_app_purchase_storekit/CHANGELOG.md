@@ -1,6 +1,11 @@
-## 0.4.10+2
+## 0.4.11+1
 
 * Fixes StoreKi 2 restore transactions not grouping purchases into a single event.
+  
+## 0.4.11
+
+* Fixes StoreKit 2 date format does not match in_app_purchase_platform_interface PurchaseDetails.transactionDate format.
+  Fixes both `SK2Transaction.purchaseDate` and `SK2Transaction.expirationDate`.
 
 ## 0.4.10+1
 

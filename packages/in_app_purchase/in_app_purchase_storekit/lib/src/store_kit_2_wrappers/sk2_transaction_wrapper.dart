@@ -44,9 +44,13 @@ class SK2Transaction {
 
   /// The date that the App Store charged the user's account for a purchased or
   /// restored product, or for a subscription purchase or renewal after a lapse.
+  ///
+  /// Milliseconds since epoch.
   final String purchaseDate;
 
   /// The date the subscription expires or renews.
+  ///
+  /// Milliseconds since epoch.
   final String? expirationDate;
 
   /// The number of consumable products purchased.
@@ -124,8 +128,8 @@ extension on SK2TransactionMessage {
       id: id.toString(),
       originalId: originalId.toString(),
       productId: productId,
-      purchaseDate: purchaseDate ?? '',
-      expirationDate: expirationDate,
+      purchaseDate: _secondsToMillisecondsSinceEpochString(purchaseDate) ?? '',
+      expirationDate: _secondsToMillisecondsSinceEpochString(expirationDate),
       quantity: purchasedQuantity,
       appAccountToken: appAccountToken,
       receiptData: receiptData,
@@ -154,12 +158,15 @@ extension on SK2TransactionMessage {
         serverVerificationData: receiptData ?? '',
         source: kIAPSource,
       ),
-      transactionDate: purchaseDate,
+      transactionDate: _secondsToMillisecondsSinceEpochString(purchaseDate),
       status: purchaseStatus,
       purchaseID: id > 0 ? id.toString() : null,
       appAccountToken: appAccountToken,
     );
   }
+
+  String? _secondsToMillisecondsSinceEpochString(double? date) =>
+      date != null ? (date * 1000).round().toString() : null;
 }
 
 /// An observer that listens to all transactions created

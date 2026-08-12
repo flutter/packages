@@ -51,7 +51,7 @@ const Duration _kExpand = Duration(milliseconds: 200);
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/expansion_tile/expansion_tile.1.dart}
+/// {@example /example/lib/expansion_tile/expansion_tile.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -101,7 +101,7 @@ typedef ExpansionTileController = ExpansibleController;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/expansion_tile/expansion_tile.0.dart}
+/// {@example /example/lib/expansion_tile/expansion_tile.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -114,7 +114,7 @@ typedef ExpansionTileController = ExpansibleController;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/expansion_tile/expansion_tile.1.dart}
+/// {@example /example/lib/expansion_tile/expansion_tile.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -400,7 +400,7 @@ class ExpansionTile extends StatefulWidget {
   ///   [ExpansionTileThemeData].
   final ShapeBorder? collapsedShape;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// If this is not null and a custom collapsed or expanded shape is provided,
   /// the value of [clipBehavior] will be used to clip the expansion tile.
@@ -427,7 +427,7 @@ class ExpansionTile extends StatefulWidget {
   /// more convenient than supplying a controller.
   final ExpansibleController? controller;
 
-  /// {@macro flutter.material.ListTile.dense}
+  /// {@macro material_ui.ListTile.dense}
   final bool? dense;
 
   /// The splash color of the ink response when the tile is tapped.
@@ -451,13 +451,13 @@ class ExpansionTile extends StatefulWidget {
 
   /// Defines how compact the expansion tile's layout will be.
   ///
-  /// {@macro flutter.material.themedata.visualDensity}
+  /// {@macro material_ui.themedata.visualDensity}
   final VisualDensity? visualDensity;
 
-  /// {@macro flutter.material.ListTile.minTileHeight}
+  /// {@macro material_ui.ListTile.minTileHeight}
   final double? minTileHeight;
 
-  /// {@macro flutter.material.ListTile.enableFeedback}
+  /// {@macro material_ui.ListTile.enableFeedback}
   final bool? enableFeedback;
 
   /// Whether this expansion tile is interactive.
@@ -497,7 +497,7 @@ class ExpansionTile extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/expansion_tile/expansion_tile.2.dart}
+  /// {@example /example/lib/expansion_tile/expansion_tile.2.dart#body}
   ///
   /// </callout-box>
   final AnimationStyle? expansionAnimationStyle;

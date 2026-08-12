@@ -242,7 +242,7 @@ enum _PickerColumnType {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/date_picker/cupertino_date_picker.0.dart}
+/// {@example /example/lib/date_picker/cupertino_date_picker.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -473,7 +473,7 @@ class CupertinoDatePicker extends StatefulWidget {
   /// Function to provide full control over which [DateTime] can be selected.
   final SelectableDayPredicate? selectableDayPredicate;
 
-  /// {@macro flutter.cupertino.picker.itemExtent}
+  /// {@macro cupertino_ui.picker.itemExtent}
   ///
   /// Defaults to a value that matches the default iOS date picker wheel.
   final double itemExtent;
@@ -2184,7 +2184,7 @@ enum CupertinoTimerPickerMode {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/date_picker/cupertino_timer_picker.0.dart}
+/// {@example /example/lib/date_picker/cupertino_timer_picker.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -2260,7 +2260,7 @@ class CupertinoTimerPicker extends StatefulWidget {
   /// Defaults to null, which disables background painting entirely.
   final Color? backgroundColor;
 
-  /// {@macro flutter.cupertino.picker.itemExtent}
+  /// {@macro cupertino_ui.picker.itemExtent}
   ///
   /// Defaults to a value that matches the default iOS timer picker wheel.
   final double itemExtent;

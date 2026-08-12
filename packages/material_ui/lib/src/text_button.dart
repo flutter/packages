@@ -65,7 +65,7 @@ import 'theme_data.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/text_button/text_button.0.dart}
+/// {@example /example/lib/text_button/text_button.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -78,7 +78,7 @@ import 'theme_data.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/text_button/text_button.1.dart}
+/// {@example /example/lib/text_button/text_button.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -116,7 +116,7 @@ class TextButton extends ButtonStyleButton {
   /// If [icon] is null, this constructor will create a [TextButton]
   /// that doesn't display an icon.
   ///
-  /// {@macro flutter.material.ButtonStyle.iconAlignment}
+  /// {@macro material_ui.ButtonStyle.iconAlignment}
   ///
   TextButton.icon({
     super.key,
@@ -279,7 +279,7 @@ class TextButton extends ButtonStyleButton {
 
   /// Defines the button's default appearance.
   ///
-  /// {@template flutter.material.text_button.default_style_of}
+  /// {@template material_ui.text_button.default_style_of}
   /// The button [child]'s [Text] and [Icon] widgets are rendered with
   /// the [ButtonStyle]'s foreground color. The button's [InkWell] adds
   /// the style's overlay color when the button is focused, hovered
@@ -353,7 +353,7 @@ class TextButton extends ButtonStyleButton {
   /// If [ThemeData.useMaterial3] is set to true the following defaults will
   /// be used:
   ///
-  /// {@template flutter.material.text_button.material3_defaults}
+  /// {@template material_ui.text_button.material3_defaults}
   /// * `textStyle` - Theme.textTheme.labelLarge
   /// * `backgroundColor` - transparent
   /// * `foregroundColor`

@@ -102,7 +102,7 @@ class ButtonSegment<T> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/segmented_button/segmented_button.0.dart}
+/// {@example /example/lib/segmented_button/segmented_button.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -114,7 +114,7 @@ class ButtonSegment<T> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/segmented_button/segmented_button.1.dart}
+/// {@example /example/lib/segmented_button/segmented_button.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -266,7 +266,7 @@ class SegmentedButton<T> extends StatefulWidget {
   /// standard opacity adjustments for the pressed, focused, and
   /// hovered states, one could write:
   ///
-  /// {@example /example/lib/segmented_button/segmented_button.1.dart}
+  /// {@example /example/lib/segmented_button/segmented_button.1.dart#body}
   ///
   /// ```dart
   /// SegmentedButton<int>(

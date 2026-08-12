@@ -45,7 +45,7 @@ const EdgeInsetsGeometry _kDefaultPadding = EdgeInsetsDirectional.fromSTEB(20.0,
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/form_row/cupertino_form_row.0.dart}
+/// {@example /example/lib/form_row/cupertino_form_row.0.dart#body}
 ///
 /// </callout-box>
 ///
