@@ -76,12 +76,12 @@ class TestDartFixesCommand extends PackageLoopingCommand {
   /// contents when done.
   static Future<Directory> _createTestDirectory(RepositoryPackage package) async {
     final FileSystem fileSystem = package.directory.fileSystem;
-    final Directory testTempDirectory = await fileSystem.systemTempDirectory.createTemp();
+    final Directory testDirectory = await fileSystem.systemTempDirectory.createTemp();
 
     // Copy from `test_fixes/` to the temp directory.
     for (final FileSystemEntity entity in package.dartFixTestDirectory.listSync(recursive: true)) {
       final String relativePath = p.relative(entity.path, from: package.dartFixTestDirectory.path);
-      final String destPath = p.join(testTempDirectory.path, relativePath);
+      final String destPath = p.join(testDirectory.path, relativePath);
       if (entity is Directory) {
         fileSystem.directory(destPath).createSync(recursive: true);
       } else if (entity is File) {
@@ -91,7 +91,7 @@ class TestDartFixesCommand extends PackageLoopingCommand {
     }
 
     // The pubspec.yaml file to create.
-    final File targetPubspecFile = fileSystem.file(p.join(testTempDirectory.path, 'pubspec.yaml'));
+    final File targetPubspecFile = fileSystem.file(p.join(testDirectory.path, 'pubspec.yaml'));
 
     final targetYaml =
         '''
@@ -111,7 +111,7 @@ dependencies:
 ''';
 
     await targetPubspecFile.writeAsString(targetYaml);
-    return testTempDirectory;
+    return testDirectory;
   }
 
   /// Run the dart fix tests for the package in the given temporary directory.
