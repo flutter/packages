@@ -1,3 +1,10 @@
+## 1.0.0
+
+- README updated for the full release of cupertino_ui.
+- Promotes the pre-release to 1.0.0.
+- Added a main.dart example for the Pub "Example" tab that references a curated
+list of existing examples.
+
 ## 0.0.3+1
 
 - Remove unresolvable doc import for flutter_test
