@@ -47,7 +47,7 @@ changing imports of `package:flutter/material.dart` to
 
 ### Step 2: Migrate localizations (if needed)
 
-If you are not currently using the GlobalMaterialLocalizations` or
+If you are not currently using the `GlobalMaterialLocalizations` or
 `GlobalCupertinoLocalizations` classes from flutter/flutter's
 `flutter_localizations` package, then you are already good to go. For those that
 do need to migrate off of these classes, simply use the new versions of these
