@@ -563,9 +563,9 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
       case AnimationStatus.forward:
         _ensureHistoryEntry();
       case AnimationStatus.reverse:
+      case AnimationStatus.dismissed:
         _historyEntry?.remove();
         _historyEntry = null;
-      case AnimationStatus.dismissed:
       case AnimationStatus.completed:
         break;
     }
@@ -573,7 +573,9 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
 
   void _handleHistoryEntryRemoved() {
     _historyEntry = null;
-    close();
+    if (!_controller.isDismissed && _controller.status != AnimationStatus.reverse) {
+      close();
+    }
   }
 
   late AnimationController _controller;
@@ -632,6 +634,10 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
       final double visualVelocity = xVelocity / _width * _directionFactor;
 
       _controller.fling(velocity: visualVelocity);
+      if (visualVelocity < 0.0) {
+        _historyEntry?.remove();
+        _historyEntry = null;
+      }
       widget.drawerCallback?.call(visualVelocity > 0.0);
     } else if (_controller.value < 0.5) {
       close();
@@ -651,6 +657,8 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
   /// Starts an animation to close the drawer.
   void close() {
     _controller.fling(velocity: -1.0);
+    _historyEntry?.remove();
+    _historyEntry = null;
     widget.drawerCallback?.call(false);
   }
 
