@@ -76,7 +76,7 @@ void main(List<String> args) {
         ..addCommand(PublishCheckCommand(packagesDir))
         ..addCommand(PublishCommand(packagesDir))
         ..addCommand(RemoveDevDependenciesCommand(packagesDir))
-        ..addCommand(TestDartFixes(packagesDir))
+        ..addCommand(TestDartFixesCommand(packagesDir))
         ..addCommand(UpdateDependencyCommand(packagesDir))
         ..addCommand(UpdateExcerptsCommand(packagesDir))
         ..addCommand(UpdateMinSdkCommand(packagesDir))

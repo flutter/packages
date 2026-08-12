@@ -15,9 +15,9 @@ import 'common/repository_package.dart';
 
 /// A command to run dart fix tests for packages that have a test_fixes
 /// directory.
-class TestDartFixes extends PackageLoopingCommand {
+class TestDartFixesCommand extends PackageLoopingCommand {
   /// Creates an instance of the test dart fixes command.
-  TestDartFixes(super.packagesDir, {super.processRunner, super.platform, super.gitDir});
+  TestDartFixesCommand(super.packagesDir, {super.processRunner, super.platform, super.gitDir});
 
   @override
   final String name = 'test-dart-fixes';
