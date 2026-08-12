@@ -21,7 +21,7 @@ Example:
 
 <?code-excerpt "readme_excerpts.dart (Instantiate)"?>
 ```dart
-final file = XFile.fromUri(Uri.file('assets/hello.txt'));
+final file = XFile.fileSystem(path: 'assets/hello.txt');
 
 debugPrint('File information:');
 debugPrint('- URI: ${file.uri}');
@@ -79,11 +79,11 @@ switch (CrossFile.implementation) {
     final params = WebScopedStorageXFileCreationParams.fromObjectUrl(
       objectUrl: 'blob:https://some/url:for/file',
     );
-    file = XFile.fromCreationParams(params);
+    file = ScopedStorageXFile.fromCreationParams(params);
   case CrossFileDarwin():
     file = ScopedStorageXFile.fromUri(Uri.file('/my/file.txt'));
   default:
-    file = XFile.fromUri(Uri.file('/my/file.txt'));
+    file = XFile.fileSystem(path: '/my/file.txt');
 }
 
 await file
