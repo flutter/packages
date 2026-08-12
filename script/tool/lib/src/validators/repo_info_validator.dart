@@ -403,18 +403,20 @@ class RepoInfoValidator {
     final enabledBranches = yaml['enabled_branches'] as YamlList?;
     final bool hasBranchPattern =
         enabledBranches != null &&
-        enabledBranches.contains(r'release-' + packageName + r'-\d+\.\d+\.\d+');
+        enabledBranches.contains(
+          r'release-' + packageName + r'-\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)?',
+        );
 
     if (isBatchRelease && !hasBranchPattern) {
       printError(
-        '${_indentation}Missing release branch pattern release-$packageName-\\d+\\.\\d+\\.\\d+ '
+        '${_indentation}Missing release branch pattern release-$packageName-\\d+\\.\\d+\\.\\d+(?:-[\\w.]+)?(?:\\+[\\w.]+)? '
         'in enabled_branches in .ci.yaml\n'
         '${_indentation}See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
       );
       errors.add('Unexpected branch handling in .ci.yaml');
     } else if (!isBatchRelease && hasBranchPattern) {
       printError(
-        '${_indentation}Unexpected release branch pattern release-$packageName-\\d+\\.\\d+\\.\\d+ '
+        '${_indentation}Unexpected release branch pattern release-$packageName-\\d+\\.\\d+\\.\\d+(?:-[\\w.]+)?(?:\\+[\\w.]+)? '
         'in enabled_branches in .ci.yaml',
       );
       errors.add('Unexpected branch handling in .ci.yaml');
