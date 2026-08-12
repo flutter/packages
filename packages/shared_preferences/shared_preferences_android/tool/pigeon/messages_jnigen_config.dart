@@ -7,17 +7,14 @@ import 'package:jnigen/jnigen.dart';
 import 'package:logging/logging.dart';
 
 void main() async {
-    Directory.current = Platform.script.resolve('../..').toFilePath();
+  Directory.current = Platform.script.resolve('../..').toFilePath();
   await generateJniBindings(
     Config(
-        androidSdkConfig: AndroidSdkConfig(
-          addGradleDeps: true,
-          androidExample: './example/',
-        ),
-        summarizerOptions: SummarizerOptions(backend: SummarizerBackend.asm),
-        outputConfig: OutputConfig(
-          dartConfig: DartCodeOutputConfig(
-            path: Uri.file('lib/src/messages.g.jni.dart'),
+      androidSdkConfig: AndroidSdkConfig(addGradleDeps: true, androidExample: './example/'),
+      summarizerOptions: SummarizerOptions(backend: SummarizerBackend.asm),
+      outputConfig: OutputConfig(
+        dartConfig: DartCodeOutputConfig(
+          path: Uri.file('lib/src/messages.g.jni.dart'),
           structure: OutputStructure.singleFile,
         ),
       ),
@@ -31,5 +28,4 @@ void main() async {
       ],
     ),
   );
-
 }

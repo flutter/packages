@@ -9,7 +9,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  jni: ^1.0.0
   shared_preferences_android:
     # When depending on this package from a real application you should use:
     #   shared_preferences_android: ^x.y.z
