@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
@@ -137,6 +138,7 @@ class _CustomNavigator extends StatefulWidget {
     required this.errorBuilder,
     required this.errorPageBuilder,
     required this.requestFocus,
+    this.navigatorActive,
   });
 
   final GlobalKey<NavigatorState> navigatorKey;
@@ -156,6 +158,7 @@ class _CustomNavigator extends StatefulWidget {
   final GoRouterWidgetBuilder? errorBuilder;
   final GoRouterPageBuilder? errorPageBuilder;
   final bool requestFocus;
+  final ValueListenable<bool>? navigatorActive;
 
   @override
   State<StatefulWidget> createState() => _CustomNavigatorState();
@@ -292,8 +295,9 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
             ShellRouteMatch match,
             RouteMatchList matchList,
             List<NavigatorObserver>? observers,
-            String? restorationScopeId,
-          ) {
+            String? restorationScopeId, {
+            ValueListenable<bool>? navigatorActive,
+          }) {
             return PopScope(
               // Prevent ShellRoute from being popped, for example
               // by an iOS back gesture, when the route has active sub-routes.
@@ -311,6 +315,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
                 configuration: widget.configuration,
                 observers: observers ?? const <NavigatorObserver>[],
                 onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
+                navigatorActive: navigatorActive,
                 // This is used to recursively build pages under this shell route.
                 errorBuilder: widget.errorBuilder,
                 errorPageBuilder: widget.errorPageBuilder,
@@ -385,12 +390,15 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   Page<Object?> _buildPlatformAdapterPage(BuildContext context, GoRouterState state, Widget child) {
     // build the page based on app type
     _cacheAppType(context);
+    final Widget pageChild = widget.navigatorActive == null
+        ? child
+        : _BranchNavigatorPopScope(navigatorActive: widget.navigatorActive!, child: child);
     return _pageBuilderForAppType!(
       key: state.pageKey,
       name: state.name ?? state.path,
       arguments: <String, String>{...state.pathParameters, ...state.uri.queryParameters},
       restorationId: state.pageKey.value,
-      child: child,
+      child: pageChild,
     );
   }
 
@@ -456,6 +464,24 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
           onPopPage: _handlePopPage,
         ),
       ),
+    );
+  }
+}
+
+class _BranchNavigatorPopScope extends StatelessWidget {
+  const _BranchNavigatorPopScope({required this.navigatorActive, required this.child});
+
+  final ValueListenable<bool> navigatorActive;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: navigatorActive,
+      child: child,
+      builder: (BuildContext context, bool isActive, Widget? child) {
+        return PopScope<Object?>(canPop: isActive, child: child!);
+      },
     );
   }
 }
