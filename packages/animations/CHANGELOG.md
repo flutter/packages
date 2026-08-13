@@ -1,5 +1,6 @@
-## NEXT
+## 3.0.0
 
+* Migrates to material_ui.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.2.0
