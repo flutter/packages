@@ -13,7 +13,9 @@ let package = Package(
     .macOS("10.15"),
   ],
   products: [
-    .library(name: "google-sign-in-ios", targets: ["google_sign_in_ios"])
+    .library(
+      name: "google-sign-in-ios",
+      targets: ["google_sign_in_ios", "google_sign_in_ios_objc"])
   ],
   dependencies: [
     .package(
@@ -24,14 +26,21 @@ let package = Package(
     .target(
       name: "google_sign_in_ios",
       dependencies: [
-        .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")
+        "google_sign_in_ios_objc"
       ],
       resources: [
         .process("Resources")
+      ]
+    ),
+    .target(
+      name: "google_sign_in_ios_objc",
+      dependencies: [
+        .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")
       ],
+      publicHeadersPath: "include",
       cSettings: [
         .headerSearchPath("include/google_sign_in_ios")
       ]
-    )
+    ),
   ]
 )
