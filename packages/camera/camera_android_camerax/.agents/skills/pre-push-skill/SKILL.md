@@ -29,8 +29,10 @@ You must verify that there are actually changed files to test.
 Command to run:
 
 ```bash
-git fetch upstream main
-git diff --name-only upstream/main...HEAD | grep '^packages/camera/camera_android_camerax'
+UPSTREAM_PREPUSH=$(git remote -v | grep 'flutter/packages' | head -n 1 | awk '{print $1}')
+UPSTREAM_PREPUSH=${UPSTREAM_PREPUSH:-upstream}
+git fetch $UPSTREAM_PREPUSH main
+git diff --name-only $UPSTREAM_PREPUSH/main...HEAD | grep '^packages/camera/camera_android_camerax'
 ```
 
 If this command outputs nothing,
@@ -51,14 +53,23 @@ is an ancestor of your current `HEAD`.
 Command to run:
 
 ```bash
-git fetch upstream main
-git merge-base --is-ancestor upstream/main HEAD
+UPSTREAM_PREPUSH=$(git remote -v | grep 'flutter/packages' | head -n 1 | awk '{print $1}')
+UPSTREAM_PREPUSH=${UPSTREAM_PREPUSH:-upstream}
+git fetch $UPSTREAM_PREPUSH main
+git merge-base --is-ancestor $UPSTREAM_PREPUSH/main HEAD
 ```
 
-If this command fails (exits with a non-zero code),
-the branch is behind `upstream/main`.
-The code is NOT ready to push.
-**STOP IMMEDIATELY.** Do not proceed to any subsequent checks and do not run `update-release-info`. Output `# NO, you are not ready to push` and instruct the user to pull `upstream/main` first.
+If this command fails (exits with a non-zero code), the branch is behind upstream.
+In this case, check if there are actual merge conflicts by simulating a merge:
+
+```bash
+git merge-tree HEAD $UPSTREAM_PREPUSH/main
+```
+
+If the `merge-tree` command fails (exits with a non-zero code), there are merge conflicts.
+**STOP IMMEDIATELY.** Do not proceed to any subsequent checks and do not run `update-release-info`. Output `# NO, you are not ready to push` and instruct the user to resolve conflicts with `$UPSTREAM_PREPUSH/main` first.
+
+If the branch is behind but there are no merge conflicts, you may proceed with the remaining checks. However, you must warn the user that they are behind and need to pull/merge `$UPSTREAM_PREPUSH/main` before pushing, and you should still avoid running `update-release-info` automatically to prevent creating potential conflicts.
 
 ## 4. Check Unit Tests Pass
 
