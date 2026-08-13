@@ -31,6 +31,7 @@ Future<String> getUpstreamRemote(String workingDirectory) async {
 /// conflicts with the latest changes on upstream/main, and verifies that
 /// pre-push-skill detects the conflict and stops immediately.
 void main() async {
+  // The root of the packages directory.
   final Directory packageDir = Directory(Platform.script.toFilePath())
       .parent
       .parent
