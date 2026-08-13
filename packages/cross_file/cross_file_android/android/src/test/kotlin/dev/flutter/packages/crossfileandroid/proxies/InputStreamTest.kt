@@ -4,13 +4,12 @@
 
 package dev.flutter.packages.crossfileandroid.proxies
 
-import dev.flutter.packages.cross_file_android.TestProxyApiRegistrar
+import dev.flutter.packages.crossfileandroid.TestProxyApiRegistrar
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.mockito.ArgumentCaptor
-import org.mockito.kotlin.capture
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 

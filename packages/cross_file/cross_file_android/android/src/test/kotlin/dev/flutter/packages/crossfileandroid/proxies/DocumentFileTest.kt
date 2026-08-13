@@ -6,7 +6,7 @@ package dev.flutter.packages.crossfileandroid.proxies
 
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
-import dev.flutter.packages.cross_file_android.TestProxyApiRegistrar
+import dev.flutter.packages.crossfileandroid.TestProxyApiRegistrar
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.mockito.Mockito.mockStatic

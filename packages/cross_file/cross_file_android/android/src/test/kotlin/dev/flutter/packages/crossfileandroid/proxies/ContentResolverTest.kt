@@ -6,7 +6,7 @@ package dev.flutter.packages.crossfileandroid.proxies
 
 import android.content.ContentResolver
 import android.net.Uri
-import dev.flutter.packages.cross_file_android.TestProxyApiRegistrar
+import dev.flutter.packages.crossfileandroid.TestProxyApiRegistrar
 import java.io.InputStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
