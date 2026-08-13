@@ -1,3 +1,7 @@
+## 1.0.1
+
+- Add missing Widget of the Week videos to widget API docs.
+
 ## 1.0.0
 
 - README updated for the full release of material_ui.
