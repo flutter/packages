@@ -3535,8 +3535,6 @@ void main() {
 
     await tester.tapAt(const Offset(50, 50));
     await tester.pump();
-    await tester.tapAt(const Offset(50, 50));
-    await tester.pump();
 
     expect(focusNode.hasPrimaryFocus, isFalse);
   }, variant: TargetPlatformVariant.mobile());
