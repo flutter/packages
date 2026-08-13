@@ -76,6 +76,9 @@ base class FileSystemXDirectory extends XDirectory {
   @internal
   const FileSystemXDirectory.fromPlatform(PlatformFileSystemXDirectory super.platform);
 
+  /// The path of the directory.
+  String get path => platform.params.path;
+
   @internal
   @override
   PlatformFileSystemXDirectory get platform => super.platform as PlatformFileSystemXDirectory;

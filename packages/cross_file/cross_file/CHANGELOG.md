@@ -2,12 +2,18 @@
 
 * Updates `cross_file` to a package-separated federated plugin.
 * Adds `XDirectory` to access file containers.
-* Adds file implementation for scoped storage APIs that use ephemeral URLS. See `ScopedStorageXFile`
-  and `ScopedStorageXDirector`.
-* **Breaking Change** Replaces `XFile(String path)` with `XFile.fromPath(String path)`.
-* **Breaking Change** Removes `XFile.fromDatag`.
-* **Breaking Change** Removes `XFile.saveTo`.
-* **Breaking Change** Removes `mimeType` and `path`.
+* Adds implementation for file systems. See `FileSystemXFile` and `FileSystemXDirectory`.
+* Adds implementation for scoped storage APIs that use ephemeral URLS. See `ScopedStorageXFile`
+  and `ScopedStorageXDirectory`.
+* **Breaking Change** Replaces `XFile(String path)` with `XFile.fileSystem({required String path})`
+  or `FileSystem(String path)`.
+* **Breaking Change** Removes `XFile.fromData`. `XFile`s can no longer be instantiated with a
+  `Uint8List`. For web, see README for an example to create one from a `Blob`/`File`.
+* **Breaking Change** Removes `XFile.saveTo()`. `FileSystemXFile.writeAsBytes` has been added
+  and the web implementation can use `WebScopedStorageXFileExtension.download`. See README to see
+  how to access platform-specific feature.
+* **Breaking Change** Removes `XFile.mimeType`.
+* **Breaking Change** Removes `XFile.path`. This has been replaced by `FileSystemXFile.path`.
 * **Breaking Change** Changes `XFile.name` to return `Future<String>` rather than `String`.
 
 ## 0.3.5+4

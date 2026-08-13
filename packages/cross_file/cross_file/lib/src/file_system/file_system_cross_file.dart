@@ -80,6 +80,9 @@ base class FileSystemXFile extends XFile {
   @override
   PlatformFileSystemXFile get platform => super.platform as PlatformFileSystemXFile;
 
+  /// The path of the file.
+  String get path => platform.params.path;
+
   /// Writes a list of bytes to a file.
   ///
   /// Platforms may throw an exception if there is an error opening or writing
