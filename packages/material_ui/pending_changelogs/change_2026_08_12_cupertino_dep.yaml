@@ -1,0 +1,3 @@
+changelog: |
+  - Updates cupertino_ui dependency constraint to ^1.0.0.
+version: patch
