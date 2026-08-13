@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:typed_data';
-
 import 'package:cross_file_darwin/src/cross_file_darwin_apis.g.dart';
 import 'package:cross_file_darwin/src/darwin_scoped_storage_cross_file.dart';
 import 'package:flutter/foundation.dart';
