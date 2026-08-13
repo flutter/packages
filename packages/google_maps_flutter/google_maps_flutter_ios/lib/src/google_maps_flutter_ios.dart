@@ -1141,6 +1141,7 @@ PlatformEdgeInsets? _platformEdgeInsetsFromEdgeInsets(EdgeInsets? insets) {
 }
 
 PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(MapConfiguration config) {
+  final Color? backgroundColor = config.backgroundColor;
   return PlatformMapConfiguration(
     compassEnabled: config.compassEnabled,
     cameraTargetBounds: _platformCameraTargetBoundsFromCameraTargetBounds(
@@ -1162,9 +1163,7 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(MapConfig
     markerType: _platformMarkerTypeFromMarkerType(config.markerType ?? MarkerType.marker),
     mapId: config.mapId,
     style: config.style,
-    backgroundColor: config.backgroundColor == null
-        ? null
-        : _platformColorFromColor(config.backgroundColor!),
+    backgroundColor: backgroundColor == null ? null : _platformColorFromColor(backgroundColor),
   );
 }
 
@@ -1192,6 +1191,7 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(Map<String, Ob
   // to support this legacy API that relied on cross-package magic strings.
   final List<double>? padding = (options['padding'] as List<Object?>?)?.cast<double>();
   final mapType = options['mapType'] as int?;
+  final backgroundColor = options['backgroundColor'] as int?;
   return PlatformMapConfiguration(
     compassEnabled: options['compassEnabled'] as bool?,
     cameraTargetBounds: _platformCameraTargetBoundsFromCameraTargetBoundsJson(
@@ -1222,9 +1222,9 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(Map<String, Ob
     markerType: PlatformMarkerType.marker,
     mapId: options['mapId'] as String?,
     style: options['style'] as String?,
-    backgroundColor: options['backgroundColor'] == null
+    backgroundColor: backgroundColor == null
         ? null
-        : _platformColorFromColor(Color(options['backgroundColor']! as int)),
+        : _platformColorFromColor(Color(backgroundColor)),
   );
 }
 
