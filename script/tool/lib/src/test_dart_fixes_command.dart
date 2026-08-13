@@ -85,7 +85,10 @@ class TestDartFixesCommand extends PackageLoopingCommand {
 
     // Copy from `test_fixes/` to the temp directory.
     for (final FileSystemEntity entity in package.dartFixTestDirectory.listSync(recursive: true)) {
-      final String relativePath = fileSystem.path.relative(entity.path, from: package.dartFixTestDirectory.path);
+      final String relativePath = fileSystem.path.relative(
+        entity.path,
+        from: package.dartFixTestDirectory.path,
+      );
       final String destPath = fileSystem.path.join(testDirectory.path, relativePath);
       if (entity is Directory) {
         fileSystem.directory(destPath).createSync(recursive: true);
@@ -96,7 +99,9 @@ class TestDartFixesCommand extends PackageLoopingCommand {
     }
 
     // The pubspec.yaml file to create.
-    final File targetPubspecFile = fileSystem.file(fileSystem.path.join(testDirectory.path, 'pubspec.yaml'));
+    final File targetPubspecFile = fileSystem.file(
+      fileSystem.path.join(testDirectory.path, 'pubspec.yaml'),
+    );
 
     final targetYaml =
         '''
