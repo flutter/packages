@@ -3758,12 +3758,13 @@ class _MenuPanelState extends State<_MenuPanel> {
         ).copyWith(scrollbars: false, overscroll: false, physics: const ClampingScrollPhysics()),
         child: PrimaryScrollController(
           controller: scrollController,
-          child: MediaQuery.removePadding(
-            context: context,
-            removeLeft: true,
-            removeTop: true,
-            removeRight: true,
-            removeBottom: true,
+          child: MediaQuery(
+            data: mediaQuery.removePadding(
+              removeLeft: true,
+              removeTop: true,
+              removeRight: true,
+              removeBottom: true,
+            ),
             child: Scrollbar(
               thumbVisibility: displayScrollbar,
               child: MediaQuery(
