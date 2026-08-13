@@ -636,4 +636,19 @@ final class InAppPurchase2PluginTests: XCTestCase {
     waitForExpectations(timeout: 1.0)
   }
 
+  func testShowManageSubscriptionsFailsGracefullyWhenNoWindow() {
+    let expectation = self.expectation(
+      description: "Should fail gracefully when without key window")
+
+    plugin.registrar = nil
+
+    plugin.showManageSubscriptions { result in
+      if case .failure = result {
+        expectation.fulfill()
+      }
+    }
+
+    waitForExpectations(timeout: 1.0)
+  }
+
 }

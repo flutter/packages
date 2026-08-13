@@ -401,6 +401,51 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     #endif
   }
 
+  /// Wrapper method around StoreKit2's showManageSubscriptions(in:) method
+  /// https://developer.apple.com/documentation/storekit/appstore/showmanagesubscriptions(in:)
+  /// Presents the App Store sheet that lets the user manage their subscriptions.
+  func showManageSubscriptions(completion: @escaping (Result<Void, Error>) -> Void) {
+    #if os(iOS)
+      if #available(iOS 15.0, *) {
+        guard let windowScene = self.registrar?.viewController?.view.window?.windowScene else {
+          let error = PigeonError(
+            code: "storekit2_missing_key_window_scene",
+            message: "Failed to fetch key window scene",
+            details: "registrar.viewController.view.window.windowScene returned nil."
+          )
+          completion(.failure(error))
+          return
+        }
+        Task { @MainActor in
+          do {
+            try await AppStore.showManageSubscriptions(in: windowScene)
+            completion(.success(()))
+          } catch {
+            completion(.failure(error))
+          }
+        }
+      } else {
+        completion(
+          .failure(
+            PigeonError(
+              code: "storekit2_unsupported_platform_version",
+              message: "Managing subscriptions requires iOS 15+",
+              details: nil
+            )))
+      }
+    #elseif os(macOS)
+      // StoreKit does not provide showManageSubscriptions on macOS. Subscriptions are
+      // managed through the App Store app instead.
+      completion(
+        .failure(
+          PigeonError(
+            code: "storekit2_unsupported_platform",
+            message: "Managing subscriptions is not supported on macOS",
+            details: nil
+          )))
+    #endif
+  }
+
   /// Wrapper method around StoreKit2's sync() method
   /// https://developer.apple.com/documentation/storekit/appstore/sync()
   /// When called, a system prompt will ask users to enter their authentication details
