@@ -403,6 +403,13 @@ void main() {
     });
   });
 
+  group('manage subscriptions', () {
+    test('forwards the call to the platform', () async {
+      await InAppPurchaseStoreKitPlatformAddition().showManageSubscriptions();
+      expect(fakeStoreKit2Platform.showManageSubscriptionsCallCount, 1);
+    });
+  });
+
   group('win back offers eligibility', () {
     late FakeStoreKit2Platform fakeStoreKit2Platform;
 
