@@ -6,7 +6,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart' show immutable, protected;
 
-import 'cross_file_platform.dart';
 import 'platform_cross_entity.dart';
 
 /// Object specifying creation parameters for creating a [PlatformXDirectory].
