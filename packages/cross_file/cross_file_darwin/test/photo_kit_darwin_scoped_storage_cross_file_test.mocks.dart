@@ -24,14 +24,12 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-class _FakePigeonInstanceManager_0 extends _i1.SmartFake
-    implements _i2.PigeonInstanceManager {
+class _FakePigeonInstanceManager_0 extends _i1.SmartFake implements _i2.PigeonInstanceManager {
   _FakePigeonInstanceManager_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeAssetResourceReader_1 extends _i1.SmartFake
-    implements _i2.AssetResourceReader {
+class _FakeAssetResourceReader_1 extends _i1.SmartFake implements _i2.AssetResourceReader {
   _FakeAssetResourceReader_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -45,8 +43,7 @@ class _FakeAssetResourceReaderDelegate_2 extends _i1.SmartFake
 /// A class which mocks [AssetResourceReader].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAssetResourceReader extends _i1.Mock
-    implements _i2.AssetResourceReader {
+class MockAssetResourceReader extends _i1.Mock implements _i2.AssetResourceReader {
   MockAssetResourceReader() {
     _i1.throwOnMissingStub(this);
   }
@@ -63,10 +60,7 @@ class MockAssetResourceReader extends _i1.Mock
           as _i2.PigeonInstanceManager);
 
   @override
-  _i3.Future<bool> openRead(
-    String? localIdentifier,
-    _i2.AssetResourceReaderDelegate? delegate,
-  ) =>
+  _i3.Future<bool> openRead(String? localIdentifier, _i2.AssetResourceReaderDelegate? delegate) =>
       (super.noSuchMethod(
             Invocation.method(#openRead, [localIdentifier, delegate]),
             returnValue: _i3.Future<bool>.value(false),
@@ -85,10 +79,7 @@ class MockAssetResourceReader extends _i1.Mock
   _i2.AssetResourceReader pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeAssetResourceReader_1(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeAssetResourceReader_1(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.AssetResourceReader);
 }
@@ -96,22 +87,16 @@ class MockAssetResourceReader extends _i1.Mock
 /// A class which mocks [AssetResourceReaderDelegate].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAssetResourceReaderDelegate extends _i1.Mock
-    implements _i2.AssetResourceReaderDelegate {
+class MockAssetResourceReaderDelegate extends _i1.Mock implements _i2.AssetResourceReaderDelegate {
   MockAssetResourceReaderDelegate() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  void Function(_i2.AssetResourceReaderDelegate, _i4.Uint8List)
-  get onDataReceived =>
+  void Function(_i2.AssetResourceReaderDelegate, _i4.Uint8List) get onDataReceived =>
       (super.noSuchMethod(
             Invocation.getter(#onDataReceived),
-            returnValue:
-                (
-                  _i2.AssetResourceReaderDelegate pigeon_instance,
-                  _i4.Uint8List bytes,
-                ) {},
+            returnValue: (_i2.AssetResourceReaderDelegate pigeon_instance, _i4.Uint8List bytes) {},
           )
           as void Function(_i2.AssetResourceReaderDelegate, _i4.Uint8List));
 
@@ -119,11 +104,7 @@ class MockAssetResourceReaderDelegate extends _i1.Mock
   void Function(_i2.AssetResourceReaderDelegate, String?) get onCompletion =>
       (super.noSuchMethod(
             Invocation.getter(#onCompletion),
-            returnValue:
-                (
-                  _i2.AssetResourceReaderDelegate pigeon_instance,
-                  String? error,
-                ) {},
+            returnValue: (_i2.AssetResourceReaderDelegate pigeon_instance, String? error) {},
           )
           as void Function(_i2.AssetResourceReaderDelegate, String?));
 
