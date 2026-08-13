@@ -29,7 +29,7 @@ Future<void> main() async {
       .where((File f) => f.path.endsWith('.dart'))
       .toList();
   for (final file in testFiles) {
-    final String fileName = file.path.split('/').last;
+    final String fileName = p.basename(file.path);
     final expectFile = File(p.join('${file.path}.expect'));
     if (!expectFile.existsSync()) {
       throw Exception(
@@ -53,9 +53,12 @@ Future<void> main() async {
     // file, one per line. Inputs that log nothing need no file, so an input that
     // starts logging a warning fails until the warning is declared.
     final warningsFile = File(p.join('${file.path}.warnings'));
-    final String expectedWarnings = warningsFile.existsSync()
-        ? warningsFile.readAsStringSync().trim()
-        : '';
+    final List<String> expectedWarnings = warningsFile.existsSync()
+        ? const LineSplitter()
+              .convert(warningsFile.readAsStringSync())
+              .where((String line) => line.isNotEmpty)
+              .toList()
+        : <String>[];
 
     test('verify $fileName', () async {
       // Normalize path separators for cross-platform compatibility
@@ -88,7 +91,7 @@ Future<void> main() async {
         await logs.cancel();
       }
 
-      expect(warnings.join('\n'), expectedWarnings);
+      expect(warnings, expectedWarnings);
 
       // Apply consistent formatting to both generated and expected code for comparison.
       final String generated = formatter.format(results.join('\n\n').trim());
