@@ -19,7 +19,7 @@ import 'theme.dart';
 
 /// A Material Design "badge".
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=_CIHLJHVoN8}
+/// Learn more about [Badge] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=_CIHLJHVoN8).
 ///
 /// A badge's [label] conveys a small amount of information about its
 /// [child], like a count or status. If the label is null then this is
