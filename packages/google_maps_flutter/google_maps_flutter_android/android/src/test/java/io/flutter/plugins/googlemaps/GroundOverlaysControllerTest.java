@@ -8,6 +8,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
@@ -46,6 +48,12 @@ public class GroundOverlaysControllerTest {
 
   @NonNull
   private PlatformGroundOverlay createGroundOverlay(String overlayId, double transparency) {
+    return createGroundOverlay(overlayId, transparency, 100.0);
+  }
+
+  @NonNull
+  private PlatformGroundOverlay createGroundOverlay(
+      String overlayId, double transparency, double imageWidth) {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
 
     return new PlatformGroundOverlay(
@@ -55,7 +63,7 @@ public class GroundOverlaysControllerTest {
                 bmpData,
                 PlatformMapBitmapScaling.AUTO,
                 /* imagePixelRatio */ 2.0,
-                /* width */ 100.0, /* height */
+                /* width */ imageWidth, /* height */
                 null)),
         /* position */ null,
         /* bounds */ null,
@@ -107,9 +115,28 @@ public class GroundOverlaysControllerTest {
     controller.changeGroundOverlays(
         Collections.singletonList(createGroundOverlay(googleGroundOverlayId, newTransparency)));
     Mockito.verify(groundOverlay, times(1)).setTransparency(newTransparency);
+    verify(bitmapDescriptorFactoryWrapper, times(1)).fromBitmap(any());
+    verifyNoMoreInteractions(bitmapDescriptorFactoryWrapper);
 
     controller.removeGroundOverlays(Collections.singletonList(googleGroundOverlayId));
 
     Mockito.verify(groundOverlay, times(1)).remove();
+  }
+
+  @Test
+  public void controller_ChangeGroundOverlayUpdatesChangedImage() {
+    final GroundOverlay groundOverlay = mock(GroundOverlay.class);
+    final String groundOverlayId = "ground-overlay";
+
+    when(groundOverlay.getId()).thenReturn("google-ground-overlay");
+    when(googleMap.addGroundOverlay(any(GroundOverlayOptions.class))).thenReturn(groundOverlay);
+
+    controller.addGroundOverlays(
+        Collections.singletonList(createGroundOverlay(groundOverlayId, 0.1, 100.0)));
+    controller.changeGroundOverlays(
+        Collections.singletonList(createGroundOverlay(groundOverlayId, 0.1, 101.0)));
+
+    verify(bitmapDescriptorFactoryWrapper, times(2)).fromBitmap(any());
+    verify(groundOverlay).setImage(mockBitmapDescriptor);
   }
 }
