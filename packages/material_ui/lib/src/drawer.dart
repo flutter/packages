@@ -339,7 +339,7 @@ class DrawerController extends StatefulWidget {
   ///
   /// The [child] argument is typically a [Drawer].
   const DrawerController({
-    GlobalKey? key,
+    GlobalKey? super.key,
     required this.child,
     required this.alignment,
     this.isDrawerOpen = false,
@@ -349,7 +349,7 @@ class DrawerController extends StatefulWidget {
     this.edgeDragWidth,
     this.enableOpenDragGesture = true,
     this.drawerBarrierDismissible = true,
-  }) : super(key: key);
+  });
 
   /// The widget below this widget in the tree.
   ///
