@@ -11,6 +11,7 @@
 #import "FGMConversionUtils.h"
 #import "FGMGroundOverlayController.h"
 #import "FGMHeatmapController.h"
+#import "FGMMapsCallbackApiProtocol.h"
 #import "FGMMarkerUserData.h"
 #import "FGMTileOverlayController.h"
 #import "google_maps_flutter_pigeon_messages.g.h"
@@ -99,17 +100,138 @@
 
 #pragma mark -
 
+/// Non-test implementation of FGMMapsCallbackApiProtocol, passing calls through to a
+/// FGMMapsCallbackApi instance.
+@interface FGMDefaultMapsCallbackApi : NSObject <FGMMapsCallbackApiProtocol>
+@property(strong, nonatomic) FGMMapsCallbackApi *callbackApi;
+
+- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger
+                   messageChannelSuffix:(NSString *)messageChannelSuffix;
+@end
+
+@implementation FGMDefaultMapsCallbackApi
+
+- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger
+                   messageChannelSuffix:(NSString *)messageChannelSuffix {
+  self = [super init];
+  if (self) {
+    _callbackApi = [[FGMMapsCallbackApi alloc] initWithBinaryMessenger:binaryMessenger
+                                                  messageChannelSuffix:messageChannelSuffix];
+  }
+  return self;
+}
+
+- (void)didStartCameraMoveWithCompletion:(void (^)(FlutterError *_Nullable))completion {
+  [self.callbackApi didStartCameraMoveWithCompletion:completion];
+}
+
+- (void)didMoveCameraToPosition:(FGMPlatformCameraPosition *)cameraPosition
+                     completion:(void (^)(FlutterError *_Nullable))completion {
+  [self.callbackApi didMoveCameraToPosition:cameraPosition completion:completion];
+}
+
+- (void)didIdleCameraWithCompletion:(void (^)(FlutterError *_Nullable))completion {
+  [self.callbackApi didIdleCameraWithCompletion:completion];
+}
+
+- (void)didTapAtPosition:(FGMPlatformLatLng *)position
+              completion:(void (^)(FlutterError *_Nullable))completion {
+  [self.callbackApi didTapAtPosition:position completion:completion];
+}
+
+- (void)didLongPressAtPosition:(FGMPlatformLatLng *)position
+                    completion:(void (^)(FlutterError *_Nullable))completion {
+  [self.callbackApi didLongPressAtPosition:position completion:completion];
+}
+
+- (void)didTapMarkerWithIdentifier:(NSString *)markerId
+                        completion:(void (^)(FlutterError *_Nullable))completion {
+  [self.callbackApi didTapMarkerWithIdentifier:markerId completion:completion];
+}
+
+- (void)didStartDragForMarkerWithIdentifier:(NSString *)markerId
+                                 atPosition:(FGMPlatformLatLng *)position
+                                 completion:(void (^)(FlutterError *_Nullable))completion {
+  [self.callbackApi didStartDragForMarkerWithIdentifier:markerId
+                                             atPosition:position
+                                             completion:completion];
+}
+
+- (void)didDragMarkerWithIdentifier:(NSString *)markerId
+                         atPosition:(FGMPlatformLatLng *)position
+                         completion:(void (^)(FlutterError *_Nullable))completion {
+  [self.callbackApi didDragMarkerWithIdentifier:markerId atPosition:position completion:completion];
+}
+
+- (void)didEndDragForMarkerWithIdentifier:(NSString *)markerId
+                               atPosition:(FGMPlatformLatLng *)position
+                               completion:(void (^)(FlutterError *_Nullable))completion {
+  [self.callbackApi didEndDragForMarkerWithIdentifier:markerId
+                                           atPosition:position
+                                           completion:completion];
+}
+
+- (void)didTapInfoWindowOfMarkerWithIdentifier:(NSString *)markerId
+                                    completion:(void (^)(FlutterError *_Nullable))completion {
+  [self.callbackApi didTapInfoWindowOfMarkerWithIdentifier:markerId completion:completion];
+}
+
+- (void)didTapCircleWithIdentifier:(NSString *)circleId
+                        completion:(void (^)(FlutterError *_Nullable))completion {
+  [self.callbackApi didTapCircleWithIdentifier:circleId completion:completion];
+}
+
+- (void)didTapPointOfInterestWithPlaceIdentifier:(NSString *)placeIdentifier
+                                      completion:(void (^)(FlutterError *_Nullable))completion {
+  [self.callbackApi didTapPointOfInterestWithPlaceIdentifier:placeIdentifier completion:completion];
+}
+
+- (void)didTapCluster:(FGMPlatformCluster *)cluster
+           completion:(void (^)(FlutterError *_Nullable))completion {
+  [self.callbackApi didTapCluster:cluster completion:completion];
+}
+
+- (void)didTapPolygonWithIdentifier:(NSString *)polygonId
+                         completion:(void (^)(FlutterError *_Nullable))completion {
+  [self.callbackApi didTapPolygonWithIdentifier:polygonId completion:completion];
+}
+
+- (void)didTapPolylineWithIdentifier:(NSString *)polylineId
+                          completion:(void (^)(FlutterError *_Nullable))completion {
+  [self.callbackApi didTapPolylineWithIdentifier:polylineId completion:completion];
+}
+
+- (void)didTapGroundOverlayWithIdentifier:(NSString *)groundOverlayId
+                               completion:(void (^)(FlutterError *_Nullable))completion {
+  [self.callbackApi didTapGroundOverlayWithIdentifier:groundOverlayId completion:completion];
+}
+
+- (void)tileWithOverlayIdentifier:(NSString *)tileOverlayId
+                         location:(FGMPlatformPoint *)location
+                             zoom:(NSInteger)zoom
+                       completion:(void (^)(FGMPlatformTile *_Nullable,
+                                            FlutterError *_Nullable))completion {
+  [self.callbackApi tileWithOverlayIdentifier:tileOverlayId
+                                     location:location
+                                         zoom:zoom
+                                   completion:completion];
+}
+
+@end
+
+#pragma mark -
+
 /// Non-test implementation of FGMAssetProvider, wrapping a FGMMapsCallbackApi
 /// instance.
 @interface FGMDefaultMapEventHandler : NSObject <FGMMapEventDelegate>
-@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
+@property(strong, nonatomic) id<FGMMapsCallbackApiProtocol> callbackHandler;
 
-- (instancetype)initWithCallbackHandler:(FGMMapsCallbackApi *)callbackHandler;
+- (instancetype)initWithCallbackHandler:(id<FGMMapsCallbackApiProtocol>)callbackHandler;
 @end
 
 @implementation FGMDefaultMapEventHandler
 
-- (instancetype)initWithCallbackHandler:(FGMMapsCallbackApi *)callbackHandler {
+- (instancetype)initWithCallbackHandler:(id<FGMMapsCallbackApiProtocol>)callbackHandler {
   self = [super init];
   if (self) {
     _callbackHandler = callbackHandler;
@@ -186,6 +308,12 @@
                                         }];
 }
 
+- (void)didTapPointOfInterestWithPlaceIdentifier:(NSString *)placeIdentifier {
+  [self.callbackHandler didTapPointOfInterestWithPlaceIdentifier:placeIdentifier
+                                                      completion:^(FlutterError *_){
+                                                      }];
+}
+
 - (void)didTapCluster:(FGMPlatformCluster *)cluster {
   [self.callbackHandler didTapCluster:cluster
                            completion:^(FlutterError *_){
@@ -246,7 +374,7 @@
 @interface FGMGoogleMapController () <FGMTileProviderDelegate>
 
 @property(nonatomic, strong) GMSMapView *mapView;
-@property(nonatomic, strong) FGMMapsCallbackApi *dartCallbackHandler;
+@property(nonatomic, strong) id<FGMMapsCallbackApiProtocol> dartCallbackHandler;
 @property(nonatomic, strong) FGMDefaultMapEventHandler *mapEventHandler;
 @property(nonatomic, assign) BOOL trackCameraPosition;
 @property(nonatomic, strong) FGMClusterManagersController *clusterManagersController;
@@ -290,18 +418,23 @@
 
   GMSMapView *mapView = [[GMSMapView alloc] initWithOptions:options];
 
+  NSString *pigeonSuffix = [NSString stringWithFormat:@"%lld", viewId];
   return [self initWithMapView:mapView
                 viewIdentifier:viewId
             creationParameters:creationParameters
                  assetProvider:[[FGMDefaultAssetProvider alloc] initWithRegistrar:registrar]
-               binaryMessenger:registrar.messenger];
+               binaryMessenger:registrar.messenger
+               callbackHandler:[[FGMDefaultMapsCallbackApi alloc]
+                                   initWithBinaryMessenger:registrar.messenger
+                                      messageChannelSuffix:pigeonSuffix]];
 }
 
 - (instancetype)initWithMapView:(GMSMapView *_Nonnull)mapView
                  viewIdentifier:(int64_t)viewId
              creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters
                   assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
-                binaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
+                binaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger
+                callbackHandler:(id<FGMMapsCallbackApiProtocol>)callbackHandler {
   if (self = [super init]) {
     _mapView = mapView;
 
@@ -310,8 +443,7 @@
     // https://github.com/flutter/flutter/issues/104121
     [self interpretMapConfiguration:creationParameters.mapConfiguration];
     NSString *pigeonSuffix = [NSString stringWithFormat:@"%lld", viewId];
-    _dartCallbackHandler = [[FGMMapsCallbackApi alloc] initWithBinaryMessenger:binaryMessenger
-                                                          messageChannelSuffix:pigeonSuffix];
+    _dartCallbackHandler = callbackHandler;
     _mapEventHandler =
         [[FGMDefaultMapEventHandler alloc] initWithCallbackHandler:_dartCallbackHandler];
     FGMPlatformMarkerType markerType = creationParameters.mapConfiguration.markerType;
@@ -556,6 +688,13 @@
   } else if ([self.groundOverlaysController hasGroundOverlaysWithIdentifier:overlayId]) {
     [self.groundOverlaysController didTapGroundOverlayWithIdentifier:overlayId];
   }
+}
+
+- (void)mapView:(GMSMapView *)mapView
+    didTapPOIWithPlaceID:(NSString *)placeID
+                    name:(NSString *)name
+                location:(CLLocationCoordinate2D)location {
+  [self.mapEventHandler didTapPointOfInterestWithPlaceIdentifier:placeID];
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapAtCoordinate:(CLLocationCoordinate2D)coordinate {

@@ -4071,6 +4071,25 @@ class MapsCallbackApi(
       }
     }
   }
+  /** Called when a point of interest is tapped. */
+  fun onPointOfInterestTap(placeIdArg: String, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPointOfInterestTap$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(placeIdArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
+      }
+    }
+  }
   /** Called when a marker cluster is tapped. */
   fun onClusterTap(clusterArg: PlatformCluster, callback: (Result<Unit>) -> Unit) {
     val separatedMessageChannelSuffix =

@@ -50,6 +50,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// Called when a circle is tapped.
 - (void)didTapCircleWithIdentifier:(NSString *)circleId;
 
+/// Called when a point of interest is tapped.
+- (void)didTapPointOfInterestWithPlaceIdentifier:(NSString *)placeIdentifier;
+
 /// Called when a marker cluster is tapped.
 - (void)didTapCluster:(FGMPlatformCluster *)cluster;
 

@@ -27,6 +27,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapCapabilities;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.maps.android.clustering.ClusterManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.ArrayList;
@@ -256,6 +257,28 @@ public class GoogleMapControllerTest {
 
     googleMapController.onClusterItemInfoWindowClick(markerBuilder);
     verify(mockMarkersController, times(1)).onClusterItemInfoWindowTap(markerBuilder.markerId());
+  }
+
+  @Test
+  public void OnPoiClickCallsFlutterApi() {
+    GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
+    googleMapController.onMapReady(mockGoogleMap);
+
+    PointOfInterest pointOfInterest =
+        new PointOfInterest(new LatLng(0, 0), "place-123", "Test Place");
+    googleMapController.onPoiClick(pointOfInterest);
+
+    verify(flutterApi, times(1)).onPointOfInterestTap(eq("place-123"), any());
+  }
+
+  @Test
+  public void OnPoiClickNullPlaceIdDoesNotCallFlutterApi() {
+    GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
+    googleMapController.onMapReady(mockGoogleMap);
+
+    googleMapController.onPoiClick(new PointOfInterest(new LatLng(0, 0), null, "Test Place"));
+
+    verify(flutterApi, times(0)).onPointOfInterestTap(any(), any());
   }
 
   @Test
