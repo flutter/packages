@@ -14,15 +14,15 @@ import org.junit.Test;
  *
  * <p>{@code camera-core}'s compiled classes carry Jspecify {@code @NonNull} type annotations on
  * members that reference {@link CallbackToFutureAdapter}. javac needs that class on the compile
- * classpath to process those annotations, even though this plugin never calls the annotated
- * members directly. Without an explicit {@code androidx.concurrent:concurrent-futures} dependency,
+ * classpath to process those annotations, even though this plugin never calls the annotated members
+ * directly. Without an explicit {@code androidx.concurrent:concurrent-futures} dependency,
  * resolution of that class can silently depend on transitive dependency behavior and fail with
  * "class file for androidx.concurrent.futures.CallbackToFutureAdapter not found" during {@code
  * compileDebugJavaWithJavac}.
  *
  * <p>The static reference to {@link CallbackToFutureAdapter} below means that if the explicit
- * dependency in {@code android/build.gradle.kts} is ever removed, this test target fails to
- * compile instead of the break only surfacing as a build error for consumers.
+ * dependency in {@code android/build.gradle.kts} is ever removed, this test target fails to compile
+ * instead of the break only surfacing as a build error for consumers.
  */
 public class ConcurrentFuturesDependencyTest {
   @Test
