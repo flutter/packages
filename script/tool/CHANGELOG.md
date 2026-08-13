@@ -1,5 +1,6 @@
 ## NEXT
 
+* Adds validation that the root README package table is sorted alphabetically.
 * Adds support for batch release of pre-1.0 packages.
 
 ## 0.14.4
