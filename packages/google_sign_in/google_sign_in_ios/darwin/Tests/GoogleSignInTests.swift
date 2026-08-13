@@ -7,11 +7,7 @@ import Testing
 
 @testable import google_sign_in_ios
 
-#if canImport(google_sign_in_ios_objc)
-  @testable import google_sign_in_ios_objc
-#endif
-
-#if os(OSX)
+#if os(macOS)
   import FlutterMacOS
 #else
   import Flutter
@@ -19,7 +15,7 @@ import Testing
 
 // Test implementation of ViewProvider.
 class TestViewProvider: ViewProvider {
-  #if os(OSX)
+  #if os(macOS)
     // The view containing the Flutter content.
     var view: NSView?
   #else
@@ -63,7 +59,7 @@ class TestSignIn: NSObject, GIDSignInProtocol {
   }
 
   func restorePreviousSignIn(completion: (((any GIDGoogleUserProtocol)?, Error?) -> Void)?) {
-    if let exception = exception {
+    if let exception {
       exception.raise()
     }
     if let user {
@@ -78,7 +74,7 @@ class TestSignIn: NSObject, GIDSignInProtocol {
   }
 
   func disconnect(completion: ((Error?) -> Void)?) {
-    if let exception = exception {
+    if let exception {
       exception.raise()
     }
     completion?(error)
@@ -92,7 +88,7 @@ class TestSignIn: NSObject, GIDSignInProtocol {
       nonce: String?,
       completion: ((GIDSignInResultProtocol?, Error?) -> Void)?
     ) {
-      if let exception = exception {
+      if let exception {
         exception.raise()
       }
       self.presentingViewController = presentingViewController
@@ -113,7 +109,7 @@ class TestSignIn: NSObject, GIDSignInProtocol {
       nonce: String?,
       completion: (((any GIDSignInResultProtocol)?, Error?) -> Void)?
     ) {
-      if let exception = exception {
+      if let exception {
         exception.raise()
       }
       self.presentingWindow = presentingWindow
@@ -130,10 +126,10 @@ class TestSignIn: NSObject, GIDSignInProtocol {
 }
 
 // Test implementation of GIDProfileDataProtocol.
-class TestProfileData: NSObject, GIDProfileDataProtocol {
+class TestProfileData: GIDProfileDataProtocol {
   var email: String
   var name: String
-  // A URL to return from imageURLWithDimension:.
+  // A URL to return from imageURL(withDimension:).
   var imageURL: URL?
 
   init(name: String, email: String, imageURL: URL?) {
@@ -152,7 +148,7 @@ class TestProfileData: NSObject, GIDProfileDataProtocol {
 }
 
 // Test implementation of GIDTokenProtocol.
-final class TestToken: NSObject, GIDTokenProtocol {
+final class TestToken: GIDTokenProtocol {
   let tokenString: String
   let expirationDate: Date?
 
@@ -163,7 +159,7 @@ final class TestToken: NSObject, GIDTokenProtocol {
 }
 
 // Test implementation of GIDSignInResultProtocol.
-class TestSignInResult: NSObject, GIDSignInResultProtocol {
+class TestSignInResult: GIDSignInResultProtocol {
   var user: any GIDGoogleUserProtocol
   var serverAuthCode: String?
 
@@ -174,7 +170,7 @@ class TestSignInResult: NSObject, GIDSignInResultProtocol {
 }
 
 // Test implementation of GIDGoogleUserProtocol.
-class TestGoogleUser: NSObject, GIDGoogleUserProtocol {
+class TestGoogleUser: GIDGoogleUserProtocol {
   var userID: String?
   var profile: (any GIDProfileDataProtocol)?
   var grantedScopes: [String]?
@@ -185,7 +181,7 @@ class TestGoogleUser: NSObject, GIDGoogleUserProtocol {
   // An exception to throw from methods.
   var exception: NSException?
 
-  // The result to return from addScopes:presentingViewController:completion:.
+  // The result to return from addScopes(_:presenting:completion:).
   var result: (any GIDSignInResultProtocol)?
 
   // The error to return from methods.
@@ -204,7 +200,7 @@ class TestGoogleUser: NSObject, GIDGoogleUserProtocol {
   }
 
   func refreshTokensIfNeeded(completion: @escaping ((any GIDGoogleUserProtocol)?, Error?) -> Void) {
-    if let exception = exception {
+    if let exception {
       exception.raise()
     }
     completion(self.error == nil ? self : nil, self.error)
@@ -218,12 +214,12 @@ class TestGoogleUser: NSObject, GIDGoogleUserProtocol {
     ) {
       self.requestedScopes = scopes
       self.presentingViewController = presentingViewController
-      if let exception = exception {
+      if let exception {
         exception.raise()
       }
       completion?(self.error == nil ? self.result : nil, self.error)
     }
-  #elseif os(OSX)
+  #elseif os(macOS)
     func addScopes(
       _ scopes: [String],
       presenting presentingWindow: NSWindow?,
@@ -231,7 +227,7 @@ class TestGoogleUser: NSObject, GIDGoogleUserProtocol {
     ) {
       self.requestedScopes = scopes
       self.presentingWindow = presentingWindow
-      if let exception = exception {
+      if let exception {
         exception.raise()
       }
       completion?(self.error == nil ? self.result : nil, self.error)
@@ -240,35 +236,36 @@ class TestGoogleUser: NSObject, GIDGoogleUserProtocol {
 }
 
 struct GoogleSignInPluginTests {
-  @Test func signOut() {
+  @Test func signOut() throws {
     let (plugin, fakeSignIn) = createTestPlugin()
-    var error: FlutterError?
-    plugin.signOutWithError(&error)
+    try plugin.signOut()
     #expect(fakeSignIn.signOutCalled == true)
-    #expect(error == nil)
   }
 
   @Test func disconnect() async {
     let (plugin, _) = createTestPlugin()
     await confirmation("expect result returns true") { confirmed in
-      plugin.disconnect { error in
-        #expect(error == nil)
+      plugin.disconnect { result in
+        switch result {
+        case .success:
+          break
+        case .failure(let error):
+          Issue.record("Unexpected error: \(error)")
+        }
         confirmed()
       }
     }
   }
 
   @Suite("configure") struct ConfigureTests {
-    @Test func configureFromAppInfoPlist() {
+    @Test func configureFromAppInfoPlist() throws {
       let (plugin, fakeSignIn) = createTestPlugin()
-      let params = FSIPlatformConfigurationParams.make(
-        withClientId: nil,
+      let params = PlatformConfigurationParams(
+        clientId: nil,
         serverClientId: nil,
         hostedDomain: "example.com")
 
-      var error: FlutterError?
-      plugin.configure(withParameters: params, error: &error)
-      #expect(error == nil)
+      try plugin.configure(params: params)
       // No configuration should be set, allowing the SDK to use its default behavior
       // (which is to load configuration information from the app's Info.plist).
       #expect(fakeSignIn.configuration == nil)
@@ -288,12 +285,12 @@ struct GoogleSignInPluginTests {
         dynamicServerClientId: String?,
         dynamicHostedDomain: String?,
         useGoogleServiceInfoPlist: Bool
-      )
+      ) throws
     {
       let (plugin, fakeSignIn) = createTestPlugin(
         googleServiceProperties: useGoogleServiceInfoPlist ? loadGoogleServiceInfo() : nil)
-      let params = FSIPlatformConfigurationParams.make(
-        withClientId: dynamicClientId,
+      let params = PlatformConfigurationParams(
+        clientId: dynamicClientId,
         serverClientId: dynamicServerClientId,
         hostedDomain: dynamicHostedDomain)
 
@@ -316,9 +313,7 @@ struct GoogleSignInPluginTests {
         expectedDomain = dynamicHostedDomain
       }
 
-      var error: FlutterError?
-      plugin.configure(withParameters: params, error: &error)
-      #expect(error == nil)
+      try plugin.configure(params: params)
       #expect(
         fakeSignIn.configuration?.clientID
           == expectedClientId)
@@ -342,16 +337,20 @@ struct GoogleSignInPluginTests {
       fakeSignIn.user = fakeUser
 
       await confirmation("completion called") { confirmed in
-        plugin.restorePreviousSignIn { result, error in
-          #expect(error == nil)
-          #expect(result?.error == nil)
-          #expect(result?.success != nil)
-          #expect(result?.success?.user.displayName == name)
-          #expect(result?.success?.user.email == email)
-          #expect(result?.success?.user.userId == userID)
-          #expect(result?.success?.user.photoUrl == imageURLString)
-          #expect(result?.success?.accessToken == accessToken)
-          #expect(result?.success?.serverAuthCode == nil)
+        plugin.restorePreviousSignIn { result in
+          switch result {
+          case .success(let signInResult):
+            #expect(signInResult.error == nil)
+            #expect(signInResult.success != nil)
+            #expect(signInResult.success?.user.displayName == name)
+            #expect(signInResult.success?.user.email == email)
+            #expect(signInResult.success?.user.userId == userID)
+            #expect(signInResult.success?.user.photoUrl == imageURLString)
+            #expect(signInResult.success?.accessToken == accessToken)
+            #expect(signInResult.success?.serverAuthCode == nil)
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
           confirmed()
         }
       }
@@ -365,10 +364,14 @@ struct GoogleSignInPluginTests {
       fakeSignIn.error = sdkError
 
       await confirmation("completion called") { confirmed in
-        plugin.restorePreviousSignIn { result, error in
-          #expect(error == nil)
-          #expect(result?.success == nil)
-          #expect(result?.error?.type == FSIGoogleSignInErrorCode.noAuthInKeychain)
+        plugin.restorePreviousSignIn { result in
+          switch result {
+          case .success(let signInResult):
+            #expect(signInResult.success == nil)
+            #expect(signInResult.error?.type == GoogleSignInErrorCode.noAuthInKeychain)
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
           confirmed()
         }
       }
@@ -393,29 +396,30 @@ struct GoogleSignInPluginTests {
       fakeSignIn.signInResult = fakeSignInResult
 
       await confirmation("completion called") { confirmed in
-        plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
-          #expect(error == nil)
-          #expect(result?.success?.user.displayName == "mockDisplay")
-          #expect(result?.success?.user.email == "mock@example.com")
-          #expect(result?.success?.user.userId == "mockID")
-          #expect(result?.success?.user.photoUrl == "https://example.com/profile.png")
-          #expect(result?.success?.accessToken == accessToken)
-          #expect(result?.success?.serverAuthCode == serverAuthCode)
+        plugin.signIn(scopeHint: [], nonce: nil) { result in
+          switch result {
+          case .success(let signInResult):
+            #expect(signInResult.success?.user.displayName == "mockDisplay")
+            #expect(signInResult.success?.user.email == "mock@example.com")
+            #expect(signInResult.success?.user.userId == "mockID")
+            #expect(signInResult.success?.user.photoUrl == "https://example.com/profile.png")
+            #expect(signInResult.success?.accessToken == accessToken)
+            #expect(signInResult.success?.serverAuthCode == serverAuthCode)
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
           confirmed()
         }
       }
     }
 
-    @Test func signInWithScopeHint() async {
+    @Test func signInWithScopeHint() async throws {
       let (plugin, fakeSignIn) = createTestPlugin()
-      var initializationError: FlutterError?
-      plugin.configure(
-        withParameters: FSIPlatformConfigurationParams.make(
-          withClientId: nil,
+      try plugin.configure(
+        params: PlatformConfigurationParams(
+          clientId: nil,
           serverClientId: nil,
-          hostedDomain: nil),
-        error: &initializationError)
-      #expect(initializationError == nil)
+          hostedDomain: nil))
 
       let fakeUser = TestGoogleUser("mockID")
       let fakeSignInResult = TestSignInResult(user: fakeUser)
@@ -424,10 +428,14 @@ struct GoogleSignInPluginTests {
       fakeSignIn.signInResult = fakeSignInResult
 
       await confirmation("completion called") { confirmed in
-        plugin.signIn(withScopeHint: requestedScopes, nonce: nil) { result, error in
-          #expect(error == nil)
-          #expect(result?.error == nil)
-          #expect(result?.success?.user.userId == "mockID")
+        plugin.signIn(scopeHint: requestedScopes, nonce: nil) { result in
+          switch result {
+          case .success(let signInResult):
+            #expect(signInResult.error == nil)
+            #expect(signInResult.success?.user.userId == "mockID")
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
           confirmed()
         }
       }
@@ -435,16 +443,13 @@ struct GoogleSignInPluginTests {
       #expect(Set(fakeSignIn.additionalScopes ?? []) == Set(requestedScopes))
     }
 
-    @Test func signInWithNonce() async {
+    @Test func signInWithNonce() async throws {
       let (plugin, fakeSignIn) = createTestPlugin()
-      var initializationError: FlutterError?
-      plugin.configure(
-        withParameters: FSIPlatformConfigurationParams.make(
-          withClientId: nil,
+      try plugin.configure(
+        params: PlatformConfigurationParams(
+          clientId: nil,
           serverClientId: nil,
-          hostedDomain: nil),
-        error: &initializationError)
-      #expect(initializationError == nil)
+          hostedDomain: nil))
 
       let fakeUser = TestGoogleUser("mockID")
       let fakeSignInResult = TestSignInResult(user: fakeUser)
@@ -453,10 +458,14 @@ struct GoogleSignInPluginTests {
       fakeSignIn.signInResult = fakeSignInResult
 
       await confirmation("completion called") { confirmed in
-        plugin.signIn(withScopeHint: [], nonce: nonce) { result, error in
-          #expect(error == nil)
-          #expect(result?.error == nil)
-          #expect(result?.success?.user.userId == "mockID")
+        plugin.signIn(scopeHint: [], nonce: nonce) { result in
+          switch result {
+          case .success(let signInResult):
+            #expect(signInResult.error == nil)
+            #expect(signInResult.success?.user.userId == "mockID")
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
           confirmed()
         }
       }
@@ -477,10 +486,14 @@ struct GoogleSignInPluginTests {
       fakeSignIn.error = sdkError
 
       await confirmation("completion called") { confirmed in
-        plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
-          #expect(error == nil)
-          #expect(result?.error == nil)
-          #expect(result?.success?.user.userId == "mockID")
+        plugin.signIn(scopeHint: [], nonce: nil) { result in
+          switch result {
+          case .success(let signInResult):
+            #expect(signInResult.error == nil)
+            #expect(signInResult.success?.user.userId == "mockID")
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
           confirmed()
         }
       }
@@ -493,12 +506,16 @@ struct GoogleSignInPluginTests {
       fakeSignIn.error = sdkError
 
       await confirmation("completion called") { confirmed in
-        plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
-          // Known errors from the SDK are returned as structured data, not
-          // FlutterError.
-          #expect(error == nil)
-          #expect(result?.success == nil)
-          #expect(result?.error?.type == .canceled)
+        plugin.signIn(scopeHint: [], nonce: nil) { result in
+          switch result {
+          case .success(let signInResult):
+            // Known errors from the SDK are returned as structured data, not
+            // FlutterError.
+            #expect(signInResult.success == nil)
+            #expect(signInResult.error?.type == .canceled)
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
           confirmed()
         }
       }
@@ -512,13 +529,18 @@ struct GoogleSignInPluginTests {
         userInfo: nil)
 
       await confirmation("completion called") { confirmed in
-        plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
-          // Unexpected errors, such as runtime exceptions, are returned as
-          // FlutterError.
-          #expect(result == nil)
-          #expect(error?.code == "google_sign_in")
-          #expect(error?.message == "MockReason")
-          #expect(error?.details as? String == "MockName")
+        plugin.signIn(scopeHint: [], nonce: nil) { result in
+          switch result {
+          case .success:
+            Issue.record("Expected a FlutterError for the runtime exception")
+          case .failure(let error):
+            // Unexpected errors, such as runtime exceptions, are returned as
+            // FlutterError.
+            let flutterError = error as! PigeonError
+            #expect(flutterError.code == "google_sign_in")
+            #expect(flutterError.message == "MockReason")
+            #expect(flutterError.details as? String == "MockName")
+          }
           confirmed()
         }
       }
@@ -535,11 +557,15 @@ struct GoogleSignInPluginTests {
       fakeUser.accessToken = TestToken("mockAccessToken")
 
       await confirmation("completion called") { confirmed in
-        plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
-          #expect(error == nil)
-          #expect(result?.error == nil)
-          #expect(result?.success?.user.idToken == "mockIdToken")
-          #expect(result?.success?.accessToken == "mockAccessToken")
+        plugin.getRefreshedAuthorizationTokens(userId: fakeUser.userID!) { result in
+          switch result {
+          case .success(let signInResult):
+            #expect(signInResult.error == nil)
+            #expect(signInResult.success?.user.idToken == "mockIdToken")
+            #expect(signInResult.success?.accessToken == "mockAccessToken")
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
           confirmed()
         }
       }
@@ -548,22 +574,26 @@ struct GoogleSignInPluginTests {
     @Test func refreshTokensUnkownUser() async {
       let (plugin, _) = createTestPlugin()
       await confirmation("completion called") { confirmed in
-        plugin.refreshedAuthorizationTokens(forUser: "unknownUser") { result, error in
-          #expect(error == nil)
-          #expect(result?.success == nil)
-          #expect(result?.error?.type == .userMismatch)
-          #expect(result?.error?.message == "The user is no longer signed in.")
+        plugin.getRefreshedAuthorizationTokens(userId: "unknownUser") { result in
+          switch result {
+          case .success(let signInResult):
+            #expect(signInResult.success == nil)
+            #expect(signInResult.error?.type == .userMismatch)
+            #expect(signInResult.error?.message == "The user is no longer signed in.")
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
           confirmed()
         }
       }
     }
 
     @Test(arguments: [
-      (GIDSignInError.hasNoAuthInKeychain.rawValue, FSIGoogleSignInErrorCode.noAuthInKeychain),
-      (GIDSignInError.canceled.rawValue, .canceled),
+      (GIDSignInError.hasNoAuthInKeychain.rawValue, GoogleSignInErrorCode.noAuthInKeychain),
+      (GIDSignInError.canceled.rawValue, GoogleSignInErrorCode.canceled),
     ]) func refreshTokensGIDSignInErrorDomainErrors(
       signInSDKErrorCode: Int,
-      expectedPigeonErrorCode: FSIGoogleSignInErrorCode
+      expectedPigeonErrorCode: GoogleSignInErrorCode
     ) async {
       let (plugin, _) = createTestPlugin()
       let fakeUser = addSignedInUser(to: plugin)
@@ -574,10 +604,14 @@ struct GoogleSignInPluginTests {
       fakeUser.error = sdkError
 
       await confirmation("completion called") { confirmed in
-        plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
-          #expect(error == nil)
-          #expect(result?.success == nil)
-          #expect(result?.error?.type == expectedPigeonErrorCode)
+        plugin.getRefreshedAuthorizationTokens(userId: fakeUser.userID!) { result in
+          switch result {
+          case .success(let signInResult):
+            #expect(signInResult.success == nil)
+            #expect(signInResult.error?.type == expectedPigeonErrorCode)
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
           confirmed()
         }
       }
@@ -597,11 +631,15 @@ struct GoogleSignInPluginTests {
       fakeUser.error = sdkError
 
       await confirmation("completion called") { confirmed in
-        plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
-          #expect(result?.error == nil)
-          #expect(result?.success == nil)
-          let expectedCode = "\(errorDomain): \(errorCode)"
-          #expect(error?.code == expectedCode)
+        plugin.getRefreshedAuthorizationTokens(userId: fakeUser.userID!) { result in
+          switch result {
+          case .success:
+            Issue.record("Expected a FlutterError for a non-GID error domain")
+          case .failure(let error):
+            let flutterError = error as! PigeonError
+            let expectedCode = "\(errorDomain): \(errorCode)"
+            #expect(flutterError.code == expectedCode)
+          }
           confirmed()
         }
       }
@@ -620,9 +658,13 @@ struct GoogleSignInPluginTests {
       let scopes = ["mockScope1"]
 
       await confirmation("completion called") { confirmed in
-        plugin.addScopes(scopes, forUser: fakeUser.userID!) { result, error in
-          #expect(error == nil)
-          #expect(result?.success != nil)
+        plugin.addScopes(scopes: scopes, userId: fakeUser.userID!) { result in
+          switch result {
+          case .success(let signInResult):
+            #expect(signInResult.success != nil)
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
           confirmed()
         }
       }
@@ -632,21 +674,25 @@ struct GoogleSignInPluginTests {
     @Test func addScopesErrorsIfNotSignedIn() async {
       let (plugin, _) = createTestPlugin()
       await confirmation("completion called") { confirmed in
-        plugin.addScopes(["mockScope1"], forUser: "unknownUser") { result, error in
-          #expect(error == nil)
-          #expect(result?.success == nil)
-          #expect(result?.error?.type == .userMismatch)
+        plugin.addScopes(scopes: ["mockScope1"], userId: "unknownUser") { result in
+          switch result {
+          case .success(let signInResult):
+            #expect(signInResult.success == nil)
+            #expect(signInResult.error?.type == .userMismatch)
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
           confirmed()
         }
       }
     }
 
     @Test(arguments: [
-      (GIDSignInError.scopesAlreadyGranted.rawValue, FSIGoogleSignInErrorCode.scopesAlreadyGranted),
-      (GIDSignInError.mismatchWithCurrentUser.rawValue, FSIGoogleSignInErrorCode.userMismatch),
+      (GIDSignInError.scopesAlreadyGranted.rawValue, GoogleSignInErrorCode.scopesAlreadyGranted),
+      (GIDSignInError.mismatchWithCurrentUser.rawValue, GoogleSignInErrorCode.userMismatch),
     ]) func addScopesGIDSignInErrorDomainErrors(
       signInSDKErrorCode: Int,
-      expectedPigeonErrorCode: FSIGoogleSignInErrorCode
+      expectedPigeonErrorCode: GoogleSignInErrorCode
     ) async {
       let (plugin, _) = createTestPlugin()
       let fakeUser = addSignedInUser(to: plugin)
@@ -657,10 +703,14 @@ struct GoogleSignInPluginTests {
       fakeUser.error = sdkError
 
       await confirmation("completion called") { confirmed in
-        plugin.addScopes(["mockScope1"], forUser: fakeUser.userID!) { result, error in
-          #expect(error == nil)
-          #expect(result?.success == nil)
-          #expect(result?.error?.type == expectedPigeonErrorCode)
+        plugin.addScopes(scopes: ["mockScope1"], userId: fakeUser.userID!) { result in
+          switch result {
+          case .success(let signInResult):
+            #expect(signInResult.success == nil)
+            #expect(signInResult.error?.type == expectedPigeonErrorCode)
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
           confirmed()
         }
       }
@@ -674,9 +724,14 @@ struct GoogleSignInPluginTests {
       fakeUser.error = sdkError
 
       await confirmation("completion called") { confirmed in
-        plugin.addScopes(["mockScope1"], forUser: fakeUser.userID!) { result, error in
-          #expect(result == nil)
-          #expect(error?.code == "BogusDomain: 42")
+        plugin.addScopes(scopes: ["mockScope1"], userId: fakeUser.userID!) { result in
+          switch result {
+          case .success:
+            Issue.record("Expected a FlutterError for an unknown error domain")
+          case .failure(let error):
+            let flutterError = error as! PigeonError
+            #expect(flutterError.code == "BogusDomain: 42")
+          }
           confirmed()
         }
       }
@@ -692,11 +747,16 @@ struct GoogleSignInPluginTests {
         userInfo: nil)
 
       await confirmation("completion called") { confirmed in
-        plugin.addScopes([], forUser: fakeUser.userID!) { result, error in
-          #expect(result == nil)
-          #expect(error?.code == "request_scopes")
-          #expect(error?.message == "MockReason")
-          #expect(error?.details as? String == "MockName")
+        plugin.addScopes(scopes: [], userId: fakeUser.userID!) { result in
+          switch result {
+          case .success:
+            Issue.record("Expected a FlutterError for the runtime exception")
+          case .failure(let error):
+            let flutterError = error as! PigeonError
+            #expect(flutterError.code == "request_scopes")
+            #expect(flutterError.message == "MockReason")
+            #expect(flutterError.details as? String == "MockName")
+          }
           confirmed()
         }
       }
@@ -755,24 +815,28 @@ struct GoogleSignInPluginTests {
 
   @Suite("errorMapping") struct ErrorMappingTests {
     @Test(arguments: [
-      (GIDSignInError.keychain.rawValue, FSIGoogleSignInErrorCode.keychainError),
-      (GIDSignInError.EMM.rawValue, FSIGoogleSignInErrorCode.eemError),
-      (GIDSignInError.unknown.rawValue, FSIGoogleSignInErrorCode.unknown),
+      (GIDSignInError.keychain.rawValue, GoogleSignInErrorCode.keychainError),
+      (GIDSignInError.EMM.rawValue, GoogleSignInErrorCode.eemError),
+      (GIDSignInError.unknown.rawValue, GoogleSignInErrorCode.unknown),
       // Unrecognized SDK codes fall through to the default → unknown.
-      (12_345, FSIGoogleSignInErrorCode.unknown),
+      (12_345, GoogleSignInErrorCode.unknown),
     ]) func mapsRemainingGIDSignInErrorCodes(
       signInSDKErrorCode: Int,
-      expectedPigeonErrorCode: FSIGoogleSignInErrorCode
+      expectedPigeonErrorCode: GoogleSignInErrorCode
     ) async {
       let (plugin, fakeSignIn) = createTestPlugin()
       fakeSignIn.error = NSError(
         domain: kGIDSignInErrorDomain, code: signInSDKErrorCode, userInfo: nil)
 
       await confirmation("completion called") { confirmed in
-        plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
-          #expect(error == nil)
-          #expect(result?.success == nil)
-          #expect(result?.error?.type == expectedPigeonErrorCode)
+        plugin.signIn(scopeHint: [], nonce: nil) { result in
+          switch result {
+          case .success(let signInResult):
+            #expect(signInResult.success == nil)
+            #expect(signInResult.error?.type == expectedPigeonErrorCode)
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
           confirmed()
         }
       }
@@ -794,20 +858,25 @@ struct GoogleSignInPluginTests {
       fakeUser.error = NSError(domain: "BogusDomain", code: 7, userInfo: userInfo)
 
       await confirmation("completion called") { confirmed in
-        plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
-          #expect(result == nil)
-          #expect(error?.code == "BogusDomain: 7")
-          let details = error?.details as? [String: Any]
-          #expect(details?["string"] as? String == "ok")
-          #expect(details?["number"] as? NSNumber == NSNumber(value: 42))
-          #expect(details?["url"] as? String == "https://example.com/path")
-          #expect((details?["array"] as? [Any])?.count == 2)
-          #expect((details?["dict"] as? [String: Any])?["inner"] as? String == "value")
-          let nestedDetails = details?[NSUnderlyingErrorKey] as? [String: Any]
-          #expect(nestedDetails?["domain"] as? String == "NestedDomain")
-          #expect(nestedDetails?["code"] as? String == "99")
-          let unsupported = details?["unsupported"] as? String
-          #expect(unsupported?.contains("Unsupported type:") == true)
+        plugin.getRefreshedAuthorizationTokens(userId: fakeUser.userID!) { result in
+          switch result {
+          case .success:
+            Issue.record("Expected a PigeonError for a non-GID error domain")
+          case .failure(let error):
+            let flutterError = error as! PigeonError
+            #expect(flutterError.code == "BogusDomain: 7")
+            let details = flutterError.details as? [String: Any]
+            #expect(details?["string"] as? String == "ok")
+            #expect(details?["number"] as? NSNumber == NSNumber(value: 42))
+            #expect(details?["url"] as? String == "https://example.com/path")
+            #expect((details?["array"] as? [Any])?.count == 2)
+            #expect((details?["dict"] as? [String: Any])?["inner"] as? String == "value")
+            let nestedDetails = details?[NSUnderlyingErrorKey] as? [String: Any]
+            #expect(nestedDetails?["domain"] as? String == "NestedDomain")
+            #expect(nestedDetails?["code"] as? String == "99")
+            let unsupported = details?["unsupported"] as? String
+            #expect(unsupported?.contains("Unsupported type:") == true)
+          }
           confirmed()
         }
       }
@@ -821,9 +890,15 @@ struct GoogleSignInPluginTests {
         domain: "DisconnectDomain", code: 3, userInfo: ["reason": "failed"])
 
       await confirmation("completion called") { confirmed in
-        plugin.disconnect { error in
-          #expect(error?.code == "DisconnectDomain: 3")
-          #expect((error?.details as? [String: Any])?["reason"] as? String == "failed")
+        plugin.disconnect { result in
+          switch result {
+          case .success:
+            Issue.record("Expected a PigeonError for a failed disconnect")
+          case .failure(let error):
+            let flutterError = error as! PigeonError
+            #expect(flutterError.code == "DisconnectDomain: 3")
+            #expect((flutterError.details as? [String: Any])?["reason"] as? String == "failed")
+          }
           confirmed()
         }
       }
@@ -838,10 +913,14 @@ struct GoogleSignInPluginTests {
       fakeSignIn.signInResult = TestSignInResult(user: fakeUser)
 
       await confirmation("completion called") { confirmed in
-        plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
-          #expect(error == nil)
-          #expect(result?.success?.user.photoUrl == nil)
-          #expect(result?.success?.user.displayName == "Name")
+        plugin.signIn(scopeHint: [], nonce: nil) { result in
+          switch result {
+          case .success(let signInResult):
+            #expect(signInResult.success?.user.photoUrl == nil)
+            #expect(signInResult.success?.user.displayName == "Name")
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
           confirmed()
         }
       }
@@ -896,7 +975,7 @@ struct GoogleSignInPluginTests {
         fakeSignIn.signInResult = TestSignInResult(user: TestGoogleUser("id"))
 
         await confirmation("completion called") { confirmed in
-          plugin.signIn(withScopeHint: [], nonce: nil) { _, _ in confirmed() }
+          plugin.signIn(scopeHint: [], nonce: nil) { _ in confirmed() }
         }
         #expect(fakeSignIn.presentingViewController === top)
       }
@@ -914,7 +993,7 @@ struct GoogleSignInPluginTests {
         fakeSignIn.signInResult = TestSignInResult(user: TestGoogleUser("id"))
 
         await confirmation("completion called") { confirmed in
-          plugin.signIn(withScopeHint: [], nonce: nil) { _, _ in confirmed() }
+          plugin.signIn(scopeHint: [], nonce: nil) { _ in confirmed() }
         }
         #expect(fakeSignIn.presentingViewController === selected)
       }
@@ -929,7 +1008,7 @@ struct GoogleSignInPluginTests {
         fakeSignIn.signInResult = TestSignInResult(user: TestGoogleUser("id"))
 
         await confirmation("completion called") { confirmed in
-          plugin.signIn(withScopeHint: [], nonce: nil) { _, _ in confirmed() }
+          plugin.signIn(scopeHint: [], nonce: nil) { _ in confirmed() }
         }
         #expect(fakeSignIn.presentingViewController === presented)
       }

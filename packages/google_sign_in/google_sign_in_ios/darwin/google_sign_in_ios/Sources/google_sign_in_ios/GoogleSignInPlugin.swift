@@ -65,19 +65,19 @@ private func sanitizedUserInfo(_ value: Any?) -> Any {
   }
 }
 
-/// Maps an NSError to a corresponding FlutterError.
+/// Maps an NSError to a corresponding PigeonError.
 ///
 /// This should only be used when an error can't be recognized and mapped to a
 /// GoogleSignInErrorCode.
-private func flutterError(from error: NSError?) -> FlutterError {
-  return FlutterError(
-    code: String(format: "%@: %ld", error?.domain ?? "(null)", error?.code ?? 0),
-    message: error?.localizedDescription,
-    details: sanitizedUserInfo(error?.userInfo))
+private func pigeonError(from error: NSError) -> PigeonError {
+  return PigeonError(
+    code: "\(error.domain): \(error.code)",
+    message: error.localizedDescription,
+    details: sanitizedUserInfo(error.userInfo) as Sendable)
 }
 
 /// Maps a GIDSignInErrorCode to the corresponding Pigeon GoogleSignInErrorCode.
-private func pigeonErrorCode(for gidSignInErrorCode: Int) -> FSIGoogleSignInErrorCode {
+private func pigeonErrorCode(for gidSignInErrorCode: Int) -> GoogleSignInErrorCode {
   switch gidSignInErrorCode {
   case GIDSignInError.keychain.rawValue:
     return .keychainError
@@ -96,13 +96,13 @@ private func pigeonErrorCode(for gidSignInErrorCode: Int) -> FSIGoogleSignInErro
   }
 }
 
-public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInApi {
+public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi {
   /// Instance used to manage Google Sign In authentication including
   /// sign in, sign out, and requesting additional scopes.
-  let signIn: any GIDSignInProtocol
+  let signIn: GIDSignInProtocol
 
   /// A mapping of user IDs to GIDGoogleUser instances to use for follow-up calls.
-  var usersByIdentifier: [String: any GIDGoogleUserProtocol] = [:]
+  var usersByIdentifier: [String: GIDGoogleUserProtocol] = [:]
 
   /// The contents of GoogleService-Info.plist, if it exists.
   private let googleServiceProperties: [String: Any]?
@@ -120,7 +120,7 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
     #else
       let messenger = registrar.messenger
     #endif
-    SetUpFSIGoogleSignInApi(messenger, instance)
+    GoogleSignInApiSetup.setUp(binaryMessenger: messenger, api: instance)
   }
 
   /// Inject view provider for testing.
@@ -129,7 +129,7 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
   }
 
   /// Inject `GIDSignInProtocol` for testing.
-  convenience init(signIn: any GIDSignInProtocol, viewProvider: ViewProvider) {
+  convenience init(signIn: GIDSignInProtocol, viewProvider: ViewProvider) {
     self.init(
       signIn: signIn,
       viewProvider: viewProvider,
@@ -138,7 +138,7 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
 
   /// Inject `GIDSignInProtocol` and `googleServiceProperties` for testing.
   init(
-    signIn: any GIDSignInProtocol,
+    signIn: GIDSignInProtocol,
     viewProvider: ViewProvider,
     googleServiceProperties: [String: Any]?
   ) {
@@ -184,12 +184,9 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
     }
   #endif
 
-  // MARK: - FSIGoogleSignInApi
+  // MARK: - GoogleSignInApi
 
-  public func configure(
-    withParameters params: FSIPlatformConfigurationParams,
-    error: AutoreleasingUnsafeMutablePointer<FlutterError?>
-  ) {
+  func configure(params: PlatformConfigurationParams) throws {
     // If configuration information was passed from Dart, or present in GoogleService-Info.plist,
     // use that. Otherwise, keep the default configuration, which GIDSignIn will automatically
     // populate from Info.plist values (the recommended configuration method).
@@ -202,19 +199,17 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
     }
   }
 
-  public func restorePreviousSignIn(
-    completion: @escaping (FSISignInResult?, FlutterError?) -> Void
-  ) {
+  func restorePreviousSignIn(completion: @escaping (Result<SignInResult, Error>) -> Void) {
     signIn.restorePreviousSignIn { [weak self] user, error in
       self?.handleAuthResult(
         user: user, serverAuthCode: nil, error: error, completion: completion)
     }
   }
 
-  public func signIn(
-    withScopeHint scopeHint: [String],
+  func signIn(
+    scopeHint: [String],
     nonce: String?,
-    completion: @escaping (FSISignInResult?, FlutterError?) -> Void
+    completion: @escaping (Result<SignInResult, Error>) -> Void
   ) {
     let exception = performSignIn(hint: nil, additionalScopes: scopeHint, nonce: nonce) {
       [weak self] signInResult, error in
@@ -226,25 +221,25 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
     }
     if let exception {
       completion(
-        nil,
-        FlutterError(
-          code: "google_sign_in", message: exception.reason, details: exception.name.rawValue))
+        .failure(
+          PigeonError(
+            code: "google_sign_in", message: exception.reason, details: exception.name.rawValue)))
     }
   }
 
-  public func refreshedAuthorizationTokens(
-    forUser userId: String,
-    completion: @escaping (FSISignInResult?, FlutterError?) -> Void
+  func getRefreshedAuthorizationTokens(
+    userId: String,
+    completion: @escaping (Result<SignInResult, Error>) -> Void
   ) {
     guard let user = usersByIdentifier[userId] else {
       completion(
-        FSISignInResult.make(
-          with: nil,
-          error: FSISignInFailure.make(
-            withType: .userMismatch,
-            message: "The user is no longer signed in.",
-            details: nil)),
-        nil)
+        .success(
+          SignInResult(
+            success: nil,
+            error: SignInFailure(
+              type: .userMismatch,
+              message: "The user is no longer signed in.",
+              details: nil))))
       return
     }
 
@@ -254,20 +249,20 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
     }
   }
 
-  public func addScopes(
-    _ scopes: [String],
-    forUser userId: String,
-    completion: @escaping (FSISignInResult?, FlutterError?) -> Void
+  func addScopes(
+    scopes: [String],
+    userId: String,
+    completion: @escaping (Result<SignInResult, Error>) -> Void
   ) {
     guard let user = usersByIdentifier[userId] else {
       completion(
-        FSISignInResult.make(
-          with: nil,
-          error: FSISignInFailure.make(
-            withType: .userMismatch,
-            message: "The user is no longer signed in.",
-            details: nil)),
-        nil)
+        .success(
+          SignInResult(
+            success: nil,
+            error: SignInFailure(
+              type: .userMismatch,
+              message: "The user is no longer signed in.",
+              details: nil))))
       return
     }
 
@@ -280,25 +275,25 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
     }
     if let exception {
       completion(
-        nil,
-        FlutterError(
-          code: "request_scopes", message: exception.reason, details: exception.name.rawValue))
+        .failure(
+          PigeonError(
+            code: "request_scopes", message: exception.reason, details: exception.name.rawValue)))
     }
   }
 
-  public func signOutWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
+  func signOut() throws {
     signIn.signOut()
     // usersByIdentifier is left populated, because the SDK may still support some operations on the
     // GIDGoogleUser object (e.g., returning existing, non-expired tokens). Operations that the SDK
     // doesn't support will return SDK errors that we can handle as normal.
   }
 
-  public func disconnect(completion: @escaping (FlutterError?) -> Void) {
+  func disconnect(completion: @escaping (Result<Void, Error>) -> Void) {
     signIn.disconnect { error in
       if let error {
-        completion(flutterError(from: error as NSError))
+        completion(.failure(pigeonError(from: error as NSError)))
       } else {
-        completion(nil)
+        completion(.success(()))
       }
     }
   }
@@ -338,7 +333,7 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
   /// Swift frames is undefined behavior.
   private func performAddScopes(
     _ scopes: [String],
-    for user: any GIDGoogleUserProtocol,
+    for user: GIDGoogleUserProtocol,
     completion: @escaping (GIDSignInResultProtocol?, Error?) -> Void
   ) -> NSException? {
     #if os(macOS)
@@ -376,10 +371,10 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
   }
 
   private func handleAuthResult(
-    user: (any GIDGoogleUserProtocol)?,
+    user: GIDGoogleUserProtocol?,
     serverAuthCode: String?,
     error: Error?,
-    completion: @escaping (FSISignInResult?, FlutterError?) -> Void
+    completion: @escaping (Result<SignInResult, Error>) -> Void
   ) {
     if let user {
       didSignIn(for: user, serverAuthCode: serverAuthCode, completion: completion)
@@ -391,22 +386,29 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
     let nsError = error as NSError?
     if let nsError, nsError.domain == kGIDSignInErrorDomain {
       completion(
-        FSISignInResult.make(
-          with: nil,
-          error: FSISignInFailure.make(
-            withType: pigeonErrorCode(for: nsError.code),
-            message: nsError.localizedDescription,
-            details: sanitizedUserInfo(nsError.userInfo))),
-        nil)
+        .success(
+          SignInResult(
+            success: nil,
+            error: SignInFailure(
+              type: pigeonErrorCode(for: nsError.code),
+              message: nsError.localizedDescription,
+              details: sanitizedUserInfo(nsError.userInfo)))))
+    } else if let nsError {
+      completion(.failure(pigeonError(from: nsError)))
     } else {
-      completion(nil, flutterError(from: nsError))
+      completion(
+        .failure(
+          PigeonError(
+            code: String(format: "%@: %ld", "(null)", 0),
+            message: nil,
+            details: sanitizedUserInfo(nil) as Sendable)))
     }
   }
 
   private func didSignIn(
-    for user: any GIDGoogleUserProtocol,
+    for user: GIDGoogleUserProtocol,
     serverAuthCode: String?,
-    completion: @escaping (FSISignInResult?, FlutterError?) -> Void
+    completion: @escaping (Result<SignInResult, Error>) -> Void
   ) {
     if let userID = user.userID {
       usersByIdentifier[userID] = user
@@ -418,20 +420,20 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
       photoURL = user.profile?.imageURL(withDimension: 1337)
     }
 
-    let userData = FSIUserData.make(
-      withDisplayName: user.profile?.name,
+    let userData = UserData(
+      displayName: user.profile?.name,
       email: user.profile?.email ?? "",
       userId: user.userID ?? "",
       photoUrl: photoURL?.absoluteString,
       idToken: user.idToken?.tokenString)
-    let result = FSISignInResult.make(
-      with: FSISignInSuccess.make(
-        withUser: userData,
+    let result = SignInResult(
+      success: SignInSuccess(
+        user: userData,
         accessToken: user.accessToken.tokenString,
         grantedScopes: user.grantedScopes ?? [],
         serverAuthCode: serverAuthCode),
       error: nil)
-    completion(result, nil)
+    completion(.success(result))
   }
 
   #if os(iOS)
