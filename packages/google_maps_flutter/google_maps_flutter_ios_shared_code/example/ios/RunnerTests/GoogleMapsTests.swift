@@ -100,6 +100,25 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     #expect(factory1.sharedMapServices as AnyObject === factory2.sharedMapServices as AnyObject)
   }
 
+  @Test func mapViewOptionsUseConfiguredBackgroundColor() {
+    let backgroundColor = FGMPlatformColor.make(
+      withRed: 0x12 / 0xFF,
+      green: 0x34 / 0xFF,
+      blue: 0x56 / 0xFF,
+      alpha: 1
+    )
+    let creationParameters = emptyCreationParameters(backgroundColor: backgroundColor)
+
+    let options = FGMGoogleMapController.mapViewOptions(
+      withFrame: .zero,
+      creationParameters: creationParameters
+    )
+
+    #expect(
+      options.backgroundColor
+        == UIColor(red: 0x12 / 0xFF, green: 0x34 / 0xFF, blue: 0x56 / 0xFF, alpha: 1))
+  }
+
   @Test func handleResultTileDownsamplesWideGamutImages() throws {
     let controller = FGMTileProviderController()
 
@@ -225,7 +244,9 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
 
   /// Creates an empty creation parameters object for tests where the values don't matter, just that
   /// there's a valid object to pass in.
-  private func emptyCreationParameters() -> FGMPlatformMapViewCreationParams {
+  private func emptyCreationParameters(
+    backgroundColor: FGMPlatformColor? = nil
+  ) -> FGMPlatformMapViewCreationParams {
     return FGMPlatformMapViewCreationParams.make(
       withInitialCameraPosition: FGMPlatformCameraPosition.make(
         withBearing: 0.0,
@@ -251,7 +272,8 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
         buildingsEnabled: nil,
         markerType: .marker,
         mapId: nil,
-        style: nil
+        style: nil,
+        backgroundColor: backgroundColor
       ),
       initialCircles: [],
       initialMarkers: [],

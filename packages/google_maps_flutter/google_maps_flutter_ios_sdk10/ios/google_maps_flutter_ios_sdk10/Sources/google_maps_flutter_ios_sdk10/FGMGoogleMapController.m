@@ -273,10 +273,9 @@
 
 @implementation FGMGoogleMapController
 
-- (instancetype)initWithFrame:(CGRect)frame
-               viewIdentifier:(int64_t)viewId
-           creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters
-                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
++ (GMSMapViewOptions *)mapViewOptionsWithFrame:(CGRect)frame
+                            creationParameters:
+                                (FGMPlatformMapViewCreationParams *)creationParameters {
   GMSCameraPosition *camera =
       FGMGetCameraPositionForPigeonCameraPosition(creationParameters.initialCameraPosition);
 
@@ -287,6 +286,19 @@
   if (mapId.length > 0) {
     options.mapID = [GMSMapID mapIDWithIdentifier:mapId];
   }
+  FGMPlatformColor *backgroundColor = creationParameters.mapConfiguration.backgroundColor;
+  if (backgroundColor) {
+    options.backgroundColor = FGMGetColorForPigeonColor(backgroundColor);
+  }
+  return options;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame
+               viewIdentifier:(int64_t)viewId
+           creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters
+                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  GMSMapViewOptions *options = [FGMGoogleMapController mapViewOptionsWithFrame:frame
+                                                            creationParameters:creationParameters];
 
   GMSMapView *mapView = [[GMSMapView alloc] initWithOptions:options];
 

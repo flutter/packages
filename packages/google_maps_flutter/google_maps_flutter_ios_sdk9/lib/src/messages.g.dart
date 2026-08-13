@@ -47,7 +47,7 @@ bool _deepEquals(Object? a, Object? b) {
 /// Pigeon equivalent of MapType
 enum PlatformMapType { none, normal, satellite, terrain, hybrid }
 
-/// Pigeon equivalent of MarkerCollisionBehavior.
+/// Pigeon equivalent of the MarkerCollisionBehavior enum.
 enum PlatformMarkerCollisionBehavior {
   requiredDisplay,
   optionalAndHidesLowerPriority,
@@ -1641,6 +1641,7 @@ class PlatformMapConfiguration {
     required this.markerType,
     this.mapId,
     this.style,
+    this.backgroundColor,
   });
 
   bool? compassEnabled;
@@ -1679,6 +1680,8 @@ class PlatformMapConfiguration {
 
   String? style;
 
+  PlatformColor? backgroundColor;
+
   List<Object?> _toList() {
     return <Object?>[
       compassEnabled,
@@ -1699,6 +1702,7 @@ class PlatformMapConfiguration {
       markerType,
       mapId,
       style,
+      backgroundColor,
     ];
   }
 
@@ -1727,6 +1731,7 @@ class PlatformMapConfiguration {
       markerType: result[15]! as PlatformMarkerType,
       mapId: result[16] as String?,
       style: result[17] as String?,
+      backgroundColor: result[18] as PlatformColor?,
     );
   }
 

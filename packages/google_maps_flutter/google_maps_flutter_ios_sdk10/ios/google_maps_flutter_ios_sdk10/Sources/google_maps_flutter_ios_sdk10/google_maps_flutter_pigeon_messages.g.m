@@ -46,7 +46,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-/// Pigeon equivalent of MarkerCollisionBehavior.
+/// Pigeon equivalent of the MarkerCollisionBehavior enum.
 @implementation FGMPlatformMarkerCollisionBehaviorBox
 - (instancetype)initWithValue:(FGMPlatformMarkerCollisionBehavior)value {
   self = [super init];
@@ -1356,7 +1356,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                       buildingsEnabled:(nullable NSNumber *)buildingsEnabled
                             markerType:(FGMPlatformMarkerType)markerType
                                  mapId:(nullable NSString *)mapId
-                                 style:(nullable NSString *)style {
+                                 style:(nullable NSString *)style
+                       backgroundColor:(nullable FGMPlatformColor *)backgroundColor {
   FGMPlatformMapConfiguration *pigeonResult = [[FGMPlatformMapConfiguration alloc] init];
   pigeonResult.compassEnabled = compassEnabled;
   pigeonResult.cameraTargetBounds = cameraTargetBounds;
@@ -1376,6 +1377,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.markerType = markerType;
   pigeonResult.mapId = mapId;
   pigeonResult.style = style;
+  pigeonResult.backgroundColor = backgroundColor;
   return pigeonResult;
 }
 + (FGMPlatformMapConfiguration *)fromList:(NSArray<id> *)list {
@@ -1399,6 +1401,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.markerType = boxedFGMPlatformMarkerType.value;
   pigeonResult.mapId = GetNullableObjectAtIndex(list, 16);
   pigeonResult.style = GetNullableObjectAtIndex(list, 17);
+  pigeonResult.backgroundColor = GetNullableObjectAtIndex(list, 18);
   return pigeonResult;
 }
 + (nullable FGMPlatformMapConfiguration *)nullableFromList:(NSArray<id> *)list {
@@ -1424,6 +1427,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     [[FGMPlatformMarkerTypeBox alloc] initWithValue:self.markerType],
     self.mapId ?: [NSNull null],
     self.style ?: [NSNull null],
+    self.backgroundColor ?: [NSNull null],
   ];
 }
 @end

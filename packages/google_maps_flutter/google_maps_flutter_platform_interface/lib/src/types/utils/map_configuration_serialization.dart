@@ -47,6 +47,7 @@ Map<String, Object> jsonForMapConfiguration(MapConfiguration config) {
     if (config.cloudMapId != null) 'cloudMapId': config.cloudMapId!,
     if (config.mapId != null) 'mapId': config.mapId!,
     if (config.style != null) 'style': config.style!,
+    if (config.backgroundColor != null) 'backgroundColor': config.backgroundColor!.toARGB32(),
     if (config.markerType != null) 'markerType': config.markerType!.index,
   };
 }

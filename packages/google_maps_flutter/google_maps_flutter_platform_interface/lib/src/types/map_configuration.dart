@@ -43,6 +43,7 @@ class MapConfiguration {
     String? mapId,
     @Deprecated('cloudMapId is deprecated. Use mapId instead.') String? cloudMapId,
     this.style,
+    this.backgroundColor,
     this.markerType,
     this.colorScheme,
   }) : mapId = mapId ?? cloudMapId;
@@ -154,6 +155,12 @@ class MapConfiguration {
   /// To clear a previously set style, set this to an empty string.
   final String? style;
 
+  /// The color displayed behind the map while map tiles load.
+  ///
+  /// This option may only take effect when the map is initialized, depending
+  /// on the platform implementation.
+  final Color? backgroundColor;
+
   /// The type of marker that the map should use.
   ///
   /// Advanced and legacy markers could be handled differently by platform
@@ -239,6 +246,7 @@ class MapConfiguration {
           : null,
       mapId: mapId != other.mapId ? mapId : null,
       style: style != other.style ? style : null,
+      backgroundColor: backgroundColor != other.backgroundColor ? backgroundColor : null,
       markerType: markerType != other.markerType ? markerType : null,
       colorScheme: colorScheme != other.colorScheme ? colorScheme : null,
     );
@@ -276,6 +284,7 @@ class MapConfiguration {
       streetViewControlEnabled: diff.streetViewControlEnabled ?? streetViewControlEnabled,
       mapId: diff.mapId ?? mapId,
       style: diff.style ?? style,
+      backgroundColor: diff.backgroundColor ?? backgroundColor,
       markerType: diff.markerType ?? markerType,
       colorScheme: diff.colorScheme ?? colorScheme,
     );
@@ -310,6 +319,7 @@ class MapConfiguration {
       streetViewControlEnabled == null &&
       mapId == null &&
       style == null &&
+      backgroundColor == null &&
       markerType == null &&
       colorScheme == null;
 
@@ -349,6 +359,7 @@ class MapConfiguration {
         streetViewControlEnabled == other.streetViewControlEnabled &&
         mapId == other.mapId &&
         style == other.style &&
+        backgroundColor == other.backgroundColor &&
         markerType == other.markerType &&
         colorScheme == other.colorScheme;
   }
@@ -382,6 +393,7 @@ class MapConfiguration {
     streetViewControlEnabled,
     mapId,
     style,
+    backgroundColor,
     markerType,
     colorScheme,
   ]);
