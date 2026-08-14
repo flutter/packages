@@ -2,3 +2,6 @@
 - file_selector
 # Waiting on https://github.com/flutter/flutter/issues/145149
 - google_maps_flutter/google_maps_flutter
+# Moved to its own dedicated shard due to long test duration
+- material_ui
+
