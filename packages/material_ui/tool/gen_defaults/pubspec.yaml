@@ -7,9 +7,9 @@ environment:
   sdk: ^3.12.0
 
 dependencies:
-  args: any
-  meta: any
+  args: ^2.7.0
+  meta: ^1.18.0
+  path: ^1.9.1
 
 dev_dependencies:
-  path: any
-  test: any
+  test: ^1.31.1
