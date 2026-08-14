@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.2.50
+// Version: 38.2.31
 
+// dart format off
 class TokenStateFocusIndicator {
   /// md.sys.state.focus-indicator.inner-offset
   static const double innerOffset = -3.00;

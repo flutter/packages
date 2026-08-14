@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.2.50
+// Version: 38.2.31
 
+// dart format off
 class TokenColorDarkMediumContrast {
   /// md.sys.color.error
   static const String error = '0xFFF9DEDC';

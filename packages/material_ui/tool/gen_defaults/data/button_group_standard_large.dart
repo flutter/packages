@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.2.50
+// Version: 38.2.31
 
+// dart format off
 class TokenButtonGroupStandardLarge {
   /// md.comp.button-group.standard.large.between-space
   static const double betweenSpace = 8.00;
