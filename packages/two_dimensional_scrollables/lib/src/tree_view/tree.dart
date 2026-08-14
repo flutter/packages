@@ -737,14 +737,8 @@ class _TreeViewState<T> extends State<TreeView<T>>
     assert(_treeController != null);
     assert(_treeController!._state != null);
     _unpackActiveNodes();
-    if (oldWidget.addAutomaticKeepAlives != widget.addAutomaticKeepAlives ||
-        oldWidget.treeNodeBuilder != widget.treeNodeBuilder ||
-        oldWidget.treeRowBuilder != widget.treeRowBuilder ||
-        oldWidget.addRepaintBoundaries != widget.addRepaintBoundaries ||
-        oldWidget.toggleAnimationStyle != widget.toggleAnimationStyle) {
-      _treeRowBuilderDelegate.dispose();
-      _setTreeRowBuilderDelegate();
-    }
+    _treeRowBuilderDelegate.dispose();
+    _setTreeRowBuilderDelegate();
   }
 
   @override
