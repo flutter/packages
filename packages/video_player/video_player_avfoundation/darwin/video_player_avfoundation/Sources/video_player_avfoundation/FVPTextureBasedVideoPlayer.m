@@ -253,18 +253,21 @@
 }
 
 - (void)seekTo:(NSInteger)position completion:(void (^)(FlutterError *_Nullable))completion {
-  CMTime previousCMTime = self.player.currentTime;
+  // Reading player.currentTime takes the item's figment lock, which is held for
+  // hundreds of milliseconds while a freshly swapped-in item is being prepared.
+  // On iOS the caller is the merged platform/UI thread, so that read froze the
+  // whole app. The comparison it fed only avoided an occasional redundant
+  // expectFrame, which the comment below already calls harmless — so always
+  // expect the frame instead of paying for the time read.
   [super seekTo:position
       completion:^(FlutterError *error) {
-        if (CMTimeCompare(self.player.currentTime, previousCMTime) != 0) {
-          // Ensure that a frame is drawn once available, even if currently paused. In theory a
-          // race is possible here where the new frame has already drawn by the time this code
-          // runs, and the display link stays on indefinitely, but that should be relatively
-          // harmless. This must use the display link rather than just informing the engine that a
-          // new frame is available because the seek completing doesn't guarantee that the pixel
-          // buffer is already available.
-          [self expectFrame];
-        }
+        // Ensure that a frame is drawn once available, even if currently paused. In theory a
+        // race is possible here where the new frame has already drawn by the time this code
+        // runs, and the display link stays on indefinitely, but that should be relatively
+        // harmless. This must use the display link rather than just informing the engine that a
+        // new frame is available because the seek completing doesn't guarantee that the pixel
+        // buffer is already available.
+        [self expectFrame];
 
         if (completion) {
           completion(error);

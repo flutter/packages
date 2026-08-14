@@ -451,11 +451,22 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)seekTo:(NSInteger)position completion:(void (^)(FlutterError *_Nullable))completion {
   CMTime targetCMTime = CMTimeMake(position, 1000);
-  CMTimeValue duration = _player.currentItem.asset.duration.value;
+  // Reading asset.duration blocks the calling thread inside ObtainPropertySync
+  // until the asset inspector has the value. Right after a source swap that
+  // wait runs into hundreds of milliseconds, and since iOS merges the platform
+  // and UI threads the whole app freezes for that long. Only consult the
+  // duration once it is already loaded.
+  AVAsset *asset = _player.currentItem.asset;
+  BOOL durationIsLoaded =
+      [asset statusOfValueForKey:@"duration" error:nil] == AVKeyValueStatusLoaded;
   // Without adding tolerance when seeking to duration,
   // seekToTime will never complete, and this call will hang.
   // see issue https://github.com/flutter/flutter/issues/124475.
-  CMTime tolerance = position == duration ? CMTimeMake(1, 1000) : kCMTimeZero;
+  // With the duration still unknown, that tolerance is the safe assumption:
+  // one millisecond of imprecision cannot hang, a zero tolerance can.
+  CMTime tolerance = !durationIsLoaded || position == asset.duration.value
+                         ? CMTimeMake(1, 1000)
+                         : kCMTimeZero;
   [_player seekToTime:targetCMTime
         toleranceBefore:tolerance
          toleranceAfter:tolerance
