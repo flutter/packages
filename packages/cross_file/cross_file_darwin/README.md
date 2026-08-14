@@ -2,6 +2,16 @@
 
 The Darwin implementation of [`cross_file`][1].
 
+This plugin provides support for traditional file systems and Apple's app sandbox, security
+scoped resources, and PhotoKit assets.
+
+When using the `FileSystem` implementations on iOS or macOS, this implementation returns the
+implementation created by `CrossFileIO`.
+
+For the `ScopedStorage` implementation, this implementation uses `dart:io` for typical file
+interactions while providing access to security scoped resource features. See
+https://developer.apple.com/documentation/uikit/uidocumentpickerviewcontroller#Work-with-external-documents.
+
 ## Usage
 
 This package is [endorsed][2], which means you can simply use `cross_file`

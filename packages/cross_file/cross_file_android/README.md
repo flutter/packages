@@ -2,7 +2,13 @@
 
 The Android implementation of [`cross_file`][1].
 
-This platform supports traditional file systems and scoped storage. 
+This platform supports traditional file systems and [Android shared storage](https://developer.android.com/training/data-storage/shared ).
+
+When using the `FileSystem` implementations on Android, this implementation returns the
+implementation created by `CrossFileIO`.
+
+For the `ScopedStorage` implementation, this implementation uses native APIs that interact with
+[shared storage](https://developer.android.com/training/data-storage/shared).
 
 ## Usage
 

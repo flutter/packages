@@ -164,7 +164,7 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
 /// image, video, or Live Photo in the Photos library.
 base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     with PhotoKitDarwinScopedStorageXFileExtension {
-  /// Constructs a [SecurityScopedDarwinScopedStorageXFile].
+  /// Constructs a [PhotoKitDarwinScopedStorageXFile].
   PhotoKitDarwinScopedStorageXFile(super.params) : super._();
 
   @override
@@ -191,6 +191,9 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
   @override
   Future<int?> length() async {
     if (_tryGetAssetResource(identifier: params.uri) case final PHAssetResource resource) {
+      // This is a workaround to access file size in bytes. See
+      // https://stackoverflow.com/questions/45110720/get-file-size-of-phasset-without-loading-in-the-resource.
+      // Note that this may not be guaranteed to work in future versions.
       final ObjCObject? fileSize = resource.valueForKey('fileSize'.toNSString());
 
       if (fileSize != null) {
