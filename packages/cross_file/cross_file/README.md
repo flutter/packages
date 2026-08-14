@@ -57,7 +57,7 @@ if (await file.exists()) {
 }
 ```
 
-You can find links to the API docs on the [pub page](https://pub.dev/packages/cross_file).
+You can find links to the API docs on the [pub page](https://pub.dev/documentation/cross_file/latest/).
 
 ### Implementation-Specific Features
 
@@ -83,12 +83,13 @@ import 'package:cross_file_web/cross_file_web.dart';
 ```
 
 Now, additional features can be accessed through the platform implementations. Classes
-[FileSystemXFile], [FileSystemXDirectory], [ScopedStorageXFile], and [ScopedStorageXDirectory] pass
+`FileSystemXFile`, `FileSystemXDirectory`, `ScopedStorageXFile`, and `ScopedStorageXDirectory]` pass
 their functionality to a class provided by the current platform. Below are a couple of ways to
 access additional functionality provided by the platform and is followed by an example.
 
 1. Pass a creation params class provided by a platform implementation to a `fromCreationParams`
-   constructor (e.g. `XFile.fromCreationParams`, `XDirectory.fromCreationParams`, etc.).
+   constructor (e.g. `FileSystemXFile.fromCreationParams`, `ScopedStorageXFile.fromCreationParams`,
+   etc.).
 2. Call methods on an implementation of a class by using `getExtension` method (e.g.
    `XFile.getExtension`, `XDirectory.getExtension`, etc.).
 

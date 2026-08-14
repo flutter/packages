@@ -2,6 +2,8 @@
 
 The Android implementation of [`cross_file`][1].
 
+This platform supports traditional file systems and scoped storage. 
+
 ## Usage
 
 This package is [endorsed][2], which means you can simply use `cross_file`
