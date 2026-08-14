@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in_ios/google_sign_in_ios.dart';
 import 'package:google_sign_in_ios/src/messages.g.dart';
@@ -848,6 +849,52 @@ void main() {
       verify(mockApi.restorePreviousSignIn());
       expect(result, null);
     });
+
+    test(
+      'attempts to authenticate if tokens have expired or been revoked',
+      () async {
+        const scopes = <String>['a', 'b'];
+        when(mockApi.restorePreviousSignIn()).thenThrow(
+          PlatformException(
+            code: 'org.openid.appauth.oauth_token: -10',
+            message: 'invalid_grant: Token has been expired or revoked.',
+          ),
+        );
+        when(mockApi.signIn(scopes, null)).thenAnswer(
+          (_) async => SignInResult(
+            success: SignInSuccess(
+              user: UserData(
+                displayName: _testUser.displayName,
+                email: _testUser.email,
+                userId: _testUser.id,
+                photoUrl: _testUser.photoUrl,
+                idToken: '',
+              ),
+              accessToken: '',
+              grantedScopes: <String>[],
+            ),
+          ),
+        );
+
+        await googleSignIn.serverAuthorizationTokensForScopes(
+          const ServerAuthorizationTokensForScopesParameters(
+            request: AuthorizationRequestDetails(
+              scopes: scopes,
+              userId: null,
+              email: null,
+              promptIfUnauthorized: true,
+            ),
+          ),
+        );
+
+        // With no user ID provided to serverAuthorizationTokensForScopes, the
+        // implementation should attempt to restore an existing sign-in, and then
+        // when that throws due to an expired/revoked token, prompt for a combined authn+authz.
+        // https://github.com/flutter/flutter/issues/184134
+        verify(mockApi.restorePreviousSignIn());
+        verify(mockApi.signIn(scopes, null));
+      },
+    );
 
     test('attempts to authenticate if no user is provided or already signed in '
         'and interaction is allowed', () async {
