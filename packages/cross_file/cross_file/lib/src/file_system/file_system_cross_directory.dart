@@ -64,7 +64,6 @@ base class FileSystemXDirectory extends XDirectory {
   ///     params = PlatformFileSystemXDirectoryCreationParams('my/dir/');
   /// }
   ///
-  ///
   /// final dir = FileSystemXDirectory.fromCreationParams(params);
   /// ```
   /// {@endtemplate}

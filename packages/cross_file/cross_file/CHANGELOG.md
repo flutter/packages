@@ -1,7 +1,7 @@
 ## 0.4.0
 
 * Updates `cross_file` to a package-separated federated plugin.
-* Adds `XDirectory` to access file containers.
+* Adds `XDirectory` to access resource containers.
 * Adds implementation for file systems. See `FileSystemXFile` and `FileSystemXDirectory`.
 * Adds implementation for scoped storage APIs that use ephemeral URLS. See `ScopedStorageXFile`
   and `ScopedStorageXDirectory`.
@@ -14,7 +14,8 @@
   how to access platform-specific feature.
 * **Breaking Change** Removes `XFile.mimeType`.
 * **Breaking Change** Removes `XFile.path`. This has been replaced by `FileSystemXFile.path`.
-* **Breaking Change** Changes `XFile.name` to return `Future<String>` rather than `String`.
+* **Breaking Change** Changes `XFile.name` to a method that returns `Future<String>` rather than a
+  field that returns `String`.
 
 ## 0.3.5+4
 

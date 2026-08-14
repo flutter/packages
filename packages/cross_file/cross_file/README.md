@@ -10,6 +10,10 @@ An abstraction to allow working with files across multiple platforms.
 |-------------|---------|---------|-------|--------|-----|-------------|
 | **Support** | SDK 24+ | iOS 13+ | Any   | 10.15+ | Any | Windows 10+ |
 
+## Overview
+
+The plugin provides two separate ways to access resources.
+
 ## Usage
 
 Instantiate a `XFile` using a uri or path and use its methods and properties to access the file and
@@ -90,9 +94,9 @@ await file
 
 debugPrint(await file.readAsString());
 
-await file
-    .getExtension<SecurityScopedDarwinScopedStorageXFileExtension>()
-    ?.stopAccessingSecurityScopedResource();
+if (file is ScopedStorageXFile) {
+  await file.dispose();
+}
 ```
 
 See https://pub.dev/documentation/cross_file_darwin/latest/cross_file_darwin/cross_file_darwin-library.html

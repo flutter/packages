@@ -7,11 +7,10 @@ import 'package:flutter/foundation.dart' show immutable, internal;
 
 import '../cross_directory.dart';
 
-/// A reference to a directory (or folder) on the file system within a devices
-/// scoped storage.
+/// A reference to a directory (or folder) within a devices scoped storage.
 ///
 /// Scoped storage limits app access to external storage and apps may lose
-/// access to a resource at some point depending on the platform.
+/// access to a resource at any point depending on the platform.
 ///
 /// ## Platform-Specific Features
 /// This class contains an underlying implementation provided by the current

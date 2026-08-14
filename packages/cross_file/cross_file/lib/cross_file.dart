@@ -17,19 +17,24 @@ final class CrossFile {
   /// The current platform implementation.
   ///
   /// The platform implementation is set automatically at runtime based on the
-  /// target platform. Use this to check which platform is currently set.
+  /// target platform. Use this to check which platform is currently set when
+  /// platform implementations are imported.
+  ///
+  /// Example:
   ///
   /// ```dart
+  /// late final XFile file;
+  ///
   /// switch (CrossFile.implementation) {
   ///   case CrossFileWeb():
   ///     final params = WebScopedStorageXFileCreationParams.fromObjectUrl(
   ///       objectUrl: 'blob:https://some/url:for/file',
   ///     );
-  ///     file = XFile.fromCreationParams(params);
+  ///     file = ScopedStorageXFile.fromCreationParams(params);
   ///   case CrossFileDarwin():
-  ///     file = ScopedStorageXFile.fromUri(Uri.file('/my/file.txt'));
+  ///     file = ScopedStorageXFile.fromUri(Uri.file('private/my/file.txt'));
   ///   default:
-  ///     file = XFile.fromUri(Uri.file('/my/file.txt'));
+  ///     file = XFile.fileSystem(path: '/my/file.txt'));
   /// }
   /// ```
   static CrossFilePlatform? get implementation => CrossFilePlatform.instance;

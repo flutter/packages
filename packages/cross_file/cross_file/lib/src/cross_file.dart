@@ -12,7 +12,7 @@ import 'cross_entity.dart';
 import 'file_system/file_system_cross_file.dart';
 import 'scoped_storage/scoped_storage_cross_file.dart';
 
-/// A reference to a local data resource.
+/// A reference to a data resource.
 @immutable
 abstract base class XFile extends XEntity {
   /// Constructs a [XFile] from a specific platform implementation.
@@ -48,24 +48,28 @@ abstract base class XFile extends XEntity {
 
   /// Creates a new independent Stream for the contents of this resource.
   ///
-  /// If start is present, the file will be read from byte-offset start.
+  /// If `start` is present, the file will be read from byte-offset `start`.
   /// Otherwise from the beginning (index 0).
   ///
-  /// If end is present, only bytes up to byte-index end will be read.
-  /// Otherwise, until end of file.
+  /// If end is present, only bytes up to byte-index `end` will be read.
+  /// Otherwise, until `end` of file.
   ///
   /// Platforms may throw an exception if there is an error opening or reading
   /// the resource.
-  Stream<Uint8List> openRead([int? start, int? end]) async* {
+  Stream<Uint8List> openRead([int? start, int? end]) {
     if (start != null && start < 0) {
-      throw RangeError('`start` must be greater than 0. start: $start');
+      return Stream.error(
+        RangeError('`start` must be greater than 0. start: $start'),
+      );
     } else if (end != null && end <= (start ?? 0)) {
-      throw RangeError(
-        '`end` must be greater than 0 and greater than `start`. start: $start, end: $end',
+      return Stream.error(
+        RangeError(
+          '`end` must be greater than 0 and greater than `start`. start: $start, end: $end',
+        ),
       );
     }
 
-    yield* platform.openRead(start, end);
+    return platform.openRead(start, end);
   }
 
   /// Reads the entire resource contents as a list of bytes.

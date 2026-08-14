@@ -52,9 +52,9 @@ Future<XFile> accessPlatformFeatures() async {
 
   debugPrint(await file.readAsString());
 
-  await file
-      .getExtension<SecurityScopedDarwinScopedStorageXFileExtension>()
-      ?.stopAccessingSecurityScopedResource();
+  if (file is ScopedStorageXFile) {
+    await file.dispose();
+  }
   // #enddocregion platform_features
 
   return file;

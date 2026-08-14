@@ -11,7 +11,7 @@ import 'file_system/file_system_cross_file.dart';
 import 'scoped_storage/scoped_storage_cross_directory.dart';
 import 'scoped_storage/scoped_storage_cross_file.dart';
 
-/// A reference to a container of local data resources.
+/// A reference to a container of data resources.
 ///
 /// Note: Not all platforms support accessing directories.
 @immutable
