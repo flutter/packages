@@ -687,6 +687,7 @@ targets:
 
   - name: Linux_web web_platform_tests_material_ui master
     recipe: packages/packages
+    bringup: true
     timeout: 90
     properties:
       target_file: web_platform_tests_material_ui.yaml
@@ -723,6 +724,7 @@ targets:
 
   - name: Linux_web web_platform_tests_material_ui_wasm master
     recipe: packages/packages
+    bringup: true
     timeout: 90
     properties:
       target_file: web_platform_tests_material_ui_wasm.yaml
@@ -759,6 +761,7 @@ targets:
 
   - name: Linux_web web_platform_tests_material_ui stable
     recipe: packages/packages
+    bringup: true
     timeout: 90
     properties:
       target_file: web_platform_tests_material_ui.yaml
