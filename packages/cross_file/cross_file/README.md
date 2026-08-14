@@ -83,7 +83,7 @@ import 'package:cross_file_web/cross_file_web.dart';
 ```
 
 Now, additional features can be accessed through the platform implementations. Classes
-`FileSystemXFile`, `FileSystemXDirectory`, `ScopedStorageXFile`, and `ScopedStorageXDirectory]` pass
+`FileSystemXFile`, `FileSystemXDirectory`, `ScopedStorageXFile`, and `ScopedStorageXDirectory` pass
 their functionality to a class provided by the current platform. Below are a couple of ways to
 access additional functionality provided by the platform and is followed by an example.
 
