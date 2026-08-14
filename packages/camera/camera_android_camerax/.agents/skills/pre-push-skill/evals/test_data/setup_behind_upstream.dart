@@ -32,13 +32,9 @@ Future<String> getUpstreamRemote(String workingDirectory) async {
 /// immediately without modifying pubspec.yaml or CHANGELOG.md.
 void main() async {
   // The root of the packages directory.
-  final Directory packageDir = Directory(Platform.script.toFilePath())
-      .parent
-      .parent
-      .parent
-      .parent
-      .parent
-      .parent;
+  final Directory packageDir = Directory(
+    Platform.script.toFilePath(),
+  ).parent.parent.parent.parent.parent.parent;
   final dartFilePath = '${packageDir.path}/lib/src/camerax_library.dart';
 
   final String upstream = await getUpstreamRemote(packageDir.path);

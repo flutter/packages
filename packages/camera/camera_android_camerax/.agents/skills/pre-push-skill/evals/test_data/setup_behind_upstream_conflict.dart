@@ -32,13 +32,9 @@ Future<String> getUpstreamRemote(String workingDirectory) async {
 /// pre-push-skill detects the conflict and stops immediately.
 void main() async {
   // The root of the packages directory.
-  final Directory packageDir = Directory(Platform.script.toFilePath())
-      .parent
-      .parent
-      .parent
-      .parent
-      .parent
-      .parent;
+  final Directory packageDir = Directory(
+    Platform.script.toFilePath(),
+  ).parent.parent.parent.parent.parent.parent;
 
   final String upstream = await getUpstreamRemote(packageDir.path);
   print('Detected upstream remote: $upstream');
