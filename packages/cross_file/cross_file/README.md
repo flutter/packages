@@ -12,7 +12,29 @@ An abstraction to allow working with files across multiple platforms.
 
 ## Overview
 
-The plugin provides two separate ways to access resources.
+This package provides a unified API for interacting with resources across platforms through two
+primary implementation types:
+
+### FileSystem
+
+The `FileSystem` implementation represents resources on a traditional file system. It is used when
+resources are identified by standard file paths or `file://` URIs.
+
+* **Classes**: `FileSystemXFile`, `FileSystemXDirectory`.
+* **Use Cases**: Desktop applications, app-private storage on mobile, or any environment where
+  direct file system access is available.
+
+### ScopedStorage
+
+The `ScopedStorage` implementation represents resources that are managed or restricted by the
+platform. These resources are typically identified by platform-specific URIs rather than direct
+paths.
+
+* **Classes**: `ScopedStorageXFile`, `ScopedStorageXDirectory`.
+* **Use Cases**: Android Content URIs, iOS Security-Scoped bookmarks, Web Object URLs, or Photo
+  Library assets.
+* **Key Characteristic**: Access to these resources may be ephemeral or requires explicit lifecycle
+  management (e.g., using `dispose()` or specific platform extensions).
 
 ## Usage
 
