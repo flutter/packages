@@ -179,6 +179,83 @@ void main() {
       expect(creationOptions.httpHeaders, headers);
     });
 
+    test('create with network passes Widevine DRM configuration', () async {
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) = setUpMockPlayer(
+        playerId: 1,
+        textureId: 100,
+      );
+      when(
+        api.createForTextureView(any),
+      ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 100));
+
+      await player.create(
+        DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/video.mpd',
+          drmConfiguration: WidevineDrmConfiguration(
+            licenseUri: Uri.parse('https://example.com/license'),
+            licenseHeaders: const <String, String>{'Authorization': 'Bearer token'},
+          ),
+        ),
+      );
+
+      final VerificationResult verification = verify(api.createForTextureView(captureAny));
+      final creationOptions = verification.captured[0] as CreationOptions;
+      final PlatformWidevineDrmConfiguration? widevineDrm = creationOptions.widevineDrm;
+      expect(widevineDrm, isNotNull);
+      expect(widevineDrm!.licenseUri, 'https://example.com/license');
+      expect(widevineDrm.licenseHeaders, <String, String>{'Authorization': 'Bearer token'});
+    });
+
+    test('create with network sends no DRM configuration by default', () async {
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) = setUpMockPlayer(
+        playerId: 1,
+        textureId: 100,
+      );
+      when(
+        api.createForTextureView(any),
+      ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 100));
+
+      await player.create(
+        DataSource(sourceType: DataSourceType.network, uri: 'https://example.com/video.mpd'),
+      );
+
+      final VerificationResult verification = verify(api.createForTextureView(captureAny));
+      expect((verification.captured[0] as CreationOptions).widevineDrm, isNull);
+    });
+
+    test('create rejects DRM for a non-network source', () async {
+      final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1, textureId: 100);
+
+      await expectLater(
+        player.create(
+          DataSource(
+            sourceType: DataSourceType.file,
+            uri: 'file:///video.mp4',
+            drmConfiguration: WidevineDrmConfiguration(
+              licenseUri: Uri.parse('https://example.com/license'),
+            ),
+          ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('create rejects a DRM configuration for another platform', () async {
+      final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1, textureId: 100);
+
+      await expectLater(
+        player.create(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/video.mpd',
+            drmConfiguration: const _OtherDrmConfiguration(),
+          ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
     test('create with network sets a default user agent', () async {
       final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) = setUpMockPlayer(
         playerId: 1,
@@ -1177,4 +1254,9 @@ void main() {
       });
     });
   });
+}
+
+/// A DRM configuration type that the Android implementation doesn't support.
+class _OtherDrmConfiguration extends VideoDrmConfiguration {
+  const _OtherDrmConfiguration();
 }

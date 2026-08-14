@@ -10,6 +10,7 @@ import 'package:video_player_platform_interface/video_player_platform_interface.
 import 'messages.g.dart' hide videoEvents;
 import 'messages.g.dart' as pigeon show videoEvents;
 import 'platform_view_player.dart';
+import 'widevine_drm_configuration.dart';
 
 /// The non-test implementation of `_apiProvider`.
 VideoPlayerInstanceApi _productionApiProvider(int playerId) {
@@ -80,6 +81,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     PlatformVideoFormat? formatHint;
     final Map<String, String> httpHeaders = dataSource.httpHeaders;
     final String? userAgent = _userAgentFromHeaders(httpHeaders);
+    final PlatformWidevineDrmConfiguration? widevineDrm = _widevineDrmFromDataSource(dataSource);
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
         final String? asset = dataSource.asset;
@@ -104,6 +106,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       userAgent: userAgent,
       formatHint: formatHint,
       backBufferDurationMs: options.videoPlayerOptions?.backBufferDurationMs,
+      widevineDrm: widevineDrm,
     );
 
     final int playerId;
@@ -120,6 +123,38 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     ensurePlayerInitialized(playerId, state);
 
     return playerId;
+  }
+
+  // Returns the Pigeon representation of the DRM configuration in [dataSource],
+  // or null if it has none.
+  //
+  // Throws an [ArgumentError] if the configuration can't be used on Android,
+  // either because it isn't a Widevine configuration or because the source
+  // isn't a network source.
+  PlatformWidevineDrmConfiguration? _widevineDrmFromDataSource(DataSource dataSource) {
+    final VideoDrmConfiguration? drmConfiguration = dataSource.drmConfiguration;
+    if (drmConfiguration == null) {
+      return null;
+    }
+    if (dataSource.sourceType != DataSourceType.network) {
+      throw ArgumentError.value(
+        dataSource.sourceType,
+        'dataSource.sourceType',
+        'DRM is only supported for network data sources',
+      );
+    }
+    if (drmConfiguration is! WidevineDrmConfiguration) {
+      throw ArgumentError.value(
+        drmConfiguration,
+        'dataSource.drmConfiguration',
+        'The Android implementation of video_player only supports '
+            'WidevineDrmConfiguration',
+      );
+    }
+    return PlatformWidevineDrmConfiguration(
+      licenseUri: drmConfiguration.licenseUri.toString(),
+      licenseHeaders: drmConfiguration.licenseHeaders,
+    );
   }
 
   // Returns the user agent to use with ExoPlayer for the given headers.

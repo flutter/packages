@@ -1,3 +1,8 @@
+## 2.12.0
+
+* Adds `FairPlayDrmConfiguration`, allowing playback of FairPlay-protected
+  network streams on iOS and macOS.
+
 ## 2.11.0
 
 * Implements `setPreventsDisplaySleepDuringVideoPlayback` using

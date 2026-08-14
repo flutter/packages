@@ -74,6 +74,9 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
 }
 
 @implementation FVPVideoPlayer {
+  // The wrapped player item. This is retained because the wrapper owns objects that have to outlive
+  // player creation, such as the resource loader delegate used for DRM.
+  NSObject<FVPAVPlayerItem> *_playerItem;
   // Whether or not player and player item listeners have ever been registered.
   BOOL _listenersRegistered;
 }
@@ -84,6 +87,7 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
 
+  _playerItem = item;
   _viewProvider = viewProvider;
 
   NSObject<FVPAVAsset> *asset = item.asset;

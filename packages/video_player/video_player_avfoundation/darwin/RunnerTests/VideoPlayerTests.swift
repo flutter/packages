@@ -4,8 +4,9 @@
 
 import AVFoundation
 import Testing
-@preconcurrency @testable import video_player_avfoundation
 import video_player_avfoundation_objc
+
+@preconcurrency @testable import video_player_avfoundation
 
 #if os(iOS)
   import Flutter
@@ -63,6 +64,48 @@ private let hlsAudioTestURI =
       options: CreationOptions(uri: hlsTestURI, httpHeaders: [:]))
 
     #expect(!textureRegistry.registeredTexture)
+  }
+
+  @Test func creationWithoutDrmDoesNotInstallAResourceLoaderDelegate() throws {
+    let avFactory = StubFVPAVFactory()
+    let videoPlayerPlugin = try createInitializedPlugin(avFactory: avFactory)
+
+    _ = try videoPlayerPlugin.createTexturePlayer(
+      options: CreationOptions(uri: hlsTestURI, httpHeaders: [:]))
+
+    #expect(avFactory.lastResourceLoaderDelegate == nil)
+  }
+
+  @Test func fairPlayConfigurationInstallsAResourceLoaderDelegate() throws {
+    let avFactory = StubFVPAVFactory()
+    let videoPlayerPlugin = try createInitializedPlugin(avFactory: avFactory)
+
+    _ = try videoPlayerPlugin.createTexturePlayer(
+      options: CreationOptions(
+        uri: hlsTestURI,
+        httpHeaders: [:],
+        fairPlayDrm: PlatformFairPlayDrmConfiguration(
+          certificateUri: "https://example.com/certificate",
+          licenseUri: "https://example.com/license",
+          licenseHeaders: ["Authorization": "Bearer token"],
+          contentId: "content-id")))
+
+    #expect(avFactory.lastResourceLoaderDelegate is FVPFairPlayResourceLoaderDelegate)
+  }
+
+  @Test func fairPlayConfigurationWithAnInvalidUriThrows() throws {
+    let videoPlayerPlugin = try createInitializedPlugin()
+
+    #expect(throws: PigeonError.self) {
+      _ = try videoPlayerPlugin.createTexturePlayer(
+        options: CreationOptions(
+          uri: hlsTestURI,
+          httpHeaders: [:],
+          fairPlayDrm: PlatformFairPlayDrmConfiguration(
+            certificateUri: "",
+            licenseUri: "https://example.com/license",
+            licenseHeaders: [:])))
+    }
   }
 
   @Test func seekToWhilePausedStartsDisplayLinkTemporarily() async throws {
@@ -1023,7 +1066,7 @@ private let hlsAudioTestURI =
   }
 
   private func playerItem(with url: URL, factory: FVPAVFactory) -> FVPAVPlayerItem {
-    let asset = factory.urlAsset(with: url, options: nil)
+    let asset = factory.urlAsset(with: url, options: nil, resourceLoaderDelegate: nil)
     return factory.playerItem(with: asset)
   }
 

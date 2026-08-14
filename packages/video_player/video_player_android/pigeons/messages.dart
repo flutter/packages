@@ -76,6 +76,14 @@ class PlatformVideoViewCreationParams {
   final int playerId;
 }
 
+/// Pigeon equivalent of video_player_android's WidevineDrmConfiguration.
+class PlatformWidevineDrmConfiguration {
+  PlatformWidevineDrmConfiguration({required this.licenseUri, required this.licenseHeaders});
+
+  String licenseUri;
+  Map<String, String> licenseHeaders;
+}
+
 class CreationOptions {
   CreationOptions({required this.uri, required this.httpHeaders});
   String uri;
@@ -83,6 +91,7 @@ class CreationOptions {
   Map<String, String> httpHeaders;
   String? userAgent;
   int? backBufferDurationMs;
+  PlatformWidevineDrmConfiguration? widevineDrm;
 }
 
 class TexturePlayerIds {

@@ -210,25 +210,81 @@ struct PlatformVideoViewCreationParams: Hashable {
   }
 }
 
+/// Pigeon equivalent of video_player_avfoundation's FairPlayDrmConfiguration.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct PlatformFairPlayDrmConfiguration: Hashable {
+  var certificateUri: String
+  var licenseUri: String
+  var licenseHeaders: [String: String]
+  var contentId: String? = nil
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PlatformFairPlayDrmConfiguration? {
+    let certificateUri = pigeonVar_list[0] as! String
+    let licenseUri = pigeonVar_list[1] as! String
+    let licenseHeaders = pigeonVar_list[2] as! [String: String]
+    let contentId: String? = nilOrValue(pigeonVar_list[3])
+
+    return PlatformFairPlayDrmConfiguration(
+      certificateUri: certificateUri,
+      licenseUri: licenseUri,
+      licenseHeaders: licenseHeaders,
+      contentId: contentId
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      certificateUri,
+      licenseUri,
+      licenseHeaders,
+      contentId,
+    ]
+  }
+  static func == (lhs: PlatformFairPlayDrmConfiguration, rhs: PlatformFairPlayDrmConfiguration)
+    -> Bool
+  {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return deepEqualsVideoPlayerPluginMessages(lhs.certificateUri, rhs.certificateUri)
+      && deepEqualsVideoPlayerPluginMessages(lhs.licenseUri, rhs.licenseUri)
+      && deepEqualsVideoPlayerPluginMessages(lhs.licenseHeaders, rhs.licenseHeaders)
+      && deepEqualsVideoPlayerPluginMessages(lhs.contentId, rhs.contentId)
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine("PlatformFairPlayDrmConfiguration")
+    deepHashVideoPlayerPluginMessages(value: certificateUri, hasher: &hasher)
+    deepHashVideoPlayerPluginMessages(value: licenseUri, hasher: &hasher)
+    deepHashVideoPlayerPluginMessages(value: licenseHeaders, hasher: &hasher)
+    deepHashVideoPlayerPluginMessages(value: contentId, hasher: &hasher)
+  }
+}
+
 /// Generated class from Pigeon that represents data sent in messages.
 struct CreationOptions: Hashable {
   var uri: String
   var httpHeaders: [String: String]
+  var fairPlayDrm: PlatformFairPlayDrmConfiguration? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> CreationOptions? {
     let uri = pigeonVar_list[0] as! String
     let httpHeaders = pigeonVar_list[1] as! [String: String]
+    let fairPlayDrm: PlatformFairPlayDrmConfiguration? = nilOrValue(pigeonVar_list[2])
 
     return CreationOptions(
       uri: uri,
-      httpHeaders: httpHeaders
+      httpHeaders: httpHeaders,
+      fairPlayDrm: fairPlayDrm
     )
   }
   func toList() -> [Any?] {
     return [
       uri,
       httpHeaders,
+      fairPlayDrm,
     ]
   }
   static func == (lhs: CreationOptions, rhs: CreationOptions) -> Bool {
@@ -237,12 +293,14 @@ struct CreationOptions: Hashable {
     }
     return deepEqualsVideoPlayerPluginMessages(lhs.uri, rhs.uri)
       && deepEqualsVideoPlayerPluginMessages(lhs.httpHeaders, rhs.httpHeaders)
+      && deepEqualsVideoPlayerPluginMessages(lhs.fairPlayDrm, rhs.fairPlayDrm)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("CreationOptions")
     deepHashVideoPlayerPluginMessages(value: uri, hasher: &hasher)
     deepHashVideoPlayerPluginMessages(value: httpHeaders, hasher: &hasher)
+    deepHashVideoPlayerPluginMessages(value: fairPlayDrm, hasher: &hasher)
   }
 }
 
@@ -288,8 +346,10 @@ private class VideoPlayerPluginMessagesPigeonCodecReader: FlutterStandardReader 
     case 129:
       return PlatformVideoViewCreationParams.fromList(self.readValue() as! [Any?])
     case 130:
-      return CreationOptions.fromList(self.readValue() as! [Any?])
+      return PlatformFairPlayDrmConfiguration.fromList(self.readValue() as! [Any?])
     case 131:
+      return CreationOptions.fromList(self.readValue() as! [Any?])
+    case 132:
       return TexturePlayerIds.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -302,11 +362,14 @@ private class VideoPlayerPluginMessagesPigeonCodecWriter: FlutterStandardWriter 
     if let value = value as? PlatformVideoViewCreationParams {
       super.writeByte(129)
       super.writeValue(value.toList())
-    } else if let value = value as? CreationOptions {
+    } else if let value = value as? PlatformFairPlayDrmConfiguration {
       super.writeByte(130)
       super.writeValue(value.toList())
-    } else if let value = value as? TexturePlayerIds {
+    } else if let value = value as? CreationOptions {
       super.writeByte(131)
+      super.writeValue(value.toList())
+    } else if let value = value as? TexturePlayerIds {
+      super.writeByte(132)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)

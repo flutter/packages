@@ -146,3 +146,78 @@ You can set the video view type of your controller (instance of `VideoPlayerCont
 If set to `VideoViewType.platformView`, platform views will be used instead of texture view on supported platforms.
 
 The relative performance of the different view types may vary by platform, and on some platforms the use of platform views may have correctness issues in certain circumstances due to limitations of Flutter's platform view system.
+
+### DRM
+
+Network sources can play DRM-protected content by passing a `drmConfiguration`
+to `VideoPlayerController.networkUrl`. DRM systems differ significantly between
+platforms, so the configuration types come from the platform implementation
+packages rather than from `video_player`:
+
+| Platform | DRM system | Configuration | Package |
+| --- | --- | --- | --- |
+| Android | Widevine | `WidevineDrmConfiguration` | [`video_player_android`](https://pub.dev/packages/video_player_android) |
+| iOS, macOS | FairPlay | `FairPlayDrmConfiguration` | [`video_player_avfoundation`](https://pub.dev/packages/video_player_avfoundation) |
+
+An app that uses DRM therefore depends on those packages directly, and imports
+the configuration type it needs:
+
+<?code-excerpt "readme_excerpts.dart (widevine)"?>
+```dart
+import 'package:video_player_android/video_player_android.dart';
+// ···
+  final controller = VideoPlayerController.networkUrl(
+    Uri.parse('https://example.com/protected.mpd'),
+    drmConfiguration: WidevineDrmConfiguration(
+      licenseUri: Uri.parse('https://example.com/license'),
+      licenseHeaders: const <String, String>{'Authorization': 'Bearer ...'},
+    ),
+    viewType: VideoViewType.platformView,
+  );
+  await controller.initialize();
+  await controller.play();
+```
+
+FairPlay additionally needs the URL of the application certificate, and
+optionally a content ID to use when generating the SPC (by default the content
+ID is derived from the `skd://` key URL in the HLS manifest):
+
+<?code-excerpt "readme_excerpts.dart (fairplay)"?>
+```dart
+import 'package:video_player_avfoundation/video_player_avfoundation.dart';
+// ···
+  final controller = VideoPlayerController.networkUrl(
+    Uri.parse('https://example.com/protected.m3u8'),
+    drmConfiguration: FairPlayDrmConfiguration(
+      certificateUri: Uri.parse('https://example.com/certificate'),
+      licenseUri: Uri.parse('https://example.com/license'),
+      licenseHeaders: const <String, String>{'Authorization': 'Bearer ...'},
+    ),
+    viewType: VideoViewType.platformView,
+  );
+```
+
+Passing a configuration that the current platform doesn't support — Widevine on
+iOS, for example — throws an `ArgumentError` from `initialize`, so apps that
+support both platforms should pick the configuration based on the platform they
+are running on. See the DRM demo in the example app for one way to do that.
+
+#### Limitations
+
+- DRM is only supported for network sources. There is no support for DRM with
+  asset, file, or content URI sources, and no support for offline or persistent
+  licenses.
+- DRM-protected video currently only renders in
+  `VideoViewType.platformView`. In texture view mode the audio plays but the
+  video frames are not displayed, because protected frames can't be copied into
+  the texture used for Flutter rendering.
+- On Android, license exchange is performed by Media3 from the license URL and
+  headers, so provider setups that need behavior outside Media3's standard DRM
+  configuration are not supported.
+- On iOS and macOS, only the standard FairPlay exchange is supported: the SPC is
+  POSTed as an `application/octet-stream` body, and the response body is used as
+  the CKC as-is. Providers that wrap the SPC in JSON, base64-encode the CKC, or
+  require request signing performed at request time are not supported.
+- Only one DRM system can be configured per source; there is no multi-DRM
+  negotiation.
+- The Web implementation does not support DRM.

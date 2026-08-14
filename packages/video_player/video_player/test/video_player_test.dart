@@ -78,6 +78,9 @@ class FakeController extends ValueNotifier<VideoPlayerValue> implements VideoPla
   VideoFormat? get formatHint => null;
 
   @override
+  VideoDrmConfiguration? get drmConfiguration => null;
+
+  @override
   Future<ClosedCaptionFile> get closedCaptionFile => _loadClosedCaption();
 
   @override
@@ -468,6 +471,26 @@ void main() {
         expect(fakeVideoPlayerPlatform.dataSources[0].uri, 'https://127.0.0.1');
         expect(fakeVideoPlayerPlatform.dataSources[0].formatHint, null);
         expect(fakeVideoPlayerPlatform.dataSources[0].httpHeaders, <String, String>{});
+      });
+
+      test('network url with DRM configuration', () async {
+        const VideoDrmConfiguration drmConfiguration = _FakeDrmConfiguration();
+        final controller = VideoPlayerController.networkUrl(
+          Uri.parse('https://127.0.0.1'),
+          drmConfiguration: drmConfiguration,
+        );
+        addTearDown(controller.dispose);
+        await controller.initialize();
+
+        expect(fakeVideoPlayerPlatform.dataSources[0].drmConfiguration, same(drmConfiguration));
+      });
+
+      test('network url has no DRM configuration by default', () async {
+        final controller = VideoPlayerController.networkUrl(Uri.parse('https://127.0.0.1'));
+        addTearDown(controller.dispose);
+        await controller.initialize();
+
+        expect(fakeVideoPlayerPlatform.dataSources[0].drmConfiguration, isNull);
       });
 
       test('network url with hint', () async {
@@ -1039,13 +1062,11 @@ void main() {
         }
 
         expect(isSorted, false, reason: 'Expected captions to be unsorted');
-        expect(captions.map((Caption c) => c.text).toList(), <String>[
-          'one',
-          'two',
-          'three',
-          'five',
-          'four',
-        ], reason: 'Captions should be in original unsorted order');
+        expect(
+          captions.map((Caption c) => c.text).toList(),
+          <String>['one', 'two', 'three', 'five', 'four'],
+          reason: 'Captions should be in original unsorted order',
+        );
       });
 
       test('works when seeking, includes all captions', () async {
@@ -2219,4 +2240,9 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   }
 
   final Map<int, String> selectedAudioTrackIds = <int, String>{};
+}
+
+/// A stand-in for the DRM configurations that implementation packages provide.
+class _FakeDrmConfiguration extends VideoDrmConfiguration {
+  const _FakeDrmConfiguration();
 }
