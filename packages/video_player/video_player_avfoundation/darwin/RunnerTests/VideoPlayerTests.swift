@@ -93,6 +93,20 @@ private let hlsAudioTestURI =
     #expect(avFactory.lastResourceLoaderDelegate is FVPFairPlayResourceLoaderDelegate)
   }
 
+  @Test func fairPlayDelegateHandlesCancellation() {
+    // AVFoundation cancels key requests on seek, item replacement and teardown; without this the
+    // exchange would keep running and finish a request that is no longer valid.
+    let delegate = FVPFairPlayResourceLoaderDelegate(
+      certificateURL: URL(string: "https://example.com/certificate")!,
+      licenseURL: URL(string: "https://example.com/license")!,
+      licenseHeaders: [:],
+      contentId: nil)
+
+    // Spelled as a raw selector because AVAssetResourceLoaderDelegate overloads didCancel: for
+    // both loading requests and authentication challenges.
+    #expect(delegate.responds(to: Selector("resourceLoader:didCancelLoadingRequest:")))
+  }
+
   @Test func fairPlayConfigurationWithAnInvalidUriThrows() throws {
     let videoPlayerPlugin = try createInitializedPlugin()
 

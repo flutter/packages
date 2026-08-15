@@ -44,7 +44,12 @@ class FairPlayDrmConfiguration extends VideoDrmConfiguration {
 
   /// The content identifier to use when generating the SPC.
   ///
-  /// If this is null, the content identifier is derived from the `skd://` key
-  /// URL that AVFoundation asks the plugin to resolve.
+  /// If this is null, the full `skd://` key URI that AVFoundation asks the
+  /// plugin to resolve is used, for example `skd://some-key-id`.
+  ///
+  /// License servers differ on what they expect as the content identifier.
+  /// Providers that key licenses on just the identifier portion of that URI,
+  /// rather than the whole URI, need it passed explicitly here — supplying the
+  /// wrong identifier produces an SPC the license server will reject.
   final String? contentId;
 }

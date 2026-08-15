@@ -191,6 +191,10 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   }
 
   [self.player replaceCurrentItemWithPlayerItem:nil];
+  // Release the wrapper as well as the player's reference to the item. The wrapper owns the
+  // resource loader delegate for DRM playback, which in turn owns any key exchange still in
+  // flight, so holding it until this player is deallocated would keep that work alive.
+  _playerItem = nil;
 
   if (_onDisposed) {
     _onDisposed();
