@@ -134,6 +134,7 @@ class DartTestCommand extends PackageLoopingCommand {
     final int exitCode = await processRunner.runAndStream(flutterCommand, <String>[
       'test',
       '--color',
+      if (platform == 'chrome') ...<String>['-r', 'expanded', '--timeout=5m', '-j', '2'],
       if (experiment.isNotEmpty) '--enable-experiment=$experiment',
       // Flutter defaults to VM mode (under a different name) and explicitly
       // setting it is deprecated, so pass nothing in that case.
@@ -162,6 +163,7 @@ class DartTestCommand extends PackageLoopingCommand {
       'run',
       if (experiment.isNotEmpty) '--enable-experiment=$experiment',
       'test',
+      if (platform == 'chrome') ...<String>['-r', 'expanded', '--timeout=5m', '-j', '2'],
       if (platform != null) '--platform=$platform',
       if (wasm) '--compiler=dart2wasm',
     ], workingDir: package.directory);
