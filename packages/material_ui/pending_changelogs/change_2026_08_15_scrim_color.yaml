@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `Drawer`, `showModalBottomSheet`, and `showDialog` ignoring a custom `ColorScheme.scrim` and always using `Colors.black54` for their scrim/barrier.
+version: patch
