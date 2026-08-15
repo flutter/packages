@@ -1,3 +1,0 @@
-changelog: |
-  - Adds MaterialUiCompatibilityBridge for legacy flutter/material.dart compatibility.
-version: minor

@@ -1,3 +1,12 @@
+## 0.7.4+5
+
+* Fixes a leaked thread per capture by dispatching the `takePicture` result callback on the main
+  executor.
+
+## 0.7.4+4
+
+* Fix `NullPointerException` when disposing camera during active video recording.
+
 ## 0.7.4+3
 
 * Updates `ResolutionPreset.max` to prefer higher resolution over capture rate

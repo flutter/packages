@@ -3,6 +3,7 @@
 * Adds support for configuring file URL access permissions. See
   `AndroidWebViewController.setAllowFileAccessFromFileURLs` and
   `AndroidWebViewController.setAllowUniversalAccessFromFileURLs`.
+* Adds support for configuring Web Authentication in `AndroidWebViewController` with `setWebAuthenticationSupport` to enable Passkey and other related Authentication.
 
 ## 4.13.0
 

@@ -696,7 +696,7 @@ release:
         root.childFile('.ci.yaml').writeAsStringSync(r'''
 enabled_branches:
   - main
-  - release-a_package-\d+\.\d+\.\d+
+  - release-a_package-\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)?
 ''');
       }
     }
@@ -991,7 +991,7 @@ enabled_branches:
           output,
           contains(
             contains(
-              r'Missing release branch pattern release-a_package-\d+\.\d+\.\d+ in enabled_branches in .ci.yaml',
+              r'Missing release branch pattern release-a_package-\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)? in enabled_branches in .ci.yaml',
             ),
           ),
         );
@@ -1006,7 +1006,7 @@ enabled_branches:
         root.childFile('.ci.yaml').writeAsStringSync(r'''
 enabled_branches:
   - main
-  - release-a_package-\d+\.\d+\.\d+
+  - release-a_package-\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)?
 ''');
 
         Error? commandError;
@@ -1023,7 +1023,7 @@ enabled_branches:
           output,
           contains(
             contains(
-              r'Unexpected release branch pattern release-a_package-\d+\.\d+\.\d+ in enabled_branches in .ci.yaml',
+              r'Unexpected release branch pattern release-a_package-\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)? in enabled_branches in .ci.yaml',
             ),
           ),
         );

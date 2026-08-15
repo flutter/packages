@@ -604,6 +604,15 @@ class MockAndroidWebViewController extends _i1.Mock implements _i6.AndroidWebVie
           as _i5.Future<bool>);
 
   @override
+  _i5.Future<void> setWebAuthenticationSupport(_i6.WebAuthenticationSupport? support) =>
+      (super.noSuchMethod(
+            Invocation.method(#setWebAuthenticationSupport, [support]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
   _i5.Future<void> setPaymentRequestEnabled(bool? enabled) =>
       (super.noSuchMethod(
             Invocation.method(#setPaymentRequestEnabled, [enabled]),

@@ -9,9 +9,9 @@ import androidx.annotation.Nullable;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
+import androidx.core.content.ContextCompat;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Executors;
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -106,7 +106,9 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
         createOnImageSavedCallback(temporaryCaptureFile, systemServicesManager, callback);
 
     pigeonInstance.takePicture(
-        outputFileOptions, Executors.newSingleThreadExecutor(), onImageSavedCallback);
+        outputFileOptions,
+        ContextCompat.getMainExecutor(getPigeonRegistrar().getContext()),
+        onImageSavedCallback);
   }
 
   @Override
