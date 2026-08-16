@@ -1,4 +1,0 @@
-changelog: |
-  - Added a main.dart example for the Pub "Example" tab that references a curated
-  list of existing examples.
-version: patch
