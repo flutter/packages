@@ -560,6 +560,7 @@ class Camera {
     await _onVideoRecordingErrorSubscription?.cancel();
     _onVideoRecordingErrorSubscription = null;
     await videoRecordingErrorController.close();
+    await _cameraFrameStreamController?.close();
   }
 
   /// Returns the first supported video mime type (amongst mp4 and webm)
@@ -614,21 +615,21 @@ class Camera {
       _isCameraFrameStreamInitialized() && _cameraFrameStreamController!.hasListener;
 
   /// Used for safely emitting camera frame stream event
-  void _safelyEmitCamereFrameStreamEvent(CameraImageData data) {
+  void _safelyEmitCameraFrameStreamEvent(CameraImageData data) {
     if (_isCameraFrameStreamInitialized()) {
       _cameraFrameStreamController!.add(data);
     }
   }
 
   /// Used for safely closing camera frame stream event
-  void _safelyCloseCamereFrameStream() {
+  void _safelyCloseCameraFrameStream() {
     if (_isCameraFrameStreamInitialized()) {
       _cameraFrameStreamController!.close();
     }
   }
 
   /// Used for safely emitting camera frame stream error
-  void _safelyEmitCamereFrameStreamError(Object error) {
+  void _safelyEmitCameraFrameStreamError(Object error) {
     if (_isCameraFrameStreamInitialized()) {
       _cameraFrameStreamController!.addError(error);
     }
@@ -657,10 +658,10 @@ class Camera {
         if (canUseMediaStreamTrackProcessor && stream != null) {
           _triggerVideoStreamTrackProcessorLoop(
             stream!,
-            onImageAvailable: _safelyEmitCamereFrameStreamEvent,
+            onImageAvailable: _safelyEmitCameraFrameStreamEvent,
             shouldContinue: _isCameraFrameStreaming,
-            onClose: _safelyCloseCamereFrameStream,
-            onError: _safelyEmitCamereFrameStreamError,
+            onClose: _safelyCloseCameraFrameStream,
+            onError: _safelyEmitCameraFrameStreamError,
           );
         } else {
           _triggerAnimationFramesLoop(_getAndEmitFrameFromVideoElement, fps: cameraStreamFPS);
@@ -712,10 +713,10 @@ class Camera {
   void _getAndEmitFrameFromVideoElement() {
     try {
       final CameraImageData image = _cameraService.takeFrame(videoElement, cameraId: textureId);
-      _safelyEmitCamereFrameStreamEvent(image);
+      _safelyEmitCameraFrameStreamEvent(image);
     } catch (e) {
-      _safelyEmitCamereFrameStreamError(e);
-      _safelyCloseCamereFrameStream();
+      _safelyEmitCameraFrameStreamError(e);
+      _safelyCloseCameraFrameStream();
     }
   }
 

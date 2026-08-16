@@ -405,6 +405,7 @@ class CameraService {
     } else {
       imageData = _takeFallbackCanvasFrame(
         videoElement,
+        cameraId: cameraId,
         width: width,
         height: height,
         settings: imageDataSettings,
@@ -458,9 +459,18 @@ class CameraService {
   /// Used by [_takeFallbackCanvasFrame] to cache the canvas element
   web.CanvasElement? _canvasElement;
 
+  /// Used by [_takeFallbackCanvasFrame] to cache the canvas context
+  web.CanvasRenderingContext2D? _canvasElementContext;
+
+  /// Used to check object type equality agains [web.CanvasRenderingContext2D]
+  @visibleForTesting
+  bool Function(JSAny) isCanvasElementContextType = (jsObj) =>
+      jsObj.isA<web.CanvasRenderingContext2D>();
+
   /// Takes a video frame using a regular `CanvasElement`
   web.ImageData _takeFallbackCanvasFrame(
     web.VideoElement videoElement, {
+    int cameraId = 0,
     required int width,
     required int height,
     required WebTweakImageDataSettings settings,
@@ -473,10 +483,14 @@ class CameraService {
         ..width = width
         ..height = height;
     }
-    final web.CanvasRenderingContext2D context = _canvasElement!.context2D;
+    _canvasElementContext ??= _wasmCompatible(
+      _canvasElement!.getContext('2d', <String, Object?>{'willReadFrequently': true}.jsify()),
+      isCanvasElementContextType,
+      cameraId: cameraId,
+    );
 
-    context.drawImageScaled(videoElement, 0, 0, width.toDouble(), height.toDouble());
-    return context.getImageData(0, 0, width, height, settings);
+    _canvasElementContext!.drawImageScaled(videoElement, 0, 0, width.toDouble(), height.toDouble());
+    return _canvasElementContext!.getImageData(0, 0, width, height, settings);
   }
 
   /// Returns the first video track from the given [mediaStream].
@@ -552,6 +566,7 @@ class CameraService {
       cameraId: cameraId,
     );
     if (videoFrame.visibleRect == null) {
+      videoFrame.close();
       throw CameraWebException(
         cameraId,
         CameraErrorCode.videoTrackReaderNotInitialized,
@@ -625,7 +640,7 @@ class CameraService {
     bool Function(JSAny) checkType, {
     int cameraId = 0,
   }) {
-    // Use the callback to perform the compile-time bound check
+    // Use the callback to perform the runtime bound check
     if (raw == null || !checkType(raw)) {
       throw CameraWebException(
         cameraId,
