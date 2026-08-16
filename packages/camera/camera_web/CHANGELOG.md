@@ -1,3 +1,7 @@
+## 0.3.6
+
+* Adds support for camera image stream on web.
+
 ## 0.3.5+5
 
 * Removes invalid @JS annotation from extension type constructors.
