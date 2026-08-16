@@ -111,9 +111,10 @@ class XFile extends XFileBase {
   }
 
   @override
-  Future<String> readAsString({Encoding encoding = utf8}) async {
-    if (_bytes != null) {
-      return encoding.decode(_bytes);
+  Future<String> readAsString({Encoding encoding = utf8}) {
+    final Uint8List? bytes = _bytes;
+    if (bytes != null) {
+      return Future<String>.sync(() => encoding.decode(bytes));
     }
     return _file.readAsString(encoding: encoding);
   }
