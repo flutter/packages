@@ -633,6 +633,11 @@ class IconButton extends StatelessWidget {
   /// [ButtonStyle.sizeVariant], [ButtonStyle.iconButtonWidth], and
   /// [ButtonStyle.shapeVariant].
   ///
+  /// When [IconButtonThemeData.variant] is [StyleVariant.material3Expressive],
+  /// [IconButton]'s default [ButtonStyle.tapTargetSize] is
+  /// [MaterialTapTargetSize.padded]. The [tapTargetSize] parameter can still be
+  /// used to override that default for an individual icon button style.
+  ///
   /// All parameters default to null, by default this method returns
   /// a [ButtonStyle] that doesn't override anything.
   ///
