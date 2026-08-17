@@ -241,7 +241,7 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
   VisualDensity? get visualDensity => VisualDensity.standard;
 
   @override
-  MaterialTapTargetSize? get tapTargetSize => Theme.of(context).materialTapTargetSize;
+  MaterialTapTargetSize? get tapTargetSize => MaterialTapTargetSize.padded;
 
   @override
   InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
@@ -506,7 +506,7 @@ class _FilledIconButtonDefaultsM3E extends ButtonStyle {
   VisualDensity? get visualDensity => VisualDensity.standard;
 
   @override
-  MaterialTapTargetSize? get tapTargetSize => Theme.of(context).materialTapTargetSize;
+  MaterialTapTargetSize? get tapTargetSize => MaterialTapTargetSize.padded;
 
   @override
   InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
@@ -771,7 +771,7 @@ class _FilledTonalIconButtonDefaultsM3E extends ButtonStyle {
   VisualDensity? get visualDensity => VisualDensity.standard;
 
   @override
-  MaterialTapTargetSize? get tapTargetSize => Theme.of(context).materialTapTargetSize;
+  MaterialTapTargetSize? get tapTargetSize => MaterialTapTargetSize.padded;
 
   @override
   InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
@@ -1049,7 +1049,7 @@ class _OutlinedIconButtonDefaultsM3E extends ButtonStyle {
   VisualDensity? get visualDensity => VisualDensity.standard;
 
   @override
-  MaterialTapTargetSize? get tapTargetSize => Theme.of(context).materialTapTargetSize;
+  MaterialTapTargetSize? get tapTargetSize => MaterialTapTargetSize.padded;
 
   @override
   InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
