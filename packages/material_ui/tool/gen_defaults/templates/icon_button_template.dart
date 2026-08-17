@@ -241,9 +241,9 @@ switch (buttonWidth ?? IconButtonWidth.standard) {
 
   String get _containerShapeSwitch {
     return '''
-switch (buttonShape ?? IconButtonShape.round) {
-      IconButtonShape.round => $_containerRoundShapeSwitch,
-      IconButtonShape.square => $_containerSquareShapeSwitch,
+switch (buttonShape ?? ButtonShapeVariant.round) {
+      ButtonShapeVariant.round => $_containerRoundShapeSwitch,
+      ButtonShapeVariant.square => $_containerSquareShapeSwitch,
     }''';
   }
 
@@ -279,9 +279,9 @@ switch (buttonShape ?? IconButtonShape.round) {
 
   String get _selectedShapeSwitch {
     return '''
-switch (buttonShape ?? IconButtonShape.round) {
-      IconButtonShape.round => $_selectedRoundShapeSwitch,
-      IconButtonShape.square => $_selectedSquareShapeSwitch,
+switch (buttonShape ?? ButtonShapeVariant.round) {
+      ButtonShapeVariant.round => $_selectedRoundShapeSwitch,
+      ButtonShapeVariant.square => $_selectedSquareShapeSwitch,
     }''';
   }
 
@@ -331,7 +331,7 @@ class $className extends ButtonStyle {
   final bool toggleable;
   final ButtonSize? buttonSize;
   final IconButtonWidth? buttonWidth;
-  final IconButtonShape? buttonShape;
+  final ButtonShapeVariant? buttonShape;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
@@ -428,7 +428,7 @@ class _M3EFilledIconButtonDefaults extends ButtonStyle {
   final bool toggleable;
   final ButtonSize? buttonSize;
   final IconButtonWidth? buttonWidth;
-  final IconButtonShape? buttonShape;
+  final ButtonShapeVariant? buttonShape;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
@@ -550,7 +550,7 @@ class _M3EFilledTonalIconButtonDefaults extends ButtonStyle {
   final bool toggleable;
   final ButtonSize? buttonSize;
   final IconButtonWidth? buttonWidth;
-  final IconButtonShape? buttonShape;
+  final ButtonShapeVariant? buttonShape;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
@@ -672,7 +672,7 @@ class _M3EOutlinedIconButtonDefaults extends ButtonStyle {
   final bool toggleable;
   final ButtonSize? buttonSize;
   final IconButtonWidth? buttonWidth;
-  final IconButtonShape? buttonShape;
+  final ButtonShapeVariant? buttonShape;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
