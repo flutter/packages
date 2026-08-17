@@ -3618,11 +3618,16 @@ void main() {
       expect(tester.getSize(find.byType(IconButton)), const Size(48.0, 48.0));
     });
 
-    testWidgets('xSmall size renders at 32dp minimum', (WidgetTester tester) async {
+    testWidgets('xSmall size renders at 32dp minimum with 48dp tap target', (
+      WidgetTester tester,
+    ) async {
+      int pressCount = 0;
       await tester.pumpWidget(
         buildM3EApp(
           child: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              pressCount += 1;
+            },
             icon: const Icon(Icons.add),
             style: const ButtonStyle(size: ButtonSize.xSmall),
           ),
@@ -3631,6 +3636,19 @@ void main() {
 
       expect(m3eIconButtonMaterialSize(tester), const Size(32.0, 32.0));
       expect(tester.getSize(find.byType(IconButton)), const Size(48.0, 48.0));
+
+      final Offset center = tester.getCenter(find.byType(IconButton));
+      for (final Offset offset in const <Offset>[
+        Offset(23.0, 0.0),
+        Offset(-23.0, 0.0),
+        Offset(0.0, 23.0),
+        Offset(0.0, -23.0),
+      ]) {
+        await tester.tapAt(center + offset);
+        await tester.pump();
+      }
+
+      expect(pressCount, 4);
     });
 
     testWidgets('styleFrom sets the size variant', (WidgetTester tester) async {
