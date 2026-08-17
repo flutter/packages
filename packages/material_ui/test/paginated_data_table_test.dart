@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'data_table_test_utils.dart';
+import 'finders.dart';
 
 class TestDataSource extends DataTableSource {
   TestDataSource({this.allowSelection = false});
@@ -94,7 +95,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.byTooltip('Next page'));
+    await tester.tap(findByTooltip('Next page'));
 
     expect(log, <String>['page-changed: 2']);
     log.clear();
@@ -117,7 +118,7 @@ void main() {
     expect(find.text('Gingerbread (0)'), findsNothing);
 
     final Finder lastPageButton = find.ancestor(
-      of: find.byTooltip('Last page'),
+      of: findByTooltip('Last page'),
       matching: find.byWidgetPredicate((Widget widget) => widget is IconButton),
     );
 
@@ -137,7 +138,7 @@ void main() {
     expect(find.text('KitKat (49)'), findsOneWidget);
 
     final Finder firstPageButton = find.ancestor(
-      of: find.byTooltip('First page'),
+      of: findByTooltip('First page'),
       matching: find.byWidgetPredicate((Widget widget) => widget is IconButton),
     );
 
@@ -194,13 +195,13 @@ void main() {
 
     expect(find.text('1–2 of 500'), findsOneWidget);
 
-    await tester.tap(find.byTooltip('Next page'));
+    await tester.tap(findByTooltip('Next page'));
     await tester.pump();
 
     expect(find.text('3–4 of 500'), findsOneWidget);
 
     final Finder lastPageButton = find.ancestor(
-      of: find.byTooltip('Last page'),
+      of: findByTooltip('Last page'),
       matching: find.byWidgetPredicate((Widget widget) => widget is IconButton),
     );
 
@@ -220,7 +221,7 @@ void main() {
 
     expect(find.textContaining('1–3 of 500'), findsOneWidget);
 
-    await tester.tap(find.byTooltip('Next page'));
+    await tester.tap(findByTooltip('Next page'));
     await tester.pump();
 
     expect(find.text('4–6 of 500'), findsOneWidget);
@@ -238,7 +239,7 @@ void main() {
 
     expect(find.textContaining('1–4 of 500'), findsOneWidget);
 
-    await tester.tap(find.byTooltip('Next page'));
+    await tester.tap(findByTooltip('Next page'));
     await tester.pump();
 
     expect(find.text('5–8 of 500'), findsOneWidget);
@@ -256,7 +257,7 @@ void main() {
 
     expect(find.textContaining('1–5 of 500'), findsOneWidget);
 
-    await tester.tap(find.byTooltip('Next page'));
+    await tester.tap(findByTooltip('Next page'));
     await tester.pump();
 
     expect(find.text('6–10 of 500'), findsOneWidget);
@@ -274,7 +275,7 @@ void main() {
 
     expect(find.textContaining('1–8 of 500'), findsOneWidget);
 
-    await tester.tap(find.byTooltip('Next page'));
+    await tester.tap(findByTooltip('Next page'));
     await tester.pump();
 
     expect(find.text('9–16 of 500'), findsOneWidget);

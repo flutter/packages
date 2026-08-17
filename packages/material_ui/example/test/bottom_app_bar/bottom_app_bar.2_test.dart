@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../../test/finders.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/bottom_app_bar/bottom_app_bar.2.dart'
     as example;
@@ -70,7 +71,7 @@ void main() {
     await tester.pumpWidget(const example.BottomAppBarDemo());
 
     // Trigger the SnackBar.
-    await tester.tap(find.byTooltip('Open popup menu'));
+    await tester.tap(findByTooltip('Open popup menu'));
     await tester.pump();
 
     expect(find.text('Yay! A SnackBar!'), findsOneWidget);

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
+import '../../../test/finders.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/tooltip/tooltip.3.dart' as example;
 
@@ -21,7 +22,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 10));
     expect(find.text(tooltipText), findsOneWidget);
     // Tap on the tooltip and wait for the tooltip to disappear.
-    await tester.tap(find.byTooltip(tooltipText));
+    await tester.tap(findByTooltip(tooltipText));
     await tester.pump(const Duration(seconds: 1));
     expect(find.text(tooltipText), findsNothing);
   });
