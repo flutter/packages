@@ -1041,7 +1041,8 @@ class _IconButtonM3 extends ButtonStyleButton {
   /// * `shape` - StadiumBorder()
   /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
   /// * `visualDensity` - VisualDensity.standard
-  /// * `tapTargetSize` - theme.materialTapTargetSize
+  /// * `tapTargetSize` - theme.materialTapTargetSize for Material 3,
+  ///   MaterialTapTargetSize.padded for Material 3 Expressive
   /// * `animationDuration` - kThemeChangeDuration
   /// * `enableFeedback` - true
   /// * `alignment` - Alignment.center

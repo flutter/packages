@@ -3651,6 +3651,28 @@ void main() {
       expect(pressCount, 4);
     });
 
+    testWidgets('xSmall size keeps 48dp tap target when theme tapTargetSize is shrinkWrap', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          theme: ThemeData(
+            useMaterial3: true,
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            iconButtonTheme: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
+          ),
+          child: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.add),
+            style: const ButtonStyle(sizeVariant: ButtonSize.xSmall),
+          ),
+        ),
+      );
+
+      expect(m3eIconButtonMaterialSize(tester), const Size(32.0, 32.0));
+      expect(tester.getSize(find.byType(IconButton)), const Size(48.0, 48.0));
+    });
+
     testWidgets('styleFrom sets the size variant', (WidgetTester tester) async {
       await tester.pumpWidget(
         buildM3EApp(
