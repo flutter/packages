@@ -105,10 +105,18 @@ void updatePackageNameInImports(File file, String packageName) {
       // Package imports.
       .replaceAllMapped(
         RegExp(
-          r'^(@?(?:testable )?)import google_maps_flutter_ios(?:_sdk\d+)?((?:_objc)?;?)$',
+          r'^(@?(?:testable )?(?:  )?)import google_maps_flutter_ios(?:_sdk\d+)?((?:_objc)?;?)$',
           multiLine: true,
         ),
         (match) => '${match.group(1)}import $packageName${match.group(2)}',
+      )
+      // Conditional import.
+      .replaceAllMapped(
+        RegExp(
+          r'#if canImport\(google_maps_flutter_ios(?:_sdk\d+)?((?:_objc)?)\)$',
+          multiLine: true,
+        ),
+        (match) => '#if canImport($packageName${match.group(1)})',
       )
       // Bridging header.
       .replaceAllMapped(
