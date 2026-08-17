@@ -5,7 +5,7 @@
 // ignore_for_file: public_member_api_docs, unreachable_from_main
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
