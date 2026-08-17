@@ -38,7 +38,15 @@
       [[XCUIApplication alloc] initWithBundleIdentifier:@"com.apple.springboard"];
   XCUIElement *permissionAlert = springboard.alerts.firstMatch;
   if ([permissionAlert waitForExistenceWithTimeout:5.0]) {
-    [permissionAlert.buttons[@"Continue"] tap];
+    // The alert is titled in the simulator's language, so the confirmation
+    // button can't be looked up by name. It is the last of the alert's two
+    // buttons ("Cancel" and "Continue") in every localization.
+    XCUIElementQuery *alertButtons = permissionAlert.buttons;
+    NSUInteger buttonCount = alertButtons.count;
+    if (buttonCount == 0) {
+      XCTFail(@"Sign In permission alert has no buttons");
+    }
+    [[alertButtons elementBoundByIndex:buttonCount - 1] tap];
   } else {
     os_log(OS_LOG_DEFAULT, "Permission alert not detected, continuing.");
   }
