@@ -628,10 +628,10 @@ class IconButton extends StatelessWidget {
   /// create a [WidgetStateProperty] with a single value for all
   /// states.
   ///
-  /// The [size], [iconButtonWidth], and [iconButtonShape] parameters configure
+  /// The [sizeVariant], [iconButtonWidth], and [shapeVariant] parameters configure
   /// the Material 3 Expressive token size, width, and shape through
-  /// [ButtonStyle.size], [ButtonStyle.iconButtonWidth], and
-  /// [ButtonStyle.iconButtonShape].
+  /// [ButtonStyle.sizeVariant], [ButtonStyle.iconButtonWidth], and
+  /// [ButtonStyle.shapeVariant].
   ///
   /// All parameters default to null, by default this method returns
   /// a [ButtonStyle] that doesn't override anything.
@@ -677,9 +677,9 @@ class IconButton extends StatelessWidget {
     bool? enableFeedback,
     AlignmentGeometry? alignment,
     InteractiveInkFeatureFactory? splashFactory,
-    ButtonSize? size,
+    ButtonSize? sizeVariant,
     IconButtonWidth? iconButtonWidth,
-    IconButtonShape? iconButtonShape,
+    ButtonShapeVariant? shapeVariant,
   }) {
     final Color? overlayFallback = overlayColor ?? foregroundColor;
     WidgetStateProperty<Color?>? overlayColorProp;
@@ -720,9 +720,9 @@ class IconButton extends StatelessWidget {
       enableFeedback: enableFeedback,
       alignment: alignment,
       splashFactory: splashFactory,
-      size: size,
+      sizeVariant: sizeVariant,
       iconButtonWidth: iconButtonWidth,
-      iconButtonShape: iconButtonShape,
+      shapeVariant: shapeVariant,
     );
   }
 
@@ -1000,15 +1000,15 @@ class _IconButtonM3 extends ButtonStyleButton {
   final bool toggleable;
 
   ButtonSize? _effectiveSize(BuildContext context) {
-    return style?.size ?? IconButtonTheme.of(context).style?.size;
+    return style?.sizeVariant ?? IconButtonTheme.of(context).style?.sizeVariant;
   }
 
   IconButtonWidth? _effectiveWidth(BuildContext context) {
     return style?.iconButtonWidth ?? IconButtonTheme.of(context).style?.iconButtonWidth;
   }
 
-  IconButtonShape? _effectiveShape(BuildContext context) {
-    return style?.iconButtonShape ?? IconButtonTheme.of(context).style?.iconButtonShape;
+  ButtonShapeVariant? _effectiveShape(BuildContext context) {
+    return style?.shapeVariant ?? IconButtonTheme.of(context).style?.shapeVariant;
   }
 
   /// ## Material 3 defaults
@@ -1050,7 +1050,7 @@ class _IconButtonM3 extends ButtonStyleButton {
   ButtonStyle defaultStyleOf(BuildContext context) {
     final ButtonSize? effectiveSize = _effectiveSize(context);
     final IconButtonWidth? effectiveWidth = _effectiveWidth(context);
-    final IconButtonShape? effectiveShape = _effectiveShape(context);
+    final ButtonShapeVariant? effectiveShape = _effectiveShape(context);
 
     return switch (styleVariant) {
       StyleVariant.material3 => switch (iconButtonVariant) {

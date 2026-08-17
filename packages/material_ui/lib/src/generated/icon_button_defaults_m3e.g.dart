@@ -24,7 +24,7 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
   final bool toggleable;
   final ButtonSize? buttonSize;
   final IconButtonWidth? buttonWidth;
-  final IconButtonShape? buttonShape;
+  final ButtonShapeVariant? buttonShape;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
@@ -176,8 +176,8 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
           };
         }
         if (toggleable && states.contains(WidgetState.selected)) {
-          return switch (buttonShape ?? IconButtonShape.round) {
-            IconButtonShape.round => switch (buttonSize ?? ButtonSize.small) {
+          return switch (buttonShape ?? ButtonShapeVariant.round) {
+            ButtonShapeVariant.round => switch (buttonSize ?? ButtonSize.small) {
               ButtonSize.xSmall => const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(12.0)),
               ),
@@ -194,7 +194,7 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
                 borderRadius: BorderRadius.all(Radius.circular(28.0)),
               ),
             },
-            IconButtonShape.square => switch (buttonSize ?? ButtonSize.small) {
+            ButtonShapeVariant.square => switch (buttonSize ?? ButtonSize.small) {
               ButtonSize.xSmall => const StadiumBorder(),
               ButtonSize.small => const StadiumBorder(),
               ButtonSize.medium => const StadiumBorder(),
@@ -203,15 +203,15 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
             },
           };
         }
-        return switch (buttonShape ?? IconButtonShape.round) {
-          IconButtonShape.round => switch (buttonSize ?? ButtonSize.small) {
+        return switch (buttonShape ?? ButtonShapeVariant.round) {
+          ButtonShapeVariant.round => switch (buttonSize ?? ButtonSize.small) {
             ButtonSize.xSmall => const StadiumBorder(),
             ButtonSize.small => const StadiumBorder(),
             ButtonSize.medium => const StadiumBorder(),
             ButtonSize.large => const StadiumBorder(),
             ButtonSize.xLarge => const StadiumBorder(),
           },
-          IconButtonShape.square => switch (buttonSize ?? ButtonSize.small) {
+          ButtonShapeVariant.square => switch (buttonSize ?? ButtonSize.small) {
             ButtonSize.xSmall => const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(12.0)),
             ),
@@ -264,7 +264,7 @@ class _M3EFilledIconButtonDefaults extends ButtonStyle {
   final bool toggleable;
   final ButtonSize? buttonSize;
   final IconButtonWidth? buttonWidth;
-  final IconButtonShape? buttonShape;
+  final ButtonShapeVariant? buttonShape;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
@@ -441,8 +441,8 @@ class _M3EFilledIconButtonDefaults extends ButtonStyle {
           };
         }
         if (toggleable && states.contains(WidgetState.selected)) {
-          return switch (buttonShape ?? IconButtonShape.round) {
-            IconButtonShape.round => switch (buttonSize ?? ButtonSize.small) {
+          return switch (buttonShape ?? ButtonShapeVariant.round) {
+            ButtonShapeVariant.round => switch (buttonSize ?? ButtonSize.small) {
               ButtonSize.xSmall => const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(12.0)),
               ),
@@ -459,7 +459,7 @@ class _M3EFilledIconButtonDefaults extends ButtonStyle {
                 borderRadius: BorderRadius.all(Radius.circular(28.0)),
               ),
             },
-            IconButtonShape.square => switch (buttonSize ?? ButtonSize.small) {
+            ButtonShapeVariant.square => switch (buttonSize ?? ButtonSize.small) {
               ButtonSize.xSmall => const StadiumBorder(),
               ButtonSize.small => const StadiumBorder(),
               ButtonSize.medium => const StadiumBorder(),
@@ -468,15 +468,15 @@ class _M3EFilledIconButtonDefaults extends ButtonStyle {
             },
           };
         }
-        return switch (buttonShape ?? IconButtonShape.round) {
-          IconButtonShape.round => switch (buttonSize ?? ButtonSize.small) {
+        return switch (buttonShape ?? ButtonShapeVariant.round) {
+          ButtonShapeVariant.round => switch (buttonSize ?? ButtonSize.small) {
             ButtonSize.xSmall => const StadiumBorder(),
             ButtonSize.small => const StadiumBorder(),
             ButtonSize.medium => const StadiumBorder(),
             ButtonSize.large => const StadiumBorder(),
             ButtonSize.xLarge => const StadiumBorder(),
           },
-          IconButtonShape.square => switch (buttonSize ?? ButtonSize.small) {
+          ButtonShapeVariant.square => switch (buttonSize ?? ButtonSize.small) {
             ButtonSize.xSmall => const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(12.0)),
             ),
@@ -529,7 +529,7 @@ class _M3EFilledTonalIconButtonDefaults extends ButtonStyle {
   final bool toggleable;
   final ButtonSize? buttonSize;
   final IconButtonWidth? buttonWidth;
-  final IconButtonShape? buttonShape;
+  final ButtonShapeVariant? buttonShape;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
@@ -706,8 +706,8 @@ class _M3EFilledTonalIconButtonDefaults extends ButtonStyle {
           };
         }
         if (toggleable && states.contains(WidgetState.selected)) {
-          return switch (buttonShape ?? IconButtonShape.round) {
-            IconButtonShape.round => switch (buttonSize ?? ButtonSize.small) {
+          return switch (buttonShape ?? ButtonShapeVariant.round) {
+            ButtonShapeVariant.round => switch (buttonSize ?? ButtonSize.small) {
               ButtonSize.xSmall => const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(12.0)),
               ),
@@ -724,7 +724,7 @@ class _M3EFilledTonalIconButtonDefaults extends ButtonStyle {
                 borderRadius: BorderRadius.all(Radius.circular(28.0)),
               ),
             },
-            IconButtonShape.square => switch (buttonSize ?? ButtonSize.small) {
+            ButtonShapeVariant.square => switch (buttonSize ?? ButtonSize.small) {
               ButtonSize.xSmall => const StadiumBorder(),
               ButtonSize.small => const StadiumBorder(),
               ButtonSize.medium => const StadiumBorder(),
@@ -733,15 +733,15 @@ class _M3EFilledTonalIconButtonDefaults extends ButtonStyle {
             },
           };
         }
-        return switch (buttonShape ?? IconButtonShape.round) {
-          IconButtonShape.round => switch (buttonSize ?? ButtonSize.small) {
+        return switch (buttonShape ?? ButtonShapeVariant.round) {
+          ButtonShapeVariant.round => switch (buttonSize ?? ButtonSize.small) {
             ButtonSize.xSmall => const StadiumBorder(),
             ButtonSize.small => const StadiumBorder(),
             ButtonSize.medium => const StadiumBorder(),
             ButtonSize.large => const StadiumBorder(),
             ButtonSize.xLarge => const StadiumBorder(),
           },
-          IconButtonShape.square => switch (buttonSize ?? ButtonSize.small) {
+          ButtonShapeVariant.square => switch (buttonSize ?? ButtonSize.small) {
             ButtonSize.xSmall => const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(12.0)),
             ),
@@ -794,7 +794,7 @@ class _M3EOutlinedIconButtonDefaults extends ButtonStyle {
   final bool toggleable;
   final ButtonSize? buttonSize;
   final IconButtonWidth? buttonWidth;
-  final IconButtonShape? buttonShape;
+  final ButtonShapeVariant? buttonShape;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
@@ -957,8 +957,8 @@ class _M3EOutlinedIconButtonDefaults extends ButtonStyle {
           };
         }
         if (toggleable && states.contains(WidgetState.selected)) {
-          return switch (buttonShape ?? IconButtonShape.round) {
-            IconButtonShape.round => switch (buttonSize ?? ButtonSize.small) {
+          return switch (buttonShape ?? ButtonShapeVariant.round) {
+            ButtonShapeVariant.round => switch (buttonSize ?? ButtonSize.small) {
               ButtonSize.xSmall => const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(12.0)),
               ),
@@ -975,7 +975,7 @@ class _M3EOutlinedIconButtonDefaults extends ButtonStyle {
                 borderRadius: BorderRadius.all(Radius.circular(28.0)),
               ),
             },
-            IconButtonShape.square => switch (buttonSize ?? ButtonSize.small) {
+            ButtonShapeVariant.square => switch (buttonSize ?? ButtonSize.small) {
               ButtonSize.xSmall => const StadiumBorder(),
               ButtonSize.small => const StadiumBorder(),
               ButtonSize.medium => const StadiumBorder(),
@@ -984,15 +984,15 @@ class _M3EOutlinedIconButtonDefaults extends ButtonStyle {
             },
           };
         }
-        return switch (buttonShape ?? IconButtonShape.round) {
-          IconButtonShape.round => switch (buttonSize ?? ButtonSize.small) {
+        return switch (buttonShape ?? ButtonShapeVariant.round) {
+          ButtonShapeVariant.round => switch (buttonSize ?? ButtonSize.small) {
             ButtonSize.xSmall => const StadiumBorder(),
             ButtonSize.small => const StadiumBorder(),
             ButtonSize.medium => const StadiumBorder(),
             ButtonSize.large => const StadiumBorder(),
             ButtonSize.xLarge => const StadiumBorder(),
           },
-          IconButtonShape.square => switch (buttonSize ?? ButtonSize.small) {
+          ButtonShapeVariant.square => switch (buttonSize ?? ButtonSize.small) {
             ButtonSize.xSmall => const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(12.0)),
             ),

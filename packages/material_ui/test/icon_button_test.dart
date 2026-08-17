@@ -3621,7 +3621,7 @@ void main() {
     testWidgets('xSmall size renders at 32dp minimum with 48dp tap target', (
       WidgetTester tester,
     ) async {
-      int pressCount = 0;
+      var pressCount = 0;
       await tester.pumpWidget(
         buildM3EApp(
           child: IconButton(
@@ -3629,7 +3629,7 @@ void main() {
               pressCount += 1;
             },
             icon: const Icon(Icons.add),
-            style: const ButtonStyle(size: ButtonSize.xSmall),
+            style: const ButtonStyle(sizeVariant: ButtonSize.xSmall),
           ),
         ),
       );
@@ -3638,7 +3638,7 @@ void main() {
       expect(tester.getSize(find.byType(IconButton)), const Size(48.0, 48.0));
 
       final Offset center = tester.getCenter(find.byType(IconButton));
-      for (final Offset offset in const <Offset>[
+      for (final offset in const <Offset>[
         Offset(23.0, 0.0),
         Offset(-23.0, 0.0),
         Offset(0.0, 23.0),
@@ -3657,7 +3657,7 @@ void main() {
           child: IconButton(
             onPressed: () {},
             icon: const Icon(Icons.add),
-            style: IconButton.styleFrom(size: ButtonSize.medium),
+            style: IconButton.styleFrom(sizeVariant: ButtonSize.medium),
           ),
         ),
       );
@@ -3672,7 +3672,7 @@ void main() {
           child: IconButton(
             onPressed: () {},
             icon: const Icon(Icons.add),
-            style: const ButtonStyle(size: ButtonSize.medium),
+            style: const ButtonStyle(sizeVariant: ButtonSize.medium),
           ),
         ),
       );
@@ -3687,7 +3687,7 @@ void main() {
           child: IconButton(
             onPressed: () {},
             icon: const Icon(Icons.add),
-            style: const ButtonStyle(size: ButtonSize.large),
+            style: const ButtonStyle(sizeVariant: ButtonSize.large),
           ),
         ),
       );
@@ -3702,7 +3702,7 @@ void main() {
           child: IconButton(
             onPressed: () {},
             icon: const Icon(Icons.add),
-            style: const ButtonStyle(size: ButtonSize.xLarge),
+            style: const ButtonStyle(sizeVariant: ButtonSize.xLarge),
           ),
         ),
       );
@@ -3799,8 +3799,8 @@ void main() {
             onPressed: () {},
             icon: const Icon(Icons.add),
             style: const ButtonStyle(
-              size: ButtonSize.medium,
-              iconButtonShape: IconButtonShape.square,
+              sizeVariant: ButtonSize.medium,
+              shapeVariant: ButtonShapeVariant.square,
             ),
           ),
         ),
@@ -3828,8 +3828,8 @@ void main() {
             onPressed: () {},
             icon: const Icon(Icons.add),
             style: const ButtonStyle(
-              size: ButtonSize.medium,
-              iconButtonShape: IconButtonShape.square,
+              sizeVariant: ButtonSize.medium,
+              shapeVariant: ButtonShapeVariant.square,
             ),
           ),
         ),
@@ -3933,7 +3933,7 @@ void main() {
           child: IconButton.filled(
             onPressed: () {},
             icon: const Icon(Icons.add),
-            style: const ButtonStyle(size: ButtonSize.large),
+            style: const ButtonStyle(sizeVariant: ButtonSize.large),
           ),
         ),
       );
@@ -3948,7 +3948,7 @@ void main() {
           child: IconButton.outlined(
             onPressed: () {},
             icon: const Icon(Icons.add),
-            style: const ButtonStyle(size: ButtonSize.medium),
+            style: const ButtonStyle(sizeVariant: ButtonSize.medium),
           ),
         ),
       );
@@ -3965,7 +3965,7 @@ void main() {
           theme: ThemeData(
             useMaterial3: true,
             iconButtonTheme: const IconButtonThemeData(
-              style: ButtonStyle(size: ButtonSize.large),
+              style: ButtonStyle(sizeVariant: ButtonSize.large),
               variant: StyleVariant.material3Expressive,
             ),
           ),
@@ -3983,14 +3983,14 @@ void main() {
           theme: ThemeData(
             useMaterial3: true,
             iconButtonTheme: const IconButtonThemeData(
-              style: ButtonStyle(size: ButtonSize.large),
+              style: ButtonStyle(sizeVariant: ButtonSize.large),
               variant: StyleVariant.material3Expressive,
             ),
           ),
           child: IconButton(
             onPressed: () {},
             icon: const Icon(Icons.add),
-            style: const ButtonStyle(size: ButtonSize.xSmall),
+            style: const ButtonStyle(sizeVariant: ButtonSize.xSmall),
           ),
         ),
       );
@@ -4004,7 +4004,7 @@ void main() {
         buildM3EApp(
           child: IconButtonTheme(
             data: const IconButtonThemeData(
-              style: ButtonStyle(size: ButtonSize.medium),
+              style: ButtonStyle(sizeVariant: ButtonSize.medium),
               variant: StyleVariant.material3Expressive,
             ),
             child: IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
@@ -4216,23 +4216,23 @@ void main() {
     test('equality', () {
       const a = IconButtonThemeData(
         style: ButtonStyle(
-          size: ButtonSize.small,
+          sizeVariant: ButtonSize.small,
           iconButtonWidth: IconButtonWidth.standard,
-          iconButtonShape: IconButtonShape.round,
+          shapeVariant: ButtonShapeVariant.round,
         ),
       );
       const b = IconButtonThemeData(
         style: ButtonStyle(
-          size: ButtonSize.small,
+          sizeVariant: ButtonSize.small,
           iconButtonWidth: IconButtonWidth.standard,
-          iconButtonShape: IconButtonShape.round,
+          shapeVariant: ButtonShapeVariant.round,
         ),
       );
       const c = IconButtonThemeData(
         style: ButtonStyle(
-          size: ButtonSize.large,
+          sizeVariant: ButtonSize.large,
           iconButtonWidth: IconButtonWidth.wide,
-          iconButtonShape: IconButtonShape.square,
+          shapeVariant: ButtonShapeVariant.square,
         ),
       );
 
@@ -4243,16 +4243,16 @@ void main() {
     test('hashCode', () {
       const a = IconButtonThemeData(
         style: ButtonStyle(
-          size: ButtonSize.small,
+          sizeVariant: ButtonSize.small,
           iconButtonWidth: IconButtonWidth.narrow,
-          iconButtonShape: IconButtonShape.round,
+          shapeVariant: ButtonShapeVariant.round,
         ),
       );
       const b = IconButtonThemeData(
         style: ButtonStyle(
-          size: ButtonSize.small,
+          sizeVariant: ButtonSize.small,
           iconButtonWidth: IconButtonWidth.narrow,
-          iconButtonShape: IconButtonShape.round,
+          shapeVariant: ButtonShapeVariant.round,
         ),
       );
 
@@ -4262,35 +4262,35 @@ void main() {
     test('lerp', () {
       const a = IconButtonThemeData(
         style: ButtonStyle(
-          size: ButtonSize.small,
+          sizeVariant: ButtonSize.small,
           iconButtonWidth: IconButtonWidth.narrow,
-          iconButtonShape: IconButtonShape.round,
+          shapeVariant: ButtonShapeVariant.round,
         ),
       );
       const b = IconButtonThemeData(
         style: ButtonStyle(
-          size: ButtonSize.large,
+          sizeVariant: ButtonSize.large,
           iconButtonWidth: IconButtonWidth.wide,
-          iconButtonShape: IconButtonShape.square,
+          shapeVariant: ButtonShapeVariant.square,
         ),
       );
 
-      expect(IconButtonThemeData.lerp(a, b, 0.0)?.style?.size, ButtonSize.small);
-      expect(IconButtonThemeData.lerp(a, b, 0.4)?.style?.size, ButtonSize.small);
-      expect(IconButtonThemeData.lerp(a, b, 0.5)?.style?.size, ButtonSize.large);
-      expect(IconButtonThemeData.lerp(a, b, 1.0)?.style?.size, ButtonSize.large);
+      expect(IconButtonThemeData.lerp(a, b, 0.0)?.style?.sizeVariant, ButtonSize.small);
+      expect(IconButtonThemeData.lerp(a, b, 0.4)?.style?.sizeVariant, ButtonSize.small);
+      expect(IconButtonThemeData.lerp(a, b, 0.5)?.style?.sizeVariant, ButtonSize.large);
+      expect(IconButtonThemeData.lerp(a, b, 1.0)?.style?.sizeVariant, ButtonSize.large);
       expect(IconButtonThemeData.lerp(a, b, 0.4)?.style?.iconButtonWidth, IconButtonWidth.narrow);
       expect(IconButtonThemeData.lerp(a, b, 0.5)?.style?.iconButtonWidth, IconButtonWidth.wide);
-      expect(IconButtonThemeData.lerp(a, b, 0.4)?.style?.iconButtonShape, IconButtonShape.round);
-      expect(IconButtonThemeData.lerp(a, b, 0.5)?.style?.iconButtonShape, IconButtonShape.square);
+      expect(IconButtonThemeData.lerp(a, b, 0.4)?.style?.shapeVariant, ButtonShapeVariant.round);
+      expect(IconButtonThemeData.lerp(a, b, 0.5)?.style?.shapeVariant, ButtonShapeVariant.square);
     });
 
-    test('debugFillProperties includes size, width, and shape', () {
+    test('debugFillProperties includes size variant, width, and shape variant', () {
       const data = IconButtonThemeData(
         style: ButtonStyle(
-          size: ButtonSize.medium,
+          sizeVariant: ButtonSize.medium,
           iconButtonWidth: IconButtonWidth.wide,
-          iconButtonShape: IconButtonShape.square,
+          shapeVariant: ButtonShapeVariant.square,
         ),
       );
       final builder = DiagnosticPropertiesBuilder();
@@ -4301,9 +4301,9 @@ void main() {
           .map((DiagnosticsNode node) => node.toString())
           .toList();
 
-      expect(descriptions, contains(contains('size: medium')));
+      expect(descriptions, contains(contains('sizeVariant: medium')));
       expect(descriptions, contains(contains('iconButtonWidth: wide')));
-      expect(descriptions, contains(contains('iconButtonShape: square')));
+      expect(descriptions, contains(contains('shapeVariant: square')));
     });
   });
 
@@ -4314,7 +4314,7 @@ void main() {
           child: IconButton(
             onPressed: () {},
             icon: const Icon(Icons.add),
-            style: const ButtonStyle(size: ButtonSize.medium),
+            style: const ButtonStyle(sizeVariant: ButtonSize.medium),
           ),
         ),
       );
