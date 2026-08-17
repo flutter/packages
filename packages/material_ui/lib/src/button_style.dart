@@ -467,13 +467,51 @@ class ButtonStyle with Diagnosticable {
   ///    configuring clipping.
   final ButtonLayerBuilder? foregroundBuilder;
 
-  /// The size variant for this button.
+  /// The Material 3 Expressive size variant for this button.
+  ///
+  /// A size variant selects a component-defined token set rather than a single
+  /// dimension. For example, an [IconButton] uses this value to choose its
+  /// default container size, padding, and icon size when it is using
+  /// [StyleVariant.material3Expressive].
+  ///
+  /// If null, the button uses its component default. For Material 3 Expressive
+  /// [IconButton] defaults, the fallback is [ButtonSize.small].
+  ///
+  /// This property is only interpreted by button components that define
+  /// Material 3 Expressive size variants. Use [minimumSize], [fixedSize],
+  /// [maximumSize], [padding], or [iconSize] to directly override those
+  /// individual style properties.
   final ButtonSize? sizeVariant;
 
-  /// The width variant for this icon button.
+  /// The Material 3 Expressive width variant for an [IconButton].
+  ///
+  /// A width variant selects the leading and trailing space tokens used to
+  /// compute an icon button's default horizontal padding and minimum width when
+  /// it is using [StyleVariant.material3Expressive]. It does not change the
+  /// button's height or icon size.
+  ///
+  /// If null, Material 3 Expressive [IconButton] defaults use
+  /// [IconButtonWidth.standard].
+  ///
+  /// This property is only interpreted by icon buttons. Use [padding],
+  /// [minimumSize], [fixedSize], or [maximumSize] to directly override the
+  /// resulting layout.
   final IconButtonWidth? iconButtonWidth;
 
-  /// The shape variant for this button.
+  /// The Material 3 Expressive shape variant for this button.
+  ///
+  /// A shape variant selects between component-defined token families, such as
+  /// round and square shapes. For [IconButton], this affects the default
+  /// container and selected-state shapes when it is using
+  /// [StyleVariant.material3Expressive]; state-specific tokens, such as the
+  /// pressed shape, are still resolved by the component defaults.
+  ///
+  /// If null, Material 3 Expressive [IconButton] defaults use
+  /// [ButtonShapeVariant.round].
+  ///
+  /// Use [shape] to provide a specific [OutlinedBorder] or stateful shape
+  /// override instead of selecting one of the Material 3 Expressive token
+  /// variants.
   final ButtonShapeVariant? shapeVariant;
 
   /// Returns a copy of this ButtonStyle with the given fields replaced with
