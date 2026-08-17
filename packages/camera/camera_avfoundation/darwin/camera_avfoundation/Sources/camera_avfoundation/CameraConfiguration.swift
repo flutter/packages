@@ -4,7 +4,10 @@
 
 import AVFoundation
 import CoreMedia
-import UIKit
+
+#if os(iOS)
+  import UIKit
+#endif
 
 /// Factory block returning an FLTCaptureDevice.
 /// Used in tests to inject a video capture device into DefaultCamera.
@@ -34,9 +37,11 @@ class CameraConfiguration {
   var assetWriterFactory: AssetWriterFactory
   var inputPixelBufferAdaptorFactory: InputPixelBufferAdaptorFactory
   var videoDimensionsConverter: VideoDimensionsConverter
-  var deviceOrientationProvider: DeviceOrientationProvider
+  #if os(iOS)
+    var deviceOrientationProvider: DeviceOrientationProvider
+  #endif
   let initialCameraName: String
-  var orientation: UIDeviceOrientation
+  var orientation: PlatformDeviceOrientation
 
   init(
     mediaSettings: PlatformMediaSettings,
@@ -57,8 +62,12 @@ class CameraConfiguration {
     self.audioCaptureSession = captureSessionFactory()
     self.captureDeviceInputFactory = captureDeviceInputFactory
     self.initialCameraName = initialCameraName
-    self.orientation = UIDevice.current.orientation
-    self.deviceOrientationProvider = DefaultDeviceOrientationProvider()
+    #if os(iOS)
+      self.orientation = getPigeonDeviceOrientation(for: UIDevice.current.orientation)
+      self.deviceOrientationProvider = DefaultDeviceOrientationProvider()
+    #else
+      self.orientation = .portraitUp
+    #endif
 
     self.videoDimensionsConverter = { format in
       return CMVideoFormatDescriptionGetDimensions(format.formatDescription)
