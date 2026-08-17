@@ -54,7 +54,9 @@ class IconButtonThemeData with Diagnosticable {
   /// The style variant of Material Design used by [IconButton].
   ///
   /// Set this to [StyleVariant.material3Expressive] to opt icon buttons into
-  /// the Material 3 Expressive defaults.
+  /// the Material 3 Expressive defaults. These defaults include the Material 3
+  /// Expressive size, width, and shape tokens, and use
+  /// [MaterialTapTargetSize.padded] for the default tap target size.
   ///
   /// If null, [IconButton] uses [StyleVariant.material3].
   final StyleVariant? variant;
