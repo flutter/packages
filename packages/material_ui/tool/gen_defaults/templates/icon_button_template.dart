@@ -400,7 +400,7 @@ $_sizeDependentProperties
   VisualDensity? get visualDensity => VisualDensity.standard;
 
   @override
-  MaterialTapTargetSize? get tapTargetSize => Theme.of(context).materialTapTargetSize;
+  MaterialTapTargetSize? get tapTargetSize => MaterialTapTargetSize.padded;
 
   @override
   InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
@@ -522,7 +522,7 @@ $_sizeDependentProperties
   VisualDensity? get visualDensity => VisualDensity.standard;
 
   @override
-  MaterialTapTargetSize? get tapTargetSize => Theme.of(context).materialTapTargetSize;
+  MaterialTapTargetSize? get tapTargetSize => MaterialTapTargetSize.padded;
 
   @override
   InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
@@ -644,7 +644,7 @@ $_sizeDependentProperties
   VisualDensity? get visualDensity => VisualDensity.standard;
 
   @override
-  MaterialTapTargetSize? get tapTargetSize => Theme.of(context).materialTapTargetSize;
+  MaterialTapTargetSize? get tapTargetSize => MaterialTapTargetSize.padded;
 
   @override
   InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
@@ -761,7 +761,7 @@ $_sizeDependentProperties
   VisualDensity? get visualDensity => VisualDensity.standard;
 
   @override
-  MaterialTapTargetSize? get tapTargetSize => Theme.of(context).materialTapTargetSize;
+  MaterialTapTargetSize? get tapTargetSize => MaterialTapTargetSize.padded;
 
   @override
   InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
