@@ -691,7 +691,7 @@ class MapCallHandler: NSObject, FGMMapsApi {
     with cameraUpdate: FGMPlatformCameraUpdate,
     error: AutoreleasingUnsafeMutablePointer<FlutterError?>
   ) {
-    guard let update = FGMPlatformCameraUpdate.make(from: cameraUpdate) else {
+    guard let update = cameraUpdate.toGMSCameraUpdate() else {
       error.pointee = FlutterError(
         code: "Invalid update",
         message: "Unrecognized camera update",
@@ -706,7 +706,7 @@ class MapCallHandler: NSObject, FGMMapsApi {
     with cameraUpdate: FGMPlatformCameraUpdate, duration durationMilliseconds: NSNumber?,
     error: AutoreleasingUnsafeMutablePointer<FlutterError?>
   ) {
-    guard let update = FGMPlatformCameraUpdate.make(from: cameraUpdate) else {
+    guard let update = cameraUpdate.toGMSCameraUpdate() else {
       error.pointee = FlutterError(
         code: "Invalid update",
         message: "Unrecognized camera update",

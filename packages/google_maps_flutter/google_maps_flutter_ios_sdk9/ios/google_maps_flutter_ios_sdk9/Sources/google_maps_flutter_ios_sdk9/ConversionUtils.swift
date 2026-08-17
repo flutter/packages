@@ -229,37 +229,38 @@ func makePigeonWeightedData(from weightedLatLngs: [GMUWeightedLatLng])
 
 extension FGMPlatformCameraUpdate {
   /// Creates a GMSCameraUpdate from its Pigeon equivalent.
-  static func make(from cameraUpdate: FGMPlatformCameraUpdate) -> GMSCameraUpdate? {
+  func toGMSCameraUpdate() -> GMSCameraUpdate? {
     // See note in messages.dart for why this is so loosely typed.
-    let update = cameraUpdate.cameraUpdate
-    if let newCameraPosition = update as? FGMPlatformCameraUpdateNewCameraPosition {
+    switch cameraUpdate {
+    case let newCameraPosition as FGMPlatformCameraUpdateNewCameraPosition:
       return GMSCameraUpdate.setCamera(newCameraPosition.cameraPosition.toGMSCameraPosition())
-    } else if let newLatLng = update as? FGMPlatformCameraUpdateNewLatLng {
+    case let newLatLng as FGMPlatformCameraUpdateNewLatLng:
       return GMSCameraUpdate.setTarget(newLatLng.latLng.toCLCoordinate())
-    } else if let newLatLngBounds = update as? FGMPlatformCameraUpdateNewLatLngBounds {
+    case let newLatLngBounds as FGMPlatformCameraUpdateNewLatLngBounds:
       return GMSCameraUpdate.fit(
         newLatLngBounds.bounds.toGMSBounds(),
         withPadding: CGFloat(newLatLngBounds.padding)
       )
-    } else if let newLatLngZoom = update as? FGMPlatformCameraUpdateNewLatLngZoom {
+    case let newLatLngZoom as FGMPlatformCameraUpdateNewLatLngZoom:
       return GMSCameraUpdate.setTarget(
         newLatLngZoom.latLng.toCLCoordinate(),
         zoom: Float(newLatLngZoom.zoom)
       )
-    } else if let scrollBy = update as? FGMPlatformCameraUpdateScrollBy {
+    case let scrollBy as FGMPlatformCameraUpdateScrollBy:
       return GMSCameraUpdate.scrollBy(x: scrollBy.dx, y: scrollBy.dy)
-    } else if let zoomBy = update as? FGMPlatformCameraUpdateZoomBy {
+    case let zoomBy as FGMPlatformCameraUpdateZoomBy:
       if let focus = zoomBy.focus {
         return GMSCameraUpdate.zoom(by: Float(zoomBy.amount), at: focus.toCGPoint())
       } else {
         return GMSCameraUpdate.zoom(by: Float(zoomBy.amount))
       }
-    } else if let zoom = update as? FGMPlatformCameraUpdateZoom {
+    case let zoom as FGMPlatformCameraUpdateZoom:
       return zoom.out ? GMSCameraUpdate.zoomOut() : GMSCameraUpdate.zoomIn()
-    } else if let zoomTo = update as? FGMPlatformCameraUpdateZoomTo {
+    case let zoomTo as FGMPlatformCameraUpdateZoomTo:
       return GMSCameraUpdate.zoom(to: Float(zoomTo.zoom))
+    default:
+      return nil
     }
-    return nil
   }
 }
 

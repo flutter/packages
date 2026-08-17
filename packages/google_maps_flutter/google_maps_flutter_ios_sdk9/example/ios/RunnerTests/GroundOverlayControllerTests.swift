@@ -116,11 +116,11 @@ import google_maps_flutter_ios_sdk9_objc
     #expect(abs(groundOverlayController.groundOverlay.anchor.y - 0.5) <= Double.ulpOfOne)
     #expect(groundOverlayController.groundOverlay.zIndex == Int32(platformGroundOverlay.zIndex))
 
-    let convertedPlatformGroundOverlay = FGMGetPigeonGroundOverlay(
-      groundOverlayController.groundOverlay,
-      "id_1",
-      false,
-      14.0
+    let convertedPlatformGroundOverlay = FGMPlatformGroundOverlay.make(
+      from: groundOverlayController.groundOverlay,
+      overlayId: "id_1",
+      isCreatedWithBounds: false,
+      zoomLevel: 14.0
     )
     #expect(convertedPlatformGroundOverlay.groundOverlayId == "id_1")
     #expect(
@@ -183,11 +183,11 @@ import google_maps_flutter_ios_sdk9_objc
     #expect(abs(groundOverlayController.groundOverlay.anchor.y - 0.5) <= Double.ulpOfOne)
     #expect(groundOverlayController.groundOverlay.zIndex == Int32(platformGroundOverlay.zIndex))
 
-    let convertedPlatformGroundOverlay = FGMGetPigeonGroundOverlay(
-      groundOverlayController.groundOverlay,
-      "id_1",
-      true,
-      nil
+    let convertedPlatformGroundOverlay = FGMPlatformGroundOverlay.make(
+      from: groundOverlayController.groundOverlay,
+      overlayId: "id_1",
+      isCreatedWithBounds: true,
+      zoomLevel: nil
     )
     #expect(convertedPlatformGroundOverlay.groundOverlayId == "id_1")
     #expect(

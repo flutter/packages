@@ -221,7 +221,7 @@ class GroundOverlaysController: NSObject {
     guard let controller = groundOverlayControllerByIdentifier[identifier] else {
       return nil
     }
-    return pigeonGroundOverlay(
+    return FGMPlatformGroundOverlay.make(
       from: controller.groundOverlay,
       overlayId: identifier,
       isCreatedWithBounds: controller.createdWithBounds,

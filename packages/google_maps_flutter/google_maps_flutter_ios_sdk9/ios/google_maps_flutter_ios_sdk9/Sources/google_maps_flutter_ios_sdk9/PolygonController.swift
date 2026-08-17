@@ -41,10 +41,10 @@ class PolygonController: NSObject {
   ) {
     polygon.isTappable = platformPolygon.consumesTapEvents
     polygon.zIndex = Int32(platformPolygon.zIndex)
-    polygon.path = path(from: points(from: platformPolygon.points))
-    polygon.holes = holes(from: platformPolygon.holes).map { path(from: $0) }
-    polygon.fillColor = color(from: platformPolygon.fillColor)
-    polygon.strokeColor = color(from: platformPolygon.strokeColor)
+    polygon.path = makePath(from: makePoints(from: platformPolygon.points))
+    polygon.holes = makeHoles(from: platformPolygon.holes).map { makePath(from: $0) }
+    polygon.fillColor = platformPolygon.fillColor.toUIColor()
+    polygon.strokeColor = platformPolygon.strokeColor.toUIColor()
     polygon.strokeWidth = CGFloat(platformPolygon.strokeWidth)
 
     // This must be done last, to avoid visual flickers of default property values.
