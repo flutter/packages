@@ -1,4 +1,4 @@
-## NEXT
+## 4.1.2
 
 * Updates Chrome launch arguments to unblock Chrome 145+ upgrade.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
