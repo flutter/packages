@@ -1060,21 +1060,21 @@ class _IconButtonM3 extends ButtonStyleButton {
         _IconButtonVariant.standard => _IconButtonDefaultsM3(context, toggleable),
       },
       StyleVariant.material3Expressive => switch (iconButtonVariant) {
-        _IconButtonVariant.filled => _M3EFilledIconButtonDefaults(
+        _IconButtonVariant.filled => _FilledIconButtonDefaultsM3E(
           context,
           toggleable,
           effectiveSize,
           effectiveWidth,
           effectiveShape,
         ),
-        _IconButtonVariant.filledTonal => _M3EFilledTonalIconButtonDefaults(
+        _IconButtonVariant.filledTonal => _FilledTonalIconButtonDefaultsM3E(
           context,
           toggleable,
           effectiveSize,
           effectiveWidth,
           effectiveShape,
         ),
-        _IconButtonVariant.outlined => _M3EOutlinedIconButtonDefaults(
+        _IconButtonVariant.outlined => _OutlinedIconButtonDefaultsM3E(
           context,
           toggleable,
           effectiveSize,
