@@ -1,3 +1,7 @@
+## 17.5.1
+
+- Fixes a duplicate page key assertion when imperatively re-entering a shell route that is still in the navigation stack (e.g. pushing into a shell after a `pushReplacement`).
+
 ## 17.5.0
 
 - Adds route `metadata` support, including inheritance and override behavior with exposure on `GoRouterState`.
