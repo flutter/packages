@@ -1,3 +1,8 @@
+## 1.0.1
+
+- Fixes `PredictiveBackPageTransitionsBuilder` to treat unknown or
+  button-triggered swipe edges as a no-direction fallback.
+
 ## 1.0.0
 
 - README updated for the full release of material_ui.
