@@ -26,6 +26,8 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
   final IconButtonWidth? _iconButtonWidth;
   final ButtonShapeVariant? _shapeVariant;
 
+  late final ColorScheme _colors = Theme.of(context).colorScheme;
+
   @override
   ButtonSize get sizeVariant => _sizeVariant ?? ButtonSize.small;
 
@@ -34,8 +36,6 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
 
   @override
   ButtonShapeVariant get shapeVariant => _shapeVariant ?? ButtonShapeVariant.round;
-
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
   WidgetStateProperty<Color?>? get backgroundColor =>
@@ -276,6 +276,8 @@ class _FilledIconButtonDefaultsM3E extends ButtonStyle {
   final IconButtonWidth? _iconButtonWidth;
   final ButtonShapeVariant? _shapeVariant;
 
+  late final ColorScheme _colors = Theme.of(context).colorScheme;
+
   @override
   ButtonSize get sizeVariant => _sizeVariant ?? ButtonSize.small;
 
@@ -284,8 +286,6 @@ class _FilledIconButtonDefaultsM3E extends ButtonStyle {
 
   @override
   ButtonShapeVariant get shapeVariant => _shapeVariant ?? ButtonShapeVariant.round;
-
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
   WidgetStateProperty<Color?>? get backgroundColor =>
@@ -551,6 +551,8 @@ class _FilledTonalIconButtonDefaultsM3E extends ButtonStyle {
   final IconButtonWidth? _iconButtonWidth;
   final ButtonShapeVariant? _shapeVariant;
 
+  late final ColorScheme _colors = Theme.of(context).colorScheme;
+
   @override
   ButtonSize get sizeVariant => _sizeVariant ?? ButtonSize.small;
 
@@ -559,8 +561,6 @@ class _FilledTonalIconButtonDefaultsM3E extends ButtonStyle {
 
   @override
   ButtonShapeVariant get shapeVariant => _shapeVariant ?? ButtonShapeVariant.round;
-
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
   WidgetStateProperty<Color?>? get backgroundColor =>
@@ -826,6 +826,8 @@ class _OutlinedIconButtonDefaultsM3E extends ButtonStyle {
   final IconButtonWidth? _iconButtonWidth;
   final ButtonShapeVariant? _shapeVariant;
 
+  late final ColorScheme _colors = Theme.of(context).colorScheme;
+
   @override
   ButtonSize get sizeVariant => _sizeVariant ?? ButtonSize.small;
 
@@ -834,8 +836,6 @@ class _OutlinedIconButtonDefaultsM3E extends ButtonStyle {
 
   @override
   ButtonShapeVariant get shapeVariant => _shapeVariant ?? ButtonShapeVariant.round;
-
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
   WidgetStateProperty<Color?>? get backgroundColor =>

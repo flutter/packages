@@ -285,12 +285,16 @@ switch (shapeVariant) {
     }''';
   }
 
-  String get _variantProperties {
+  String get _variantFields {
     return '''
   final ButtonSize? _sizeVariant;
   final IconButtonWidth? _iconButtonWidth;
   final ButtonShapeVariant? _shapeVariant;
+''';
+  }
 
+  String get _variantGetters {
+    return '''
   @override
   ButtonSize get sizeVariant => _sizeVariant ?? ButtonSize.small;
 
@@ -346,8 +350,10 @@ class $className extends ButtonStyle {
 
   final BuildContext context;
   final bool toggleable;
-$_variantProperties
+$_variantFields
   late final ColorScheme _colors = Theme.of(context).colorScheme;
+
+$_variantGetters
 
   @override
   WidgetStateProperty<Color?>? get backgroundColor =>
@@ -441,8 +447,10 @@ class _FilledIconButtonDefaultsM3E extends ButtonStyle {
 
   final BuildContext context;
   final bool toggleable;
-$_variantProperties
+$_variantFields
   late final ColorScheme _colors = Theme.of(context).colorScheme;
+
+$_variantGetters
 
   @override
   WidgetStateProperty<Color?>? get backgroundColor =>
@@ -561,8 +569,10 @@ class _FilledTonalIconButtonDefaultsM3E extends ButtonStyle {
 
   final BuildContext context;
   final bool toggleable;
-$_variantProperties
+$_variantFields
   late final ColorScheme _colors = Theme.of(context).colorScheme;
+
+$_variantGetters
 
   @override
   WidgetStateProperty<Color?>? get backgroundColor =>
@@ -681,8 +691,10 @@ class _OutlinedIconButtonDefaultsM3E extends ButtonStyle {
 
   final BuildContext context;
   final bool toggleable;
-$_variantProperties
+$_variantFields
   late final ColorScheme _colors = Theme.of(context).colorScheme;
+
+$_variantGetters
 
   @override
   WidgetStateProperty<Color?>? get backgroundColor =>
