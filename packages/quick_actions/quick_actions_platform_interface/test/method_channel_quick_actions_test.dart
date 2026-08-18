@@ -55,6 +55,7 @@ void main() {
             localizedTitle: 'title',
             localizedSubtitle: 'subtitle',
             icon: 'icon.svg',
+            iosSystemIcon: 'some_icon',
           ),
         ]);
 
@@ -68,6 +69,7 @@ void main() {
                 'localizedTitle': 'title',
                 'localizedSubtitle': 'subtitle',
                 'icon': 'icon.svg',
+                'iosSystemIcon': 'some_icon',
               },
             ],
           ),
@@ -77,7 +79,12 @@ void main() {
       test('passes shortcutItem through channel with null localizedSubtitle', () {
         quickActions.initialize((String type) {});
         quickActions.setShortcutItems(<ShortcutItem>[
-          const ShortcutItem(type: 'test', localizedTitle: 'title', icon: 'icon.svg'),
+          const ShortcutItem(
+            type: 'test',
+            localizedTitle: 'title',
+            icon: 'icon.svg',
+            iosSystemIcon: 'some_icon',
+          ),
         ]);
 
         expect(log, <Matcher>[
@@ -85,7 +92,12 @@ void main() {
           isMethodCall(
             'setShortcutItems',
             arguments: <Map<String, String>>[
-              <String, String>{'type': 'test', 'localizedTitle': 'title', 'icon': 'icon.svg'},
+              <String, String>{
+                'type': 'test',
+                'localizedTitle': 'title',
+                'icon': 'icon.svg',
+                'iosSystemIcon': 'some_icon',
+              },
             ],
           ),
         ]);
@@ -96,12 +108,14 @@ void main() {
         const localizedTitle = 'localizedTitle';
         const localizedSubtitle = 'localizedSubtitle';
         const icon = 'icon';
+        const iosSystemIcon = 'some_icon';
         await quickActions.setShortcutItems(const <ShortcutItem>[
           ShortcutItem(
             type: type,
             localizedTitle: localizedTitle,
             localizedSubtitle: localizedSubtitle,
             icon: icon,
+            iosSystemIcon: iosSystemIcon,
           ),
         ]);
         expect(log, <Matcher>[
@@ -113,6 +127,7 @@ void main() {
                 'localizedTitle': localizedTitle,
                 'localizedSubtitle': localizedSubtitle,
                 'icon': icon,
+                'iosSystemIcon': iosSystemIcon,
               },
             ],
           ),
@@ -146,18 +161,21 @@ void main() {
       const localizedTitle = 'title';
       const localizedSubtitle = 'subtitle';
       const icon = 'foo';
+      const iosSystemIcon = 'some_icon';
 
       const item = ShortcutItem(
         type: type,
         localizedTitle: localizedTitle,
         localizedSubtitle: localizedSubtitle,
         icon: icon,
+        iosSystemIcon: iosSystemIcon,
       );
 
       expect(item.type, type);
       expect(item.localizedTitle, localizedTitle);
       expect(item.localizedSubtitle, localizedSubtitle);
       expect(item.icon, icon);
+      expect(item.iosSystemIcon, iosSystemIcon);
     });
   });
 }
