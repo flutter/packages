@@ -277,10 +277,6 @@ class TableView extends StatefulWidget {
   )
   final double? cacheExtent;
 
-  /// The alignment of the table within the viewport when there is extra space.
-  ///
-  /// Defaults to [Alignment.topLeft].
-
   /// A delegate that provides the children for the [TwoDimensionalScrollView].
   final TableCellDelegateMixin delegate;
 
