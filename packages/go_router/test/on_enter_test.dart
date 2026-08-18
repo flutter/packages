@@ -1881,6 +1881,9 @@ void main() {
         expect(redirectCallCount, redirectCountAfterInit);
       });
 
+      testWidgets('onEnter cannot guard a location only reachable via redirect:', (
+        WidgetTester tester,
+      ) async {
       // Regression test for https://github.com/flutter/flutter/issues/188014
       //
       // onEnter cannot intercept a location that is only ever reached
@@ -1891,11 +1894,7 @@ void main() {
       // 'onEnter called once when top-level redirect chains' test above,
       // but is easy to trip over when onEnter itself tries to branch on an
       // intermediate redirect target.
-      testWidgets('onEnter cannot guard a location only reachable via redirect:', (
-        WidgetTester tester,
-      ) async {
         final seenNextPaths = <String>[];
-
         router = GoRouter(
           initialLocation: '/',
           onEnter:
