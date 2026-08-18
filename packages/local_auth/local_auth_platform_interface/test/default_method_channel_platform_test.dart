@@ -180,5 +180,20 @@ void main() {
         ]);
       });
     });
+
+    test('authenticate with no localized reason.', () async {
+      await localAuthentication.authenticate(authMessages: <AuthMessages>[]);
+      expect(log, <Matcher>[
+        isMethodCall(
+          'authenticate',
+          arguments: <String, dynamic>{
+            'useErrorDialogs': true,
+            'stickyAuth': false,
+            'sensitiveTransaction': true,
+            'biometricOnly': false,
+          },
+        ),
+      ]);
+    });
   });
 }

@@ -1,5 +1,8 @@
-## NEXT
+## 2.1.0
 
+* Adds `requiresLocalizedReason` to determine if the current platform implementation
+  requires a localized reason for authentication.
+* Makes `localizedReason` parameter optional in `authenticate`.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.0.3

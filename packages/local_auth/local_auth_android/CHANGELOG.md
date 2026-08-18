@@ -1,3 +1,9 @@
+## 2.1.0
+
+* Adds `requiresLocalizedReason` to determine if the current platform implementation
+  requires a localized reason for authentication.
+* Makes `localizedReason` parameter optional in `authenticate`.
+
 ## 2.0.9
 
 * Migrates to Built-in Kotlin to support AGP 9.

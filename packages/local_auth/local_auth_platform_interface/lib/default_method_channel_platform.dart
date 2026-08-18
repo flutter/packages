@@ -17,13 +17,12 @@ const MethodChannel _channel = MethodChannel('plugins.flutter.io/local_auth');
 class DefaultLocalAuthPlatform extends LocalAuthPlatform {
   @override
   Future<bool> authenticate({
-    required String localizedReason,
+    String? localizedReason,
     required Iterable<AuthMessages> authMessages,
     AuthenticationOptions options = const AuthenticationOptions(),
   }) async {
-    assert(localizedReason.isNotEmpty);
     final args = <String, Object>{
-      'localizedReason': localizedReason,
+      if (localizedReason != null) 'localizedReason': localizedReason,
       'useErrorDialogs': options.useErrorDialogs,
       'stickyAuth': options.stickyAuth,
       'sensitiveTransaction': options.sensitiveTransaction,
