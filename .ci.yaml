@@ -713,15 +713,6 @@ targets:
       channel: master
       package_sharding: "--shardIndex 2 --shardCount 3"
 
-  - name: Linux_web web_platform_tests_camera_web master
-    recipe: packages/packages
-    bringup: true
-    timeout: 90
-    properties:
-      target_file: web_platform_tests_camera_web.yaml
-      version_file: flutter_master.version
-      channel: master
-
   # Wasm integration tests in master
   - name: Linux_web web_platform_tests_wasm_shard_1 master
     recipe: packages/packages
@@ -749,15 +740,6 @@ targets:
       version_file: flutter_master.version
       channel: master
       package_sharding: "--shardIndex 2 --shardCount 3"
-
-  - name: Linux_web web_platform_tests_camera_web_wasm master
-    recipe: packages/packages
-    bringup: true
-    timeout: 90
-    properties:
-      target_file: web_platform_tests_camera_web_wasm.yaml
-      version_file: flutter_master.version
-      channel: master
 
   # JS integration tests in stable
   - name: Linux_web web_platform_tests_shard_1 stable
