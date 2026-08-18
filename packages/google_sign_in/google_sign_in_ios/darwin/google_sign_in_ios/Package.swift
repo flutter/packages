@@ -13,9 +13,7 @@ let package = Package(
     .macOS("10.15"),
   ],
   products: [
-    .library(
-      name: "google-sign-in-ios",
-      targets: ["google_sign_in_ios", "google_sign_in_ios_objc"])
+    .library(name: "google-sign-in-ios", targets: ["google_sign_in_ios"])
   ],
   dependencies: [
     .package(
