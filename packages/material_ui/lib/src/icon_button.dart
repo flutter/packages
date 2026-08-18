@@ -1046,12 +1046,44 @@ class _IconButtonM3 extends ButtonStyleButton {
   ///
   /// If [ThemeData.useMaterial3] is true and [IconButtonThemeData.variant] is
   /// [StyleVariant.material3Expressive], Material 3 Expressive defaults are
-  /// used. The Material 3 Expressive-specific defaults include:
+  /// used:
   ///
+  /// * `textStyle` - null
+  /// * `backgroundColor` - transparent
+  /// * `foregroundColor`
+  ///   * disabled - Theme.colorScheme.onSurface(0.38)
+  ///   * selected - Theme.colorScheme.primary
+  ///   * others - Theme.colorScheme.onSurfaceVariant
+  /// * `overlayColor`
+  ///   * selected
+  ///      * hovered - Theme.colorScheme.primary(0.08)
+  ///      * focused or pressed - Theme.colorScheme.primary(0.1)
+  ///   * hovered - Theme.colorScheme.onSurfaceVariant(0.08)
+  ///   * pressed or focused - Theme.colorScheme.onSurfaceVariant(0.1)
+  ///   * others - transparent
+  /// * `shadowColor` - null
+  /// * `surfaceTintColor` - null
+  /// * `elevation` - 0
+  /// * `padding` - based on [ButtonStyle.sizeVariant] and
+  ///   [ButtonStyle.iconButtonWidth]; defaults to all(8)
+  /// * `minimumSize` - based on [ButtonStyle.sizeVariant] and
+  ///   [ButtonStyle.iconButtonWidth]; defaults to Size(40, 40)
+  /// * `fixedSize` - null
+  /// * `maximumSize` - Size.infinite
+  /// * `iconSize` - based on [ButtonStyle.sizeVariant]; defaults to 24
+  /// * `side` - null
+  /// * `shape` - based on [ButtonStyle.sizeVariant],
+  ///   [ButtonStyle.shapeVariant], and state; defaults to StadiumBorder()
+  /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
+  /// * `visualDensity` - VisualDensity.standard
+  /// * `tapTargetSize` - MaterialTapTargetSize.padded
+  /// * `animationDuration` - kThemeChangeDuration
+  /// * `enableFeedback` - true
+  /// * `alignment` - Alignment.center
+  /// * `splashFactory` - Theme.splashFactory
   /// * `sizeVariant` - ButtonSize.small
   /// * `iconButtonWidth` - IconButtonWidth.standard
   /// * `shapeVariant` - ButtonShapeVariant.round
-  /// * `tapTargetSize` - MaterialTapTargetSize.padded
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
     final ButtonStyle? iconButtonThemeStyle = IconButtonTheme.of(context).style;
