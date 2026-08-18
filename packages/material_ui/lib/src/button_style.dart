@@ -507,7 +507,7 @@ class ButtonStyle with Diagnosticable {
   /// pressed shape, are still resolved by the component defaults.
   ///
   /// Use [shape] to provide a specific [OutlinedBorder] or stateful shape
-  /// override instead of selecting one of the Material 3 Expressive token
+  /// override instead of selecting one of the Material 3 Expressive shape
   /// variants.
   final ButtonShapeVariant? shapeVariant;
 
