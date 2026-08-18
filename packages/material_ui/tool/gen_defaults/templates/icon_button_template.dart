@@ -56,7 +56,7 @@ ${_generateOutlinedDefaults()}
     required String xLarge,
   }) {
     return '''
-switch (sizeVariant ?? ButtonSize.small) {
+switch (sizeVariant) {
       ButtonSize.xSmall => $xSmall,
       ButtonSize.small => $small,
       ButtonSize.medium => $medium,
@@ -119,7 +119,7 @@ switch (sizeVariant ?? ButtonSize.small) {
     required double wideTrailing,
   }) {
     return '''
-switch (iconButtonWidth ?? IconButtonWidth.standard) {
+switch (iconButtonWidth) {
         IconButtonWidth.narrow => const EdgeInsetsDirectional.fromSTEB($narrowLeading, $defaultLeading, $narrowTrailing, $defaultTrailing),
         IconButtonWidth.standard => const EdgeInsetsDirectional.fromSTEB($defaultLeading, $defaultLeading, $defaultTrailing, $defaultTrailing),
         IconButtonWidth.wide => const EdgeInsetsDirectional.fromSTEB($wideLeading, $defaultLeading, $wideTrailing, $defaultTrailing),
@@ -192,7 +192,7 @@ switch (iconButtonWidth ?? IconButtonWidth.standard) {
     required double wideTrailing,
   }) {
     return '''
-switch (iconButtonWidth ?? IconButtonWidth.standard) {
+switch (iconButtonWidth) {
         IconButtonWidth.narrow => const Size(${iconSize + narrowLeading + narrowTrailing}, $height),
         IconButtonWidth.standard => const Size(${iconSize + defaultLeading + defaultTrailing}, $height),
         IconButtonWidth.wide => const Size(${iconSize + wideLeading + wideTrailing}, $height),
@@ -241,7 +241,7 @@ switch (iconButtonWidth ?? IconButtonWidth.standard) {
 
   String get _containerShapeSwitch {
     return '''
-switch (shapeVariant ?? ButtonShapeVariant.round) {
+switch (shapeVariant) {
       ButtonShapeVariant.round => $_containerRoundShapeSwitch,
       ButtonShapeVariant.square => $_containerSquareShapeSwitch,
     }''';
@@ -279,10 +279,27 @@ switch (shapeVariant ?? ButtonShapeVariant.round) {
 
   String get _selectedShapeSwitch {
     return '''
-switch (shapeVariant ?? ButtonShapeVariant.round) {
+switch (shapeVariant) {
       ButtonShapeVariant.round => $_selectedRoundShapeSwitch,
       ButtonShapeVariant.square => $_selectedSquareShapeSwitch,
     }''';
+  }
+
+  String get _variantProperties {
+    return '''
+  final ButtonSize? _sizeVariant;
+  final IconButtonWidth? _iconButtonWidth;
+  final ButtonShapeVariant? _shapeVariant;
+
+  @override
+  ButtonSize get sizeVariant => _sizeVariant ?? ButtonSize.small;
+
+  @override
+  IconButtonWidth get iconButtonWidth => _iconButtonWidth ?? IconButtonWidth.standard;
+
+  @override
+  ButtonShapeVariant get shapeVariant => _shapeVariant ?? ButtonShapeVariant.round;
+''';
   }
 
   String get _sizeDependentProperties {
@@ -320,7 +337,7 @@ switch (shapeVariant ?? ButtonShapeVariant.round) {
   String _generateStandardDefaults(String className) {
     return '''
 class $className extends ButtonStyle {
-  $className(this.context, this.toggleable, this.sizeVariant, this.iconButtonWidth, this.shapeVariant)
+  $className(this.context, this.toggleable, this._sizeVariant, this._iconButtonWidth, this._shapeVariant)
     : super(
         animationDuration: kThemeChangeDuration,
         enableFeedback: true,
@@ -329,9 +346,7 @@ class $className extends ButtonStyle {
 
   final BuildContext context;
   final bool toggleable;
-  final ButtonSize? sizeVariant;
-  final IconButtonWidth? iconButtonWidth;
-  final ButtonShapeVariant? shapeVariant;
+$_variantProperties
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
@@ -414,9 +429,9 @@ class _FilledIconButtonDefaultsM3E extends ButtonStyle {
   _FilledIconButtonDefaultsM3E(
     this.context,
     this.toggleable,
-    this.sizeVariant,
-    this.iconButtonWidth,
-    this.shapeVariant,
+    this._sizeVariant,
+    this._iconButtonWidth,
+    this._shapeVariant,
   )
     : super(
         animationDuration: kThemeChangeDuration,
@@ -426,9 +441,7 @@ class _FilledIconButtonDefaultsM3E extends ButtonStyle {
 
   final BuildContext context;
   final bool toggleable;
-  final ButtonSize? sizeVariant;
-  final IconButtonWidth? iconButtonWidth;
-  final ButtonShapeVariant? shapeVariant;
+$_variantProperties
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
@@ -536,9 +549,9 @@ class _FilledTonalIconButtonDefaultsM3E extends ButtonStyle {
   _FilledTonalIconButtonDefaultsM3E(
     this.context,
     this.toggleable,
-    this.sizeVariant,
-    this.iconButtonWidth,
-    this.shapeVariant,
+    this._sizeVariant,
+    this._iconButtonWidth,
+    this._shapeVariant,
   )
     : super(
         animationDuration: kThemeChangeDuration,
@@ -548,9 +561,7 @@ class _FilledTonalIconButtonDefaultsM3E extends ButtonStyle {
 
   final BuildContext context;
   final bool toggleable;
-  final ButtonSize? sizeVariant;
-  final IconButtonWidth? iconButtonWidth;
-  final ButtonShapeVariant? shapeVariant;
+$_variantProperties
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
@@ -658,9 +669,9 @@ class _OutlinedIconButtonDefaultsM3E extends ButtonStyle {
   _OutlinedIconButtonDefaultsM3E(
     this.context,
     this.toggleable,
-    this.sizeVariant,
-    this.iconButtonWidth,
-    this.shapeVariant,
+    this._sizeVariant,
+    this._iconButtonWidth,
+    this._shapeVariant,
   )
     : super(
         animationDuration: kThemeChangeDuration,
@@ -670,9 +681,7 @@ class _OutlinedIconButtonDefaultsM3E extends ButtonStyle {
 
   final BuildContext context;
   final bool toggleable;
-  final ButtonSize? sizeVariant;
-  final IconButtonWidth? iconButtonWidth;
-  final ButtonShapeVariant? shapeVariant;
+$_variantProperties
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
