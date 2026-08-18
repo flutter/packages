@@ -628,11 +628,11 @@ class IconButton extends StatelessWidget {
   /// create a [WidgetStateProperty] with a single value for all
   /// states.
   ///
-  /// The [sizeVariant], [iconButtonWidth], and [shapeVariant] parameters
-  /// configure the Material 3 Expressive appearance of an [IconButton]. They
-  /// provide options for extra-small through extra-large sizes, narrow through
-  /// wide widths, and round or square shapes through [ButtonStyle.sizeVariant],
-  /// [ButtonStyle.iconButtonWidth], and [ButtonStyle.shapeVariant].
+  /// The [sizeVariant], [iconButtonWidth], and [shapeVariant] parameters are
+  /// Material 3 Expressive options. They provide extra-small through
+  /// extra-large sizes, narrow through wide widths, and round or square shapes
+  /// through [ButtonStyle.sizeVariant], [ButtonStyle.iconButtonWidth], and
+  /// [ButtonStyle.shapeVariant].
   ///
   /// When these properties are null, Material 3 Expressive [IconButton]
   /// defaults use [ButtonSize.small], [IconButtonWidth.standard], and
