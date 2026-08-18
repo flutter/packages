@@ -10,7 +10,6 @@ environment:
 
 dependencies:
   crypto: ^3.0.0
-  cupertino_ui: ^1.0.0
   flutter:
     sdk: flutter
   http: ^1.0.0
@@ -18,6 +17,7 @@ dependencies:
   path_provider: ^2.0.0
 
 dev_dependencies:
+  cupertino_ui: ^1.0.0
   flutter_test:
     sdk: flutter
   mockito: ^5.0.0
