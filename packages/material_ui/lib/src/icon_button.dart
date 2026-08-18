@@ -1005,18 +1005,6 @@ class _IconButtonM3 extends ButtonStyleButton {
   final StyleVariant styleVariant;
   final bool toggleable;
 
-  ButtonSize? _effectiveSize(BuildContext context) {
-    return style?.sizeVariant ?? IconButtonTheme.of(context).style?.sizeVariant;
-  }
-
-  IconButtonWidth? _effectiveWidth(BuildContext context) {
-    return style?.iconButtonWidth ?? IconButtonTheme.of(context).style?.iconButtonWidth;
-  }
-
-  ButtonShapeVariant? _effectiveShape(BuildContext context) {
-    return style?.shapeVariant ?? IconButtonTheme.of(context).style?.shapeVariant;
-  }
-
   /// ## Material 3 defaults
   ///
   /// If [ThemeData.useMaterial3] is true and [IconButtonThemeData.variant] is
@@ -1066,9 +1054,12 @@ class _IconButtonM3 extends ButtonStyleButton {
   /// * `tapTargetSize` - MaterialTapTargetSize.padded
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
-    final ButtonSize? effectiveSize = _effectiveSize(context);
-    final IconButtonWidth? effectiveWidth = _effectiveWidth(context);
-    final ButtonShapeVariant? effectiveShape = _effectiveShape(context);
+    final ButtonStyle? iconButtonThemeStyle = IconButtonTheme.of(context).style;
+    final ButtonSize? effectiveSize = style?.sizeVariant ?? iconButtonThemeStyle?.sizeVariant;
+    final IconButtonWidth? effectiveWidth =
+        style?.iconButtonWidth ?? iconButtonThemeStyle?.iconButtonWidth;
+    final ButtonShapeVariant? effectiveShape =
+        style?.shapeVariant ?? iconButtonThemeStyle?.shapeVariant;
 
     return switch (styleVariant) {
       StyleVariant.material3 => switch (iconButtonVariant) {
