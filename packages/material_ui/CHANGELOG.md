@@ -1,8 +1,3 @@
-## 1.0.1
-
-- Documents that `TextField.decoration` is merged with the ambient
-  `InputDecorationTheme` rather than replacing it.
-
 ## 1.0.0
 
 - README updated for the full release of material_ui.
