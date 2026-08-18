@@ -14,8 +14,8 @@ import 'package:args/args.dart';
 
 import '../templates/action_chip_template.dart';
 import '../templates/app_bar_template.dart';
-import '../templates/banner_template.dart';
 import '../templates/badge_template.dart';
+import '../templates/banner_template.dart';
 // import '../templates/bottom_app_bar_template.dart';
 import '../templates/bottom_sheet_template.dart';
 // import '../templates/button_template.dart';
@@ -30,7 +30,7 @@ import '../templates/bottom_sheet_template.dart';
 // import '../templates/expansion_tile_template.dart';
 // import '../templates/fab_template.dart';
 // import '../templates/filter_chip_template.dart';
-// import '../templates/icon_button_template.dart';
+import '../templates/icon_button_template.dart';
 // import '../templates/input_chip_template.dart';
 // import '../templates/input_decorator_template.dart';
 // import '../templates/list_tile_template.dart';
@@ -82,6 +82,7 @@ Future<void> main(List<String> args) async {
   // const FabTemplateM3().generateFile(verbose: verbose);
   // const FilterChipTemplateM3().generateFile(verbose: verbose);
   // const IconButtonTemplateM3().generateFile(verbose: verbose);
+  const IconButtonTemplateM3E().generateFile(verbose: verbose);
   // const InputChipTemplateM3().generateFile(verbose: verbose);
   // const InputDecoratorTemplateM3().generateFile(verbose: verbose);
   // const ListTileTemplateM3().generateFile(verbose: verbose);

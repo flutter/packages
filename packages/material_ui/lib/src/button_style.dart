@@ -31,6 +31,55 @@ import 'theme_data.dart';
 // late BuildContext context;
 // typedef MyAppHome = Placeholder;
 
+/// Defines size variants for Material 3 Expressive button components.
+///
+/// Each size variant represents a named visual scale. For example, a Material
+/// 3 Expressive [IconButton] uses this value to choose its container size, icon
+/// size, and padding.
+enum ButtonSizeVariant {
+  /// The smallest button size.
+  xSmall,
+
+  /// A small button size.
+  small,
+
+  /// A medium button size.
+  medium,
+
+  /// A large button size.
+  large,
+
+  /// The largest button size.
+  xLarge,
+}
+
+/// Defines the width variants for Material 3 Expressive [IconButton].
+enum IconButtonWidthVariant {
+  /// A narrower icon button.
+  narrow,
+
+  /// The standard icon button width.
+  standard,
+
+  /// A wider icon button.
+  wide,
+}
+
+/// Defines shape variants for Material 3 Expressive button components.
+enum ButtonShapeVariant {
+  /// A rounded button shape.
+  ///
+  /// For example, a Material 3 Expressive [IconButton] with this variant uses
+  /// rounder default container shapes.
+  round,
+
+  /// A squared button shape.
+  ///
+  /// For example, a Material 3 Expressive [IconButton] with this variant uses
+  /// more squared default container shapes.
+  square,
+}
+
 /// The type for [ButtonStyle.backgroundBuilder] and [ButtonStyle.foregroundBuilder].
 ///
 /// The [states] parameter is the button's current pressed/hovered/etc state. The [child] is
@@ -187,6 +236,9 @@ class ButtonStyle with Diagnosticable {
     this.splashFactory,
     this.backgroundBuilder,
     this.foregroundBuilder,
+    this.sizeVariant,
+    this.iconButtonWidth,
+    this.shapeVariant,
   });
 
   /// The style for a button's [Text] widget descendants.
@@ -423,6 +475,42 @@ class ButtonStyle with Diagnosticable {
   ///    configuring clipping.
   final ButtonLayerBuilder? foregroundBuilder;
 
+  /// The Material 3 Expressive size variant for this button.
+  ///
+  /// A size variant selects a component-defined token set rather than a single
+  /// dimension. For example, an [IconButton] uses this value to choose its
+  /// default container size, padding, and icon size when it is using
+  /// [StyleVariant.material3Expressive].
+  ///
+  /// Use [minimumSize], [fixedSize], [maximumSize], [padding], or [iconSize] to
+  /// directly override those individual style properties.
+  final ButtonSizeVariant? sizeVariant;
+
+  /// The Material 3 Expressive width variant for an [IconButton].
+  ///
+  /// A width variant selects the leading and trailing space tokens used to
+  /// compute an icon button's default horizontal padding and minimum width when
+  /// it is using [StyleVariant.material3Expressive]. It does not change the
+  /// button's height or icon size.
+  ///
+  /// This property is only used by icon buttons. Use [padding],
+  /// [minimumSize], [fixedSize], or [maximumSize] to directly override the
+  /// resulting layout.
+  final IconButtonWidthVariant? iconButtonWidth;
+
+  /// The Material 3 Expressive shape variant for this button.
+  ///
+  /// A shape variant selects between component-defined token families, such as
+  /// round and square shapes. For [IconButton], this affects the default
+  /// container and selected-state shapes when it is using
+  /// [StyleVariant.material3Expressive]; state-specific tokens, such as the
+  /// pressed shape, are still resolved by the component defaults.
+  ///
+  /// Use [shape] to provide a specific [OutlinedBorder] or stateful shape
+  /// override instead of selecting one of the Material 3 Expressive shape
+  /// variants.
+  final ButtonShapeVariant? shapeVariant;
+
   /// Returns a copy of this ButtonStyle with the given fields replaced with
   /// the new values.
   ButtonStyle copyWith({
@@ -451,6 +539,9 @@ class ButtonStyle with Diagnosticable {
     InteractiveInkFeatureFactory? splashFactory,
     ButtonLayerBuilder? backgroundBuilder,
     ButtonLayerBuilder? foregroundBuilder,
+    ButtonSizeVariant? sizeVariant,
+    IconButtonWidthVariant? iconButtonWidth,
+    ButtonShapeVariant? shapeVariant,
   }) {
     return ButtonStyle(
       textStyle: textStyle ?? this.textStyle,
@@ -478,6 +569,9 @@ class ButtonStyle with Diagnosticable {
       splashFactory: splashFactory ?? this.splashFactory,
       backgroundBuilder: backgroundBuilder ?? this.backgroundBuilder,
       foregroundBuilder: foregroundBuilder ?? this.foregroundBuilder,
+      sizeVariant: sizeVariant ?? this.sizeVariant,
+      iconButtonWidth: iconButtonWidth ?? this.iconButtonWidth,
+      shapeVariant: shapeVariant ?? this.shapeVariant,
     );
   }
 
@@ -516,6 +610,9 @@ class ButtonStyle with Diagnosticable {
       splashFactory: splashFactory ?? style.splashFactory,
       backgroundBuilder: backgroundBuilder ?? style.backgroundBuilder,
       foregroundBuilder: foregroundBuilder ?? style.foregroundBuilder,
+      sizeVariant: sizeVariant ?? style.sizeVariant,
+      iconButtonWidth: iconButtonWidth ?? style.iconButtonWidth,
+      shapeVariant: shapeVariant ?? style.shapeVariant,
     );
   }
 
@@ -547,6 +644,9 @@ class ButtonStyle with Diagnosticable {
       splashFactory,
       backgroundBuilder,
       foregroundBuilder,
+      sizeVariant,
+      iconButtonWidth,
+      shapeVariant,
     ];
     return Object.hashAll(values);
   }
@@ -584,7 +684,10 @@ class ButtonStyle with Diagnosticable {
         other.alignment == alignment &&
         other.splashFactory == splashFactory &&
         other.backgroundBuilder == backgroundBuilder &&
-        other.foregroundBuilder == foregroundBuilder;
+        other.foregroundBuilder == foregroundBuilder &&
+        other.sizeVariant == sizeVariant &&
+        other.iconButtonWidth == iconButtonWidth &&
+        other.shapeVariant == shapeVariant;
   }
 
   @override
@@ -706,6 +809,13 @@ class ButtonStyle with Diagnosticable {
         defaultValue: null,
       ),
     );
+    properties.add(EnumProperty<ButtonSizeVariant>('sizeVariant', sizeVariant, defaultValue: null));
+    properties.add(
+      EnumProperty<IconButtonWidthVariant>('iconButtonWidth', iconButtonWidth, defaultValue: null),
+    );
+    properties.add(
+      EnumProperty<ButtonShapeVariant>('shapeVariant', shapeVariant, defaultValue: null),
+    );
   }
 
   /// Linearly interpolate between two [ButtonStyle]s.
@@ -769,6 +879,9 @@ class ButtonStyle with Diagnosticable {
       splashFactory: t < 0.5 ? a?.splashFactory : b?.splashFactory,
       backgroundBuilder: t < 0.5 ? a?.backgroundBuilder : b?.backgroundBuilder,
       foregroundBuilder: t < 0.5 ? a?.foregroundBuilder : b?.foregroundBuilder,
+      sizeVariant: t < 0.5 ? a?.sizeVariant : b?.sizeVariant,
+      iconButtonWidth: t < 0.5 ? a?.iconButtonWidth : b?.iconButtonWidth,
+      shapeVariant: t < 0.5 ? a?.shapeVariant : b?.shapeVariant,
     );
   }
 }
