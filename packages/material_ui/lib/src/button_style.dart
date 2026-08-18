@@ -493,7 +493,7 @@ class ButtonStyle with Diagnosticable {
   /// it is using [StyleVariant.material3Expressive]. It does not change the
   /// button's height or icon size.
   ///
-  /// This property is only interpreted by icon buttons. Use [padding],
+  /// This property is only used by icon buttons. Use [padding],
   /// [minimumSize], [fixedSize], or [maximumSize] to directly override the
   /// resulting layout.
   final IconButtonWidth? iconButtonWidth;
