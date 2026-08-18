@@ -32,11 +32,12 @@ dev_dependencies:
   path: ^1.9.1
   platform: ^3.1.6
 
+flutter:
+  shaders:
+    - shaders/material_ink_sparkle.frag
+
 topics:
   - ui
   - widgets
   - material
 
-flutter:
-  shaders:
-    - shaders/material_ink_sparkle.frag
