@@ -33,42 +33,54 @@ import 'theme_data.dart';
 
 /// Defines size variants for Material 3 Expressive button components.
 ///
-/// Components interpret each size variant according to their own token set.
+/// Components interpret each size variant according to their own design. For
+/// example, a Material 3 Expressive [IconButton] changes its container size,
+/// icon size, and padding when its size variant changes.
 enum ButtonSize {
-  /// Extra small button size.
+  /// The smallest button size.
   xSmall,
 
-  /// Small button size. This is the default for icon buttons.
+  /// A small button size.
+  ///
+  /// This is the default for Material 3 Expressive [IconButton].
   small,
 
-  /// Medium button size.
+  /// A medium button size.
   medium,
 
-  /// Large button size.
+  /// A large button size.
   large,
 
-  /// Extra large button size.
+  /// The largest button size.
   xLarge,
 }
 
 /// Defines the width variants for Material 3 Expressive [IconButton].
 enum IconButtonWidth {
-  /// Uses the narrow leading and trailing space tokens.
+  /// A narrower icon button.
   narrow,
 
-  /// Uses the default leading and trailing space tokens.
+  /// The standard icon button width.
+  ///
+  /// This is the default for Material 3 Expressive [IconButton].
   standard,
 
-  /// Uses the wide leading and trailing space tokens.
+  /// A wider icon button.
   wide,
 }
 
 /// Defines shape variants for Material 3 Expressive button components.
 enum ButtonShapeVariant {
-  /// Uses the round shape tokens.
+  /// A rounded button shape.
+  ///
+  /// For example, a Material 3 Expressive [IconButton] with this variant uses
+  /// rounder default container shapes.
   round,
 
-  /// Uses the square shape tokens.
+  /// A squared button shape.
+  ///
+  /// For example, a Material 3 Expressive [IconButton] with this variant uses
+  /// more squared default container shapes.
   square,
 }
 
