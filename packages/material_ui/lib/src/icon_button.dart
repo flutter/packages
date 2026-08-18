@@ -1019,8 +1019,9 @@ class _IconButtonM3 extends ButtonStyleButton {
 
   /// ## Material 3 defaults
   ///
-  /// If [ThemeData.useMaterial3] is set to true the following defaults will
-  /// be used:
+  /// If [ThemeData.useMaterial3] is true and [IconButtonThemeData.variant] is
+  /// not [StyleVariant.material3Expressive], the following defaults will be
+  /// used:
   ///
   /// * `textStyle` - null
   /// * `backgroundColor` - transparent
@@ -1045,17 +1046,24 @@ class _IconButtonM3 extends ButtonStyleButton {
   /// * `iconSize` - 24
   /// * `side` - null
   /// * `shape` - StadiumBorder()
-  /// * `sizeVariant` - ButtonSize.small for Material 3 Expressive
-  /// * `iconButtonWidth` - IconButtonWidth.standard for Material 3 Expressive
-  /// * `shapeVariant` - ButtonShapeVariant.round for Material 3 Expressive
   /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
   /// * `visualDensity` - VisualDensity.standard
-  /// * `tapTargetSize` - theme.materialTapTargetSize for Material 3,
-  ///   MaterialTapTargetSize.padded for Material 3 Expressive
+  /// * `tapTargetSize` - theme.materialTapTargetSize
   /// * `animationDuration` - kThemeChangeDuration
   /// * `enableFeedback` - true
   /// * `alignment` - Alignment.center
   /// * `splashFactory` - Theme.splashFactory
+  ///
+  /// ## Material 3 Expressive defaults
+  ///
+  /// If [ThemeData.useMaterial3] is true and [IconButtonThemeData.variant] is
+  /// [StyleVariant.material3Expressive], Material 3 Expressive defaults are
+  /// used. The Material 3 Expressive-specific defaults include:
+  ///
+  /// * `sizeVariant` - ButtonSize.small
+  /// * `iconButtonWidth` - IconButtonWidth.standard
+  /// * `shapeVariant` - ButtonShapeVariant.round
+  /// * `tapTargetSize` - MaterialTapTargetSize.padded
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
     final ButtonSize? effectiveSize = _effectiveSize(context);
