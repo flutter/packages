@@ -3579,7 +3579,6 @@ void main() {
       theme:
           theme ??
           ThemeData(
-            useMaterial3: true,
             iconButtonTheme: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
           ),
       home: Scaffold(body: Center(child: child)),
@@ -3659,7 +3658,6 @@ void main() {
       await tester.pumpWidget(
         buildM3EApp(
           theme: ThemeData(
-            useMaterial3: true,
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             iconButtonTheme: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
           ),
@@ -3764,7 +3762,6 @@ void main() {
       await tester.pumpWidget(
         buildM3EApp(
           theme: ThemeData(
-            useMaterial3: true,
             iconButtonTheme: const IconButtonThemeData(
               style: ButtonStyle(iconButtonWidth: IconButtonWidthVariant.wide),
               variant: StyleVariant.material3Expressive,
@@ -3987,7 +3984,6 @@ void main() {
       await tester.pumpWidget(
         buildM3EApp(
           theme: ThemeData(
-            useMaterial3: true,
             iconButtonTheme: const IconButtonThemeData(
               style: ButtonStyle(sizeVariant: ButtonSizeVariant.large),
               variant: StyleVariant.material3Expressive,
@@ -4005,7 +4001,6 @@ void main() {
       await tester.pumpWidget(
         buildM3EApp(
           theme: ThemeData(
-            useMaterial3: true,
             iconButtonTheme: const IconButtonThemeData(
               style: ButtonStyle(sizeVariant: ButtonSizeVariant.large),
               variant: StyleVariant.material3Expressive,
