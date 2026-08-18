@@ -33,9 +33,9 @@ import 'theme_data.dart';
 
 /// Defines size variants for Material 3 Expressive button components.
 ///
-/// Components interpret each size variant according to their own design. For
-/// example, a Material 3 Expressive [IconButton] changes its container size,
-/// icon size, and padding when its size variant changes.
+/// Each size variant represents a named visual scale. For example, a Material
+/// 3 Expressive [IconButton] uses this value to choose its container size, icon
+/// size, and padding.
 enum ButtonSize {
   /// The smallest button size.
   xSmall,
