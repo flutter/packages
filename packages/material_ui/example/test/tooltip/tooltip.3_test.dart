@@ -52,9 +52,12 @@ Finder findByTooltip(Pattern message, {bool skipOffstage = true}) {
     // 2. Tooltip.message and Tooltip.richMessage are empty, since in this
     //    case no RawTooltip is created.
     if (widget is Tooltip) {
-      final String tooltipMessage = widget.message ?? widget.richMessage!.toPlainText();
+      final String tooltipMessage =
+          widget.message ?? widget.richMessage!.toPlainText();
       if ((widget.excludeFromSemantics ?? false) || tooltipMessage.isEmpty) {
-        return message is RegExp ? message.hasMatch(tooltipMessage) : tooltipMessage == message;
+        return message is RegExp
+            ? message.hasMatch(tooltipMessage)
+            : tooltipMessage == message;
       }
     }
     return widget is RawTooltip &&
