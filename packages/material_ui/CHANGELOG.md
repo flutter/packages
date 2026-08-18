@@ -1,18 +1,18 @@
 ## 1.0.0
 
-- README updated for the full release of material_ui.
+- Updates README for the full release of material_ui.
 - Promotes the pre-release to 1.0.0.
 
 ## 0.0.3+1
 
-- Replace unresolvable doc imports
-- Added a main.dart example for the Pub "Example" tab that reference a curated
+- Replaces unresolvable doc imports.
+- Adds a main.dart example for the Pub "Example" tab, which references a curated
 list of existing examples.
 
 ## 0.0.3
 
-- Fix API doc by clearing unsupported directives introduced by macros.
-- Fix API doc references.
+- Fixes API doc by clearing unsupported directives introduced by macros.
+- Fixes API doc references.
 - Adds MaterialUiCompatibilityBridge for legacy flutter/material.dart compatibility.
 
 ## 0.0.2
@@ -26,4 +26,4 @@ list of existing examples.
 
 ## 0.0.1
 
-* Initial setup of the `material_ui` package, preparing for decoupling Material widgets from the Flutter framework.
+- Sets up the `material_ui` package, preparing for decoupling Material widgets from the Flutter framework.
