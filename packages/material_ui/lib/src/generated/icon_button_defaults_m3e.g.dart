@@ -11,10 +11,13 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
   _IconButtonDefaultsM3E(
     this.context,
     this.toggleable,
-    this._sizeVariant,
-    this._iconButtonWidth,
-    this._shapeVariant,
-  ) : super(
+    ButtonSize? sizeVariant,
+    IconButtonWidth? iconButtonWidth,
+    ButtonShapeVariant? shapeVariant,
+  ) : _sizeVariant = sizeVariant,
+      _iconButtonWidth = iconButtonWidth,
+      _shapeVariant = shapeVariant,
+      super(
         animationDuration: kThemeChangeDuration,
         enableFeedback: true,
         alignment: Alignment.center,
@@ -261,10 +264,13 @@ class _FilledIconButtonDefaultsM3E extends ButtonStyle {
   _FilledIconButtonDefaultsM3E(
     this.context,
     this.toggleable,
-    this._sizeVariant,
-    this._iconButtonWidth,
-    this._shapeVariant,
-  ) : super(
+    ButtonSize? sizeVariant,
+    IconButtonWidth? iconButtonWidth,
+    ButtonShapeVariant? shapeVariant,
+  ) : _sizeVariant = sizeVariant,
+      _iconButtonWidth = iconButtonWidth,
+      _shapeVariant = shapeVariant,
+      super(
         animationDuration: kThemeChangeDuration,
         enableFeedback: true,
         alignment: Alignment.center,
@@ -536,10 +542,13 @@ class _FilledTonalIconButtonDefaultsM3E extends ButtonStyle {
   _FilledTonalIconButtonDefaultsM3E(
     this.context,
     this.toggleable,
-    this._sizeVariant,
-    this._iconButtonWidth,
-    this._shapeVariant,
-  ) : super(
+    ButtonSize? sizeVariant,
+    IconButtonWidth? iconButtonWidth,
+    ButtonShapeVariant? shapeVariant,
+  ) : _sizeVariant = sizeVariant,
+      _iconButtonWidth = iconButtonWidth,
+      _shapeVariant = shapeVariant,
+      super(
         animationDuration: kThemeChangeDuration,
         enableFeedback: true,
         alignment: Alignment.center,
@@ -811,10 +820,13 @@ class _OutlinedIconButtonDefaultsM3E extends ButtonStyle {
   _OutlinedIconButtonDefaultsM3E(
     this.context,
     this.toggleable,
-    this._sizeVariant,
-    this._iconButtonWidth,
-    this._shapeVariant,
-  ) : super(
+    ButtonSize? sizeVariant,
+    IconButtonWidth? iconButtonWidth,
+    ButtonShapeVariant? shapeVariant,
+  ) : _sizeVariant = sizeVariant,
+      _iconButtonWidth = iconButtonWidth,
+      _shapeVariant = shapeVariant,
+      super(
         animationDuration: kThemeChangeDuration,
         enableFeedback: true,
         alignment: Alignment.center,
