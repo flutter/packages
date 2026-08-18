@@ -636,7 +636,7 @@ class IconButton extends StatelessWidget {
   ///
   /// When [IconButtonThemeData.variant] is [StyleVariant.material3Expressive],
   /// and these properties are null, Material 3 Expressive [IconButton] defaults
-  /// use [ButtonSize.small], [IconButtonWidth.standard], and
+  /// use [ButtonSizeVariant.small], [IconButtonWidthVariant.standard], and
   /// [ButtonShapeVariant.round].
   ///
   /// All parameters default to null, by default this method returns
@@ -683,8 +683,8 @@ class IconButton extends StatelessWidget {
     bool? enableFeedback,
     AlignmentGeometry? alignment,
     InteractiveInkFeatureFactory? splashFactory,
-    ButtonSize? sizeVariant,
-    IconButtonWidth? iconButtonWidth,
+    ButtonSizeVariant? sizeVariant,
+    IconButtonWidthVariant? iconButtonWidth,
     ButtonShapeVariant? shapeVariant,
   }) {
     final Color? overlayFallback = overlayColor ?? foregroundColor;
@@ -1081,14 +1081,15 @@ class _IconButtonM3 extends ButtonStyleButton {
   /// * `enableFeedback` - true
   /// * `alignment` - Alignment.center
   /// * `splashFactory` - Theme.splashFactory
-  /// * `sizeVariant` - ButtonSize.small
-  /// * `iconButtonWidth` - IconButtonWidth.standard
+  /// * `sizeVariant` - ButtonSizeVariant.small
+  /// * `iconButtonWidth` - IconButtonWidthVariant.standard
   /// * `shapeVariant` - ButtonShapeVariant.round
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
     final ButtonStyle? iconButtonThemeStyle = IconButtonTheme.of(context).style;
-    final ButtonSize? effectiveSize = style?.sizeVariant ?? iconButtonThemeStyle?.sizeVariant;
-    final IconButtonWidth? effectiveWidth =
+    final ButtonSizeVariant? effectiveSize =
+        style?.sizeVariant ?? iconButtonThemeStyle?.sizeVariant;
+    final IconButtonWidthVariant? effectiveWidth =
         style?.iconButtonWidth ?? iconButtonThemeStyle?.iconButtonWidth;
     final ButtonShapeVariant? effectiveShape =
         style?.shapeVariant ?? iconButtonThemeStyle?.shapeVariant;

@@ -36,7 +36,7 @@ import 'theme_data.dart';
 /// Each size variant represents a named visual scale. For example, a Material
 /// 3 Expressive [IconButton] uses this value to choose its container size, icon
 /// size, and padding.
-enum ButtonSize {
+enum ButtonSizeVariant {
   /// The smallest button size.
   xSmall,
 
@@ -54,7 +54,7 @@ enum ButtonSize {
 }
 
 /// Defines the width variants for Material 3 Expressive [IconButton].
-enum IconButtonWidth {
+enum IconButtonWidthVariant {
   /// A narrower icon button.
   narrow,
 
@@ -484,7 +484,7 @@ class ButtonStyle with Diagnosticable {
   ///
   /// Use [minimumSize], [fixedSize], [maximumSize], [padding], or [iconSize] to
   /// directly override those individual style properties.
-  final ButtonSize? sizeVariant;
+  final ButtonSizeVariant? sizeVariant;
 
   /// The Material 3 Expressive width variant for an [IconButton].
   ///
@@ -496,7 +496,7 @@ class ButtonStyle with Diagnosticable {
   /// This property is only used by icon buttons. Use [padding],
   /// [minimumSize], [fixedSize], or [maximumSize] to directly override the
   /// resulting layout.
-  final IconButtonWidth? iconButtonWidth;
+  final IconButtonWidthVariant? iconButtonWidth;
 
   /// The Material 3 Expressive shape variant for this button.
   ///
@@ -539,8 +539,8 @@ class ButtonStyle with Diagnosticable {
     InteractiveInkFeatureFactory? splashFactory,
     ButtonLayerBuilder? backgroundBuilder,
     ButtonLayerBuilder? foregroundBuilder,
-    ButtonSize? sizeVariant,
-    IconButtonWidth? iconButtonWidth,
+    ButtonSizeVariant? sizeVariant,
+    IconButtonWidthVariant? iconButtonWidth,
     ButtonShapeVariant? shapeVariant,
   }) {
     return ButtonStyle(
@@ -809,9 +809,9 @@ class ButtonStyle with Diagnosticable {
         defaultValue: null,
       ),
     );
-    properties.add(EnumProperty<ButtonSize>('sizeVariant', sizeVariant, defaultValue: null));
+    properties.add(EnumProperty<ButtonSizeVariant>('sizeVariant', sizeVariant, defaultValue: null));
     properties.add(
-      EnumProperty<IconButtonWidth>('iconButtonWidth', iconButtonWidth, defaultValue: null),
+      EnumProperty<IconButtonWidthVariant>('iconButtonWidth', iconButtonWidth, defaultValue: null),
     );
     properties.add(
       EnumProperty<ButtonShapeVariant>('shapeVariant', shapeVariant, defaultValue: null),

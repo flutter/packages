@@ -57,11 +57,11 @@ ${_generateOutlinedDefaults()}
   }) {
     return '''
 switch (sizeVariant) {
-      ButtonSize.xSmall => $xSmall,
-      ButtonSize.small => $small,
-      ButtonSize.medium => $medium,
-      ButtonSize.large => $large,
-      ButtonSize.xLarge => $xLarge,
+      ButtonSizeVariant.xSmall => $xSmall,
+      ButtonSizeVariant.small => $small,
+      ButtonSizeVariant.medium => $medium,
+      ButtonSizeVariant.large => $large,
+      ButtonSizeVariant.xLarge => $xLarge,
     }''';
   }
 
@@ -120,9 +120,9 @@ switch (sizeVariant) {
   }) {
     return '''
 switch (iconButtonWidth) {
-        IconButtonWidth.narrow => const EdgeInsetsDirectional.fromSTEB($narrowLeading, $defaultLeading, $narrowTrailing, $defaultTrailing),
-        IconButtonWidth.standard => const EdgeInsetsDirectional.fromSTEB($defaultLeading, $defaultLeading, $defaultTrailing, $defaultTrailing),
-        IconButtonWidth.wide => const EdgeInsetsDirectional.fromSTEB($wideLeading, $defaultLeading, $wideTrailing, $defaultTrailing),
+        IconButtonWidthVariant.narrow => const EdgeInsetsDirectional.fromSTEB($narrowLeading, $defaultLeading, $narrowTrailing, $defaultTrailing),
+        IconButtonWidthVariant.standard => const EdgeInsetsDirectional.fromSTEB($defaultLeading, $defaultLeading, $defaultTrailing, $defaultTrailing),
+        IconButtonWidthVariant.wide => const EdgeInsetsDirectional.fromSTEB($wideLeading, $defaultLeading, $wideTrailing, $defaultTrailing),
       }''';
   }
 
@@ -193,9 +193,9 @@ switch (iconButtonWidth) {
   }) {
     return '''
 switch (iconButtonWidth) {
-        IconButtonWidth.narrow => const Size(${iconSize + narrowLeading + narrowTrailing}, $height),
-        IconButtonWidth.standard => const Size(${iconSize + defaultLeading + defaultTrailing}, $height),
-        IconButtonWidth.wide => const Size(${iconSize + wideLeading + wideTrailing}, $height),
+        IconButtonWidthVariant.narrow => const Size(${iconSize + narrowLeading + narrowTrailing}, $height),
+        IconButtonWidthVariant.standard => const Size(${iconSize + defaultLeading + defaultTrailing}, $height),
+        IconButtonWidthVariant.wide => const Size(${iconSize + wideLeading + wideTrailing}, $height),
       }''';
   }
 
@@ -287,8 +287,8 @@ switch (shapeVariant) {
 
   String get _variantFields {
     return '''
-  final ButtonSize? _sizeVariant;
-  final IconButtonWidth? _iconButtonWidth;
+  final ButtonSizeVariant? _sizeVariant;
+  final IconButtonWidthVariant? _iconButtonWidth;
   final ButtonShapeVariant? _shapeVariant;
 ''';
   }
@@ -296,10 +296,10 @@ switch (shapeVariant) {
   String get _variantGetters {
     return '''
   @override
-  ButtonSize get sizeVariant => _sizeVariant ?? ButtonSize.small;
+  ButtonSizeVariant get sizeVariant => _sizeVariant ?? ButtonSizeVariant.small;
 
   @override
-  IconButtonWidth get iconButtonWidth => _iconButtonWidth ?? IconButtonWidth.standard;
+  IconButtonWidthVariant get iconButtonWidth => _iconButtonWidth ?? IconButtonWidthVariant.standard;
 
   @override
   ButtonShapeVariant get shapeVariant => _shapeVariant ?? ButtonShapeVariant.round;
@@ -344,8 +344,8 @@ class $className extends ButtonStyle {
   $className(
     this.context,
     this.toggleable,
-    ButtonSize? sizeVariant,
-    IconButtonWidth? iconButtonWidth,
+    ButtonSizeVariant? sizeVariant,
+    IconButtonWidthVariant? iconButtonWidth,
     ButtonShapeVariant? shapeVariant,
   ) : _sizeVariant = sizeVariant,
       _iconButtonWidth = iconButtonWidth,
@@ -443,8 +443,8 @@ class _FilledIconButtonDefaultsM3E extends ButtonStyle {
   _FilledIconButtonDefaultsM3E(
     this.context,
     this.toggleable,
-    ButtonSize? sizeVariant,
-    IconButtonWidth? iconButtonWidth,
+    ButtonSizeVariant? sizeVariant,
+    IconButtonWidthVariant? iconButtonWidth,
     ButtonShapeVariant? shapeVariant,
   ) : _sizeVariant = sizeVariant,
       _iconButtonWidth = iconButtonWidth,
@@ -567,8 +567,8 @@ class _FilledTonalIconButtonDefaultsM3E extends ButtonStyle {
   _FilledTonalIconButtonDefaultsM3E(
     this.context,
     this.toggleable,
-    ButtonSize? sizeVariant,
-    IconButtonWidth? iconButtonWidth,
+    ButtonSizeVariant? sizeVariant,
+    IconButtonWidthVariant? iconButtonWidth,
     ButtonShapeVariant? shapeVariant,
   ) : _sizeVariant = sizeVariant,
       _iconButtonWidth = iconButtonWidth,
@@ -691,8 +691,8 @@ class _OutlinedIconButtonDefaultsM3E extends ButtonStyle {
   _OutlinedIconButtonDefaultsM3E(
     this.context,
     this.toggleable,
-    ButtonSize? sizeVariant,
-    IconButtonWidth? iconButtonWidth,
+    ButtonSizeVariant? sizeVariant,
+    IconButtonWidthVariant? iconButtonWidth,
     ButtonShapeVariant? shapeVariant,
   ) : _sizeVariant = sizeVariant,
       _iconButtonWidth = iconButtonWidth,
