@@ -39,4 +39,4 @@ topics:
 
 flutter:
   shaders:
-    - packages/material_ui/shaders/ink_sparkle.frag
+    - shaders/material_ink_sparkle.frag
