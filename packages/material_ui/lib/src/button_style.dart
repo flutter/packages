@@ -482,10 +482,8 @@ class ButtonStyle with Diagnosticable {
   /// default container size, padding, and icon size when it is using
   /// [StyleVariant.material3Expressive].
   ///
-  /// Buttons without Material 3 Expressive size variants ignore this property.
-  /// Use [minimumSize], [fixedSize],
-  /// [maximumSize], [padding], or [iconSize] to directly override those
-  /// individual style properties.
+  /// Use [minimumSize], [fixedSize], [maximumSize], [padding], or [iconSize] to
+  /// directly override those individual style properties.
   final ButtonSize? sizeVariant;
 
   /// The Material 3 Expressive width variant for an [IconButton].
