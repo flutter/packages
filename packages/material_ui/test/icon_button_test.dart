@@ -3573,12 +3573,15 @@ void main() {
   });
 
   Widget buildM3EApp({required Widget child, ThemeData? theme}) {
+    final ThemeData effectiveTheme = theme ?? ThemeData();
+    final IconButtonThemeData iconButtonTheme = effectiveTheme.iconButtonTheme;
     return MaterialApp(
-      theme:
-          theme ??
-          ThemeData(
-            iconButtonTheme: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
-          ),
+      theme: effectiveTheme.copyWith(
+        iconButtonTheme: IconButtonThemeData(
+          style: iconButtonTheme.style,
+          variant: iconButtonTheme.variant ?? StyleVariant.material3Expressive,
+        ),
+      ),
       home: Scaffold(body: Center(child: child)),
     );
   }
@@ -3655,10 +3658,7 @@ void main() {
     ) async {
       await tester.pumpWidget(
         buildM3EApp(
-          theme: ThemeData(
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            iconButtonTheme: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
-          ),
+          theme: ThemeData(materialTapTargetSize: MaterialTapTargetSize.shrinkWrap),
           child: IconButton(
             onPressed: () {},
             icon: const Icon(Icons.add),
@@ -3762,7 +3762,6 @@ void main() {
           theme: ThemeData(
             iconButtonTheme: const IconButtonThemeData(
               style: ButtonStyle(iconButtonWidth: IconButtonWidthVariant.wide),
-              variant: StyleVariant.material3Expressive,
             ),
           ),
           child: IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
@@ -3984,7 +3983,6 @@ void main() {
           theme: ThemeData(
             iconButtonTheme: const IconButtonThemeData(
               style: ButtonStyle(sizeVariant: ButtonSizeVariant.large),
-              variant: StyleVariant.material3Expressive,
             ),
           ),
           child: IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
@@ -4001,7 +3999,6 @@ void main() {
           theme: ThemeData(
             iconButtonTheme: const IconButtonThemeData(
               style: ButtonStyle(sizeVariant: ButtonSizeVariant.large),
-              variant: StyleVariant.material3Expressive,
             ),
           ),
           child: IconButton(
