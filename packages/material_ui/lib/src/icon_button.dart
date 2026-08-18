@@ -633,6 +633,10 @@ class IconButton extends StatelessWidget {
   /// [ButtonStyle.sizeVariant], [ButtonStyle.iconButtonWidth], and
   /// [ButtonStyle.shapeVariant].
   ///
+  /// When these properties are null, Material 3 Expressive [IconButton]
+  /// defaults use [ButtonSize.small], [IconButtonWidth.standard], and
+  /// [ButtonShapeVariant.round].
+  ///
   /// When [IconButtonThemeData.variant] is [StyleVariant.material3Expressive],
   /// [IconButton]'s default [ButtonStyle.tapTargetSize] is
   /// [MaterialTapTargetSize.padded]. The [tapTargetSize] parameter can still be
@@ -1044,6 +1048,9 @@ class _IconButtonM3 extends ButtonStyleButton {
   /// * `iconSize` - 24
   /// * `side` - null
   /// * `shape` - StadiumBorder()
+  /// * `sizeVariant` - ButtonSize.small for Material 3 Expressive
+  /// * `iconButtonWidth` - IconButtonWidth.standard for Material 3 Expressive
+  /// * `shapeVariant` - ButtonShapeVariant.round for Material 3 Expressive
   /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
   /// * `visualDensity` - VisualDensity.standard
   /// * `tapTargetSize` - theme.materialTapTargetSize for Material 3,

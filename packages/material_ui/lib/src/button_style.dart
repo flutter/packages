@@ -41,8 +41,6 @@ enum ButtonSize {
   xSmall,
 
   /// A small button size.
-  ///
-  /// This is the default for Material 3 Expressive [IconButton].
   small,
 
   /// A medium button size.
@@ -61,8 +59,6 @@ enum IconButtonWidth {
   narrow,
 
   /// The standard icon button width.
-  ///
-  /// This is the default for Material 3 Expressive [IconButton].
   standard,
 
   /// A wider icon button.
@@ -486,9 +482,6 @@ class ButtonStyle with Diagnosticable {
   /// default container size, padding, and icon size when it is using
   /// [StyleVariant.material3Expressive].
   ///
-  /// If null, the button uses its component default. For Material 3 Expressive
-  /// [IconButton] defaults, the fallback is [ButtonSize.small].
-  ///
   /// This property is only interpreted by button components that define
   /// Material 3 Expressive size variants. Use [minimumSize], [fixedSize],
   /// [maximumSize], [padding], or [iconSize] to directly override those
@@ -502,9 +495,6 @@ class ButtonStyle with Diagnosticable {
   /// it is using [StyleVariant.material3Expressive]. It does not change the
   /// button's height or icon size.
   ///
-  /// If null, Material 3 Expressive [IconButton] defaults use
-  /// [IconButtonWidth.standard].
-  ///
   /// This property is only interpreted by icon buttons. Use [padding],
   /// [minimumSize], [fixedSize], or [maximumSize] to directly override the
   /// resulting layout.
@@ -517,9 +507,6 @@ class ButtonStyle with Diagnosticable {
   /// container and selected-state shapes when it is using
   /// [StyleVariant.material3Expressive]; state-specific tokens, such as the
   /// pressed shape, are still resolved by the component defaults.
-  ///
-  /// If null, Material 3 Expressive [IconButton] defaults use
-  /// [ButtonShapeVariant.round].
   ///
   /// Use [shape] to provide a specific [OutlinedBorder] or stateful shape
   /// override instead of selecting one of the Material 3 Expressive token
