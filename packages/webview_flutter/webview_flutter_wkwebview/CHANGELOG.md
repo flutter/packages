@@ -1,3 +1,9 @@
+## 3.26.1
+
+* Fixes web views on iOS becoming unresponsive to touches after the first
+  interaction by registering the platform view with the hit-test based gesture
+  blocking policy.
+
 ## 3.26.0
 
 * Adds new method for accessing a native `WKWebView` from a `FlutterPluginRegistrar`.

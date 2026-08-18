@@ -84,6 +84,16 @@ import WebKit
         forIdentifier: 0, withPluginRegistrar: registrar)
       #expect(result == nil)
     }
+
+    @MainActor @Test func registersViewFactoryWithHitTestGesturePolicy() throws {
+      let registrar = TestFlutterPluginRegistrar()
+
+      WebViewFlutterPlugin.register(with: registrar)
+
+      #expect(
+        registrar.registeredGestureRecognizersBlockingPolicy
+          == FlutterPlatformViewGestureRecognizersBlockingPolicyDoNotBlockGesture)
+    }
   #endif
 }
 
@@ -128,6 +138,8 @@ class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
 
   #if os(iOS)
     var viewController: UIViewController?
+    var registeredGestureRecognizersBlockingPolicy:
+      FlutterPlatformViewGestureRecognizersBlockingPolicy?
 
     func messenger() -> FlutterBinaryMessenger {
       return TestBinaryMessenger()
@@ -145,6 +157,7 @@ class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
       _ factory: FlutterPlatformViewFactory, withId factoryId: String,
       gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy
     ) {
+      registeredGestureRecognizersBlockingPolicy = gestureRecognizersBlockingPolicy
     }
 
     func addSceneDelegate(_ delegate: any FlutterSceneLifeCycleDelegate) {

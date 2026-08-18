@@ -34,7 +34,20 @@ public class WebViewFlutterPlugin: NSObject, FlutterPlugin {
       registrar.addSceneDelegate(plugin)
     #endif
 
-    registrar.register(viewFactory, withId: "plugins.flutter.io/webview")
+    #if os(iOS)
+      // The default `eager` policy blocks the platform view's gesture
+      // recognizers through Flutter's gesture arena, which is stateful. When
+      // that state is stranded the web view stops receiving touches for the
+      // rest of its lifetime. `doNotBlockGesture` derives the same decision
+      // from hit testing instead, so there is no state left to strand.
+      // See https://github.com/flutter/flutter/issues/175099.
+      registrar.register(
+        viewFactory, withId: "plugins.flutter.io/webview",
+        gestureRecognizersBlockingPolicy:
+          FlutterPlatformViewGestureRecognizersBlockingPolicyDoNotBlockGesture)
+    #else
+      registrar.register(viewFactory, withId: "plugins.flutter.io/webview")
+    #endif
     registrar.publish(plugin)
   }
 
