@@ -209,15 +209,6 @@ targets:
       version_file: flutter_master.version
       package_sharding: "--shardIndex 2 --shardCount 3"
 
-  - name: Linux_web web_dart_unit_test_material_ui master
-    recipe: packages/packages
-    bringup: true
-    timeout: 90
-    properties:
-      target_file: web_dart_unit_tests_material_ui.yaml
-      channel: master
-      version_file: flutter_master.version
-
   - name: Linux_web web_dart_unit_test_shard_1 stable
     recipe: packages/packages
     timeout: 60
@@ -245,15 +236,6 @@ targets:
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 2 --shardCount 3"
 
-  - name: Linux_web web_dart_unit_test_material_ui stable
-    recipe: packages/packages
-    bringup: true
-    timeout: 90
-    properties:
-      target_file: web_dart_unit_tests_material_ui.yaml
-      channel: stable
-      version_file: flutter_stable.version
-
   # Wasm unit tests in master
   # TODO(stuartmorgan): Switch to testing wasm on master and stable and non-wasm
   # only on master if/when wasm builds become the default on stable; see
@@ -276,16 +258,6 @@ targets:
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 1 --shardCount 2"
-
-  - name: Linux_web web_dart_unit_test_material_ui_wasm master
-    recipe: packages/packages
-    bringup: true
-    timeout: 90
-    properties:
-      target_file: web_dart_unit_tests_material_ui_wasm.yaml
-      channel: master
-      version_file: flutter_master.version
-
 
   - name: Linux analyze master
     recipe: packages/packages
@@ -713,15 +685,6 @@ targets:
       channel: master
       package_sharding: "--shardIndex 2 --shardCount 3"
 
-  - name: Linux_web web_platform_tests_material_ui master
-    recipe: packages/packages
-    bringup: true
-    timeout: 90
-    properties:
-      target_file: web_platform_tests_material_ui.yaml
-      version_file: flutter_master.version
-      channel: master
-
   - name: Linux_web web_platform_tests_camera_web master
     recipe: packages/packages
     bringup: true
@@ -759,15 +722,6 @@ targets:
       channel: master
       package_sharding: "--shardIndex 2 --shardCount 3"
 
-  - name: Linux_web web_platform_tests_material_ui_wasm master
-    recipe: packages/packages
-    bringup: true
-    timeout: 90
-    properties:
-      target_file: web_platform_tests_material_ui_wasm.yaml
-      version_file: flutter_master.version
-      channel: master
-
   - name: Linux_web web_platform_tests_camera_web_wasm master
     recipe: packages/packages
     bringup: true
@@ -804,16 +758,6 @@ targets:
       version_file: flutter_stable.version
       channel: stable
       package_sharding: "--shardIndex 2 --shardCount 3"
-
-  - name: Linux_web web_platform_tests_material_ui stable
-    recipe: packages/packages
-    bringup: true
-    timeout: 90
-    properties:
-      target_file: web_platform_tests_material_ui.yaml
-      version_file: flutter_stable.version
-      channel: stable
-
 
   ### Linux desktop tasks
   - name: Linux_desktop build_all_packages master

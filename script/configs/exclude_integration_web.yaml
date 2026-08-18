@@ -4,5 +4,4 @@
 - google_maps_flutter/google_maps_flutter
 # Moved to its own dedicated shard due to long test duration
 - camera/camera_web
-- material_ui
 
