@@ -11,10 +11,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart'
-    hide VideoAudioTrack;
+    hide VideoAudioTrack, VideoTrack;
 import 'package:video_player_platform_interface/video_player_platform_interface.dart'
     as platform_interface
-    show VideoAudioTrack;
+    show VideoAudioTrack, VideoTrack;
 
 const String _localhost = 'https://127.0.0.1';
 final Uri _localhostUri = Uri.parse(_localhost);
@@ -72,6 +72,9 @@ class FakeController extends ValueNotifier<VideoPlayerValue> implements VideoPla
   Future<void> setLooping(bool looping) async {}
 
   @override
+  Future<void> setPreventsDisplaySleepDuringVideoPlayback(bool prevents) async {}
+
+  @override
   VideoFormat? get formatHint => null;
 
   @override
@@ -85,6 +88,15 @@ class FakeController extends ValueNotifier<VideoPlayerValue> implements VideoPla
 
   @override
   Future<void> setClosedCaptionFile(Future<ClosedCaptionFile>? closedCaptionFile) async {}
+
+  @override
+  Future<List<VideoTrack>> getVideoTracks() async => <VideoTrack>[];
+
+  @override
+  Future<void> selectVideoTrack(VideoTrack? track) async {}
+
+  @override
+  bool isVideoTrackSupportAvailable() => false;
 
   @override
   Future<List<VideoAudioTrack>> getAudioTracks() async {
@@ -1667,7 +1679,8 @@ void main() {
           'volume: 0.5, '
           'playbackSpeed: 1.5, '
           'errorDescription: null, '
-          'isCompleted: false),',
+          'isCompleted: false, '
+          'preventsDisplaySleepDuringVideoPlayback: true),',
         );
       });
 
@@ -1752,6 +1765,22 @@ void main() {
 
         await controller.initialize();
         expect(controller.videoPlayerOptions!.mixWithOthers, true);
+      });
+
+      test('setPreventsDisplaySleepDuringVideoPlayback', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        expect(controller.value.preventsDisplaySleepDuringVideoPlayback, true);
+
+        await controller.setPreventsDisplaySleepDuringVideoPlayback(false);
+        expect(controller.value.preventsDisplaySleepDuringVideoPlayback, false);
+
+        expect(
+          fakeVideoPlayerPlatform.calls.contains('setPreventsDisplaySleepDuringVideoPlayback'),
+          true,
+        );
       });
 
       test('true allowBackgroundPlayback continues playback', () async {
@@ -1892,6 +1921,102 @@ void main() {
       await controller.seekTo(const Duration(seconds: 20));
     });
   });
+
+  group('video tracks', () {
+    test('isVideoTrackSupportAvailable returns platform value', () async {
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+      await controller.initialize();
+
+      expect(controller.isVideoTrackSupportAvailable(), true);
+    });
+
+    test('getVideoTracks returns empty list when not initialized', () async {
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+
+      final List<VideoTrack> tracks = await controller.getVideoTracks();
+
+      expect(tracks, isEmpty);
+    });
+
+    test('getVideoTracks returns tracks from platform', () async {
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+      await controller.initialize();
+
+      fakeVideoPlayerPlatform
+          .setVideoTracksForPlayer(controller.playerId, <platform_interface.VideoTrack>[
+            const platform_interface.VideoTrack(
+              id: '0_0',
+              isSelected: true,
+              label: '1080p',
+              bitrate: 5000000,
+              width: 1920,
+              height: 1080,
+            ),
+            const platform_interface.VideoTrack(
+              id: '0_1',
+              isSelected: false,
+              label: '720p',
+              bitrate: 2500000,
+              width: 1280,
+              height: 720,
+            ),
+          ]);
+
+      final List<VideoTrack> tracks = await controller.getVideoTracks();
+
+      expect(tracks.length, 2);
+      expect(tracks[0].id, '0_0');
+      expect(tracks[0].label, '1080p');
+      expect(tracks[0].isSelected, true);
+      expect(tracks[0].bitrate, 5000000);
+      expect(tracks[1].id, '0_1');
+      expect(tracks[1].label, '720p');
+      expect(fakeVideoPlayerPlatform.calls, contains('getVideoTracks'));
+    });
+
+    test('getVideoTracks preserves null labels from platform', () async {
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+      await controller.initialize();
+
+      fakeVideoPlayerPlatform.setVideoTracksForPlayer(
+        controller.playerId,
+        <platform_interface.VideoTrack>[
+          const platform_interface.VideoTrack(id: '0_0', isSelected: true, bitrate: 5000000),
+        ],
+      );
+
+      final List<VideoTrack> tracks = await controller.getVideoTracks();
+
+      expect(tracks.single.label, isNull);
+    });
+
+    test('selectVideoTrack calls platform with track', () async {
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+      await controller.initialize();
+
+      const track = VideoTrack(id: '0_1', isSelected: false, label: '720p', bitrate: 2500000);
+      await controller.selectVideoTrack(track);
+
+      expect(fakeVideoPlayerPlatform.calls, contains('selectVideoTrack'));
+    });
+
+    test('selectVideoTrack with null enables auto quality', () async {
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+      await controller.initialize();
+
+      await controller.selectVideoTrack(null);
+
+      expect(fakeVideoPlayerPlatform.calls, contains('selectVideoTrack'));
+    });
+
+    test('selectVideoTrack does nothing when not initialized', () async {
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+
+      await controller.selectVideoTrack(null);
+
+      expect(fakeVideoPlayerPlatform.calls, isNot(contains('selectVideoTrack')));
+    });
+  });
 }
 
 class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
@@ -1900,6 +2025,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   List<DataSource> dataSources = <DataSource>[];
   List<VideoViewType> viewTypes = <VideoViewType>[];
   final Map<int, StreamController<VideoEvent>> streams = <int, StreamController<VideoEvent>>{};
+  List<VideoPlayerOptions?> videoPlayerOptions = <VideoPlayerOptions?>[];
   bool forceInitError = false;
   int nextPlayerId = 0;
   final Map<int, Duration> _positions = <int, Duration>{};
@@ -1943,6 +2069,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
     }
     dataSources.add(options.dataSource);
     viewTypes.add(options.viewType);
+    videoPlayerOptions.add(options.videoPlayerOptions);
     return nextPlayerId++;
   }
 
@@ -2005,6 +2132,14 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> setPreventsDisplaySleepDuringVideoPlayback(
+    int playerId,
+    bool preventsDisplaySleepDuringVideoPlayback,
+  ) async {
+    calls.add('setPreventsDisplaySleepDuringVideoPlayback');
+  }
+
+  @override
   Widget buildView(int playerId) {
     return Texture(textureId: playerId);
   }
@@ -2016,6 +2151,29 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
     }
     calls.add('setWebOptions');
     webOptions[playerId] = options;
+  }
+
+  // Video track selection support
+  final Map<int, List<platform_interface.VideoTrack>> _videoTracks =
+      <int, List<platform_interface.VideoTrack>>{};
+  void setVideoTracksForPlayer(int playerId, List<platform_interface.VideoTrack> tracks) {
+    _videoTracks[playerId] = tracks;
+  }
+
+  @override
+  Future<List<platform_interface.VideoTrack>> getVideoTracks(int playerId) async {
+    calls.add('getVideoTracks');
+    return _videoTracks[playerId] ?? <platform_interface.VideoTrack>[];
+  }
+
+  @override
+  Future<void> selectVideoTrack(int playerId, platform_interface.VideoTrack? track) async {
+    calls.add('selectVideoTrack');
+  }
+
+  @override
+  bool isVideoTrackSupportAvailable() {
+    return true;
   }
 
   @override

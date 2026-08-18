@@ -12,60 +12,75 @@ import 'theme.dart';
 
 /// {@macro flutter.widgets.RawAutocomplete.RawAutocomplete}
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=-Nny8kzW380}
+/// Learn more about [Autocomplete] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=-Nny8kzW380).
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to create a very basic Autocomplete widget using the
 /// default UI.
 ///
-/// {@example /example/lib/autocomplete/autocomplete.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/autocomplete/autocomplete.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to create an Autocomplete widget with a custom type.
 /// Try searching with text from the name or email field.
 ///
-/// {@example /example/lib/autocomplete/autocomplete.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/autocomplete/autocomplete.1.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to create an Autocomplete widget whose options are
 /// fetched over the network.
 ///
-/// {@example /example/lib/autocomplete/autocomplete.2.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/autocomplete/autocomplete.2.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to create an Autocomplete widget whose options are
 /// fetched over the network. It uses debouncing to wait to perform the network
 /// request until after the user finishes typing.
 ///
-/// {@example /example/lib/autocomplete/autocomplete.3.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/autocomplete/autocomplete.3.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to create an Autocomplete widget whose options are
 /// fetched over the network. It includes both debouncing and error handling, so
 /// that failed network requests show an error to the user and can be recovered
 /// from. Try toggling the network Switch widget to simulate going offline.
 ///
-/// {@example /example/lib/autocomplete/autocomplete.4.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/autocomplete/autocomplete.4.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -98,7 +113,10 @@ class Autocomplete<T extends Object> extends StatelessWidget {
 
   /// The [FocusNode] that is used for the text field.
   ///
-  /// {@macro flutter.widgets.RawAutocomplete.split}
+  /// For more information, see [RawAutocomplete.focusNode].
+  // TODO(dkwingsmt): Migrate the doc back to macro
+  // flutter.widgets.RawAutocomplete.split
+  // https://github.com/flutter/flutter/issues/189629
   ///
   /// If this parameter is not null, then [textEditingController] must also be
   /// non-null.
@@ -129,7 +147,10 @@ class Autocomplete<T extends Object> extends StatelessWidget {
 
   /// The [TextEditingController] that is used for the text field.
   ///
-  /// {@macro flutter.widgets.RawAutocomplete.split}
+  /// For more information, see [RawAutocomplete.textEditingController].
+  // TODO(dkwingsmt): Migrate the doc back to macro
+  // flutter.widgets.RawAutocomplete.split
+  // https://github.com/flutter/flutter/issues/189629
   ///
   /// If this parameter is not null, then [focusNode] must also be non-null.
   final TextEditingController? textEditingController;

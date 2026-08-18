@@ -330,27 +330,33 @@ bool _isTransitionable(BuildContext context) {
 /// this behavior, wrap each of the `navigationBar`'s components inside a
 /// [MediaQuery] with the desired [TextScaler].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a [CupertinoNavigationBar] placed in a [CupertinoPageScaffold].
 /// Since [backgroundColor]'s opacity is not 1.0, there is a blur effect and
 /// content slides underneath.
 ///
-/// {@example /example/lib/nav_bar/cupertino_navigation_bar.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/nav_bar/cupertino_navigation_bar.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows the resulting layout from [CupertinoNavigationBar.large]
 /// constructor, showing a large title similar to the expanded state of
 /// [CupertinoSliverNavigationBar].
 ///
-/// {@example /example/lib/nav_bar/cupertino_navigation_bar.2.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/nav_bar/cupertino_navigation_bar.2.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -446,7 +452,7 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   ///     dynamically change size in response to scrolling.
   final Widget? largeTitle;
 
-  /// {@template flutter.cupertino.CupertinoNavigationBar.leading}
+  /// {@template cupertino_ui.CupertinoNavigationBar.leading}
   /// Widget to place at the start of the navigation bar. Normally a back button
   /// for a normal page or a cancel button for full page dialogs.
   ///
@@ -455,7 +461,7 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   /// {@endtemplate}
   final Widget? leading;
 
-  /// {@template flutter.cupertino.CupertinoNavigationBar.automaticallyImplyLeading}
+  /// {@template cupertino_ui.CupertinoNavigationBar.automaticallyImplyLeading}
   /// Controls whether we should try to imply the leading widget if null.
   ///
   /// If true and [leading] is null, automatically try to deduce what the [leading]
@@ -479,7 +485,7 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   /// If [middle] widget is not null, this parameter has no effect.
   final bool automaticallyImplyMiddle;
 
-  /// {@template flutter.cupertino.CupertinoNavigationBar.previousPageTitle}
+  /// {@template cupertino_ui.CupertinoNavigationBar.previousPageTitle}
   /// Manually specify the previous route's title when automatically implying
   /// the leading back button.
   ///
@@ -508,13 +514,13 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   ///    dynamically change size in response to scrolling.
   final Widget? middle;
 
-  /// {@template flutter.cupertino.CupertinoNavigationBar.trailing}
+  /// {@template cupertino_ui.CupertinoNavigationBar.trailing}
   /// Widget to place at the end of the navigation bar. Normally additional actions
   /// taken on the page such as a search or edit function.
   /// {@endtemplate}
   final Widget? trailing;
 
-  /// {@template flutter.cupertino.CupertinoNavigationBar.backgroundColor}
+  /// {@template cupertino_ui.CupertinoNavigationBar.backgroundColor}
   /// The background color of the navigation bar. If it contains transparency, the
   /// tab bar will automatically produce a blurring effect to the content
   /// behind it. This behavior can be disabled by setting [enableBackgroundFilterBlur]
@@ -527,7 +533,7 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   /// {@endtemplate}
   final Color? backgroundColor;
 
-  /// {@template flutter.cupertino.CupertinoNavigationBar.automaticBackgroundVisibility}
+  /// {@template cupertino_ui.CupertinoNavigationBar.automaticBackgroundVisibility}
   /// Whether the navigation bar appears transparent when no content is scrolled under.
   ///
   /// If this is true, the navigation bar's background color will be transparent
@@ -540,7 +546,7 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   /// {@endtemplate}
   final bool automaticBackgroundVisibility;
 
-  /// {@template flutter.cupertino.CupertinoNavigationBar.brightness}
+  /// {@template cupertino_ui.CupertinoNavigationBar.brightness}
   /// The brightness of the specified [backgroundColor].
   ///
   /// Setting this value changes the style of the system status bar. Typically
@@ -552,7 +558,7 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   /// {@endtemplate}
   final Brightness? brightness;
 
-  /// {@template flutter.cupertino.CupertinoNavigationBar.padding}
+  /// {@template cupertino_ui.CupertinoNavigationBar.padding}
   /// Padding for the contents of the navigation bar.
   ///
   /// If null, the navigation bar will adopt the following defaults:
@@ -567,14 +573,14 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   /// {@endtemplate}
   final EdgeInsetsDirectional? padding;
 
-  /// {@template flutter.cupertino.CupertinoNavigationBar.border}
+  /// {@template cupertino_ui.CupertinoNavigationBar.border}
   /// The border of the navigation bar. By default renders a single pixel bottom border side.
   ///
   /// If a border is null, the navigation bar will not display a border.
   /// {@endtemplate}
   final Border? border;
 
-  /// {@template flutter.cupertino.CupertinoNavigationBar.transitionBetweenRoutes}
+  /// {@template cupertino_ui.CupertinoNavigationBar.transitionBetweenRoutes}
   /// Whether to transition between navigation bars.
   ///
   /// When [transitionBetweenRoutes] is true, this navigation bar will transition
@@ -593,7 +599,7 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   /// {@endtemplate}
   final bool transitionBetweenRoutes;
 
-  /// {@template flutter.cupertino.CupertinoNavigationBar.enableBackgroundFilterBlur}
+  /// {@template cupertino_ui.CupertinoNavigationBar.enableBackgroundFilterBlur}
   /// Whether to have a blur effect when a non-opaque background color is used.
   ///
   /// When [enableBackgroundFilterBlur] is set to false, the blur effect will be
@@ -604,7 +610,7 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   /// {@endtemplate}
   final bool enableBackgroundFilterBlur;
 
-  /// {@template flutter.cupertino.CupertinoNavigationBar.heroTag}
+  /// {@template cupertino_ui.CupertinoNavigationBar.heroTag}
   /// Tag for the navigation bar's Hero widget if [transitionBetweenRoutes] is true.
   ///
   /// Defaults to a common tag between all [CupertinoNavigationBar] and
@@ -626,15 +632,18 @@ class CupertinoNavigationBar extends StatefulWidget implements ObstructingPrefer
   /// Only widgets that implement [PreferredSizeWidget] can be used at the
   /// bottom of a navigation bar.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example shows a [CupertinoSearchTextField] at the bottom of a
   /// [CupertinoNavigationBar].
   ///
-  /// {@example /example/lib/nav_bar/cupertino_navigation_bar.1.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro cupertino_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/nav_bar/cupertino_navigation_bar.1.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -935,23 +944,29 @@ class _CupertinoNavigationBarState extends State<CupertinoNavigationBar> {
 /// user scrolls, but it will also stretch when the user over-scrolls if the
 /// [stretch] value is `true`. Defaults to `false`.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows [CupertinoSliverNavigationBar] in action inside a [CustomScrollView].
 ///
-/// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// To add a widget to the bottom of the nav bar, wrap it with [PreferredSize] and provide its fully extended size.
 ///
-/// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.2.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.2.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1015,15 +1030,18 @@ class CupertinoSliverNavigationBar extends StatefulWidget {
   /// If [automaticallyImplyTitle] is false, then the [largeTitle] argument is
   /// required.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example demonstrates how to use a
   /// [CupertinoSliverNavigationBar.search] to manage a search view.
   ///
-  /// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.1.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro cupertino_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/nav_bar/cupertino_sliver_nav_bar.1.dart#body}
+  ///
+  /// </callout-box>
   const CupertinoSliverNavigationBar.search({
     super.key,
     required Widget this.searchField,
@@ -1078,12 +1096,12 @@ class CupertinoSliverNavigationBar extends StatefulWidget {
   /// ([CupertinoPageRoute.title]) and [automaticallyImplyTitle] must be true.
   final Widget? largeTitle;
 
-  /// {@macro flutter.cupertino.CupertinoNavigationBar.leading}
+  /// {@macro cupertino_ui.CupertinoNavigationBar.leading}
   ///
   /// This widget is visible in both collapsed and expanded states.
   final Widget? leading;
 
-  /// {@macro flutter.cupertino.CupertinoNavigationBar.automaticallyImplyLeading}
+  /// {@macro cupertino_ui.CupertinoNavigationBar.automaticallyImplyLeading}
   final bool automaticallyImplyLeading;
 
   /// Controls whether we should try to imply the [largeTitle] widget if null.
@@ -1104,7 +1122,7 @@ class CupertinoSliverNavigationBar extends StatefulWidget {
   /// expanded state and [middle] in collapsed state.
   final bool alwaysShowMiddle;
 
-  /// {@macro flutter.cupertino.CupertinoNavigationBar.previousPageTitle}
+  /// {@macro cupertino_ui.CupertinoNavigationBar.previousPageTitle}
   final String? previousPageTitle;
 
   /// A widget to place in the middle of the static navigation bar instead of
@@ -1118,33 +1136,33 @@ class CupertinoSliverNavigationBar extends StatefulWidget {
   /// state.
   final Widget? middle;
 
-  /// {@macro flutter.cupertino.CupertinoNavigationBar.trailing}
+  /// {@macro cupertino_ui.CupertinoNavigationBar.trailing}
   ///
   /// This widget is visible in both collapsed and expanded states.
   final Widget? trailing;
 
-  /// {@macro flutter.cupertino.CupertinoNavigationBar.backgroundColor}
+  /// {@macro cupertino_ui.CupertinoNavigationBar.backgroundColor}
   final Color? backgroundColor;
 
-  /// {@macro flutter.cupertino.CupertinoNavigationBar.automaticBackgroundVisibility}
+  /// {@macro cupertino_ui.CupertinoNavigationBar.automaticBackgroundVisibility}
   final bool automaticBackgroundVisibility;
 
-  /// {@macro flutter.cupertino.CupertinoNavigationBar.enableBackgroundFilterBlur}
+  /// {@macro cupertino_ui.CupertinoNavigationBar.enableBackgroundFilterBlur}
   final bool enableBackgroundFilterBlur;
 
-  /// {@macro flutter.cupertino.CupertinoNavigationBar.brightness}
+  /// {@macro cupertino_ui.CupertinoNavigationBar.brightness}
   final Brightness? brightness;
 
-  /// {@macro flutter.cupertino.CupertinoNavigationBar.padding}
+  /// {@macro cupertino_ui.CupertinoNavigationBar.padding}
   final EdgeInsetsDirectional? padding;
 
-  /// {@macro flutter.cupertino.CupertinoNavigationBar.border}
+  /// {@macro cupertino_ui.CupertinoNavigationBar.border}
   final Border? border;
 
-  /// {@macro flutter.cupertino.CupertinoNavigationBar.transitionBetweenRoutes}
+  /// {@macro cupertino_ui.CupertinoNavigationBar.transitionBetweenRoutes}
   final bool transitionBetweenRoutes;
 
-  /// {@macro flutter.cupertino.CupertinoNavigationBar.heroTag}
+  /// {@macro cupertino_ui.CupertinoNavigationBar.heroTag}
   final Object heroTag;
 
   /// A widget to place at the bottom of the large title or static navigation

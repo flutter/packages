@@ -1,3 +1,7 @@
+## 0.8.13+20
+
+* Bumps androidx.activity:activity from 1.12.4 to 1.13.0.
+
 ## 0.8.13+19
 
 * Updates plugin to use Android Photo Picker on API 36 and above.

@@ -1,3 +1,7 @@
+## 7.2.16
+
+* Keeps default_web_client_id resource from being stripped by resource shrinkers.
+
 ## 7.2.15
 
 * Fixes an `IllegalStateException` ("Reply already submitted") crash when an authorization activity

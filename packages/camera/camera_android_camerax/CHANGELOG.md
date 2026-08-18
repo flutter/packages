@@ -1,3 +1,25 @@
+## 0.7.4+5
+
+* Fixes a leaked thread per capture by dispatching the `takePicture` result callback on the main
+  executor.
+
+## 0.7.4+4
+
+* Fix `NullPointerException` when disposing camera during active video recording.
+
+## 0.7.4+3
+
+* Updates `ResolutionPreset.max` to prefer higher resolution over capture rate
+  for CameraX `ResolutionSelector` use cases on Android.
+
+## 0.7.4+2
+
+* Bumps cameraxVersion from 1.6.0 to 1.6.1.
+* Updates androidx.camera:camera-core from 1.6.0 to 1.6.1.
+* Updates androidx.camera:camera-camera2 from 1.6.0 to 1.6.1.
+* Updates androidx.camera:camera-lifecycle from 1.6.0 to 1.6.1.
+* Updates androidx.camera:camera-video from 1.6.0 to 1.6.1.
+
 ## 0.7.4+1
 
 * Fixes a `StateError` ("Bad state: No element") in `setFocusMode(FocusMode.auto)`

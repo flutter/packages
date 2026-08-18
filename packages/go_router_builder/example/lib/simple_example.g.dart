@@ -13,10 +13,12 @@ List<RouteBase> get $appRoutes => [$homeRoute];
 RouteBase get $homeRoute => GoRouteData.$route(
   path: '/',
   name: 'Home',
+  hasOverriddenOnExit: false,
   factory: $HomeRoute._fromState,
   routes: [
     GoRouteData.$route(
       path: 'family/:familyId',
+      hasOverriddenOnExit: false,
       factory: $FamilyRoute._fromState,
     ),
   ],

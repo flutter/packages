@@ -1,5 +1,6 @@
 RouteBase get $customParameterRoute => GoRouteData.$route(
   path: '/default-value-route',
+  hasOverriddenOnExit: false,
   factory: $CustomParameterRoute._fromState,
 );
 
@@ -33,6 +34,7 @@ mixin $CustomParameterRoute on GoRouteData {
 
 RouteBase get $customParameterComplexRoute => GoRouteData.$route(
   path: '/:id/',
+  hasOverriddenOnExit: false,
   factory: $CustomParameterComplexRoute._fromState,
 );
 

@@ -44,7 +44,7 @@ enum StretchMode {
 /// The part of a Material Design [AppBar] that expands, collapses, and
 /// stretches.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=mSc7qFzxHDw}
+/// Learn more about [FlexibleSpaceBar] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=mSc7qFzxHDw).
 ///
 /// Most commonly used in the [SliverAppBar.flexibleSpace] field, a flexible
 /// space bar expands and contracts as the app scrolls so that the [AppBar]
@@ -60,8 +60,7 @@ enum StretchMode {
 /// [FlexibleSpaceBar.createSettings], to convey sizing information down to the
 /// [FlexibleSpaceBar].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample application demonstrates the different features of the
 /// [FlexibleSpaceBar] when used in a [SliverAppBar]. This app bar is configured
@@ -70,9 +69,13 @@ enum StretchMode {
 /// `zoomBackground`. The app bar also makes use of [CollapseMode.parallax] by
 /// default.
 ///
-/// {@example /example/lib/flexible_space_bar/flexible_space_bar.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/flexible_space_bar/flexible_space_bar.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///

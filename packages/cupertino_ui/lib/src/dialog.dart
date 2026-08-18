@@ -195,7 +195,7 @@ bool _isInAccessibilityMode(BuildContext context) {
 
 /// An iOS-style alert dialog.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=75CsnyRXf5I}
+/// Learn more about [CupertinoAlertDialog] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=75CsnyRXf5I).
 ///
 /// An alert dialog informs the user about situations that require
 /// acknowledgment. An alert dialog has an optional title, optional content,
@@ -213,16 +213,19 @@ bool _isInAccessibilityMode(BuildContext context) {
 /// Typically passed as the child widget to [showDialog], which displays the
 /// dialog.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows how to use a [CupertinoAlertDialog].
 ///	The [CupertinoAlertDialog] shows an alert with a set of two choices
 /// when [CupertinoButton] is pressed.
 ///
-/// {@example /example/lib/dialog/cupertino_alert_dialog.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/dialog/cupertino_alert_dialog.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -286,10 +289,21 @@ class CupertinoAlertDialog extends StatefulWidget {
   ///    section when it is long.
   final ScrollController? actionScrollController;
 
-  /// {@macro flutter.material.dialog.insetAnimationDuration}
+  /// {@template cupertino_ui.dialog.insetAnimationDuration}
+  /// The duration of the animation to show when the system keyboard intrudes
+  /// into the space that the dialog is placed in.
+  ///
+  /// Defaults to 100 milliseconds when [Dialog] is used, and [Duration.zero]
+  /// when [Dialog.fullscreen] is used.
+  /// {@endtemplate}
   final Duration insetAnimationDuration;
 
-  /// {@macro flutter.material.dialog.insetAnimationCurve}
+  /// {@template cupertino_ui.dialog.insetAnimationCurve}
+  /// The curve to use for the animation shown when the system keyboard intrudes
+  /// into the space that the dialog is placed in.
+  ///
+  /// Defaults to [Curves.decelerate].
+  /// {@endtemplate}
   final Curve insetAnimationCurve;
 
   @override
@@ -520,16 +534,19 @@ class _CupertinoAlertDialogState extends State<CupertinoAlertDialog> {
 /// which is useful for more complicated layouts, such as rendering divider gaps
 /// in [CupertinoAlertDialog] or rendering custom surface colors.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows how to use a [CupertinoPopupSurface]. The [CupertinoPopupSurface]
 /// shows a modal popup from the bottom of the screen.
 /// Toggle the switch to configure its surface color.
 ///
-/// {@example /example/lib/dialog/cupertino_popup_surface.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/dialog/cupertino_popup_surface.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1035,7 +1052,7 @@ class _ActionSheetGestureDetector extends StatelessWidget {
 
 /// An iOS-style action sheet.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=U-ao8p4A82k}
+/// Learn more about [CupertinoActionSheet] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=U-ao8p4A82k).
 ///
 /// An action sheet is a specific style of alert that presents the user
 /// with a set of two or more choices related to the current context.
@@ -1058,16 +1075,19 @@ class _ActionSheetGestureDetector extends StatelessWidget {
 /// [showCupertinoModalPopup], which displays the action sheet by sliding it up
 /// from the bottom of the screen.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows how to use a [CupertinoActionSheet].
 ///	The [CupertinoActionSheet] shows a modal popup that slides in from the
 /// bottom when [CupertinoButton] is pressed.
 ///
-/// {@example /example/lib/dialog/cupertino_action_sheet.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/dialog/cupertino_action_sheet.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///

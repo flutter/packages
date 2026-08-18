@@ -40,12 +40,12 @@ abstract class RangeSliderThumbShape {
 
   /// Returns the preferred size of the shape, based on the given conditions.
   ///
-  /// {@template flutter.material.RangeSliderThumbShape.getPreferredSize.isDiscrete}
+  /// {@template material_ui.RangeSliderThumbShape.getPreferredSize.isDiscrete}
   /// The `isDiscrete` argument is true if [RangeSlider.divisions] is non-null.
   /// When true, the slider will render tick marks on top of the track.
   /// {@endtemplate}
   ///
-  /// {@template flutter.material.RangeSliderThumbShape.getPreferredSize.isEnabled}
+  /// {@template material_ui.RangeSliderThumbShape.getPreferredSize.isEnabled}
   /// The `isEnabled` argument is false when [RangeSlider.onChanged] is null and
   /// true otherwise. When true, the slider will respond to input.
   /// {@endtemplate}
@@ -53,19 +53,19 @@ abstract class RangeSliderThumbShape {
 
   /// Paints the thumb shape based on the state passed to it.
   ///
-  /// {@template flutter.material.RangeSliderThumbShape.paint.context}
+  /// {@template material_ui.RangeSliderThumbShape.paint.context}
   /// The `context` argument represents the [RangeSlider]'s render box.
   /// {@endtemplate}
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.center}
+  /// {@macro material_ui.SliderComponentShape.paint.center}
   ///
-  /// {@template flutter.material.RangeSliderThumbShape.paint.activationAnimation}
+  /// {@template material_ui.RangeSliderThumbShape.paint.activationAnimation}
   /// The `activationAnimation` argument is an animation triggered when the user
   /// begins to interact with the [RangeSlider]. It reverses when the user stops
   /// interacting with the slider.
   /// {@endtemplate}
   ///
-  /// {@template flutter.material.RangeSliderThumbShape.paint.enableAnimation}
+  /// {@template material_ui.RangeSliderThumbShape.paint.enableAnimation}
   /// The `enableAnimation` argument is an animation triggered when the
   /// [RangeSlider] is enabled, and it reverses when the slider is disabled. The
   /// [RangeSlider] is enabled when [RangeSlider.onChanged] is not null. Use
@@ -73,15 +73,15 @@ abstract class RangeSliderThumbShape {
   /// enabled state.
   /// {@endtemplate}
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.getPreferredSize.isDiscrete}
+  /// {@macro material_ui.RangeSliderThumbShape.getPreferredSize.isDiscrete}
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.getPreferredSize.isEnabled}
+  /// {@macro material_ui.RangeSliderThumbShape.getPreferredSize.isEnabled}
   ///
   /// If the `isOnTop` argument is true, this thumb is painted on top of the
   /// other slider thumb because this thumb is the one that was most recently
   /// selected.
   ///
-  /// {@template flutter.material.RangeSliderThumbShape.paint.sliderTheme}
+  /// {@template material_ui.RangeSliderThumbShape.paint.sliderTheme}
   /// The `sliderTheme` argument is the theme assigned to the [RangeSlider] that
   /// this shape belongs to.
   /// {@endtemplate}
@@ -90,7 +90,7 @@ abstract class RangeSliderThumbShape {
   /// of either slider thumb should be changed, such as drawing different
   /// shapes for the left and right thumb.
   ///
-  /// {@template flutter.material.RangeSliderThumbShape.paint.thumb}
+  /// {@template material_ui.RangeSliderThumbShape.paint.thumb}
   /// The `thumb` argument is the specifier for which of the two thumbs this
   /// method should paint (start or end).
   /// {@endtemplate}
@@ -135,14 +135,14 @@ abstract class RangeSliderValueIndicatorShape {
 
   /// Returns the preferred size of the shape, based on the given conditions.
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.getPreferredSize.isEnabled}
+  /// {@macro material_ui.RangeSliderThumbShape.getPreferredSize.isEnabled}
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.getPreferredSize.isDiscrete}
+  /// {@macro material_ui.RangeSliderThumbShape.getPreferredSize.isDiscrete}
   ///
   /// The `labelPainter` argument helps determine the width of the shape. It is
   /// variable width because it is derived from a formatted string.
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.textScaleFactor}
+  /// {@macro material_ui.SliderComponentShape.paint.textScaleFactor}
   Size getPreferredSize(
     bool isEnabled,
     bool isDiscrete, {
@@ -167,31 +167,31 @@ abstract class RangeSliderValueIndicatorShape {
 
   /// Paints the value indicator shape based on the state passed to it.
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.paint.context}
+  /// {@macro material_ui.RangeSliderThumbShape.paint.context}
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.center}
+  /// {@macro material_ui.SliderComponentShape.paint.center}
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.paint.activationAnimation}
+  /// {@macro material_ui.RangeSliderThumbShape.paint.activationAnimation}
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.paint.enableAnimation}
+  /// {@macro material_ui.RangeSliderThumbShape.paint.enableAnimation}
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.getPreferredSize.isDiscrete}
+  /// {@macro material_ui.RangeSliderThumbShape.getPreferredSize.isDiscrete}
   ///
   /// The `isOnTop` argument is the top-most value indicator between the two value
   /// indicators, which is always the indicator for the most recently selected thumb. In
   /// the default case, this is used to paint a stroke around the top indicator
   /// for better visibility between the two indicators.
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.textScaleFactor}
+  /// {@macro material_ui.SliderComponentShape.paint.textScaleFactor}
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.sizeWithOverflow}
+  /// {@macro material_ui.SliderComponentShape.paint.sizeWithOverflow}
   ///
-  /// {@template flutter.material.RangeSliderValueIndicatorShape.paint.parentBox}
+  /// {@template material_ui.RangeSliderValueIndicatorShape.paint.parentBox}
   /// The `parentBox` argument is the [RenderBox] of the [RangeSlider]. Its
   /// attributes, such as size, can be used to assist in painting this shape.
   /// {@endtemplate}
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.paint.sliderTheme}
+  /// {@macro material_ui.RangeSliderThumbShape.paint.sliderTheme}
   ///
   /// The `textDirection` argument can be used to determine how any extra text
   /// or graphics, besides the text painted by the [labelPainter] should be
@@ -201,7 +201,7 @@ abstract class RangeSliderValueIndicatorShape {
   /// The `value` argument is the current parametric value (from 0.0 to 1.0) of
   /// the slider.
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.paint.thumb}
+  /// {@macro material_ui.RangeSliderThumbShape.paint.thumb}
   void paint(
     PaintingContext context,
     Offset center, {
@@ -247,29 +247,29 @@ abstract class RangeSliderTickMarkShape {
   ///
   /// It is used to help position the tick marks within the slider.
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.paint.sliderTheme}
+  /// {@macro material_ui.RangeSliderThumbShape.paint.sliderTheme}
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.getPreferredSize.isEnabled}
+  /// {@macro material_ui.RangeSliderThumbShape.getPreferredSize.isEnabled}
   Size getPreferredSize({required SliderThemeData sliderTheme, bool isEnabled});
 
   /// Paints the slider track.
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.paint.context}
+  /// {@macro material_ui.RangeSliderThumbShape.paint.context}
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.center}
+  /// {@macro material_ui.SliderComponentShape.paint.center}
   ///
-  /// {@macro flutter.material.RangeSliderValueIndicatorShape.paint.parentBox}
+  /// {@macro material_ui.RangeSliderValueIndicatorShape.paint.parentBox}
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.paint.sliderTheme}
+  /// {@macro material_ui.RangeSliderThumbShape.paint.sliderTheme}
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.paint.enableAnimation}
+  /// {@macro material_ui.RangeSliderThumbShape.paint.enableAnimation}
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.getPreferredSize.isEnabled}
+  /// {@macro material_ui.RangeSliderThumbShape.getPreferredSize.isEnabled}
   ///
   /// The `textDirection` argument can be used to determine how the tick marks
   /// are painted depending on whether they are on an active track segment or not.
   ///
-  /// {@template flutter.material.RangeSliderTickMarkShape.paint.trackSegment}
+  /// {@template material_ui.RangeSliderTickMarkShape.paint.trackSegment}
   /// The track segment between the two thumbs is the active track segment. The
   /// track segments between the thumb and each end of the slider are the inactive
   /// track segments. In [TextDirection.ltr], the start of the slider is on the
@@ -329,11 +329,11 @@ abstract class RangeSliderTrackShape {
   /// used to convert gesture coordinates from global to slider-relative
   /// coordinates.
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.paint.sliderTheme}
+  /// {@macro material_ui.RangeSliderThumbShape.paint.sliderTheme}
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.getPreferredSize.isEnabled}
+  /// {@macro material_ui.RangeSliderThumbShape.getPreferredSize.isEnabled}
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.getPreferredSize.isDiscrete}
+  /// {@macro material_ui.RangeSliderThumbShape.getPreferredSize.isDiscrete}
   Rect getPreferredRect({
     required RenderBox parentBox,
     Offset offset = Offset.zero,
@@ -344,17 +344,17 @@ abstract class RangeSliderTrackShape {
 
   /// Paints the track shape based on the state passed to it.
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.context}
+  /// {@macro material_ui.SliderComponentShape.paint.context}
   ///
   /// The `offset` argument is the offset of the origin of the `parentBox` to
   /// the origin of its `context` canvas. This shape must be painted relative
   /// to this offset. See [PaintingContextCallback].
   ///
-  /// {@macro flutter.material.RangeSliderValueIndicatorShape.paint.parentBox}
+  /// {@macro material_ui.RangeSliderValueIndicatorShape.paint.parentBox}
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.paint.sliderTheme}
+  /// {@macro material_ui.RangeSliderThumbShape.paint.sliderTheme}
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.paint.enableAnimation}
+  /// {@macro material_ui.RangeSliderThumbShape.paint.enableAnimation}
   ///
   /// The `startThumbCenter` argument is the offset of the center of the start
   /// thumb relative to the origin of the [PaintingContext.canvas]. It can be
@@ -364,15 +364,15 @@ abstract class RangeSliderTrackShape {
   /// thumb relative to the origin of the [PaintingContext.canvas]. It can be
   /// used as one point that divides the track between inactive and active.
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.getPreferredSize.isEnabled}
+  /// {@macro material_ui.RangeSliderThumbShape.getPreferredSize.isEnabled}
   ///
-  /// {@macro flutter.material.RangeSliderThumbShape.getPreferredSize.isDiscrete}
+  /// {@macro material_ui.RangeSliderThumbShape.getPreferredSize.isDiscrete}
   ///
   /// The `textDirection` argument can be used to determine how the track
   /// segments are painted depending on whether they are on an active track
   /// segment or not.
   ///
-  /// {@macro flutter.material.RangeSliderTickMarkShape.paint.trackSegment}
+  /// {@macro material_ui.RangeSliderTickMarkShape.paint.trackSegment}
   void paint(
     PaintingContext context,
     Offset offset, {
@@ -470,7 +470,7 @@ mixin BaseRangeSliderTrackShape {
 ///   [SliderThemeData.disabledActiveTrackColor],
 ///   [SliderThemeData.disabledInactiveTrackColor].
 ///
-/// {@macro flutter.material.RangeSliderTickMarkShape.paint.trackSegment}
+/// {@macro material_ui.RangeSliderTickMarkShape.paint.trackSegment}
 ///
 /// ![A range slider widget, consisting of 5 divisions and showing the rectangular range slider track shape.](https://flutter.github.io/assets-for-api-docs/assets/material/rectangular_range_slider_track_shape.png)
 ///
@@ -579,7 +579,7 @@ class RectangularRangeSliderTrackShape extends RangeSliderTrackShape
 ///   [SliderThemeData.disabledActiveTrackColor],
 ///   [SliderThemeData.disabledInactiveTrackColor].
 ///
-/// {@macro flutter.material.RangeSliderTickMarkShape.paint.trackSegment}
+/// {@macro material_ui.RangeSliderTickMarkShape.paint.trackSegment}
 ///
 /// ![A range slider widget, consisting of 5 divisions and showing the rounded rect range slider track shape.](https://flutter.github.io/assets-for-api-docs/assets/material/rounded_rect_range_slider_track_shape.png)
 ///

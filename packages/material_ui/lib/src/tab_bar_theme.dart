@@ -411,7 +411,7 @@ class TabBarThemeData with Diagnosticable {
   /// Overrides the default value for [TabBar.splashFactory].
   final InteractiveInkFeatureFactory? splashFactory;
 
-  /// {@macro flutter.material.tabs.mouseCursor}
+  /// {@macro material_ui.tabs.mouseCursor}
   ///
   /// If specified, overrides the default value of [TabBar.mouseCursor].
   final WidgetStateProperty<MouseCursor?>? mouseCursor;

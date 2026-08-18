@@ -936,4 +936,50 @@ void main() {
     expect(code, contains('gchar* test_package_input_to_string('));
     expect(code, contains('g_string_new("Input(");'));
   });
+
+  test('gen constants', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[],
+      enums: <Enum>[],
+      constants: <Constant>[
+        Constant(
+          name: 'stringConst',
+          type: const TypeDeclaration(baseName: 'String', isNullable: false),
+          value: 'hello',
+        ),
+        Constant(
+          name: 'intConst',
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+          value: 42,
+        ),
+        Constant(
+          name: 'doubleConst',
+          type: const TypeDeclaration(baseName: 'double', isNullable: false),
+          value: 3.14,
+        ),
+        Constant(
+          name: 'boolConst',
+          type: const TypeDeclaration(baseName: 'bool', isNullable: false),
+          value: true,
+        ),
+      ],
+    );
+    final sink = StringBuffer();
+    const generator = GObjectGenerator();
+    final generatorOptions = OutputFileOptions<InternalGObjectOptions>(
+      fileType: FileType.header,
+      languageOptions: const InternalGObjectOptions(
+        headerIncludePath: 'foo.h',
+        gobjectHeaderOut: '',
+        gobjectSourceOut: '',
+      ),
+    );
+    generator.generate(generatorOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('#define TEST_PACKAGE_STRING_CONST "hello"'));
+    expect(code, contains('#define TEST_PACKAGE_INT_CONST 42'));
+    expect(code, contains('#define TEST_PACKAGE_DOUBLE_CONST 3.14'));
+    expect(code, contains('#define TEST_PACKAGE_BOOL_CONST TRUE'));
+  });
 }

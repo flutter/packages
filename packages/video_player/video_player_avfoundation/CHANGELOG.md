@@ -1,3 +1,8 @@
+## 2.11.0
+
+* Implements `setPreventsDisplaySleepDuringVideoPlayback` using
+  `AVPlayer.preventsDisplaySleepDuringVideoPlayback`.
+
 ## 2.10.0
 
 * Implements `getVideoTracks()` and `selectVideoTrack()` methods for video track (quality) selection using AVFoundation.

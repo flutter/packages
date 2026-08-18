@@ -1,5 +1,6 @@
 RouteBase get $setRoute => GoRouteData.$route(
       path: '/set-route',
+      hasOverriddenOnExit: false,
       factory: $SetRoute._fromState,
     );
 

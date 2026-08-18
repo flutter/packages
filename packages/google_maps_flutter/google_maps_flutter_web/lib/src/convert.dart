@@ -113,11 +113,10 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
     options.rotateControl = configuration.fortyFiveDegreeImageryEnabled;
   }
 
-  // These don't have any configuration entries, but they seem to be off in the
-  // native maps.
-  options.mapTypeControl = false;
-  options.fullscreenControl = false;
-  options.streetViewControl = false;
+  // These are off by default in the native maps.
+  options.mapTypeControl = configuration.mapTypeControlEnabled ?? false;
+  options.fullscreenControl = configuration.fullscreenControlEnabled ?? false;
+  options.streetViewControl = configuration.streetViewControlEnabled ?? false;
 
   // Treat an empty mapId as null, as the app-facing package may pass it either
   // way.

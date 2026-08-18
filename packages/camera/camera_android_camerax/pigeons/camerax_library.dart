@@ -622,6 +622,11 @@ abstract class ResolutionSelector {
   /// The resolution selection strategy for the `UseCase`.
   late final ResolutionStrategy? resolutionStrategy;
 
+  /// The allowed resolution mode for the `UseCase`.
+  ///
+  /// See [ResolutionSelectorAllowedResolutionMode].
+  late final int? allowedResolutionMode;
+
   /// Returns the specified `AspectRatioStrategy`, or
   /// `AspectRatioStrategy.ratio_4_3FallbackAutoStrategy` if none is specified
   /// when creating the ResolutionSelector.

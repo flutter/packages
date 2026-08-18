@@ -38,8 +38,7 @@ import 'theme.dart';
 /// If the [key] is a [PageStorageKey], the [initialFirstRowIndex] is persisted
 /// to [PageStorage].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 ///
 /// This sample shows how to display a [DataTable] with three columns: name,
@@ -47,19 +46,26 @@ import 'theme.dart';
 /// table contains three rows of data for three example users, the data for
 /// which is defined by three [DataRow] objects.
 ///
-/// {@example /example/lib/paginated_data_table/paginated_data_table.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/paginated_data_table/paginated_data_table.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 ///
 /// This example shows how paginated data tables can supported sorted data.
 ///
-/// {@example /example/lib/paginated_data_table/paginated_data_table.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/paginated_data_table/paginated_data_table.1.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -251,7 +257,7 @@ class PaginatedDataTable extends StatefulWidget {
   /// This value defaults to 56.0 to adhere to the Material Design specifications.
   final double columnSpacing;
 
-  /// {@macro flutter.material.dataTable.showCheckboxColumn}
+  /// {@macro material_ui.dataTable.showCheckboxColumn}
   final bool showCheckboxColumn;
 
   /// Flag to display the pagination buttons to go to the first and last pages.
@@ -260,7 +266,7 @@ class PaginatedDataTable extends StatefulWidget {
   /// The index of the first row to display when the widget is first created.
   final int? initialFirstRowIndex;
 
-  /// {@macro flutter.material.dataTable.dividerThickness}
+  /// {@macro material_ui.dataTable.dividerThickness}
   ///
   /// If null, [DataTableThemeData.dividerThickness] is used. This value
   /// defaults to 1.0.
@@ -321,10 +327,41 @@ class PaginatedDataTable extends StatefulWidget {
   /// {@macro flutter.widgets.scroll_view.controller}
   final ScrollController? controller;
 
-  /// {@macro flutter.widgets.scroll_view.primary}
+  /// {@template material_ui.paginated_data_table.primary}
+  /// Whether this is the primary scroll view associated with the parent
+  /// [PrimaryScrollController].
+  ///
+  /// When this is true, the scroll view is scrollable even if it does not have
+  /// sufficient content to actually scroll. Otherwise, by default the user can
+  /// only scroll the view if it has sufficient content. See [physics].
+  ///
+  /// Also when true, the scroll view is used for default [ScrollAction]s. If a
+  /// ScrollAction is not handled by an otherwise focused part of the application,
+  /// the ScrollAction will be evaluated using this scroll view, for example,
+  /// when executing [Shortcuts] key events like page up and down.
+  ///
+  /// On iOS, this also identifies the scroll view that will scroll to top in
+  /// response to a tap in the status bar.
+  ///
+  /// Cannot be true while a [ScrollController] is provided to `controller`,
+  /// only one ScrollController can be associated with a ScrollView.
+  ///
+  /// Setting to false will explicitly prevent inheriting any
+  /// [PrimaryScrollController].
+  ///
+  /// Defaults to null. When null, and a controller is not provided,
+  /// [PrimaryScrollController.shouldInherit] is used to decide automatic
+  /// inheritance.
+  ///
+  /// By default, the [PrimaryScrollController] that is injected by each
+  /// [ModalRoute] is configured to automatically be inherited on
+  /// mobile platforms for ScrollViews in the [Axis.vertical]
+  /// scroll direction. Adding another to your app will override the
+  /// PrimaryScrollController above it.
+  /// {@endtemplate}
   final bool? primary;
 
-  /// {@macro flutter.material.dataTable.headingRowColor}
+  /// {@macro material_ui.dataTable.headingRowColor}
   final WidgetStateProperty<Color?>? headingRowColor;
 
   /// Controls the visibility of empty rows on the last page of a

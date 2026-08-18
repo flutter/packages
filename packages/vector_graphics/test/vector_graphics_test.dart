@@ -415,6 +415,23 @@ void main() {
     );
   });
 
+  testWidgets('Semantic label works without an ambient Directionality (flutter/flutter#175532)', (
+    WidgetTester tester,
+  ) async {
+    final testBundle = TestAssetBundle();
+
+    await tester.pumpWidget(
+      DefaultAssetBundle(
+        bundle: testBundle,
+        child: const VectorGraphic(loader: AssetBytesLoader('foo.svg'), semanticsLabel: 'Foo'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.bySemanticsLabel('Foo'), findsOneWidget);
+  });
+
   testWidgets('Default placeholder builder', (WidgetTester tester) async {
     final testBundle = TestAssetBundle();
 

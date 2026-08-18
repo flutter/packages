@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// #region body
 import 'package:cupertino_ui/cupertino_ui.dart';
 
 /// Flutter code sample for [CupertinoNavigationBar] showing a
@@ -71,3 +72,4 @@ class _NavigationBarSearchField extends StatelessWidget
   Size get preferredSize =>
       const Size.fromHeight(searchFieldHeight + padding * 2);
 }
+// #endregion body

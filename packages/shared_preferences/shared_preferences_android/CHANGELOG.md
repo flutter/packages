@@ -1,3 +1,7 @@
+## 2.4.27
+
+* Converts legacy backend to Kotlin.
+
 ## 2.4.26
 
 * Updates internal implementation to use Kotlin Pigeon.

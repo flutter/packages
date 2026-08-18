@@ -78,15 +78,18 @@ enum _CupertinoListTileType { base, notched }
 /// behavior it should not be used for example to toggle the [CupertinoSwitch]
 /// in the trailing widget.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example uses a [ListView] to demonstrate different configurations of
 /// [CupertinoListTile]s.
 ///
-/// {@example /example/lib/list_tile/cupertino_list_tile.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/list_tile/cupertino_list_tile.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///

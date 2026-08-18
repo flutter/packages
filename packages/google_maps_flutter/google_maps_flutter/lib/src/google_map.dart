@@ -103,6 +103,9 @@ class GoogleMap extends StatefulWidget {
     this.webCameraControlEnabled = true,
     this.compassEnabled = true,
     this.mapToolbarEnabled = true,
+    this.mapTypeControlEnabled = false,
+    this.fullscreenControlEnabled = false,
+    this.streetViewControlEnabled = false,
     this.cameraTargetBounds = CameraTargetBounds.unbounded,
     this.mapType = MapType.normal,
     this.minMaxZoomPreference = MinMaxZoomPreference.unbounded,
@@ -373,6 +376,21 @@ class GoogleMap extends StatefulWidget {
   ///
   /// See https://developers.google.com/maps/documentation/javascript/controls for more details.
   final bool webCameraControlEnabled;
+
+  /// True if map type control should be shown.
+  ///
+  /// Web only.
+  final bool mapTypeControlEnabled;
+
+  /// True if fullscreen control should be shown.
+  ///
+  /// Web only.
+  final bool fullscreenControlEnabled;
+
+  /// True if street view control should be shown.
+  ///
+  /// Web only.
+  final bool streetViewControlEnabled;
 
   /// Identifier that's associated with a specific cloud-based map style.
   ///
@@ -724,6 +742,9 @@ MapConfiguration _configurationFromMapWidget(GoogleMap map) {
     webGestureHandling: map.webGestureHandling,
     compassEnabled: map.compassEnabled,
     mapToolbarEnabled: map.mapToolbarEnabled,
+    mapTypeControlEnabled: map.mapTypeControlEnabled,
+    fullscreenControlEnabled: map.fullscreenControlEnabled,
+    streetViewControlEnabled: map.streetViewControlEnabled,
     cameraTargetBounds: map.cameraTargetBounds,
     mapType: map.mapType,
     minMaxZoomPreference: map.minMaxZoomPreference,

@@ -222,7 +222,7 @@ class Material extends StatefulWidget {
   /// Whether the color should be animated.
   final bool animateColor;
 
-  /// {@template flutter.material.material.elevation}
+  /// {@template material_ui.material.elevation}
   /// The z-coordinate at which to place this material relative to its parent.
   ///
   /// This controls the size of the shadow below the material and the opacity
@@ -268,7 +268,7 @@ class Material extends StatefulWidget {
 
   /// The color to paint the shadow below the material.
   ///
-  /// {@template flutter.material.material.shadowColor}
+  /// {@template material_ui.material.shadowColor}
   /// If null and [ThemeData.useMaterial3] is true then [ThemeData]'s
   /// [ColorScheme.shadow] will be used. If [ThemeData.useMaterial3] is false
   /// then [ThemeData.shadowColor] will be used.
@@ -287,7 +287,7 @@ class Material extends StatefulWidget {
   /// The color of the surface tint overlay applied to the material color
   /// to indicate elevation.
   ///
-  /// {@template flutter.material.material.surfaceTintColor}
+  /// {@template material_ui.material.surfaceTintColor}
   /// Material Design 3 introduced a new way for some components to indicate
   /// their elevation by using a surface tint color overlay on top of the
   /// base material [color]. This overlay is painted with an opacity that is
@@ -316,7 +316,7 @@ class Material extends StatefulWidget {
 
   /// Defines the material's shape as well its shadow.
   ///
-  /// {@template flutter.material.material.shape}
+  /// {@template material_ui.material.shape}
   /// If shape is non null, the [borderRadius] is ignored and the material's
   /// clip boundary and shadow are defined by the shape.
   ///
@@ -331,12 +331,7 @@ class Material extends StatefulWidget {
   /// If false, the border will be painted behind the [child].
   final bool borderOnForeground;
 
-  /// {@template flutter.material.Material.clipBehavior}
-  /// The content will be clipped (or not) according to this option.
-  ///
-  /// See the enum [Clip] for details of all possible options and their common
-  /// use cases.
-  /// {@endtemplate}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;
@@ -839,7 +834,7 @@ class _MaterialInterior extends ImplicitlyAnimatedWidget {
   /// If false, the border will be painted behind the child.
   final bool borderOnForeground;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;

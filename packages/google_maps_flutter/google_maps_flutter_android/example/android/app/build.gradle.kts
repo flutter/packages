@@ -54,7 +54,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
     api("androidx.test:core:1.4.0")
     testImplementation("com.google.android.gms:play-services-maps:17.0.0")
-    testImplementation("com.google.maps.android:android-maps-utils:4.0.0")
+    testImplementation("com.google.maps.android:android-maps-utils:5.0.0")
 }
 
 // Declares copyFlutterAssetsDebug as an explicit dependency for packageDebugUnitTestForUnitTest.
