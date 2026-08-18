@@ -1005,9 +1005,9 @@ class _IconButtonM3 extends ButtonStyleButton {
   final StyleVariant styleVariant;
   final bool toggleable;
 
-  // TODO(quncCccccc): Clean up [ThemeData.useMaterial3] once useMaterial3 is deprecated.
   /// ## Material 3 defaults
   ///
+  // TODO(quncCccccc): Clean up [ThemeData.useMaterial3] once useMaterial3 is deprecated.
   /// If [ThemeData.useMaterial3] is true and [IconButtonThemeData.variant] is
   /// [StyleVariant.material3], the following defaults will be
   /// used:
