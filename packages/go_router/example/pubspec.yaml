@@ -4,8 +4,8 @@ version: 3.0.1
 publish_to: none
 
 environment:
-  sdk: ^3.10.0
-  flutter: ">=3.38.0"
+  sdk: ^3.12.0
+  flutter: ">=3.44.0"
 
 dependencies:
   adaptive_navigation: ^0.0.4
@@ -16,6 +16,7 @@ dependencies:
   go_router:
     path: ..
   logging: ^1.0.0
+  material_ui: ^1.0.0
   shared_preferences: ^2.0.11
   url_launcher: ^6.0.7
 

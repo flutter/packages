@@ -4,7 +4,7 @@
 
 // ignore_for_file: diagnostic_describe_all_properties
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../misc/extensions.dart';
 
