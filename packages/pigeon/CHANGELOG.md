@@ -1,6 +1,6 @@
 ## 27.3.2
 
-* [dart] Fixes lint warning from unused codec variable in Dart proxy classesg.
+* [dart] Fixes lint warning from unused codec variable in Dart proxy classes.
 
 ## 27.3.1
 
