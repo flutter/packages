@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -194,6 +196,116 @@ void main() {
       expect(exceptionCaught, isTrue);
       expect(find.text('generic error handled'), findsOneWidget);
       expect(find.text('should not reach here'), findsNothing);
+    });
+
+    testWidgets('recovers to the fallback route when onException defers router.go '
+        'during a blocked initial navigation', (WidgetTester tester) async {
+      final router = GoRouter(
+        initialLocation: '/protected',
+        onEnter: (_, GoRouterState current, GoRouterState next, GoRouter goRouter) {
+          if (next.matchedLocation == '/protected') {
+            return const Block.stop();
+          }
+          return const Allow();
+        },
+        onException: (_, GoRouterState state, GoRouter router) {
+          // Deferred to a microtask by the app itself: this should still
+          // work now that go_router also defers its own call to
+          // onException on the initial-navigation path (the sibling test
+          // below covers a router.go() called synchronously from
+          // onException).
+          scheduleMicrotask(() => router.go('/fallback'));
+        },
+        routes: <RouteBase>[
+          GoRoute(path: '/protected', builder: (_, _) => const Text('protected')),
+          GoRoute(path: '/fallback', builder: (_, _) => const Text('fallback')),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('fallback'), findsOneWidget);
+      expect(find.text('protected'), findsNothing);
+      expect(router.state.uri.path, '/fallback');
+    });
+
+    testWidgets('recovers to the fallback route when onException calls router.go '
+        'synchronously during a blocked initial navigation', (WidgetTester tester) async {
+      final router = GoRouter(
+        initialLocation: '/protected',
+        onEnter: (_, GoRouterState current, GoRouterState next, GoRouter goRouter) {
+          if (next.matchedLocation == '/protected') {
+            return const Block.stop();
+          }
+          return const Allow();
+        },
+        onException: (_, GoRouterState state, GoRouter router) {
+          router.go('/fallback');
+        },
+        routes: <RouteBase>[
+          GoRoute(path: '/protected', builder: (_, _) => const Text('protected')),
+          GoRoute(path: '/fallback', builder: (_, _) => const Text('fallback')),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('fallback'), findsOneWidget);
+      expect(find.text('protected'), findsNothing);
+      expect(router.state.uri.path, '/fallback');
+    });
+
+    testWidgets('renders the default error screen for an unmatched initial navigation '
+        'when onException does not navigate', (WidgetTester tester) async {
+      var exceptionCaught = false;
+
+      await createRouter(
+        <RouteBase>[GoRoute(path: '/', builder: (_, GoRouterState state) => const Text('home'))],
+        tester,
+        initialLocation: '/unmatched-route',
+        onException: (_, _, _) {
+          exceptionCaught = true;
+        },
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(exceptionCaught, isTrue);
+      expect(find.text('Page Not Found'), findsOneWidget);
+    });
+
+    testWidgets('preserves the first installed error configuration when a second '
+        'unmatched navigation also has onException not navigate', (WidgetTester tester) async {
+      final visited = <String>[];
+
+      final GoRouter router = await createRouter(
+        <RouteBase>[GoRoute(path: '/', builder: (_, GoRouterState state) => const Text('home'))],
+        tester,
+        initialLocation: '/first-unmatched',
+        onException: (_, GoRouterState state, _) {
+          visited.add(state.uri.toString());
+        },
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(visited, <String>['/first-unmatched']);
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/first-unmatched');
+
+      router.go('/second-unmatched');
+      await tester.pumpAndSettle();
+
+      // onException fires again for the second exception, but the
+      // already-installed error configuration from the first is
+      // preserved instead of being replaced by the second.
+      expect(tester.takeException(), isNull);
+      expect(visited, <String>['/first-unmatched', '/second-unmatched']);
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/first-unmatched');
+      expect(find.text('Page Not Found'), findsOneWidget);
     });
   });
 }
