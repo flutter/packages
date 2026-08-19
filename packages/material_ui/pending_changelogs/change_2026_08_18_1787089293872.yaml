@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes typos in library code and tests.
+version: patch
