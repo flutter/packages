@@ -1395,6 +1395,105 @@ void main() {
       expect(rootNavigatorPopped, false);
     });
 
+    testWidgets(
+      'dragging with enableDrag: false rubber-bands and springs back without dismissing',
+      (WidgetTester tester) async {
+        Widget nonDragGestureApp(GlobalKey homeScaffoldKey, GlobalKey sheetScaffoldKey) {
+          return CupertinoApp(
+            home: CupertinoPageScaffold(
+              key: homeScaffoldKey,
+              child: Center(
+                child: Column(
+                  children: <Widget>[
+                    const Text('Page 1'),
+                    CupertinoButton(
+                      onPressed: () {
+                        showCupertinoSheet<void>(
+                          context: homeScaffoldKey.currentContext!,
+                          pageBuilder: (BuildContext context) {
+                            return CupertinoPageScaffold(
+                              key: sheetScaffoldKey,
+                              child: const Center(child: Text('Page 2')),
+                            );
+                          },
+                          enableDrag: false,
+                        );
+                      },
+                      child: const Text('Push Page 2'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
+        final GlobalKey homeKey = GlobalKey();
+        final GlobalKey sheetKey = GlobalKey();
+
+        await tester.pumpWidget(nonDragGestureApp(homeKey, sheetKey));
+
+        await tester.tap(find.text('Push Page 2'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Page 2'), findsOneWidget);
+
+        var box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
+        final double initialPosition = box.localToGlobal(Offset.zero).dy;
+
+        final TestGesture gesture = await tester.startGesture(const Offset(100, 200));
+        await gesture.moveBy(const Offset(0, 200));
+        await tester.pump();
+
+        box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
+        final double middlePosition = box.localToGlobal(Offset.zero).dy;
+
+        expect(middlePosition, greaterThan(initialPosition));
+
+        await gesture.up();
+        await tester.pumpAndSettle();
+
+        expect(find.text('Page 2'), findsOneWidget);
+
+        box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
+        final double finalPosition = box.localToGlobal(Offset.zero).dy;
+
+        expect(finalPosition, closeTo(initialPosition, 0.1));
+      },
+    );
+
+    testWidgets('partial upward drag stretches and returns without popping', (
+      WidgetTester tester,
+    ) async {
+      final GlobalKey homeKey = GlobalKey();
+      final GlobalKey sheetKey = GlobalKey();
+
+      await tester.pumpWidget(dragGestureApp(homeKey, sheetKey));
+
+      await tester.tap(find.text('Push Page 2'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Page 2'), findsOneWidget);
+
+      var box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
+      final double initialPosition = box.localToGlobal(Offset.zero).dy;
+
+      final TestGesture gesture = await tester.startGesture(const Offset(100, 400));
+      await gesture.moveBy(const Offset(0, -100));
+      await tester.pump();
+
+      box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
+      final double stretchedPosition = box.localToGlobal(Offset.zero).dy;
+      expect(stretchedPosition, lessThan(initialPosition));
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
+      final double finalPosition = box.localToGlobal(Offset.zero).dy;
+      expect(finalPosition, initialPosition);
+    });
+
     testWidgets('Sheet ignores gestures mid-dismissal and finishes closing', (
       WidgetTester tester,
     ) async {
@@ -1444,107 +1543,6 @@ void main() {
 
       expect(find.text('Page 2'), findsNothing);
       expect(find.text('Page 1'), findsOneWidget);
-    });
-
-    testWidgets('dragging does not move the sheet when enableDrag is false', (
-      WidgetTester tester,
-    ) async {
-      Widget nonDragGestureApp(GlobalKey homeScaffoldKey, GlobalKey sheetScaffoldKey) {
-        return CupertinoApp(
-          home: CupertinoPageScaffold(
-            key: homeScaffoldKey,
-            child: Center(
-              child: Column(
-                children: <Widget>[
-                  const Text('Page 1'),
-                  CupertinoButton(
-                    onPressed: () {
-                      showCupertinoSheet<void>(
-                        context: homeScaffoldKey.currentContext!,
-                        pageBuilder: (BuildContext context) {
-                          return CupertinoPageScaffold(
-                            key: sheetScaffoldKey,
-                            child: const Center(child: Text('Page 2')),
-                          );
-                        },
-                        enableDrag: false,
-                      );
-                    },
-                    child: const Text('Push Page 2'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      }
-
-      final GlobalKey homeKey = GlobalKey();
-      final GlobalKey sheetKey = GlobalKey();
-
-      await tester.pumpWidget(nonDragGestureApp(homeKey, sheetKey));
-
-      await tester.tap(find.text('Push Page 2'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Page 2'), findsOneWidget);
-
-      var box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
-      final double initialPosition = box.localToGlobal(Offset.zero).dy;
-
-      final TestGesture gesture = await tester.startGesture(const Offset(100, 200));
-      // Partial drag down
-      await gesture.moveBy(const Offset(0, 200));
-      await tester.pump();
-
-      // Release gesture. Sheet should not move.
-      box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
-      final double middlePosition = box.localToGlobal(Offset.zero).dy;
-
-      expect(middlePosition, equals(initialPosition));
-
-      await gesture.up();
-      await tester.pumpAndSettle();
-
-      expect(find.text('Page 2'), findsOneWidget);
-
-      box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
-      final double finalPosition = box.localToGlobal(Offset.zero).dy;
-
-      expect(finalPosition, equals(middlePosition));
-      expect(finalPosition, equals(initialPosition));
-    });
-
-    testWidgets('partial upward drag stretches and returns without popping', (
-      WidgetTester tester,
-    ) async {
-      final GlobalKey homeKey = GlobalKey();
-      final GlobalKey sheetKey = GlobalKey();
-
-      await tester.pumpWidget(dragGestureApp(homeKey, sheetKey));
-
-      await tester.tap(find.text('Push Page 2'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Page 2'), findsOneWidget);
-
-      var box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
-      final double initialPosition = box.localToGlobal(Offset.zero).dy;
-
-      final TestGesture gesture = await tester.startGesture(const Offset(100, 400));
-      await gesture.moveBy(const Offset(0, -100));
-      await tester.pump();
-
-      box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
-      final double stretchedPosition = box.localToGlobal(Offset.zero).dy;
-      expect(stretchedPosition, lessThan(initialPosition));
-
-      await gesture.up();
-      await tester.pumpAndSettle();
-
-      box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
-      final double finalPosition = box.localToGlobal(Offset.zero).dy;
-      expect(finalPosition, initialPosition);
     });
   });
 
