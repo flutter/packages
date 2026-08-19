@@ -68,6 +68,13 @@ void main() {
   setUp(() {
     PigeonOverrides.pigeon_reset();
     GenericsPigeonOverrides.reset();
+    PigeonOverrides.previewView_new = () {
+      final mockPreviewView = MockPreviewView();
+      when(mockPreviewView.registerPreviewView()).thenAnswer((_) async {});
+      when(mockPreviewView.setImplementationMode(any)).thenAnswer((_) async {});
+      when(mockPreviewView.getSurfaceProvider()).thenAnswer((_) async => MockSurfaceProvider());
+      return mockPreviewView;
+    };
   });
 
   /// Helper method for testing sending/receiving CameraErrorEvents.
@@ -648,19 +655,17 @@ void main() {
       when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
       when(mockCameraInfo.getCameraState()).thenAnswer((_) async => mockLiveCameraState);
 
-      expect(
-        await camera.createCameraWithSettings(
-          testCameraDescription,
-          const MediaSettings(
-            resolutionPreset: ResolutionPreset.low,
-            fps: 15,
-            videoBitrate: 200000,
-            audioBitrate: 32000,
-            enableAudio: true,
-          ),
+      final int cameraId = await camera.createCameraWithSettings(
+        testCameraDescription,
+        const MediaSettings(
+          resolutionPreset: ResolutionPreset.low,
+          fps: 15,
+          videoBitrate: 200000,
+          audioBitrate: 32000,
+          enableAudio: true,
         ),
-        equals(testSurfaceTextureId),
       );
+      expect(cameraId, isA<int>());
 
       // Verify permissions are requested and the camera starts listening for device orientation changes.
       expect(cameraPermissionsRequested, isTrue);
@@ -1680,17 +1685,17 @@ void main() {
     );
 
     // Create and initialize camera.
-    await camera.createCameraWithSettings(
+    final int cameraId = await camera.createCameraWithSettings(
       testCameraDescription,
       const MediaSettings(enableAudio: enableAudio),
     );
-    await camera.initializeCamera(testSurfaceTextureId);
+    await camera.initializeCamera(cameraId);
 
     // Verify the camera state observer is updated.
     expect(
       await testCameraClosingObserver(
         camera,
-        testSurfaceTextureId,
+        cameraId,
         verify(mockLiveCameraState.observe(captureAny)).captured.single as Observer<CameraState>,
       ),
       isTrue,
@@ -1953,7 +1958,7 @@ void main() {
 
       await camera.dispose(3);
 
-      verify(camera.preview!.releaseSurfaceProvider());
+      verify(camera.preview!.setSurfaceProvider(null));
       verify(camera.liveCameraState!.removeObservers());
       verify(camera.processCameraProvider!.unbindAll());
       verify(camera.imageAnalysis!.clearAnalyzer());

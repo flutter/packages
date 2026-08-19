@@ -59,9 +59,9 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The [ImplementationMode] of the [PreviewView].
   ///
-  /// Defaults to [ImplementationMode.performance].
+  /// Defaults to [ImplementationMode.compatible].
   @visibleForTesting
-  ImplementationMode previewMode = ImplementationMode.performance;
+  ImplementationMode previewMode = ImplementationMode.compatible;
 
   /// Sets the implementation mode of the [PreviewView].
   ///
@@ -1050,7 +1050,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         );
       },
       onCreatePlatformView: (params) {
-        return PlatformViewsService.initSurfaceAndroidView(
+        return PlatformViewsService.initAndroidView(
             id: params.id,
             viewType: viewType,
             layoutDirection: TextDirection.ltr,
