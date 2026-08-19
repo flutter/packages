@@ -1,3 +1,3 @@
 changelog: |
   - Add missing Widget of the Week videos to widget API docs.
-version: next
+version: patch
