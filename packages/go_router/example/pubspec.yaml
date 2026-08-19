@@ -11,6 +11,7 @@ dependencies:
   adaptive_navigation: ^0.0.4
   collection: ^1.15.0
   cupertino_icons: ^1.0.2
+  cupertino_ui: ^1.0.0
   flutter:
     sdk: flutter
   go_router:
