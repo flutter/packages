@@ -28,17 +28,14 @@ Future<String> getUpstreamRemote(String workingDirectory) async {
 }
 
 /// Checks out a branch that is behind upstream/main by 1 commit, makes a local commit,
-/// and verifies that pre-push-skill detects the branch is behind upstream and stops
-/// immediately without modifying pubspec.yaml or CHANGELOG.md.
+/// and sets up the branch to test that pre-push-skill detects the branch is behind upstream,
+/// verifies there are no merge conflicts, proceeds with checks without running update-release-info,
+/// and reports that the branch needs to be updated before pushing.
 void main() async {
   // The root of the packages directory.
-  final Directory packageDir = Directory(Platform.script.toFilePath())
-      .parent
-      .parent
-      .parent
-      .parent
-      .parent
-      .parent;
+  final Directory packageDir = Directory(
+    Platform.script.toFilePath(),
+  ).parent.parent.parent.parent.parent.parent;
   final dartFilePath = '${packageDir.path}/lib/src/camerax_library.dart';
 
   final String upstream = await getUpstreamRemote(packageDir.path);
@@ -57,12 +54,12 @@ void main() async {
     exit(1);
   }
 
-  // 2. Checkout a new temporary branch 'eval_behind_upstream' starting 1 commit behind upstream/main
-  print('Checking out eval_behind_upstream...');
+  // 2. Checkout a new temporary branch 'eval_behind_upstream_no_conflict' starting 1 commit behind upstream/main
+  print('Checking out eval_behind_upstream_no_conflict...');
   final ProcessResult checkoutResult = await Process.run('git', <String>[
     'checkout',
     '-B',
-    'eval_behind_upstream',
+    'eval_behind_upstream_no_conflict',
     '$upstream/main~1',
   ], workingDirectory: packageDir.path);
   if (checkoutResult.exitCode != 0) {
