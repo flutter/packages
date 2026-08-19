@@ -1028,6 +1028,45 @@ void main() {
         );
       });
     });
+
+    group('codec instance variable', () {
+      test('proxy api only contains a static host method', () {
+        final root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[
+                Method(
+                  name: 'method',
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                  location: .host,
+                  isStatic: true,
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final sink = StringBuffer();
+        const generator = DartGenerator();
+        generator.generate(
+          const InternalDartOptions(ignoreLints: false),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+
+        final String collapsedCode = _collapseNewlineAndIndentation(sink.toString());
+        expect(
+          collapsedCode,
+          isNot(contains('late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecApi')),
+        );
+      });
+    });
   });
 }
 
