@@ -1040,7 +1040,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Pass parameters to the platform side.
     const creationParams = <String, dynamic>{};
 
-    final Widget platformViewLink = PlatformViewLink(
+    return PlatformViewLink(
       viewType: viewType,
       surfaceFactory: (context, controller) {
         return AndroidViewSurface(
@@ -1062,12 +1062,6 @@ class AndroidCameraCameraX extends CameraPlatform {
           )
           ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
           ..create();
-      },
-    );
-
-    return Builder(
-      builder: (BuildContext context) {
-        return Center(child: platformViewLink);
       },
     );
   }
