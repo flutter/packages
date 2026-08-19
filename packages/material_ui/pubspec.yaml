@@ -34,7 +34,7 @@ dev_dependencies:
 
 flutter:
   shaders:
-    - shaders/material_ink_sparkle.frag
+    - packages/material_ui/shaders/ink_sparkle.frag
 
 topics:
   - ui
