@@ -6,7 +6,7 @@
       "prompt": "First, run 'dart .agents/skills/pre-push-skill/evals/test_data/setup_behind_upstream_no_conflict.dart'. Then, run the pre-push skill.",
       "expected_chat_output": [
         "The agent warned the user that the branch must be pulled or merged before pushing.",
-        "The agent concluded that the code is not ready to push (# NO, you are not ready to push)."
+        "The agent reported that the code is not ready to push (# NO, you are not ready to push)."
       ],
       "expected_repo_state": [
         "The agent detected that the branch is behind the upstream main branch.",
