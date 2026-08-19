@@ -1,3 +1,11 @@
+## 2.13.0
+
+* Adds `VideoAssetProvider` and `VideoPlayerPlugin.setVideoAssetProvider`, letting another
+  component supply the `VideoAsset` used for a URI. This is the extension point for playback
+  this plugin cannot express itself, such as reading from a download or HTTP cache, applying a
+  custom `DataSource.Factory`, or resolving an unknown scheme. Behavior is unchanged when no
+  provider is registered.
+
 ## 2.12.0
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/176575) where some videos report an incorrect duration when initialized without a video duration.
