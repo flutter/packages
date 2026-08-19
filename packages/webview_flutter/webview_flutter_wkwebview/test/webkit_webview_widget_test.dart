@@ -4,6 +4,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -37,6 +38,96 @@ void main() {
         findsOneWidget,
       );
       expect(find.byKey(const Key('keyValue')), findsOneWidget);
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('gestureBlockingPolicy defaults to falling back to the plugin default', (
+      WidgetTester tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      final WebKitWebViewController controller = createTestWebViewController();
+
+      final widget = WebKitWebViewWidget(WebKitWebViewWidgetCreationParams(controller: controller));
+
+      await tester.pumpWidget(Builder(builder: (BuildContext context) => widget.build(context)));
+
+      expect(
+        tester.widget<UiKitView>(find.byType(UiKitView)).gestureBlockingPolicy,
+        UiKitViewGestureBlockingPolicy.fallbackToPluginDefault,
+      );
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('gestureBlockingPolicy is passed to the UiKitView', (WidgetTester tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      final WebKitWebViewController controller = createTestWebViewController();
+
+      final widget = WebKitWebViewWidget(
+        WebKitWebViewWidgetCreationParams(
+          controller: controller,
+          gestureBlockingPolicy: UiKitViewGestureBlockingPolicy.doNotBlockGesture,
+        ),
+      );
+
+      await tester.pumpWidget(Builder(builder: (BuildContext context) => widget.build(context)));
+
+      expect(
+        tester.widget<UiKitView>(find.byType(UiKitView)).gestureBlockingPolicy,
+        UiKitViewGestureBlockingPolicy.doNotBlockGesture,
+      );
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('Key of the PlatformView changes when the gestureBlockingPolicy changes', (
+      WidgetTester tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      final WebKitWebViewController controller = createTestWebViewController();
+
+      final webViewWidget = WebKitWebViewWidget(
+        WebKitWebViewWidgetCreationParams(controller: controller),
+      );
+
+      await tester.pumpWidget(
+        Builder(builder: (BuildContext context) => webViewWidget.build(context)),
+      );
+      await tester.pumpAndSettle();
+
+      final webViewWidget2 = WebKitWebViewWidget(
+        WebKitWebViewWidgetCreationParams(
+          controller: controller,
+          gestureBlockingPolicy: UiKitViewGestureBlockingPolicy.doNotBlockGesture,
+        ),
+      );
+
+      await tester.pumpWidget(
+        Builder(builder: (BuildContext context) => webViewWidget2.build(context)),
+      );
+      await tester.pumpAndSettle();
+
+      expect(webViewWidget.params != webViewWidget2.params, isTrue);
+      expect(
+        find.byKey(
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+            webViewWidget.params as WebKitWebViewWidgetCreationParams,
+          ),
+        ),
+        findsNothing,
+      );
+      expect(
+        find.byKey(
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+            webViewWidget2.params as WebKitWebViewWidgetCreationParams,
+          ),
+        ),
+        findsOneWidget,
+      );
 
       debugDefaultTargetPlatformOverride = null;
     });
