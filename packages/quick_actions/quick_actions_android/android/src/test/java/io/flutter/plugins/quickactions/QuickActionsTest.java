@@ -6,8 +6,11 @@ package io.flutter.plugins.quickactions;
 
 import static io.flutter.plugins.quickactions.QuickActions.EXTRA_ACTION;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import android.app.Activity;
@@ -49,6 +52,21 @@ public class QuickActionsTest {
   static final int SUPPORTED_BUILD = 25;
   static final int UNSUPPORTED_BUILD = 24;
   static final String SHORTCUT_TYPE = "action_one";
+
+  @Test
+  public void getLaunchAction_noActivity_returnsNull() {
+    // Arrange
+    // Build.VERSION.SDK_INT is 0 in unit tests, so the version check is stubbed to make sure the
+    // null activity, and not the unsupported version, is what is being exercised here.
+    final QuickActions quickActions = spy(new QuickActions(mock(Context.class)));
+    doReturn(true).when(quickActions).isVersionAllowed();
+
+    // Act
+    final String launchAction = quickActions.getLaunchAction();
+
+    // Assert
+    assertNull(launchAction);
+  }
 
   @Test
   public void canAttachToEngine() {
