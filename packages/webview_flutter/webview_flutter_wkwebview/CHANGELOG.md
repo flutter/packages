@@ -1,3 +1,7 @@
+## 3.26.1
+
+* Updates pigeon to `27.3.2`.
+
 ## 3.26.0
 
 * Adds new method for accessing a native `WKWebView` from a `FlutterPluginRegistrar`.
