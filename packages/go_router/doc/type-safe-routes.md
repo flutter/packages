@@ -28,7 +28,7 @@ part 'go_router_builder.g.dart';
     ]
 )
 @immutable
-class HomeScreenRoute extends GoRouteData with _$HomeScreenRoute {
+class HomeScreenRoute extends GoRouteData with $HomeScreenRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const HomeScreen();
@@ -36,7 +36,7 @@ class HomeScreenRoute extends GoRouteData with _$HomeScreenRoute {
 }
 
 @immutable
-class SongRoute extends GoRouteData with _$SongRoute {
+class SongRoute extends GoRouteData with $SongRoute {
   final int id;
 
   const SongRoute({
