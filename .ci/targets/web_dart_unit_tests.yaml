@@ -7,6 +7,5 @@ tasks:
     args: [
       "dart-test",
       "--platform=chrome",
-      "--exclude=script/configs/dart_unit_tests_exceptions.yaml",
-      "--exclude=script/configs/exclude_unit_tests_web.yaml"
+      "--exclude=script/configs/dart_unit_tests_exceptions.yaml"
     ]
