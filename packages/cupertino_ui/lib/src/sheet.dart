@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:math' as math;
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter/services.dart';
@@ -41,7 +39,7 @@ const double _kStretchedTopGapRatio = 0.072;
 
 // Spring description used for the bounce-back animation when enableDrag == false
 // or when snapping back to position. Measured on iOS 26
-SpringDescription _sheetSpring = SpringDescription.withDurationAndBounce(
+final SpringDescription _sheetSpring = SpringDescription.withDurationAndBounce(
   duration: const Duration(milliseconds: 430),
 );
 
@@ -68,7 +66,8 @@ double _computeRubberBandFriction({
   double constant = _kAppleRubberBandElasticity,
 }) {
   final double stretchProgress = (currentDisplacement / dimension).clamp(0.0, 1.0);
-  return constant * math.pow(1.0 - stretchProgress, 2.0);
+  final double remainingProgress = 1.0 - stretchProgress;
+  return constant * remainingProgress * remainingProgress;
 }
 
 // Tween for animating a Cupertino sheet onto the screen.
@@ -1190,7 +1189,9 @@ class _CupertinoDragGestureController<T> {
       if (popDragController.isAnimating) {
         void animationStatusCallback(AnimationStatus status) {
           if (status == AnimationStatus.completed || status == AnimationStatus.dismissed) {
-            navigator.didStopUserGesture();
+            if (navigator.mounted) {
+              navigator.didStopUserGesture();
+            }
             popDragController.removeStatusListener(animationStatusCallback);
           }
         }
