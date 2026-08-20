@@ -93,8 +93,6 @@ void main() {
 ///
 /// This was copied from flutter_test, which uses flutter/material.dart.
 ///
-// TODO(justinmc): Port flutter_test to material_ui, then delete this method and
-// use that one. See https://github.com/flutter/flutter/issues/186966
 Finder findByTooltip(Pattern message, {bool skipOffstage = true}) {
   return find.byWidgetPredicate((Widget widget) {
     // Compare RawTooltip's semantics tooltip with the given message.
