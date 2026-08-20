@@ -63,7 +63,7 @@
 
 ## 0.9.3
 
-* Require minimal version of flutter SDK to be `2.10`.
+* Requires minimal version of flutter SDK to be `2.10`.
 
 ## 0.9.2
 

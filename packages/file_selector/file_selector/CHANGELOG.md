@@ -85,9 +85,9 @@
 ## 0.9.0
 
 * **BREAKING CHANGE**: The following methods:
-    * `openFile`.
-    * `openFiles`.
-    * `getSavePath`.
+    * `openFile`
+    * `openFiles`
+    * `getSavePath`
 
   can throw `ArgumentError`s if called with any `XTypeGroup`s that
   do not contain appropriate filters for the current platform. For

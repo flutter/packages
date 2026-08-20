@@ -210,7 +210,7 @@
 
 ## 0.6.3+2
 
-* Keep handling deprecated Android v1 classes for backward compatibility.
+* Keeps handling deprecated Android v1 classes for backward compatibility.
 
 ## 0.6.3+1
 
@@ -240,7 +240,7 @@
 ## 0.6.2
 
 * Removes Android dependencies fallback.
-* Require Flutter SDK 1.12.13+hotfix.5 or greater.
+* Requires Flutter SDK 1.12.13+hotfix.5 or greater.
 * Fixes block implicitly retains 'self' warning.
 
 ## 0.6.1+4
@@ -259,7 +259,7 @@
 
 * Removes the deprecated `author:` field from pubspec.yaml.
 * Migrates the plugin to the pubspec platforms manifest.
-* Require Flutter SDK 1.10.0 or greater.
+* Requires Flutter SDK 1.10.0 or greater.
 
 ## 0.6.1
 
@@ -282,7 +282,7 @@
 
 * Define a new parameter for signaling that the transaction is sensitive.
 * Up the biometric version to beta01.
-* Handle no device credential error.
+* Handles no device credential error.
 
 ## 0.5.3
 
@@ -320,7 +320,7 @@
 
 ## 0.4.0+1
 
-* Log a more detailed warning at build time about the previous AndroidX
+* Logs a more detailed warning at build time about the previous AndroidX
   migration.
 
 ## 0.4.0

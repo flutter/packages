@@ -269,7 +269,7 @@ the returned controller is 100% functional (has bounds, a projection, etc...).
 ## 0.2.1
 
 * Moves integration tests to `example`.
-* Tweak pubspec dependencies for main package.
+* Tweaks pubspec dependencies for main package.
 
 ## 0.2.0
 
@@ -302,7 +302,7 @@ the returned controller is 100% functional (has bounds, a projection, etc...).
 
 ## 0.1.0+7
 
-* Substitute `undefined_prefixed_name: ignore` analyzer setting by a `dart:ui` shim with conditional exports. [Issue](https://github.com/flutter/flutter/issues/69309).
+* Substitutes `undefined_prefixed_name: ignore` analyzer setting by a `dart:ui` shim with conditional exports. [Issue](https://github.com/flutter/flutter/issues/69309).
 
 ## 0.1.0+6
 

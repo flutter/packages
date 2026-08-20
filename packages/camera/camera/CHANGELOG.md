@@ -554,7 +554,7 @@ Method changes in `CameraController`:
 
 ## 0.5.8+7
 
-* Keep handling deprecated Android v1 classes for backward compatibility.
+* Keeps handling deprecated Android v1 classes for backward compatibility.
 
 ## 0.5.8+6
 
@@ -583,7 +583,7 @@ Method changes in `CameraController`:
 ## 0.5.8
 
 * Removes Android dependencies fallback.
-* Require Flutter SDK 1.12.13+hotfix.5 or greater.
+* Requires Flutter SDK 1.12.13+hotfix.5 or greater.
 
 ## 0.5.7+5
 
@@ -601,7 +601,7 @@ Method changes in `CameraController`:
 
 * Removes the deprecated `author:` field from pubspec.yaml.
 * Migrates the plugin to the pubspec platforms manifest.
-* Require Flutter SDK 1.10.0 or greater.
+* Requires Flutter SDK 1.10.0 or greater.
 
 ## 0.5.7+1
 
@@ -736,7 +736,7 @@ a `MissingPluginException.`.
 
 ## 0.3.0+3
 
-* Log a more detailed warning at build time about the previous AndroidX
+* Logs a more detailed warning at build time about the previous AndroidX
   migration.
 
 ## 0.3.0+2

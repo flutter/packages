@@ -19,7 +19,7 @@
 ## 1.2.4
 
 * Fixes Stack Overflow crashes caused by circular references (masks, patterns, deferred nodes, and clip paths).
-* Prevent CPU/Memory Denial of Service (DoS) resource exhaustion from exponential DAG reference expansions (Billion Laughs SVG exploits) by enforcing a strict, cumulative reference expansion safety limit of 1,000.
+* Prevents CPU/Memory Denial of Service (DoS) resource exhaustion from exponential DAG reference expansions (Billion Laughs SVG exploits) by enforcing a strict, cumulative reference expansion safety limit of 1,000.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 1.2.3
@@ -111,7 +111,7 @@
 * Fixes handling of invalid XML `@id` attributes.
 * Fixes handling of self-referential `<use/>` elements.
 * Adds `--out-dir` option to compiler.
-* Tweak warning message for unhandled eleemnts.
+* Tweaks warning message for unhandled eleemnts.
 
 ## 1.1.8
 

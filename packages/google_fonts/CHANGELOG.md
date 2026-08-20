@@ -1000,7 +1000,7 @@
 
 ## 0.0.5
 
-- Mark as experimental in more places.
+- Marks as experimental in more places.
 
 ## 0.0.4
 

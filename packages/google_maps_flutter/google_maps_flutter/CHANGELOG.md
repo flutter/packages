@@ -276,12 +276,12 @@
 
 ## 2.0.8
 
-* Mark iOS arm64 simulators as unsupported.
+* Marks iOS arm64 simulators as unsupported.
 
 ## 2.0.7
 
 * Adds iOS unit and UI integration test targets.
-* Exclude arm64 simulators in example app.
+* Excludes arm64 simulators in example app.
 * Removes references to the Android V1 embedding.
 
 ## 2.0.6
@@ -388,7 +388,7 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 
 ## 0.5.33
 
-* Keep handling deprecated Android v1 classes for backward compatibility.
+* Keeps handling deprecated Android v1 classes for backward compatibility.
 
 ## 0.5.32
 
@@ -527,7 +527,7 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 
 * Removes the deprecated `author:` field from pubspec.yaml.
 * Migrates the plugin to the pubspec platforms manifest.
-* Require Flutter SDK 1.10.0 or greater.
+* Requires Flutter SDK 1.10.0 or greater.
 
 ## 0.5.21+14
 
@@ -672,7 +672,7 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 
 ## 0.5.12
 
-* Prevent calling null callbacks and callbacks on removed objects.
+* Prevents calling null callbacks and callbacks on removed objects.
 
 ## 0.5.11+1
 
@@ -772,7 +772,7 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 
 ## 0.2.0+2
 
-* Log a more detailed warning at build time about the previous AndroidX
+* Logs a more detailed warning at build time about the previous AndroidX
   migration.
 
 ## 0.2.0+1

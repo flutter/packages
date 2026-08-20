@@ -96,7 +96,7 @@
 ## 0.12.0
 
 * Changes the behavior of `--packages-for-branch` on main/master to run for
-  packages changed in the last commit, rather than running for all packages
+  packages changed in the last commit, rather than running for all packages.
   This allows CI to test the same filtered set of packages in post-submit as are
   tested in presubmit.
 * Adds a `fix` command to run `dart fix --apply` in target packages.
@@ -252,7 +252,7 @@
 - Removes `allow-warnings` from the `podspecs` command.
 - Adds `skip-if-not-supporting-flutter-version` to allow running tests using a
   version of Flutter that not all packages support. (E.g., to allow for running
-  some tests against old versions of Flutter to help avoid accidental breakage.).
+  some tests against old versions of Flutter to help avoid accidental breakage.)
 
 ## 0.7.3
 
@@ -266,27 +266,27 @@
 
 ## 0.7.2
 
-- Updates Firebase Testlab deprecated test device. (Pixel 4 API 29 -> Pixel 5 API 30).
+- Update Firebase Testlab deprecated test device. (Pixel 4 API 29 -> Pixel 5 API 30).
 - `native-test --android`, `--ios`, and `--macos` now fail plugins that don't
   have unit tests, rather than skipping them.
-- Adds a new `federation-safety-check` command to help catch changes to
+- Added a new `federation-safety-check` command to help catch changes to
   federated packages that have been done in such a way that they will pass in
   CI, but fail once the change is landed and published.
 - `publish-check` now validates that there is an `AUTHORS` file.
-- Adds flags to `version-check` to allow overriding the platform interface
+- Added flags to `version-check` to allow overriding the platform interface
   major version change restriction.
-- Improves error handling and error messages in CHANGELOG version checks.
+- Improved error handling and error messages in CHANGELOG version checks.
 - `license-check` now validates Kotlin files.
 - `pubspec-check` now checks that the description is of the pub-recommended
   length.
-- Fixes `license-check` when run on Windows with line ending conversion enabled.
-- Fixes `pubspec-check` on Windows.
-- Adds support for `main` as a primary branch. `master` continues to work for
+- Fix `license-check` when run on Windows with line ending conversion enabled.
+- Fixed `pubspec-check` on Windows.
+- Add support for `main` as a primary branch. `master` continues to work for
   compatibility.
 
 ## 0.7.1
 
-- Adds support for `.pluginToolsConfig.yaml` in the `build-examples` command.
+- Add support for `.pluginToolsConfig.yaml` in the `build-examples` command.
 
 ## 0.7.0
 
@@ -296,12 +296,12 @@
 
 ## 0.6.0+1
 
-- Fixes `build-examples` to work for non-plugin packages.
+- Fixed `build-examples` to work for non-plugin packages.
 
 ## 0.6.0
 
-- Adds Android native integration test support to `native-test`.
-- Adds a new `android-lint` command to lint Android plugin native code.
+- Added Android native integration test support to `native-test`.
+- Added a new `android-lint` command to lint Android plugin native code.
 - Pubspec validation now checks for `implements` in implementation packages.
 - Pubspec valitation now checks the full relative path of `repository` entries.
 - `build-examples` now supports UWP plugins via a `--winuwp` flag.
@@ -319,14 +319,14 @@
   contain lists of packages to exclude, in addition to just package names,
   so that exclude lists can be maintained separately from scripts and CI
   configuration.
-- Adds an `xctest` flag to select specific test targets, to allow running only
+- Added an `xctest` flag to select specific test targets, to allow running only
   unit tests or integration tests.
 - **Breaking change**: Split Xcode analysis out of `xctest` and into a new
   `xcode-analyze` command.
-- Fixes a bug that caused `firebase-test-lab` to hang if it tried to run more
+- Fixed a bug that caused `firebase-test-lab` to hang if it tried to run more
   than one plugin's tests in a single run.
 - **Breaking change**: If `firebase-test-lab` is run on a package that supports
-  Android, but for which no tests are run, it now fails instead of skipping
+  Android, but for which no tests are run, it now fails instead of skipping.
   This matches `drive-examples`, as this command is what is used for driving
   Android Flutter integration tests on CI.
 - **Breaking change**: Replaced `xctest` with a new `native-test` command that
@@ -343,63 +343,63 @@
 
 ## 0.4.1
 
-- Improves `license-check` output.
-- Uses `java -version` rather than `java --version`, for compatibility with more
+- Improved `license-check` output.
+- Use `java -version` rather than `java --version`, for compatibility with more
   versions of Java.
 
 ## 0.4.0
 
-- Modified the output format of many commands.
+- Modified the output format of many commands
 - **Breaking change**: `firebase-test-lab` no longer supports `*_e2e.dart`
   files, only `integration_test/*_test.dart`.
-- Adds a summary to the end of successful command runs for commands using the
+- Add a summary to the end of successful command runs for commands using the
   new output format.
-- Fixes some cases where a failure in a command for a single package would
+- Fixed some cases where a failure in a command for a single package would
   immediately abort the test.
-- Deprecates `--plugins` in favor of new `--packages`. `--plugins` continues to
+- Deprecated `--plugins` in favor of new `--packages`. `--plugins` continues to
   work for now, but will be removed in the future.
-- Makes `drive-examples` device detection robust against Flutter tool banners.
+- Make `drive-examples` device detection robust against Flutter tool banners.
 - `format` is now supported on Windows.
 
 ## 0.3.0
 
-- Adds a --build-id flag to `firebase-test-lab` instead of hard-coding the use of
+- Add a --build-id flag to `firebase-test-lab` instead of hard-coding the use of
   `CIRRUS_BUILD_ID`. `CIRRUS_BUILD_ID` is the default value for that flag, for backward
   compatibility.
-- `xctest` now supports running macOS tests in addition to iOS.
+- `xctest` now supports running macOS tests in addition to iOS
   - **Breaking change**: it now requires an `--ios` and/or `--macos` flag.
 - **Breaking change**: `build-examples` for iOS now uses `--ios` rather than
   `--ipa`.
 - The tooling now runs in strong null-safe mode.
 - `publish plugins` check against pub.dev to determine if a release should happen.
-- Modified the output format of many commands.
-- Removes `podspec`'s `--skip` in favor of `--ignore` using the new structure.
+- Modified the output format of many commands
+- Removed `podspec`'s `--skip` in favor of `--ignore` using the new structure.
 
 ## 0.2.0
 
-- Removes `xctest`'s `--skip`, which is redundant with `--ignore`.
+- Remove `xctest`'s `--skip`, which is redundant with `--ignore`.
 
 ## 0.1.4
 
-- Adds a `pubspec-check` command.
+- Add a `pubspec-check` command
 
 ## 0.1.3
 
-- Cosmetic fix to `publish-check` output.
-- Adds a --dart-sdk option to `analyze`.
-- Allows reverts in `version-check`.
+- Cosmetic fix to `publish-check` output
+- Add a --dart-sdk option to `analyze`
+- Allow reverts in `version-check`
 
 ## 0.1.2
 
-- Adds `against-pub` flag for version-check, which allows the command to check version with pub.
-- Adds `machine` flag for publish-check, which replaces outputs to something parsable by machines.
-- Adds `skip-conformation` flag to publish-plugin to allow auto publishing.
-- Changes `run-on-changed-packages` to consider all packages as changed if any
+- Add `against-pub` flag for version-check, which allows the command to check version with pub.
+- Add `machine` flag for publish-check, which replaces outputs to something parsable by machines.
+- Add `skip-conformation` flag to publish-plugin to allow auto publishing.
+- Change `run-on-changed-packages` to consider all packages as changed if any
   files have been changed that could affect the entire repository.
 
 ## 0.1.1
 
-- Updates the allowed third-party licenses for flutter/packages.
+- Update the allowed third-party licenses for flutter/packages.
 
 ## 0.1.0+1
 
@@ -409,20 +409,20 @@
 
 - **NOTE**: This is no longer intended as a general-purpose package, and is now
   supported only for flutter/plugins and flutter/tools.
-- Fixes version checks.
-  - Removes handling of pre-release null-safe versions.
-- Fixes build all for null-safe template apps.
-- Improves handling of web integration tests.
-- Supports enforcing standardized copyright files.
-- Improves handling of iOS tests.
+- Fix version checks
+  - Remove handling of pre-release null-safe versions
+- Fix build all for null-safe template apps
+- Improve handling of web integration tests
+- Supports enforcing standardized copyright files
+- Improve handling of iOS tests
 
 ## v.0.0.45+3
 
-- Pins `collection` to `1.14.13` to be able to target Flutter stable (v1.22.6).
+- Pin `collection` to `1.14.13` to be able to target Flutter stable (v1.22.6).
 
 ## v.0.0.45+2
 
-- Makes `publish-plugin` to work on non-flutter packages.
+- Make `publish-plugin` to work on non-flutter packages.
 
 ## v.0.0.45+1
 
@@ -430,7 +430,7 @@
 
 ## v.0.0.45
 
-- Adds exclude flag to exclude any plugin from further processing.
+- Add exclude flag to exclude any plugin from further processing.
 
 ## v.0.0.44+7
 
@@ -438,65 +438,65 @@
 
 ## v.0.0.44+6
 
-- Fixes code formatting.
+- Fix code formatting.
 
 ## v.0.0.44+5
 
-- Removes `-v` flag on drive-examples.
+- Remove `-v` flag on drive-examples.
 
 ## v.0.0.44+4
 
-- Fixes bug where directory isn't passed.
+- Fix bug where directory isn't passed
 
 ## v.0.0.44+3
 
-- More verbose logging.
+- More verbose logging
 
 ## v.0.0.44+2
 
-- Removes pre-alpha Windows workaround to create examples on the fly.
+- Remove pre-alpha Windows workaround to create examples on the fly.
 
 ## v.0.0.44+1
 
 - Print packages that passed tests in `xctest` command.
-- Removes printing the whole list of simulators.
+- Remove printing the whole list of simulators.
 
 ## v.0.0.44
 
-- Adds 'xctest' command to run xctests.
+- Add 'xctest' command to run xctests.
 
 ## v.0.0.43
 
-- Allows minor `*-nullsafety` pre release packages.
+- Allow minor `*-nullsafety` pre release packages.
 
 ## v.0.0.42+1
 
-- Fixes test command when `--enable-experiment` is called.
+- Fix test command when `--enable-experiment` is called.
 
 ## v.0.0.42
 
-- Allows `*-nullsafety` pre release packages.
+- Allow `*-nullsafety` pre release packages.
 
 ## v.0.0.41
 
-- Supports `--enable-experiment` flag in subcommands `test`, `build-examples`, `drive-examples`,
+- Support `--enable-experiment` flag in subcommands `test`, `build-examples`, `drive-examples`,
 and `firebase-test-lab`.
 
 ## v.0.0.40
 
-- Supports `integration_test/` directory for `drive-examples` command.
+- Support `integration_test/` directory for `drive-examples` command
 
 ## v.0.0.39
 
-- Supports `integration_test/` directory for `package:integration_test`.
+- Support `integration_test/` directory for `package:integration_test`
 
 ## v.0.0.38
 
-- Adds C++ and ObjC++ to clang-format.
+- Add C++ and ObjC++ to clang-format.
 
 ## v.0.0.37+2
 
-- Makes `http` and `http_multi_server` dependency version constraint more flexible.
+- Make `http` and `http_multi_server` dependency version constraint more flexible.
 
 ## v.0.0.37+1
 
@@ -508,11 +508,11 @@ and `firebase-test-lab`.
 
 ## v.0.0.36+3
 
-- Adds support for Linux plugins.
+- Add support for Linux plugins.
 
 ## v.0.0.36+2
 
-- Default to showing podspec lint warnings.
+- Default to showing podspec lint warnings
 
 ## v.0.0.36+1
 
@@ -520,9 +520,9 @@ and `firebase-test-lab`.
 
 ## v.0.0.36
 
-- Removes retry on Firebase Test Lab's call to gcloud set.
-- Removes quiet flag from Firebase Test Lab's gcloud set command.
-- Allows Firebase Test Lab command to continue past gcloud set network failures
+- Remove retry on Firebase Test Lab's call to gcloud set.
+- Remove quiet flag from Firebase Test Lab's gcloud set command.
+- Allow Firebase Test Lab command to continue past gcloud set network failures.
   This is a mitigation for the network service sometimes not responding,
   but it isn't actually necessary to have a network connection for this command.
 
@@ -536,7 +536,7 @@ and `firebase-test-lab`.
 
 ## v.0.0.34
 
-- Firebase Test Lab command now only tries to configure the project once.
+- Firebase Test Lab command now only tries to configure the project once
 - Firebase Test Lab command now retries project configuration up to five times.
 
 ## v.0.0.33+1
@@ -549,29 +549,29 @@ and `firebase-test-lab`.
 ## v.0.0.33
 
 - Version check command now fails on breaking changes to platform interfaces.
-- Updates version check test to be more flexible.
+- Updated version check test to be more flexible.
 
 ## v.0.0.32+7
 
-- Ensures that Firebase Test Lab tests have a unique storage bucket for each test run.
+- Ensure that Firebase Test Lab tests have a unique storage bucket for each test run.
 
 ## v.0.0.32+6
 
-- Ensures that Firebase Test Lab tests have a unique storage bucket for each package.
+- Ensure that Firebase Test Lab tests have a unique storage bucket for each package.
 
 ## v.0.0.32+5
 
-- Removes --fail-fast and --silent from lint podspec command.
+- Remove --fail-fast and --silent from lint podspec command.
 
 ## v.0.0.32+4
 
-- Updates `publish-plugin` to use `flutter pub publish` instead of just `pub
+- Update `publish-plugin` to use `flutter pub publish` instead of just `pub
   publish`. Enforces a `pub publish` command that matches the Dart SDK in the
   user's Flutter install.
 
 ## v.0.0.32+3
 
-- Updates Firebase Testlab deprecated test device. (Pixel 3 API 28 -> Pixel 4 API 29).
+- Update Firebase Testlab deprecated test device. (Pixel 3 API 28 -> Pixel 4 API 29).
 
 ## v.0.0.32+2
 
@@ -590,11 +590,11 @@ and `firebase-test-lab`.
 
 ## v.0.0.31+1
 
-- Adds --skip and --no-analyze flags to podspec command.
+- Add --skip and --no-analyze flags to podspec command.
 
 ## v.0.0.31
 
-- Adds support for macos on `DriveExamplesCommand` and `BuildExamplesCommand`.
+- Add support for macos on `DriveExamplesCommand` and `BuildExamplesCommand`.
 
 ## v.0.0.30
 
@@ -602,7 +602,7 @@ and `firebase-test-lab`.
 
 ## v.0.0.29
 
-- Adds a command to run pod lib lint on podspec files.
+- Add a command to run pod lib lint on podspec files.
 
 ## v.0.0.28
 
@@ -614,13 +614,13 @@ and `firebase-test-lab`.
 
 ## v.0.0.26
 
-- Adds a command for publishing plugins to pub.
+- Add a command for publishing plugins to pub.
 
 ## v.0.0.25
 
-- Updates `DriveExamplesCommand` to use `ProcessRunner`.
-- Makes `DriveExamplesCommand` rely on `ProcessRunner` to determine if the test fails or not.
-- Adds simple tests for `DriveExamplesCommand`.
+- Update `DriveExamplesCommand` to use `ProcessRunner`.
+- Make `DriveExamplesCommand` rely on `ProcessRunner` to determine if the test fails or not.
+- Add simple tests for `DriveExamplesCommand`.
 
 ## v.0.0.24
 
@@ -629,45 +629,45 @@ and `firebase-test-lab`.
 
 ## v.0.0.23
 
-- Adds a test case for transitive dependency solving in the
+- Add a test case for transitive dependency solving in the
   `create_all_plugins_app` command.
 
 ## v.0.0.22
 
-- Updates firebase-test-lab command with updated conventions for test locations.
-- Updates firebase-test-lab to add an optional "device" argument.
-- Updates version-check command to always compare refs instead of using the working copy.
-- Adds unit tests for the firebase-test-lab and version-check commands.
-- Adds ProcessRunner to mock running processes for testing.
+- Updated firebase-test-lab command with updated conventions for test locations.
+- Updated firebase-test-lab to add an optional "device" argument.
+- Updated version-check command to always compare refs instead of using the working copy.
+- Added unit tests for the firebase-test-lab and version-check commands.
+- Add ProcessRunner to mock running processes for testing.
 
 ## v.0.0.21
 
-- Supports the `--plugins` argument for federated plugins.
+- Support the `--plugins` argument for federated plugins.
 
 ## v.0.0.20
 
-- Supports for finding federated plugins, where one directory contains
+- Support for finding federated plugins, where one directory contains
   multiple packages for different platform implementations.
 
 ## v.0.0.19+3
 
-- Uses `package:file` for file I/O.
+- Use `package:file` for file I/O.
 
 ## v.0.0.19+2
 
-- Uses java as language when calling `flutter create`.
+- Use java as language when calling `flutter create`.
 
 ## v.0.0.19+1
 
-- Renames command for `CreateAllPluginsAppCommand`.
+- Rename command for `CreateAllPluginsAppCommand`.
 
 ## v.0.0.19
 
-- Uses flutter create to build app testing plugin compilation.
+- Use flutter create to build app testing plugin compilation.
 
 ## v.0.0.18+2
 
-- Fixes `.travis.yml` file name in `README.md`.
+- Fix `.travis.yml` file name in `README.md`.
 
 ## v0.0.18+1
 
@@ -675,7 +675,7 @@ and `firebase-test-lab`.
 
 ## v0.0.18
 
-- Adds option to exclude packages from generated pubspec command.
+- Add option to exclude packages from generated pubspec command.
 
 ## v0.0.17+4
 
@@ -687,23 +687,23 @@ and `firebase-test-lab`.
 
 ## v0.0.17+2
 
-- Fixes exception handling for version checker.
+- Fix exception handling for version checker
 
 ## v0.0.17+1
 
-- Fixes bug where we used a flag instead of an option.
+- Fix bug where we used a flag instead of an option
 
 ## v0.0.17
 
-- Adds a command for checking the version number.
+- Add a command for checking the version number
 
 ## v0.0.16
 
-- Adds a command for generating `pubspec.yaml` for All Plugins app.
+- Add a command for generating `pubspec.yaml` for All Plugins app.
 
 ## v0.0.15
 
-- Adds a command for running driver tests of plugin examples.
+- Add a command for running driver tests of plugin examples.
 
 ## v0.0.14
 

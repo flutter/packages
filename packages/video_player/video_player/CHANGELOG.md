@@ -58,7 +58,7 @@
 ## 2.9.2
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
-* Throws a more descriptive `StateError` in the case where 
+* Throws a more descriptive `StateError` in the case where
   `VideoPlayerController.initialize` receives more than one `initialized` event.
 
 ## 2.9.1
@@ -436,7 +436,7 @@ receives an`Uri` instead of a `String` url.
 
 ## 0.10.12+4
 
-* Keep handling deprecated Android v1 classes for backward compatibility.
+* Keeps handling deprecated Android v1 classes for backward compatibility.
 
 ## 0.10.12+3
 
@@ -473,7 +473,7 @@ receives an`Uri` instead of a `String` url.
 
 ## 0.10.9+2
 
-* Declare API stability and compatibility with `1.0.0` (more details at: https://github.com/flutter/flutter/wiki/Package-migration-to-1.0.0).
+* Declares API stability and compatibility with `1.0.0` (more details at: https://github.com/flutter/flutter/wiki/Package-migration-to-1.0.0).
 
 ## 0.10.9+1
 
@@ -482,7 +482,7 @@ receives an`Uri` instead of a `String` url.
 ## 0.10.9
 
 * Removes Android dependencies fallback.
-* Require Flutter SDK 1.12.13+hotfix.5 or greater.
+* Requires Flutter SDK 1.12.13+hotfix.5 or greater.
 * Fixes CocoaPods podspec lint warnings.
 
 ## 0.10.8+2
@@ -525,13 +525,13 @@ receives an`Uri` instead of a `String` url.
 ## 0.10.5
 
 * Supports `web` by default.
-* Require Flutter SDK 1.12.13+hotfix.4 or greater.
+* Requires Flutter SDK 1.12.13+hotfix.4 or greater.
 
 ## 0.10.4+2
 
 * Removes the deprecated `author:` field form pubspec.yaml.
 * Migrates the plugin to the pubspec platforms manifest.
-* Require Flutter SDK 1.10.0 or greater.
+* Requires Flutter SDK 1.10.0 or greater.
 
 ## 0.10.4+1
 
@@ -657,7 +657,7 @@ DefaultHttpDataSourceFactory by default.
 
 ## 0.10.0+1
 
-* Log a more detailed warning at build time about the previous AndroidX
+* Logs a more detailed warning at build time about the previous AndroidX
   migration.
 
 ## 0.10.0

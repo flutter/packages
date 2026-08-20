@@ -116,7 +116,7 @@
 ## 0.1.1
 
 * Adds optional `scope` to `OverridableTokenClientConfig` object.
-* Mark some callbacks as optional properly.
+* Marks some callbacks as optional properly.
 
 ## 0.1.0
 

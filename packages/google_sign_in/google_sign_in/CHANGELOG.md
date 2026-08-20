@@ -195,7 +195,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 
 ## 5.0.7
 
-* Mark iOS arm64 simulators as unsupported.
+* Marks iOS arm64 simulators as unsupported.
 
 ## 5.0.6
 
@@ -205,7 +205,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 
 * Adds iOS unit and UI integration test targets.
 * Adds iOS unit test module map.
-* Exclude arm64 simulators in example app.
+* Excludes arm64 simulators in example app.
 
 ## 5.0.4
 
@@ -251,7 +251,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 
 ## 4.5.4
 
-* Keep handling deprecated Android v1 classes for backward compatibility.
+* Keeps handling deprecated Android v1 classes for backward compatibility.
 
 ## 4.5.3
 
@@ -330,7 +330,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 ## 4.1.0
 
 * Supports web by default.
-* Require Flutter SDK `v1.12.13+hotfix.4` or greater.
+* Requires Flutter SDK `v1.12.13+hotfix.4` or greater.
 
 ## 4.0.17
 
@@ -340,7 +340,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 
 * Removes the deprecated `author:` field from pubspec.yaml.
 * Migrates the plugin to the pubspec platforms manifest.
-* Require Flutter SDK 1.10.0 or greater.
+* Requires Flutter SDK 1.10.0 or greater.
 
 ## 4.0.15
 
@@ -418,7 +418,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 
 ## 4.0.1
 
-* Log a more detailed warning at build time about the previous AndroidX
+* Logs a more detailed warning at build time about the previous AndroidX
   migration.
 
 ## 4.0.0+1
@@ -598,7 +598,7 @@ allprojects {
 
 ## 0.0.5
 
-* Require the use of `support-v4` library on Android. This is an API change in
+* Requires the use of `support-v4` library on Android. This is an API change in
   that plugin users will need their activity class to be an instance of
   `android.support.v4.app.FragmentActivity`. Flutter framework provides such
   an activity out of the box: `io.flutter.app.FlutterFragmentActivity`.
@@ -607,7 +607,7 @@ allprojects {
 
 ## 0.0.4
 
-* Prevent race conditions when GoogleSignIn methods are called concurrently (#94).
+* Prevents race conditions when GoogleSignIn methods are called concurrently (#94).
 
 ## 0.0.3
 

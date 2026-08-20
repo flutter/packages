@@ -1,7 +1,7 @@
 ## 0.4.11+1
 
 * Fixes StoreKit 2 restore transactions not grouping purchases into a single event.
-  
+
 ## 0.4.11
 
 * Fixes StoreKit 2 date format does not match in_app_purchase_platform_interface PurchaseDetails.transactionDate format
@@ -113,7 +113,7 @@
 
 ## 0.3.20+1
 
-* Prevent devices below iOS 15 or macOS 15 from enabling StoreKit2.
+* Prevents devices below iOS 15 or macOS 15 from enabling StoreKit2.
 
 ## 0.3.20
 
@@ -182,7 +182,7 @@
 
 ## 0.3.13+1
 
-* Handle translation of errors nested in dictionaries.
+* Handles translation of errors nested in dictionaries.
 
 ## 0.3.13
 

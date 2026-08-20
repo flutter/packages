@@ -15,10 +15,10 @@
     * adds `invalid_runtime_check_with_js_interop_types`.
     * adds `unnecessary_library_name`.
     * removes `avoid_null_checks_in_equality_operators`.
-* Removes the following lints (see https://github.com/dart-lang/lints/issues/205):.
-    * `prefer_const_constructors`.
-    * `prefer_const_declarations`.
-    * `prefer_const_literals_to_create_immutables`.
+* Removes the following lints (see https://github.com/dart-lang/lints/issues/205):
+    * `prefer_const_constructors`
+    * `prefer_const_declarations`
+    * `prefer_const_literals_to_create_immutables`
 * Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
 
 ## 4.0.0
@@ -41,19 +41,19 @@
 ## 3.0.0
 
 * Updates `package:lints` dependency to version 3.0.0, with the following changes:
-    * added `collection_methods_unrelated_type`.
-    * added `dangling_library_doc_comments`.
-    * added `implicit_call_tearoffs`.
-    * added `secure_pubspec_urls`.
-    * added `type_literal_in_constant_pattern`.
-    * added `unnecessary_to_list_in_spreads`.
-    * added `use_string_in_part_of_directives`.
-    * added `use_super_parameters`.
-    * removed `iterable_contains_unrelated_type`.
-    * removed `list_remove_unrelated_type`.
-    * removed `no_wildcard_variable_uses`.
-    * removed `prefer_equal_for_default_values`.
-    * removed `prefer_void_to_null`.
+    * adds `collection_methods_unrelated_type`.
+    * adds `dangling_library_doc_comments`.
+    * adds `implicit_call_tearoffs`.
+    * adds `secure_pubspec_urls`.
+    * adds `type_literal_in_constant_pattern`.
+    * adds `unnecessary_to_list_in_spreads`.
+    * adds `use_string_in_part_of_directives`.
+    * adds `use_super_parameters`.
+    * removes `iterable_contains_unrelated_type`.
+    * removes `list_remove_unrelated_type`.
+    * removes `no_wildcard_variable_uses`.
+    * removes `prefer_equal_for_default_values`.
+    * removes `prefer_void_to_null`.
 * Updates minimum supported SDK version to Flutter 3.10 / Dart 3.0.
 
 ## 2.0.3

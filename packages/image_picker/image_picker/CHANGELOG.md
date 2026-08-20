@@ -36,7 +36,7 @@
 ## 1.1.0
 
 * Adds limit parameter to `MediaOptions` and `MultiImagePickerOptions` which limits
-  the number of media that can be selected. 
+  the number of media that can be selected.
     * Currently supported only on iOS and Android.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
@@ -263,7 +263,7 @@ picking multiple images on pre-iOS 14 devices.
 
 ## 0.8.1+1
 
-* Expose errors thrown in `pickImage` and `pickVideo` docs.
+* Exposes errors thrown in `pickImage` and `pickVideo` docs.
 
 ## 0.8.1
 
@@ -392,7 +392,7 @@ is not included selected photos and image is scaled.
 
 ## 0.6.7+11
 
-* Keep handling deprecated Android v1 classes for backward compatibility.
+* Keeps handling deprecated Android v1 classes for backward compatibility.
 
 ## 0.6.7+10
 
@@ -429,7 +429,7 @@ is not included selected photos and image is scaled.
 
 * Fixes to the example app:
   * Makes videos in web start muted. This allows auto-play across browsers.
-  * Prevent the app from disposing of video controllers too early.
+  * Prevents the app from disposing of video controllers too early.
 
 ## 0.6.7+2
 
@@ -515,7 +515,7 @@ is ready to go.
 
 * Removes the deprecated `author:` field from pubspec.yaml.
 * Migrates the plugin to the pubspec platforms manifest.
-* Require Flutter SDK 1.10.0 or greater.
+* Requires Flutter SDK 1.10.0 or greater.
 
 ## 0.6.2+2
 
@@ -738,7 +738,7 @@ parameter to compress image.
 
 ## 0.5.0+2
 
-* Log a more detailed warning at build time about the previous AndroidX
+* Logs a more detailed warning at build time about the previous AndroidX
   migration.
 
 ## 0.5.0+1

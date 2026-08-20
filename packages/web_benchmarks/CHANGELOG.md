@@ -26,7 +26,7 @@
 
 * Adds `flutter_frame.total_time`, `flutter_frame.build_time`, and `flutter_frame.raster_time`
 metrics to benchmark results. These values are derived from the Flutter `FrameTiming` API.
-* Expose a new library `metrics.dart` that contains definitions for the benchmark metrics.
+* Exposes a new library `metrics.dart` that contains definitions for the benchmark metrics.
 * Adds p50, p90, and p95 metrics for benchmark scores.
 
 ## 3.0.0

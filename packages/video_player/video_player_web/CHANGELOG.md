@@ -159,7 +159,7 @@
 
 ## 0.1.4+1
 
-* Substitute `undefined_prefixed_name: ignore` analyzer setting by a `dart:ui` shim with conditional exports. [Issue](https://github.com/flutter/flutter/issues/69309).
+* Substitutes `undefined_prefixed_name: ignore` analyzer setting by a `dart:ui` shim with conditional exports. [Issue](https://github.com/flutter/flutter/issues/69309).
 
 ## 0.1.4
 
@@ -180,7 +180,7 @@
 
 ## 0.1.2+3
 
-* Declare API stability and compatibility with `1.0.0` (more details at: https://github.com/flutter/flutter/wiki/Package-migration-to-1.0.0).
+* Declares API stability and compatibility with `1.0.0` (more details at: https://github.com/flutter/flutter/wiki/Package-migration-to-1.0.0).
 
 ## 0.1.2+2
 
@@ -193,7 +193,7 @@
 ## 0.1.2
 
 * Adds a `PlatformException` to the player's `eventController` when there's a `videoElement.onError`. Fixes https://github.com/flutter/flutter/issues/48884.
-* Handle DomExceptions on videoElement.play() and turn them into `PlatformException` as well, so we don't end up with unhandled Futures.
+* Handles DomExceptions on videoElement.play() and turn them into `PlatformException` as well, so we don't end up with unhandled Futures.
 * Updates setup instructions in the README.
 
 ## 0.1.1+1
@@ -207,7 +207,7 @@
 ## 0.1.0+1
 
 * Removes the deprecated `author:` field from pubspec.yaml.
-* Require Flutter SDK 1.10.0 or greater.
+* Requires Flutter SDK 1.10.0 or greater.
 
 ## 0.1.0
 

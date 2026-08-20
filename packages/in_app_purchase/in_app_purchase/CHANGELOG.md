@@ -156,7 +156,7 @@
 
 ## 1.0.9
 
-* Handle purchases with `PurchaseStatus.restored` correctly in the example App.
+* Handles purchases with `PurchaseStatus.restored` correctly in the example App.
 * Updates dependencies on `in_app_purchase_android` and `in_app_purchase_ios` to their latest versions (version 0.1.5 and 0.1.3+5 respectively).
 
 ## 1.0.8
@@ -369,7 +369,7 @@ As part of implementing federated architecture and making the interface compatib
 
 ## 0.3.4
 
-* Expose SKError code to client apps.
+* Exposes SKError code to client apps.
 
 ## 0.3.3+2
 
@@ -395,7 +395,7 @@ As part of implementing federated architecture and making the interface compatib
 ## 0.3.2
 
 * Removes Android dependencies fallback.
-* Require Flutter SDK 1.12.13+hotfix.5 or greater.
+* Requires Flutter SDK 1.12.13+hotfix.5 or greater.
 
 ## 0.3.1+2
 
@@ -458,7 +458,7 @@ As part of implementing federated architecture and making the interface compatib
 
 * Removes the deprecated `author:` field from pubspec.yaml.
 * Migrates the plugin to the pubspec platforms manifest.
-* Require Flutter SDK 1.10.0 or greater.
+* Requires Flutter SDK 1.10.0 or greater.
 
 ## 0.2.2+3
 

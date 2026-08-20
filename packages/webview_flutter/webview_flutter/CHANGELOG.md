@@ -354,11 +354,11 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.3.24
 
-* Keep handling deprecated Android v1 classes for backward compatibility.
+* Keeps handling deprecated Android v1 classes for backward compatibility.
 
 ## 0.3.23
 
-* Handle WebView multi-window support.
+* Handles WebView multi-window support.
 
 ## 0.3.22+2
 
@@ -447,7 +447,7 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 * Adds support for onPageStarted event.
 * Removes the deprecated `author:` field from pubspec.yaml.
 * Migrates to the new pubspec platforms manifest.
-* Require Flutter SDK 1.10.0 or greater.
+* Requires Flutter SDK 1.10.0 or greater.
 
 ## 0.3.17
 
@@ -636,7 +636,7 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.3.3+2
 
-* Exclude LongPress handler from semantics tree since it does nothing.
+* Excludes LongPress handler from semantics tree since it does nothing.
 
 ## 0.3.3+1
 
@@ -648,7 +648,7 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.3.2+1
 
-* Log a more detailed warning at build time about the previous AndroidX
+* Logs a more detailed warning at build time about the previous AndroidX
   migration.
 
 ## 0.3.2

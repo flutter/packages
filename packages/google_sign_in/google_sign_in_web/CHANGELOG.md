@@ -4,7 +4,7 @@
 
 ## 1.1.3
 
-* Restored previously reverted changes to prevent `_initCalled` from being invoked twice on web.
+* Restores previously reverted changes to prevent `_initCalled` from being invoked twice on web.
 * Fixes `renderButton` being stuck on "Getting ready" on web by correcting the `FutureBuilder` state check to use `ConnectionState.done`.
 
 ## 1.1.2
@@ -244,12 +244,12 @@
 
 ## 0.8.2
 
-* Require Flutter SDK 1.12.13+hotfix.4 or greater.
+* Requires Flutter SDK 1.12.13+hotfix.4 or greater.
 
 ## 0.8.1+2
 
 * Removes the deprecated `author:` field from pubspec.yaml.
-* Require Flutter SDK 1.10.0 or greater.
+* Requires Flutter SDK 1.10.0 or greater.
 
 ## 0.8.1+1
 

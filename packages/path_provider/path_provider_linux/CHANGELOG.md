@@ -85,7 +85,7 @@
 
 ## 0.1.1+2
 
-* Log errors in the example when calls to the `path_provider` fail.
+* Logs errors in the example when calls to the `path_provider` fail.
 
 ## 0.1.1+1
 

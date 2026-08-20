@@ -15,7 +15,7 @@
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 * Updates README to remove usesCleartextTraffic.  Users should use
-  network security configuration instead. 
+  network security configuration instead.
 
 ## 0.4.0+21
 
@@ -256,7 +256,7 @@
 
 ## 0.0.1+6
 
-* Keep handling deprecated Android v1 classes for backward compatibility.
+* Keeps handling deprecated Android v1 classes for backward compatibility.
 
 ## 0.0.1+5
 

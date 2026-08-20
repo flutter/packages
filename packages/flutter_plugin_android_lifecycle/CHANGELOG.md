@@ -164,7 +164,7 @@
 
 ## 1.0.11
 
-* Keep handling deprecated Android v1 classes for backward compatibility.
+* Keeps handling deprecated Android v1 classes for backward compatibility.
 
 ## 1.0.10
 
@@ -193,13 +193,13 @@
 
 ## 1.0.4
 
-* Require Flutter SDK 1.12.13 or greater.
+* Requires Flutter SDK 1.12.13 or greater.
 * Changes to avoid reflection.
 
 ## 1.0.3
 
 * Removes the deprecated `author:` field from pubspec.yaml.
-* Require Flutter SDK 1.10.0 or greater.
+* Requires Flutter SDK 1.10.0 or greater.
 
 ## 1.0.2
 

@@ -230,7 +230,7 @@
 
 ## 0.5.12
 
-* Keep handling deprecated Android v1 classes for backward compatibility.
+* Keeps handling deprecated Android v1 classes for backward compatibility.
 
 ## 0.5.11
 
@@ -259,12 +259,12 @@
 
 ## 0.5.7+1
 
-* Declare API stability and compatibility with `1.0.0` (more details at: https://github.com/flutter/flutter/wiki/Package-migration-to-1.0.0).
+* Declares API stability and compatibility with `1.0.0` (more details at: https://github.com/flutter/flutter/wiki/Package-migration-to-1.0.0).
 
 ## 0.5.7
 
 * Removes Android dependencies fallback.
-* Require Flutter SDK 1.12.13+hotfix.5 or greater.
+* Requires Flutter SDK 1.12.13+hotfix.5 or greater.
 * Fixes CocoaPods podspec lint warnings.
 
 ## 0.5.6+3
@@ -282,7 +282,7 @@
 ## 0.5.6
 
 * Supports `web` by default.
-* Require Flutter SDK 1.12.13+hotfix.4 or greater.
+* Requires Flutter SDK 1.12.13+hotfix.4 or greater.
 
 ## 0.5.5
 
@@ -296,7 +296,7 @@
 
 * Removes the deprecated `author:` field from pubspec.yaml.
 * Migrates the plugin to the pubspec platforms manifest.
-* Require Flutter SDK 1.10.0 or greater.
+* Requires Flutter SDK 1.10.0 or greater.
 
 ## 0.5.4+8
 
@@ -385,7 +385,7 @@
 
 ## 0.5.1+1
 
-* Log a more detailed warning at build time about the previous AndroidX
+* Logs a more detailed warning at build time about the previous AndroidX
   migration.
 
 ## 0.5.1
@@ -402,7 +402,7 @@
 
 ## 0.4.3
 
-* Prevent strings that match special prefixes from being saved. This is a bugfix that prevents apps from accidentally setting special values that would be interpreted incorrectly.
+* Prevents strings that match special prefixes from being saved. This is a bugfix that prevents apps from accidentally setting special values that would be interpreted incorrectly.
 
 ## 0.4.2
 

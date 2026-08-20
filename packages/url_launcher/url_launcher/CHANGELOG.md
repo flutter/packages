@@ -224,7 +224,7 @@ _Retracted due to incorrect types in new APIs._
 
 ## 6.0.6
 
-* Require `url_launcher_platform_interface` 2.0.3. This fixes an issue
+* Requires `url_launcher_platform_interface` 2.0.3. This fixes an issue
   where 6.0.5 could fail to compile in some projects due to internal
   changes in that version that were not compatible with earlier versions
   of `url_launcher_platform_interface`.
@@ -308,11 +308,11 @@ _Retracted due to incorrect types in new APIs._
 
 ## 5.7.1
 
-* Keep handling deprecated Android v1 classes for backward compatibility.
+* Keeps handling deprecated Android v1 classes for backward compatibility.
 
 ## 5.7.0
 
-* Handle WebView multi-window support.
+* Handles WebView multi-window support.
 
 ## 5.6.0
 
@@ -361,7 +361,7 @@ _Retracted due to incorrect types in new APIs._
 ## 5.4.5
 
 * Removes Android dependencies fallback.
-* Require Flutter SDK 1.12.13+hotfix.5 or greater.
+* Requires Flutter SDK 1.12.13+hotfix.5 or greater.
 * Fixes CocoaPods podspec lint warnings.
 
 ## 5.4.4
@@ -478,7 +478,7 @@ _Retracted due to incorrect types in new APIs._
 
 ## 5.0.1
 
-* Log a more detailed warning at build time about the previous AndroidX
+* Logs a more detailed warning at build time about the previous AndroidX
   migration.
 
 ## 5.0.0

@@ -402,7 +402,7 @@
 
 ## 0.1.6
 
-* Require Dart SDK >= 2.14.
+* Requires Dart SDK >= 2.14.
 * Updates `json_annotation` dependency to `^4.3.0`.
 
 ## 0.1.5+1

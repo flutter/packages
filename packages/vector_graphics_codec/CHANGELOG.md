@@ -40,7 +40,7 @@
 * Fixes handling of invalid XML `@id` attributes.
 * Fixes handling of self-referential `<use/>` elements.
 * Adds `--out-dir` option to compiler.
-* Tweak warning message for unhandled eleemnts.
+* Tweaks warning message for unhandled eleemnts.
 
 ## 1.1.8
 
