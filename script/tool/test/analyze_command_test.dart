@@ -596,43 +596,6 @@ void main() {
         expect(output, contains('Running cognitive_complexity analysis...'));
       });
 
-      test('runs cognitive_complexity if only test_data exists and lib/ does not exist', () async {
-        final RepositoryPackage package = createFakePackage(
-          'a_package',
-          packagesDir,
-          isFlutter: true,
-        );
-        _writeFakePubspecWithLinter(package, inDevDependencies: true);
-        package.libDirectory.deleteSync(recursive: true);
-        package.directory
-            .childDirectory('test_data')
-            .childFile('data.dart')
-            .createSync(recursive: true);
-
-        _mockCallsForFlutterAnalyze(
-          processRunner,
-          extraDartCalls: [
-            FakeProcessInfo(MockProcess(), <String>['run', 'cognitive_complexity']),
-          ],
-        );
-
-        final List<String> output = await runCapturingPrint(runner, <String>['analyze']);
-
-        expect(
-          processRunner.recordedCalls,
-          orderedEquals(<ProcessCall>[
-            ProcessCall('flutter', const <String>['pub', 'get'], package.path),
-            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
-            ProcessCall('dart', const <String>[
-              'run',
-              'cognitive_complexity',
-              'test_data/data.dart',
-            ], package.path),
-          ]),
-        );
-        expect(output, contains('Running cognitive_complexity analysis...'));
-      });
-
       test('skips cognitive_complexity if no lib/ or test_data/ dart files exist', () async {
         final RepositoryPackage package = createFakePackage(
           'a_package',

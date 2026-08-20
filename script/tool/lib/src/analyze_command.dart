@@ -368,60 +368,24 @@ class AnalyzeCommand extends PackageLoopingCommand {
         filePath.endsWith('.gen.dart');
   }
 
-  List<String> _getCognitiveComplexityFiles(RepositoryPackage package) {
-    final filesToAnalyze = <String>[];
-
-    const ignoredDirectoryNames = <String>{
-      '.dart_tool',
-      '.git',
-      'build',
-      'android',
-      'ios',
-      'macos',
-      'windows',
-      'linux',
-      'web',
-    };
-
-    void scanDirectory(Directory dir) {
-      for (final FileSystemEntity entity in dir.listSync(followLinks: false)) {
-        if (entity is Directory) {
-          final String dirName = path.basename(entity.path);
-          if (ignoredDirectoryNames.contains(dirName)) {
-            continue;
-          }
-          if (isPackage(entity)) {
-            continue;
-          }
-          scanDirectory(entity);
-        } else if (entity is File &&
-            entity.path.endsWith('.dart') &&
-            !_isGeneratedDartFile(entity.path)) {
-          final String relativePath = path.relative(entity.path, from: package.directory.path);
-          final List<String> segments = path.split(relativePath);
-          if (segments.first == 'lib' || segments.contains('test_data')) {
-            filesToAnalyze.add(relativePath.replaceAll(r'\', '/'));
-          }
-        }
-      }
-    }
-
-    if (package.directory.existsSync()) {
-      scanDirectory(package.directory);
-    }
-
-    filesToAnalyze.sort();
-    return filesToAnalyze;
-  }
-
   /// Runs the `cognitive_complexity` metrics analyzer on the package.
   ///
   /// Assumes `cognitive_complexity` is present in `dev_dependencies`.
   Future<List<String>> _runCognitiveComplexityForPackage(RepositoryPackage package) async {
-    final List<String> filesToAnalyze = _getCognitiveComplexityFiles(package);
+    final filesToAnalyze = <String>[];
+    for (final FileSystemEntity entity in package.directory.listSync(recursive: true)) {
+      if (entity is File && entity.path.endsWith('.dart') && !_isGeneratedDartFile(entity.path)) {
+        final String relativePath = path.relative(entity.path, from: package.directory.path);
+        final List<String> segments = path.split(relativePath);
+        if (segments.first == 'lib' || segments.contains('test_data')) {
+          filesToAnalyze.add(relativePath.replaceAll(r'\', '/'));
+        }
+      }
+    }
     if (filesToAnalyze.isEmpty) {
       return <String>[];
     }
+    filesToAnalyze.sort();
 
     print('Running cognitive_complexity analysis...');
     final int? threshold = _getLinterThreshold(package);
