@@ -67,7 +67,7 @@ git merge-tree HEAD $UPSTREAM_PREPUSH/main
 ```
 
 If the `merge-tree` command fails (exits with a non-zero code), there are merge conflicts.
-**STOP IMMEDIATELY.** Do not proceed to any subsequent checks and do not run `update-release-info`. Output `# NO, you are not ready to push`, inform the user that there are merge conflicts, and provide the command to reproduce the merge (e.g. `git merge $UPSTREAM_PREPUSH/main`).
+**STOP IMMEDIATELY.** Do not proceed to any subsequent checks and do not run `update-release-info`. Output `# NO, you are not ready to push`, inform the user that there are merge conflicts, and provide the command to reproduce the merge (`git merge $UPSTREAM_PREPUSH/main`).
 
 If the branch is behind but there are no merge conflicts, you may proceed with the remaining checks. However, you must warn the user that they are behind and should pull/merge `$UPSTREAM_PREPUSH/main` before pushing, and you should still avoid running `update-release-info` automatically to prevent creating potential conflicts.
 
