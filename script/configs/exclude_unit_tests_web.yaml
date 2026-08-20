@@ -6,4 +6,4 @@
 # dart_unit_tests_wasm_exceptions.yaml file instead.
 
 # CLI-tool for material_ui developers to generate Material tokens.
-- gen_defaults
+- material_ui/tool/gen_defaults
