@@ -725,22 +725,11 @@ struct GoogleSignInPluginTests {
         #expect(fakeSignIn.handledURLs == [url])
       }
 
-      /// UIOpenURLContext has no public initializer, so this drives the Obj-C
-      /// scene:openURLContexts: implementation via the runtime with a stand-in
-      /// object that only needs to respond to the `URL` selector.
-      @Test func sceneOpenURLContexts() throws {
-        let (plugin, fakeSignIn) = createTestPlugin()
-        let url = URL(string: "com.googleusercontent.apps.test:/oauthredirect")!
-        let scene = try #require(UIApplication.shared.connectedScenes.first)
-        let fakeContext = FakeOpenURLContext(url: url)
-
-        plugin.perform(
-          NSSelectorFromString("scene:openURLContexts:"),
-          with: scene,
-          with: NSSet(object: fakeContext))
-
-        #expect(fakeSignIn.handledURLs == [url])
-      }
+      // TODO(victogomez-cs): Re-add a typed scene:openURLContexts: test after
+      // the Obj-C plugin is migrated to Swift. The test was dropped because
+      // UIOpenURLContext has no public initializer, so invoking the Obj-C
+      // method required performSelector. See
+      // https://github.com/flutter/flutter/issues/119103
     #endif
   }
 
