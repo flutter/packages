@@ -11,3 +11,6 @@ tasks:
   - name: Dart unit tests - pathified
     script: .ci/scripts/dart_unit_tests_pathified.sh
     args: ["--platform=vm"]
+  - name: Dart fix tests
+    script: .ci/scripts/tool_runner.sh
+    args: ["test-dart-fixes"]
