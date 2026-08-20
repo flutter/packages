@@ -550,7 +550,7 @@ void main() {
         expect(output, contains('Running cognitive_complexity analysis...'));
       });
 
-      test('runs cognitive_complexity on files in test_data and lib', () async {
+      test('runs cognitive_complexity on files in evals/test_data and lib', () async {
         final RepositoryPackage package = createFakePackage(
           'a_package',
           packagesDir,
@@ -559,6 +559,7 @@ void main() {
         _writeFakePubspecWithLinter(package, inDevDependencies: true);
         package.libDirectory.childFile('lib.dart').createSync();
         package.directory
+            .childDirectory('evals')
             .childDirectory('test_data')
             .childFile('data.dart')
             .createSync(recursive: true);
@@ -588,15 +589,15 @@ void main() {
               'run',
               'cognitive_complexity',
               '.agents/skills/evals/test_data/eval.dart',
+              'evals/test_data/data.dart',
               'lib/lib.dart',
-              'test_data/data.dart',
             ], package.path),
           ]),
         );
         expect(output, contains('Running cognitive_complexity analysis...'));
       });
 
-      test('skips cognitive_complexity if no lib/ or test_data/ dart files exist', () async {
+      test('skips cognitive_complexity if no lib/ or evals/test_data/ dart files exist', () async {
         final RepositoryPackage package = createFakePackage(
           'a_package',
           packagesDir,
@@ -607,6 +608,10 @@ void main() {
         package.directory
             .childDirectory('test')
             .childFile('foo_test.dart')
+            .createSync(recursive: true);
+        package.directory
+            .childDirectory('test_data')
+            .childFile('fixture.dart')
             .createSync(recursive: true);
 
         _mockCallsForFlutterAnalyze(processRunner);
@@ -624,33 +629,38 @@ void main() {
         expect(combinedOutput, isNot(contains('cognitive_complexity')));
       });
 
-      test('skips cognitive_complexity if test_data/ only contains generated files', () async {
-        final RepositoryPackage package = createFakePackage(
-          'a_package',
-          packagesDir,
-          isFlutter: true,
-        );
-        _writeFakePubspecWithLinter(package, inDevDependencies: true);
-        package.libDirectory.deleteSync(recursive: true);
-        final Directory testDataDir = package.directory.childDirectory('test_data');
-        testDataDir.childFile('foo.g.dart').createSync(recursive: true);
-        testDataDir.childFile('bar.mocks.dart').createSync(recursive: true);
-        testDataDir.childFile('baz.gen.dart').createSync(recursive: true);
+      test(
+        'skips cognitive_complexity if evals/test_data/ only contains generated files',
+        () async {
+          final RepositoryPackage package = createFakePackage(
+            'a_package',
+            packagesDir,
+            isFlutter: true,
+          );
+          _writeFakePubspecWithLinter(package, inDevDependencies: true);
+          package.libDirectory.deleteSync(recursive: true);
+          final Directory testDataDir = package.directory
+              .childDirectory('evals')
+              .childDirectory('test_data');
+          testDataDir.childFile('foo.g.dart').createSync(recursive: true);
+          testDataDir.childFile('bar.mocks.dart').createSync(recursive: true);
+          testDataDir.childFile('baz.gen.dart').createSync(recursive: true);
 
-        _mockCallsForFlutterAnalyze(processRunner);
+          _mockCallsForFlutterAnalyze(processRunner);
 
-        final List<String> output = await runCapturingPrint(runner, <String>['analyze']);
+          final List<String> output = await runCapturingPrint(runner, <String>['analyze']);
 
-        expect(
-          processRunner.recordedCalls,
-          orderedEquals(<ProcessCall>[
-            ProcessCall('flutter', const <String>['pub', 'get'], package.path),
-            ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
-          ]),
-        );
-        final String combinedOutput = output.join('\n').toLowerCase();
-        expect(combinedOutput, isNot(contains('cognitive_complexity')));
-      });
+          expect(
+            processRunner.recordedCalls,
+            orderedEquals(<ProcessCall>[
+              ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+              ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
+            ]),
+          );
+          final String combinedOutput = output.join('\n').toLowerCase();
+          expect(combinedOutput, isNot(contains('cognitive_complexity')));
+        },
+      );
 
       test('skips cognitive_complexity if lib/ only contains generated files', () async {
         final RepositoryPackage package = createFakePackage(
