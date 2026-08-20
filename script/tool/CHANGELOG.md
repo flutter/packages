@@ -1,6 +1,7 @@
 ## NEXT
 
 * Adds support for batch release of pre-1.0 packages.
+* Runs `cognitive_complexity` on Dart files in `evals/test_data` directories as well as `lib/`.
 
 ## 0.14.4
 

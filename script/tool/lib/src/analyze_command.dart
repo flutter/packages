@@ -372,14 +372,18 @@ class AnalyzeCommand extends PackageLoopingCommand {
   ///
   /// Assumes `cognitive_complexity` is present in `dev_dependencies`.
   Future<List<String>> _runCognitiveComplexityForPackage(RepositoryPackage package) async {
-    if (!package.libDirectory.existsSync()) {
-      return <String>[];
-    }
     final filesToAnalyze = <String>[];
-    for (final FileSystemEntity entity in package.libDirectory.listSync(recursive: true)) {
+    for (final FileSystemEntity entity in package.directory.listSync(recursive: true)) {
       if (entity is File && entity.path.endsWith('.dart') && !_isGeneratedDartFile(entity.path)) {
         final String relativePath = path.relative(entity.path, from: package.directory.path);
-        filesToAnalyze.add(relativePath.replaceAll(r'\', '/'));
+        final String posixPath = relativePath.replaceAll(r'\', '/');
+        final bool isLib = posixPath.startsWith('lib/');
+        final bool isRootEvalData = posixPath.startsWith('evals/test_data/');
+        final bool isSkillEvalData =
+            posixPath.startsWith('.agents/skills/') && posixPath.contains('/evals/test_data/');
+        if (isLib || isRootEvalData || isSkillEvalData) {
+          filesToAnalyze.add(posixPath);
+        }
       }
     }
     if (filesToAnalyze.isEmpty) {
