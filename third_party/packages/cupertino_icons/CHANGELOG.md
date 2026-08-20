@@ -11,7 +11,7 @@
 
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Vertically center aligns the icons.
-* Fixes overlapping / broken outlines for glyphs such as "create\_solid" and "car\_fill".
+* Fixes overlapping / broken outlines for glyphs such as "create\_solid" and "car\_fill"
 
 ## 1.0.7
 
@@ -40,16 +40,16 @@
 * Vertically center align the glyphs in the .ttf.
 
 ## 1.0.1+2
-* Updates README images.
+* Update README images
 
 ## 1.0.1+1
-* Adds README note that version 1.0.0 should be used until nnbd is on stable.
+* Add README note that version 1.0.0 should be used until nnbd is on stable.
 
 ## 1.0.1
-* Adds Dart SDK constraint to make it compatible with null safety.
+* Add Dart SDK constraint to make it compatible with null safety.
 
 ## 1.0.0
-* Moves to 1.0.0 and remove SDK version constraint since the font's codepoints
+* Move to 1.0.0 and remove SDK version constraint since the font's codepoints
   are now fully compatible and missing glyphs are backfilled.
 
 ## 1.0.0-dev.4
@@ -57,27 +57,27 @@
   was not manually mapped to its previous codepoint.
 
 ## 1.0.0-dev.3
-* Serve icons map on GitHub Pages.
+* Serve icons map on GitHub Pages
 * Auto width everything since not all SVGs have the same canvas.
-* Adds back missing icons from 0.1.3 not part of the new iOS icon repertoire
+* Add back missing icons from 0.1.3 not part of the new iOS icon repertoire
   to preserve backward compatibility.
 * Duplicate codepoints for merged icons so they're addressable from different
   CupertinoIcons that have now merged.
 
 ## 1.0.0-dev.2
-* Adds back 2 thicker chevrons for back/forward navigation.
+* Add back 2 thicker chevrons for back/forward navigation.
 
 ## 1.0.0-dev.1
-* Updates font content to the iOS 13 system icons repertoire for use on Flutter
+* Updated font content to the iOS 13 system icons repertoire for use on Flutter
 SDK versions 1.22+.
 
 ## 0.1.3
 
-* Updates 'chevron left' and 'chevron right' icons to match San Francisco font.
+* Updated 'chevron left' and 'chevron right' icons to match San Francisco font.
 
 ## 0.1.2
 
-* Fixes linter warning for missing lib/ folder.
+* Fix linter warning for missing lib/ folder.
 * Constrain to Dart 2.
 
 ## 0.1.1
