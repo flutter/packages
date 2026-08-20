@@ -439,7 +439,7 @@ _Retracted due to incorrect types in new APIs._
 
 ## 5.1.4
 
-* Updates and migrate iOS example project.
+* Updates and migrates iOS example project.
 
 ## 5.1.3
 
@@ -483,7 +483,7 @@ _Retracted due to incorrect types in new APIs._
 
 ## 5.0.0
 
-* **Breaking change**. Migrate from the deprecated original Android Support
+* **BREAKING CHANGE:** Migrate from the deprecated original Android Support
   Library to AndroidX. This shouldn't result in any functional changes, but it
   requires any Android apps using this plugin to [also
   migrate](https://developer.android.com/jetpack/androidx/migrate) if they're
@@ -513,7 +513,7 @@ _Retracted due to incorrect types in new APIs._
 * **BAD**. This was a breaking change that was incorrectly published on a minor
   version upgrade, should never have happened. Reverted by 4.2.0+3.
 
-* **Breaking change**. Migrate from the deprecated original Android Support
+* **BREAKING CHANGE:** Migrate from the deprecated original Android Support
   Library to AndroidX. This shouldn't result in any functional changes, but it
   requires any Android apps using this plugin to [also
   migrate](https://developer.android.com/jetpack/androidx/migrate) if they're
@@ -561,7 +561,7 @@ _Retracted due to incorrect types in new APIs._
 
 ## 3.0.0
 
-* **Breaking change**. Set SDK constraints to match the Flutter beta release.
+* **BREAKING CHANGE:** Set SDK constraints to match the Flutter beta release.
 
 ## 2.0.2
 
@@ -575,7 +575,7 @@ _Retracted due to incorrect types in new APIs._
 
 ## 2.0.0
 
-* **Breaking change**. Upgrades to Gradle 4.1 and Android Studio Gradle plugin
+* **BREAKING CHANGE:** Upgrades to Gradle 4.1 and Android Studio Gradle plugin
   3.0.1. Older Flutter projects need to upgrade their Gradle setup as well in
   order to use this version of the plugin. Instructions can be found
   [here](https://github.com/flutter/flutter/wiki/Updating-Flutter-projects-to-Gradle-4.1-and-Android-Studio-Gradle-plugin-3.0.1).

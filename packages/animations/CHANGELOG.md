@@ -63,7 +63,7 @@
 * Updates for non-nullable bindings.
 
 ## 2.0.2
-* Fixes documentation for `OpenContainer` class; replaced `openBuilder` with `closedBuilder`.
+* Fixes documentation for `OpenContainer` class; replaces `openBuilder` with `closedBuilder`.
 
 ## 2.0.1
 * Adds links to the spec and codelab.

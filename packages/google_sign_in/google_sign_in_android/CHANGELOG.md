@@ -58,7 +58,7 @@
 
 ## 7.2.3
 
-* Removes mockito-inline and updated to mockito-core 5.17.0.
+* Removes mockito-inline and updates to mockito-core 5.17.0.
 
 ## 7.2.2
 

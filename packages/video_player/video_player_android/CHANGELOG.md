@@ -61,7 +61,7 @@
 
 ## 2.8.18
 
-* Removes mockito-inline and updated to mockito-core 5.17.0.
+* Removes mockito-inline and updates to mockito-core 5.17.0.
 
 ## 2.8.17
 

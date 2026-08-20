@@ -59,19 +59,19 @@
   compile to WASM.
 * Performs the following **breaking API changes (in bold)** and other fixes to
   align with the published GIS SDK:
-  * **Removes the need to explicitly `allowInterop` in all callbacks.**.
+  * **Removes the need to explicitly `allowInterop` in all callbacks.**
   * `id`:
-    * **Changes type:**.
+    * **Changes type:**
       * `IdConfiguration.intermediate_iframe_close_callback` to
       `VoidFn?`.
     * Adds: `fedcm` to `CredentialSelectBy` enum.
     * Fixes typo in `storeCredential` `callback` positional parameter name.
   * `oauth2`:
-    * **Removes:**.
+    * **Removes:**
       * `CodeClientConfig.auto_select`, `hint` (now `login_hint`), and `hosted_domain` (now `hd`).
       * `TokenClientConfig.hint` (now `login_hint`) and `hosted_domain` (now `hd`).
       * `OverridableTokenClientConfig.hint` (now `login_hint`).
-    * **Changes types:**.
+    * **Changes types:**
       * `CodeClientConfig.redirect_uri` to `Uri?`.
       * `scope` in `CodeClientConfig` and `CodeResponse` to `List<String>`.
       * `CodeResponse.code` and `state` to `String?` (now nullable).

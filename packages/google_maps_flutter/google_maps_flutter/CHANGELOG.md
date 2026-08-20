@@ -568,7 +568,7 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 
 ## 0.5.21+5
 
-* Updates and migrate iOS example project.
+* Updates and migrates iOS example project.
 
 ## 0.5.21+4
 
@@ -749,7 +749,7 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 
 ## 0.3.0
 
-* **Breaking change**. Changes the Marker API to be
+* **BREAKING CHANGE:** Changes the Marker API to be
   widget based, it was controller based. Also changed the
   example app to account for the same.
 
@@ -781,7 +781,7 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 
 ## 0.2.0
 
-* **Breaking change**. Migrate from the deprecated original Android Support
+* **BREAKING CHANGE:** Migrate from the deprecated original Android Support
   Library to AndroidX. This shouldn't result in any functional changes, but it
   requires any Android apps using this plugin to [also
   migrate](https://developer.android.com/jetpack/androidx/migrate) if they're

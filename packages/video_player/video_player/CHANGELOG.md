@@ -579,7 +579,7 @@ receives an`Uri` instead of a `String` url.
 
 ## 0.10.2+2
 
-* Updates and migrate iOS example project.
+* Updates and migrates iOS example project.
 
 ## 0.10.2+1
 
@@ -662,7 +662,7 @@ DefaultHttpDataSourceFactory by default.
 
 ## 0.10.0
 
-* **Breaking change**. Migrate from the deprecated original Android Support
+* **BREAKING CHANGE:** Migrate from the deprecated original Android Support
   Library to AndroidX. This shouldn't result in any functional changes, but it
   requires any Android apps using this plugin to [also
   migrate](https://developer.android.com/jetpack/androidx/migrate) if they're
@@ -746,7 +746,7 @@ DefaultHttpDataSourceFactory by default.
 ## 0.5.0
 
 * Adds the constructor `VideoPlayerController.file`.
-* **Breaking change**. Changes `VideoPlayerController.isNetwork` to
+* **BREAKING CHANGE:** Changes `VideoPlayerController.isNetwork` to
   an enum `VideoPlayerController.dataSourceType`.
 
 ## 0.4.1
@@ -755,14 +755,14 @@ DefaultHttpDataSourceFactory by default.
 
 ## 0.4.0
 
-* **Breaking change**. Removes the `VideoPlayerController` constructor.
+* **BREAKING CHANGE:** Removes the `VideoPlayerController` constructor.
 * Adds two new factory constructors `VideoPlayerController.asset` and
   `VideoPlayerController.network` to respectively play a video from the
   Flutter assets and from a network uri.
 
 ## 0.3.0
 
-* **Breaking change**. Set SDK constraints to match the Flutter beta release.
+* **BREAKING CHANGE:** Set SDK constraints to match the Flutter beta release.
 
 ## 0.2.1
 
@@ -771,7 +771,7 @@ DefaultHttpDataSourceFactory by default.
 
 ## 0.2.0
 
-* **Breaking change**. Renamed `VideoPlayerController.isErroneous` to `VideoPlayerController.hasError`.
+* **BREAKING CHANGE:** Renamed `VideoPlayerController.isErroneous` to `VideoPlayerController.hasError`.
 * Updates documentation of when fields are available on `VideoPlayerController`.
 * Updates links in README.md.
 
@@ -783,7 +783,7 @@ DefaultHttpDataSourceFactory by default.
 
 ## 0.1.0
 
-* **Breaking change**. Upgrades to Gradle 4.1 and Android Studio Gradle plugin
+* **BREAKING CHANGE:** Upgrades to Gradle 4.1 and Android Studio Gradle plugin
   3.0.1. Older Flutter projects need to upgrade their Gradle setup as well in
   order to use this version of the plugin. Instructions can be found
   [here](https://github.com/flutter/flutter/wiki/Updating-Flutter-projects-to-Gradle-4.1-and-Android-Studio-Gradle-plugin-3.0.1).

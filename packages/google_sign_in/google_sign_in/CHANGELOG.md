@@ -368,7 +368,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 
 ## 4.0.9
 
-* Updates and migrate iOS example project.
+* Updates and migrates iOS example project.
 * Define clang module for iOS.
 
 ## 4.0.8
@@ -427,7 +427,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 
 ## 4.0.0
 
-* **Breaking change**. Migrate from the deprecated original Android Support
+* **BREAKING CHANGE:** Migrate from the deprecated original Android Support
   Library to AndroidX. This shouldn't result in any functional changes, but it
   requires any Android apps using this plugin to [also
   migrate](https://developer.android.com/jetpack/androidx/migrate) if they're
@@ -449,7 +449,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 * **BAD**. This was a breaking change that was incorrectly published on a minor
   version upgrade, should never have happened. Reverted by 3.3.0+1.
 
-* **Breaking change**. Migrate from the deprecated original Android Support
+* **BREAKING CHANGE:** Migrate from the deprecated original Android Support
   Library to AndroidX. This shouldn't result in any functional changes, but it
   requires any Android apps using this plugin to [also
   migrate](https://developer.android.com/jetpack/androidx/migrate) if they're
@@ -509,7 +509,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 
 ## 3.0.0
 
-* **Breaking change**. Set SDK constraints to match the Flutter beta release.
+* **BREAKING CHANGE:** Set SDK constraints to match the Flutter beta release.
 
 ## 2.1.2
 
@@ -531,7 +531,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 
 ## 2.0.0
 
-* **Breaking change**. Upgrades to Gradle 4.1 and Android Studio Gradle plugin
+* **BREAKING CHANGE:** Upgrades to Gradle 4.1 and Android Studio Gradle plugin
   3.0.1. Older Flutter projects need to upgrade their Gradle setup as well in
   order to use this version of the plugin. Instructions can be found
   [here](https://github.com/flutter/flutter/wiki/Updating-Flutter-projects-to-Gradle-4.1-and-Android-Studio-Gradle-plugin-3.0.1).

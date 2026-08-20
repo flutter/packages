@@ -190,7 +190,7 @@
 * Updates README for Android Integration.
 * Updates the example app: remove the deprecated `RaisedButton` and `FlatButton` widgets.
 * Fixes outdated links across a number of markdown files ([#3276](https://github.com/flutter/plugins/pull/3276)).
-* **Breaking change**. Parameter names refactored to use the generic `biometric` prefix in place of `fingerprint` in the `AndroidAuthMessages` class.
+* **BREAKING CHANGE:** Parameter names refactored to use the generic `biometric` prefix in place of `fingerprint` in the `AndroidAuthMessages` class.
   * `fingerprintHint` is now `biometricHint`.
   * `fingerprintNotRecognized`is now `biometricNotRecognized`.
   * `fingerprintSuccess`is now `biometricSuccess`.
@@ -271,7 +271,7 @@
 
 ## 0.6.0+2
 
-* Updates and migrate iOS example project.
+* Updates and migrates iOS example project.
 * Define clang module for iOS.
 
 ## 0.6.0+1
@@ -314,7 +314,7 @@
 * Adds two more error codes `LockedOut` and `PermanentlyLockedOut`.
 
 ## 0.5.0
- * **Breaking change**. Update the Android API to use androidx Biometric package. This gives
+ * **BREAKING CHANGE:** Update the Android API to use androidx Biometric package. This gives
    the prompt the updated Material look. However, it also requires the activity to be a
    FragmentActivity. Users can switch to FlutterFragmentActivity in their main app to migrate.
 
@@ -325,7 +325,7 @@
 
 ## 0.4.0
 
-* **Breaking change**. Migrate from the deprecated original Android Support
+* **BREAKING CHANGE:** Migrate from the deprecated original Android Support
   Library to AndroidX. This shouldn't result in any functional changes, but it
   requires any Android apps using this plugin to [also
   migrate](https://developer.android.com/jetpack/androidx/migrate) if they're
@@ -336,7 +336,7 @@
 
 ## 0.3.0
 
-* **Breaking change**. Adds canCheckBiometrics and getAvailableBiometrics which leads to a new API.
+* **BREAKING CHANGE:** Adds canCheckBiometrics and getAvailableBiometrics which leads to a new API.
 
 ## 0.2.1
 
@@ -344,7 +344,7 @@
 
 ## 0.2.0
 
-* **Breaking change**. Set SDK constraints to match the Flutter beta release.
+* **BREAKING CHANGE:** Set SDK constraints to match the Flutter beta release.
 
 ## 0.1.2
 
@@ -357,7 +357,7 @@
 
 ## 0.1.0
 
-* **Breaking change**. Upgrades to Gradle 4.1 and Android Studio Gradle plugin
+* **BREAKING CHANGE:** Upgrades to Gradle 4.1 and Android Studio Gradle plugin
   3.0.1. Older Flutter projects need to upgrade their Gradle setup as well in
   order to use this version of the plugin. Instructions can be found
   [here](https://github.com/flutter/flutter/wiki/Updating-Flutter-projects-to-Gradle-4.1-and-Android-Studio-Gradle-plugin-3.0.1).

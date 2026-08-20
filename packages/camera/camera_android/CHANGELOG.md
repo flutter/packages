@@ -29,7 +29,7 @@
 
 ## 0.10.10+12
 
-* Removes mockito-inline and updated to mockito-core 5.17.0.
+* Removes mockito-inline and updates to mockito-core 5.17.0.
 
 ## 0.10.10+11
 

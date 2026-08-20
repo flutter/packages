@@ -643,7 +643,7 @@ Method changes in `CameraController`:
 
 ## 0.5.4+3
 
-* Updates and migrate iOS example project.
+* Updates and migrates iOS example project.
 
 ## 0.5.4+2
 
@@ -749,7 +749,7 @@ a `MissingPluginException.`.
 
 ## 0.3.0
 
-* **Breaking change**. Migrate from the deprecated original Android Support
+* **BREAKING CHANGE:** Migrate from the deprecated original Android Support
   Library to AndroidX. This shouldn't result in any functional changes, but it
   requires any Android apps using this plugin to [also
   migrate](https://developer.android.com/jetpack/androidx/migrate) if they're
@@ -827,7 +827,7 @@ Method changes:
 
 ## 0.1.0
 
-* **Breaking change**. Set SDK constraints to match the Flutter beta release.
+* **BREAKING CHANGE:** Set SDK constraints to match the Flutter beta release.
 
 ## 0.0.4
 

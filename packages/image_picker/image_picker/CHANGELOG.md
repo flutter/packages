@@ -442,7 +442,7 @@ is not included selected photos and image is scaled.
 ## 0.6.7
 
 * Utilize the new platform_interface package.
-* **This change marks old methods as `deprecated`. Please check the README for migration instructions to the new API.**.
+* **This change marks old methods as `deprecated`. Please check the README for migration instructions to the new API.**
 
 ## 0.6.6+5
 
@@ -557,7 +557,7 @@ is ready to go.
 
 ## 0.6.1+5
 
-* Updates and migrate iOS example project.
+* Updates and migrates iOS example project.
 
 ## 0.6.1+4
 
@@ -747,7 +747,7 @@ parameter to compress image.
 
 ## 0.5.0
 
-* **Breaking change**. Migrate from the deprecated original Android Support
+* **BREAKING CHANGE:** Migrate from the deprecated original Android Support
   Library to AndroidX. This shouldn't result in any functional changes, but it
   requires any Android apps using this plugin to [also
   migrate](https://developer.android.com/jetpack/androidx/migrate) if they're
@@ -810,7 +810,7 @@ parameter to compress image.
 
 ## 0.4.0
 
-* **Breaking change**. The `source` parameter for the `pickImage` is now required. Also, the `ImageSource.any` option doesn't exist anymore.
+* **BREAKING CHANGE:** The `source` parameter for the `pickImage` is now required. Also, the `ImageSource.any` option doesn't exist anymore.
 * Uses the native Android image gallery for picking images instead of a custom UI.
 
 ## 0.3.1
@@ -819,7 +819,7 @@ parameter to compress image.
 
 ## 0.3.0
 
-* **Breaking change**. Sets SDK constraints to match the Flutter beta release.
+* **BREAKING CHANGE:** Sets SDK constraints to match the Flutter beta release.
 
 ## 0.2.1
 
@@ -828,7 +828,7 @@ parameter to compress image.
 
 ## 0.2.0
 
-* **Breaking change**. Upgrades to Gradle 4.1 and Android Studio Gradle plugin
+* **BREAKING CHANGE:** Upgrades to Gradle 4.1 and Android Studio Gradle plugin
   3.0.1. Older Flutter projects need to upgrade their Gradle setup as well in
   order to use this version of the plugin. Instructions can be found
   [here](https://github.com/flutter/flutter/wiki/Updating-Flutter-projects-to-Gradle-4.1-and-Android-Studio-Gradle-plugin-3.0.1).

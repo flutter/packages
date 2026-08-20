@@ -257,7 +257,7 @@ As part of implementing federated architecture and making the interface compatib
 
 * Migrates to Google Billing Library 3.0.
   * Adds `obfuscatedProfileId`, `purchaseToken` in [BillingClientWrapper.launchBillingFlow].
-  * **BREAKING CHANGES**.
+  * **BREAKING CHANGES:**
     * Removes `developerPayload` in [BillingClientWrapper.acknowledgePurchase], [BillingClientWrapper.consumeAsync], [InAppPurchaseConnection.completePurchase], [InAppPurchaseConnection.consumePurchase].
     * Removes `isRewarded` from [SkuDetailsWrapper].
     * [SkuDetailsWrapper.introductoryPriceCycles] now returns `int` instead of `String`.
@@ -274,7 +274,7 @@ As part of implementing federated architecture and making the interface compatib
 
 * Migrates to nullsafety.
 * Deprecates `sandboxTesting`, introduce `simulatesAskToBuyInSandbox`.
-* **Breaking Change:**.
+* **BREAKING CHANGE:**
   * Removes `callbackChannel` in `channels.dart`, see https://github.com/flutter/flutter/issues/69225.
 
 ## 0.3.5+2
@@ -488,7 +488,7 @@ As part of implementing federated architecture and making the interface compatib
 
 ## 0.2.1+4
 
-* Updates and migrate iOS example project.
+* Updates and migrates iOS example project.
 
 ## 0.2.1+3
 

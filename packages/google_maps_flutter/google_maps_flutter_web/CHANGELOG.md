@@ -260,7 +260,7 @@ the returned controller is 100% functional (has bounds, a projection, etc...).
 ## 0.3.0
 
 * Migrates package to null-safety.
-* **Breaking changes:**.
+* **BREAKING CHANGES:**
   * The property `icon` of a `Marker` cannot be `null`. Defaults to `BitmapDescriptor.defaultMarker`.
   * The property `initialCameraPosition` of a `GoogleMapController` can't be `null`. It is also marked as `required`.
   * The parameter `creationId` of the `buildView` method cannot be `null` (this should be handled internally for users of the plugin).

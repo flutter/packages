@@ -186,7 +186,7 @@
 
 ## 2.2.4
 
-* Bumps example go_router version to v10.0.0 and migrate example code.
+* Bumps example go_router version to v10.0.0 and migrates example code.
 
 ## 2.2.3
 
@@ -194,7 +194,7 @@
 
 ## 2.2.2
 
-* Bumps example go_router version and migrate example code.
+* Bumps example go_router version and migrates example code.
 
 ## 2.2.1
 
@@ -264,7 +264,7 @@
 
 ## 1.1.1
 
-* Supports for the generation of the pushReplacement method has been added.
+* Adds support for the generation of the pushReplacement method.
 
 ## 1.1.0
 
