@@ -276,7 +276,7 @@ void main() {
     );
   });
 
-  testWidgets('Material3 - OutlinedButton repsects Theme shadowColor', (WidgetTester tester) async {
+  testWidgets('Material3 - OutlinedButton respects Theme shadowColor', (WidgetTester tester) async {
     const colorScheme = ColorScheme.light();
     const shadowColor = Color(0xff000001);
     const overriddenColor = Color(0xff000002);
@@ -344,7 +344,7 @@ void main() {
     expect(material.shadowColor, shadowColor);
   });
 
-  testWidgets('Material2 - OutlinedButton repsects Theme shadowColor', (WidgetTester tester) async {
+  testWidgets('Material2 - OutlinedButton respects Theme shadowColor', (WidgetTester tester) async {
     const colorScheme = ColorScheme.light();
     const shadowColor = Color(0xff000001);
     const overriddenColor = Color(0xff000002);
