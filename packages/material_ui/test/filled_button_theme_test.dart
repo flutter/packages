@@ -230,7 +230,7 @@ void main() {
     );
   });
 
-  testWidgets('FilledButton repsects Theme shadowColor', (WidgetTester tester) async {
+  testWidgets('FilledButton respects Theme shadowColor', (WidgetTester tester) async {
     const colorScheme = ColorScheme.light();
     const shadowColor = Color(0xff000001);
     const overriddenColor = Color(0xff000002);
