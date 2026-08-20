@@ -39,7 +39,7 @@ dev_dependencies:
   logging: ^1.2.0
   mockito: ^5.4.4
   path: ^1.8.0
-  pigeon: ^26.1.4
+  pigeon: ^27.3.2
 
 topics:
   - camera
