@@ -438,8 +438,7 @@
 
 ## 8.0.1
 
-- Fixes a link for an example in `path` documentation
-  documentation.
+- Fixes a link for an example in `path` documentation.
 
 ## 8.0.0
 

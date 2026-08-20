@@ -635,7 +635,7 @@
 
 ## 9.0.7
 
-* [swift] Changes all ints to int64
+* [swift] Changes all ints to int64.
   May require code updates to existing code.
 * Adds integration tests for int64.
 

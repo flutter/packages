@@ -284,7 +284,7 @@
 
 ## 6.0.0
 
-* Deprecates `clientId` and adds support for `serverClientId` instead
+* Deprecates `clientId` and adds support for `serverClientId` instead.
   Historically `clientId` was interpreted as `serverClientId`, but only on Android. On
   other platforms it was interpreted as the OAuth `clientId` of the app. For backwards-compatibility
   `clientId` will still be used as a server client ID if `serverClientId` is not provided.

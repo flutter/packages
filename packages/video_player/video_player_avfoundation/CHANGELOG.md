@@ -190,7 +190,7 @@
 
 ## 2.4.9
 
-* Fixes the iOS crash when using multiple players on the same screen
+* Fixes the iOS crash when using multiple players on the same screen.
   See: https://github.com/flutter/flutter/issues/124937.
 
 ## 2.4.8

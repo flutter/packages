@@ -373,7 +373,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 
 ## 4.0.8
 
-* Get rid of `MethodCompleter` and serialize async actions using chained futures
+* Get rid of `MethodCompleter` and serialize async actions using chained futures.
   This prevents a bug when sign in methods are being used in error handling zones.
 
 ## 4.0.7
