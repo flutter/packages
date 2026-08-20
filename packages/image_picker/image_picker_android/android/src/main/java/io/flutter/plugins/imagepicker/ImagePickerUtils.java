@@ -15,6 +15,8 @@ import android.provider.MediaStore;
 import java.util.Arrays;
 
 final class ImagePickerUtils {
+  private static final int API_LEVEL_36 = 36;
+
   /** returns true, if permission present in manifest, otherwise false */
   private static boolean isPermissionPresentInManifest(Context context, String permissionName) {
     try {
@@ -85,5 +87,23 @@ final class ImagePickerUtils {
     }
 
     return effectiveLimit;
+  }
+
+  /**
+   * Returns whether gallery/media selection should use {@link
+   * androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia} (Android Photo
+   * Picker) instead of {@link android.content.Intent#ACTION_GET_CONTENT}.
+   *
+   * <p>On Android API 36+, {@code ACTION_GET_CONTENT} for images may be handled by the system
+   * photo picker's {@code PhotopickerGetContentActivity}. That path combined with {@code
+   * startActivityForResult} can return {@link android.app.Activity#RESULT_OK} without {@link
+   * android.content.Intent#getData()} or usable {@link android.content.ClipData}, so the plugin
+   * would complete with no paths. The {@code PickVisualMedia} contract uses the Activity Result API
+   * and receives URIs reliably.
+   *
+   * <p>See <a href="https://github.com/flutter/flutter/issues/182071">flutter/flutter#182071</a>.
+   */
+  static boolean effectiveUsePhotoPicker(boolean usePhotoPickerFromDart) {
+    return Build.VERSION.SDK_INT >= API_LEVEL_36 || usePhotoPickerFromDart;
   }
 }
