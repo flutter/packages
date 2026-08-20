@@ -1,3 +1,7 @@
+## 27.3.2
+
+* [dart] Fixes lint warning from unused codec variable in Dart proxy classes.
+
 ## 27.3.1
 
 * Updates `analyzer` dependency to support versions 13 and 14.
