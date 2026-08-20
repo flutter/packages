@@ -32,6 +32,10 @@ dev_dependencies:
   path: ^1.9.1
   platform: ^3.1.6
 
+flutter:
+  shaders:
+    - packages/material_ui/shaders/ink_sparkle.frag
+
 topics:
   - ui
   - widgets
