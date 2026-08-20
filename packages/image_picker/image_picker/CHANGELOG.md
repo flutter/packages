@@ -278,7 +278,7 @@ see: [#84634](https://github.com/flutter/flutter/issues/84634).
 
 ## 0.8.0+3
 
-* Readded request for camera permissions.
+* Readds request for camera permissions.
 
 ## 0.8.0+2
 
@@ -290,7 +290,7 @@ see: [#84634](https://github.com/flutter/flutter/issues/84634).
 
 ## 0.8.0
 
-* BREAKING CHANGE: Changed storage location for captured images and videos to internal cache on Android,
+* **BREAKING CHANGE**: Changes storage location for captured images and videos to internal cache on Android,
 to comply with new Google Play storage requirements. This means developers are responsible for moving
 the image or video to a different location in case more permanent storage is required. Other applications
 will no longer be able to access images or videos captured unless they are moved to a publicly accessible location.
@@ -300,10 +300,10 @@ will no longer be able to access images or videos captured unless they are moved
 * Migrates maven repo from jcenter to mavenCentral.
 
 ## 0.7.5+3
-* Localize `UIAlertController` strings.
+* Localizes `UIAlertController` strings.
 
 ## 0.7.5+2
-* Implement `UIAlertController` with a preferredStyle of `UIAlertControllerStyleAlert` since `UIAlertView` is deprecated.
+* Implements `UIAlertController` with a preferredStyle of `UIAlertControllerStyleAlert` since `UIAlertView` is deprecated.
 
 ## 0.7.5+1
 
@@ -314,7 +314,7 @@ is not included selected photos and image is scaled.
 
 * Fixes an issue where image rotation is wrong when Select Photos chose and image is scaled.
 * Migrates to PHPicker for iOS 14 and higher versions to pick image from the photo library.
-* Implement the limited permission to pick photo from the photo library when Select Photo is chosen.
+* Implements the limited permission to pick photo from the photo library when Select Photo is chosen.
 
 ## 0.7.4
 
@@ -340,7 +340,7 @@ is not included selected photos and image is scaled.
 ## 0.7.0
 
 * Migrates to nullsafety.
-* Breaking Changes:
+* **BREAKING CHANGES**:
     * Removes the deprecated methods: `ImagePicker.pickImage`, `ImagePicker.pickVideo`,
 `ImagePicker.retrieveLostData`.
 
@@ -400,7 +400,7 @@ is not included selected photos and image is scaled.
 
 ## 0.6.7+9
 
-* Updates the ExifInterface to the AndroidX version to support more file formats;.
+* Updates the ExifInterface to the AndroidX version to support more file formats.
 * Updates documentation of `getImage()` regarding compression support for specific image types.
 
 ## 0.6.7+8
@@ -519,8 +519,8 @@ is ready to go.
 
 ## 0.6.2+2
 
-* Android: Revert the image file return logic when the image doesn't have to be scaled. Fix a rotation regression caused by 0.6.2+1.
-* Example App: Add a dialog to enter `maxWidth`, `maxHeight` or `quality` when picking image.
+* Android: Reverts the image file return logic when the image doesn't have to be scaled. Fix a rotation regression caused by 0.6.2+1.
+* Example App: Adds a dialog to enter `maxWidth`, `maxHeight` or `quality` when picking image.
 
 ## 0.6.2+1
 
@@ -635,7 +635,7 @@ parameter to compress image.
 
 ## 0.6.0+8
 
-* Bugfix: Add missed return statement into the image_picker example.
+* Bugfix: Adds missed return statement into the image_picker example.
 
 ## 0.6.0+7
 
@@ -647,12 +647,12 @@ parameter to compress image.
 
 ## 0.6.0+5
 
-* iOS: Add missing import.
+* iOS: Adds missing import.
 
 ## 0.6.0+4
 
 * iOS: Using first byte to determine original image type.
-* iOS: Added XCTest target.
+* iOS: Adds XCTest target.
 * iOS: The picked image now has the correct EXIF data copied from the original image.
 
 ## 0.6.0+3
@@ -669,7 +669,7 @@ parameter to compress image.
 
 ## 0.6.0
 
-* Breaking change iOS: Returned `File` objects when picking videos now always holds the correct path. Before this change, the path returned could have `file://` prepended to it.
+* **BREAKING CHANGE**: iOS: Returned `File` objects when picking videos now always holds the correct path. Before this change, the path returned could have `file://` prepended to it.
 
 ## 0.5.4+3
 
@@ -819,16 +819,16 @@ parameter to compress image.
 
 ## 0.3.0
 
-* **Breaking change**. Set SDK constraints to match the Flutter beta release.
+* **Breaking change**. Sets SDK constraints to match the Flutter beta release.
 
 ## 0.2.1
 
-* Simplified and upgraded Android project template to Android SDK 27.
+* Simplifies and upgrades Android project template to Android SDK 27.
 * Updates package description.
 
 ## 0.2.0
 
-* **Breaking change**. Upgraded to Gradle 4.1 and Android Studio Gradle plugin
+* **Breaking change**. Upgrades to Gradle 4.1 and Android Studio Gradle plugin
   3.0.1. Older Flutter projects need to upgrade their Gradle setup as well in
   order to use this version of the plugin. Instructions can be found
   [here](https://github.com/flutter/flutter/wiki/Updating-Flutter-projects-to-Gradle-4.1-and-Android-Studio-Gradle-plugin-3.0.1).
@@ -872,7 +872,7 @@ allprojects {
         }                                    // NEW
     }
 }
-```.
+```
 
 ## 0.0.3
 

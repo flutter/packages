@@ -86,7 +86,7 @@
 ## 0.10.5+6
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
-* Drop unused dependency on `package:quiver`.
+* Drops unused dependency on `package:quiver`.
 
 ## 0.10.5+5
 
@@ -305,7 +305,7 @@
 
 ## 0.9.4+2
 
-* Updates package description;.
+* Updates package description.
 * Refactors unit test on iOS to make it compatible with new restrictions in Xcode 13 which only supports the use of the `XCUIDevice` in Xcode UI tests.
 
 ## 0.9.4+1
@@ -365,7 +365,7 @@
 
 ## 0.8.1+4
 
-* Silenced warnings that may occur during build when using a very
+* Silences warnings that may occur during build when using a very
   recent version of Flutter relating to null safety.
 
 ## 0.8.1+3
@@ -382,12 +382,12 @@
 
 ## 0.8.1
 
-* Solved a rotation issue on iOS which caused the default preview to be displayed as landscape right instead of portrait.
+* Solves a rotation issue on iOS which caused the default preview to be displayed as landscape right instead of portrait.
 
 ## 0.8.0
 
 * Stable null safety release.
-* Solved delay when using the zoom feature on iOS.
+* Solves delay when using the zoom feature on iOS.
 * Adds a timeout to the pre-capture sequence on Android to prevent crashes when the camera cannot get a focus.
 * Updates the example code listed in the [README.md](README.md), so it runs without errors when you simply copy/ paste it into a Flutter App.
 
@@ -402,7 +402,7 @@
 ## 0.7.0+2
 
 * Fixes example reference in README.
-* Revert compileSdkVersion back to 29 (from 30) as this is causing problems with add-to-app configurations.
+* Reverts compileSdkVersion back to 29 (from 30) as this is causing problems with add-to-app configurations.
 
 ## 0.7.0+1
 
@@ -410,7 +410,7 @@
 
 ## 0.7.0
 
-* BREAKING CHANGE: `CameraValue.aspectRatio` now returns `width / height` rather than `height / width`. [(commit)](https://github.com/flutter/plugins/commit/100c7470d4066b1d0f8f7e4ec6d7c943e736f970).
+* **BREAKING CHANGE**: `CameraValue.aspectRatio` now returns `width / height` rather than `height / width`. [(commit)](https://github.com/flutter/plugins/commit/100c7470d4066b1d0f8f7e4ec6d7c943e736f970).
   * Adds support for capture orientation locking on Android and iOS.
   * Fixes camera preview not rotating correctly on Android and iOS.
   * Fixes camera preview sometimes appearing stretched on Android and iOS.
@@ -435,7 +435,7 @@
 
 ## 0.6.4+3
 
-* Detect if selected camera supports auto focus and act accordingly on Android. This solves a problem where front facing cameras are not capturing the picture because auto focus is not supported.
+* Detects if selected camera supports auto focus and act accordingly on Android. This solves a problem where front facing cameras are not capturing the picture because auto focus is not supported.
 
 ## 0.6.4+2
 
@@ -451,7 +451,7 @@
 
 ## 0.6.3+4
 
-* Revert previous dependency update: Changed dependency on camera_platform_interface to >=1.04 <1.1.0.
+* Reverts previous dependency update: Changes dependency on camera_platform_interface to >=1.04 <1.1.0.
 
 ## 0.6.3+3
 
@@ -491,16 +491,16 @@
 
 ## 0.6.0+1
 
-Updated README to inform users that iOS 10.0+ is needed for use
+* Updates README to inform users that iOS 10.0+ is needed for use
 
 ## 0.6.0
 
-As part of implementing federated architecture and making the interface compatible with the web this version contains the following **breaking changes**:
+As part of implementing federated architecture and making the interface compatible with the web this version contains the following **BREAKING CHANGES**:
 
 Method changes in `CameraController`:
-- The `takePicture` method no longer accepts the `path` parameter, but instead returns the captured image as an instance of the `XFile` class;.
-- The `startVideoRecording` method no longer accepts the `filePath`. Instead the recorded video is now returned as a `XFile` instance when the `stopVideoRecording` method completes;.
-- The `stopVideoRecording` method now returns the captured video when it completes;.
+- The `takePicture` method no longer accepts the `path` parameter, but instead returns the captured image as an instance of the `XFile` class.
+- The `startVideoRecording` method no longer accepts the `filePath`. Instead the recorded video is now returned as a `XFile` instance when the `stopVideoRecording` method completes.
+- The `stopVideoRecording` method now returns the captured video when it completes.
 - Adds the `buildPreview` method which is now used to implement the CameraPreview widget.
 
 ## 0.5.8+19
@@ -509,7 +509,7 @@ Method changes in `CameraController`:
 
 ## 0.5.8+18
 
-* Suppress unchecked warning in Android tests which prevented the tests to compile.
+* Suppresses unchecked warning in Android tests which prevented the tests to compile.
 
 ## 0.5.8+17
 
@@ -727,7 +727,7 @@ a `MissingPluginException.`.
 
 ## 0.4.0
 
-* **Breaking Change** Change iOS image stream format to `ImageFormatGroup.bgra8888` from
+* **Breaking Change** Changes iOS image stream format to `ImageFormatGroup.bgra8888` from
   `ImageFormatGroup.yuv420`.
 
 ## 0.3.0+4
@@ -831,7 +831,7 @@ Method changes:
 
 ## 0.0.4
 
-* Revert regression of `CameraController.capture()` introduced in v. 0.0.3.
+* Reverts regression of `CameraController.capture()` introduced in v. 0.0.3.
 
 ## 0.0.3
 
@@ -841,7 +841,7 @@ Method changes:
 
 ## 0.0.2
 
-* Simplified and upgraded Android project template to Android SDK 27.
+* Simplifies and upgrades Android project template to Android SDK 27.
 * Moves Android package to io.flutter.plugins.
 * Fixes warnings from the Dart 2.0 analyzer.
 

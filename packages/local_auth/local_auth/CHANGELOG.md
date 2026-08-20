@@ -99,11 +99,11 @@
 
 * Migrates plugin to federated architecture.
 * Adds OS version support information to README.
-* BREAKING CHANGE: Deprecated method `authenticateWithBiometrics` has been removed
+* **BREAKING CHANGE**: Deprecated method `authenticateWithBiometrics` has been removed
   Use `authenticate` instead.
-* BREAKING CHANGE: Enum `BiometricType` has been expanded with options for `strong` and `weak`,
+* **BREAKING CHANGE**: Enum `BiometricType` has been expanded with options for `strong` and `weak`,
   and applications should be updated to handle these accordingly.
-* BREAKING CHANGE: Parameters of `authenticate` have been changed.
+* **BREAKING CHANGE**: Parameters of `authenticate` have been changed.
 
   Example:
   ```dart
@@ -336,7 +336,7 @@
 
 ## 0.3.0
 
-* **Breaking change**. Add canCheckBiometrics and getAvailableBiometrics which leads to a new API.
+* **Breaking change**. Adds canCheckBiometrics and getAvailableBiometrics which leads to a new API.
 
 ## 0.2.1
 
@@ -352,12 +352,12 @@
 
 ## 0.1.1
 
-* Simplified and upgraded Android project template to Android SDK 27.
+* Simplifies and upgrades Android project template to Android SDK 27.
 * Updates package description.
 
 ## 0.1.0
 
-* **Breaking change**. Upgraded to Gradle 4.1 and Android Studio Gradle plugin
+* **Breaking change**. Upgrades to Gradle 4.1 and Android Studio Gradle plugin
   3.0.1. Older Flutter projects need to upgrade their Gradle setup as well in
   order to use this version of the plugin. Instructions can be found
   [here](https://github.com/flutter/flutter/wiki/Updating-Flutter-projects-to-Gradle-4.1-and-Android-Studio-Gradle-plugin-3.0.1).

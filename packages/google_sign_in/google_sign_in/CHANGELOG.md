@@ -178,7 +178,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 
 ## 5.2.1
 
- Change the placeholder of the GoogleUserCircleAvatar to a transparent image.
+ Changes the placeholder of the GoogleUserCircleAvatar to a transparent image.
 
 ## 5.2.0
 
@@ -222,7 +222,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 
 ## 5.0.1
 
-* Updates platforms `init` function to prioritize `clientId` property when available;.
+* Updates platforms `init` function to prioritize `clientId` property when available.
 * Updates `google_sign_in_platform_interface` version.
 
 ## 5.0.0
@@ -293,7 +293,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 
 ## 4.4.1
 
-* Android: Move `GoogleSignInWrapper` to a separate class.
+* Android: Moves `GoogleSignInWrapper` to a separate class.
 
 ## 4.4.0
 
@@ -391,7 +391,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 
 ## 4.0.4
 
-* Revert changes in 4.0.3.
+* Reverts changes in 4.0.3.
 
 ## 4.0.3
 
@@ -437,7 +437,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 
 ## 3.3.0+1
 
-* **Revert the breaking 3.3.0 update**. 3.3.0 was known to be breaking and
+* **Reverts the breaking 3.3.0 update**. 3.3.0 was known to be breaking and
   should have incremented the major version number instead of the minor. This
   revert is in and of itself breaking for anyone that has already migrated
   however. Anyone who has already migrated their app to AndroidX should
@@ -505,7 +505,7 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 
 ## 3.0.1
 
-* Simplified podspec for Cocoapods 1.5.0, avoiding link issues in app archives.
+* Simplifies podspec for Cocoapods 1.5.0, avoiding link issues in app archives.
 
 ## 3.0.0
 
@@ -526,12 +526,12 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 
 ## 2.0.1
 
-* Simplified and upgraded Android project template to Android SDK 27.
+* Simplifies and upgrades Android project template to Android SDK 27.
 * Updates package description.
 
 ## 2.0.0
 
-* **Breaking change**. Upgraded to Gradle 4.1 and Android Studio Gradle plugin
+* **Breaking change**. Upgrades to Gradle 4.1 and Android Studio Gradle plugin
   3.0.1. Older Flutter projects need to upgrade their Gradle setup as well in
   order to use this version of the plugin. Instructions can be found
   [here](https://github.com/flutter/flutter/wiki/Updating-Flutter-projects-to-Gradle-4.1-and-Android-Studio-Gradle-plugin-3.0.1).
@@ -585,7 +585,7 @@ allprojects {
         }                                    // NEW
     }
 }
-```.
+```
 
 ## 0.1.0
 

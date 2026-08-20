@@ -464,8 +464,8 @@ receives an`Uri` instead of a `String` url.
 
 ## 0.10.11
 
-* iOS: Fixed crash when detaching from a dying engine.
-* Android: Fixed exception when detaching from any engine.
+* iOS: Fixes crash when detaching from a dying engine.
+* Android: Fixes exception when detaching from any engine.
 
 ## 0.10.10
 
@@ -596,7 +596,7 @@ DefaultHttpDataSourceFactory by default.
 
 ## 0.10.1+6
 
-* [iOS] Fixed a memory leak with notification observing.
+* [iOS] Fixes a memory leak with notification observing.
 
 ## 0.10.1+5
 
@@ -614,7 +614,7 @@ DefaultHttpDataSourceFactory by default.
 
 ## 0.10.1+2
 
-* Example: Fixed tab display and added scroll view.
+* Example: Fixes tab display and added scroll view.
 
 ## 0.10.1+1
 
@@ -645,7 +645,7 @@ DefaultHttpDataSourceFactory by default.
 
 ## 0.10.0+4
 
-* Android: Upgrade ExoPlayer to 2.9.6.
+* Android: Upgrades ExoPlayer to 2.9.6.
 
 ## 0.10.0+3
 
@@ -746,7 +746,7 @@ DefaultHttpDataSourceFactory by default.
 ## 0.5.0
 
 * Adds the constructor `VideoPlayerController.file`.
-* **Breaking change**. Changed `VideoPlayerController.isNetwork` to
+* **Breaking change**. Changes `VideoPlayerController.isNetwork` to
   an enum `VideoPlayerController.dataSourceType`.
 
 ## 0.4.1
@@ -755,7 +755,7 @@ DefaultHttpDataSourceFactory by default.
 
 ## 0.4.0
 
-* **Breaking change**. Removed the `VideoPlayerController` constructor.
+* **Breaking change**. Removes the `VideoPlayerController` constructor.
 * Adds two new factory constructors `VideoPlayerController.asset` and
   `VideoPlayerController.network` to respectively play a video from the
   Flutter assets and from a network uri.
@@ -777,13 +777,13 @@ DefaultHttpDataSourceFactory by default.
 
 ## 0.1.1
 
-* Simplifies and upgraded Android project template to Android SDK 27.
+* Simplifies and upgrades Android project template to Android SDK 27.
 * Moves Android package to io.flutter.plugins.
 * Fixes warnings from the Dart 2.0 analyzer.
 
 ## 0.1.0
 
-* **Breaking change**. Upgraded to Gradle 4.1 and Android Studio Gradle plugin
+* **Breaking change**. Upgrades to Gradle 4.1 and Android Studio Gradle plugin
   3.0.1. Older Flutter projects need to upgrade their Gradle setup as well in
   order to use this version of the plugin. Instructions can be found
   [here](https://github.com/flutter/flutter/wiki/Updating-Flutter-projects-to-Gradle-4.1-and-Android-Studio-Gradle-plugin-3.0.1).

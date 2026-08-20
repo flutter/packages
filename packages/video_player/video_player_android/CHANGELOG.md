@@ -232,7 +232,7 @@
 
 ## 2.7.1
 
-* Revert Impeller support.
+* Reverts Impeller support.
 
 ## 2.7.0
 
@@ -264,7 +264,7 @@
 
 ## 2.4.17
 
-* Revert Impeller support.
+* Reverts Impeller support.
 
 ## 2.4.16
 

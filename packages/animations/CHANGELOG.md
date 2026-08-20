@@ -103,7 +103,7 @@ and tappable when it is supposed to be hidden.
 ## 1.0.0+4
 
 * Fixes a typo in the changelog dates.
-* Revert use of modern Material text style nomenclature in the example app
+* Reverts use of modern Material text style nomenclature in the example app
   to be compatible with Flutter's `stable` branch for the time being.
 * Adds override analyzer ignore in modal.dart for reverseTransitionDuration
   until Flutter's stable branch contains

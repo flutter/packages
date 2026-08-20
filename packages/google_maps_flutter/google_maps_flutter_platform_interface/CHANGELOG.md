@@ -231,10 +231,10 @@
 ## 2.0.0
 
 * Migrates to null-safety.
-* BREAKING CHANGE: Removed deprecated APIs.
-* BREAKING CHANGE: Many sets in APIs that used to treat null and empty set as
+* **BREAKING CHANGE**: Removes deprecated APIs.
+* **BREAKING CHANGE**: Many sets in APIs that used to treat null and empty set as
   equivalent now require passing an empty set.
-* BREAKING CHANGE: toJson now always returns an `Object`; the details of the
+* **BREAKING CHANGE**: toJson now always returns an `Object`; the details of the
   object type and structure should be treated as an implementation detail.
 
 ## 1.2.0

@@ -183,7 +183,7 @@
 
 ## 2.2.2
 
-* Modified `README.md` to fix minor syntax issues and added Code Excerpt to `README.md`.
+* Modifies `README.md` to fix minor syntax issues and added Code Excerpt to `README.md`.
 * Updates code for new analysis options.
 * Updates code for `no_leading_underscores_for_local_identifiers` lint.
 
@@ -313,7 +313,7 @@
 ## 2.0.0
 
 * Migrates to null-safety.
-* BREAKING CHANGE: Passing an unknown map object ID (e.g., MarkerId) to a
+* **BREAKING CHANGE**: Passing an unknown map object ID (e.g., MarkerId) to a
   method, it will throw an `UnknownMapObjectIDError`. Previously it would
   either silently do nothing, or throw an error trying to call a function on
   `null`, depneding on the method.
@@ -423,7 +423,7 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 
 ## 0.5.28
 
-* Android: Add liteModeEnabled option.
+* Android: Adds liteModeEnabled option.
 
 ## 0.5.27+3
 
@@ -446,7 +446,7 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 ## 0.5.26+4
 
 * Android: Fix map view crash when "exit app" while using `FragmentActivity`.
-* Android: Remove listeners from `GoogleMap` when disposing.
+* Android: Removes listeners from `GoogleMap` when disposing.
 
 ## 0.5.26+3
 
@@ -487,7 +487,7 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 
 ## 0.5.24
 
-* Exposed `getZoomLevel` in `GoogleMapController`.
+* Exposes `getZoomLevel` in `GoogleMapController`.
 
 ## 0.5.23+1
 
@@ -503,7 +503,7 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 
 ## 0.5.22+2
 
-* Updates README: Add steps to enable Google Map SDK in the Google Developer Console.
+* Updates README: Adds steps to enable Google Map SDK in the Google Developer Console.
 
 ## 0.5.22+1
 
@@ -749,7 +749,7 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 
 ## 0.3.0
 
-* **Breaking change**. Changed the Marker API to be
+* **Breaking change**. Changes the Marker API to be
   widget based, it was controller based. Also changed the
   example app to account for the same.
 

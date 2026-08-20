@@ -142,12 +142,12 @@ _Retracted due to incorrect types in new APIs._
 
 * Introduces new `launchUrl` and `canLaunchUrl` APIs; `launch` and `canLaunch`
   are now deprecated. These new APIs:
-  * replace the `String` URL argument with a `Uri`, to prevent common issues
+  * replaces the `String` URL argument with a `Uri`, to prevent common issues
     with providing invalid URL strings.
-  * replace `forceSafariVC` and `forceWebView` with `LaunchMode`, which makes
+  * replaces `forceSafariVC` and `forceWebView` with `LaunchMode`, which makes
     the API platform-neutral, and standardizes the default behavior between
     Android and iOS.
-  * move web view configuration options into a new `WebViewConfiguration`
+  * moves web view configuration options into a new `WebViewConfiguration`
     object. The default behavior for JavaScript and DOM storage is now enabled
     rather than disabled.
 * Also deprecates `closeWebView` in favor of `closeInAppWebView` to clarify
@@ -209,7 +209,7 @@ _Retracted due to incorrect types in new APIs._
 
 ## 6.0.9
 
-* Silenced warnings that may occur during build when using a very
+* Silences warnings that may occur during build when using a very
   recent version of Flutter relating to null safety.
 
 ## 6.0.8
@@ -416,7 +416,7 @@ _Retracted due to incorrect types in new APIs._
 
 ## 5.2.1
 
-* Revert the migration since the Flutter dependency was too low.
+* Reverts the migration since the Flutter dependency was too low.
 
 ## 5.2.0
 
@@ -493,7 +493,7 @@ _Retracted due to incorrect types in new APIs._
 
 ## 4.2.0+3
 
-* **Revert the breaking 4.2.0 update**. 4.2.0 was known to be breaking and
+* **Reverts the breaking 4.2.0 update**. 4.2.0 was known to be breaking and
   should have incremented the major version number instead of the minor. This
   revert is in and of itself breaking for anyone that has already migrated
   however. Anyone who has already migrated their app to AndroidX should
@@ -570,12 +570,12 @@ _Retracted due to incorrect types in new APIs._
 
 ## 2.0.1
 
-* Simplified and upgraded Android project template to Android SDK 27.
+* Simplifies and upgrades Android project template to Android SDK 27.
 * Updates package description.
 
 ## 2.0.0
 
-* **Breaking change**. Upgraded to Gradle 4.1 and Android Studio Gradle plugin
+* **Breaking change**. Upgrades to Gradle 4.1 and Android Studio Gradle plugin
   3.0.1. Older Flutter projects need to upgrade their Gradle setup as well in
   order to use this version of the plugin. Instructions can be found
   [here](https://github.com/flutter/flutter/wiki/Updating-Flutter-projects-to-Gradle-4.1-and-Android-Studio-Gradle-plugin-3.0.1).
@@ -600,7 +600,7 @@ _Retracted due to incorrect types in new APIs._
 
 ## 0.4.2+5
 
-* Aligned author name with rest of repo.
+* Aligns author name with rest of repo.
 
 ## 0.4.2+2, 0.4.2+3, 0.4.2+4
 

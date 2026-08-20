@@ -181,8 +181,8 @@
 
 ## 1.0.3
 
-* Adds a "Restore purchases" button to conform to Apple's StoreKit guidelines on [restoring products](https://developer.apple.com/documentation/storekit/in-app_purchase/restoring_purchased_products?language=objc);.
-* Corrected an error in a example snippet displayed in the README.md.
+* Adds a "Restore purchases" button to conform to Apple's StoreKit guidelines on [restoring products](https://developer.apple.com/documentation/storekit/in-app_purchase/restoring_purchased_products?language=objc).
+* Corrects an error in a example snippet displayed in the README.md.
 
 ## 1.0.2
 
@@ -205,21 +205,21 @@
 As part of implementing federated architecture and making the interface compatible for other platforms this version contains the following **breaking changes**:
 
 * Changes to the platform agnostic interface:
-  * If you used `InAppPurchaseConnection.instance` to access generic In App Purchase APIs, please use `InAppPurchase.instance` instead;.
-  * The `InAppPurchaseConnection.purchaseUpdatedStream` has been renamed to `InAppPurchase.purchaseStream`;.
-  * The `InAppPurchaseConnection.queryPastPurchases` method has been removed. Instead, you should use `InAppPurchase.restorePurchases`. This method emits each restored purchase on the `InAppPurchase.purchaseStream`, the `PurchaseDetails` object will be marked with a `status` of `PurchaseStatus.restored`;.
+  * If you used `InAppPurchaseConnection.instance` to access generic In App Purchase APIs, please use `InAppPurchase.instance` instead.
+  * The `InAppPurchaseConnection.purchaseUpdatedStream` has been renamed to `InAppPurchase.purchaseStream`.
+  * The `InAppPurchaseConnection.queryPastPurchases` method has been removed. Instead, you should use `InAppPurchase.restorePurchases`. This method emits each restored purchase on the `InAppPurchase.purchaseStream`, the `PurchaseDetails` object will be marked with a `status` of `PurchaseStatus.restored`.
   * The `InAppPurchase.completePurchase` method no longer returns an instance `BillingWrapperResult` class (which was Android specific). Instead it will return a completed `Future` if the method executed successfully, in case of errors it will complete with an `InAppPurchaseException` describing the error.
 * Android specific changes:
   * The Android specific `InAppPurchaseConnection.consumePurchase` and `InAppPurchaseConnection.enablePendingPurchases` methods have been removed from the platform agnostic interface and moved to the Android specific `InAppPurchaseAndroidPlatformAddition` class:
-    * `InAppPurchaseAndroidPlatformAddition.enablePendingPurchases` is a static method that should be called when initializing your App. Access the method like this: `InAppPurchaseAndroidPlatformAddition.enablePendingPurchases()` (make sure to add the following import: `import 'package:in_app_purchase_android/in_app_purchase_android.dart';`);.
+    * `InAppPurchaseAndroidPlatformAddition.enablePendingPurchases` is a static method that should be called when initializing your App. Access the method like this: `InAppPurchaseAndroidPlatformAddition.enablePendingPurchases()` (make sure to add the following import: `import 'package:in_app_purchase_android/in_app_purchase_android.dart';`).
     * To use the `InAppPurchaseAndroidPlatformAddition.consumePurchase` method, acquire an instance using the `InAppPurchase.getPlatformAddition` method. For example:
   ```dart
   // Acquire the InAppPurchaseAndroidPlatformAddition instance
   InAppPurchaseAndroidPlatformAddition androidAddition = InAppPurchase.instance.getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
   // Consume an Android purchase
   BillingResultWrapper billingResult = await androidAddition.consumePurchase(purchase);
-  ```.
-  * The [billing_client_wrappers](https://pub.dev/documentation/in_app_purchase_android/latest/billing_client_wrappers/billing_client_wrappers-library.html) have been moved into the [in_app_purchase_android](https://pub.dev/packages/in_app_purchase_android) package. They are still available through the [in_app_purchase](https://pub.dev/packages/in_app_purchase) plugin but to use them it is necessary to import the correct package when using them: `import 'package:in_app_purchase_android/billing_client_wrappers.dart';`;.
+  ```
+  * The [billing_client_wrappers](https://pub.dev/documentation/in_app_purchase_android/latest/billing_client_wrappers/billing_client_wrappers-library.html) have been moved into the [in_app_purchase_android](https://pub.dev/packages/in_app_purchase_android) package. They are still available through the [in_app_purchase](https://pub.dev/packages/in_app_purchase) plugin but to use them it is necessary to import the correct package when using them: `import 'package:in_app_purchase_android/billing_client_wrappers.dart';`.
 * iOS specific changes:
   * The iOS specific methods `InAppPurchaseConnection.presentCodeRedemptionSheet` and `InAppPurchaseConnection.refreshPurchaseVerificationData` methods have been removed from the platform agnostic interface and moved into the iOS specific `InAppPurchaseIosPlatformAddition` class. To use them acquire an instance through the `InAppPurchase.getPlatformAddition` method like so:
   ```dart
@@ -229,8 +229,8 @@ As part of implementing federated architecture and making the interface compatib
   await iosAddition.presentCodeRedemptionSheet();
   // Refresh purchase verification data
   PurchaseVerificationData? verificationData = await iosAddition.refreshPurchaseVerificationData();
-  ```.
-  * The [store_kit_wrappers](https://pub.dev/documentation/in_app_purchase_ios/latest/store_kit_wrappers/store_kit_wrappers-library.html) have been moved into the [in_app_purchase_ios](https://pub.dev/packages/in_app_purchase_ios) package. They are still available in the [in_app_purchase](https://pub.dev/packages/in_app_purchase) plugin, but to use them it is necessary to import the correct package when using them: `import 'package:in_app_purchase_ios/store_kit_wrappers.dart';`;.
+  ```
+  * The [store_kit_wrappers](https://pub.dev/documentation/in_app_purchase_ios/latest/store_kit_wrappers/store_kit_wrappers-library.html) have been moved into the [in_app_purchase_ios](https://pub.dev/packages/in_app_purchase_ios) package. They are still available in the [in_app_purchase](https://pub.dev/packages/in_app_purchase) plugin, but to use them it is necessary to import the correct package when using them: `import 'package:in_app_purchase_ios/store_kit_wrappers.dart';`.
   * Updates the minimum supported Flutter version to 1.20.0.
 
 ## 0.5.2
@@ -239,7 +239,7 @@ As part of implementing federated architecture and making the interface compatib
 
 ## 0.5.1+3
 
-* Configured the iOS example App to make use of StoreKit Testing on iOS 14 and higher.
+* Configures the iOS example App to make use of StoreKit Testing on iOS 14 and higher.
 
 ## 0.5.1+2
 
@@ -251,13 +251,13 @@ As part of implementing federated architecture and making the interface compatib
 
 ## 0.5.1
 
-* [iOS] Introduce `SKPaymentQueueWrapper.presentCodeRedemptionSheet`.
+* [iOS] Introduces `SKPaymentQueueWrapper.presentCodeRedemptionSheet`.
 
 ## 0.5.0
 
 * Migrates to Google Billing Library 3.0.
   * Adds `obfuscatedProfileId`, `purchaseToken` in [BillingClientWrapper.launchBillingFlow].
-  * **Breaking Change**.
+  * **BREAKING CHANGES**.
     * Removes `developerPayload` in [BillingClientWrapper.acknowledgePurchase], [BillingClientWrapper.consumeAsync], [InAppPurchaseConnection.completePurchase], [InAppPurchaseConnection.consumePurchase].
     * Removes `isRewarded` from [SkuDetailsWrapper].
     * [SkuDetailsWrapper.introductoryPriceCycles] now returns `int` instead of `String`.
@@ -433,16 +433,16 @@ As part of implementing federated architecture and making the interface compatib
           * **[Breaking Change]:**  The `SkuDetailsResponseWrapper` now contains a `billingResult` field in place of `billingResponse` field.
           * A `billingResult` field is added to the `PurchasesResultWrapper`.
      * Other Updates to the "billing_client_wrappers":
-          * Updates to the `PurchaseWrapper`: Add `developerPayload`, `purchaseState` and `isAcknowledged` fields.
-          * Updates to the `SkuDetailsWrapper`: Add `originalPrice` and `originalPriceAmountMicros` fields.
+          * Updates to the `PurchaseWrapper`: Adds `developerPayload`, `purchaseState` and `isAcknowledged` fields.
+          * Updates to the `SkuDetailsWrapper`: Adds `originalPrice` and `originalPriceAmountMicros` fields.
           * **[Breaking Change]:** The `BillingClient.queryPurchaseHistory` is updated to return a `PurchasesHistoryResult`, which contains a list of `PurchaseHistoryRecordWrapper` instead of `PurchaseWrapper`. A `PurchaseHistoryRecordWrapper` object has the same fields and values as A `PurchaseWrapper` object, except that a `PurchaseHistoryRecordWrapper` object does not contain `isAutoRenewing`, `orderId` and `packageName`.
           * Adds a new `BillingClient.acknowledgePurchase` API. Starting from this version, the developer has to acknowledge any purchase on Android using this API within 3 days of purchase, or the user will be refunded. Note that if a product is "consumed" via `BillingClient.consumeAsync`, it is implicitly acknowledged.
-          * **[Breaking Change]:**  Added `enablePendingPurchases` in `BillingClientWrapper`. The application has to call this method before calling `BillingClientWrapper.startConnection`. See [enablePendingPurchases](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.Builder.html#enablependingpurchases) for more information.
+          * **[Breaking Change]:**  Adds `enablePendingPurchases` in `BillingClientWrapper`. The application has to call this method before calling `BillingClientWrapper.startConnection`. See [enablePendingPurchases](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.Builder.html#enablependingpurchases) for more information.
      * Updates to the "InAppPurchaseConnection":
           * **[Breaking Change]:** `InAppPurchaseConnection.completePurchase` now returns a `Future<BillingResultWrapper>` instead of `Future<void>`. A new optional parameter `{String developerPayload}` has also been added to the API. On Android, this API does not throw an exception anymore, it instead acknowledge the purchase. If a purchase is not completed within 3 days on Android, the user will be refunded.
           * **[Breaking Change]:** `InAppPurchaseConnection.consumePurchase` now returns a `Future<BillingResultWrapper>` instead of `Future<BillingResponse>`. A new optional parameter `{String developerPayload}` has also been added to the API.
           * A new boolean field `pendingCompletePurchase` has been added to the `PurchaseDetails` class. Which can be used as an indicator of whether to call `InAppPurchaseConnection.completePurchase` on the purchase.
-          * **[Breaking Change]:**  Added `enablePendingPurchases` in `InAppPurchaseConnection`. The application has to call this method when initializing the `InAppPurchaseConnection` on Android. See [enablePendingPurchases](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.Builder.html#enablependingpurchases) for more information.
+          * **[Breaking Change]:**  Adds `enablePendingPurchases` in `InAppPurchaseConnection`. The application has to call this method when initializing the `InAppPurchaseConnection` on Android. See [enablePendingPurchases](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.Builder.html#enablependingpurchases) for more information.
      * Misc: Some documentation updates reflecting the `BillingClient` migration and some documentation fixes.
      * Refer to [Google Play Billing Library Release Note](https://developer.android.com/google/play/billing/billing_library_releases_notes#release-2_0) for a detailed information on the update.
 
@@ -504,7 +504,7 @@ As part of implementing federated architecture and making the interface compatib
 
 ## 0.2.1
 
-* iOS: Add currencyCode to priceLocale on productDetails.
+* iOS: Adds currencyCode to priceLocale on productDetails.
 
 ## 0.2.0+8
 
@@ -545,7 +545,7 @@ As part of implementing federated architecture and making the interface compatib
 
 ## 0.1.1+3
 
-* Expanded description in `pubspec.yaml` and fixed typo in `README.md`.
+* Expands description in `pubspec.yaml` and fixed typo in `README.md`.
 
 ## 0.1.1+2
 
@@ -588,20 +588,20 @@ As part of implementing federated architecture and making the interface compatib
 Beta release.
 
 * Ability to list products, load previous purchases, and make purchases.
-* Simplified Dart API that's been unified for ease of use.
+* Simplifies Dart API that's been unified for ease of use.
 * Platform-specific APIs more directly exposing `StoreKit` and `BillingClient`.
 
 Includes:
 
-* 5ba657dc [in_app_purchase] Remove extraneous download logic (#1560).
+* 5ba657dc [in_app_purchase] Removes extraneous download logic (#1560).
 * 01bb8796 [in_app_purchase] Minor doc updates (#1555).
 * 1a4d493f [in_app_purchase] Only fetch owned purchases (#1540).
-* d63c51cf [in_app_purchase] Add auto-consume errors to PurchaseDetails (#1537).
+* d63c51cf [in_app_purchase] Adds auto-consume errors to PurchaseDetails (#1537).
 * 959da97f [in_app_purchase] Minor doc updates (#1536).
 * b82ae1a6 [in_app_purchase] Rename the unified API (#1517).
 * d1ad723a [in_app_purchase]remove SKDownloadWrapper and related code. (#1474).
 * 7c1e8b8a [in_app_purchase]make payment unified APIs (#1421).
-* 80233db6 [in_app_purchase] Add references to the original object for PurchaseDetails and ProductDetails (#1448).
+* 80233db6 [in_app_purchase] Adds references to the original object for PurchaseDetails and ProductDetails (#1448).
 * 8c180f0d [in_app_purchase]load purchase (#1380).
 * e9f141bc [in_app_purchase] Iap refactor (#1381).
 * d3b3d60c add driver test command to cirrus (#1342).
@@ -615,17 +615,17 @@ Includes:
 * fad02d87 [in_app_purchase] Java API for querying purchases (#1259).
 * bc501915 [In_app_purchase]SKProduct related fixes (#1252).
 * f92ba3a1 IAP make payment objc (#1231).
-* 62b82522 [IAP] Add the Dart API for launchBillingFlow (#1232).
-* b40a4acf [IAP] Add Java call for launchBillingFlow (#1230).
+* 62b82522 [IAP] Adds the Dart API for launchBillingFlow (#1232).
+* b40a4acf [IAP] Adds Java call for launchBillingFlow (#1230).
 * 4ff06cd1 [In_app_purchase]remove categories (#1222).
 * 0e72ca56 [In_app_purchase]fix requesthandler crash (#1199).
 * 81dff2be Iap getproductlist basic draft (#1169).
 * db139b28 Iap iOS add payment dart wrappers (#1178).
 * 2e5fbb9b Fix the param map passed down to the platform channel when calling querySkuDetails (#1194).
 * 4a84bac1 Mark some packages as unpublishable (#1193).
-* 51696552 Add a gradle warning to the AndroidX plugins (#1138).
+* 51696552 Adds a gradle warning to the AndroidX plugins (#1138).
 * 832ab832 Iap add payment objc translators (#1172).
-* d0e615cf Revert "IAP add payment translators in objc (#1126)" (#1171).
+* d0e615cf Reverts "IAP add payment translators in objc (#1126)" (#1171).
 * 09a5a36e IAP add payment translators in objc (#1126).
 * a100fbf9 Expose nslocale and expose currencySymbol instead of currencyCode to match android (#1162).
 * 1c982efd Using json serializer for skproduct wrapper and related classes (#1147).
@@ -635,7 +635,7 @@ Includes:
 * 59e84d85 Migrate independent plugins to AndroidX (#1103).
 * a027ccd6 [IAP] Generate boilerplate serializers (#1090).
 * 909cf1c2 [IAP] Fetch SkuDetails from Google Play (#1084).
-* 6bbaa7e5 [IAP] Add missing license headers (#1083).
+* 6bbaa7e5 [IAP] Adds missing license headers (#1083).
 * 5347e877 [IAP] Clean up Dart unit tests (#1082).
 * fe03e407 [IAP] Check if the payment processor is available (#1057).
 * 43ee28cf Fix `Manifest versionCode not found` (#1076).

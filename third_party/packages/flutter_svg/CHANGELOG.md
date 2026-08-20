@@ -347,7 +347,7 @@
 
 ## 0.17.2
 
-* Bumped minimum Flutter version to 1.6.7 to pick up DiagnosticableMixin.
+* Bumps minimum Flutter version to 1.6.7 to pick up DiagnosticableMixin.
 * Allows more variations of whitespace in base64 encoded image data.
 
 ## 0.17.1
@@ -358,7 +358,7 @@
 ## 0.17.0
 
 * Makes ColorFiltering apply to whole layer instead of per paint operation.
-* **BREAKING** Remove `colorFilter` parameter from `VectorDrawable.draw`.
+* **BREAKING** Removes `colorFilter` parameter from `VectorDrawable.draw`.
 * Fixes color filtering for text.
 
 ## 0.16.1
@@ -508,9 +508,9 @@ This will not normally be done.
   improperly.
 * Many documentation updates/improvements.
 * Adds support for gradients that use `xlink:href`.
-* **BREAKING**: Changed some of the methods on `DrawableDefinitionServer` to
+* **BREAKING**: Changes some of the methods on `DrawableDefinitionServer` to
   support gradients better.
-* **BREAKING**: Removed the `PaintServer` typedef, since this was only serving
+* **BREAKING**: Removes the `PaintServer` typedef, since this was only serving
   gradients and we need to have more control there for `xlink:href` support.
 
 ## 0.10.0+1
@@ -549,7 +549,7 @@ This will not normally be done.
 
 ## 0.8.1
 
-* Revert changes made on 0.7.0 to attempt to utilize `width` and `height`. These
+* Reverts changes made on 0.7.0 to attempt to utilize `width` and `height`. These
   changes did not quite fix what they were intended to fix and caused problems
   they weren't intended to case.
 
@@ -622,7 +622,7 @@ This will not normally be done.
 
 ## 0.5.3
 
-* Revert `HttpStatus.OK` change - not ready yet for Flutter beta channel.
+* Reverts `HttpStatus.OK` change - not ready yet for Flutter beta channel.
 
 ## 0.5.2
 

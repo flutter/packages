@@ -1049,17 +1049,17 @@
 
 ## 1.0.9
 
-* [dart] Fixed cast exception that can happen with primitive data types with
+* [dart] Fixes cast exception that can happen with primitive data types with
   type arguments in FlutterApi's.
 
 ## 1.0.8
 
 * [front-end] Started accepting explicit Object references in type arguments.
-* [codecs] Fixed nuisance where duplicate entries could show up in custom codecs.
+* [codecs] Fixes nuisance where duplicate entries could show up in custom codecs.
 
 ## 1.0.7
 
-* [front-end] Fixed bug where nested classes' type arguments aren't included in
+* [front-end] Fixes bug where nested classes' type arguments aren't included in
   the output (generated class and codec).
 
 ## 1.0.6
@@ -1068,12 +1068,12 @@
 
 ## 1.0.5
 
-* [java] Fixed bug when using Integer arguments to methods declared with 'int'
+* [java] Fixes bug when using Integer arguments to methods declared with 'int'
   arguments.
 
 ## 1.0.4
 
-* [front-end] Fixed bug where codecs weren't generating support for types that
+* [front-end] Fixes bug where codecs weren't generating support for types that
   only show up in type arguments.
 
 ## 1.0.3
@@ -1087,29 +1087,29 @@
 
 ## 1.0.1
 
-* [front-end] Fixed bug where classes only referenced as type arguments for
+* [front-end] Fixes bug where classes only referenced as type arguments for
   generics weren't being generated.
 
 ## 1.0.0
 
-* Started allowing primitive data types as arguments and return types.
+* Starts allowing primitive data types as arguments and return types.
 * Generics support.
 * Supports for functions with more than one argument.
-* [command-line] Added `one_language` flag for allowing Pigeon to only generate
+* [command-line] Adds `one_language` flag for allowing Pigeon to only generate
   code for one platform.
-* [command-line] Added the optional sdkPath parameter for specifying Dart SDK
+* [command-line] Adds the optional sdkPath parameter for specifying Dart SDK
   path.
-* [dart] Fixed copyright headers for Dart test output.
-* [front-end] Added more errors for incorrect usage of Pigeon (previously they
+* [dart] Fixes copyright headers for Dart test output.
+* [front-end] Adds more errors for incorrect usage of Pigeon (previously they
   were just ignored).
 * [generators] Moved Pigeon to using a custom codec which allows collection
   types to contain custom classes.
-* [java] Fixed NPE in Java generated code for nested types.
+* [java] Fixes NPE in Java generated code for nested types.
 * [objc] **BREAKING CHANGE:** logic for generating selectors has changed
   `void add(Input value)` will now translate to
   `-(void)addValue:(Input*)value`, methods with no arguments will translate to
   `...WithError:` or `...WithCompletion:`.
-* [objc] Added `@ObjCSelector` for specifying custom objc selectors.
+* [objc] Adds `@ObjCSelector` for specifying custom objc selectors.
 
 ## 0.3.0
 
@@ -1139,7 +1139,7 @@
 
 ## 0.2.1
 
-* Java: Fixed issue where multiple async HostApis can generate multiple Result interfaces.
+* Java: Fixes issue where multiple async HostApis can generate multiple Result interfaces.
 * Dart: Made it so you can specify the BinaryMessenger of the generated APIs.
 
 ## 0.2.0
@@ -1191,7 +1191,7 @@ class Foo {
 
 ## 0.1.20
 
-* Implemented `@async` HostApi's for iOS.
+* Implements `@async` HostApi's for iOS.
 * Fixes async FlutterApi methods with void return.
 
 ## 0.1.19
@@ -1218,7 +1218,7 @@ class Foo {
 
 ## 0.1.14
 
-* [Windows] Fixed executing from drives other than C:.
+* [Windows] Fixes executing from drives other than C:.
 
 ## 0.1.13
 
@@ -1249,7 +1249,7 @@ class Foo {
 
 ## 0.1.8
 
-* Started spawning pigeon_lib in an isolate instead of a subprocess. The
+* Starts spawning pigeon_lib in an isolate instead of a subprocess. The
   subprocess could have lead to errors if the dart version on $PATH didn't match
   the one that comes with flutter.
 
@@ -1317,7 +1317,7 @@ class Foo {
 
 ## 0.1.0-experimental.7
 
-* Suppressed or got rid of warnings in generated Dart code.
+* Suppresses or got rid of warnings in generated Dart code.
 
 ## 0.1.0-experimental.6
 
@@ -1326,7 +1326,7 @@ class Foo {
 ## 0.1.0-experimental.5
 
 * Fixes runtime exception in Android with values of ints less than 2^32.
-* Incremented codegen version warning.
+* Increments codegen version warning.
 
 ## 0.1.0-experimental.4
 

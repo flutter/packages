@@ -266,7 +266,7 @@
 
 ## 2.0.7
 
-* Republished 2.0.6 with Flutter 2.2 to avoid https://github.com/dart-lang/pub/issues/3001.
+* Republishes 2.0.6 with Flutter 2.2 to avoid https://github.com/dart-lang/pub/issues/3001.
 
 ## 2.0.6
 
@@ -340,12 +340,12 @@ when hybrid composition is used [flutter/issues/75667](https://github.com/flutte
 
 ## 1.0.0 - Out of developer preview 🎉.
 
-* Bumped the minimal Flutter SDK to 1.22 where platform views are out of developer preview, and
+* Bumps the minimal Flutter SDK to 1.22 where platform views are out of developer preview, and
 performing better on iOS. Flutter 1.22 no longer requires adding the
 `io.flutter.embedded_views_preview` flag to `Info.plist`.
 
 * Adds support for Hybrid Composition on Android (see opt-in instructions in [README](https://github.com/flutter/plugins/blob/main/packages/webview_flutter/README.md#android)).
-  * Lowered the required Android API to 19 (was previously 20): [#23728](https://github.com/flutter/flutter/issues/23728).
+  * Lowers the required Android API to 19 (was previously 20): [#23728](https://github.com/flutter/flutter/issues/23728).
   * Fixes the following issues:
     * 🎹 Keyboard: [#41089](https://github.com/flutter/flutter/issues/41089), [#36478](https://github.com/flutter/flutter/issues/36478), [#51254](https://github.com/flutter/flutter/issues/51254), [#50716](https://github.com/flutter/flutter/issues/50716), [#55724](https://github.com/flutter/flutter/issues/55724),  [#56513](https://github.com/flutter/flutter/issues/56513), [#56515](https://github.com/flutter/flutter/issues/56515), [#61085](https://github.com/flutter/flutter/issues/61085), [#62205](https://github.com/flutter/flutter/issues/62205), [#62547](https://github.com/flutter/flutter/issues/62547), [#58943](https://github.com/flutter/flutter/issues/58943), [#56361](https://github.com/flutter/flutter/issues/56361), [#56361](https://github.com/flutter/flutter/issues/42902), [#40716](https://github.com/flutter/flutter/issues/40716), [#37989](https://github.com/flutter/flutter/issues/37989), [#27924](https://github.com/flutter/flutter/issues/27924).
     * ♿️ Accessibility: [#50716](https://github.com/flutter/flutter/issues/50716).
@@ -451,7 +451,7 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.3.17
 
-* Fixes pedantic lint errors. Added missing documentation and awaited some futures
+* Fixes pedantic lint errors. Adds missing documentation and awaited some futures
   in tests and the example app.
 
 ## 0.3.16
@@ -473,7 +473,7 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.3.15+1
 
-* Revert the prior embedding support add since it requires an API that hasn't
+* Reverts the prior embedding support add since it requires an API that hasn't
   rolled to stable.
 
 ## 0.3.15

@@ -159,13 +159,13 @@
 
 ## 1.6.1
 
-* Revert deprecation of `clearCookies` in WebViewPlatform for later deprecation.
+* Reverts deprecation of `clearCookies` in WebViewPlatform for later deprecation.
 
 ## 1.6.0
 
 * Adds platform interface for cookie manager.
 * Deprecates `clearCookies` in WebViewPlatform in favour of `CookieManager#clearCookies`.
-* Expanded `CreationParams` to include cookies to be set at webview creation.
+* Expands `CreationParams` to include cookies to be set at webview creation.
 
 ## 1.5.2
 
@@ -198,4 +198,4 @@
 
 ## 1.0.0
 
-* Extracted platform interface from `webview_flutter`.
+* Extracts platform interface from `webview_flutter`.

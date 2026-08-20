@@ -122,7 +122,7 @@
 ## 2.0.0
 
 * Migrates to null safety.
-* BREAKING CHANGE: Path accessors that return non-nullable results will throw
+* **BREAKING CHANGE**: Path accessors that return non-nullable results will throw
   a `MissingPlatformDirectoryException` if the platform implementation is unable
   to get the corresponding directory (except on platforms where the method is
   explicitly unsupported, where they will continue to throw `UnsupportedError`).
@@ -231,7 +231,7 @@
 
 ## 1.6.4
 
-* Endorsed macOS implementation.
+* Endorses macOS implementation.
 
 ## 1.6.3
 
@@ -363,12 +363,12 @@
 
 ## 0.3.1
 
-* Simplified and upgraded Android project template to Android SDK 27.
+* Simplifies and upgrades Android project template to Android SDK 27.
 * Updates package description.
 
 ## 0.3.0
 
-* **Breaking change**. Upgraded to Gradle 4.1 and Android Studio Gradle plugin
+* **Breaking change**. Upgrades to Gradle 4.1 and Android Studio Gradle plugin
   3.0.1. Older Flutter projects need to upgrade their Gradle setup as well in
   order to use this version of the plugin. Instructions can be found
   [here](https://github.com/flutter/flutter/wiki/Updating-Flutter-projects-to-Gradle-4.1-and-Android-Studio-Gradle-plugin-3.0.1).

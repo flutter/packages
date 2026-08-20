@@ -256,7 +256,7 @@
 
 ## 6.0.19
 
-* Revert gradle back to 3.4.2.
+* Reverts gradle back to 3.4.2.
 
 ## 6.0.18
 
