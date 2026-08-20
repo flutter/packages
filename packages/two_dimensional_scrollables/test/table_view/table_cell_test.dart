@@ -5,6 +5,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:leak_tracker_flutter_testing/leak_tracker_flutter_testing.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 const TableSpan span = TableSpan(extent: FixedTableSpanExtent(100));
@@ -148,171 +149,197 @@ void main() {
         expect(cell, isNull);
       });
 
-      testWidgets('Merge start cannot exceed current index', (WidgetTester tester) async {
-        // Merge span start is greater than given index, ex: column 10 has merge
-        // start at 20.
-        final exceptions = <Object>[];
-        final FlutterExceptionHandler? oldHandler = FlutterError.onError;
-        FlutterError.onError = (FlutterErrorDetails details) {
-          exceptions.add(details.exception);
-        };
-        // Row
-        // +---------+
-        // |  X err  |
-        // |         |
-        // +---------+
-        // |  merge  |
-        // |         |
-        // +         +
-        // |         |
-        // |         |
-        // +---------+
-        // This cell should only be built for (0, 1) and (0, 2), not (0,0).
-        var cell = const TableViewCell(rowMergeStart: 1, rowMergeSpan: 2, child: SizedBox.shrink());
-        await tester.pumpWidget(
-          TableView.builder(
-            cellBuilder: (_, _) => cell,
-            columnBuilder: (_) => span,
-            rowBuilder: (_) => span,
-            columnCount: 1,
-            rowCount: 3,
-          ),
-        );
-        FlutterError.onError = oldHandler;
-        expect(exceptions.length, 2);
-        expect(exceptions.first.toString(), contains('spanMergeStart <= currentSpan'));
+      testWidgets(
+        'Merge start cannot exceed current index',
+        // The build throws an assertion error which prevents the table from
+        // properly disposing the elements.
+        experimentalLeakTesting: LeakTesting.settings.withIgnoredAll(),
+        (WidgetTester tester) async {
+          // Merge span start is greater than given index, ex: column 10 has merge
+          // start at 20.
+          final exceptions = <Object>[];
+          final FlutterExceptionHandler? oldHandler = FlutterError.onError;
+          FlutterError.onError = (FlutterErrorDetails details) {
+            exceptions.add(details.exception);
+          };
+          // Row
+          // +---------+
+          // |  X err  |
+          // |         |
+          // +---------+
+          // |  merge  |
+          // |         |
+          // +         +
+          // |         |
+          // |         |
+          // +---------+
+          // This cell should only be built for (0, 1) and (0, 2), not (0,0).
+          var cell = const TableViewCell(
+            rowMergeStart: 1,
+            rowMergeSpan: 2,
+            child: SizedBox.shrink(),
+          );
+          await tester.pumpWidget(
+            TableView.builder(
+              cellBuilder: (_, _) => cell,
+              columnBuilder: (_) => span,
+              rowBuilder: (_) => span,
+              columnCount: 1,
+              rowCount: 3,
+            ),
+          );
+          FlutterError.onError = oldHandler;
+          expect(exceptions, hasLength(2));
+          expect(exceptions.first.toString(), contains('spanMergeStart <= currentSpan'));
 
-        await tester.pumpWidget(Container());
-        exceptions.clear();
-        FlutterError.onError = (FlutterErrorDetails details) {
-          exceptions.add(details.exception);
-        };
-        // Column
-        // +---------+---------+---------+
-        // |  X err  | merged            |
-        // |         |                   |
-        // +---------+---------+---------+
-        // This cell should only be returned for (1, 0) and (2, 0), not (0,0).
-        cell = const TableViewCell(
-          columnMergeStart: 1,
-          columnMergeSpan: 2,
-          child: SizedBox.shrink(),
-        );
-        await tester.pumpWidget(
-          TableView.builder(
-            cellBuilder: (_, _) => cell,
-            columnBuilder: (_) => span,
-            rowBuilder: (_) => span,
-            columnCount: 3,
-            rowCount: 1,
-          ),
-        );
-        FlutterError.onError = oldHandler;
-        expect(exceptions.length, 2);
-        expect(exceptions.first.toString(), contains('spanMergeStart <= currentSpan'));
-      });
+          await tester.pumpWidget(const SizedBox());
+          exceptions.clear();
+          FlutterError.onError = (FlutterErrorDetails details) {
+            exceptions.add(details.exception);
+          };
+          // Column
+          // +---------+---------+---------+
+          // |  X err  | merged            |
+          // |         |                   |
+          // +---------+---------+---------+
+          // This cell should only be returned for (1, 0) and (2, 0), not (0,0).
+          cell = const TableViewCell(
+            columnMergeStart: 1,
+            columnMergeSpan: 2,
+            child: SizedBox.shrink(),
+          );
+          await tester.pumpWidget(
+            TableView.builder(
+              cellBuilder: (_, _) => cell,
+              columnBuilder: (_) => span,
+              rowBuilder: (_) => span,
+              columnCount: 3,
+              rowCount: 1,
+            ),
+          );
+          FlutterError.onError = oldHandler;
+          expect(exceptions, hasLength(2));
+          expect(exceptions.first.toString(), contains('spanMergeStart <= currentSpan'));
+        },
+      );
 
-      testWidgets('Merge cannot exceed table contents', (WidgetTester tester) async {
-        // Merge exceeds table content, ex: at column 10, cell spans 4 columns,
-        // but table only has 12 columns.
-        final exceptions = <Object>[];
-        final FlutterExceptionHandler? oldHandler = FlutterError.onError;
-        FlutterError.onError = (FlutterErrorDetails details) {
-          exceptions.add(details.exception);
-        };
-        // Row
-        var cell = const TableViewCell(
-          rowMergeStart: 0,
-          rowMergeSpan: 10, // Exceeds the number of rows
-          child: SizedBox.shrink(),
-        );
-        await tester.pumpWidget(
-          TableView.builder(
-            cellBuilder: (_, _) => cell,
-            columnBuilder: (_) => span,
-            rowBuilder: (_) => span,
-            columnCount: 1,
-            rowCount: 3,
-          ),
-        );
-        FlutterError.onError = oldHandler;
-        expect(exceptions.length, 2);
-        expect(exceptions.first.toString(), contains('spanMergeEnd < spanCount'));
+      testWidgets(
+        'Merge cannot exceed table contents',
+        // The build throws an assertion error which prevents the table from
+        // properly disposing the elements.
+        experimentalLeakTesting: LeakTesting.settings.withIgnoredAll(),
+        (WidgetTester tester) async {
+          // Merge exceeds table content, ex: at column 10, cell spans 4 columns,
+          // but table only has 12 columns.
+          final exceptions = <Object>[];
+          final FlutterExceptionHandler? oldHandler = FlutterError.onError;
+          FlutterError.onError = (FlutterErrorDetails details) {
+            exceptions.add(details.exception);
+          };
+          // Row
+          var cell = const TableViewCell(
+            rowMergeStart: 0,
+            rowMergeSpan: 10, // Exceeds the number of rows
+            child: SizedBox.shrink(),
+          );
+          await tester.pumpWidget(
+            TableView.builder(
+              cellBuilder: (_, _) => cell,
+              columnBuilder: (_) => span,
+              rowBuilder: (_) => span,
+              columnCount: 1,
+              rowCount: 3,
+            ),
+          );
+          FlutterError.onError = oldHandler;
+          expect(exceptions, hasLength(2));
+          expect(exceptions.first.toString(), contains('spanMergeEnd < spanCount'));
 
-        await tester.pumpWidget(Container());
-        exceptions.clear();
-        FlutterError.onError = (FlutterErrorDetails details) {
-          exceptions.add(details.exception);
-        };
-        // Column
-        cell = const TableViewCell(
-          columnMergeStart: 0,
-          columnMergeSpan: 10, // Exceeds the number of columns
-          child: SizedBox.shrink(),
-        );
-        await tester.pumpWidget(
-          TableView.builder(
-            cellBuilder: (_, _) => cell,
-            columnBuilder: (_) => span,
-            rowBuilder: (_) => span,
-            columnCount: 3,
-            rowCount: 1,
-          ),
-        );
-        FlutterError.onError = oldHandler;
-        expect(exceptions.length, 2);
-        expect(exceptions.first.toString(), contains('spanMergeEnd < spanCount'));
-      });
+          await tester.pumpWidget(const SizedBox());
+          exceptions.clear();
+          FlutterError.onError = (FlutterErrorDetails details) {
+            exceptions.add(details.exception);
+          };
+          // Column
+          cell = const TableViewCell(
+            columnMergeStart: 0,
+            columnMergeSpan: 10, // Exceeds the number of columns
+            child: SizedBox.shrink(),
+          );
+          await tester.pumpWidget(
+            TableView.builder(
+              cellBuilder: (_, _) => cell,
+              columnBuilder: (_) => span,
+              rowBuilder: (_) => span,
+              columnCount: 3,
+              rowCount: 1,
+            ),
+          );
+          FlutterError.onError = oldHandler;
+          expect(exceptions, hasLength(2));
+          expect(exceptions.first.toString(), contains('spanMergeEnd < spanCount'));
+        },
+      );
 
-      testWidgets('Merge cannot contain pinned and unpinned cells', (WidgetTester tester) async {
-        // Merge spans pinned and unpinned cells, ex: column 0 is pinned, 0-2
-        // expected merge.
-        final exceptions = <Object>[];
-        final FlutterExceptionHandler? oldHandler = FlutterError.onError;
-        FlutterError.onError = (FlutterErrorDetails details) {
-          exceptions.add(details.exception);
-        };
-        // Row
-        var cell = const TableViewCell(rowMergeStart: 0, rowMergeSpan: 3, child: SizedBox.shrink());
-        await tester.pumpWidget(
-          TableView.builder(
-            cellBuilder: (_, _) => cell,
-            columnBuilder: (_) => span,
-            rowBuilder: (_) => span,
-            columnCount: 1,
-            rowCount: 3,
-            pinnedRowCount: 1,
-          ),
-        );
-        FlutterError.onError = oldHandler;
-        expect(exceptions.length, 2);
-        expect(exceptions.first.toString(), contains('spanMergeEnd < pinnedSpanCount'));
+      testWidgets(
+        'Merge cannot contain pinned and unpinned cells',
+        // The build throws an assertion error which prevents the table from
+        // properly disposing the elements.
+        experimentalLeakTesting: LeakTesting.settings.withIgnoredAll(),
+        (WidgetTester tester) async {
+          // Merge spans pinned and unpinned cells, ex: column 0 is pinned, 0-2
+          // expected merge.
+          final exceptions = <Object>[];
+          final FlutterExceptionHandler? oldHandler = FlutterError.onError;
+          FlutterError.onError = (FlutterErrorDetails details) {
+            exceptions.add(details.exception);
+          };
+          // Row
+          var cell = const TableViewCell(
+            rowMergeStart: 0,
+            rowMergeSpan: 3,
+            child: SizedBox.shrink(),
+          );
+          await tester.pumpWidget(
+            TableView.builder(
+              cellBuilder: (_, _) => cell,
+              columnBuilder: (_) => span,
+              rowBuilder: (_) => span,
+              columnCount: 1,
+              rowCount: 3,
+              pinnedRowCount: 1,
+            ),
+          );
+          FlutterError.onError = oldHandler;
+          expect(exceptions, hasLength(2));
+          expect(exceptions.first.toString(), contains('spanMergeEnd < pinnedSpanCount'));
 
-        await tester.pumpWidget(Container());
-        exceptions.clear();
-        FlutterError.onError = (FlutterErrorDetails details) {
-          exceptions.add(details.exception);
-        };
-        // Column
-        cell = const TableViewCell(
-          columnMergeStart: 0,
-          columnMergeSpan: 3,
-          child: SizedBox.shrink(),
-        );
-        await tester.pumpWidget(
-          TableView.builder(
-            cellBuilder: (_, _) => cell,
-            columnBuilder: (_) => span,
-            rowBuilder: (_) => span,
-            columnCount: 3,
-            rowCount: 1,
-            pinnedColumnCount: 1,
-          ),
-        );
-        FlutterError.onError = oldHandler;
-        expect(exceptions.length, 2);
-        expect(exceptions.first.toString(), contains('spanMergeEnd < pinnedSpanCount'));
-      });
+          await tester.pumpWidget(const SizedBox());
+          exceptions.clear();
+          FlutterError.onError = (FlutterErrorDetails details) {
+            exceptions.add(details.exception);
+          };
+          // Column
+          cell = const TableViewCell(
+            columnMergeStart: 0,
+            columnMergeSpan: 3,
+            child: SizedBox.shrink(),
+          );
+          await tester.pumpWidget(
+            TableView.builder(
+              cellBuilder: (_, _) => cell,
+              columnBuilder: (_) => span,
+              rowBuilder: (_) => span,
+              columnCount: 3,
+              rowCount: 1,
+              pinnedColumnCount: 1,
+            ),
+          );
+          FlutterError.onError = oldHandler;
+          expect(exceptions, hasLength(2));
+          expect(exceptions.first.toString(), contains('spanMergeEnd < pinnedSpanCount'));
+        },
+      );
     });
 
     group('layout', () {

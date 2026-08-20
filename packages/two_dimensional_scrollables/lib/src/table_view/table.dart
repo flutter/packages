@@ -105,32 +105,37 @@ import 'table_span.dart';
 ///
 ///  * [TableSpan], describes the configuration for a row or column in the
 ///    TableView.
-///  * [TwoDimensionalScrollView], the super class that is extended by TableView.
+///  * [TwoDimensionalScrollView], a scroll view that can scroll in two
+///    dimensions.
 ///  * [GridView], another scrolling widget that can be used to create tables
 ///    that scroll in one dimension.
-class TableView extends TwoDimensionalScrollView {
+class TableView extends StatefulWidget {
   /// Creates a [TableView] that scrolls in both dimensions.
   ///
   /// A non-null [delegate] must be provided.
   const TableView({
     super.key,
-    super.primary,
-    super.mainAxis,
-    super.horizontalDetails,
-    super.verticalDetails,
-    super.cacheExtent,
-    required TableCellDelegateMixin super.delegate,
-    super.diagonalDragBehavior = DiagonalDragBehavior.none,
-    super.dragStartBehavior,
-    super.keyboardDismissBehavior,
-    super.clipBehavior,
+    this.primary,
+    this.mainAxis = Axis.vertical,
+    this.verticalDetails = const ScrollableDetails.vertical(),
+    this.horizontalDetails = const ScrollableDetails.horizontal(),
+    @Deprecated(
+      'Use scrollCacheExtent instead. '
+      'This feature was deprecated after v3.41.0-0.0.pre.',
+    )
+    this.cacheExtent,
+    required this.delegate,
+    this.diagonalDragBehavior = DiagonalDragBehavior.none,
+    this.dragStartBehavior = DragStartBehavior.start,
+    this.keyboardDismissBehavior,
+    this.clipBehavior = Clip.hardEdge,
     this.alignment = Alignment.topLeft,
-  });
+  }) : _isInternalDelegate = false;
 
   /// Creates a [TableView] of widgets that are created on demand.
   ///
   /// This constructor is appropriate for table views with a large
-  /// number of cells because the [cellbuilder] is called only for those
+  /// number of cells because the [cellBuilder] is called only for those
   /// cells that are actually visible.
   ///
   /// This constructor generates a [TableCellBuilderDelegate] for building
@@ -148,15 +153,20 @@ class TableView extends TwoDimensionalScrollView {
   /// returning null from [ListView.builder] to signify the end of the list.
   TableView.builder({
     super.key,
-    super.primary,
-    super.mainAxis,
-    super.horizontalDetails,
-    super.verticalDetails,
-    super.cacheExtent,
-    super.diagonalDragBehavior = DiagonalDragBehavior.none,
-    super.dragStartBehavior,
-    super.keyboardDismissBehavior,
-    super.clipBehavior,
+
+    this.primary,
+    this.mainAxis = Axis.vertical,
+    this.verticalDetails = const ScrollableDetails.vertical(),
+    this.horizontalDetails = const ScrollableDetails.horizontal(),
+    @Deprecated(
+      'Use scrollCacheExtent instead. '
+      'This feature was deprecated after v3.41.0-0.0.pre.',
+    )
+    this.cacheExtent,
+    this.diagonalDragBehavior = DiagonalDragBehavior.none,
+    this.dragStartBehavior = DragStartBehavior.start,
+    this.keyboardDismissBehavior,
+    this.clipBehavior = Clip.hardEdge,
     int pinnedRowCount = 0,
     int pinnedColumnCount = 0,
     int trailingPinnedRowCount = 0,
@@ -175,19 +185,18 @@ class TableView extends TwoDimensionalScrollView {
        assert(pinnedColumnCount >= 0),
        assert(trailingPinnedColumnCount >= 0),
        assert(columnCount == null || columnCount >= pinnedColumnCount + trailingPinnedColumnCount),
-       super(
-         delegate: TableCellBuilderDelegate(
-           columnCount: columnCount,
-           rowCount: rowCount,
-           pinnedColumnCount: pinnedColumnCount,
-           pinnedRowCount: pinnedRowCount,
-           trailingPinnedColumnCount: trailingPinnedColumnCount,
-           trailingPinnedRowCount: trailingPinnedRowCount,
-           cellBuilder: cellBuilder,
-           columnBuilder: columnBuilder,
-           rowBuilder: rowBuilder,
-         ),
-       );
+       delegate = TableCellBuilderDelegate(
+         columnCount: columnCount,
+         rowCount: rowCount,
+         pinnedColumnCount: pinnedColumnCount,
+         pinnedRowCount: pinnedRowCount,
+         trailingPinnedColumnCount: trailingPinnedColumnCount,
+         trailingPinnedRowCount: trailingPinnedRowCount,
+         cellBuilder: cellBuilder,
+         columnBuilder: columnBuilder,
+         rowBuilder: rowBuilder,
+       ),
+       _isInternalDelegate = true;
 
   /// Creates a [TableView] from an explicit two dimensional array of children.
   ///
@@ -201,15 +210,19 @@ class TableView extends TwoDimensionalScrollView {
   /// `children[vicinity.column][vicinity.row]`.
   TableView.list({
     super.key,
-    super.primary,
-    super.mainAxis,
-    super.horizontalDetails,
-    super.verticalDetails,
-    super.cacheExtent,
-    super.diagonalDragBehavior = DiagonalDragBehavior.none,
-    super.dragStartBehavior,
-    super.keyboardDismissBehavior,
-    super.clipBehavior,
+    this.primary,
+    this.mainAxis = Axis.vertical,
+    this.verticalDetails = const ScrollableDetails.vertical(),
+    this.horizontalDetails = const ScrollableDetails.horizontal(),
+    @Deprecated(
+      'Use scrollCacheExtent instead. '
+      'This feature was deprecated after v3.41.0-0.0.pre.',
+    )
+    this.cacheExtent,
+    this.diagonalDragBehavior = DiagonalDragBehavior.none,
+    this.dragStartBehavior = DragStartBehavior.start,
+    this.keyboardDismissBehavior,
+    this.clipBehavior = Clip.hardEdge,
     int pinnedRowCount = 0,
     int pinnedColumnCount = 0,
     int trailingPinnedRowCount = 0,
@@ -222,17 +235,134 @@ class TableView extends TwoDimensionalScrollView {
        assert(pinnedColumnCount >= 0),
        assert(trailingPinnedRowCount >= 0),
        assert(trailingPinnedColumnCount >= 0),
-       super(
-         delegate: TableCellListDelegate(
-           pinnedColumnCount: pinnedColumnCount,
-           pinnedRowCount: pinnedRowCount,
-           trailingPinnedColumnCount: trailingPinnedColumnCount,
-           trailingPinnedRowCount: trailingPinnedRowCount,
-           cells: cells,
-           columnBuilder: columnBuilder,
-           rowBuilder: rowBuilder,
-         ),
-       );
+       delegate = TableCellListDelegate(
+         pinnedColumnCount: pinnedColumnCount,
+         pinnedRowCount: pinnedRowCount,
+         trailingPinnedColumnCount: trailingPinnedColumnCount,
+         trailingPinnedRowCount: trailingPinnedRowCount,
+         cells: cells,
+         columnBuilder: columnBuilder,
+         rowBuilder: rowBuilder,
+       ),
+       _isInternalDelegate = true;
+
+  /// {@macro flutter.widgets.scroll_view.primary}
+  final bool? primary;
+
+  /// The main axis of the two.
+  ///
+  /// Used to determine how to apply [primary] when true.
+  ///
+  /// This value should also be provided to the subclass of
+  /// [TwoDimensionalViewport], where it is used to determine paint order of
+  /// children.
+  final Axis mainAxis;
+
+  /// The configuration of the horizontal Scrollable.
+  ///
+  /// These [ScrollableDetails] can be used to set the [AxisDirection],
+  /// [ScrollController], [ScrollPhysics] and more for the horizontal axis.
+  final ScrollableDetails horizontalDetails;
+
+  /// The configuration of the vertical Scrollable.
+  ///
+  /// These [ScrollableDetails] can be used to set the [AxisDirection],
+  /// [ScrollController], [ScrollPhysics] and more for the vertical axis.
+  final ScrollableDetails verticalDetails;
+
+  /// {@macro flutter.rendering.RenderViewportBase.cacheExtent}
+  @Deprecated(
+    'Use scrollCacheExtent instead. '
+    'This feature was deprecated after v3.41.0-0.0.pre.',
+  )
+  final double? cacheExtent;
+
+  /// A delegate that provides the children for the [TwoDimensionalScrollView].
+  final TableCellDelegateMixin delegate;
+
+  /// Whether the [delegate] was provided by the user or created internally by
+  /// the [TableView].
+  final bool _isInternalDelegate;
+
+  /// Whether scrolling gestures should lock to one axes, allow free movement
+  /// in both axes, or be evaluated on a weighted scale.
+  ///
+  /// Defaults to [DiagonalDragBehavior.none], locking axes to receive input one
+  /// at a time.
+  final DiagonalDragBehavior diagonalDragBehavior;
+
+  /// {@macro flutter.widgets.scrollable.dragStartBehavior}
+  final DragStartBehavior dragStartBehavior;
+
+  /// {@macro flutter.widgets.scroll_view.keyboardDismissBehavior}
+  ///
+  /// If [keyboardDismissBehavior] is null then it will fallback to the inherited
+  /// [ScrollBehavior.getKeyboardDismissBehavior].
+  final ScrollViewKeyboardDismissBehavior? keyboardDismissBehavior;
+
+  /// {@macro flutter.material.Material.clipBehavior}
+  ///
+  /// Defaults to [Clip.hardEdge].
+  final Clip clipBehavior;
+
+  /// The alignment of the table within the viewport when there is extra space.
+  ///
+  /// Defaults to [Alignment.topLeft].
+  final AlignmentGeometry alignment;
+
+  @override
+  State<TableView> createState() => _TableViewState();
+}
+
+class _TableViewState extends State<TableView> {
+  @override
+  void didUpdateWidget(TableView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget._isInternalDelegate) {
+      oldWidget.delegate.dispose();
+    }
+  }
+
+  @override
+  void dispose() {
+    if (widget._isInternalDelegate) {
+      widget.delegate.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _TableView(
+      primary: widget.primary,
+      mainAxis: widget.mainAxis,
+      horizontalDetails: widget.horizontalDetails,
+      verticalDetails: widget.verticalDetails,
+      cacheExtent: widget.cacheExtent,
+      diagonalDragBehavior: widget.diagonalDragBehavior,
+      dragStartBehavior: widget.dragStartBehavior,
+      keyboardDismissBehavior: widget.keyboardDismissBehavior,
+      clipBehavior: widget.clipBehavior,
+      delegate: widget.delegate,
+      alignment: widget.alignment,
+    );
+  }
+}
+
+class _TableView extends TwoDimensionalScrollView {
+  const _TableView({
+    super.primary,
+    super.mainAxis,
+    super.horizontalDetails,
+    super.verticalDetails,
+    super.cacheExtent,
+    required TableCellDelegateMixin super.delegate,
+    super.diagonalDragBehavior = DiagonalDragBehavior.none,
+    super.dragStartBehavior,
+    super.keyboardDismissBehavior,
+    super.clipBehavior,
+    this.alignment = Alignment.topLeft,
+  });
 
   /// The alignment of the table within the viewport when there is extra space.
   ///
