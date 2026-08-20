@@ -108,10 +108,6 @@ class VersionAndChangelogValidator {
   /// PR that would normally require one.
   static const String _missingChangelogChangeOverrideLabel = 'override: no changelog needed';
 
-  /// The label that must be on a PR to allow editing a CHANGELOG.md file for a
-  /// package that uses batch release (disallows direct CHANGELOG.md edits).
-  static const String _changelogEditOverrideLabel = 'override: allow changelog edit';
-
   /// Validates that the version and changelog of a package are consistent,
   /// and match the policy for the files changed, returning a list of resulting
   /// error strings.
@@ -623,26 +619,17 @@ ${_indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
 
     // The changelog.md and pubspec.yaml's version should not be updated directly.
     if (changedFilesInPackage.contains('$relativePackagePath/CHANGELOG.md')) {
-      if (_prLabels.contains(_changelogEditOverrideLabel)) {
-        _logWarning(
-          'Allowing CHANGELOG.md update due to the '
-          '"$_changelogEditOverrideLabel" label.',
-        );
-      } else {
-        printError(
-          'This package uses batch release, so CHANGELOG.md should not be changed directly.\n'
-          'Instead, create a pending changelog file in pending_changelogs folder.\n'
-          'See https://github.com/flutter/flutter/blob/main/docs/ecosystem/contributing/README.md#batched-release.',
-        );
-        errors.add('CHANGELOG.md changed');
-      }
+      printError(
+        'This package uses batch release, so CHANGELOG.md should not be changed directly.\n'
+        'Instead, create a pending changelog file in pending_changelogs folder.',
+      );
+      errors.add('CHANGELOG.md changed');
     }
     if (changedFilesInPackage.contains('$relativePackagePath/pubspec.yaml')) {
       if (versionState != _CurrentVersionState.unchanged) {
         printError(
           'This package uses batch release, so the version in pubspec.yaml should not be changed directly.\n'
-          'Instead, create a pending changelog file in pending_changelogs folder.\n'
-          'See https://github.com/flutter/flutter/blob/main/docs/ecosystem/contributing/README.md#batched-release.',
+          'Instead, create a pending changelog file in pending_changelogs folder.',
         );
         errors.add('pubspec.yaml version changed');
       }

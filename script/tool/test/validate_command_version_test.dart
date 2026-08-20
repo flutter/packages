@@ -1674,54 +1674,6 @@ packages/package/CHANGELOG.md
         );
       });
 
-      test(
-        'ignores changelog modifications check with override: allow changelog edit label',
-        () async {
-          final RepositoryPackage package = createFakePackage(
-            'package',
-            packagesDir,
-            version: '1.0.0',
-          );
-          package.ciConfigFile.writeAsStringSync('''
-release:
-  batch: true
-''');
-          // Create the pending_changelogs directory so the test doesn't fail on that check.
-          package.directory.childDirectory('pending_changelogs').createSync();
-
-          gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-            FakeProcessInfo(
-              MockProcess(
-                stdout: '''
-packages/package/CHANGELOG.md
-''',
-              ),
-            ),
-          ];
-          gitProcessRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
-            FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
-          ];
-
-          final List<String> output = await runCapturingPrint(runner, <String>[
-            'validate',
-            '--base-sha=main',
-            '--pr-labels=override: allow changelog edit',
-          ]);
-
-          expect(
-            output,
-            containsAllInOrder(<Matcher>[
-              contains('Running for package'),
-              contains(
-                'Allowing CHANGELOG.md update due to the '
-                '"override: allow changelog edit" label.',
-              ),
-              contains('(1 with warnings)'),
-            ]),
-          );
-        },
-      );
-
       test('fails when there is pubspec version modifications', () async {
         final RepositoryPackage package = createFakePackage(
           'package',
