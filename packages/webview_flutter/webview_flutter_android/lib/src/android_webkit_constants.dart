@@ -131,4 +131,9 @@ class WebViewFeatureConstants {
   ///
   /// See https://developer.android.com/reference/androidx/webkit/WebViewFeature#DOCUMENT_START_SCRIPT.
   static const String documentStartScript = 'DOCUMENT_START_SCRIPT';
+
+  /// This feature covers [WebSettingsCompat.setWebAuthenticationSupport].
+  ///
+  /// See https://developer.android.com/reference/androidx/webkit/WebViewFeature#WEB_AUTHENTICATION.
+  static const String webAuthentication = 'WEB_AUTHENTICATION';
 }

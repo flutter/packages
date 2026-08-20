@@ -1,3 +1,15 @@
+## 0.7.4+6
+
+* Adds explicit `androidx.concurrent:concurrent-futures:1.2.0` dependency to fix
+  `compileDebugJavaWithJavac` failing with "class file for
+  androidx.concurrent.futures.CallbackToFutureAdapter not found" when
+  `camera-core`'s Jspecify type annotations are resolved during compilation.
+  
+## 0.7.4+5
+
+* Fixes a leaked thread per capture by dispatching the `takePicture` result callback on the main
+  executor.
+
 ## 0.7.4+4
 
 * Fix `NullPointerException` when disposing camera during active video recording.
