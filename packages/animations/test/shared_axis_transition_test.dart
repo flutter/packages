@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:animations/src/shared_axis_transition.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
 void main() {
