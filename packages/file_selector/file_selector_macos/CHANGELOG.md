@@ -133,7 +133,7 @@
 
 ## 0.0.4+1
 
-* Update README
+* Updates README.
 
 ## 0.0.4
 
@@ -141,11 +141,11 @@
 
 ## 0.0.3
 
-* Fix README
+* Fixes README.
 
 ## 0.0.2
 
-* Update SDK constraint to signal compatibility with null safety.
+* Updates SDK constraint to signal compatibility with null safety.
 
 ## 0.0.1
 

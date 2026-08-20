@@ -33,7 +33,7 @@
 
 ## 27.0.0
 
-* **Breaking Change** Overrides `toString` (or equivalent) methods on generated data classes
+* **Breaking Change** Overrides `toString` (or equivalent) methods on generated data classes.
   * This can conflict with custom `description` implementations in Swift.
 * [swift] Updates `isNullish` to handle double nested `Any?` values.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
@@ -356,7 +356,7 @@
 
 ## 19.0.2
 
-* [kotlin] Adds the `@JvmOverloads` to the `HostApi` setUp method. This prevents the calling Java code from having to provide an empty `String` as Kotlin provides it by default
+* [kotlin] Adds the `@JvmOverloads` to the `HostApi` setUp method. This prevents the calling Java code from having to provide an empty `String` as Kotlin provides it by default.
 
 ## 19.0.1
 
@@ -635,7 +635,7 @@
 
 ## 9.0.7
 
-* [swift] Changes all ints to int64.
+* [swift] Changes all ints to int64
   May require code updates to existing code.
 * Adds integration tests for int64.
 
@@ -685,10 +685,10 @@
 
 ## 7.2.0
 
-* [swift] Changes async method completion types.
+* [swift] Changes async method completion types
   May require code updates to existing code.
 * [swift] Adds error handling to async methods.
-* [kotlin] Changes async method completion types.
+* [kotlin] Changes async method completion types
   May require code updates to existing code.
 * [kotlin] Adds error handling to async methods.
 * Adds async error handling integration tests for all platforms.
@@ -740,7 +740,7 @@
 
 ## 7.0.0
 
-* [java] **BREAKING CHANGE**: Makes data classes final.
+* [java] **BREAKING CHANGE**: Makes data classes final
   Updates generators for 1p linters.
 
 ## 6.0.3
@@ -777,7 +777,7 @@
 
 ## 4.2.15
 
-* Relocates generator classes. (Reverted)
+* Relocates generator classes. (Reverted).
 
 ## 4.2.14
 
@@ -785,7 +785,7 @@
 
 ## 4.2.13
 
-* Add documentation comment support for Enum members.
+* Adds documentation comment support for Enum members.
 
 ## 4.2.12
 
@@ -863,7 +863,7 @@
 
 ## 4.0.0
 
-* [java] **BREAKING CHANGE**: Changes style for enum values from camelCase to snake_case.
+* [java] **BREAKING CHANGE**: Changes style for enum values from camelCase to snake_case
   Generated java enum values will now always be in upper snake_case.
 
 ## 3.2.9
@@ -1021,11 +1021,11 @@
 
 ## 1.0.15
 
-* [java] Fix too little information when having an exception
+* [java] Fix too little information when having an exception.
 
 ## 1.0.14
 
-* [tests] Port several generator tests to run in Dart over bash
+* [tests] Port several generator tests to run in Dart over bash.
 
 ## 1.0.13
 
@@ -1064,7 +1064,7 @@
 
 ## 1.0.6
 
-* Updated example README for set up steps.
+* Updates example README for set up steps.
 
 ## 1.0.5
 
@@ -1094,7 +1094,7 @@
 
 * Started allowing primitive data types as arguments and return types.
 * Generics support.
-* Support for functions with more than one argument.
+* Supports for functions with more than one argument.
 * [command-line] Added `one_language` flag for allowing Pigeon to only generate
   code for one platform.
 * [command-line] Added the optional sdkPath parameter for specifying Dart SDK
@@ -1105,7 +1105,7 @@
 * [generators] Moved Pigeon to using a custom codec which allows collection
   types to contain custom classes.
 * [java] Fixed NPE in Java generated code for nested types.
-* [objc] **BREAKING CHANGE:** logic for generating selectors has changed.
+* [objc] **BREAKING CHANGE:** logic for generating selectors has changed
   `void add(Input value)` will now translate to
   `-(void)addValue:(Input*)value`, methods with no arguments will translate to
   `...WithError:` or `...WithCompletion:`.
@@ -1113,12 +1113,12 @@
 
 ## 0.3.0
 
-* Updated the front-end parser to use dart
-  [`analyzer`](https://pub.dev/packages/analyzer) instead of `dart:mirrors`.
+* Updates the front-end parser to use dart
+  [`analyzer`](https://pub.dev/packages/analyzer) instead of `dart:mirrors`
   `dart:mirrors` doesn't support null-safe code so there were a class of
   features we couldn't implement without this migration.
 * **BREAKING CHANGE** - the `configurePigeon` function has been migrated to a
-  `@ConfigurePigeon` annotation. See `./pigeons/message.dart` for an example.
+  `@ConfigurePigeon` annotation. See `./pigeons/message.dart` for an example
   The annotation can be attached to anything in the file to take effect.
 * **BREAKING CHANGE** - Now Pigeon files must be in one file per invocation of
   Pigeon. For example, the classes your APIs use must be in the same file as
@@ -1135,7 +1135,7 @@
 
 ## 0.2.2
 
-* Added support for enums.
+* Adds support for enums.
 
 ## 0.2.1
 
@@ -1166,13 +1166,13 @@ class Foo {
 * **BREAKING CHANGE** - The default output from Pigeon is now null-safe. If you
   want non-null-safe code you must provide the `--no-dart_null_safety` flag.
 * The Pigeon source code is now null-safe.
-* Fixed niladic non-value returning async functions in the Java generator.
-* Made `runCommandLine` return an the status code.
+* Fixes niladic non-value returning async functions in the Java generator.
+* Makes `runCommandLine` return an the status code.
 
 ## 0.1.24
 
-* Moved logic from bin/ to lib/ to help customers wrap up the behavior.
-* Added some more linter ignores for Dart.
+* Moves logic from bin/ to lib/ to help customers wrap up the behavior.
+* Adds some more linter ignores for Dart.
 
 ## 0.1.23
 
@@ -1181,22 +1181,22 @@ class Foo {
 ## 0.1.22
 
 * Java code generator enhancements:
-  * Added linter tests to CI.
-  * Fixed some linter issues in the Java code.
+  * Adds linter tests to CI.
+  * Fixes some linter issues in the Java code.
 
 ## 0.1.21
 
-* Fixed decode method on generated Flutter classes that use null-safety and have
+* Fixes decode method on generated Flutter classes that use null-safety and have
   null values.
 
 ## 0.1.20
 
 * Implemented `@async` HostApi's for iOS.
-* Fixed async FlutterApi methods with void return.
+* Fixes async FlutterApi methods with void return.
 
 ## 0.1.19
 
-* Fixed a bug introduced in 0.1.17 where methods without arguments were
+* Fixes a bug introduced in 0.1.17 where methods without arguments were
   no longer being called.
 
 ## 0.1.18
@@ -1210,11 +1210,11 @@ class Foo {
 
 ## 0.1.16
 
-* Fixed running in certain environments where NNBD is enabled by default.
+* Fixes running in certain environments where NNBD is enabled by default.
 
 ## 0.1.15
 
-* Added support for running in versions of Dart that support NNBD.
+* Adds support for running in versions of Dart that support NNBD.
 
 ## 0.1.14
 
@@ -1222,30 +1222,30 @@ class Foo {
 
 ## 0.1.13
 
-* Fixed execution on Windows with certain setups where Dart didn't allow
+* Fixes execution on Windows with certain setups where Dart didn't allow
   backslashes in `import` statements.
 
 ## 0.1.12
 
-* Fixed assert failure with creating a PlatformException as a result of an
+* Fixes assert failure with creating a PlatformException as a result of an
   exception in Java handlers.
 
 ## 0.1.11
 
-* Added flag to generate null safety annotated Dart code `--dart_null_safety`.
-* Made it so Dart API setup methods can take null.
+* Adds flag to generate null safety annotated Dart code `--dart_null_safety`.
+* Makes it so Dart API setup methods can take null.
 
 ## 0.1.10+1
 
-* Updated the examples page.
+* Updates the examples page.
 
 ## 0.1.10
 
-* Fixed bug that prevented running `pigeon` on Windows (introduced in `0.1.8`).
+* Fixes bug that prevented running `pigeon` on Windows (introduced in `0.1.8`).
 
 ## 0.1.9
 
-* Fixed bug where executing pigeon without arguments would crash (introduced in 0.1.8).
+* Fixes bug where executing pigeon without arguments would crash (introduced in 0.1.8).
 
 ## 0.1.8
 
@@ -1255,65 +1255,65 @@ class Foo {
 
 ## 0.1.7
 
-* Fixed Dart compilation for later versions that support null safety, opting out
+* Fixes Dart compilation for later versions that support null safety, opting out
   of it for now.
-* Fixed nested types in the Java runtime.
+* Fixes nested types in the Java runtime.
 
 ## 0.1.6
 
-* Fixed unused variable linter warning in Dart code under certain conditions.
+* Fixes unused variable linter warning in Dart code under certain conditions.
 
 ## 0.1.5
 
-* Made array datatypes correctly get imported and exported avoiding the need to
+* Makes array datatypes correctly get imported and exported avoiding the need to
   add extra imports to generated code.
 
 ## 0.1.4
 
-* Fixed nullability for NSError's in generated objc code.
-* Fixed nullability of nested objects in the Dart generator.
-* Added test to make sure the pigeon version is correct in generated code headers.
+* Fixes nullability for NSError's in generated objc code.
+* Fixes nullability of nested objects in the Dart generator.
+* Adds test to make sure the pigeon version is correct in generated code headers.
 
 ## 0.1.3
 
-* Added error message if supported datatypes are used as arguments or return
+* Adds error message if supported datatypes are used as arguments or return
   types directly, without an enclosing class.
-* Added support for List and Map datatypes in Java and Objective-C targets.
+* Adds support for List and Map datatypes in Java and Objective-C targets.
 
 ## 0.1.2+1
 
-* Updated the Readme.md.
+* Updates the Readme.md.
 
 ## 0.1.2
 
-* Removed static analysis warnings from generated Java code.
+* Removes static analysis warnings from generated Java code.
 
 ## 0.1.1
 
-* Fixed issue where nested types didn't work if they weren't present in the Api.
+* Fixes issue where nested types didn't work if they weren't present in the Api.
 
 ## 0.1.0
 
-* Added pigeon.dart.
-* Fixed some Obj-C linter problems.
-* Added the ability to generate a mock handler in Dart.
+* Adds pigeon.dart.
+* Fixes some Obj-C linter problems.
+* Adds the ability to generate a mock handler in Dart.
 
 ## 0.1.0-experimental.11
 
-* Fixed setting an API to null in Java.
+* Fixes setting an API to null in Java.
 
 ## 0.1.0-experimental.10
 
-* Added support for void argument functions.
-* Added nullability annotations to generated objc code.
+* Adds support for void argument functions.
+* Adds nullability annotations to generated objc code.
 
 ## 0.1.0-experimental.9
 
-* Added e2e tests for iOS.
+* Adds e2e tests for iOS.
 
 ## 0.1.0-experimental.8
 
-* Renamed `setupPigeon` to `configurePigeon`.
+* Renames `setupPigeon` to `configurePigeon`.
 
 ## 0.1.0-experimental.7
 
@@ -1321,28 +1321,28 @@ class Foo {
 
 ## 0.1.0-experimental.6
 
-* Added support for void return types.
+* Adds support for void return types.
 
 ## 0.1.0-experimental.5
 
-* Fixed runtime exception in Android with values of ints less than 2^32.
+* Fixes runtime exception in Android with values of ints less than 2^32.
 * Incremented codegen version warning.
 
 ## 0.1.0-experimental.4
 
-* Fixed primitive types for Android Java.
+* Fixes primitive types for Android Java.
 
 ## 0.1.0-experimental.3
 
-* Added support for Android Java.
+* Adds support for Android Java.
 
 ## 0.1.0-experimental.2
 
-* Added Host->Flutter calls for Objective-C
+* Adds Host->Flutter calls for Objective-C.
 
 ## 0.1.0-experimental.1
 
-* Fixed warning in the README.md
+* Fixes warning in the README.md.
 
 ## 0.1.0-experimental.0
 

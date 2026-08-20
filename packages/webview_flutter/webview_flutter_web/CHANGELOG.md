@@ -21,9 +21,9 @@
 
 ## 0.2.3
 
-* Migrates to `package:web`
+* Migrates to `package:web`.
 * Updates `HttpRequestFactory.request` to use the Fetch API.
-* Updates `index.html` in the example to use `flutter_bootstrap.js`
+* Updates `index.html` in the example to use `flutter_bootstrap.js`.
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.3.
 
 ## 0.2.2+4
@@ -90,4 +90,4 @@
 
 ## 0.1.0
 
-* First web implementation for webview_flutter
+* First web implementation for webview_flutter.

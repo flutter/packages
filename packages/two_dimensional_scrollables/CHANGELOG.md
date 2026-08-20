@@ -25,7 +25,7 @@
 
 ## 0.4.0
 
-* Added `alignment` property to `TableView` and `TreeView` to align content within the viewport when it is smaller than the viewport extent.
+* Adds `alignment` property to `TableView` and `TreeView` to align content within the viewport when it is smaller than the viewport extent.
 
 ## 0.3.9
 
@@ -108,7 +108,7 @@ selection, and multi-cell selection.
 
 ## 0.0.5
 
-* Exposes addAutomaticKeepAlives in TableCellBuilderDelegate and TableCellListDelegate
+* Exposes addAutomaticKeepAlives in TableCellBuilderDelegate and TableCellListDelegate.
 * Fixes bug where having one reversed axis caused incorrect painting of a pinned row.
 * Adds support for BorderRadius in TableSpanDecorations.
 
@@ -130,4 +130,4 @@ selection, and multi-cell selection.
 
 ## 0.0.1
 
-* Initial release - TableView
+* Initial release - TableView.

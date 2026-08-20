@@ -85,7 +85,7 @@
 ## 0.2.7
 
 * Adds support to retrieve content time offsets at which ad breaks are scheduled. See
-  `AdsManager.adCuePoints`
+  `AdsManager.adCuePoints`.
 
 ## 0.2.6+7
 

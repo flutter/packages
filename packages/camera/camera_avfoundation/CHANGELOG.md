@@ -82,7 +82,7 @@
 
 ## 0.9.22
 
-* Adds lensType in the PlatformCameraDescription
+* Adds lensType in the PlatformCameraDescription.
 
 ## 0.9.21+4
 
@@ -247,7 +247,7 @@
 ## 0.9.17+6
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
-* Removes OCMock usage from permission tests
+* Removes OCMock usage from permission tests.
 
 ## 0.9.17+5
 
@@ -401,7 +401,7 @@
 
 ## 0.9.10
 
-* Remove usage of deprecated quiver Optional type.
+* Removes usage of deprecated quiver Optional type.
 
 ## 0.9.9
 

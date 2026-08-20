@@ -79,7 +79,7 @@
 
 ## 1.0.19
 
-* Add `DropdownButton` and `ClipRRect` widgets to rfw widget library.
+* Adds `DropdownButton` and `ClipRRect` widgets to rfw widget library.
 
 ## 1.0.18
 
@@ -108,7 +108,7 @@
 
 ## 1.0.13
 
-* Block comments in RFW's text format. (`/*...*/`)
+* Block comments in RFW's text format. (`/*...*/`).
 
 ## 1.0.12
 

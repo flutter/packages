@@ -139,7 +139,7 @@
 
 ## 2.1.3
 
-*  Update to use the `verify` method introduced in platform_plugin_interface 2.1.0.
+*  Updates to use the `verify` method introduced in platform_plugin_interface 2.1.0.
 
 ## 2.1.2
 
@@ -147,7 +147,7 @@
 
 ## 2.1.1
 
-* Add web-relevant docs to platform interface code.
+* Adds web-relevant docs to platform interface code.
 
 ## 2.1.0
 
@@ -155,7 +155,7 @@
 
 ## 2.0.1
 
-* Update platform_plugin_interface version requirement.
+* Updates platform_plugin_interface version requirement.
 
 ## 2.0.0
 
@@ -163,7 +163,7 @@
 
 ## 1.6.0
 
-- Added VideoRecordedEvent to support ending a video recording in the native implementation.
+- Adds VideoRecordedEvent to support ending a video recording in the native implementation.
 
 ## 1.5.0
 
@@ -172,7 +172,7 @@
 
 ## 1.4.0
 
-- Added interface methods to support auto focus.
+- Adds interface methods to support auto focus.
 
 ## 1.3.0
 
@@ -180,28 +180,28 @@
 
 ## 1.2.0
 
-- Added interface to support automatic exposure.
+- Adds interface to support automatic exposure.
 
 ## 1.1.0
 
-- Added an optional `maxVideoDuration` parameter to the `startVideoRecording` method, which allows implementations to limit the duration of a video recording.
+- Adds an optional `maxVideoDuration` parameter to the `startVideoRecording` method, which allows implementations to limit the duration of a video recording.
 
 ## 1.0.4
 
-- Added the torch option to the FlashMode enum, which when implemented indicates the flash light should be turned on continuously.
+- Adds the torch option to the FlashMode enum, which when implemented indicates the flash light should be turned on continuously.
 
 ## 1.0.3
 
-- Update Flutter SDK constraint.
+- Updates Flutter SDK constraint.
 
 ## 1.0.2
 
-- Added interface methods to support zoom features.
+- Adds interface methods to support zoom features.
 
 ## 1.0.1
 
-- Added interface methods for setting flash mode.
+- Adds interface methods for setting flash mode.
 
 ## 1.0.0
 
-- Initial open-source release
+- Initial open-source release.

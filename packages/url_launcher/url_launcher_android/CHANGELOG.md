@@ -193,7 +193,7 @@
 
 ## 6.0.34
 
-* Reverts ContextCompat usage that caused flutter/flutter#127014
+* Reverts ContextCompat usage that caused flutter/flutter#127014.
 
 ## 6.0.33
 
@@ -226,7 +226,7 @@
 
 ## 6.0.26
 
-* Bump RoboElectric dependency to 4.4.1 to support AndroidX.
+* Bumps RoboElectric dependency to 4.4.1 to support AndroidX.
 
 ## 6.0.25
 

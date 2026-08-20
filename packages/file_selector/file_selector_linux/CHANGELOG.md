@@ -69,7 +69,7 @@
 
 ## 0.0.2+1
 
-* Updates README
+* Updates README.
 
 ## 0.0.2
 

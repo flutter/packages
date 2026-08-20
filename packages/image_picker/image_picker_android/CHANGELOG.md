@@ -33,7 +33,7 @@
 
 ## 0.8.13+12
 
-* Bump androidx.core:core from 1.13.1 to 1.17.0.
+* Bumps androidx.core:core from 1.13.1 to 1.17.0.
 
 ## 0.8.13+11
 
@@ -176,7 +176,7 @@
 
 ## 0.8.12+3
 
-* Update documentation to note that limit is not always supported.
+* Updates documentation to note that limit is not always supported.
 
 ## 0.8.12+2
 
@@ -367,7 +367,7 @@
 ## 0.8.5+8
 
 * Adds Android 13 photo picker functionality if SDK version is at least 33.
-* Bumps compileSdkVersion from 31 to 33
+* Bumps compileSdkVersion from 31 to 33.
 
 ## 0.8.5+7
 

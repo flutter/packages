@@ -59,7 +59,7 @@
 
 ## 2.1.0
 
-* Deprecated `SharedPreferencesWindows.instance` in favor of `SharedPreferencesStorePlatform.instance`.
+* Deprecates `SharedPreferencesWindows.instance` in favor of `SharedPreferencesStorePlatform.instance`.
 
 ## 2.0.4
 
@@ -67,48 +67,48 @@
 
 ## 2.0.3
 
-* Removed obsolete `pluginClass: none` from pubpsec.
+* Removes obsolete `pluginClass: none` from pubpsec.
 * Fixes newly enabled analyzer options.
 
 ## 2.0.2
 
-* Updated installation instructions in README.
+* Updates installation instructions in README.
 
 ## 2.0.1
 
-* Add `implements` to the pubspec.
-* Add `registerWith` to the Dart main class.
+* Adds `implements` to the pubspec.
+* Adds `registerWith` to the Dart main class.
 
 ## 2.0.0
 
-* Migrate to null-safety.
+* Migrates to null-safety.
 
 ## 0.0.3+1
 
-* Update Flutter SDK constraint.
+* Updates Flutter SDK constraint.
 
 ## 0.0.3
 
-* Update integration test examples to use `testWidgets` instead of `test`.
+* Updates integration test examples to use `testWidgets` instead of `test`.
 
 ## 0.0.2+4
 
-* Remove unused `test` dependency.
-* Update Dart SDK constraint in example.
+* Removes unused `test` dependency.
+* Updates Dart SDK constraint in example.
 
 ## 0.0.2+3
 
-* Check in linux/ directory for example/
+* Check in linux/ directory for example/.
 
 ## 0.0.2+2
 
-* Bump the `file` package dependency to resolve dep conflicts with `flutter_driver`.
+* Bumps the `file` package dependency to resolve dep conflicts with `flutter_driver`.
 
 ## 0.0.2+1
-* Replace path_provider dependency with path_provider_linux.
+* Replaces path_provider dependency with path_provider_linux.
 
 ## 0.0.2
-* Add iOS stub.
+* Adds iOS stub.
 
 ## 0.0.1
 * Initial release to support shared_preferences on Linux.

@@ -79,11 +79,11 @@
 
 ## 0.3.2
 
-* Improve web implementation so it can stream larger files.
+* Improves web implementation so it can stream larger files.
 
 ## 0.3.1+5
 
-* Unify XFile interface for web and mobile platforms
+* Unify XFile interface for web and mobile platforms.
 
 ## 0.3.1+4
 
@@ -92,12 +92,12 @@
 
 ## 0.3.1+3
 
-* Fix example in README
+* Fixes example in README.
 
 ## 0.3.1+2
 
-* Fix package import in README
-* Remove 'Get Started' boilerplate in README
+* Fixes package import in README.
+* Removes 'Get Started' boilerplate in README.
 
 ## 0.3.1+1
 
@@ -105,14 +105,14 @@
 
 ## 0.3.1
 
-* Fix nullability of `XFileBase`'s `path` and `name` to match the
+* Fixes nullability of `XFileBase`'s `path` and `name` to match the
   implementations to avoid potential analyzer issues.
 
 ## 0.3.0
 
-* Migrated package to null-safety.
+* Migrates package to null-safety.
 * **breaking change** According to our unit tests, the API should be backwards-compatible. Some relevant changes were made, however:
-  * Web: `lastModified` returns the epoch time as a default value, to maintain the `Future<DateTime>` return type (and not `null`)
+  * Web: `lastModified` returns the epoch time as a default value, to maintain the `Future<DateTime>` return type (and not `null`).
 
 ## 0.2.1
 
@@ -124,11 +124,11 @@
 
 ## 0.1.0+2
 
-* Fix outdated links across a number of markdown files ([#3276](https://github.com/flutter/plugins/pull/3276))
+* Fixes outdated links across a number of markdown files ([#3276](https://github.com/flutter/plugins/pull/3276)).
 
 ## 0.1.0+1
 
-* Update Flutter SDK constraint.
+* Updates Flutter SDK constraint.
 
 ## 0.1.0
 

@@ -59,19 +59,19 @@
   compile to WASM.
 * Performs the following **breaking API changes (in bold)** and other fixes to
   align with the published GIS SDK:
-  * **Removes the need to explicitly `allowInterop` in all callbacks.**
+  * **Removes the need to explicitly `allowInterop` in all callbacks.**.
   * `id`:
-    * **Changes type:**
+    * **Changes type:**.
       * `IdConfiguration.intermediate_iframe_close_callback` to
       `VoidFn?`.
     * Adds: `fedcm` to `CredentialSelectBy` enum.
     * Fixes typo in `storeCredential` `callback` positional parameter name.
   * `oauth2`:
-    * **Removes:**
+    * **Removes:**.
       * `CodeClientConfig.auto_select`, `hint` (now `login_hint`), and `hosted_domain` (now `hd`).
       * `TokenClientConfig.hint` (now `login_hint`) and `hosted_domain` (now `hd`).
       * `OverridableTokenClientConfig.hint` (now `login_hint`).
-    * **Changes types:**
+    * **Changes types:**.
       * `CodeClientConfig.redirect_uri` to `Uri?`.
       * `scope` in `CodeClientConfig` and `CodeResponse` to `List<String>`.
       * `CodeResponse.code` and `state` to `String?` (now nullable).
@@ -87,7 +87,7 @@
     * Fixes:
       * Assert that `scope` is not empty when used to create `CodeClientConfig`,
         `TokenClientConfig`, and `OverridableTokenClientConfig` instances.
-      * Deprecated `enable_serial_consent`.
+      * Deprecates `enable_serial_consent`.
 
 ## 0.2.2
 
@@ -109,13 +109,13 @@
 
 * Adds `renderButton` API to `id.dart`.
 * **Breaking Change:** Makes JS-interop API more `dart2wasm`-friendly.
-  * Removes external getters for function types
+  * Removes external getters for function types.
   * Introduces an external getter for the whole libraries instead.
   * Updates `README.md` with the new way of `import`ing the desired libraries.
 
 ## 0.1.1
 
-* Add optional `scope` to `OverridableTokenClientConfig` object.
+* Adds optional `scope` to `OverridableTokenClientConfig` object.
 * Mark some callbacks as optional properly.
 
 ## 0.1.0

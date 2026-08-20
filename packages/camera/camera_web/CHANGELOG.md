@@ -25,7 +25,7 @@
 
 ## 0.3.5
 
-* Migrates to package:web to support WASM
+* Migrates to package:web to support WASM.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 0.3.4
@@ -122,12 +122,12 @@
 
 ## 0.2.1+1
 
-* Update usage documentation.
+* Updates usage documentation.
 
 ## 0.2.1
 
-* Add video recording functionality.
-* Fix cameraNotReadable error that prevented access to the camera on some Android devices.
+* Adds video recording functionality.
+* Fixes cameraNotReadable error that prevented access to the camera on some Android devices.
 
 ## 0.2.0
 

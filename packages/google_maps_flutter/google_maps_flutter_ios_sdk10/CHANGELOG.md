@@ -8,7 +8,7 @@
 
 ## 2.18.3
 
-* Remove privacy manifest entries duplicated from Google Maps SDK.
+* Removes privacy manifest entries duplicated from Google Maps SDK.
 
 ## 2.18.2
 

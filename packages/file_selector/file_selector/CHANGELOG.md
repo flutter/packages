@@ -85,9 +85,9 @@
 ## 0.9.0
 
 * **BREAKING CHANGE**: The following methods:
-    * `openFile`
-    * `openFiles`
-    * `getSavePath`
+    * `openFile`.
+    * `openFiles`.
+    * `getSavePath`.
 
   can throw `ArgumentError`s if called with any `XTypeGroup`s that
   do not contain appropriate filters for the current platform. For
@@ -126,11 +126,11 @@
 ## 0.8.2+1
 
 * Minor code cleanup for new analysis rules.
-* Updated package description.
+* Updates package description.
 
 ## 0.8.2
 
-* Update `platform_plugin_interface` version requirement.
+* Updates `platform_plugin_interface` version requirement.
 
 ## 0.8.1
 
@@ -142,11 +142,11 @@ Migrate to null safety.
 
 ## 0.7.0+2
 
-* Update the example app: remove the deprecated `RaisedButton` and `FlatButton` widgets.
+* Updates the example app: remove the deprecated `RaisedButton` and `FlatButton` widgets.
 
 ## 0.7.0+1
 
-* Update Flutter SDK constraint.
+* Updates Flutter SDK constraint.
 
 ## 0.7.0
 
