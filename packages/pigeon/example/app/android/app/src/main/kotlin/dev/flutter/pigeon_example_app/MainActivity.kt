@@ -49,8 +49,8 @@ private class PigeonFlutterApi(binding: FlutterPlugin.FlutterPluginBinding) {
     flutterApi = MessageFlutterApi(binding.binaryMessenger)
   }
 
-  fun callFlutterMethod(aString: String, callback: (Result<String>) -> Unit) {
-    flutterApi!!.flutterMethod(aString) { echo -> callback(echo) }
+  suspend fun callFlutterMethod(aString: String): String {
+    return flutterApi!!.flutterMethod(aString)
   }
 }
 // #enddocregion kotlin-class-flutter

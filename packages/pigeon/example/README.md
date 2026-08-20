@@ -283,12 +283,8 @@ private class PigeonFlutterApi {
     flutterAPI = MessageFlutterApi(binaryMessenger: binaryMessenger)
   }
 
-  func callFlutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void
-  ) {
-    flutterAPI.flutterMethod(aString: aStringArg) {
-      completion($0)
-    }
+  func callFlutterMethod(aString aStringArg: String?) async throws -> String {
+    return try await flutterAPI.flutterMethod(aString: aStringArg)
   }
 }
 ```
@@ -304,8 +300,8 @@ private class PigeonFlutterApi(binding: FlutterPlugin.FlutterPluginBinding) {
     flutterApi = MessageFlutterApi(binding.binaryMessenger)
   }
 
-  fun callFlutterMethod(aString: String, callback: (Result<String>) -> Unit) {
-    flutterApi!!.flutterMethod(aString) { echo -> callback(echo) }
+  suspend fun callFlutterMethod(aString: String): String {
+    return flutterApi!!.flutterMethod(aString)
   }
 }
 ```

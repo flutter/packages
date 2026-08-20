@@ -35,12 +35,8 @@ private class PigeonFlutterApi {
     flutterAPI = MessageFlutterApi(binaryMessenger: binaryMessenger)
   }
 
-  func callFlutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void
-  ) {
-    flutterAPI.flutterMethod(aString: aStringArg) {
-      completion($0)
-    }
+  func callFlutterMethod(aString aStringArg: String?) async throws -> String {
+    return try await flutterAPI.flutterMethod(aString: aStringArg)
   }
 }
 // #enddocregion swift-class-flutter
