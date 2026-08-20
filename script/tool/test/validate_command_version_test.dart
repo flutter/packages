@@ -1675,7 +1675,7 @@ packages/package/CHANGELOG.md
       });
 
       test(
-        'ignores changelog modifications check with override: allow CHANGELOG.md edit label',
+        'ignores changelog modifications check with override: allow changelog edit label',
         () async {
           final RepositoryPackage package = createFakePackage(
             'package',
@@ -1705,7 +1705,7 @@ packages/package/CHANGELOG.md
           final List<String> output = await runCapturingPrint(runner, <String>[
             'validate',
             '--base-sha=main',
-            '--pr-labels=override: allow CHANGELOG.md edit',
+            '--pr-labels=override: allow changelog edit',
           ]);
 
           expect(
@@ -1714,7 +1714,7 @@ packages/package/CHANGELOG.md
               contains('Running for package'),
               contains(
                 'Allowing CHANGELOG.md update due to the '
-                '"override: allow CHANGELOG.md edit" label.',
+                '"override: allow changelog edit" label.',
               ),
               contains('(1 with warnings)'),
             ]),
