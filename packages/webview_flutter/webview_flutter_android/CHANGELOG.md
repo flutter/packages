@@ -1,3 +1,10 @@
+## 4.15.0
+
+* Adds support for `PlatformWebViewController.addDocumentStartJavaScript` and
+  `PlatformWebViewController.supportsAddDocumentStartJavaScript`.
+* Introduces `AndroidDocumentStartJavaScriptParams`, a platform-specific extension of
+  `DocumentStartJavaScriptParams` for Android that adds support for `allowedOriginRules`.
+
 ## 4.14.0
 * Adds support for configuring Web Authentication in `AndroidWebViewController` with `setWebAuthenticationSupport` to enable Passkey and other related Authentication.
 

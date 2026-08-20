@@ -1,3 +1,9 @@
+## 4.15.0
+
+* Adds `WebViewController.addDocumentStartJavaScript` and
+  `WebViewController.supportsAddDocumentStartJavaScript` to support injecting JavaScript that runs
+  before the page's own scripts.
+
 ## 4.14.1
 
 * Adds documentation for `NavigationDelegate` callback parameters.

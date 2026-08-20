@@ -223,6 +223,10 @@ class PigeonOverrides {
   /// Overrides [WebViewFeature.isFeatureSupported].
   static Future<bool> Function(String)? webViewFeature_isFeatureSupported;
 
+  /// Overrides [WebViewCompat.addDocumentStartJavaScript].
+  static Future<void> Function(WebView, String, List<String>)?
+  webViewCompat_addDocumentStartJavaScript;
+
   /// Sets all overridden ProxyApi class members to null.
   static void pigeon_reset() {
     cookieManager_instance = null;
@@ -237,6 +241,7 @@ class PigeonOverrides {
     webSettingsCompat_setPaymentRequestEnabled = null;
     webSettingsCompat_setWebAuthenticationSupport = null;
     webViewFeature_isFeatureSupported = null;
+    webViewCompat_addDocumentStartJavaScript = null;
   }
 }
 
@@ -380,6 +385,7 @@ class PigeonInstanceManager {
     Certificate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     WebSettingsCompat.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     WebViewFeature.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebViewCompat.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
 
@@ -7321,6 +7327,114 @@ class WebViewFeature extends PigeonInternalProxyApiBaseClass {
   @override
   WebViewFeature pigeon_copy() {
     return WebViewFeature.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+    );
+  }
+}
+
+/// Compatibility version of `WebView`.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/webkit/WebViewCompat.
+class WebViewCompat extends PigeonInternalProxyApiBaseClass {
+  /// Constructs [WebViewCompat] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  WebViewCompat.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager});
+
+  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecWebViewCompat =
+      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    WebViewCompat Function()? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
+      pigeon_instanceManager ?? PigeonInstanceManager.instance,
+    );
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebViewCompat.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final int arg_pigeon_instanceIdentifier = args[0]! as int;
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+              pigeon_newInstance?.call() ??
+                  WebViewCompat.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                  ),
+              arg_pigeon_instanceIdentifier,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+  }
+
+  /// Adds a JavaScript script to the `WebView` which will be executed in any
+  /// frame whose origin matches `allowedOriginRules` when the document begins
+  /// to load.
+  ///
+  /// This method should only be called if `WebViewFeature.isFeatureSupported`
+  /// returns true for `WebViewFeature.DOCUMENT_START_SCRIPT`.
+  static Future<void> addDocumentStartJavaScript(
+    WebView webView,
+    String script,
+    List<String> allowedOriginRules, {
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) async {
+    if (PigeonOverrides.webViewCompat_addDocumentStartJavaScript != null) {
+      return PigeonOverrides.webViewCompat_addDocumentStartJavaScript!(
+        webView,
+        script,
+        allowedOriginRules,
+      );
+    }
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
+      pigeon_instanceManager ?? PigeonInstanceManager.instance,
+    );
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_android.WebViewCompat.addDocumentStartJavaScript';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      webView,
+      script,
+      allowedOriginRules,
+    ]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
+
+  @override
+  WebViewCompat pigeon_copy() {
+    return WebViewCompat.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
     );
