@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'app_bar_utils.dart';
+import 'finders.dart';
 import 'semantics_tester.dart';
 
 TextStyle? _iconStyle(WidgetTester tester, IconData icon) {
@@ -1956,7 +1957,7 @@ void main() {
       ),
     );
 
-    final Finder endDrawerFinder = find.byTooltip('Open navigation menu');
+    final Finder endDrawerFinder = findByTooltip('Open navigation menu');
     await tester.tap(endDrawerFinder);
     await tester.pump();
 

@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'feedback_tester.dart';
+import 'finders.dart';
 import 'semantics_tester.dart';
 
 void main() {
@@ -2356,7 +2357,7 @@ void main() {
     // The default tooltip is defined as [MaterialLocalizations.showMenuTooltip]
     // and it is used when no tooltip is provided.
     expect(find.byType(Tooltip), findsNWidgets(3));
-    expect(find.byTooltip(const DefaultMaterialLocalizations().showMenuTooltip), findsNWidgets(3));
+    expect(findByTooltip(const DefaultMaterialLocalizations().showMenuTooltip), findsNWidgets(3));
   });
 
   testWidgets('PopupMenuButton custom tooltip', (WidgetTester tester) async {
@@ -2404,7 +2405,7 @@ void main() {
     );
 
     expect(find.byType(Tooltip), findsNWidgets(3));
-    expect(find.byTooltip('Test tooltip'), findsNWidgets(3));
+    expect(findByTooltip('Test tooltip'), findsNWidgets(3));
   });
 
   testWidgets('Allow Widget for PopupMenuButton.icon', (WidgetTester tester) async {
