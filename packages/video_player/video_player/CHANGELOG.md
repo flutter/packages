@@ -382,7 +382,7 @@ receives an`Uri` instead of a `String` url.
 * Updates the example app: remove the deprecated `RaisedButton` and `FlatButton` widgets.
 * Migrates from deprecated `defaultBinaryMessenger`.
 * Fixes an issue where a crash can occur after a closing a video player view on iOS.
-* Silently ignores the mixWithOthers VideoPlayerOptions in web instead of throwing an exception.
+* Sets the `mixWithOthers` `VideoPlayerOptions` in web now is silently ignored instead of throwing an exception.
 
 ## 1.0.2
 
