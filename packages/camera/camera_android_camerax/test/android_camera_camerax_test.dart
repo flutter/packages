@@ -5772,11 +5772,11 @@ void main() {
 
   test('setPreviewMode sets previewMode on AndroidCameraCameraX', () {
     final camera = AndroidCameraCameraX();
-    expect(camera.previewMode, equals(ImplementationMode.performance));
-
-    camera.setPreviewMode(ImplementationMode.compatible);
-
     expect(camera.previewMode, equals(ImplementationMode.compatible));
+
+    camera.setPreviewMode(ImplementationMode.performance);
+
+    expect(camera.previewMode, equals(ImplementationMode.performance));
   });
 }
 

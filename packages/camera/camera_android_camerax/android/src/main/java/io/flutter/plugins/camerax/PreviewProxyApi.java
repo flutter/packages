@@ -10,6 +10,7 @@ import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
+import androidx.annotation.VisibleForTesting;
 import androidx.camera.camera2.interop.Camera2Interop;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import androidx.camera.core.Preview;
@@ -28,7 +29,8 @@ import java.util.concurrent.Executors;
  */
 class PreviewProxyApi extends PigeonApiPreview {
   // Stores the SurfaceProducer when it is used as a SurfaceProvider for a Preview.
-  private final Map<Preview, TextureRegistry.SurfaceProducer> surfaceProducers = new HashMap<>();
+  @VisibleForTesting
+  final Map<Preview, TextureRegistry.SurfaceProducer> surfaceProducers = new HashMap<>();
 
   PreviewProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);

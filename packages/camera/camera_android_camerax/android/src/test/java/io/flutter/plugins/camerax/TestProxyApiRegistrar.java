@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.platform.PlatformViewRegistry;
 import io.flutter.view.TextureRegistry;
 
 /**
@@ -17,7 +18,11 @@ import io.flutter.view.TextureRegistry;
  */
 public class TestProxyApiRegistrar extends ProxyApiRegistrar {
   public TestProxyApiRegistrar() {
-    super(mock(BinaryMessenger.class), mock(Context.class), mock(TextureRegistry.class));
+    super(
+        mock(BinaryMessenger.class),
+        mock(Context.class),
+        mock(PlatformViewRegistry.class),
+        mock(TextureRegistry.class));
   }
 
   @Override

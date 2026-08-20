@@ -25,14 +25,12 @@ class CameraPreview extends StatelessWidget {
             valueListenable: controller,
             builder: (BuildContext context, Object? value, Widget? child) {
               return AspectRatio(
-                aspectRatio: _isLandscape()
+                aspectRatio: _isLandscape(context)
                     ? controller.value.aspectRatio
                     : (1 / controller.value.aspectRatio),
-                child: ClipRect(
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: <Widget>[controller.buildPreview(), child ?? Container()],
-                  ),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: <Widget>[controller.buildPreview(), child ?? Container()],
                 ),
               );
             },
@@ -57,11 +55,20 @@ class CameraPreview extends StatelessWidget {
     return quarterTurns;
   }
 
-  bool _isLandscape() {
-    return <DeviceOrientation>[
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ].contains(_getApplicableOrientation());
+  bool _isLandscape(BuildContext context) {
+    if (controller.value.isRecordingVideo) {
+      return <DeviceOrientation>[
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ].contains(controller.value.recordingOrientation);
+    }
+    if (controller.value.lockedCaptureOrientation != null) {
+      return <DeviceOrientation>[
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ].contains(controller.value.lockedCaptureOrientation);
+    }
+    return MediaQuery.of(context).orientation == Orientation.landscape;
   }
 
   DeviceOrientation _getApplicableOrientation() {

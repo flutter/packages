@@ -72,7 +72,10 @@ public class DeviceOrientationManager {
     return new OrientationEventListener(getContext()) {
       @Override
       public void onOrientationChanged(int orientation) {
-        handleUiOrientationChange();
+        if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
+          return;
+        }
+        handleSensorOrientationChange(orientation);
       }
     };
   }
@@ -86,6 +89,72 @@ public class DeviceOrientationManager {
 
     orientationEventListener.disable();
     orientationEventListener = null;
+  }
+
+  /**
+   * Handles orientation changes coming from the device's sensors.
+   *
+   * <p>This method is visible for testing purposes only and should never be used outside this
+   * class.
+   */
+  @VisibleForTesting
+  void handleSensorOrientationChange(int angle) {
+    PlatformChannel.DeviceOrientation orientation = calculateSensorOrientation(angle);
+    handleOrientationChange(this, orientation, lastOrientation, api);
+    lastOrientation = orientation;
+  }
+
+  /**
+   * Calculates the sensor orientation based on the supplied angle.
+   *
+   * <p>This method is visible for testing purposes only and should never be used outside this
+   * class.
+   *
+   * @param angle Orientation angle.
+   * @return The sensor orientation based on the supplied angle.
+   */
+  @VisibleForTesting
+  PlatformChannel.DeviceOrientation calculateSensorOrientation(int angle) {
+    final int tolerance = 45;
+    angle += tolerance;
+
+    // Orientation is 0 in the default orientation mode. This is portrait-mode for phones
+    // and landscape for tablets. We have to compensate for this by calculating the default
+    // orientation, and apply an offset accordingly.
+    int defaultDeviceOrientation = getDeviceDefaultOrientation();
+    if (defaultDeviceOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+      angle += 90;
+    }
+    // Determine the orientation
+    angle = angle % 360;
+    return new PlatformChannel.DeviceOrientation[] {
+      PlatformChannel.DeviceOrientation.PORTRAIT_UP,
+      PlatformChannel.DeviceOrientation.LANDSCAPE_LEFT,
+      PlatformChannel.DeviceOrientation.PORTRAIT_DOWN,
+      PlatformChannel.DeviceOrientation.LANDSCAPE_RIGHT,
+    }[angle / 90];
+  }
+
+  /**
+   * Gets the default orientation of the device.
+   *
+   * <p>This method is visible for testing purposes only and should never be used outside this
+   * class.
+   *
+   * @return The default orientation of the device.
+   */
+  @VisibleForTesting
+  int getDeviceDefaultOrientation() {
+    Configuration config = getContext().getResources().getConfiguration();
+    int rotation = getDefaultRotation();
+    if (((rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180)
+            && config.orientation == Configuration.ORIENTATION_LANDSCAPE)
+        || ((rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270)
+            && config.orientation == Configuration.ORIENTATION_PORTRAIT)) {
+      return Configuration.ORIENTATION_LANDSCAPE;
+    } else {
+      return Configuration.ORIENTATION_PORTRAIT;
+    }
   }
 
   /**

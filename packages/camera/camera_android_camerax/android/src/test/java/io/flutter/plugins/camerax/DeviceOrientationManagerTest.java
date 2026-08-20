@@ -9,6 +9,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -69,13 +70,13 @@ public class DeviceOrientationManagerTest {
   public void start_createsExpectedOrientationEventListener() {
     DeviceOrientationManager deviceOrientationManagerSpy = spy(deviceOrientationManager);
 
-    doNothing().when(deviceOrientationManagerSpy).handleUiOrientationChange();
+    doNothing().when(deviceOrientationManagerSpy).handleSensorOrientationChange(3);
 
     deviceOrientationManagerSpy.start();
     deviceOrientationManagerSpy.orientationEventListener.onOrientationChanged(
         /* some device orientation */ 3);
 
-    verify(deviceOrientationManagerSpy).handleUiOrientationChange();
+    verify(deviceOrientationManagerSpy).handleSensorOrientationChange(3);
   }
 
   @Test
@@ -172,6 +173,61 @@ public class DeviceOrientationManagerTest {
     setUpUIOrientationMocks(Configuration.ORIENTATION_UNDEFINED, Surface.ROTATION_0);
     uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.PORTRAIT_UP, uiOrientation);
+  }
+
+  @Test
+  public void calculateSensorOrientation_returnsExpectedOrientationForPortraitDefaultDevice() {
+    DeviceOrientationManager deviceOrientationManagerSpy = spy(deviceOrientationManager);
+    doReturn(Configuration.ORIENTATION_PORTRAIT)
+        .when(deviceOrientationManagerSpy)
+        .getDeviceDefaultOrientation();
+
+    assertEquals(
+        DeviceOrientation.PORTRAIT_UP,
+        deviceOrientationManagerSpy.calculateSensorOrientation(0));
+    assertEquals(
+        DeviceOrientation.LANDSCAPE_LEFT,
+        deviceOrientationManagerSpy.calculateSensorOrientation(90));
+    assertEquals(
+        DeviceOrientation.PORTRAIT_DOWN,
+        deviceOrientationManagerSpy.calculateSensorOrientation(180));
+    assertEquals(
+        DeviceOrientation.LANDSCAPE_RIGHT,
+        deviceOrientationManagerSpy.calculateSensorOrientation(270));
+  }
+
+  @Test
+  public void calculateSensorOrientation_returnsExpectedOrientationForLandscapeDefaultDevice() {
+    DeviceOrientationManager deviceOrientationManagerSpy = spy(deviceOrientationManager);
+    doReturn(Configuration.ORIENTATION_LANDSCAPE)
+        .when(deviceOrientationManagerSpy)
+        .getDeviceDefaultOrientation();
+
+    assertEquals(
+        DeviceOrientation.LANDSCAPE_LEFT,
+        deviceOrientationManagerSpy.calculateSensorOrientation(0));
+    assertEquals(
+        DeviceOrientation.PORTRAIT_DOWN,
+        deviceOrientationManagerSpy.calculateSensorOrientation(90));
+    assertEquals(
+        DeviceOrientation.LANDSCAPE_RIGHT,
+        deviceOrientationManagerSpy.calculateSensorOrientation(180));
+    assertEquals(
+        DeviceOrientation.PORTRAIT_UP,
+        deviceOrientationManagerSpy.calculateSensorOrientation(270));
+  }
+
+  @Test
+  public void getDeviceDefaultOrientation_returnsExpectedOrientation() {
+    setUpUIOrientationMocks(Configuration.ORIENTATION_PORTRAIT, Surface.ROTATION_0);
+    assertEquals(
+        Configuration.ORIENTATION_PORTRAIT,
+        deviceOrientationManager.getDeviceDefaultOrientation());
+
+    setUpUIOrientationMocks(Configuration.ORIENTATION_LANDSCAPE, Surface.ROTATION_0);
+    assertEquals(
+        Configuration.ORIENTATION_LANDSCAPE,
+        deviceOrientationManager.getDeviceDefaultOrientation());
   }
 
   private void setUpUIOrientationMocks(int orientation, int rotation) {

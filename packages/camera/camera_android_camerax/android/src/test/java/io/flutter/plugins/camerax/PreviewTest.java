@@ -94,10 +94,10 @@ public class PreviewTest {
         }.getPigeonApiPreview();
 
     final Preview instance = mock(Preview.class);
-    final SystemServicesManager systemServicesManager = mock(SystemServicesManager.class);
+    final Preview.SurfaceProvider surfaceProvider = mock(Preview.SurfaceProvider.class);
 
-    assertEquals(textureId, api.setSurfaceProvider(instance, systemServicesManager));
-    verify(instance).setSurfaceProvider(any(Preview.SurfaceProvider.class));
+    api.setSurfaceProvider(instance, surfaceProvider);
+    verify(instance).setSurfaceProvider(surfaceProvider);
   }
 
   @Test
@@ -239,18 +239,18 @@ public class PreviewTest {
         mock(TextureRegistry.SurfaceProducer.class);
     when(mockSurfaceProducer.id()).thenReturn(0L);
     when(mockTextureRegistry.createSurfaceProducer()).thenReturn(mockSurfaceProducer);
-    final PigeonApiPreview api =
-        new TestProxyApiRegistrar() {
-          @NonNull
-          @Override
-          TextureRegistry getTextureRegistry() {
-            return mockTextureRegistry;
-          }
-        }.getPigeonApiPreview();
+    final PreviewProxyApi api =
+        (PreviewProxyApi)
+            new TestProxyApiRegistrar() {
+              @NonNull
+              @Override
+              TextureRegistry getTextureRegistry() {
+                return mockTextureRegistry;
+              }
+            }.getPigeonApiPreview();
 
     final Preview instance = mock(Preview.class);
-    final SystemServicesManager systemServicesManager = mock(SystemServicesManager.class);
-    api.setSurfaceProvider(instance, systemServicesManager);
+    api.surfaceProducers.put(instance, mockSurfaceProducer);
     api.releaseSurfaceProvider(instance);
 
     verify(mockSurfaceProducer).release();
@@ -286,18 +286,18 @@ public class PreviewTest {
         mock(TextureRegistry.SurfaceProducer.class);
     when(mockSurfaceProducer.id()).thenReturn(0L);
     when(mockTextureRegistry.createSurfaceProducer()).thenReturn(mockSurfaceProducer);
-    final PigeonApiPreview api =
-        new TestProxyApiRegistrar() {
-          @NonNull
-          @Override
-          TextureRegistry getTextureRegistry() {
-            return mockTextureRegistry;
-          }
-        }.getPigeonApiPreview();
+    final PreviewProxyApi api =
+        (PreviewProxyApi)
+            new TestProxyApiRegistrar() {
+              @NonNull
+              @Override
+              TextureRegistry getTextureRegistry() {
+                return mockTextureRegistry;
+              }
+            }.getPigeonApiPreview();
 
     final Preview instance = mock(Preview.class);
-    final SystemServicesManager systemServicesManager = mock(SystemServicesManager.class);
-    api.setSurfaceProvider(instance, systemServicesManager);
+    api.surfaceProducers.put(instance, mockSurfaceProducer);
     api.surfaceProducerHandlesCropAndRotation(instance);
 
     verify(mockSurfaceProducer).handlesCropAndRotation();
