@@ -600,14 +600,19 @@ abstract class PackageCommand extends Command<void> {
   Stream<PackageEnumerationEntry> getTargetPackagesAndSubpackages({
     bool filterExcluded = true,
   }) async* {
+    final Set<String> excludedPackageNames = getExcludedPackageNames();
     await for (final PackageEnumerationEntry package in getTargetPackages(
       filterExcluded: filterExcluded,
     )) {
       yield package;
       yield* Stream<PackageEnumerationEntry>.fromIterable(
         package.package.getSubpackages().map(
-          (RepositoryPackage subPackage) =>
-              PackageEnumerationEntry(subPackage, excluded: package.excluded),
+          (RepositoryPackage subPackage) => PackageEnumerationEntry(
+            subPackage,
+            excluded: excludedPackageNames.contains(
+              _subPackageName(subPackage, parent: package.package),
+            ),
+          ),
         ),
       );
     }
@@ -796,5 +801,9 @@ abstract class PackageCommand extends Command<void> {
           specialFiles.contains(path) ||
           specialDirectories.any((String dir) => path.startsWith(dir)),
     );
+  }
+
+  String _subPackageName(RepositoryPackage subpackage, {required RepositoryPackage parent}) {
+    return path.join(path.basename(parent.path), path.relative(subpackage.path, from: parent.path));
   }
 }
