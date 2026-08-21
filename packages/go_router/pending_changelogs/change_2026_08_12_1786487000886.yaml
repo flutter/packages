@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes relative navigation resolving against the underlying route instead of the imperatively-pushed route.
+version: patch

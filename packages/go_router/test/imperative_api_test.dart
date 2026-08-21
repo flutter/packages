@@ -286,4 +286,57 @@ void main() {
     expect(find.text('shell'), findsNothing);
     expect(find.byKey(e), findsOneWidget);
   });
+
+  for (final MapEntry<String, void Function(GoRouter, String)> operation
+      in <String, void Function(GoRouter, String)>{
+        'go': (GoRouter router, String location) => router.go(location),
+        'push': (GoRouter router, String location) => router.push<void>(location),
+        'pushReplacement': (GoRouter router, String location) =>
+            router.pushReplacement<void>(location),
+        'replace': (GoRouter router, String location) => router.replace<void>(location),
+      }.entries) {
+    testWidgets('${operation.key} resolves a relative route against the imperative top', (
+      WidgetTester tester,
+    ) async {
+      // Regression test for https://github.com/flutter/flutter/issues/182441.
+      final homeReviews = UniqueKey();
+      final productReviews = UniqueKey();
+      final routes = <RouteBase>[
+        GoRoute(
+          path: '/home',
+          builder: (_, _) => const DummyScreen(),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'reviews',
+              builder: (_, _) => DummyScreen(key: homeReviews),
+            ),
+          ],
+        ),
+        GoRoute(
+          path: '/products/:id',
+          builder: (_, _) => const DummyScreen(),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'reviews',
+              builder: (_, _) => DummyScreen(key: productReviews),
+            ),
+          ],
+        ),
+      ];
+      final GoRouter router = await createRouter(routes, tester, initialLocation: '/home');
+
+      router.push<void>('/products/9');
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, '/products/9');
+
+      operation.value(router, './reviews?sort=recent#top');
+      await tester.pumpAndSettle();
+
+      expect(router.state.uri.path, '/products/9/reviews');
+      expect(router.state.uri.queryParameters, <String, String>{'sort': 'recent'});
+      expect(router.state.uri.fragment, 'top');
+      expect(find.byKey(productReviews), findsOneWidget);
+      expect(find.byKey(homeReviews), findsNothing);
+    });
+  }
 }

@@ -17,6 +17,7 @@ import 'misc/constants.dart';
 import 'misc/inherited_router.dart';
 import 'on_enter.dart';
 import 'parser.dart';
+import 'path_utils.dart';
 import 'route.dart';
 import 'state.dart';
 
@@ -401,11 +402,24 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     fragment: fragment,
   );
 
+  String _resolveRelativeLocation(String location) {
+    if (!location.startsWith('./')) {
+      return location;
+    }
+
+    final RouteMatch? lastMatch = routerDelegate.currentConfiguration.lastOrNull;
+    if (lastMatch is! ImperativeRouteMatch) {
+      return location;
+    }
+
+    return concatenateUris(lastMatch.matches.uri, Uri.parse(location)).toString();
+  }
+
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
   void go(String location, {Object? extra}) {
     log('going to $location');
-    routeInformationProvider.go(location, extra: extra);
+    routeInformationProvider.go(_resolveRelativeLocation(location), extra: extra);
   }
 
   /// Restore the RouteMatchList
@@ -447,7 +461,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   Future<T?> push<T extends Object?>(String location, {Object? extra}) async {
     log('pushing $location');
     return routeInformationProvider.push<T>(
-      location,
+      _resolveRelativeLocation(location),
       base: routerDelegate.currentConfiguration,
       extra: extra,
     );
@@ -477,7 +491,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   Future<T?> pushReplacement<T extends Object?>(String location, {Object? extra}) {
     log('pushReplacement $location');
     return routeInformationProvider.pushReplacement<T>(
-      location,
+      _resolveRelativeLocation(location),
       base: routerDelegate.currentConfiguration,
       extra: extra,
     );
@@ -515,7 +529,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   Future<T?> replace<T>(String location, {Object? extra}) {
     log('replace $location');
     return routeInformationProvider.replace<T>(
-      location,
+      _resolveRelativeLocation(location),
       base: routerDelegate.currentConfiguration,
       extra: extra,
     );
