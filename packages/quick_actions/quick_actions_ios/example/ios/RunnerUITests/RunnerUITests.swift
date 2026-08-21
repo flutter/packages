@@ -38,7 +38,7 @@ class RunnerUITests: XCTestCase {
 
   func testQuickActionWithFreshStart() throws {
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    let quickActionsAppIcon = springboard.icons["quick_actions_example"]
+    let quickActionsAppIcon = springboard.icons["Quick Actions Example"]
 
     findAndTapQuickActionButton(
       buttonName: "Action two", quickActionsAppIcon: quickActionsAppIcon, springboard: springboard)
@@ -73,7 +73,7 @@ class RunnerUITests: XCTestCase {
     XCUIDevice.shared.press(.home)
 
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    let quickActionsAppIcon = springboard.icons["quick_actions_example"]
+    let quickActionsAppIcon = springboard.icons["Quick Actions Example"]
     if !quickActionsAppIcon.waitForExistence(timeout: elementWaitingTime) {
       XCTFail(
         "Failed due to not able to find the example app from springboard with \(elementWaitingTime) seconds. Springboard debug description: \(springboard.debugDescription)"
