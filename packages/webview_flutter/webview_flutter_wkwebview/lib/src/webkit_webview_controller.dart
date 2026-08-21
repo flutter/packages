@@ -953,6 +953,7 @@ class WebKitWebViewWidgetCreationParams extends PlatformWebViewWidgetCreationPar
     required super.controller,
     super.layoutDirection,
     super.gestureRecognizers,
+    this.gestureBlockingPolicy = UiKitViewGestureBlockingPolicy.fallbackToPluginDefault,
   });
 
   /// Constructs a [WebKitWebViewWidgetCreationParams] using a
@@ -966,14 +967,30 @@ class WebKitWebViewWidgetCreationParams extends PlatformWebViewWidgetCreationPar
         gestureRecognizers: params.gestureRecognizers,
       );
 
+  /// How the gesture recognizers of the underlying `WKWebView` are blocked by
+  /// Flutter.
+  ///
+  /// This is only used on iOS; the value is ignored on macOS.
+  ///
+  /// Defaults to [UiKitViewGestureBlockingPolicy.fallbackToPluginDefault],
+  /// which uses the policy the plugin registers the platform view with.
+  ///
+  /// Setting this to [UiKitViewGestureBlockingPolicy.doNotBlockGesture]
+  /// derives the blocking decision from hit testing instead of Flutter's
+  /// gesture arena, which can work around a web view that stops responding to
+  /// touches, at the cost of the web view potentially recognizing a gesture
+  /// that should have been blocked.
+  final UiKitViewGestureBlockingPolicy gestureBlockingPolicy;
+
   @override
-  int get hashCode => Object.hash(controller, layoutDirection);
+  int get hashCode => Object.hash(controller, layoutDirection, gestureBlockingPolicy);
 
   @override
   bool operator ==(Object other) {
     return other is WebKitWebViewWidgetCreationParams &&
         controller == other.controller &&
-        layoutDirection == other.layoutDirection;
+        layoutDirection == other.layoutDirection &&
+        gestureBlockingPolicy == other.gestureBlockingPolicy;
   }
 }
 
@@ -1013,6 +1030,7 @@ class WebKitWebViewWidget extends PlatformWebViewWidget {
       return UiKitView(
         key: key,
         viewType: 'plugins.flutter.io/webview',
+        gestureBlockingPolicy: _webKitParams.gestureBlockingPolicy,
         onPlatformViewCreated: (_) {},
         layoutDirection: params.layoutDirection,
         gestureRecognizers: params.gestureRecognizers,
