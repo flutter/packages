@@ -1144,17 +1144,17 @@
   OCMStub([mockAVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo])
       .andReturn(AVAuthorizationStatusAuthorized);
 
-  UIWindowScene *scene =
-      (UIWindowScene *)UIApplication.sharedApplication.connectedScenes.allObjects.firstObject;
-  UIWindow *window = [[UIWindow alloc] initWithWindowScene:scene];
-  window.frame = scene.coordinateSpace.bounds;
-  UIViewController *rootViewController = [[UIViewController alloc] init];
-  window.rootViewController = rootViewController;
-  [rootViewController loadViewIfNeeded];
-  [window makeKeyAndVisible];
+  id mockViewController = OCMClassMock([UIViewController class]);
+  __block UIAlertController *alert = nil;
+  OCMStub([mockViewController presentViewController:[OCMArg any] animated:YES completion:nil])
+      .andDo(^(NSInvocation *invocation) {
+        __unsafe_unretained UIAlertController *presented = nil;
+        [invocation getArgument:&presented atIndex:2];
+        alert = presented;
+      });
 
   FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc]
-      initWithViewProvider:[[StubViewProvider alloc] initWithViewController:rootViewController]];
+      initWithViewProvider:[[StubViewProvider alloc] initWithViewController:mockViewController]];
   [plugin setImagePickerControllerOverrides:@[ [[UIImagePickerController alloc] init] ]];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"unavailable"];
@@ -1169,7 +1169,6 @@
                    }];
   [self waitForExpectationsWithTimeout:30 handler:nil];
 
-  UIAlertController *alert = (UIAlertController *)rootViewController.presentedViewController;
   XCTAssertTrue([alert isKindOfClass:[UIAlertController class]]);
   void (^handler)(UIAlertAction *) = [alert.actions.firstObject valueForKey:@"handler"];
   if (handler) {
@@ -1186,14 +1185,10 @@
 }
 
 - (void)testPresentingViewControllerReusesExistingBlockerWindow {
-  UIWindowScene *scene =
-      (UIWindowScene *)UIApplication.sharedApplication.connectedScenes.allObjects.firstObject;
-  UIWindow *window = [[UIWindow alloc] initWithWindowScene:scene];
-  window.frame = scene.coordinateSpace.bounds;
+  UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
   UIViewController *rootViewController = [[UIViewController alloc] init];
   window.rootViewController = rootViewController;
   [rootViewController loadViewIfNeeded];
-  [window makeKeyAndVisible];
 
   FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc]
       initWithViewProvider:[[StubViewProvider alloc] initWithViewController:rootViewController]];
@@ -1204,23 +1199,15 @@
 }
 
 - (void)testPresentingViewControllerWithoutWindowSceneUsesFrame {
-  UIWindowScene *scene =
-      (UIWindowScene *)UIApplication.sharedApplication.connectedScenes.allObjects.firstObject;
-  UIWindow *window = [[UIWindow alloc] initWithWindowScene:scene];
-  window.frame = scene.coordinateSpace.bounds;
+  UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
   UIViewController *rootViewController = [[UIViewController alloc] init];
   window.rootViewController = rootViewController;
   [rootViewController loadViewIfNeeded];
-  [window makeKeyAndVisible];
-
-  id mockWindow = OCMPartialMock(window);
-  OCMStub([mockWindow windowScene]).andReturn(nil);
 
   FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc]
       initWithViewProvider:[[StubViewProvider alloc] initWithViewController:rootViewController]];
   XCTAssertNotNil([plugin presentingViewControllerForImagePickerInNewWindow]);
   [plugin removeInteractionBlocker];
-  [mockWindow stopMocking];
 }
 
 - (void)testDefaultViewProviderReturnsRegistrarViewController {
