@@ -2815,9 +2815,12 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
   testWidgets('async task queue handlers run on a background thread', (_) async {
     final api = HostIntegrationCoreApi();
+    // Swift async methods inherently run on a background thread pool regardless of
+    // platform, whereas other languages rely on engine TaskQueue support.
     final bool taskQueuesSupported =
         defaultTargetPlatform == TargetPlatform.android ||
-        defaultTargetPlatform == TargetPlatform.iOS;
+        defaultTargetPlatform == TargetPlatform.iOS ||
+        targetGenerator == TargetGenerator.swift;
     expect(await api.asyncTaskQueueIsBackgroundThread(), taskQueuesSupported);
   });
 

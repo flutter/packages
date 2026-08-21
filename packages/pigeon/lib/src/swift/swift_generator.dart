@@ -1891,41 +1891,24 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
           call = onCreateCall(methodArgument, apiVarName: 'api');
         }
         if (useAsync) {
-          void writeTaskBody({required bool mainActor}) {
-            final taskDeclaration = mainActor ? 'Task { @MainActor in' : 'Task {';
-            indent.writeln(taskDeclaration);
-            indent.nest(1, () {
-              indent.write('do ');
-              indent.addScoped('{', '}', () {
-                if (returnType.isVoid) {
-                  indent.writeln('try await $call');
-                  indent.writeln('reply(wrapResult(nil))');
-                } else {
-                  indent.writeln('let result = try await $call');
-                  indent.writeln('reply(wrapResult(result))');
-                }
-              }, addTrailingNewline: false);
-              indent.addScoped(' catch {', '}', () {
-                indent.writeln('reply(wrapError(error))');
-              });
+          final taskDeclaration = serialBackgroundQueue == null ? 'Task { @MainActor in' : 'Task {';
+          indent.writeln(taskDeclaration);
+          indent.nest(1, () {
+            indent.write('do ');
+            indent.addScoped('{', '}', () {
+              if (returnType.isVoid) {
+                indent.writeln('try await $call');
+                indent.writeln('reply(wrapResult(nil))');
+              } else {
+                indent.writeln('let result = try await $call');
+                indent.writeln('reply(wrapResult(result))');
+              }
+            }, addTrailingNewline: false);
+            indent.addScoped(' catch {', '}', () {
+              indent.writeln('reply(wrapError(error))');
             });
-            indent.writeln('}');
-          }
-
-          if (serialBackgroundQueue == null) {
-            writeTaskBody(mainActor: true);
-          } else {
-            // Task queues are currently only supported on iOS in the engine
-            // embedder (see https://github.com/flutter/flutter/issues/162613).
-            // On macOS, taskQueue is nil so messages arrive on the main thread;
-            // running on @MainActor preserves fallback main-thread execution on
-            // platforms without task queue support.
-            indent.writeln('#if os(iOS)');
-            writeTaskBody(mainActor: false);
-            indent.writeln('#else');
-            writeTaskBody(mainActor: true);
-            indent.writeln('#endif');
-          }
+          });
+          indent.writeln('}');
         } else if (isAsynchronous) {
           final resultName = returnType.isVoid ? 'nil' : 'res';
           final successVariableInit = returnType.isVoid ? '' : '(let res)';

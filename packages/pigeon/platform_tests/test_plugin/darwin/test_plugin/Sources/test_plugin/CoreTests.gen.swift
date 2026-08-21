@@ -3650,25 +3650,14 @@ class HostIntegrationCoreApiSetup {
         binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
     if let api = api {
       asyncTaskQueueIsBackgroundThreadChannel.setMessageHandler { _, reply in
-        #if os(iOS)
-          Task {
-            do {
-              let result = try await api.asyncTaskQueueIsBackgroundThread()
-              reply(wrapResult(result))
-            } catch {
-              reply(wrapError(error))
-            }
+        Task {
+          do {
+            let result = try await api.asyncTaskQueueIsBackgroundThread()
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
           }
-        #else
-          Task { @MainActor in
-            do {
-              let result = try await api.asyncTaskQueueIsBackgroundThread()
-              reply(wrapResult(result))
-            } catch {
-              reply(wrapError(error))
-            }
-          }
-        #endif
+        }
       }
     } else {
       asyncTaskQueueIsBackgroundThreadChannel.setMessageHandler(nil)
