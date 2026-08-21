@@ -33,6 +33,15 @@ Future<void> main() async {
         request.response.writeln('How are you today?');
       } else if (request.uri.path == '/headers') {
         request.response.writeln('${request.headers}');
+      } else if (request.uri.path == '/document-start.html') {
+        request.response.headers.contentType = ContentType.html;
+        // The inline script records the state of the window at parse time, so
+        // that a test can verify that injected scripts ran before it.
+        request.response.writeln(
+          '<!DOCTYPE html><html><head> '
+          '<script>window.recordedAtParseTime = String(window.injectedAtDocumentStart);</script> '
+          '</head><body>Document start test.</body></html>',
+        );
       } else if (request.uri.path == '/favicon.ico') {
         request.response.statusCode = HttpStatus.notFound;
       } else if (request.uri.path == '/http-basic-authentication') {
@@ -54,6 +63,7 @@ Future<void> main() async {
   final secondaryUrl = '$prefixUrl/secondary.txt';
   final headersUrl = '$prefixUrl/headers';
   final basicAuthUrl = '$prefixUrl/http-basic-authentication';
+  final documentStartUrl = '$prefixUrl/document-start.html';
 
   setUp(() {
     PigeonOverrides.pigeon_reset();
@@ -191,6 +201,44 @@ Future<void> main() async {
     await pageFinished.future;
 
     await expectLater(controller.runJavaScriptReturningResult('1 + 1'), completion(2));
+  });
+
+  testWidgets('addDocumentStartJavaScript', (WidgetTester tester) async {
+    final pageFinished = Completer<void>();
+    final messageReceived = Completer<String>();
+
+    final controller = PlatformWebViewController(const PlatformWebViewControllerCreationParams());
+    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    final delegate = PlatformNavigationDelegate(const PlatformNavigationDelegateCreationParams());
+    unawaited(delegate.setOnPageFinished((_) => pageFinished.complete()));
+    unawaited(controller.setPlatformNavigationDelegate(delegate));
+    await controller.addJavaScriptChannel(
+      JavaScriptChannelParams(
+        name: 'Echo',
+        onMessageReceived: (JavaScriptMessage message) => messageReceived.complete(message.message),
+      ),
+    );
+
+    await controller.addDocumentStartJavaScript('window.injectedAtDocumentStart = "injected";');
+    await controller.loadRequest(LoadRequestParams(uri: Uri.parse(documentStartUrl)));
+
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ),
+    );
+
+    await pageFinished.future;
+
+    // The page records this value while it is being parsed, so a match proves
+    // that the script ran before the document's own scripts.
+    await controller.runJavaScript('Echo.postMessage(window.recordedAtParseTime);');
+
+    await expectLater(messageReceived.future, completion('injected'));
   });
 
   testWidgets('loadRequest with headers', (WidgetTester tester) async {

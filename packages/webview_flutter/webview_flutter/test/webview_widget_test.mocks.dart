@@ -4,13 +4,13 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i7;
-import 'dart:ui' as _i3;
+import 'dart:ui' as _i4;
 
-import 'package:flutter/foundation.dart' as _i5;
-import 'package:flutter/widgets.dart' as _i4;
+import 'package:flutter/foundation.dart' as _i6;
+import 'package:flutter/widgets.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:webview_flutter_platform_interface/src/platform_navigation_delegate.dart' as _i8;
-import 'package:webview_flutter_platform_interface/src/platform_webview_controller.dart' as _i6;
+import 'package:webview_flutter_platform_interface/src/platform_webview_controller.dart' as _i3;
 import 'package:webview_flutter_platform_interface/src/platform_webview_widget.dart' as _i9;
 import 'package:webview_flutter_platform_interface/src/types/types.dart' as _i2;
 
@@ -35,31 +35,37 @@ class _FakePlatformWebViewControllerCreationParams_0 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
-class _FakeObject_1 extends _i1.SmartFake implements Object {
-  _FakeObject_1(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
-}
-
-class _FakeOffset_2 extends _i1.SmartFake implements _i3.Offset {
-  _FakeOffset_2(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
-}
-
-class _FakePlatformWebViewWidgetCreationParams_3 extends _i1.SmartFake
-    implements _i2.PlatformWebViewWidgetCreationParams {
-  _FakePlatformWebViewWidgetCreationParams_3(Object parent, Invocation parentInvocation)
+class _FakePlatformDocumentStartJavaScriptRegistration_1 extends _i1.SmartFake
+    implements _i3.PlatformDocumentStartJavaScriptRegistration {
+  _FakePlatformDocumentStartJavaScriptRegistration_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeWidget_4 extends _i1.SmartFake implements _i4.Widget {
-  _FakeWidget_4(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+class _FakeObject_2 extends _i1.SmartFake implements Object {
+  _FakeObject_2(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+}
+
+class _FakeOffset_3 extends _i1.SmartFake implements _i4.Offset {
+  _FakeOffset_3(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+}
+
+class _FakePlatformWebViewWidgetCreationParams_4 extends _i1.SmartFake
+    implements _i2.PlatformWebViewWidgetCreationParams {
+  _FakePlatformWebViewWidgetCreationParams_4(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeWidget_5 extends _i1.SmartFake implements _i5.Widget {
+  _FakeWidget_5(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 
   @override
-  String toString({_i5.DiagnosticLevel? minLevel = _i5.DiagnosticLevel.info}) => super.toString();
+  String toString({_i6.DiagnosticLevel? minLevel = _i6.DiagnosticLevel.info}) => super.toString();
 }
 
 /// A class which mocks [PlatformWebViewController].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPlatformWebViewController extends _i1.Mock implements _i6.PlatformWebViewController {
+class MockPlatformWebViewController extends _i1.Mock implements _i3.PlatformWebViewController {
   MockPlatformWebViewController() {
     _i1.throwOnMissingStub(this);
   }
@@ -208,17 +214,32 @@ class MockPlatformWebViewController extends _i1.Mock implements _i6.PlatformWebV
           as _i7.Future<void>);
 
   @override
+  _i7.Future<_i3.PlatformDocumentStartJavaScriptRegistration> addDocumentStartJavaScript(
+    String? javaScript,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#addDocumentStartJavaScript, [javaScript]),
+            returnValue: _i7.Future<_i3.PlatformDocumentStartJavaScriptRegistration>.value(
+              _FakePlatformDocumentStartJavaScriptRegistration_1(
+                this,
+                Invocation.method(#addDocumentStartJavaScript, [javaScript]),
+              ),
+            ),
+          )
+          as _i7.Future<_i3.PlatformDocumentStartJavaScriptRegistration>);
+
+  @override
   _i7.Future<Object> runJavaScriptReturningResult(String? javaScript) =>
       (super.noSuchMethod(
             Invocation.method(#runJavaScriptReturningResult, [javaScript]),
             returnValue: _i7.Future<Object>.value(
-              _FakeObject_1(this, Invocation.method(#runJavaScriptReturningResult, [javaScript])),
+              _FakeObject_2(this, Invocation.method(#runJavaScriptReturningResult, [javaScript])),
             ),
           )
           as _i7.Future<Object>);
 
   @override
-  _i7.Future<void> addJavaScriptChannel(_i6.JavaScriptChannelParams? javaScriptChannelParams) =>
+  _i7.Future<void> addJavaScriptChannel(_i3.JavaScriptChannelParams? javaScriptChannelParams) =>
       (super.noSuchMethod(
             Invocation.method(#addJavaScriptChannel, [javaScriptChannelParams]),
             returnValue: _i7.Future<void>.value(),
@@ -285,14 +306,14 @@ class MockPlatformWebViewController extends _i1.Mock implements _i6.PlatformWebV
           as bool);
 
   @override
-  _i7.Future<_i3.Offset> getScrollPosition() =>
+  _i7.Future<_i4.Offset> getScrollPosition() =>
       (super.noSuchMethod(
             Invocation.method(#getScrollPosition, []),
-            returnValue: _i7.Future<_i3.Offset>.value(
-              _FakeOffset_2(this, Invocation.method(#getScrollPosition, [])),
+            returnValue: _i7.Future<_i4.Offset>.value(
+              _FakeOffset_3(this, Invocation.method(#getScrollPosition, [])),
             ),
           )
-          as _i7.Future<_i3.Offset>);
+          as _i7.Future<_i4.Offset>);
 
   @override
   _i7.Future<void> enableZoom(bool? enabled) =>
@@ -304,7 +325,7 @@ class MockPlatformWebViewController extends _i1.Mock implements _i6.PlatformWebV
           as _i7.Future<void>);
 
   @override
-  _i7.Future<void> setBackgroundColor(_i3.Color? color) =>
+  _i7.Future<void> setBackgroundColor(_i4.Color? color) =>
       (super.noSuchMethod(
             Invocation.method(#setBackgroundColor, [color]),
             returnValue: _i7.Future<void>.value(),
@@ -426,7 +447,7 @@ class MockPlatformWebViewWidget extends _i1.Mock implements _i9.PlatformWebViewW
   _i2.PlatformWebViewWidgetCreationParams get params =>
       (super.noSuchMethod(
             Invocation.getter(#params),
-            returnValue: _FakePlatformWebViewWidgetCreationParams_3(
+            returnValue: _FakePlatformWebViewWidgetCreationParams_4(
               this,
               Invocation.getter(#params),
             ),
@@ -434,10 +455,10 @@ class MockPlatformWebViewWidget extends _i1.Mock implements _i9.PlatformWebViewW
           as _i2.PlatformWebViewWidgetCreationParams);
 
   @override
-  _i4.Widget build(_i4.BuildContext? context) =>
+  _i5.Widget build(_i5.BuildContext? context) =>
       (super.noSuchMethod(
             Invocation.method(#build, [context]),
-            returnValue: _FakeWidget_4(this, Invocation.method(#build, [context])),
+            returnValue: _FakeWidget_5(this, Invocation.method(#build, [context])),
           )
-          as _i4.Widget);
+          as _i5.Widget);
 }

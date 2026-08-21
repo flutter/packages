@@ -180,6 +180,14 @@ void main() {
     expect(() => controller.runJavaScript('javaScript'), throwsUnimplementedError);
   });
 
+  test('Default implementation of addDocumentStartJavaScript should throw unimplemented error', () {
+    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+
+    expect(() => controller.addDocumentStartJavaScript('javaScript'), throwsUnimplementedError);
+  });
+
   test(
     'Default implementation of runJavaScriptReturningResult should throw unimplemented error',
     () {

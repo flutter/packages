@@ -4,11 +4,11 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i5;
-import 'dart:ui' as _i3;
+import 'dart:ui' as _i4;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:webview_flutter_platform_interface/src/platform_navigation_delegate.dart' as _i6;
-import 'package:webview_flutter_platform_interface/src/platform_webview_controller.dart' as _i4;
+import 'package:webview_flutter_platform_interface/src/platform_webview_controller.dart' as _i3;
 import 'package:webview_flutter_platform_interface/src/types/types.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -32,24 +32,30 @@ class _FakePlatformWebViewControllerCreationParams_0 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
-class _FakeObject_1 extends _i1.SmartFake implements Object {
-  _FakeObject_1(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+class _FakePlatformDocumentStartJavaScriptRegistration_1 extends _i1.SmartFake
+    implements _i3.PlatformDocumentStartJavaScriptRegistration {
+  _FakePlatformDocumentStartJavaScriptRegistration_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeOffset_2 extends _i1.SmartFake implements _i3.Offset {
-  _FakeOffset_2(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+class _FakeObject_2 extends _i1.SmartFake implements Object {
+  _FakeObject_2(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
-class _FakePlatformNavigationDelegateCreationParams_3 extends _i1.SmartFake
+class _FakeOffset_3 extends _i1.SmartFake implements _i4.Offset {
+  _FakeOffset_3(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+}
+
+class _FakePlatformNavigationDelegateCreationParams_4 extends _i1.SmartFake
     implements _i2.PlatformNavigationDelegateCreationParams {
-  _FakePlatformNavigationDelegateCreationParams_3(Object parent, Invocation parentInvocation)
+  _FakePlatformNavigationDelegateCreationParams_4(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
 /// A class which mocks [PlatformWebViewController].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPlatformWebViewController extends _i1.Mock implements _i4.PlatformWebViewController {
+class MockPlatformWebViewController extends _i1.Mock implements _i3.PlatformWebViewController {
   MockPlatformWebViewController() {
     _i1.throwOnMissingStub(this);
   }
@@ -198,17 +204,32 @@ class MockPlatformWebViewController extends _i1.Mock implements _i4.PlatformWebV
           as _i5.Future<void>);
 
   @override
+  _i5.Future<_i3.PlatformDocumentStartJavaScriptRegistration> addDocumentStartJavaScript(
+    String? javaScript,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#addDocumentStartJavaScript, [javaScript]),
+            returnValue: _i5.Future<_i3.PlatformDocumentStartJavaScriptRegistration>.value(
+              _FakePlatformDocumentStartJavaScriptRegistration_1(
+                this,
+                Invocation.method(#addDocumentStartJavaScript, [javaScript]),
+              ),
+            ),
+          )
+          as _i5.Future<_i3.PlatformDocumentStartJavaScriptRegistration>);
+
+  @override
   _i5.Future<Object> runJavaScriptReturningResult(String? javaScript) =>
       (super.noSuchMethod(
             Invocation.method(#runJavaScriptReturningResult, [javaScript]),
             returnValue: _i5.Future<Object>.value(
-              _FakeObject_1(this, Invocation.method(#runJavaScriptReturningResult, [javaScript])),
+              _FakeObject_2(this, Invocation.method(#runJavaScriptReturningResult, [javaScript])),
             ),
           )
           as _i5.Future<Object>);
 
   @override
-  _i5.Future<void> addJavaScriptChannel(_i4.JavaScriptChannelParams? javaScriptChannelParams) =>
+  _i5.Future<void> addJavaScriptChannel(_i3.JavaScriptChannelParams? javaScriptChannelParams) =>
       (super.noSuchMethod(
             Invocation.method(#addJavaScriptChannel, [javaScriptChannelParams]),
             returnValue: _i5.Future<void>.value(),
@@ -275,14 +296,14 @@ class MockPlatformWebViewController extends _i1.Mock implements _i4.PlatformWebV
           as bool);
 
   @override
-  _i5.Future<_i3.Offset> getScrollPosition() =>
+  _i5.Future<_i4.Offset> getScrollPosition() =>
       (super.noSuchMethod(
             Invocation.method(#getScrollPosition, []),
-            returnValue: _i5.Future<_i3.Offset>.value(
-              _FakeOffset_2(this, Invocation.method(#getScrollPosition, [])),
+            returnValue: _i5.Future<_i4.Offset>.value(
+              _FakeOffset_3(this, Invocation.method(#getScrollPosition, [])),
             ),
           )
-          as _i5.Future<_i3.Offset>);
+          as _i5.Future<_i4.Offset>);
 
   @override
   _i5.Future<void> enableZoom(bool? enabled) =>
@@ -294,7 +315,7 @@ class MockPlatformWebViewController extends _i1.Mock implements _i4.PlatformWebV
           as _i5.Future<void>);
 
   @override
-  _i5.Future<void> setBackgroundColor(_i3.Color? color) =>
+  _i5.Future<void> setBackgroundColor(_i4.Color? color) =>
       (super.noSuchMethod(
             Invocation.method(#setBackgroundColor, [color]),
             returnValue: _i5.Future<void>.value(),
@@ -416,7 +437,7 @@ class MockPlatformNavigationDelegate extends _i1.Mock implements _i6.PlatformNav
   _i2.PlatformNavigationDelegateCreationParams get params =>
       (super.noSuchMethod(
             Invocation.getter(#params),
-            returnValue: _FakePlatformNavigationDelegateCreationParams_3(
+            returnValue: _FakePlatformNavigationDelegateCreationParams_4(
               this,
               Invocation.getter(#params),
             ),
@@ -499,6 +520,25 @@ class MockPlatformNavigationDelegate extends _i1.Mock implements _i6.PlatformNav
   _i5.Future<void> setOnSSlAuthError(_i6.SslAuthErrorCallback? onSslAuthError) =>
       (super.noSuchMethod(
             Invocation.method(#setOnSSlAuthError, [onSslAuthError]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+}
+
+/// A class which mocks [PlatformDocumentStartJavaScriptRegistration].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockPlatformDocumentStartJavaScriptRegistration extends _i1.Mock
+    implements _i3.PlatformDocumentStartJavaScriptRegistration {
+  MockPlatformDocumentStartJavaScriptRegistration() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i5.Future<void> remove() =>
+      (super.noSuchMethod(
+            Invocation.method(#remove, []),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )

@@ -1,3 +1,9 @@
+## 4.15.0
+
+* Adds `WebViewController.addDocumentStartJavaScript` for injecting JavaScript
+  that runs at the start of future document loads. It returns a
+  `DocumentStartJavaScriptRegistration` that can be used to stop injecting the JavaScript.
+
 ## 4.14.1
 
 * Adds documentation for `NavigationDelegate` callback parameters.
