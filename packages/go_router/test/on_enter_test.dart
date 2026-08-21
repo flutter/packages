@@ -1718,9 +1718,9 @@ void main() {
       });
     });
 
-      // Tests for onEnter interaction with chained redirects.
-      // These validate that onEnter works correctly when top-level and
-      // route-level redirects produce chains.
+    // Tests for onEnter interaction with chained redirects.
+    // These validate that onEnter works correctly when top-level and
+    // route-level redirects produce chains.
     group('onEnter with chained redirects', () {
       testWidgets('onEnter called once when top-level redirect chains', (
         WidgetTester tester,
