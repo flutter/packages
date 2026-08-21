@@ -35,7 +35,7 @@ internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
   private fun setUp(messenger: BinaryMessenger, context: Context) {
     preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
     try {
-      SharedPreferencesApi.setUp(messenger, this)
+      SharedPreferencesApiRegistrar().register(this)
     } catch (ex: Exception) {
       Log.e(TAG, "Received exception while setting up SharedPreferencesPlugin", ex)
     }
@@ -46,7 +46,7 @@ internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
   }
 
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
-    SharedPreferencesApi.setUp(binding.binaryMessenger, null)
+    SharedPreferencesApiRegistrar().register(null)
   }
 
   override fun setBool(key: String, value: Boolean): Boolean {

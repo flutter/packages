@@ -21,6 +21,7 @@ Podfile.lock
 Pods/
 .swiftpm/
 .symlinks/
+*.g.o
 
 *instrumentscli*.trace
 *.cipd
