@@ -1,4 +1,9 @@
+## 4.14.1
+
+* Updates pigeon to `27.3.2`.
+
 ## 4.14.0
+
 * Adds support for configuring Web Authentication in `AndroidWebViewController` with `setWebAuthenticationSupport` to enable Passkey and other related Authentication.
 
 ## 4.13.0
