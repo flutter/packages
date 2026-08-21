@@ -124,7 +124,7 @@ class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
 
   @override
   Future<bool> isMyLocationButtonEnabled({required int mapId}) async {
-    return false; // My Location widget not supported on the web
+    return _configurationProvider(mapId).myLocationButtonEnabled ?? false;
   }
 
   @override
