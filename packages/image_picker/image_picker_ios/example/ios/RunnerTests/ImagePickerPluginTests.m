@@ -1018,7 +1018,7 @@
   OCMStub([mockAVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo
                                        completionHandler:OCMOCK_ANY])
       .andDo(^(NSInvocation *invocation) {
-        void (^handler)(BOOL granted);
+        __unsafe_unretained void (^handler)(BOOL granted);
         [invocation getArgument:&handler atIndex:3];
         handler(NO);
       });
@@ -1054,7 +1054,7 @@
   OCMStub([mockAVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo
                                        completionHandler:OCMOCK_ANY])
       .andDo(^(NSInvocation *invocation) {
-        void (^handler)(BOOL granted);
+        __unsafe_unretained void (^handler)(BOOL granted);
         [invocation getArgument:&handler atIndex:3];
         handler(YES);
       });
@@ -1313,7 +1313,7 @@
       .andReturn(PHAuthorizationStatusNotDetermined);
   OCMStub(ClassMethod([photoLibrary requestAuthorization:OCMOCK_ANY]))
       .andDo(^(NSInvocation *invocation) {
-        void (^handler)(PHAuthorizationStatus status);
+        __unsafe_unretained void (^handler)(PHAuthorizationStatus status);
         [invocation getArgument:&handler atIndex:2];
         handler(PHAuthorizationStatusAuthorized);
       });
@@ -1345,7 +1345,7 @@
       .andReturn(PHAuthorizationStatusNotDetermined);
   OCMStub(ClassMethod([photoLibrary requestAuthorization:OCMOCK_ANY]))
       .andDo(^(NSInvocation *invocation) {
-        void (^handler)(PHAuthorizationStatus status);
+        __unsafe_unretained void (^handler)(PHAuthorizationStatus status);
         [invocation getArgument:&handler atIndex:2];
         handler(PHAuthorizationStatusDenied);
       });
@@ -1529,7 +1529,8 @@
                                                       options:OCMOCK_ANY
                                                 resultHandler:OCMOCK_ANY])
       .andDo(^(NSInvocation *invocation) {
-        void (^handler)(NSData *, NSString *, CGImagePropertyOrientation, NSDictionary *);
+        __unsafe_unretained void (^handler)(NSData *, NSString *, CGImagePropertyOrientation,
+                                            NSDictionary *);
         [invocation getArgument:&handler atIndex:4];
         handler(ImagePickerTestImages.JPGTestData, @"public.jpeg", kCGImagePropertyOrientationUp,
                 nil);
