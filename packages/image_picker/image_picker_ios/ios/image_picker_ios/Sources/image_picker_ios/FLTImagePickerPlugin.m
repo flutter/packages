@@ -533,12 +533,18 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 
 - (void)imagePickerController:(UIImagePickerController *)picker
     didFinishPickingMediaWithInfo:(NSDictionary<NSString *, id> *)info {
-  NSURL *videoURL = info[UIImagePickerControllerMediaURL];
+  FLTImagePickerMethodCallContext *context = self.callContext;
   __weak typeof(self) weakSelf = self;
   [picker dismissViewControllerAnimated:YES
                              completion:^{
                                [weakSelf removeInteractionBlocker];
+                               if (weakSelf.callContext == context) {
+                                 [weakSelf sendCallResultWithPickerInfo:info];
+                               }
                              }];
+}
+
+- (void)sendCallResultWithPickerInfo:(NSDictionary<NSString *, id> *)info {
   // The method dismissViewControllerAnimated does not immediately prevent
   // further didFinishPickingMediaWithInfo invocations. A nil check is necessary
   // to prevent below code to be unwantly executed multiple times and cause a
@@ -546,6 +552,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   if (!self.callContext) {
     return;
   }
+  NSURL *videoURL = info[UIImagePickerControllerMediaURL];
   if (videoURL != nil) {
     if (@available(iOS 13.0, *)) {
       NSURL *destination = [FLTImagePickerPhotoAssetUtil saveVideoFromURL:videoURL];
@@ -624,12 +631,15 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+  FLTImagePickerMethodCallContext *context = self.callContext;
   __weak typeof(self) weakSelf = self;
   [picker dismissViewControllerAnimated:YES
                              completion:^{
                                [weakSelf removeInteractionBlocker];
+                               if (weakSelf.callContext == context) {
+                                 [weakSelf sendCallResultWithSavedPathList:nil];
+                               }
                              }];
-  [self sendCallResultWithSavedPathList:nil];
 }
 
 #pragma mark -

@@ -323,6 +323,67 @@
   [plugin imagePickerControllerDidCancel:controller];
 }
 
+- (void)testCancelResultIsNotSentUntilDismissalCompletes {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  __block NSArray<NSString *> *pickResult = nil;
+  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *_Nullable result, FlutterError *_Nullable error) {
+        pickResult = result;
+      }];
+
+  __block void (^dismissCompletion)(void) = nil;
+  id mockPicker = OCMClassMock([UIImagePickerController class]);
+  OCMStub([mockPicker
+      dismissViewControllerAnimated:YES
+                         completion:[OCMArg checkWithBlock:^BOOL(void (^completion)(void)) {
+                           dismissCompletion = [completion copy];
+                           return YES;
+                         }]]);
+
+  [plugin imagePickerControllerDidCancel:mockPicker];
+
+  XCTAssertNotNil(dismissCompletion);
+  XCTAssertNil(pickResult, @"The cancel result should not be sent before dismissal completes.");
+
+  dismissCompletion();
+
+  XCTAssertEqualObjects(pickResult, @[]);
+}
+
+- (void)testPickResultIsNotSentUntilDismissalCompletes {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  __block NSArray<NSString *> *pickResult = nil;
+  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *_Nullable result, FlutterError *_Nullable error) {
+        pickResult = result;
+      }];
+
+  // Capture the dismissal completion instead of running it, so the test controls
+  // when dismissal "finishes".
+  __block void (^dismissCompletion)(void) = nil;
+  id mockPicker = OCMClassMock([UIImagePickerController class]);
+  OCMStub([mockPicker
+      dismissViewControllerAnimated:YES
+                         completion:[OCMArg checkWithBlock:^BOOL(void (^completion)(void)) {
+                           dismissCompletion = [completion copy];
+                           return YES;
+                         }]]);
+
+  UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
+  [plugin imagePickerController:mockPicker
+      didFinishPickingMediaWithInfo:@{UIImagePickerControllerOriginalImage : image}];
+
+  XCTAssertNotNil(dismissCompletion);
+  XCTAssertNil(pickResult, @"The picked media should not be sent before dismissal completes.");
+
+  dismissCompletion();
+
+  XCTAssertEqual(pickResult.count, 1);
+  XCTAssertGreaterThan(pickResult.firstObject.length, 0);
+}
+
 - (void)testCameraPickerInteractionBlockerWindowIsAddedAndRemoved {
   id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
   id mockAVCaptureDevice = OCMClassMock([AVCaptureDevice class]);
