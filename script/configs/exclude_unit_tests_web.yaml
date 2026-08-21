@@ -1,0 +1,9 @@
+# Packages that are excluded from web unit tests (compiled to JS/Wasm).
+#
+# Each excluded package should have a comment for why it is excluded.
+#
+# If trying to exclude a test that works in JS mode but fails in Wasm, use the
+# dart_unit_tests_wasm_exceptions.yaml file instead.
+
+# CLI-tool for material_ui developers to generate Material tokens.
+- material_ui/tool/gen_defaults
