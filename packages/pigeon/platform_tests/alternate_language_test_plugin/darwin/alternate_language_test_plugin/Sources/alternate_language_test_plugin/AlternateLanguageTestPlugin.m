@@ -64,7 +64,7 @@
 
 - (void)taskQueueIsBackgroundThreadWithCompletion:(void (^)(NSNumber *_Nullable,
                                                             FlutterError *_Nullable))completion {
-  completion(@(![NSThread isMainThread]), nil);
+  completion([NSNumber numberWithBool:![NSThread isMainThread]], nil);
 }
 
 #pragma mark HostIntegrationCoreApi implementation

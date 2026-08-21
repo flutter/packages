@@ -55,37 +55,37 @@ public class AlternateLanguageTestPlugin
 
   // HostCallbackCoreApi
   @Override
-  public void noop(VoidResult result) {
+  public void noop(@NonNull VoidResult result) {
     result.success();
   }
 
   @Override
-  public void echoString(@NonNull String aString, Result<String> result) {
+  public void echoString(@NonNull String aString, @NonNull Result<String> result) {
     result.success(aString);
   }
 
   @Override
-  public void echoAllTypes(@NonNull AllTypes everything, Result<AllTypes> result) {
+  public void echoAllTypes(@NonNull AllTypes everything, @NonNull Result<AllTypes> result) {
     result.success(everything);
   }
 
   @Override
-  public void echoNullableString(@Nullable String aString, Result<String> result) {
+  public void echoNullableString(@Nullable String aString, @NonNull NullableResult<String> result) {
     result.success(aString);
   }
 
   @Override
-  public void throwError(Result<Object> result) {
+  public void throwError(@NonNull NullableResult<Object> result) {
     result.error(new CoreTests.FlutterError("code", "message", "details"));
   }
 
   @Override
-  public void throwErrorFromVoid(VoidResult result) {
+  public void throwErrorFromVoid(@NonNull VoidResult result) {
     result.error(new CoreTests.FlutterError("code", "message", "details"));
   }
 
   @Override
-  public void taskQueueIsBackgroundThread(Result<Boolean> result) {
+  public void taskQueueIsBackgroundThread(@NonNull Result<Boolean> result) {
     result.success(Looper.myLooper() != Looper.getMainLooper());
   }
 

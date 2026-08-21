@@ -108,19 +108,21 @@ void TestPlugin::ThrowError(
         core_tests_pigeontest::ErrorOr<std::optional<::flutter::EncodableValue>>
             reply)>
         result) {
-  result(core_tests_pigeontest::FlutterError("code", "message", "details"));
+  result(core_tests_pigeontest::FlutterError(
+      "code", "message", flutter::EncodableValue("details")));
 }
 
 void TestPlugin::ThrowErrorFromVoid(
     std::function<
         void(std::optional<core_tests_pigeontest::FlutterError> reply)>
         result) {
-  result(core_tests_pigeontest::FlutterError("code", "message", "details"));
+  result(core_tests_pigeontest::FlutterError(
+      "code", "message", flutter::EncodableValue("details")));
 }
 
 void TestPlugin::TaskQueueIsBackgroundThread(
     std::function<void(core_tests_pigeontest::ErrorOr<bool> reply)> result) {
-  result(true);
+  result(std::this_thread::get_id() != main_thread_id_);
 }
 
 TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger,
