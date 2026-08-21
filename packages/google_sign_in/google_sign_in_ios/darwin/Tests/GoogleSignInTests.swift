@@ -49,8 +49,13 @@ class TestSignIn: NSObject, FSIGIDSignIn {
   // Whether signOut was called.
   var signOutCalled = false
 
+  // URLs passed to handleURL:, and the value to return.
+  var handledURLs: [URL] = []
+  var handleURLResult = true
+
   func handle(_ url: URL) -> Bool {
-    return true
+    handledURLs.append(url)
+    return handleURLResult
   }
 
   func restorePreviousSignIn(completion: (((any FSIGIDGoogleUser)?, Error?) -> Void)?) {
@@ -693,7 +698,227 @@ struct GoogleSignInPluginTests {
       }
     }
   }
+
+  @Suite("urlHandling")
+  @MainActor
+  struct URLHandlingTests {
+    #if os(iOS) || targetEnvironment(macCatalyst)
+      @Test func applicationOpenURL() {
+        let (plugin, fakeSignIn) = createTestPlugin()
+        let url = URL(string: "com.googleusercontent.apps.test:/oauthredirect")!
+        fakeSignIn.handleURLResult = true
+
+        let handled = plugin.application(UIApplication.shared, open: url, options: [:])
+
+        #expect(handled == true)
+        #expect(fakeSignIn.handledURLs == [url])
+      }
+
+      @Test func applicationOpenURLReturnsHandleResult() {
+        let (plugin, fakeSignIn) = createTestPlugin()
+        let url = URL(string: "com.googleusercontent.apps.test:/oauthredirect")!
+        fakeSignIn.handleURLResult = false
+
+        let handled = plugin.application(UIApplication.shared, open: url, options: [:])
+
+        #expect(handled == false)
+        #expect(fakeSignIn.handledURLs == [url])
+      }
+
+    // TODO(victogomez-cs): Add a typed unit test for scene:openURLContexts:.
+    // That method takes NSSet<UIOpenURLContext *>, and UIKit marks
+    // UIOpenURLContext's -init and +new as unavailable, so a Swift test
+    // cannot construct a real context (or a typed fake) to pass in. The
+    // previous test used performSelector with an NSObject stand-in, which is
+    // not type-checked. application:openURL: covers the same handleURL:
+    // forwarding until this path can be invoked without that runtime hack.
+    // Tracked with the Swift migration:
+    // https://github.com/flutter/flutter/issues/119103
+    #endif
+  }
+
+  @Suite("errorMapping") struct ErrorMappingTests {
+    @Test(arguments: [
+      (GIDSignInError.keychain.rawValue, FSIGoogleSignInErrorCode.keychainError),
+      (GIDSignInError.EMM.rawValue, FSIGoogleSignInErrorCode.eemError),
+      (GIDSignInError.unknown.rawValue, FSIGoogleSignInErrorCode.unknown),
+      // Unrecognized SDK codes fall through to the default → unknown.
+      (12_345, FSIGoogleSignInErrorCode.unknown),
+    ]) func mapsRemainingGIDSignInErrorCodes(
+      signInSDKErrorCode: Int,
+      expectedPigeonErrorCode: FSIGoogleSignInErrorCode
+    ) async {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      fakeSignIn.error = NSError(
+        domain: kGIDSignInErrorDomain, code: signInSDKErrorCode, userInfo: nil)
+
+      await confirmation("completion called") { confirmed in
+        plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
+          #expect(error == nil)
+          #expect(result?.success == nil)
+          #expect(result?.error?.type == expectedPigeonErrorCode)
+          confirmed()
+        }
+      }
+    }
+
+    @Test func sanitizesComplexUserInfoInFlutterError() async {
+      let (plugin, _) = createTestPlugin()
+      let fakeUser = addSignedInUser(to: plugin)
+      let nested = NSError(domain: "NestedDomain", code: 99, userInfo: ["nestedKey": "nestedValue"])
+      let userInfo: [String: Any] = [
+        "string": "ok",
+        "number": NSNumber(value: 42),
+        "url": URL(string: "https://example.com/path")!,
+        "array": ["a", NSNumber(value: 1)],
+        "dict": ["inner": "value"],
+        NSUnderlyingErrorKey: nested,
+        "unsupported": Date(timeIntervalSince1970: 0),
+      ]
+      fakeUser.error = NSError(domain: "BogusDomain", code: 7, userInfo: userInfo)
+
+      await confirmation("completion called") { confirmed in
+        plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
+          #expect(result == nil)
+          #expect(error?.code == "BogusDomain: 7")
+          let details = error?.details as? [String: Any]
+          #expect(details?["string"] as? String == "ok")
+          #expect(details?["number"] as? NSNumber == NSNumber(value: 42))
+          #expect(details?["url"] as? String == "https://example.com/path")
+          #expect((details?["array"] as? [Any])?.count == 2)
+          #expect((details?["dict"] as? [String: Any])?["inner"] as? String == "value")
+          let nestedDetails = details?[NSUnderlyingErrorKey] as? [String: Any]
+          #expect(nestedDetails?["domain"] as? String == "NestedDomain")
+          #expect(nestedDetails?["code"] as? String == "99")
+          let unsupported = details?["unsupported"] as? String
+          #expect(unsupported?.contains("Unsupported type:") == true)
+          confirmed()
+        }
+      }
+    }
+  }
+
+  @Suite("disconnect") struct DisconnectTests {
+    @Test func disconnectReturnsFlutterErrorOnFailure() async {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      fakeSignIn.error = NSError(
+        domain: "DisconnectDomain", code: 3, userInfo: ["reason": "failed"])
+
+      await confirmation("completion called") { confirmed in
+        plugin.disconnect { error in
+          #expect(error?.code == "DisconnectDomain: 3")
+          #expect((error?.details as? [String: Any])?["reason"] as? String == "failed")
+          confirmed()
+        }
+      }
+    }
+  }
+
+  @Suite("userData") struct UserDataTests {
+    @Test func signInWithoutProfileImageOmitsPhotoUrl() async {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      let fakeUser = TestGoogleUser("mockID")
+      fakeUser.profile = TestProfileData(name: "Name", email: "user@example.com", imageURL: nil)
+      fakeSignIn.signInResult = TestSignInResult(user: fakeUser)
+
+      await confirmation("completion called") { confirmed in
+        plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
+          #expect(error == nil)
+          #expect(result?.success?.user.photoUrl == nil)
+          #expect(result?.success?.user.displayName == "Name")
+          confirmed()
+        }
+      }
+    }
+  }
+
+  #if os(iOS) || targetEnvironment(macCatalyst)
+    @Suite("topViewController")
+    @MainActor
+    struct TopViewControllerTests {
+      @Test func usesNavigationControllerVisibleController() async {
+        let root = UIViewController()
+        let nav = UINavigationController(rootViewController: root)
+        let top = UIViewController()
+        nav.pushViewController(top, animated: false)
+
+        let viewProvider = TestViewProvider()
+        viewProvider.viewController = nav
+        let (plugin, fakeSignIn) = createTestPlugin(viewProvider: viewProvider)
+        fakeSignIn.signInResult = TestSignInResult(user: TestGoogleUser("id"))
+
+        await confirmation("completion called") { confirmed in
+          plugin.signIn(withScopeHint: [], nonce: nil) { _, _ in confirmed() }
+        }
+        #expect(fakeSignIn.presentingViewController === top)
+      }
+
+      @Test func usesTabBarControllerSelectedController() async {
+        let selected = UIViewController()
+        let other = UIViewController()
+        let tab = UITabBarController()
+        tab.viewControllers = [selected, other]
+        tab.selectedViewController = selected
+
+        let viewProvider = TestViewProvider()
+        viewProvider.viewController = tab
+        let (plugin, fakeSignIn) = createTestPlugin(viewProvider: viewProvider)
+        fakeSignIn.signInResult = TestSignInResult(user: TestGoogleUser("id"))
+
+        await confirmation("completion called") { confirmed in
+          plugin.signIn(withScopeHint: [], nonce: nil) { _, _ in confirmed() }
+        }
+        #expect(fakeSignIn.presentingViewController === selected)
+      }
+
+      @Test func usesPresentedViewController() async {
+        let presented = UIViewController()
+        let host = StubHostingViewController(presented: presented)
+
+        let viewProvider = TestViewProvider()
+        viewProvider.viewController = host
+        let (plugin, fakeSignIn) = createTestPlugin(viewProvider: viewProvider)
+        fakeSignIn.signInResult = TestSignInResult(user: TestGoogleUser("id"))
+
+        await confirmation("completion called") { confirmed in
+          plugin.signIn(withScopeHint: [], nonce: nil) { _, _ in confirmed() }
+        }
+        #expect(fakeSignIn.presentingViewController === presented)
+      }
+    }
+  #endif
 }
+
+#if os(iOS) || targetEnvironment(macCatalyst)
+  /// Stand-in for UIOpenURLContext that only needs to respond to `URL`.
+  final class FakeOpenURLContext: NSObject {
+    @objc(URL) var openURL: URL
+
+    init(url: URL) {
+      self.openURL = url
+      super.init()
+    }
+  }
+
+  /// Lets tests stub `presentedViewController` without a real window presentation.
+  @MainActor
+  final class StubHostingViewController: UIViewController {
+    private let stubPresented: UIViewController?
+
+    init(presented: UIViewController?) {
+      self.stubPresented = presented
+      super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+      fatalError("init(coder:) has not been implemented")
+    }
+
+    override var presentedViewController: UIViewController? {
+      stubPresented
+    }
+  }
+#endif
 
 func loadGoogleServiceInfo() -> [String: Any]? {
   if let plistPath = Bundle(for: TestSignIn.self).path(
