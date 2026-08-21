@@ -1,3 +1,7 @@
+## 4.15.0
+
+* Adds NavigationDelegate.onCreateWindow for target=_blank / window.open.
+
 ## 4.14.1
 
 * Adds documentation for `NavigationDelegate` callback parameters.

@@ -38,6 +38,18 @@ public class WebViewClientTest {
   }
 
   @Test
+  public void onCreateWindow() {
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebViewClientImpl instance = new WebViewClientImpl(mockApi);
+    final String url = "https://www.google.com";
+    instance.notifyCreateWindow(url);
+
+    verify(mockApi).onCreateWindow(eq(instance), eq(url), any());
+  }
+
+  @Test
   public void onReceivedError() {
     final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
     when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
