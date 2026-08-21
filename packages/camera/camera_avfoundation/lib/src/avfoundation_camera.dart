@@ -418,6 +418,16 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   @override
+  Future<bool> isZeroShutterLagSupported(int cameraId) {
+    return _hostApi.isZeroShutterLagSupported();
+  }
+
+  @override
+  Future<void> setZeroShutterLagEnabled(int cameraId, bool enabled) async {
+    await _hostApi.setZeroShutterLagEnabled(enabled);
+  }
+
+  @override
   Widget buildPreview(int cameraId) {
     return Texture(textureId: cameraId);
   }

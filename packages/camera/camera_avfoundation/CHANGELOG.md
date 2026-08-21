@@ -1,3 +1,8 @@
+## 0.10.3
+
+* Adds support for zero-shutter-lag still image capture via
+  `isZeroShutterLagSupported` and `setZeroShutterLagEnabled` (iOS 17+).
+
 ## 0.10.2
 
 * Adds `setJpegImageQuality` for controlling JPEG compression quality.
