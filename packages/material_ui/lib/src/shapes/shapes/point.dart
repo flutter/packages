@@ -1,0 +1,153 @@
+part of 'shapes.dart';
+
+typedef PointTransformer = (double, double) Function(double x, double y);
+
+@immutable
+class Point {
+  static const zero = Point(0, 0);
+
+  const Point(this.x, this.y);
+
+  final double x;
+
+  final double y;
+
+  Point copy() => Point(x, y);
+
+  Point rotate90() => Point(-y, x);
+
+  Point rotate(double degrees, {Point center = Point.zero}) {
+    final radians = degrees * math.pi / 180;
+    final off = this - center;
+    final cos = math.cos(radians);
+    final sin = math.sin(radians);
+    return Point(
+          off.x * cos - off.y * sin,
+          off.x * sin + off.y * cos,
+        ) +
+        center;
+  }
+
+  Point translate(double dx, double dy) => Point(x + dx, y + dy);
+
+  Point scale(double sx, double sy) => Point(x * sx, y * sy);
+
+  double get angleDegrees => angleRadians * math.pi / 180;
+
+  double get angleRadians => math.atan2(y, x);
+
+  /// The magnitude of the [Point], which is the distance of this point from
+  /// (0, 0).
+  ///
+  /// If you need this value to compare it to another [Point]'s distance,
+  /// consider using [getDistanceSquared] instead, since it is cheaper to
+  /// compute.
+  double getDistance() => math.sqrt(x * x + y * y);
+
+  /// The square of the magnitude (which is the distance of this point from
+  /// (0, 0)) of the [Point].
+  ///
+  /// This is cheaper than computing the [getDistance] itself.
+  double getDistanceSquared() => x * x + y * y;
+
+  double dotProduct(Point other) => x * other.x + y * other.y;
+
+  double dotProductXY(double otherX, double otherY) => x * otherX + y * otherY;
+
+  /// Compute the Z coordinate of the cross product of two vectors, to check
+  /// if the second vector is going clockwise ( > 0 ) or counterclockwise
+  /// (< 0) compared with the first one. It could also be 0, if the vectors
+  /// are co-linear.
+  bool clockwise(Point other) => (x * other.y - y * other.x) > 0;
+
+  Point getDirection() {
+    final d = getDistance();
+    assert(d > 0, "Can't get the direction of a 0-length vector");
+    return this / d;
+  }
+
+  /// Unary negation operator.
+  ///
+  /// Returns a [Point] with the coordinates negated.
+  ///
+  /// If the [Point] represents an arrow on a plane, this operator returns the
+  /// same arrow but pointing in the reverse direction.
+  Point operator -() => Point(-x, -y);
+
+  /// Binary subtraction operator.
+  ///
+  /// Returns a Point whose [x] value is the left-hand-side operand's [x]
+  /// minus the right-hand-side operand's [x] and whose [y] value is the
+  /// left-hand-side operand's [y] minus the right-hand-side operand's [y].
+  Point operator -(Point operand) => Point(x - operand.x, y - operand.y);
+
+  /// Binary addition operator.
+  ///
+  /// Returns a Point whose [x] value is the sum of the [x] values of the two
+  /// operands, and whose [y] value is the sum of the [y] values of the two
+  /// operands.
+  Point operator +(Point operand) => Point(x + operand.x, y + operand.y);
+
+  /// Multiplication operator.
+  ///
+  /// Returns a Point whose coordinates are the coordinates of the
+  /// left-hand-side operand (a [Point]) multiplied by the scalar
+  /// right-hand-side operand (a [double]).
+  Point operator *(double operand) => Point(x * operand, y * operand);
+
+  /// Division operator.
+  ///
+  /// Returns a Point whose coordinates are the coordinates of the
+  /// left-hand-side operand (a [Point]) divided by the scalar
+  /// right-hand-side operand (a [double]).
+  Point operator /(double operand) => Point(x / operand, y / operand);
+
+  /// Modulo (remainder) operator.
+  ///
+  /// Returns a Point whose coordinates are the remainder of dividing the
+  /// coordinates of the left-hand-side operand (a [Point]) by the scalar
+  /// right-hand-side operand (a [double]).
+  Point operator %(double operand) => Point(x % operand, y % operand);
+
+  Point transformed(PointTransformer f) {
+    final result = f(x, y);
+    return Point(result.$1, result.$2);
+  }
+
+  @override
+  String toString() => 'Point($x, $y)';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) {
+      return true;
+    }
+
+    if (other is! Point) {
+      return false;
+    }
+
+    return other.x == x && other.y == y;
+  }
+
+  @override
+  int get hashCode => Object.hashAll([x, y]);
+}
+
+/// Linearly interpolate between two Points.
+///
+/// The [fraction] argument represents position on the timeline,
+/// with 0.0 meaning that the interpolation has not started, returning
+/// [start] (or something equivalent to [start]), 1.0 meaning that the
+/// interpolation has finished, returning [stop] (or something equivalent to
+/// [stop]), and values in between meaning that the interpolation is at the
+/// relevant point on the timeline between [start] and [stop]. The
+/// interpolation can be extrapolated beyond 0.0 and 1.0, so negative values
+/// and values greater than 1.0 are valid (and can easily be generated by
+/// curves).
+Point interpolate(Point start, Point stop, double fraction) {
+  return Point(
+    lerp(start.x, stop.x, fraction),
+    lerp(start.y, stop.y, fraction),
+  );
+}
