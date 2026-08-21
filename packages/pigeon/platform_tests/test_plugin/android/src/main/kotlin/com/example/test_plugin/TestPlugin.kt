@@ -16,7 +16,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
  * Helper to adapt callback-based Flutter API calls into Kotlin coroutines, allowing integration
  * tests and host handlers to `await` Flutter API calls.
  */
-private suspend inline fun <T> suspendFlutterApi(
+internal suspend inline fun <T> suspendFlutterApi(
     crossinline block: ((Result<T>) -> Unit) -> Unit
 ): T = suspendCancellableCoroutine { continuation ->
   block { result ->
