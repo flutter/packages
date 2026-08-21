@@ -707,10 +707,27 @@ void main() {
     expect(
       code,
       contains(
-        'Task {\n          do {\n            let result = try await api.doSomething(arg: argArg)\n            reply(wrapResult(result))',
+        '#if os(iOS)\n'
+        '        Task {\n'
+        '          do {\n'
+        '            let result = try await api.doSomething(arg: argArg)\n'
+        '            reply(wrapResult(result))\n'
+        '          } catch {\n'
+        '            reply(wrapError(error))\n'
+        '          }\n'
+        '        }\n'
+        '        #else\n'
+        '        Task { @MainActor in\n'
+        '          do {\n'
+        '            let result = try await api.doSomething(arg: argArg)\n'
+        '            reply(wrapResult(result))\n'
+        '          } catch {\n'
+        '            reply(wrapError(error))\n'
+        '          }\n'
+        '        }\n'
+        '        #endif',
       ),
     );
-    expect(code, isNot(contains('Task { @MainActor in')));
   });
 
   test('asyncCallback emits callback-based host api method', () {
