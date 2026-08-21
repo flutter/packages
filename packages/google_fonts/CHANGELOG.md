@@ -1,3 +1,8 @@
+## 8.2.2
+
+- Adds support for the `material_ui` package so `TextStyle` and `TextTheme` types are compatible with Material Design widgets that use `material_ui`.
+- Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 8.2.1
 
 - Fixes `pendingFonts()` retaining failed font loads.
