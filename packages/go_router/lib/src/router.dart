@@ -384,7 +384,14 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 
   final ValueListenable<RoutingConfig> _routingConfig;
 
-  /// Returns `true` if there is at least two or more route can be pop.
+  /// Returns `true` if any navigator in the current route stack can pop.
+  ///
+  /// This considers the root navigator and nested shell navigators. It does
+  /// not evaluate pop vetoes such as [PopScope]; [maybePop] does.
+  ///
+  /// See also:
+  /// * [pop], which pops from the first navigator that can pop.
+  /// * [maybePop], which walks navigators with disposition-aware pops.
   bool canPop() => routerDelegate.canPop();
 
   /// Get a location from route name and parameters.
@@ -549,8 +556,16 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// If the top-most route is a pop up or dialog, this method pops it instead
   /// of any GoRoute under it.
   ///
+  /// Selects the first navigator in the current stack that can pop. Prefer
+  /// [maybePop] when the caller needs a non-throwing result or must respect
+  /// [PopScope] / route pop disposition.
+  ///
   /// Ensure that the `value` of `routeInformationProvider` is synced
   ///  with `routerDelegate.currentConfiguration`.
+  ///
+  /// See also:
+  /// * [maybePop], which walks nested navigators, consults pop disposition,
+  ///   and returns `false` instead of throwing when every navigator bubbles.
   void pop<T extends Object?>([T? result]) {
     assert(() {
       log('popping ${routerDelegate.currentConfiguration.uri}');
@@ -563,6 +578,40 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     if (!identical(routerDelegate.currentConfiguration, configBeforePop)) {
       restore(routerDelegate.currentConfiguration);
     }
+  }
+
+  /// Attempts to pop the top-most poppable route in the current GoRouter stack.
+  ///
+  /// Walks nested navigators from innermost to outermost, calling
+  /// [NavigatorState.maybePop] on each so [PopScope] / route pop disposition is
+  /// consulted. Returns whether the request was handled, and returns `false`
+  /// rather than throwing when every navigator bubbles.
+  ///
+  /// Fallthrough to a parent happens only when a navigator bubbles (`false`).
+  /// A `doNotPop` disposition is handled (`true`) and does not pop a parent —
+  /// including on a shell leaf where [NavigatorState.canPop] is false.
+  /// This differs from [pop], which picks the first navigator with
+  /// [NavigatorState.canPop] and forces a pop (skipping leaf vetoes in that
+  /// case). It also differs from [GoRouterDelegate.popRoute], which may consult
+  /// [GoRoute.onExit] for app-exit behavior when nothing can pop.
+  ///
+  /// When a pop completes synchronously and changes
+  /// [GoRouterDelegate.currentConfiguration], this method also calls [restore]
+  /// to keep the [routeInformationProvider] in sync.
+  ///
+  /// See also:
+  /// * [pop], which forces a pop on the first navigator that can pop.
+  /// * [canPop], which reports whether any navigator can pop (without vetoes).
+  /// * [NavigatorState.maybePop], which operates only on an explicitly chosen
+  ///   local navigator and does not perform GoRouter-wide selection or
+  ///   [restore].
+  Future<bool> maybePop<T extends Object?>([T? result]) async {
+    final RouteMatchList configBeforePop = routerDelegate.currentConfiguration;
+    final bool didPop = await routerDelegate.maybePop<T>(result);
+    if (didPop && !identical(routerDelegate.currentConfiguration, configBeforePop)) {
+      restore(routerDelegate.currentConfiguration);
+    }
+    return didPop;
   }
 
   /// Refresh the route.

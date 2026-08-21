@@ -1,0 +1,3 @@
+changelog: |
+  - Adds `maybePop` to `GoRouter`, `GoRouterDelegate`, and `GoRouterHelper`. This method walks nested navigators from innermost to outermost with [NavigatorState.maybePop], honors [PopScope] (including on shell leaves where [NavigatorState.canPop] is false), returns `false` instead of throwing when nothing can pop, and calls [GoRouter.restore] when a pop completes synchronously. Unlike [GoRouterDelegate.popRoute], it does not perform app-exit / [GoRoute.onExit] handling when every navigator bubbles.
+version: minor
