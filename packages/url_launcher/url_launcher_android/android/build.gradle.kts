@@ -72,7 +72,7 @@ android {
 
 dependencies {
     // Java language implementation
-    implementation("androidx.core:core:1.17.0")
+    implementation("androidx.core:core:1.19.0")
     implementation("androidx.annotation:annotation:1.10.0")
     implementation("androidx.browser:browser:1.9.0")
     testImplementation("junit:junit:4.13.2")
