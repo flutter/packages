@@ -776,7 +776,7 @@ class CupertinoSheetRoute<T> extends PageRoute<T> with _CupertinoSheetRouteTrans
           data: CupertinoUserInterfaceLevelData.elevated,
           child: _CupertinoSheetScope(
             child: _CupertinoDraggableScrollableSheet<T>(
-              enabledCallback: () => enableDrag,
+              enabledCallback: () => enableDrag && !(controller?.isAnimating ?? false),
               onStartPopGesture: () =>
                   _CupertinoSheetRouteTransitionMixin._startPopGesture<T>(this, topGap),
               builder: _sheetWithDragHandle,
@@ -906,7 +906,7 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
       linearTransition: linearTransition,
       topGap: topGap,
       child: _CupertinoDragGestureDetector<T>(
-        enabledCallback: () => enableDrag,
+        enabledCallback: () => enableDrag && !(route.controller?.isAnimating ?? false),
         onStartPopGesture: () => _startPopGesture<T>(route, topGap),
         child: child,
       ),
@@ -1377,6 +1377,9 @@ class _CupertinoDraggableScrollableSheetState<T>
 
   void _dragStart() {
     assert(mounted);
+    if (!widget.enabledCallback()) {
+      return;
+    }
     _dragGestureController ??= widget.onStartPopGesture();
   }
 

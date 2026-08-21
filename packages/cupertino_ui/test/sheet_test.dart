@@ -1395,6 +1395,57 @@ void main() {
       expect(rootNavigatorPopped, false);
     });
 
+    testWidgets('Sheet ignores gestures mid-dismissal and finishes closing', (
+      WidgetTester tester,
+    ) async {
+      final GlobalKey homeKey = GlobalKey();
+      final GlobalKey sheetKey = GlobalKey();
+
+      await tester.pumpWidget(dragGestureApp(homeKey, sheetKey));
+
+      // Open sheet
+      await tester.tap(find.text('Push Page 2'));
+      await tester.pumpAndSettle();
+
+      final Finder sheetFinder = find.byKey(sheetKey);
+      final Size sheetSize = tester.getSize(sheetFinder);
+      final double sheetHeight = sheetSize.height;
+
+      final double dragDistance = sheetHeight / 1.8;
+
+      final Offset sheetTopLeft = tester.getTopLeft(sheetFinder);
+      final startPoint = Offset(sheetTopLeft.dx + (sheetSize.width / 1.8), sheetTopLeft.dy + 20.0);
+
+      // Drag sheet down
+      final TestGesture gesture = await tester.startGesture(startPoint);
+      await gesture.moveBy(Offset(0, dragDistance));
+      await tester.pump();
+
+      // Release sheet
+      await gesture.up();
+      await tester.pump();
+
+      await tester.pump(const Duration(milliseconds: 50));
+
+      final box = tester.renderObject(sheetFinder) as RenderBox;
+      final double currentY = box.localToGlobal(Offset.zero).dy;
+
+      // Try to intercept the gesture by dragging up
+      final TestGesture interceptGesture = await tester.startGesture(
+        Offset(startPoint.dx, currentY + 100),
+      );
+      await tester.pump();
+
+      // Drag up
+      await interceptGesture.moveBy(const Offset(0, -50));
+      await interceptGesture.up();
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('Page 2'), findsNothing);
+      expect(find.text('Page 1'), findsOneWidget);
+    });
+
     testWidgets('dragging does not move the sheet when enableDrag is false', (
       WidgetTester tester,
     ) async {
