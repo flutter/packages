@@ -70,6 +70,8 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 /// Manages a "search view" route that allows the user to select one of the
 /// suggested completions for a search query.
 ///
+/// Learn more about [SearchAnchor] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=vM2dC8OCZoY).
+///
 /// The search view's route can either be shown by creating a [SearchController]
 /// and then calling [SearchController.openView] or by tapping on an anchor.
 /// When the anchor is tapped or [SearchController.openView] is called, the search view either
@@ -1411,6 +1413,8 @@ class SearchController extends TextEditingController {
 }
 
 /// A Material Design search bar.
+///
+/// Learn more about [SearchBar] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=vM2dC8OCZoY).
 ///
 /// A [SearchBar] looks like a [TextField]. Tapping a SearchBar typically shows a
 /// "search view" route: a route with the search bar at the top and a list of
