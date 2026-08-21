@@ -1,3 +1,8 @@
+## 27.3.3
+
+* [swift] Fixes a crash when a Flutter API returns null for a non-null return
+  value and the null arrives as `NSNull`.
+
 ## 27.3.2
 
 * [dart] Fixes lint warning from unused codec variable in Dart proxy classes.

@@ -1729,11 +1729,19 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
         );
       }, addTrailingNewline: false);
       if (!returnType.isNullable && !returnType.isVoid) {
-        indent.addScoped('else if listResponse[0] == nil {', '} ', () {
-          indent.writeln(
-            'completion(.failure(${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))',
-          );
-        }, addTrailingNewline: false);
+        // `FlutterStandardReader` substitutes `NSNull` for a `nil` element of
+        // a list, so a null reply can arrive as either. See
+        // https://github.com/flutter/flutter/issues/191254.
+        indent.addScoped(
+          'else if listResponse[0] == nil || listResponse[0] is NSNull {',
+          '} ',
+          () {
+            indent.writeln(
+              'completion(.failure(${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))',
+            );
+          },
+          addTrailingNewline: false,
+        );
       }
       indent.addScoped('else {', '}', () {
         if (returnType.isVoid) {
