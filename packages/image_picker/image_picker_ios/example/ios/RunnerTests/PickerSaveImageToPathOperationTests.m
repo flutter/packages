@@ -229,6 +229,154 @@
   [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
+- (void)testInitWithNilResultReturnsNil API_AVAILABLE(ios(14)) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+  FLTPHPickerSaveImageToPathOperation *operation = [[FLTPHPickerSaveImageToPathOperation alloc]
+           initWithResult:nil
+                maxHeight:@100
+                 maxWidth:@100
+      desiredImageQuality:@100
+             fullMetadata:YES
+           savedPathBlock:^(NSString *savedPath, FlutterError *error){
+           }];
+#pragma clang diagnostic pop
+  XCTAssertNil(operation);
+}
+
+- (void)testStartWhenCancelledFinishesWithoutSaving API_AVAILABLE(ios(14)) {
+  NSURL *imageURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"pngImage"
+                                                             withExtension:@"png"];
+  NSItemProvider *itemProvider = [[NSItemProvider alloc] initWithContentsOfURL:imageURL];
+  PHPickerResult *result = [self createPickerResultWithProvider:itemProvider];
+
+  __block BOOL savedPathCalled = NO;
+  FLTPHPickerSaveImageToPathOperation *operation = [[FLTPHPickerSaveImageToPathOperation alloc]
+           initWithResult:result
+                maxHeight:@100
+                 maxWidth:@100
+      desiredImageQuality:@100
+             fullMetadata:NO
+           savedPathBlock:^(NSString *savedPath, FlutterError *error) {
+             savedPathCalled = YES;
+           }];
+  [operation cancel];
+  [operation start];
+  XCTAssertTrue(operation.isFinished);
+  XCTAssertFalse(savedPathCalled);
+  XCTAssertTrue(operation.isConcurrent);
+}
+
+- (void)testSaveVideoCopiesFile API_AVAILABLE(ios(14)) {
+  NSString *sourcePath = [NSTemporaryDirectory()
+      stringByAppendingPathComponent:[[NSUUID UUID].UUIDString
+                                         stringByAppendingPathExtension:@"mov"]];
+  XCTAssertTrue([[NSFileManager defaultManager]
+      createFileAtPath:sourcePath
+              contents:[@"video" dataUsingEncoding:NSUTF8StringEncoding]
+            attributes:nil]);
+  NSURL *videoURL = [NSURL fileURLWithPath:sourcePath];
+
+  id mockItemProvider = OCMClassMock([NSItemProvider class]);
+  OCMStub([mockItemProvider hasItemConformingToTypeIdentifier:UTTypeImage.identifier])
+      .andReturn(NO);
+  OCMStub([mockItemProvider hasItemConformingToTypeIdentifier:UTTypeMovie.identifier])
+      .andReturn(YES);
+  OCMStub([mockItemProvider registeredTypeIdentifiers]).andReturn(@[ UTTypeMovie.identifier ]);
+  [[mockItemProvider stub]
+      loadFileRepresentationForTypeIdentifier:OCMOCK_ANY
+                            completionHandler:[OCMArg invokeBlockWithArgs:videoURL, [NSNull null],
+                                                                          nil]];
+
+  id pickerResult = OCMClassMock([PHPickerResult class]);
+  OCMStub([pickerResult itemProvider]).andReturn(mockItemProvider);
+
+  XCTestExpectation *pathExpectation = [self expectationWithDescription:@"video path was created"];
+  __block NSString *copiedPath = nil;
+  FLTPHPickerSaveImageToPathOperation *operation = [[FLTPHPickerSaveImageToPathOperation alloc]
+           initWithResult:pickerResult
+                maxHeight:@100
+                 maxWidth:@100
+      desiredImageQuality:@100
+             fullMetadata:NO
+           savedPathBlock:^(NSString *savedPath, FlutterError *error) {
+             XCTAssertNil(error);
+             XCTAssertTrue([[NSFileManager defaultManager] fileExistsAtPath:savedPath]);
+             copiedPath = [savedPath copy];
+             [pathExpectation fulfill];
+           }];
+  [operation start];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+  [[NSFileManager defaultManager] removeItemAtPath:sourcePath error:nil];
+  if (copiedPath) {
+    [[NSFileManager defaultManager] removeItemAtPath:copiedPath error:nil];
+  }
+}
+
+- (void)testSaveVideoFailsWhenLoadReturnsError API_AVAILABLE(ios(14)) {
+  NSError *loadError = [NSError errorWithDomain:@"PHPickerDomain" code:1234 userInfo:nil];
+  id mockItemProvider = OCMClassMock([NSItemProvider class]);
+  OCMStub([mockItemProvider hasItemConformingToTypeIdentifier:UTTypeImage.identifier])
+      .andReturn(NO);
+  OCMStub([mockItemProvider hasItemConformingToTypeIdentifier:UTTypeMovie.identifier])
+      .andReturn(YES);
+  OCMStub([mockItemProvider registeredTypeIdentifiers]).andReturn(@[ UTTypeMovie.identifier ]);
+  [[mockItemProvider stub]
+      loadFileRepresentationForTypeIdentifier:OCMOCK_ANY
+                            completionHandler:[OCMArg invokeBlockWithArgs:[NSNull null], loadError,
+                                                                          nil]];
+
+  id pickerResult = OCMClassMock([PHPickerResult class]);
+  OCMStub([pickerResult itemProvider]).andReturn(mockItemProvider);
+
+  XCTestExpectation *errorExpectation = [self expectationWithDescription:@"invalid image error"];
+  FLTPHPickerSaveImageToPathOperation *operation = [[FLTPHPickerSaveImageToPathOperation alloc]
+           initWithResult:pickerResult
+                maxHeight:@100
+                 maxWidth:@100
+      desiredImageQuality:@100
+             fullMetadata:NO
+           savedPathBlock:^(NSString *savedPath, FlutterError *error) {
+             XCTAssertEqualObjects(error.code, @"invalid_image");
+             XCTAssertEqualObjects(error.message, loadError.localizedDescription);
+             XCTAssertEqualObjects(error.details, @"PHPickerDomain");
+             [errorExpectation fulfill];
+           }];
+  [operation start];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testSaveVideoFailsWhenCopyFails API_AVAILABLE(ios(14)) {
+  id mockItemProvider = OCMClassMock([NSItemProvider class]);
+  OCMStub([mockItemProvider hasItemConformingToTypeIdentifier:UTTypeImage.identifier])
+      .andReturn(NO);
+  OCMStub([mockItemProvider hasItemConformingToTypeIdentifier:UTTypeMovie.identifier])
+      .andReturn(YES);
+  OCMStub([mockItemProvider registeredTypeIdentifiers]).andReturn(@[ UTTypeMovie.identifier ]);
+  NSURL *missing = [NSURL fileURLWithPath:@"/this/path/does/not/exist.mov"];
+  [[mockItemProvider stub]
+      loadFileRepresentationForTypeIdentifier:OCMOCK_ANY
+                            completionHandler:[OCMArg
+                                                  invokeBlockWithArgs:missing, [NSNull null], nil]];
+
+  id pickerResult = OCMClassMock([PHPickerResult class]);
+  OCMStub([pickerResult itemProvider]).andReturn(mockItemProvider);
+
+  XCTestExpectation *errorExpectation = [self expectationWithDescription:@"copy video error"];
+  FLTPHPickerSaveImageToPathOperation *operation = [[FLTPHPickerSaveImageToPathOperation alloc]
+           initWithResult:pickerResult
+                maxHeight:@100
+                 maxWidth:@100
+      desiredImageQuality:@100
+             fullMetadata:NO
+           savedPathBlock:^(NSString *savedPath, FlutterError *error) {
+             XCTAssertEqualObjects(error.code, @"flutter_image_picker_copy_video_error");
+             [errorExpectation fulfill];
+           }];
+  [operation start];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
 - (void)testSavePNGImageWithoutFullMetadata API_AVAILABLE(ios(14)) {
   id photoAssetUtil = OCMClassMock([PHAsset class]);
 

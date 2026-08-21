@@ -95,6 +95,45 @@
                                                               quality:nil];
   XCTAssertEqual([FLTImagePickerMetaDataUtil getImageMIMETypeFromImageData:convertedDataPNG],
                  FLTImagePickerMIMETypePNG);
+
+  NSData *convertedJPEGDefaultQuality =
+      [FLTImagePickerMetaDataUtil convertImage:imageJPG
+                                     usingType:FLTImagePickerMIMETypeJPEG
+                                       quality:nil];
+  XCTAssertEqual(
+      [FLTImagePickerMetaDataUtil getImageMIMETypeFromImageData:convertedJPEGDefaultQuality],
+      FLTImagePickerMIMETypeJPEG);
+}
+
+- (void)testGetImageMIMETypeFromImageDataUnknownReturnsOther {
+  uint8_t bytes[] = {0x00};
+  NSData *data = [NSData dataWithBytes:bytes length:1];
+  XCTAssertEqual([FLTImagePickerMetaDataUtil getImageMIMETypeFromImageData:data],
+                 FLTImagePickerMIMETypeOther);
+}
+
+- (void)testConvertImageIgnoresQualityForPNG {
+  UIImage *imageJPG = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
+  NSData *convertedDataPNG = [FLTImagePickerMetaDataUtil convertImage:imageJPG
+                                                            usingType:FLTImagePickerMIMETypePNG
+                                                              quality:@(0.5)];
+  XCTAssertEqual([FLTImagePickerMetaDataUtil getImageMIMETypeFromImageData:convertedDataPNG],
+                 FLTImagePickerMIMETypePNG);
+}
+
+- (void)testConvertImageDefaultsNonJPEGNonPNGToJPEG {
+  UIImage *imageJPG = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
+  NSData *convertedGIF = [FLTImagePickerMetaDataUtil convertImage:imageJPG
+                                                        usingType:FLTImagePickerMIMETypeGIF
+                                                          quality:@(0.5)];
+  XCTAssertEqual([FLTImagePickerMetaDataUtil getImageMIMETypeFromImageData:convertedGIF],
+                 FLTImagePickerMIMETypeJPEG);
+
+  NSData *convertedOther = [FLTImagePickerMetaDataUtil convertImage:imageJPG
+                                                          usingType:FLTImagePickerMIMETypeOther
+                                                            quality:nil];
+  XCTAssertEqual([FLTImagePickerMetaDataUtil getImageMIMETypeFromImageData:convertedOther],
+                 FLTImagePickerMIMETypeJPEG);
 }
 
 @end
