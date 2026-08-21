@@ -399,50 +399,50 @@ class PartI {
         fontWeight: FontWeight.w100,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '3e37b91e94bc50eaa90a97067251c3ed1a0f6f3330c2f8c0325d0bd78f2fc472',
-        160564,
+        'c6958adea169ff78fba857019009ba0ff907ae63dca196620d6145f7b9c1d8a1',
+        160288,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w200,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '5118fbc3904b3db03d3c8dcd6fb0dbd0972b897a10906a540c8f1ecc5bd7ca63',
-        161740,
+        '2af0cf7a8ac509c3a894f228a4bd143ab6ef6e2cb1d3ea2b640ed416122d1b0e',
+        161464,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '0712bcecba66b2dd8d9affb6ca2a12d0d62c8f7d96776030a03c4f000027b655',
-        161740,
+        '2a99c99096c74ccedc78cd1408303dfdd351e4d02ffdd032ec61981fbbf42d49',
+        161464,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '1dd5b8658755ac24816510d55a5fb695a1afb4501670975bf25b280c26374402',
-        159912,
+        '04cc42c019ecfa09218b404922c36f9d32c5936d6b0a2421b561565df7351770',
+        159636,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '562c4db5603ce976913e221339e8fcc9627254bf8c818bb88a9ed1a7aa03c5a0',
-        164208,
+        '72da3bcfac943bd602e8f4c34bcc4f3e818960948c15fefbf70e7a800151d9d4',
+        163932,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '8c07e6cd6d0f3e35d2679c155d3c259e7bddfee21549f01a0b09d35b4d7a39c6',
-        164284,
+        '0044f0256740658e8b735fb56f3d75c699e72c9883e172643c12aedbff317ec5',
+        164008,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '7147bc82b252b7ab0e19d656da55d46cace739e45096c9d9d4fe23616216e77b',
-        163188,
+        '9b414a64994368924b9f9c0999bd303c0909105dced7862ce170bd75fe173d2d',
+        162912,
       ),
     };
 
@@ -2751,6 +2751,107 @@ class PartI {
     );
   }
 
+  /// Applies the Idiqlat font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Idiqlat
+  static TextStyle idiqlat({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'cac318dba98618af5600c7b19015c0f0c10dbc52c13b1581f5cfa1b5bd3a9d94',
+        63916,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '51d79f092e659a64cce462913ea3c6f3f6023c175dcadfa746af43422aa6574b',
+        64320,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '26f40496ed826008e73c1870a574ee3323bc4394d502119cc180386d4f3193ae',
+        64936,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Idiqlat',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Idiqlat font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Idiqlat
+  static TextTheme idiqlatTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: idiqlat(textStyle: textTheme.displayLarge),
+      displayMedium: idiqlat(textStyle: textTheme.displayMedium),
+      displaySmall: idiqlat(textStyle: textTheme.displaySmall),
+      headlineLarge: idiqlat(textStyle: textTheme.headlineLarge),
+      headlineMedium: idiqlat(textStyle: textTheme.headlineMedium),
+      headlineSmall: idiqlat(textStyle: textTheme.headlineSmall),
+      titleLarge: idiqlat(textStyle: textTheme.titleLarge),
+      titleMedium: idiqlat(textStyle: textTheme.titleMedium),
+      titleSmall: idiqlat(textStyle: textTheme.titleSmall),
+      bodyLarge: idiqlat(textStyle: textTheme.bodyLarge),
+      bodyMedium: idiqlat(textStyle: textTheme.bodyMedium),
+      bodySmall: idiqlat(textStyle: textTheme.bodySmall),
+      labelLarge: idiqlat(textStyle: textTheme.labelLarge),
+      labelMedium: idiqlat(textStyle: textTheme.labelMedium),
+      labelSmall: idiqlat(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Imbue font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -4958,6 +5059,278 @@ class PartI {
       labelLarge: interTight(textStyle: textTheme.labelLarge),
       labelMedium: interTight(textStyle: textTheme.labelMedium),
       labelSmall: interTight(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Iosevka Charon font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Iosevka+Charon
+  static TextStyle iosevkaCharon({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6a70a95f5507bf895a88bdae392f2085b9844a97b034fd39e1f137a4d18c77fe',
+        1029348,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'e0facb0f50e3280e020a31d5dfb4935253fb8afb9ccaca0bb0d904c28e5cb0aa',
+        1088540,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9d7195a1c3b1042479630a8cbbf34093ebdb3e410d23526d5a70e431351311c5',
+        1027980,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '125967363eb427921a30fd825aa9161896c5b86a7aa2127466f7e65c5f400ca7',
+        1087048,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'cb90ec5fc25470ebe653331d86a650fdc29b48acd7bc2667662fc743776aec74',
+        1024272,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '18f88d1dfc5926e8c9008b199490f939b70160cd35b4aaf4832d44083cfbeeb3',
+        1084928,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9c3a229a15371419670ec8fe01c637d49698231787e771de23ed6fc682ee0b0f',
+        1020904,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '55e1d4be496556bd71aa27e30b312c6586efcaeb3fc96debb74a66a85b2eb76a',
+        1084140,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'IosevkaCharon',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Iosevka Charon font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Iosevka+Charon
+  static TextTheme iosevkaCharonTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: iosevkaCharon(textStyle: textTheme.displayLarge),
+      displayMedium: iosevkaCharon(textStyle: textTheme.displayMedium),
+      displaySmall: iosevkaCharon(textStyle: textTheme.displaySmall),
+      headlineLarge: iosevkaCharon(textStyle: textTheme.headlineLarge),
+      headlineMedium: iosevkaCharon(textStyle: textTheme.headlineMedium),
+      headlineSmall: iosevkaCharon(textStyle: textTheme.headlineSmall),
+      titleLarge: iosevkaCharon(textStyle: textTheme.titleLarge),
+      titleMedium: iosevkaCharon(textStyle: textTheme.titleMedium),
+      titleSmall: iosevkaCharon(textStyle: textTheme.titleSmall),
+      bodyLarge: iosevkaCharon(textStyle: textTheme.bodyLarge),
+      bodyMedium: iosevkaCharon(textStyle: textTheme.bodyMedium),
+      bodySmall: iosevkaCharon(textStyle: textTheme.bodySmall),
+      labelLarge: iosevkaCharon(textStyle: textTheme.labelLarge),
+      labelMedium: iosevkaCharon(textStyle: textTheme.labelMedium),
+      labelSmall: iosevkaCharon(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Iosevka Charon Mono font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Iosevka+Charon+Mono
+  static TextStyle iosevkaCharonMono({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '661212244b8fa1b9fdaf99160ff93937a3f78aeba66541379895fea13640828e',
+        1023772,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '80f05b035898dbf988844a82c5e2f1f2d923aab7a3888dc4256786da309a2891',
+        1081408,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c59141202010c265acd1ec13e6cd9b50116b16ef439f5608902a43fc38415394',
+        1021456,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '34476de295013b7209ece54e6a8185a58d867d488eb0dc85adf28c438dd65a95',
+        1080012,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '464014fdb6a89a16ee639aece4e61885fd0d2f49e798d59ebcfb43ba5078866f',
+        1019228,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '5c8392e9c78bc1564ff32a10cbf63821ec6fa6571607c70bd6b0a3100dfc3e12',
+        1078432,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e29bdc881c6803ae21d56cf79b4459fef61da3a8383a59c4187e932ec55f2cdf',
+        1016924,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'a156dae65f792c030536f872ad3b31b59d1b0fd3774a4a7a7474772dbc0d5cbf',
+        1078452,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'IosevkaCharonMono',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Iosevka Charon Mono font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Iosevka+Charon+Mono
+  static TextTheme iosevkaCharonMonoTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: iosevkaCharonMono(textStyle: textTheme.displayLarge),
+      displayMedium: iosevkaCharonMono(textStyle: textTheme.displayMedium),
+      displaySmall: iosevkaCharonMono(textStyle: textTheme.displaySmall),
+      headlineLarge: iosevkaCharonMono(textStyle: textTheme.headlineLarge),
+      headlineMedium: iosevkaCharonMono(textStyle: textTheme.headlineMedium),
+      headlineSmall: iosevkaCharonMono(textStyle: textTheme.headlineSmall),
+      titleLarge: iosevkaCharonMono(textStyle: textTheme.titleLarge),
+      titleMedium: iosevkaCharonMono(textStyle: textTheme.titleMedium),
+      titleSmall: iosevkaCharonMono(textStyle: textTheme.titleSmall),
+      bodyLarge: iosevkaCharonMono(textStyle: textTheme.bodyLarge),
+      bodyMedium: iosevkaCharonMono(textStyle: textTheme.bodyMedium),
+      bodySmall: iosevkaCharonMono(textStyle: textTheme.bodySmall),
+      labelLarge: iosevkaCharonMono(textStyle: textTheme.labelLarge),
+      labelMedium: iosevkaCharonMono(textStyle: textTheme.labelMedium),
+      labelSmall: iosevkaCharonMono(textStyle: textTheme.labelSmall),
     );
   }
 

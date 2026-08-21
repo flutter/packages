@@ -12,6 +12,114 @@ import '../google_fonts_variant.dart';
 
 /// Methods for fonts starting with 'L'.
 class PartL {
+  /// Applies the LINE Seed JP font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/LINE+Seed+JP
+  static TextStyle lineSeedJp({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '30630648f3b15a28a6347a2e2bcf75fce486024b5e6faefda8f9139644563da0',
+        3724132,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd342b47865519a9226a40fc0157944512072f0bf2f8c8aa900a3a4d9a7491898',
+        3650408,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '001e78b4fca206e6a3d8990f5fb4abc92bce1ff8823259240e7688b2c38a7fe1',
+        3763144,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '78ca41e2d79c86ebf466b3685cfaa0e0d34023714a61be1b01eb84ec50533306',
+        3580956,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'LINESeedJP',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the LINE Seed JP font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/LINE+Seed+JP
+  static TextTheme lineSeedJpTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: lineSeedJp(textStyle: textTheme.displayLarge),
+      displayMedium: lineSeedJp(textStyle: textTheme.displayMedium),
+      displaySmall: lineSeedJp(textStyle: textTheme.displaySmall),
+      headlineLarge: lineSeedJp(textStyle: textTheme.headlineLarge),
+      headlineMedium: lineSeedJp(textStyle: textTheme.headlineMedium),
+      headlineSmall: lineSeedJp(textStyle: textTheme.headlineSmall),
+      titleLarge: lineSeedJp(textStyle: textTheme.titleLarge),
+      titleMedium: lineSeedJp(textStyle: textTheme.titleMedium),
+      titleSmall: lineSeedJp(textStyle: textTheme.titleSmall),
+      bodyLarge: lineSeedJp(textStyle: textTheme.bodyLarge),
+      bodyMedium: lineSeedJp(textStyle: textTheme.bodyMedium),
+      bodySmall: lineSeedJp(textStyle: textTheme.bodySmall),
+      labelLarge: lineSeedJp(textStyle: textTheme.labelLarge),
+      labelMedium: lineSeedJp(textStyle: textTheme.labelMedium),
+      labelSmall: lineSeedJp(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the LXGW Marker Gothic font family from Google Fonts to the
   /// given [textStyle].
   ///

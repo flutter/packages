@@ -3843,7 +3843,7 @@ class PartP {
         fontWeight: FontWeight.w200,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'bb35d9a126749fc8bf7dfce45aa5417549b54b9bd3a9b4fa5cb620c0a82071a6',
+        'bec0fa013d1d06a87bc7abe829e15a4785b1f25bb356b0185dac478790ea8e13',
         137224,
       ),
       const GoogleFontsVariant(
@@ -13829,29 +13829,29 @@ class PartP {
         fontWeight: FontWeight.w100,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '12b889eee10a905b902cd8286a7990c6ea7ac1a3351f64867322ea6aa3fd9c56',
-        87260,
+        '5e9cbbc26fd3fe61e17255f3e90709a82101e09953bd793dbbf1291cae64f13b',
+        88724,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w200,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '90fa83f73039a5bedca2b367f8857a4f8d5ff55d6404c4642c9a55491cce2269',
-        87416,
+        '7bb26defca7a79217ac915501b381497c3b14c1ce918bedfc91ea6bdb845b2cb',
+        88852,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'de911f53fd492802b8e1d9a83bc1ed7bddaa46d56e031731eec7dc85e69a4459',
-        87360,
+        'bf39b38103fb842f340f6e8072be0b7d92d4a040d2f27720cc2cf7435a478104',
+        88772,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '1d5d24541268eb985ae9c15de9f0d260e223079042ff2d391df2a3e454acdb92',
-        87112,
+        'f072a8ad08cb6dfb3d4bc23531fd85ed2ba793cf04cee352ae4fd018a4b9c36d',
+        88500,
       ),
     };
 
@@ -13906,6 +13906,201 @@ class PartP {
     );
   }
 
+  /// Applies the Playwrite NZ Basic font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+NZ+Basic
+  static TextStyle playwriteNzBasic({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a5fbc5c2a7521b7b7b3c56655210ff01df62df75a47f8c8785ef7d75d959fa86',
+        62048,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ddd24ad262b7d3e285b82917c9b4810af2f5566123d0bbf7a82a9ee93eb64963',
+        62056,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '2c170774c2b46ab6f6d28d1119a03bfadc89ac2939b3972304bfa55c8482cf9a',
+        62164,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '592bac9c02df5213950f41e5c5c0b19273e62d9ff19badb23b5fd709a1c03c5b',
+        61948,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteNZBasic',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite NZ Basic font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+NZ+Basic
+  static TextTheme playwriteNzBasicTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteNzBasic(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteNzBasic(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteNzBasic(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteNzBasic(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteNzBasic(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteNzBasic(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteNzBasic(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteNzBasic(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteNzBasic(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteNzBasic(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteNzBasic(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteNzBasic(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteNzBasic(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteNzBasic(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteNzBasic(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite NZ Basic Guides font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+NZ+Basic+Guides
+  static TextStyle playwriteNzBasicGuides({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e7e445a7da1c960bc93477173e1de8b753bd7298b163464fbacf145d6b9c037c',
+        140852,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteNZBasicGuides',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite NZ Basic Guides font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+NZ+Basic+Guides
+  static TextTheme playwriteNzBasicGuidesTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteNzBasicGuides(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteNzBasicGuides(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteNzBasicGuides(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteNzBasicGuides(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteNzBasicGuides(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteNzBasicGuides(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteNzBasicGuides(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteNzBasicGuides(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteNzBasicGuides(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteNzBasicGuides(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteNzBasicGuides(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteNzBasicGuides(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteNzBasicGuides(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteNzBasicGuides(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteNzBasicGuides(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Playwrite NZ Guides font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -13937,8 +14132,8 @@ class PartP {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'b0b19c82ecec3e10afb20fd79030e7bd30a18b60c2bf083599dd3ec9504facc6',
-        184396,
+        '4935b2124370be69aaf3c048a473e500d2f8053271cd624a3de951a500b856bb',
+        185528,
       ),
     };
 
@@ -15940,6 +16135,212 @@ class PartP {
       labelLarge: playwriteZaGuides(textStyle: textTheme.labelLarge),
       labelMedium: playwriteZaGuides(textStyle: textTheme.labelMedium),
       labelSmall: playwriteZaGuides(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Pliant font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Pliant
+  static TextStyle pliant({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'deea2b2efef442a12fb2861bab180e70eca38687e35102bebdea1800f50d35d5',
+        143964,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '479c4ab9215c956d82b4312d88961088407c2c12b2624471bb94bc4bb7160d99',
+        144108,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '35dfa435e9a378f02dd90d47d69cb320f50210cf776ae2bfd6f2ee74c85603b3',
+        144024,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4ae9e5103e1db972690578951abf4d7cd678f82df842310cdc69694554866aec',
+        143948,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '005a9c50c42b19cb418526e7351d3df729812a745c5e5194efbb542a3b897efe',
+        143920,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '98abfb5536b28b35f58953308a7d904da7730058187bffe47f422d013db60356',
+        143944,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e3b8eb5bed585fd452b560aae3afd01e8e7c0437b2c98abee120b3f0d08d660a',
+        143824,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '530493b58b70c5d989cb4498709425250a5e6c80b63f166fdac50e6328116ec9',
+        143944,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '54f66c4d84f7c2bd4e186e467533421c3927fc8d87b0bd3ba689197c97ca2ce1',
+        143900,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'e293aecb09a764ef500b9834e8f5b0deccc27dcd7755f4c489ff383c39e15296',
+        147156,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'f7d42ce2a2db746f6d69d92a98fe5fd4b85618cee61e0e6f8eabe0d4054ffd0d',
+        147284,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '2d863b1bb886fa4db59ffa869429880a8cdc4fba39fe120a8c6969a187f7cd9d',
+        147180,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '84e428140ef95d3c950a638a478a70e363d2e997734058ab16600c75077f66a4',
+        147100,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '5dbcfc58ec4780f6e5ffe8410809bc2dc838150a2aab9c326f27505d5568ab5e',
+        147212,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '213d0f37c41b64c12b845329429f7520c0494125ac27d1b2d9610afc9d6b2407',
+        147232,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '7da00b88fcb6eacfdce4d041b3150ef80b7a04c148aedef3baa659743387631e',
+        147092,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'e598982970946769cf68631483f5743917cac4a1c0e03bba66bc8366883829ec',
+        147124,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '2856164e485c9b7b7bfceab1eb0edfd0710e7b331f97ef3e99118a840ab20fad',
+        147040,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Pliant',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Pliant font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Pliant
+  static TextTheme pliantTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: pliant(textStyle: textTheme.displayLarge),
+      displayMedium: pliant(textStyle: textTheme.displayMedium),
+      displaySmall: pliant(textStyle: textTheme.displaySmall),
+      headlineLarge: pliant(textStyle: textTheme.headlineLarge),
+      headlineMedium: pliant(textStyle: textTheme.headlineMedium),
+      headlineSmall: pliant(textStyle: textTheme.headlineSmall),
+      titleLarge: pliant(textStyle: textTheme.titleLarge),
+      titleMedium: pliant(textStyle: textTheme.titleMedium),
+      titleSmall: pliant(textStyle: textTheme.titleSmall),
+      bodyLarge: pliant(textStyle: textTheme.bodyLarge),
+      bodyMedium: pliant(textStyle: textTheme.bodyMedium),
+      bodySmall: pliant(textStyle: textTheme.bodySmall),
+      labelLarge: pliant(textStyle: textTheme.labelLarge),
+      labelMedium: pliant(textStyle: textTheme.labelMedium),
+      labelSmall: pliant(textStyle: textTheme.labelSmall),
     );
   }
 

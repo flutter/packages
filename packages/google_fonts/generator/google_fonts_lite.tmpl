@@ -1,0 +1,87 @@
+// GENERATED CODE - DO NOT EDIT
+
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+
+import 'google_fonts_base.dart';
+import 'google_fonts_descriptor.dart';
+import 'google_fonts_variant.dart';
+
+/// Provides a lightweight entry point to [TextStyle]s from Google Fonts.
+///
+/// Unlike the main `GoogleFonts` class which declares dedicated methods for
+/// each font, [GoogleFontsLite] provides dynamic font lookup via [getFont]
+/// and [fontsMap], allowing unused font methods to be tree-shaken by the compiler.
+abstract final class GoogleFontsLite {
+  /// Map of all available Google Fonts families to their variant file descriptors.
+  static final Map<String, Map<GoogleFontsVariant, GoogleFontsFile>> fontsMap = {
+    {{#fontEntries}}
+      '{{fontFamilyDisplay}}': {
+      {{#fontUrls}}
+      const GoogleFontsVariant(fontWeight: FontWeight.w{{variantWeight}}, fontStyle: FontStyle.{{variantStyle}},) : const GoogleFontsFile('{{hash}}', {{length}},),
+      {{/fontUrls}}
+      },
+    {{/fontEntries}}
+  };
+  
+  /// Retrieve a font by family name.
+  ///
+  /// Applies the given font family from Google Fonts to the given [textStyle]
+  /// and returns the resulting [TextStyle].
+  ///
+  /// Note: [fontFamily] is case-sensitive.
+  static TextStyle getFont(String fontFamily, {
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    if (!fontsMap.containsKey(fontFamily)) {
+      throw Exception("No font family by name '$fontFamily' was found.");
+    }
+
+    return googleFontsTextStyle(
+      fontFamily: fontFamily.replaceAll(' ', ''),
+      fonts: fontsMap[fontFamily]!,
+      textStyle: textStyle,
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+    );
+  }
+}

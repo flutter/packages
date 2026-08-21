@@ -1987,12 +1987,12 @@ class PartF {
     );
   }
 
-  /// Applies the Finlandica font family from Google Fonts to the
+  /// Applies the Finlandica Headline font family from Google Fonts to the
   /// given [textStyle].
   ///
   /// See:
-  ///  * https://fonts.google.com/specimen/Finlandica
-  static TextStyle finlandica({
+  ///  * https://fonts.google.com/specimen/Finlandica+Headline
+  static TextStyle finlandicaHeadline({
     TextStyle? textStyle,
     Color? color,
     Color? backgroundColor,
@@ -2015,66 +2015,136 @@ class PartF {
   }) {
     final fonts = <GoogleFontsVariant, GoogleFontsFile>{
       const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '62e5f3ff56b808791e5776674b4c0b87d03114dbce52bdc664b460e9fb79b455',
+        137256,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '17efd6b0e5828009f6c3ab76cd269e1be6423a6e372abedc9f40dc60b7e3453b',
+        137676,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5b76f023c825162060cd7c06cc5c76d37a48b53170ef207eedd4a152fab38a71',
+        137744,
+      ),
+      const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '4cc7d5439aafca36da59ee2a648a20a9512f9a954d88305d6e813b22d87ca223',
-        81184,
+        '5c1ddd2a3ad9f3b337b5d64ba0ffd147b2943c4b600621a9fb1ef8da258b8c11',
+        137564,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'dcfb751ad05904c9ccfe7dda4795971605586ec909791a75bdb3295e1b95b0c2',
-        81320,
+        'ab560476419f351a51909928846f48f78d02d43f14e7fc1156e9dfc934f21626',
+        137648,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '49973c91b06f7617ff28243dcc67ae68d38213e952e79b7977ecc6bad910bf72',
-        81208,
+        'cfc5c946a76d69a83111f521cace35cb363c8b2a84dba68b89e83b80aa527f8a',
+        137748,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '64a8735cbb430911886c7a56835dfd385750eda0289e2fde3f2d733580974065',
-        80944,
+        'b48f2be1c9a817d0fd72c469a0861e4ad49b8f0e9519022df56fe0f956bab820',
+        137648,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd1a85222b7ec9efb75de70b9aa07c02bcbf934d598490936306130215b68760d',
+        137584,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9f1b0aa8c07844a4abe285b39f1d4d356b6751ab595e4b3189069e3e15f1a5fe',
+        135564,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '1b674ab1634a66bee94f3b85c74d9e7326643bbb92c8f8d5562b642767598b45',
+        143044,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '7d23851e193338163fc4a89a9180817e539b5399dc097ee283678049f9179811',
+        145640,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'd21a2d4d381c5fa718058d58ca740adf2298b4e4033144cd361e626d79194782',
+        145756,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '25d6600dde62e3e6bb14dc1fb8ece72ecddc02d9ff3ba83dff7b56eb182f0254',
-        85660,
+        'ca6f02fbd43841d7a10a3551c16d4b33050d52af5c928cfbc5dffe0e465ba9e7',
+        145488,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '687fd448bc04d57f3820866b8e3c0abb4d42de59476d0e42ebea3b609cbbfe82',
-        85920,
+        'a0e4ec4941bae68ac9476a19a9ef8660b2c19156813a5eb1254d73dca0748a09',
+        145768,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'bfbc5582d7a17945dcf44417ff13a4c986547aa47ab3b5819a3608667122d915',
-        85952,
+        '3078fe037fcbefefe7d92f3b9aff3f53331f0afae53cfef6701790ab5b3dac34',
+        145772,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'd134289cca826c842949208b7943ab32da90ca97ad857f0e784981a4792d11e8',
-        85612,
+        'a15d2f1081e03258fdd98edfac87b80e509287aff15e5ca081ba986981439181',
+        145604,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'ede4d7cca50388fa209d08378df8137b07585c9ca592e59973e554e7c417c35c',
+        145644,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '2b098b17bde22ff4de52a119a797aa43363a1ffd5854b49b93c8e51cb2a3befe',
+        143096,
       ),
     };
 
     return googleFontsTextStyle(
       textStyle: textStyle,
-      fontFamily: 'Finlandica',
+      fontFamily: 'FinlandicaHeadline',
       color: color,
       backgroundColor: backgroundColor,
       fontSize: fontSize,
@@ -2097,29 +2167,235 @@ class PartF {
     );
   }
 
-  /// Applies the Finlandica font family from Google Fonts to every
+  /// Applies the Finlandica Headline font family from Google Fonts to every
   /// [TextStyle] in the given [textTheme].
   ///
   /// See:
-  ///  * https://fonts.google.com/specimen/Finlandica
-  static TextTheme finlandicaTextTheme([TextTheme? textTheme]) {
+  ///  * https://fonts.google.com/specimen/Finlandica+Headline
+  static TextTheme finlandicaHeadlineTextTheme([TextTheme? textTheme]) {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
-      displayLarge: finlandica(textStyle: textTheme.displayLarge),
-      displayMedium: finlandica(textStyle: textTheme.displayMedium),
-      displaySmall: finlandica(textStyle: textTheme.displaySmall),
-      headlineLarge: finlandica(textStyle: textTheme.headlineLarge),
-      headlineMedium: finlandica(textStyle: textTheme.headlineMedium),
-      headlineSmall: finlandica(textStyle: textTheme.headlineSmall),
-      titleLarge: finlandica(textStyle: textTheme.titleLarge),
-      titleMedium: finlandica(textStyle: textTheme.titleMedium),
-      titleSmall: finlandica(textStyle: textTheme.titleSmall),
-      bodyLarge: finlandica(textStyle: textTheme.bodyLarge),
-      bodyMedium: finlandica(textStyle: textTheme.bodyMedium),
-      bodySmall: finlandica(textStyle: textTheme.bodySmall),
-      labelLarge: finlandica(textStyle: textTheme.labelLarge),
-      labelMedium: finlandica(textStyle: textTheme.labelMedium),
-      labelSmall: finlandica(textStyle: textTheme.labelSmall),
+      displayLarge: finlandicaHeadline(textStyle: textTheme.displayLarge),
+      displayMedium: finlandicaHeadline(textStyle: textTheme.displayMedium),
+      displaySmall: finlandicaHeadline(textStyle: textTheme.displaySmall),
+      headlineLarge: finlandicaHeadline(textStyle: textTheme.headlineLarge),
+      headlineMedium: finlandicaHeadline(textStyle: textTheme.headlineMedium),
+      headlineSmall: finlandicaHeadline(textStyle: textTheme.headlineSmall),
+      titleLarge: finlandicaHeadline(textStyle: textTheme.titleLarge),
+      titleMedium: finlandicaHeadline(textStyle: textTheme.titleMedium),
+      titleSmall: finlandicaHeadline(textStyle: textTheme.titleSmall),
+      bodyLarge: finlandicaHeadline(textStyle: textTheme.bodyLarge),
+      bodyMedium: finlandicaHeadline(textStyle: textTheme.bodyMedium),
+      bodySmall: finlandicaHeadline(textStyle: textTheme.bodySmall),
+      labelLarge: finlandicaHeadline(textStyle: textTheme.labelLarge),
+      labelMedium: finlandicaHeadline(textStyle: textTheme.labelMedium),
+      labelSmall: finlandicaHeadline(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Finlandica Text font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Finlandica+Text
+  static TextStyle finlandicaText({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fe633767de55a478c017b5bc27c59ada3a61b2d90aeddce4b2aaf86f3409a187',
+        138820,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd911bc5c8c9a81b7fa9822ffd8e5f83c6d3ffdb64c3342d6f8d5ca4808ce5e77',
+        138860,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e702b0d4324e204ad9668f3e716a74fa2191ffa14adc54390e1d16c382d8cf1c',
+        138724,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6f2acba3689fb69d0e7a0cdc52c357e8f4ee1957f772473714469021db81d8c9',
+        138680,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7bb705e899ac0def1b62335229c92c5685396db5870ac74c7fed3e4321000b7b',
+        138584,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '95c4a7ccf077e2c5ffb5e531286359f298f421b2a41fc245f3e7cd21c4e4502a',
+        138716,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a16b8fbfc4dec08bab199bcdfb653622366ed3394173a549a54c92e4d0106c01',
+        138664,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '321db7507f8a85601d6a176986f473351de4539342f02fed8771c0c75f595936',
+        138652,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '8ad83a535f100196c7cd00afd1569aa1599f98dd10ee785d333db74053883e52',
+        136496,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'ae7877184a996a0a3bb76c27574a2287d61161211cc84c7264eb6ad45308230a',
+        140116,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '73313fa37a8aa222baf75950b18600a8a5dcf8c22be17a5d8366ac12e4928722',
+        140116,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'eaf12c30f564285c1c974888b21dd43def0104b800e2d9ffa71ad7e0043417f6',
+        140032,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'fa3463b58dafc2c635d5d2cb8c1fe3a8f5ca0102464bfefeb117c7b3e6ffeb79',
+        139920,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'bd089cb25b94035cedc892ad3b84b539fabff481b2e0ec0192b012e042ae504d',
+        139968,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'e83288ad3c724c40ad88abd81ee967fbb8f564e87c4e2fcafceeae4058f55b0b',
+        140076,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '746bbfd17ac687e6acb876e8251f28906626141506a5cbd1bbc52dd17fad17fd',
+        139912,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'ab750a471b8f9ff2dcd3083967c80f69a79974a7428263f8945acc6c19988af8',
+        140028,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'f7d8fec1ca56d7ac8d1487007054139fae99dd5141dc44c0ee0c0f34305caae5',
+        139716,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'FinlandicaText',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Finlandica Text font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Finlandica+Text
+  static TextTheme finlandicaTextTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: finlandicaText(textStyle: textTheme.displayLarge),
+      displayMedium: finlandicaText(textStyle: textTheme.displayMedium),
+      displaySmall: finlandicaText(textStyle: textTheme.displaySmall),
+      headlineLarge: finlandicaText(textStyle: textTheme.headlineLarge),
+      headlineMedium: finlandicaText(textStyle: textTheme.headlineMedium),
+      headlineSmall: finlandicaText(textStyle: textTheme.headlineSmall),
+      titleLarge: finlandicaText(textStyle: textTheme.titleLarge),
+      titleMedium: finlandicaText(textStyle: textTheme.titleMedium),
+      titleSmall: finlandicaText(textStyle: textTheme.titleSmall),
+      bodyLarge: finlandicaText(textStyle: textTheme.bodyLarge),
+      bodyMedium: finlandicaText(textStyle: textTheme.bodyMedium),
+      bodySmall: finlandicaText(textStyle: textTheme.bodySmall),
+      labelLarge: finlandicaText(textStyle: textTheme.labelLarge),
+      labelMedium: finlandicaText(textStyle: textTheme.labelMedium),
+      labelSmall: finlandicaText(textStyle: textTheme.labelSmall),
     );
   }
 
