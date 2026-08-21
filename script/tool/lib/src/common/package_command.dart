@@ -609,9 +609,9 @@ abstract class PackageCommand extends Command<void> {
         package.package.getSubpackages().map(
           (RepositoryPackage subPackage) => PackageEnumerationEntry(
             subPackage,
-            excluded: excludedPackageNames.contains(
-              _subPackageName(subPackage, parent: package.package),
-            ),
+            excluded:
+                package.excluded ||
+                excludedPackageNames.contains(_subPackageName(subPackage, parent: package.package)),
           ),
         ),
       );
