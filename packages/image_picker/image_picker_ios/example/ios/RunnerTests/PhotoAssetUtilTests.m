@@ -44,9 +44,11 @@
   NSURL *destination =
       [FLTImagePickerPhotoAssetUtil saveVideoFromURL:[NSURL fileURLWithPath:sourcePath]];
   XCTAssertNotNil(destination);
-  XCTAssertTrue([[NSFileManager defaultManager] fileExistsAtPath:destination.path]);
+  if (destination) {
+    XCTAssertTrue([[NSFileManager defaultManager] fileExistsAtPath:destination.path]);
+    [[NSFileManager defaultManager] removeItemAtURL:destination error:nil];
+  }
   [[NSFileManager defaultManager] removeItemAtPath:sourcePath error:nil];
-  [[NSFileManager defaultManager] removeItemAtURL:destination error:nil];
 }
 
 - (void)testSaveVideoFromURLReturnsNilWhenCopyFails {
@@ -82,6 +84,9 @@
                                                                         imageQuality:nil];
 #pragma clang diagnostic pop
   XCTAssertEqualObjects([NSURL fileURLWithPath:savedPath].pathExtension, @"jpg");
+  if (savedPath) {
+    [[NSFileManager defaultManager] removeItemAtPath:savedPath error:nil];
+  }
 }
 
 - (void)testCreateFileReturnsPathWhenWriteFails {

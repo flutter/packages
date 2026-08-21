@@ -292,6 +292,7 @@
   OCMStub([pickerResult itemProvider]).andReturn(mockItemProvider);
 
   XCTestExpectation *pathExpectation = [self expectationWithDescription:@"video path was created"];
+  __block NSString *copiedPath = nil;
   FLTPHPickerSaveImageToPathOperation *operation = [[FLTPHPickerSaveImageToPathOperation alloc]
            initWithResult:pickerResult
                 maxHeight:@100
@@ -301,11 +302,15 @@
            savedPathBlock:^(NSString *savedPath, FlutterError *error) {
              XCTAssertNil(error);
              XCTAssertTrue([[NSFileManager defaultManager] fileExistsAtPath:savedPath]);
+             copiedPath = [savedPath copy];
              [pathExpectation fulfill];
            }];
   [operation start];
   [self waitForExpectationsWithTimeout:30 handler:nil];
   [[NSFileManager defaultManager] removeItemAtPath:sourcePath error:nil];
+  if (copiedPath) {
+    [[NSFileManager defaultManager] removeItemAtPath:copiedPath error:nil];
+  }
 }
 
 - (void)testSaveVideoFailsWhenLoadReturnsError API_AVAILABLE(ios(14)) {
