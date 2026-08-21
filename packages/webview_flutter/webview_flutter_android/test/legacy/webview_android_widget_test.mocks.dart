@@ -268,6 +268,24 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
           as _i4.Future<void>);
 
   @override
+  _i4.Future<void> setAllowUniversalAccessFromFileURLs(bool? enabled) =>
+      (super.noSuchMethod(
+            Invocation.method(#setAllowUniversalAccessFromFileURLs, [enabled]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setAllowFileAccessFromFileURLs(bool? enabled) =>
+      (super.noSuchMethod(
+            Invocation.method(#setAllowFileAccessFromFileURLs, [enabled]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
   _i4.Future<void> setGeolocationEnabled(bool? enabled) =>
       (super.noSuchMethod(
             Invocation.method(#setGeolocationEnabled, [enabled]),

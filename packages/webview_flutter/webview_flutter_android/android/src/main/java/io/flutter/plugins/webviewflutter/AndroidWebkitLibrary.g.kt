@@ -2584,6 +2584,18 @@ abstract class PigeonApiWebSettings(
   /** Enables or disables content URL access within WebView. */
   abstract fun setAllowContentAccess(pigeon_instance: android.webkit.WebSettings, enabled: Boolean)
 
+  /** Enables or disables universal cross-origin access from file URLs. */
+  abstract fun setAllowUniversalAccessFromFileURLs(
+      pigeon_instance: android.webkit.WebSettings,
+      enabled: Boolean
+  )
+
+  /** Enables or disables file URL access to other file URLs. */
+  abstract fun setAllowFileAccessFromFileURLs(
+      pigeon_instance: android.webkit.WebSettings,
+      enabled: Boolean
+  )
+
   /** Sets whether Geolocation is enabled within WebView. */
   abstract fun setGeolocationEnabled(pigeon_instance: android.webkit.WebSettings, enabled: Boolean)
 
@@ -2905,6 +2917,54 @@ abstract class PigeonApiWebSettings(
             val wrapped: List<Any?> =
                 try {
                   api.setAllowContentAccess(pigeon_instanceArg, enabledArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  AndroidWebkitLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setAllowUniversalAccessFromFileURLs",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as android.webkit.WebSettings
+            val enabledArg = args[1] as Boolean
+            val wrapped: List<Any?> =
+                try {
+                  api.setAllowUniversalAccessFromFileURLs(pigeon_instanceArg, enabledArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  AndroidWebkitLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setAllowFileAccessFromFileURLs",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as android.webkit.WebSettings
+            val enabledArg = args[1] as Boolean
+            val wrapped: List<Any?> =
+                try {
+                  api.setAllowFileAccessFromFileURLs(pigeon_instanceArg, enabledArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   AndroidWebkitLibraryPigeonUtils.wrapError(exception)
