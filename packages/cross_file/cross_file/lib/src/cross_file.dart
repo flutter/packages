@@ -58,9 +58,7 @@ abstract base class XFile extends XEntity {
   /// the resource.
   Stream<Uint8List> openRead([int? start, int? end]) {
     if (start != null && start < 0) {
-      return Stream.error(
-        RangeError('`start` must be greater than 0. start: $start'),
-      );
+      return Stream.error(RangeError('`start` must be greater than 0. start: $start'));
     } else if (end != null && end <= (start ?? 0)) {
       return Stream.error(
         RangeError(
