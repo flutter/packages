@@ -1,3 +1,9 @@
+## 3.26.1
+
+* Fixes a fatal crash caused by concurrent calls to `addJavaScriptChannel`,
+  `removeJavaScriptChannel`, or `enableZoom` attempting to register a script
+  message handler that is already registered.
+
 ## 3.26.0
 
 * Adds new method for accessing a native `WKWebView` from a `FlutterPluginRegistrar`.
