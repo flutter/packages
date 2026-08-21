@@ -1,3 +1,8 @@
+## 6.10.0
+
+* Adds `VideoDrmConfiguration` and `DataSource.drmConfiguration` to allow platform
+  implementations to accept DRM configuration for network sources.
+
 ## 6.9.0
 
 * Adds `backBufferDurationMs` to `VideoPlayerOptions` to support configuring the back buffer duration.

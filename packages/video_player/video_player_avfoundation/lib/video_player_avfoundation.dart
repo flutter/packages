@@ -3,3 +3,4 @@
 // found in the LICENSE file.
 
 export 'src/avfoundation_video_player.dart';
+export 'src/fair_play_drm_configuration.dart';

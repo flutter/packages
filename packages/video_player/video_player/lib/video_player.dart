@@ -19,6 +19,7 @@ export 'package:video_player_platform_interface/video_player_platform_interface.
     show
         DataSourceType,
         DurationRange,
+        VideoDrmConfiguration,
         VideoFormat,
         VideoPlayerOptions,
         VideoPlayerWebOptions,
@@ -398,6 +399,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
        dataSourceType = platform_interface.DataSourceType.asset,
        formatHint = null,
        httpHeaders = const <String, String>{},
+       drmConfiguration = null,
        super(
          VideoPlayerValue(
            duration: Duration.zero,
@@ -419,6 +421,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ///
   /// [httpHeaders] option allows to specify HTTP headers
   /// for the request to the [dataSource].
+  ///
+  /// The [drmConfiguration] option allows playing DRM-protected content; see
+  /// [VideoPlayerController.networkUrl] for details.
   @Deprecated('Use VideoPlayerController.networkUrl instead')
   VideoPlayerController.network(
     this.dataSource, {
@@ -426,6 +431,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
+    this.drmConfiguration,
     this.viewType = platform_interface.VideoViewType.textureView,
   }) : _closedCaptionFileFuture = closedCaptionFile,
        dataSourceType = platform_interface.DataSourceType.network,
@@ -447,12 +453,26 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ///
   /// [httpHeaders] option allows to specify HTTP headers
   /// for the request to the [dataSource].
+  ///
+  /// The [drmConfiguration] option allows playing DRM-protected content. It
+  /// takes a platform implementation's subclass of
+  /// [platform_interface.VideoDrmConfiguration], such as
+  /// `WidevineDrmConfiguration` from `video_player_android` or
+  /// `FairPlayDrmConfiguration` from `video_player_avfoundation`, so an
+  /// application that uses DRM depends on those packages directly. Passing a
+  /// configuration that the current platform doesn't support throws an
+  /// [ArgumentError] from [initialize].
+  ///
+  /// DRM-protected video is currently only rendered correctly with
+  /// [platform_interface.VideoViewType.platformView]; in texture view mode the
+  /// audio plays but the video frames are not displayed.
   VideoPlayerController.networkUrl(
     Uri url, {
     this.formatHint,
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
+    this.drmConfiguration,
     this.viewType = platform_interface.VideoViewType.textureView,
   }) : _closedCaptionFileFuture = closedCaptionFile,
        dataSource = url.toString(),
@@ -481,6 +501,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
        dataSourceType = platform_interface.DataSourceType.file,
        package = null,
        formatHint = null,
+       drmConfiguration = null,
        super(
          VideoPlayerValue(
            duration: Duration.zero,
@@ -508,6 +529,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
        package = null,
        formatHint = null,
        httpHeaders = const <String, String>{},
+       drmConfiguration = null,
        super(
          VideoPlayerValue(
            duration: Duration.zero,
@@ -528,6 +550,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// **Android only**. Will override the platform's generic file format
   /// detection with whatever is set here.
   final platform_interface.VideoFormat? formatHint;
+
+  /// The DRM configuration for the video, if any.
+  ///
+  /// Only set for [VideoPlayerController.networkUrl] and
+  /// [VideoPlayerController.network]; always null for other video types.
+  final platform_interface.VideoDrmConfiguration? drmConfiguration;
 
   /// Describes the type of data source this [VideoPlayerController]
   /// is constructed with.
@@ -587,6 +615,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           uri: dataSource,
           formatHint: formatHint,
           httpHeaders: httpHeaders,
+          drmConfiguration: drmConfiguration,
         );
       case platform_interface.DataSourceType.file:
         dataSourceDescription = platform_interface.DataSource(
