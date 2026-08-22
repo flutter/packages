@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'morph.dart';
+library;
+
 import 'dart:math' as math;
 import 'dart:ui';
 
@@ -18,14 +21,14 @@ import 'utils.dart';
 /// either the number of vertices desired or an ordered list of vertices.
 @immutable
 class RoundedPolygon {
-  RoundedPolygon._(this.features, this.center) : cubics = <Cubic>[] {
+  RoundedPolygon._(this.features, this.center) : cubics = <CubicBezier>[] {
     _initCubics();
 
     assert(() {
-      Cubic prevCubic = cubics[cubics.length - 1];
+      CubicBezier prevCubic = cubics[cubics.length - 1];
 
       for (var index = 0; index < cubics.length; index++) {
-        final Cubic cubic = cubics[index];
+        final CubicBezier cubic = cubics[index];
 
         if ((cubic.anchor0X - prevCubic.anchor1X).abs() > distanceEpsilon ||
             (cubic.anchor0Y - prevCubic.anchor1Y).abs() > distanceEpsilon) {
@@ -110,7 +113,7 @@ class RoundedPolygon {
   /// This function takes the vertices (either supplied or calculated,
   /// depending on the constructor called), plus [CornerRounding] parameters,
   /// and creates the actual [RoundedPolygon] shape, rounding around the
-  /// vertices (or not) as specified. The result is a list of [Cubic] curves
+  /// vertices (or not) as specified. The result is a list of [CubicBezier] curves
   /// which represent the geometry of the final shape.
   ///
   /// [vertices] is the list of vertices in this polygon specified as pairs of
@@ -162,7 +165,7 @@ class RoundedPolygon {
         'the same size as the number of vertices (vertices.size / 2).',
       );
     }
-    final corners = <List<Cubic>>[];
+    final corners = <List<CubicBezier>>[];
     final int n = vertices.length ~/ 2;
     final roundedCorners = <_RoundedCorner>[];
     for (var i = 0; i < n; i++) {
@@ -244,7 +247,7 @@ class RoundedPolygon {
         ..add(CornerFeature(corners[i], convex: cvx))
         ..add(
           EdgeFeature([
-            Cubic.straightLine(
+            CubicBezier.straightLine(
               corners[i].last.anchor1X,
               corners[i].last.anchor1Y,
               corners[(i + 1) % n].first.anchor0X,
@@ -270,7 +273,7 @@ class RoundedPolygon {
   }
 
   /// Takes a list of [Feature] objects that define the polygon's shape and
-  /// curves. By specifying the features directly, the summarization of [Cubic]
+  /// curves. By specifying the features directly, the summarization of [CubicBezier]
   /// objects to curves can be precisely controlled. This affects [Morph]'s
   /// default mapping, as curves with the same type (convex or concave) are
   /// mapped with each other. For example, if you have a convex curve in your
@@ -308,7 +311,7 @@ class RoundedPolygon {
       final vertices = <double>[];
 
       for (final feature in features) {
-        for (final Cubic cubic in feature.cubics) {
+        for (final CubicBezier cubic in feature.cubics) {
           vertices
             ..add(cubic.anchor0X)
             ..add(cubic.anchor0Y);
@@ -684,8 +687,8 @@ class RoundedPolygon {
 
   final Point center;
 
-  /// A flattened version of the [Feature]s, as a `List<Cubic>`.
-  final List<Cubic> cubics;
+  /// A flattened version of the [Feature]s, as a `List<CubicBezier>`.
+  final List<CubicBezier> cubics;
 
   double get centerX => center.x;
 
@@ -696,14 +699,14 @@ class RoundedPolygon {
     // shape exactly matches the first anchor point. There can be rendering
     // artifacts introduced by those points being slightly off, even by much
     // less than a pixel.
-    Cubic? firstCubic;
-    Cubic? lastCubic;
-    List<Cubic>? firstFeatureSplitStart;
-    List<Cubic>? firstFeatureSplitEnd;
+    CubicBezier? firstCubic;
+    CubicBezier? lastCubic;
+    List<CubicBezier>? firstFeatureSplitStart;
+    List<CubicBezier>? firstFeatureSplitEnd;
 
     if (features.isNotEmpty && features[0].cubics.length == 3) {
-      final Cubic centerCubic = features[0].cubics[1];
-      final (Cubic start, Cubic end) = centerCubic.split(0.5);
+      final CubicBezier centerCubic = features[0].cubics[1];
+      final (CubicBezier start, CubicBezier end) = centerCubic.split(0.5);
       firstFeatureSplitStart = [features[0].cubics[0], start];
       firstFeatureSplitEnd = [end, features[0].cubics[2]];
     }
@@ -711,7 +714,7 @@ class RoundedPolygon {
     // iterating one past the features list size allows us to insert the
     // initial split cubic if it exists.
     for (var i = 0; i <= features.length; i++) {
-      final List<Cubic> featureCubics;
+      final List<CubicBezier> featureCubics;
 
       if (i == 0 && firstFeatureSplitEnd != null) {
         featureCubics = firstFeatureSplitEnd;
@@ -728,7 +731,7 @@ class RoundedPolygon {
       for (var j = 0; j < featureCubics.length; j++) {
         // Skip zero-length curves; they add nothing and can trigger rendering
         // artifacts.
-        final Cubic cubic = featureCubics[j];
+        final CubicBezier cubic = featureCubics[j];
 
         if (!cubic.zeroLength()) {
           if (lastCubic != null) {
@@ -745,7 +748,7 @@ class RoundedPolygon {
             final List<double> points = lastCubic.points.toList();
             points[6] = cubic.anchor1X;
             points[7] = cubic.anchor1Y;
-            lastCubic = Cubic.raw(points);
+            lastCubic = CubicBezier.raw(points);
           }
         }
       }
@@ -753,7 +756,7 @@ class RoundedPolygon {
 
     if (lastCubic != null && firstCubic != null) {
       cubics.add(
-        Cubic(
+        CubicBezier(
           lastCubic.anchor0X,
           lastCubic.anchor0Y,
           lastCubic.control0X,
@@ -766,7 +769,9 @@ class RoundedPolygon {
       );
     } else {
       // Empty / 0-sized polygon.
-      cubics.add(Cubic(centerX, centerY, centerX, centerY, centerX, centerY, centerX, centerY));
+      cubics.add(
+        CubicBezier(centerX, centerY, centerX, centerY, centerX, centerY, centerX, centerY),
+      );
     }
   }
 
@@ -822,7 +827,7 @@ class RoundedPolygon {
 
     var maxDistSquared = 0.0;
     for (var i = 0; i < cubics.length; i++) {
-      final Cubic cubic = cubics[i];
+      final CubicBezier cubic = cubics[i];
       final double anchorDistance = distanceSquared(
         cubic.anchor0X - centerX,
         cubic.anchor0Y - centerY,
@@ -980,7 +985,7 @@ Point calculateCenter(List<double> vertices) {
 /// parameter.
 ///
 /// If rounding is null, there is no rounding; the corner will simply be a
-/// single point at [p1]. This point will be represented by a [Cubic] of length
+/// single point at [p1]. This point will be represented by a [CubicBezier] of length
 /// 0 at that point.
 ///
 /// If rounding is not null, the corner will be rounded either with a curve
@@ -1072,7 +1077,7 @@ class _RoundedCorner {
   /// The center is the same as [p0] if there is no rounding.
   Point center = Point.zero;
 
-  List<Cubic> getCubics(double allowedCut0, double allowedCut1) {
+  List<CubicBezier> getCubics(double allowedCut0, double allowedCut1) {
     // We use the minimum of both cuts to determine the radius, but if there is
     // more space in one side we can use it for smoothing.
     final double allowedCut = math.min(allowedCut0, allowedCut1);
@@ -1082,7 +1087,7 @@ class _RoundedCorner {
         allowedCut < distanceEpsilon ||
         cornerRadius < distanceEpsilon) {
       center = p1;
-      return [Cubic.straightLine(p1.x, p1.y, p1.x, p1.y)];
+      return [CubicBezier.straightLine(p1.x, p1.y, p1.x, p1.y)];
     }
 
     // How much of the cut is required for the rounding part.
@@ -1101,7 +1106,7 @@ class _RoundedCorner {
     center = p1 + ((d1 + d2) / 2).getDirection() * centerDistance;
     final Point circleIntersection0 = p1 + d1 * actualRoundCut;
     final Point circleIntersection2 = p1 + d2 * actualRoundCut;
-    final Cubic flanking0 = _computeFlankingCurve(
+    final CubicBezier flanking0 = _computeFlankingCurve(
       actualRoundCut,
       actualSmoothing0,
       p1,
@@ -1111,7 +1116,7 @@ class _RoundedCorner {
       center,
       actualR,
     );
-    final Cubic flanking2 = _computeFlankingCurve(
+    final CubicBezier flanking2 = _computeFlankingCurve(
       actualRoundCut,
       actualSmoothing1,
       p1,
@@ -1124,7 +1129,7 @@ class _RoundedCorner {
 
     return [
       flanking0,
-      Cubic.circularArc(
+      CubicBezier.circularArc(
         center.x,
         center.y,
         flanking0.anchor1X,
@@ -1177,7 +1182,7 @@ class _RoundedCorner {
   ///
   /// Returns a Bezier cubic curve that connects from the (cut) linear side
   /// and the (cut) circular segment in a smooth way.
-  Cubic _computeFlankingCurve(
+  CubicBezier _computeFlankingCurve(
     double actualRoundCut,
     double actualSmoothingValues,
     Point corner,
@@ -1216,7 +1221,7 @@ class _RoundedCorner {
     // 2/3 seems to come from design tools?
     final Point anchorStart = (curveStart + anchorEnd * 2) / 3;
 
-    return Cubic.fromPoints(curveStart, anchorStart, anchorEnd, curveEnd);
+    return CubicBezier.fromPoints(curveStart, anchorStart, anchorEnd, curveEnd);
   }
 
   /// Returns the intersection point of the two lines d0->d1 and p0->p1, or

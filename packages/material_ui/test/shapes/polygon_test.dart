@@ -133,9 +133,9 @@ void main() {
       // Now create a function which translates points by (1, 2) and make sure
       // the shape is translated similarly by it.
       const offset = Point(1, 2);
-      final List<Cubic> squareCubics = square.cubics;
+      final List<CubicBezier> squareCubics = square.cubics;
       final PointTransformer translator = translateTransform(offset.x, offset.y);
-      final List<Cubic> translatedSquareCubics = square.transformed(translator).cubics;
+      final List<CubicBezier> translatedSquareCubics = square.transformed(translator).cubics;
 
       for (var i = 0; i < squareCubics.length; i++) {
         expectPointsEqualish(
@@ -158,7 +158,7 @@ void main() {
     });
 
     test('features', () {
-      List<Cubic> nonZeroCubics(List<Cubic> original) {
+      List<CubicBezier> nonZeroCubics(List<CubicBezier> original) {
         return original.where((c) => !c.zeroLength()).toList();
       }
 
@@ -168,7 +168,9 @@ void main() {
       // polygon.
       // Note the Equalish test since some points may be adjusted in conversion
       // from raw cubics in the feature to the cubics list for the shape.
-      List<Cubic> nonzeroCubics = nonZeroCubics(squareFeatures.expand((f) => f.cubics).toList());
+      List<CubicBezier> nonzeroCubics = nonZeroCubics(
+        squareFeatures.expand((f) => f.cubics).toList(),
+      );
       expectCubicListsEqualish(square.cubics, nonzeroCubics);
 
       // Same as the first polygon test, but with a copy of that polygon.

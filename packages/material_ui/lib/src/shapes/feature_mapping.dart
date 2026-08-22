@@ -184,7 +184,7 @@ double featureDistSquared(Feature f1, Feature f2) {
 }
 
 Point featureRepresentativePoint(Feature feature) {
-  final List<Cubic> cubics = feature.cubics;
+  final List<CubicBezier> cubics = feature.cubics;
   final double x = (cubics.first.anchor0X + cubics.last.anchor1X) / 2;
   final double y = (cubics.first.anchor0Y + cubics.last.anchor1Y) / 2;
   return Point(x, y);

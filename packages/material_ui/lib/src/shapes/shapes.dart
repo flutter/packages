@@ -10,7 +10,7 @@
 library;
 
 export 'corner_rounding.dart' show CornerRounding;
-export 'cubic.dart' show Cubic;
+export 'cubic.dart' show CubicBezier;
 export 'features.dart' show Feature;
 export 'morph.dart' show Morph;
 export 'point.dart' show PointTransformer;

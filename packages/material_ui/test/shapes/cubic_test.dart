@@ -11,7 +11,7 @@ import 'package:material_ui/src/shapes/point.dart';
 import 'test_utils.dart';
 
 void main() {
-  group('$Cubic', () {
+  group('$CubicBezier', () {
     // These points create a roughly circular arc in the upper-right quadrant
     // around (0,0).
     const Point zero = Point.zero;
@@ -19,7 +19,7 @@ void main() {
     const p1 = Point(1, 0.5);
     const p2 = Point(0.5, 1);
     const p3 = Point(0, 1);
-    final cubic = Cubic.fromPoints(p0, p1, p2, p3);
+    final cubic = CubicBezier.fromPoints(p0, p1, p2, p3);
 
     test('fromPoints', () {
       expect(p0, Point(cubic.anchor0X, cubic.anchor0Y));
@@ -29,13 +29,13 @@ void main() {
     });
 
     test('circularArc', () {
-      final arcCubic = Cubic.circularArc(zero.x, zero.y, p0.x, p0.y, p3.x, p3.y);
+      final arcCubic = CubicBezier.circularArc(zero.x, zero.y, p0.x, p0.y, p3.x, p3.y);
       expect(p0, Point(arcCubic.anchor0X, arcCubic.anchor0Y));
       expect(p3, Point(arcCubic.anchor1X, arcCubic.anchor1Y));
     });
 
     test('div', () {
-      Cubic divCubic = cubic / 1;
+      CubicBezier divCubic = cubic / 1;
       expectCubicsEqualish(cubic, divCubic);
       divCubic = cubic / 1;
       expectCubicsEqualish(cubic, divCubic);
@@ -52,7 +52,7 @@ void main() {
     });
 
     test('times', () {
-      Cubic timesCubic = cubic * 1;
+      CubicBezier timesCubic = cubic * 1;
       expect(p0, Point(timesCubic.anchor0X, timesCubic.anchor0Y));
       expect(p1, Point(timesCubic.control0X, timesCubic.control0Y));
       expect(p2, Point(timesCubic.control1X, timesCubic.control1Y));
@@ -75,8 +75,8 @@ void main() {
     });
 
     test('plus', () {
-      final Cubic offsetCubic = cubic * 2;
-      final Cubic plusCubic = cubic + offsetCubic;
+      final CubicBezier offsetCubic = cubic * 2;
+      final CubicBezier plusCubic = cubic + offsetCubic;
       expectPointsEqualish(
         p0 + Point(offsetCubic.anchor0X, offsetCubic.anchor0Y),
         Point(plusCubic.anchor0X, plusCubic.anchor0Y),
@@ -96,7 +96,7 @@ void main() {
     });
 
     test('reverse', () {
-      final Cubic reverseCubic = cubic.reverse();
+      final CubicBezier reverseCubic = cubic.reverse();
       expect(p3, Point(reverseCubic.anchor0X, reverseCubic.anchor0Y));
       expect(p2, Point(reverseCubic.control0X, reverseCubic.control0Y));
       expect(p1, Point(reverseCubic.control1X, reverseCubic.control1Y));
@@ -115,7 +115,7 @@ void main() {
     }
 
     test('straightLine', () {
-      final lineCubic = Cubic.straightLine(p0.x, p0.y, p3.x, p3.y);
+      final lineCubic = CubicBezier.straightLine(p0.x, p0.y, p3.x, p3.y);
       expect(p0, Point(lineCubic.anchor0X, lineCubic.anchor0Y));
       expect(p3, Point(lineCubic.anchor1X, lineCubic.anchor1Y));
       expectBetween(p0, p3, Point(lineCubic.control0X, lineCubic.control0Y));
@@ -123,7 +123,7 @@ void main() {
     });
 
     test('split', () {
-      final (Cubic split0, Cubic split1) = cubic.split(0.5);
+      final (CubicBezier split0, CubicBezier split1) = cubic.split(0.5);
       expect(Point(cubic.anchor0X, cubic.anchor0Y), Point(split0.anchor0X, split0.anchor0Y));
       expect(Point(cubic.anchor1X, cubic.anchor1Y), Point(split1.anchor1X, split1.anchor1Y));
       expectBetween(
@@ -145,7 +145,7 @@ void main() {
         Point(cubic.anchor1X, cubic.anchor1Y),
         halfway,
       );
-      final straightLineCubic = Cubic.straightLine(p0.x, p0.y, p3.x, p3.y);
+      final straightLineCubic = CubicBezier.straightLine(p0.x, p0.y, p3.x, p3.y);
       halfway = straightLineCubic.pointOnCurve(0.5);
       final computedHalfway = Point(p0.x + 0.5 * (p3.x - p0.x), p0.y + 0.5 * (p3.y - p0.y));
       expectPointsEqualish(computedHalfway, halfway);
@@ -153,7 +153,7 @@ void main() {
 
     test('transform', () {
       PointTransformer transform = identityTransform();
-      Cubic transformedCubic = cubic.transformed(transform);
+      CubicBezier transformedCubic = cubic.transformed(transform);
       expectCubicsEqualish(cubic, transformedCubic);
 
       transform = scaleTransform(3, 3);
@@ -183,8 +183,8 @@ void main() {
       );
     });
 
-    test('empty Cubic has zero length', () {
-      expect(Cubic.empty(10, 10).zeroLength(), isTrue);
+    test('empty CubicBezier has zero length', () {
+      expect(CubicBezier.empty(10, 10).zeroLength(), isTrue);
     });
   });
 }

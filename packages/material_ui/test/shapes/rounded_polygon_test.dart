@@ -94,15 +94,15 @@ void main() {
         expect(() => RoundedPolygon.fromFeatures(const []), throwsArgumentError);
         expect(
           () => RoundedPolygon.fromFeatures([
-            CornerFeature([Cubic.empty(0, 0)]),
+            CornerFeature([CubicBezier.empty(0, 0)]),
           ]),
           throwsArgumentError,
         );
       });
 
       test('throws for non continuous features', () {
-        final cubic1 = Cubic.straightLine(0, 0, 1, 0);
-        final cubic2 = Cubic.straightLine(10, 10, 20, 20);
+        final cubic1 = CubicBezier.straightLine(0, 0, 1, 0);
+        final cubic2 = CubicBezier.straightLine(10, 10, 20, 20);
         expect(
           () => RoundedPolygon.fromFeatures([Feature.buildEdge(cubic1), Feature.buildEdge(cubic2)]),
           throwsArgumentError,
@@ -201,7 +201,7 @@ void main() {
       final Feature lowerEdgeFeature = polygon.features.firstWhere((f) => f is EdgeFeature);
       expect(1, lowerEdgeFeature.cubics.length);
 
-      final Cubic lowerEdge = lowerEdgeFeature.cubics.first;
+      final CubicBezier lowerEdge = lowerEdgeFeature.cubics.first;
       expectEqualish(0.5, lowerEdge.anchor0X);
       expectEqualish(0, lowerEdge.anchor0Y);
       expectEqualish(0.5, lowerEdge.anchor1X);
@@ -337,13 +337,13 @@ void main() {
         innerRounding: const CornerRounding(radius: roundingFactor),
       );
 
-      final List<Cubic> cubics = canonicalShape.cubics;
-      final List<Cubic> cubics1 = fullSizeShape.cubics;
+      final List<CubicBezier> cubics = canonicalShape.cubics;
+      final List<CubicBezier> cubics1 = fullSizeShape.cubics;
       expect(cubics.length, cubics1.length);
 
       for (var i = 0; i < cubics.length; i++) {
-        final Cubic cubic = cubics[i];
-        final Cubic cubic1 = cubics1[i];
+        final CubicBezier cubic = cubics[i];
+        final CubicBezier cubic1 = cubics1[i];
 
         expectEqualish(cubic.anchor0X, cubic1.anchor0X);
         expectEqualish(cubic.anchor0Y, cubic1.anchor0Y);

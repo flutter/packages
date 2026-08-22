@@ -198,11 +198,11 @@ void main() {
 
     test('handles empty feature last', () {
       final triangle = RoundedPolygon.fromFeatures([
-        Feature.buildConvexCorner([Cubic.straightLine(0, 0, 1, 1)]),
-        Feature.buildConvexCorner([Cubic.straightLine(1, 1, 1, 0)]),
-        Feature.buildConvexCorner([Cubic.straightLine(1, 0, 0, 0)]),
+        Feature.buildConvexCorner([CubicBezier.straightLine(0, 0, 1, 1)]),
+        Feature.buildConvexCorner([CubicBezier.straightLine(1, 1, 1, 0)]),
+        Feature.buildConvexCorner([CubicBezier.straightLine(1, 0, 0, 0)]),
         // Empty feature at the end.
-        Feature.buildConvexCorner([Cubic.straightLine(0, 0, 0, 0)]),
+        Feature.buildConvexCorner([CubicBezier.straightLine(0, 0, 0, 0)]),
       ]);
 
       irregularPolygonMeasure(triangle);

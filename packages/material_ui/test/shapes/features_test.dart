@@ -17,8 +17,8 @@ void main() {
     });
 
     test('Cannot build non continuous features', () {
-      final cubic1 = Cubic.straightLine(0, 0, 1, 1);
-      final cubic2 = Cubic.straightLine(10, 10, 11, 11);
+      final cubic1 = CubicBezier.straightLine(0, 0, 1, 1);
+      final cubic2 = CubicBezier.straightLine(10, 10, 11, 11);
 
       expect(() => Feature.buildConvexCorner([cubic1, cubic2]), throwsArgumentError);
       expect(() => Feature.buildConcaveCorner([cubic1, cubic2]), throwsArgumentError);
@@ -26,28 +26,28 @@ void main() {
     });
 
     test('Builds concave corner', () {
-      final cubic = Cubic.straightLine(0, 0, 1, 0);
+      final cubic = CubicBezier.straightLine(0, 0, 1, 0);
       final actual = Feature.buildConcaveCorner([cubic]);
       final expected = CornerFeature([cubic], convex: false);
       expectFeaturesEqualish(expected, actual);
     });
 
     test('Builds convex corner', () {
-      final cubic = Cubic.straightLine(0, 0, 1, 0);
+      final cubic = CubicBezier.straightLine(0, 0, 1, 0);
       final actual = Feature.buildConvexCorner([cubic]);
       final expected = CornerFeature([cubic], convex: true);
       expectFeaturesEqualish(expected, actual);
     });
 
     test('Builds edge', () {
-      final cubic = Cubic.straightLine(0, 0, 1, 0);
+      final cubic = CubicBezier.straightLine(0, 0, 1, 0);
       final actual = Feature.buildEdge(cubic);
       final expected = EdgeFeature([cubic]);
       expectFeaturesEqualish(expected, actual);
     });
 
     test('Builds ignorable as edge', () {
-      final cubic = Cubic.straightLine(0, 0, 1, 0);
+      final cubic = CubicBezier.straightLine(0, 0, 1, 0);
       final actual = Feature.buildIgnorableFeature([cubic]);
       final expected = EdgeFeature([cubic]);
       expectFeaturesEqualish(expected, actual);

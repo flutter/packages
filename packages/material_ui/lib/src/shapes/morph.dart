@@ -21,7 +21,7 @@ import 'utils.dart';
 /// structures. For one thing, the shape of a polygon is contiguous from start
 /// to end (compared to an arbitrary [Path] object, which could have one or more
 /// `moveTo` operations in the shape). Also, all edges of a polygon shape are
-/// represented by [Cubic] objects, thus the start and end shapes use similar
+/// represented by [CubicBezier] objects, thus the start and end shapes use similar
 /// operations. Two Polygon shapes then only differ in the quantity and
 /// placement of their curves. The morph works by determining how to map the
 /// curves of the two shapes together (based on proximity and other
@@ -41,13 +41,13 @@ class Morph {
   /// cubics necessary to represent the start and end shapes (the original
   /// cubics in the shapes may be cut to align the start/end shapes), matched
   /// one to one in each pair.
-  late final List<(Cubic, Cubic)> _morphMatch;
+  late final List<(CubicBezier, CubicBezier)> _morphMatch;
 
   /// [_match], called at [Morph] construction time, creates the structure used
   /// to animate between the start and end shapes. The technique is to match
   /// geometry (curves) between the shapes when and where possible, and to
   /// create new/placeholder curves when necessary (when one of the shapes has
-  /// more curves than the other). The result is a list of pairs of Cubic
+  /// more curves than the other). The result is a list of pairs of CubicBezier
   /// curves. Those curves are the matched pairs: the first of each pair holds
   /// the geometry of the start shape, the second holds the geometry for the
   /// end shape. Changing the progress of a Morph object simply interpolates
@@ -57,7 +57,7 @@ class Morph {
   /// where the points are in each shape (proportionally, along the outline),
   /// and then running [featureMapper] which decides how to map (match) all of
   /// the curves with each other.
-  static List<(Cubic, Cubic)> _match(RoundedPolygon p1, RoundedPolygon p2) {
+  static List<(CubicBezier, CubicBezier)> _match(RoundedPolygon p1, RoundedPolygon p2) {
     // Measure polygons, returns lists of measured cubics for each polygon,
     // which we then use to match start/end curves.
     final measuredPolygon1 = MeasuredPolygon.measurePolygon(const LengthMeasurer(), p1);
@@ -94,7 +94,7 @@ class Morph {
     // pairs of cubics [ret], which are the start/end curves that represent the
     // Morph object and the start and end shapes, and which can be interpolated
     // to animate the between those shapes.
-    final ret = <(Cubic, Cubic)>[];
+    final ret = <(CubicBezier, CubicBezier)>[];
     // i1/i2 are the indices of the current cubic on the start (1) and end (2)
     // shapes.
     var i1 = 0;
@@ -129,7 +129,7 @@ class Morph {
       b2 = newb2;
     }
 
-    assert(b1 == null && b2 == null, "Expected both Polygon's Cubic to be fully matched");
+    assert(b1 == null && b2 == null, "Expected both Polygon's CubicBezier to be fully matched");
 
     return ret;
   }
@@ -191,7 +191,7 @@ class Morph {
   }
 
   /// Returns a representation of the morph object at a given [progress] value
-  /// as a list of [Cubic]s. Note that this function causes a new list to be
+  /// as a list of [CubicBezier]s. Note that this function causes a new list to be
   /// created and populated, so there is some
   /// overhead.
   ///
@@ -204,18 +204,18 @@ class Morph {
   /// The range is generally [0..1] and values outside could result in
   /// undefined shapes, but values close to (but outside) the range can be used
   /// to get an exaggerated effect (e.g., for a bounce or overshoot animation).
-  List<Cubic> asCubics(double progress) {
-    final result = <Cubic>[];
+  List<CubicBezier> asCubics(double progress) {
+    final result = <CubicBezier>[];
 
     // The first/last mechanism here ensures that the final anchor point in the
     // shape exactly matches the first anchor point. There can be rendering
     // artifacts introduced by those points being slightly off, even by much
     // less than a pixel.
-    Cubic? firstCubic;
-    Cubic? lastCubic;
+    CubicBezier? firstCubic;
+    CubicBezier? lastCubic;
 
     for (var i = 0; i < _morphMatch.length; i++) {
-      final cubic = Cubic.raw(
+      final cubic = CubicBezier.raw(
         List<double>.generate(8, (j) {
           return lerp(_morphMatch[i].$1.points[j], _morphMatch[i].$2.points[j], progress);
         }),
@@ -230,7 +230,7 @@ class Morph {
 
     if (lastCubic != null && firstCubic != null) {
       result.add(
-        Cubic(
+        CubicBezier(
           lastCubic.anchor0X,
           lastCubic.anchor0Y,
           lastCubic.control0X,

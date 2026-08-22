@@ -35,7 +35,12 @@ void main() {
       }
     }
 
-    void expectCubicOnRadii(Cubic cubic, double radius1, [double? radius2, Point center = zero]) {
+    void expectCubicOnRadii(
+      CubicBezier cubic,
+      double radius1, [
+      double? radius2,
+      Point center = zero,
+    ]) {
       expectPointOnRadii(Point(cubic.anchor0X, cubic.anchor0Y), radius1, radius2, center);
       expectPointOnRadii(Point(cubic.anchor1X, cubic.anchor1Y), radius1, radius2, center);
     }
@@ -44,7 +49,7 @@ void main() {
     // from that point to the center, compared to the requested radius. The
     // test is very lenient since the Circle shape is only a 4x cubic
     // approximation of the circle and varies from the true circle.
-    void expectCircularCubic(Cubic cubic, double radius, Point center) {
+    void expectCircularCubic(CubicBezier cubic, double radius, Point center) {
       var t = 0.0;
       while (t <= 1) {
         final Point pointOnCurve = cubic.pointOnCurve(t);
@@ -54,7 +59,7 @@ void main() {
       }
     }
 
-    void expectCircleShape(List<Cubic> shape, {double radius = 1, Point center = zero}) {
+    void expectCircleShape(List<CubicBezier> shape, {double radius = 1, Point center = zero}) {
       for (final cubic in shape) {
         expectCircularCubic(cubic, radius, center);
       }
@@ -85,7 +90,7 @@ void main() {
     // versions, just check that the shape is within the appropriate bounds.
     test('star', () {
       var star = RoundedPolygon.star(numVerticesPerRadius: 4, innerRadius: 0.5);
-      List<Cubic> shape = star.cubics;
+      List<CubicBezier> shape = star.cubics;
       var radius = 1.0;
       var innerRadius = 0.5;
 

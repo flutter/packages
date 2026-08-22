@@ -2,14 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'morph.dart';
+library;
+
 import 'dart:collection';
 
 import 'cubic.dart';
 import 'point.dart';
 
-/// While a polygon's shape can be drawn solely using a list of [Cubic] objects
-/// representing its raw curves and lines, features add an extra layer of
-/// context to groups of cubics. Features group cubics into (straight) edges,
+/// While a polygon's shape can be drawn solely using a list of [CubicBezier]
+/// objects representing its raw curves and lines, features add an extra layer
+/// of context to groups of cubics. Features group cubics into (straight) edges,
 /// convex corners, or concave corners. For example, rounding a rectangle adds
 /// many cubics around its edges, but the rectangle's overall number of corners
 /// remains the same. [Morph] therefore uses this grouping for several reasons:
@@ -24,9 +27,9 @@ import 'point.dart';
 /// By using features, you can manipulate polygon shapes with more context and
 /// control.
 abstract class Feature {
-  const Feature(List<Cubic> cubics) : _cubics = cubics;
+  const Feature(List<CubicBezier> cubics) : _cubics = cubics;
 
-  /// Group a list of [Cubic] objects to a feature that should be ignored in
+  /// Group a list of [CubicBezier] objects to a feature that should be ignored in
   /// the default [Morph] mapping. The feature can have any indentation.
   ///
   /// Sometimes, it's helpful to ignore certain features when morphing shapes.
@@ -47,25 +50,26 @@ abstract class Feature {
   /// squares' outer corners.
   ///
   /// Throws [ArgumentError] for lists of empty cubics or non-continuous cubics.
-  factory Feature.buildIgnorableFeature(List<Cubic> cubics) => _validated(EdgeFeature(cubics));
+  factory Feature.buildIgnorableFeature(List<CubicBezier> cubics) =>
+      _validated(EdgeFeature(cubics));
 
-  /// Group a [Cubic] object to an edge (neither inward or outward
+  /// Group a [CubicBezier] object to an edge (neither inward or outward
   /// identification in a shape).
   ///
   /// Throws [ArgumentError] for lists of empty cubics or non-continuous cubics.
-  factory Feature.buildEdge(Cubic cubic) => EdgeFeature([cubic]);
+  factory Feature.buildEdge(CubicBezier cubic) => EdgeFeature([cubic]);
 
-  /// Group a list of [Cubic] objects to a convex corner (outward indentation
+  /// Group a list of [CubicBezier] objects to a convex corner (outward indentation
   /// in a shape).
   ///
   /// Throws [ArgumentError] for lists of empty cubics or non-continuous cubics
-  factory Feature.buildConvexCorner(List<Cubic> cubics) => _validated(CornerFeature(cubics));
+  factory Feature.buildConvexCorner(List<CubicBezier> cubics) => _validated(CornerFeature(cubics));
 
-  /// Group a list of [Cubic] objects to a concave corner (inward indentation
+  /// Group a list of [CubicBezier] objects to a concave corner (inward indentation
   /// in a shape).
   ///
   /// Throws [ArgumentError] for lists of empty cubics or non-continuous cubics
-  factory Feature.buildConcaveCorner(List<Cubic> cubics) =>
+  factory Feature.buildConcaveCorner(List<CubicBezier> cubics) =>
       _validated(CornerFeature(cubics, convex: false));
 
   static Feature _validated(Feature feature) {
@@ -85,9 +89,9 @@ abstract class Feature {
 
   static bool _isContinuous(Feature feature) {
     const distanceEpsilon = 1e-5;
-    Cubic prevCubic = feature._cubics.first;
+    CubicBezier prevCubic = feature._cubics.first;
     for (var i = 1; i < feature._cubics.length; i++) {
-      final Cubic cubic = feature._cubics[i];
+      final CubicBezier cubic = feature._cubics[i];
       if ((cubic.anchor0X - prevCubic.anchor1X).abs() > distanceEpsilon ||
           (cubic.anchor0Y - prevCubic.anchor1Y).abs() > distanceEpsilon) {
         return false;
@@ -97,10 +101,10 @@ abstract class Feature {
     return true;
   }
 
-  final List<Cubic> _cubics;
+  final List<CubicBezier> _cubics;
 
-  /// Returns unmodifiable list of [Cubic].
-  List<Cubic> get cubics => UnmodifiableListView(_cubics);
+  /// Returns unmodifiable list of [CubicBezier].
+  List<CubicBezier> get cubics => UnmodifiableListView(_cubics);
 
   /// Whether this Feature gets ignored in the Morph mapping. See
   /// [Feature.buildIgnorableFeature] for more details
@@ -129,7 +133,7 @@ abstract class Feature {
 
 /// Edges have only a list of the cubic curves which make up the edge. Edges
 /// lie between corners and have no vertex or concavity; the curves are simply
-/// straight lines (represented by [Cubic] curves).
+/// straight lines (represented by [CubicBezier] curves).
 class EdgeFeature extends Feature {
   EdgeFeature(super._cubics);
 

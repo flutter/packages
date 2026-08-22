@@ -15,7 +15,7 @@ class MeasuredPolygon {
   MeasuredPolygon._({
     required Measurer measurer,
     required this._features,
-    required List<Cubic> cubics,
+    required List<CubicBezier> cubics,
     required List<double> outlineProgress,
   }) : assert(
          outlineProgress.length == cubics.length + 1,
@@ -48,7 +48,7 @@ class MeasuredPolygon {
   }
 
   factory MeasuredPolygon.measurePolygon(Measurer measurer, RoundedPolygon polygon) {
-    final cubics = <Cubic>[];
+    final cubics = <CubicBezier>[];
     final featureToCubic = <(Feature, int)>[];
 
     // Get the cubics from the polygon, at the same time, extract the features
@@ -123,7 +123,7 @@ class MeasuredPolygon {
   }
 
   /// Finds the point in the input list of measured cubics that pass the given
-  /// outline progress, and generates a new MeasuredPolygon (equivalent to
+  /// outline progress, and generates a new [MeasuredPolygon] (equivalent to
   /// this), that starts at that point. This usually means cutting the cubic
   /// that crosses the outline progress (unless the cut is at one of its ends).
   /// For example, given outline progress 0.4f and measured cubics on these
@@ -163,7 +163,7 @@ class MeasuredPolygon {
     // * All cubics after the target, until the end + All cubics from the
     //   start, before the target cubic
     // * The first part of the target cubic (before the cut)
-    final List<Cubic> retCubics = [b2.cubic];
+    final List<CubicBezier> retCubics = [b2.cubic];
     for (var i = 1; i < _cubics.length; i++) {
       retCubics.add(_cubics[(i + targetIndex) % _cubics.length].cubic);
     }
@@ -248,7 +248,7 @@ class MeasuredCubic {
 
   final Measurer measurer;
 
-  final Cubic cubic;
+  final CubicBezier cubic;
 
   late final double measuredSize;
 
@@ -294,12 +294,12 @@ class MeasuredCubic {
     final double t = measurer.findCubicCutPoint(cubic, relativeProgress * measuredSize);
 
     if (t < 0 || t > 1) {
-      throw ArgumentError('Cubic cut point is expected to be between 0 and 1.');
+      throw ArgumentError('CubicBezier cut point is expected to be between 0 and 1.');
     }
 
     // c1/c2 are the two new cubics, then we return MeasuredCubics created
     // from them.
-    final (Cubic c1, Cubic c2) = cubic.split(t);
+    final (CubicBezier c1, CubicBezier c2) = cubic.split(t);
     return (
       MeasuredCubic(
         measurer: measurer,
@@ -332,12 +332,12 @@ abstract interface class Measurer {
   /// Returns size of given cubic, according to however the implementation
   /// wants to measure the size (angle, length, etc). It has to be greater or
   /// equal to 0.
-  double measureCubic(Cubic c);
+  double measureCubic(CubicBezier c);
 
   /// Given a cubic and a measure that should be between 0 and the value
-  /// returned by measureCubic (if not, it will be capped), finds the parameter
-  /// t of the cubic at which that measure is reached.
-  double findCubicCutPoint(Cubic c, double m);
+  /// returned by [measureCubic] (if not, it will be capped), finds the
+  /// parameter t of the cubic at which that measure is reached.
+  double findCubicCutPoint(CubicBezier c, double m);
 }
 
 /// Approximates the arc lengths of cubics by splitting the arc into segments
@@ -349,20 +349,20 @@ class LengthMeasurer implements Measurer {
   const LengthMeasurer();
 
   // The minimum number needed to achieve up to 98.5% accuracy from the true
-  // arc length See PolygonMeasureTest.measureCircle
+  // arc length.
   static const _segments = 3;
 
   @override
-  double measureCubic(Cubic c) {
+  double measureCubic(CubicBezier c) {
     return _closestProgressTo(c, double.infinity).$2;
   }
 
   @override
-  double findCubicCutPoint(Cubic c, double m) {
+  double findCubicCutPoint(CubicBezier c, double m) {
     return _closestProgressTo(c, m).$1;
   }
 
-  (double, double) _closestProgressTo(Cubic cubic, double threshold) {
+  (double, double) _closestProgressTo(CubicBezier cubic, double threshold) {
     var total = 0.0;
     var remainder = threshold;
     var prev = Point(cubic.anchor0X, cubic.anchor0Y);

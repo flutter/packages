@@ -49,7 +49,7 @@ class MaterialShapeBorder extends OutlinedBorder {
   /// Defaults to zero, and must be between zero and one, inclusive.
   final double squash;
 
-  final List<Cubic> _cubics;
+  final List<CubicBezier> _cubics;
 
   @override
   ShapeBorder scale(double t) {

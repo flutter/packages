@@ -21,7 +21,7 @@ bool pointsEqualish(Point p0, Point p1) {
   return equalish(p0.x, p1.x, _epsilon) && equalish(p0.y, p1.y, _epsilon);
 }
 
-bool cubicsEqualish(Cubic c0, Cubic c1) {
+bool cubicsEqualish(CubicBezier c0, CubicBezier c1) {
   return pointsEqualish(Point(c0.anchor0X, c0.anchor0Y), Point(c1.anchor0X, c1.anchor0Y)) &&
       pointsEqualish(Point(c0.anchor1X, c0.anchor1Y), Point(c1.anchor1X, c1.anchor1Y)) &&
       pointsEqualish(Point(c0.control0X, c0.control0Y), Point(c1.control0X, c1.control0Y)) &&
@@ -35,7 +35,7 @@ void expectPointsEqualish(Point expected, Point actual) {
   expect(expected.y, moreOrLessEquals(actual.y, epsilon: _epsilon), reason: msg);
 }
 
-void expectCubicsEqualish(Cubic expected, Cubic actual) {
+void expectCubicsEqualish(CubicBezier expected, CubicBezier actual) {
   expectPointsEqualish(
     Point(expected.anchor0X, expected.anchor0Y),
     Point(actual.anchor0X, actual.anchor0Y),
@@ -54,7 +54,7 @@ void expectCubicsEqualish(Cubic expected, Cubic actual) {
   );
 }
 
-void expectCubicListsEqualish(List<Cubic> expected, List<Cubic> actual) {
+void expectCubicListsEqualish(List<CubicBezier> expected, List<CubicBezier> actual) {
   expect(expected.length, actual.length);
   for (var i = 0; i < expected.length; i++) {
     expectCubicsEqualish(expected[i], actual[i]);
@@ -93,7 +93,7 @@ void expectEqualish(double expected, double actual, [String? message]) {
   expect(expected, moreOrLessEquals(actual, epsilon: _epsilon), reason: message);
 }
 
-void expectInBounds(List<Cubic> shape, Point minPoint, Point maxPoint) {
+void expectInBounds(List<CubicBezier> shape, Point minPoint, Point maxPoint) {
   for (final cubic in shape) {
     expectPointGreaterish(minPoint, Point(cubic.anchor0X, cubic.anchor0Y));
     expectPointLessish(maxPoint, Point(cubic.anchor0X, cubic.anchor0Y));

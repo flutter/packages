@@ -18,13 +18,13 @@ import 'utils.dart';
 /// and ([control1X], [control1Y]) determining the slope of the curve between
 /// the anchor points.
 @immutable
-class Cubic {
-  /// Creates a Cubic that holds the anchor and control point data for a
+class CubicBezier {
+  /// Creates a [CubicBezier] that holds the anchor and control point data for a
   /// single Bézier curve, with anchor points ([anchor0X], [anchor0Y]) and
   /// ([anchor1X], [anchor1Y]) at either end and control points ([control0X],
   /// [control0Y]) and ([control1X], [control1Y]) determining the slope of the
   /// curve between the anchor points.
-  Cubic(
+  CubicBezier(
     double anchor0X,
     double anchor0Y,
     double control0X,
@@ -44,15 +44,15 @@ class Cubic {
         anchor1Y,
       ]);
 
-  /// Creates a Cubic directly from the flat list of its eight anchor and
+  /// Creates a [CubicBezier] directly from the flat list of its eight anchor and
   /// control point coordinates, in the order used by [points].
   @internal
-  const Cubic.raw(List<double> points)
+  const CubicBezier.raw(List<double> points)
     : assert(points.length == 8, 'Points array size should be 8.'),
       _points = points;
 
   @internal
-  Cubic.fromPoints(Point anchor0, Point control0, Point control1, Point anchor1)
+  CubicBezier.fromPoints(Point anchor0, Point control0, Point control1, Point anchor1)
     : this.raw([
         anchor0.x,
         anchor0.y,
@@ -67,8 +67,8 @@ class Cubic {
   /// Generates a bezier curve that is a straight line between the given anchor
   /// points. The control points lie 1/3 of the distance from their respective
   /// anchor points.
-  factory Cubic.straightLine(double x0, double y0, double x1, double y1) {
-    return Cubic.raw([
+  factory CubicBezier.straightLine(double x0, double y0, double x1, double y1) {
+    return CubicBezier.raw([
       x0,
       y0,
       lerp(x0, x1, 1 / 3),
@@ -85,7 +85,7 @@ class Cubic {
   /// smallest of the two possible arcs around the entire 360-degree circle.
   /// Arcs of greater than 180 degrees should use more than one arc together.
   /// Note that p0 and p1 should be equidistant from the center.
-  factory Cubic.circularArc(
+  factory CubicBezier.circularArc(
     double centerX,
     double centerY,
     double x0,
@@ -102,7 +102,7 @@ class Cubic {
 
     // p0 ~= p1
     if (cosa > 0.999) {
-      return Cubic.straightLine(x0, y0, x1, y1);
+      return CubicBezier.straightLine(x0, y0, x1, y1);
     }
 
     final double k =
@@ -113,7 +113,7 @@ class Cubic {
         (1 - cosa) *
         (clockwise ? 1 : -1);
 
-    return Cubic(
+    return CubicBezier(
       x0,
       y0,
       x0 + rotatedP0.x * k,
@@ -125,8 +125,8 @@ class Cubic {
     );
   }
 
-  /// Generates an empty Cubic defined at (x0, y0).
-  Cubic.empty(double x0, double y0) : this.raw([x0, y0, x0, y0, x0, y0, x0, y0]);
+  /// Generates an empty [CubicBezier] defined at (x0, y0).
+  CubicBezier.empty(double x0, double y0) : this.raw([x0, y0, x0, y0, x0, y0, x0, y0]);
 
   final List<double> _points;
 
@@ -172,7 +172,7 @@ class Cubic {
       (anchor0X - anchor1X).abs() < distanceEpsilon &&
       (anchor0Y - anchor1Y).abs() < distanceEpsilon;
 
-  bool convexTo(Cubic next) {
+  bool convexTo(CubicBezier next) {
     final prevVertex = Point(anchor0X, anchor0Y);
     final currVertex = Point(anchor1X, anchor1Y);
     final nextVertex = Point(next.anchor1X, next.anchor1Y);
@@ -310,14 +310,14 @@ class Cubic {
     bounds[3] = maxY;
   }
 
-  /// Returns two Cubics, created by splitting this curve at the given
+  /// Returns two [CubicBezier]s, created by splitting this curve at the given
   /// distance of [t] between the original starting and ending anchor points.
-  (Cubic, Cubic) split(double t) {
+  (CubicBezier, CubicBezier) split(double t) {
     final double u = 1 - t;
     final Point point = pointOnCurve(t);
 
     return (
-      Cubic(
+      CubicBezier(
         anchor0X,
         anchor0Y,
         anchor0X * u + control0X * t,
@@ -327,7 +327,7 @@ class Cubic {
         point.x,
         point.y,
       ),
-      Cubic(
+      CubicBezier(
         point.x,
         point.y,
         control0X * (u * u) + control1X * (2 * u * t) + anchor1X * (t * t),
@@ -341,17 +341,26 @@ class Cubic {
   }
 
   /// Utility function to reverse the control/anchor points for this curve.
-  Cubic reverse() =>
-      Cubic(anchor1X, anchor1Y, control1X, control1Y, control0X, control0Y, anchor0X, anchor0Y);
+  CubicBezier reverse() => CubicBezier(
+    anchor1X,
+    anchor1Y,
+    control1X,
+    control1Y,
+    control0X,
+    control0Y,
+    anchor0X,
+    anchor0Y,
+  );
 
-  Cubic operator +(Cubic o) => Cubic.raw(List.generate(8, (i) => _points[i] + o._points[i]));
+  CubicBezier operator +(CubicBezier o) =>
+      CubicBezier.raw(List.generate(8, (i) => _points[i] + o._points[i]));
 
-  Cubic operator *(double x) => Cubic.raw(List.generate(8, (i) => _points[i] * x));
+  CubicBezier operator *(double x) => CubicBezier.raw(List.generate(8, (i) => _points[i] * x));
 
-  Cubic operator /(double x) => this * (1.0 / x);
+  CubicBezier operator /(double x) => this * (1.0 / x);
 
-  Cubic transformed(PointTransformer f) {
-    final newCubic = _MutableCubic();
+  CubicBezier transformed(PointTransformer f) {
+    final newCubic = _MutableCubicBezier();
     for (var i = 0; i < 8; i++) {
       newCubic._points[i] = _points[i];
     }
@@ -373,7 +382,7 @@ class Cubic {
       return true;
     }
 
-    if (other is! Cubic) {
+    if (other is! CubicBezier) {
       return false;
     }
 
@@ -394,13 +403,13 @@ class Cubic {
   int get hashCode => _points.hashCode;
 }
 
-/// Mutable version of [Cubic], used mostly for performance critical paths so
-/// we can avoid creating new [Cubic]s
+/// Mutable version of [CubicBezier], used mostly for performance critical paths
+/// so we can avoid creating new [CubicBezier]s
 ///
-/// This is used in Morph.forEachCubic, reusing a [_MutableCubic] instance to
-/// avoid creating new [Cubic]s.
-class _MutableCubic extends Cubic {
-  _MutableCubic() : super.raw(List.filled(8, 0));
+/// This is used in Morph.forEachCubic, reusing a [_MutableCubicBezier] instance
+/// to avoid creating new [CubicBezier]s.
+class _MutableCubicBezier extends CubicBezier {
+  _MutableCubicBezier() : super.raw(List.filled(8, 0));
 
   void _transformOnePoint(PointTransformer f, int ix) {
     final (double, double) result = f(_points[ix], _points[ix + 1]);
@@ -415,14 +424,14 @@ class _MutableCubic extends Cubic {
     _transformOnePoint(f, 6);
   }
 
-  void interpolate(Cubic c1, Cubic c2, double progress) {
+  void interpolate(CubicBezier c1, CubicBezier c2, double progress) {
     for (var i = 0; i < 8; i++) {
       _points[i] = lerp(c1._points[i], c2._points[i], progress);
     }
   }
 }
 
-/// Returns a [Path] for a [Cubic] list.
+/// Returns a [Path] for a [CubicBezier] list.
 ///
 /// [path] is a [Path] to reset and set with the new path data.
 ///
@@ -438,7 +447,7 @@ class _MutableCubic extends Cubic {
 ///
 /// [closePath] is whether or not to close the created [Path].
 ///
-/// [cubics] is list of [Cubic]s to build path from.
+/// [cubics] is list of [CubicBezier]s to build path from.
 ///
 /// [rotationPivotX] is the rotation pivot on the X axis.
 ///
@@ -448,12 +457,12 @@ Path pathFromCubics({
   required int startAngle,
   required bool repeatPath,
   required bool closePath,
-  required List<Cubic> cubics,
+  required List<CubicBezier> cubics,
   required double rotationPivotX,
   required double rotationPivotY,
 }) {
   var first = true;
-  Cubic? firstCubic;
+  CubicBezier? firstCubic;
 
   path.reset();
 

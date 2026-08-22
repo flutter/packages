@@ -26,8 +26,8 @@ void main() {
     // Simple test to verify that a Morph with the same start and end shape has
     // curves equivalent to those in that shape.
     test('cubics', () {
-      final List<Cubic> p1Cubics = poly1.cubics;
-      final List<Cubic> cubics11 = morph11.asCubics(0);
+      final List<CubicBezier> p1Cubics = poly1.cubics;
+      final List<CubicBezier> cubics11 = morph11.asCubics(0);
       expect(cubics11, isNotEmpty);
 
       // The structure of a morph and its component shapes may not match
