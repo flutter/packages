@@ -1,3 +1,15 @@
+## 4.5.0
+
+- Detects routes that resolve to the same URL pattern. Routes are compared by
+  the whole URL each one resolves to, so a collision is caught wherever the two
+  routes sit in the route tree, including across shell routes and
+  `StatefulShellRoute` branches, between relative routes, and between separate
+  annotations in one library. Paths that differ only in a parameter name, or
+  only in casing where the earlier route sets `caseSensitive: false`, count as
+  the same pattern. These are reported as build warnings by default. The new
+  `duplicate_route_paths` builder option raises them to build errors with
+  `error`, or silences them with `ignore`.
+
 ## 4.4.0
 
 - Adds `hasOverriddenOnExit` parameter to `GoRouteData.$route` and `RelativeGoRouteData.$route` helper methods for type-safe routes. When set to `true`, enables custom `onExit` callback invocation from route data classes extending `GoRouteData` or `RelativeGoRouteData` when the route is removed from the navigation stack.
