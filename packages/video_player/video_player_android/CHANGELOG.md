@@ -1,3 +1,7 @@
+## 2.12.1
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/132934) where videos with a pixel aspect ratio other than 1.0 (anamorphic content) reported their coded size instead of their display size, causing them to be rendered stretched.
+
 ## 2.12.0
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/176575) where some videos report an incorrect duration when initialized without a video duration.
