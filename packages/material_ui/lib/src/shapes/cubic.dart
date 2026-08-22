@@ -2,7 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of 'shapes.dart';
+import 'dart:collection';
+import 'dart:math' as math;
+import 'dart:ui';
+
+import 'package:flutter/foundation.dart';
+import 'package:vector_math/vector_math_64.dart' show Matrix4;
+
+import 'point.dart';
+import 'utils.dart';
 
 /// This class holds the anchor and control point data for a single cubic
 /// Bézier curve, with anchor points ([anchor0X], [anchor0Y]) and ([anchor1X],
@@ -25,7 +33,7 @@ class Cubic {
     double control1Y,
     double anchor1X,
     double anchor1Y,
-  ) : this._raw([
+  ) : this.raw([
         anchor0X,
         anchor0Y,
         control0X,
@@ -36,13 +44,16 @@ class Cubic {
         anchor1Y,
       ]);
 
-  const Cubic._raw(List<double> points)
+  /// Creates a Cubic directly from the flat list of its eight anchor and
+  /// control point coordinates, in the order used by [points].
+  @internal
+  const Cubic.raw(List<double> points)
     : assert(points.length == 8, 'Points array size should be 8.'),
       _points = points;
 
   @internal
   Cubic.fromPoints(Point anchor0, Point control0, Point control1, Point anchor1)
-    : this._raw([
+    : this.raw([
         anchor0.x,
         anchor0.y,
         control0.x,
@@ -57,7 +68,7 @@ class Cubic {
   /// points. The control points lie 1/3 of the distance from their respective
   /// anchor points.
   factory Cubic.straightLine(double x0, double y0, double x1, double y1) {
-    return Cubic._raw([
+    return Cubic.raw([
       x0,
       y0,
       lerp(x0, x1, 1 / 3),
@@ -115,7 +126,7 @@ class Cubic {
   }
 
   /// Generates an empty Cubic defined at (x0, y0).
-  Cubic.empty(double x0, double y0) : this._raw([x0, y0, x0, y0, x0, y0, x0, y0]);
+  Cubic.empty(double x0, double y0) : this.raw([x0, y0, x0, y0, x0, y0, x0, y0]);
 
   final List<double> _points;
 
@@ -333,9 +344,9 @@ class Cubic {
   Cubic reverse() =>
       Cubic(anchor1X, anchor1Y, control1X, control1Y, control0X, control0Y, anchor0X, anchor0Y);
 
-  Cubic operator +(Cubic o) => Cubic._raw(List.generate(8, (i) => _points[i] + o._points[i]));
+  Cubic operator +(Cubic o) => Cubic.raw(List.generate(8, (i) => _points[i] + o._points[i]));
 
-  Cubic operator *(double x) => Cubic._raw(List.generate(8, (i) => _points[i] * x));
+  Cubic operator *(double x) => Cubic.raw(List.generate(8, (i) => _points[i] * x));
 
   Cubic operator /(double x) => this * (1.0 / x);
 
@@ -389,7 +400,7 @@ class Cubic {
 /// This is used in Morph.forEachCubic, reusing a [_MutableCubic] instance to
 /// avoid creating new [Cubic]s.
 class _MutableCubic extends Cubic {
-  _MutableCubic() : super._raw(List.filled(8, 0));
+  _MutableCubic() : super.raw(List.filled(8, 0));
 
   void _transformOnePoint(PointTransformer f, int ix) {
     final (double, double) result = f(_points[ix], _points[ix + 1]);
@@ -409,4 +420,95 @@ class _MutableCubic extends Cubic {
       _points[i] = lerp(c1._points[i], c2._points[i], progress);
     }
   }
+}
+
+/// Returns a [Path] for a [Cubic] list.
+///
+/// [path] is a [Path] to reset and set with the new path data.
+///
+/// [startAngle] is an angle (in degrees) to rotate the [Path] to start
+/// drawing from. If [startAngle] is non zero, then caller has to use the
+/// returned [Path], as path transformation creates a new path.
+///
+/// [repeatPath] is whether or not to repeat the [Path] twice before closing
+/// it. This flag is useful when the caller would like to draw parts of the
+/// path while offsetting the start and stop positions (for example, when
+/// phasing and rotating a path to simulate a motion as a Star circular
+/// progress indicator advances).
+///
+/// [closePath] is whether or not to close the created [Path].
+///
+/// [cubics] is list of [Cubic]s to build path from.
+///
+/// [rotationPivotX] is the rotation pivot on the X axis.
+///
+/// [rotationPivotY] is the rotation pivot on the Y axis.
+Path pathFromCubics({
+  required Path path,
+  required int startAngle,
+  required bool repeatPath,
+  required bool closePath,
+  required List<Cubic> cubics,
+  required double rotationPivotX,
+  required double rotationPivotY,
+}) {
+  var first = true;
+  Cubic? firstCubic;
+
+  path.reset();
+
+  for (final cubic in cubics) {
+    if (first) {
+      path.moveTo(cubic.anchor0X, cubic.anchor0Y);
+      if (startAngle != 0) {
+        firstCubic = cubic;
+      }
+      first = false;
+    }
+
+    path.cubicTo(
+      cubic.control0X,
+      cubic.control0Y,
+      cubic.control1X,
+      cubic.control1Y,
+      cubic.anchor1X,
+      cubic.anchor1Y,
+    );
+  }
+
+  if (repeatPath) {
+    var firstInRepeat = true;
+    for (final cubic in cubics) {
+      if (firstInRepeat) {
+        path.lineTo(cubic.anchor0X, cubic.anchor0Y);
+        firstInRepeat = false;
+      }
+
+      path.cubicTo(
+        cubic.control0X,
+        cubic.control0Y,
+        cubic.control1X,
+        cubic.control1Y,
+        cubic.anchor1X,
+        cubic.anchor1Y,
+      );
+    }
+  }
+
+  if (closePath) {
+    path.close();
+  }
+
+  if (startAngle != 0 && firstCubic != null) {
+    final double angleToFirstCubic = math.atan2(
+      cubics[0].anchor0Y - rotationPivotY,
+      cubics[0].anchor0X - rotationPivotX,
+    );
+    // Rotate the Path to to start from the given angle.
+    path = path.transform(
+      (Matrix4.identity()..rotateZ(-angleToFirstCubic + (startAngle * math.pi / 180))).storage,
+    );
+  }
+
+  return path;
 }

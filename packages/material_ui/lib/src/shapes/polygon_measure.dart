@@ -2,7 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of 'shapes.dart';
+import 'dart:collection';
+
+import 'cubic.dart';
+import 'feature_mapping.dart';
+import 'features.dart';
+import 'point.dart';
+import 'rounded_polygon.dart';
+import 'utils.dart';
 
 class MeasuredPolygon {
   MeasuredPolygon._({

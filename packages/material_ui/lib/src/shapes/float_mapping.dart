@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of 'shapes.dart';
+import 'dart:math' as math;
+
+import 'utils.dart';
 
 /// Checks if the given progress is in the given progress range.
 ///

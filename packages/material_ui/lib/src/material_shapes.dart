@@ -10,6 +10,7 @@ import 'dart:math' as math;
 
 import 'package:vector_math/vector_math_64.dart';
 
+import 'shapes/point.dart';
 import 'shapes/shapes.dart';
 
 /// Holds predefined Material Design shapes as [RoundedPolygon]s that can be

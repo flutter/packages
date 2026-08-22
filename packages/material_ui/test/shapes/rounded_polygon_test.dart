@@ -3,7 +3,12 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/src/shapes/shapes.dart';
+import 'package:material_ui/src/shapes/corner_rounding.dart';
+import 'package:material_ui/src/shapes/cubic.dart';
+import 'package:material_ui/src/shapes/features.dart';
+import 'package:material_ui/src/shapes/point.dart';
+import 'package:material_ui/src/shapes/rounded_polygon.dart';
+import 'package:material_ui/src/shapes/utils.dart';
 
 import 'test_utils.dart';
 

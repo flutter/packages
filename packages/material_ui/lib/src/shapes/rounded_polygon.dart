@@ -2,7 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of 'shapes.dart';
+import 'dart:math' as math;
+import 'dart:ui';
+
+import 'package:flutter/foundation.dart';
+
+import 'corner_rounding.dart';
+import 'cubic.dart';
+import 'features.dart';
+import 'point.dart';
+import 'utils.dart';
 
 /// The RoundedPolygon class allows simple construction of polygonal shapes
 /// with optional rounding at the vertices. Polygons can be constructed with
@@ -736,7 +745,7 @@ class RoundedPolygon {
             final List<double> points = lastCubic.points.toList();
             points[6] = cubic.anchor1X;
             points[7] = cubic.anchor1Y;
-            lastCubic = Cubic._raw(points);
+            lastCubic = Cubic.raw(points);
           }
         }
       }
@@ -874,6 +883,39 @@ class RoundedPolygon {
     bounds[3] = maxY;
 
     return bounds;
+  }
+
+  /// Returns a [Path] representation for a [RoundedPolygon] shape. Note that
+  /// there is some rounding happening (to the nearest thousandth), to work
+  /// around rendering artifacts introduced by some points being just slightly
+  /// off from each other (far less than a pixel). This also allows for a more
+  /// optimal path, as redundant curves (usually a single point) can be
+  /// detected and not added to the resulting path.
+  ///
+  /// [path] is a [Path] to reset and set with the new path data.
+  ///
+  /// [startAngle] is an angle (in degrees) to rotate the [Path] to start
+  /// drawing from. The rotation pivot is set to be the polygon's centerX and
+  /// centerY coordinates. If [startAngle] is non zero, then caller has to use
+  /// the returned [Path], as path transformation creates a new path.
+  ///
+  /// [repeatPath] is whether or not to repeat the [Path] twice before closing
+  /// it. This flag is useful when the caller would like to draw parts of the
+  /// path while offsetting the start and stop positions (for example, when
+  /// phasing and rotating a path to simulate a motion as a Star circular
+  /// progress indicator advances).
+  ///
+  /// [closePath] is whether or not to close the created [Path].
+  Path toPath({int startAngle = 0, bool repeatPath = false, bool closePath = true, Path? path}) {
+    return pathFromCubics(
+      path: path ?? Path(),
+      startAngle: startAngle,
+      repeatPath: repeatPath,
+      closePath: closePath,
+      cubics: cubics,
+      rotationPivotX: centerX,
+      rotationPivotY: centerY,
+    );
   }
 
   @override

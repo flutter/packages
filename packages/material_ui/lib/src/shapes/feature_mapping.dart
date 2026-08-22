@@ -2,7 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of 'shapes.dart';
+import 'cubic.dart';
+import 'features.dart';
+import 'float_mapping.dart';
+import 'point.dart';
+import 'utils.dart';
 
 /// MeasuredFeatures contains a list of all features in a polygon along with
 /// the [0..1] progress at that feature.

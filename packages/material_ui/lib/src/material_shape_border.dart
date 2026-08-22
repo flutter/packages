@@ -9,7 +9,9 @@ import 'package:flutter/painting.dart';
 
 import 'package:vector_math/vector_math_64.dart' show Matrix4;
 
-import 'shapes/shapes.dart';
+import 'shapes/cubic.dart';
+import 'shapes/morph.dart';
+import 'shapes/rounded_polygon.dart';
 
 /// A border that fits a material-shaped border within the rectangle of the
 /// widget it is applied to.

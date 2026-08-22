@@ -2,7 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of 'shapes.dart';
+import 'dart:collection';
+
+import 'cubic.dart';
+import 'point.dart';
 
 /// While a polygon's shape can be drawn solely using a list of [Cubic] objects
 /// representing its raw curves and lines, features add an extra layer of

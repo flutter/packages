@@ -2,7 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of 'shapes.dart';
+import 'dart:math' as math;
+import 'dart:ui';
+
+import 'cubic.dart';
+import 'feature_mapping.dart';
+import 'float_mapping.dart';
+import 'polygon_measure.dart';
+import 'rounded_polygon.dart';
+import 'utils.dart';
 
 /// This class is used to animate between start and end polygons objects.
 ///
@@ -207,7 +215,7 @@ class Morph {
     Cubic? lastCubic;
 
     for (var i = 0; i < _morphMatch.length; i++) {
-      final cubic = Cubic._raw(
+      final cubic = Cubic.raw(
         List<double>.generate(8, (j) {
           return lerp(_morphMatch[i].$1.points[j], _morphMatch[i].$2.points[j], progress);
         }),
@@ -236,5 +244,56 @@ class Morph {
     }
 
     return result;
+  }
+
+  /// Returns a [Path] for a [Morph].
+  ///
+  /// [progress] is the [Morph]'s progress.
+  ///
+  /// [path] is a [Path] to reset and set with the new path data.
+  ///
+  /// [startAngle] is an angle (in degrees) to rotate the [Path] to start
+  /// drawing from. If [startAngle] is non zero, then caller has to use the
+  /// returned [Path], as path transformation creates a new path.
+  ///
+  /// [repeatPath] is whether or not to repeat the [Path] twice before closing
+  /// it. This flag is useful when the caller would like to draw parts of the
+  /// path while offsetting the start and stop positions (for example, when
+  /// phasing and rotating a path to simulate a motion as a Star circular
+  /// progress indicator advances).
+  ///
+  /// [closePath] is whether or not to close the created [Path].
+  ///
+  /// [rotationPivotX] is the rotation pivot on the X axis. By default it's set
+  /// to 0, and that should align with Morph instances that were created for
+  /// [RoundedPolygon] with zero centerX. In case the [RoundedPolygon] were
+  /// normalized (i. e. moved to (0.5, 0.5)), or where created with a different
+  /// centerX coordinated, this pivot point may need to be aligned to support a
+  /// proper rotation.
+  ///
+  /// [rotationPivotY] is the rotation pivot on the Y axis. By default it's set
+  /// to 0, and that should align with Morph instances that were created for
+  /// [RoundedPolygon] with zero centerY. In case the RoundedPolygon were
+  /// normalized (i. e. moves to (0.5, 0.5)), or where created with a different
+  /// centerY coordinated, this pivot point may need to be aligned to support a
+  /// proper rotation.
+  Path toPath({
+    required double progress,
+    int startAngle = 0,
+    bool repeatPath = false,
+    bool closePath = true,
+    double rotationPivotX = 0,
+    double rotationPivotY = 0,
+    Path? path,
+  }) {
+    return pathFromCubics(
+      path: path ?? Path(),
+      startAngle: startAngle,
+      repeatPath: repeatPath,
+      closePath: closePath,
+      cubics: asCubics(progress),
+      rotationPivotX: rotationPivotX,
+      rotationPivotY: rotationPivotY,
+    );
   }
 }

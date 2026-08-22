@@ -5,7 +5,12 @@
 import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/src/shapes/shapes.dart';
+import 'package:material_ui/src/shapes/corner_rounding.dart';
+import 'package:material_ui/src/shapes/cubic.dart';
+import 'package:material_ui/src/shapes/feature_mapping.dart';
+import 'package:material_ui/src/shapes/features.dart';
+import 'package:material_ui/src/shapes/polygon_measure.dart';
+import 'package:material_ui/src/shapes/rounded_polygon.dart';
 
 import 'test_utils.dart';
 

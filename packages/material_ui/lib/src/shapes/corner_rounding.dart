@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of 'shapes.dart';
-
 /// Defines the amount and quality around a given vertex of a shape.
 /// [radius] defines the radius of the circle which forms the basis of
 /// the rounding for the vertex. [smoothing] defines the amount by which the
