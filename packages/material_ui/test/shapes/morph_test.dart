@@ -6,7 +6,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/src/shapes/shapes/shapes.dart';
+import 'package:material_ui/src/shapes/shapes.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 import 'test_utils.dart';

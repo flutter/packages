@@ -2,6 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// This code is a Dart port of the AndroidX graphics-shapes library:
+// https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:graphics/graphics-shapes/
+
+/// A geometry engine for describing rounded polygonal shapes and morphing
+/// between them.
+library;
+
 import 'dart:collection';
 import 'dart:math' as math;
 import 'dart:ui';

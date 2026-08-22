@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/src/shapes/shapes/shapes.dart';
+import 'package:material_ui/src/shapes/shapes.dart';
 
 void main() {
   test('$CornerRounding()', () {
