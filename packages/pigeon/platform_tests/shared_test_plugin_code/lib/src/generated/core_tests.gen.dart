@@ -1056,8 +1056,8 @@ class HostIntegrationCoreApi {
       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
           ? '.$messageChannelSuffix'
           : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
 
+  final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
@@ -5992,8 +5992,8 @@ class HostCallbackCoreApi {
       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
           ? '.$messageChannelSuffix'
           : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
 
+  final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
@@ -6132,8 +6132,8 @@ class HostTrivialApi {
       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
           ? '.$messageChannelSuffix'
           : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
 
+  final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
@@ -6163,8 +6163,8 @@ class HostSmallApi {
       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
           ? '.$messageChannelSuffix'
           : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
 
+  final BinaryMessenger? pigeonVar_binaryMessenger;
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;

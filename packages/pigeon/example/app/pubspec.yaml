@@ -28,3 +28,4 @@ flutter:
   config:
     swift-package-manager: true
   uses-material-design: true
+

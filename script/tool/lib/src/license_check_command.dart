@@ -313,6 +313,12 @@ class LicenseCheckCommand extends PackageCommand {
       return true;
     }
 
+    // TODO(tarrinneal): Determine a permanent solution for Swift-generated
+    // Objective-C compatibility files in _objc_gen directories.
+    if (p.split(file.path).any((String part) => part.endsWith('_objc_gen'))) {
+      return true;
+    }
+
     return false;
   }
 
