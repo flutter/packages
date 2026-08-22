@@ -11,9 +11,6 @@
 // https://github.com/flutter/flutter/issues/122950
 // Fails with "flutter test --test-randomize-ordering-seed=20230318"
 @Tags(<String>['reduced-test-set', 'no-shuffle'])
-// TODO(188666): Fix web test failures and re-enable. See also:
-// https://github.com/flutter/flutter/issues/71604.
-@TestOn('!chrome')
 library;
 
 import 'dart:async';
