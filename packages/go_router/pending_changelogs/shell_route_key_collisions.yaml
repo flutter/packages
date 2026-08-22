@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `ShellRoute` key collisions during imperative navigation while preserving navigator state across reparses.
+version: patch

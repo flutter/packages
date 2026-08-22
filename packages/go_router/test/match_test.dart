@@ -64,6 +64,8 @@ void main() {
       expect(matches1.length, 1);
       expect(matches2.length, 1);
       expect(matches1.first.pageKey, matches2.first.pageKey);
+      expect((matches1.first as ShellRouteMatch).navigatorKey, same(route.navigatorKey));
+      expect((matches2.first as ShellRouteMatch).navigatorKey, same(route.navigatorKey));
     });
 
     test('GoRoute Match has stable unique key', () {
