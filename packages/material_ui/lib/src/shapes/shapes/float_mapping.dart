@@ -31,23 +31,20 @@ double linearMap(List<double> xValues, List<double> yValues, double x) {
     throw StateError('segmentStartIndex not found.');
   }
 
-  final segmentEndIndex = (segmentStartIndex + 1) % xValues.length;
-  final segmentSizeX = positiveModulo(
+  final int segmentEndIndex = (segmentStartIndex + 1) % xValues.length;
+  final double segmentSizeX = positiveModulo(
     xValues[segmentEndIndex] - xValues[segmentStartIndex],
     1,
   );
-  final segmentSizeY = positiveModulo(
+  final double segmentSizeY = positiveModulo(
     yValues[segmentEndIndex] - yValues[segmentStartIndex],
     1,
   );
-  final positionInSegment = segmentSizeX < 0.001
+  final double positionInSegment = segmentSizeX < 0.001
       ? 0.5
       : positiveModulo(x - xValues[segmentStartIndex], 1) / segmentSizeX;
 
-  return positiveModulo(
-    yValues[segmentStartIndex] + segmentSizeY * positionInSegment,
-    1,
-  );
+  return positiveModulo(yValues[segmentStartIndex] + segmentSizeY * positionInSegment, 1);
 }
 
 /// [DoubleMapper] creates mappings from values in the [0..1) source space to
@@ -71,22 +68,19 @@ double linearMap(List<double> xValues, List<double> yValues, double x) {
 /// progress values between the start and end shape, which is then used to
 /// insert new curves and match curves overall.
 class DoubleMapper {
-  static final identity = DoubleMapper([
-    (0.0, 0.0),
-    (0.5, 0.5),
-  ]);
-
   DoubleMapper(List<(double, double)> mappings) {
     _sourceValues = List.filled(mappings.length, 0);
     _targetValues = List.filled(mappings.length, 0);
     for (var i = 0; i < mappings.length; i++) {
-      final pair = mappings[i];
+      final (double, double) pair = mappings[i];
       _sourceValues[i] = pair.$1;
       _targetValues[i] = pair.$2;
     }
     validateProgress(_sourceValues);
     validateProgress(_targetValues);
   }
+
+  static final identity = DoubleMapper([(0.0, 0.0), (0.5, 0.5)]);
 
   late final List<double> _sourceValues;
 
@@ -108,30 +102,24 @@ void validateProgress(List<double> p) {
     throw ArgumentError('List is empty.');
   }
 
-  var prev = p.last;
+  double prev = p.last;
   var wraps = 0;
 
   for (var i = 0; i < p.length; i++) {
-    final curr = p[i];
+    final double curr = p[i];
 
     if (curr < 0 || curr >= 1) {
-      throw ArgumentError(
-        'FloatMapping - Progress outside of range: ${p.join(', ')}',
-      );
+      throw ArgumentError('FloatMapping - Progress outside of range: ${p.join(', ')}');
     }
 
     if (progressDistance(curr, prev).abs() <= distanceEpsilon) {
-      throw ArgumentError(
-        'FloatMapping - Progress repeats a value: ${p.join(', ')}',
-      );
+      throw ArgumentError('FloatMapping - Progress repeats a value: ${p.join(', ')}');
     }
 
     if (curr < prev) {
       wraps++;
       if (wraps > 1) {
-        throw ArgumentError(
-          'FloatMapping - Progress wraps more than once: ${p.join(', ')}',
-        );
+        throw ArgumentError('FloatMapping - Progress wraps more than once: ${p.join(', ')}');
       }
     }
 
@@ -142,6 +130,6 @@ void validateProgress(List<double> p) {
 /// Distance between two progress values, considering wrap-around.
 /// For example, the distance between 0.99 and 0.0 is 0.01.
 double progressDistance(double p1, double p2) {
-  final diff = (p1 - p2).abs();
+  final double diff = (p1 - p2).abs();
   return math.min(diff, 1.0 - diff);
 }

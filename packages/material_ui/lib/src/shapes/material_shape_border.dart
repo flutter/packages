@@ -12,20 +12,13 @@ import 'shapes/shapes.dart';
 ///
 /// Typically used with a [ShapeDecoration] to draw a material-shaped border.
 class MaterialShapeBorder extends OutlinedBorder {
-  MaterialShapeBorder({
-    required RoundedPolygon this.shape,
-    super.side,
-    this.squash = 0,
-  })  : _cubics = shape.cubics,
-        assert(squash >= 0 && squash <= 1, 'squash has to be in range [0, 1]');
+  MaterialShapeBorder({required RoundedPolygon this.shape, super.side, this.squash = 0})
+    : _cubics = shape.cubics,
+      assert(squash >= 0 && squash <= 1, 'squash has to be in range [0, 1]');
 
-  const MaterialShapeBorder._fromCubics({
-    required List<Cubic> cubics,
-    super.side,
-    this.squash = 0,
-  })  : shape = null,
-        _cubics = cubics,
-        assert(squash >= 0 && squash <= 1, 'squash has to be in range [0, 1]');
+  const MaterialShapeBorder._fromCubics({required this._cubics, super.side, this.squash = 0})
+    : shape = null,
+      assert(squash >= 0 && squash <= 1, 'squash has to be in range [0, 1]');
 
   /// The shape this border represents.
   ///
@@ -54,21 +47,13 @@ class MaterialShapeBorder extends OutlinedBorder {
 
   @override
   ShapeBorder scale(double t) {
-    final shape = this.shape;
+    final RoundedPolygon? shape = this.shape;
 
     if (shape != null) {
-      return MaterialShapeBorder(
-        shape: shape,
-        side: side.scale(t),
-        squash: squash,
-      );
+      return MaterialShapeBorder(shape: shape, side: side.scale(t), squash: squash);
     }
 
-    return MaterialShapeBorder._fromCubics(
-      cubics: _cubics,
-      side: side.scale(t),
-      squash: squash,
-    );
+    return MaterialShapeBorder._fromCubics(cubics: _cubics, side: side.scale(t), squash: squash);
   }
 
   @override
@@ -82,8 +67,8 @@ class MaterialShapeBorder extends OutlinedBorder {
     }
 
     if (a is MaterialShapeBorder) {
-      final aShape = a.shape;
-      final shape = this.shape;
+      final RoundedPolygon? aShape = a.shape;
+      final RoundedPolygon? shape = this.shape;
 
       if (aShape == null || shape == null) {
         throw StateError(
@@ -114,8 +99,8 @@ class MaterialShapeBorder extends OutlinedBorder {
     }
 
     if (b is MaterialShapeBorder) {
-      final bShape = b.shape;
-      final shape = this.shape;
+      final RoundedPolygon? bShape = b.shape;
+      final RoundedPolygon? shape = this.shape;
 
       if (bShape == null || shape == null) {
         throw StateError(
@@ -126,10 +111,7 @@ class MaterialShapeBorder extends OutlinedBorder {
       }
 
       return MaterialShapeBorder._fromCubics(
-        cubics: Morph(
-          shape,
-          bShape,
-        ).asCubics(t),
+        cubics: Morph(shape, bShape).asCubics(t),
         side: BorderSide.lerp(side, b.side, t),
         squash: ui.lerpDouble(squash, b.squash, t)!,
       );
@@ -139,11 +121,7 @@ class MaterialShapeBorder extends OutlinedBorder {
   }
 
   @override
-  MaterialShapeBorder copyWith({
-    RoundedPolygon? shape,
-    BorderSide? side,
-    double? squash,
-  }) {
+  MaterialShapeBorder copyWith({RoundedPolygon? shape, BorderSide? side, double? squash}) {
     if (shape != null) {
       return MaterialShapeBorder(
         shape: shape,
@@ -152,7 +130,7 @@ class MaterialShapeBorder extends OutlinedBorder {
       );
     }
 
-    final oldShape = this.shape;
+    final RoundedPolygon? oldShape = this.shape;
 
     if (oldShape != null) {
       return MaterialShapeBorder(
@@ -178,10 +156,8 @@ class MaterialShapeBorder extends OutlinedBorder {
       scale = Offset(squash * scale.dx + (1 - squash) * scale.dy, scale.dy);
     }
 
-    final actualRect = Offset(
-          rect.left + (rect.width - scale.dx) / 2,
-          rect.top + (rect.height - scale.dy) / 2,
-        ) &
+    final Rect actualRect =
+        Offset(rect.left + (rect.width - scale.dx) / 2, rect.top + (rect.height - scale.dy) / 2) &
         Size(scale.dx, scale.dy);
 
     final matrix = Matrix4.identity()
@@ -201,13 +177,13 @@ class MaterialShapeBorder extends OutlinedBorder {
 
   @override
   Path getInnerPath(Rect rect, {TextDirection? textDirection}) {
-    final adjustedRect = rect.deflate(side.strokeInset);
+    final Rect adjustedRect = rect.deflate(side.strokeInset);
     return _getPathFromRect(adjustedRect);
   }
 
   @override
   Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
-    final adjustedRect = rect.inflate(side.strokeOutset);
+    final Rect adjustedRect = rect.inflate(side.strokeOutset);
     return _getPathFromRect(adjustedRect);
   }
 
@@ -218,8 +194,8 @@ class MaterialShapeBorder extends OutlinedBorder {
         return;
 
       case BorderStyle.solid:
-        final adjustedRect = rect.inflate(side.strokeOffset / 2);
-        final path = _getPathFromRect(adjustedRect);
+        final Rect adjustedRect = rect.inflate(side.strokeOffset / 2);
+        final Path path = _getPathFromRect(adjustedRect);
         canvas.drawPath(path, side.toPaint());
     }
   }

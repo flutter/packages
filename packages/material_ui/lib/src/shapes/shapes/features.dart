@@ -40,8 +40,7 @@ abstract class Feature {
   /// squares' outer corners.
   ///
   /// Throws [ArgumentError] for lists of empty cubics or non-continuous cubics.
-  factory Feature.buildIgnorableFeature(List<Cubic> cubics) =>
-      _validated(EdgeFeature(cubics));
+  factory Feature.buildIgnorableFeature(List<Cubic> cubics) => _validated(EdgeFeature(cubics));
 
   /// Group a [Cubic] object to an edge (neither inward or outward
   /// identification in a shape).
@@ -53,8 +52,7 @@ abstract class Feature {
   /// in a shape).
   ///
   /// Throws [ArgumentError] for lists of empty cubics or non-continuous cubics
-  factory Feature.buildConvexCorner(List<Cubic> cubics) =>
-      _validated(CornerFeature(cubics));
+  factory Feature.buildConvexCorner(List<Cubic> cubics) => _validated(CornerFeature(cubics));
 
   /// Group a list of [Cubic] objects to a concave corner (inward indentation
   /// in a shape).
@@ -80,9 +78,9 @@ abstract class Feature {
 
   static bool _isContinuous(Feature feature) {
     const distanceEpsilon = 1e-5;
-    var prevCubic = feature._cubics.first;
+    Cubic prevCubic = feature._cubics.first;
     for (var i = 1; i < feature._cubics.length; i++) {
-      final cubic = feature._cubics[i];
+      final Cubic cubic = feature._cubics[i];
       if ((cubic.anchor0X - prevCubic.anchor1X).abs() > distanceEpsilon ||
           (cubic.anchor0Y - prevCubic.anchor1Y).abs() > distanceEpsilon) {
         return false;
@@ -129,20 +127,12 @@ class EdgeFeature extends Feature {
   EdgeFeature(super._cubics);
 
   @override
-  Feature transformed(PointTransformer f) => EdgeFeature(
-        List.generate(
-          _cubics.length,
-          (i) => _cubics[i].transformed(f),
-        ),
-      );
+  Feature transformed(PointTransformer f) =>
+      EdgeFeature(List.generate(_cubics.length, (i) => _cubics[i].transformed(f)));
 
   @override
-  Feature reversed() => EdgeFeature(
-        List.generate(
-          _cubics.length,
-          (i) => _cubics[_cubics.length - 1 - i].reverse(),
-        ),
-      );
+  Feature reversed() =>
+      EdgeFeature(List.generate(_cubics.length, (i) => _cubics[_cubics.length - 1 - i].reverse()));
 
   @override
   bool get isIgnorableFeature => true;
@@ -174,23 +164,15 @@ class CornerFeature extends Feature {
 
   @override
   Feature transformed(PointTransformer f) => CornerFeature(
-        List.generate(
-          _cubics.length,
-          (i) => _cubics[i].transformed(f),
-        ),
-        convex: convex,
-      );
+    List.generate(_cubics.length, (i) => _cubics[i].transformed(f)),
+    convex: convex,
+  );
 
   @override
   Feature reversed() => CornerFeature(
-        List.generate(
-          _cubics.length,
-          (i) => _cubics[_cubics.length - 1 - i].reverse(),
-        ),
-        // TODO: b/369320447 - Revert flag negation when [RoundedPolygon]
-        // ignores orientation for setting the flag.
-        convex: !convex,
-      );
+    List.generate(_cubics.length, (i) => _cubics[_cubics.length - 1 - i].reverse()),
+    convex: !convex,
+  );
 
   @override
   bool get isIgnorableFeature => false;

@@ -9,25 +9,20 @@ import 'test_utils.dart';
 
 void main() {
   group('Shapes', () {
-    const zero = Point.zero;
+    const Point zero = Point.zero;
     const epsilon = 0.01;
 
     double distance(Point start, Point end) {
-      final vector = end - start;
+      final Point vector = end - start;
       return math.sqrt(vector.x * vector.x + vector.y * vector.y);
     }
 
     // Test that the given point is radius distance away from [center]. If
     // two radii are provided it is sufficient to lie on either one (used for
     // testing points on stars).
-    void expectPointOnRadii(
-      Point point,
-      double radius1, [
-      double? radius2,
-      Point center = zero,
-    ]) {
+    void expectPointOnRadii(Point point, double radius1, [double? radius2, Point center = zero]) {
       radius2 ??= radius1;
-      final dist = distance(center, point);
+      final double dist = distance(center, point);
       try {
         expect(radius1, moreOrLessEquals(dist, epsilon: epsilon));
       } on TestFailure catch (_) {
@@ -35,24 +30,9 @@ void main() {
       }
     }
 
-    void expectCubicOnRadii(
-      Cubic cubic,
-      double radius1, [
-      double? radius2,
-      Point center = zero,
-    ]) {
-      expectPointOnRadii(
-        Point(cubic.anchor0X, cubic.anchor0Y),
-        radius1,
-        radius2,
-        center,
-      );
-      expectPointOnRadii(
-        Point(cubic.anchor1X, cubic.anchor1Y),
-        radius1,
-        radius2,
-        center,
-      );
+    void expectCubicOnRadii(Cubic cubic, double radius1, [double? radius2, Point center = zero]) {
+      expectPointOnRadii(Point(cubic.anchor0X, cubic.anchor0Y), radius1, radius2, center);
+      expectPointOnRadii(Point(cubic.anchor1X, cubic.anchor1Y), radius1, radius2, center);
     }
 
     // Tests points along the curve of the cubic by comparing the distance
@@ -62,18 +42,14 @@ void main() {
     void expectCircularCubic(Cubic cubic, double radius, Point center) {
       var t = 0.0;
       while (t <= 1) {
-        final pointOnCurve = cubic.pointOnCurve(t);
-        final distanceToPoint = distance(center, pointOnCurve);
+        final Point pointOnCurve = cubic.pointOnCurve(t);
+        final double distanceToPoint = distance(center, pointOnCurve);
         expect(radius, moreOrLessEquals(distanceToPoint, epsilon: epsilon));
         t += 0.1;
       }
     }
 
-    void expectCircleShape(
-      List<Cubic> shape, {
-      double radius = 1,
-      Point center = zero,
-    }) {
+    void expectCircleShape(List<Cubic> shape, {double radius = 1, Point center = zero}) {
       for (final cubic in shape) {
         expectCircularCubic(cubic, radius, center);
       }
@@ -95,10 +71,7 @@ void main() {
       expectCircleShape(bigCircle.cubics, radius: 3);
 
       const center = Point(1, 2);
-      final offsetCircle = RoundedPolygon.circle(
-        centerX: center.x,
-        centerY: center.y,
-      );
+      final offsetCircle = RoundedPolygon.circle(centerX: center.x, centerY: center.y);
       expectCircleShape(offsetCircle.cubics, center: center);
     });
 
@@ -106,11 +79,8 @@ void main() {
     // the vertices are the right distance from the center. For the rounded
     // versions, just check that the shape is within the appropriate bounds.
     test('star', () {
-      var star = RoundedPolygon.star(
-        numVerticesPerRadius: 4,
-        innerRadius: 0.5,
-      );
-      var shape = star.cubics;
+      var star = RoundedPolygon.star(numVerticesPerRadius: 4, innerRadius: 0.5);
+      List<Cubic> shape = star.cubics;
       var radius = 1.0;
       var innerRadius = 0.5;
 
@@ -132,11 +102,7 @@ void main() {
 
       radius = 4;
       innerRadius = 2;
-      star = RoundedPolygon.star(
-        numVerticesPerRadius: 4,
-        radius: radius,
-        innerRadius: innerRadius,
-      );
+      star = RoundedPolygon.star(numVerticesPerRadius: 4, radius: radius, innerRadius: innerRadius);
       shape = star.cubics;
       for (final cubic in shape) {
         expectCubicOnRadii(cubic, radius, innerRadius);
@@ -159,11 +125,7 @@ void main() {
       const min = Point(-1, -1);
       const max = Point(1, 1);
 
-      var star = RoundedPolygon.star(
-        numVerticesPerRadius: 4,
-        innerRadius: 0.5,
-        rounding: rounding,
-      );
+      var star = RoundedPolygon.star(numVerticesPerRadius: 4, innerRadius: 0.5, rounding: rounding);
       expectInBounds(star.cubics, min, max);
 
       star = RoundedPolygon.star(

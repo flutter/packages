@@ -13,7 +13,7 @@ const angleEpsilon = 1e-6;
 // that allow higher tolerances.
 const relaxedDistanceEpsilon = 5e-3;
 
-const twoPi = math.pi * 2;
+const double twoPi = math.pi * 2;
 
 double distance(double x, double y) => math.sqrt(x * x + y * y);
 
@@ -21,7 +21,7 @@ double distanceSquared(double x, double y) => x * x + y * y;
 
 /// Returns unit vector representing the direction to this point from (0, 0).
 Point directionVector(double x, double y) {
-  final d = distance(x, y);
+  final double d = distance(x, y);
   assert(d > 0, 'Required distance greater than zero.');
   return Point(x / d, y / d);
 }
@@ -29,11 +29,7 @@ Point directionVector(double x, double y) {
 Point directionVectorFromAngle(double angleRadians) =>
     Point(math.cos(angleRadians), math.sin(angleRadians));
 
-Point radialToCartesian(
-  double radius,
-  double angleRadians, [
-  Point center = Point.zero,
-]) =>
+Point radialToCartesian(double radius, double angleRadians, [Point center = Point.zero]) =>
     directionVectorFromAngle(angleRadians) * radius + center;
 
 double square(double x) => x * x;
@@ -63,10 +59,10 @@ bool collinearIsh(
   // The dot product of a perpendicular angle is 0. By rotating one of the
   // vectors, we save the calculations to convert the dot product to degrees
   // afterwards.
-  final ab = Point(bX - aX, bY - aY).rotate90();
+  final Point ab = Point(bX - aX, bY - aY).rotate90();
   final ac = Point(cX - aX, cY - aY);
-  final dotProduct = ab.dotProduct(ac).abs();
-  final relativeTolerance = tolerance * ab.getDistance() * ac.getDistance();
+  final double dotProduct = ab.dotProduct(ac).abs();
+  final double relativeTolerance = tolerance * ab.getDistance() * ac.getDistance();
 
   return dotProduct < tolerance || dotProduct < relativeTolerance;
 }
@@ -74,7 +70,6 @@ bool collinearIsh(
 /// Approximates whether corner at this vertex is concave or convex, based on
 /// the relationship of the prev->curr/curr->next vectors.
 bool convex(Point previous, Point current, Point next) {
-  // TODO: b/369320447 - This is a fast, but not reliable calculation.
   return (current - previous).clockwise(next - current);
 }
 
@@ -85,18 +80,13 @@ bool convex(Point previous, Point current, Point next) {
 // NTS: Does it make sense to split the function f in 2, one to generate a
 // candidate, of a custom type T (i.e. (Float) -> T), and one to evaluate it
 // ( (T) -> Float )?
-double findMinimum(
-  double v0,
-  double v1,
-  double Function(double) f, {
-  double tolerance = 1e-3,
-}) {
+double findMinimum(double v0, double v1, double Function(double) f, {double tolerance = 1e-3}) {
   var a = v0;
   var b = v1;
 
   while (b - a > tolerance) {
-    final c1 = (2 * a + b) / 3;
-    final c2 = (2 * b + a) / 3;
+    final double c1 = (2 * a + b) / 3;
+    final double c2 = (2 * b + a) / 3;
 
     if (f(c1) < f(c2)) {
       b = c2;
@@ -129,13 +119,15 @@ int binarySearchBy<E, K>(
 ]) {
   end = RangeError.checkValidRange(start, end, sortedList.length);
   var min = start;
-  var max = end;
+  int max = end;
   final key = value;
   while (min < max) {
-    final mid = min + ((max - min) >> 1);
-    final element = sortedList[mid];
-    final comp = compare(keyOf(element), key);
-    if (comp == 0) return mid;
+    final int mid = min + ((max - min) >> 1);
+    final E element = sortedList[mid];
+    final int comp = compare(keyOf(element), key);
+    if (comp == 0) {
+      return mid;
+    }
     if (comp < 0) {
       min = mid + 1;
     } else {
@@ -146,16 +138,19 @@ int binarySearchBy<E, K>(
 }
 
 extension DoubleCoerceExtensions on double {
-  double coerceAtLeast(double minimumValue) =>
-      this < minimumValue ? minimumValue : this;
+  double coerceAtLeast(double minimumValue) => this < minimumValue ? minimumValue : this;
 
   double coerceAtMost(double maximumValue) {
     return this > maximumValue ? maximumValue : this;
   }
 
   double coerceIn(double minimumValue, double maximumValue) {
-    if (this < minimumValue) return minimumValue;
-    if (this > maximumValue) return maximumValue;
+    if (this < minimumValue) {
+      return minimumValue;
+    }
+    if (this > maximumValue) {
+      return maximumValue;
+    }
     return this;
   }
 }
@@ -163,7 +158,7 @@ extension DoubleCoerceExtensions on double {
 extension Matrix4PointTransformer on Matrix4 {
   PointTransformer asPointTransformer() {
     return (x, y) {
-      final vector = transform3(Vector3(x, y, 0));
+      final Vector3 vector = transform3(Vector3(x, y, 0));
       return (vector.x, vector.y);
     };
   }
@@ -191,12 +186,7 @@ extension RoundedPolygonToPathExtension on RoundedPolygon {
   /// progress indicator advances).
   ///
   /// [closePath] is whether or not to close the created [Path].
-  Path toPath({
-    int startAngle = 0,
-    bool repeatPath = false,
-    bool closePath = true,
-    Path? path,
-  }) {
+  Path toPath({int startAngle = 0, bool repeatPath = false, bool closePath = true, Path? path}) {
     return pathFromCubics(
       path: path ?? Path(),
       startAngle: startAngle,
@@ -340,17 +330,13 @@ Path pathFromCubics({
   }
 
   if (startAngle != 0 && firstCubic != null) {
-    final angleToFirstCubic = math.atan2(
+    final double angleToFirstCubic = math.atan2(
       cubics[0].anchor0Y - rotationPivotY,
       cubics[0].anchor0X - rotationPivotX,
     );
     // Rotate the Path to to start from the given angle.
     path = path.transform(
-      (Matrix4.identity()
-            ..rotateZ(
-              -angleToFirstCubic + (startAngle * math.pi / 180),
-            ))
-          .storage,
+      (Matrix4.identity()..rotateZ(-angleToFirstCubic + (startAngle * math.pi / 180))).storage,
     );
   }
 

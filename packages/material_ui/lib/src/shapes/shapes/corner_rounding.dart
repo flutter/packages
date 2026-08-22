@@ -38,16 +38,11 @@ part of 'shapes.dart';
 /// circular arc in the center; the flanking curves on either side meet at the
 /// middle.
 class CornerRounding {
-  static const unrounded = CornerRounding();
+  const CornerRounding({this.radius = 0, this.smoothing = 0})
+    : assert(radius >= 0, 'radius has to be greater that zero'),
+      assert(smoothing >= 0 && smoothing <= 1, 'smoothing has to be in range [0, 1]');
 
-  const CornerRounding({
-    this.radius = 0,
-    this.smoothing = 0,
-  })  : assert(radius >= 0, 'radius has to be greater that zero'),
-        assert(
-          smoothing >= 0 && smoothing <= 1,
-          'smoothing has to be in range [0, 1]',
-        );
+  static const unrounded = CornerRounding();
 
   final double radius;
 

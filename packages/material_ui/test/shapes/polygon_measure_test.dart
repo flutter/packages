@@ -15,37 +15,28 @@ void main() {
       RoundedPolygon polygon, [
       void Function(MeasuredPolygon)? extraChecks,
     ]) {
-      final measuredPolygon = MeasuredPolygon.measurePolygon(
-        measurer,
-        polygon,
-      );
+      final measuredPolygon = MeasuredPolygon.measurePolygon(measurer, polygon);
 
       expect(0, measuredPolygon.first.startOutlineProgress);
       expect(1, measuredPolygon.last.endOutlineProgress);
 
       for (var index = 0; index < measuredPolygon.length; index++) {
-        final measuredCubic = measuredPolygon[index];
+        final MeasuredCubic measuredCubic = measuredPolygon[index];
 
         if (index > 0) {
-          expect(
-            measuredPolygon[index - 1].endOutlineProgress,
-            measuredCubic.startOutlineProgress,
-          );
+          expect(measuredPolygon[index - 1].endOutlineProgress, measuredCubic.startOutlineProgress);
         }
 
-        expect(
-          measuredCubic.endOutlineProgress >=
-              measuredCubic.startOutlineProgress,
-          isTrue,
-        );
+        expect(measuredCubic.endOutlineProgress >= measuredCubic.startOutlineProgress, isTrue);
       }
 
       for (var index = 0; index < measuredPolygon.features.length; index++) {
-        final progressableFeature = measuredPolygon.features[index];
+        final ProgressableFeature progressableFeature = measuredPolygon.features[index];
         expect(
           progressableFeature.progress >= 0 && progressableFeature.progress < 1,
           isTrue,
-          reason: 'Feature #$index has invalid progress: '
+          reason:
+              'Feature #$index has invalid progress: '
               '${progressableFeature.progress}',
         );
       }
@@ -53,21 +44,17 @@ void main() {
       extraChecks?.call(measuredPolygon);
     }
 
-    void regularPolygonMeasure(
-      int sides, [
-      CornerRounding rounding = CornerRounding.unrounded,
-    ]) {
-      irregularPolygonMeasure(
-        RoundedPolygon.fromVerticesNum(sides, rounding: rounding),
-        (measuredPolygon) {
-          expect(sides, measuredPolygon.length);
+    void regularPolygonMeasure(int sides, [CornerRounding rounding = CornerRounding.unrounded]) {
+      irregularPolygonMeasure(RoundedPolygon.fromVerticesNum(sides, rounding: rounding), (
+        measuredPolygon,
+      ) {
+        expect(sides, measuredPolygon.length);
 
-          for (var index = 0; index < measuredPolygon.length; index++) {
-            final measuredCubic = measuredPolygon[index];
-            expectEqualish(index / sides, measuredCubic.startOutlineProgress);
-          }
-        },
-      );
+        for (var index = 0; index < measuredPolygon.length; index++) {
+          final MeasuredCubic measuredCubic = measuredPolygon[index];
+          expectEqualish(index / sides, measuredCubic.startOutlineProgress);
+        }
+      });
     }
 
     void customPolygonMeasure(RoundedPolygon polygon, List<double> progresses) {
@@ -75,11 +62,10 @@ void main() {
         expect(measuredPolygon.length, progresses.length);
 
         for (var index = 0; index < measuredPolygon.length; index++) {
-          final measuredCubic = measuredPolygon[index];
+          final MeasuredCubic measuredCubic = measuredPolygon[index];
           expectEqualish(
             progresses[index],
-            measuredCubic.endOutlineProgress -
-                measuredCubic.startOutlineProgress,
+            measuredCubic.endOutlineProgress - measuredCubic.startOutlineProgress,
           );
         }
       });
@@ -107,28 +93,19 @@ void main() {
 
     test('measure slightly rounded hexagon', () {
       irregularPolygonMeasure(
-        RoundedPolygon.fromVerticesNum(
-          6,
-          rounding: const CornerRounding(radius: 0.15),
-        ),
+        RoundedPolygon.fromVerticesNum(6, rounding: const CornerRounding(radius: 0.15)),
       );
     });
 
     test('measure medium rounded hexagon', () {
       irregularPolygonMeasure(
-        RoundedPolygon.fromVerticesNum(
-          6,
-          rounding: const CornerRounding(radius: 0.5),
-        ),
+        RoundedPolygon.fromVerticesNum(6, rounding: const CornerRounding(radius: 0.5)),
       );
     });
 
     test('measure maximum rounded hexagon', () {
       irregularPolygonMeasure(
-        RoundedPolygon.fromVerticesNum(
-          6,
-          rounding: const CornerRounding(radius: 1),
-        ),
+        RoundedPolygon.fromVerticesNum(6, rounding: const CornerRounding(radius: 1)),
       );
     });
 
@@ -139,16 +116,13 @@ void main() {
       const vertices = 4;
       final polygon = RoundedPolygon.circle(numVertices: vertices);
 
-      final actualLength = polygon.cubics.fold<double>(
+      final double actualLength = polygon.cubics.fold<double>(
         0,
         (sum, cubic) => sum + const LengthMeasurer().measureCubic(cubic),
       );
-      const expectedLength = 2 * math.pi;
+      const double expectedLength = 2 * math.pi;
 
-      expect(
-        expectedLength,
-        moreOrLessEquals(actualLength, epsilon: 0.015 * expectedLength),
-      );
+      expect(expectedLength, moreOrLessEquals(actualLength, epsilon: 0.015 * expectedLength));
     });
 
     test('measure irregular triangle angle', () {
@@ -200,22 +174,19 @@ void main() {
         -unit,
       ];
 
-      final diagonal = math.sqrt(unit * unit + unit * unit);
-      const horizontal = 2 * unit;
-      final total = 4 * diagonal + 2 * horizontal;
+      final double diagonal = math.sqrt(unit * unit + unit * unit);
+      const double horizontal = 2 * unit;
+      final double total = 4 * diagonal + 2 * horizontal;
 
       final polygon = RoundedPolygon.fromVertices(coordinates);
-      customPolygonMeasure(
-        polygon,
-        [
-          diagonal / total,
-          horizontal / total,
-          diagonal / total,
-          diagonal / total,
-          horizontal / total,
-          diagonal / total,
-        ],
-      );
+      customPolygonMeasure(polygon, [
+        diagonal / total,
+        horizontal / total,
+        diagonal / total,
+        diagonal / total,
+        horizontal / total,
+        diagonal / total,
+      ]);
     });
 
     test('handles empty feature last', () {

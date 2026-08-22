@@ -11,10 +11,7 @@ void main() {
     final perVtxRounded = [rounding, rounding, rounding, rounding];
 
     test('fromVerticesNum', () {
-      expect(
-        () => RoundedPolygon.fromVerticesNum(2),
-        throwsArgumentError,
-      );
+      expect(() => RoundedPolygon.fromVerticesNum(2), throwsArgumentError);
 
       final square = RoundedPolygon.fromVerticesNum(4);
       var min = const Point(-1, -1);
@@ -26,18 +23,12 @@ void main() {
       max *= 2;
       expectInBounds(doubleSquare.cubics, min, max);
 
-      final squareRounded = RoundedPolygon.fromVerticesNum(
-        4,
-        rounding: rounding,
-      );
+      final squareRounded = RoundedPolygon.fromVerticesNum(4, rounding: rounding);
       min = const Point(-1, -1);
       max = const Point(1, 1);
       expectInBounds(squareRounded.cubics, min, max);
 
-      final squarePVRounded = RoundedPolygon.fromVerticesNum(
-        4,
-        perVertexRounding: perVtxRounded,
-      );
+      final squarePVRounded = RoundedPolygon.fromVerticesNum(4, perVertexRounding: perVtxRounded);
       min = const Point(-1, -1);
       max = const Point(1, 1);
       expectInBounds(squarePVRounded.cubics, min, max);
@@ -48,12 +39,9 @@ void main() {
       const p1 = Point(0, 1);
       const p2 = Point(-1, 0);
       const p3 = Point(0, -1);
-      final verts = [p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y];
+      final List<double> verts = [p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y];
 
-      expect(
-        () => RoundedPolygon.fromVertices([p0.x, p0.y, p1.x, p1.y]),
-        throwsArgumentError,
-      );
+      expect(() => RoundedPolygon.fromVertices([p0.x, p0.y, p1.x, p1.y]), throwsArgumentError);
 
       final manualSquare = RoundedPolygon.fromVertices(verts);
       var min = const Point(-1, -1);
@@ -61,7 +49,7 @@ void main() {
       expectInBounds(manualSquare.cubics, min, max);
 
       const offset = Point(1, 2);
-      final offsetVerts = [
+      final List<double> offsetVerts = [
         p0.x + offset.x,
         p0.y + offset.y,
         p1.x + offset.x,
@@ -80,10 +68,7 @@ void main() {
       max = const Point(2, 3);
       expectInBounds(manualSquareOffset.cubics, min, max);
 
-      final manualSquareRounded = RoundedPolygon.fromVertices(
-        verts,
-        rounding: rounding,
-      );
+      final manualSquareRounded = RoundedPolygon.fromVertices(verts, rounding: rounding);
       min = const Point(-1, -1);
       max = const Point(1, 1);
       expectInBounds(manualSquareRounded.cubics, min, max);
@@ -99,10 +84,7 @@ void main() {
 
     group('fromFeatures', () {
       test('throws for too few features', () {
-        expect(
-          () => RoundedPolygon.fromFeatures(const []),
-          throwsArgumentError,
-        );
+        expect(() => RoundedPolygon.fromFeatures(const []), throwsArgumentError);
         expect(
           () => RoundedPolygon.fromFeatures([
             CornerFeature([Cubic.empty(0, 0)]),
@@ -115,10 +97,7 @@ void main() {
         final cubic1 = Cubic.straightLine(0, 0, 1, 0);
         final cubic2 = Cubic.straightLine(10, 10, 20, 20);
         expect(
-          () => RoundedPolygon.fromFeatures([
-            Feature.buildEdge(cubic1),
-            Feature.buildEdge(cubic2),
-          ]),
+          () => RoundedPolygon.fromFeatures([Feature.buildEdge(cubic1), Feature.buildEdge(cubic2)]),
           throwsArgumentError,
         );
       });
@@ -180,9 +159,7 @@ void main() {
     });
 
     test('computes center', () {
-      final polygon = RoundedPolygon.fromVertices(
-        const [0, 0, 1, 0, 0, 1, 1, 1],
-      );
+      final polygon = RoundedPolygon.fromVertices(const [0, 0, 1, 0, 0, 1, 1, 1]);
       expect(0.5, polygon.centerX);
       expect(0.5, polygon.centerY);
     });
@@ -198,10 +175,10 @@ void main() {
     }
 
     test('rounding space usage', () {
-      const p0 = Point.zero;
+      const Point p0 = Point.zero;
       const p1 = Point(1, 0);
       const p2 = Point(0.5, 1);
-      final pvRounding = [
+      final List<CornerRounding> pvRounding = [
         const CornerRounding(radius: 1, smoothing: 0),
         const CornerRounding(radius: 1, smoothing: 1),
         CornerRounding.unrounded,
@@ -214,11 +191,10 @@ void main() {
       // Since there is not enough room in the p0 -> p1 side even for the
       // roundings, we shouldn't take smoothing into account, so the corners
       // should end in the middle point.
-      final lowerEdgeFeature =
-          polygon.features.firstWhere((f) => f is EdgeFeature);
+      final Feature lowerEdgeFeature = polygon.features.firstWhere((f) => f is EdgeFeature);
       expect(1, lowerEdgeFeature.cubics.length);
 
-      final lowerEdge = lowerEdgeFeature.cubics.first;
+      final Cubic lowerEdge = lowerEdgeFeature.cubics.first;
       expectEqualish(0.5, lowerEdge.anchor0X);
       expectEqualish(0, lowerEdge.anchor0Y);
       expectEqualish(0.5, lowerEdge.anchor1X);
@@ -251,12 +227,12 @@ void main() {
       // Corner rounding parameter for vertex 3 (bottom left).
       CornerRounding rounding3 = const CornerRounding(radius: 0.5),
     }) {
-      const p0 = Point.zero;
+      const Point p0 = Point.zero;
       const p1 = Point(5, 0);
       const p2 = Point(5, 1);
       const p3 = Point(0, 1);
 
-      final pvRounding = [
+      final List<CornerRounding> pvRounding = [
         rounding0,
         CornerRounding.unrounded,
         CornerRounding.unrounded,
@@ -267,8 +243,9 @@ void main() {
         perVertexRounding: pvRounding,
       );
 
-      final [e01, _, _, e30] =
-          polygon.features.whereType<EdgeFeature>().toList();
+      final [EdgeFeature e01, _, _, EdgeFeature e30] = polygon.features
+          .whereType<EdgeFeature>()
+          .toList();
       final msg = 'r0 = ${describe(rounding0)}, r3 = ${describe(rounding3)}';
       expectEqualish(expectedV0SX, e01.cubics.first.anchor0X, msg);
       expectEqualish(expectedV0SY, e30.cubics.first.anchor1Y, msg);
@@ -279,7 +256,7 @@ void main() {
       // Vertex 3 has the default 0.5 radius, 0 smoothing.
       // Vertex 0 has 0.4 radius, and smoothing varying from 0 to 1.
       for (var i = 0; i <= points; i++) {
-        final smooth = i / points;
+        final double smooth = i / points;
         doUnevenSmoothTest(
           rounding0: CornerRounding(radius: 0.4, smoothing: smooth),
           expectedV0SX: 0.4 * (1 + smooth),
@@ -294,14 +271,13 @@ void main() {
       // Vertex 0 has 0.4f radius and smoothing varies from 0 to 1, when it
       // reaches 0.5 it starts competing with vertex 3 for space.
       for (var i = 0; i <= points; i++) {
-        final smooth = i / points;
+        final double smooth = i / points;
 
-        final smoothWantedV0 = 0.4 * smooth;
+        final double smoothWantedV0 = 0.4 * smooth;
         const smoothWantedV3 = 0.2;
 
         // There is 0.4 room for smoothing.
-        final factor =
-            (0.4 / (smoothWantedV0 + smoothWantedV3)).coerceAtMost(1);
+        final double factor = (0.4 / (smoothWantedV0 + smoothWantedV3)).coerceAtMost(1);
         doUnevenSmoothTest(
           rounding0: CornerRounding(radius: 0.4, smoothing: smooth),
           expectedV0SX: 0.4 * (1 + smooth),
@@ -318,7 +294,7 @@ void main() {
       // room for smoothing on the segment between these vertices, but vertex
       // 0 can still have smoothing on the top side.
       for (var i = 0; i <= points; i++) {
-        final smooth = i / points;
+        final double smooth = i / points;
 
         doUnevenSmoothTest(
           rounding0: CornerRounding(radius: 0.4, smoothing: smooth),
@@ -333,10 +309,10 @@ void main() {
     test('full size creation', () {
       const radius = 400.0;
       const innerRadiusFactor = 0.35;
-      const innerRadius = radius * innerRadiusFactor;
+      const double innerRadius = radius * innerRadiusFactor;
       const roundingFactor = 0.32;
 
-      final fullSizeShape = RoundedPolygon.star(
+      final RoundedPolygon fullSizeShape = RoundedPolygon.star(
         numVerticesPerRadius: 4,
         radius: radius,
         innerRadius: innerRadius,
@@ -354,13 +330,13 @@ void main() {
         innerRounding: const CornerRounding(radius: roundingFactor),
       );
 
-      final cubics = canonicalShape.cubics;
-      final cubics1 = fullSizeShape.cubics;
+      final List<Cubic> cubics = canonicalShape.cubics;
+      final List<Cubic> cubics1 = fullSizeShape.cubics;
       expect(cubics.length, cubics1.length);
 
       for (var i = 0; i < cubics.length; i++) {
-        final cubic = cubics[i];
-        final cubic1 = cubics1[i];
+        final Cubic cubic = cubics[i];
+        final Cubic cubic1 = cubics1[i];
 
         expectEqualish(cubic.anchor0X, cubic1.anchor0X);
         expectEqualish(cubic.anchor0Y, cubic1.anchor0Y);

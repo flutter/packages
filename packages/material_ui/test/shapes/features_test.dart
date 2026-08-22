@@ -17,18 +17,9 @@ void main() {
       final cubic1 = Cubic.straightLine(0, 0, 1, 1);
       final cubic2 = Cubic.straightLine(10, 10, 11, 11);
 
-      expect(
-        () => Feature.buildConvexCorner([cubic1, cubic2]),
-        throwsArgumentError,
-      );
-      expect(
-        () => Feature.buildConcaveCorner([cubic1, cubic2]),
-        throwsArgumentError,
-      );
-      expect(
-        () => Feature.buildIgnorableFeature([cubic1, cubic2]),
-        throwsArgumentError,
-      );
+      expect(() => Feature.buildConvexCorner([cubic1, cubic2]), throwsArgumentError);
+      expect(() => Feature.buildConcaveCorner([cubic1, cubic2]), throwsArgumentError);
+      expect(() => Feature.buildIgnorableFeature([cubic1, cubic2]), throwsArgumentError);
     });
 
     test('Builds concave corner', () {

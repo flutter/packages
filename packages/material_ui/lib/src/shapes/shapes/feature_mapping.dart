@@ -23,10 +23,7 @@ class DistanceVertex {
 }
 
 /// Creates a mapping between the "features" (rounded corners) of two shapes.
-DoubleMapper featureMapper(
-  MeasuredFeatures features1,
-  MeasuredFeatures features2,
-) {
+DoubleMapper featureMapper(MeasuredFeatures features1, MeasuredFeatures features2) {
   // We only use corners for this mapping.
   final filteredFeatures1 = <ProgressableFeature>[];
   for (var i = 0; i < features1.length; i++) {
@@ -42,7 +39,7 @@ DoubleMapper featureMapper(
     }
   }
 
-  final featureProgressMapping = doMapping(
+  final List<(double, double)> featureProgressMapping = doMapping(
     filteredFeatures1,
     filteredFeatures2,
   );
@@ -73,7 +70,7 @@ List<(double, double)> doMapping(
 
   for (final f1 in features1) {
     for (final f2 in features2) {
-      final d = featureDistSquared(f1.feature, f2.feature);
+      final double d = featureDistSquared(f1.feature, f2.feature);
       if (d != double.maxFinite) {
         distanceVertexList.add(DistanceVertex(d, f1, f2));
       }
@@ -88,10 +85,10 @@ List<(double, double)> doMapping(
   }
 
   if (distanceVertexList.length == 1) {
-    final d = distanceVertexList.first;
+    final DistanceVertex d = distanceVertexList.first;
 
-    final f1 = d.f1.progress;
-    final f2 = d.f2.progress;
+    final double f1 = d.f1.progress;
+    final double f2 = d.f2.progress;
 
     return [(f1, f2), ((f1 + 0.5) % 1, (f2 + 0.5) % 1)];
   }
@@ -122,7 +119,7 @@ class _MappingHelper {
     }
 
     // List is sorted, find where we need to insert this new mapping.
-    final index = binarySearchBy<(double, double), double>(
+    final int index = binarySearchBy<(double, double), double>(
       mapping,
       (it) => it.$1,
       (a, b) => a.compareTo(b),
@@ -133,13 +130,13 @@ class _MappingHelper {
       throw StateError("There can't be two features with the same progress.");
     }
 
-    final insertionIndex = -index - 1;
-    final n = mapping.length;
+    final int insertionIndex = -index - 1;
+    final int n = mapping.length;
 
     // We can always add the first 1 element.
     if (n >= 1) {
-      final (before1, before2) = mapping[(insertionIndex + n - 1) % n];
-      final (after1, after2) = mapping[insertionIndex % n];
+      final (double before1, double before2) = mapping[(insertionIndex + n - 1) % n];
+      final (double after1, double after2) = mapping[insertionIndex % n];
 
       // We don't want features that are way too close to each other, that will
       // make the DoubleMapper unstable.
@@ -168,7 +165,6 @@ class _MappingHelper {
 /// different shapes. This information is used to determine how to map features
 /// (and the curves that make up those features).
 double featureDistSquared(Feature f1, Feature f2) {
-  // TODO: We might want to enable concave-convex matching in some situations.
   // If so, the approach below will not work
   if (f1 is CornerFeature && f2 is CornerFeature && f1.convex != f2.convex) {
     // Simple hack to force all features to map only to features of the same
@@ -176,14 +172,12 @@ double featureDistSquared(Feature f1, Feature f2) {
     return double.maxFinite;
   }
 
-  return (featureRepresentativePoint(f1) - featureRepresentativePoint(f2))
-      .getDistanceSquared();
+  return (featureRepresentativePoint(f1) - featureRepresentativePoint(f2)).getDistanceSquared();
 }
 
-// TODO: b/378441547 - Move to explicit parameter / expose?
 Point featureRepresentativePoint(Feature feature) {
-  final cubics = feature.cubics;
-  final x = (cubics.first.anchor0X + cubics.last.anchor1X) / 2;
-  final y = (cubics.first.anchor0Y + cubics.last.anchor1Y) / 2;
+  final List<Cubic> cubics = feature.cubics;
+  final double x = (cubics.first.anchor0X + cubics.last.anchor1X) / 2;
+  final double y = (cubics.first.anchor0Y + cubics.last.anchor1Y) / 2;
   return Point(x, y);
 }

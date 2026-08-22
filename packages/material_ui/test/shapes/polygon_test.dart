@@ -26,8 +26,7 @@ void main() {
       max = max * 2;
       expectInBounds(doubleSquare.cubics, min, max);
 
-      final offsetSquare =
-          RoundedPolygon.fromVerticesNum(4, centerX: 1, centerY: 2);
+      final offsetSquare = RoundedPolygon.fromVerticesNum(4, centerX: 1, centerY: 2);
       min = const Point(0, 1);
       max = const Point(2, 3);
       expectInBounds(offsetSquare.cubics, min, max);
@@ -56,10 +55,10 @@ void main() {
       expectInBounds(manualSquare.cubics, min, max);
 
       const offset = Point(1, 2);
-      final p0Offset = p0 + offset;
-      final p1Offset = p1 + offset;
-      final p2Offset = p2 + offset;
-      final p3Offset = p3 + offset;
+      final Point p0Offset = p0 + offset;
+      final Point p1Offset = p1 + offset;
+      final Point p2Offset = p2 + offset;
+      final Point p3Offset = p3 + offset;
       final manualSquareOffset = RoundedPolygon.fromVertices(
         [
           p0Offset.x,
@@ -80,13 +79,13 @@ void main() {
     });
 
     test('bounds', () {
-      var bounds = square.calculateBounds();
+      List<double> bounds = square.calculateBounds();
       expectEqualish(-1, bounds[0]); // Left
       expectEqualish(-1, bounds[1]); // Top
       expectEqualish(1, bounds[2]); // Right
       expectEqualish(1, bounds[3]); // Bottom
 
-      var betterBounds = square.calculateBounds(approximate: false);
+      List<double> betterBounds = square.calculateBounds(approximate: false);
       expectEqualish(-1, betterBounds[0]); // Left
       expectEqualish(-1, betterBounds[1]); // Top
       expectEqualish(1, betterBounds[2]); // Right
@@ -106,7 +105,7 @@ void main() {
       );
 
       bounds = pentagon.calculateBounds();
-      final maxBounds = pentagon.calculateMaxBounds();
+      final List<double> maxBounds = pentagon.calculateMaxBounds();
       expect(maxBounds[2] - maxBounds[0] > bounds[2] - bounds[0], isTrue);
     });
 
@@ -117,8 +116,8 @@ void main() {
     test('transform', () {
       // First, make sure the shape doesn't change when transformed by the
       // identity.
-      final squareCopy = square.transformed(identityTransform());
-      final n = square.cubics.length;
+      final RoundedPolygon squareCopy = square.transformed(identityTransform());
+      final int n = square.cubics.length;
 
       expect(n, squareCopy.cubics.length);
       for (var i = 0; i < n; i++) {
@@ -128,38 +127,26 @@ void main() {
       // Now create a function which translates points by (1, 2) and make sure
       // the shape is translated similarly by it.
       const offset = Point(1, 2);
-      final squareCubics = square.cubics;
-      final translator = translateTransform(offset.x, offset.y);
-      final translatedSquareCubics = square.transformed(translator).cubics;
+      final List<Cubic> squareCubics = square.cubics;
+      final PointTransformer translator = translateTransform(offset.x, offset.y);
+      final List<Cubic> translatedSquareCubics = square.transformed(translator).cubics;
 
       for (var i = 0; i < squareCubics.length; i++) {
         expectPointsEqualish(
           Point(squareCubics[i].anchor0X, squareCubics[i].anchor0Y) + offset,
-          Point(
-            translatedSquareCubics[i].anchor0X,
-            translatedSquareCubics[i].anchor0Y,
-          ),
+          Point(translatedSquareCubics[i].anchor0X, translatedSquareCubics[i].anchor0Y),
         );
         expectPointsEqualish(
           Point(squareCubics[i].control0X, squareCubics[i].control0Y) + offset,
-          Point(
-            translatedSquareCubics[i].control0X,
-            translatedSquareCubics[i].control0Y,
-          ),
+          Point(translatedSquareCubics[i].control0X, translatedSquareCubics[i].control0Y),
         );
         expectPointsEqualish(
           Point(squareCubics[i].control1X, squareCubics[i].control1Y) + offset,
-          Point(
-            translatedSquareCubics[i].control1X,
-            translatedSquareCubics[i].control1Y,
-          ),
+          Point(translatedSquareCubics[i].control1X, translatedSquareCubics[i].control1Y),
         );
         expectPointsEqualish(
           Point(squareCubics[i].anchor1X, squareCubics[i].anchor1Y) + offset,
-          Point(
-            translatedSquareCubics[i].anchor1X,
-            translatedSquareCubics[i].anchor1Y,
-          ),
+          Point(translatedSquareCubics[i].anchor1X, translatedSquareCubics[i].anchor1Y),
         );
       }
     });
@@ -169,38 +156,32 @@ void main() {
         return original.where((c) => !c.zeroLength()).toList();
       }
 
-      final squareFeatures = square.features;
+      final List<Feature> squareFeatures = square.features;
 
       // Verify that cubics of polygon == nonzero cubics of features of that
       // polygon.
       // Note the Equalish test since some points may be adjusted in conversion
       // from raw cubics in the feature to the cubics list for the shape.
-      var nonzeroCubics = nonZeroCubics(
-        squareFeatures.expand((f) => f.cubics).toList(),
-      );
+      List<Cubic> nonzeroCubics = nonZeroCubics(squareFeatures.expand((f) => f.cubics).toList());
       expectCubicListsEqualish(square.cubics, nonzeroCubics);
 
       // Same as the first polygon test, but with a copy of that polygon.
       final squareCopy = RoundedPolygon.from(square);
-      final squareCopyFeatures = squareCopy.features;
-      nonzeroCubics = nonZeroCubics(
-        squareCopyFeatures.expand((f) => f.cubics).toList(),
-      );
+      final List<Feature> squareCopyFeatures = squareCopy.features;
+      nonzeroCubics = nonZeroCubics(squareCopyFeatures.expand((f) => f.cubics).toList());
       expectCubicListsEqualish(squareCopy.cubics, nonzeroCubics);
     });
 
     test('transform keeps contiguous anchors equal', () {
-      final poly = RoundedPolygon.fromVerticesNum(
-        4,
-        radius: 1,
-        rounding: const CornerRounding(radius: 7 / 15),
-      ).transformed(
-        (x, y) {
-          final point =
-              Point(x, y).rotate(45).scale(648, 648).translate(540, 1212);
-          return (point.x, point.y);
-        },
-      );
+      final RoundedPolygon poly =
+          RoundedPolygon.fromVerticesNum(
+            4,
+            radius: 1,
+            rounding: const CornerRounding(radius: 7 / 15),
+          ).transformed((x, y) {
+            final Point point = Point(x, y).rotate(45).scale(648, 648).translate(540, 1212);
+            return (point.x, point.y);
+          });
 
       for (var i = 0; i < poly.cubics.length; i++) {
         // It has to be the same point.
@@ -225,20 +206,16 @@ void main() {
       );
       expect(poly.cubics.length, 1);
 
-      final stillEmpty = poly.transformed(scaleTransform(10, 20));
+      final RoundedPolygon stillEmpty = poly.transformed(scaleTransform(10, 20));
       expect(stillEmpty.cubics.length, 1);
       expect(stillEmpty.cubics.first.zeroLength(), isTrue);
     });
 
     test('empty side', () {
       // Triangle with one point repeated.
-      final poly1 = RoundedPolygon.fromVertices(
-        const [0, 0, 1, 0, 1, 0, 0, 1],
-      );
+      final poly1 = RoundedPolygon.fromVertices(const [0, 0, 1, 0, 1, 0, 0, 1]);
       // Triangle.
-      final poly2 = RoundedPolygon.fromVertices(
-        const [0, 0, 1, 0, 0, 1],
-      );
+      final poly2 = RoundedPolygon.fromVertices(const [0, 0, 1, 0, 0, 1]);
       expectCubicListsEqualish(poly1.cubics, poly2.cubics);
     });
   });

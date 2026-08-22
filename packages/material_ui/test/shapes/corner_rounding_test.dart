@@ -10,7 +10,7 @@ void main() {
     expect(defaultCorner.radius, 0);
     expect(defaultCorner.smoothing, 0);
 
-    const unrounded = CornerRounding.unrounded;
+    const CornerRounding unrounded = CornerRounding.unrounded;
     expect(unrounded.radius, 0);
     expect(unrounded.smoothing, 0);
 

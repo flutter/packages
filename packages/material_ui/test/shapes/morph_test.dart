@@ -1,5 +1,6 @@
 // ignore_for_file: cascade_invocations, document_ignores
 
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter_test/flutter_test.dart';
@@ -21,8 +22,8 @@ void main() {
     // Simple test to verify that a Morph with the same start and end shape has
     // curves equivalent to those in that shape.
     test('cubics', () {
-      final p1Cubics = poly1.cubics;
-      final cubics11 = morph11.asCubics(0);
+      final List<Cubic> p1Cubics = poly1.cubics;
+      final List<Cubic> cubics11 = morph11.asCubics(0);
       expect(cubics11, isNotEmpty);
 
       // The structure of a morph and its component shapes may not match
@@ -55,16 +56,16 @@ void main() {
             ..color = const ui.Color(0xFFFFFFFF),
         );
 
-      final picture = recorder.endRecording();
+      final ui.Picture picture = recorder.endRecording();
       return picture.toImage(side.toInt(), side.toInt());
     }
 
     Future<void> comparePathsVisually(ui.Path a, ui.Path b, double side) async {
-      final imageA = await drawPathToImage(a, side);
-      final imageB = await drawPathToImage(b, side);
+      final ui.Image imageA = await drawPathToImage(a, side);
+      final ui.Image imageB = await drawPathToImage(b, side);
 
-      final bytesA = await imageA.toByteData();
-      final bytesB = await imageB.toByteData();
+      final ByteData? bytesA = await imageA.toByteData();
+      final ByteData? bytesB = await imageB.toByteData();
 
       if (bytesA!.lengthInBytes != bytesB!.lengthInBytes) {
         fail('byte data length of a has to be equal to byte data length of b');
@@ -89,12 +90,10 @@ void main() {
         ..translate(scale / 2, scale / 2)
         ..scale(scale, scale);
 
-      final poly1Path = poly1.toPath().transform(matrix.storage);
-      final poly2Path = poly2.toPath().transform(matrix.storage);
-      final morph120Path =
-          morph12.toPath(progress: 0).transform(matrix.storage);
-      final morph121Path =
-          morph12.toPath(progress: 1).transform(matrix.storage);
+      final ui.Path poly1Path = poly1.toPath().transform(matrix.storage);
+      final ui.Path poly2Path = poly2.toPath().transform(matrix.storage);
+      final ui.Path morph120Path = morph12.toPath(progress: 0).transform(matrix.storage);
+      final ui.Path morph121Path = morph12.toPath(progress: 1).transform(matrix.storage);
 
       await comparePathsVisually(poly1Path, morph120Path, radius * 2);
       await comparePathsVisually(poly2Path, morph121Path, radius * 2);

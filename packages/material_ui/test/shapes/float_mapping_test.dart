@@ -5,13 +5,10 @@ import 'test_utils.dart';
 
 void main() {
   group('FloatMapping', () {
-    void validateMapping(
-      DoubleMapper mapper,
-      double Function(double) expectedFunction,
-    ) {
+    void validateMapping(DoubleMapper mapper, double Function(double) expectedFunction) {
       for (var i = 0; i < 10000; i++) {
-        final source = i / 10000;
-        final target = expectedFunction(source);
+        final double source = i / 10000;
+        final double target = expectedFunction(source);
 
         expectEqualish(target, mapper.map(source));
         expectEqualish(source, mapper.mapBack(target));
@@ -56,20 +53,17 @@ void main() {
     });
 
     test('multiple point', () {
-      validateMapping(
-        DoubleMapper([(0.4, 0.2), (0.5, 0.22), (0, 0.8)]),
-        (x) {
-          if (x < 0.4) {
-            return (0.8 + x) % 1;
-          } else if (x < 0.5) {
-            return 0.2 + (x - 0.4) / 5;
-          } else {
-            // maps a change of 0.5 in the source to a change 0.58 in the
-            // target, hence the 1.16.
-            return 0.22 + (x - 0.5) * 1.16;
-          }
-        },
-      );
+      validateMapping(DoubleMapper([(0.4, 0.2), (0.5, 0.22), (0, 0.8)]), (x) {
+        if (x < 0.4) {
+          return (0.8 + x) % 1;
+        } else if (x < 0.5) {
+          return 0.2 + (x - 0.4) / 5;
+        } else {
+          // maps a change of 0.5 in the source to a change 0.58 in the
+          // target, hence the 1.16.
+          return 0.22 + (x - 0.5) * 1.16;
+        }
+      });
     });
 
     test('target double wrap throws', () {

@@ -18,9 +18,9 @@ abstract final class MaterialShapes {
   static const _cornerRound50 = CornerRounding(radius: 0.5);
   static const _cornerRound100 = CornerRounding(radius: 1);
 
-  static const _negative45Radians = -45 * math.pi / 180;
-  static const _negative90Radians = -90 * math.pi / 180;
-  static const _negative135Radians = -135 * math.pi / 180;
+  static const double _negative45Radians = -45 * math.pi / 180;
+  static const double _negative90Radians = -90 * math.pi / 180;
+  static const double _negative135Radians = -135 * math.pi / 180;
 
   /// A circle shape.
   static final circle = RoundedPolygon.circle(
@@ -40,13 +40,13 @@ abstract final class MaterialShapes {
   );
 
   /// A slanted square shape.
-  static final slanted = _customPolygon(const [
+  static final RoundedPolygon slanted = _customPolygon(const [
     _PointNRound(Point(0.926, 0.970), CornerRounding(radius: 0.189, smoothing: 0.811)),
     _PointNRound(Point(-0.021, 0.967), CornerRounding(radius: 0.187, smoothing: 0.057)),
   ], 2).normalized();
 
   /// An arch shape.
-  static final arch =
+  static final RoundedPolygon arch =
       RoundedPolygon.fromVerticesNum(
             4,
             perVertexRounding: const [
@@ -60,14 +60,14 @@ abstract final class MaterialShapes {
           .normalized();
 
   /// A semi-circle shape.
-  static final semiCircle = RoundedPolygon.rectangle(
+  static final RoundedPolygon semiCircle = RoundedPolygon.rectangle(
     width: 1.6,
     height: 1,
     perVertexRounding: const [_cornerRound20, _cornerRound20, _cornerRound100, _cornerRound100],
   ).normalized();
 
   /// An oval shape.
-  static final oval = RoundedPolygon.circle()
+  static final RoundedPolygon oval = RoundedPolygon.circle()
       .transformed(
         (Matrix4.identity()
               ..rotateZ(_negative45Radians)
@@ -77,7 +77,7 @@ abstract final class MaterialShapes {
       .normalized();
 
   /// An pill shape.
-  static final pill = _customPolygon(
+  static final RoundedPolygon pill = _customPolygon(
     [
       const _PointNRound(Point(0.961, 0.039), CornerRounding(radius: 0.426)),
       const _PointNRound(Point(1.001, 0.428)),
@@ -88,12 +88,12 @@ abstract final class MaterialShapes {
   ).normalized();
 
   /// A triangle shape.
-  static final triangle = RoundedPolygon.fromVerticesNum(3, rounding: _cornerRound20)
+  static final RoundedPolygon triangle = RoundedPolygon.fromVerticesNum(3, rounding: _cornerRound20)
       .transformed((Matrix4.identity()..rotateZ(_negative90Radians)).asPointTransformer())
       .normalized();
 
   /// An arrow shape.
-  static final arrow = _customPolygon([
+  static final RoundedPolygon arrow = _customPolygon([
     const _PointNRound(Point(0.5, 0.892), CornerRounding(radius: 0.313)),
     const _PointNRound(Point(-0.216, 1.05), CornerRounding(radius: 0.207)),
     const _PointNRound(Point(0.499, -0.16), CornerRounding(radius: 0.215, smoothing: 1)),
@@ -101,7 +101,7 @@ abstract final class MaterialShapes {
   ], 1).normalized();
 
   /// A fan shape.
-  static final fan = _customPolygon([
+  static final RoundedPolygon fan = _customPolygon([
     const _PointNRound(Point(1.004, 1), CornerRounding(radius: 0.148, smoothing: 0.417)),
     const _PointNRound(Point(0, 1), CornerRounding(radius: 0.151)),
     const _PointNRound(Point(0, -0.003), CornerRounding(radius: 0.148)),
@@ -109,20 +109,20 @@ abstract final class MaterialShapes {
   ], 1).normalized();
 
   /// A diamond shape.
-  static final diamond = _customPolygon([
+  static final RoundedPolygon diamond = _customPolygon([
     const _PointNRound(Point(0.5, 1.096), CornerRounding(radius: 0.151, smoothing: 0.524)),
     const _PointNRound(Point(0.04, 0.5), CornerRounding(radius: .159)),
   ], 2).normalized();
 
   /// A clam-shell shape.
-  static final clamShell = _customPolygon([
+  static final RoundedPolygon clamShell = _customPolygon([
     const _PointNRound(Point(0.171, 0.841), CornerRounding(radius: 0.159)),
     const _PointNRound(Point(-0.02, 0.5), CornerRounding(radius: 0.140)),
     const _PointNRound(Point(0.17, 0.159), CornerRounding(radius: 0.159)),
   ], 2).normalized();
 
   /// A pentagon shape.
-  static final pentagon = _customPolygon(
+  static final RoundedPolygon pentagon = _customPolygon(
     [
       const _PointNRound(Point(0.5, -0.009), CornerRounding(radius: 0.172)),
       const _PointNRound(Point(1.03, 0.365), CornerRounding(radius: 0.164)),
@@ -133,7 +133,7 @@ abstract final class MaterialShapes {
   ).normalized();
 
   /// A gem shape.
-  static final gem = _customPolygon(
+  static final RoundedPolygon gem = _customPolygon(
     [
       const _PointNRound(Point(0.499, 1.023), CornerRounding(radius: 0.241, smoothing: 0.778)),
       const _PointNRound(Point(-0.005, 0.792), CornerRounding(radius: 0.208)),
@@ -145,50 +145,50 @@ abstract final class MaterialShapes {
   ).normalized();
 
   /// A sunny shape.
-  static final sunny = RoundedPolygon.star(
+  static final RoundedPolygon sunny = RoundedPolygon.star(
     numVerticesPerRadius: 8,
     innerRadius: 0.8,
     rounding: _cornerRound15,
   ).normalized();
 
   /// A very-sunny shape.
-  static final verySunny = _customPolygon([
+  static final RoundedPolygon verySunny = _customPolygon([
     const _PointNRound(Point(0.5, 1.080), CornerRounding(radius: 0.085)),
     const _PointNRound(Point(0.358, 0.843), CornerRounding(radius: 0.085)),
   ], 8).normalized();
 
   /// A 4-sided cookie shape.
-  static final cookie4Sided = _customPolygon([
+  static final RoundedPolygon cookie4Sided = _customPolygon([
     const _PointNRound(Point(1.237, 1.236), CornerRounding(radius: 0.258)),
     const _PointNRound(Point(0.5, 0.918), CornerRounding(radius: 0.233)),
   ], 4).normalized();
 
   /// A 6-sided cookie shape.
-  static final cookie6Sided = _customPolygon([
+  static final RoundedPolygon cookie6Sided = _customPolygon([
     const _PointNRound(Point(0.723, 0.884), CornerRounding(radius: 0.394)),
     const _PointNRound(Point(0.5, 1.099), CornerRounding(radius: 0.398)),
   ], 6).normalized();
 
   /// A 7-sided cookie shape.
-  static final cookie7Sided =
+  static final RoundedPolygon cookie7Sided =
       RoundedPolygon.star(numVerticesPerRadius: 7, innerRadius: 0.75, rounding: _cornerRound50)
           .transformed((Matrix4.identity()..rotateZ(_negative90Radians)).asPointTransformer())
           .normalized();
 
   /// A 9-sided cookie shape.
-  static final cookie9Sided =
+  static final RoundedPolygon cookie9Sided =
       RoundedPolygon.star(numVerticesPerRadius: 9, innerRadius: 0.8, rounding: _cornerRound50)
           .transformed((Matrix4.identity()..rotateZ(_negative90Radians)).asPointTransformer())
           .normalized();
 
   /// A 12-sided cookie shape.
-  static final cookie12Sided =
+  static final RoundedPolygon cookie12Sided =
       RoundedPolygon.star(numVerticesPerRadius: 12, innerRadius: 0.8, rounding: _cornerRound50)
           .transformed((Matrix4.identity()..rotateZ(_negative90Radians)).asPointTransformer())
           .normalized();
 
   /// A 4-leaf clover shape.
-  static final clover4Leaf = _customPolygon(
+  static final RoundedPolygon clover4Leaf = _customPolygon(
     [
       const _PointNRound(Point(0.5, 0.074)),
       const _PointNRound(Point(0.725, -0.099), CornerRounding(radius: 0.476)),
@@ -198,31 +198,31 @@ abstract final class MaterialShapes {
   ).normalized();
 
   /// A 8-leaf clover shape.
-  static final clover8Leaf = _customPolygon([
+  static final RoundedPolygon clover8Leaf = _customPolygon([
     const _PointNRound(Point(0.5, 0.036)),
     const _PointNRound(Point(0.758, -0.101), CornerRounding(radius: 0.209)),
   ], 8).normalized();
 
   /// A burst shape.
-  static final burst = _customPolygon([
+  static final RoundedPolygon burst = _customPolygon([
     const _PointNRound(Point(0.5, -0.006), CornerRounding(radius: 0.006)),
     const _PointNRound(Point(0.592, 0.158), CornerRounding(radius: 0.006)),
   ], 12).normalized();
 
   /// A soft-burst shape.
-  static final softBurst = _customPolygon([
+  static final RoundedPolygon softBurst = _customPolygon([
     const _PointNRound(Point(0.193, 0.277), CornerRounding(radius: 0.053)),
     const _PointNRound(Point(0.176, 0.055), CornerRounding(radius: 0.053)),
   ], 10).normalized();
 
   /// A boom shape.
-  static final boom = _customPolygon([
+  static final RoundedPolygon boom = _customPolygon([
     const _PointNRound(Point(0.457, 0.296), CornerRounding(radius: 0.007)),
     const _PointNRound(Point(0.5, -0.051), CornerRounding(radius: 0.007)),
   ], 15).normalized();
 
   /// A soft-boom shape.
-  static final softBoom = _customPolygon(
+  static final RoundedPolygon softBoom = _customPolygon(
     [
       const _PointNRound(Point(0.733, 0.454)),
       const _PointNRound(Point(0.839, 0.437), CornerRounding(radius: 0.532)),
@@ -234,7 +234,7 @@ abstract final class MaterialShapes {
   ).normalized();
 
   /// A flower shape.
-  static final flower = _customPolygon(
+  static final RoundedPolygon flower = _customPolygon(
     [
       const _PointNRound(Point(0.370, 0.187)),
       const _PointNRound(Point(0.416, 0.049), CornerRounding(radius: 0.381)),
@@ -245,7 +245,7 @@ abstract final class MaterialShapes {
   ).normalized();
 
   /// A puffy shape.
-  static final puffy = _customPolygon(
+  static final RoundedPolygon puffy = _customPolygon(
     [
       const _PointNRound(Point(0.5, 0.053)),
       const _PointNRound(Point(0.545, -0.04), CornerRounding(radius: 0.405)),
@@ -264,7 +264,7 @@ abstract final class MaterialShapes {
   ).transformed((Matrix4.identity()..scale(1.0, 0.742)).asPointTransformer()).normalized();
 
   /// A puffy-diamond shape.
-  static final puffyDiamond = _customPolygon(
+  static final RoundedPolygon puffyDiamond = _customPolygon(
     [
       const _PointNRound(Point(0.87, 0.13), CornerRounding(radius: 0.146)),
       const _PointNRound(Point(0.818, 0.357)),
@@ -275,7 +275,7 @@ abstract final class MaterialShapes {
   ).normalized();
 
   /// A ghostish shape.
-  static final ghostish = _customPolygon(
+  static final RoundedPolygon ghostish = _customPolygon(
     [
       const _PointNRound(Point(0.5, 0), CornerRounding(radius: 1)),
       const _PointNRound(Point(1, 0), CornerRounding(radius: 1)),
@@ -287,7 +287,7 @@ abstract final class MaterialShapes {
   ).normalized();
 
   /// A pixel-circle shape.
-  static final pixelCircle = _customPolygon(
+  static final RoundedPolygon pixelCircle = _customPolygon(
     [
       const _PointNRound(Point(0.5, 0)),
       const _PointNRound(Point(0.704, 0)),
@@ -303,7 +303,7 @@ abstract final class MaterialShapes {
   ).normalized();
 
   /// A pixel-triangle shape.
-  static final pixelTriangle = _customPolygon(
+  static final RoundedPolygon pixelTriangle = _customPolygon(
     [
       const _PointNRound(Point(0.11, 0.5)),
       const _PointNRound(Point(0.113, 0)),
@@ -324,7 +324,7 @@ abstract final class MaterialShapes {
   ).normalized();
 
   /// A bun shape.
-  static final bun = _customPolygon(
+  static final RoundedPolygon bun = _customPolygon(
     [
       const _PointNRound(Point(0.796, 0.5)),
       const _PointNRound(Point(0.853, 0.518), CornerRounding(radius: 1)),
@@ -336,7 +336,7 @@ abstract final class MaterialShapes {
   ).normalized();
 
   /// A heart shape.
-  static final heart = _customPolygon(
+  static final RoundedPolygon heart = _customPolygon(
     [
       const _PointNRound(Point(0.5, 0.268), CornerRounding(radius: 0.016)),
       const _PointNRound(Point(0.792, -0.066), CornerRounding(radius: 0.958)),
@@ -348,7 +348,7 @@ abstract final class MaterialShapes {
   ).normalized();
 
   /// A list of all available shapes.
-  static final all = UnmodifiableListView(<RoundedPolygon>[
+  static final UnmodifiableListView<RoundedPolygon> all = UnmodifiableListView(<RoundedPolygon>[
     MaterialShapes.circle,
     MaterialShapes.square,
     MaterialShapes.slanted,
@@ -392,7 +392,7 @@ abstract final class MaterialShapes {
     Point center = const Point(0.5, 0.5),
     bool mirroring = false,
   }) {
-    final actualPoints = _doRepeat(pnr, reps, center, mirroring);
+    final List<_PointNRound> actualPoints = _doRepeat(pnr, reps, center, mirroring);
 
     final vertices = List<double>.filled(actualPoints.length * 2, 0);
     final perVertexRounding = List<CornerRounding>.filled(
@@ -401,10 +401,10 @@ abstract final class MaterialShapes {
     );
 
     for (var i = 0; i < actualPoints.length; i++) {
-      final ap = actualPoints[i];
+      final _PointNRound ap = actualPoints[i];
       perVertexRounding[i] = ap.r;
 
-      final j = i * 2;
+      final int j = i * 2;
       vertices[j] = ap.p.x;
       vertices[j + 1] = ap.p.y;
     }
@@ -426,34 +426,35 @@ abstract final class MaterialShapes {
     final result = <_PointNRound>[];
 
     if (mirroring) {
-      final measures = List.generate(points.length, (i) {
-        final point = points[i];
-        final off = point.p - center;
+      final List<({double angle, double distance})> measures = List.generate(points.length, (i) {
+        final _PointNRound point = points[i];
+        final Point off = point.p - center;
         return (angle: off.angleRadians, distance: off.getDistance());
       });
-      final actualReps = reps * 2;
-      final sectionAngle = math.pi * 2 / actualReps;
+      final int actualReps = reps * 2;
+      final double sectionAngle = math.pi * 2 / actualReps;
 
       for (var r = 0; r < actualReps; r++) {
         for (var index = 0; index < points.length; index++) {
-          final i = (r.isEven) ? index : points.length - 1 - index;
+          final int i = (r.isEven) ? index : points.length - 1 - index;
           if (i > 0 || r.isEven) {
-            final a =
+            final double a =
                 sectionAngle * r +
                 ((r.isEven)
                     ? measures[i].angle
                     : sectionAngle - measures[i].angle + 2 * measures[0].angle);
 
-            final finalPoint = Point(math.cos(a), math.sin(a)) * measures[i].distance + center;
+            final Point finalPoint =
+                Point(math.cos(a), math.sin(a)) * measures[i].distance + center;
 
             result.add(_PointNRound(finalPoint, points[i].r));
           }
         }
       }
     } else {
-      final np = points.length;
+      final int np = points.length;
       for (var i = 0; i < np * reps; i++) {
-        final point = points[i % np].p.rotate((i ~/ np) * 360 / reps, center: center);
+        final Point point = points[i % np].p.rotate((i ~/ np) * 360 / reps, center: center);
         result.add(_PointNRound(point, points[i % np].r));
       }
     }

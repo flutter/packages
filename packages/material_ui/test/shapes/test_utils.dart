@@ -15,37 +15,17 @@ bool pointsEqualish(Point p0, Point p1) {
 }
 
 bool cubicsEqualish(Cubic c0, Cubic c1) {
-  return pointsEqualish(
-        Point(c0.anchor0X, c0.anchor0Y),
-        Point(c1.anchor0X, c1.anchor0Y),
-      ) &&
-      pointsEqualish(
-        Point(c0.anchor1X, c0.anchor1Y),
-        Point(c1.anchor1X, c1.anchor1Y),
-      ) &&
-      pointsEqualish(
-        Point(c0.control0X, c0.control0Y),
-        Point(c1.control0X, c1.control0Y),
-      ) &&
-      pointsEqualish(
-        Point(c0.control1X, c0.control1Y),
-        Point(c1.control1X, c1.control1Y),
-      );
+  return pointsEqualish(Point(c0.anchor0X, c0.anchor0Y), Point(c1.anchor0X, c1.anchor0Y)) &&
+      pointsEqualish(Point(c0.anchor1X, c0.anchor1Y), Point(c1.anchor1X, c1.anchor1Y)) &&
+      pointsEqualish(Point(c0.control0X, c0.control0Y), Point(c1.control0X, c1.control0Y)) &&
+      pointsEqualish(Point(c0.control1X, c0.control1Y), Point(c1.control1X, c1.control1Y));
 }
 
 // Test points equality within epsilon.
 void expectPointsEqualish(Point expected, Point actual) {
   final msg = '$expected vs. $actual';
-  expect(
-    expected.x,
-    moreOrLessEquals(actual.x, epsilon: _epsilon),
-    reason: msg,
-  );
-  expect(
-    expected.y,
-    moreOrLessEquals(actual.y, epsilon: _epsilon),
-    reason: msg,
-  );
+  expect(expected.x, moreOrLessEquals(actual.x, epsilon: _epsilon), reason: msg);
+  expect(expected.y, moreOrLessEquals(actual.y, epsilon: _epsilon), reason: msg);
 }
 
 void expectCubicsEqualish(Cubic expected, Cubic actual) {
@@ -103,11 +83,7 @@ void expectPointLessish(Point expected, Point actual) {
 }
 
 void expectEqualish(double expected, double actual, [String? message]) {
-  expect(
-    expected,
-    moreOrLessEquals(actual, epsilon: _epsilon),
-    reason: message,
-  );
+  expect(expected, moreOrLessEquals(actual, epsilon: _epsilon), reason: message);
 }
 
 void expectInBounds(List<Cubic> shape, Point minPoint, Point maxPoint) {
@@ -123,10 +99,11 @@ void expectInBounds(List<Cubic> shape, Point minPoint, Point maxPoint) {
   }
 }
 
-PointTransformer identityTransform() => (x, y) => (x, y);
+PointTransformer identityTransform() =>
+    (x, y) => (x, y);
 
 PointTransformer pointRotator(double angleDegrees) {
-  final angleRadians = angleDegrees * math.pi / 180;
+  final double angleRadians = angleDegrees * math.pi / 180;
   final matrix = Matrix4.identity()..rotateZ(angleRadians);
   return matrix.asPointTransformer();
 }

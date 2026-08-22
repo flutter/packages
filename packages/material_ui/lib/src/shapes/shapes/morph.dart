@@ -17,9 +17,7 @@ part of 'shapes.dart';
 /// splitting curves when the shapes do not have the same number of curves or
 /// when the curve placement within the shapes is very different.
 class Morph {
-  Morph(RoundedPolygon start, RoundedPolygon end)
-      : _start = start,
-        _end = end {
+  Morph(RoundedPolygon start, RoundedPolygon end) : _start = start, _end = end {
     _morphMatch = _match(start, end);
   }
 
@@ -50,30 +48,24 @@ class Morph {
   static List<(Cubic, Cubic)> _match(RoundedPolygon p1, RoundedPolygon p2) {
     // Measure polygons, returns lists of measured cubics for each polygon,
     // which we then use to match start/end curves.
-    final measuredPolygon1 = MeasuredPolygon.measurePolygon(
-      const LengthMeasurer(),
-      p1,
-    );
-    final measuredPolygon2 = MeasuredPolygon.measurePolygon(
-      const LengthMeasurer(),
-      p2,
-    );
+    final measuredPolygon1 = MeasuredPolygon.measurePolygon(const LengthMeasurer(), p1);
+    final measuredPolygon2 = MeasuredPolygon.measurePolygon(const LengthMeasurer(), p2);
 
     // features1 and 2 will contain the list of corners (just the inner
     // circular curve) along with the progress at the middle of those corners.
     // These measurement values are then used to compare and match between the
     // two polygons.
-    final features1 = measuredPolygon1.features;
-    final features2 = measuredPolygon2.features;
+    final List<ProgressableFeature> features1 = measuredPolygon1.features;
+    final List<ProgressableFeature> features2 = measuredPolygon2.features;
 
     // Map features: doubleMapper is the result of mapping the features in each
     // shape to the closest feature in the other shape.
     // Given a progress in one of the shapes it can be used to find the
     // corresponding progress in the other shape (in both directions).
-    final doubleMapper = featureMapper(features1, features2);
+    final DoubleMapper doubleMapper = featureMapper(features1, features2);
 
     // cut point on poly2 is the mapping of the 0 point on poly1.
-    final polygon2CutPoint = doubleMapper.map(0);
+    final double polygon2CutPoint = doubleMapper.map(0);
 
     // Cut and rotate.
     // Polygons start at progress 0, and the featureMapper has decided that we
@@ -83,7 +75,7 @@ class Morph {
     // matching. The resulting bs1/2 are MeasuredPolygons, whose MeasuredCubics
     // start from outlineProgress=0 and increasing until outlineProgress=1.
     final bs1 = measuredPolygon1;
-    final bs2 = measuredPolygon2.cutAndShift(polygon2CutPoint);
+    final MeasuredPolygon bs2 = measuredPolygon2.cutAndShift(polygon2CutPoint);
 
     // Match.
     // Now we can compare the two lists of measured cubics and create a list of
@@ -96,32 +88,28 @@ class Morph {
     var i1 = 0;
     var i2 = 0;
     // b1, b2 are the current measured cubic for each polygon.
-    var b1 = bs1.getOrNull(i1++);
-    var b2 = bs2.getOrNull(i2++);
+    MeasuredCubic? b1 = bs1.getOrNull(i1++);
+    MeasuredCubic? b2 = bs2.getOrNull(i2++);
     // Iterate until all curves are accounted for and matched.
     while (b1 != null && b2 != null) {
       // Progresses are in shape1's perspective
       // b1a, b2a are ending progress values of current measured cubics in
       // [0,1] range.
-      final b1a = (i1 == bs1.length) ? 1.0 : b1.endOutlineProgress;
-      final b2a = (i2 == bs2.length)
+      final double b1a = (i1 == bs1.length) ? 1.0 : b1.endOutlineProgress;
+      final double b2a = (i2 == bs2.length)
           ? 1.0
-          : doubleMapper.mapBack(
-              positiveModulo(b2.endOutlineProgress + polygon2CutPoint, 1),
-            );
-      final minb = math.min(b1a, b2a);
+          : doubleMapper.mapBack(positiveModulo(b2.endOutlineProgress + polygon2CutPoint, 1));
+      final double minb = math.min(b1a, b2a);
       // min b is the progress at which the curve that ends first ends.
       // If both curves ends roughly there, no cutting is needed, we have a
       // match.
       // If one curve extends beyond, we need to cut it.
-      final (seg1, newb1) = (b1a > minb + angleEpsilon)
+      final (MeasuredCubic seg1, MeasuredCubic? newb1) = (b1a > minb + angleEpsilon)
           ? b1.cutAtProgress(minb)
           : (b1, bs1.getOrNull(i1++));
 
-      final (seg2, newb2) = (b2a > minb + angleEpsilon)
-          ? b2.cutAtProgress(
-              positiveModulo(doubleMapper.map(minb) - polygon2CutPoint, 1),
-            )
+      final (MeasuredCubic seg2, MeasuredCubic? newb2) = (b2a > minb + angleEpsilon)
+          ? b2.cutAtProgress(positiveModulo(doubleMapper.map(minb) - polygon2CutPoint, 1))
           : (b2, bs2.getOrNull(i2++));
 
       ret.add((seg1.cubic, seg2.cubic));
@@ -129,10 +117,7 @@ class Morph {
       b2 = newb2;
     }
 
-    assert(
-      b1 == null && b2 == null,
-      "Expected both Polygon's Cubic to be fully matched",
-    );
+    assert(b1 == null && b2 == null, "Expected both Polygon's Cubic to be fully matched");
 
     return ret;
   }
@@ -149,16 +134,13 @@ class Morph {
   /// Returns the axis-aligned bounding box for this object, where the
   /// rectangles left, top, right, and bottom values will be stored in entries
   /// 0, 1, 2, and 3, in that order.
-  List<double> calculateBounds({
-    List<double>? bounds,
-    bool approximate = true,
-  }) {
+  List<double> calculateBounds({List<double>? bounds, bool approximate = true}) {
     bounds ??= List.filled(4, 0);
     _start.calculateBounds(bounds: bounds, approximate: approximate);
-    final minX = bounds[0];
-    final minY = bounds[1];
-    final maxX = bounds[2];
-    final maxY = bounds[3];
+    final double minX = bounds[0];
+    final double minY = bounds[1];
+    final double maxX = bounds[2];
+    final double maxY = bounds[3];
     _end.calculateBounds(bounds: bounds, approximate: approximate);
     bounds[0] = math.min(minX, bounds[0]);
     bounds[1] = math.min(minY, bounds[1]);
@@ -184,10 +166,10 @@ class Morph {
   List<double> calculateMaxBounds([List<double>? bounds]) {
     bounds ??= List.filled(4, 0);
     _start.calculateMaxBounds(bounds);
-    final minX = bounds[0];
-    final minY = bounds[1];
-    final maxX = bounds[2];
-    final maxY = bounds[3];
+    final double minX = bounds[0];
+    final double minY = bounds[1];
+    final double maxX = bounds[2];
+    final double maxY = bounds[3];
     _end.calculateMaxBounds(bounds);
     bounds[0] = math.min(minX, bounds[0]);
     bounds[1] = math.min(minY, bounds[1]);
@@ -223,11 +205,7 @@ class Morph {
     for (var i = 0; i < _morphMatch.length; i++) {
       final cubic = Cubic._raw(
         List<double>.generate(8, (j) {
-          return lerp(
-            _morphMatch[i].$1.points[j],
-            _morphMatch[i].$2.points[j],
-            progress,
-          );
+          return lerp(_morphMatch[i].$1.points[j], _morphMatch[i].$2.points[j], progress);
         }),
       );
 
