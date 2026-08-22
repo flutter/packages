@@ -179,7 +179,6 @@ final class DefaultCamera: NSObject, Camera {
     flashMode = captureDevice.hasFlash ? .auto : .off
 
     capturePhotoOutput = AVCapturePhotoOutput()
-    capturePhotoOutput.isHighResolutionCaptureEnabled = true
 
     videoCaptureSession.automaticallyConfiguresApplicationAudioSession = false
     audioCaptureSession.automaticallyConfiguresApplicationAudioSession = false
@@ -495,8 +494,27 @@ final class DefaultCamera: NSObject, Camera {
   }
 
   func start() {
+    configureMaxPhotoDimensions()
+
     videoCaptureSession.startRunning()
     audioCaptureSession.startRunning()
+  }
+
+  /// Configures `capturePhotoOutput` to allow capturing at the active format's highest supported
+  /// resolution. Must be called whenever `captureDevice` changes, since the active format's
+  /// supported dimensions can change with it.
+  private func configureMaxPhotoDimensions() {
+    if #available(iOS 16.0, *) {
+      // If the active format reports no supported dimensions, `capturePhotoOutput` keeps
+      // AVFoundation's own default rather than being left unconfigured.
+      if let maxSupportedDimensions = captureDevice.flutterActiveFormat.supportedMaxPhotoDimensions
+        .max(by: { Int64($0.width) * Int64($0.height) < Int64($1.width) * Int64($1.height) })
+      {
+        capturePhotoOutput.maxPhotoDimensions = maxSupportedDimensions
+      }
+    } else {
+      capturePhotoOutput.isHighResolutionCaptureEnabled = true
+    }
   }
 
   func stop() {
@@ -706,10 +724,6 @@ final class DefaultCamera: NSObject, Camera {
   func captureToFile(completion: @escaping (Result<String, any Error>) -> Void) {
     var settings = AVCapturePhotoSettings()
 
-    if mediaSettings.resolutionPreset == .max {
-      settings.isHighResolutionPhotoEnabled = true
-    }
-
     let fileExtension: String
 
     let isHEVCCodecAvailable = capturePhotoOutput.availablePhotoCodecTypes.contains(
@@ -727,9 +741,14 @@ final class DefaultCamera: NSObject, Camera {
             AVVideoQualityKey: CGFloat(imageQuality) / 100.0
           ],
         ])
-        if mediaSettings.resolutionPreset == .max {
-          settings.isHighResolutionPhotoEnabled = true
-        }
+      }
+    }
+
+    if mediaSettings.resolutionPreset == .max {
+      if #available(iOS 16.0, *) {
+        settings.maxPhotoDimensions = capturePhotoOutput.maxPhotoDimensions
+      } else {
+        settings.isHighResolutionPhotoEnabled = true
       }
     }
 
@@ -1207,6 +1226,8 @@ final class DefaultCamera: NSObject, Camera {
     }
     videoCaptureSession.addConnection(newConnection)
     videoCaptureSession.commitConfiguration()
+
+    configureMaxPhotoDimensions()
 
     completion(.success(()))
   }
