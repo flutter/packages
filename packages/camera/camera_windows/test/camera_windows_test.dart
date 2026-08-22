@@ -337,7 +337,18 @@ void main() {
         await plugin.startVideoRecording(cameraId);
 
         // Assert
-        verify(mockApi.startVideoRecording(any));
+        verify(mockApi.startVideoRecording(any, any));
+      });
+
+      test('Should start recording a video with a custom path', () async {
+        // Arrange
+        const path = '/test/video.mp4';
+
+        // Act
+        await plugin.startVideoCapturing(const VideoCaptureOptions(1, videoOutputPath: path));
+
+        // Assert
+        verify(mockApi.startVideoRecording(1, path));
       });
 
       test('capturing fails if trying to stream', () async {

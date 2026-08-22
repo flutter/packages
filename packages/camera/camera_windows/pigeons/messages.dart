@@ -64,7 +64,7 @@ abstract class CameraApi {
 
   /// Starts recording video with the given camera.
   @async
-  void startVideoRecording(int cameraId);
+  void startVideoRecording(int cameraId, String? videoOutputPath);
 
   /// Finishes recording video with the given camera, and returns the path to
   /// the resulting file.

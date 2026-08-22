@@ -1,3 +1,7 @@
+## 2.14.0
+
+* Adds `videoOutputPath` support to `MethodChannelCamera.startVideoRecording`.
+
 ## 2.13.1
 
 * Changes the default implementation of `setJpegImageQuality` to a no-op so that

@@ -1,3 +1,7 @@
+## 0.7.5
+
+* Adds support for custom video output path in video recording.
+
 ## 0.7.4+6
 
 * Adds explicit `androidx.concurrent:concurrent-futures:1.2.0` dependency to fix
