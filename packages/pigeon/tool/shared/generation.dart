@@ -143,6 +143,7 @@ Future<int> generateTestPigeons({required String baseDir, bool includeOverflow =
       kotlinPackage: 'com.example.test_plugin',
       kotlinErrorClassName: kotlinErrorName,
       kotlinUseJni: input == 'native_interop_tests',
+      kotlinAppDirectory: '$outputBase/example',
       kotlinIncludeErrorClass: input != 'primitive',
       // iOS/macOS
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
@@ -313,6 +314,8 @@ Future<int> runPigeon({
         includeErrorClass: kotlinIncludeErrorClass,
         useJni: kotlinUseJni,
         useGeneratedAnnotation: kotlinUseGeneratedAnnotation,
+        appDirectory: kotlinAppDirectory.isNotEmpty ? kotlinAppDirectory : null,
+        configDirectory: kotlinAppDirectory.isNotEmpty ? kotlinAppDirectory : null,
       ),
       objcHeaderOut: objcHeaderOut,
       objcSourceOut: objcSourceOut,
@@ -322,7 +325,8 @@ Future<int> runPigeon({
         errorClassName: swiftErrorClassName,
         includeErrorClass: swiftIncludeErrorClass,
         useFfi: swiftUseFfi,
-        appDirectory: swiftAppDirectory,
+        appDirectory: swiftAppDirectory.isNotEmpty ? swiftAppDirectory : null,
+        configDirectory: swiftAppDirectory.isNotEmpty ? swiftAppDirectory : null,
       ),
       basePath: basePath,
       dartPackageName: dartPackageName,

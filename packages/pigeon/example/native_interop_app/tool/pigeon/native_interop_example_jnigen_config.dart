@@ -10,7 +10,7 @@ void main() async {
   Directory.current = Platform.script.resolve('../..').toFilePath();
   await generateJniBindings(
     Config(
-      androidSdkConfig: AndroidSdkConfig(addGradleDeps: true, androidExample: './'),
+      androidSdkConfig: AndroidSdkConfig(addGradleDeps: true, androidExample: '.'),
       summarizerOptions: SummarizerOptions(backend: SummarizerBackend.asm),
       outputConfig: OutputConfig(
         dartConfig: DartCodeOutputConfig(

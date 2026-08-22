@@ -76,7 +76,11 @@ import 'package:swiftgen/swiftgen.dart';
 
     final String basePath = generatorOptions.basePath ?? '';
     final String configDirSetting =
-        generatorOptions.swiftOptions.configDirectory ?? generatorOptions.configDirectory ?? '';
+        generatorOptions.swiftOptions.configDirectory ??
+        generatorOptions.configDirectory ??
+        generatorOptions.swiftOptions.appDirectory ??
+        generatorOptions.exampleAppDirectory ??
+        '';
     final String rawConfigDir =
         (basePath.isNotEmpty &&
             configDirSetting.isNotEmpty &&
@@ -160,10 +164,6 @@ import 'package:swiftgen/swiftgen.dart';
         indent.writeln("'${prefix}PigeonInternalNumberType',");
       });
 
-      final String targetAppDir = (generatorOptions.basePath?.isNotEmpty ?? false)
-          ? generatorOptions.basePath!
-          : (generatorOptions.exampleAppDirectory ?? './');
-
       // TODO(tarrinneal): Make minimum OS versions configurable (ios/macos in externalVersions below).
       indent.format('''
   var targetTriple = '${configuredSdkTriple ?? ''}';
@@ -185,15 +185,15 @@ import 'package:swiftgen/swiftgen.dart';
       sdk: sdk,
     ),
     inputs: <SwiftGenInput>[ObjCCompatibleSwiftFileInput(files: <Uri>[
-        Uri.file('${path.relative(fullSwiftOut, from: targetAppDir)}')
+        Uri.file('$fullSwiftOut')
       ])
     ],
     include: (Declaration d) =>
         classes.contains(d.name) || enums.contains(d.name),
     output: Output(
       module: '$moduleName',
-      dartFile: Uri.file('${path.relative(path.withoutExtension(fullDartOut), from: targetAppDir)}.ffi.dart'),
-      objectiveCFile: Uri.file('${path.relative(path.posix.join(objcDir, '${path.posix.basenameWithoutExtension(fullSwiftOut)}.m'), from: targetAppDir)}'),
+      dartFile: Uri.file('${path.withoutExtension(fullDartOut)}.ffi.dart'),
+      objectiveCFile: Uri.file('${path.posix.join(objcDir, '${path.posix.basenameWithoutExtension(fullSwiftOut)}.m')}'),
       preamble: \'''
 // ${generatorOptions.swiftOptions.copyrightHeader?.join('\n// ') ?? ''}
 
@@ -247,7 +247,7 @@ ${hasAsyncFlutterApi ? '''
     ),
   ).generate(
     logger: null,
-    tempDirectory: Uri.directory('${path.relative(objcDir, from: generatorOptions.exampleAppDirectory ?? './')}'),
+    tempDirectory: Uri.directory('$objcDir'),
   );
       ''');
     });
