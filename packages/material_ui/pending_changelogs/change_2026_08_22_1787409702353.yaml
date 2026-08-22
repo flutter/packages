@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes DropdownButtonFormField underline alignment at bottom
+version: patch
