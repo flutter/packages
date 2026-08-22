@@ -52,6 +52,9 @@ class FfigenConfigGenerator extends Generator<InternalFfigenConfigOptions> {
     required String dartPackageName,
   }) {
     final indent = Indent();
+    if (generatorOptions.dartOptions.copyrightHeader != null) {
+      addLines(indent, generatorOptions.dartOptions.copyrightHeader!, linePrefix: '// ');
+    }
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.writeln('// ignore_for_file: depend_on_referenced_packages');
@@ -164,6 +167,9 @@ import 'package:swiftgen/swiftgen.dart';
         indent.writeln("'${prefix}PigeonInternalNumberType',");
       });
 
+      final copyrightPreamble = generatorOptions.swiftOptions.copyrightHeader != null
+          ? '// ${generatorOptions.swiftOptions.copyrightHeader!.join(r'\n// ')}\n'
+          : '';
       // TODO(tarrinneal): Make minimum OS versions configurable (ios/macos in externalVersions below).
       indent.format('''
   var targetTriple = '${configuredSdkTriple ?? ''}';
@@ -194,12 +200,11 @@ import 'package:swiftgen/swiftgen.dart';
       module: '$moduleName',
       dartFile: Uri.file('${path.withoutExtension(fullDartOut)}.ffi.dart'),
       objectiveCFile: Uri.file('${path.posix.join(objcDir, '${path.posix.basenameWithoutExtension(fullSwiftOut)}.m')}'),
-      preamble: \'''
-// ${generatorOptions.swiftOptions.copyrightHeader?.join('\n// ') ?? ''}
-
+      preamble: \'\'\'
+$copyrightPreamble
 // ignore_for_file: always_specify_types, camel_case_types, non_constant_identifier_names, unnecessary_non_null_assertion, unused_element, unused_field
 // coverage:ignore-file
-\''',
+\'\'\',
       ),
     ffigen: FfiGeneratorOptions(
       objectiveC: fg.ObjectiveC(
@@ -249,7 +254,7 @@ ${hasAsyncFlutterApi ? '''
     logger: null,
     tempDirectory: Uri.directory('$objcDir'),
   );
-      ''');
+''');
     });
     indent.format('''
 Future<Uri> _getAppleSdk() async {

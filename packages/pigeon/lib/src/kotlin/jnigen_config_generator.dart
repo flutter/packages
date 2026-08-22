@@ -47,6 +47,9 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
     required String dartPackageName,
   }) {
     final indent = Indent();
+    if (generatorOptions.dartOptions.copyrightHeader != null) {
+      addLines(indent, generatorOptions.dartOptions.copyrightHeader!, linePrefix: '// ');
+    }
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.writeln('// ignore_for_file: depend_on_referenced_packages');
@@ -107,8 +110,15 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
       indent.writeln("  Directory.current = Platform.script.resolve('../..').toFilePath();");
       indent.writeScoped('await generateJniBindings(', ');', () {
         indent.writeScoped('Config(', '),', () {
+          final hasCopyright = generatorOptions.kotlinOptions.copyrightHeader != null;
+          final copyrightPreamble = hasCopyright
+              ? '// ${generatorOptions.kotlinOptions.copyrightHeader!.join(r'\n// ')}\n'
+              : '';
           indent.format('''
-            androidSdkConfig: AndroidSdkConfig(
+${hasCopyright ? '''
+            preamble: \'\'\'
+$copyrightPreamble\'\'\',
+''' : ''}            androidSdkConfig: AndroidSdkConfig(
               addGradleDeps: true,
               androidExample: '$androidExample',
             ),

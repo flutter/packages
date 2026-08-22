@@ -131,10 +131,13 @@ void main() {
         'foo.mocks.dart',
         // Ignored files.
         'resource.h',
+        // Swift-generated Objective-C compatibility files.
+        'foo_objc_gen/Runner.h',
+        'foo_objc_gen/Foo.gen.m',
       ];
 
       for (final name in ignoredFiles) {
-        root.childFile(name).createSync();
+        root.childFile(name).createSync(recursive: true);
       }
       mockGitFilesListWithAllFiles(root);
 
