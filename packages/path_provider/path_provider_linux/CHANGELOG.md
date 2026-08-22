@@ -51,7 +51,7 @@
 
 ## 2.1.3
 
-* Change getApplicationSupportPath from using executable name to application ID (if provided).
+* Changes getApplicationSupportPath from using executable name to application ID (if provided).
   * If the executable name based directory exists, continue to use that so existing applications continue with the same behaviour.
 
 ## 2.1.2
@@ -60,7 +60,7 @@
 
 ## 2.1.1
 
-* Removed obsolete `pluginClass: none` from pubpsec.
+* Removes obsolete `pluginClass: none` from pubpsec.
 
 ## 2.1.0
 
@@ -68,28 +68,28 @@
 
 ## 2.0.2
 
-* Updated installation instructions in README.
+* Updates installation instructions in README.
 
 ## 2.0.1
 
-* Add `implements` to pubspec.yaml.
-* Add `registerWith` method to the main Dart class.
+* Adds `implements` to pubspec.yaml.
+* Adds `registerWith` method to the main Dart class.
 
 ## 2.0.0
 
-* Migrate to null safety.
+* Migrates to null safety.
 
 ## 0.1.1+3
 
-* Update Flutter SDK constraint.
+* Updates Flutter SDK constraint.
 
 ## 0.1.1+2
 
-* Log errors in the example when calls to the `path_provider` fail.
+* Logs errors in the example when calls to the `path_provider` fail.
 
 ## 0.1.1+1
 
-* Check in linux/ directory for example/
+* Check in linux/ directory for example/.
 
 ## 0.1.1 - NOT PUBLISHED
 
@@ -102,13 +102,13 @@
 
 ## 0.0.1+2
 
-* This release updates the example to depend on the endorsed plugin rather than relative path
+* This release updates the example to depend on the endorsed plugin rather than relative path.
 
 ## 0.0.1+1
 
-* This updates the readme and pubspec and example to reflect the endorsement of this implementation of `path_provider`
+* This updates the readme and pubspec and example to reflect the endorsement of this implementation of `path_provider`.
 
 ## 0.0.1
 
-* The initial implementation of path\_provider for Linux
-  * Implements getApplicationSupportPath, getApplicationDocumentsPath, getDownloadsPath, and getTemporaryPath
+* The initial implementation of path\_provider for Linux.
+  * Implements getApplicationSupportPath, getApplicationDocumentsPath, getDownloadsPath, and getTemporaryPath.

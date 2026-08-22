@@ -61,7 +61,7 @@
 
 ## 2.8.18
 
-* Removed mockito-inline and updated to mockito-core 5.17.0.
+* Removes mockito-inline and updates to mockito-core 5.17.0.
 
 ## 2.8.17
 
@@ -213,7 +213,7 @@
 
 ## 2.7.5
 
-* Add a deprecation suppression in advance of a new `SurfaceProducer` API.
+* Adds a deprecation suppression in advance of a new `SurfaceProducer` API.
 
 ## 2.7.4
 
@@ -232,7 +232,7 @@
 
 ## 2.7.1
 
-* Revert Impeller support.
+* Reverts Impeller support.
 
 ## 2.7.0
 
@@ -264,7 +264,7 @@
 
 ## 2.4.17
 
-* Revert Impeller support.
+* Reverts Impeller support.
 
 ## 2.4.16
 

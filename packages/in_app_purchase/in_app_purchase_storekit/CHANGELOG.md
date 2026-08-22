@@ -1,10 +1,10 @@
 ## 0.4.11+1
 
 * Fixes StoreKit 2 restore transactions not grouping purchases into a single event.
-  
+
 ## 0.4.11
 
-* Fixes StoreKit 2 date format does not match in_app_purchase_platform_interface PurchaseDetails.transactionDate format.
+* Fixes StoreKit 2 date format does not match in_app_purchase_platform_interface PurchaseDetails.transactionDate format
   Fixes both `SK2Transaction.purchaseDate` and `SK2Transaction.expirationDate`.
 
 ## 0.4.10+1
@@ -18,7 +18,7 @@
 
 ## 0.4.9
 
-* Add support for offer codes in StoreKit 2.
+* Adds support for offer codes in StoreKit 2.
 * Updates minimum supported SDK version to Flutter 3.38.
 
 ## 0.4.8+1
@@ -46,7 +46,7 @@
 
 ## 0.4.6
 
-* Adds a new case `.unverified` to enum `SK2ProductPurchaseResult`
+* Adds a new case `.unverified` to enum `SK2ProductPurchaseResult`.
 * Fixes the StoreKit2 implementation throwing `PlatformException`s instead of returning the corresponding
 `SK2ProductPurchaseResult` when a purchase is cancelled / unverified / pending.
 
@@ -61,34 +61,34 @@
 
 ## 0.4.4
 
-* Added support for specifying quantity in `SK2ProductPurchaseOptions` (consumable purchases on iOS).
+* Adds support for specifying quantity in `SK2ProductPurchaseOptions` (consumable purchases on iOS).
 
 ## 0.4.3
 
-* Adds **Introductory Offer Eligibility** support for StoreKit2
+* Adds **Introductory Offer Eligibility** support for StoreKit2.
 
 ## 0.4.2
 
-* Add [jwsRepresentation](https://developer.apple.com/documentation/storekit/verificationresult/jwsrepresentation-21vgo) to `SK2PurchaseDetails` as `serverVerificationData` for secure server-side purchase verification. Use this JSON Web Signature (JWS) value to perform your own JWS verification on your server.
-* Add [jsonRepresentation](https://developer.apple.com/documentation/storekit/transaction/jsonrepresentation) to `SK2PurchaseDetails` as `localVerificationData` for local transaction debugging and verification.
+* Adds [jwsRepresentation](https://developer.apple.com/documentation/storekit/verificationresult/jwsrepresentation-21vgo) to `SK2PurchaseDetails` as `serverVerificationData` for secure server-side purchase verification. Use this JSON Web Signature (JWS) value to perform your own JWS verification on your server.
+* Adds [jsonRepresentation](https://developer.apple.com/documentation/storekit/transaction/jsonrepresentation) to `SK2PurchaseDetails` as `localVerificationData` for local transaction debugging and verification.
 
 ## 0.4.1
 
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 * Adds **Win Back Offers** support for StoreKit2:
-  * Includes new `isWinBackOfferEligible` function for eligibility verification
-* Adds **Promotional Offers** support in StoreKit2 purchases
-* Fixes introductory pricing handling in promotional offers list in StoreKit2
-* Ensures proper `appAccountToken` handling for StoreKit2 purchases
+  * Includes new `isWinBackOfferEligible` function for eligibility verification.
+* Adds **Promotional Offers** support in StoreKit2 purchases.
+* Fixes introductory pricing handling in promotional offers list in StoreKit2.
+* Ensures proper `appAccountToken` handling for StoreKit2 purchases.
 
 ## 0.4.0
 
 * **BREAKING CHANGE:** StoreKit 2 is now the default for all devices that support it.
-* To revert to StoreKit1 for devices below iOS 15, call `enableStoreKit1`
+* To revert to StoreKit1 for devices below iOS 15, call `enableStoreKit1`.
 
 ## 0.3.22+1
 
-* Fix a channel thread-safety issue when StoreKit2 is enabled.
+* Fixes a channel thread-safety issue when StoreKit2 is enabled.
 
 ## 0.3.22
 
@@ -113,7 +113,7 @@
 
 ## 0.3.20+1
 
-* Prevent devices below iOS 15 or macOS 15 from enabling StoreKit2.
+* Prevents devices below iOS 15 or macOS 15 from enabling StoreKit2.
 
 ## 0.3.20
 
@@ -141,16 +141,16 @@
 
 ## 0.3.18+2
 
-* Adds support for StoreKit2's `purchase` and `transactions`
+* Adds support for StoreKit2's `purchase` and `transactions`.
 
 ## 0.3.18+1
 
-* Adds support for StoreKit2's `canMakePayments` and `products`
+* Adds support for StoreKit2's `canMakePayments` and `products`.
 
 ## 0.3.18
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
-* Changes the `localizedDescription` field of `SKProductMessage` to allow for null values
+* Changes the `localizedDescription` field of `SKProductMessage` to allow for null values.
 
 ## 0.3.17+3
 
@@ -182,11 +182,11 @@
 
 ## 0.3.13+1
 
-* Handle translation of errors nested in dictionaries.
+* Handles translation of errors nested in dictionaries.
 
 ## 0.3.13
 
-* Added new native tests for more complete test coverage.
+* Adds new native tests for more complete test coverage.
 
 ## 0.3.12+1
 

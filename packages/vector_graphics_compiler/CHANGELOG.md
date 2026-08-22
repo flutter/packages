@@ -18,14 +18,14 @@
 
 ## 1.2.4
 
-* Fix Stack Overflow crashes caused by circular references (masks, patterns, deferred nodes, and clip paths).
-* Prevent CPU/Memory Denial of Service (DoS) resource exhaustion from exponential DAG reference expansions (Billion Laughs SVG exploits) by enforcing a strict, cumulative reference expansion safety limit of 1,000.
+* Fixes Stack Overflow crashes caused by circular references (masks, patterns, deferred nodes, and clip paths).
+* Prevents CPU/Memory Denial of Service (DoS) resource exhaustion from exponential DAG reference expansions (Billion Laughs SVG exploits) by enforcing a strict, cumulative reference expansion safety limit of 1,000.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 1.2.3
 
 * Fixes the SVG parser injecting a spurious space between adjacent
-  `<tspan>` elements that have no whitespace between them in the source.
+  `<tspan>` elements that have no whitespace between them in the source
   Previously `<tspan>A</tspan><tspan>B</tspan>` was emitted as `"A"` +
   `" B"`, producing a visible gap; it now emits `"A"` + `"B"` to match
   every browser.
@@ -84,61 +84,61 @@
 
 ## 1.1.11+1
 
-* Relax package:http constraint.
+* Relaxes package:http constraint.
 
 ## 1.1.11
 
-* Use package:http to drop dependency on dart:html.
+* Uses package:http to drop dependency on dart:html.
 
 ## 1.1.10+1
 
-* Add missing save before clip.
+* Adds missing save before clip.
 
 ## 1.1.10
 
-* Add missing clip before saveLayer.
+* Adds missing clip before saveLayer.
 
 ## 1.1.9+2
 
-* Fix case sensitivity on scientific notation parsing.
+* Fixes case sensitivity on scientific notation parsing.
 
 ## 1.1.9+1
 
-* Fix publication error that did not have latest source code.
+* Fixes publication error that did not have latest source code.
 
 ## 1.1.9
 
-* Fix handling of invalid XML `@id` attributes.
-* Fix handling of self-referential `<use/>` elements.
-* Add `--out-dir` option to compiler.
-* Tweak warning message for unhandled eleemnts.
+* Fixes handling of invalid XML `@id` attributes.
+* Fixes handling of self-referential `<use/>` elements.
+* Adds `--out-dir` option to compiler.
+* Tweaks warning message for unhandled eleemnts.
 
 ## 1.1.8
 
-*  Fix bugs in transform parsing.
+*  Fixes bugs in transform parsing.
 
 ## 1.1.7
 
-* Support for matching the ambient text direction.
+* Supports for matching the ambient text direction.
 
 ## 1.1.6
 
-* Fix bug in text position computation when transforms are involved.
+* Fixes bug in text position computation when transforms are involved.
 
 ## 1.1.5+1
 
-* Remove/update some invalid assertions related to image formats.
+* Removes/update some invalid assertions related to image formats.
 
 ## 1.1.5
 
-* Support for encoding path control points as IEEE 754-2008 half precision
+* Supports for encoding path control points as IEEE 754-2008 half precision
   floating point values using the option `--use-half-precision-control-points`.
-* Added an error builder property to provide a fallback widget on exceptions.
+* Adds an error builder property to provide a fallback widget on exceptions.
 
 ## 1.1.4
 
-* Support more image formats and malformed MIME types.
-* Fix inheritence for `fill-rule`s.
+* Supports more image formats and malformed MIME types.
+* Fixes inheritence for `fill-rule`s.
 
 ## 1.1.3
 
@@ -146,7 +146,7 @@
 
 ## 1.1.2
 
-* Fix handling and inheritence of `none`.
+* Fixes handling and inheritence of `none`.
 
 ## 1.1.1
 
@@ -155,25 +155,25 @@
 
 ## 1.1.0
 
-* Fix a number of inheritence related bugs:
+* Fixes a number of inheritence related bugs:
   * Inheritence of properties specified on the root element now work.
   * Opacity inheritence is more correct now.
   * Inheritence of `use` elements is more correctly handled.
-* Make `currentColor` non-null on SVG theme, and fix how it is applied.
-* Remove the opacity peephole optimizer, which was incorrectly applying
+* Makes `currentColor` non-null on SVG theme, and fix how it is applied.
+* Removes the opacity peephole optimizer, which was incorrectly applying
   optimizations in a few cases. A future release may add this back.
-* Add clipBehavior to the widget.
-* Fix patterns when multiple patterns are specified and applied within the
+* Adds clipBehavior to the widget.
+* Fixes patterns when multiple patterns are specified and applied within the
   graphic.
 
 ## 1.0.1
 
-* Fix handling of unspecified fill colors on use/group elements.
+* Fixes handling of unspecified fill colors on use/group elements.
 
 ## 1.0.0+1
 
-* Fix issue in pattern decoding.
-* Fix issue in matrix parsing for some combinations of matrices.
+* Fixes issue in pattern decoding.
+* Fixes issue in matrix parsing for some combinations of matrices.
 
 ## 1.0.0
 
@@ -184,16 +184,16 @@
 
 ## 0.0.3
 
-* Better concurrency support
+* Better concurrency support.
 * Pattern support.
 * Bug fixes around image handling.
 * Bug fix for when optimizers are used on non-default fill types.
-* Support for SVG theme related properties (currentColor, font-size, x-height).
+* Supports for SVG theme related properties (currentColor, font-size, x-height).
 
 ## 0.0.2
 
-* Add optimizations for masks, clipping, and overdraw.
+* Adds optimizations for masks, clipping, and overdraw.
 
 ## 0.0.1
 
-* Create repository
+* Create repository.

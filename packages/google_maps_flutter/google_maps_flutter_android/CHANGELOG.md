@@ -41,7 +41,7 @@
 
 ## 2.19.2
 
-* Bump com.google.maps.android:android-maps-utils from 4.0.0 to 4.1.0.
+* Bumps com.google.maps.android:android-maps-utils from 4.0.0 to 4.1.0.
 
 ## 2.19.1
 
@@ -61,7 +61,7 @@
 
 ## 2.18.10
 
-* Bump com.google.maps.android:android-maps-utils from 3.19.1 to 3.20.1.
+* Bumps com.google.maps.android:android-maps-utils from 3.19.1 to 3.20.1.
 
 ## 2.18.9
 
@@ -253,7 +253,7 @@
 ## 2.6.0
 
 * Fixes missing updates in TLHC mode.
-* Switched default display mode to TLHC mode.
+* Switches default display mode to TLHC mode.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 2.5.3
@@ -301,7 +301,7 @@
 
 ## 2.4.10
 
-* Bump RoboElectric dependency to 4.4.1 to support AndroidX.
+* Bumps RoboElectric dependency to 4.4.1 to support AndroidX.
 
 ## 2.4.9
 
@@ -340,7 +340,7 @@
 
 ## 2.4.1
 
-* Update `androidx.test.espresso:espresso-core` to 3.5.1.
+* Updates `androidx.test.espresso:espresso-core` to 3.5.1.
 
 ## 2.4.0
 
@@ -349,11 +349,11 @@
 
 ## 2.3.3
 
-* Update android gradle plugin to 7.3.1.
+* Updates android gradle plugin to 7.3.1.
 
 ## 2.3.2
 
-* Update `com.google.android.gms:play-services-maps` to 18.1.0.
+* Updates `com.google.android.gms:play-services-maps` to 18.1.0.
 
 ## 2.3.1
 

@@ -11,18 +11,18 @@
 ## 2.1.2
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
-* Adds an example of using `OpenContainer`
+* Adds an example of using `OpenContainer`.
 
 ## 2.1.1
 
-* Updated the documentation for `OpenContainer.onClosed` to clarify that it is called at the start of the closing transition, not at the end.
+* Updates the documentation for `OpenContainer.onClosed` to clarify that it is called at the start of the closing transition, not at the end.
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 
 ## 2.1.0
 
 * Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
-* Make `OpenContainerState` public.
+* Makes `OpenContainerState` public.
 
 ## 2.0.11
 
@@ -35,7 +35,7 @@
 ## 2.0.9
 
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
-* Migrate motion curves to use `Easing` class.
+* Migrates motion curves to use `Easing` class.
 
 ## 2.0.8
 
@@ -44,14 +44,14 @@
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.0.7
-* Updates screenshots to use webp compressed animations
+* Updates screenshots to use webp compressed animations.
 
 ## 2.0.6
-* Adds screenshots to pubspec.yaml
+* Adds screenshots to pubspec.yaml.
 
 ## 2.0.5
-* Update `OpenContainer` to use `Visibility` widget internally instead of `Opacity`.
-* Update `OpenContainer` to use `FadeTransition` instead of animating an `Opacity`
+* Updates `OpenContainer` to use `Visibility` widget internally instead of `Opacity`.
+* Updates `OpenContainer` to use `FadeTransition` instead of animating an `Opacity`
   widget internally.
 
 ## 2.0.4
@@ -63,15 +63,15 @@
 * Updates for non-nullable bindings.
 
 ## 2.0.2
-* Fixed documentation for `OpenContainer` class; replaced `openBuilder` with `closedBuilder`.
+* Fixes documentation for `OpenContainer` class; replaces `openBuilder` with `closedBuilder`.
 
 ## 2.0.1
-* Add links to the spec and codelab.
+* Adds links to the spec and codelab.
 
 ## 2.0.0
 
 * Migrates to null safety.
-* Add `routeSettings` and `filter` option to `showModal`.
+* Adds `routeSettings` and `filter` option to `showModal`.
 
 ## 1.1.2
 
@@ -83,48 +83,48 @@
 
 ## 1.1.0
 
-* Introduce usage of `DualTransitionBuilder` for all transition widgets, preventing ongoing animations at the start of the transition animation from resetting at the end of the transition animations.
-* Fix `FadeScaleTransition` example's `FloatingActionButton` being accessible
+* Introduces usage of `DualTransitionBuilder` for all transition widgets, preventing ongoing animations at the start of the transition animation from resetting at the end of the transition animations.
+* Fixes `FadeScaleTransition` example's `FloatingActionButton` being accessible
 and tappable when it is supposed to be hidden.
 * `showModal` now defaults to using `FadeScaleTransitionConfiguration` instead of `null`.
-* Added const constructors for `FadeScaleTransitionConfiguration` and `ModalConfiguration`.
-* Add custom fillColor property to `SharedAxisTransition` and `SharedAxisPageTransitionsBuilder`.
-* Fix prefer_const_constructors lint in test and example.
-* Add option `useRootNavigator` to `OpenContainer`.
-* Add `OpenContainer.onClosed`, which is called with a returned value when the container was popped and has returned to the closed state.
+* Adds const constructors for `FadeScaleTransitionConfiguration` and `ModalConfiguration`.
+* Adds custom fillColor property to `SharedAxisTransition` and `SharedAxisPageTransitionsBuilder`.
+* Fixes prefer_const_constructors lint in test and example.
+* Adds option `useRootNavigator` to `OpenContainer`.
+* Adds `OpenContainer.onClosed`, which is called with a returned value when the container was popped and has returned to the closed state.
 * Fixes a bug with OpenContainer where a crash occurs when the container is dismissed after the container widget itself is removed.
 
 
 ## 1.0.0+5
 
-* Fix override analyzer ignore placement.
+* Fixes override analyzer ignore placement.
 
 
 ## 1.0.0+4
 
-* Fix a typo in the changelog dates
-* Revert use of modern Material text style nomenclature in the example app
+* Fixes a typo in the changelog dates.
+* Reverts use of modern Material text style nomenclature in the example app
   to be compatible with Flutter's `stable` branch for the time being.
-* Add override analyzer ignore in modal.dart for reverseTransitionDuration
+* Adds override analyzer ignore in modal.dart for reverseTransitionDuration
   until Flutter's stable branch contains
   https://github.com/flutter/flutter/pull/48274.
 
 
 ## 1.0.0+3
 
-* Update README.md to better describe Material motion
+* Updates README.md to better describe Material motion.
 
 
 ## 1.0.0+2
 
-* Fixes to pubspec.yaml
+* Fixes to pubspec.yaml.
 
 
 ## 1.0.0+1
 
-* Fixes to pubspec.yaml
+* Fixes to pubspec.yaml.
 
 
 ## 1.0.0
 
-* Initial release
+* Initial release.

@@ -108,7 +108,7 @@
 
 ## 5.0.1
 
-* Update to use the `verify` method introduced in platform_plugin_interface 2.1.0.
+* Updates to use the `verify` method introduced in platform_plugin_interface 2.1.0.
 
 ## 5.0.0
 
@@ -120,19 +120,19 @@
 
 ## 4.2.0
 
-* Add `contentUri` to `DataSourceType`.
+* Adds `contentUri` to `DataSourceType`.
 
 ## 4.1.0
 
-* Add `httpHeaders` to `DataSource`
+* Adds `httpHeaders` to `DataSource`.
 
 ## 4.0.0
 
 * **Breaking Changes**:
-  * Migrate to null-safety
-  * Update to latest Pigeon. This includes a breaking change to how the test logic is exposed.
-* Add note about the `mixWithOthers` option being ignored on the web.
-* Make DataSource's `uri` parameter nullable.
+  * Migrates to null-safety.
+  * Updates to latest Pigeon. This includes a breaking change to how the test logic is exposed.
+* Adds note about the `mixWithOthers` option being ignored on the web.
+* Makes DataSource's `uri` parameter nullable.
 * `messages.dart` sets Dart `2.12`.
 
 ## 3.0.0
@@ -141,41 +141,41 @@
 
 ## 2.2.1
 
-* Update Flutter SDK constraint.
+* Updates Flutter SDK constraint.
 
 ## 2.2.0
 
-* Added option to set the video playback speed on the video controller.
+* Adds option to set the video playback speed on the video controller.
 
 ## 2.1.1
 
-* Fix mixWithOthers test channel.
+* Fixes mixWithOthers test channel.
 
 ## 2.1.0
 
-* Add VideoPlayerOptions with audio mix mode
+* Adds VideoPlayerOptions with audio mix mode.
 
 ## 2.0.2
 
-* Migrated tests to use pigeon correctly.
+* Migrates tests to use pigeon correctly.
 
 ## 2.0.1
 
-* Updated minimum Dart version.
-* Added class to help testing Pigeon communication.
+* Updates minimum Dart version.
+* Adds class to help testing Pigeon communication.
 
 ## 2.0.0
 
-* Migrated to [pigeon](https://pub.dev/packages/pigeon).
+* Migrates to [pigeon](https://pub.dev/packages/pigeon).
 
 ## 1.0.5
 
-* Make the pedantic dev_dependency explicit.
+* Makes the pedantic dev_dependency explicit.
 
 ## 1.0.4
 
-* Remove the deprecated `author:` field from pubspec.yaml
-* Require Flutter SDK 1.10.0 or greater.
+* Removes the deprecated `author:` field from pubspec.yaml.
+* Requires Flutter SDK 1.10.0 or greater.
 
 ## 1.0.3
 
@@ -183,11 +183,11 @@
 
 ## 1.0.2
 
-* Fix unawaited futures in the tests.
+* Fixes unawaited futures in the tests.
 
 ## 1.0.1
 
-* Return correct platform event type when buffering
+* Returns correct platform event type when buffering.
 
 ## 1.0.0
 

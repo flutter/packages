@@ -24,10 +24,10 @@
 
 ## 3.1.0
 
-* Add `flutter_frame.total_time`, `flutter_frame.build_time`, and `flutter_frame.raster_time`
+* Adds `flutter_frame.total_time`, `flutter_frame.build_time`, and `flutter_frame.raster_time`
 metrics to benchmark results. These values are derived from the Flutter `FrameTiming` API.
-* Expose a new library `metrics.dart` that contains definitions for the benchmark metrics.
-* Add p50, p90, and p95 metrics for benchmark scores.
+* Exposes a new library `metrics.dart` that contains definitions for the benchmark metrics.
+* Adds p50, p90, and p95 metrics for benchmark scores.
 
 ## 3.0.0
 
@@ -84,8 +84,8 @@ JavaScript and WebAssembly compilation respectively.
 
 * **Breaking change:** replace the `useCanvasKit` parameter in the `serveWebBenchmark`
 method with a new parameter `compilationOptions`, which allows you to:
-  * specify the web renderer to use for the benchmark app (html, canvaskit, or skwasm)
-  * specify whether to use WebAssembly to build the benchmark app
+  * specify the web renderer to use for the benchmark app (html, canvaskit, or skwasm).
+  * specify whether to use WebAssembly to build the benchmark app.
 * **Breaking change:** `serveWebBenchmark` now uses `canvaskit` instead of `html` as the
 default web renderer.
 
@@ -95,7 +95,7 @@ default web renderer.
 
 ## 0.1.0+10
 
-* Ensure the benchmark client reloads with the proper `initialPage`.
+* Ensures the benchmark client reloads with the proper `initialPage`.
 * Migrates benchmark recorder away from deprecated `js_util` APIs.
 
 ## 0.1.0+9
@@ -150,27 +150,27 @@ default web renderer.
 
 ## 0.0.7
 
-* Updates BlinkTraceEvents to match with changes in Chromium v89+
+* Updates BlinkTraceEvents to match with changes in Chromium v89+.
 
 ## 0.0.6
 
-* Update implementation of `_RecordingWidgetsBinding` to match the [new Binding API](https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/foundation/binding.dart#L96-L128)
+* Updates implementation of `_RecordingWidgetsBinding` to match the [new Binding API](https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/foundation/binding.dart#L96-L128).
 
 ## 0.0.5
 
-* Updated dependencies to allow broader versions for upstream packages.
+* Updates dependencies to allow broader versions for upstream packages.
 
 ## 0.0.4
 
-* Updated dependencies to allow broader versions for upstream packages.
+* Updates dependencies to allow broader versions for upstream packages.
 
 ## 0.0.3
 
-* Fixed benchmarks failing due to trace format change for begin frame.
+* Fixes benchmarks failing due to trace format change for begin frame.
 
 ## 0.0.2
 
-* Improve console messages.
+* Improves console messages.
 
 ## 0.0.1 - Initial release.
 

@@ -33,7 +33,7 @@
 ## 3.0.2
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
-* Removes input element after completion
+* Removes input element after completion.
 
 ## 3.0.1
 
@@ -44,7 +44,7 @@
 
 * **BREAKING CHANGE:** Removes all code and tests mentioning `PickedFile`.
 * Listens to `cancel` event on file selection. When the selection is canceled:
-  * `Future<XFile?>` methods return `null`
+  * `Future<XFile?>` methods return `null`.
   * `Future<List<XFile>>` methods return an empty list.
 
 ## 2.2.0
@@ -96,11 +96,11 @@
 
 ## 2.1.3
 
-* Add `implements` to pubspec.
+* Adds `implements` to pubspec.
 
 ## 2.1.2
 
-* Updated installation instructions in README.
+* Updates installation instructions in README.
 
 # 2.1.1
 
@@ -111,24 +111,24 @@
 # 2.1.0
 
 * Implemented `getImage`, `getVideo` and `getFile` methods that return `XFile` instances.
-* Move tests to `example` directory, so they run as integration_tests with `flutter drive`.
+* Moves tests to `example` directory, so they run as integration_tests with `flutter drive`.
 
 # 2.0.0
 
-* Migrate to null safety.
-* Add doc comments to point out that some arguments aren't supported on the web.
+* Migrates to null safety.
+* Adds doc comments to point out that some arguments aren't supported on the web.
 
 # 0.1.0+3
 
-* Update Flutter SDK constraint.
+* Updates Flutter SDK constraint.
 
 # 0.1.0+2
 
-* Adds Video MIME Types for the safari browser for acception
+* Adds Video MIME Types for the safari browser for acception.
 
 # 0.1.0+1
 
-* Remove `android` directory.
+* Removes `android` directory.
 
 # 0.1.0
 

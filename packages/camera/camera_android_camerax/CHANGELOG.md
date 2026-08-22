@@ -4,7 +4,7 @@
   `compileDebugJavaWithJavac` failing with "class file for
   androidx.concurrent.futures.CallbackToFutureAdapter not found" when
   `camera-core`'s Jspecify type annotations are resolved during compilation.
-  
+
 ## 0.7.4+5
 
 * Fixes a leaked thread per capture by dispatching the `takePicture` result callback on the main
@@ -12,7 +12,7 @@
 
 ## 0.7.4+4
 
-* Fix `NullPointerException` when disposing camera during active video recording.
+* Fixes `NullPointerException` when disposing camera during active video recording.
 
 ## 0.7.4+3
 
@@ -71,7 +71,7 @@
 
 ## 0.6.30
 
-* Bump camerax_version from 1.5.2 to 1.5.3.
+* Bumps camerax_version from 1.5.2 to 1.5.3.
 
 ## 0.6.29
 
@@ -127,7 +127,7 @@
 
 ## 0.6.24
 
-* Change plugin to assume mp4 format for capture videos.
+* Changes plugin to assume mp4 format for capture videos.
 
 ## 0.6.23+5
 
@@ -356,7 +356,7 @@ this plugin should now be compatible with [google_ml_kit_flutter](https://github
 
 ## 0.6.5+2
 
-* Update to latest stable camerax `1.3.3`.
+* Updates to latest stable camerax `1.3.3`.
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 0.6.5+1
@@ -456,7 +456,7 @@ this plugin should now be compatible with [google_ml_kit_flutter](https://github
 ## 0.5.0+27
 
 * Removes or updates any references to an `ActivityPluginBinding` when the plugin is detached
-  or attached/re-attached, respectively, to an `Activity.`
+  or attached/re-attached, respectively, to an `Activity.`.
 
 ## 0.5.0+26
 
@@ -567,7 +567,7 @@ this plugin should now be compatible with [google_ml_kit_flutter](https://github
 
 ## 0.5.0+1
 
-* Update `README.md` to include known duplicate Kotlin classes issue.
+* Updates `README.md` to include known duplicate Kotlin classes issue.
 
 ## 0.5.0
 

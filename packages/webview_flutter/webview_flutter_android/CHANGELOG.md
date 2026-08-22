@@ -482,12 +482,12 @@
 
 ## 2.9.3
 
-* Updates the Dart InstanceManager to take a listener for when an object is garbage collected.
+* Updates the Dart InstanceManager to take a listener for when an object is garbage collected
   See https://github.com/flutter/flutter/issues/107199.
 
 ## 2.9.2
 
-* Updates the Java InstanceManager to take a listener for when an object is garbage collected.
+* Updates the Java InstanceManager to take a listener for when an object is garbage collected
   See https://github.com/flutter/flutter/issues/107199.
 
 ## 2.9.1
@@ -499,7 +499,7 @@
 
 * Ignores unnecessary import warnings in preparation for [upcoming Flutter changes](https://github.com/flutter/flutter/pull/106316).
 * Fixes bug where `Directionality` from context didn't affect `SurfaceAndroidWebView`.
-* Fixes bug where default text direction was different for `SurfaceAndroidWebView` and `AndroidWebView`.
+* Fixes bug where default text direction was different for `SurfaceAndroidWebView` and `AndroidWebView`
   Default is now `TextDirection.ltr` for both.
 * Fixes bug where setting WebView to a transparent background could cause visual errors when using
   `SurfaceAndroidWebView`. Hybrid composition is now used when the background color is not 100%
@@ -600,7 +600,7 @@
 
 ## 2.2.1
 
-* Fix `NullPointerException` from a race condition when changing focus. This only affects `WebView`
+* Fixes `NullPointerException` from a race condition when changing focus. This only affects `WebView`
 when it is created without Hybrid Composition.
 
 ## 2.2.0
@@ -609,15 +609,15 @@ when it is created without Hybrid Composition.
 
 ## 2.1.0
 
-* Add `zoomEnabled` functionality.
+* Adds `zoomEnabled` functionality.
 
 ## 2.0.15
 
-* Added Overrides in  FlutterWebView.java
+* Adds Overrides in  FlutterWebView.java.
 
 ## 2.0.14
 
-* Update example App so navigation menu loads immediatly but only becomes available when `WebViewController` is available (same behavior as example App in webview_flutter package).
+* Updates example App so navigation menu loads immediatly but only becomes available when `WebViewController` is available (same behavior as example App in webview_flutter package).
 
 ## 2.0.13
 

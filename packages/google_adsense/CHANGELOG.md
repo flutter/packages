@@ -4,7 +4,7 @@
 
 ## 0.1.2
 
-* Added a callback to the widget for testing to make unit tests more deterministic.
+* Adds a callback to the widget for testing to make unit tests more deterministic.
 
 ## 0.1.1
 

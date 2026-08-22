@@ -29,7 +29,7 @@
 
 ## 0.10.10+12
 
-* Removed mockito-inline and updated to mockito-core 5.17.0.
+* Removes mockito-inline and updates to mockito-core 5.17.0.
 
 ## 0.10.10+11
 
@@ -63,7 +63,7 @@
 
 ## 0.10.10+4
 
-* Fix flutter#166533 - prevent startImageStream OOM error when main thread paused.
+* Fixes flutter#166533 - prevent startImageStream OOM error when main thread paused.
 
 ## 0.10.10+3
 
@@ -301,7 +301,7 @@
 
 ## 0.10.2
 
-* Remove usage of deprecated quiver Optional type.
+* Removes usage of deprecated quiver Optional type.
 
 ## 0.10.1
 

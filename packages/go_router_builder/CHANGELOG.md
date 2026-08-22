@@ -32,14 +32,14 @@
 
 ## 4.1.1
 
-- Allow `analyzer: '>=7.4.0 <9.0.0'`.
-- Allow `build: '>=3.0.0 <5.0.0'`.
-- Allow `source_gen: '>=3.1.0 <5.0.0'`.
+- Allows `analyzer: '>=7.4.0 <9.0.0'`.
+- Allows `build: '>=3.0.0 <5.0.0'`.
+- Allows `source_gen: '>=3.1.0 <5.0.0'`.
 
 ## 4.1.0
 
-- Adds support for classes that support fromJson/toJson. [#117261](https://github.com/flutter/flutter/issues/117261)
-- Adds annotation that enable custom string encoder/decoder [#110781](https://github.com/flutter/flutter/issues/110781)
+- Adds support for classes that support fromJson/toJson. [#117261](https://github.com/flutter/flutter/issues/117261).
+- Adds annotation that enable custom string encoder/decoder [#110781](https://github.com/flutter/flutter/issues/110781).
 
 ## 4.0.1
 
@@ -47,7 +47,7 @@
 
 ## 4.0.0
 
-- Make Route mixins public.
+- Makes Route mixins public.
 
 ## 3.3.1
 
@@ -83,7 +83,7 @@
 
 ## 2.9.1
 
-- Fixes an deprecated warning for using withNullability
+- Fixes an deprecated warning for using withNullability.
 
 ## 2.9.0
 
@@ -91,11 +91,11 @@
 
 ## 2.8.2
 
-- Fixes an issue when enum params are not required
+- Fixes an issue when enum params are not required.
 
 ## 2.8.1
 
-- Fixes an issue when navigate to router with invalid params
+- Fixes an issue when navigate to router with invalid params.
 
 ## 2.8.0
 
@@ -161,11 +161,11 @@
 
 ## 2.3.4
 
-* Fixes a bug of typeArguments losing NullabilitySuffix
+* Fixes a bug of typeArguments losing NullabilitySuffix.
 
 ## 2.3.3
 
-* Adds `initialLocation` for `StatefulShellBranchConfig`
+* Adds `initialLocation` for `StatefulShellBranchConfig`.
 
 ## 2.3.2
 
@@ -178,7 +178,7 @@
 
 ## 2.3.0
 
-* Adds Support for StatefulShellRoute
+* Adds Support for StatefulShellRoute.
 
 ## 2.2.5
 
@@ -186,7 +186,7 @@
 
 ## 2.2.4
 
-* Bumps example go_router version to v10.0.0 and migrate example code.
+* Bumps example go_router version to v10.0.0 and migrates example code.
 
 ## 2.2.3
 
@@ -194,7 +194,7 @@
 
 ## 2.2.2
 
-* Bumps example go_router version and migrate example code.
+* Bumps example go_router version and migrates example code.
 
 ## 2.2.1
 
@@ -227,15 +227,15 @@
 
 ## 1.2.2
 
-* Supports returning value in generated `push` method. [go_router CHANGELOG](https://github.com/flutter/packages/blob/main/packages/go_router/CHANGELOG.md#650)
+* Supports returning value in generated `push` method. [go_router CHANGELOG](https://github.com/flutter/packages/blob/main/packages/go_router/CHANGELOG.md#650).
 
 ## 1.2.1
 
-* Supports opt-in required extra parameters. [#117261](https://github.com/flutter/flutter/issues/117261)
+* Supports opt-in required extra parameters. [#117261](https://github.com/flutter/flutter/issues/117261).
 
 ## 1.2.0
 
-* Adds Support for ShellRoute
+* Adds Support for ShellRoute.
 
 ## 1.1.7
 
@@ -264,7 +264,7 @@
 
 ## 1.1.1
 
-* Support for the generation of the pushReplacement method has been added.
+* Adds support for the generation of the pushReplacement method.
 
 ## 1.1.0
 
@@ -272,7 +272,7 @@
 
 ## 1.0.16
 
-* Update the documentation to go_router v6.0.0.
+* Updates the documentation to go_router v6.0.0.
 * Bumps go_router version in example folder to v6.0.0.
 
 ## 1.0.15
@@ -294,7 +294,7 @@
 
 ## 1.0.11
 
-* Replace mentions of the deprecated `GoRouteData.buildPage` with `GoRouteData.buildPageWithState`.
+* Replaces mentions of the deprecated `GoRouteData.buildPage` with `GoRouteData.buildPageWithState`.
 
 ## 1.0.10
 
@@ -319,15 +319,15 @@
 
 ## 1.0.5
 
-* Update example to avoid using `push()` to push the same page since is not supported. [#105150](https://github.com/flutter/flutter/issues/105150)
+* Updates example to avoid using `push()` to push the same page since is not supported. [#105150](https://github.com/flutter/flutter/issues/105150).
 
 ## 1.0.4
 
-* Adds `push` method to generated GoRouteData's extension. [#103025](https://github.com/flutter/flutter/issues/103025)
+* Adds `push` method to generated GoRouteData's extension. [#103025](https://github.com/flutter/flutter/issues/103025).
 
 ## 1.0.3
 
-* Fixes incorrect separator at location path on Windows. [#102710](https://github.com/flutter/flutter/issues/102710)
+* Fixes incorrect separator at location path on Windows. [#102710](https://github.com/flutter/flutter/issues/102710).
 
 ## 1.0.2
 

@@ -58,7 +58,7 @@
 ## 2.9.2
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
-* Throws a more descriptive `StateError` in the case where 
+* Throws a more descriptive `StateError` in the case where
   `VideoPlayerController.initialize` receives more than one `initialized` event.
 
 ## 2.9.1
@@ -150,7 +150,7 @@ receives an`Uri` instead of a `String` url.
 
 ## 2.5.0
 
-* Exposes `VideoScrubber` so it can be used to make custom video progress indicators
+* Exposes `VideoScrubber` so it can be used to make custom video progress indicators.
 
 ## 2.4.10
 
@@ -215,7 +215,7 @@ receives an`Uri` instead of a `String` url.
 ## 2.2.18
 
 * Moves Android and iOS implementations to federated packages.
-* Update audio URL in iOS tests.
+* Updates audio URL in iOS tests.
 
 ## 2.2.17
 
@@ -271,23 +271,23 @@ receives an`Uri` instead of a `String` url.
 
 ## 2.2.6
 
-* Initialize player when size and duration become available on iOS
+* Initialize player when size and duration become available on iOS.
 
 ## 2.2.5
 
-* Support to closed caption WebVTT format added.
+* Supports to closed caption WebVTT format added.
 
 ## 2.2.4
 
-* Update minimum Flutter SDK to 2.5 and iOS deployment target to 9.0.
+* Updates minimum Flutter SDK to 2.5 and iOS deployment target to 9.0.
 
 ## 2.2.3
 
-* Fixed empty caption text still showing the caption widget.
+* Fixes empty caption text still showing the caption widget.
 
 ## 2.2.2
 
-* Fix a disposed `VideoPlayerController` throwing an exception when being replaced in the `VideoPlayer`.
+* Fixes a disposed `VideoPlayerController` throwing an exception when being replaced in the `VideoPlayer`.
 
 ## 2.2.1
 
@@ -295,98 +295,98 @@ receives an`Uri` instead of a `String` url.
 
 ## 2.2.0
 
-* Add `contentUri` based VideoPlayerController.
+* Adds `contentUri` based VideoPlayerController.
 
 ## 2.1.15
 
-* Ensured seekTo isn't called before video player is initialized. Fixes [#89259](https://github.com/flutter/flutter/issues/89259).
-* Updated Android lint settings.
+* Ensures seekTo isn't called before video player is initialized. Fixes [#89259](https://github.com/flutter/flutter/issues/89259).
+* Updates Android lint settings.
 
 ## 2.1.14
 
-* Removed dependency on the `flutter_test` package.
+* Removes dependency on the `flutter_test` package.
 
 ## 2.1.13
 
-* Removed obsolete warning about not working in iOS simulators from README.
+* Removes obsolete warning about not working in iOS simulators from README.
 
 ## 2.1.12
 
-* Update the video url in the readme code sample
+* Updates the video url in the readme code sample.
 
 ## 2.1.11
 
-* Remove references to the Android V1 embedding.
+* Removes references to the Android V1 embedding.
 
 ## 2.1.10
 
-* Ensure video pauses correctly when it finishes.
+* Ensures video pauses correctly when it finishes.
 
 ## 2.1.9
 
-* Silenced warnings that may occur during build when using a very
+* Silences warnings that may occur during build when using a very
   recent version of Flutter relating to null safety.
 
 ## 2.1.8
 
-* Refactor `FLTCMTimeToMillis` to support indefinite streams. Fixes [#48670](https://github.com/flutter/flutter/issues/48670).
+* Refactors `FLTCMTimeToMillis` to support indefinite streams. Fixes [#48670](https://github.com/flutter/flutter/issues/48670).
 
 ## 2.1.7
 
-* Update exoplayer to 2.14.1, removing dependency on Bintray.
+* Updates exoplayer to 2.14.1, removing dependency on Bintray.
 
 ## 2.1.6
 
-* Remove obsolete pre-1.0 warning from README.
-* Add iOS unit and UI integration test targets.
+* Removes obsolete pre-1.0 warning from README.
+* Adds iOS unit and UI integration test targets.
 
 ## 2.1.5
 
-* Update example code in README to fix broken url.
+* Updates example code in README to fix broken url.
 
 ## 2.1.4
 
-* Add an exoplayer URL to the maven repositories to address
+* Adds an exoplayer URL to the maven repositories to address
   a possible build regression in 2.1.2.
 
 ## 2.1.3
 
-* Fix pointer value to boolean conversion analyzer warnings.
+* Fixes pointer value to boolean conversion analyzer warnings.
 
 ## 2.1.2
 
-* Migrate maven repository from jcenter to mavenCentral.
+* Migrates maven repository from jcenter to mavenCentral.
 
 ## 2.1.1
 
-* Update example code in README to reflect API changes.
+* Updates example code in README to reflect API changes.
 
 ## 2.1.0
 
-* Add `httpHeaders` option to `VideoPlayerController.network`
+* Adds `httpHeaders` option to `VideoPlayerController.network`.
 
 ## 2.0.2
 
-* Fix `VideoPlayerValue` size and aspect ratio documentation
+* Fixes `VideoPlayerValue` size and aspect ratio documentation.
 
 ## 2.0.1
 
-* Remove the deprecated API "exoPlayer.setAudioAttributes".
+* Removes the deprecated API "exoPlayer.setAudioAttributes".
 
 ## 2.0.0
 
-* Migrate to null safety.
-* Fix an issue where `isBuffering` was not updating on Android.
-* Fix outdated links across a number of markdown files ([#3276](https://github.com/flutter/plugins/pull/3276))
-* Fix `VideoPlayerValue toString()` test.
-* Update the example app: remove the deprecated `RaisedButton` and `FlatButton` widgets.
-* Migrate from deprecated `defaultBinaryMessenger`.
-* Fix an issue where a crash can occur after a closing a video player view on iOS.
-* Setting the `mixWithOthers` `VideoPlayerOptions` in web now is silently ignored instead of throwing an exception.
+* Migrates to null safety.
+* Fixes an issue where `isBuffering` was not updating on Android.
+* Fixes outdated links across a number of markdown files ([#3276](https://github.com/flutter/plugins/pull/3276)).
+* Fixes `VideoPlayerValue toString()` test.
+* Updates the example app: remove the deprecated `RaisedButton` and `FlatButton` widgets.
+* Migrates from deprecated `defaultBinaryMessenger`.
+* Fixes an issue where a crash can occur after a closing a video player view on iOS.
+* Sets the `mixWithOthers` `VideoPlayerOptions` in web now is silently ignored instead of throwing an exception.
 
 ## 1.0.2
 
-* Update Flutter SDK constraint.
+* Updates Flutter SDK constraint.
 
 ## 1.0.1
 
@@ -398,36 +398,36 @@ receives an`Uri` instead of a `String` url.
 
 ## 0.11.1+5
 
-* Update Dart SDK constraint in example.
-* Remove `test` dependency.
+* Updates Dart SDK constraint in example.
+* Removes `test` dependency.
 * Convert disabled driver test to integration_test.
 
 ## 0.11.1+4
 
-* Add `toString()` to `Caption`.
-* Fix a bug on Android when loading videos from assets would crash.
+* Adds `toString()` to `Caption`.
+* Fixes a bug on Android when loading videos from assets would crash.
 
 ## 0.11.1+3
 
-* Android: Upgrade ExoPlayer to 2.12.1.
+* Android: Upgrades ExoPlayer to 2.12.1.
 
 ## 0.11.1+2
 
-* Update android compileSdkVersion to 29.
+* Updates android compileSdkVersion to 29.
 
 ## 0.11.1+1
 
-* Fixed uncanceled timers when calling `play` on the controller multiple times before `pause`, which
+* Fixes uncanceled timers when calling `play` on the controller multiple times before `pause`, which
   caused value listeners to be called indefinitely (after `pause`) and more often than needed.
 
 ## 0.11.1
 
-* Enable TLSv1.1 & TLSv1.2 for API 19 and below.
+* Enables TLSv1.1 & TLSv1.2 for API 19 and below.
 
 ## 0.11.0
 
-* Added option to set the video playback speed on the video controller.
-* **Minor breaking change**: fixed `VideoPlayerValue.toString` to insert a comma after `isBuffering`.
+* Adds option to set the video playback speed on the video controller.
+* **BREAKING CHANGE**: fixed `VideoPlayerValue.toString` to insert a comma after `isBuffering`.
 
 ## 0.10.12+5
 
@@ -436,7 +436,7 @@ receives an`Uri` instead of a `String` url.
 
 ## 0.10.12+4
 
-* Keep handling deprecated Android v1 classes for backward compatibility.
+* Keeps handling deprecated Android v1 classes for backward compatibility.
 
 ## 0.10.12+3
 
@@ -444,7 +444,7 @@ receives an`Uri` instead of a `String` url.
 
 ## 0.10.12+2
 
-* Fix `setMixWithOthers` test.
+* Fixes `setMixWithOthers` test.
 
 ## 0.10.12+1
 
@@ -452,11 +452,11 @@ receives an`Uri` instead of a `String` url.
 
 ## 0.10.12
 
-* Introduce VideoPlayerOptions to set the audio mix mode.
+* Introduces VideoPlayerOptions to set the audio mix mode.
 
 ## 0.10.11+2
 
-* Fix aspectRatio calculation when size.width or size.height are zero.
+* Fixes aspectRatio calculation when size.width or size.height are zero.
 
 ## 0.10.11+1
 
@@ -464,38 +464,38 @@ receives an`Uri` instead of a `String` url.
 
 ## 0.10.11
 
-* iOS: Fixed crash when detaching from a dying engine.
-* Android: Fixed exception when detaching from any engine.
+* iOS: Fixes crash when detaching from a dying engine.
+* Android: Fixes exception when detaching from any engine.
 
 ## 0.10.10
 
-* Migrated to [pigeon](https://pub.dev/packages/pigeon).
+* Migrates to [pigeon](https://pub.dev/packages/pigeon).
 
 ## 0.10.9+2
 
-* Declare API stability and compatibility with `1.0.0` (more details at: https://github.com/flutter/flutter/wiki/Package-migration-to-1.0.0).
+* Declares API stability and compatibility with `1.0.0` (more details at: https://github.com/flutter/flutter/wiki/Package-migration-to-1.0.0).
 
 ## 0.10.9+1
 
-* Readme updated to include web support and details on how to use for web
+* Readme updated to include web support and details on how to use for web.
 
 ## 0.10.9
 
-* Remove Android dependencies fallback.
-* Require Flutter SDK 1.12.13+hotfix.5 or greater.
-* Fix CocoaPods podspec lint warnings.
+* Removes Android dependencies fallback.
+* Requires Flutter SDK 1.12.13+hotfix.5 or greater.
+* Fixes CocoaPods podspec lint warnings.
 
 ## 0.10.8+2
 
-* Replace deprecated `getFlutterEngine` call on Android.
+* Replaces deprecated `getFlutterEngine` call on Android.
 
 ## 0.10.8+1
 
-* Make the pedantic dev_dependency explicit.
+* Makes the pedantic dev_dependency explicit.
 
 ## 0.10.8
 
-* Added support for cleaning up the plugin if used for add-to-app (Flutter
+* Adds support for cleaning up the plugin if used for add-to-app (Flutter
   v1.15.3 is required for that feature).
 
 
@@ -511,11 +511,11 @@ receives an`Uri` instead of a `String` url.
 
 ## 0.10.5+3
 
-* Add integration instructions for the `web` platform.
+* Adds integration instructions for the `web` platform.
 
 ## 0.10.5+2
 
-* Make sure the plugin is correctly initialized
+* Makes sure the plugin is correctly initialized.
 
 ## 0.10.5+1
 
@@ -524,18 +524,18 @@ receives an`Uri` instead of a `String` url.
 
 ## 0.10.5
 
-* Support `web` by default.
-* Require Flutter SDK 1.12.13+hotfix.4 or greater.
+* Supports `web` by default.
+* Requires Flutter SDK 1.12.13+hotfix.4 or greater.
 
 ## 0.10.4+2
 
-* Remove the deprecated `author:` field form pubspec.yaml
-* Migrate the plugin to the pubspec platforms manifest.
-* Require Flutter SDK 1.10.0 or greater.
+* Removes the deprecated `author:` field form pubspec.yaml.
+* Migrates the plugin to the pubspec platforms manifest.
+* Requires Flutter SDK 1.10.0 or greater.
 
 ## 0.10.4+1
 
-* Fix pedantic lints. This fixes some potential race conditions in cases where
+* Fixes pedantic lints. This fixes some potential race conditions in cases where
   futures within some video_player methods weren't being awaited correctly.
 
 ## 0.10.4
@@ -544,30 +544,30 @@ receives an`Uri` instead of a `String` url.
 
 ## 0.10.3+3
 
-* Add DartDocs and unit tests.
+* Adds DartDocs and unit tests.
 
 ## 0.10.3+2
 
-* Update the homepage to point to the new plugin location
+* Updates the homepage to point to the new plugin location.
 
 ## 0.10.3+1
 
 * Dispose `FLTVideoPlayer` in `onTextureUnregistered` callback on iOS.
-* Add a temporary fix to dispose the `FLTVideoPlayer` with a delay to avoid race condition.
-* Updated the example app to include a new page that pop back after video is done playing.
+* Adds a temporary fix to dispose the `FLTVideoPlayer` with a delay to avoid race condition.
+* Updates the example app to include a new page that pop back after video is done playing.
 
 ## 0.10.3
 
-* Add support for the v2 Android embedding. This shouldn't impact existing
+* Adds support for the v2 Android embedding. This shouldn't impact existing
   functionality.
 
 ## 0.10.2+6
 
-* Remove AndroidX warnings.
+* Removes AndroidX warnings.
 
 ## 0.10.2+5
 
-* Update unit test for compatibility with Flutter stable branch.
+* Updates unit test for compatibility with Flutter stable branch.
 
 ## 0.10.2+4
 
@@ -575,15 +575,15 @@ receives an`Uri` instead of a `String` url.
 
 ## 0.10.2+3
 
-* Fix bug where formatHint was not being pass down to network sources.
+* Fixes bug where formatHint was not being pass down to network sources.
 
 ## 0.10.2+2
 
-* Update and migrate iOS example project.
+* Updates and migrates iOS example project.
 
 ## 0.10.2+1
 
-* Use DefaultHttpDataSourceFactory only when network schemas and use
+* Uses DefaultHttpDataSourceFactory only when network schemas and use
 DefaultHttpDataSourceFactory by default.
 
 ## 0.10.2
@@ -592,33 +592,33 @@ DefaultHttpDataSourceFactory by default.
 
 ## 0.10.1+7
 
-* Fix tests by ignoring deprecated member use.
+* Fixes tests by ignoring deprecated member use.
 
 ## 0.10.1+6
 
-* [iOS] Fixed a memory leak with notification observing.
+* [iOS] Fixes a memory leak with notification observing.
 
 ## 0.10.1+5
 
-* Fix race condition while disposing the VideoController.
+* Fixes race condition while disposing the VideoController.
 
 ## 0.10.1+4
 
-* Fixed syntax error in README.md.
+* Fixes syntax error in README.md.
 
 ## 0.10.1+3
 
-* Add missing template type parameter to `invokeMethod` calls.
-* Bump minimum Flutter version to 1.5.0.
-* Replace invokeMethod with invokeMapMethod wherever necessary.
+* Adds missing template type parameter to `invokeMethod` calls.
+* Bumps minimum Flutter version to 1.5.0.
+* Replaces invokeMethod with invokeMapMethod wherever necessary.
 
 ## 0.10.1+2
 
-* Example: Fixed tab display and added scroll view
+* Example: Fixes tab display and added scroll view.
 
 ## 0.10.1+1
 
-* iOS: Avoid deprecated `seekToTime` API
+* iOS: Avoid deprecated `seekToTime` API.
 
 ## 0.10.1
 
@@ -627,13 +627,13 @@ DefaultHttpDataSourceFactory by default.
 ## 0.10.0+8
 
 * iOS: Fix an issue where the player sends initialization message incorrectly.
-* Fix a few other IDE warnings.
+* Fixes a few other IDE warnings.
 
 
 ## 0.10.0+7
 
-* Android: Fix issue where buffering status in percentage instead of milliseconds
-* Android: Update buffering status everytime we notify for position change
+* Android: Fix issue where buffering status in percentage instead of milliseconds.
+* Android: Update buffering status everytime we notify for position change.
 
 ## 0.10.0+6
 
@@ -641,28 +641,28 @@ DefaultHttpDataSourceFactory by default.
 
 ## 0.10.0+5
 
-* Fixed iOS build warnings about implicit retains.
+* Fixes iOS build warnings about implicit retains.
 
 ## 0.10.0+4
 
-* Android: Upgrade ExoPlayer to 2.9.6.
+* Android: Upgrades ExoPlayer to 2.9.6.
 
 ## 0.10.0+3
 
-* Fix divide by zero bug on iOS.
+* Fixes divide by zero bug on iOS.
 
 ## 0.10.0+2
 
-* Added supported format documentation in README.
+* Adds supported format documentation in README.
 
 ## 0.10.0+1
 
-* Log a more detailed warning at build time about the previous AndroidX
+* Logs a more detailed warning at build time about the previous AndroidX
   migration.
 
 ## 0.10.0
 
-* **Breaking change**. Migrate from the deprecated original Android Support
+* **BREAKING CHANGE:** Migrate from the deprecated original Android Support
   Library to AndroidX. This shouldn't result in any functional changes, but it
   requires any Android apps using this plugin to [also
   migrate](https://developer.android.com/jetpack/androidx/migrate) if they're
@@ -670,31 +670,31 @@ DefaultHttpDataSourceFactory by default.
 
 ## 0.9.0
 
-* Fixed the aspect ratio and orientation of videos. Videos are now properly displayed when recorded
+* Fixes the aspect ratio and orientation of videos. Videos are now properly displayed when recorded
  in portrait mode both in iOS and Android.
 
 ## 0.8.0
 
-* Android: Upgrade ExoPlayer to 2.9.1
-* Android: Use current gradle dependencies
-* Android 9 compatibility fixes for Demo App
+* Android: Upgrades ExoPlayer to 2.9.1.
+* Android: Uses current gradle dependencies.
+* Android 9 compatibility fixes for Demo App.
 
 ## 0.7.2
 
-* Updated to use factories on exoplayer `MediaSource`s for Android instead of the now-deprecated constructors.
+* Updates to use factories on exoplayer `MediaSource`s for Android instead of the now-deprecated constructors.
 
 ## 0.7.1
 
-* Fixed null exception on Android when the video has a width or height of 0.
+* Fixes null exception on Android when the video has a width or height of 0.
 
 ## 0.7.0
 
-* Add a unit test for controller and texture changes. This is a breaking change since the interface
+* Adds a unit test for controller and texture changes. This is a breaking change since the interface
   had to be cleaned up to facilitate faking.
 
 ## 0.6.6
 
-* Fix the condition where the player doesn't update when attached controller is changed.
+* Fixes the condition where the player doesn't update when attached controller is changed.
 
 ## 0.6.5
 
@@ -724,99 +724,99 @@ DefaultHttpDataSourceFactory by default.
 ## 0.5.5
 
 * **Breaking change** `VideoPlayerController.initialize()` now only completes after the controller is initialized.
-* Updated example in README.md.
+* Updates example in README.md.
 
 ## 0.5.4
 
-* Updated Gradle tooling to match Android Studio 3.1.2.
+* Updates Gradle tooling to match Android Studio 3.1.2.
 
 ## 0.5.3
 
-* Added video buffering status.
+* Adds video buffering status.
 
 ## 0.5.2
 
-* Fixed a bug on iOS that could lead to missing initialization.
-* Added support for HLS video on iOS.
+* Fixes a bug on iOS that could lead to missing initialization.
+* Adds support for HLS video on iOS.
 
 ## 0.5.1
 
-* Fixed bug on video loop feature for iOS.
+* Fixes bug on video loop feature for iOS.
 
 ## 0.5.0
 
-* Added the constructor `VideoPlayerController.file`.
-* **Breaking change**. Changed `VideoPlayerController.isNetwork` to
+* Adds the constructor `VideoPlayerController.file`.
+* **BREAKING CHANGE:** Changes `VideoPlayerController.isNetwork` to
   an enum `VideoPlayerController.dataSourceType`.
 
 ## 0.4.1
 
-* Updated Flutter SDK constraint to reflect the changes in v0.4.0.
+* Updates Flutter SDK constraint to reflect the changes in v0.4.0.
 
 ## 0.4.0
 
-* **Breaking change**. Removed the `VideoPlayerController` constructor
-* Added two new factory constructors `VideoPlayerController.asset` and
+* **BREAKING CHANGE:** Removes the `VideoPlayerController` constructor.
+* Adds two new factory constructors `VideoPlayerController.asset` and
   `VideoPlayerController.network` to respectively play a video from the
   Flutter assets and from a network uri.
 
 ## 0.3.0
 
-* **Breaking change**. Set SDK constraints to match the Flutter beta release.
+* **BREAKING CHANGE:** Set SDK constraints to match the Flutter beta release.
 
 ## 0.2.1
 
-* Fixed some signatures to account for strong mode runtime errors.
-* Fixed spelling mistake in toString output.
+* Fixes some signatures to account for strong mode runtime errors.
+* Fixes spelling mistake in toString output.
 
 ## 0.2.0
 
-* **Breaking change**. Renamed `VideoPlayerController.isErroneous` to `VideoPlayerController.hasError`.
-* Updated documentation of when fields are available on `VideoPlayerController`.
-* Updated links in README.md.
+* **BREAKING CHANGE:** Renamed `VideoPlayerController.isErroneous` to `VideoPlayerController.hasError`.
+* Updates documentation of when fields are available on `VideoPlayerController`.
+* Updates links in README.md.
 
 ## 0.1.1
 
-* Simplified and upgraded Android project template to Android SDK 27.
-* Moved Android package to io.flutter.plugins.
-* Fixed warnings from the Dart 2.0 analyzer.
+* Simplifies and upgrades Android project template to Android SDK 27.
+* Moves Android package to io.flutter.plugins.
+* Fixes warnings from the Dart 2.0 analyzer.
 
 ## 0.1.0
 
-* **Breaking change**. Upgraded to Gradle 4.1 and Android Studio Gradle plugin
+* **BREAKING CHANGE:** Upgrades to Gradle 4.1 and Android Studio Gradle plugin
   3.0.1. Older Flutter projects need to upgrade their Gradle setup as well in
   order to use this version of the plugin. Instructions can be found
   [here](https://github.com/flutter/flutter/wiki/Updating-Flutter-projects-to-Gradle-4.1-and-Android-Studio-Gradle-plugin-3.0.1).
 
 ## 0.0.7
 
-* Added access to the video size.
-* Made the VideoProgressIndicator render using a LinearProgressIndicator.
+* Adds access to the video size.
+* Makes the VideoProgressIndicator render using a LinearProgressIndicator.
 
 ## 0.0.6
 
-* Fixed a bug related to hot restart on Android.
+* Fixes a bug related to hot restart on Android.
 
 ## 0.0.5
 
-* Added VideoPlayerValue.toString().
-* Added FLT prefix to iOS types.
+* Adds VideoPlayerValue.toString().
+* Adds FLT prefix to iOS types.
 
 ## 0.0.4
 
 * The player will now pause on app pause, and resume on app resume.
-* Implemented scrubbing on the progress bar.
+* Implements scrubbing on the progress bar.
 
 ## 0.0.3
 
-* Made creating a VideoPlayerController a synchronous operation. Must be followed by a call to initialize().
-* Added VideoPlayerController.setVolume().
-* Moved the package to flutter/plugins github repo.
+* Makes creating a VideoPlayerController a synchronous operation. Must be followed by a call to initialize().
+* Adds VideoPlayerController.setVolume().
+* Moves the package to flutter/plugins github repo.
 
 ## 0.0.2
 
-* Fix meta dependency version.
+* Fixes meta dependency version.
 
 ## 0.0.1
 
-* Initial release
+* Initial release.

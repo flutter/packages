@@ -24,9 +24,9 @@
 
 ## 7.2.11
 
-* Bumps AndroidX Credentials to v1.6.0
-* Bumps Play Services Auth to v21.5.1
-* Bumps Android Identity GoogleID to v1.2.0
+* Bumps AndroidX Credentials to v1.6.0.
+* Bumps Play Services Auth to v21.5.1.
+* Bumps Android Identity GoogleID to v1.2.0.
 
 ## 7.2.10
 
@@ -58,7 +58,7 @@
 
 ## 7.2.3
 
-* Removed mockito-inline and updated to mockito-core 5.17.0.
+* Removes mockito-inline and updates to mockito-core 5.17.0.
 
 ## 7.2.2
 
@@ -249,7 +249,7 @@
 
 ## 6.1.6
 
-* Minor implementation cleanup
+* Minor implementation cleanup.
 * Updates minimum Flutter version to 3.0.
 
 ## 6.1.5
@@ -266,7 +266,7 @@
 
 ## 6.1.2
 
-* Fixes passing `serverClientId` via the channelled `init` call
+* Fixes passing `serverClientId` via the channelled `init` call.
 
 ## 6.1.1
 

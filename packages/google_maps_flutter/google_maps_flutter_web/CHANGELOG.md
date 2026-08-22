@@ -26,8 +26,8 @@
 ## 0.6.0
 
 * **BREAKING CHANGES**: Adds type constraints to generic type parameters:
-  * `ClusterManagersController<T>` now requires `T extends Object`
-  * `MarkersController<T, O>` now requires `T extends Object`
+  * `ClusterManagersController<T>` now requires `T extends Object`.
+  * `MarkersController<T, O>` now requires `T extends Object`.
 * Adds support for Google Maps JavaScript API Advanced Markers (`AdvancedMarker`), including new `AdvancedMarkerController` and `AdvancedMarkersController` classes, support for `PinConfig` with customizable background, border, and glyph, and custom marker content via `BitmapDescriptor` (including `AssetMapBitmap`, `BytesMapBitmap`, and `PinConfig`). Advanced markers require the `marker` library - add `&libraries=marker` to your Google Maps API script URL in `web/index.html`.
 * Adds `isAdvancedMarkersAvailable()` method to check if advanced markers are supported.
 * Refactors marker architecture to support both legacy `Marker` and new `AdvancedMarker` types through unified controller interfaces.
@@ -56,7 +56,7 @@
 
 ## 0.5.12+2
 
-* Fix broken cameraTargetBounds option on web.
+* Fixes broken cameraTargetBounds option on web.
 
 ## 0.5.12+1
 
@@ -232,22 +232,22 @@
 
 ## 0.3.2
 
-* Add `onDragStart` and `onDrag` to `Marker`
+* Adds `onDragStart` and `onDrag` to `Marker`.
 
 ## 0.3.1
 
-* Fix the `getScreenCoordinate(LatLng)` method. [#80710](https://github.com/flutter/flutter/issues/80710)
+* Fixes the `getScreenCoordinate(LatLng)` method. [#80710](https://github.com/flutter/flutter/issues/80710).
 * Wait until the map tiles have loaded before calling `onPlatformViewCreated`, so
-the returned controller is 100% functional (has bounds, a projection, etc...)
-* Use zIndex property when initializing Circle objects. [#89374](https://github.com/flutter/flutter/issues/89374)
+the returned controller is 100% functional (has bounds, a projection, etc...).
+* Uses zIndex property when initializing Circle objects. [#89374](https://github.com/flutter/flutter/issues/89374).
 
 ## 0.3.0+4
 
-* Add `implements` to pubspec.
+* Adds `implements` to pubspec.
 
 ## 0.3.0+3
 
-* Update the `README.md` usage instructions to not be tied to explicit package versions.
+* Updates the `README.md` usage instructions to not be tied to explicit package versions.
 
 ## 0.3.0+2
 
@@ -255,32 +255,32 @@ the returned controller is 100% functional (has bounds, a projection, etc...)
 
 ## 0.3.0+1
 
-* Change sizing code of `GoogleMap` widget's `HtmlElementView` so it works well when slotted.
+* Changes sizing code of `GoogleMap` widget's `HtmlElementView` so it works well when slotted.
 
 ## 0.3.0
 
-* Migrate package to null-safety.
-* **Breaking changes:**
-  * The property `icon` of a `Marker` cannot be `null`. Defaults to `BitmapDescriptor.defaultMarker`
+* Migrates package to null-safety.
+* **BREAKING CHANGES:**
+  * The property `icon` of a `Marker` cannot be `null`. Defaults to `BitmapDescriptor.defaultMarker`.
   * The property `initialCameraPosition` of a `GoogleMapController` can't be `null`. It is also marked as `required`.
-  * The parameter `creationId` of the `buildView` method cannot be `null` (this should be handled internally for users of the plugin)
+  * The parameter `creationId` of the `buildView` method cannot be `null` (this should be handled internally for users of the plugin).
   * Most of the Controller methods can't be called after `remove`/`dispose`. Calling these methods now will throw an Assertion error. Before it'd be a no-op, or a null-pointer exception.
 
 ## 0.2.1
 
-* Move integration tests to `example`.
-* Tweak pubspec dependencies for main package.
+* Moves integration tests to `example`.
+* Tweaks pubspec dependencies for main package.
 
 ## 0.2.0
 
-* Make this plugin compatible with the rest of null-safe plugins.
+* Makes this plugin compatible with the rest of null-safe plugins.
 * Noop tile overlays methods, so they don't crash on web.
 
 **NOTE**: This plugin is **not** null-safe yet!
 
 ## 0.1.2
 
-* Update min Flutter SDK to 1.20.0.
+* Updates min Flutter SDK to 1.20.0.
 
 ## 0.1.1
 
@@ -288,45 +288,45 @@ the returned controller is 100% functional (has bounds, a projection, etc...)
 
 ## 0.1.0+10
 
-* Update `package:google_maps_flutter_platform_interface` to `^1.1.0`.
-* Add support for Polygon Holes.
+* Updates `package:google_maps_flutter_platform_interface` to `^1.1.0`.
+* Adds support for Polygon Holes.
 
 ## 0.1.0+9
 
-* Update Flutter SDK constraint.
+* Updates Flutter SDK constraint.
 
 ## 0.1.0+8
 
-* Update `package:google_maps_flutter_platform_interface` to `^1.0.5`.
-* Add support for `fromBitmap` BitmapDescriptors. [Issue](https://github.com/flutter/flutter/issues/66622).
+* Updates `package:google_maps_flutter_platform_interface` to `^1.0.5`.
+* Adds support for `fromBitmap` BitmapDescriptors. [Issue](https://github.com/flutter/flutter/issues/66622).
 
 ## 0.1.0+7
 
-* Substitute `undefined_prefixed_name: ignore` analyzer setting by a `dart:ui` shim with conditional exports. [Issue](https://github.com/flutter/flutter/issues/69309).
+* Substitutes `undefined_prefixed_name: ignore` analyzer setting by a `dart:ui` shim with conditional exports. [Issue](https://github.com/flutter/flutter/issues/69309).
 
 ## 0.1.0+6
 
-* Ensure a single `InfoWindow` is shown at a time. [Issue](https://github.com/flutter/flutter/issues/67380).
+* Ensures a single `InfoWindow` is shown at a time. [Issue](https://github.com/flutter/flutter/issues/67380).
 
 ## 0.1.0+5
 
-* Update `package:google_maps` to `^3.4.5`.
-* Fix `GoogleMapController.getLatLng()`. [Issue](https://github.com/flutter/flutter/issues/67606).
-* Make `InfoWindow` contents clickable so `onTap` works as advertised. [Issue](https://github.com/flutter/flutter/issues/67289).
-* Fix `InfoWindow` snippets when converting initial markers. [Issue](https://github.com/flutter/flutter/issues/67854).
+* Updates `package:google_maps` to `^3.4.5`.
+* Fixes `GoogleMapController.getLatLng()`. [Issue](https://github.com/flutter/flutter/issues/67606).
+* Makes `InfoWindow` contents clickable so `onTap` works as advertised. [Issue](https://github.com/flutter/flutter/issues/67289).
+* Fixes `InfoWindow` snippets when converting initial markers. [Issue](https://github.com/flutter/flutter/issues/67854).
 
 ## 0.1.0+4
 
-* Update `package:sanitize_html` to `^1.4.1` to prevent [a crash](https://github.com/flutter/flutter/issues/67854) when InfoWindow title/snippet have links.
+* Updates `package:sanitize_html` to `^1.4.1` to prevent [a crash](https://github.com/flutter/flutter/issues/67854) when InfoWindow title/snippet have links.
 
 ## 0.1.0+3
 
-* Fix crash when converting initial polylines and polygons. [Issue](https://github.com/flutter/flutter/issues/65152).
+* Fixes crash when converting initial polylines and polygons. [Issue](https://github.com/flutter/flutter/issues/65152).
 * Correctly convert Colors when rendering polylines, polygons and circles. [Issue](https://github.com/flutter/flutter/issues/67032).
 
 ## 0.1.0+2
 
-* Fix crash when converting Markers with icon explicitly set to null. [Issue](https://github.com/flutter/flutter/issues/64938).
+* Fixes crash when converting Markers with icon explicitly set to null. [Issue](https://github.com/flutter/flutter/issues/64938).
 
 ## 0.1.0+1
 
@@ -334,4 +334,4 @@ the returned controller is 100% functional (has bounds, a projection, etc...)
 
 ## 0.1.0
 
-* First open-source version
+* First open-source version.

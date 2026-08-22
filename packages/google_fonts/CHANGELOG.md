@@ -4,7 +4,7 @@
 
 ## 8.2.0
 
-- Extract the class `Config` to its own file and rename it `GoogleFontsConfig`. The `Config` class is now deprecated.
+- Extracts the class `Config` to its own file and renames it `GoogleFontsConfig`. The `Config` class is now deprecated.
 - Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 8.1.0
@@ -21,7 +21,7 @@
 
 ## 8.0.0
 
-- Added fonts:
+- Adds fonts:
   - `Amarna`
   - `BBH Bartle`
   - `BBH Bogle`
@@ -42,7 +42,7 @@
   - `Stack Sans Headline`
   - `Stack Sans Notch`
   - `Stack Sans Text`
-- Removed fonts:
+- Removes fonts:
   - `Chiron GoRound TC`
   - `Chiron Sung HK`
 
@@ -52,15 +52,15 @@
 
 ## 7.0.2
 
-- Adds missing public API documentation
+- Adds missing public API documentation.
 
 ## 7.0.1
 
-- Excludes variable font entries when a static entry of the same weight and style exists
+- Excludes variable font entries when a static entry of the same weight and style exists.
 
 ## 7.0.0
 
-- Added fonts:
+- Adds fonts:
   - `Afacad Flux`
   - `Agu Display`
   - `Alan Sans`
@@ -248,7 +248,7 @@
   - `Zalando Sans`
   - `Zalando Sans Expanded`
   - `Zalando Sans SemiExpanded`
-- Removed fonts:
+- Removes fonts:
   - `Asap Condensed`
   - `Big Shoulders Display`
   - `Big Shoulders Inline Display`
@@ -290,8 +290,8 @@
 
 ## 6.3.0
 
-- Update AssetManifest to use the builtin Flutter API.
-- Added fonts:
+- Updates AssetManifest to use the builtin Flutter API.
+- Adds fonts:
   - `Anton SC`
   - `Arsenal SC`
   - `Baskervville SC`
@@ -406,11 +406,11 @@
 
 ## 6.2.1
 
-- Update lowest supported Flutter version to current stable (`3.19.2`)
+- Updates lowest supported Flutter version to current stable (`3.19.2`).
 
 ## 6.2.0
 
-- Added fonts:
+- Adds fonts:
   - `AR One Sans`
   - `Afacad`
   - `Agbalumo`
@@ -452,11 +452,11 @@
 
 ## 6.1.0
 
-- Add an example where one can select any available font
+- Adds an example where one can select any available font.
 
 ## 6.0.0
 
-- Added fonts
+- Adds fonts.
   - `ADLaM Display`
   - `Agdasima`
   - `Akatab`
@@ -515,19 +515,19 @@
   - `Ysabeau SC`
   - `Yuji Hentaigana Akari`
   - `Yuji Hentaigana Akebono`
-- Removed fonts:
+- Removes fonts:
   - `Coda Caption`
   - `Source Sans Pro`
   - `Source Serif Pro`
 
 ## 5.1.0
 
-- Add ability to wait for fonts to load with `GoogleFonts.pendingFonts`
-- Split `google_fonts.dart` into multiple files
+- Adds ability to wait for fonts to load with `GoogleFonts.pendingFonts`.
+- Split `google_fonts.dart` into multiple files.
 
 ## 5.0.0
 
-- Added fonts:
+- Adds fonts:
   - `Alkatra`
   - `Anuphan`
   - `Braah One`
@@ -584,7 +584,7 @@
   - `Wix Madefor Display`
   - `Wix Madefor Text`
   - `Ysabeau`
-- Removed fonts:
+- Removes fonts:
   - `Arima Madurai`
   - `Fredoka One`
   - `Gentium Book Basic`
@@ -595,27 +595,27 @@
 
 ## 4.0.5
 
-- Bumped `http` version to 1.0.0
+- Bumped `http` version to 1.0.0.
 
 ## 4.0.4
 
-- Bumped minimum SDK version to 2.14
+- Bumped minimum SDK version to 2.14.
 
 ## 4.0.3
 
-- Added screenshots
+- Adds screenshots.
 
 ## 4.0.2
 
-- Update pubspec `repository`
+- Updates pubspec `repository`.
 
 ## 4.0.1
 
-- Hide AssetManifest from flutter services imports
+- Hide AssetManifest from flutter services imports.
 
 ## 4.0.0
 
-- Added fonts:
+- Adds fonts:
   - `Aboreto`
   - `Abyssinica SIL`
   - `Albert Sans`
@@ -683,7 +683,7 @@
   - `Tiro Kannada`
   - `Tiro Tamil`
   - `Tiro Telugu`
-- Removed fonts:
+- Removes fonts:
   - `Andika New Basic`
   - `Gentium Basic`
   - `Kdam Thmor`
@@ -696,17 +696,17 @@
 
 ## 3.0.1
 ### Changed
-- Improve asset manifest loading errors
-- Improve testing guidance
+- Improves asset manifest loading errors.
+- Improves testing guidance.
 
 ## 3.0.0
 
-- Complete null safety migration
-- Improve documentation
-- Improve support around HTTP fetching errors
-- Added cache busting for font updates
-- Added support for removing fonts
-- Added fonts:
+- Complete null safety migration.
+- Improves documentation.
+- Improves support around HTTP fetching errors.
+- Adds cache busting for font updates.
+- Adds support for removing fonts.
+- Adds fonts:
   - `Akaya Kanadaka`
   - `Akshar`
   - `Alumni Sans Inline One`
@@ -812,7 +812,7 @@
   - `Waterfall`
   - `Whisper`
   - `Zen Dots`
-- Removed fonts:
+- Removes fonts:
   - `Amatica SC`
   - `Andada`
   - `Baloo`
@@ -838,184 +838,184 @@
 
 ## 2.3.3
 
-- Updated the value of the pubspec 'repository' field
+- Updates the value of the pubspec 'repository' field.
 
 ## 2.3.2
 
-- Add warning on macOS about entitlements
+- Adds warning on macOS about entitlements.
 
 ## 2.3.1
 
-- Introduce Flutter SDK constraint minimum of 2.10
+- Introduces Flutter SDK constraint minimum of 2.10.
 
 ## 2.3.0
 
-- Update 2018 text style names to 2021 text style names (`display`, `headline`, `title`, `body`, `label` X `large`, `medium`, `small`)
+- Updates 2018 text style names to 2021 text style names (`display`, `headline`, `title`, `body`, `label` X `large`, `medium`, `small`).
 
 ## 2.2.0
 
-- Added the latest fonts from fonts.google.com
+- Adds the latest fonts from fonts.google.com.
 
 ## 2.1.1
 
-- Migrated from `pedantic` to `flutter_lints`
+- Migrates from `pedantic` to `flutter_lints`.
 
 ## 2.1.0
 
-- Added the latest fonts from fonts.google.com
+- Adds the latest fonts from fonts.google.com.
 
 ## 2.0.0
 
-- Migrated the main library to null safety
-- Require Dart 2.12 or greater
+- Migrates the main library to null safety.
+- Require Dart 2.12 or greater.
 
 ## 1.1.2
 
-- Bump dependency constraints for null safety
+- Bumps dependency constraints for null safety.
 
 ## 1.1.1
 
-- Use conditional imports to separate out web from destkop + mobile `file_io` implementations
+- Uses conditional imports to separate out web from destkop + mobile `file_io` implementations.
 
 ## 1.1.0
 
-- Increase the flutter SDK dependency to version `1.17` (latest stable). This is needed for updated text theme names and a fix in the engine
-- Update text theme names
+- Increase the flutter SDK dependency to version `1.17` (latest stable). This is needed for updated text theme names and a fix in the engine.
+- Updates text theme names.
 
 ## 1.0.0
 
-- Removed beta notice from README
-- Public API is now defined, as per [semantic versioning guidelines](https://semver.org/spec/v2.0.0-rc.1.html)
+- Removes beta notice from README.
+- Public API is now defined, as per [semantic versioning guidelines](https://semver.org/spec/v2.0.0-rc.1.html).
 
 ## 0.7.0
 
-- Added the following variable fonts: Bellota, Bellota Text, Comic Neue, Fira Code, Gotu, Hepta Slab, Inria Sans, Inter, Literata, Manrope, Markazi Text, Public Sans, Sen, Spartan, Viaoda Libre
+- Adds the following variable fonts: Bellota, Bellota Text, Comic Neue, Fira Code, Gotu, Hepta Slab, Inria Sans, Inter, Literata, Manrope, Markazi Text, Public Sans, Sen, Spartan, Viaoda Libre.
 
 ## 0.6.2
 
-- Clean up code
+- Cleans up code.
 
 ## 0.6.1
 
-- Memoize asset manifest
+- Memoize asset manifest.
 
 ## 0.6.0
 
-- Rename `config.allowHttp` to `config.allowRuntimeFetching`
+- Renames `config.allowHttp` to `config.allowRuntimeFetching`.
 
 ## 0.5.0
 
-- Use more accurate naming algorithm for `GoogleFonts.foo` and `GoogleFonts.fooTextTheme`
+- Uses more accurate naming algorithm for `GoogleFonts.foo` and `GoogleFonts.fooTextTheme`.
 
 ## 0.4.3
 
-- Add `GoogleFonts.getTextTheme(...)` method for dynamically getting a text theme from a font name
+- Adds `GoogleFonts.getTextTheme(...)` method for dynamically getting a text theme from a font name.
 
 ## 0.4.2
 
-- Change loadFontIfNecessary to only follow through once per unique family when called in parallel
+- Changes loadFontIfNecessary to only follow through once per unique family when called in parallel.
 
 ## 0.4.1
 
-- Update README to include instructions for how to include licenses for fonts
+- Updates README to include instructions for how to include licenses for fonts.
 
 ## 0.4.0
 
-- Added ability to load fonts dynamically through `getFont` method
-- Added `asMap` method which returns a map with font family names mapped to methods
+- Adds ability to load fonts dynamically through `getFont` method.
+- Adds `asMap` method which returns a map with font family names mapped to methods.
 
 ## 0.3.10
 
-- Update Fonts API url in generator to add in missing fonts
+- Updates Fonts API url in generator to add in missing fonts.
 
 ## 0.3.9
 
-- Fix `path_provider` usage for web
+- Fixes `path_provider` usage for web.
 
 ## 0.3.8
 
-- Add byte length and checksum verification for font files downloaded
+- Adds byte length and checksum verification for font files downloaded.
 
 ## 0.3.7
 
-- Fix asset font loading bug
-- Update asset font README instructions
+- Fixes asset font loading bug.
+- Updates asset font README instructions.
 
 ## 0.3.6
 
-- Add a config to the `GoogleFonts` class with an `allowHttp` option
+- Adds a config to the `GoogleFonts` class with an `allowHttp` option.
 
 ## 0.3.5
 
-- Add `CONTRIBUTING.md`
-- Update generator to get most up-to-date urls from fonts.google.com
+- Adds `CONTRIBUTING.md`.
+- Updates generator to get most up-to-date urls from fonts.google.com.
 
 ## 0.3.4
 
-- Store downloaded font files in device's support directory instead of documents directory
+- Store downloaded font files in device's support directory instead of documents directory.
 
 ## 0.3.3
 
-- Update font URLs to https to properly support web
+- Updates font URLs to https to properly support web.
 
 ## 0.3.2
 
-- README image path fixes
+- README image path fixes.
 
 ## 0.3.1
 
-- README fixes
+- README fixes.
 
 ## 0.3.0
 
-- Added dartdocs to every public method in the google fonts package
-- Added the ability to include font files in pubspec assets (see README)
+- Adds dartdocs to every public method in the google fonts package.
+- Adds the ability to include font files in pubspec assets (see README).
 
 ## 0.2.0
 
-- Updated to include all fonts currently on fonts.google.com
+- Updates to include all fonts currently on fonts.google.com.
 
 ## 0.1.1
 
-- Generated method names changed back to pre 0.1.0 (breaking change). For example, `GoogleFonts.latoTextStyle(...)` is now `GoogleFonts.lato(...)`
-- Text theme parameters are now optional positional parameters (breaking change). For example, `GoogleFonts.latoTextTheme(textTheme: TextTheme(...))` is now `GoogleFonts.latoTextTheme(TextTheme(...))`
+- **BREAKING CHANGE**: Reverts generated method names to pre 0.1.0. For example, `GoogleFonts.latoTextStyle(...)` is now `GoogleFonts.lato(...)`.
+- **BREAKING CHANGE**: Text theme parameters are now optional positional parameters. For example, `GoogleFonts.latoTextTheme(textTheme: TextTheme(...))` is now `GoogleFonts.latoTextTheme(TextTheme(...))`.
 
 ## 0.1.0
 
-- Generated method names changed (breaking change).
-- Text theme support. Every font family now *also* has a `TextTheme` method. For example, the `Lato` font now has `GoogleFonts.latoTextStyle()` and `GoogleFonts.latoTextTheme()`. See README for more examples
-- Refactored implementation, updated READMEs, and usage docs
+- **BREAKING CHANGE**: Changes generated method names.
+- Text theme support. Every font family now *also* has a `TextTheme` method. For example, the `Lato` font now has `GoogleFonts.latoTextStyle()` and `GoogleFonts.latoTextTheme()`. See README for more examples.
+- Refactors implementation, updated READMEs, and usage docs.
 
 ## 0.0.8
 
-- Internal refactor and added tests
+- Internal refactor and added tests.
 
 ## 0.0.7
 
-- BETA support for Flutter web
+- BETA support for Flutter web.
 
 ## 0.0.6
 
-- Minor updates to README
+- Minor updates to README.
 
 ## 0.0.5
 
-- Mark as experimental in more places
+- Marks as experimental in more places.
 
 ## 0.0.4
 
-- Add pubspec instructions to README
+- Adds pubspec instructions to README.
 
 ## 0.0.3
 
-- Fix homepage and main gif
+- Fixes homepage and main gif.
 
 ## 0.0.2
 
-- Update README with import instructions
+- Updates README with import instructions.
 
 ## 0.0.1
 
-- Initial release: supports all 960 fonts and variants from fonts.google.com
-- ttf files are downloaded via http on demand, and saved to local disk so that they can be loaded without making another http request for future font requests
-- Fonts are loaded asynchronously through the font loader and Text widgets that use them are refreshed when they are ready
+- Initial release: supports all 960 fonts and variants from fonts.google.com.
+- ttf files are downloaded via http on demand, and saved to local disk so that they can be loaded without making another http request for future font requests.
+- Fonts are loaded asynchronously through the font loader and Text widgets that use them are refreshed when they are ready.

@@ -47,7 +47,7 @@
 
 ## 2.2.1
 
-* Supports Flutter Web + Wasm
+* Supports Flutter Web + Wasm.
 * Updates minimum supported SDK version to Flutter 3.16.0/Dart 3.2.0.
 
 ## 2.2.0
@@ -100,7 +100,7 @@
 
 ## 2.0.12
 
-* Fixes call to `setState` after dispose on the `Link` widget.
+* Fixes call to `setState` after dispose on the `Link` widget
 [Issue](https://github.com/flutter/flutter/issues/102741).
 * Removes unused `BuildContext` from the `LinkViewController`.
 
@@ -115,7 +115,7 @@
 
 ## 2.0.9
 
-- Fixes invalid routes when opening a `Link` in a new tab
+- Fixes invalid routes when opening a `Link` in a new tab.
 
 ## 2.0.8
 
@@ -136,56 +136,56 @@
 
 ## 2.0.4
 
-- Add `implements` to pubspec.
+- Adds `implements` to pubspec.
 
 ## 2.0.3
 
-- Replaced reference to `shared_preferences` plugin with the `url_launcher` in the README.
+- Replaces reference to `shared_preferences` plugin with the `url_launcher` in the README.
 
 ## 2.0.2
 
-- Updated installation instructions in README.
+- Updates installation instructions in README.
 
 ## 2.0.1
 
-- Change sizing code of `Link` widget's `HtmlElementView` so it works well when slotted.
+- Changes sizing code of `Link` widget's `HtmlElementView` so it works well when slotted.
 
 ## 2.0.0
 
-- Migrate to null safety.
+- Migrates to null safety.
 
 ## 0.1.5+3
 
-- Fix Link misalignment [issue](https://github.com/flutter/flutter/issues/70053).
+- Fixes Link misalignment [issue](https://github.com/flutter/flutter/issues/70053).
 
 ## 0.1.5+2
 
-- Update Flutter SDK constraint.
+- Updates Flutter SDK constraint.
 
 ## 0.1.5+1
 
-- Substitute `undefined_prefixed_name: ignore` analyzer setting by a `dart:ui` shim with conditional exports. [Issue](https://github.com/flutter/flutter/issues/69309).
+- Substitutes `undefined_prefixed_name: ignore` analyzer setting by a `dart:ui` shim with conditional exports. [Issue](https://github.com/flutter/flutter/issues/69309).
 
 ## 0.1.5
 
-- Added the web implementation of the Link widget.
+- Adds the web implementation of the Link widget.
 
 ## 0.1.4+2
 
-- Move `lib/third_party` to `lib/src/third_party`.
+- Moves `lib/third_party` to `lib/src/third_party`.
 
 ## 0.1.4+1
 
-- Add a more correct attribution to `package:platform_detect` code.
+- Adds a more correct attribution to `package:platform_detect` code.
 
 ## 0.1.4
 
-- (Null safety) Remove dependency on `package:platform_detect`
-- Port unit tests to run with `flutter drive`
+- (Null safety) Removes dependency on `package:platform_detect`.
+- Port unit tests to run with `flutter drive`.
 
 ## 0.1.3+2
 
-- Fix a typo in a test name and fix some style inconsistencies.
+- Fixes a typo in a test name and fix some style inconsistencies.
 
 ## 0.1.3+1
 
@@ -193,24 +193,24 @@
 
 ## 0.1.3
 
-- Added webOnlyWindowName parameter to launch()
+- Adds webOnlyWindowName parameter to launch().
 
 ## 0.1.2+1
 
-- Update docs
+- Updates docs.
 
 ## 0.1.2
 
-- Adds "tel" and "sms" support
+- Adds "tel" and "sms" support.
 
 ## 0.1.1+6
 
 - Open "mailto" urls with target set as "\_top" on Safari browsers.
-- Update lower bound of dart dependency to 2.2.0.
+- Updates lower bound of dart dependency to 2.2.0.
 
 ## 0.1.1+5
 
-- Update lower bound of dart dependency to 2.1.0.
+- Updates lower bound of dart dependency to 2.1.0.
 
 ## 0.1.1+4
 
@@ -218,7 +218,7 @@
 
 ## 0.1.1+3
 
-- Refactor tests to not rely on the underlying browser behavior.
+- Refactors tests to not rely on the underlying browser behavior.
 
 ## 0.1.1+2
 
@@ -226,28 +226,28 @@
 
 ## 0.1.1+1
 
-- Make the pedantic dev_dependency explicit.
+- Makes the pedantic dev_dependency explicit.
 
 ## 0.1.1
 
-- Added support for mailto scheme
+- Adds support for mailto scheme.
 
 ## 0.1.0+2
 
-- Remove androidx references from the no-op android implemenation.
+- Removes androidx references from the no-op android implemenation.
 
 ## 0.1.0+1
 
-- Add an android/ folder with no-op implementation to workaround https://github.com/flutter/flutter/issues/46304.
-- Bump the minimal required Flutter version to 1.10.0.
+- Adds an android/ folder with no-op implementation to workaround https://github.com/flutter/flutter/issues/46304.
+- Bumps the minimal required Flutter version to 1.10.0.
 
 ## 0.1.0
 
-- Update docs and pubspec.
+- Updates docs and pubspec.
 
 ## 0.0.2
 
-- Switch to using `url_launcher_platform_interface`.
+- Switches to using `url_launcher_platform_interface`.
 
 ## 0.0.1
 

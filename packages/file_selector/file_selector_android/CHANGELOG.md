@@ -32,7 +32,7 @@
 
 ## 0.5.2+2
 
-* Removed mockito-inline and updated to mockito-core 5.17.0.
+* Removes mockito-inline and updates to mockito-core 5.17.0.
 
 ## 0.5.2+1
 

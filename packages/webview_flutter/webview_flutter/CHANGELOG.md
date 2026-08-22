@@ -4,7 +4,7 @@
 
 ## 4.14.0
 
-* Add method to retrieve cookies. See `WebViewCookieManager.getCookies`.
+* Adds method to retrieve cookies. See `WebViewCookieManager.getCookies`.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 4.13.1
@@ -181,7 +181,7 @@
 
 * **BREAKING CHANGE**: On Android, hybrid composition (SurfaceAndroidWebView)
   is now the default. The previous default, virtual display, can be specified
-  with `WebView.platform = AndroidWebView()`
+  with `WebView.platform = AndroidWebView()`.
 
 ## 2.8.0
 
@@ -209,64 +209,64 @@
 
 ## 2.3.1
 
-* Add iOS-specific note to set `JavascriptMode.unrestricted` in order to set `zoomEnabled: false`.
+* Adds iOS-specific note to set `JavascriptMode.unrestricted` in order to set `zoomEnabled: false`.
 
 ## 2.3.0
 
-* Add ability to enable/disable zoom functionality.
+* Adds ability to enable/disable zoom functionality.
 
 ## 2.2.0
 
-* Added `runJavascript` and `runJavascriptForResult` to supersede `evaluateJavascript`.
-* Deprecated `evaluateJavascript`.
+* Adds `runJavascript` and `runJavascriptForResult` to supersede `evaluateJavascript`.
+* Deprecates `evaluateJavascript`.
 
 ## 2.1.2
 
-* Fix typos in the README.
+* Fixes typos in the README.
 
 ## 2.1.1
 
-* Fixed `_CastError` that was thrown when running the example App.
+* Fixes `_CastError` that was thrown when running the example App.
 
 ## 2.1.0
 
-* Migrated to fully federated architecture.
+* Migrates to fully federated architecture.
 
 ## 2.0.14
 
-* Update minimum Flutter SDK to 2.5 and iOS deployment target to 9.0.
+* Updates minimum Flutter SDK to 2.5 and iOS deployment target to 9.0.
 
 ## 2.0.13
 
 * Send URL of File to download to the NavigationDelegate on Android just like it is already done on iOS.
-* Updated Android lint settings.
+* Updates Android lint settings.
 
 ## 2.0.12
 
-* Improved the documentation on using the different Android Platform View modes.
+* Improves the documentation on using the different Android Platform View modes.
 * So that Android and iOS behave the same, `onWebResourceError` is now only called for the main
   page.
 
 ## 2.0.11
 
-* Remove references to the Android V1 embedding.
+* Removes references to the Android V1 embedding.
 
 ## 2.0.10
 
-* Fix keyboard issues link in the README.
+* Fixes keyboard issues link in the README.
 
 ## 2.0.9
 
-* Add iOS UI integration test target.
+* Adds iOS UI integration test target.
 * Suppress deprecation warning for iOS APIs deprecated in iOS 9.
 
 ## 2.0.8
 
-* Migrate maven repository from jcenter to mavenCentral.
+* Migrates maven repository from jcenter to mavenCentral.
 
 ## 2.0.7
 
-* Republished 2.0.6 with Flutter 2.2 to avoid https://github.com/dart-lang/pub/issues/3001
+* Republishes 2.0.6 with Flutter 2.2 to avoid https://github.com/dart-lang/pub/issues/3001.
 
 ## 2.0.6
 
@@ -279,7 +279,7 @@ hybrid composition ([flutter/issues/59894](https://github.com/flutter/flutter/is
 
 ## 2.0.4
 
-* Fix a bug where `allowsInlineMediaPlayback` is not respected on iOS.
+* Fixes a bug where `allowsInlineMediaPlayback` is not respected on iOS.
 
 ## 2.0.3
 
@@ -293,26 +293,26 @@ when hybrid composition is used [flutter/issues/75667](https://github.com/flutte
 
 ## 2.0.1
 
-* Run CocoaPods iOS tests in RunnerUITests target
+* Run CocoaPods iOS tests in RunnerUITests target.
 
 ## 2.0.0
 
 * Migration to null-safety.
-* Added support for progress tracking.
-* Add section to the wiki explaining how to use Material components.
-* Update integration test to workaround an iOS 14 issue with `evaluateJavascript`.
-* Fix `onWebResourceError` on iOS.
-* Fix outdated links across a number of markdown files ([#3276](https://github.com/flutter/plugins/pull/3276))
-* Added `allowsInlineMediaPlayback` property.
+* Adds support for progress tracking.
+* Adds section to the wiki explaining how to use Material components.
+* Updates integration test to workaround an iOS 14 issue with `evaluateJavascript`.
+* Fixes `onWebResourceError` on iOS.
+* Fixes outdated links across a number of markdown files ([#3276](https://github.com/flutter/plugins/pull/3276)).
+* Adds `allowsInlineMediaPlayback` property.
 
 ## 1.0.8
 
-* Update Flutter SDK constraint.
+* Updates Flutter SDK constraint.
 
 ## 1.0.7
 
 * Minor documentation update to indicate known issue on iOS 13.4 and 13.5.
-  * See: https://github.com/flutter/flutter/issues/53490
+  * See: https://github.com/flutter/flutter/issues/53490.
 
 ## 1.0.6
 
@@ -320,7 +320,7 @@ when hybrid composition is used [flutter/issues/75667](https://github.com/flutte
 
 ## 1.0.5
 
-* Fix example in the readme.
+* Fixes example in the readme.
 
 ## 1.0.4
 
@@ -328,7 +328,7 @@ when hybrid composition is used [flutter/issues/75667](https://github.com/flutte
 
 ## 1.0.3
 
-* Update android compileSdkVersion to 29.
+* Updates android compileSdkVersion to 29.
 
 ## 1.0.2
 
@@ -336,17 +336,17 @@ when hybrid composition is used [flutter/issues/75667](https://github.com/flutte
 
 ## 1.0.1
 
-* Add documentation for `WebViewPlatformCreatedCallback`.
+* Adds documentation for `WebViewPlatformCreatedCallback`.
 
 ## 1.0.0 - Out of developer preview 🎉.
 
-* Bumped the minimal Flutter SDK to 1.22 where platform views are out of developer preview, and
+* Bumps the minimal Flutter SDK to 1.22 where platform views are out of developer preview, and
 performing better on iOS. Flutter 1.22 no longer requires adding the
 `io.flutter.embedded_views_preview` flag to `Info.plist`.
 
-* Added support for Hybrid Composition on Android (see opt-in instructions in [README](https://github.com/flutter/plugins/blob/main/packages/webview_flutter/README.md#android))
-  * Lowered the required Android API to 19 (was previously 20): [#23728](https://github.com/flutter/flutter/issues/23728).
-  * Fixed the following issues:
+* Adds support for Hybrid Composition on Android (see opt-in instructions in [README](https://github.com/flutter/plugins/blob/main/packages/webview_flutter/README.md#android)).
+  * Lowers the required Android API to 19 (was previously 20): [#23728](https://github.com/flutter/flutter/issues/23728).
+  * Fixes the following issues:
     * 🎹 Keyboard: [#41089](https://github.com/flutter/flutter/issues/41089), [#36478](https://github.com/flutter/flutter/issues/36478), [#51254](https://github.com/flutter/flutter/issues/51254), [#50716](https://github.com/flutter/flutter/issues/50716), [#55724](https://github.com/flutter/flutter/issues/55724),  [#56513](https://github.com/flutter/flutter/issues/56513), [#56515](https://github.com/flutter/flutter/issues/56515), [#61085](https://github.com/flutter/flutter/issues/61085), [#62205](https://github.com/flutter/flutter/issues/62205), [#62547](https://github.com/flutter/flutter/issues/62547), [#58943](https://github.com/flutter/flutter/issues/58943), [#56361](https://github.com/flutter/flutter/issues/56361), [#56361](https://github.com/flutter/flutter/issues/42902), [#40716](https://github.com/flutter/flutter/issues/40716), [#37989](https://github.com/flutter/flutter/issues/37989), [#27924](https://github.com/flutter/flutter/issues/27924).
     * ♿️ Accessibility: [#50716](https://github.com/flutter/flutter/issues/50716).
     * ⚡️ Performance: [#61280](https://github.com/flutter/flutter/issues/61280), [#31243](https://github.com/flutter/flutter/issues/31243),  [#52211](https://github.com/flutter/flutter/issues/52211).
@@ -354,71 +354,71 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.3.24
 
-* Keep handling deprecated Android v1 classes for backward compatibility.
+* Keeps handling deprecated Android v1 classes for backward compatibility.
 
 ## 0.3.23
 
-* Handle WebView multi-window support.
+* Handles WebView multi-window support.
 
 ## 0.3.22+2
 
-* Update package:e2e reference to use the local version in the flutter/plugins
+* Updates package:e2e reference to use the local version in the flutter/plugins
   repository.
 
 ## 0.3.22+1
 
-* Update the `setAndGetScrollPosition` to use hard coded values and add a `pumpAndSettle` call.
+* Updates the `setAndGetScrollPosition` to use hard coded values and add a `pumpAndSettle` call.
 
 ## 0.3.22
 
-* Add support for passing a failing url.
+* Adds support for passing a failing url.
 
 ## 0.3.21
 
-* Enable programmatic scrolling using Android's WebView.scrollTo & iOS WKWebView.scrollView.contentOffset.
+* Enables programmatic scrolling using Android's WebView.scrollTo & iOS WKWebView.scrollView.contentOffset.
 
 ## 0.3.20+2
 
-* Fix CocoaPods podspec lint warnings.
+* Fixes CocoaPods podspec lint warnings.
 
 ## 0.3.20+1
 
 * OCMock module import -> #import, unit tests compile generated as library.
-* Fix select drop down crash on old Android tablets (https://github.com/flutter/flutter/issues/54164).
+* Fixes select drop down crash on old Android tablets (https://github.com/flutter/flutter/issues/54164).
 
 ## 0.3.20
 
-* Added support for receiving web resource loading errors. See `WebView.onWebResourceError`.
+* Adds support for receiving web resource loading errors. See `WebView.onWebResourceError`.
 
 ## 0.3.19+10
 
-* Replace deprecated `getFlutterEngine` call on Android.
+* Replaces deprecated `getFlutterEngine` call on Android.
 
 ## 0.3.19+9
 
-* Remove example app's iOS workspace settings.
+* Removes example app's iOS workspace settings.
 
 ## 0.3.19+8
 
-* Make the pedantic dev_dependency explicit.
+* Makes the pedantic dev_dependency explicit.
 
 ## 0.3.19+7
 
-* Remove the Flutter SDK constraint upper bound.
+* Removes the Flutter SDK constraint upper bound.
 
 ## 0.3.19+6
 
-* Enable opening links that target the "_blank" window (links open in same window).
+* Enables opening links that target the "_blank" window (links open in same window).
 
 ## 0.3.19+5
 
 * On iOS, always keep contentInsets of the WebView to be 0.
-* Fix XCTest case to follow XCTest naming convention.
+* Fixes XCTest case to follow XCTest naming convention.
 
 ## 0.3.19+4
 
 * On iOS, fix the scroll view content inset is automatically adjusted. After the fix, the content position of the WebView is customizable by Flutter.
-* Fix an iOS 13 bug where the scroll indicator shows at random location.
+* Fixes an iOS 13 bug where the scroll indicator shows at random location.
 
 ## 0.3.19+3
 
@@ -426,7 +426,7 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.3.19+2
 
-* Migrate from deprecated BinaryMessages to ServicesBinding.instance.defaultBinaryMessenger.
+* Migrates from deprecated BinaryMessages to ServicesBinding.instance.defaultBinaryMessenger.
 
 ## 0.3.19+1
 
@@ -436,7 +436,7 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.3.19
 
-* Add setting for iOS to allow gesture based navigation.
+* Adds setting for iOS to allow gesture based navigation.
 
 ## 0.3.18+1
 
@@ -444,19 +444,19 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.3.18
 
-* Add support for onPageStarted event.
-* Remove the deprecated `author:` field from pubspec.yaml
-* Migrate to the new pubspec platforms manifest.
-* Require Flutter SDK 1.10.0 or greater.
+* Adds support for onPageStarted event.
+* Removes the deprecated `author:` field from pubspec.yaml.
+* Migrates to the new pubspec platforms manifest.
+* Requires Flutter SDK 1.10.0 or greater.
 
 ## 0.3.17
 
-* Fix pedantic lint errors. Added missing documentation and awaited some futures
+* Fixes pedantic lint errors. Adds missing documentation and awaited some futures
   in tests and the example app.
 
 ## 0.3.16
 
-* Add support for async NavigationDelegates. Synchronous NavigationDelegates
+* Adds support for async NavigationDelegates. Synchronous NavigationDelegates
   should still continue to function without any change in behavior.
 
 ## 0.3.15+3
@@ -469,16 +469,16 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.3.15+2
 
-* Remove AndroidX warnings.
+* Removes AndroidX warnings.
 
 ## 0.3.15+1
 
-* Revert the prior embedding support add since it requires an API that hasn't
+* Reverts the prior embedding support add since it requires an API that hasn't
   rolled to stable.
 
 ## 0.3.15
 
-* Add support for the v2 Android embedding. This shouldn't affect existing
+* Adds support for the v2 Android embedding. This shouldn't affect existing
   functionality. Plugin authors who use the V2 embedding can now register the
   plugin and expect that it correctly responds to app lifecycle changes.
 
@@ -488,15 +488,15 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.3.14+1
 
-* Allow underscores anywhere for Javascript Channel name.
+* Allows underscores anywhere for Javascript Channel name.
 
 ## 0.3.14
 
-* Added a getTitle getter to WebViewController.
+* Adds a getTitle getter to WebViewController.
 
 ## 0.3.13
 
-* Add an optional `userAgent` property to set a custom User Agent.
+* Adds an optional `userAgent` property to set a custom User Agent.
 
 ## 0.3.12+1
 
@@ -504,7 +504,7 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.3.12
 
-* Added a getTitle getter to WebViewController.
+* Adds a getTitle getter to WebViewController.
 
 ## 0.3.11+6
 
@@ -517,7 +517,7 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.3.11+4
 
-* Removed noisy log messages on iOS.
+* Removes noisy log messages on iOS.
 
 ## 0.3.11+3
 
@@ -526,7 +526,7 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.3.11+2
 
-* Add fix for input connection being dropped after a screen resize on certain
+* Adds fix for input connection being dropped after a screen resize on certain
   Android devices.
 
 ## 0.3.11+1
@@ -536,16 +536,16 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.3.11
 
-* Add an initialAutoMediaPlaybackPolicy setting for controlling how auto media
+* Adds an initialAutoMediaPlaybackPolicy setting for controlling how auto media
   playback is restricted.
 
 ## 0.3.10+5
 
-* Add dependency on `androidx.annotation:annotation:1.0.0`.
+* Adds dependency on `androidx.annotation:annotation:1.0.0`.
 
 ## 0.3.10+4
 
-* Add keyboard text to README.
+* Adds keyboard text to README.
 
 ## 0.3.10+3
 
@@ -553,15 +553,15 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.3.10+2
 
-* Fix InputConnection being lost when combined with route transitions.
+* Fixes InputConnection being lost when combined with route transitions.
 
 ## 0.3.10+1
 
-* Add support for simultaenous Flutter `TextInput` and WebView text fields.
+* Adds support for simultaenous Flutter `TextInput` and WebView text fields.
 
 ## 0.3.10
 
-* Add partial WebView keyboard support for Android versions prior to N. Support
+* Adds partial WebView keyboard support for Android versions prior to N. Support
   for UIs that also have Flutter `TextInput` fields is still pending. This basic
   support currently only works with Flutter `master`. The keyboard will still
   appear when it previously did not when run with older versions of Flutter. But
@@ -570,99 +570,99 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.3.9+2
 
-* Update Dart code to conform to current Dart formatter.
+* Updates Dart code to conform to current Dart formatter.
 
 ## 0.3.9+1
 
-* Add missing template type parameter to `invokeMethod` calls.
-* Bump minimum Flutter version to 1.5.0.
-* Replace invokeMethod with invokeMapMethod wherever necessary.
+* Adds missing template type parameter to `invokeMethod` calls.
+* Bumps minimum Flutter version to 1.5.0.
+* Replaces invokeMethod with invokeMapMethod wherever necessary.
 
 ## 0.3.9
 
-* Allow external packages to provide webview implementations for new platforms.
+* Allows external packages to provide webview implementations for new platforms.
 
 ## 0.3.8+1
 
-* Suppress deprecation warning for BinaryMessages. See: https://github.com/flutter/flutter/issues/33446
+* Suppress deprecation warning for BinaryMessages. See: https://github.com/flutter/flutter/issues/33446.
 
 ## 0.3.8
 
-* Add `debuggingEnabled` property.
+* Adds `debuggingEnabled` property.
 
 ## 0.3.7+1
 
-* Fix an issue where JavaScriptChannel messages weren't sent from the platform thread on Android.
+* Fixes an issue where JavaScriptChannel messages weren't sent from the platform thread on Android.
 
 ## 0.3.7
 
-* Fix loadUrlWithHeaders flaky test.
+* Fixes loadUrlWithHeaders flaky test.
 
 ## 0.3.6+1
 
-* Remove un-used method params in webview\_flutter
+* Removes un-used method params in webview\_flutter.
 
 ## 0.3.6
 
-* Add an optional `headers` field to the controller.
+* Adds an optional `headers` field to the controller.
 
 ## 0.3.5+5
 
-* Fixed error in documentation of `javascriptChannels`.
+* Fixes error in documentation of `javascriptChannels`.
 
 ## 0.3.5+4
 
-* Fix bugs in the example app by updating it to use a `StatefulWidget`.
+* Fixes bugs in the example app by updating it to use a `StatefulWidget`.
 
 ## 0.3.5+3
 
-* Make sure to post javascript channel messages from the platform thread.
+* Makes sure to post javascript channel messages from the platform thread.
 
 ## 0.3.5+2
 
-* Fix crash from `NavigationDelegate` on later versions of Android.
+* Fixes crash from `NavigationDelegate` on later versions of Android.
 
 ## 0.3.5+1
 
-* Fix a bug where updates to onPageFinished were ignored.
+* Fixes a bug where updates to onPageFinished were ignored.
 
 ## 0.3.5
 
-* Added an onPageFinished callback.
+* Adds an onPageFinished callback.
 
 ## 0.3.4
 
-* Support specifying navigation delegates that can prevent navigations from being executed.
+* Supports specifying navigation delegates that can prevent navigations from being executed.
 
 ## 0.3.3+2
 
-* Exclude LongPress handler from semantics tree since it does nothing.
+* Excludes LongPress handler from semantics tree since it does nothing.
 
 ## 0.3.3+1
 
-* Fixed a memory leak on Android - the WebView was not properly disposed.
+* Fixes a memory leak on Android - the WebView was not properly disposed.
 
 ## 0.3.3
 
-* Add clearCache method to WebView controller.
+* Adds clearCache method to WebView controller.
 
 ## 0.3.2+1
 
-* Log a more detailed warning at build time about the previous AndroidX
+* Logs a more detailed warning at build time about the previous AndroidX
   migration.
 
 ## 0.3.2
 
-* Added CookieManager to interface with WebView cookies. Currently has the ability to clear cookies.
+* Adds CookieManager to interface with WebView cookies. Currently has the ability to clear cookies.
 
 ## 0.3.1
 
-* Added JavaScript channels to facilitate message passing from JavaScript code running inside
+* Adds JavaScript channels to facilitate message passing from JavaScript code running inside
   the WebView to the Flutter app's Dart code.
 
 ## 0.3.0
 
-* **Breaking change**. Migrate from the deprecated original Android Support
+* **BREAKING CHANGE:** Migrate from the deprecated original Android Support
   Library to AndroidX. This shouldn't result in any functional changes, but it
   requires any Android apps using this plugin to [also
   migrate](https://developer.android.com/jetpack/androidx/migrate) if they're
@@ -670,29 +670,29 @@ performing better on iOS. Flutter 1.22 no longer requires adding the
 
 ## 0.2.0
 
-* Added a evaluateJavascript method to WebView controller.
+* Adds a evaluateJavascript method to WebView controller.
 * (BREAKING CHANGE) Renamed the `JavaScriptMode` enum to `JavascriptMode`, and the WebView `javasScriptMode` parameter to `javascriptMode`.
 
 ## 0.1.2
 
-* Added a reload method to the WebView controller.
+* Adds a reload method to the WebView controller.
 
 ## 0.1.1
 
-* Added a `currentUrl` accessor for the WebView controller to look up what URL
+* Adds a `currentUrl` accessor for the WebView controller to look up what URL
   is being displayed.
 
 ## 0.1.0+1
 
-* Fix null crash when initialUrl is unset on iOS.
+* Fixes null crash when initialUrl is unset on iOS.
 
 ## 0.1.0
 
-* Add goBack, goForward, canGoBack, and canGoForward methods to the WebView controller.
+* Adds goBack, goForward, canGoBack, and canGoForward methods to the WebView controller.
 
 ## 0.0.1+1
 
-* Fix case for "FLTWebViewFlutterPlugin" (iOS was failing to buld on case-sensitive file systems).
+* Fixes case for "FLTWebViewFlutterPlugin" (iOS was failing to buld on case-sensitive file systems).
 
 ## 0.0.1
 

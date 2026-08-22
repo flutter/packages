@@ -31,7 +31,7 @@
 ## 3.24.1
 
 * Updates platform views on iOS to only have a weak reference to the native view. This is a
-  potential workaround to prevent a crash during the Flutter engine shutdown. See https://github.com/flutter/flutter/issues/168535
+  potential workaround to prevent a crash during the Flutter engine shutdown. See https://github.com/flutter/flutter/issues/168535.
 
 ## 3.24.0
 
@@ -277,7 +277,7 @@
 
 ## 3.4.3
 
-* Replace `describeEnum` with the `name` getter.
+* Replaces `describeEnum` with the `name` getter.
 
 ## 3.4.2
 
@@ -444,11 +444,11 @@
 
 ## 2.1.0
 
-* Add `zoomEnabled` functionality.
+* Adds `zoomEnabled` functionality.
 
 ## 2.0.14
 
-* Update example App so navigation menu loads immediatly but only becomes available when `WebViewController` is available (same behavior as example App in webview_flutter package).
+* Updates example App so navigation menu loads immediatly but only becomes available when `WebViewController` is available (same behavior as example App in webview_flutter package).
 
 ## 2.0.13
 

@@ -48,8 +48,8 @@
 
 ## 2.8.9
 
-* Resolve `tracksWithMediaType:` deprecations.
-* Use `loadTracksWithMediaType:completionHandler:` for iOS 15.0+/macOS 12.0+.
+* Resolves `tracksWithMediaType:` deprecations.
+* Uses `loadTracksWithMediaType:completionHandler:` for iOS 15.0+/macOS 12.0+.
 
 ## 2.8.8
 
@@ -191,7 +191,7 @@
 ## 2.4.9
 
 * Fixes the iOS crash when using multiple players on the same screen.
-  See: https://github.com/flutter/flutter/issues/124937
+  See: https://github.com/flutter/flutter/issues/124937.
 
 ## 2.4.8
 
@@ -200,7 +200,7 @@
 ## 2.4.7
 
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
-* Adds iOS exception on incorrect asset path
+* Adds iOS exception on incorrect asset path.
 
 ## 2.4.6
 
@@ -269,8 +269,8 @@
 
 ## 2.3.3
 
-* Fix XCUITest based on the new voice over announcement for tooltips.
-  See: https://github.com/flutter/flutter/pull/87684
+* Fixes XCUITest based on the new voice over announcement for tooltips
+  See: https://github.com/flutter/flutter/pull/87684.
 
 ## 2.3.2
 

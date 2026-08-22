@@ -9,13 +9,13 @@
 
 ## 0.4.0+23
 
-* Removed the unused `io.flutter.network-policy` metadata tag from the README and example application.
+* Removes the unused `io.flutter.network-policy` metadata tag from the README and example application.
 
 ## 0.4.0+22
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 * Updates README to remove usesCleartextTraffic.  Users should use
-  network security configuration instead. 
+  network security configuration instead.
 
 ## 0.4.0+21
 
@@ -198,7 +198,7 @@
 ## 0.2.0+4
 
 * Updates minimum Flutter version to 2.10.
-* Bumps gson to 2.9.1
+* Bumps gson to 2.9.1.
 
 ## 0.2.0+3
 
@@ -222,29 +222,29 @@
 
 ## 0.1.0+4
 
-* Updated Android lint settings.
-* Updated package description.
+* Updates Android lint settings.
+* Updates package description.
 
 ## 0.1.0+3
 
-* Remove references to the Android v1 embedding.
+* Removes references to the Android v1 embedding.
 
 ## 0.1.0+2
 
-* Migrate maven repo from jcenter to mavenCentral
+* Migrates maven repo from jcenter to mavenCentral.
 
 ## 0.1.0+1
 
-* Minor code cleanup
-* Package metadata updates
+* Minor code cleanup.
+* Package metadata updates.
 
 ## 0.1.0
 
-* Update SDK requirement for null-safety compatibility.
+* Updates SDK requirement for null-safety compatibility.
 
 ## 0.0.1+9
 
-* Update Flutter SDK constraint.
+* Updates Flutter SDK constraint.
 
 ## 0.0.1+8
 
@@ -252,28 +252,28 @@
 
 ## 0.0.1+7
 
-* Update android compileSdkVersion to 29.
+* Updates android compileSdkVersion to 29.
 
 ## 0.0.1+6
 
-* Keep handling deprecated Android v1 classes for backward compatibility.
+* Keeps handling deprecated Android v1 classes for backward compatibility.
 
 ## 0.0.1+5
 
-* Replace deprecated `getFlutterEngine` call on Android.
-* Fix CocoaPods podspec lint warnings.
+* Replaces deprecated `getFlutterEngine` call on Android.
+* Fixes CocoaPods podspec lint warnings.
 
 ## 0.0.1+4
 
-* Remove Swift dependency.
+* Removes Swift dependency.
 
 ## 0.0.1+3
 
-* Make the pedantic dev_dependency explicit.
+* Makes the pedantic dev_dependency explicit.
 
 ## 0.0.1+2
 
-* Update te example app to avoid using deprecated api.
+* Updates te example app to avoid using deprecated api.
 
 ## 0.0.1+1
 

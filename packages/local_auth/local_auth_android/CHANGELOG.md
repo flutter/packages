@@ -33,7 +33,7 @@
 
 ## 2.0.1
 
-* Removed mockito-inline and updated to mockito-core 5.17.0.
+* Removes mockito-inline and updates to mockito-core 5.17.0.
 
 ## 2.0.0
 
@@ -158,7 +158,7 @@
 
 ## 1.0.30
 
-* Updates androidx.fragment version to 1.5.6
+* Updates androidx.fragment version to 1.5.6.
 
 ## 1.0.29
 

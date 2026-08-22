@@ -5,7 +5,7 @@
 
 ## 17.4.0
 
-- Fixes onExit ignored for GoRoute nested inside ShellRoute
+- Fixes onExit ignored for GoRoute nested inside ShellRoute.
 - Adds `BlockedInitialNavigationException` (a `GoException` subtype), raised when the initial navigation is blocked by `onEnter` with no prior route to restore, so apps can distinguish this case in `onException` without string matching.
 
 ## 17.3.0
@@ -57,7 +57,7 @@
 
 ## 16.2.4
 
-- Fix Android Cold Start deep link with empty path losing scheme and authority.
+- Fixes Android Cold Start deep link with empty path losing scheme and authority.
 
 ## 16.2.3
 
@@ -83,7 +83,7 @@
 ## 16.0.0
 
 - **BREAKING CHANGE**
-  - Bump major version for `GoRouteData` breaking changes.
+  - Bumps major version for `GoRouteData` breaking changes.
   - (Previously 15.2.4) Fixes routing to treat URLs with different cases (e.g., `/Home` vs `/home`) as distinct routes.
   - (Previously 15.2.3) Updates Type-safe routes topic documentation to use the mixin from `go_router_builder` 3.0.0.
   - (Previously 15.2.2) Fixes calling `PopScope.onPopInvokedWithResult` in branch routes.
@@ -112,11 +112,11 @@
 - **BREAKING CHANGE**
   - URLs are now case sensitive.
   - Adds `caseSensitive` parameter to `GoRouter` (default to `true`).
-  - See [Migrating to 15.0.0](https://flutter.dev/go/go-router-v15-breaking-changes)
+  - See [Migrating to 15.0.0](https://flutter.dev/go/go-router-v15-breaking-changes).
 
 ## 14.8.1
 
-- Secured canPop method for the lack of matches in routerDelegate's configuration.
+- Secures canPop method for the lack of matches in routerDelegate's configuration.
 
 ## 14.8.0
 
@@ -124,7 +124,7 @@
 
 ## 14.7.2
 
-- Add missing `await` keyword to `onTap` callback in `navigation.md`.
+- Adds missing `await` keyword to `onTap` callback in `navigation.md`.
 
 ## 14.7.1
 
@@ -149,11 +149,11 @@
 
 ## 14.6.1
 
-- Fixed `PopScope`, and `WillPopScop` was not handled properly in the Root routes.
+- Fixes `PopScope`, and `WillPopScop` was not handled properly in the Root routes.
 
 ## 14.6.0
 
-- Allows going to a path relatively by prefixing `./`
+- Allows going to a path relatively by prefixing `./`.
 
 ## 14.5.0
 
@@ -177,7 +177,7 @@
 
 ## 14.2.8
 
-- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView.
+- Updates custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView.
 
 ## 14.2.7
 
@@ -194,7 +194,7 @@
 ## 14.2.4
 
 - Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
-- Fix GoRouter configuration in `upgrading.md`
+- Fixes GoRouter configuration in `upgrading.md`.
 
 ## 14.2.3
 
@@ -210,7 +210,7 @@
 
 ## 14.2.0
 
-- Added proper `redirect` handling for `ShellRoute.$route` and `StatefulShellRoute.$route` for proper redirection handling in case of code generation.
+- Adds proper `redirect` handling for `ShellRoute.$route` and `StatefulShellRoute.$route` for proper redirection handling in case of code generation.
 
 ## 14.1.4
 
@@ -230,7 +230,7 @@
 
 ## 14.1.0
 
-- Adds route redirect to ShellRoutes
+- Adds route redirect to ShellRoutes.
 
 ## 14.0.2
 
@@ -238,7 +238,7 @@
 
 ## 14.0.1
 
-- Updates the redirection documentation for clarity
+- Updates the redirection documentation for clarity.
 
 ## 14.0.0
 
@@ -251,11 +251,11 @@
 
 ## 13.2.3
 
-- Fixes an issue where deep links without path caused an exception
+- Fixes an issue where deep links without path caused an exception.
 
 ## 13.2.2
 
-- Fixes restoreRouteInformation issue when GoRouter.optionURLReflectsImperativeAPIs is true and the last match is ShellRouteMatch
+- Fixes restoreRouteInformation issue when GoRouter.optionURLReflectsImperativeAPIs is true and the last match is ShellRouteMatch.
 
 ## 13.2.1
 
@@ -264,12 +264,12 @@
 
 ## 13.2.0
 
-- Exposes full `Uri` on `GoRouterState` in `GoRouterRedirect`
+- Exposes full `Uri` on `GoRouterState` in `GoRouterRedirect`.
 
 ## 13.1.0
 
-- Adds `topRoute` to `GoRouterState`
-- Adds `lastOrNull` to `RouteMatchList`
+- Adds `topRoute` to `GoRouterState`.
+- Adds `lastOrNull` to `RouteMatchList`.
 
 ## 13.0.1
 
@@ -394,7 +394,7 @@
 
 ## 9.0.3
 
-- Adds helpers for go_router_builder for StatefulShellRoute support
+- Adds helpers for go_router_builder for StatefulShellRoute support.
 
 ## 9.0.2
 
@@ -409,7 +409,7 @@
 - **BREAKING CHANGE**:
   - Removes GoRouter.location. Use GoRouterState.of().location instead.
   - GoRouter does not `extends` ChangeNotifier.
-  - [Migration guide](https://flutter.dev/go/go-router-v9-breaking-changes)
+  - [Migration guide](https://flutter.dev/go/go-router-v9-breaking-changes).
 - Reduces excessive rebuilds due to inherited look up.
 
 ## 8.2.0
@@ -439,7 +439,6 @@
 ## 8.0.1
 
 - Fixes a link for an example in `path` documentation.
-  documentation.
 
 ## 8.0.0
 
@@ -489,7 +488,7 @@
 
 ## 6.5.8
 
-- Adds name parameter to `TypedGoRoute`
+- Adds name parameter to `TypedGoRoute`.
 
 ## 6.5.7
 
@@ -536,8 +535,8 @@
 - Aligns Dart and Flutter SDK constraints.
 - Updates compileSdkVersion to 33.
 - Updates example app to iOS 11.
-- Adds `navigatorKey` to `TypedShellRoute`
-- Adds `parentNavigatorKey` to `TypedGoRoute`
+- Adds `navigatorKey` to `TypedShellRoute`.
+- Adds `parentNavigatorKey` to `TypedGoRoute`.
 - Updates documentation in matching methods.
 
 ## 6.2.0
@@ -550,11 +549,11 @@
 
 ## 6.0.10
 
-- Adds helpers for go_router_builder for ShellRoute support
+- Adds helpers for go_router_builder for ShellRoute support.
 
 ## 6.0.9
 
-- Fixes deprecation message for `GoRouterState.namedLocation`
+- Fixes deprecation message for `GoRouterState.namedLocation`.
 
 ## 6.0.8
 
@@ -562,12 +561,12 @@
 
 ## 6.0.7
 
-- Add observers parameter to the ShellRoute that will be passed to the nested Navigator.
-- Use `HeroControllerScope` for nested Navigator that fixes Hero Widgets not animating in Nested Navigator.
+- Adds observers parameter to the ShellRoute that will be passed to the nested Navigator.
+- Uses `HeroControllerScope` for nested Navigator that fixes Hero Widgets not animating in Nested Navigator.
 
 ## 6.0.6
 
-- Adds `reverseTransitionDuration` to `CustomTransitionPage`
+- Adds `reverseTransitionDuration` to `CustomTransitionPage`.
 
 ## 6.0.5
 
@@ -579,7 +578,7 @@
 
 ## 6.0.3
 
-- Makes `CustomTransitionPage.barrierDismissible` work
+- Makes `CustomTransitionPage.barrierDismissible` work.
 
 ## 6.0.2
 
@@ -598,7 +597,7 @@
   - `GoRouteData`'s `buildPageWithState` has been removed and replaced by `buildPage` with now takes 2 parameters `BuildContext context, GoRouterState state`.
   - `replace` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacement`.
   - `replaceNamed` from `GoRouter`, `GoRouterDelegate` and `GoRouterHelper` has been renamed into `pushReplacementNamed`.
-  - [go_router v6 migration guide](https://flutter.dev/go/go-router-v6-breaking-changes)
+  - [go_router v6 migration guide](https://flutter.dev/go/go-router-v6-breaking-changes).
 
 ## 5.2.4
 
@@ -606,7 +605,7 @@
 
 ## 5.2.3
 
-- Fixes link for router configuration and sub-routes
+- Fixes link for router configuration and sub-routes.
 
 ## 5.2.2
 
@@ -660,7 +659,7 @@
 - Updates README.
 - Removes dynamic calls in examples.
 - **BREAKING CHANGE**
-  - Remove NavigatorObserver mixin from GoRouter
+  - Removes NavigatorObserver mixin from GoRouter.
 
 ## 5.1.1
 
@@ -681,7 +680,7 @@
 
 ## 5.0.3
 
-- Changes examples to use the routerConfig API
+- Changes examples to use the routerConfig API.
 
 ## 5.0.2
 
@@ -689,7 +688,7 @@
 
 ## 5.0.1
 
-- Allows ShellRoute to have child ShellRoutes (flutter/flutter#111981)
+- Allows ShellRoute to have child ShellRoutes (flutter/flutter#111981).
 
 ## 5.0.0
 
@@ -700,25 +699,25 @@
   fields.
 - **BREAKING CHANGE**
   - Redesigns redirection API, adds asynchronous feature, and adds build context to redirect.
-  - Removes GoRouterRefreshStream
-  - Removes navigatorBuilder
-  - Removes urlPathStrategy
-- [go_router v5 migration guide](https://flutter.dev/go/go-router-v5-breaking-changes)
+  - Removes GoRouterRefreshStream.
+  - Removes navigatorBuilder.
+  - Removes urlPathStrategy.
+- [go_router v5 migration guide](https://flutter.dev/go/go-router-v5-breaking-changes).
 
 ## 4.5.1
 
 - Fixes an issue where GoRoutes with only a redirect were disallowed
-  (flutter/flutter#111763)
+  (flutter/flutter#111763).
 
 ## 4.5.0
 
-- Adds ShellRoute for nested navigation support (flutter/flutter#99126)
+- Adds ShellRoute for nested navigation support (flutter/flutter#99126).
 - Adds `parentNavigatorKey` to GoRoute, which specifies the Navigator to place that
   route's Page onto.
 
 ## 4.4.1
 
-- Fix an issue where disabling logging clears the root logger's listeners
+- Fixes an issue where disabling logging clears the root logger's listeners.
 
 ## 4.4.0
 
@@ -749,7 +748,7 @@
 
 ## 4.2.5
 
-- Fixes a bug where calling extra parameter is always null in route level redirect callback
+- Fixes a bug where calling extra parameter is always null in route level redirect callback.
 
 ## 4.2.4
 
@@ -765,7 +764,7 @@
 
 ## 4.2.1
 
-- Refactors internal classes and methods
+- Refactors internal classes and methods.
 
 ## 4.2.0
 
@@ -785,7 +784,7 @@
 
 ## 4.0.2
 
-- Fixes a bug where initialLocation took precedence over deep-links
+- Fixes a bug where initialLocation took precedence over deep-links.
 
 ## 4.0.1
 
@@ -793,12 +792,12 @@
 
 ## 4.0.0
 
-- Refactors go_router and introduces `GoRouteInformationProvider`. [Migration Doc](https://flutter.dev/go/go-router-v4-breaking-changes)
+- Refactors go_router and introduces `GoRouteInformationProvider`. [Migration Doc](https://flutter.dev/go/go-router-v4-breaking-changes).
 - Fixes a bug where top-level routes are skipped if another contains child routes.
 
 ## 3.1.1
 
-- Uses first match if there are more than one route to match. [ [#99833](https://github.com/flutter/flutter/issues/99833)
+- Uses first match if there are more than one route to match. [ [#99833](https://github.com/flutter/flutter/issues/99833).
 
 ## 3.1.0
 
@@ -814,8 +813,8 @@
 
 ## 3.0.5
 
-- Add `dispatchNotification` method to `DummyBuildContext` in tests. (This
-  should be revisited when Flutter `2.11.0` becomes stable.)
+- Adds `dispatchNotification` method to `DummyBuildContext` in tests. (This
+  should be revisited when Flutter `2.11.0` becomes stable.).
 - Improves code coverage.
 - `GoRoute` now warns about requiring either `pageBuilder`, `builder` or `redirect` at instantiation.
 
@@ -834,23 +833,23 @@
 
 ## 3.0.1
 
-- pass along the error to the `navigatorBuilder` to allow for different
-  implementations based on the presence of an error
+- Passes along the error to the `navigatorBuilder` to allow for different
+  implementations based on the presence of an error.
 
 ## 3.0.0
 
-- breaking change: added `GoRouterState` to `navigatorBuilder` function
-- breaking change: removed `BuildContext` from `GoRouter.pop()` to remove the
+- **BREAKING CHANGE**: adds `GoRouterState` to `navigatorBuilder` function.
+- **BREAKING CHANGE**: removes `BuildContext` from `GoRouter.pop()` to remove the
   need to use `context` parameter when calling the `GoRouter` API; this changes
   the behavior of `GoRouter.pop()` to only pop what's on the `GoRouter` page
-  stack and no longer calls `Navigator.pop()`
+  stack and no longer calls `Navigator.pop()`.
 - new [Migrating to 3.0 section](https://gorouter.dev/migrating-to-30) in the
   docs to describe the details of the breaking changes and how to update your
-  code
-- added a new [shared
+  code.
+- Adds a new [shared
   scaffold](https://github.com/csells/go_router/blob/main/go_router/example/lib/shared_scaffold.dart)
   sample to show how to use the `navigatorBuilder` function to build a custom
-  shared scaffold outside of the animations provided by go_router
+  shared scaffold outside of the animations provided by go_router.
 
 ## 2.5.7
 
@@ -860,41 +859,41 @@
   translation of the docs; thanks to
   [toshi-kuji](https://github.com/toshi-kuji)! Unfortunately I don't yet know
   how to properly display them via docs.page, but [I'm working on
-  it](https://github.com/csells/go_router/issues/266)
-- updated the examples using the `from` query parameter to be completely
-  self-contained in the `redirect` function, simplifying usage
-- updated the async data example to be simpler
-- added a new example to show how to implement a loading page
-- renamed the navigator_integration example to user_input and added an example
-  of `WillPopScope` for go_router apps
+  it](https://github.com/csells/go_router/issues/266).
+- updates the examples using the `from` query parameter to be completely
+  self-contained in the `redirect` function, simplifying usage.
+- updates the async data example to be simpler.
+- adds a new example to show how to implement a loading page.
+- renames the navigator_integration example to user_input and adds an example
+  of `WillPopScope` for go_router apps.
 
 ## 2.5.6
 
 - [PR 259](https://github.com/csells/go_router/pull/259): remove a hack for
   notifying the router of a route change that was no longer needed; thanks to
   [nullrocket](https://github.com/nullrocket)!
-- improved async example to handle the case that the data has been returned but
-  the page is no longer there by checking the `mounted` property of the screen
+- improves async example to handle the case that the data has been returned but
+  the page is no longer there by checking the `mounted` property of the screen.
 
 ## 2.5.5
 
-- updated implementation to use logging package for debug diagnostics; thanks
-  to [johnpryan](https://github.com/johnpryan)
+- updates implementation to use logging package for debug diagnostics; thanks
+  to [johnpryan](https://github.com/johnpryan).
 
 ## 2.5.4
 
-- fixed up the `GoRouterRefreshStream` implementation with an export, an example
-  and some docs
+- fixes up the `GoRouterRefreshStream` implementation with an export, an example
+  and some docs.
 
 ## 2.5.3
 
-- added `GoRouterRefreshStream` from
+- adds `GoRouterRefreshStream` from
   [jopmiddelkamp](https://github.com/jopmiddelkamp) to easily map from a
   `Stream` to a `Listenable` for use with `refreshListenable`; very useful when
   combined with stream-based state management like
-  [flutter_bloc](https://pub.dev/packages/flutter_bloc)
-- dartdocs fixups from [mehade369](https://github.com/mehade369)
-- example link fixes from [ben-milanko](https://github.com/ben-milanko)
+  [flutter_bloc](https://pub.dev/packages/flutter_bloc).
+- dartdocs fixups from [mehade369](https://github.com/mehade369).
+- example link fixes from [ben-milanko](https://github.com/ben-milanko).
 
 ## 2.5.2
 
@@ -905,38 +904,38 @@
 
 - [fix 205](https://github.com/csells/go_router/issues/205): hack around a
   failed assertion in Flutter when using `Duration.zero` in the
-  `NoTransitionPage`
+  `NoTransitionPage`.
 
 ## 2.5.0
 
 - provide default implementation of `GoRoute.pageBuilder` to provide a simpler
-  way to build pages via the `GoRouter.build` method
+  way to build pages via the `GoRouter.build` method.
 - provide default implementation of `GoRouter.errorPageBuilder` to provide a
-  simpler way to build error pages via the `GoRouter.errorBuilder` method
+  simpler way to build error pages via the `GoRouter.errorBuilder` method.
 - provide default implementation of `GoRouter.errorBuilder` to provide an error
-  page without the need to implement a custom error page builder
+  page without the need to implement a custom error page builder.
 - new [Migrating to 2.5 section](https://gorouter.dev/migrating-to-25) in
   the docs to show how to take advantage of the new `builder` and default error
-  page builder
-- removed `launch.json` as VSCode-centric and unnecessary for discovery or easy
-  launching
-- added a [new custom error screen
-  sample](https://github.com/csells/go_router/blob/master/example/lib/error_screen.dart)
-- added a [new WidgetsApp
-  sample](https://github.com/csells/go_router/blob/master/example/lib/widgets_app.dart)
-- added a new `NoTransitionPage` class
-- updated docs to explain why the browser's Back button doesn't work
-  with the `extra` param
-- updated README to point to new docs site: [gorouter.dev](https://gorouter.dev)
+  page builder.
+- removes `launch.json` as VSCode-centric and unnecessary for discovery or easy
+  launching.
+- adds a [new custom error screen
+  sample](https://github.com/csells/go_router/blob/master/example/lib/error_screen.dart).
+- adds a [new WidgetsApp
+  sample](https://github.com/csells/go_router/blob/master/example/lib/widgets_app.dart).
+- adds a new `NoTransitionPage` class.
+- updates docs to explain why the browser's Back button doesn't work
+  with the `extra` param.
+- updates README to point to new docs site: [gorouter.dev](https://gorouter.dev).
 
 ## 2.3.1
 
 - [fix 191](https://github.com/csells/go_router/issues/191): handle several
-  kinds of trailing / in the location, e.g. `/foo/` should be the same as `/foo`
+  kinds of trailing / in the location, e.g. `/foo/` should be the same as `/foo`.
 
 ## 2.3.0
 
-- fix a misleading error message when using redirect functions with sub-routes
+- fix a misleading error message when using redirect functions with sub-routes.
 
 ## 2.2.9
 
@@ -947,52 +946,52 @@
 
 ## 2.2.8
 
-- reformatted CHANGELOG file; lets see if pub.dev is still ok with it...
-- staged an in-progress doc site at <https://docs.page/csells/go_router>
-- tightened up a test that was silently failing
-- fixed a bug that dropped parent params in sub-route redirects
+- reformats CHANGELOG file; lets see if pub.dev is still ok with it...
+- stages an in-progress doc site at <https://docs.page/csells/go_router>.
+- tightens up a test that was silently failing.
+- fixes a bug that dropped parent params in sub-route redirects.
 
 ## 2.2.7
 
 - [fix 163](https://github.com/csells/go_router/issues/163): avoids unnecessary
-  page rebuilds
+  page rebuilds.
 - [fix 139](https://github.com/csells/go_router/issues/139): avoids unnecessary
-  page flashes on deep linking
+  page flashes on deep linking.
 - [fix 158](https://github.com/csells/go_router/issues/158): shows exception
   info in the debug output even during a top-level redirect coded w/ an
-  anonymous function, i.e. what the samples all use
+  anonymous function, i.e. what the samples all use.
 - [fix 151](https://github.com/csells/go_router/issues/151): exposes
-  `Navigator.pop()` via `GoRouter.pop()` to make it easy to find
+  `Navigator.pop()` via `GoRouter.pop()` to make it easy to find.
 
 ## 2.2.6
 
 - [fix 127](https://github.com/csells/go_router/issues/127): updated the docs
   to add a video overview of the project for people that prefer that media style
-  over long-form text when approaching a new topic
+  over long-form text when approaching a new topic.
 - [fix 108](https://github.com/csells/go_router/issues/108): updated the
   description of the `state` parameter to clarfy that not all properties will be
-  set at every usage
+  set at every usage.
 
 ## 2.2.5
 
 - [fix 120 again](https://github.com/csells/go_router/issues/120): found the bug
   in my tests that was masking the real bug; changed two characters to implement
-  the actual fix (sigh)
+  the actual fix (sigh).
 
 ## 2.2.4
 
 - [fix 116](https://github.com/csells/go_router/issues/116): work-around for
-  auto-import of the `context.go` family of extension methods
+  auto-import of the `context.go` family of extension methods.
 
 ## 2.2.3
 
 - [fix 132](https://github.com/csells/go_router/issues/132): route names are
-  stored as case insensitive and are now matched in a case insensitive manner
+  stored as case insensitive and are now matched in a case insensitive manner.
 
 ## 2.2.2
 
 - [fix 120](https://github.com/csells/go_router/issues/120): encoding and
-  decoding of params and query params
+  decoding of params and query params.
 
 ## 2.2.1
 
@@ -1003,241 +1002,241 @@
 
 ## 2.2.0
 
-- added a new [`navigatorBuilder`](https://gorouter.dev/navigator-builder) argument to the
+- adds a new [`navigatorBuilder`](https://gorouter.dev/navigator-builder) argument to the
   `GoRouter` constructor; thanks to [andyduke](https://github.com/andyduke)!
 - also from [andyduke](https://github.com/andyduke) is an update to
-  improve state restoration
-- refactor from [kevmoo](https://github.com/kevmoo) for easier maintenance
-- added a new [Navigator Integration section of the
-  docs](https://gorouter.dev/navigator-integration)
+  improve state restoration.
+- refactors from [kevmoo](https://github.com/kevmoo) for easier maintenance.
+- adds a new [Navigator Integration section of the
+  docs](https://gorouter.dev/navigator-integration).
 
 ## 2.1.2
 
-- [fix 61 again](https://github.com/csells/go_router/issues/61): enable images
-  and file links to work on pub.dev/documentation
+- [fix 61 again](https://github.com/csells/go_router/issues/61): enables images
+  and file links to work on pub.dev/documentation.
 - [fix 62](https://github.com/csells/go_router/issues/62) re-tested; fixed w/
-  earlier Android system Back button fix (using navigation key)
+  earlier Android system Back button fix (using navigation key).
 - [fix 91](https://github.com/csells/go_router/issues/91): fix a regression w/
-  the `errorPageBuilder`
+  the `errorPageBuilder`.
 - [fix 92](https://github.com/csells/go_router/issues/92): fix an edge case w/
-  named sub-routes
+  named sub-routes.
 - [fix 89](https://github.com/csells/go_router/issues/89): enable queryParams
-  and extra object param w/ `push`
-- refactored tests for greater coverage and fewer methods `@visibleForTesting`
+  and extra object param w/ `push`.
+- refactors tests for greater coverage and fewer methods `@visibleForTesting`.
 
 ## 2.1.1
 
 - [fix 86](https://github.com/csells/go_router/issues/86): add `name` to
   `GoRouterState` to complete support for URI-free navigation knowledge in your
-  code
+  code.
 - [fix 83](https://github.com/csells/go_router/issues/83): fix for `null`
-  `extra` object
+  `extra` object.
 
 ## 2.1.0
 
 - [fix 80](https://github.com/csells/go_router/issues/80): adding a redirect
-  limit to catch too many redirects error
+  limit to catch too many redirects error.
 - [fix 81](https://github.com/csells/go_router/issues/81): allow an `extra`
-  object to pass through for navigation
+  object to pass through for navigation.
 
 ## 2.0.1
 
-- add badges to the README and codecov to the GitHub commit action; thanks to
-  [rydmike](https://github.com/rydmike) for both
+- adds badges to the README and codecov to the GitHub commit action; thanks to
+  [rydmike](https://github.com/rydmike) for both.
 
 ## 2.0.0
 
-- BREAKING CHANGE and [fix #50](https://github.com/csells/go_router/issues/50):
+- **BREAKING CHANGE**: [fix #50](https://github.com/csells/go_router/issues/50):
   split `params` into `params` and `queryParams`; see the [Migrating to 2.0
   section of the docs](https://gorouter.dev/migrating-to-20)
-  for instructions on how to migrate your code from 1.x to 2.0
+  for instructions on how to migrate your code from 1.x to 2.0.
 - [fix 69](https://github.com/csells/go_router/issues/69): exposed named
-  location lookup for redirection
+  location lookup for redirection.
 - [fix 57](https://github.com/csells/go_router/issues/57): enable the Android
   system Back button to behave exactly like the `AppBar` Back button; thanks to
   [SunlightBro](https://github.com/SunlightBro) for the one-line fix that I had
-  no idea about until he pointed it out
+  no idea about until he pointed it out.
 - [fix 59](https://github.com/csells/go_router/issues/59): add query params to
-  top-level redirect
+  top-level redirect.
 - [fix 44](https://github.com/csells/go_router/issues/44): show how to use the
   `AutomaticKeepAliveClientMixin` with nested navigation to keep widget state
   between navigations; thanks to [rydmike](https://github.com/rydmike) for this
-  update
+  update.
 
 ## 1.1.3
 
 - enable case-insensitive path matching while still preserving path and query
-  parameter cases
+  parameter cases.
 - change a lifetime of habit to sort constructors first as per
-  [sort_constructors_first](https://dart.dev/lints/sort_constructors_first).
+  [sort_constructors_first](https://dart.dev/lints/sort_constructors_first)
   Thanks for the PR, [Abhishek01039](https://github.com/Abhishek01039)!
 - set the initial transition example route to `/none` to make pushing the 'fade
-  transition' button on the first run through more fun
-- fixed an error in the async data example
+  transition' button on the first run through more fun.
+- fixes an error in the async data example.
 
 ## 1.1.2
 
 - Thanks, Mikes!
-  - updated dartdocs from [rydmike](https://github.com/rydmike)
+  - updates dartdocs from [rydmike](https://github.com/rydmike).
   - also shoutout to [https://github.com/Salakar](https://github.com/Salakar)
-    for the CI action on GitHub
+    for the CI action on GitHub.
   - this is turning into a real community effort...
 
 ## 1.1.1
 
-- now showing routing exceptions in the debug log
-- updated the docs to make it clear that it will be called until it returns
-  `null`
+- now showing routing exceptions in the debug log.
+- updates the docs to make it clear that it will be called until it returns
+  `null`.
 
 ## 1.1.0
 
-- added support `NavigatorObserver` objects to receive change notifications
+- adds support `NavigatorObserver` objects to receive change notifications.
 
 ## 1.0.1
 
-- docs updates based on user feedback for clarity
-- fix for setting URL path strategy in `main()`
-- fix for `push()` disables `AppBar` Back button
+- docs updates based on user feedback for clarity.
+- fix for setting URL path strategy in `main()`.
+- fix for `push()` disables `AppBar` Back button.
 
 ## 1.0.0
 
-- updated version for initial release
-- some renaming for clarify and consistency with transitions
-  - `GoRoute.builder` => `GoRoute.pageBuilder`
-  - `GoRoute.error` => `GoRoute.errorPageBuilder`
-- added diagnostic logging for `push` and `pushNamed`
+- updates version for initial release.
+- some renaming for clarify and consistency with transitions.
+  - `GoRoute.builder` => `GoRoute.pageBuilder`.
+  - `GoRoute.error` => `GoRoute.errorPageBuilder`.
+- adds diagnostic logging for `push` and `pushNamed`.
 
 ## 0.9.6
 
-- added support for `push` as well as `go`
-- added 'none' to transitions example app
-- updated animation example to use no transition and added an animated gif to
-  the docs
+- adds support for `push` as well as `go`.
+- adds 'none' to transitions example app.
+- updates animation example to use no transition and added an animated gif to
+  the docs.
 
 ## 0.9.5
 
-- added support for custom transitions between routes
+- adds support for custom transitions between routes.
 
 ## 0.9.4
 
-- updated API docs
-- updated docs for `GoRouterState`
+- updates API docs.
+- updates docs for `GoRouterState`.
 
 ## 0.9.3
 
-- updated API docs
+- updates API docs.
 
 ## 0.9.2
 
-- updated named route lookup to O(1)
-- updated diagnostics output to show known named routes
+- updates named route lookup to O(1).
+- updates diagnostics output to show known named routes.
 
 ## 0.9.1
 
-- updated diagnostics output to show named route lookup
-- docs updates
+- updates diagnostics output to show named route lookup.
+- docs updates.
 
 ## 0.9.0
 
-- added support for named routes
+- adds support for named routes.
 
 ## 0.8.8
 
-- fix to make `GoRouter` notify on pop
+- fix to make `GoRouter` notify on pop.
 
 ## 0.8.7
 
-- made `GoRouter` a `ChangeNotifier` so you can listen for `location` changes
+- made `GoRouter` a `ChangeNotifier` so you can listen for `location` changes.
 
 ## 0.8.6
 
-- books sample bug fix
+- books sample bug fix.
 
 ## 0.8.5
 
-- added Cupertino sample
-- added example of async data lookup
+- adds Cupertino sample.
+- adds example of async data lookup.
 
 ## 0.8.4
 
-- added state restoration sample
+- adds state restoration sample.
 
 ## 0.8.3
 
-- changed `debugOutputFullPaths` to `debugLogDiagnostics` and added add'l
-  debugging logging
-- parameterized redirect
+- changes `debugOutputFullPaths` to `debugLogDiagnostics` and added add'l
+  debugging logging.
+- parameterizes redirect.
 
 ## 0.8.2
 
-- updated docs for `Link` widget support
+- updates docs for `Link` widget support.
 
 ## 0.8.1
 
-- added Books sample; fixed some issues it revealed
+- adds Books sample; fixed some issues it revealed.
 
 ## 0.8.0
 
-- breaking build to refactor the API for simplicity and capability
+- breaking build to refactor the API for simplicity and capability.
 - move to fixed routing from conditional routing; simplies API, allows for
-  redirection at the route level and there scenario was sketchy anyway
-- add redirection at the route level
-- replace guard objects w/ redirect functions
-- add `refresh` method and `refreshListener`
-- removed `.builder` ctor from `GoRouter` (not reasonable to implement)
-- add Dynamic linking section to the docs
-- replaced Books sample with Nested Navigation sample
-- add ability to dump the known full paths to your routes to debug output
+  redirection at the route level and there scenario was sketchy anyway.
+- adds redirection at the route level.
+- replaces guard objects w/ redirect functions.
+- adds `refresh` method and `refreshListener`.
+- removes `.builder` ctor from `GoRouter` (not reasonable to implement).
+- adds Dynamic linking section to the docs.
+- replaces Books sample with Nested Navigation sample.
+- adds ability to dump the known full paths to your routes to debug output.
 
 ## 0.7.1
 
-- update to pageKey to take sub-routes into account
+- update to pageKey to take sub-routes into account.
 
 ## 0.7.0
 
 - BREAK: rename `pattern` to `path` for consistency w/ other routers in the
-  world
-- added the `GoRouterLoginGuard` for the common redirect-to-login-page pattern
+  world.
+- adds the `GoRouterLoginGuard` for the common redirect-to-login-page pattern.
 
 ## 0.6.2
 
-- fixed issue showing home page for a second before redirecting (if needed)
+- fixes issue showing home page for a second before redirecting (if needed).
 
 ## 0.6.1
 
-- added `GoRouterState.pageKey`
-- removed `cupertino_icons` from main `pubspec.yaml`
+- adds `GoRouterState.pageKey`.
+- removes `cupertino_icons` from main `pubspec.yaml`.
 
 ## 0.6.0
 
 - refactor to support sub-routes to build a stack of pages instead of matching
-  multiple routes
-- added unit tests for building the stack of pages
+  multiple routes.
+- adds unit tests for building the stack of pages.
 - some renaming of the types, e.g. `Four04Page` and `FamiliesPage` to
-  `ErrorPage` and `HomePage` respectively
-- fix a redirection error shown in the debug output
+  `ErrorPage` and `HomePage` respectively.
+- fix a redirection error shown in the debug output.
 
 ## 0.5.2
 
-- add `urlPathStrategy` argument to `GoRouter` ctor
+- adds `urlPathStrategy` argument to `GoRouter` ctor.
 
 ## 0.5.1
 
-- docs and description updates
+- docs and description updates.
 
 ## 0.5.0
 
-- moved redirect to top-level instead of per route for simplicity
+- moves redirect to top-level instead of per route for simplicity.
 
 ## 0.4.1
 
-- fixed CHANGELOG formatting
+- fixes CHANGELOG formatting.
 
 ## 0.4.0
 
-- bundled various useful route handling variables into the `GoRouterState` for
-  use when building pages and error pages
-- updated URL Strategy section of docs to reference `flutter run`
+- bundles various useful route handling variables into the `GoRouterState` for
+  use when building pages and error pages.
+- updates URL Strategy section of docs to reference `flutter run`.
 
 ## 0.3.2
 
@@ -1245,39 +1244,39 @@
 
 ## 0.3.1
 
-- updated the CHANGELOG
+- updates the CHANGELOG.
 
 ## 0.3.0
 
-- moved redirection into a `GoRoute` ctor arg
-- forgot to update the CHANGELOG
+- moves redirection into a `GoRoute` ctor arg.
+- forgot to update the CHANGELOG.
 
 ## 0.2.3
 
 - move outstanding issues to [issue
-  tracker](https://github.com/csells/go_router/issues)
-- added explanation of Deep Linking to docs
-- reformatting to meet pub.dev scoring guidelines
+  tracker](https://github.com/csells/go_router/issues).
+- adds explanation of Deep Linking to docs.
+- reformatting to meet pub.dev scoring guidelines.
 
 ## 0.2.2
 
-- docs updates
+- docs updates.
 
 ## 0.2.1
 
-- messing with the CHANGELOG formatting
+- messing with the CHANGELOG formatting.
 
 ## 0.2.0
 
-- initial useful release
-- added support for declarative routes via `GoRoute` instances
-- added support for imperative routing via `GoRoute.builder`
-- added support for setting the URL path strategy
-- added support for conditional routing
-- added support for redirection
-- added support for optional query parameters as well as positional parameters
-  in route names
+- initial useful release.
+- adds support for declarative routes via `GoRoute` instances.
+- adds support for imperative routing via `GoRoute.builder`.
+- adds support for setting the URL path strategy.
+- adds support for conditional routing.
+- adds support for redirection.
+- adds support for optional query parameters as well as positional parameters
+  in route names.
 
 ## 0.1.0
 
-- squatting on the package name (I'm not too proud to admit it)
+- squatting on the package name (I'm not too proud to admit it).

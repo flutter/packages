@@ -46,7 +46,7 @@
 
 ## 0.2.0
 
-* Migrated to null safety.
+* Migrates to null safety.
 
 ## 0.1.2
 
@@ -54,8 +54,8 @@
 
 ## 0.1.1
 
-* Remove flutter, flutter_test from pubspec dependencies.
+* Removes flutter, flutter_test from pubspec dependencies.
 
 ## 0.1.0
 
-* Initial release includes all the features described in the README.md
+* Initial release includes all the features described in the README.md.
