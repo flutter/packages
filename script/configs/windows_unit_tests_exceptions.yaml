@@ -7,6 +7,7 @@
 # Chrome, which isn't currently supported by web infrastructure.
 # TODO(ditman): Fix this in the repo tooling.
 - camera_web
+- cross_file_web
 - file_selector_web
 - google_maps_flutter_web
 - google_sign_in_web
