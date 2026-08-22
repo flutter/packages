@@ -201,6 +201,82 @@ void main() {
       expect(match1 == match2, isFalse);
       expect(match1.hashCode == match2.hashCode, isFalse);
     });
+
+    test('push scopes key collisions in nested ShellRouteMatch', () {
+      final leafRoute = GoRoute(path: '/leaf', builder: _builder);
+      final nestedNavigatorKey = GlobalKey<NavigatorState>();
+      final nestedRoute = ShellRoute(
+        navigatorKey: nestedNavigatorKey,
+        builder: _shellBuilder,
+        routes: <RouteBase>[leafRoute],
+      );
+      final currentOuterRoute = ShellRoute(
+        builder: _shellBuilder,
+        routes: <RouteBase>[nestedRoute],
+      );
+      final pushedOuterRoute = ShellRoute(builder: _shellBuilder, routes: <RouteBase>[nestedRoute]);
+      const nestedPageKey = ValueKey<String>('nested');
+      const currentOuterPageKey = ValueKey<String>('current-outer');
+      const pushedOuterPageKey = ValueKey<String>('pushed-outer');
+      expect(currentOuterPageKey, isNot(pushedOuterPageKey));
+      expect(currentOuterRoute.navigatorKey, isNot(equals(pushedOuterRoute.navigatorKey)));
+
+      ShellRouteMatch nestedMatch() => ShellRouteMatch(
+        route: nestedRoute,
+        matches: <RouteMatchBase>[
+          RouteMatch(
+            route: leafRoute,
+            matchedLocation: '/leaf',
+            pageKey: const ValueKey<String>('/leaf'),
+          ),
+        ],
+        matchedLocation: '/leaf',
+        pageKey: nestedPageKey,
+        navigatorKey: nestedNavigatorKey,
+      );
+
+      final currentMatchList = RouteMatchList(
+        matches: <RouteMatchBase>[
+          ShellRouteMatch(
+            route: currentOuterRoute,
+            matches: <RouteMatchBase>[nestedMatch()],
+            matchedLocation: '/leaf',
+            pageKey: currentOuterPageKey,
+            navigatorKey: currentOuterRoute.navigatorKey,
+          ),
+        ],
+        uri: Uri.parse('/leaf'),
+        pathParameters: const <String, String>{},
+      );
+      final pushedMatchList = RouteMatchList(
+        matches: <RouteMatchBase>[
+          ShellRouteMatch(
+            route: pushedOuterRoute,
+            matches: <RouteMatchBase>[nestedMatch()],
+            matchedLocation: '/leaf',
+            pageKey: pushedOuterPageKey,
+            navigatorKey: pushedOuterRoute.navigatorKey,
+          ),
+        ],
+        uri: Uri.parse('/leaf'),
+        pathParameters: const <String, String>{},
+      );
+
+      final RouteMatchList result = currentMatchList.push(
+        ImperativeRouteMatch(
+          pageKey: const ValueKey<String>('push'),
+          matches: pushedMatchList,
+          completer: Completer<void>(),
+        ),
+      );
+
+      final pushedOuterMatch = result.matches.last as ShellRouteMatch;
+      final pushedNestedMatch = pushedOuterMatch.matches.single as ShellRouteMatch;
+      expect(pushedOuterMatch.pageKey, pushedOuterPageKey);
+      expect(pushedOuterMatch.navigatorKey, same(pushedOuterRoute.navigatorKey));
+      expect(pushedNestedMatch.pageKey, isNot(nestedPageKey));
+      expect(pushedNestedMatch.navigatorKey, isNot(equals(nestedNavigatorKey)));
+    });
   });
 }
 

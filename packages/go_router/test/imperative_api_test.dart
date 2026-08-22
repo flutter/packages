@@ -4,6 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:go_router/src/match.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'test_helpers.dart';
@@ -241,10 +242,29 @@ void main() {
     final DummyStatefulWidgetState pushedFirstPage = tester.state<DummyStatefulWidgetState>(
       find.byType(DummyStatefulWidget),
     );
+    final NavigatorState pushedFirstNavigator = Navigator.of(pushedFirstPage.context);
     expect(pushedFirstPage, isNot(same(firstPage)));
+    expect(pushedFirstNavigator, isNot(same(firstNavigator)));
+    expect(pushedFirstNavigator, isNot(same(secondNavigator)));
     pushedFirstPage.increment();
     await tester.pump();
     expect(pushedFirstPage.counter, 1);
+
+    // Recreate the full match list so the scoped shell keys are reconstructed
+    // from the stable imperative page key.
+    final codec = RouteMatchListCodec(router.configuration);
+    final RouteMatchList restoredConfiguration = codec.decode(
+      codec.encode(router.routerDelegate.currentConfiguration),
+    );
+    expect(restoredConfiguration, isNot(same(router.routerDelegate.currentConfiguration)));
+    router.restore(restoredConfiguration);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.state<DummyStatefulWidgetState>(find.byType(DummyStatefulWidget)),
+      same(pushedFirstPage),
+    );
+    expect(Navigator.of(pushedFirstPage.context), same(pushedFirstNavigator));
 
     router.refresh();
     await tester.pumpAndSettle();

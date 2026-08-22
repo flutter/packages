@@ -682,27 +682,41 @@ class RouteMatchList with Diagnosticable {
       return newMatches;
     }
     final RouteMatchBase branch = otherMatches.last;
-    final bool needsScopedKeys =
-        branch is ShellRouteMatch &&
-        branch.route is ShellRoute &&
-        newMatches.whereType<ShellRouteMatch>().any(
-          (ShellRouteMatch existingMatch) =>
-              existingMatch.pageKey == branch.pageKey ||
-              existingMatch.navigatorKey == branch.navigatorKey,
-        );
+    final List<ShellRouteMatch> existingShellRouteMatches = _shellRouteMatches(
+      newMatches,
+    ).toList(growable: false);
     newMatches.add(
-      _cloneBranchAndInsertImperativeMatch(branch, match, needsScopedKeys: needsScopedKeys),
+      _cloneBranchAndInsertImperativeMatch(
+        branch,
+        match,
+        existingShellRouteMatches: existingShellRouteMatches,
+      ),
     );
     return newMatches;
+  }
+
+  static Iterable<ShellRouteMatch> _shellRouteMatches(Iterable<RouteMatchBase> matches) sync* {
+    for (final match in matches) {
+      if (match is ShellRouteMatch) {
+        yield match;
+        yield* _shellRouteMatches(match.matches);
+      }
+    }
   }
 
   static RouteMatchBase _cloneBranchAndInsertImperativeMatch(
     RouteMatchBase branch,
     ImperativeRouteMatch match, {
-    required bool needsScopedKeys,
+    required List<ShellRouteMatch> existingShellRouteMatches,
   }) {
     if (branch is ShellRouteMatch) {
-      final bool scopeKeys = needsScopedKeys && branch.route is ShellRoute;
+      final bool scopeKeys =
+          branch.route is ShellRoute &&
+          existingShellRouteMatches.any(
+            (ShellRouteMatch existingMatch) =>
+                existingMatch.pageKey == branch.pageKey ||
+                existingMatch.navigatorKey == branch.navigatorKey,
+          );
       final ValueKey<String> pageKey = scopeKeys
           ? _ShellRoutePageKey(branch.route, match.pageKey)
           : branch.pageKey;
@@ -714,7 +728,7 @@ class RouteMatchList with Diagnosticable {
           _cloneBranchAndInsertImperativeMatch(
             branch.matches.last,
             match,
-            needsScopedKeys: needsScopedKeys,
+            existingShellRouteMatches: existingShellRouteMatches,
           ),
         ],
         pageKey: pageKey,
