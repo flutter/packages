@@ -25,5 +25,7 @@ dev_dependencies:
     path: ../../
 
 flutter:
+  config:
+    swift-package-manager: true
   uses-material-design: true
 

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:pigeon/pigeon.dart' show TaskQueueType;
 import 'package:pigeon/src/ast.dart';
 import 'package:pigeon/src/swift/swift_generator.dart';
 import 'package:test/test.dart';
@@ -412,8 +413,8 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    expect(code, contains('completion: @escaping (Result<Void, PigeonError>) -> Void'));
-    expect(code, contains('completion(.success(()))'));
+    expect(code, contains('func doSomething(arg0 arg0Arg: Input) async throws'));
+    expect(code, contains('continuation.resume()'));
     expect(code, isNot(contains('if (')));
   });
 
@@ -497,10 +498,7 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    expect(
-      code,
-      contains('func doSomething(completion: @escaping (Result<Output, PigeonError>) -> Void)'),
-    );
+    expect(code, contains('func doSomething() async throws -> Output'));
     expect(code, contains('channel.sendMessage(nil'));
     expect(code, isNot(contains('if (')));
   });
@@ -654,9 +652,132 @@ void main() {
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
     expect(code, contains('protocol Api'));
+    expect(code, contains('func doSomething(arg: Input) async throws -> Output'));
+    expect(
+      code,
+      contains(
+        'Task { @MainActor in\n          do {\n            let result = try await api.doSomething(arg: argArg)\n            reply(wrapResult(result))',
+      ),
+    );
+  });
+
+  test('async method with TaskQueue generates Task without @MainActor', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration(baseName: 'Output', isNullable: false),
+              isAsynchronous: true,
+              taskQueueType: TaskQueueType.serialBackgroundThread,
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'arg',
+                  type: const TypeDeclaration(baseName: 'Input', isNullable: false),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Input',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'input',
+            ),
+          ],
+        ),
+        Class(
+          name: 'Output',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'output',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('protocol Api'));
+    expect(code, contains('func doSomething(arg: Input) async throws -> Output'));
+    expect(
+      code,
+      contains(
+        'Task {\n          do {\n            let result = try await api.doSomething(arg: argArg)\n            reply(wrapResult(result))',
+      ),
+    );
+    expect(code, isNot(contains('Task { @MainActor in')));
+  });
+
+  test('asyncCallback emits callback-based host api method', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration(baseName: 'Output', isNullable: false),
+              isAsynchronous: true,
+              isAsynchronousCallback: true,
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'arg',
+                  type: const TypeDeclaration(baseName: 'Input', isNullable: false),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Input',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'input',
+            ),
+          ],
+        ),
+        Class(
+          name: 'Output',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+              name: 'output',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('protocol Api'));
+    expect(
+      code,
+      contains(
+        'func doSomething(arg: Input, completion: @escaping (Result<Output, Error>) -> Void)',
+      ),
+    );
     expect(code, contains('api.doSomething(arg: argArg) { result in'));
-    expect(code, contains('reply(wrapResult(res))'));
-    expect(code, isNot(contains('if (')));
   });
 
   test('gen one async Flutter Api', () {
@@ -716,7 +837,7 @@ void main() {
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
     expect(code, contains('class Api'));
-    expect(code, matches('func doSomething.*Input.*completion.*Output.*Void'));
+    expect(code, matches('func doSomething.*Input.*async throws -> Output'));
     expect(code, isNot(contains('if (')));
   });
 
@@ -952,12 +1073,9 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    expect(
-      code,
-      contains('func doit(completion: @escaping (Result<[Int64?], PigeonError>) -> Void)'),
-    );
+    expect(code, contains('func doit() async throws -> [Int64?]'));
     expect(code, contains('let result = listResponse[0] as! [Int64?]'));
-    expect(code, contains('completion(.success(result))'));
+    expect(code, contains('continuation.resume(returning: result)'));
   });
 
   test('host multiple args', () {
@@ -1034,13 +1152,8 @@ void main() {
     final code = sink.toString();
     expect(code, contains('let channel = FlutterBasicMessageChannel'));
     expect(code, contains('let result = listResponse[0] as! Int64'));
-    expect(code, contains('completion(.success(result))'));
-    expect(
-      code,
-      contains(
-        'func add(x xArg: Int64, y yArg: Int64, completion: @escaping (Result<Int64, PigeonError>) -> Void)',
-      ),
-    );
+    expect(code, contains('continuation.resume(returning: result)'));
+    expect(code, contains('func add(x xArg: Int64, y yArg: Int64) async throws -> Int64'));
     expect(code, contains('channel.sendMessage([xArg, yArg] as [Any?]) { response in'));
   });
 
@@ -1094,7 +1207,7 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    expect(code, contains('func doit(completion: @escaping (Result<Int64?, Error>) -> Void'));
+    expect(code, contains('func doit() async throws -> Int64?'));
   });
 
   test('nullable argument host', () {
@@ -1156,12 +1269,7 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    expect(
-      code,
-      contains(
-        'func doit(foo fooArg: Int64?, completion: @escaping (Result<Void, PigeonError>) -> Void)',
-      ),
-    );
+    expect(code, contains('func doit(foo fooArg: Int64?) async throws'));
   });
 
   test('nonnull fields', () {
@@ -1471,7 +1579,9 @@ void main() {
     final code = sink.toString();
     expect(
       code,
-      contains('completion(.failure(createConnectionError(withChannelName: channelName)))'),
+      contains(
+        'continuation.resume(throwing: createConnectionError(withChannelName: channelName))',
+      ),
     );
     expect(
       code,

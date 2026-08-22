@@ -1,3 +1,0 @@
-changelog: |
-  - Remove unresolvable doc import for flutter_test
-version: patch

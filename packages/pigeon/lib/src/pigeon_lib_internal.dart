@@ -2025,7 +2025,17 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final List<Parameter> arguments = parameters.parameters
         .map(_formalParameterToPigeonParameter)
         .toList();
-    final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
+    final bool hasAsync = _hasMetadata(node.metadata, 'async');
+    final bool hasAsyncCallback = _hasMetadata(node.metadata, 'asyncCallback');
+    final bool isUseCallback =
+        hasAsyncCallback ||
+        (_findMetadata(
+              node.metadata,
+              'async',
+            )?.arguments?.arguments.any((arg) => arg.toSource().contains('useCallback: true')) ??
+            false);
+    final bool isAsynchronous = hasAsync || hasAsyncCallback;
+    final bool isAsynchronousCallback = isAsynchronous && isUseCallback;
     final bool isStatic = _hasMetadata(node.metadata, 'static');
     final String objcSelector =
         _findMetadata(
@@ -2095,6 +2105,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               AstEventChannelApi() => ApiLocation.host,
             },
             isAsynchronous: isAsynchronous,
+            isAsynchronousCallback: isAsynchronousCallback,
             objcSelector: objcSelector,
             swiftFunction: swiftFunction,
             offset: node.offset,

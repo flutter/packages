@@ -13,8 +13,21 @@ analyzer:
     - windows/**
     - macos/**
     - linux/**
+  # These are repeated from ../../analysis_options.yaml because pana cannot see
+  # the shared options when the package is published.
+  errors:
+    deprecated_member_use: ignore
+    deprecated_member_use_from_same_package: ignore
+    # `dart analyze` hasn't recognized the @example directive yet.
+    # Remove it once https://github.com/dart-lang/sdk/pull/63646 is landed.
+    doc_directive_unknown: ignore
 
 linter:
   rules:
     # TODO(dkwingsmt): Remove when https://github.com/dart-lang/sdk/issues/63777 is fixed.
     unintended_html_in_doc_comment: false
+
+# These are repeated from ../../analysis_options.yaml because pana cannot see
+# the shared options when the package is published.
+formatter:
+  page_width: 100

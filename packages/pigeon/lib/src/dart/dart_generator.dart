@@ -2298,7 +2298,7 @@ ${api.name}({
         ..fields.addAll(<cb.Field>[
           if (api.constructors.isNotEmpty ||
               api.attachedFields.any((ApiField field) => !field.isStatic) ||
-              api.hostMethods.isNotEmpty)
+              api.hostMethods.any((Method method) => !method.isStatic))
             proxy_api_helper.codecInstanceField(
               codecInstanceName: codecInstanceName,
               codecName: codecName,

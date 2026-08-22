@@ -70,6 +70,7 @@ android {
         compileOnly("javax.annotation:javax.annotation-api:1.3.2")
         testImplementation("junit:junit:4.13.2")
         testImplementation("io.mockk:mockk:1.14.11")
+        testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
         // org.jetbrains.kotlin:kotlin-bom artifact purpose is to align kotlin stdlib and related code versions.
         // See: https://youtrack.jetbrains.com/issue/KT-55297/kotlin-stdlib-should-declare-constraints-on-kotlin-stdlib-jdk8-and-kotlin-stdlib-jdk7
         implementation(platform("org.jetbrains.kotlin:kotlin-bom:2.1.0"))

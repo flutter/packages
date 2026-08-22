@@ -58,6 +58,65 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     );
   }
 
+  group('Host Callback API tests', () {
+    testWidgets('noop callback works', (WidgetTester _) async {
+      final api = HostCallbackCoreApi();
+      expect(api.noop(), completes);
+    });
+
+    testWidgets('echoString callback works', (WidgetTester _) async {
+      final api = HostCallbackCoreApi();
+      final String result = await api.echoString('hello');
+      expect(result, 'hello');
+    });
+
+    testWidgets('echoAllTypes callback works', (WidgetTester _) async {
+      final api = HostCallbackCoreApi();
+      final AllTypes echoObject = await api.echoAllTypes(genericAllTypes);
+      expect(echoObject, genericAllTypes);
+    });
+
+    testWidgets('echoNullableString callback works', (WidgetTester _) async {
+      final api = HostCallbackCoreApi();
+      final String? result = await api.echoNullableString('hello');
+      expect(result, 'hello');
+    });
+
+    testWidgets('throwError callback works', (WidgetTester _) async {
+      final api = HostCallbackCoreApi();
+      expect(
+        () async => api.throwError(),
+        throwsA(
+          isA<PlatformException>()
+              .having((PlatformException e) => e.code, 'code', 'code')
+              .having((PlatformException e) => e.message, 'message', 'message')
+              .having((PlatformException e) => e.details, 'details', 'details'),
+        ),
+      );
+    });
+
+    testWidgets('throwErrorFromVoid callback works', (WidgetTester _) async {
+      final api = HostCallbackCoreApi();
+      expect(
+        () async => api.throwErrorFromVoid(),
+        throwsA(
+          isA<PlatformException>()
+              .having((PlatformException e) => e.code, 'code', 'code')
+              .having((PlatformException e) => e.message, 'message', 'message')
+              .having((PlatformException e) => e.details, 'details', 'details'),
+        ),
+      );
+    });
+
+    testWidgets('taskQueueIsBackgroundThread callback works', (WidgetTester _) async {
+      final api = HostCallbackCoreApi();
+      final bool taskQueuesSupported =
+          defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS;
+      expect(await api.taskQueueIsBackgroundThread(), taskQueuesSupported);
+    });
+  });
+
   group('Host sync API tests', () {
     testWidgets('basic void->void call works', (WidgetTester _) async {
       final api = HostIntegrationCoreApi();
@@ -1613,12 +1672,26 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   group('Flutter API tests', () {
     setUp(() {
       FlutterIntegrationCoreApi.setUp(FlutterApiTestImplementation());
+      FlutterCallbackCoreApi.setUp(_FlutterCallbackApiTestImplementation());
     });
 
     testWidgets('basic void->void call works', (WidgetTester _) async {
       final api = HostIntegrationCoreApi();
 
       expect(api.callFlutterNoop(), completes);
+    });
+
+    testWidgets('callback basic void->void call works', (WidgetTester _) async {
+      final api = HostIntegrationCoreApi();
+
+      expect(api.callFlutterCallbackNoop(), completes);
+    });
+
+    testWidgets('callback echoString works', (WidgetTester _) async {
+      final api = HostIntegrationCoreApi();
+
+      final String echo = await api.callFlutterCallbackEchoString('hello');
+      expect(echo, 'hello');
     });
 
     testWidgets('errors are returned from non void methods correctly', (WidgetTester _) async {
@@ -1629,11 +1702,29 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       }, throwsA(isA<PlatformException>()));
     });
 
+    testWidgets('callback errors are returned from non void methods correctly', (
+      WidgetTester _,
+    ) async {
+      final api = HostIntegrationCoreApi();
+
+      expect(() async {
+        await api.callFlutterCallbackThrowError();
+      }, throwsA(isA<PlatformException>()));
+    });
+
     testWidgets('errors are returned from void methods correctly', (WidgetTester _) async {
       final api = HostIntegrationCoreApi();
 
       expect(() async {
         await api.callFlutterThrowErrorFromVoid();
+      }, throwsA(isA<PlatformException>()));
+    });
+
+    testWidgets('callback errors are returned from void methods correctly', (WidgetTester _) async {
+      final api = HostIntegrationCoreApi();
+
+      expect(() async {
+        await api.callFlutterCallbackThrowErrorFromVoid();
       }, throwsA(isA<PlatformException>()));
     });
 
@@ -2204,6 +2295,17 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(await api.taskQueueIsBackgroundThread(), taskQueuesSupported);
   });
 
+  testWidgets('async task queue handlers run on a background thread', (_) async {
+    final api = HostIntegrationCoreApi();
+    // Swift async methods inherently run on a background thread pool regardless of
+    // platform, whereas other languages rely on engine TaskQueue support.
+    final bool taskQueuesSupported =
+        defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.iOS ||
+        targetGenerator == TargetGenerator.swift;
+    expect(await api.asyncTaskQueueIsBackgroundThread(), taskQueuesSupported);
+  });
+
   /// Event channels
 
   const eventChannelSupported = <TargetGenerator>[TargetGenerator.kotlin, TargetGenerator.swift];
@@ -2290,7 +2392,27 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   });
 }
 
-/// Implementation of FlutterIntegrationCoreApi for integration tests.
+class _FlutterCallbackApiTestImplementation implements FlutterCallbackCoreApi {
+  @override
+  Future<void> noop() async {}
+
+  @override
+  Future<String> echoString(String aString) async {
+    return aString;
+  }
+
+  @override
+  Future<Object?> throwError() async {
+    throw FlutterError('this is an error');
+  }
+
+  @override
+  Future<void> throwErrorFromVoid() async {
+    throw FlutterError('this is an error');
+  }
+}
+
+/// Test implementation for [FlutterIntegrationCoreApi].
 class FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   @override
   AllTypes echoAllTypes(AllTypes everything) {

@@ -1,7 +1,16 @@
-## 27.4.0
+## 28.1.0
 
 * [swift] [kotlin] Adds experimental support for FFI and JNI.
 * Exposes missing PigeonOptions and language-specific configurations as command-line arguments.
+
+## 28.0.0
+
+* **Breaking Change** Updates Kotlin and Swift generators to generate `suspend` functions and `async throws` signatures for `@FlutterApi` methods by default, and for `@HostApi` methods annotated with `@async`.
+  * Use `@asyncCallback` if callback-style signatures are required.
+
+## 27.3.2
+
+* [dart] Fixes lint warning from unused codec variable in Dart proxy classes.
 
 ## 27.3.1
 
