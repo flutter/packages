@@ -335,6 +335,72 @@ void main() {
       expect(icon.style.height, '${expectedSize}px');
     });
 
+    testWidgets('changeMarkers preserves bitmap icon content when position changes', (
+      WidgetTester tester,
+    ) async {
+      const markerId = MarkerId('1');
+      final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
+      final markers = <AdvancedMarker>{
+        AdvancedMarker(
+          markerId: markerId,
+          icon: BytesMapBitmap(bytes, imagePixelRatio: 1),
+          position: const LatLng(1, 2),
+        ),
+      };
+      await controller.addMarkers(markers);
+
+      final gmaps.AdvancedMarkerElement? marker = controller.markers[markerId]?.marker;
+      expect(marker, isNotNull);
+      final icon = marker!.content as HTMLImageElement?;
+      expect(icon, isNotNull);
+      final String blobUrl = icon!.src;
+
+      final updatedMarkers = <AdvancedMarker>{
+        AdvancedMarker(
+          markerId: markerId,
+          icon: BytesMapBitmap(bytes, imagePixelRatio: 1),
+          position: const LatLng(42, 54),
+        ),
+      };
+      await controller.changeMarkers(updatedMarkers);
+
+      final position = marker.position! as gmaps.LatLngLiteral;
+      expect(position.lat, equals(42));
+      expect(position.lng, equals(54));
+      expect(icon.isSameNode(marker.content), isTrue);
+      expect(icon.src, blobUrl);
+    });
+
+    testWidgets('changeMarkers replaces bitmap icon content when alpha changes', (
+      WidgetTester tester,
+    ) async {
+      const markerId = MarkerId('1');
+      final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
+      final markers = <AdvancedMarker>{
+        AdvancedMarker(markerId: markerId, icon: BytesMapBitmap(bytes, imagePixelRatio: 1)),
+      };
+      await controller.addMarkers(markers);
+
+      final gmaps.AdvancedMarkerElement? marker = controller.markers[markerId]?.marker;
+      expect(marker, isNotNull);
+      final icon = marker!.content as HTMLImageElement?;
+      expect(icon, isNotNull);
+
+      final updatedMarkers = <AdvancedMarker>{
+        AdvancedMarker(
+          markerId: markerId,
+          alpha: 0.5,
+          icon: BytesMapBitmap(bytes, imagePixelRatio: 1),
+        ),
+      };
+      await controller.changeMarkers(updatedMarkers);
+
+      final updatedIcon = marker.content as HTMLImageElement?;
+      expect(updatedIcon, isNotNull);
+      expect(updatedIcon!.isSameNode(icon), isFalse);
+      expect(updatedIcon.style.opacity, '0.5');
+    });
+
     testWidgets('markers with custom bitmap icon and pixel ratio work', (
       WidgetTester tester,
     ) async {
