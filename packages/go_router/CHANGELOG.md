@@ -1,3 +1,7 @@
+## 17.5.1
+
+- Fixes a `StateError` ("Bad state: Future already completed") when a route with an `onExit` callback is popped twice before the navigator rebuilds.
+
 ## 17.5.0
 
 - Adds route `metadata` support, including inheritance and override behavior with exposure on `GoRouterState`.

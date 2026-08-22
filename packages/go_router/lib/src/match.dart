@@ -458,7 +458,15 @@ class ImperativeRouteMatch extends RouteMatch {
 
   /// Called when the corresponding [Route] associated with this route match is
   /// completed.
+  ///
+  /// A route match can be completed more than once when the same route is
+  /// popped again before the navigator has rebuilt; for example, two back
+  /// events in quick succession while an `onExit` callback defers the pop to a
+  /// microtask. Only the first completion is reported; later ones are ignored.
   void complete([dynamic value]) {
+    if (completer.isCompleted) {
+      return;
+    }
     completer.complete(value);
   }
 

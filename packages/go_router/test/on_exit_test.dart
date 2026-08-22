@@ -529,6 +529,45 @@ void main() {
     expect(find.byKey(homeKey), findsNothing);
   });
 
+  // Regression test for https://github.com/flutter/flutter/issues/191280
+  testWidgets('popping a route with onExit twice before the navigator rebuilds does not throw', (
+    WidgetTester tester,
+  ) async {
+    final homeKey = UniqueKey();
+    final detailKey = UniqueKey();
+
+    final GoRouter router = await createRouter(
+      <RouteBase>[
+        GoRoute(
+          path: '/',
+          builder: (_, _) => DummyScreen(key: homeKey),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'detail',
+              onExit: (_, _) => true,
+              builder: (_, _) => DummyScreen(key: detailKey),
+            ),
+          ],
+        ),
+      ],
+      tester,
+    );
+
+    final Future<Object?> pushFuture = router.push('/detail');
+    await tester.pumpAndSettle();
+    expect(find.byKey(detailKey), findsOneWidget);
+
+    // Two back events arrive before the deferred pop is applied — e.g. a user
+    // tapping the back button twice in quick succession.
+    router.pop('first');
+    router.pop('second');
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.byKey(homeKey), findsOneWidget);
+    expect(await pushFuture, 'first');
+  });
+
   // Regression test for https://github.com/flutter/flutter/issues/137829
   testWidgets('back button works synchronously with ShellRoute', (WidgetTester tester) async {
     var allow = false;
