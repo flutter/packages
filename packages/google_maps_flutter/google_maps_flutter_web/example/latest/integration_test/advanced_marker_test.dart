@@ -107,9 +107,36 @@ void main() {
     ) async {
       AdvancedMarkerController(marker: marker);
 
-      // Should not throw when no listener was attached.
+      // Should not throw when onHover is unset.
       marker.dispatchEvent(web.Event('gmp-mouseenter'));
       marker.dispatchEvent(web.Event('gmp-mouseleave'));
+    });
+
+    testWidgets('onHover can be set after construction', (WidgetTester tester) async {
+      // Regression test: the marker starts with no onHover callback, so no
+      // hover events should be reported until one is assigned later, at
+      // which point the already-attached DOM listeners must start using it.
+      final controller = AdvancedMarkerController(marker: marker);
+
+      marker.dispatchEvent(web.Event('gmp-mouseenter'));
+
+      final hoverStates = <bool>[];
+      controller.onHover = hoverStates.add;
+
+      marker.dispatchEvent(web.Event('gmp-mouseenter'));
+      marker.dispatchEvent(web.Event('gmp-mouseleave'));
+
+      expect(hoverStates, <bool>[true, false]);
+    });
+
+    testWidgets('onHover can be cleared after construction', (WidgetTester tester) async {
+      final hoverStates = <bool>[];
+      final controller = AdvancedMarkerController(marker: marker, onHover: hoverStates.add);
+
+      controller.onHover = null;
+      marker.dispatchEvent(web.Event('gmp-mouseenter'));
+
+      expect(hoverStates, isEmpty);
     });
 
     testWidgets('onHover stops being called after remove', (WidgetTester tester) async {

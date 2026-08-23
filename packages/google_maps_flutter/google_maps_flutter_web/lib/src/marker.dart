@@ -223,12 +223,13 @@ class AdvancedMarkerController
     super.onDragEnd,
     super.onTap,
     super.clusterManagerId,
-    ValueChanged<bool>? onHover,
-  }) : _onHover = onHover {
-    if (_onHover != null) {
-      _marker!.addEventListener('gmp-mouseenter', _onMouseEnter);
-      _marker!.addEventListener('gmp-mouseleave', _onMouseLeave);
-    }
+    this.onHover,
+  }) {
+    // Always attached, regardless of whether `onHover` is initially set, so
+    // that a later update to [onHover] (see [MarkersController.changeMarkers])
+    // is honored without needing to add/remove the underlying DOM listeners.
+    _marker!.addEventListener('gmp-mouseenter', _onMouseEnter);
+    _marker!.addEventListener('gmp-mouseleave', _onMouseLeave);
   }
 
   /// List of active stream subscriptions for marker events.
@@ -238,13 +239,17 @@ class AdvancedMarkerController
   /// These subscriptions should be disposed when the controller is disposed.
   final List<StreamSubscription<dynamic>> _subscriptions = <StreamSubscription<dynamic>>[];
 
-  // Reports mouse hover state changes. Only supported on the web, through the
-  // `gmp-mouseenter`/`gmp-mouseleave` DOM events dispatched by
-  // [gmaps.AdvancedMarkerElement].
-  final ValueChanged<bool>? _onHover;
+  /// Reports mouse hover state changes. Only supported on the web, through
+  /// the `gmp-mouseenter`/`gmp-mouseleave` DOM events dispatched by
+  /// [gmaps.AdvancedMarkerElement].
+  ///
+  /// Mutable so that [MarkersController.changeMarkers] can propagate a new
+  /// callback without having to recreate the underlying
+  /// [gmaps.AdvancedMarkerElement] and its DOM listeners.
+  ValueChanged<bool>? onHover;
 
-  late final JSFunction _onMouseEnter = ((JSAny? _) => _onHover?.call(true)).toJS;
-  late final JSFunction _onMouseLeave = ((JSAny? _) => _onHover?.call(false)).toJS;
+  late final JSFunction _onMouseEnter = ((JSAny? _) => onHover?.call(true)).toJS;
+  late final JSFunction _onMouseLeave = ((JSAny? _) => onHover?.call(false)).toJS;
 
   @override
   void addMarkerListener({
@@ -292,10 +297,8 @@ class AdvancedMarkerController
     if (_marker != null) {
       _infoWindowShown = false;
 
-      if (_onHover != null) {
-        _marker!.removeEventListener('gmp-mouseenter', _onMouseEnter);
-        _marker!.removeEventListener('gmp-mouseleave', _onMouseLeave);
-      }
+      _marker!.removeEventListener('gmp-mouseenter', _onMouseEnter);
+      _marker!.removeEventListener('gmp-mouseleave', _onMouseLeave);
 
       _marker!.remove();
       _marker!.map = null;

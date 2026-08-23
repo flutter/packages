@@ -142,6 +142,13 @@ abstract class MarkersController<T extends Object, O> extends GeometryController
           markerOptions,
           newInfoWindowContent: infoWindow?.content as web.HTMLElement?,
         );
+        if (marker is AdvancedMarker && markerController is AdvancedMarkerController) {
+          (markerController as AdvancedMarkerController).onHover = marker.onHover == null
+              ? null
+              : (bool isHovering) {
+                  _onMarkerHover(marker.markerId, isHovering);
+                };
+        }
       }
     }
   }
