@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes SliverGeometry maxPaintExtent assertion in CarouselView.weighted
+version: patch
