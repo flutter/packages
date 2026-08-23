@@ -1,6 +1,8 @@
 ## 2.19.13
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+* Implements `onMarkerHover` as a no-op stream, since hovering a marker with
+  a mouse is only supported on the web platform.
 
 ## 2.19.12
 

@@ -223,7 +223,13 @@ class AdvancedMarkerController
     super.onDragEnd,
     super.onTap,
     super.clusterManagerId,
-  });
+    ValueChanged<bool>? onHover,
+  }) : _onHover = onHover {
+    if (_onHover != null) {
+      _marker!.addEventListener('gmp-mouseenter', _onMouseEnter);
+      _marker!.addEventListener('gmp-mouseleave', _onMouseLeave);
+    }
+  }
 
   /// List of active stream subscriptions for marker events.
   ///
@@ -231,6 +237,14 @@ class AdvancedMarkerController
   /// including taps and different drag events.
   /// These subscriptions should be disposed when the controller is disposed.
   final List<StreamSubscription<dynamic>> _subscriptions = <StreamSubscription<dynamic>>[];
+
+  // Reports mouse hover state changes. Only supported on the web, through the
+  // `gmp-mouseenter`/`gmp-mouseleave` DOM events dispatched by
+  // [gmaps.AdvancedMarkerElement].
+  final ValueChanged<bool>? _onHover;
+
+  late final JSFunction _onMouseEnter = ((JSAny? _) => _onHover?.call(true)).toJS;
+  late final JSFunction _onMouseLeave = ((JSAny? _) => _onHover?.call(false)).toJS;
 
   @override
   void addMarkerListener({
@@ -277,6 +291,11 @@ class AdvancedMarkerController
   void remove() {
     if (_marker != null) {
       _infoWindowShown = false;
+
+      if (_onHover != null) {
+        _marker!.removeEventListener('gmp-mouseenter', _onMouseEnter);
+        _marker!.removeEventListener('gmp-mouseleave', _onMouseLeave);
+      }
 
       _marker!.remove();
       _marker!.map = null;

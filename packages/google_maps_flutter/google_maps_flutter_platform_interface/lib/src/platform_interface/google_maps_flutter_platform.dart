@@ -322,6 +322,13 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('onMarkerDragEnd() has not been implemented.');
   }
 
+  /// The mouse has started or stopped hovering over a [Marker].
+  ///
+  /// This is only fired on the web platform, for [AdvancedMarker]s.
+  Stream<MarkerHoverEvent> onMarkerHover({required int mapId}) {
+    throw UnimplementedError('onMarkerHover() has not been implemented.');
+  }
+
   /// A [Polyline] has been tapped.
   Stream<PolylineTapEvent> onPolylineTap({required int mapId}) {
     throw UnimplementedError('onPolylineTap() has not been implemented.');

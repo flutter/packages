@@ -83,6 +83,11 @@ class GoogleMapController {
     );
     _streamSubscriptions.add(
       GoogleMapsFlutterPlatform.instance
+          .onMarkerHover(mapId: mapId)
+          .listen((MarkerHoverEvent e) => _googleMapState.onMarkerHover(e.value, e.isHovering)),
+    );
+    _streamSubscriptions.add(
+      GoogleMapsFlutterPlatform.instance
           .onInfoWindowTap(mapId: mapId)
           .listen((InfoWindowTapEvent e) => _googleMapState.onInfoWindowTap(e.value)),
     );

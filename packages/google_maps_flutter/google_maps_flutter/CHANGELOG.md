@@ -1,3 +1,8 @@
+## 2.19.0
+
+* Adds support for `AdvancedMarker.onHover`, reporting mouse hover state
+  changes. Only supported on the web platform.
+
 ## 2.18.0
 
 * Adds support for mapTypeControlEnabled, fullscreenControlEnabled, and streetViewControlEnabled on web.

@@ -213,6 +213,11 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<MarkerHoverEvent> onMarkerHover({required int mapId}) {
+    return mapEventStreamController.stream.whereType<MarkerHoverEvent>();
+  }
+
+  @override
   Stream<PolylineTapEvent> onPolylineTap({required int mapId}) {
     return mapEventStreamController.stream.whereType<PolylineTapEvent>();
   }

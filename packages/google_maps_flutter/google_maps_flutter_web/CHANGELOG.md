@@ -1,3 +1,8 @@
+## 0.7.0
+
+* Adds support for `AdvancedMarker.onHover`, reporting mouse hover state
+  changes via the `gmp-mouseenter`/`gmp-mouseleave` DOM events.
+
 ## 0.6.3
 
 * Adds support for mapTypeControlEnabled, fullscreenControlEnabled, and streetViewControlEnabled.

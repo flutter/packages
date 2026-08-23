@@ -230,6 +230,11 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<MarkerHoverEvent> onMarkerHover({required int mapId}) {
+    return _events(mapId).whereType<MarkerHoverEvent>();
+  }
+
+  @override
   Stream<PolylineTapEvent> onPolylineTap({required int mapId}) {
     return _events(mapId).whereType<PolylineTapEvent>();
   }

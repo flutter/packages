@@ -35,10 +35,21 @@ class AdvancedMarker extends Marker {
     super.onDragEnd,
     int zIndex = 0,
     this.collisionBehavior = MarkerCollisionBehavior.requiredDisplay,
+    this.onHover,
   }) : super(zIndex: zIndex.toDouble());
 
   /// Indicates how the marker behaves when it collides with other markers.
   final MarkerCollisionBehavior collisionBehavior;
+
+  /// Callback reporting when the mouse starts or stops hovering over the
+  /// marker.
+  ///
+  /// The `isHovering` argument is `true` when the mouse starts hovering the
+  /// marker, and `false` when it stops.
+  ///
+  /// This is only supported on the web platform. On other platforms, this
+  /// callback is never called.
+  final ValueChanged<bool>? onHover;
 
   /// Creates a new [AdvancedMarker] object whose values are the same as this
   /// instance, unless overwritten by the specified parameters.
@@ -67,6 +78,7 @@ class AdvancedMarker extends Marker {
     ClusterManagerId? clusterManagerIdParam,
     MarkerCollisionBehavior? collisionBehaviorParam,
     double? altitudeParam,
+    ValueChanged<bool>? onHoverParam,
   }) {
     return AdvancedMarker(
       markerId: markerId,
@@ -87,6 +99,7 @@ class AdvancedMarker extends Marker {
       onDragEnd: onDragEndParam ?? onDragEnd,
       clusterManagerId: clusterManagerIdParam ?? clusterManagerId,
       collisionBehavior: collisionBehaviorParam ?? collisionBehavior,
+      onHover: onHoverParam ?? onHover,
     );
   }
 
@@ -148,7 +161,7 @@ class AdvancedMarker extends Marker {
         'icon: $icon, infoWindow: $infoWindow, position: $position, rotation: $rotation, '
         'visible: $visible, zIndex: $zIndex, onTap: $onTap, onDragStart: $onDragStart, '
         'onDrag: $onDrag, onDragEnd: $onDragEnd, clusterManagerId: $clusterManagerId, '
-        'collisionBehavior: $collisionBehavior}';
+        'collisionBehavior: $collisionBehavior, onHover: $onHover}';
   }
 }
 

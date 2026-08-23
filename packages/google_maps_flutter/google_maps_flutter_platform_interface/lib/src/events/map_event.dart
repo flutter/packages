@@ -128,6 +128,21 @@ class MarkerDragEndEvent extends _PositionedMapEvent<MarkerId> {
   MarkerDragEndEvent(super.mapId, super.position, super.markerId);
 }
 
+/// An event fired when the mouse starts or stops hovering over a [Marker].
+///
+/// This is only fired on the web platform, for [AdvancedMarker]s.
+class MarkerHoverEvent extends MapEvent<MarkerId> {
+  /// Build a MarkerHover Event triggered from the map represented by `mapId`.
+  ///
+  /// The `value` of this event is a [MarkerId] object that represents the Marker.
+  /// The `isHovering` is `true` when the mouse starts hovering the marker, and
+  /// `false` when it stops.
+  MarkerHoverEvent(super.mapId, super.markerId, this.isHovering);
+
+  /// Whether the mouse is hovering the marker.
+  final bool isHovering;
+}
+
 /// An event fired when a [Polyline] is tapped.
 class PolylineTapEvent extends MapEvent<PolylineId> {
   /// Build an PolylineTap Event triggered from the map represented by `mapId`.

@@ -1,21 +1,14 @@
 ## 2.18.10
-
 * Converts marker controllers to Swift.
-
+* Implements `onMarkerHover` as a no-op stream, since hovering a marker with
+  a mouse is only supported on the web platform.
 ## 2.18.9
-
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
-
 ## 2.18.8
-
 * Converts overlay controllers to Swift.
-
 ## 2.18.7
-
 * Converts circle, polygon, and polyline controllers to Swift.
-
 ## 2.18.6
-
 * Converts parts of the implementation to Swift.
 
 ## 2.18.5

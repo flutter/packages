@@ -168,6 +168,12 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<MarkerHoverEvent> onMarkerHover({required int mapId}) {
+    // Hovering a marker with a mouse is only supported on the web platform.
+    return _events(mapId).whereType<MarkerHoverEvent>();
+  }
+
+  @override
   Stream<PolylineTapEvent> onPolylineTap({required int mapId}) {
     return _events(mapId).whereType<PolylineTapEvent>();
   }

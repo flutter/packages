@@ -1,3 +1,9 @@
+## 2.17.0
+
+* Adds `AdvancedMarker.onHover`, `MarkerHoverEvent`, and
+  `GoogleMapsFlutterPlatform.onMarkerHover` to support reporting mouse hover
+  state changes for advanced markers. Only supported on the web platform.
+
 ## 2.16.1
 
 * Fixes the `PinConfig` code sample in the `BitmapDescriptor` documentation.

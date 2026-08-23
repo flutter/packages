@@ -10,6 +10,7 @@ import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
 import 'package:google_maps_flutter_web/src/utils.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:web/web.dart' as web;
 
 /// Test Markers
 void main() {
@@ -87,6 +88,38 @@ void main() {
       gmaps.event.trigger(marker, 'dragend', gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0));
 
       expect(await methodCalled, isTrue);
+    });
+
+    testWidgets('onHover gets called on gmp-mouseenter/gmp-mouseleave', (
+      WidgetTester tester,
+    ) async {
+      final hoverStates = <bool>[];
+      AdvancedMarkerController(marker: marker, onHover: hoverStates.add);
+
+      marker.dispatchEvent(web.Event('gmp-mouseenter'));
+      marker.dispatchEvent(web.Event('gmp-mouseleave'));
+
+      expect(hoverStates, <bool>[true, false]);
+    });
+
+    testWidgets('gmp-mouseenter/gmp-mouseleave are ignored when onHover is null', (
+      WidgetTester tester,
+    ) async {
+      AdvancedMarkerController(marker: marker);
+
+      // Should not throw when no listener was attached.
+      marker.dispatchEvent(web.Event('gmp-mouseenter'));
+      marker.dispatchEvent(web.Event('gmp-mouseleave'));
+    });
+
+    testWidgets('onHover stops being called after remove', (WidgetTester tester) async {
+      final hoverStates = <bool>[];
+      final controller = AdvancedMarkerController(marker: marker, onHover: hoverStates.add);
+
+      controller.remove();
+      marker.dispatchEvent(web.Event('gmp-mouseenter'));
+
+      expect(hoverStates, isEmpty);
     });
 
     testWidgets('update', (WidgetTester tester) async {

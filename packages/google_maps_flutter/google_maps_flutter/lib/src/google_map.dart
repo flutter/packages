@@ -648,6 +648,16 @@ class _GoogleMapState extends State<GoogleMap> {
     }
   }
 
+  void onMarkerHover(MarkerId markerId, bool isHovering) {
+    final Marker? marker = _markers[markerId];
+    if (marker == null) {
+      throw UnknownMapObjectIdError('marker', markerId, 'onHover');
+    }
+    if (marker is AdvancedMarker) {
+      marker.onHover?.call(isHovering);
+    }
+  }
+
   void onPolygonTap(PolygonId polygonId) {
     final Polygon? polygon = _polygons[polygonId];
     if (polygon == null) {

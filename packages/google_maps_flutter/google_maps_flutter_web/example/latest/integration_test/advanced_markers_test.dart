@@ -60,6 +60,42 @@ void main() {
       expect(controller.markers, isNot(contains(const MarkerId('66'))));
     });
 
+    testWidgets('fires MarkerHoverEvent when the marker has an onHover callback', (
+      WidgetTester tester,
+    ) async {
+      const markerId = MarkerId('1');
+      await controller.addMarkers(<AdvancedMarker>{
+        AdvancedMarker(markerId: markerId, onHover: (bool _) {}),
+      });
+
+      final gmaps.AdvancedMarkerElement gmMarker = controller.markers[markerId]!.marker!;
+
+      final Future<MapEvent<Object?>> firstEvent = events.stream.first;
+      gmMarker.dispatchEvent(Event('gmp-mouseenter'));
+      final MapEvent<Object?> event = await firstEvent;
+
+      expect(event, isA<MarkerHoverEvent>());
+      expect((event as MarkerHoverEvent).value, markerId);
+      expect(event.isHovering, isTrue);
+    });
+
+    testWidgets('does not attach a hover listener when onHover is null', (
+      WidgetTester tester,
+    ) async {
+      const markerId = MarkerId('1');
+      await controller.addMarkers(<AdvancedMarker>{AdvancedMarker(markerId: markerId)});
+
+      final gmaps.AdvancedMarkerElement gmMarker = controller.markers[markerId]!.marker!;
+
+      final receivedEvents = <MapEvent<Object?>>[];
+      final StreamSubscription<MapEvent<Object?>> sub = events.stream.listen(receivedEvents.add);
+      gmMarker.dispatchEvent(Event('gmp-mouseenter'));
+      await tester.pump();
+      await sub.cancel();
+
+      expect(receivedEvents, isEmpty);
+    });
+
     testWidgets('changeMarkers', (WidgetTester tester) async {
       gmaps.AdvancedMarkerElement? marker;
       gmaps.LatLngLiteral? position;

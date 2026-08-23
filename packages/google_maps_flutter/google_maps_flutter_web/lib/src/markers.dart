@@ -249,6 +249,10 @@ abstract class MarkersController<T extends Object, O> extends GeometryController
     _streamController.add(MarkerDragEndEvent(mapId, gmLatLngToLatLng(latLng), markerId));
   }
 
+  void _onMarkerHover(MarkerId markerId, bool isHovering) {
+    _streamController.add(MarkerHoverEvent(mapId, markerId, isHovering));
+  }
+
   void _hideAllMarkerInfoWindow() {
     _markerIdToController.values
         .where((MarkerController<T, O>? controller) => controller?.infoWindowShown ?? false)
@@ -308,6 +312,7 @@ class AdvancedMarkersController
     gmaps.InfoWindow? gmInfoWindow,
   ) async {
     assert(marker is AdvancedMarker, 'Marker must be an AdvancedMarker.');
+    final advancedMarker = marker as AdvancedMarker;
 
     final gmMarker = gmaps.AdvancedMarkerElement(markerOptions);
     gmMarker.setAttribute('id', marker.markerId.value);
@@ -330,6 +335,11 @@ class AdvancedMarkersController
       onDragEnd: (gmaps.LatLng latLng) {
         _onMarkerDragEnd(marker.markerId, latLng);
       },
+      onHover: advancedMarker.onHover == null
+          ? null
+          : (bool isHovering) {
+              _onMarkerHover(marker.markerId, isHovering);
+            },
     );
   }
 }
