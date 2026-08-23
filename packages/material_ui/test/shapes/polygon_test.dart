@@ -184,7 +184,6 @@ void main() {
       final RoundedPolygon poly =
           RoundedPolygon.fromVerticesNum(
             4,
-            radius: 1,
             rounding: const CornerRounding(radius: 7 / 15),
           ).transformed((x, y) {
             final Point point = Point(x, y).rotate(45).scale(648, 648).translate(540, 1212);

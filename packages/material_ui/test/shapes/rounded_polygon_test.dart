@@ -187,7 +187,7 @@ void main() {
       const p1 = Point(1, 0);
       const p2 = Point(0.5, 1);
       final List<CornerRounding> pvRounding = [
-        const CornerRounding(radius: 1, smoothing: 0),
+        const CornerRounding(radius: 1),
         const CornerRounding(radius: 1, smoothing: 1),
         CornerRounding.unrounded,
       ];
@@ -332,7 +332,6 @@ void main() {
 
       final canonicalShape = RoundedPolygon.star(
         numVerticesPerRadius: 4,
-        radius: 1,
         innerRadius: innerRadiusFactor,
         rounding: const CornerRounding(radius: roundingFactor),
         innerRounding: const CornerRounding(radius: roundingFactor),

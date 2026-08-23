@@ -89,7 +89,7 @@ void main() {
     // the vertices are the right distance from the center. For the rounded
     // versions, just check that the shape is within the appropriate bounds.
     test('star', () {
-      var star = RoundedPolygon.star(numVerticesPerRadius: 4, innerRadius: 0.5);
+      var star = RoundedPolygon.star(numVerticesPerRadius: 4);
       List<CubicBezier> shape = star.cubics;
       var radius = 1.0;
       var innerRadius = 0.5;
@@ -135,37 +135,24 @@ void main() {
       const min = Point(-1, -1);
       const max = Point(1, 1);
 
-      var star = RoundedPolygon.star(numVerticesPerRadius: 4, innerRadius: 0.5, rounding: rounding);
+      var star = RoundedPolygon.star(numVerticesPerRadius: 4, rounding: rounding);
+      expectInBounds(star.cubics, min, max);
+
+      star = RoundedPolygon.star(numVerticesPerRadius: 4, innerRounding: innerRounding);
       expectInBounds(star.cubics, min, max);
 
       star = RoundedPolygon.star(
         numVerticesPerRadius: 4,
-        innerRadius: 0.5,
-        innerRounding: innerRounding,
-      );
-      expectInBounds(star.cubics, min, max);
-
-      star = RoundedPolygon.star(
-        numVerticesPerRadius: 4,
-        innerRadius: 0.5,
         rounding: rounding,
         innerRounding: innerRounding,
       );
       expectInBounds(star.cubics, min, max);
 
-      star = RoundedPolygon.star(
-        numVerticesPerRadius: 4,
-        innerRadius: 0.5,
-        perVertexRounding: perVtxRounded,
-      );
+      star = RoundedPolygon.star(numVerticesPerRadius: 4, perVertexRounding: perVtxRounded);
       expectInBounds(star.cubics, min, max);
 
       expect(
-        () => RoundedPolygon.star(
-          numVerticesPerRadius: 6,
-          innerRadius: 0.5,
-          perVertexRounding: perVtxRounded,
-        ),
+        () => RoundedPolygon.star(numVerticesPerRadius: 6, perVertexRounding: perVtxRounded),
         throwsArgumentError,
       );
     });

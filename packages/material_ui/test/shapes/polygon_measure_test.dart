@@ -139,7 +139,7 @@ void main() {
           perVertexRounding: const [
             CornerRounding(radius: 0.2, smoothing: 0.5),
             CornerRounding(radius: 0.2, smoothing: 0.5),
-            CornerRounding(radius: 0.4, smoothing: 0),
+            CornerRounding(radius: 0.4),
             CornerRounding(radius: 0.2, smoothing: 0.5),
           ],
         ),

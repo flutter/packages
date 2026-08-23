@@ -35,7 +35,7 @@ void main() {
     test('Builds convex corner', () {
       final cubic = CubicBezier.straightLine(0, 0, 1, 0);
       final actual = Feature.buildConvexCorner([cubic]);
-      final expected = CornerFeature([cubic], convex: true);
+      final expected = CornerFeature([cubic]);
       expectFeaturesEqualish(expected, actual);
     });
 
