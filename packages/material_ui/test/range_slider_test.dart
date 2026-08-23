@@ -4062,9 +4062,7 @@ void main() {
               builder: (BuildContext context, StateSetter setState) {
                 return RangeSlider(
                   values: values,
-                  overlayColor: WidgetStateProperty.resolveWith<Color?>((
-                    Set<WidgetState> states,
-                  ) {
+                  overlayColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
                     if (states.contains(WidgetState.focused)) {
                       return focusedColor;
                     }
