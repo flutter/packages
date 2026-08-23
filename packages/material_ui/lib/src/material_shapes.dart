@@ -19,6 +19,18 @@ import 'shapes/shapes.dart';
 /// Note that each [RoundedPolygon] in this class is normalized.
 ///
 /// https://developer.android.com/images/reference/androidx/compose/material3/shapes.png
+///
+/// <callout-box>
+///
+/// This example shows how to animate a [Morph] through every shape in [all].
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/material_shapes/material_shapes.0.dart#body}
+///
+/// </callout-box>
 abstract final class MaterialShapes {
   static const _cornerRound15 = CornerRounding(radius: 0.15);
   static const _cornerRound20 = CornerRounding(radius: 0.2);
