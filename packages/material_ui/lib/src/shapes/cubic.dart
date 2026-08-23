@@ -55,6 +55,8 @@ class CubicBezier {
     : assert(points.length == 8, 'Points array size should be 8.'),
       _points = points;
 
+  /// Creates a [CubicBezier] from its two anchor points and its two control
+  /// points.
   @internal
   CubicBezier.fromPoints(Point anchor0, Point control0, Point control1, Point anchor1)
     : this.raw([
@@ -145,20 +147,28 @@ class CubicBezier {
   /// that expects a coordinate buffer.
   List<double> get points => UnmodifiableListView(_points);
 
+  /// The X coordinate of the anchor point at the start of the curve.
   double get anchor0X => _points[0];
 
+  /// The Y coordinate of the anchor point at the start of the curve.
   double get anchor0Y => _points[1];
 
+  /// The X coordinate of the control point closest to [anchor0X].
   double get control0X => _points[2];
 
+  /// The Y coordinate of the control point closest to [anchor0Y].
   double get control0Y => _points[3];
 
+  /// The X coordinate of the control point closest to [anchor1X].
   double get control1X => _points[4];
 
+  /// The Y coordinate of the control point closest to [anchor1Y].
   double get control1Y => _points[5];
 
+  /// The X coordinate of the anchor point at the end of the curve.
   double get anchor1X => _points[6];
 
+  /// The Y coordinate of the anchor point at the end of the curve.
   double get anchor1Y => _points[7];
 
   /// Returns a point on the curve for parameter [t], representing the
@@ -375,13 +385,19 @@ class CubicBezier {
     anchor0Y,
   );
 
+  /// Returns a curve whose coordinates are the sums of this curve's and [o]'s
+  /// corresponding coordinates.
   CubicBezier operator +(CubicBezier o) =>
       CubicBezier.raw(List.generate(8, (i) => _points[i] + o._points[i]));
 
+  /// Returns a curve whose coordinates are this curve's multiplied by [x].
   CubicBezier operator *(double x) => CubicBezier.raw(List.generate(8, (i) => _points[i] * x));
 
+  /// Returns a curve whose coordinates are this curve's divided by [x].
   CubicBezier operator /(double x) => this * (1.0 / x);
 
+  /// Returns a copy of this curve with [f] applied to each of its anchor and
+  /// control points.
   CubicBezier transformed(PointTransformer f) {
     final newCubic = _MutableCubicBezier();
     for (var i = 0; i < 8; i++) {

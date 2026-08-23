@@ -29,6 +29,11 @@ import 'utils.dart';
 /// splitting curves when the shapes do not have the same number of curves or
 /// when the curve placement within the shapes is very different.
 class Morph {
+  /// Creates a [Morph] between the [start] and [end] polygons.
+  ///
+  /// The mapping between the two shapes is computed once, here, so a [Morph]
+  /// should be created ahead of time and reused across frames rather than
+  /// rebuilt for each value of progress.
   Morph(RoundedPolygon start, RoundedPolygon end) : _start = start, _end = end {
     _morphMatch = _match(start, end);
   }

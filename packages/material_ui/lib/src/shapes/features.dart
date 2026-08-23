@@ -29,6 +29,11 @@ import 'point.dart';
 /// By using features, you can manipulate polygon shapes with more context and
 /// control.
 abstract class Feature {
+  /// Creates a [Feature] spanning the given [cubics].
+  ///
+  /// Prefer the [Feature.buildEdge], [Feature.buildConvexCorner],
+  /// [Feature.buildConcaveCorner] and [Feature.buildIgnorableFeature]
+  /// factories, which validate that the cubics form a continuous run.
   const Feature(List<CubicBezier> cubics) : _cubics = cubics;
 
   /// Group a list of [CubicBezier] objects to a feature that should be ignored in

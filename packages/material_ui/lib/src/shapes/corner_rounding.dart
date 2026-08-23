@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'rounded_polygon.dart';
+library;
+
 /// Defines the amount and quality around a given vertex of a shape.
 /// [radius] defines the radius of the circle which forms the basis of
 /// the rounding for the vertex. [smoothing] defines the amount by which the
@@ -19,34 +22,41 @@
 ///      meaning that it is purely a circular curve and a value of 1 meaning
 ///      that the flanking curves are maximized between the inner curve and
 ///      the edges.
-///
-/// [radius] is  a value of 0 or greater, representing the radius of the
-/// circle which defines the inner rounding arc of the corner. A value of 0
-/// indicates that the corner is sharp, or completely unrounded. A positive
-/// value is the requested size of the radius. Note that this radius is an
-/// absolute size that should relate to the overall size of its shape. Thus if
-/// the shape is in screen coordinate size, the radius should be sized
-/// appropriately. If the shape is in some canonical form (bounds of (-1,-1) to
-/// (1,1), for example, which is the default when creating a [RoundedPolygon]
-/// from a number of vertices), then the radius should be relative to that
-/// size. The radius will be scaled if the shape itself is transformed, since
-/// it will produce curves which round the corner and thus get transformed
-/// along with the overall shape.
-///
-/// [smoothing] is the amount by which the arc is "smoothed" by extending the
-/// curve from the inner circular arc to the edge between vertices. A value of
-/// 0 (no smoothing) indicates that the corner is rounded by only a circular
-/// arc; there are no flanking curves. A value of 1 indicates that there is no
-/// circular arc in the center; the flanking curves on either side meet at the
-/// middle.
 class CornerRounding {
+  /// Creates a [CornerRounding].
   const CornerRounding({this.radius = 0, this.smoothing = 0})
     : assert(radius >= 0, 'radius has to be greater that zero'),
       assert(smoothing >= 0 && smoothing <= 1, 'smoothing has to be in range [0, 1]');
 
+  /// A [CornerRounding] with a radius of zero, producing a sharp corner at a
+  /// vertex.
   static const unrounded = CornerRounding();
 
+  /// The radius of the circle which defines the inner rounding arc of the
+  /// corner.
+  ///
+  /// A value of 0 indicates that the corner is sharp, or completely unrounded.
+  /// A positive value is the requested size of the radius.
+  ///
+  /// This is an absolute size that should relate to the overall size of the
+  /// shape. If the shape is in screen coordinates, the radius should be sized
+  /// accordingly; if the shape is in a canonical form, such as the bounds of
+  /// (-1, -1) to (1, 1) that [RoundedPolygon.fromVerticesNum] produces by
+  /// default, the radius should be relative to that size. The radius is scaled
+  /// when the shape itself is transformed, since it produces curves which round
+  /// the corner and so are transformed along with the overall shape.
+  ///
+  /// Must be greater than or equal to zero.
   final double radius;
 
+  /// The amount by which the arc is smoothed by extending the curve from the
+  /// inner circular arc to the edge between vertices.
+  ///
+  /// A value of 0 indicates that the corner is rounded by only a circular arc,
+  /// with no flanking curves. A value of 1 indicates that there is no circular
+  /// arc in the center, and the flanking curves on either side meet at the
+  /// middle.
+  ///
+  /// Must be in the range 0.0 to 1.0, inclusive.
   final double smoothing;
 }

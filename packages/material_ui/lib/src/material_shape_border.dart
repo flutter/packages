@@ -18,6 +18,7 @@ import 'shapes/rounded_polygon.dart';
 ///
 /// Typically used with a [ShapeDecoration] to draw a material-shaped border.
 class MaterialShapeBorder extends OutlinedBorder {
+  /// Creates a [MaterialShapeBorder].
   MaterialShapeBorder({required RoundedPolygon this.shape, super.side, this.squash = 0})
     : _cubics = shape.cubics,
       assert(squash >= 0 && squash <= 1, 'squash has to be in range [0, 1]');
