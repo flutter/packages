@@ -256,6 +256,10 @@ static NSString *ColorStringAtPixel(UIImage *image, int pixelX, int pixelY) {
                                            format:kCIFormatRGB10
                                        colorSpace:displayP3ColorSpace];
     XCTAssertNotEqual(cgImage, nil);
+    if (cgImage == nil) {
+      CGColorSpaceRelease(displayP3ColorSpace);
+      return;
+    }
     XCTAssertEqual(CGImageGetBitsPerComponent(cgImage), 10);
 
     UIImage *image = [UIImage imageWithCGImage:cgImage];
