@@ -185,13 +185,14 @@ class _CupertinoActivityIndicatorPainter extends CustomPainter {
   final RRect tickFundamentalShape;
 
   int _alphaValueForTick(int tick) {
-    final int fadingTickCount = tickCount - tickCount ~/ 2;
-    final int fadingTick = tick - tickCount ~/ 2;
+    final int halfTickCount = tickCount ~/ 2;
+    final int fadingTick = tick - halfTickCount;
     if (fadingTick < 0) {
       return _kMinTickAlpha;
     }
-    return _kMinTickAlpha +
-        ((_kMaxTickAlpha - _kMinTickAlpha) * (fadingTick + 1) / fadingTickCount).round();
+    final int fadingTickCount = tickCount - halfTickCount;
+    final int numerator = (_kMaxTickAlpha - _kMinTickAlpha) * (fadingTick + 1);
+    return _kMinTickAlpha + (numerator + fadingTickCount ~/ 2) ~/ fadingTickCount;
   }
 
   @override
