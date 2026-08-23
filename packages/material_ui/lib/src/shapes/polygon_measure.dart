@@ -4,6 +4,8 @@
 
 import 'dart:collection';
 
+import 'package:flutter/foundation.dart';
+
 import 'cubic.dart';
 import 'feature_mapping.dart';
 import 'features.dart';
@@ -11,6 +13,9 @@ import 'point.dart';
 import 'rounded_polygon.dart';
 import 'utils.dart';
 
+/// A [RoundedPolygon] whose cubics have been measured, so that each one is
+/// associated with the [0..1] progress range it covers along the outline.
+@internal
 class MeasuredPolygon {
   MeasuredPolygon._({
     required Measurer measurer,
@@ -222,6 +227,7 @@ class MeasuredPolygon {
 ///
 /// Outline progress is a value in [0..1) that represents the distance traveled
 /// along the overall outline path of the shape.
+@internal
 class MeasuredCubic {
   MeasuredCubic({
     required this.measurer,
@@ -280,7 +286,8 @@ class MeasuredCubic {
     // Floating point errors further up can cause cutOutlineProgress to land
     // just slightly outside of the start/end progress for this cubic, so we
     // limit it to those bounds to avoid further errors later
-    final double boundedCutOutlineProgress = cutOutlineProgress.coerceIn(
+    final double boundedCutOutlineProgress = clampDouble(
+      cutOutlineProgress,
       _startOutlineProgress,
       _endOutlineProgress,
     );
@@ -326,7 +333,9 @@ class MeasuredCubic {
 
 /// Interface for measuring a cubic. Implementations can use whatever algorithm
 /// desired to produce these measurement values.
+@internal
 abstract interface class Measurer {
+  /// Abstract const constructor.
   const Measurer();
 
   /// Returns size of given cubic, according to however the implementation
@@ -345,7 +354,9 @@ abstract interface class Measurer {
 /// result will be to the true arc length. The default implementation has at
 /// least 98.5% accuracy on the case of a circular arc, which is the
 /// worst case for our standard shapes.
+@internal
 class LengthMeasurer implements Measurer {
+  /// Creates a [LengthMeasurer].
   const LengthMeasurer();
 
   // The minimum number needed to achieve up to 98.5% accuracy from the true

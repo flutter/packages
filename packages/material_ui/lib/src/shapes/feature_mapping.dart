@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
+
 import 'cubic.dart';
 import 'features.dart';
 import 'float_mapping.dart';
@@ -10,27 +12,41 @@ import 'utils.dart';
 
 /// MeasuredFeatures contains a list of all features in a polygon along with
 /// the [0..1] progress at that feature.
+@internal
 typedef MeasuredFeatures = List<ProgressableFeature>;
 
+/// A [Feature] paired with the [0..1] progress at which it sits along the
+/// outline of its polygon.
+@internal
 class ProgressableFeature {
+  /// Creates a [ProgressableFeature].
   const ProgressableFeature(this.progress, this.feature);
 
+  /// The [0..1] progress at which [feature] sits along the polygon outline.
   final double progress;
 
+  /// The feature at [progress].
   final Feature feature;
 }
 
+/// A candidate pairing of two features, along with the distance between them.
+@internal
 class DistanceVertex {
+  /// Creates a [DistanceVertex].
   const DistanceVertex(this.distance, this.f1, this.f2);
 
+  /// The distance between [f1] and [f2].
   final double distance;
 
+  /// The feature from the first polygon.
   final ProgressableFeature f1;
 
+  /// The feature from the second polygon.
   final ProgressableFeature f2;
 }
 
 /// Creates a mapping between the "features" (rounded corners) of two shapes.
+@internal
 DoubleMapper featureMapper(MeasuredFeatures features1, MeasuredFeatures features2) {
   // We only use corners for this mapping.
   final filteredFeatures1 = <ProgressableFeature>[];
@@ -70,6 +86,7 @@ DoubleMapper featureMapper(MeasuredFeatures features1, MeasuredFeatures features
 ///       the second elements of each pair are monotonically increasing, except
 ///       maybe one time (Counting all pair of consecutive elements, and the
 ///       last element to first element).
+@internal
 List<(double, double)> doMapping(
   List<ProgressableFeature> features1,
   List<ProgressableFeature> features2,
@@ -172,6 +189,7 @@ class _MappingHelper {
 /// Returns distance along overall shape between two Features on the two
 /// different shapes. This information is used to determine how to map features
 /// (and the curves that make up those features).
+@internal
 double featureDistSquared(Feature f1, Feature f2) {
   // If so, the approach below will not work
   if (f1 is CornerFeature && f2 is CornerFeature && f1.convex != f2.convex) {
@@ -183,6 +201,9 @@ double featureDistSquared(Feature f1, Feature f2) {
   return (featureRepresentativePoint(f1) - featureRepresentativePoint(f2)).getDistanceSquared();
 }
 
+/// Returns the point that best represents [feature] when matching features
+/// between two shapes.
+@internal
 Point featureRepresentativePoint(Feature feature) {
   final List<CubicBezier> cubics = feature.cubics;
   final double x = (cubics.first.anchor0X + cubics.last.anchor1X) / 2;

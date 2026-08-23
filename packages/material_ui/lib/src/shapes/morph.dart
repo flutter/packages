@@ -287,11 +287,11 @@ class Morph {
     Path? path,
   }) {
     return pathFromCubics(
-      path: path ?? Path(),
+      cubics: asCubics(progress),
+      path: path,
       startAngle: startAngle,
       repeatPath: repeatPath,
       closePath: closePath,
-      cubics: asCubics(progress),
       rotationPivotX: rotationPivotX,
       rotationPivotY: rotationPivotY,
     );

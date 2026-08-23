@@ -297,7 +297,6 @@ class RoundedPolygon {
   ///
   /// Throws [ArgumentError] if [features] length is less than 2 or if they
   /// don't describe a closed shape.
-  @internal
   factory RoundedPolygon.fromFeatures(
     List<Feature> features, {
     double centerX = double.nan,
@@ -683,15 +682,20 @@ class RoundedPolygon {
     );
   }
 
+  /// The [Feature]s this polygon is composed of.
   final List<Feature> features;
 
+  /// The center of this polygon, around which all vertices are placed.
+  @internal
   final Point center;
 
   /// A flattened version of the [Feature]s, as a `List<CubicBezier>`.
   final List<CubicBezier> cubics;
 
+  /// The X coordinate of the center of this polygon.
   double get centerX => center.x;
 
+  /// The Y coordinate of the center of this polygon.
   double get centerY => center.y;
 
   void _initCubics() {
@@ -913,11 +917,11 @@ class RoundedPolygon {
   /// [closePath] is whether or not to close the created [Path].
   Path toPath({int startAngle = 0, bool repeatPath = false, bool closePath = true, Path? path}) {
     return pathFromCubics(
-      path: path ?? Path(),
+      cubics: cubics,
+      path: path,
       startAngle: startAngle,
       repeatPath: repeatPath,
       closePath: closePath,
-      cubics: cubics,
       rotationPivotX: centerX,
       rotationPivotY: centerY,
     );
@@ -967,6 +971,7 @@ class RoundedPolygon {
 /// transformed. Any transforms that occur before the center is calculated will
 /// be taken into account automatically since the center calculation is an
 /// average of the current location of all cubic anchor points.
+@internal
 Point calculateCenter(List<double> vertices) {
   var cumulativeX = 0.0;
   var cumulativeY = 0.0;
@@ -1282,8 +1287,8 @@ List<double> _pillStarVerticesFromNumVerts(
   // length zero (whichever dimension is smaller gets only circular curvature
   // for the pill shape).
   final double endcapRadius = math.min(width, height);
-  final double vSegLen = (height - width).coerceAtLeast(0);
-  final double hSegLen = (width - height).coerceAtLeast(0);
+  final double vSegLen = math.max(height - width, 0.0);
+  final double hSegLen = math.max(width - height, 0.0);
   final double vSegHalf = vSegLen / 2;
   final double hSegHalf = hSegLen / 2;
   // vertexSpacing is used to position the vertices on the end caps. The caller

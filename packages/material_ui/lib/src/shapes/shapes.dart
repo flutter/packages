@@ -10,8 +10,8 @@
 library;
 
 export 'corner_rounding.dart' show CornerRounding;
-export 'cubic.dart' show CubicBezier;
+export 'cubic.dart' show CubicBezier, pathFromCubics;
 export 'features.dart' show Feature;
 export 'morph.dart' show Morph;
-export 'point.dart' show PointTransformer;
+export 'point.dart' show Matrix4PointTransformer, PointTransformer;
 export 'rounded_polygon.dart' show RoundedPolygon;

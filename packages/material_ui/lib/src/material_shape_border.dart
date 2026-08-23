@@ -170,15 +170,7 @@ class MaterialShapeBorder extends OutlinedBorder {
       ..translate(actualRect.left, actualRect.top)
       ..scale(scale.dx, scale.dy);
 
-    return pathFromCubics(
-      path: Path(),
-      startAngle: 0,
-      repeatPath: false,
-      closePath: true,
-      cubics: _cubics,
-      rotationPivotX: 0,
-      rotationPivotY: 0,
-    ).transform(matrix.storage);
+    return pathFromCubics(cubics: _cubics).transform(matrix.storage);
   }
 
   @override

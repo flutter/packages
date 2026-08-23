@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'morph.dart';
+/// @docImport 'rounded_polygon.dart';
+library;
+
 import 'dart:collection';
 import 'dart:math' as math;
 import 'dart:ui';
@@ -126,10 +130,19 @@ class CubicBezier {
   }
 
   /// Generates an empty [CubicBezier] defined at (x0, y0).
+  ///
+  /// Both anchor points and both control points coincide, so the curve has
+  /// zero length. See [zeroLength].
   CubicBezier.empty(double x0, double y0) : this.raw([x0, y0, x0, y0, x0, y0, x0, y0]);
 
   final List<double> _points;
 
+  /// The eight coordinates of this curve as a flat, unmodifiable list, ordered
+  /// as anchor0, control0, control1, anchor1.
+  ///
+  /// Equivalent to reading [anchor0X] through [anchor1Y] in order, and more
+  /// convenient when serializing a curve or handing its coordinates to code
+  /// that expects a coordinate buffer.
   List<double> get points => UnmodifiableListView(_points);
 
   double get anchor0X => _points[0];
@@ -154,6 +167,7 @@ class CubicBezier {
   ///
   /// [t] is the distance along the curve between the anchor points, where 0
   /// is at anchor0 and 1 is at anchor1
+  @internal
   Point pointOnCurve(double t) {
     final double u = 1 - t;
     return Point(
@@ -168,10 +182,18 @@ class CubicBezier {
     );
   }
 
+  /// Whether this curve's two anchor points coincide, and so the curve
+  /// contributes nothing to an outline.
+  ///
+  /// Coincidence is measured with a small tolerance rather than exactly, so a
+  /// curve whose anchors differ only by rounding error still counts as zero
+  /// length. Note that the control points are not considered.
   bool zeroLength() =>
       (anchor0X - anchor1X).abs() < distanceEpsilon &&
       (anchor0Y - anchor1Y).abs() < distanceEpsilon;
 
+  /// Whether the corner formed by this curve and [next] turns convexly.
+  @internal
   bool convexTo(CubicBezier next) {
     final prevVertex = Point(anchor0X, anchor0Y);
     final currVertex = Point(anchor1X, anchor1Y);
@@ -184,6 +206,7 @@ class CubicBezier {
   /// Returns the true bounds of this curve, filling [bounds] with the
   /// axis-aligned bounding box values for left, top, right, and bottom,
   /// in that order.
+  @internal
   void calculateBounds(List<double> bounds, {bool approximate = false}) {
     assert(bounds.length == 4, 'Bounds array size should be 4.');
 
@@ -400,7 +423,7 @@ class CubicBezier {
   }
 
   @override
-  int get hashCode => _points.hashCode;
+  int get hashCode => Object.hashAll(_points);
 }
 
 /// Mutable version of [CubicBezier], used mostly for performance critical paths
@@ -431,9 +454,14 @@ class _MutableCubicBezier extends CubicBezier {
   }
 }
 
-/// Returns a [Path] for a [CubicBezier] list.
+/// Returns a [Path] built from the given [cubics].
 ///
-/// [path] is a [Path] to reset and set with the new path data.
+/// This is the building block behind [RoundedPolygon.toPath] and
+/// [Morph.toPath], and is useful when working with a list of curves obtained
+/// from [Morph.asCubics] directly.
+///
+/// [path] is a [Path] to reset and set with the new path data. A new [Path] is
+/// created when none is given.
 ///
 /// [startAngle] is an angle (in degrees) to rotate the [Path] to start
 /// drawing from. If [startAngle] is non zero, then caller has to use the
@@ -447,20 +475,20 @@ class _MutableCubicBezier extends CubicBezier {
 ///
 /// [closePath] is whether or not to close the created [Path].
 ///
-/// [cubics] is list of [CubicBezier]s to build path from.
-///
 /// [rotationPivotX] is the rotation pivot on the X axis.
 ///
 /// [rotationPivotY] is the rotation pivot on the Y axis.
 Path pathFromCubics({
-  required Path path,
-  required int startAngle,
-  required bool repeatPath,
-  required bool closePath,
   required List<CubicBezier> cubics,
-  required double rotationPivotX,
-  required double rotationPivotY,
+  Path? path,
+  int startAngle = 0,
+  bool repeatPath = false,
+  bool closePath = true,
+  double rotationPivotX = 0,
+  double rotationPivotY = 0,
 }) {
+  path ??= Path();
+
   var first = true;
   CubicBezier? firstCubic;
 

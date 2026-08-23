@@ -4,6 +4,8 @@
 
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
+
 import 'utils.dart';
 
 /// Checks if the given progress is in the given progress range.
@@ -11,6 +13,7 @@ import 'utils.dart';
 /// Since progress is in the [0..1) interval and wraps, there is a special case
 /// when [progressTo] < [progressFrom]. For example, if the progress range is
 /// 0.7 to 0.2, both 0.8 and 0.1 are inside and 0.5 is outside.
+@internal
 bool progressInRange(double progress, double progressFrom, double progressTo) {
   if (progressTo >= progressFrom) {
     return progress >= progressFrom && progress <= progressTo;
@@ -21,6 +24,7 @@ bool progressInRange(double progress, double progressFrom, double progressTo) {
 
 /// Maps from one set of progress values to another. This is used to retrieve
 /// the value on one shape that maps to the appropriate value on the other.
+@internal
 double linearMap(List<double> xValues, List<double> yValues, double x) {
   assert(x >= 0 && x <= 1, 'Invalid progress $x');
 
@@ -73,6 +77,7 @@ double linearMap(List<double> xValues, List<double> yValues, double x) {
 /// [0.25 .. 1] } x = (y + 0.5) / 1.5 This is used to create mappings of
 /// progress values between the start and end shape, which is then used to
 /// insert new curves and match curves overall.
+@internal
 class DoubleMapper {
   DoubleMapper(List<(double, double)> mappings) {
     _sourceValues = List.filled(mappings.length, 0);
@@ -103,6 +108,7 @@ class DoubleMapper {
 /// and are monotonically increasing, allowing at most one wraparound.
 ///
 /// Throws [ArgumentError] if validation fails.
+@internal
 void validateProgress(List<double> p) {
   if (p.isEmpty) {
     throw ArgumentError('List is empty.');
@@ -135,6 +141,7 @@ void validateProgress(List<double> p) {
 
 /// Distance between two progress values, considering wrap-around.
 /// For example, the distance between 0.99 and 0.0 is 0.01.
+@internal
 double progressDistance(double p1, double p2) {
   final double diff = (p1 - p2).abs();
   return math.min(diff, 1.0 - diff);

@@ -2,13 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math' as math;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/src/shapes/corner_rounding.dart';
 import 'package:material_ui/src/shapes/cubic.dart';
 import 'package:material_ui/src/shapes/features.dart';
 import 'package:material_ui/src/shapes/point.dart';
 import 'package:material_ui/src/shapes/rounded_polygon.dart';
-import 'package:material_ui/src/shapes/utils.dart';
 
 import 'test_utils.dart';
 
@@ -267,7 +268,7 @@ void main() {
         doUnevenSmoothTest(
           rounding0: CornerRounding(radius: 0.4, smoothing: smooth),
           expectedV0SX: 0.4 * (1 + smooth),
-          expectedV0SY: (0.4 * (1 + smooth)).coerceAtMost(0.5),
+          expectedV0SY: math.min(0.4 * (1 + smooth), 0.5),
           expectedV3SY: 0.5,
         );
       }
@@ -284,7 +285,7 @@ void main() {
         const smoothWantedV3 = 0.2;
 
         // There is 0.4 room for smoothing.
-        final double factor = (0.4 / (smoothWantedV0 + smoothWantedV3)).coerceAtMost(1);
+        final double factor = math.min(0.4 / (smoothWantedV0 + smoothWantedV3), 1.0);
         doUnevenSmoothTest(
           rounding0: CornerRounding(radius: 0.4, smoothing: smooth),
           expectedV0SX: 0.4 * (1 + smooth),

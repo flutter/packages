@@ -7,6 +7,8 @@ library;
 
 import 'dart:collection';
 
+import 'package:flutter/foundation.dart';
+
 import 'cubic.dart';
 import 'point.dart';
 
@@ -134,7 +136,9 @@ abstract class Feature {
 /// Edges have only a list of the cubic curves which make up the edge. Edges
 /// lie between corners and have no vertex or concavity; the curves are simply
 /// straight lines (represented by [CubicBezier] curves).
+@internal
 class EdgeFeature extends Feature {
+  /// Creates an [EdgeFeature] from the given cubics.
   EdgeFeature(super._cubics);
 
   @override
@@ -168,9 +172,12 @@ class EdgeFeature extends Feature {
 /// rounded (or not), and a flag indicating whether the corner is convex. A
 /// regular polygon has all convex corners, while a star polygon generally
 /// (but not necessarily) has both convex (outer) and concave (inner) corners.
+@internal
 class CornerFeature extends Feature {
+  /// Creates a [CornerFeature] from the given cubics.
   const CornerFeature(super._cubics, {this.convex = true});
 
+  /// Whether this corner is convex.
   final bool convex;
 
   @override
