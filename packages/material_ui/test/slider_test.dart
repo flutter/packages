@@ -3999,7 +3999,7 @@ void main() {
         ),
       ),
     );
-    // Initially, the slider does not have focus whe enabled and not tapped.
+    // Initially, the slider does not have focus when enabled and not tapped.
     await tester.pumpAndSettle();
     expect(value, equals(0.5));
     // Get FocusNode from the state of the slider to include auto-generated FocusNode.
@@ -5619,7 +5619,7 @@ void main() {
     expect(log.last, const Offset(400.0, 300.0));
   });
 
-  // Regression test for hhttps://github.com/flutter/flutter/issues/161805
+  // Regression test for https://github.com/flutter/flutter/issues/161805
   testWidgets('Discrete Slider does not apply thumb padding in a non-rounded track shape', (
     WidgetTester tester,
   ) async {

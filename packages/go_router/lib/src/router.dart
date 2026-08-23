@@ -237,7 +237,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   ///
   /// See [routing_config.dart](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/routing_config.dart).
   GoRouter.routingConfig({
-    required ValueListenable<RoutingConfig> routingConfig,
+    required this._routingConfig,
     Codec<Object?, Object?>? extraCodec,
     GoExceptionHandler? onException,
     GoRouterPageBuilder? errorPageBuilder,
@@ -252,8 +252,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
     bool requestFocus = true,
-  }) : _routingConfig = routingConfig,
-       backButtonDispatcher = RootBackButtonDispatcher(),
+  }) : backButtonDispatcher = RootBackButtonDispatcher(),
        assert(
          initialExtra == null || initialLocation != null,
          'initialLocation must be set in order to use initialExtra',
