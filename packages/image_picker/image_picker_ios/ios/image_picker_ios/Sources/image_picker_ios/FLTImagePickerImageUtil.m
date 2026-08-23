@@ -33,9 +33,13 @@ static UIImage *FLTImagePickerDrawScaledImage(UIImage *imageToScale, double widt
   if (imageToScale == nil || width == 0 || height == 0) {
     return nil;
   }
+  UIGraphicsImageRendererFormat *imageRendererFormat = [[UIGraphicsImageRendererFormat alloc] init];
+  imageRendererFormat.scale = imageToScale.imageRendererFormat.scale;
+  imageRendererFormat.opaque = imageToScale.imageRendererFormat.opaque;
+  imageRendererFormat.preferredRange = UIGraphicsImageRendererFormatRangeStandard;
   UIGraphicsImageRenderer *imageRenderer =
       [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(width, height)
-                                             format:imageToScale.imageRendererFormat];
+                                             format:imageRendererFormat];
   return [imageRenderer imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
     CGContextRef cgContext = rendererContext.CGContext;
 

@@ -8,6 +8,7 @@
 #if __has_include(<image_picker_ios/image_picker_ios-umbrella.h>)
 @import image_picker_ios.Test;
 #endif
+@import CoreImage;
 @import XCTest;
 
 // Corner colors of test image scaled to 3x2. Format is "R G B A".
@@ -237,6 +238,44 @@ static NSString *ColorStringAtPixel(UIImage *image, int pixelX, int pixelY) {
                                        isMetadataAvailable:YES];
 
   XCTAssertEqual(newImage, nil);
+}
+
+- (void)testScaledImage_10BitWideGamutImageCanBeEncodedAsJPEG {
+  if (@available(iOS 17.0, *)) {
+    CGColorSpaceRef displayP3ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceDisplayP3);
+    CIColor *color = [CIColor colorWithRed:0.5
+                                     green:0.25
+                                      blue:0.75
+                                     alpha:1.0
+                                colorSpace:displayP3ColorSpace];
+    CIImage *ciImage =
+        [[CIImage imageWithColor:color] imageByCroppingToRect:CGRectMake(0, 0, 2880, 2160)];
+    CIContext *ciContext = [CIContext contextWithOptions:nil];
+    CGImageRef cgImage = [ciContext createCGImage:ciImage
+                                         fromRect:ciImage.extent
+                                           format:kCIFormatRGB10
+                                       colorSpace:displayP3ColorSpace];
+    XCTAssertNotEqual(cgImage, nil);
+    XCTAssertEqual(CGImageGetBitsPerComponent(cgImage), 10);
+
+    UIImage *image = [UIImage imageWithCGImage:cgImage];
+    CGImageRelease(cgImage);
+    CGColorSpaceRelease(displayP3ColorSpace);
+
+    UIImage *scaledImage = [FLTImagePickerImageUtil scaledImage:image
+                                                       maxWidth:@1920
+                                                      maxHeight:@1920
+                                            isMetadataAvailable:YES];
+    XCTAssertEqual(scaledImage.size.width, 1920);
+    XCTAssertEqual(scaledImage.size.height, 1440);
+
+    NSData *encodedData = [FLTImagePickerMetaDataUtil convertImage:scaledImage
+                                                         usingType:FLTImagePickerMIMETypeJPEG
+                                                           quality:@0.8];
+    XCTAssertNotNil(encodedData);
+    XCTAssertGreaterThan(encodedData.length, 0U);
+    XCTAssertNotNil([UIImage imageWithData:encodedData]);
+  }
 }
 
 @end

@@ -1,3 +1,7 @@
+## 0.8.13+7
+
+* Fixes scaling 10-bit images on iOS.
+
 ## 0.8.13+6
 
 * Replaces deprecated `kUTTypeGIF` with `UTTypeGIF` to fix iOS 15+ deprecation warnings.
