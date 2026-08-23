@@ -1917,6 +1917,36 @@ class CameraInfo extends PigeonInternalProxyApiBaseClass {
     return pigeonVar_replyValue! as LiveData;
   }
 
+  /// Returns the intrinsic zoom ratio of this camera.
+  ///
+  /// The intrinsic zoom ratio is the ratio of the camera's field of view to
+  /// that of the default camera with the same lens facing direction. A ratio
+  /// smaller than 1.0 describes a wider field of view than the default camera
+  /// (an ultra wide lens), and a ratio larger than 1.0 describes a narrower
+  /// field of view (a telephoto lens).
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/CameraInfo#getIntrinsicZoomRatio().
+  Future<double> getIntrinsicZoomRatio() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecCameraInfo;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_android_camerax.CameraInfo.getIntrinsicZoomRatio';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as double;
+  }
+
   @override
   CameraInfo pigeon_copy() {
     return CameraInfo.pigeon_detached(

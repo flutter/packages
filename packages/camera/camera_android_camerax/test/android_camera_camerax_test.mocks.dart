@@ -458,6 +458,15 @@ class MockCameraInfo extends _i1.Mock implements _i3.CameraInfo {
             returnValueForMissingStub: _FakeCameraInfo_8(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i3.CameraInfo);
+
+  @override
+  _i5.Future<double> getIntrinsicZoomRatio() =>
+      (super.noSuchMethod(
+            Invocation.method(#getIntrinsicZoomRatio, []),
+            returnValue: _i5.Future<double>.value(0.0),
+            returnValueForMissingStub: _i5.Future<double>.value(0.0),
+          )
+          as _i5.Future<double>);
 }
 
 /// A class which mocks [CameraCharacteristicsKey].

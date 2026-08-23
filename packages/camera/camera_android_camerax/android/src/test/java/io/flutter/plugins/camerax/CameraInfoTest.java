@@ -99,4 +99,15 @@ public class CameraInfoTest {
 
     assertEquals(value, api.getZoomState(instance).getLiveData());
   }
+
+  @Test
+  public void getIntrinsicZoomRatio_retrievesExpectedIntrinsicZoomRatio() {
+    final PigeonApiCameraInfo api = new TestProxyApiRegistrar().getPigeonApiCameraInfo();
+
+    final CameraInfo instance = mock(CameraInfo.class);
+    final float value = 0.5f;
+    when(instance.getIntrinsicZoomRatio()).thenReturn(value);
+
+    assertEquals(value, api.getIntrinsicZoomRatio(instance), 0.0001);
+  }
 }

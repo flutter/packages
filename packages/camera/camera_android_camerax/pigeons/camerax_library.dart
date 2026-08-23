@@ -241,6 +241,17 @@ abstract class CameraInfo {
 
   /// A LiveData of ZoomState.
   LiveData getZoomState();
+
+  /// Returns the intrinsic zoom ratio of this camera.
+  ///
+  /// The intrinsic zoom ratio is the ratio of the camera's field of view to
+  /// that of the default camera with the same lens facing direction. A ratio
+  /// smaller than 1.0 describes a wider field of view than the default camera
+  /// (an ultra wide lens), and a ratio larger than 1.0 describes a narrower
+  /// field of view (a telephoto lens).
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/CameraInfo#getIntrinsicZoomRatio().
+  double getIntrinsicZoomRatio();
 }
 
 /// Direction of lens of a camera.

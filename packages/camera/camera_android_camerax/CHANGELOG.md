@@ -1,3 +1,8 @@
+## 0.7.5
+
+* Adds `lensType` to the `CameraDescription`s returned by `availableCameras`,
+  determined from `CameraInfo.getIntrinsicZoomRatio`.
+
 ## 0.7.4+6
 
 * Adds explicit `androidx.concurrent:concurrent-futures:1.2.0` dependency to fix
