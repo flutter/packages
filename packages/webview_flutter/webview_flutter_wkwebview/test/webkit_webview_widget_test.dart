@@ -69,7 +69,7 @@ void main() {
       final widget = WebKitWebViewWidget(
         WebKitWebViewWidgetCreationParams(
           controller: controller,
-          gestureBlockingPolicy: UiKitViewGestureBlockingPolicy.doNotBlockGesture,
+          gestureBlockingPolicy: .doNotBlockGesture,
         ),
       );
 
@@ -102,7 +102,7 @@ void main() {
       final webViewWidget2 = WebKitWebViewWidget(
         WebKitWebViewWidgetCreationParams(
           controller: controller,
-          gestureBlockingPolicy: UiKitViewGestureBlockingPolicy.doNotBlockGesture,
+          gestureBlockingPolicy: .doNotBlockGesture,
         ),
       );
 

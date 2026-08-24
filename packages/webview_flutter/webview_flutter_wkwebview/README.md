@@ -21,7 +21,7 @@ blocking decision from hit testing instead can work around it:
 ```dart
 final params = WebKitWebViewWidgetCreationParams(
   controller: controller,
-  gestureBlockingPolicy: UiKitViewGestureBlockingPolicy.doNotBlockGesture,
+  gestureBlockingPolicy: .doNotBlockGesture,
 );
 ```
 
