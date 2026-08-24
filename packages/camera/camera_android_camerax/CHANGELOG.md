@@ -1,3 +1,7 @@
+## 0.7.4+7
+
+* Fix exposure offset slider freezing camera preview and fix setExposureOffset return value.
+
 ## 0.7.4+6
 
 * Adds explicit `androidx.concurrent:concurrent-futures:1.2.0` dependency to fix
