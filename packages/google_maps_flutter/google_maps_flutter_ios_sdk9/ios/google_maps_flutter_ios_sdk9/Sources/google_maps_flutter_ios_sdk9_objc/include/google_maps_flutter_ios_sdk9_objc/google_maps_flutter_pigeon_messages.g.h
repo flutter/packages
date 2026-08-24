@@ -28,7 +28,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 - (instancetype)initWithValue:(FGMPlatformMapType)value;
 @end
 
-/// Pigeon equivalent of MarkerCollisionBehavior.
+/// Pigeon equivalent of the MarkerCollisionBehavior enum.
 typedef NS_ENUM(NSUInteger, FGMPlatformMarkerCollisionBehavior) {
   FGMPlatformMarkerCollisionBehaviorRequiredDisplay = 0,
   FGMPlatformMarkerCollisionBehaviorOptionalAndHidesLowerPriority = 1,
@@ -133,6 +133,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @class FGMPlatformBitmapAssetMap;
 @class FGMPlatformBitmapBytesMap;
 @class FGMPlatformBitmapPinConfig;
+@class FGMPlatformMarkerUpdateAnimationConfiguration;
 
 /// Pigeon representatation of a CameraPosition.
 @interface FGMPlatformCameraPosition : NSObject
@@ -746,6 +747,17 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @property(nonatomic, strong, nullable) FGMPlatformBitmap *glyphBitmap;
 @end
 
+/// Controls marker update animation behavior for properties that the native iOS
+/// SDK implicitly animates.
+@interface FGMPlatformMarkerUpdateAnimationConfiguration : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithPositionAnimationsEnabled:(BOOL)positionAnimationsEnabled
+                        rotationAnimationsEnabled:(BOOL)rotationAnimationsEnabled;
+@property(nonatomic, assign) BOOL positionAnimationsEnabled;
+@property(nonatomic, assign) BOOL rotationAnimationsEnabled;
+@end
+
 /// The codec used by all APIs.
 NSObject<FlutterMessageCodec> *FGMGetGoogleMapsFlutterPigeonMessagesCodec(void);
 
@@ -761,6 +773,10 @@ NSObject<FlutterMessageCodec> *FGMGetGoogleMapsFlutterPigeonMessagesCodec(void);
 /// null values will remain unchanged.
 - (void)updateWithMapConfiguration:(FGMPlatformMapConfiguration *)configuration
                              error:(FlutterError *_Nullable *_Nonnull)error;
+/// Sets the marker update animation configuration.
+- (void)setMarkerUpdateAnimationConfiguration:
+            (FGMPlatformMarkerUpdateAnimationConfiguration *)configuration
+                                        error:(FlutterError *_Nullable *_Nonnull)error;
 /// Updates the set of circles on the map.
 - (void)updateCirclesByAdding:(NSArray<FGMPlatformCircle *> *)toAdd
                      changing:(NSArray<FGMPlatformCircle *> *)toChange
