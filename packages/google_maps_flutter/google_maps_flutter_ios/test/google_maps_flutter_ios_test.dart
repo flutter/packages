@@ -260,6 +260,64 @@ void main() {
     expect(passedConfig.padding, isNull);
   });
 
+  test('MarkerUpdateAnimationConfiguration defaults to enabled animations', () {
+    const configuration = MarkerUpdateAnimationConfiguration();
+
+    expect(configuration.positionAnimationsEnabled, true);
+    expect(configuration.rotationAnimationsEnabled, true);
+  });
+
+  test(
+    'setMarkerUpdateAnimationConfiguration passes expected arguments',
+    () async {
+      const mapId = 1;
+      final (GoogleMapsFlutterIOS maps, MockMapsApi api) = setUpMockMap(
+        mapId: mapId,
+      );
+
+      await maps.setMarkerUpdateAnimationConfiguration(
+        mapId: mapId,
+        configuration: const MarkerUpdateAnimationConfiguration(
+          positionAnimationsEnabled: false,
+          rotationAnimationsEnabled: false,
+        ),
+      );
+
+      final VerificationResult verification = verify(
+        api.setMarkerUpdateAnimationConfiguration(captureAny),
+      );
+      final passedConfiguration =
+          verification.captured[0]
+              as PlatformMarkerUpdateAnimationConfiguration;
+      expect(passedConfiguration.positionAnimationsEnabled, false);
+      expect(passedConfiguration.rotationAnimationsEnabled, false);
+    },
+  );
+
+  test(
+    'setMarkerUpdateAnimationConfiguration is a no-op for non-iOS platforms',
+    () async {
+      final GoogleMapsFlutterPlatform previousPlatform =
+          GoogleMapsFlutterPlatform.instance;
+      GoogleMapsFlutterPlatform.instance = _FakeGoogleMapsFlutterPlatform();
+      addTearDown(() {
+        GoogleMapsFlutterPlatform.instance = previousPlatform;
+      });
+
+      await expectLater(
+        GoogleMapsFlutterPlatform.instance
+            .setMarkerUpdateAnimationConfiguration(
+              mapId: 1,
+              configuration: const MarkerUpdateAnimationConfiguration(
+                positionAnimationsEnabled: false,
+                rotationAnimationsEnabled: false,
+              ),
+            ),
+        completes,
+      );
+    },
+  );
+
   test('updateMapOptions passes expected arguments', () async {
     const mapId = 1;
     final (GoogleMapsFlutterIOS maps, MockMapsApi api) = setUpMockMap(mapId: mapId);
@@ -1319,3 +1377,5 @@ void _expectColorsEqual(PlatformColor actual, Color expected) {
   expect(actual.blue, expected.b);
   expect(actual.alpha, expected.a);
 }
+
+class _FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {}

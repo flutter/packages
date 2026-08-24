@@ -40,6 +40,23 @@ class UnknownMapIDError extends Error {
   }
 }
 
+/// Controls marker update animation behavior for marker properties that the
+/// native iOS SDK implicitly animates.
+@immutable
+class MarkerUpdateAnimationConfiguration {
+  /// Creates a marker update animation configuration.
+  const MarkerUpdateAnimationConfiguration({
+    this.positionAnimationsEnabled = true,
+    this.rotationAnimationsEnabled = true,
+  });
+
+  /// Whether marker position updates should use native iOS implicit animations.
+  final bool positionAnimationsEnabled;
+
+  /// Whether marker rotation updates should use native iOS implicit animations.
+  final bool rotationAnimationsEnabled;
+}
+
 /// An implementation of [GoogleMapsFlutterPlatform] for iOS.
 class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   /// Creates a new Android maps implementation instance.
@@ -207,6 +224,17 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     return _hostApi(
       mapId,
     ).updateMapConfiguration(_platformMapConfigurationFromMapConfiguration(configuration));
+  }
+
+  Future<void> _setMarkerUpdateAnimationConfiguration({
+    required int mapId,
+    required MarkerUpdateAnimationConfiguration configuration,
+  }) {
+    return _hostApi(mapId).setMarkerUpdateAnimationConfiguration(
+      _platformMarkerUpdateAnimationConfigurationFromMarkerUpdateAnimationConfiguration(
+        configuration,
+      ),
+    );
   }
 
   @override
@@ -635,6 +663,16 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     );
   }
 
+  static PlatformMarkerUpdateAnimationConfiguration
+  _platformMarkerUpdateAnimationConfigurationFromMarkerUpdateAnimationConfiguration(
+    MarkerUpdateAnimationConfiguration configuration,
+  ) {
+    return PlatformMarkerUpdateAnimationConfiguration(
+      positionAnimationsEnabled: configuration.positionAnimationsEnabled,
+      rotationAnimationsEnabled: configuration.rotationAnimationsEnabled,
+    );
+  }
+
   static PlatformGroundOverlay _platformGroundOverlayFromGroundOverlay(
     GroundOverlay groundOverlay,
   ) {
@@ -918,6 +956,28 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       default:
         throw ArgumentError('Unrecognized type of bitmap ${bitmap.runtimeType}', 'bitmap');
     }
+  }
+}
+
+/// iOS-only extensions to [GoogleMapsFlutterPlatform].
+extension GoogleMapsFlutterIOSMarkerUpdateAnimationConfiguration
+    on GoogleMapsFlutterPlatform {
+  /// Sets the marker update animation configuration for iOS maps.
+  ///
+  /// If the current platform implementation is not [GoogleMapsFlutterIOS], this
+  /// completes without doing anything.
+  Future<void> setMarkerUpdateAnimationConfiguration({
+    required int mapId,
+    required MarkerUpdateAnimationConfiguration configuration,
+  }) {
+    final platform = this;
+    if (platform is GoogleMapsFlutterIOS) {
+      return platform._setMarkerUpdateAnimationConfiguration(
+        mapId: mapId,
+        configuration: configuration,
+      );
+    }
+    return Future<void>.value();
   }
 }
 
