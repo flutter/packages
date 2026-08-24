@@ -2252,7 +2252,7 @@ void main() {
                     showCupertinoSheet<void>(
                       context: scaffoldKey.currentContext!,
                       hasPlatformViews: hasPlatformViews,
-                      pageBuilder: (BuildContext context) {
+                      scrollableBuilder: (BuildContext context, ScrollController controller) {
                         return const CupertinoPageScaffold(child: Center(child: Text('Page 2')));
                       },
                     );
