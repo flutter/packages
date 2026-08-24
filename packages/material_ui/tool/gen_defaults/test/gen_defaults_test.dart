@@ -408,7 +408,7 @@ void main() {
           isA<AssertionError>().having(
             (AssertionError e) => e.message,
             'message',
-            contains('Make sure you are utilizing the passed `className` parameter.'),
+            contains('Make sure you are utilizing the passed `className` parameter,'),
           ),
         ),
       );
