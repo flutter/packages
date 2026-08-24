@@ -32,9 +32,7 @@ void main() {
         setter.setFloat(1.0);
       });
 
-      expect(shader.floats, {
-        0: 1.0,
-      });
+      expect(shader.floats, {0: 1.0});
     });
 
     test('setFloats', () {
@@ -44,11 +42,7 @@ void main() {
         setter.setFloats([1.0, 2.0, 3.0]);
       });
 
-      expect(shader.floats, {
-        0: 1.0,
-        1: 2.0,
-        2: 3.0,
-      });
+      expect(shader.floats, {0: 1.0, 1: 2.0, 2: 3.0});
     });
 
     test('setSize', () {
@@ -58,31 +52,17 @@ void main() {
         setter.setSize(const Size(1.0, 2.0));
       });
 
-      expect(shader.floats, {
-        0: 1.0,
-        1: 2.0,
-      });
+      expect(shader.floats, {0: 1.0, 1: 2.0});
     });
 
     test('setSizes', () {
       final shader = _MockFragmentShader();
 
       shader.setFloatUniforms((setter) {
-        setter.setSizes(const [
-          Size(1.0, 2.0),
-          Size(3.0, 4.0),
-          Size(5.0, 6.0),
-        ]);
+        setter.setSizes(const [Size(1.0, 2.0), Size(3.0, 4.0), Size(5.0, 6.0)]);
       });
 
-      expect(shader.floats, {
-        0: 1.0,
-        1: 2.0,
-        2: 3.0,
-        3: 4.0,
-        4: 5.0,
-        5: 6.0,
-      });
+      expect(shader.floats, {0: 1.0, 1: 2.0, 2: 3.0, 3: 4.0, 4: 5.0, 5: 6.0});
     });
 
     test('setColor', () {
@@ -92,12 +72,7 @@ void main() {
         setter.setColor(const Color(0xFF006600));
       });
 
-      expect(shader.floats, {
-        0: 0.0,
-        1: 0.4,
-        2: 0.0,
-        3: 1.0,
-      });
+      expect(shader.floats, {0: 0.0, 1: 0.4, 2: 0.0, 3: 1.0});
     });
 
     test('setColor w/ premultiply', () {
@@ -107,23 +82,14 @@ void main() {
         setter.setColor(const Color(0x00006600), premultiply: true);
       });
 
-      expect(shader.floats, {
-        0: 0.0,
-        1: 0.0,
-        2: 0.0,
-        3: 0.0,
-      });
+      expect(shader.floats, {0: 0.0, 1: 0.0, 2: 0.0, 3: 0.0});
     });
 
     test('setColors', () {
       final shader = _MockFragmentShader();
 
       shader.setFloatUniforms((setter) {
-        setter.setColors(const [
-          Color(0xFF006600),
-          Color(0xFF660000),
-          Color(0x66000066),
-        ]);
+        setter.setColors(const [Color(0xFF006600), Color(0xFF660000), Color(0x66000066)]);
       });
 
       expect(shader.floats, {
@@ -138,7 +104,7 @@ void main() {
         8: 0.0,
         9: 0.0,
         10: 0.4,
-        11: 0.4
+        11: 0.4,
       });
     });
 
@@ -146,14 +112,11 @@ void main() {
       final shader = _MockFragmentShader();
 
       shader.setFloatUniforms((setter) {
-        setter.setColors(
-          premultiply: true,
-          const [
-            Color(0xFF006600),
-            Color(0xFF660000),
-            Color(0x00000066),
-          ],
-        );
+        setter.setColors(premultiply: true, const [
+          Color(0xFF006600),
+          Color(0xFF660000),
+          Color(0x00000066),
+        ]);
       });
 
       expect(shader.floats, {
@@ -168,7 +131,7 @@ void main() {
         8: 0.0,
         9: 0.0,
         10: 0.0,
-        11: 0.4
+        11: 0.4,
       });
     });
 
@@ -179,31 +142,17 @@ void main() {
         setter.setOffset(const Offset(1.0, 2.0));
       });
 
-      expect(shader.floats, {
-        0: 1.0,
-        1: 2.0,
-      });
+      expect(shader.floats, {0: 1.0, 1: 2.0});
     });
 
     test('setOffsets', () {
       final shader = _MockFragmentShader();
 
       shader.setFloatUniforms((setter) {
-        setter.setOffsets(const [
-          Offset(1.0, 2.0),
-          Offset(3.0, 4.0),
-          Offset(5.0, 6.0),
-        ]);
+        setter.setOffsets(const [Offset(1.0, 2.0), Offset(3.0, 4.0), Offset(5.0, 6.0)]);
       });
 
-      expect(shader.floats, {
-        0: 1.0,
-        1: 2.0,
-        2: 3.0,
-        3: 4.0,
-        4: 5.0,
-        5: 6.0,
-      });
+      expect(shader.floats, {0: 1.0, 1: 2.0, 2: 3.0, 3: 4.0, 4: 5.0, 5: 6.0});
     });
 
     test('setVector', () {
@@ -235,12 +184,7 @@ void main() {
         setter.setMatrix2(Matrix2(1.0, 2.0, 3.0, 4.0));
       });
 
-      expect(shader.floats, {
-        0: 1.0,
-        1: 2.0,
-        2: 3.0,
-        3: 4.0,
-      });
+      expect(shader.floats, {0: 1.0, 1: 2.0, 2: 3.0, 3: 4.0});
     });
 
     test('setMatrix2s', () {
@@ -336,24 +280,26 @@ void main() {
       final shader = _MockFragmentShader();
 
       shader.setFloatUniforms((setter) {
-        setter.setMatrix4(Matrix4(
-          1.0,
-          2.0,
-          3.0,
-          4.0,
-          5.0,
-          6.0,
-          7.0,
-          8.0,
-          9.0,
-          10.0,
-          11.0,
-          12.0,
-          13.0,
-          14.0,
-          15.0,
-          16.0,
-        ));
+        setter.setMatrix4(
+          Matrix4(
+            1.0,
+            2.0,
+            3.0,
+            4.0,
+            5.0,
+            6.0,
+            7.0,
+            8.0,
+            9.0,
+            10.0,
+            11.0,
+            12.0,
+            13.0,
+            14.0,
+            15.0,
+            16.0,
+          ),
+        );
       });
 
       expect(shader.floats, {

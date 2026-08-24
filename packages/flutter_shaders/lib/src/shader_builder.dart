@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,8 +7,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/widgets.dart';
 
 /// A callback used by [ShaderBuilder].
-typedef ShaderBuilderCallback = Widget Function(
-    BuildContext, ui.FragmentShader, Widget?);
+typedef ShaderBuilderCallback = Widget Function(BuildContext, ui.FragmentShader, Widget?);
 
 /// A widget that loads and caches [FragmentProgram]s based on the asset key.
 ///
@@ -38,12 +37,7 @@ typedef ShaderBuilderCallback = Widget Function(
 /// ```
 class ShaderBuilder extends StatefulWidget {
   /// Create a new [ShaderBuilder].
-  const ShaderBuilder(
-    this.builder, {
-    super.key,
-    required this.assetKey,
-    this.child,
-  });
+  const ShaderBuilder(this.builder, {super.key, required this.assetKey, this.child});
 
   /// The asset key used to a lookup a shader.
   final String assetKey;
@@ -69,12 +63,13 @@ class ShaderBuilder extends StatefulWidget {
       return Future<void>.value();
     }
     return ui.FragmentProgram.fromAsset(assetKey).then(
-        (ui.FragmentProgram program) {
-      _ShaderBuilderState._shaderCache[assetKey] = program;
-    }, onError: (Object error, StackTrace stackTrace) {
-      FlutterError.reportError(
-          FlutterErrorDetails(exception: error, stack: stackTrace));
-    });
+      (ui.FragmentProgram program) {
+        _ShaderBuilderState._shaderCache[assetKey] = program;
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        FlutterError.reportError(FlutterErrorDetails(exception: error, stack: stackTrace));
+      },
+    );
   }
 }
 
@@ -82,8 +77,7 @@ class _ShaderBuilderState extends State<ShaderBuilder> {
   ui.FragmentProgram? program;
   ui.FragmentShader? shader;
 
-  static final Map<String, ui.FragmentProgram> _shaderCache =
-      <String, ui.FragmentProgram>{};
+  static final Map<String, ui.FragmentProgram> _shaderCache = <String, ui.FragmentProgram>{};
 
   @override
   void initState() {
@@ -106,19 +100,21 @@ class _ShaderBuilderState extends State<ShaderBuilder> {
       return;
     }
 
-    ui.FragmentProgram.fromAsset(assetKey).then((ui.FragmentProgram program) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        this.program = program;
-        shader = program.fragmentShader();
-        _shaderCache[assetKey] = program;
-      });
-    }, onError: (Object error, StackTrace stackTrace) {
-      FlutterError.reportError(
-          FlutterErrorDetails(exception: error, stack: stackTrace));
-    });
+    ui.FragmentProgram.fromAsset(assetKey).then(
+      (ui.FragmentProgram program) {
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          this.program = program;
+          shader = program.fragmentShader();
+          _shaderCache[assetKey] = program;
+        });
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        FlutterError.reportError(FlutterErrorDetails(exception: error, stack: stackTrace));
+      },
+    );
   }
 
   @override

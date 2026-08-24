@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,8 +15,7 @@ void main() {
     await ShaderBuilder.precacheShader('shaders/sampler.frag');
   });
 
-  testWidgets('AnimatedSampler captures child widgets in texture',
-      (WidgetTester tester) async {
+  testWidgets('AnimatedSampler captures child widgets in texture', (WidgetTester tester) async {
     final GlobalKey globalKey = GlobalKey();
     var usedShader = false;
     await tester.pumpWidget(MaterialApp(
@@ -40,10 +39,10 @@ void main() {
 
     ByteData? snapshot;
     await tester.runAsync(() async {
-      snapshot = await (await (globalKey.currentContext?.findRenderObject()
-                  as RenderRepaintBoundary?)!
-              .toImage())
-          .toByteData(format: ui.ImageByteFormat.rawStraightRgba);
+      snapshot =
+          await (await (globalKey.currentContext?.findRenderObject() as RenderRepaintBoundary?)!
+                  .toImage())
+              .toByteData(format: ui.ImageByteFormat.rawStraightRgba);
     });
 
     // Validate that color is Colors.red from child widget.

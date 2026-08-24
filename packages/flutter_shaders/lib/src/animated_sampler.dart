@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,11 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 /// A callback for the [AnimatedSamplerBuilder] widget.
-typedef AnimatedSamplerBuilder = void Function(
-  ui.Image image,
-  Size size,
-  ui.Canvas canvas,
-);
+typedef AnimatedSamplerBuilder = void Function(ui.Image image, Size size, ui.Canvas canvas);
 
 /// A widget that allows access to a snapshot of the child widgets for painting
 /// with a sampler applied to a [FragmentProgram].
@@ -52,12 +48,7 @@ typedef AnimatedSamplerBuilder = void Function(
 ///      caching during expensive animations.
 class AnimatedSampler extends StatelessWidget {
   /// Create a new [AnimatedSampler].
-  const AnimatedSampler(
-    this.builder, {
-    required this.child,
-    super.key,
-    this.enabled = true,
-  });
+  const AnimatedSampler(this.builder, {required this.child, super.key, this.enabled = true});
 
   /// A callback used by this widget to provide the children captured in
   /// a texture.
@@ -72,20 +63,12 @@ class AnimatedSampler extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _ShaderSamplerBuilder(
-      builder,
-      enabled: enabled,
-      child: child,
-    );
+    return _ShaderSamplerBuilder(builder, enabled: enabled, child: child);
   }
 }
 
 class _ShaderSamplerBuilder extends SingleChildRenderObjectWidget {
-  const _ShaderSamplerBuilder(
-    this.builder, {
-    super.child,
-    required this.enabled,
-  });
+  const _ShaderSamplerBuilder(this.builder, {super.child, required this.enabled});
 
   final AnimatedSamplerBuilder builder;
   final bool enabled;
@@ -100,8 +83,7 @@ class _ShaderSamplerBuilder extends SingleChildRenderObjectWidget {
   }
 
   @override
-  void updateRenderObject(
-      BuildContext context, covariant RenderObject renderObject) {
+  void updateRenderObject(BuildContext context, covariant RenderObject renderObject) {
     (renderObject as _RenderShaderSamplerBuilderWidget)
       ..devicePixelRatio = MediaQuery.of(context).devicePixelRatio
       ..builder = builder
@@ -117,15 +99,13 @@ class _RenderShaderSamplerBuilderWidget extends RenderProxyBox {
     required double devicePixelRatio,
     required AnimatedSamplerBuilder builder,
     required bool enabled,
-  })  : _devicePixelRatio = devicePixelRatio,
-        _builder = builder,
-        _enabled = enabled;
+  }) : _devicePixelRatio = devicePixelRatio,
+       _builder = builder,
+       _enabled = enabled;
 
   @override
-  OffsetLayer updateCompositedLayer(
-      {required covariant _ShaderSamplerBuilderLayer? oldLayer}) {
-    final _ShaderSamplerBuilderLayer layer =
-        oldLayer ?? _ShaderSamplerBuilderLayer(builder);
+  OffsetLayer updateCompositedLayer({required covariant _ShaderSamplerBuilderLayer? oldLayer}) {
+    final _ShaderSamplerBuilderLayer layer = oldLayer ?? _ShaderSamplerBuilderLayer(builder);
     layer
       ..callback = builder
       ..size = size
@@ -221,15 +201,14 @@ class _ShaderSamplerBuilderLayer extends OffsetLayer {
 
   ui.Image _buildChildScene(Rect bounds, double pixelRatio) {
     final builder = ui.SceneBuilder();
-    final transform =
-        Matrix4.diagonal3Values(pixelRatio, pixelRatio, 1);
+    final transform = Matrix4.diagonal3Values(pixelRatio, pixelRatio, 1);
     builder.pushTransform(transform.storage);
     addChildrenToScene(builder);
     builder.pop();
     return builder.build().toImageSync(
-          (pixelRatio * bounds.width).ceil(),
-          (pixelRatio * bounds.height).ceil(),
-        );
+      (pixelRatio * bounds.width).ceil(),
+      (pixelRatio * bounds.height).ceil(),
+    );
   }
 
   @override
@@ -240,11 +219,10 @@ class _ShaderSamplerBuilderLayer extends OffsetLayer {
 
   @override
   void addToScene(ui.SceneBuilder builder) {
-    if (size.isEmpty) return;
-    final ui.Image image = _buildChildScene(
-      offset & size,
-      devicePixelRatio,
-    );
+    if (size.isEmpty) {
+      return;
+    }
+    final ui.Image image = _buildChildScene(offset & size, devicePixelRatio);
     final pictureRecorder = ui.PictureRecorder();
     final canvas = Canvas(pictureRecorder);
     try {

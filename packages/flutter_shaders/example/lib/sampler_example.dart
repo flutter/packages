@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/material.dart';
 import 'package:flutter_shaders/flutter_shaders.dart';
 
@@ -5,7 +9,9 @@ void main() {
   runApp(const ExampleApp());
 }
 
+/// The example application widget showcasing shader sampling.
 class ExampleApp extends StatefulWidget {
+  /// Creates the [ExampleApp] widget.
   const ExampleApp({super.key});
 
   @override
@@ -40,10 +46,15 @@ class _ExampleAppState extends State<ExampleApp> {
   }
 }
 
+/// A widget that renders text sampled and pixelated through a custom fragment shader.
 class SampledText extends StatelessWidget {
+  /// Creates a [SampledText] widget.
   const SampledText({super.key, required this.text, required this.value});
 
+  /// The text content to display.
   final String text;
+
+  /// The pixelation scale value applied to the shader.
   final double value;
 
   @override

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,14 +8,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_shaders/flutter_shaders.dart';
 
 void main() async {
-  final ui.FragmentProgram program =
-      await ui.FragmentProgram.fromAsset('shaders/inkwell.frag');
+  final ui.FragmentProgram program = await ui.FragmentProgram.fromAsset('shaders/inkwell.frag');
   runApp(MyApp(program: program));
 }
 
+/// The main application widget for the shader demo.
 class MyApp extends StatelessWidget {
+  /// Creates the [MyApp] demo widget.
   const MyApp({super.key, required this.program});
 
+  /// The fragment program used to power shader effects.
   final ui.FragmentProgram program;
 
   @override
@@ -44,9 +46,12 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// The home page widget displaying counter and shader effects.
 class MyHomePage extends StatefulWidget {
+  /// Creates the home page with a given [title].
   const MyHomePage({super.key, required this.title});
 
+  /// The title displayed in the AppBar.
   final String title;
 
   @override

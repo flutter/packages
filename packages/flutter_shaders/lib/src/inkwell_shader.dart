@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,15 +16,16 @@ import 'package:flutter/material.dart';
 /// See also:
 ///
 ///   * [ShaderInkFeature] for more information on the available configuration.
-typedef ShaderConfigCallback = void Function(
-  ui.FragmentShader shader, {
-  required double animation,
-  required Size referenceBoxSize,
-  required Color color,
-  required Offset position,
-  required TextDirection textDirection,
-  required double targetRadius,
-});
+typedef ShaderConfigCallback =
+    void Function(
+      ui.FragmentShader shader, {
+      required double animation,
+      required Size referenceBoxSize,
+      required Color color,
+      required Offset position,
+      required TextDirection textDirection,
+      required double targetRadius,
+    });
 
 /// Allows customization of the material inkwell effect with a user authored
 /// fragment shader.
@@ -89,14 +90,21 @@ typedef ShaderConfigCallback = void Function(
 ///
 ///   * [ShaderInkFeature] for more information on the available configuration.
 class ShaderInkFeatureFactory extends InteractiveInkFeatureFactory {
+  /// Creates a [ShaderInkFeatureFactory] configured with the provided [program]
+  /// and [callback].
   const ShaderInkFeatureFactory(
     this.program,
     this.callback, {
     this.animationDuration = const Duration(milliseconds: 617),
   });
 
+  /// The [ui.FragmentProgram] used to create shader instances for ink splashes.
   final ui.FragmentProgram program;
+
+  /// The callback that configures uniforms on the shader during animation.
   final ShaderConfigCallback callback;
+
+  /// The duration of the ink splash animation.
   final Duration animationDuration;
 
   @override
@@ -181,32 +189,24 @@ class ShaderInkFeature extends InteractiveInkFeature {
     ShapeBorder? customBorder,
     double? radius,
     super.onRemoved,
-  })  : _fragmentShader = fragmentShader,
-        _callback = callback,
-        _animationDuration = animationDuration,
-        _position = position,
-        _borderRadius = borderRadius ?? BorderRadius.zero,
-        _customBorder = customBorder,
-        _textDirection = textDirection,
-        _targetRadius = radius ??
-            _getTargetRadius(
-              referenceBox,
-              containedInkWell,
-              rectCallback,
-              position,
-            ),
-        _clipCallback =
-            _getClipCallback(referenceBox, containedInkWell, rectCallback) {
+  }) : _fragmentShader = fragmentShader,
+       _callback = callback,
+       _animationDuration = animationDuration,
+       _position = position,
+       _borderRadius = borderRadius ?? BorderRadius.zero,
+       _customBorder = customBorder,
+       _textDirection = textDirection,
+       _targetRadius =
+           radius ?? _getTargetRadius(referenceBox, containedInkWell, rectCallback, position),
+       _clipCallback = _getClipCallback(referenceBox, containedInkWell, rectCallback) {
     controller.addInkFeature(this);
 
     // Immediately begin animating the ink.
-    _animationController = AnimationController(
-      duration: _animationDuration,
-      vsync: controller.vsync,
-    )
-      ..addListener(controller.markNeedsPaint)
-      ..addStatusListener(_handleStatusChanged)
-      ..forward();
+    _animationController =
+        AnimationController(duration: _animationDuration, vsync: controller.vsync)
+          ..addListener(controller.markNeedsPaint)
+          ..addStatusListener(_handleStatusChanged)
+          ..forward();
   }
 
   late AnimationController _animationController;
@@ -283,10 +283,7 @@ class ShaderInkFeature extends InteractiveInkFeature {
   /// the ink feature is to be painted.
   ///
   /// For examples on how the function is used, see [InkSparkle] and [paintInkCircle].
-  void _transformCanvas({
-    required Canvas canvas,
-    required Matrix4 transform,
-  }) {
+  void _transformCanvas({required Canvas canvas, required Matrix4 transform}) {
     final Offset? originOffset = MatrixUtils.getAsTranslation(transform);
     if (originOffset == null) {
       canvas.transform(transform.storage);
@@ -319,16 +316,17 @@ class ShaderInkFeature extends InteractiveInkFeature {
   }) {
     final Rect rect = clipCallback();
     if (customBorder != null) {
-      canvas.clipPath(
-          customBorder.getOuterPath(rect, textDirection: textDirection));
+      canvas.clipPath(customBorder.getOuterPath(rect, textDirection: textDirection));
     } else if (borderRadius != BorderRadius.zero) {
-      canvas.clipRRect(RRect.fromRectAndCorners(
-        rect,
-        topLeft: borderRadius.topLeft,
-        topRight: borderRadius.topRight,
-        bottomLeft: borderRadius.bottomLeft,
-        bottomRight: borderRadius.bottomRight,
-      ));
+      canvas.clipRRect(
+        RRect.fromRectAndCorners(
+          rect,
+          topLeft: borderRadius.topLeft,
+          topRight: borderRadius.topRight,
+          bottomLeft: borderRadius.bottomLeft,
+          bottomRight: borderRadius.bottomRight,
+        ),
+      );
     } else {
       canvas.clipRect(rect);
     }
@@ -341,11 +339,9 @@ double _getTargetRadius(
   RectCallback? rectCallback,
   Offset position,
 ) {
-  final Size size =
-      rectCallback != null ? rectCallback().size : referenceBox.size;
+  final Size size = rectCallback != null ? rectCallback().size : referenceBox.size;
   final double d1 = size.bottomRight(Offset.zero).distance;
-  final double d2 =
-      (size.topRight(Offset.zero) - size.bottomLeft(Offset.zero)).distance;
+  final double d2 = (size.topRight(Offset.zero) - size.bottomLeft(Offset.zero)).distance;
   return math.max(d1, d2) / 2.0;
 }
 
