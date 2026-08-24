@@ -2,16 +2,15 @@ name: example
 publish_to: none
 
 environment:
-  sdk: '>=2.19.0-0.dev <3.0.0'
-  flutter: ">=3.7.0-0.0"
+  sdk: ^3.10.0
+  flutter: ">=3.38.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
+  flutter_shaders: any
 dev_dependencies:
-  flutter_shaders:
-    path: ../
   flutter_test:
     sdk: flutter
 

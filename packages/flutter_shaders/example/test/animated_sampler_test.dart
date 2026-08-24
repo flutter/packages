@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,35 +15,39 @@ void main() {
     await ShaderBuilder.precacheShader('shaders/sampler.frag');
   });
 
-  testWidgets('AnimatedSampler captures child widgets in texture',
-      (WidgetTester tester) async {
+  testWidgets('AnimatedSampler captures child widgets in texture', (WidgetTester tester) async {
     final GlobalKey globalKey = GlobalKey();
-    bool usedShader = false;
-    await tester.pumpWidget(MaterialApp(
-      home: RepaintBoundary(
-        key: globalKey,
-        child: ShaderBuilder(assetKey: 'shaders/sampler.frag',
-            (BuildContext context, FragmentShader shader, Widget? child) {
-          return AnimatedSampler((ui.Image image, Size size, Canvas canvas) {
-            usedShader = true;
-            shader.setFloat(0, size.width);
-            shader.setFloat(1, size.height);
-            shader.setImageSampler(0, image);
+    var usedShader = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: RepaintBoundary(
+          key: globalKey,
+          child: ShaderBuilder(assetKey: 'shaders/sampler.frag', (
+            BuildContext context,
+            FragmentShader shader,
+            Widget? child,
+          ) {
+            return AnimatedSampler((ui.Image image, Size size, Canvas canvas) {
+              usedShader = true;
+              shader.setFloat(0, size.width);
+              shader.setFloat(1, size.height);
+              shader.setImageSampler(0, image);
 
-            canvas.drawRect(Offset.zero & size, Paint()..shader = shader);
-          }, child: Container(color: Colors.red));
-        }),
+              canvas.drawRect(Offset.zero & size, Paint()..shader = shader);
+            }, child: Container(color: Colors.red));
+          }),
+        ),
       ),
-    ));
+    );
 
     expect(usedShader, true);
 
     ByteData? snapshot;
     await tester.runAsync(() async {
-      snapshot = await (await (globalKey.currentContext?.findRenderObject()
-                  as RenderRepaintBoundary?)!
-              .toImage())
-          .toByteData(format: ui.ImageByteFormat.rawStraightRgba);
+      snapshot =
+          await (await (globalKey.currentContext?.findRenderObject() as RenderRepaintBoundary?)!
+                  .toImage())
+              .toByteData(format: ui.ImageByteFormat.rawStraightRgba);
     });
 
     // Validate that color is Colors.red from child widget.
