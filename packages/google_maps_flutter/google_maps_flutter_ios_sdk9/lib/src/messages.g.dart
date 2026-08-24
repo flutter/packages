@@ -2683,8 +2683,7 @@ class PlatformMarkerUpdateAnimationConfiguration {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformMarkerUpdateAnimationConfiguration ||
-        other.runtimeType != runtimeType) {
+    if (other is! PlatformMarkerUpdateAnimationConfiguration || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -2958,9 +2957,7 @@ class _PigeonCodec extends StandardMessageCodec {
       case 175:
         return PlatformBitmapPinConfig.decode(readValue(buffer)!);
       case 178:
-        return PlatformMarkerUpdateAnimationConfiguration.decode(
-          readValue(buffer)!,
-        );
+        return PlatformMarkerUpdateAnimationConfiguration.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -3029,9 +3026,7 @@ class MapsApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[configuration],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[configuration]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
