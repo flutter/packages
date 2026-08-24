@@ -37,6 +37,12 @@ NS_ASSUME_NONNULL_BEGIN
        googleServiceProperties:(nullable NSDictionary<NSString *, id> *)googleServiceProperties
     NS_DESIGNATED_INITIALIZER;
 
+#if TARGET_OS_IOS
+/// Forwards each URL to GIDSignIn. Extracted so tests can cover scene URL
+/// handling without constructing UIOpenURLContext.
+- (void)handleURLs:(NSArray<NSURL *> *)urls;
+#endif
+
 @end
 
 NS_ASSUME_NONNULL_END

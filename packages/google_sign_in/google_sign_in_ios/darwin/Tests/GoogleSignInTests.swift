@@ -725,15 +725,15 @@ struct GoogleSignInPluginTests {
         #expect(fakeSignIn.handledURLs == [url])
       }
 
-    // TODO(victogomez-cs): Add a typed unit test for scene:openURLContexts:.
-    // That method takes NSSet<UIOpenURLContext *>, and UIKit marks
-    // UIOpenURLContext's -init and +new as unavailable, so a Swift test
-    // cannot construct a real context (or a typed fake) to pass in. The
-    // previous test used performSelector with an NSObject stand-in, which is
-    // not type-checked. application:openURL: covers the same handleURL:
-    // forwarding until this path can be invoked without that runtime hack.
-    // Tracked with the Swift migration:
-    // https://github.com/flutter/flutter/issues/119103
+      @Test func handleURLs() {
+        let (plugin, fakeSignIn) = createTestPlugin()
+        let firstURL = URL(string: "com.googleusercontent.apps.test:/oauthredirect")!
+        let secondURL = URL(string: "com.googleusercontent.apps.test:/another")!
+
+        plugin.handleURLs([firstURL, secondURL])
+
+        #expect(fakeSignIn.handledURLs == [firstURL, secondURL])
+      }
     #endif
   }
 
