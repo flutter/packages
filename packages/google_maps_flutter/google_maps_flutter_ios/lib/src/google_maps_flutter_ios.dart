@@ -960,8 +960,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
 }
 
 /// iOS-only extensions to [GoogleMapsFlutterPlatform].
-extension GoogleMapsFlutterIOSMarkerUpdateAnimationConfiguration
-    on GoogleMapsFlutterPlatform {
+extension GoogleMapsFlutterIOSMarkerUpdateAnimationConfiguration on GoogleMapsFlutterPlatform {
   /// Sets the marker update animation configuration for iOS maps.
   ///
   /// If the current platform implementation is not [GoogleMapsFlutterIOS], this

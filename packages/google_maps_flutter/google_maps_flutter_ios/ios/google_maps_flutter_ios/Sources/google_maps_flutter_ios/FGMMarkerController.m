@@ -103,21 +103,23 @@ static FGMPlatformMarkerUpdateAnimationConfiguration *FGMDefaultMarkerUpdateAnim
   // The iOS Maps SDK implicitly animates marker position and rotation changes.
   // For each property whose animation is disabled, apply the update inside a
   // CATransaction with actions disabled so it takes effect immediately.
-  if (markerUpdateAnimationConfiguration.positionAnimationsEnabled) {
-    marker.position = position;
-  } else {
+  if (markerUpdateAnimationConfiguration &&
+      !markerUpdateAnimationConfiguration.positionAnimationsEnabled) {
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     marker.position = position;
     [CATransaction commit];
+  } else {
+    marker.position = position;
   }
-  if (markerUpdateAnimationConfiguration.rotationAnimationsEnabled) {
-    marker.rotation = rotation;
-  } else {
+  if (markerUpdateAnimationConfiguration &&
+      !markerUpdateAnimationConfiguration.rotationAnimationsEnabled) {
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     marker.rotation = rotation;
     [CATransaction commit];
+  } else {
+    marker.rotation = rotation;
   }
   marker.zIndex = (int)platformMarker.zIndex;
   FGMPlatformInfoWindow *infoWindow = platformMarker.infoWindow;

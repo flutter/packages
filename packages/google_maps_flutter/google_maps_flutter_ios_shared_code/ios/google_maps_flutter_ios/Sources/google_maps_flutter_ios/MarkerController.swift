@@ -83,7 +83,7 @@ class MarkerController: NSObject {
     mapView: GMSMapView?,
     assetProvider: FGMAssetProvider,
     screenScale: CGFloat,
-    markerUpdateAnimationConfiguration: FGMPlatformMarkerUpdateAnimationConfiguration,
+    markerUpdateAnimationConfiguration: FGMPlatformMarkerUpdateAnimationConfiguration?,
     usingOpacityForVisibility useOpacityForVisibility: Bool
   ) {
     marker.groundAnchor = platformMarker.anchor.toCGPoint()
@@ -98,21 +98,21 @@ class MarkerController: NSObject {
     // The iOS Maps SDK implicitly animates marker position and rotation changes.
     // For each property whose animation is disabled, apply the update inside a
     // CATransaction with actions disabled so it takes effect immediately.
-    if markerUpdateAnimationConfiguration.positionAnimationsEnabled {
-      marker.position = position
-    } else {
+    if markerUpdateAnimationConfiguration?.positionAnimationsEnabled == false {
       CATransaction.begin()
       CATransaction.setDisableActions(true)
       marker.position = position
       CATransaction.commit()
+    } else {
+      marker.position = position
     }
-    if markerUpdateAnimationConfiguration.rotationAnimationsEnabled {
-      marker.rotation = rotation
-    } else {
+    if markerUpdateAnimationConfiguration?.rotationAnimationsEnabled == false {
       CATransaction.begin()
       CATransaction.setDisableActions(true)
       marker.rotation = rotation
       CATransaction.commit()
+    } else {
+      marker.rotation = rotation
     }
     marker.zIndex = Int32(platformMarker.zIndex)
     let infoWindow = platformMarker.infoWindow
