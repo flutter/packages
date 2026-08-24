@@ -4,6 +4,7 @@
 
 import Flutter
 import GoogleMaps
+import QuartzCore
 import UIKit
 
 /// Defines marker controllable by Flutter.
@@ -84,7 +85,11 @@ class MarkerController {
       screenScale: screenScale
     )
     marker.isFlat = platformMarker.flat
+    CATransaction.begin()
+    CATransaction.setDisableActions(true)
+    CATransaction.setAnimationDuration(0.0)
     marker.position = platformMarker.position.toCLLocationCoordinate2D()
+    CATransaction.commit()
     marker.rotation = platformMarker.rotation
     marker.zIndex = Int32(platformMarker.zIndex)
     let infoWindow = platformMarker.infoWindow

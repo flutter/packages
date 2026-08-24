@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+@import QuartzCore;
+
 #import "FGMMarkerController.h"
 #import "FGMMarkerController_Test.h"
 
@@ -85,7 +87,11 @@
   UIImage *image = FGMIconFromBitmap(platformMarker.icon, assetProvider, screenScale);
   marker.icon = image;
   marker.flat = platformMarker.flat;
+  [CATransaction begin];
+  [CATransaction setDisableActions:YES];
+  [CATransaction setAnimationDuration:0.0];
   marker.position = FGMGetCoordinateForPigeonLatLng(platformMarker.position);
+  [CATransaction commit];
   marker.rotation = platformMarker.rotation;
   marker.zIndex = (int)platformMarker.zIndex;
   FGMPlatformInfoWindow *infoWindow = platformMarker.infoWindow;
