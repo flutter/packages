@@ -75,16 +75,25 @@ If the branch is behind but there are no merge conflicts, you may proceed with t
 
 Tests ensure that your changes do not break existing functionality
 and that new features work as expected.
-All unit tests must pass before code can be merged.
+All unit tests (both Dart and native Android) must pass before code can be merged.
+
+### Dart Unit Tests
 Command to run:
 
 ```bash
-cd $(git rev-parse --show-toplevel)
-dart run script/tool/bin/flutter_plugin_tools.dart \
+dart pub global run flutter_plugin_tools \
   dart-test --packages camera_android_camerax
 ```
 
-If this command fails, the code is likely not ready to push.
+### Native Unit Tests
+Command to run:
+
+```bash
+dart pub global run flutter_plugin_tools \
+  native-test --android --packages camera_android_camerax --no-integration
+```
+
+If either command fails, the code is not ready to push.
 The tests might have been failing prior to any changes being made,
 so prompt the user to review all found errors
 and fix the newly introduced failures before pushing any code.
@@ -98,8 +107,7 @@ and add a corresponding entry describing the change in `CHANGELOG.md`.
 Command to run:
 
 ```bash
-cd $(git rev-parse --show-toplevel)
-dart run script/tool/bin/flutter_plugin_tools.dart \
+dart pub global run flutter_plugin_tools \
   publish-check --packages camera_android_camerax
 ```
 
@@ -114,8 +122,7 @@ the standard copyright and license header.
 Command to run:
 
 ```bash
-cd $(git rev-parse --show-toplevel)
-dart run script/tool/bin/flutter_plugin_tools.dart license-check --packages camera_android_camerax
+dart pub global run flutter_plugin_tools license-check --packages camera_android_camerax
 ```
 
 If this command fails, the code WAS NOT ready to push.
@@ -132,6 +139,10 @@ be pushed.
 Virtually all changes require a test.
 See [Test Documentation](https://github.com/flutter/flutter/blob/master/docs/ecosystem/testing/Plugin-Tests.md).
 Evaluate the change against that testing rubric.
+
+Specifically check:
+- **Dart changes**: If Dart source files in `lib/` (excluding generated files, e.g., `.g.dart` files) were modified or added, verify that corresponding Dart tests in `test/` were added or updated.
+- **Native Android changes**: If native Android source files (`.java`, `.kt` in `android/src/main/`, excluding Pigeon generated files like `.g.java` and `.g.kt`) were modified or added, verify that corresponding native unit tests in `android/src/test/` were added or updated.
 
 Based on the rubric, if the change requires a test,
 give the user a quote from the testing documentation

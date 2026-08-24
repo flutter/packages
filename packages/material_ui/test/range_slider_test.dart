@@ -1629,7 +1629,7 @@ void main() {
       expect(
         valueIndicatorBox,
         paints
-          // Represents the raised button wth next text.
+          // Represents the raised button with next text.
           ..path(color: Colors.black)
           ..paragraph()
           // Represents the range slider.
@@ -3537,7 +3537,7 @@ void main() {
     );
   });
 
-  // Regression test for hhttps://github.com/flutter/flutter/issues/161805
+  // Regression test for https://github.com/flutter/flutter/issues/161805
   testWidgets('Discrete RangeSlider does not apply thumb padding in a non-rounded track shape', (
     WidgetTester tester,
   ) async {
