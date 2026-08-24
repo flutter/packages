@@ -75,9 +75,7 @@ class UniformsSetter {
 
   /// Sets a list of float uniforms sequentially.
   void setFloats(List<double> values) {
-    for (final value in values) {
-      setFloat(value);
-    }
+    values.forEach(setFloat);
   }
 
   /// Sets a [Size] uniform (width and height) at the current index.
@@ -89,9 +87,7 @@ class UniformsSetter {
 
   /// Sets a list of [Size] uniforms sequentially.
   void setSizes(List<Size> sizes) {
-    for (final size in sizes) {
-      setSize(size);
-    }
+    sizes.forEach(setSize);
   }
 
   /// Sets a [Color] uniform as normalized RGBA floats.
@@ -129,9 +125,7 @@ class UniformsSetter {
 
   /// Sets a list of [Offset] uniforms sequentially.
   void setOffsets(List<Offset> offsets) {
-    for (final offset in offsets) {
-      setOffset(offset);
-    }
+    offsets.forEach(setOffset);
   }
 
   /// Sets a [Vector] uniform from its underlying storage floats.
@@ -141,9 +135,7 @@ class UniformsSetter {
 
   /// Sets a list of [Vector] uniforms sequentially.
   void setVectors(List<Vector> vectors) {
-    for (final vector in vectors) {
-      setVector(vector);
-    }
+    vectors.forEach(setVector);
   }
 
   /// Sets a 2x2 matrix uniform from its underlying storage floats.
@@ -153,9 +145,7 @@ class UniformsSetter {
 
   /// Sets a list of 2x2 matrix uniforms sequentially.
   void setMatrix2s(List<Matrix2> matrix2s) {
-    for (final matrix2 in matrix2s) {
-      setMatrix2(matrix2);
-    }
+    matrix2s.forEach(setMatrix2);
   }
 
   /// Sets a 3x3 matrix uniform from its underlying storage floats.
@@ -165,9 +155,7 @@ class UniformsSetter {
 
   /// Sets a list of 3x3 matrix uniforms sequentially.
   void setMatrix3s(List<Matrix3> matrix3s) {
-    for (final matrix3 in matrix3s) {
-      setMatrix3(matrix3);
-    }
+    matrix3s.forEach(setMatrix3);
   }
 
   /// Sets a 4x4 matrix uniform from its underlying storage floats.
@@ -177,8 +165,6 @@ class UniformsSetter {
 
   /// Sets a list of 4x4 matrix uniforms sequentially.
   void setMatrix4s(List<Matrix4> matrix4s) {
-    for (final matrix4 in matrix4s) {
-      setMatrix4(matrix4);
-    }
+    matrix4s.forEach(setMatrix4);
   }
 }
