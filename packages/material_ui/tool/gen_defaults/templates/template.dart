@@ -76,6 +76,9 @@ abstract class TokenTemplate {
 
   /// The name of the class that will be generated (e.g. `_IconButtonDefaultsM3`
   /// or `_IconButtonDefaultsM3E`).
+  ///
+  /// Return an empty string for templates that generate top-level declarations
+  /// instead of a class.
   @visibleForTesting
   String get className {
     assert(
@@ -102,12 +105,10 @@ abstract class TokenTemplate {
     };
   }
 
-  /// Whether the generated contents must declare the generated defaults class.
-  bool get requiresGeneratedClass => true;
-
   /// Returns the body of the generated file as a string.
   ///
-  /// The [className] parameter must be used to declare the class.
+  /// The [className] parameter must be used to declare the class, unless it is
+  /// empty.
   String generateContents(String className);
 
   /// Generates a Dart number literal for token values.
@@ -218,10 +219,11 @@ abstract class TokenTemplate {
     if (verbose) {
       stdout.writeln('Generating contents...');
     }
-    final String contents = generateContents(requiresGeneratedClass ? className : '');
+    final String generatedClassName = className;
+    final String contents = generateContents(generatedClassName);
     assert(
-      !requiresGeneratedClass || contents.contains(_classRegExp),
-      'The generated contents for "$name" must define the class "$className". '
+      generatedClassName.isEmpty || contents.contains(_classRegExp),
+      'The generated contents for "$name" must define the class "$generatedClassName". '
       'Make sure you are utilizing the passed `className` parameter.',
     );
 
