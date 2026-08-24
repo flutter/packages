@@ -23,7 +23,7 @@ class ColorSchemeTemplateM3 extends TokenTemplateM3 {
   String get outputFileName => 'color_scheme_defaults.g.dart';
 
   @override
-  bool get requiresGeneratedClass => false;
+  String get className => '';
 
   static const Map<String, String> _lightTokens = <String, String>{
     'background': TokenColorLight.background,
