@@ -65,7 +65,7 @@ class CupertinoActivityIndicator extends StatefulWidget {
   }) : assert(radius > 0.0),
        assert(progress >= 0.0),
        assert(progress <= 1.0),
-       assert(tickCount > 0),
+       assert(tickCount > 0.0),
        animating = false;
 
   /// Color of the activity indicator.
