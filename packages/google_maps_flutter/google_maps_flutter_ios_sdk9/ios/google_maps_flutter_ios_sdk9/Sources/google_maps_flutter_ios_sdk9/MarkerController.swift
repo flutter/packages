@@ -92,7 +92,6 @@ class MarkerController: NSObject {
     marker.isFlat = platformMarker.flat
     CATransaction.begin()
     CATransaction.setDisableActions(true)
-    CATransaction.setAnimationDuration(0.0)
     marker.position = platformMarker.position.toCLLocationCoordinate2D()
     CATransaction.commit()
     marker.rotation = platformMarker.rotation
