@@ -14,21 +14,13 @@ Adding an error to `cameraErrorStreamController` notifies the frontend `CameraCo
 
 Additionally, we identified a secondary bug: when `setExposureOffset` succeeds, it currently returns the integer *index* instead of the calculated double *offset* (which violates the `Camera` platform interface contract).
 
-## User Review Required
+## Design Decisions
 > [!NOTE]
-> The platform interface for `setExposureOffset` specifies that it should return the rounded offset value that was set (e.g. `3.0`). We will be fixing a bug where it previously returned the raw integer index from CameraX (e.g. `15`). 
+> **Returning gracefully on cancellation instead of throwing an exception:** 
+> We have decided not to throw an exception when the operation is canceled. The cancellation is primarily caused by intermediate values being set between the old and desired value as the user rapidly scrubs the slider, which supersedes older requests. The only other relevant situation for a cancellation exception is when the camera is closed, in which case failing to set the exposure offset is not a real error. Returning the requested offset gracefully avoids crashing or cluttering the developer's console when these benign cancellations occur.
 > 
-> **Proof regarding the CameraX return value:**
-> The CameraX documentation for `CameraControl.setExposureCompensationIndex(int index)` states that it returns a `ListenableFuture<Integer>`, and that this integer is the index that was actually set. The native Pigeon wrapper in `CameraControlProxyApi.java` correctly returns this integer. However, the Dart code was directly returning `newIndex.toDouble()`, thus returning the index (e.g. `15.0`) instead of multiplying it by the `exposureOffsetStepSize` (e.g. `15 * 0.2 = 3.0`) as required by the `camera` platform interface.
-
-## Open Questions
-> [!IMPORTANT]
-> **Regarding your comment on notifying the developer:**
-> If we throw an exception when the request is canceled, it will bubble up to the `setExposureOffset` Future caller. Because canceling is expected behavior when a user drags a slider rapidly (the new request supersedes the old one), throwing an exception forces developers to catch and ignore it, and in the case of the example app, it surfaces an annoying snackbar error.
-> 
-> If we *don't* throw an exception, we can just return the rounded offset that they requested. Since a new request has already been submitted to replace this one, the slider will eventually settle on the final request's value. 
-> 
-> We could technically throw a `CameraException` with a specific code like `exposureOffsetCanceled`, but returning the requested value gracefully (which is what we currently propose) is usually the standard way to handle superseded rapid-fire requests without littering the developer's console/UI with errors. What do you prefer?
+> **Returning the correct offset value:** 
+> The platform interface for `setExposureOffset` specifies that it should return the rounded offset value that was set (e.g. `3.0`). We will be fixing a bug where it previously returned the raw integer index from CameraX (e.g. `15.0`). The CameraX documentation for `CameraControl.setExposureCompensationIndex(int index)` states that it returns a `ListenableFuture<Integer>`, and that this integer is the index that was actually set. The native Pigeon wrapper in `CameraControlProxyApi.java` correctly returns this integer. However, the Dart code was directly returning `newIndex.toDouble()`, thus returning the index instead of multiplying it by the `exposureOffsetStepSize` (e.g. `15 * 0.2 = 3.0`) as required by the `camera` platform interface.
 
 ## Proposed Changes
 
