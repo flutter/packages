@@ -9,9 +9,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_shaders: any
 dev_dependencies:
-  flutter_shaders:
-    path: ../
   flutter_test:
     sdk: flutter
 

@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Can cache fragment shaders', (WidgetTester tester) async {
-    bool shaderLoaded = false;
+    var shaderLoaded = false;
     final Widget child = ShaderBuilder(
         (BuildContext context, FragmentShader shader, Widget? child) {
       shaderLoaded = true;
@@ -26,7 +26,7 @@ void main() {
     expect(shaderLoaded, isTrue);
 
     // Shader is still cached with a new widget.
-    bool sameShaderLoaded = false;
+    var sameShaderLoaded = false;
     await tester.pumpWidget(ShaderBuilder(
         (BuildContext context, FragmentShader shader, Widget? child) {
       sameShaderLoaded = true;
@@ -49,7 +49,7 @@ void main() {
       'synchronously when future completes', (WidgetTester tester) async {
     await ShaderBuilder.precacheShader('shaders/sampler.frag');
 
-    bool shaderLoaded = false;
+    var shaderLoaded = false;
     await tester.pumpWidget(ShaderBuilder(
         (BuildContext context, FragmentShader shader, Widget? child) {
       shaderLoaded = true;

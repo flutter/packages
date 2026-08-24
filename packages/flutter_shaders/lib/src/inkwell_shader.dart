@@ -2,9 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
 import 'dart:math' as math;
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
 
 /// A callback used by the [ShaderInkFeature] to configure the fragment shader
 /// on each frame of the inkwell animation.
@@ -180,7 +181,6 @@ class ShaderInkFeature extends InteractiveInkFeature {
     ShapeBorder? customBorder,
     double? radius,
     super.onRemoved,
-    double? turbulenceSeed,
   })  : _fragmentShader = fragmentShader,
         _callback = callback,
         _animationDuration = animationDuration,
@@ -188,13 +188,13 @@ class ShaderInkFeature extends InteractiveInkFeature {
         _borderRadius = borderRadius ?? BorderRadius.zero,
         _customBorder = customBorder,
         _textDirection = textDirection,
-        _targetRadius = (radius ??
+        _targetRadius = radius ??
             _getTargetRadius(
               referenceBox,
               containedInkWell,
               rectCallback,
               position,
-            )),
+            ),
         _clipCallback =
             _getClipCallback(referenceBox, containedInkWell, rectCallback) {
     controller.addInkFeature(this);
@@ -243,7 +243,7 @@ class ShaderInkFeature extends InteractiveInkFeature {
     if (_clipCallback != null) {
       _clipCanvas(
         canvas: canvas,
-        clipCallback: _clipCallback!,
+        clipCallback: _clipCallback,
         textDirection: _textDirection,
         customBorder: _customBorder,
         borderRadius: _borderRadius,
@@ -252,9 +252,9 @@ class ShaderInkFeature extends InteractiveInkFeature {
 
     _updateFragmentShader();
 
-    final Paint paint = Paint()..shader = _fragmentShader;
+    final paint = Paint()..shader = _fragmentShader;
     if (_clipCallback != null) {
-      canvas.drawRect(_clipCallback!(), paint);
+      canvas.drawRect(_clipCallback(), paint);
     } else {
       canvas.drawPaint(paint);
     }

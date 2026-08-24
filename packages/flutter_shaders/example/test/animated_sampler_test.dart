@@ -18,7 +18,7 @@ void main() {
   testWidgets('AnimatedSampler captures child widgets in texture',
       (WidgetTester tester) async {
     final GlobalKey globalKey = GlobalKey();
-    bool usedShader = false;
+    var usedShader = false;
     await tester.pumpWidget(MaterialApp(
       home: RepaintBoundary(
         key: globalKey,

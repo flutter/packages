@@ -25,7 +25,7 @@ class _ExampleAppState extends State<ExampleApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: Text('Shaders!')),
+        appBar: AppBar(title: const Text('Shaders!')),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -63,7 +63,7 @@ class SampledText extends StatelessWidget {
           Rect.fromLTWH(0, 0, size.width, size.height),
           Paint()..shader = shader,
         );
-      }, child: Text(text, style: TextStyle(fontSize: 20)));
+      }, child: Text(text, style: const TextStyle(fontSize: 20)));
     }, assetKey: 'packages/flutter_shaders/shaders/pixelation.frag');
   }
 }

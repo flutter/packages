@@ -13,7 +13,7 @@ class _MockFragmentShader implements FragmentShader {
   final images = <int, Image>{};
 
   @override
-  noSuchMethod(Invocation invocation) {
+  void noSuchMethod(Invocation invocation) {
     throw UnimplementedError();
   }
 

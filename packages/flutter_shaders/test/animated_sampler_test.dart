@@ -16,7 +16,7 @@ void main() {
         home: AnimatedSampler(
           builder,
           enabled: false,
-          child: SizedBox(),
+          child: const SizedBox(),
         ),
       ),
     );
@@ -24,14 +24,14 @@ void main() {
 
   testWidgets('starts calling builder once enabled', (tester) async {
     final AnimatedSamplerBuilder builder =
-        expectAsync4((image, size, offset, canvas) {}, count: 1);
+        expectAsync4((image, size, offset, canvas) {});
 
     await tester.pumpWidget(
       MaterialApp(
         home: AnimatedSampler(
           builder,
           enabled: false,
-          child: SizedBox(),
+          child: const SizedBox(),
         ),
       ),
     );
@@ -40,8 +40,7 @@ void main() {
       MaterialApp(
         home: AnimatedSampler(
           builder,
-          enabled: true,
-          child: SizedBox(),
+          child: const SizedBox(),
         ),
       ),
     );
@@ -55,7 +54,7 @@ void main() {
       MaterialApp(
         home: AnimatedSampler(
           builder,
-          child: RepaintBoundary(
+          child: const RepaintBoundary(
             child: CircularProgressIndicator(),
           ),
         ),
@@ -63,6 +62,6 @@ void main() {
     );
 
     // Pump the next frame to animate `CircularProgressIndicator`.
-    await tester.pump(Duration(seconds: 1));
+    await tester.pump(const Duration(seconds: 1));
   });
 }

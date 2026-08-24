@@ -220,8 +220,8 @@ class _ShaderSamplerBuilderLayer extends OffsetLayer {
   }
 
   ui.Image _buildChildScene(Rect bounds, double pixelRatio) {
-    final ui.SceneBuilder builder = ui.SceneBuilder();
-    final Matrix4 transform =
+    final builder = ui.SceneBuilder();
+    final transform =
         Matrix4.diagonal3Values(pixelRatio, pixelRatio, 1);
     builder.pushTransform(transform.storage);
     addChildrenToScene(builder);
@@ -245,8 +245,8 @@ class _ShaderSamplerBuilderLayer extends OffsetLayer {
       offset & size,
       devicePixelRatio,
     );
-    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
-    final Canvas canvas = Canvas(pictureRecorder);
+    final pictureRecorder = ui.PictureRecorder();
+    final canvas = Canvas(pictureRecorder);
     try {
       callback(image, size, canvas);
     } finally {
