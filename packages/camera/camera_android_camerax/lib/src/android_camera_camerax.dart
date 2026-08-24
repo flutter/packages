@@ -751,16 +751,10 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
 
       if (newIndex == null) {
-        cameraErrorStreamController.add(
-          'Setting exposure compensation index was canceled due to the camera being closed or a new request being submitted.',
-        );
-        throw CameraException(
-          setExposureOffsetFailedErrorCode,
-          'Setting exposure compensation index was canceled due to the camera being closed or a new request being submitted.',
-        );
+        return offset;
       }
 
-      return newIndex.toDouble();
+      return newIndex * exposureOffsetStepSize;
     } on PlatformException catch (e) {
       cameraErrorStreamController.add(
         e.message ?? 'Setting the camera exposure compensation index failed.',

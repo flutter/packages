@@ -1,3 +1,7 @@
+## 0.7.4+7
+
+* Fix exposure offset setting error thrown when canceled by a new request.
+
 ## 0.7.4+6
 
 * Adds explicit `androidx.concurrent:concurrent-futures:1.2.0` dependency to fix
