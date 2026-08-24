@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
+import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
 import 'common/file_filters.dart';
@@ -177,33 +178,33 @@ class DartTestCommand extends PackageLoopingCommand {
     if (!testConfig.existsSync()) {
       return null;
     }
-    final testOnRegex = RegExp(r'^test_on:\s*([a-z].*[a-z])\s*$');
-    for (final String line in testConfig.readAsLinesSync()) {
-      final RegExpMatch? match = testOnRegex.firstMatch(line);
-      if (match != null) {
-        final String targetFilter = match.group(1)!;
-        // test_on lines can be very complex, but in pratice the packages in
-        // this repo currently only need the ability to require vm or not, so a
-        // simple one-target directive is all that's supported currently.
-        // Making it deliberately strict avoids the possibility of accidentally
-        // skipping vm coverage due to a complex expression that's not handled
-        // correctly.
-        switch (targetFilter) {
-          case 'vm':
-            return _TestPlatform.vm;
-          case 'browser':
-            return _TestPlatform.browser;
-          default:
-            printError(
-              'Unknown "test_on" value: "$targetFilter"\n'
-              "If this value needs to be supported for this package's tests, "
-              'please update the repository tooling to support more test_on '
-              'modes.',
-            );
-            throw ToolExit(_exitUnknownTestPlatform);
-        }
-      }
+    final Object? root = loadYaml(testConfig.readAsStringSync());
+    if (root is! YamlMap) {
+      throw const FormatException('Root of ci_config.yaml must be a map.');
     }
-    return null;
+    final Object? targetFilter = root['test_on'];
+    if (targetFilter == null || targetFilter is! String) {
+      return null;
+    }
+    // test_on lines can be very complex, but in pratice the packages in
+    // this repo currently only need the ability to require vm or not, so a
+    // simple one-target directive is all that's supported currently.
+    // Making it deliberately strict avoids the possibility of accidentally
+    // skipping vm coverage due to a complex expression that's not handled
+    // correctly.
+    switch (targetFilter) {
+      case 'vm':
+        return _TestPlatform.vm;
+      case 'browser':
+        return _TestPlatform.browser;
+      default:
+        printError(
+          'Unknown "test_on" value: "$targetFilter"\n'
+          "If this value needs to be supported for this package's tests, "
+          'please update the repository tooling to support more test_on '
+          'modes.',
+        );
+        throw ToolExit(_exitUnknownTestPlatform);
+    }
   }
 }
