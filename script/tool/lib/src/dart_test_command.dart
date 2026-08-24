@@ -180,7 +180,7 @@ class DartTestCommand extends PackageLoopingCommand {
     }
     final Object? root = loadYaml(testConfig.readAsStringSync());
     if (root is! YamlMap) {
-      throw const FormatException('Root of ci_config.yaml must be a map.');
+      return null;
     }
     final Object? targetFilter = root['test_on'];
     if (targetFilter == null || targetFilter is! String) {
