@@ -10,7 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'colors.dart';
 
 const double _kDefaultIndicatorRadius = 10.0;
-const int _kDefaultIndicatorTickCount = 8;
+const int _kDefaultIndicatorTickCount = 8.0;
 
 // Extracted from iOS 13.2 Beta.
 const Color _kActiveTickColor = CupertinoDynamicColor.withBrightness(
