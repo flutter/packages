@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 #if TARGET_OS_IOS
 /// Forwards each URL to GIDSignIn. Extracted so tests can cover scene URL
 /// handling without constructing UIOpenURLContext.
-- (void)handleURLs:(NSArray<NSURL *> *)urls;
+- (void)handleURLs:(NSArray<NSURL *> *)urls NS_SWIFT_NAME(handleURLs(_:));
 #endif
 
 @end
