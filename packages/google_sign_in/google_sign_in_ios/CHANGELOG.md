@@ -1,3 +1,8 @@
+## 6.3.5
+
+* Migrates ViewProvider and GID SDK wrappers from Objective-C to Swift.
+* Returns an error when no host view is available to present Google Sign-In.
+
 ## 6.3.4
 
 * Migrates the plugin class from Objective-C to Swift.
