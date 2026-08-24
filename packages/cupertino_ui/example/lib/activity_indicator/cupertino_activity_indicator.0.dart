@@ -51,7 +51,7 @@ class CupertinoIndicatorExample extends StatelessWidget {
                 CupertinoActivityIndicator(
                   radius: 20.0,
                   color: CupertinoColors.activeBlue,
-                  tickCount: 12,
+                  tickCount: 12.0,
                 ),
                 SizedBox(height: 10),
                 Text(
@@ -68,7 +68,7 @@ class CupertinoIndicatorExample extends StatelessWidget {
                 CupertinoActivityIndicator(
                   radius: 20.0,
                   animating: false,
-                  tickCount: 16,
+                  tickCount: 16.0,
                 ),
                 SizedBox(height: 10),
                 Text(

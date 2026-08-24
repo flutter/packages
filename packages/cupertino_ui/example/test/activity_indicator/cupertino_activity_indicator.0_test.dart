@@ -25,7 +25,7 @@ void main() {
     );
     expect(
       tester.widget<CupertinoActivityIndicator>(firstIndicator).tickCount,
-      8,
+      8.0,
     );
 
     // Cupertino activity indicator with custom radius, color, and tick count.
@@ -46,7 +46,7 @@ void main() {
     );
     expect(
       tester.widget<CupertinoActivityIndicator>(secondIndicator).tickCount,
-      12,
+      12.0,
     );
 
     // Cupertino activity indicator with custom radius and disabled animation.
@@ -61,7 +61,7 @@ void main() {
     );
     expect(
       tester.widget<CupertinoActivityIndicator>(thirdIndicator).tickCount,
-      16,
+      16.0,
     );
   });
 }

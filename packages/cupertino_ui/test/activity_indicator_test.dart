@@ -157,11 +157,11 @@ void main() {
   });
 
   test('tickCount defaults to 8', () {
-    expect(const CupertinoActivityIndicator().tickCount, 8);
-    expect(const CupertinoActivityIndicator.partiallyRevealed().tickCount, 8);
+    expect(const CupertinoActivityIndicator().tickCount, 8.0);
+    expect(const CupertinoActivityIndicator.partiallyRevealed().tickCount, 8.0);
   });
 
-  for (final tickCount in <int>[8, 12, 16]) {
+  for (final tickCount in <double>[8.0, 12.0, 16.0]) {
     testWidgets('Can specify $tickCount ticks', (WidgetTester tester) async {
       await tester.pumpWidget(
         Center(child: CupertinoActivityIndicator(animating: false, tickCount: tickCount)),
@@ -169,7 +169,7 @@ void main() {
 
       expect(
         find.byType(CupertinoActivityIndicator),
-        paintsExactlyCountTimes(#drawRRect, tickCount),
+        paintsExactlyCountTimes(#drawRRect, tickCount.toInt()),
       );
       expect(
         tester
@@ -185,16 +185,24 @@ void main() {
   ) async {
     await tester.pumpWidget(
       const Center(
-        child: CupertinoActivityIndicator.partiallyRevealed(progress: 0.5, tickCount: 16),
+        child: CupertinoActivityIndicator.partiallyRevealed(progress: 0.5, tickCount: 16.0),
       ),
     );
 
     expect(find.byType(CupertinoActivityIndicator), paintsExactlyCountTimes(#drawRRect, 8));
   });
 
-  test('tickCount must be positive', () {
-    expect(() => CupertinoActivityIndicator(tickCount: 0), throwsAssertionError);
-    expect(() => CupertinoActivityIndicator.partiallyRevealed(tickCount: 0), throwsAssertionError);
+  test('tickCount must be a positive whole number', () {
+    expect(() => CupertinoActivityIndicator(tickCount: 0.0), throwsAssertionError);
+    expect(
+      () => CupertinoActivityIndicator.partiallyRevealed(tickCount: 0.0),
+      throwsAssertionError,
+    );
+    expect(() => CupertinoActivityIndicator(tickCount: 8.5), throwsAssertionError);
+    expect(
+      () => CupertinoActivityIndicator.partiallyRevealed(tickCount: 8.5),
+      throwsAssertionError,
+    );
   });
 
   group('CupertinoLinearActivityIndicator', () {

@@ -10,7 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'colors.dart';
 
 const double _kDefaultIndicatorRadius = 10.0;
-const int _kDefaultIndicatorTickCount = 8.0;
+const double _kDefaultIndicatorTickCount = 8.0;
 
 // Extracted from iOS 13.2 Beta.
 const Color _kActiveTickColor = CupertinoDynamicColor.withBrightness(
@@ -47,7 +47,8 @@ class CupertinoActivityIndicator extends StatefulWidget {
     this.radius = _kDefaultIndicatorRadius,
     this.tickCount = _kDefaultIndicatorTickCount,
   }) : assert(radius > 0.0),
-       assert(tickCount > 0),
+       assert(tickCount > 0.0),
+       assert(tickCount % 1.0 == 0.0),
        progress = 1.0;
 
   /// Creates a non-animated iOS-style activity indicator that displays
@@ -66,6 +67,7 @@ class CupertinoActivityIndicator extends StatefulWidget {
        assert(progress >= 0.0),
        assert(progress <= 1.0),
        assert(tickCount > 0.0),
+       assert(tickCount % 1.0 == 0.0),
        animating = false;
 
   /// Color of the activity indicator.
@@ -85,8 +87,8 @@ class CupertinoActivityIndicator extends StatefulWidget {
 
   /// The number of ticks drawn around the indicator.
   ///
-  /// Defaults to 8. Must be positive.
-  final int tickCount;
+  /// Defaults to 8.0. Must be a positive whole number.
+  final double tickCount;
 
   /// Determines the percentage of spinner ticks that will be shown. Typical usage would
   /// display all ticks, however, this allows for more fine-grained control such as
@@ -163,8 +165,10 @@ class _CupertinoActivityIndicatorPainter extends CustomPainter {
     required this.activeColor,
     required this.radius,
     required this.progress,
-    required this.tickCount,
-  }) : tickFundamentalShape = RRect.fromLTRBXY(
+    required double tickCount,
+  }) : tickCount = tickCount,
+       _integerTickCount = tickCount.toInt(),
+       tickFundamentalShape = RRect.fromLTRBXY(
          -radius / _kDefaultIndicatorRadius,
          -radius / 3.0,
          radius / _kDefaultIndicatorRadius,
@@ -178,19 +182,20 @@ class _CupertinoActivityIndicatorPainter extends CustomPainter {
   final Color activeColor;
   final double radius;
   final double progress;
-  final int tickCount;
+  final double tickCount;
+  final int _integerTickCount;
 
   // Use a RRect instead of RSuperellipse since this shape is really small
   // and should make little visual difference.
   final RRect tickFundamentalShape;
 
   int _alphaValueForTick(int tick) {
-    final int halfTickCount = tickCount ~/ 2;
+    final int halfTickCount = _integerTickCount ~/ 2;
     final int fadingTick = tick - halfTickCount;
     if (fadingTick < 0) {
       return _kMinTickAlpha;
     }
-    final int fadingTickCount = tickCount - halfTickCount;
+    final int fadingTickCount = _integerTickCount - halfTickCount;
     final int numerator = (_kMaxTickAlpha - _kMinTickAlpha) * (fadingTick + 1);
     return _kMinTickAlpha + (numerator + fadingTickCount ~/ 2) ~/ fadingTickCount;
   }
@@ -202,13 +207,13 @@ class _CupertinoActivityIndicatorPainter extends CustomPainter {
     canvas.save();
     canvas.translate(size.width / 2.0, size.height / 2.0);
 
-    final int activeTick = (tickCount * position.value).floor();
+    final int activeTick = (_integerTickCount * position.value).floor();
 
-    for (var i = 0; i < tickCount * progress; ++i) {
-      final int t = (i - activeTick) % tickCount;
+    for (var i = 0; i < _integerTickCount * progress; ++i) {
+      final int t = (i - activeTick) % _integerTickCount;
       paint.color = activeColor.withAlpha(progress < 1 ? _kMaxTickAlpha : _alphaValueForTick(t));
       canvas.drawRRect(tickFundamentalShape, paint);
-      canvas.rotate(_kTwoPI / tickCount);
+      canvas.rotate(_kTwoPI / _integerTickCount);
     }
 
     canvas.restore();
