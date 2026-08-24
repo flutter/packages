@@ -118,5 +118,5 @@ I will ensure this PR meets the `flutter/packages` standards by doing the follow
 1. Validating the code formatting with `dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart format --packages camera_android_camerax`.
 2. Validating static analysis with `dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart analyze --packages camera_android_camerax`.
 3. Validating tests with `dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart dart-test --packages camera_android_camerax`.
-4. Bumping the patch version and generating a `CHANGELOG.md` entry via `dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart update-release-info --version=minimal --base-branch=origin/main --changelog="Fix exposure offset slider freezing camera preview."`
+4. Bumping the patch version and generating a `CHANGELOG.md` entry via `dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart update-release-info --version=minimal --base-branch=origin/main --changelog="Fix exposure offset slider freezing camera preview and fix setExposureOffset return value."`
 5. Ensuring the pre-push checks via `.agents/skills/pre-push-skill/SKILL.md` are green.
