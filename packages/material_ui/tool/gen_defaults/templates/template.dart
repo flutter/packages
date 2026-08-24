@@ -77,8 +77,8 @@ abstract class TokenTemplate {
   /// The name of the class that will be generated (e.g. `_IconButtonDefaultsM3`
   /// or `_IconButtonDefaultsM3E`).
   ///
-  /// Return an empty string for templates that generate top-level declarations
-  /// instead of a class.
+  /// Templates that generate top-level declarations instead of a class should
+  /// override and return an empty string.
   @visibleForTesting
   String get className {
     assert(
@@ -224,7 +224,8 @@ abstract class TokenTemplate {
     assert(
       generatedClassName.isEmpty || contents.contains(_classRegExp),
       'The generated contents for "$name" must define the class "$generatedClassName". '
-      'Make sure you are utilizing the passed `className` parameter.',
+      'Make sure you are utilizing the passed `className` parameter, or override '
+      '`className` to be empty.',
     );
 
     final buffer = StringBuffer();
