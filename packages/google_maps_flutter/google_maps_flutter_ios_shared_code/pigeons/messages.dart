@@ -642,7 +642,7 @@ abstract class MapsApi {
   void updateMapConfiguration(PlatformMapConfiguration configuration);
 
   /// Sets the marker update animation configuration.
-  @ObjCSelector('setMarkerUpdateAnimationConfiguration:')
+  @SwiftFunction('setMarkerUpdateAnimationConfiguration(configuration:)')
   void setMarkerUpdateAnimationConfiguration(
     PlatformMarkerUpdateAnimationConfiguration configuration,
   );

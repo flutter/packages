@@ -2778,12 +2778,18 @@ class PlatformMarkerUpdateAnimationConfiguration {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(positionAnimationsEnabled, other.positionAnimationsEnabled) &&
+        _deepEquals(rotationAnimationsEnabled, other.rotationAnimationsEnabled);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'PlatformMarkerUpdateAnimationConfiguration(positionAnimationsEnabled: $positionAnimationsEnabled, rotationAnimationsEnabled: $rotationAnimationsEnabled)';
+  }
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -3127,17 +3133,8 @@ class MapsApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[configuration]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Updates the set of circles on the map.

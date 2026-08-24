@@ -70,6 +70,18 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     return updateMapOptions(jsonForMapConfiguration(configuration), mapId: mapId);
   }
 
+  /// Sets platform-specific configuration for the map.
+  ///
+  /// The default implementation does nothing. Platform implementations should
+  /// override this method to handle their corresponding
+  /// [PlatformMapConfiguration] subclasses.
+  Future<void> setPlatformConfiguration(
+    PlatformMapConfiguration configuration, {
+    required int mapId,
+  }) {
+    return Future<void>.value();
+  }
+
   /// Updates marker configuration.
   ///
   /// Change listeners are notified once the update has been made on the

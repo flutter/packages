@@ -1,3 +1,7 @@
+## 2.21.2
+
+* Updates for the platform-specific map configuration API.
+
 ## 2.21.1
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.

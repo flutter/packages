@@ -2689,12 +2689,18 @@ class PlatformMarkerUpdateAnimationConfiguration {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(positionAnimationsEnabled, other.positionAnimationsEnabled) &&
+        _deepEquals(rotationAnimationsEnabled, other.rotationAnimationsEnabled);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'PlatformMarkerUpdateAnimationConfiguration(positionAnimationsEnabled: $positionAnimationsEnabled, rotationAnimationsEnabled: $rotationAnimationsEnabled)';
+  }
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -2846,7 +2852,7 @@ class _PigeonCodec extends StandardMessageCodec {
       buffer.putUint8(175);
       writeValue(buffer, value.encode());
     } else if (value is PlatformMarkerUpdateAnimationConfiguration) {
-      buffer.putUint8(178);
+      buffer.putUint8(176);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -2956,7 +2962,7 @@ class _PigeonCodec extends StandardMessageCodec {
         return PlatformBitmapBytesMap.decode(readValue(buffer)!);
       case 175:
         return PlatformBitmapPinConfig.decode(readValue(buffer)!);
-      case 178:
+      case 176:
         return PlatformMarkerUpdateAnimationConfiguration.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -3028,17 +3034,8 @@ class MapsApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[configuration]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Updates the set of circles on the map.
