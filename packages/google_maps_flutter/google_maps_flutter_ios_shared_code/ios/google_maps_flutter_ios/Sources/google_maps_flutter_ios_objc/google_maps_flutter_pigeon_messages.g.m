@@ -3116,6 +3116,32 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     @(self.rotationAnimationsEnabled),
   ];
 }
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  FGMPlatformMarkerUpdateAnimationConfiguration *other =
+      (FGMPlatformMarkerUpdateAnimationConfiguration *)object;
+  return self.positionAnimationsEnabled == other.positionAnimationsEnabled &&
+         self.rotationAnimationsEnabled == other.rotationAnimationsEnabled;
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  result = result * 31 + @(self.positionAnimationsEnabled).hash;
+  result = result * 31 + @(self.rotationAnimationsEnabled).hash;
+  return result;
+}
+- (NSString *)description {
+  return
+      [NSString stringWithFormat:@"FGMPlatformMarkerUpdateAnimationConfiguration("
+                                 @"positionAnimationsEnabled: %@, rotationAnimationsEnabled: %@)",
+                                 self.positionAnimationsEnabled ? @"true" : @"false",
+                                 self.rotationAnimationsEnabled ? @"true" : @"false"];
+}
 @end
 
 @interface FGMGoogleMapsFlutterPigeonMessagesPigeonCodecReader : FlutterStandardReader

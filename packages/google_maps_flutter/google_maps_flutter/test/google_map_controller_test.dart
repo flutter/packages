@@ -52,4 +52,24 @@ void main() {
 
     await expectLater(() => controller?.getZoomLevel(), throwsA(isA<StateError>()));
   });
+
+  testWidgets('setPlatformConfiguration delegates with the map ID', (WidgetTester tester) async {
+    GoogleMapController? controller;
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: const CameraPosition(target: LatLng(0.0, 0.0)),
+          onMapCreated: (GoogleMapController value) => controller = value,
+        ),
+      ),
+    );
+
+    const configuration = PlatformMapConfiguration();
+    await controller!.setPlatformConfiguration(configuration);
+
+    expect(platform.platformConfiguration, same(configuration));
+    expect(platform.platformConfigurationMapId, platform.createdIds.single);
+  });
 }
