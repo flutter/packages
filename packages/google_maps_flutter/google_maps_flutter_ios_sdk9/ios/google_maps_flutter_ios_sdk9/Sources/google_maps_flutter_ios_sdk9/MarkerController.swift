@@ -4,6 +4,7 @@
 
 import Flutter
 import GoogleMaps
+import QuartzCore
 import UIKit
 
 #if canImport(google_maps_flutter_ios_sdk9_objc)
@@ -89,7 +90,11 @@ class MarkerController: NSObject {
       screenScale: screenScale
     )
     marker.isFlat = platformMarker.flat
+    CATransaction.begin()
+    CATransaction.setDisableActions(true)
+    CATransaction.setAnimationDuration(0.0)
     marker.position = platformMarker.position.toCLLocationCoordinate2D()
+    CATransaction.commit()
     marker.rotation = platformMarker.rotation
     marker.zIndex = Int32(platformMarker.zIndex)
     let infoWindow = platformMarker.infoWindow
