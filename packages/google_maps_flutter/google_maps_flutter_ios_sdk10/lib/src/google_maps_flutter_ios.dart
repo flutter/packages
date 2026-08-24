@@ -8,7 +8,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart'
+    hide PlatformMapConfiguration;
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart'
+    as platform_interface
+    show PlatformMapConfiguration;
 import 'package:stream_transform/stream_transform.dart';
 
 import 'google_map_inspector_ios.dart';
@@ -40,21 +44,20 @@ class UnknownMapIDError extends Error {
   }
 }
 
-/// Controls marker update animation behavior for marker properties that the
-/// native iOS SDK implicitly animates.
+/// Platform-specific configuration for a Google Map on iOS.
 @immutable
-class MarkerUpdateAnimationConfiguration {
-  /// Creates a marker update animation configuration.
-  const MarkerUpdateAnimationConfiguration({
-    this.positionAnimationsEnabled = true,
-    this.rotationAnimationsEnabled = true,
+class GoogleMapsFlutterIOSMapConfiguration extends platform_interface.PlatformMapConfiguration {
+  /// Creates an iOS map configuration.
+  const GoogleMapsFlutterIOSMapConfiguration({
+    this.markerPositionAnimationsEnabled = true,
+    this.markerRotationAnimationsEnabled = true,
   });
 
   /// Whether marker position updates should use native iOS implicit animations.
-  final bool positionAnimationsEnabled;
+  final bool markerPositionAnimationsEnabled;
 
   /// Whether marker rotation updates should use native iOS implicit animations.
-  final bool rotationAnimationsEnabled;
+  final bool markerRotationAnimationsEnabled;
 }
 
 /// An implementation of [GoogleMapsFlutterPlatform] for iOS.
@@ -226,15 +229,17 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     ).updateMapConfiguration(_platformMapConfigurationFromMapConfiguration(configuration));
   }
 
-  Future<void> _setMarkerUpdateAnimationConfiguration({
+  @override
+  Future<void> setPlatformConfiguration(
+    platform_interface.PlatformMapConfiguration configuration, {
     required int mapId,
-    required MarkerUpdateAnimationConfiguration configuration,
   }) {
-    return _hostApi(mapId).setMarkerUpdateAnimationConfiguration(
-      _platformMarkerUpdateAnimationConfigurationFromMarkerUpdateAnimationConfiguration(
-        configuration,
-      ),
-    );
+    if (configuration is GoogleMapsFlutterIOSMapConfiguration) {
+      return _hostApi(mapId).setMarkerUpdateAnimationConfiguration(
+        _platformMarkerUpdateAnimationConfigurationFromMapConfiguration(configuration),
+      );
+    }
+    return Future<void>.value();
   }
 
   @override
@@ -664,12 +669,12 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformMarkerUpdateAnimationConfiguration
-  _platformMarkerUpdateAnimationConfigurationFromMarkerUpdateAnimationConfiguration(
-    MarkerUpdateAnimationConfiguration configuration,
+  _platformMarkerUpdateAnimationConfigurationFromMapConfiguration(
+    GoogleMapsFlutterIOSMapConfiguration configuration,
   ) {
     return PlatformMarkerUpdateAnimationConfiguration(
-      positionAnimationsEnabled: configuration.positionAnimationsEnabled,
-      rotationAnimationsEnabled: configuration.rotationAnimationsEnabled,
+      positionAnimationsEnabled: configuration.markerPositionAnimationsEnabled,
+      rotationAnimationsEnabled: configuration.markerRotationAnimationsEnabled,
     );
   }
 
@@ -956,27 +961,6 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       default:
         throw ArgumentError('Unrecognized type of bitmap ${bitmap.runtimeType}', 'bitmap');
     }
-  }
-}
-
-/// iOS-only extensions to [GoogleMapsFlutterPlatform].
-extension GoogleMapsFlutterIOSMarkerUpdateAnimationConfiguration on GoogleMapsFlutterPlatform {
-  /// Sets the marker update animation configuration for iOS maps.
-  ///
-  /// If the current platform implementation is not [GoogleMapsFlutterIOS], this
-  /// completes without doing anything.
-  Future<void> setMarkerUpdateAnimationConfiguration({
-    required int mapId,
-    required MarkerUpdateAnimationConfiguration configuration,
-  }) {
-    final platform = this;
-    if (platform is GoogleMapsFlutterIOS) {
-      return platform._setMarkerUpdateAnimationConfiguration(
-        mapId: mapId,
-        configuration: configuration,
-      );
-    }
-    return Future<void>.value();
   }
 }
 
