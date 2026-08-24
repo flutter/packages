@@ -1,3 +1,7 @@
+## 2.20.0
+
+* Adds an iOS map-level option to disable implicit marker position and rotation update animations.
+
 ## 2.19.0
 
 * Adds support for tapping points of interest on the map.

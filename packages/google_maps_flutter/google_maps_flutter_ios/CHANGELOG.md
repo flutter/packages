@@ -1,3 +1,7 @@
+## 2.19.0
+
+* Adds an iOS map-level option to disable implicit marker position and rotation update animations.
+
 ## 2.18.7
 
 * Updates README to note that `GoogleMap.onPointOfInterestTap` is not supported.
