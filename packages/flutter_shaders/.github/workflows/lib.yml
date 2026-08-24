@@ -1,0 +1,23 @@
+name: analyze and test
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**/*.md'
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: 'master'
+    - run: flutter --version
+    - run: flutter pub get
+    - run: dart format --set-exit-if-changed .
+    - run: flutter analyze .
+
