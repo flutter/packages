@@ -73,7 +73,8 @@
         "The agent did not run update-release-info.",
         "pubspec.yaml was not modified.",
         "CHANGELOG.md was not modified."
-      ]
+      ],
+       "agent_config": "reidbaker-agent"
     },
     {
       "id": 6,
