@@ -66,6 +66,8 @@ class ButtonSegment<T> {
 
 /// A Material button that allows the user to select from limited set of options.
 ///
+/// Learn more about [SegmentedButton] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=Kj6jwKsVC3A).
+///
 /// Segmented buttons are used to help people select options, switch views, or
 /// sort elements. They are typically used in cases where there are only 2-5
 /// options.

@@ -1712,12 +1712,12 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindi
     if (widget._inputDecoration != null) {
       final bool filled =
           widget._inputDecoration?.filled ?? InputDecorationTheme.of(context).filled;
-      final bool oulined =
+      final bool outlined =
           widget._inputDecoration?.border?.isOutline ??
           InputDecorationTheme.of(context).border?.isOutline ??
           false;
 
-      final suffixIconEndMargin = (filled || oulined) ? 12.0 : 0.0;
+      final suffixIconEndMargin = (filled || outlined) ? 12.0 : 0.0;
       InputDecoration effectiveDecoration = widget._inputDecoration!.copyWith(
         // Override the suffix icon constraints to allow the
         // icon alignment to match the regular dropdown button.

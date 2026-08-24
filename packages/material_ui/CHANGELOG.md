@@ -1,6 +1,10 @@
-## 1.0.0+1
+## 1.0.1+1
 
 - Internal changes
+
+## 1.0.1
+
+- Updates cupertino_ui dependency constraint to ^1.0.0.
 
 ## 1.0.0
 
