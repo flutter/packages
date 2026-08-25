@@ -1,7 +1,3 @@
-## NEXT
-
-- Internal changes
-
 ## 1.0.1
 
 - Updates cupertino_ui dependency constraint to ^1.0.0.
