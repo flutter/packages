@@ -760,6 +760,7 @@ protocol InAppPurchase2API {
   func countryCode(completion: @escaping (Result<String, Error>) -> Void)
   func sync(completion: @escaping (Result<Void, Error>) -> Void)
   func presentOfferCodeRedeemSheet(completion: @escaping (Result<Void, Error>) -> Void)
+  func showManageSubscriptions(completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -1026,6 +1027,24 @@ class InAppPurchase2APISetup {
       }
     } else {
       presentOfferCodeRedeemSheetChannel.setMessageHandler(nil)
+    }
+    let showManageSubscriptionsChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.showManageSubscriptions\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      showManageSubscriptionsChannel.setMessageHandler { _, reply in
+        api.showManageSubscriptions { result in
+          switch result {
+          case .success:
+            reply(wrapResult(nil))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      showManageSubscriptionsChannel.setMessageHandler(nil)
     }
   }
 }
