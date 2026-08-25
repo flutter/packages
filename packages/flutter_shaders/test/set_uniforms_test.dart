@@ -4,6 +4,7 @@
 
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_shaders/flutter_shaders.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_math/vector_math.dart';
@@ -377,6 +378,6 @@ void main() {
       });
 
       expect(nextIndex, 2);
-    });
+    }, skip: kIsWeb); // The ink_sparkle asset is only available in VM test harnesses.
   });
 }
