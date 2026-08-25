@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:ui';
-
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
@@ -59,8 +58,9 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
 
   @override
   Future<TileOverlay?> getTileOverlayInfo(TileOverlayId tileOverlayId, {required int mapId}) async {
-    final PlatformTileLayer? tileInfo = await _inspectorProvider(mapId)!
-        .getTileOverlayInfo(tileOverlayId.value);
+    final PlatformTileLayer? tileInfo = await _inspectorProvider(
+      mapId,
+    )!.getTileOverlayInfo(tileOverlayId.value);
     if (tileInfo == null) {
       return null;
     }
@@ -78,8 +78,9 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
 
   @override
   Future<Heatmap?> getHeatmapInfo(HeatmapId heatmapId, {required int mapId}) async {
-    final PlatformHeatmap? heatmapInfo = await _inspectorProvider(mapId)!
-        .getHeatmapInfo(heatmapId.value);
+    final PlatformHeatmap? heatmapInfo = await _inspectorProvider(
+      mapId,
+    )!.getHeatmapInfo(heatmapId.value);
     if (heatmapInfo == null) {
       return null;
     }
@@ -103,8 +104,9 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
     GroundOverlayId groundOverlayId, {
     required int mapId,
   }) async {
-    final PlatformGroundOverlay? groundOverlayInfo = await _inspectorProvider(mapId)!
-        .getGroundOverlayInfo(groundOverlayId.value);
+    final PlatformGroundOverlay? groundOverlayInfo = await _inspectorProvider(
+      mapId,
+    )!.getGroundOverlayInfo(groundOverlayId.value);
 
     if (groundOverlayInfo == null) {
       return null;
@@ -192,8 +194,9 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
 
   @override
   Future<CameraPosition> getCameraPosition({required int mapId}) async {
-    final PlatformCameraPosition cameraPosition = await _inspectorProvider(mapId)!
-        .getCameraPosition();
+    final PlatformCameraPosition cameraPosition = await _inspectorProvider(
+      mapId,
+    )!.getCameraPosition();
     return CameraPosition(
       target: LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude),
       bearing: cameraPosition.bearing,
