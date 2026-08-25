@@ -87,29 +87,23 @@ void main(List<String> args) {
       .where((String line) => line.isNotEmpty)
       .toList();
 
-  final forbidden = <String>[
+  final forbiddenIdentities = <String>[
     evalAuthorEmail,
     evalAuthorName,
   ];
 
-  final violatingIdentities = <String>[];
   for (final identity in identities) {
-    for (final pattern in forbidden) {
-      if (identity.contains(pattern)) {
-        violatingIdentities.add(identity);
-        break;
+    for (final forbiddenIdentity in forbiddenIdentities) {
+      if (identity.contains(forbiddenIdentity)) {
+        stderr.writeln(
+          'ERROR: Found commit(s) authored or committed by evaluation test credentials:\n'
+          '  $identity\n'
+          'Evaluation test commits must not be pushed. Clean or rebase your branch before pushing.',
+        );
+        exitCode = 1;
+        return;
       }
     }
-  }
-
-  if (violatingIdentities.isNotEmpty) {
-    stderr.writeln(
-      'ERROR: Found commit(s) authored or committed by evaluation test credentials:\n'
-      '  ${violatingIdentities.toSet().join('\n  ')}\n'
-      'Evaluation test commits must not be pushed. Clean or rebase your branch before pushing.',
-    );
-    exitCode = 1;
-    return;
   }
 
   stdout.writeln('SUCCESS: No evaluation test commits detected.');
