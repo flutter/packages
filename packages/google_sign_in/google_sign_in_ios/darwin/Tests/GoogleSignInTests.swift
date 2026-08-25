@@ -848,6 +848,38 @@ struct GoogleSignInPluginTests {
     }
   }
 
+  @Suite("wrappers") struct WrapperTests {
+    @Test func signInCompletesWithErrorWhenPresenterIsNil() async {
+      let wrapper = GIDSignInWrapper()
+      await confirmation("completion called") { confirmed in
+        wrapper.signIn(
+          withPresenting: nil, hint: nil, additionalScopes: nil, nonce: nil
+        ) { result, error in
+          #expect(result == nil)
+          let nsError = error as NSError?
+          #expect(nsError?.domain == "google_sign_in")
+          #expect(
+            nsError?.localizedDescription
+              == "No host view available to present Google Sign-In.")
+          confirmed()
+        }
+      }
+    }
+
+    @Test func pluginSignInWithoutPresenterReturnsFlutterError() async {
+      let plugin = GoogleSignInPlugin(
+        signIn: GIDSignInWrapper(), viewProvider: TestViewProvider())
+      await confirmation("completion called") { confirmed in
+        plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
+          #expect(result == nil)
+          #expect(error?.code == "google_sign_in: 0")
+          #expect(error?.message == "No host view available to present Google Sign-In.")
+          confirmed()
+        }
+      }
+    }
+  }
+
   #if os(iOS) || targetEnvironment(macCatalyst)
     @Suite("topViewController")
     @MainActor

@@ -10,6 +10,28 @@ import GoogleSignIn
   import UIKit
 #endif
 
+/// Completes with an error instead of force-unwrapping a missing presenter.
+///
+/// The GID SDK's Swift presenter argument is non-optional. Obj-C forwarded nil
+/// through at runtime (a silent no-op); unwrapping it here would crash.
+private func requirePresenter<Presenter>(
+  _ presenter: Presenter?,
+  completion: ((GIDSignInResultProtocol?, Error?) -> Void)?
+) -> Presenter? {
+  guard let presenter else {
+    completion?(
+      nil,
+      NSError(
+        domain: "google_sign_in",
+        code: 0,
+        userInfo: [
+          NSLocalizedDescriptionKey: "No host view available to present Google Sign-In."
+        ]))
+    return nil
+  }
+  return presenter
+}
+
 /// Implementation of `GIDSignInProtocol` that passes through to GIDSignIn.
 final class GIDSignInWrapper: GIDSignInProtocol {
   /// The underlying GIDSignIn instance.
@@ -50,9 +72,14 @@ final class GIDSignInWrapper: GIDSignInProtocol {
       nonce: String?,
       completion: ((GIDSignInResultProtocol?, Error?) -> Void)?
     ) {
-      // The SDK's Swift API is non-optional; Obj-C passed nil through at runtime.
+      guard
+        let presentingViewController = requirePresenter(
+          presentingViewController, completion: completion)
+      else {
+        return
+      }
       signIn.signIn(
-        withPresenting: presentingViewController!,
+        withPresenting: presentingViewController,
         hint: hint,
         additionalScopes: additionalScopes,
         nonce: nonce
@@ -68,8 +95,12 @@ final class GIDSignInWrapper: GIDSignInProtocol {
       nonce: String?,
       completion: ((GIDSignInResultProtocol?, Error?) -> Void)?
     ) {
+      guard let presentingWindow = requirePresenter(presentingWindow, completion: completion)
+      else {
+        return
+      }
       signIn.signIn(
-        withPresenting: presentingWindow!,
+        withPresenting: presentingWindow,
         hint: hint,
         additionalScopes: additionalScopes,
         nonce: nonce
@@ -145,9 +176,15 @@ final class GIDGoogleUserWrapper: GIDGoogleUserProtocol {
       presenting presentingViewController: UIViewController?,
       completion: ((GIDSignInResultProtocol?, Error?) -> Void)?
     ) {
+      guard
+        let presentingViewController = requirePresenter(
+          presentingViewController, completion: completion)
+      else {
+        return
+      }
       user.addScopes(
         scopes,
-        presenting: presentingViewController!
+        presenting: presentingViewController
       ) { result, error in
         completion?(result.flatMap { GIDSignInResultWrapper(result: $0) }, error)
       }
@@ -158,7 +195,11 @@ final class GIDGoogleUserWrapper: GIDGoogleUserProtocol {
       presenting presentingWindow: NSWindow?,
       completion: ((GIDSignInResultProtocol?, Error?) -> Void)?
     ) {
-      user.addScopes(scopes, presenting: presentingWindow!) { result, error in
+      guard let presentingWindow = requirePresenter(presentingWindow, completion: completion)
+      else {
+        return
+      }
+      user.addScopes(scopes, presenting: presentingWindow) { result, error in
         completion?(result.flatMap { GIDSignInResultWrapper(result: $0) }, error)
       }
     }
