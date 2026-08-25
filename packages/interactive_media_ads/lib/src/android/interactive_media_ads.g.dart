@@ -15,9 +15,9 @@ import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-  List<Object?>? replyList,
-  String channelName, {
-  required bool isNullValid,
+    List<Object?>? replyList,
+    String channelName, {
+    required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -39,6 +39,7 @@ Object? _extractReplyValueOrThrow(
   return replyList.firstOrNull;
 }
 
+
 List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
@@ -48,7 +49,6 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
   }
   return <Object?>[error.code, error.message, error.details];
 }
-
 /// Provides overrides for the constructors and static members of each
 /// Dart proxy class.
 ///
@@ -62,64 +62,87 @@ class PigeonOverrides {
   static ContentProgressProvider Function()? contentProgressProvider_new;
 
   /// Overrides [VideoProgressUpdate.new].
-  static VideoProgressUpdate Function({required int currentTimeMs, required int durationMs})?
-  videoProgressUpdate_new;
+  static VideoProgressUpdate Function({
+    required int currentTimeMs,
+    required int durationMs,
+  })? videoProgressUpdate_new;
 
   /// Overrides [FrameLayout.new].
   static FrameLayout Function()? frameLayout_new;
 
   /// Overrides [VideoView.new].
   static VideoView Function({
-    required void Function(VideoView pigeon_instance, MediaPlayer player, int what, int extra)
-    onError,
-    Future<void> Function(VideoView pigeon_instance, MediaPlayer player)? onPrepared,
-    void Function(VideoView pigeon_instance, MediaPlayer player)? onCompletion,
-  })?
-  videoView_new;
+    required void Function(
+      VideoView pigeon_instance,
+      MediaPlayer player,
+      int what,
+      int extra,
+    ) onError,
+    Future<void> Function(
+      VideoView pigeon_instance,
+      MediaPlayer player,
+    )? onPrepared,
+    void Function(
+      VideoView pigeon_instance,
+      MediaPlayer player,
+    )? onCompletion,
+  })? videoView_new;
 
   /// Overrides [VideoAdPlayer.new].
   static VideoAdPlayer Function({
-    required void Function(VideoAdPlayer pigeon_instance, VideoAdPlayerCallback callback)
-    addCallback,
+    required void Function(
+      VideoAdPlayer pigeon_instance,
+      VideoAdPlayerCallback callback,
+    ) addCallback,
     required void Function(
       VideoAdPlayer pigeon_instance,
       AdMediaInfo adMediaInfo,
       AdPodInfo adPodInfo,
-    )
-    loadAd,
-    required Future<void> Function(VideoAdPlayer pigeon_instance, AdMediaInfo adMediaInfo) pauseAd,
-    required void Function(VideoAdPlayer pigeon_instance, AdMediaInfo adMediaInfo) playAd,
+    ) loadAd,
+    required Future<void> Function(
+      VideoAdPlayer pigeon_instance,
+      AdMediaInfo adMediaInfo,
+    ) pauseAd,
+    required void Function(
+      VideoAdPlayer pigeon_instance,
+      AdMediaInfo adMediaInfo,
+    ) playAd,
     required void Function(VideoAdPlayer pigeon_instance) release,
-    required void Function(VideoAdPlayer pigeon_instance, VideoAdPlayerCallback callback)
-    removeCallback,
-    required void Function(VideoAdPlayer pigeon_instance, AdMediaInfo adMediaInfo) stopAd,
-  })?
-  videoAdPlayer_new;
+    required void Function(
+      VideoAdPlayer pigeon_instance,
+      VideoAdPlayerCallback callback,
+    ) removeCallback,
+    required void Function(
+      VideoAdPlayer pigeon_instance,
+      AdMediaInfo adMediaInfo,
+    ) stopAd,
+  })? videoAdPlayer_new;
 
   /// Overrides [AdsLoadedListener.new].
-  static AdsLoadedListener Function({
-    required void Function(AdsLoadedListener pigeon_instance, AdsManagerLoadedEvent event)
-    onAdsManagerLoaded,
-  })?
-  adsLoadedListener_new;
+  static AdsLoadedListener Function(
+      {required void Function(
+        AdsLoadedListener pigeon_instance,
+        AdsManagerLoadedEvent event,
+      ) onAdsManagerLoaded})? adsLoadedListener_new;
 
   /// Overrides [AdErrorListener.new].
-  static AdErrorListener Function({
-    required void Function(AdErrorListener pigeon_instance, AdErrorEvent event) onAdError,
-  })?
-  adErrorListener_new;
+  static AdErrorListener Function(
+      {required void Function(
+        AdErrorListener pigeon_instance,
+        AdErrorEvent event,
+      ) onAdError})? adErrorListener_new;
 
   /// Overrides [AdEventListener.new].
-  static AdEventListener Function({
-    required void Function(AdEventListener pigeon_instance, AdEvent event) onAdEvent,
-  })?
-  adEventListener_new;
+  static AdEventListener Function(
+      {required void Function(
+        AdEventListener pigeon_instance,
+        AdEvent event,
+      ) onAdEvent})? adEventListener_new;
 
   /// Overrides [CompanionAdSlotClickListener.new].
-  static CompanionAdSlotClickListener Function({
-    required void Function(CompanionAdSlotClickListener pigeon_instance) onCompanionAdClick,
-  })?
-  companionAdSlotClickListener_new;
+  static CompanionAdSlotClickListener Function(
+      {required void Function(CompanionAdSlotClickListener pigeon_instance)
+          onCompanionAdClick})? companionAdSlotClickListener_new;
 
   /// Overrides [ImaSdkFactory.instance].
   static ImaSdkFactory? imaSdkFactory_instance;
@@ -128,8 +151,10 @@ class PigeonOverrides {
   static VideoProgressUpdate? videoProgressUpdate_videoTimeNotReady;
 
   /// Overrides [ImaSdkFactory.createAdDisplayContainer].
-  static Future<AdDisplayContainer> Function(ViewGroup, VideoAdPlayer)?
-  imaSdkFactory_createAdDisplayContainer;
+  static Future<AdDisplayContainer> Function(
+    ViewGroup,
+    VideoAdPlayer,
+  )? imaSdkFactory_createAdDisplayContainer;
 
   /// Sets all overridden ProxyApi class members to null.
   static void pigeon_reset() {
@@ -159,7 +184,8 @@ abstract class PigeonInternalProxyApiBaseClass {
   PigeonInternalProxyApiBaseClass({
     this.pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  }) : pigeon_instanceManager = pigeon_instanceManager ?? PigeonInstanceManager.instance;
+  }) : pigeon_instanceManager =
+            pigeon_instanceManager ?? PigeonInstanceManager.instance;
 
   /// Sends and receives binary data across the Flutter platform barrier.
   ///
@@ -231,8 +257,7 @@ class PigeonInstanceManager {
   final Expando<int> _identifiers = Expando<int>();
   final Map<int, WeakReference<PigeonInternalProxyApiBaseClass>> _weakInstances =
       <int, WeakReference<PigeonInternalProxyApiBaseClass>>{};
-  final Map<int, PigeonInternalProxyApiBaseClass> _strongInstances =
-      <int, PigeonInternalProxyApiBaseClass>{};
+  final Map<int, PigeonInternalProxyApiBaseClass> _strongInstances = <int, PigeonInternalProxyApiBaseClass>{};
   late final Finalizer<int> _finalizer;
   int _nextIdentifier = 0;
 
@@ -285,9 +310,7 @@ class PigeonInstanceManager {
     CompanionAd.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     UniversalAdId.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     Ad.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    CompanionAdSlotClickListener.pigeon_setUpMessageHandlers(
-      pigeon_instanceManager: instanceManager,
-    );
+    CompanionAdSlotClickListener.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     CompanionAdSlot.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     AdSlot.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     return instanceManager;
@@ -306,7 +329,8 @@ class PigeonInstanceManager {
 
     final int identifier = _nextUniqueIdentifier();
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] = WeakReference<PigeonInternalProxyApiBaseClass>(instance);
+    _weakInstances[identifier] =
+        WeakReference<PigeonInternalProxyApiBaseClass>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
 
     final PigeonInternalProxyApiBaseClass copy = instance.pigeon_copy();
@@ -408,7 +432,8 @@ class PigeonInstanceManager {
 
   /// Whether this manager contains the given [identifier].
   bool containsIdentifier(int identifier) {
-    return _weakInstances.containsKey(identifier) || _strongInstances.containsKey(identifier);
+    return _weakInstances.containsKey(identifier) ||
+        _strongInstances.containsKey(identifier);
   }
 
   int _nextUniqueIdentifier() {
@@ -425,7 +450,7 @@ class PigeonInstanceManager {
 class _PigeonInternalInstanceManagerApi {
   /// Constructor for [_PigeonInternalInstanceManagerApi].
   _PigeonInternalInstanceManagerApi({BinaryMessenger? binaryMessenger})
-    : pigeonVar_binaryMessenger = binaryMessenger;
+      : pigeonVar_binaryMessenger = binaryMessenger;
 
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
@@ -438,10 +463,9 @@ class _PigeonInternalInstanceManagerApi {
   }) {
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManager.removeStrongReference',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.PigeonInternalInstanceManager.removeStrongReference',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -449,14 +473,14 @@ class _PigeonInternalInstanceManagerApi {
           final List<Object?> args = message! as List<Object?>;
           final int arg_identifier = args[0]! as int;
           try {
-            (instanceManager ?? PigeonInstanceManager.instance).remove(arg_identifier);
+            (instanceManager ?? PigeonInstanceManager.instance)
+                .remove(arg_identifier);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -471,10 +495,15 @@ class _PigeonInternalInstanceManagerApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[identifier]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[identifier]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Clear the native `PigeonInstanceManager`.
@@ -491,33 +520,38 @@ class _PigeonInternalInstanceManagerApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 }
 
 class _PigeonInternalProxyApiBaseCodec extends _PigeonCodec {
-  const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
-  final PigeonInstanceManager instanceManager;
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PigeonInternalProxyApiBaseClass) {
-      buffer.putUint8(128);
-      writeValue(buffer, instanceManager.getIdentifier(value));
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return instanceManager.getInstanceWithWeakReference(readValue(buffer)! as int);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
+ const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
+ final PigeonInstanceManager instanceManager;
+ @override
+ void writeValue(WriteBuffer buffer, Object? value) {
+   if (value is PigeonInternalProxyApiBaseClass) {
+     buffer.putUint8(128);
+     writeValue(buffer, instanceManager.getIdentifier(value));
+   } else {
+     super.writeValue(buffer, value);
+   }
+ }
+ @override
+ Object? readValueOfType(int type, ReadBuffer buffer) {
+   switch (type) {
+     case 128:
+       return instanceManager
+           .getInstanceWithWeakReference(readValue(buffer)! as int);
+     default:
+       return super.readValueOfType(type, buffer);
+   }
+ }
 }
+
 
 /// The types of error that can be encountered.
 ///
@@ -525,79 +559,56 @@ class _PigeonInternalProxyApiBaseCodec extends _PigeonCodec {
 enum AdErrorCode {
   /// Ads player was not provided.
   adsPlayerWasNotProvided,
-
   /// There was a problem requesting ads from the server.
   adsRequestNetworkError,
-
   /// A companion ad failed to load or render.
   companionAdLoadingFailed,
-
   /// There was a problem requesting ads from the server.
   failedToRequestAds,
-
   /// An error internal to the SDK occurred.
   internalError,
-
   /// Invalid arguments were provided to SDK methods.
   invalidArguments,
-
   /// An overlay ad failed to load.
   overlayAdLoadingFailed,
-
   /// An overlay ad failed to render.
   overlayAdPlayingFailed,
-
   /// Ads list was returned but ContentProgressProvider was not configured.
   playlistNoContentTracking,
-
   /// Ads loader sent ads loaded event when it was not expected.
   unexpectedAdsLoadedEvent,
-
   /// The ad response was not understood and cannot be parsed.
   unknownAdResponse,
-
   /// An unexpected error occurred and the cause is not known.
   unknownError,
-
   /// No assets were found in the VAST ad response.
   vastAssetNotFound,
-
   /// A VAST response containing a single `<VAST>` tag with no child tags.
   vastEmptyResponse,
-
   /// Assets were found in the VAST ad response for a linear ad, but none of
   /// them matched the video player's capabilities.
   vastLinearAssetMismatch,
-
   /// At least one VAST wrapper ad loaded successfully and a subsequent wrapper
   /// or inline ad load has timed out.
   vastLoadTimeout,
-
   /// The ad response was not recognized as a valid VAST ad.
   vastMalformedResponse,
-
   /// Failed to load media assets from a VAST response.
   vastMediaLoadTimeout,
-
   /// Assets were found in the VAST ad response for a nonlinear ad, but none of
   /// them matched the video player's capabilities.
   vastNonlinearAssetMismatch,
-
   /// No Ads VAST response after one or more wrappers.
   vastNoAdsAfterWrapper,
-
   /// The maximum number of VAST wrapper redirects has been reached.
   vastTooManyRedirects,
-
   /// Trafficking error.
   ///
   /// Video player received an ad type that it was not expecting and/or cannot
   /// display.
   vastTraffickingError,
-
   /// There was an error playing the video ad.
   videoPlayError,
-
   /// The error code is not recognized by this wrapper.
   unknown,
 }
@@ -608,10 +619,8 @@ enum AdErrorCode {
 enum AdErrorType {
   /// Indicates that the error was encountered when the ad was being loaded.
   load,
-
   /// Indicates that the error was encountered after the ad loaded, during ad play.
   play,
-
   /// The error is not recognized by this wrapper.
   unknown,
 }
@@ -622,88 +631,61 @@ enum AdErrorType {
 enum AdEventType {
   /// Fired when an ad break in a stream ends.
   adBreakEnded,
-
   /// Fired when an ad break will not play back any ads.
   adBreakFetchError,
-
   /// Fired when an ad break is ready from VMAP or ad rule ads.
   adBreakReady,
-
   /// Fired when an ad break in a stream starts.
   adBreakStarted,
-
   /// Fired when playback stalls while the ad buffers.
   adBuffering,
-
   /// Fired when an ad period in a stream ends.
   adPeriodEnded,
-
   /// Fired when an ad period in a stream starts.
   adPeriodStarted,
-
   /// Fired to inform of ad progress and can be used by publisher to display a
   /// countdown timer.
   adProgress,
-
   /// Fired when the ads manager is done playing all the valid ads in the ads
   /// response, or when the response doesn't return any valid ads.
   allAdsCompleted,
-
   /// Fired when an ad is clicked.
   clicked,
-
   /// Fired when an ad completes playing.
   completed,
-
   /// Fired when content should be paused.
   contentPauseRequested,
-
   /// Fired when content should be resumed.
   contentResumeRequested,
-
   /// Fired when VOD stream cuepoints have changed.
   cuepointsChanged,
-
   /// Fired when the ad playhead crosses first quartile.
   firstQuartile,
-
   /// The user has closed the icon fallback image dialog.
   iconFallbackImageClosed,
-
   /// The user has tapped an ad icon.
   iconTapped,
-
   /// Fired when the VAST response has been received.
   loaded,
-
   /// Fired to enable the SDK to communicate a message to be logged, which is
   /// stored in adData.
   log,
-
   /// Fired when the ad playhead crosses midpoint.
   midpoint,
-
   /// Fired when an ad is paused.
   paused,
-
   /// Fired when an ad is resumed.
   resumed,
-
   /// Fired when an ad changes its skippable state.
   skippableStateChanged,
-
   /// Fired when an ad was skipped.
   skipped,
-
   /// Fired when an ad starts playing.
   started,
-
   /// Fired when a non-clickthrough portion of a video ad is clicked.
   tapped,
-
   /// Fired when the ad playhead crosses third quartile.
   thirdQuartile,
-
   /// The event type is not recognized by this wrapper.
   unknown,
 }
@@ -714,10 +696,8 @@ enum AdEventType {
 enum UiElement {
   /// The ad attribution UI element, for example, "Ad".
   adAttribution,
-
   /// Ad attribution is required for a countdown timer to be displayed.
   countdown,
-
   /// The element is not recognized by this wrapper.
   unknown,
 }
@@ -729,28 +709,25 @@ enum AudioManagerAudioFocus {
   /// Used to indicate a gain of audio focus, or a request of audio focus,
   /// of unknown duration.
   gain,
-
   /// Used to indicate a temporary gain or request of audio focus, anticipated
   /// to last a short amount of time.
   ///
   /// Examples of temporary changes are the playback of driving directions, or
   /// an event notification.
   gainTransient,
-
   /// Used to indicate a temporary request of audio focus, anticipated to last a
   /// short amount of time, during which no other applications, or system
   /// components, should play anything.
   gainTransientExclusive,
-
   /// Used to indicate a temporary request of audio focus, anticipated to last a
   /// short amount of time, and where it is acceptable for other audio
   /// applications to keep playing after having lowered their output level (also
   /// referred to as "ducking").
   gainTransientMayDuck,
-
   /// Used to indicate no audio focus has been gained or lost, or requested.
   none,
 }
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -759,19 +736,19 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is AdErrorCode) {
+    }    else if (value is AdErrorCode) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is AdErrorType) {
+    }    else if (value is AdErrorType) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else if (value is AdEventType) {
+    }    else if (value is AdEventType) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    } else if (value is UiElement) {
+    }    else if (value is UiElement) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    } else if (value is AudioManagerAudioFocus) {
+    }    else if (value is AudioManagerAudioFocus) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
     } else {
@@ -802,7 +779,6 @@ class _PigeonCodec extends StandardMessageCodec {
     }
   }
 }
-
 /// A base class for more specialized container interfaces.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseDisplayContainer.html.
@@ -817,7 +793,8 @@ class BaseDisplayContainer extends PigeonInternalProxyApiBaseClass {
     super.pigeon_instanceManager,
   });
 
-  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecBaseDisplayContainer =
+  late final _PigeonInternalProxyApiBaseCodec
+      _pigeonVar_codecBaseDisplayContainer =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
   static void pigeon_setUpMessageHandlers({
@@ -826,16 +803,15 @@ class BaseDisplayContainer extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     BaseDisplayContainer Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.BaseDisplayContainer.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.BaseDisplayContainer.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -843,7 +819,8 @@ class BaseDisplayContainer extends PigeonInternalProxyApiBaseClass {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   BaseDisplayContainer.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -856,8 +833,7 @@ class BaseDisplayContainer extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -878,13 +854,15 @@ class BaseDisplayContainer extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      companionSlots,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, companionSlots]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
@@ -905,8 +883,10 @@ class AdDisplayContainer extends BaseDisplayContainer {
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  AdDisplayContainer.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager})
-    : super.pigeon_detached();
+  AdDisplayContainer.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  }) : super.pigeon_detached();
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -914,16 +894,15 @@ class AdDisplayContainer extends BaseDisplayContainer {
     PigeonInstanceManager? pigeon_instanceManager,
     AdDisplayContainer Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.AdDisplayContainer.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.AdDisplayContainer.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -931,7 +910,8 @@ class AdDisplayContainer extends BaseDisplayContainer {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   AdDisplayContainer.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -944,8 +924,7 @@ class AdDisplayContainer extends BaseDisplayContainer {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -971,7 +950,10 @@ class AdsLoader extends PigeonInternalProxyApiBaseClass {
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  AdsLoader.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager});
+  AdsLoader.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  });
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecAdsLoader =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
@@ -982,16 +964,15 @@ class AdsLoader extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     AdsLoader Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.AdsLoader.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.AdsLoader.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -999,7 +980,8 @@ class AdsLoader extends PigeonInternalProxyApiBaseClass {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   AdsLoader.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -1012,8 +994,7 @@ class AdsLoader extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -1022,7 +1003,8 @@ class AdsLoader extends PigeonInternalProxyApiBaseClass {
 
   /// Registers a listener for errors that occur during the ads request.
   Future<void> addAdErrorListener(AdErrorListener listener) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsLoader;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsLoader;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.AdsLoader.addAdErrorListener';
@@ -1031,15 +1013,21 @@ class AdsLoader extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, listener]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, listener]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Registers a listener for the ads manager loaded event.
   Future<void> addAdsLoadedListener(AdsLoadedListener listener) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsLoader;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsLoader;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.AdsLoader.addAdsLoadedListener';
@@ -1048,26 +1036,38 @@ class AdsLoader extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, listener]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, listener]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Requests ads from a server.
   Future<void> requestAds(AdsRequest request) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsLoader;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsLoader;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.AdsLoader.requestAds';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsLoader.requestAds';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, request]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, request]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
@@ -1104,16 +1104,15 @@ class AdsManagerLoadedEvent extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     AdsManagerLoadedEvent Function(AdsManager? manager)? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.AdsManagerLoadedEvent.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.AdsManagerLoadedEvent.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -1122,7 +1121,8 @@ class AdsManagerLoadedEvent extends PigeonInternalProxyApiBaseClass {
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           final AdsManager? arg_manager = args[1] as AdsManager?;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call(arg_manager) ??
                   AdsManagerLoadedEvent.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -1136,8 +1136,7 @@ class AdsManagerLoadedEvent extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -1178,16 +1177,15 @@ class AdErrorEvent extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     AdErrorEvent Function(AdError error)? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.AdErrorEvent.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.AdErrorEvent.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -1196,7 +1194,8 @@ class AdErrorEvent extends PigeonInternalProxyApiBaseClass {
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           final AdError arg_error = args[1]! as AdError;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call(arg_error) ??
                   AdErrorEvent.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -1210,8 +1209,7 @@ class AdErrorEvent extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -1267,19 +1265,17 @@ class AdError extends PigeonInternalProxyApiBaseClass {
       int errorCodeNumber,
       AdErrorType errorType,
       String message,
-    )?
-    pigeon_newInstance,
+    )? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.AdError.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.AdError.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -1291,13 +1287,10 @@ class AdError extends PigeonInternalProxyApiBaseClass {
           final AdErrorType arg_errorType = args[3]! as AdErrorType;
           final String arg_message = args[4]! as String;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
-              pigeon_newInstance?.call(
-                    arg_errorCode,
-                    arg_errorCodeNumber,
-                    arg_errorType,
-                    arg_message,
-                  ) ??
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call(arg_errorCode, arg_errorCodeNumber,
+                      arg_errorType, arg_message) ??
                   AdError.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
@@ -1313,8 +1306,7 @@ class AdError extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -1343,7 +1335,10 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  AdsRequest.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager});
+  AdsRequest.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  });
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecAdsRequest =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
@@ -1354,16 +1349,15 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     AdsRequest Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.AdsRequest.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.AdsRequest.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -1371,7 +1365,8 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   AdsRequest.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -1384,8 +1379,7 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -1394,24 +1388,33 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
 
   /// Sets the URL from which ads will be requested.
   Future<void> setAdTagUrl(String adTagUrl) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsRequest;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsRequest;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.AdsRequest.setAdTagUrl';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsRequest.setAdTagUrl';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, adTagUrl]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, adTagUrl]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Attaches a ContentProgressProvider instance to allow scheduling ad breaks
   /// based on content progress (cue points).
-  Future<void> setContentProgressProvider(ContentProgressProvider provider) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsRequest;
+  Future<void> setContentProgressProvider(
+      ContentProgressProvider provider) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsRequest;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.AdsRequest.setContentProgressProvider';
@@ -1420,10 +1423,15 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, provider]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, provider]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Notifies the SDK whether the player intends to start the content and ad in
@@ -1432,7 +1440,8 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
   /// Not calling this function leaves the setting as unknown. Note: Changing
   /// this setting will have no impact on ad playback.
   Future<void> setAdWillAutoPlay(bool willAutoPlay) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsRequest;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsRequest;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.AdsRequest.setAdWillAutoPlay';
@@ -1441,13 +1450,15 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      willAutoPlay,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, willAutoPlay]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Notifies the SDK whether the player intends to start the content and ad
@@ -1456,7 +1467,8 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
   /// Not calling this function leaves the setting as unknown. Note: Changing
   /// this setting will have no impact on ad playback.
   Future<void> setAdWillPlayMuted(bool willPlayMuted) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsRequest;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsRequest;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.AdsRequest.setAdWillPlayMuted';
@@ -1465,19 +1477,22 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      willPlayMuted,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, willPlayMuted]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Specifies a VAST, VMAP, or ad rules response to be used instead of making
   /// a request through an ad tag URL.
   Future<void> setAdsResponse(String cannedAdResponse) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsRequest;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsRequest;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.AdsRequest.setAdsResponse';
@@ -1486,13 +1501,15 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      cannedAdResponse,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, cannedAdResponse]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Specifies the duration of the content in seconds to be shown.
@@ -1500,7 +1517,8 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
   /// This optional parameter is used by AdX requests. It is recommended for AdX
   /// users.
   Future<void> setContentDuration(double duration) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsRequest;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsRequest;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.AdsRequest.setContentDuration';
@@ -1509,10 +1527,15 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, duration]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, duration]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Specifies the keywords used to describe the content to be shown.
@@ -1520,7 +1543,8 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
   /// This optional parameter is used by AdX requests and is recommended for AdX
   /// users.
   Future<void> setContentKeywords(List<String> keywords) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsRequest;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsRequest;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.AdsRequest.setContentKeywords';
@@ -1529,10 +1553,15 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, keywords]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, keywords]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Specifies the title of the content to be shown.
@@ -1540,7 +1569,8 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
   /// Used in AdX requests. This optional parameter is used by AdX requests and
   /// is recommended for AdX users.
   Future<void> setContentTitle(String title) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsRequest;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsRequest;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.AdsRequest.setContentTitle';
@@ -1549,10 +1579,15 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, title]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, title]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Notifies the SDK whether the player intends to continuously play the
@@ -1561,7 +1596,8 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
   /// Not calling this function leaves the setting as unknown. Note: Changing
   /// this setting will have no impact on ad playback.
   Future<void> setContinuousPlayback(bool continuousPlayback) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsRequest;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsRequest;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.AdsRequest.setContinuousPlayback';
@@ -1570,13 +1606,15 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      continuousPlayback,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, continuousPlayback]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Specifies the maximum amount of time to wait in seconds, after calling
@@ -1585,7 +1623,8 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
   /// This can be used to stagger requests during a live-stream event, in order
   /// to mitigate spikes in the number of requests.
   Future<void> setLiveStreamPrefetchSeconds(double prefetchTime) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsRequest;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsRequest;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.AdsRequest.setLiveStreamPrefetchSeconds';
@@ -1594,13 +1633,15 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      prefetchTime,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, prefetchTime]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Specifies the VAST load timeout in milliseconds for a single wrapper.
@@ -1608,7 +1649,8 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
   /// This parameter is optional and will override the default timeout,
   /// currently set to 5000ms.
   Future<void> setVastLoadTimeout(double timeout) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsRequest;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsRequest;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.AdsRequest.setVastLoadTimeout';
@@ -1617,10 +1659,15 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, timeout]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, timeout]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
@@ -1650,8 +1697,12 @@ class ContentProgressProvider extends PigeonInternalProxyApiBaseClass {
   }
 
   @protected
-  ContentProgressProvider.pigeon_new({super.pigeon_binaryMessenger, super.pigeon_instanceManager}) {
-    final int pigeonVar_instanceIdentifier = pigeon_instanceManager.addDartCreatedInstance(this);
+  ContentProgressProvider.pigeon_new({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  }) {
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecContentProgressProvider;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -1662,13 +1713,16 @@ class ContentProgressProvider extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      pigeonVar_instanceIdentifier,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+      _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+      );
     }();
   }
 
@@ -1682,7 +1736,8 @@ class ContentProgressProvider extends PigeonInternalProxyApiBaseClass {
     super.pigeon_instanceManager,
   });
 
-  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecContentProgressProvider =
+  late final _PigeonInternalProxyApiBaseCodec
+      _pigeonVar_codecContentProgressProvider =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
   static void pigeon_setUpMessageHandlers({
@@ -1691,16 +1746,15 @@ class ContentProgressProvider extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     ContentProgressProvider Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.ContentProgressProvider.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.ContentProgressProvider.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -1708,7 +1762,8 @@ class ContentProgressProvider extends PigeonInternalProxyApiBaseClass {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   ContentProgressProvider.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -1721,8 +1776,7 @@ class ContentProgressProvider extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -1744,10 +1798,15 @@ class ContentProgressProvider extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, update]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, update]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
@@ -1789,25 +1848,26 @@ class AdsManager extends BaseManager {
     PigeonInstanceManager? pigeon_instanceManager,
     AdsManager Function(List<double> adCuePoints)? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.AdsManager.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.AdsManager.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
-          final List<double> arg_adCuePoints = (args[1]! as List<Object?>).cast<double>();
+          final List<double> arg_adCuePoints =
+              (args[1]! as List<Object?>).cast<double>();
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call(arg_adCuePoints) ??
                   AdsManager.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -1821,8 +1881,7 @@ class AdsManager extends BaseManager {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -1831,7 +1890,8 @@ class AdsManager extends BaseManager {
 
   /// Discards current ad break and resumes content.
   Future<void> discardAdBreak() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsManager;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.AdsManager.discardAdBreak';
@@ -1840,58 +1900,84 @@ class AdsManager extends BaseManager {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Pauses the current ad.
   Future<void> pause() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsManager;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.AdsManager.pause';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsManager.pause';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Starts playing the ads.
   Future<void> start() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsManager;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.AdsManager.start';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsManager.start';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Resumes the current ad.
   Future<void> resume() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsManager;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.AdsManager.resume';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsManager.resume';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Skips the current ad.
@@ -1899,18 +1985,25 @@ class AdsManager extends BaseManager {
   /// `AdsManager.skip()` only skips ads if IMA does not render the 'Skip ad'
   /// button.
   Future<void> skip() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsManager;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.AdsManager.skip';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdsManager.skip';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
@@ -1932,7 +2025,10 @@ class BaseManager extends PigeonInternalProxyApiBaseClass {
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  BaseManager.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager});
+  BaseManager.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  });
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecBaseManager =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
@@ -1943,16 +2039,15 @@ class BaseManager extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     BaseManager Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.BaseManager.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.BaseManager.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -1960,7 +2055,8 @@ class BaseManager extends PigeonInternalProxyApiBaseClass {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   BaseManager.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -1973,8 +2069,7 @@ class BaseManager extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -1984,7 +2079,8 @@ class BaseManager extends PigeonInternalProxyApiBaseClass {
   /// Registers a listener for errors that occur during the ad or stream
   /// initialization and playback.
   Future<void> addAdErrorListener(AdErrorListener errorListener) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecBaseManager;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecBaseManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.BaseManager.addAdErrorListener';
@@ -1993,19 +2089,22 @@ class BaseManager extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      errorListener,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, errorListener]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Registers a listener for ad events that occur during ad or stream
   /// initialization and playback.
   Future<void> addAdEventListener(AdEventListener adEventListener) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecBaseManager;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecBaseManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.BaseManager.addAdEventListener';
@@ -2014,67 +2113,91 @@ class BaseManager extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      adEventListener,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, adEventListener]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Stops the ad and all tracking, then releases all assets that were loaded
   /// to play the ad.
   Future<void> destroy() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecBaseManager;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecBaseManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.BaseManager.destroy';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.BaseManager.destroy';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Initializes the ad experience on the manager.
   Future<void> init(AdsRenderingSettings? settings) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecBaseManager;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecBaseManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.BaseManager.init';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.BaseManager.init';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, settings]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, settings]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Generic focus endpoint that puts focus on the skip button if present.
   Future<void> focus() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecBaseManager;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecBaseManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.BaseManager.focus';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.BaseManager.focus';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Returns the latest AdProgressInfo for the current playing ad.
   Future<AdProgressInfo?> getAdProgressInfo() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecBaseManager;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecBaseManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.BaseManager.getAdProgressInfo';
@@ -2083,7 +2206,8 @@ class BaseManager extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2096,7 +2220,8 @@ class BaseManager extends PigeonInternalProxyApiBaseClass {
 
   /// Get currently playing ad.
   Future<Ad?> getCurrentAd() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecBaseManager;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecBaseManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.BaseManager.getCurrentAd';
@@ -2105,7 +2230,8 @@ class BaseManager extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2118,7 +2244,8 @@ class BaseManager extends PigeonInternalProxyApiBaseClass {
 
   /// Removes a listener for error events.
   Future<void> removeAdErrorListener(AdErrorListener errorListener) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecBaseManager;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecBaseManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.BaseManager.removeAdErrorListener';
@@ -2127,18 +2254,21 @@ class BaseManager extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      errorListener,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, errorListener]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Removes a listener for ad events.
   Future<void> removeAdEventListener(AdEventListener adEventListener) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecBaseManager;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecBaseManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.BaseManager.removeAdEventListener';
@@ -2147,13 +2277,15 @@ class BaseManager extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      adEventListener,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, adEventListener]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
@@ -2195,18 +2327,21 @@ class AdEvent extends PigeonInternalProxyApiBaseClass {
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    AdEvent Function(AdEventType type, Map<String, String>? adData, Ad? ad)? pigeon_newInstance,
+    AdEvent Function(
+      AdEventType type,
+      Map<String, String>? adData,
+      Ad? ad,
+    )? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.AdEvent.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.AdEvent.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2214,11 +2349,12 @@ class AdEvent extends PigeonInternalProxyApiBaseClass {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           final AdEventType arg_type = args[1]! as AdEventType;
-          final Map<String, String>? arg_adData = (args[2] as Map<Object?, Object?>?)
-              ?.cast<String, String>();
+          final Map<String, String>? arg_adData =
+              (args[2] as Map<Object?, Object?>?)?.cast<String, String>();
           final Ad? arg_ad = args[3] as Ad?;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call(arg_type, arg_adData, arg_ad) ??
                   AdEvent.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -2234,8 +2370,7 @@ class AdEvent extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -2263,14 +2398,18 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  ImaSdkFactory.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager});
+  ImaSdkFactory.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  });
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecImaSdkFactory =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
   static final ImaSdkFactory _instance = pigeonVar_instance();
 
-  static ImaSdkFactory get instance => PigeonOverrides.imaSdkFactory_instance ?? _instance;
+  static ImaSdkFactory get instance =>
+      PigeonOverrides.imaSdkFactory_instance ?? _instance;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -2278,16 +2417,15 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     ImaSdkFactory Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2295,7 +2433,8 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   ImaSdkFactory.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -2308,8 +2447,7 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -2318,14 +2456,12 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
 
   static ImaSdkFactory pigeonVar_instance() {
     final ImaSdkFactory pigeonVar_instance = ImaSdkFactory.pigeon_detached();
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(PigeonInstanceManager.instance);
     final BinaryMessenger pigeonVar_binaryMessenger =
         ServicesBinding.instance.defaultBinaryMessenger;
-    final int pigeonVar_instanceIdentifier = PigeonInstanceManager.instance.addDartCreatedInstance(
-      pigeonVar_instance,
-    );
+    final int pigeonVar_instanceIdentifier = PigeonInstanceManager.instance
+        .addDartCreatedInstance(pigeonVar_instance);
     () async {
       const pigeonVar_channelName =
           'dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.instance';
@@ -2334,12 +2470,15 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
         pigeonChannelCodec,
         binaryMessenger: pigeonVar_binaryMessenger,
       );
-      final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-        pigeonVar_instanceIdentifier,
-      ]);
+      final Future<Object?> pigeonVar_sendFuture =
+          pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+      _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+      );
     }();
     return pigeonVar_instance;
   }
@@ -2351,11 +2490,14 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
   }) async {
     if (PigeonOverrides.imaSdkFactory_createAdDisplayContainer != null) {
-      return PigeonOverrides.imaSdkFactory_createAdDisplayContainer!(container, player);
+      return PigeonOverrides.imaSdkFactory_createAdDisplayContainer!(
+        container,
+        player,
+      );
     }
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createAdDisplayContainer';
@@ -2364,10 +2506,8 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      container,
-      player,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[container, player]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2380,7 +2520,8 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
 
   /// Creates a CompanionAdSlot for the SDK to fill with companion ads.
   Future<CompanionAdSlot> createCompanionAdSlot() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecImaSdkFactory;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecImaSdkFactory;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createCompanionAdSlot';
@@ -2389,7 +2530,8 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2402,7 +2544,8 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
 
   /// Creates an `ImaSdkSettings` object for configuring the IMA SDK.
   Future<ImaSdkSettings> createImaSdkSettings() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecImaSdkFactory;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecImaSdkFactory;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createImaSdkSettings';
@@ -2411,7 +2554,8 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2424,8 +2568,12 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
 
   /// Creates an `AdsLoader` for requesting ads using the specified settings
   /// object.
-  Future<AdsLoader> createAdsLoader(ImaSdkSettings settings, AdDisplayContainer container) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecImaSdkFactory;
+  Future<AdsLoader> createAdsLoader(
+    ImaSdkSettings settings,
+    AdDisplayContainer container,
+  ) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecImaSdkFactory;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createAdsLoader';
@@ -2434,11 +2582,8 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      settings,
-      container,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, settings, container]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2451,7 +2596,8 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
 
   /// Creates an AdsRequest object to contain the data used to request ads.
   Future<AdsRequest> createAdsRequest() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecImaSdkFactory;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecImaSdkFactory;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createAdsRequest';
@@ -2460,7 +2606,8 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2474,7 +2621,8 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
   /// Creates an `AdsRenderingSettings` object to give the AdsManager parameters
   /// that control the rendering of ads.
   Future<AdsRenderingSettings> createAdsRenderingSettings() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecImaSdkFactory;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecImaSdkFactory;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.ImaSdkFactory.createAdsRenderingSettings';
@@ -2483,7 +2631,8 @@ class ImaSdkFactory extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -2512,7 +2661,10 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  ImaSdkSettings.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager});
+  ImaSdkSettings.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  });
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecImaSdkSettings =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
@@ -2523,16 +2675,15 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     ImaSdkSettings Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2540,7 +2691,8 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   ImaSdkSettings.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -2553,8 +2705,7 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -2563,7 +2714,8 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
 
   /// Sets whether to automatically play VMAP and ad rules ad breaks.
   Future<void> setAutoPlayAdBreaks(bool autoPlayAdBreaks) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecImaSdkSettings;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecImaSdkSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setAutoPlayAdBreaks';
@@ -2572,18 +2724,21 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      autoPlayAdBreaks,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, autoPlayAdBreaks]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Enables and disables the debug mode, which is disabled by default.
   Future<void> setDebugMode(bool debugMode) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecImaSdkSettings;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecImaSdkSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setDebugMode';
@@ -2592,10 +2747,15 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, debugMode]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, debugMode]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Sets the feature flags and their states to control experimental features.
@@ -2604,7 +2764,8 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
   /// will remain constant until the next ad request. Calling this method again
   /// will reset any feature flags for the next ad request.
   Future<void> setFeatureFlags(Map<String, String> featureFlags) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecImaSdkSettings;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecImaSdkSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setFeatureFlags';
@@ -2613,13 +2774,15 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      featureFlags,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, featureFlags]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Sets the preferred language for the ad UI.
@@ -2630,7 +2793,8 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
   /// Once the AdsLoader object has been created, using this setter will have no
   /// effect.
   Future<void> setLanguage(String language) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecImaSdkSettings;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecImaSdkSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setLanguage';
@@ -2639,10 +2803,15 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, language]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, language]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Specifies the maximum number of redirects before the subsequent redirects
@@ -2650,7 +2819,8 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
   ///
   /// The default is 4.
   Future<void> setMaxRedirects(int maxRedirects) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecImaSdkSettings;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecImaSdkSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setMaxRedirects';
@@ -2659,13 +2829,15 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      maxRedirects,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, maxRedirects]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Sets the partner provided player type.
@@ -2673,7 +2845,8 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
   /// Player type greater than 20 characters will be truncated. The player type
   /// specified should be short and unique.
   Future<void> setPlayerType(String playerType) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecImaSdkSettings;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecImaSdkSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setPlayerType';
@@ -2682,20 +2855,23 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      playerType,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, playerType]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Sets the partner provided player version.
   ///
   /// Player versions greater than 20 characters will be truncated.
   Future<void> setPlayerVersion(String playerVersion) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecImaSdkSettings;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecImaSdkSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setPlayerVersion';
@@ -2704,29 +2880,38 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      playerVersion,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, playerVersion]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Sets the publisher provided ID used for tracking.
   Future<void> setPpid(String ppid) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecImaSdkSettings;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecImaSdkSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setPpid';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setPpid';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, ppid]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, ppid]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Session ID is a temporary random ID.
@@ -2734,7 +2919,8 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
   /// A session ID must be a UUID, or an empty string if the SDK should not send
   /// a session ID.
   Future<void> setSessionId(String sessionId) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecImaSdkSettings;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecImaSdkSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.ImaSdkSettings.setSessionId';
@@ -2743,10 +2929,15 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, sessionId]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, sessionId]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
@@ -2789,8 +2980,10 @@ class VideoProgressUpdate extends PigeonInternalProxyApiBaseClass {
     required int currentTimeMs,
     required int durationMs,
   }) {
-    final int pigeonVar_instanceIdentifier = pigeon_instanceManager.addDartCreatedInstance(this);
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecVideoProgressUpdate;
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecVideoProgressUpdate;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.VideoProgressUpdate.pigeon_defaultConstructor';
@@ -2799,15 +2992,16 @@ class VideoProgressUpdate extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      pigeonVar_instanceIdentifier,
-      currentTimeMs,
-      durationMs,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+        <Object?>[pigeonVar_instanceIdentifier, currentTimeMs, durationMs]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+      _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+      );
     }();
   }
 
@@ -2816,19 +3010,25 @@ class VideoProgressUpdate extends PigeonInternalProxyApiBaseClass {
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  VideoProgressUpdate.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager});
+  VideoProgressUpdate.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  });
 
-  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecVideoProgressUpdate =
+  late final _PigeonInternalProxyApiBaseCodec
+      _pigeonVar_codecVideoProgressUpdate =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
   /// Value to use for cases when progress is not yet defined, such as video
   /// initialization.
-  static final VideoProgressUpdate _videoTimeNotReady = pigeonVar_videoTimeNotReady();
+  static final VideoProgressUpdate _videoTimeNotReady =
+      pigeonVar_videoTimeNotReady();
 
   /// Value to use for cases when progress is not yet defined, such as video
   /// initialization.
   static VideoProgressUpdate get videoTimeNotReady =>
-      PigeonOverrides.videoProgressUpdate_videoTimeNotReady ?? _videoTimeNotReady;
+      PigeonOverrides.videoProgressUpdate_videoTimeNotReady ??
+      _videoTimeNotReady;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -2836,16 +3036,15 @@ class VideoProgressUpdate extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     VideoProgressUpdate Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.VideoProgressUpdate.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.VideoProgressUpdate.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2853,7 +3052,8 @@ class VideoProgressUpdate extends PigeonInternalProxyApiBaseClass {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   VideoProgressUpdate.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -2866,8 +3066,7 @@ class VideoProgressUpdate extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -2875,15 +3074,14 @@ class VideoProgressUpdate extends PigeonInternalProxyApiBaseClass {
   }
 
   static VideoProgressUpdate pigeonVar_videoTimeNotReady() {
-    final VideoProgressUpdate pigeonVar_instance = VideoProgressUpdate.pigeon_detached();
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      PigeonInstanceManager.instance,
-    );
+    final VideoProgressUpdate pigeonVar_instance =
+        VideoProgressUpdate.pigeon_detached();
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(PigeonInstanceManager.instance);
     final BinaryMessenger pigeonVar_binaryMessenger =
         ServicesBinding.instance.defaultBinaryMessenger;
-    final int pigeonVar_instanceIdentifier = PigeonInstanceManager.instance.addDartCreatedInstance(
-      pigeonVar_instance,
-    );
+    final int pigeonVar_instanceIdentifier = PigeonInstanceManager.instance
+        .addDartCreatedInstance(pigeonVar_instance);
     () async {
       const pigeonVar_channelName =
           'dev.flutter.pigeon.interactive_media_ads.VideoProgressUpdate.videoTimeNotReady';
@@ -2892,12 +3090,15 @@ class VideoProgressUpdate extends PigeonInternalProxyApiBaseClass {
         pigeonChannelCodec,
         binaryMessenger: pigeonVar_binaryMessenger,
       );
-      final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-        pigeonVar_instanceIdentifier,
-      ]);
+      final Future<Object?> pigeonVar_sendFuture =
+          pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+      _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+      );
     }();
     return pigeonVar_instance;
   }
@@ -2934,16 +3135,15 @@ class AdMediaInfo extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     AdMediaInfo Function(String url)? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.AdMediaInfo.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.AdMediaInfo.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2952,7 +3152,8 @@ class AdMediaInfo extends PigeonInternalProxyApiBaseClass {
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           final String arg_url = args[1]! as String;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call(arg_url) ??
                   AdMediaInfo.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -2966,8 +3167,7 @@ class AdMediaInfo extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -3042,19 +3242,17 @@ class AdPodInfo extends PigeonInternalProxyApiBaseClass {
       double timeOffset,
       int totalAds,
       bool isBumper,
-    )?
-    pigeon_newInstance,
+    )? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.AdPodInfo.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.AdPodInfo.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -3068,15 +3266,15 @@ class AdPodInfo extends PigeonInternalProxyApiBaseClass {
           final int arg_totalAds = args[5]! as int;
           final bool arg_isBumper = args[6]! as bool;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call(
-                    arg_adPosition,
-                    arg_maxDuration,
-                    arg_podIndex,
-                    arg_timeOffset,
-                    arg_totalAds,
-                    arg_isBumper,
-                  ) ??
+                      arg_adPosition,
+                      arg_maxDuration,
+                      arg_podIndex,
+                      arg_timeOffset,
+                      arg_totalAds,
+                      arg_isBumper) ??
                   AdPodInfo.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
@@ -3094,8 +3292,7 @@ class AdPodInfo extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -3136,10 +3333,14 @@ class FrameLayout extends ViewGroup {
   }
 
   @protected
-  FrameLayout.pigeon_new({super.pigeon_binaryMessenger, super.pigeon_instanceManager})
-    : super.pigeon_detached() {
-    final int pigeonVar_instanceIdentifier = pigeon_instanceManager.addDartCreatedInstance(this);
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecFrameLayout;
+  FrameLayout.pigeon_new({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  }) : super.pigeon_detached() {
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecFrameLayout;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.FrameLayout.pigeon_defaultConstructor';
@@ -3148,13 +3349,16 @@ class FrameLayout extends ViewGroup {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      pigeonVar_instanceIdentifier,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+      _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+      );
     }();
   }
 
@@ -3163,8 +3367,10 @@ class FrameLayout extends ViewGroup {
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  FrameLayout.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager})
-    : super.pigeon_detached();
+  FrameLayout.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  }) : super.pigeon_detached();
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecFrameLayout =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
@@ -3175,16 +3381,15 @@ class FrameLayout extends ViewGroup {
     PigeonInstanceManager? pigeon_instanceManager,
     FrameLayout Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.FrameLayout.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.FrameLayout.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -3192,7 +3397,8 @@ class FrameLayout extends ViewGroup {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   FrameLayout.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -3205,8 +3411,7 @@ class FrameLayout extends ViewGroup {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -3231,8 +3436,10 @@ class ViewGroup extends View {
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  ViewGroup.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager})
-    : super.pigeon_detached();
+  ViewGroup.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  }) : super.pigeon_detached();
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecViewGroup =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
@@ -3243,16 +3450,15 @@ class ViewGroup extends View {
     PigeonInstanceManager? pigeon_instanceManager,
     ViewGroup Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.ViewGroup.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.ViewGroup.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -3260,7 +3466,8 @@ class ViewGroup extends View {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   ViewGroup.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -3273,8 +3480,7 @@ class ViewGroup extends View {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -3283,36 +3489,50 @@ class ViewGroup extends View {
 
   /// Adds a child view.
   Future<void> addView(View view) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecViewGroup;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecViewGroup;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.ViewGroup.addView';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.ViewGroup.addView';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, view]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, view]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Called by a ViewGroup subclass to remove child views from itself, when it
   /// must first know its size on screen before it can calculate how many child
   /// views it will render.
   Future<void> removeView(View view) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecViewGroup;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecViewGroup;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.ViewGroup.removeView';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.ViewGroup.removeView';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, view]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, view]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
@@ -3331,10 +3551,20 @@ class VideoView extends View {
   factory VideoView({
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    Future<void> Function(VideoView pigeon_instance, MediaPlayer player)? onPrepared,
-    void Function(VideoView pigeon_instance, MediaPlayer player)? onCompletion,
-    required void Function(VideoView pigeon_instance, MediaPlayer player, int what, int extra)
-    onError,
+    Future<void> Function(
+      VideoView pigeon_instance,
+      MediaPlayer player,
+    )? onPrepared,
+    void Function(
+      VideoView pigeon_instance,
+      MediaPlayer player,
+    )? onCompletion,
+    required void Function(
+      VideoView pigeon_instance,
+      MediaPlayer player,
+      int what,
+      int extra,
+    ) onError,
   }) {
     if (PigeonOverrides.videoView_new != null) {
       return PigeonOverrides.videoView_new!(
@@ -3360,8 +3590,10 @@ class VideoView extends View {
     this.onCompletion,
     required this.onError,
   }) : super.pigeon_detached() {
-    final int pigeonVar_instanceIdentifier = pigeon_instanceManager.addDartCreatedInstance(this);
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecVideoView;
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecVideoView;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.VideoView.pigeon_defaultConstructor';
@@ -3370,13 +3602,16 @@ class VideoView extends View {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      pigeonVar_instanceIdentifier,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+      _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+      );
     }();
   }
 
@@ -3415,7 +3650,10 @@ class VideoView extends View {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final Future<void> Function(VideoView pigeon_instance, MediaPlayer player)? onPrepared;
+  final Future<void> Function(
+    VideoView pigeon_instance,
+    MediaPlayer player,
+  )? onPrepared;
 
   /// Callback to be invoked when playback of a media source has completed.
   ///
@@ -3436,7 +3674,10 @@ class VideoView extends View {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(VideoView pigeon_instance, MediaPlayer player)? onCompletion;
+  final void Function(
+    VideoView pigeon_instance,
+    MediaPlayer player,
+  )? onCompletion;
 
   /// Callback to be invoked when there has been an error during an asynchronous
   /// operation.
@@ -3458,26 +3699,41 @@ class VideoView extends View {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(VideoView pigeon_instance, MediaPlayer player, int what, int extra) onError;
+  final void Function(
+    VideoView pigeon_instance,
+    MediaPlayer player,
+    int what,
+    int extra,
+  ) onError;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    Future<void> Function(VideoView pigeon_instance, MediaPlayer player)? onPrepared,
-    void Function(VideoView pigeon_instance, MediaPlayer player)? onCompletion,
-    void Function(VideoView pigeon_instance, MediaPlayer player, int what, int extra)? onError,
+    Future<void> Function(
+      VideoView pigeon_instance,
+      MediaPlayer player,
+    )? onPrepared,
+    void Function(
+      VideoView pigeon_instance,
+      MediaPlayer player,
+    )? onCompletion,
+    void Function(
+      VideoView pigeon_instance,
+      MediaPlayer player,
+      int what,
+      int extra,
+    )? onError,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.VideoView.onPrepared',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.VideoView.onPrepared',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -3486,17 +3742,14 @@ class VideoView extends View {
           final VideoView arg_pigeon_instance = args[0]! as VideoView;
           final MediaPlayer arg_player = args[1]! as MediaPlayer;
           try {
-            await (onPrepared ?? arg_pigeon_instance.onPrepared)?.call(
-              arg_pigeon_instance,
-              arg_player,
-            );
+            await (onPrepared ?? arg_pigeon_instance.onPrepared)
+                ?.call(arg_pigeon_instance, arg_player);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -3504,10 +3757,9 @@ class VideoView extends View {
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.VideoView.onCompletion',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.VideoView.onCompletion',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -3516,17 +3768,14 @@ class VideoView extends View {
           final VideoView arg_pigeon_instance = args[0]! as VideoView;
           final MediaPlayer arg_player = args[1]! as MediaPlayer;
           try {
-            (onCompletion ?? arg_pigeon_instance.onCompletion)?.call(
-              arg_pigeon_instance,
-              arg_player,
-            );
+            (onCompletion ?? arg_pigeon_instance.onCompletion)
+                ?.call(arg_pigeon_instance, arg_player);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -3534,10 +3783,9 @@ class VideoView extends View {
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.VideoView.onError',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.VideoView.onError',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -3548,19 +3796,14 @@ class VideoView extends View {
           final int arg_what = args[2]! as int;
           final int arg_extra = args[3]! as int;
           try {
-            (onError ?? arg_pigeon_instance.onError).call(
-              arg_pigeon_instance,
-              arg_player,
-              arg_what,
-              arg_extra,
-            );
+            (onError ?? arg_pigeon_instance.onError)
+                .call(arg_pigeon_instance, arg_player, arg_what, arg_extra);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -3569,25 +3812,33 @@ class VideoView extends View {
 
   /// Sets the URI of the video.
   Future<void> setVideoUri(String? uri) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecVideoView;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecVideoView;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.VideoView.setVideoUri';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.VideoView.setVideoUri';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, uri]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, uri]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// The current position of the playing video.
   ///
   /// In milliseconds.
   Future<int> getCurrentPosition() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecVideoView;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecVideoView;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.VideoView.getCurrentPosition';
@@ -3596,7 +3847,8 @@ class VideoView extends View {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3612,7 +3864,8 @@ class VideoView extends View {
   ///
   /// Only available on Android API 26+. Noop on lower versions.
   Future<void> setAudioFocusRequest(AudioManagerAudioFocus focusGain) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecVideoView;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecVideoView;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.VideoView.setAudioFocusRequest';
@@ -3621,10 +3874,15 @@ class VideoView extends View {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, focusGain]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, focusGain]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
@@ -3648,7 +3906,10 @@ class View extends PigeonInternalProxyApiBaseClass {
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  View.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager});
+  View.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  });
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -3656,16 +3917,15 @@ class View extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     View Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.View.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.View.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -3673,7 +3933,8 @@ class View extends PigeonInternalProxyApiBaseClass {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   View.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -3686,8 +3947,7 @@ class View extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -3713,7 +3973,10 @@ class MediaPlayer extends PigeonInternalProxyApiBaseClass {
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  MediaPlayer.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager});
+  MediaPlayer.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  });
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecMediaPlayer =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
@@ -3724,16 +3987,15 @@ class MediaPlayer extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     MediaPlayer Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -3741,7 +4003,8 @@ class MediaPlayer extends PigeonInternalProxyApiBaseClass {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   MediaPlayer.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -3754,8 +4017,7 @@ class MediaPlayer extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -3764,7 +4026,8 @@ class MediaPlayer extends PigeonInternalProxyApiBaseClass {
 
   /// Gets the duration of the file.
   Future<int> getDuration() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecMediaPlayer;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecMediaPlayer;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.getDuration';
@@ -3773,7 +4036,8 @@ class MediaPlayer extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3786,66 +4050,94 @@ class MediaPlayer extends PigeonInternalProxyApiBaseClass {
 
   /// Seeks to specified time position.
   Future<void> seekTo(int mSec) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecMediaPlayer;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecMediaPlayer;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.seekTo';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.seekTo';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, mSec]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, mSec]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Starts or resumes playback.
   Future<void> start() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecMediaPlayer;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecMediaPlayer;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.start';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.start';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Pauses playback.
   Future<void> pause() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecMediaPlayer;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecMediaPlayer;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.pause';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.pause';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Stops playback after playback has been started or paused.
   Future<void> stop() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecMediaPlayer;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecMediaPlayer;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.stop';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.stop';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
@@ -3871,7 +4163,8 @@ class VideoAdPlayerCallback extends PigeonInternalProxyApiBaseClass {
     super.pigeon_instanceManager,
   });
 
-  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecVideoAdPlayerCallback =
+  late final _PigeonInternalProxyApiBaseCodec
+      _pigeonVar_codecVideoAdPlayerCallback =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
   static void pigeon_setUpMessageHandlers({
@@ -3880,16 +4173,15 @@ class VideoAdPlayerCallback extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     VideoAdPlayerCallback Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayerCallback.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -3897,7 +4189,8 @@ class VideoAdPlayerCallback extends PigeonInternalProxyApiBaseClass {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   VideoAdPlayerCallback.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -3910,8 +4203,7 @@ class VideoAdPlayerCallback extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -3933,14 +4225,15 @@ class VideoAdPlayerCallback extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      adMediaInfo,
-      videoProgressUpdate,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
+        .send(<Object?>[this, adMediaInfo, videoProgressUpdate]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Fire this callback when video playback stalls waiting for data.
@@ -3955,13 +4248,15 @@ class VideoAdPlayerCallback extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      adMediaInfo,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, adMediaInfo]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Fire this callback when all content has finished playing.
@@ -3976,10 +4271,15 @@ class VideoAdPlayerCallback extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Fire this callback when the video finishes playing.
@@ -3994,13 +4294,15 @@ class VideoAdPlayerCallback extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      adMediaInfo,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, adMediaInfo]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Fire this callback when the video has encountered an error.
@@ -4015,13 +4317,15 @@ class VideoAdPlayerCallback extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      adMediaInfo,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, adMediaInfo]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Fire this callback when the video is ready to begin playback.
@@ -4036,13 +4340,15 @@ class VideoAdPlayerCallback extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      adMediaInfo,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, adMediaInfo]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Fire this callback when the video is paused.
@@ -4057,13 +4363,15 @@ class VideoAdPlayerCallback extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      adMediaInfo,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, adMediaInfo]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Fire this callback when the player begins playing a video.
@@ -4078,13 +4386,15 @@ class VideoAdPlayerCallback extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      adMediaInfo,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, adMediaInfo]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Fire this callback when the video is unpaused.
@@ -4099,17 +4409,22 @@ class VideoAdPlayerCallback extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      adMediaInfo,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, adMediaInfo]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Fire this callback when the playback volume changes.
-  Future<void> onVolumeChanged(AdMediaInfo adMediaInfo, int percentage) async {
+  Future<void> onVolumeChanged(
+    AdMediaInfo adMediaInfo,
+    int percentage,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecVideoAdPlayerCallback;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -4120,14 +4435,15 @@ class VideoAdPlayerCallback extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      adMediaInfo,
-      percentage,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, adMediaInfo, percentage]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
@@ -4147,20 +4463,32 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   factory VideoAdPlayer({
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    required void Function(VideoAdPlayer pigeon_instance, VideoAdPlayerCallback callback)
-    addCallback,
+    required void Function(
+      VideoAdPlayer pigeon_instance,
+      VideoAdPlayerCallback callback,
+    ) addCallback,
     required void Function(
       VideoAdPlayer pigeon_instance,
       AdMediaInfo adMediaInfo,
       AdPodInfo adPodInfo,
-    )
-    loadAd,
-    required Future<void> Function(VideoAdPlayer pigeon_instance, AdMediaInfo adMediaInfo) pauseAd,
-    required void Function(VideoAdPlayer pigeon_instance, AdMediaInfo adMediaInfo) playAd,
+    ) loadAd,
+    required Future<void> Function(
+      VideoAdPlayer pigeon_instance,
+      AdMediaInfo adMediaInfo,
+    ) pauseAd,
+    required void Function(
+      VideoAdPlayer pigeon_instance,
+      AdMediaInfo adMediaInfo,
+    ) playAd,
     required void Function(VideoAdPlayer pigeon_instance) release,
-    required void Function(VideoAdPlayer pigeon_instance, VideoAdPlayerCallback callback)
-    removeCallback,
-    required void Function(VideoAdPlayer pigeon_instance, AdMediaInfo adMediaInfo) stopAd,
+    required void Function(
+      VideoAdPlayer pigeon_instance,
+      VideoAdPlayerCallback callback,
+    ) removeCallback,
+    required void Function(
+      VideoAdPlayer pigeon_instance,
+      AdMediaInfo adMediaInfo,
+    ) stopAd,
   }) {
     if (PigeonOverrides.videoAdPlayer_new != null) {
       return PigeonOverrides.videoAdPlayer_new!(
@@ -4198,8 +4526,10 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
     required this.removeCallback,
     required this.stopAd,
   }) {
-    final int pigeonVar_instanceIdentifier = pigeon_instanceManager.addDartCreatedInstance(this);
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecVideoAdPlayer;
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecVideoAdPlayer;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.pigeon_defaultConstructor';
@@ -4208,13 +4538,16 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      pigeonVar_instanceIdentifier,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+      _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+      );
     }();
   }
 
@@ -4257,7 +4590,10 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(VideoAdPlayer pigeon_instance, VideoAdPlayerCallback callback) addCallback;
+  final void Function(
+    VideoAdPlayer pigeon_instance,
+    VideoAdPlayerCallback callback,
+  ) addCallback;
 
   /// Loads a video ad hosted at AdMediaInfo.
   ///
@@ -4278,8 +4614,11 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(VideoAdPlayer pigeon_instance, AdMediaInfo adMediaInfo, AdPodInfo adPodInfo)
-  loadAd;
+  final void Function(
+    VideoAdPlayer pigeon_instance,
+    AdMediaInfo adMediaInfo,
+    AdPodInfo adPodInfo,
+  ) loadAd;
 
   /// Pauses playing the current ad.
   ///
@@ -4300,7 +4639,10 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final Future<void> Function(VideoAdPlayer pigeon_instance, AdMediaInfo adMediaInfo) pauseAd;
+  final Future<void> Function(
+    VideoAdPlayer pigeon_instance,
+    AdMediaInfo adMediaInfo,
+  ) pauseAd;
 
   /// Starts or resumes playing the video ad referenced by the AdMediaInfo,
   /// provided loadAd has already been called for it.
@@ -4322,7 +4664,10 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(VideoAdPlayer pigeon_instance, AdMediaInfo adMediaInfo) playAd;
+  final void Function(
+    VideoAdPlayer pigeon_instance,
+    AdMediaInfo adMediaInfo,
+  ) playAd;
 
   /// Cleans up and releases all resources used by the `VideoAdPlayer`.
   ///
@@ -4364,7 +4709,10 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(VideoAdPlayer pigeon_instance, VideoAdPlayerCallback callback) removeCallback;
+  final void Function(
+    VideoAdPlayer pigeon_instance,
+    VideoAdPlayerCallback callback,
+  ) removeCallback;
 
   /// Stops playing the current ad.
   ///
@@ -4385,50 +4733,68 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(VideoAdPlayer pigeon_instance, AdMediaInfo adMediaInfo) stopAd;
+  final void Function(
+    VideoAdPlayer pigeon_instance,
+    AdMediaInfo adMediaInfo,
+  ) stopAd;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    void Function(VideoAdPlayer pigeon_instance, VideoAdPlayerCallback callback)? addCallback,
-    void Function(VideoAdPlayer pigeon_instance, AdMediaInfo adMediaInfo, AdPodInfo adPodInfo)?
-    loadAd,
-    Future<void> Function(VideoAdPlayer pigeon_instance, AdMediaInfo adMediaInfo)? pauseAd,
-    void Function(VideoAdPlayer pigeon_instance, AdMediaInfo adMediaInfo)? playAd,
+    void Function(
+      VideoAdPlayer pigeon_instance,
+      VideoAdPlayerCallback callback,
+    )? addCallback,
+    void Function(
+      VideoAdPlayer pigeon_instance,
+      AdMediaInfo adMediaInfo,
+      AdPodInfo adPodInfo,
+    )? loadAd,
+    Future<void> Function(
+      VideoAdPlayer pigeon_instance,
+      AdMediaInfo adMediaInfo,
+    )? pauseAd,
+    void Function(
+      VideoAdPlayer pigeon_instance,
+      AdMediaInfo adMediaInfo,
+    )? playAd,
     void Function(VideoAdPlayer pigeon_instance)? release,
-    void Function(VideoAdPlayer pigeon_instance, VideoAdPlayerCallback callback)? removeCallback,
-    void Function(VideoAdPlayer pigeon_instance, AdMediaInfo adMediaInfo)? stopAd,
+    void Function(
+      VideoAdPlayer pigeon_instance,
+      VideoAdPlayerCallback callback,
+    )? removeCallback,
+    void Function(
+      VideoAdPlayer pigeon_instance,
+      AdMediaInfo adMediaInfo,
+    )? stopAd,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.addCallback',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.addCallback',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
           final VideoAdPlayer arg_pigeon_instance = args[0]! as VideoAdPlayer;
-          final VideoAdPlayerCallback arg_callback = args[1]! as VideoAdPlayerCallback;
+          final VideoAdPlayerCallback arg_callback =
+              args[1]! as VideoAdPlayerCallback;
           try {
-            (addCallback ?? arg_pigeon_instance.addCallback).call(
-              arg_pigeon_instance,
-              arg_callback,
-            );
+            (addCallback ?? arg_pigeon_instance.addCallback)
+                .call(arg_pigeon_instance, arg_callback);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -4436,10 +4802,9 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.loadAd',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.loadAd',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -4449,18 +4814,14 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
           final AdMediaInfo arg_adMediaInfo = args[1]! as AdMediaInfo;
           final AdPodInfo arg_adPodInfo = args[2]! as AdPodInfo;
           try {
-            (loadAd ?? arg_pigeon_instance.loadAd).call(
-              arg_pigeon_instance,
-              arg_adMediaInfo,
-              arg_adPodInfo,
-            );
+            (loadAd ?? arg_pigeon_instance.loadAd)
+                .call(arg_pigeon_instance, arg_adMediaInfo, arg_adPodInfo);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -4468,10 +4829,9 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.pauseAd',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.pauseAd',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -4480,17 +4840,14 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
           final VideoAdPlayer arg_pigeon_instance = args[0]! as VideoAdPlayer;
           final AdMediaInfo arg_adMediaInfo = args[1]! as AdMediaInfo;
           try {
-            await (pauseAd ?? arg_pigeon_instance.pauseAd).call(
-              arg_pigeon_instance,
-              arg_adMediaInfo,
-            );
+            await (pauseAd ?? arg_pigeon_instance.pauseAd)
+                .call(arg_pigeon_instance, arg_adMediaInfo);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -4498,10 +4855,9 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.playAd',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.playAd',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -4510,14 +4866,14 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
           final VideoAdPlayer arg_pigeon_instance = args[0]! as VideoAdPlayer;
           final AdMediaInfo arg_adMediaInfo = args[1]! as AdMediaInfo;
           try {
-            (playAd ?? arg_pigeon_instance.playAd).call(arg_pigeon_instance, arg_adMediaInfo);
+            (playAd ?? arg_pigeon_instance.playAd)
+                .call(arg_pigeon_instance, arg_adMediaInfo);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -4525,10 +4881,9 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.release',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.release',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -4542,8 +4897,7 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -4551,29 +4905,26 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.removeCallback',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.removeCallback',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
           final VideoAdPlayer arg_pigeon_instance = args[0]! as VideoAdPlayer;
-          final VideoAdPlayerCallback arg_callback = args[1]! as VideoAdPlayerCallback;
+          final VideoAdPlayerCallback arg_callback =
+              args[1]! as VideoAdPlayerCallback;
           try {
-            (removeCallback ?? arg_pigeon_instance.removeCallback).call(
-              arg_pigeon_instance,
-              arg_callback,
-            );
+            (removeCallback ?? arg_pigeon_instance.removeCallback)
+                .call(arg_pigeon_instance, arg_callback);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -4581,10 +4932,9 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.stopAd',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.stopAd',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -4593,14 +4943,14 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
           final VideoAdPlayer arg_pigeon_instance = args[0]! as VideoAdPlayer;
           final AdMediaInfo arg_adMediaInfo = args[1]! as AdMediaInfo;
           try {
-            (stopAd ?? arg_pigeon_instance.stopAd).call(arg_pigeon_instance, arg_adMediaInfo);
+            (stopAd ?? arg_pigeon_instance.stopAd)
+                .call(arg_pigeon_instance, arg_adMediaInfo);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -4609,7 +4959,8 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
 
   /// The volume of the player as a percentage from 0 to 100.
   Future<void> setVolume(int value) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecVideoAdPlayer;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecVideoAdPlayer;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.setVolume';
@@ -4618,16 +4969,22 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, value]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, value]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// The `VideoProgressUpdate` describing playback progress of the current
   /// video.
   Future<void> setAdProgress(VideoProgressUpdate progress) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecVideoAdPlayer;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecVideoAdPlayer;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.setAdProgress';
@@ -4636,10 +4993,15 @@ class VideoAdPlayer extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, progress]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, progress]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
@@ -4665,11 +5027,14 @@ class AdsLoadedListener extends PigeonInternalProxyApiBaseClass {
   factory AdsLoadedListener({
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    required void Function(AdsLoadedListener pigeon_instance, AdsManagerLoadedEvent event)
-    onAdsManagerLoaded,
+    required void Function(
+      AdsLoadedListener pigeon_instance,
+      AdsManagerLoadedEvent event,
+    ) onAdsManagerLoaded,
   }) {
     if (PigeonOverrides.adsLoadedListener_new != null) {
-      return PigeonOverrides.adsLoadedListener_new!(onAdsManagerLoaded: onAdsManagerLoaded);
+      return PigeonOverrides.adsLoadedListener_new!(
+          onAdsManagerLoaded: onAdsManagerLoaded);
     }
     return AdsLoadedListener.pigeon_new(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -4684,8 +5049,10 @@ class AdsLoadedListener extends PigeonInternalProxyApiBaseClass {
     super.pigeon_instanceManager,
     required this.onAdsManagerLoaded,
   }) {
-    final int pigeonVar_instanceIdentifier = pigeon_instanceManager.addDartCreatedInstance(this);
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdsLoadedListener;
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdsLoadedListener;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.AdsLoadedListener.pigeon_defaultConstructor';
@@ -4694,13 +5061,16 @@ class AdsLoadedListener extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      pigeonVar_instanceIdentifier,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+      _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+      );
     }();
   }
 
@@ -4715,7 +5085,8 @@ class AdsLoadedListener extends PigeonInternalProxyApiBaseClass {
     required this.onAdsManagerLoaded,
   });
 
-  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecAdsLoadedListener =
+  late final _PigeonInternalProxyApiBaseCodec
+      _pigeonVar_codecAdsLoadedListener =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
   /// Called once the AdsManager or StreamManager has been loaded.
@@ -4737,45 +5108,47 @@ class AdsLoadedListener extends PigeonInternalProxyApiBaseClass {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(AdsLoadedListener pigeon_instance, AdsManagerLoadedEvent event)
-  onAdsManagerLoaded;
+  final void Function(
+    AdsLoadedListener pigeon_instance,
+    AdsManagerLoadedEvent event,
+  ) onAdsManagerLoaded;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    void Function(AdsLoadedListener pigeon_instance, AdsManagerLoadedEvent event)?
-    onAdsManagerLoaded,
+    void Function(
+      AdsLoadedListener pigeon_instance,
+      AdsManagerLoadedEvent event,
+    )? onAdsManagerLoaded,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.AdsLoadedListener.onAdsManagerLoaded',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.AdsLoadedListener.onAdsManagerLoaded',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final AdsLoadedListener arg_pigeon_instance = args[0]! as AdsLoadedListener;
-          final AdsManagerLoadedEvent arg_event = args[1]! as AdsManagerLoadedEvent;
+          final AdsLoadedListener arg_pigeon_instance =
+              args[0]! as AdsLoadedListener;
+          final AdsManagerLoadedEvent arg_event =
+              args[1]! as AdsManagerLoadedEvent;
           try {
-            (onAdsManagerLoaded ?? arg_pigeon_instance.onAdsManagerLoaded).call(
-              arg_pigeon_instance,
-              arg_event,
-            );
+            (onAdsManagerLoaded ?? arg_pigeon_instance.onAdsManagerLoaded)
+                .call(arg_pigeon_instance, arg_event);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -4799,7 +5172,10 @@ class AdErrorListener extends PigeonInternalProxyApiBaseClass {
   factory AdErrorListener({
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    required void Function(AdErrorListener pigeon_instance, AdErrorEvent event) onAdError,
+    required void Function(
+      AdErrorListener pigeon_instance,
+      AdErrorEvent event,
+    ) onAdError,
   }) {
     if (PigeonOverrides.adErrorListener_new != null) {
       return PigeonOverrides.adErrorListener_new!(onAdError: onAdError);
@@ -4817,8 +5193,10 @@ class AdErrorListener extends PigeonInternalProxyApiBaseClass {
     super.pigeon_instanceManager,
     required this.onAdError,
   }) {
-    final int pigeonVar_instanceIdentifier = pigeon_instanceManager.addDartCreatedInstance(this);
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdErrorListener;
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdErrorListener;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.AdErrorListener.pigeon_defaultConstructor';
@@ -4827,13 +5205,16 @@ class AdErrorListener extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      pigeonVar_instanceIdentifier,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+      _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+      );
     }();
   }
 
@@ -4870,40 +5251,46 @@ class AdErrorListener extends PigeonInternalProxyApiBaseClass {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(AdErrorListener pigeon_instance, AdErrorEvent event) onAdError;
+  final void Function(
+    AdErrorListener pigeon_instance,
+    AdErrorEvent event,
+  ) onAdError;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    void Function(AdErrorListener pigeon_instance, AdErrorEvent event)? onAdError,
+    void Function(
+      AdErrorListener pigeon_instance,
+      AdErrorEvent event,
+    )? onAdError,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.AdErrorListener.onAdError',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.AdErrorListener.onAdError',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final AdErrorListener arg_pigeon_instance = args[0]! as AdErrorListener;
+          final AdErrorListener arg_pigeon_instance =
+              args[0]! as AdErrorListener;
           final AdErrorEvent arg_event = args[1]! as AdErrorEvent;
           try {
-            (onAdError ?? arg_pigeon_instance.onAdError).call(arg_pigeon_instance, arg_event);
+            (onAdError ?? arg_pigeon_instance.onAdError)
+                .call(arg_pigeon_instance, arg_event);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -4927,7 +5314,10 @@ class AdEventListener extends PigeonInternalProxyApiBaseClass {
   factory AdEventListener({
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    required void Function(AdEventListener pigeon_instance, AdEvent event) onAdEvent,
+    required void Function(
+      AdEventListener pigeon_instance,
+      AdEvent event,
+    ) onAdEvent,
   }) {
     if (PigeonOverrides.adEventListener_new != null) {
       return PigeonOverrides.adEventListener_new!(onAdEvent: onAdEvent);
@@ -4945,8 +5335,10 @@ class AdEventListener extends PigeonInternalProxyApiBaseClass {
     super.pigeon_instanceManager,
     required this.onAdEvent,
   }) {
-    final int pigeonVar_instanceIdentifier = pigeon_instanceManager.addDartCreatedInstance(this);
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdEventListener;
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdEventListener;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.AdEventListener.pigeon_defaultConstructor';
@@ -4955,13 +5347,16 @@ class AdEventListener extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      pigeonVar_instanceIdentifier,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+      _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+      );
     }();
   }
 
@@ -4998,40 +5393,46 @@ class AdEventListener extends PigeonInternalProxyApiBaseClass {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(AdEventListener pigeon_instance, AdEvent event) onAdEvent;
+  final void Function(
+    AdEventListener pigeon_instance,
+    AdEvent event,
+  ) onAdEvent;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    void Function(AdEventListener pigeon_instance, AdEvent event)? onAdEvent,
+    void Function(
+      AdEventListener pigeon_instance,
+      AdEvent event,
+    )? onAdEvent,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.AdEventListener.onAdEvent',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.AdEventListener.onAdEvent',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final AdEventListener arg_pigeon_instance = args[0]! as AdEventListener;
+          final AdEventListener arg_pigeon_instance =
+              args[0]! as AdEventListener;
           final AdEvent arg_event = args[1]! as AdEvent;
           try {
-            (onAdEvent ?? arg_pigeon_instance.onAdEvent).call(arg_pigeon_instance, arg_event);
+            (onAdEvent ?? arg_pigeon_instance.onAdEvent)
+                .call(arg_pigeon_instance, arg_event);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -5062,7 +5463,8 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
     super.pigeon_instanceManager,
   });
 
-  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecAdsRenderingSettings =
+  late final _PigeonInternalProxyApiBaseCodec
+      _pigeonVar_codecAdsRenderingSettings =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
   static void pigeon_setUpMessageHandlers({
@@ -5071,16 +5473,15 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     AdsRenderingSettings Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.AdsRenderingSettings.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -5088,7 +5489,8 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   AdsRenderingSettings.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -5101,8 +5503,7 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -5121,7 +5522,8 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -5145,7 +5547,8 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -5169,7 +5572,8 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -5195,7 +5599,8 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -5218,7 +5623,8 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -5244,10 +5650,15 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, bitrate]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, bitrate]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Notifies the SDK whether to launch the click-through URL using Custom Tabs
@@ -5265,13 +5676,15 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      enableCustomTabs,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, enableCustomTabs]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// If set, the SDK will instruct the player to load the creative in response
@@ -5290,13 +5703,15 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      enablePreloading,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, enablePreloading]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Set whether to focus on the skip button when the skippable ad can be
@@ -5305,7 +5720,8 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
   /// This is a no-op on non-Android TV devices.
   ///
   /// Default is true.
-  Future<void> setFocusSkipButtonWhenAvailable(bool enableFocusSkipButton) async {
+  Future<void> setFocusSkipButtonWhenAvailable(
+      bool enableFocusSkipButton) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecAdsRenderingSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -5316,13 +5732,15 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      enableFocusSkipButton,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, enableFocusSkipButton]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Specifies a non-default amount of time to wait for media to load before
@@ -5342,13 +5760,15 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      loadVideoTimeout,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, loadVideoTimeout]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// If specified, the SDK will prioritize the media with MIME type on the
@@ -5364,10 +5784,15 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, mimeTypes]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, mimeTypes]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// For VMAP and ad rules playlists, only play ad breaks scheduled after this
@@ -5383,10 +5808,15 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, time]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, time]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Sets the ad UI elements to be rendered by the IMA SDK.
@@ -5401,13 +5831,15 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      uiElements,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, uiElements]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
@@ -5468,19 +5900,17 @@ class AdProgressInfo extends PigeonInternalProxyApiBaseClass {
       double currentTime,
       double duration,
       int totalAds,
-    )?
-    pigeon_newInstance,
+    )? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.AdProgressInfo.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.AdProgressInfo.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -5494,15 +5924,15 @@ class AdProgressInfo extends PigeonInternalProxyApiBaseClass {
           final double arg_duration = args[5]! as double;
           final int arg_totalAds = args[6]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call(
-                    arg_adBreakDuration,
-                    arg_adPeriodDuration,
-                    arg_adPosition,
-                    arg_currentTime,
-                    arg_duration,
-                    arg_totalAds,
-                  ) ??
+                      arg_adBreakDuration,
+                      arg_adPeriodDuration,
+                      arg_adPosition,
+                      arg_currentTime,
+                      arg_duration,
+                      arg_totalAds) ??
                   AdProgressInfo.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
@@ -5520,8 +5950,7 @@ class AdProgressInfo extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -5581,19 +6010,22 @@ class CompanionAd extends PigeonInternalProxyApiBaseClass {
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    CompanionAd Function(String? apiFramework, int height, String? resourceValue, int width)?
-    pigeon_newInstance,
+    CompanionAd Function(
+      String? apiFramework,
+      int height,
+      String? resourceValue,
+      int width,
+    )? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.CompanionAd.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.CompanionAd.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -5605,13 +6037,10 @@ class CompanionAd extends PigeonInternalProxyApiBaseClass {
           final String? arg_resourceValue = args[3] as String?;
           final int arg_width = args[4]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
-              pigeon_newInstance?.call(
-                    arg_apiFramework,
-                    arg_height,
-                    arg_resourceValue,
-                    arg_width,
-                  ) ??
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call(arg_apiFramework, arg_height,
+                      arg_resourceValue, arg_width) ??
                   CompanionAd.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
@@ -5627,8 +6056,7 @@ class CompanionAd extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -5678,18 +6106,20 @@ class UniversalAdId extends PigeonInternalProxyApiBaseClass {
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    UniversalAdId Function(String adIdRegistry, String adIdValue)? pigeon_newInstance,
+    UniversalAdId Function(
+      String adIdRegistry,
+      String adIdValue,
+    )? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.UniversalAdId.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.UniversalAdId.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -5699,7 +6129,8 @@ class UniversalAdId extends PigeonInternalProxyApiBaseClass {
           final String arg_adIdRegistry = args[1]! as String;
           final String arg_adIdValue = args[2]! as String;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call(arg_adIdRegistry, arg_adIdValue) ??
                   UniversalAdId.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -5714,8 +6145,7 @@ class UniversalAdId extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -5893,19 +6323,17 @@ class Ad extends PigeonInternalProxyApiBaseClass {
       int width,
       bool isLinear,
       bool isSkippable,
-    )?
-    pigeon_newInstance,
+    )? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.Ad.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.Ad.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -5915,12 +6343,15 @@ class Ad extends PigeonInternalProxyApiBaseClass {
           final String arg_adId = args[1]! as String;
           final AdPodInfo arg_adPodInfo = args[2]! as AdPodInfo;
           final String arg_adSystem = args[3]! as String;
-          final List<String> arg_adWrapperCreativeIds = (args[4]! as List<Object?>).cast<String>();
-          final List<String> arg_adWrapperIds = (args[5]! as List<Object?>).cast<String>();
-          final List<String> arg_adWrapperSystems = (args[6]! as List<Object?>).cast<String>();
+          final List<String> arg_adWrapperCreativeIds =
+              (args[4]! as List<Object?>).cast<String>();
+          final List<String> arg_adWrapperIds =
+              (args[5]! as List<Object?>).cast<String>();
+          final List<String> arg_adWrapperSystems =
+              (args[6]! as List<Object?>).cast<String>();
           final String arg_advertiserName = args[7]! as String;
-          final List<CompanionAd> arg_companionAds = (args[8]! as List<Object?>)
-              .cast<CompanionAd>();
+          final List<CompanionAd> arg_companionAds =
+              (args[8]! as List<Object?>).cast<CompanionAd>();
           final String? arg_contentType = args[9] as String?;
           final String arg_creativeAdId = args[10]! as String;
           final String arg_creativeId = args[11]! as String;
@@ -5932,9 +6363,10 @@ class Ad extends PigeonInternalProxyApiBaseClass {
           final String? arg_surveyUrl = args[17] as String?;
           final String? arg_title = args[18] as String?;
           final String arg_traffickingParameters = args[19]! as String;
-          final List<UiElement> arg_uiElements = (args[20]! as List<Object?>).cast<UiElement>();
-          final List<UniversalAdId> arg_universalAdIds = (args[21]! as List<Object?>)
-              .cast<UniversalAdId>();
+          final List<UiElement> arg_uiElements =
+              (args[20]! as List<Object?>).cast<UiElement>();
+          final List<UniversalAdId> arg_universalAdIds =
+              (args[21]! as List<Object?>).cast<UniversalAdId>();
           final int arg_vastMediaBitrate = args[22]! as int;
           final int arg_vastMediaHeight = args[23]! as int;
           final int arg_vastMediaWidth = args[24]! as int;
@@ -5942,36 +6374,36 @@ class Ad extends PigeonInternalProxyApiBaseClass {
           final bool arg_isLinear = args[26]! as bool;
           final bool arg_isSkippable = args[27]! as bool;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call(
-                    arg_adId,
-                    arg_adPodInfo,
-                    arg_adSystem,
-                    arg_adWrapperCreativeIds,
-                    arg_adWrapperIds,
-                    arg_adWrapperSystems,
-                    arg_advertiserName,
-                    arg_companionAds,
-                    arg_contentType,
-                    arg_creativeAdId,
-                    arg_creativeId,
-                    arg_dealId,
-                    arg_description,
-                    arg_duration,
-                    arg_height,
-                    arg_skipTimeOffset,
-                    arg_surveyUrl,
-                    arg_title,
-                    arg_traffickingParameters,
-                    arg_uiElements,
-                    arg_universalAdIds,
-                    arg_vastMediaBitrate,
-                    arg_vastMediaHeight,
-                    arg_vastMediaWidth,
-                    arg_width,
-                    arg_isLinear,
-                    arg_isSkippable,
-                  ) ??
+                      arg_adId,
+                      arg_adPodInfo,
+                      arg_adSystem,
+                      arg_adWrapperCreativeIds,
+                      arg_adWrapperIds,
+                      arg_adWrapperSystems,
+                      arg_advertiserName,
+                      arg_companionAds,
+                      arg_contentType,
+                      arg_creativeAdId,
+                      arg_creativeId,
+                      arg_dealId,
+                      arg_description,
+                      arg_duration,
+                      arg_height,
+                      arg_skipTimeOffset,
+                      arg_surveyUrl,
+                      arg_title,
+                      arg_traffickingParameters,
+                      arg_uiElements,
+                      arg_universalAdIds,
+                      arg_vastMediaBitrate,
+                      arg_vastMediaHeight,
+                      arg_vastMediaWidth,
+                      arg_width,
+                      arg_isLinear,
+                      arg_isSkippable) ??
                   Ad.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
@@ -6010,8 +6442,7 @@ class Ad extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -6061,12 +6492,12 @@ class CompanionAdSlotClickListener extends PigeonInternalProxyApiBaseClass {
   factory CompanionAdSlotClickListener({
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    required void Function(CompanionAdSlotClickListener pigeon_instance) onCompanionAdClick,
+    required void Function(CompanionAdSlotClickListener pigeon_instance)
+        onCompanionAdClick,
   }) {
     if (PigeonOverrides.companionAdSlotClickListener_new != null) {
       return PigeonOverrides.companionAdSlotClickListener_new!(
-        onCompanionAdClick: onCompanionAdClick,
-      );
+          onCompanionAdClick: onCompanionAdClick);
     }
     return CompanionAdSlotClickListener.pigeon_new(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -6081,7 +6512,8 @@ class CompanionAdSlotClickListener extends PigeonInternalProxyApiBaseClass {
     super.pigeon_instanceManager,
     required this.onCompanionAdClick,
   }) {
-    final int pigeonVar_instanceIdentifier = pigeon_instanceManager.addDartCreatedInstance(this);
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecCompanionAdSlotClickListener;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -6092,13 +6524,16 @@ class CompanionAdSlotClickListener extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      pigeonVar_instanceIdentifier,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+      _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+      );
     }();
   }
 
@@ -6113,7 +6548,8 @@ class CompanionAdSlotClickListener extends PigeonInternalProxyApiBaseClass {
     required this.onCompanionAdClick,
   });
 
-  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecCompanionAdSlotClickListener =
+  late final _PigeonInternalProxyApiBaseCodec
+      _pigeonVar_codecCompanionAdSlotClickListener =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
   /// Respond to a click on this companion ad slot.
@@ -6135,24 +6571,25 @@ class CompanionAdSlotClickListener extends PigeonInternalProxyApiBaseClass {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final void Function(CompanionAdSlotClickListener pigeon_instance) onCompanionAdClick;
+  final void Function(CompanionAdSlotClickListener pigeon_instance)
+      onCompanionAdClick;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    void Function(CompanionAdSlotClickListener pigeon_instance)? onCompanionAdClick,
+    void Function(CompanionAdSlotClickListener pigeon_instance)?
+        onCompanionAdClick,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.CompanionAdSlotClickListener.onCompanionAdClick',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.CompanionAdSlotClickListener.onCompanionAdClick',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -6161,16 +6598,14 @@ class CompanionAdSlotClickListener extends PigeonInternalProxyApiBaseClass {
           final CompanionAdSlotClickListener arg_pigeon_instance =
               args[0]! as CompanionAdSlotClickListener;
           try {
-            (onCompanionAdClick ?? arg_pigeon_instance.onCompanionAdClick).call(
-              arg_pigeon_instance,
-            );
+            (onCompanionAdClick ?? arg_pigeon_instance.onCompanionAdClick)
+                .call(arg_pigeon_instance);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -6196,8 +6631,10 @@ class CompanionAdSlot extends AdSlot {
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  CompanionAdSlot.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager})
-    : super.pigeon_detached();
+  CompanionAdSlot.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  }) : super.pigeon_detached();
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecCompanionAdSlot =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
@@ -6208,16 +6645,15 @@ class CompanionAdSlot extends AdSlot {
     PigeonInstanceManager? pigeon_instanceManager,
     CompanionAdSlot Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -6225,7 +6661,8 @@ class CompanionAdSlot extends AdSlot {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   CompanionAdSlot.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -6238,8 +6675,7 @@ class CompanionAdSlot extends AdSlot {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -6247,8 +6683,10 @@ class CompanionAdSlot extends AdSlot {
   }
 
   /// Registers a listener for companion clicks.
-  Future<void> addClickListener(CompanionAdSlotClickListener clickListener) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecCompanionAdSlot;
+  Future<void> addClickListener(
+      CompanionAdSlotClickListener clickListener) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecCompanionAdSlot;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.addClickListener';
@@ -6257,18 +6695,22 @@ class CompanionAdSlot extends AdSlot {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      clickListener,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, clickListener]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Removes a listener for companion clicks.
-  Future<void> removeClickListener(CompanionAdSlotClickListener clickListener) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecCompanionAdSlot;
+  Future<void> removeClickListener(
+      CompanionAdSlotClickListener clickListener) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecCompanionAdSlot;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.interactive_media_ads.CompanionAdSlot.removeClickListener';
@@ -6277,13 +6719,15 @@ class CompanionAdSlot extends AdSlot {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      clickListener,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, clickListener]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
@@ -6304,7 +6748,10 @@ class AdSlot extends PigeonInternalProxyApiBaseClass {
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  AdSlot.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager});
+  AdSlot.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  });
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecAdSlot =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
@@ -6315,16 +6762,15 @@ class AdSlot extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     AdSlot Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
-      pigeon_instanceManager ?? PigeonInstanceManager.instance,
-    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.interactive_media_ads.AdSlot.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.interactive_media_ads.AdSlot.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -6332,7 +6778,8 @@ class AdSlot extends PigeonInternalProxyApiBaseClass {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
                   AdSlot.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -6345,8 +6792,7 @@ class AdSlot extends PigeonInternalProxyApiBaseClass {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -6355,15 +6801,18 @@ class AdSlot extends PigeonInternalProxyApiBaseClass {
 
   /// Returns the ViewGroup into which the companion will be rendered.
   Future<ViewGroup?> getContainer() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdSlot;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdSlot;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.AdSlot.getContainer';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdSlot.getContainer';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -6376,15 +6825,18 @@ class AdSlot extends PigeonInternalProxyApiBaseClass {
 
   /// Returns the height of the ad slot.
   Future<int> getHeight() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdSlot;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdSlot;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.AdSlot.getHeight';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdSlot.getHeight';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -6397,15 +6849,18 @@ class AdSlot extends PigeonInternalProxyApiBaseClass {
 
   /// Returns the width of the ad slot.
   Future<int> getWidth() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdSlot;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdSlot;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.AdSlot.getWidth';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdSlot.getWidth';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -6418,15 +6873,18 @@ class AdSlot extends PigeonInternalProxyApiBaseClass {
 
   /// Returns true if the ad slot is filled, false otherwise.
   Future<bool> isFilled() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdSlot;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdSlot;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.AdSlot.isFilled';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdSlot.isFilled';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -6441,40 +6899,53 @@ class AdSlot extends PigeonInternalProxyApiBaseClass {
   ///
   /// Required.
   Future<void> setContainer(ViewGroup container) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdSlot;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdSlot;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.AdSlot.setContainer';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdSlot.setContainer';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, container]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, container]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Sets the size of the ad slot.
   ///
   /// Only companions matching the slot size will be displayed in the slot.
-  Future<void> setSize(int width, int height) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdSlot;
+  Future<void> setSize(
+    int width,
+    int height,
+  ) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdSlot;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.AdSlot.setSize';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdSlot.setSize';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      this,
-      width,
-      height,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, width, height]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Sets the size of the ad slot as fluid.
@@ -6482,18 +6953,25 @@ class AdSlot extends PigeonInternalProxyApiBaseClass {
   /// This is a convenience method that sets both parameters of [setSize] to
   /// [CompanionAdSlot.FLUID_SIZE](https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAdSlot#FLUID_SIZE()).
   Future<void> setFluidSize() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecAdSlot;
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecAdSlot;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName = 'dev.flutter.pigeon.interactive_media_ads.AdSlot.setFluidSize';
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.AdSlot.setFluidSize';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
@@ -6504,3 +6982,4 @@ class AdSlot extends PigeonInternalProxyApiBaseClass {
     );
   }
 }
+

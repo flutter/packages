@@ -418,13 +418,13 @@ class SK2Product {
   /// Converts this instance of [SK2Product] to it's pigeon representation [SK2ProductMessage]
   SK2ProductMessage convertToPigeon() {
     return SK2ProductMessage(
-      id: id,
       displayName: displayName,
-      description: description,
-      price: price,
       displayPrice: displayPrice,
-      type: type.convertToPigeon(),
+      id: id,
+      localizedDescription: description,
+      price: price,
       priceLocale: priceLocale.convertToPigeon(),
+      type: type.convertToPigeon(),
     );
   }
 }
@@ -436,7 +436,7 @@ extension on SK2ProductMessage {
       displayName: displayName,
       displayPrice: displayPrice,
       price: price,
-      description: description,
+      description: localizedDescription,
       type: type.convertFromPigeon(),
       subscription: subscription?.convertFromPigeon(),
       priceLocale: priceLocale.convertFromPigeon(),

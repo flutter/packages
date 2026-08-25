@@ -46,7 +46,7 @@ final class StoreKit2TranslatorTests: XCTestCase {
     productMessage = SK2ProductMessage(
       id: "subscription_silver",
       displayName: "Subscription Silver",
-      description: "A lower level subscription.",
+      localizedDescription: "A lower level subscription.",
       price: 4.99,
       displayPrice: "$4.99",
       type: SK2ProductTypeMessage.autoRenewable,

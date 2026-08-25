@@ -80,14 +80,14 @@ class SK2SubscriptionInfoMessage {
 /// https://developer.apple.com/documentation/storekit/product
 class SK2ProductMessage {
   const SK2ProductMessage({
-    required this.id,
     required this.displayName,
     required this.displayPrice,
-    required this.description,
+    required this.id,
+    required this.localizedDescription,
     required this.price,
+    required this.priceLocale,
     required this.type,
     this.subscription,
-    required this.priceLocale,
   });
 
   /// The unique product identifier.
@@ -97,7 +97,7 @@ class SK2ProductMessage {
   final String displayName;
 
   /// The localized description of the product.
-  final String description;
+  final String localizedDescription;
 
   /// The localized string representation of the product price, suitable for display.
   final double price;

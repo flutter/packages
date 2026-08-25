@@ -13,9 +13,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-  List<Object?>? replyList,
-  String channelName, {
-  required bool isNullValid,
+    List<Object?>? replyList,
+    String channelName, {
+    required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -37,14 +37,13 @@ Object? _extractReplyValueOrThrow(
   return replyList.firstOrNull;
 }
 
+
 /// Possible outcomes of launching a URL.
 enum LaunchResult {
   /// The URL was successfully launched (or could be, for `canLaunchUrl`).
   success,
-
   /// There was no handler available for the URL.
   failure,
-
   /// The URL could not be launched because it is invalid.
   invalidUrl,
 }
@@ -53,19 +52,16 @@ enum LaunchResult {
 enum InAppLoadResult {
   /// The URL was successfully loaded.
   success,
-
   /// The URL did not load successfully.
   failedToLoad,
-
   /// The URL could not be launched because it is invalid.
   invalidUrl,
-
   /// The URL could not be launched because no UI is available.
   noUI,
-
   /// The controller was closed before loading.
   dismissed,
 }
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -74,10 +70,10 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is LaunchResult) {
+    }    else if (value is LaunchResult) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is InAppLoadResult) {
+    }    else if (value is InAppLoadResult) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
     } else {
@@ -105,10 +101,8 @@ class UrlLauncherApi {
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   UrlLauncherApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-    : pigeonVar_binaryMessenger = binaryMessenger,
-      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-          ? '.$messageChannelSuffix'
-          : '';
+      : pigeonVar_binaryMessenger = binaryMessenger,
+        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -117,8 +111,7 @@ class UrlLauncherApi {
 
   /// Checks whether a URL can be loaded.
   Future<LaunchResult> canLaunchUrl(String url) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.canLaunchUrl$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.canLaunchUrl$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -128,41 +121,38 @@ class UrlLauncherApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as LaunchResult;
   }
 
   /// Opens the URL externally, returning the status of launching it.
   Future<LaunchResult> launchUrl(String url, bool universalLinksOnly) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.launchUrl$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.launchUrl$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      url,
-      universalLinksOnly,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url, universalLinksOnly]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as LaunchResult;
   }
 
   /// Opens the URL in an in-app SFSafariViewController, returning the results
   /// of loading it.
   Future<InAppLoadResult> openUrlInSafariViewController(String url) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.openUrlInSafariViewController$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.openUrlInSafariViewController$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -172,17 +162,17 @@ class UrlLauncherApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as InAppLoadResult;
   }
 
   /// Closes the view controller opened by [openUrlInSafariViewController].
   Future<void> closeSafariViewController() async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.closeSafariViewController$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.closeSafariViewController$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -191,6 +181,11 @@ class UrlLauncherApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
   }
 }

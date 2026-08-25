@@ -13,9 +13,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-  List<Object?>? replyList,
-  String channelName, {
-  required bool isNullValid,
+    List<Object?>? replyList,
+    String channelName, {
+    required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -37,6 +37,7 @@ Object? _extractReplyValueOrThrow(
   return replyList.firstOrNull;
 }
 
+
 List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
@@ -46,7 +47,6 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
   }
   return <Object?>[error.code, error.message, error.details];
 }
-
 bool _deepEquals(Object? a, Object? b) {
   if (identical(a, b)) {
     return true;
@@ -59,7 +59,8 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -108,9 +109,14 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
+
 /// Home screen quick-action shortcut item.
 class ShortcutItemMessage {
-  ShortcutItemMessage({required this.type, required this.localizedTitle, this.icon});
+  ShortcutItemMessage({
+    required this.type,
+    required this.localizedTitle,
+    this.icon,
+  });
 
   /// The identifier of this item; should be unique within the app.
   String type;
@@ -122,12 +128,15 @@ class ShortcutItemMessage {
   String? icon;
 
   List<Object?> _toList() {
-    return <Object?>[type, localizedTitle, icon];
+    return <Object?>[
+      type,
+      localizedTitle,
+      icon,
+    ];
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static ShortcutItemMessage decode(Object result) {
     result as List<Object?>;
@@ -147,9 +156,7 @@ class ShortcutItemMessage {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(type, other.type) &&
-        _deepEquals(localizedTitle, other.localizedTitle) &&
-        _deepEquals(icon, other.icon);
+    return _deepEquals(type, other.type) && _deepEquals(localizedTitle, other.localizedTitle) && _deepEquals(icon, other.icon);
   }
 
   @override
@@ -162,6 +169,7 @@ class ShortcutItemMessage {
   }
 }
 
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -169,7 +177,7 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is ShortcutItemMessage) {
+    }    else if (value is ShortcutItemMessage) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else {
@@ -193,10 +201,8 @@ class AndroidQuickActionsApi {
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   AndroidQuickActionsApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-    : pigeonVar_binaryMessenger = binaryMessenger,
-      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-          ? '.$messageChannelSuffix'
-          : '';
+      : pigeonVar_binaryMessenger = binaryMessenger,
+        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -205,8 +211,7 @@ class AndroidQuickActionsApi {
 
   /// Checks for, and returns the action that launched the app.
   Future<String?> getLaunchAction() async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsApi.getLaunchAction$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsApi.getLaunchAction$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -216,17 +221,17 @@ class AndroidQuickActionsApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
     return pigeonVar_replyValue as String?;
   }
 
   /// Sets the dynamic shortcuts for the app.
   Future<void> setShortcutItems(List<ShortcutItemMessage> itemsList) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsApi.setShortcutItems$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsApi.setShortcutItems$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -235,13 +240,17 @@ class AndroidQuickActionsApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[itemsList]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
   }
 
   /// Removes all dynamic shortcuts.
   Future<void> clearShortcutItems() async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsApi.clearShortcutItems$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsApi.clearShortcutItems$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -250,7 +259,12 @@ class AndroidQuickActionsApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
   }
 }
 
@@ -260,18 +274,12 @@ abstract class AndroidQuickActionsFlutterApi {
   /// Sends a string representing a shortcut from the native platform to the app.
   void launchAction(String action);
 
-  static void setUp(
-    AndroidQuickActionsFlutterApi? api, {
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) {
+  static void setUp(AndroidQuickActionsFlutterApi? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsFlutterApi.launchAction$messageChannelSuffix',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsFlutterApi.launchAction$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -283,10 +291,8 @@ abstract class AndroidQuickActionsFlutterApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }

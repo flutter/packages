@@ -1,6 +1,6 @@
 ## 2.4.28
 
-* Updates pigeon dev_dependency to ^27.3.1 for analyzer 14 compatibility.
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
 
 ## 2.4.27
 

@@ -13,9 +13,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-  List<Object?>? replyList,
-  String channelName, {
-  required bool isNullValid,
+    List<Object?>? replyList,
+    String channelName, {
+    required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -49,7 +49,8 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -98,6 +99,7 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
+
 /// Possible error conditions for [UrlLauncherApi] calls.
 enum UrlLauncherError {
   /// The URL could not be parsed as an NSURL.
@@ -106,23 +108,31 @@ enum UrlLauncherError {
 
 /// Possible results for a [UrlLauncherApi] call with a boolean outcome.
 class UrlLauncherBoolResult {
-  UrlLauncherBoolResult({required this.value, this.error});
+  UrlLauncherBoolResult({
+    required this.value,
+    this.error,
+  });
 
   bool value;
 
   UrlLauncherError? error;
 
   List<Object?> _toList() {
-    return <Object?>[value, error];
+    return <Object?>[
+      value,
+      error,
+    ];
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static UrlLauncherBoolResult decode(Object result) {
     result as List<Object?>;
-    return UrlLauncherBoolResult(value: result[0]! as bool, error: result[1] as UrlLauncherError?);
+    return UrlLauncherBoolResult(
+      value: result[0]! as bool,
+      error: result[1] as UrlLauncherError?,
+    );
   }
 
   @override
@@ -147,6 +157,7 @@ class UrlLauncherBoolResult {
   }
 }
 
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -154,10 +165,10 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is UrlLauncherError) {
+    }    else if (value is UrlLauncherError) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is UrlLauncherBoolResult) {
+    }    else if (value is UrlLauncherBoolResult) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else {
@@ -184,10 +195,8 @@ class UrlLauncherApi {
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   UrlLauncherApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-    : pigeonVar_binaryMessenger = binaryMessenger,
-      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-          ? '.$messageChannelSuffix'
-          : '';
+      : pigeonVar_binaryMessenger = binaryMessenger,
+        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -196,8 +205,7 @@ class UrlLauncherApi {
 
   /// Returns a true result if the URL can definitely be launched.
   Future<UrlLauncherBoolResult> canLaunchUrl(String url) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.url_launcher_macos.UrlLauncherApi.canLaunchUrl$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.url_launcher_macos.UrlLauncherApi.canLaunchUrl$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -207,17 +215,17 @@ class UrlLauncherApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as UrlLauncherBoolResult;
   }
 
   /// Opens the URL externally, returning a true result if successful.
   Future<UrlLauncherBoolResult> launchUrl(String url) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.url_launcher_macos.UrlLauncherApi.launchUrl$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.url_launcher_macos.UrlLauncherApi.launchUrl$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -227,10 +235,11 @@ class UrlLauncherApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as UrlLauncherBoolResult;
   }
 }

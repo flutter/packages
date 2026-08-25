@@ -13,9 +13,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-  List<Object?>? replyList,
-  String channelName, {
-  required bool isNullValid,
+    List<Object?>? replyList,
+    String channelName, {
+    required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -49,7 +49,8 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -98,8 +99,13 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
+
 /// A Pigeon representation of the GTK_FILE_CHOOSER_ACTION_* options.
-enum PlatformFileChooserActionType { open, chooseDirectory, save }
+enum PlatformFileChooserActionType {
+  open,
+  chooseDirectory,
+  save,
+}
 
 /// A Pigeon representation of the Linux portion of an `XTypeGroup`.
 class PlatformTypeGroup {
@@ -116,12 +122,15 @@ class PlatformTypeGroup {
   List<String> mimeTypes;
 
   List<Object?> _toList() {
-    return <Object?>[label, extensions, mimeTypes];
+    return <Object?>[
+      label,
+      extensions,
+      mimeTypes,
+    ];
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static PlatformTypeGroup decode(Object result) {
     result as List<Object?>;
@@ -141,9 +150,7 @@ class PlatformTypeGroup {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(label, other.label) &&
-        _deepEquals(extensions, other.extensions) &&
-        _deepEquals(mimeTypes, other.mimeTypes);
+    return _deepEquals(label, other.label) && _deepEquals(extensions, other.extensions) && _deepEquals(mimeTypes, other.mimeTypes);
   }
 
   @override
@@ -199,8 +206,7 @@ class PlatformFileChooserOptions {
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static PlatformFileChooserOptions decode(Object result) {
     result as List<Object?>;
@@ -223,12 +229,7 @@ class PlatformFileChooserOptions {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(allowedFileTypes, other.allowedFileTypes) &&
-        _deepEquals(currentFolderPath, other.currentFolderPath) &&
-        _deepEquals(currentName, other.currentName) &&
-        _deepEquals(acceptButtonLabel, other.acceptButtonLabel) &&
-        _deepEquals(selectMultiple, other.selectMultiple) &&
-        _deepEquals(createFolders, other.createFolders);
+    return _deepEquals(allowedFileTypes, other.allowedFileTypes) && _deepEquals(currentFolderPath, other.currentFolderPath) && _deepEquals(currentName, other.currentName) && _deepEquals(acceptButtonLabel, other.acceptButtonLabel) && _deepEquals(selectMultiple, other.selectMultiple) && _deepEquals(createFolders, other.createFolders);
   }
 
   @override
@@ -241,6 +242,7 @@ class PlatformFileChooserOptions {
   }
 }
 
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -248,13 +250,13 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is PlatformFileChooserActionType) {
+    }    else if (value is PlatformFileChooserActionType) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is PlatformTypeGroup) {
+    }    else if (value is PlatformTypeGroup) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformFileChooserOptions) {
+    }    else if (value is PlatformFileChooserOptions) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
@@ -283,10 +285,8 @@ class FileSelectorApi {
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   FileSelectorApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-    : pigeonVar_binaryMessenger = binaryMessenger,
-      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-          ? '.$messageChannelSuffix'
-          : '';
+      : pigeonVar_binaryMessenger = binaryMessenger,
+        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -297,12 +297,8 @@ class FileSelectorApi {
   /// list of selected paths.
   ///
   /// An empty list corresponds to a cancelled selection.
-  Future<List<String>> showFileChooser(
-    PlatformFileChooserActionType type,
-    PlatformFileChooserOptions options,
-  ) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.file_selector_linux.FileSelectorApi.showFileChooser$pigeonVar_messageChannelSuffix';
+  Future<List<String>> showFileChooser(PlatformFileChooserActionType type, PlatformFileChooserOptions options) async {
+    final pigeonVar_channelName = 'dev.flutter.pigeon.file_selector_linux.FileSelectorApi.showFileChooser$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -312,10 +308,11 @@ class FileSelectorApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return (pigeonVar_replyValue! as List<Object?>).cast<String>();
   }
 }

@@ -1,6 +1,6 @@
 ## 0.3.0+17
 
-* Updates pigeon dev_dependency to ^27.3.1 for analyzer 14 compatibility.
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
 
 ## 0.3.0+16
 

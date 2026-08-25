@@ -13,9 +13,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-  List<Object?>? replyList,
-  String channelName, {
-  required bool isNullValid,
+    List<Object?>? replyList,
+    String channelName, {
+    required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -49,7 +49,8 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -98,39 +99,38 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
+
 /// Enum mapping of known codes from
 /// https://developers.google.com/identity/sign-in/ios/reference/Enums/GIDSignInErrorCode
 enum GoogleSignInErrorCode {
   /// Either the underlying kGIDSignInErrorCodeUnknown, or a code that isn't
   /// a known code mapped to a value below.
   unknown,
-
   /// kGIDSignInErrorCodeKeychain; an error reading or writing to keychain.
   keychainError,
-
   /// kGIDSignInErrorCodeHasNoAuthInKeychain; no auth present in the keychain.
   ///
   /// For restorePreviousSignIn, this indicates that there is no sign in to
   /// restore.
   noAuthInKeychain,
-
   /// kGIDSignInErrorCodeCanceled; the request was canceled by the user.
   canceled,
-
   /// kGIDSignInErrorCodeEMM; an enterprise management error occurred.
   eemError,
-
   /// kGIDSignInErrorCodeScopesAlreadyGranted; the requested scopes have already
   /// been granted.
   scopesAlreadyGranted,
-
   /// kGIDSignInErrorCodeMismatchWithCurrentUser; an operation was requested on
   /// a non-current user.
   userMismatch,
 }
 
 class PlatformConfigurationParams {
-  PlatformConfigurationParams({this.clientId, this.serverClientId, this.hostedDomain});
+  PlatformConfigurationParams({
+    this.clientId,
+    this.serverClientId,
+    this.hostedDomain,
+  });
 
   String? clientId;
 
@@ -139,12 +139,15 @@ class PlatformConfigurationParams {
   String? hostedDomain;
 
   List<Object?> _toList() {
-    return <Object?>[clientId, serverClientId, hostedDomain];
+    return <Object?>[
+      clientId,
+      serverClientId,
+      hostedDomain,
+    ];
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static PlatformConfigurationParams decode(Object result) {
     result as List<Object?>;
@@ -164,9 +167,7 @@ class PlatformConfigurationParams {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(clientId, other.clientId) &&
-        _deepEquals(serverClientId, other.serverClientId) &&
-        _deepEquals(hostedDomain, other.hostedDomain);
+    return _deepEquals(clientId, other.clientId) && _deepEquals(serverClientId, other.serverClientId) && _deepEquals(hostedDomain, other.hostedDomain);
   }
 
   @override
@@ -202,12 +203,17 @@ class UserData {
   String? idToken;
 
   List<Object?> _toList() {
-    return <Object?>[displayName, email, userId, photoUrl, idToken];
+    return <Object?>[
+      displayName,
+      email,
+      userId,
+      photoUrl,
+      idToken,
+    ];
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static UserData decode(Object result) {
     result as List<Object?>;
@@ -229,11 +235,7 @@ class UserData {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(displayName, other.displayName) &&
-        _deepEquals(email, other.email) &&
-        _deepEquals(userId, other.userId) &&
-        _deepEquals(photoUrl, other.photoUrl) &&
-        _deepEquals(idToken, other.idToken);
+    return _deepEquals(displayName, other.displayName) && _deepEquals(email, other.email) && _deepEquals(userId, other.userId) && _deepEquals(photoUrl, other.photoUrl) && _deepEquals(idToken, other.idToken);
   }
 
   @override
@@ -248,7 +250,10 @@ class UserData {
 
 /// The response from an auth call.
 class SignInResult {
-  SignInResult({this.success, this.error});
+  SignInResult({
+    this.success,
+    this.error,
+  });
 
   /// The success result, if any.
   ///
@@ -261,16 +266,21 @@ class SignInResult {
   SignInFailure? error;
 
   List<Object?> _toList() {
-    return <Object?>[success, error];
+    return <Object?>[
+      success,
+      error,
+    ];
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static SignInResult decode(Object result) {
     result as List<Object?>;
-    return SignInResult(success: result[0] as SignInSuccess?, error: result[1] as SignInFailure?);
+    return SignInResult(
+      success: result[0] as SignInSuccess?,
+      error: result[1] as SignInFailure?,
+    );
   }
 
   @override
@@ -297,7 +307,11 @@ class SignInResult {
 
 /// An sign in failure.
 class SignInFailure {
-  SignInFailure({required this.type, this.message, this.details});
+  SignInFailure({
+    required this.type,
+    this.message,
+    this.details,
+  });
 
   /// The type of failure.
   GoogleSignInErrorCode type;
@@ -309,12 +323,15 @@ class SignInFailure {
   Object? details;
 
   List<Object?> _toList() {
-    return <Object?>[type, message, details];
+    return <Object?>[
+      type,
+      message,
+      details,
+    ];
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static SignInFailure decode(Object result) {
     result as List<Object?>;
@@ -334,9 +351,7 @@ class SignInFailure {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(type, other.type) &&
-        _deepEquals(message, other.message) &&
-        _deepEquals(details, other.details);
+    return _deepEquals(type, other.type) && _deepEquals(message, other.message) && _deepEquals(details, other.details);
   }
 
   @override
@@ -372,12 +387,16 @@ class SignInSuccess {
   String? serverAuthCode;
 
   List<Object?> _toList() {
-    return <Object?>[user, accessToken, grantedScopes, serverAuthCode];
+    return <Object?>[
+      user,
+      accessToken,
+      grantedScopes,
+      serverAuthCode,
+    ];
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static SignInSuccess decode(Object result) {
     result as List<Object?>;
@@ -398,10 +417,7 @@ class SignInSuccess {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(user, other.user) &&
-        _deepEquals(accessToken, other.accessToken) &&
-        _deepEquals(grantedScopes, other.grantedScopes) &&
-        _deepEquals(serverAuthCode, other.serverAuthCode);
+    return _deepEquals(user, other.user) && _deepEquals(accessToken, other.accessToken) && _deepEquals(grantedScopes, other.grantedScopes) && _deepEquals(serverAuthCode, other.serverAuthCode);
   }
 
   @override
@@ -414,6 +430,7 @@ class SignInSuccess {
   }
 }
 
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -421,22 +438,22 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is GoogleSignInErrorCode) {
+    }    else if (value is GoogleSignInErrorCode) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is PlatformConfigurationParams) {
+    }    else if (value is PlatformConfigurationParams) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is UserData) {
+    }    else if (value is UserData) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is SignInResult) {
+    }    else if (value is SignInResult) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is SignInFailure) {
+    }    else if (value is SignInFailure) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is SignInSuccess) {
+    }    else if (value is SignInSuccess) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
     } else {
@@ -471,10 +488,8 @@ class GoogleSignInApi {
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   GoogleSignInApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-    : pigeonVar_binaryMessenger = binaryMessenger,
-      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-          ? '.$messageChannelSuffix'
-          : '';
+      : pigeonVar_binaryMessenger = binaryMessenger,
+        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -483,8 +498,7 @@ class GoogleSignInApi {
 
   /// Configures the sign in object with application-level parameters.
   Future<void> configure(PlatformConfigurationParams params) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.configure$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.configure$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -493,14 +507,18 @@ class GoogleSignInApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[params]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
   }
 
   /// Attempts to restore an existing sign-in, if any, with minimal user
   /// interaction.
   Future<SignInResult> restorePreviousSignIn() async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.restorePreviousSignIn$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.restorePreviousSignIn$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -510,40 +528,37 @@ class GoogleSignInApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as SignInResult;
   }
 
   /// Starts a sign in with user interaction.
   Future<SignInResult> signIn(List<String> scopeHint, String? nonce) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.signIn$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.signIn$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      scopeHint,
-      nonce,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[scopeHint, nonce]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as SignInResult;
   }
 
   /// Requests the access token for the current sign in.
   Future<SignInResult> getRefreshedAuthorizationTokens(String userId) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.getRefreshedAuthorizationTokens$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.getRefreshedAuthorizationTokens$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -553,17 +568,17 @@ class GoogleSignInApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as SignInResult;
   }
 
   /// Requests authorization of the given additional scopes.
   Future<SignInResult> addScopes(List<String> scopes, String userId) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.addScopes$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.addScopes$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -573,17 +588,17 @@ class GoogleSignInApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as SignInResult;
   }
 
   /// Signs out the current user.
   Future<void> signOut() async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.signOut$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.signOut$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -592,13 +607,17 @@ class GoogleSignInApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
   }
 
   /// Revokes scope grants to the application.
   Future<void> disconnect() async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.disconnect$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.disconnect$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -607,6 +626,11 @@ class GoogleSignInApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
   }
 }
