@@ -231,6 +231,72 @@ void main() {
     expect(detailState.value, 1);
   });
 
+  testWidgets('routing config preserves multiple nested imperative shell matches', (
+    WidgetTester tester,
+  ) async {
+    final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
+    final firstDetailKey = GlobalKey<_StatefulTestState>(debugLabel: 'firstDetailState');
+    final secondDetailKey = GlobalKey<_StatefulTestState>(debugLabel: 'secondDetailState');
+
+    RoutingConfig buildConfig() => RoutingConfig(
+      routes: <RouteBase>[
+        ShellRoute(
+          navigatorKey: shellNavigatorKey,
+          routes: <RouteBase>[
+            GoRoute(path: '/', builder: (_, _) => const Text('home')),
+            GoRoute(
+              path: '/detail/:id',
+              builder: (_, GoRouterState state) {
+                final isFirst = state.pathParameters['id'] == 'first';
+                return StatefulTest(
+                  key: isFirst ? firstDetailKey : secondDetailKey,
+                  child: Text('detail ${state.pathParameters['id']}'),
+                );
+              },
+            ),
+          ],
+          builder: (_, _, Widget widget) => widget,
+        ),
+      ],
+    );
+
+    final config = ValueNotifier<RoutingConfig>(buildConfig());
+    addTearDown(config.dispose);
+    final GoRouter router = await createRouterWithRoutingConfig(config, tester);
+
+    final Future<String?> firstResult = router.push<String>('/detail/first');
+    await tester.pumpAndSettle();
+    final _StatefulTestState firstDetailState = firstDetailKey.currentState!;
+    firstDetailState.value = 1;
+
+    final Future<String?> secondResult = router.push<String>('/detail/second');
+    await tester.pumpAndSettle();
+    final _StatefulTestState secondDetailState = secondDetailKey.currentState!;
+    secondDetailState.value = 2;
+
+    config.value = buildConfig();
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('detail second'), findsOneWidget);
+    expect(firstDetailKey.currentState, same(firstDetailState));
+    expect(secondDetailKey.currentState, same(secondDetailState));
+    expect(firstDetailState.value, 1);
+    expect(secondDetailState.value, 2);
+
+    router.pop('second result');
+    await tester.pumpAndSettle();
+    expect(await secondResult, 'second result');
+    expect(find.text('detail first'), findsOneWidget);
+    expect(firstDetailKey.currentState, same(firstDetailState));
+    expect(firstDetailState.value, 1);
+
+    router.pop('first result');
+    await tester.pumpAndSettle();
+    expect(await firstResult, 'first result');
+    expect(find.text('home'), findsOneWidget);
+  });
+
   testWidgets('routing config preserves stateful shell branch state', (WidgetTester tester) async {
     final shellKey = GlobalKey<StatefulNavigationShellState>(debugLabel: 'statefulShell');
     final branchNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'branch');
