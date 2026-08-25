@@ -71,6 +71,28 @@ const double _kDayPickerGridLandscapeMaxScaleFactor = 1.5;
 // 14 is a common font size used to compute the effective text scale.
 const double _fontSizeToScale = 14.0;
 
+/// The signature of a function that builds a widget for a day in a
+/// [CalendarDatePicker].
+///
+/// The [day] is the date represented by the widget. The [states] are the
+/// current [WidgetState]s of the day, such as [WidgetState.disabled],
+/// [WidgetState.selected], or [WidgetState.hovered]. The [child] is the
+/// default widget built by the date picker.
+///
+/// The date picker's semantics, focus, and tap handling are applied to the
+/// widget returned by this function.
+typedef CalendarDatePickerDayBuilder =
+    Widget Function(BuildContext context, DateTime day, Set<WidgetState> states, Widget child);
+
+/// The signature of a function that builds a weekday header in a
+/// [CalendarDatePicker].
+///
+/// The [weekday] uses the same numbering as [DateTime.weekday], from
+/// [DateTime.monday] through [DateTime.sunday]. The [child] is the default
+/// localized weekday header built by the date picker.
+typedef CalendarDatePickerWeekdayBuilder =
+    Widget Function(BuildContext context, int weekday, Widget child);
+
 /// Displays a grid of days for a given month and allows the user to select a
 /// date.
 ///
@@ -117,6 +139,10 @@ class CalendarDatePicker extends StatefulWidget {
   /// If [selectableDayPredicate] and [initialDate] are both non-null,
   /// [selectableDayPredicate] must return `true` for the [initialDate].
   ///
+  /// The [dayBuilder] and [weekdayBuilder] can be used to customize the days and
+  /// weekday headers in the calendar's day grid. They are only used when the
+  /// picker is displaying the day selection interface.
+  ///
   /// {@template material_ui.calendar_date_picker.calendarDelegate}
   /// The [calendarDelegate] controls date interpretation, formatting, and
   /// navigation within the picker. By providing a custom implementation,
@@ -133,6 +159,8 @@ class CalendarDatePicker extends StatefulWidget {
     this.onDisplayedMonthChanged,
     this.initialCalendarMode = DatePickerMode.day,
     this.selectableDayPredicate,
+    this.dayBuilder,
+    this.weekdayBuilder,
     this.calendarDelegate = const GregorianCalendarDelegate(),
   }) : initialDate = initialDate == null ? null : calendarDelegate.dateOnly(initialDate),
        firstDate = calendarDelegate.dateOnly(firstDate),
@@ -191,6 +219,18 @@ class CalendarDatePicker extends StatefulWidget {
 
   /// Function to provide full control over which dates in the calendar can be selected.
   final SelectableDayPredicate? selectableDayPredicate;
+
+  /// An optional builder for the individual days in the calendar's day grid.
+  ///
+  /// The builder is only used when the picker is displaying the day selection
+  /// interface.
+  final CalendarDatePickerDayBuilder? dayBuilder;
+
+  /// An optional builder for the weekday headers in the calendar's day grid.
+  ///
+  /// The builder is only used when the picker is displaying the day selection
+  /// interface.
+  final CalendarDatePickerWeekdayBuilder? weekdayBuilder;
 
   /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
@@ -359,6 +399,8 @@ class _CalendarDatePickerState extends State<CalendarDatePicker> {
           onChanged: _handleDayChanged,
           onDisplayedMonthChanged: _handleMonthChanged,
           selectableDayPredicate: widget.selectableDayPredicate,
+          dayBuilder: widget.dayBuilder,
+          weekdayBuilder: widget.weekdayBuilder,
         );
       case DatePickerMode.year:
         return Padding(
@@ -570,6 +612,8 @@ class _MonthPicker extends StatefulWidget {
     required this.onDisplayedMonthChanged,
     required this.calendarDelegate,
     this.selectableDayPredicate,
+    this.dayBuilder,
+    this.weekdayBuilder,
   }) : assert(!firstDate.isAfter(lastDate)),
        assert(selectedDate == null || !selectedDate.isBefore(firstDate)),
        assert(selectedDate == null || !selectedDate.isAfter(lastDate));
@@ -610,6 +654,12 @@ class _MonthPicker extends StatefulWidget {
 
   /// Optional user supplied predicate function to customize selectable days.
   final SelectableDayPredicate? selectableDayPredicate;
+
+  /// An optional builder for the individual days in the calendar's day grid.
+  final CalendarDatePickerDayBuilder? dayBuilder;
+
+  /// An optional builder for the weekday headers in the calendar's day grid.
+  final CalendarDatePickerWeekdayBuilder? weekdayBuilder;
 
   /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
@@ -882,6 +932,8 @@ class _MonthPickerState extends State<_MonthPicker> {
       lastDate: widget.lastDate,
       displayedMonth: month,
       selectableDayPredicate: widget.selectableDayPredicate,
+      dayBuilder: widget.dayBuilder,
+      weekdayBuilder: widget.weekdayBuilder,
     );
   }
 
@@ -1003,6 +1055,8 @@ class _DayPicker extends StatefulWidget {
     required this.onChanged,
     required this.calendarDelegate,
     this.selectableDayPredicate,
+    this.dayBuilder,
+    this.weekdayBuilder,
   }) : assert(!firstDate.isAfter(lastDate)),
        assert(selectedDate == null || !selectedDate.isBefore(firstDate)),
        assert(selectedDate == null || !selectedDate.isAfter(lastDate));
@@ -1033,6 +1087,12 @@ class _DayPicker extends StatefulWidget {
 
   /// Optional user supplied predicate function to customize selectable days.
   final SelectableDayPredicate? selectableDayPredicate;
+
+  /// An optional builder for the individual days in the calendar's day grid.
+  final CalendarDatePickerDayBuilder? dayBuilder;
+
+  /// An optional builder for the weekday headers in the calendar's day grid.
+  final CalendarDatePickerWeekdayBuilder? weekdayBuilder;
 
   /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
@@ -1094,7 +1154,11 @@ class _DayPickerState extends State<_DayPicker> {
   ///     _ _ _ _ 1 2 3
   ///     4 5 6 7 8 9 10
   ///
-  List<Widget> _dayHeaders(TextStyle? headerStyle, MaterialLocalizations localizations) {
+  List<Widget> _dayHeaders(
+    BuildContext context,
+    TextStyle? headerStyle,
+    MaterialLocalizations localizations,
+  ) {
     final result = <Widget>[];
     for (
       int i = localizations.firstDayOfWeekIndex;
@@ -1102,9 +1166,18 @@ class _DayPickerState extends State<_DayPicker> {
       i = (i + 1) % DateTime.daysPerWeek
     ) {
       final String weekday = localizations.narrowWeekdays[i];
+      final int dateTimeWeekday = (i == 0 ? DateTime.sunday : i);
+      final child = Text(weekday);
+
+      final Widget weekdayWidget =
+          widget.weekdayBuilder?.call(context, dateTimeWeekday, child) ?? child;
+
       result.add(
         ExcludeSemantics(
-          child: Center(child: Text(weekday, style: headerStyle)),
+          child: DefaultTextStyle.merge(
+            style: headerStyle,
+            child: Center(child: weekdayWidget),
+          ),
         ),
       );
     }
@@ -1127,7 +1200,7 @@ class _DayPickerState extends State<_DayPicker> {
     final int daysInMonth = widget.calendarDelegate.getDaysInMonth(year, month);
     final int dayOffset = widget.calendarDelegate.firstDayOffset(year, month, localizations);
 
-    final List<Widget> dayItems = _dayHeaders(weekdayStyle, localizations);
+    final List<Widget> dayItems = _dayHeaders(context, weekdayStyle, localizations);
     // 1-based day of month, e.g. 1-31 for January, and 1-29 for February on
     // a leap year.
     int day = -dayOffset;
@@ -1157,6 +1230,7 @@ class _DayPickerState extends State<_DayPicker> {
             onChanged: widget.onChanged,
             focusNode: _dayFocusNodes[day - 1],
             calendarDelegate: widget.calendarDelegate,
+            dayBuilder: widget.dayBuilder,
           ),
         );
       }
@@ -1192,6 +1266,7 @@ class _Day extends StatefulWidget {
     required this.onChanged,
     required this.focusNode,
     required this.calendarDelegate,
+    this.dayBuilder,
   });
 
   final DateTime day;
@@ -1201,6 +1276,7 @@ class _Day extends StatefulWidget {
   final ValueChanged<DateTime> onChanged;
   final FocusNode focusNode;
   final CalendarDelegate<DateTime> calendarDelegate;
+  final CalendarDatePickerDayBuilder? dayBuilder;
 
   @override
   State<_Day> createState() => _DayState();
@@ -1271,12 +1347,27 @@ class _DayState extends State<_Day> {
 
     Widget dayWidget = Ink(
       decoration: decoration,
-      child: Center(
-        child: Text(
-          localizations.formatDecimal(widget.day.day),
-          style: dayStyle?.apply(color: dayForegroundColor),
-        ),
-      ),
+      child: Center(child: Text(localizations.formatDecimal(widget.day.day))),
+    );
+
+    if (widget.dayBuilder != null) {
+      dayWidget = ListenableBuilder(
+        listenable: _statesController,
+        builder: (BuildContext context, Widget? child) {
+          return widget.dayBuilder!(
+            context,
+            widget.day,
+            Set<WidgetState>.unmodifiable(_statesController.value),
+            child!,
+          );
+        },
+        child: dayWidget,
+      );
+    }
+
+    dayWidget = DefaultTextStyle.merge(
+      style: dayStyle?.apply(color: dayForegroundColor),
+      child: dayWidget,
     );
 
     // Adds padding as per M3 guidelines for portrait mode. Not applied in landscape

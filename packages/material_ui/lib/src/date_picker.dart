@@ -122,6 +122,10 @@ const double _fontSizeToScale = 14.0;
 /// this can be used to only allow weekdays for selection. If provided, it must
 /// return true for [initialDate].
 ///
+/// The [dayBuilder] and [weekdayBuilder] can be used to customize the days and
+/// weekday headers in the calendar's day grid. They are only used when the
+/// picker is displaying the day selection interface.
+///
 /// {@macro material_ui.calendar_date_picker.calendarDelegate}
 ///
 /// The following optional string parameters allow you to override the default
@@ -234,6 +238,8 @@ Future<DateTime?> showDatePicker({
   ValueChanged<DatePickerEntryMode>? onDatePickerModeChange,
   Icon? switchToInputEntryModeIcon,
   Icon? switchToCalendarEntryModeIcon,
+  CalendarDatePickerDayBuilder? dayBuilder,
+  CalendarDatePickerWeekdayBuilder? weekdayBuilder,
   CalendarDelegate<DateTime> calendarDelegate = const GregorianCalendarDelegate(),
 }) async {
   initialDate = initialDate == null ? null : calendarDelegate.dateOnly(initialDate);
@@ -276,6 +282,8 @@ Future<DateTime?> showDatePicker({
     onDatePickerModeChange: onDatePickerModeChange,
     switchToInputEntryModeIcon: switchToInputEntryModeIcon,
     switchToCalendarEntryModeIcon: switchToCalendarEntryModeIcon,
+    dayBuilder: dayBuilder,
+    weekdayBuilder: weekdayBuilder,
     calendarDelegate: calendarDelegate,
   );
 
@@ -343,6 +351,8 @@ class DatePickerDialog extends StatefulWidget {
     this.switchToInputEntryModeIcon,
     this.switchToCalendarEntryModeIcon,
     this.insetPadding = const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+    this.dayBuilder,
+    this.weekdayBuilder,
     this.calendarDelegate = const GregorianCalendarDelegate(),
   }) : initialDate = initialDate == null ? null : calendarDelegate.dateOnly(initialDate),
        firstDate = calendarDelegate.dateOnly(firstDate),
@@ -468,6 +478,18 @@ class DatePickerDialog extends StatefulWidget {
   ///
   /// Defaults to `EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0)`.
   final EdgeInsets insetPadding;
+
+  /// An optional builder for the individual days in the calendar's day grid.
+  ///
+  /// The builder is only used when the picker is displaying the day selection
+  /// interface.
+  final CalendarDatePickerDayBuilder? dayBuilder;
+
+  /// An optional builder for the weekday headers in the calendar's day grid.
+  ///
+  /// The builder is only used when the picker is displaying the day selection
+  /// interface.
+  final CalendarDatePickerWeekdayBuilder? weekdayBuilder;
 
   /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
@@ -651,6 +673,8 @@ class _DatePickerDialogState extends State<DatePickerDialog> with RestorationMix
         onDateChanged: _handleDateChanged,
         selectableDayPredicate: widget.selectableDayPredicate,
         initialCalendarMode: widget.initialCalendarMode,
+        dayBuilder: widget.dayBuilder,
+        weekdayBuilder: widget.weekdayBuilder,
       );
     }
 
