@@ -6,7 +6,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 
-import '../evals/test_data/test_utils.dart';
+import 'test_utils.dart';
 
 const String _remoteFlag = 'remote';
 const String _baseBranchFlag = 'base-branch';

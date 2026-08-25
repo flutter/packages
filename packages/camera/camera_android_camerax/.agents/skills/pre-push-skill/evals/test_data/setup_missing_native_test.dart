@@ -4,7 +4,7 @@
 
 import 'dart:io';
 
-import 'test_utils.dart';
+import '../../../../../evals/tool/test_utils.dart';
 
 void main() {
   ensureNotMainBranch();
