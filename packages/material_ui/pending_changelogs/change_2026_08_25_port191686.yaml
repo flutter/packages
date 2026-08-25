@@ -1,0 +1,3 @@
+changelog: |
+  - `showDatePicker` now defaults to `DatePickerEntryMode.input` in landscape orientation, where the calendar grid would otherwise shrink day buttons below the recommended touch target size. Portrait orientation is unaffected, and an explicit `initialEntryMode` still overrides the default.
+version: patch
