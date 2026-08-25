@@ -4,22 +4,58 @@
 
 import 'dart:io';
 
+import 'package:args/args.dart';
+
 import '../evals/test_data/test_utils.dart';
 
-void main(List<String> args) {
-  var remote = 'origin';
-  var baseBranch = 'main';
-  var head = 'HEAD';
+const String _remoteFlag = 'remote';
+const String _baseBranchFlag = 'base-branch';
+const String _headFlag = 'head';
+const String _helpFlag = 'help';
 
-  for (final arg in args) {
-    if (arg.startsWith('--remote=')) {
-      remote = arg.substring('--remote='.length);
-    } else if (arg.startsWith('--base-branch=')) {
-      baseBranch = arg.substring('--base-branch='.length);
-    } else if (arg.startsWith('--head=')) {
-      head = arg.substring('--head='.length);
-    }
+void main(List<String> args) {
+  final parser = ArgParser()
+    ..addOption(
+      _remoteFlag,
+      defaultsTo: 'origin',
+      help: 'The git remote to compare against.',
+    )
+    ..addOption(
+      _baseBranchFlag,
+      defaultsTo: 'main',
+      help: 'The base branch to compare against.',
+    )
+    ..addOption(
+      _headFlag,
+      defaultsTo: 'HEAD',
+      help: 'The head commit or reference to compare.',
+    )
+    ..addFlag(
+      _helpFlag,
+      abbr: 'h',
+      negatable: false,
+      help: 'Prints usage information.',
+    );
+
+  final ArgResults argResults;
+  try {
+    argResults = parser.parse(args);
+  } on FormatException catch (e) {
+    stderr.writeln(e.message);
+    stderr.writeln(parser.usage);
+    exitCode = 1;
+    return;
   }
+
+  if (argResults.wasParsed(_helpFlag)) {
+    stdout.writeln('Checks git commit history for forbidden evaluation author credentials.\n');
+    stdout.writeln(parser.usage);
+    return;
+  }
+
+  final remote = argResults[_remoteFlag] as String;
+  final baseBranch = argResults[_baseBranchFlag] as String;
+  final head = argResults[_headFlag] as String;
 
   // Fetch upstream to ensure base branch is available.
   final ProcessResult fetchResult = Process.runSync('git', <String>['fetch', remote, baseBranch]);
