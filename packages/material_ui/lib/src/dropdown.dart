@@ -988,9 +988,9 @@ class DropdownButton<T> extends StatefulWidget {
   /// Creates a dropdown button.
   ///
   /// The [items] must have distinct values. If [value] isn't null then it
-  /// must be equal to one of the [DropdownMenuItem] values. If [items] or
-  /// [onChanged] is null, the button will be disabled, the down arrow
-  /// will be greyed out.
+  /// must be equal to one of the [DropdownMenuItem] values. If [items] is
+  /// null or empty, or [enabled] is false, the button will be disabled,
+  /// the down arrow will be greyed out.
   ///
   /// If [value] is null and the button is enabled, [hint] will be displayed
   /// if it is non-null.
@@ -1034,9 +1034,11 @@ class DropdownButton<T> extends StatefulWidget {
     this.barrierDismissible = true,
     this.mouseCursor,
     this.dropdownMenuItemMouseCursor,
+    bool? enabled,
     // When adding new arguments, consider adding similar arguments to
     // DropdownButtonFormField.
-  }) : assert(
+  }) : enabled = enabled ?? onChanged != null,
+       assert(
          items == null ||
              items.isEmpty ||
              value == null ||
@@ -1060,7 +1062,7 @@ class DropdownButton<T> extends StatefulWidget {
     this.value,
     this.hint,
     this.disabledHint,
-    required this.onChanged,
+    this.onChanged,
     this.onTap,
     this.elevation = 8,
     this.style,
@@ -1087,7 +1089,9 @@ class DropdownButton<T> extends StatefulWidget {
     this.dropdownMenuItemMouseCursor,
     required this._inputDecoration,
     required this._isEmpty,
-  }) : assert(
+    bool? enabled,
+  }) : enabled = enabled ?? onChanged != null,
+       assert(
          items == null ||
              items.isEmpty ||
              value == null ||
@@ -1104,7 +1108,7 @@ class DropdownButton<T> extends StatefulWidget {
 
   /// The list of items the user can select.
   ///
-  /// If the [onChanged] callback is null or the list of items is null
+  /// If [enabled] is false or the list of items is null or empty
   /// then the dropdown button will be disabled, i.e. its arrow will be
   /// displayed in grey and it will not respond to input.
   final List<DropdownMenuItem<T>>? items;
@@ -1130,19 +1134,26 @@ class DropdownButton<T> extends StatefulWidget {
 
   /// A preferred placeholder widget that is displayed when the dropdown is disabled.
   ///
-  /// If [value] is null, the dropdown is disabled ([items] or [onChanged] is null),
+  /// If the dropdown is disabled ([items] is null or empty, or [enabled] is false),
   /// this widget is displayed as a placeholder for the dropdown button's value.
   final Widget? disabledHint;
 
   /// {@template material_ui.dropdownButton.onChanged}
   /// Called when the user selects an item.
   ///
-  /// If the [onChanged] callback is null or the list of [DropdownButton.items]
-  /// is null then the dropdown button will be disabled, i.e. its arrow will be
-  /// displayed in grey and it will not respond to input. A disabled button
-  /// will display the [DropdownButton.disabledHint] widget if it is non-null.
-  /// If [DropdownButton.disabledHint] is also null but [DropdownButton.hint] is
-  /// non-null, [DropdownButton.hint] will instead be displayed.
+  /// The dropdown button is enabled when [enabled] is true.
+  ///
+  /// If [enabled] is null, then the dropdown button will be enabled if
+  /// [onChanged] is provided, and disabled otherwise.
+  ///
+  /// If [enabled] is false, or the list of [DropdownButton.items] is null or empty,
+  /// then the dropdown button will be disabled. When disabled, the arrow is
+  /// displayed in grey and the button does not respond to input.
+  ///
+  /// A disabled button will display the [DropdownButton.disabledHint] widget if
+  /// it is non-null. If [DropdownButton.disabledHint] is also null but
+  /// [DropdownButton.hint] is non-null, [DropdownButton.hint] will instead be
+  /// displayed.
   /// {@endtemplate}
   final ValueChanged<T?>? onChanged;
 
@@ -1223,7 +1234,7 @@ class DropdownButton<T> extends StatefulWidget {
   final Widget? icon;
 
   /// The color of any [Icon] descendant of [icon] if this button is disabled,
-  /// i.e. if [onChanged] is null.
+  /// i.e. if [enabled] is false.
   ///
   /// Defaults to [MaterialColor.shade400] of [Colors.grey] when the theme's
   /// [ThemeData.brightness] is [Brightness.light] and to
@@ -1231,7 +1242,7 @@ class DropdownButton<T> extends StatefulWidget {
   final Color? iconDisabledColor;
 
   /// The color of any [Icon] descendant of [icon] if this button is enabled,
-  /// i.e. if [onChanged] is defined.
+  /// i.e. if [enabled] is true.
   ///
   /// Defaults to [MaterialColor.shade700] of [Colors.grey] when the theme's
   /// [ThemeData.brightness] is [Brightness.light] and to
@@ -1361,6 +1372,16 @@ class DropdownButton<T> extends StatefulWidget {
   ///
   /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
   final MouseCursor? dropdownMenuItemMouseCursor;
+
+  /// Whether the [DropdownButton] is enabled.
+  ///
+  /// When [enabled] is false, the field is disabled and does not allow user
+  /// interaction or value changes, regardless of the [onChanged] callback.
+  ///
+  /// If the `enabled` argument is not explicitly provided in the constructor,
+  /// this property falls back to true if [onChanged] is not null, and
+  /// false otherwise.
+  final bool enabled;
 
   final InputDecoration? _inputDecoration;
 
@@ -1574,7 +1595,7 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindi
     }
   }
 
-  bool get _enabled => widget.items != null && widget.items!.isNotEmpty && widget.onChanged != null;
+  bool get _enabled => widget.items != null && widget.items!.isNotEmpty && widget.enabled;
 
   Orientation _getOrientation(BuildContext context) {
     Orientation? result = MediaQuery.maybeOrientationOf(context);
@@ -1839,7 +1860,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
     T? initialValue,
     Widget? hint,
     Widget? disabledHint,
-    required this.onChanged,
+    this.onChanged,
     VoidCallback? onTap,
     int elevation = 8,
     TextStyle? style,
@@ -1859,6 +1880,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
     super.validator,
     super.errorBuilder,
     super.forceErrorText,
+    bool? enabled,
     AutovalidateMode? autovalidateMode,
     double? menuMaxHeight,
     bool? enableFeedback,
@@ -1892,6 +1914,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
        super(
          initialValue: initialValue ?? value,
          autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
+         enabled: enabled ?? onChanged != null,
          builder: (FormFieldState<T> field) {
            final state = field as _DropdownButtonFormFieldState<T>;
            InputDecoration effectiveDecoration = (decoration ?? const InputDecoration())
@@ -1900,7 +1923,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
            final bool showSelectedItem =
                items != null &&
                items.where((DropdownMenuItem<T> item) => item.value == state.value).isNotEmpty;
-           final bool isDropdownEnabled = onChanged != null && items != null && items.isNotEmpty;
+           final bool isDropdownEnabled = items != null && items.isNotEmpty && field.widget.enabled;
            // If decoration hintText is provided, use it as the default value for both hint and disabledHint.
            final Widget? decorationHint = effectiveDecoration.hintText != null
                ? Text(effectiveDecoration.hintText!)
@@ -1964,6 +1987,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
                  barrierDismissible: barrierDismissible,
                  mouseCursor: mouseCursor,
                  dropdownMenuItemMouseCursor: dropdownMenuItemMouseCursor,
+                 enabled: isDropdownEnabled,
                ),
              ),
            );
