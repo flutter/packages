@@ -64,11 +64,10 @@ void main(List<String> args) {
     stderr.writeln('Warning: Failed to fetch $remote/$baseBranch: ${fetchResult.stderr}');
   }
 
-  // Format '%an <%ae>%n%cn <%ce>' extracts both Author and Committer names and emails.
   final ProcessResult result = Process.runSync('git', <String>[
     'log',
     '$remote/$baseBranch..$head',
-    '--format=%an <%ae>%n%cn <%ce>',
+    '--format=full',
   ]);
 
   if (result.exitCode != 0) {
