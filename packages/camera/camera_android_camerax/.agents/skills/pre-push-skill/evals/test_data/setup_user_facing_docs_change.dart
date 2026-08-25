@@ -21,7 +21,7 @@ Dash is a very cute mascot who loves having her photo taken using `takePicture`.
 ''');
 
   updateReleaseInfo(
-    changelog: 'Document how Dash likes getting pictures taken with takePicture.',
+    changelog: 'Documents how Dash likes getting pictures taken with takePicture.',
   );
 
   commitFiles(

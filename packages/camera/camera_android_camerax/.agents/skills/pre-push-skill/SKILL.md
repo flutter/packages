@@ -53,8 +53,9 @@ dart run evals/tool/check_eval_commits.dart
 
 *Note: The script automatically discovers the remote pointing to `flutter/packages` (falling back to `upstream` or `origin`). You can optionally specify `--remote=<remote>`, `--base-branch=<branch>` (defaults to `main`), or `--head=<ref>` (defaults to `HEAD`) if comparing against a custom upstream repository, branch, or reference.*
 
-If this command outputs an error or exits with a non-zero code, the branch contains evaluation test commits.
-The code is NOT ready to push. Test commits must be removed or rebased before pushing.
+- If this command outputs `SUCCESS:` (exits with code `0`), no evaluation commits were detected. Proceed to the next check.
+- If this command exits with code `1`, the branch contains commits authored or committed with evaluation test credentials. The code is **NOT** ready to push. Test commits must be removed or rebased before pushing.
+- If this command exits with code `2`, an infrastructure error occurred (such as git fetch failure). Report the error to the user.
 
 ## 4. Check Merge Conflicts
 
@@ -119,7 +120,11 @@ If this command fails, the code WAS NOT ready to push.
 The required version bump and changelog entry must be made
 and committed before code can be pushed.
 
-Additionally, ensure `CHANGELOG.md` formatting follows the [CHANGELOG style guide](https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changelog-style).
+Additionally, verify that `CHANGELOG.md` strictly conforms to the repository CHANGELOG rules:
+1. **Present tense indicative**: Start entries with active verbs in present tense (e.g., "Adds", "Fixes", "Updates", not "Added", "Fixed", or "Add").
+2. **Trailing period**: Every entry must end with a period (`.`).
+3. **Breaking changes**: Prefix breaking changes with `**BREAKING CHANGE**`.
+4. **Code References in Backticks**: Enclose all code elements, class names, method names, and identifiers in backticks (e.g. `` `takePicture` ``, `` `CameraPreview` ``).
 
 ## 7. Check License Headers
 

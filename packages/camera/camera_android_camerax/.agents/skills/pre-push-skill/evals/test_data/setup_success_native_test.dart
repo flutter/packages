@@ -49,8 +49,12 @@ public class DummyEvalFeatureTest {
 
   updateReleaseInfo(changelog: 'Adds `DummyEvalFeature` and tests.');
 
+  // Overrides eval author credentials so this success fixture passes the commit author check.
+  // Risk: Must only be run in isolated worktrees to prevent un-quarantined test commits.
   commitFiles(
     <String>[javaFile.path, javaTestFile.path, 'pubspec.yaml', 'CHANGELOG.md'],
     'Add DummyEvalFeature.java, tests, and changelog update',
+    authorName: 'Contributor',
+    authorEmail: 'contributor@example.com',
   );
 }

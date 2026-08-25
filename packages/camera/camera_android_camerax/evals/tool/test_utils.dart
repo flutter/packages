@@ -34,7 +34,7 @@ String detectDefaultRemote() {
     final String url = parts[1];
     remoteNames.add(name);
 
-    if (url.contains('flutter/packages')) {
+    if (url.contains(RegExp(r'/flutter/packages(\.git)?$'))) {
       return name;
     }
   }
@@ -51,7 +51,7 @@ void ensureNotMainBranch() {
   final ProcessResult branchResult = Process.runSync('git', <String>['branch', '--show-current']);
   final String branch = branchResult.stdout.toString().trim();
   if (branch == 'main') {
-    stdout.writeln('Error: Cannot run setup scripts on main branch.');
+    stderr.writeln('Error: Cannot run setup scripts on main branch.');
     exit(1);
   }
 }
@@ -62,11 +62,19 @@ void updateReleaseInfo({required String changelog, String version = 'bugfix'}) {
   if (scriptToolDir.existsSync()) {
     final packageConfigFile = File('../../../script/tool/.dart_tool/package_config.json');
     if (!packageConfigFile.existsSync()) {
-      Process.runSync('dart', <String>['pub', 'get'], workingDirectory: scriptToolDir.path);
+      final ProcessResult pubGetResult = Process.runSync(
+        'dart',
+        <String>['pub', 'get'],
+        workingDirectory: scriptToolDir.path,
+      );
+      if (pubGetResult.exitCode != 0) {
+        stderr.writeln('Error: pub get in script/tool failed:\n${pubGetResult.stderr}');
+        exit(pubGetResult.exitCode);
+      }
     }
   }
 
-  Process.runSync('dart', <String>[
+  final ProcessResult result = Process.runSync('dart', <String>[
     'run',
     '../../../script/tool/bin/flutter_plugin_tools.dart',
     'update-release-info',
@@ -74,29 +82,39 @@ void updateReleaseInfo({required String changelog, String version = 'bugfix'}) {
     '--version=$version',
     '--changelog=$changelog',
   ]);
+  if (result.exitCode != 0) {
+    stderr.writeln('Error: update-release-info failed:\n${result.stderr}\n${result.stdout}');
+    exit(result.exitCode);
+  }
 }
 
-/// Stages [paths] and commits them with [message] using evaluation author metadata.
-void commitFiles(List<String> paths, String message) {
+/// Stages [paths] and commits them with [message].
+///
+/// Defaults to [evalAuthorName] and [evalAuthorEmail] so evaluation commits
+/// are quarantined and rejected by pre-push validation by default.
+void commitFiles(
+  List<String> paths,
+  String message, {
+  String authorName = evalAuthorName,
+  String authorEmail = evalAuthorEmail,
+}) {
   final ProcessResult addResult = Process.runSync('git', <String>['add', ...paths]);
   if (addResult.exitCode != 0) {
     stderr.writeln('Error: git add failed:\n${addResult.stderr}');
-    exitCode = addResult.exitCode;
-    return;
+    exit(addResult.exitCode);
   }
 
   final ProcessResult commitResult = Process.runSync('git', <String>[
     '-c',
-    'user.name=$evalAuthorName',
+    'user.name=$authorName',
     '-c',
-    'user.email=$evalAuthorEmail',
+    'user.email=$authorEmail',
     'commit',
     '-m',
     message,
   ]);
   if (commitResult.exitCode != 0) {
     stderr.writeln('Error: git commit failed:\n${commitResult.stderr}');
-    exitCode = commitResult.exitCode;
-    return;
+    exit(commitResult.exitCode);
   }
 }
