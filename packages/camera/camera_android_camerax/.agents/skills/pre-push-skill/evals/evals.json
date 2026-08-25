@@ -71,7 +71,7 @@
     },
     {
       "id": 6,
-      "prompt": "First, run 'dart run .agents/skills/pre-push-skill/evals/test_data/setup_eval_commit_failure.dart'. Then, run the /pre-push skill. Do not attempt to fix any issues you find, only report the output of the skill.",
+      "prompt": "First, run 'dart run .agents/skills/pre-push-skill/evals/test_data/setup_eval_commit_author_failure.dart'. Then, run the /pre-push skill. Do not attempt to fix any issues you find, only report the output of the skill.",
       "expected_chat_output": [
         "Agent explicitly states that the code is not ready to push.",
         "Agent points out that the branch contains commits authored by evaluation test credentials (eval-author@example.com)."

@@ -6,6 +6,12 @@ import 'dart:io';
 
 import '../../../../../evals/tool/test_utils.dart';
 
+/// Sets up a test scenario where a commit is authored using evaluation test
+/// credentials (`Eval Author <eval-author@example.com>`).
+///
+/// This script verifies that `pre-push-skill` and `check_eval_commits.dart`
+/// detect evaluation test credentials in outgoing branch commits and halt
+/// push readiness.
 void main() {
   ensureNotMainBranch();
 

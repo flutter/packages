@@ -42,8 +42,14 @@ void updateReleaseInfo({required String changelog, String version = 'bugfix'}) {
 
 /// Stages [paths] and commits them with [message] using evaluation author metadata.
 void commitFiles(List<String> paths, String message) {
-  Process.runSync('git', <String>['add', ...paths]);
-  Process.runSync('git', <String>[
+  final ProcessResult addResult = Process.runSync('git', <String>['add', ...paths]);
+  if (addResult.exitCode != 0) {
+    stderr.writeln('Error: git add failed:\n${addResult.stderr}');
+    exitCode = addResult.exitCode;
+    return;
+  }
+
+  final ProcessResult commitResult = Process.runSync('git', <String>[
     '-c',
     'user.name=$evalAuthorName',
     '-c',
@@ -52,4 +58,9 @@ void commitFiles(List<String> paths, String message) {
     '-m',
     message,
   ]);
+  if (commitResult.exitCode != 0) {
+    stderr.writeln('Error: git commit failed:\n${commitResult.stderr}');
+    exitCode = commitResult.exitCode;
+    return;
+  }
 }
