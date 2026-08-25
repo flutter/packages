@@ -7,11 +7,11 @@ import google_maps_flutter_ios_sdk10_objc
 
 /// Defines polyline controllable by Flutter.
 class PolylineController: NSObject {
-  private(set) var polyline: GMSPolyline
+  let polyline: GMSPolyline
   private weak var mapView: GMSMapView?
 
-  init(path: GMSMutablePath, identifier: String, mapView: GMSMapView) {
-    self.polyline = GMSPolyline(path: path)
+  init(identifier: String, mapView: GMSMapView) {
+    self.polyline = GMSPolyline()
     self.mapView = mapView
     self.polyline.userData = [identifier]
     super.init()
@@ -70,9 +70,10 @@ class PolylinesController: NSObject {
   func add(_ polylines: [FGMPlatformPolyline]) {
     guard let mapView = mapView else { return }
     for polyline in polylines {
-      let path = FGMGetPathFromPoints(FGMGetPointsForPigeonLatLngs(polyline.points))
       let identifier = polyline.polylineId
-      let controller = PolylineController(path: path, identifier: identifier, mapView: mapView)
+      let controller = PolylineController(identifier: identifier, mapView: mapView)
+      // TODO(stuarmorgan): Consider updating the flow here to do the update from within
+      // the initialiazer, as in CircleController.
       controller.update(from: polyline)
       polylineIdentifierToController[identifier] = controller
     }

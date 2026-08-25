@@ -10,8 +10,8 @@ class PolygonController: NSObject {
   let polygon: GMSPolygon
   private weak var mapView: GMSMapView?
 
-  init(path: GMSMutablePath, identifier: String, mapView: GMSMapView) {
-    self.polygon = GMSPolygon(path: path)
+  init(identifier: String, mapView: GMSMapView) {
+    self.polygon = GMSPolygon()
     self.mapView = mapView
     self.polygon.userData = [identifier]
     super.init()
@@ -65,9 +65,10 @@ class PolygonsController: NSObject {
   func add(_ polygons: [FGMPlatformPolygon]) {
     guard let mapView = mapView else { return }
     for polygon in polygons {
-      let path = FGMGetPathFromPoints(FGMGetPointsForPigeonLatLngs(polygon.points))
       let identifier = polygon.polygonId
-      let controller = PolygonController(path: path, identifier: identifier, mapView: mapView)
+      let controller = PolygonController(identifier: identifier, mapView: mapView)
+      // TODO(stuarmorgan): Consider updating the flow here to do the update from within
+      // the initialiazer, as in CircleController.
       controller.update(from: polygon)
       polygonIdentifierToController[identifier] = controller
     }

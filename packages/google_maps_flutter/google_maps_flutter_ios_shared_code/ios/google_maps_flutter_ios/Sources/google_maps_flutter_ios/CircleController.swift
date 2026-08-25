@@ -11,8 +11,7 @@ class CircleController: NSObject {
   private weak var mapView: GMSMapView?
 
   init(circle: FGMPlatformCircle, mapView: GMSMapView) {
-    let center = FGMGetCoordinateForPigeonLatLng(circle.center)
-    self.circle = GMSCircle(position: center, radius: circle.radius)
+    self.circle = GMSCircle()
     self.mapView = mapView
     self.circle.userData = [circle.circleId]
     super.init()

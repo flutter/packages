@@ -29,7 +29,6 @@ import Testing
     )
 
     let polylineController = PolylineController(
-      path: FGMGetPathFromPoints(FGMGetPointsForPigeonLatLngs(polyline.points)),
       identifier: polyline.polylineId,
       mapView: mapView
     )
