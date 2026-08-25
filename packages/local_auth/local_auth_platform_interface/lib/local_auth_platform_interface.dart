@@ -57,7 +57,7 @@ abstract class LocalAuthPlatform extends PlatformInterface {
   ///
   /// Provide [options] for configuring further authentication related options.
   Future<bool> authenticate({
-    required String localizedReason,
+    String? localizedReason,
     required Iterable<AuthMessages> authMessages,
     AuthenticationOptions options = const AuthenticationOptions(),
   }) async {
@@ -96,5 +96,11 @@ abstract class LocalAuthPlatform extends PlatformInterface {
   /// or an error occurred.
   Future<bool> stopAuthentication() async {
     throw UnimplementedError('stopAuthentication() has not been implemented.');
+  }
+
+  /// Returns true if the current platform implementation requires
+  /// a localized reason for authentication.
+  bool requiresLocalizedReason() {
+    throw UnimplementedError('requiresLocalizedReason() has not been implemented.');
   }
 }

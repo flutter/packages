@@ -27,11 +27,11 @@ class LocalAuthAndroid extends LocalAuthPlatform {
 
   @override
   Future<bool> authenticate({
-    required String localizedReason,
+    String? localizedReason,
     required Iterable<AuthMessages> authMessages,
     AuthenticationOptions options = const AuthenticationOptions(),
   }) async {
-    assert(localizedReason.isNotEmpty);
+    assert(!requiresLocalizedReason() || (localizedReason != null && localizedReason.isNotEmpty));
     final AuthResult result = await _api.authenticate(
       AuthOptions(
         biometricOnly: options.biometricOnly,
@@ -126,8 +126,12 @@ class LocalAuthAndroid extends LocalAuthPlatform {
   @override
   Future<bool> stopAuthentication() async => _api.stopAuthentication();
 
+  /// Always returns false as Android does not require a localized reason for authentication.
+  @override
+  bool requiresLocalizedReason() => false;
+
   AuthStrings _pigeonStringsFromAuthMessages(
-    String localizedReason,
+    String? localizedReason,
     Iterable<AuthMessages> messagesList,
   ) {
     AndroidAuthMessages? messages;
