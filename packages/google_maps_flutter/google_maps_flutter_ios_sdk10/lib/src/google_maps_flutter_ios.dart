@@ -204,16 +204,14 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
 
   @override
   Future<void> updateMapConfiguration(MapConfiguration configuration, {required int mapId}) {
-    return _hostApi(
-      mapId,
-    ).updateMapConfiguration(_platformMapConfigurationFromMapConfiguration(configuration));
+    return _hostApi(mapId)
+        .updateMapConfiguration(_platformMapConfigurationFromMapConfiguration(configuration));
   }
 
   @override
   Future<void> updateMapOptions(Map<String, dynamic> optionsUpdate, {required int mapId}) {
-    return _hostApi(
-      mapId,
-    ).updateMapConfiguration(_platformMapConfigurationFromOptionsJson(optionsUpdate));
+    return _hostApi(mapId)
+        .updateMapConfiguration(_platformMapConfigurationFromOptionsJson(optionsUpdate));
   }
 
   @override

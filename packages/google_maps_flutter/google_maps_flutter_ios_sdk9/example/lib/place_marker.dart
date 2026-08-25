@@ -440,8 +440,7 @@ class _AdvancedMarkersCapabilityStatusState extends State<AdvancedMarkersCapabil
         switch (_isAdvancedMarkersAvailable) {
           null => 'Checking map capabilities…',
           true => 'Map capabilities check result:\nthis map supports advanced markers',
-          false =>
-            "Map capabilities check result:\nthis map doesn't support advanced markers. Please check that map ID is provided and correct map renderer is used",
+          false => "Map capabilities check result:\nthis map doesn't support advanced markers. Please check that map ID is provided and correct map renderer is used",
         },
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(

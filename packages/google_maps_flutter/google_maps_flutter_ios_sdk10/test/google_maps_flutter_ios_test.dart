@@ -790,9 +790,9 @@ void main() {
       expect(firstChanged.transparency, object2new.transparency);
       expect(
         firstChanged.image.bitmap.runtimeType,
-        GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(
-          object2new.image,
-        ).bitmap.runtimeType,
+        GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(object2new.image)
+            .bitmap
+            .runtimeType,
       );
     }
     // Object three should be added.
@@ -1183,9 +1183,9 @@ void main() {
           if (args.containsKey('params')) {
             final paramsUint8List = args['params'] as Uint8List;
             final byteData = ByteData.sublistView(paramsUint8List);
-            final creationParams =
-                MapsApi.pigeonChannelCodec.decodeMessage(byteData)
-                    as PlatformMapViewCreationParams?;
+            final creationParams = MapsApi.pigeonChannelCodec.decodeMessage(
+              byteData,
+            ) as PlatformMapViewCreationParams?;
             if (creationParams != null) {
               final String? passedMapId = creationParams.mapConfiguration.mapId;
               if (passedMapId != null) {
@@ -1237,9 +1237,9 @@ void main() {
             if (args.containsKey('params')) {
               final paramsUint8List = args['params'] as Uint8List;
               final byteData = ByteData.sublistView(paramsUint8List);
-              final creationParams =
-                  MapsApi.pigeonChannelCodec.decodeMessage(byteData)
-                      as PlatformMapViewCreationParams?;
+              final creationParams = MapsApi.pigeonChannelCodec.decodeMessage(
+                byteData,
+              ) as PlatformMapViewCreationParams?;
               if (creationParams != null && !passedMarkerTypeCompleter.isCompleted) {
                 passedMarkerTypeCompleter.complete(creationParams.mapConfiguration.markerType);
               }
@@ -1280,8 +1280,7 @@ void main() {
       expect(
         passedMarkerType,
         PlatformMarkerType.advancedMarker,
-        reason:
-            'Should pass advancedMarker on PlatformView creation when MarkerType.advancedMarker is set',
+        reason: 'Should pass advancedMarker on PlatformView creation when MarkerType.advancedMarker is set',
       );
     });
 

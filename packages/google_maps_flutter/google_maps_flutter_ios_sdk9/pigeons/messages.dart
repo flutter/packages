@@ -10,10 +10,8 @@ import 'package:pigeon/pigeon.dart';
     // This uses a different output name to avoid conflicts with the pigeon
     // files in other packages, without having to use full relative paths
     // in #includes (which would make source sharing harder to manage).
-    objcHeaderOut:
-        'ios/google_maps_flutter_ios_sdk9/Sources/google_maps_flutter_ios_sdk9/include/google_maps_flutter_ios_sdk9/google_maps_flutter_pigeon_messages.g.h',
-    objcSourceOut:
-        'ios/google_maps_flutter_ios_sdk9/Sources/google_maps_flutter_ios_sdk9/google_maps_flutter_pigeon_messages.g.m',
+    objcHeaderOut: 'ios/google_maps_flutter_ios_sdk9/Sources/google_maps_flutter_ios_sdk9/include/google_maps_flutter_ios_sdk9/google_maps_flutter_pigeon_messages.g.h',
+    objcSourceOut: 'ios/google_maps_flutter_ios_sdk9/Sources/google_maps_flutter_ios_sdk9/google_maps_flutter_pigeon_messages.g.m',
     objcOptions: ObjcOptions(prefix: 'FGM'),
     copyrightHeader: 'pigeons/copyright.txt',
     // Use the base package name so that the generated code can be shared
