@@ -63,7 +63,9 @@ class ErrorOr {
 
  private:
   friend class HostIntegrationCoreApi;
+  friend class FlutterCallbackCoreApi;
   friend class FlutterIntegrationCoreApi;
+  friend class HostCallbackCoreApi;
   friend class HostTrivialApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
@@ -108,7 +110,9 @@ class UnusedClass {
   static UnusedClass FromEncodableList(const ::flutter::EncodableList& list);
   ::flutter::EncodableList ToEncodableList() const;
   friend class HostIntegrationCoreApi;
+  friend class FlutterCallbackCoreApi;
   friend class FlutterIntegrationCoreApi;
+  friend class HostCallbackCoreApi;
   friend class HostTrivialApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
@@ -245,7 +249,9 @@ class AllTypes {
   ::flutter::EncodableList ToEncodableList() const;
   friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
+  friend class FlutterCallbackCoreApi;
   friend class FlutterIntegrationCoreApi;
+  friend class HostCallbackCoreApi;
   friend class HostTrivialApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
@@ -464,7 +470,9 @@ class AllNullableTypes {
   ::flutter::EncodableList ToEncodableList() const;
   friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
+  friend class FlutterCallbackCoreApi;
   friend class FlutterIntegrationCoreApi;
+  friend class HostCallbackCoreApi;
   friend class HostTrivialApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
@@ -668,7 +676,9 @@ class AllNullableTypesWithoutRecursion {
   ::flutter::EncodableList ToEncodableList() const;
   friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
+  friend class FlutterCallbackCoreApi;
   friend class FlutterIntegrationCoreApi;
+  friend class HostCallbackCoreApi;
   friend class HostTrivialApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
@@ -725,7 +735,9 @@ class AnEmptyClass {
   ::flutter::EncodableList ToEncodableList() const;
   friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
+  friend class FlutterCallbackCoreApi;
   friend class FlutterIntegrationCoreApi;
+  friend class HostCallbackCoreApi;
   friend class HostTrivialApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
@@ -809,7 +821,9 @@ class AllClassesWrapper {
       const ::flutter::EncodableList& list);
   ::flutter::EncodableList ToEncodableList() const;
   friend class HostIntegrationCoreApi;
+  friend class FlutterCallbackCoreApi;
   friend class FlutterIntegrationCoreApi;
+  friend class HostCallbackCoreApi;
   friend class HostTrivialApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
@@ -853,7 +867,9 @@ class TestMessage {
   static TestMessage FromEncodableList(const ::flutter::EncodableList& list);
   ::flutter::EncodableList ToEncodableList() const;
   friend class HostIntegrationCoreApi;
+  friend class FlutterCallbackCoreApi;
   friend class FlutterIntegrationCoreApi;
+  friend class HostCallbackCoreApi;
   friend class HostTrivialApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
@@ -1287,6 +1303,10 @@ class HostIntegrationCoreApi {
   // Returns true if the handler is run on a non-main thread, which should be
   // true for any platform with TaskQueue support.
   virtual ErrorOr<bool> TaskQueueIsBackgroundThread() = 0;
+  // Returns true if the handler is run on a non-main thread, which should be
+  // true for any platform with TaskQueue support.
+  virtual void AsyncTaskQueueIsBackgroundThread(
+      std::function<void(ErrorOr<bool> reply)> result) = 0;
   virtual void CallFlutterNoop(
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
   virtual void CallFlutterThrowError(
@@ -1464,6 +1484,17 @@ class HostIntegrationCoreApi {
   virtual void CallFlutterSmallApiEchoString(
       const std::string& a_string,
       std::function<void(ErrorOr<std::string> reply)> result) = 0;
+  virtual void CallFlutterCallbackNoop(
+      std::function<void(std::optional<FlutterError> reply)> result) = 0;
+  virtual void CallFlutterCallbackEchoString(
+      const std::string& a_string,
+      std::function<void(ErrorOr<std::string> reply)> result) = 0;
+  virtual void CallFlutterCallbackThrowError(
+      std::function<
+          void(ErrorOr<std::optional<::flutter::EncodableValue>> reply)>
+          result) = 0;
+  virtual void CallFlutterCallbackThrowErrorFromVoid(
+      std::function<void(std::optional<FlutterError> reply)> result) = 0;
 
   // The codec used by HostIntegrationCoreApi.
   static const ::flutter::StandardMessageCodec& GetCodec();
@@ -1480,6 +1511,32 @@ class HostIntegrationCoreApi {
  protected:
   HostIntegrationCoreApi() = default;
 };
+// A Flutter API using callback-based asynchronous methods (@asyncCallback).
+//
+// Generated class from Pigeon that represents Flutter messages that can be
+// called from C++.
+class FlutterCallbackCoreApi {
+ public:
+  FlutterCallbackCoreApi(::flutter::BinaryMessenger* binary_messenger);
+  FlutterCallbackCoreApi(::flutter::BinaryMessenger* binary_messenger,
+                         const std::string& message_channel_suffix);
+  static const ::flutter::StandardMessageCodec& GetCodec();
+  void Noop(std::function<void(void)>&& on_success,
+            std::function<void(const FlutterError&)>&& on_error);
+  void EchoString(const std::string& a_string,
+                  std::function<void(const std::string&)>&& on_success,
+                  std::function<void(const FlutterError&)>&& on_error);
+  void ThrowError(
+      std::function<void(const ::flutter::EncodableValue*)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
+  void ThrowErrorFromVoid(std::function<void(void)>&& on_success,
+                          std::function<void(const FlutterError&)>&& on_error);
+
+ private:
+  ::flutter::BinaryMessenger* binary_messenger_;
+  std::string message_channel_suffix_;
+};
+
 // The core interface that the Dart platform_test code implements for host
 // integration tests to call into.
 //
@@ -1741,6 +1798,51 @@ class FlutterIntegrationCoreApi {
   std::string message_channel_suffix_;
 };
 
+// A Host API using callback-based asynchronous methods (@asyncCallback).
+//
+// Generated interface from Pigeon that represents a handler of messages from
+// Flutter.
+class HostCallbackCoreApi {
+ public:
+  HostCallbackCoreApi(const HostCallbackCoreApi&) = delete;
+  HostCallbackCoreApi& operator=(const HostCallbackCoreApi&) = delete;
+  virtual ~HostCallbackCoreApi() {}
+  virtual void Noop(
+      std::function<void(std::optional<FlutterError> reply)> result) = 0;
+  virtual void EchoString(
+      const std::string& a_string,
+      std::function<void(ErrorOr<std::string> reply)> result) = 0;
+  virtual void EchoAllTypes(
+      const AllTypes& everything,
+      std::function<void(ErrorOr<AllTypes> reply)> result) = 0;
+  virtual void EchoNullableString(
+      const std::string* a_string,
+      std::function<void(ErrorOr<std::optional<std::string>> reply)>
+          result) = 0;
+  virtual void ThrowError(
+      std::function<
+          void(ErrorOr<std::optional<::flutter::EncodableValue>> reply)>
+          result) = 0;
+  virtual void ThrowErrorFromVoid(
+      std::function<void(std::optional<FlutterError> reply)> result) = 0;
+  virtual void TaskQueueIsBackgroundThread(
+      std::function<void(ErrorOr<bool> reply)> result) = 0;
+
+  // The codec used by HostCallbackCoreApi.
+  static const ::flutter::StandardMessageCodec& GetCodec();
+  // Sets up an instance of `HostCallbackCoreApi` to handle messages through the
+  // `binary_messenger`.
+  static void SetUp(::flutter::BinaryMessenger* binary_messenger,
+                    HostCallbackCoreApi* api);
+  static void SetUp(::flutter::BinaryMessenger* binary_messenger,
+                    HostCallbackCoreApi* api,
+                    const std::string& message_channel_suffix);
+  static ::flutter::EncodableValue WrapError(std::string_view error_message);
+  static ::flutter::EncodableValue WrapError(const FlutterError& error);
+
+ protected:
+  HostCallbackCoreApi() = default;
+};
 // An API that can be implemented for minimal, compile-only tests.
 //
 // Generated interface from Pigeon that represents a handler of messages from
