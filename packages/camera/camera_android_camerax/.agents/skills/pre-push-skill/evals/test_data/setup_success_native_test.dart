@@ -47,15 +47,7 @@ public class DummyEvalFeatureTest {
 }
 ''');
 
-  // Use repository tooling to bump version and add changelog entry.
-  Process.runSync('dart', <String>[
-    'run',
-    '../../../script/tool/bin/flutter_plugin_tools.dart',
-    'update-release-info',
-    '--packages=camera_android_camerax',
-    '--version=bugfix',
-    '--changelog=Adds `DummyEvalFeature` and tests.',
-  ]);
+  updateReleaseInfo(changelog: 'Adds `DummyEvalFeature` and tests.');
 
   commitFiles(
     <String>[javaFile.path, javaTestFile.path, 'pubspec.yaml', 'CHANGELOG.md'],

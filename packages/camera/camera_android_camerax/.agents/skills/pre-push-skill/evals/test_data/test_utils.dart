@@ -14,6 +14,26 @@ void ensureNotMainBranch() {
   }
 }
 
+/// Updates the package version and changelog using repository tooling.
+void updateReleaseInfo({required String changelog, String version = 'bugfix'}) {
+  final scriptToolDir = Directory('../../../script/tool');
+  if (scriptToolDir.existsSync()) {
+    final packageConfigFile = File('../../../script/tool/.dart_tool/package_config.json');
+    if (!packageConfigFile.existsSync()) {
+      Process.runSync('dart', <String>['pub', 'get'], workingDirectory: scriptToolDir.path);
+    }
+  }
+
+  Process.runSync('dart', <String>[
+    'run',
+    '../../../script/tool/bin/flutter_plugin_tools.dart',
+    'update-release-info',
+    '--packages=camera_android_camerax',
+    '--version=$version',
+    '--changelog=$changelog',
+  ]);
+}
+
 /// Stages [paths] and commits them with [message] using dummy author metadata.
 void commitFiles(List<String> paths, String message) {
   Process.runSync('git', <String>['add', ...paths]);

@@ -20,15 +20,9 @@ $readmeContent
 Dash is a very cute mascot who loves having her photo taken using `takePicture`.
 ''');
 
-  // Use repository tooling to bump version and add changelog entry without backticks.
-  Process.runSync('dart', <String>[
-    'run',
-    '../../../script/tool/bin/flutter_plugin_tools.dart',
-    'update-release-info',
-    '--packages=camera_android_camerax',
-    '--version=bugfix',
-    '--changelog=Document how Dash likes getting pictures taken with takePicture.',
-  ]);
+  updateReleaseInfo(
+    changelog: 'Document how Dash likes getting pictures taken with takePicture.',
+  );
 
   commitFiles(
     <String>[readmeFile.path, 'pubspec.yaml', 'CHANGELOG.md'],
