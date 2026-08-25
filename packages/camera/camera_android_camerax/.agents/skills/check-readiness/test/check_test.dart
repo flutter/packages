@@ -68,6 +68,8 @@ void main() {
     );
     workspaceRoot = fileSystem.path.absolute('workspace');
     fileSystem.file(fileSystem.path.join(workspaceRoot, '.git')).createSync(recursive: true);
+    processManager.runMock['git config --get core.hooksPath'] =
+        ProcessResult(0, 0, 'script/githooks\n', '');
     printLogs.clear();
   });
 
@@ -118,6 +120,37 @@ void main() {
         printLogs,
         contains(
             'Error: Git working directory is not clean. Please commit or stash your changes before starting new work.'));
+  });
+
+  test('fails when git hooks are not configured', () async {
+    fileSystem
+        .directory(fileSystem.path.join(workspaceRoot, '.agents', 'skills'))
+        .createSync(recursive: true);
+
+    processManager.runMock['git config --get core.hooksPath'] = ProcessResult(0, 1, '', '');
+
+    final bool result = await runChecker();
+    expect(result, isFalse);
+    expect(
+      printLogs.any((line) => line.contains('Git hooks are not configured correctly')),
+      isTrue,
+    );
+  });
+
+  test('fails when git hooks point to incorrect path', () async {
+    fileSystem
+        .directory(fileSystem.path.join(workspaceRoot, '.agents', 'skills'))
+        .createSync(recursive: true);
+
+    processManager.runMock['git config --get core.hooksPath'] =
+        ProcessResult(0, 0, 'other/hooks\n', '');
+
+    final bool result = await runChecker();
+    expect(result, isFalse);
+    expect(
+      printLogs.any((line) => line.contains('Git hooks are not configured correctly')),
+      isTrue,
+    );
   });
 
   test('fails when flutter is missing', () async {
