@@ -54,6 +54,44 @@
         "The agent does not create any new commits or modify the working tree."
       ],
       "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 5,
+      "prompt": "First, run 'dart .agents/skills/pre-push-skill/evals/test_data/setup_behind_upstream_no_conflict.dart'. Then, run the pre-push skill.",
+      "expected_chat_output": [
+        "The agent warned the user that the branch should be pulled or merged before pushing.",
+        "The agent reported that the code is ready to push (# YES, you are ready to push!)."
+      ],
+      "expected_repo_state": [
+        "The agent detected that the branch is behind the upstream main branch.",
+        "The agent verified that there are no merge conflicts with the upstream main branch.",
+        "The agent ran the unit tests check.",
+        "The agent ran the publish check (Version and CHANGELOG updates).",
+        "The agent ran the license headers check.",
+        "The agent ran the required documentation check.",
+        "The agent ran the added tests check.",
+        "The agent did not run update-release-info.",
+        "pubspec.yaml was not modified.",
+        "CHANGELOG.md was not modified."
+      ],
+       "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 6,
+      "prompt": "First, run 'dart .agents/skills/pre-push-skill/evals/test_data/setup_behind_upstream_conflict.dart'. Then, run the pre-push skill.",
+      "expected_chat_output": [
+        "The agent reported that the code is not ready to push (# NO, you are not ready to push).",
+        "The agent told the user that there were merge conflicts and the command to reproduce the merge."
+      ],
+      "expected_repo_state": [
+        "The agent detected that the branch is behind the upstream main branch.",
+        "The agent detected merge conflicts with the upstream main branch.",
+        "The agent stopped immediately at the merge conflict check without running subsequent checks.",
+        "The agent did not run update-release-info.",
+        "pubspec.yaml was not modified.",
+        "CHANGELOG.md was not modified."
+      ],
+      "agent_config": "reidbaker-agent"
     }
   ]
 }
