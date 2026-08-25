@@ -1531,6 +1531,9 @@ class DateRangePickerDialog extends StatefulWidget {
   /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
 
+  /// Optional text input formatters.
+  final List<TextInputFormatter>? inputFormatters;
+
   @override
   State<DateRangePickerDialog> createState() => _DateRangePickerDialogState();
 }

@@ -17,7 +17,6 @@ import 'package:material_ui/material_ui.dart';
 
 import 'clipboard_utils.dart';
 
-
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
