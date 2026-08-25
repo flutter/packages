@@ -6,6 +6,11 @@ has its own copy of these files—allowing us to maintain multiple major version
 wrappers without complex branching—each implementation package has a CI test
 that validates that its copies of these files have not diverged.
 
+Note: `google_maps_flutter_ios` is **not** part of the shared source system.
+It is frozen, with ongoing development happening only in the `_sdk*` versions,
+since `google_maps_flutter_ios` cannot adopt Swift without breaking the
+dynamic CocoaPods resolution system.
+
 This means that for almost all changes to `google_maps_flutter_ios_*`, the
 changes need to be copied here, and to all instances of the package, with any
 instance of the package name itself changed in each copy. After making changes
