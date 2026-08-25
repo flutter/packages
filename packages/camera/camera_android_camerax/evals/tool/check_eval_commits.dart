@@ -13,36 +13,8 @@ const String _baseBranchFlag = 'base-branch';
 const String _headFlag = 'head';
 const String _helpFlag = 'help';
 
-String _detectDefaultRemote() {
-  final ProcessResult result = Process.runSync('git', <String>['remote', '-v']);
-  if (result.exitCode == 0) {
-    final stdout = result.stdout.toString();
-    for (final String line in stdout.split('\n')) {
-      if (line.contains('flutter/packages')) {
-        final List<String> parts = line.split(RegExp(r'\s+'));
-        if (parts.isNotEmpty) {
-          return parts.first;
-        }
-      }
-    }
-    final List<String> remotes = stdout
-        .split('\n')
-        .map((String line) => line.split(RegExp(r'\s+')).firstOrNull)
-        .whereType<String>()
-        .where((String name) => name.isNotEmpty)
-        .toList();
-    if (remotes.contains('upstream')) {
-      return 'upstream';
-    }
-    if (remotes.contains('origin')) {
-      return 'origin';
-    }
-  }
-  return 'origin';
-}
-
 void main(List<String> args) {
-  final String defaultRemote = _detectDefaultRemote();
+  final String defaultRemote = detectDefaultRemote();
   final parser = ArgParser()
     ..addOption(
       _remoteFlag,

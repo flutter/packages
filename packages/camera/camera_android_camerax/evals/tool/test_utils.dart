@@ -10,6 +10,36 @@ const String evalAuthorName = 'Eval Author';
 /// Author email used for evaluation test commits.
 const String evalAuthorEmail = 'eval-author@example.com';
 
+/// Detects the remote pointing to the main flutter/packages repository,
+/// or falls back to 'upstream' or 'origin'.
+String detectDefaultRemote() {
+  final ProcessResult result = Process.runSync('git', <String>['remote', '-v']);
+  if (result.exitCode == 0) {
+    final stdout = result.stdout.toString();
+    for (final String line in stdout.split('\n')) {
+      if (line.contains('flutter/packages')) {
+        final List<String> parts = line.split(RegExp(r'\s+'));
+        if (parts.isNotEmpty) {
+          return parts.first;
+        }
+      }
+    }
+    final List<String> remotes = stdout
+        .split('\n')
+        .map((String line) => line.split(RegExp(r'\s+')).firstOrNull)
+        .whereType<String>()
+        .where((String name) => name.isNotEmpty)
+        .toList();
+    if (remotes.contains('upstream')) {
+      return 'upstream';
+    }
+    if (remotes.contains('origin')) {
+      return 'origin';
+    }
+  }
+  return 'origin';
+}
+
 /// Asserts that the current git branch is not `main` to prevent modifying the default branch.
 void ensureNotMainBranch() {
   final ProcessResult branchResult = Process.runSync('git', <String>['branch', '--show-current']);
