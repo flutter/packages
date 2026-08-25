@@ -4,6 +4,9 @@
   to https://github.com/flutter/packages.
 * Updates metadata in `pubspec.yaml`.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Adds [FloatUniformsSetter] interface for configuring float uniforms.
+* Adds documentation comments for public APIs.
+* Updates code for new analysis options.
 
 ## 0.1.3
 
