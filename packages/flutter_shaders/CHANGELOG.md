@@ -1,3 +1,10 @@
+## 0.1.4
+
+* Transfers the package source from https://github.com/jonahwilliams/flutter_shaders
+  to https://github.com/flutter/packages.
+* Updates metadata in `pubspec.yaml`.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 0.1.3
 
 * Remove unecessary location decorations for pixelation shader.
