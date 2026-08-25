@@ -1880,6 +1880,70 @@ void main() {
         // onEnter blocked before redirects were evaluated.
         expect(redirectCallCount, redirectCountAfterInit);
       });
+
+      testWidgets('onEnter cannot guard a location only reachable via redirect:', (
+        WidgetTester tester,
+      ) async {
+        // Regression test for https://github.com/flutter/flutter/issues/188014
+        //
+        // onEnter cannot intercept a location that is only ever reached
+        // through a `redirect:` callback (route-level or top-level) -- it is
+        // evaluated once, against the literal navigated-to URI, strictly
+        // before redirects run. This is documented behavior (see the
+        // [RoutingConfig.onEnter] doc comment) and matches the existing
+        // 'onEnter called once when top-level redirect chains' test above,
+        // but is easy to trip over when onEnter itself tries to branch on an
+        // intermediate redirect target.
+        final seenNextPaths = <String>[];
+        router = GoRouter(
+          initialLocation: '/',
+          onEnter:
+              (
+                BuildContext context,
+                GoRouterState current,
+                GoRouterState next,
+                GoRouter goRouter,
+              ) async {
+                seenNextPaths.add(next.uri.path);
+                if (next.uri.path == '/a') {
+                  return Block.then(() => goRouter.go('/b'));
+                }
+                return const Allow();
+              },
+          routes: <RouteBase>[
+            GoRoute(path: '/', redirect: (_, _) => '/a'),
+            GoRoute(path: '/a', builder: (_, _) => const Text('A')),
+            GoRoute(path: '/b', builder: (_, _) => const Text('B')),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        expect(seenNextPaths, equals(<String>['/']));
+        expect(router.routerDelegate.currentConfiguration.uri.toString(), '/a');
+        expect(find.text('A'), findsOneWidget);
+        expect(find.text('B'), findsNothing);
+      });
+
+      testWidgets('workaround: guard the redirect target inside redirect: instead', (
+        WidgetTester tester,
+      ) async {
+        router = GoRouter(
+          initialLocation: '/',
+          routes: <RouteBase>[
+            GoRoute(path: '/', redirect: (_, _) => '/a'),
+            GoRoute(path: '/a', redirect: (_, _) => '/b', builder: (_, _) => const Text('A')),
+            GoRoute(path: '/b', builder: (_, _) => const Text('B')),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        expect(router.routerDelegate.currentConfiguration.uri.toString(), '/b');
+        expect(find.text('B'), findsOneWidget);
+      });
     });
   });
 }
