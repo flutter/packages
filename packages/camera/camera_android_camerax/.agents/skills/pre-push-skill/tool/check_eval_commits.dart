@@ -6,24 +6,43 @@ import 'dart:io';
 
 import '../evals/test_data/test_utils.dart';
 
-void main() {
-  // Fetch upstream main if available to compare against.
-  Process.runSync('git', <String>['fetch', 'origin', 'main']);
+void main(List<String> args) {
+  var remote = 'origin';
+  var baseBranch = 'main';
+  var head = 'HEAD';
 
+  for (final arg in args) {
+    if (arg.startsWith('--remote=')) {
+      remote = arg.substring('--remote='.length);
+    } else if (arg.startsWith('--base-branch=')) {
+      baseBranch = arg.substring('--base-branch='.length);
+    } else if (arg.startsWith('--head=')) {
+      head = arg.substring('--head='.length);
+    }
+  }
+
+  // Fetch upstream to ensure base branch is available.
+  final ProcessResult fetchResult = Process.runSync('git', <String>['fetch', remote, baseBranch]);
+  if (fetchResult.exitCode != 0) {
+    stderr.writeln('Warning: Failed to fetch $remote/$baseBranch: ${fetchResult.stderr}');
+  }
+
+  // Format '%an <%ae>' extracts the commit Author Name (%an) and Author Email (%ae),
+  // for example: "Eval Author <eval-author@example.com>".
   final ProcessResult result = Process.runSync('git', <String>[
     'log',
-    'origin/main..HEAD',
+    '$remote/$baseBranch..$head',
     '--format=%an <%ae>',
   ]);
 
-  final logOutput = result.exitCode == 0
-      ? result.stdout.toString()
-      : (Process.runSync('git', <String>[
-          'log',
-          '-n',
-          '20',
-          '--format=%an <%ae>',
-        ]).stdout as String);
+  if (result.exitCode != 0) {
+    stderr.writeln(
+      'ERROR: Failed to run git log for $remote/$baseBranch..$head:\n${result.stderr}',
+    );
+    exit(result.exitCode);
+  }
+
+  final logOutput = result.stdout.toString();
 
   final List<String> authors = logOutput
       .split('\n')
