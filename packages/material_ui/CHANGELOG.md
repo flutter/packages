@@ -18,7 +18,7 @@
 ## 0.0.3+1
 
 - Replaces unresolvable doc imports.
-- Adds a main.dart example for the Pub "Example" tab that reference a curated
+- Adds a main.dart example for the Pub "Example" tab that references a curated
 list of existing examples.
 
 ## 0.0.3
