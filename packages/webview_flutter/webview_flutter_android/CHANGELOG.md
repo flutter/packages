@@ -1,6 +1,6 @@
 ## 4.14.1
 
-* Updates pigeon dev_dependency lower bound for analyzer 14 compatibility.
+* Updates pigeon dev_dependency constraint for analyzer 14 compatibility.
 
 ## 4.14.0
 * Adds support for configuring Web Authentication in `AndroidWebViewController` with `setWebAuthenticationSupport` to enable Passkey and other related Authentication.

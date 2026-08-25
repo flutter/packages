@@ -1,6 +1,6 @@
 ## 2.19.13
 
-* Updates pigeon dev_dependency lower bound for analyzer 14 compatibility.
+* Updates pigeon dev_dependency constraint for analyzer 14 compatibility.
 
 ## 2.19.12
 
