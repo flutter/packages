@@ -413,4 +413,149 @@ void main() {
     tabBarTheme: TabBarThemeData(indicatorColor: Colors.green),
   );
   themeData.indicatorColor; // Removing field reference not supported.
+
+  // Changes made in TKTKTK
+  // Constructor
+  ThemeData themeData = ThemeData();
+  themeData = ThemeData(
+    canvasColor: Colors.red, // No theme-level replacement
+    cardTheme: CardThemeData(color: Colors.red),
+    dividerTheme: DividerThemeData(color: Colors.red),
+    inputDecorationTheme: InputDecorationThemeData(hintStyle: TextStyle(color: Colors.red)),
+    colorScheme: ColorScheme(primary: Colors.red),
+    primaryColorDark: Colors.green, // No theme-level replacement
+    primaryColorLight: Colors.blue, // No theme-level replacement
+    primaryIconTheme: IconThemeData(color: Colors.red), // No theme-level replacement
+    primaryTextTheme: TextTheme(
+      displayLarge: TextStyle(color: Colors.red),
+      displayMedium: TextStyle(color: Colors.red, fontSize: 20),
+      displaySmall: TextStyle(fontSize: 20),
+    ), // No theme-level replacement
+    scaffoldBackgroundColor: Colors.red, // No theme-level replacement
+    secondaryHeaderColor: Colors.red, // No theme-level replacement
+    colorScheme: ColorScheme(shadow: Colors.red),
+  );
+  // Constructor with existing replacement targets
+  themeData = ThemeData(
+    colorScheme: ColorScheme(primary: Colors.red, secondary: Colors.green),
+  );
+  themeData = ThemeData(
+    colorScheme: ColorScheme(primary: Colors.red),
+  );
+  themeData = ThemeData(
+    canvasColor: Colors.red, // No theme-level replacement
+    cardTheme: CardThemeData(color: Colors.red),
+    dividerTheme: DividerThemeData(color: Colors.red),
+    inputDecorationTheme: InputDecorationThemeData(hintStyle: TextStyle(color: Colors.red)),
+    primaryColorDark: Colors.green, // No theme-level replacement
+    primaryColorLight: Colors.blue, // No theme-level replacement
+    primaryIconTheme: IconThemeData(color: Colors.red), // No theme-level replacement
+    primaryTextTheme: TextTheme(
+      displayLarge: TextStyle(color: Colors.red),
+      displayMedium: TextStyle(color: Colors.red, fontSize: 20),
+      displaySmall: TextStyle(fontSize: 20),
+    ), // No theme-level replacement
+    scaffoldBackgroundColor: Colors.red, // No theme-level replacement
+    secondaryHeaderColor: Colors.red, // No theme-level replacement
+    colorScheme: ColorScheme(shadow: Colors.red),
+  );
+  // .raw
+  themeData = ThemeData.raw(
+    canvasColor: Colors.red, // No theme-level replacement
+    cardTheme: CardThemeData(color: Colors.red),
+    dividerTheme: DividerThemeData(color: Colors.red),
+    inputDecorationTheme: InputDecorationThemeData(hintStyle: TextStyle(color: Colors.red)),
+    colorScheme: ColorScheme(primary: Colors.red),
+    primaryColorDark: Colors.green, // No theme-level replacement
+    primaryColorLight: Colors.blue, // No theme-level replacement
+    primaryIconTheme: IconThemeData(color: Colors.red), // No theme-level replacement
+    primaryTextTheme: TextTheme(
+      displayLarge: TextStyle(color: Colors.red),
+      displayMedium: TextStyle(color: Colors.red, fontSize: 20),
+      displaySmall: TextStyle(fontSize: 20),
+    ), // No theme-level replacement
+    scaffoldBackgroundColor: Colors.red, // No theme-level replacement
+    secondaryHeaderColor: Colors.red, // No theme-level replacement
+    colorScheme: ColorScheme(shadow: Colors.red),
+  );
+  // .raw with existing replacement targets
+  themeData = ThemeData.raw(
+    colorScheme: ColorScheme(primary: Colors.red, secondary: Colors.green),
+  );
+  themeData = ThemeData.raw(
+    colorScheme: ColorScheme(primary: Colors.red),
+  );
+  themeData = ThemeData.raw(
+    canvasColor: Colors.red, // No theme-level replacement
+    cardTheme: CardThemeData(color: Colors.red),
+    dividerTheme: DividerThemeData(color: Colors.red),
+    inputDecorationTheme: InputDecorationThemeData(hintStyle: TextStyle(color: Colors.red)),
+    primaryColorDark: Colors.green, // No theme-level replacement
+    primaryColorLight: Colors.blue, // No theme-level replacement
+    primaryIconTheme: IconThemeData(color: Colors.red), // No theme-level replacement
+    primaryTextTheme: TextTheme(
+      displayLarge: TextStyle(color: Colors.red),
+      displayMedium: TextStyle(color: Colors.red, fontSize: 20),
+      displaySmall: TextStyle(fontSize: 20),
+    ), // No theme-level replacement
+    scaffoldBackgroundColor: Colors.red, // No theme-level replacement
+    secondaryHeaderColor: Colors.red, // No theme-level replacement
+    colorScheme: ColorScheme(shadow: Colors.red),
+  );
+  // .copyWith
+  themeData = themeData.copyWith(
+    canvasColor: Colors.red, // No theme-level replacement
+    cardTheme: CardThemeData(color: Colors.red),
+    dividerTheme: DividerThemeData(color: Colors.red),
+    inputDecorationTheme: InputDecorationThemeData(hintStyle: TextStyle(color: Colors.red)),
+    colorScheme: ColorScheme(primary: Colors.red),
+    primaryColorDark: Colors.green, // No theme-level replacement
+    primaryColorLight: Colors.blue, // No theme-level replacement
+    primaryIconTheme: IconThemeData(color: Colors.red), // No theme-level replacement
+    primaryTextTheme: TextTheme(
+      displayLarge: TextStyle(color: Colors.red),
+      displayMedium: TextStyle(color: Colors.red, fontSize: 20),
+      displaySmall: TextStyle(fontSize: 20),
+    ), // No theme-level replacement
+    scaffoldBackgroundColor: Colors.red, // No theme-level replacement
+    secondaryHeaderColor: Colors.red, // No theme-level replacement
+    colorScheme: ColorScheme(shadow: Colors.red),
+  );
+  // .copyWith with existing replacement targets
+  themeData = themeData.copyWith(
+    colorScheme: ColorScheme(primary: Colors.red, secondary: Colors.green),
+  );
+  themeData = themeData.copyWith(
+    colorScheme: ColorScheme(primary: Colors.red),
+  );
+  themeData = themeData.copyWith(
+    canvasColor: Colors.red, // No theme-level replacement
+    cardTheme: CardThemeData(color: Colors.red),
+    dividerTheme: DividerThemeData(color: Colors.red),
+    inputDecorationTheme: InputDecorationThemeData(hintStyle: TextStyle(color: Colors.red)),
+    primaryColorDark: Colors.green, // No theme-level replacement
+    primaryColorLight: Colors.blue, // No theme-level replacement
+    primaryIconTheme: IconThemeData(color: Colors.red), // No theme-level replacement
+    primaryTextTheme: TextTheme(
+      displayLarge: TextStyle(color: Colors.red),
+      displayMedium: TextStyle(color: Colors.red, fontSize: 20),
+      displaySmall: TextStyle(fontSize: 20),
+    ), // No theme-level replacement
+    scaffoldBackgroundColor: Colors.red, // No theme-level replacement
+    secondaryHeaderColor: Colors.red, // No theme-level replacement
+    colorScheme: ColorScheme(shadow: Colors.red),
+  );
+  // Usages
+  themeData.colorScheme.surface;
+  themeData.cardTheme.color; // 2 possible replacements
+  themeData.dividerTheme.color;
+  themeData.inputDecorationTheme.hintStyle.color; // 2 possible replacements
+  themeData.colorScheme.primary;
+  themeData.primaryColorDark; // No usage-level replacement
+  themeData.primaryColorLight; // No usage-level replacement
+  themeData.primaryIconTheme; // No usage-level replacement
+  themeData.primaryTextTheme; // No usage-level replacement
+  themeData.scaffoldBackgroundColor; // No usage-level replacement
+  themeData.secondaryHeaderColor; // No usage-level replacement
+  themeData.colorScheme.shadow;
 }
