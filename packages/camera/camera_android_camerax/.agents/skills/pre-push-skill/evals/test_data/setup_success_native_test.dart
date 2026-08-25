@@ -50,40 +50,7 @@ public class DummyEvalFeatureTest {
 }
 ''');
 
-  // Use repo tooling to bump version and add changelog entry.
-  final ProcessResult toolResult = Process.runSync('dart', <String>[
-    'run',
-    '../../../script/tool/bin/flutter_plugin_tools.dart',
-    'update-release-info',
-    '--packages=camera_android_camerax',
-    '--version=bugfix',
-    '--changelog=Adds `DummyEvalFeature` and tests.',
-  ]);
-
-  final pubspecFile = File('pubspec.yaml');
-  final changelogFile = File('CHANGELOG.md');
-
-  // Fallback if git worktree prevents package:git from running flutter_plugin_tools
-  if (toolResult.exitCode != 0 || !changelogFile.readAsStringSync().contains('DummyEvalFeature')) {
-    final String pubspecContent = pubspecFile.readAsStringSync();
-    final versionRegex = RegExp(r'version:\s*(\d+\.\d+\.\d+(\+\d+)?)');
-    final RegExpMatch? versionMatch = versionRegex.firstMatch(pubspecContent);
-    if (versionMatch != null) {
-      final String currentVersion = versionMatch.group(1)!;
-      final String newVersion = _bumpVersion(currentVersion);
-      pubspecFile.writeAsStringSync(
-        pubspecContent.replaceFirst(versionRegex, 'version: $newVersion'),
-      );
-
-      final String changelogContent = changelogFile.readAsStringSync();
-      changelogFile.writeAsStringSync('''
-## $newVersion
-
-* Adds `DummyEvalFeature` and tests.
-
-$changelogContent''');
-    }
-  }
+  updateVersionAndChangelog('Adds `DummyEvalFeature` and tests.');
 
   Process.runSync('git', <String>['add', javaFile.path, javaTestFile.path, 'pubspec.yaml', 'CHANGELOG.md']);
   Process.runSync('git', <String>[
@@ -95,6 +62,32 @@ $changelogContent''');
     '-m',
     'Add DummyEvalFeature.java, tests, and changelog update',
   ]);
+}
+
+/// Updates the package version in `pubspec.yaml` and prepends the new entry to `CHANGELOG.md`.
+void updateVersionAndChangelog(String changelogEntry) {
+  final pubspecFile = File('pubspec.yaml');
+  final String pubspecContent = pubspecFile.readAsStringSync();
+  final versionRegex = RegExp(r'version:\s*(\d+\.\d+\.\d+(\+\d+)?)');
+  final RegExpMatch? versionMatch = versionRegex.firstMatch(pubspecContent);
+  if (versionMatch == null) {
+    throw StateError('Could not find version in pubspec.yaml');
+  }
+
+  final String currentVersion = versionMatch.group(1)!;
+  final String newVersion = _bumpVersion(currentVersion);
+  pubspecFile.writeAsStringSync(
+    pubspecContent.replaceFirst(versionRegex, 'version: $newVersion'),
+  );
+
+  final changelogFile = File('CHANGELOG.md');
+  final String changelogContent = changelogFile.readAsStringSync();
+  changelogFile.writeAsStringSync('''
+## $newVersion
+
+* $changelogEntry
+
+$changelogContent''');
 }
 
 String _bumpVersion(String version) {

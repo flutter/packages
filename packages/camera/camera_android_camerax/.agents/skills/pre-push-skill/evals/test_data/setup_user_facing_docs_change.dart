@@ -23,40 +23,7 @@ $readmeContent
 Dash is a very cute mascot who loves having her photo taken using `takePicture`.
 ''');
 
-  // Use repo tooling to bump version and add changelog entry without backticks.
-  final ProcessResult toolResult = Process.runSync('dart', <String>[
-    'run',
-    '../../../script/tool/bin/flutter_plugin_tools.dart',
-    'update-release-info',
-    '--packages=camera_android_camerax',
-    '--version=bugfix',
-    '--changelog=Document how Dash likes getting pictures taken with takePicture.',
-  ]);
-
-  final pubspecFile = File('pubspec.yaml');
-  final changelogFile = File('CHANGELOG.md');
-
-  // Fallback if git worktree prevents package:git from running flutter_plugin_tools
-  if (toolResult.exitCode != 0 || !changelogFile.readAsStringSync().contains('Dash')) {
-    final String pubspecContent = pubspecFile.readAsStringSync();
-    final versionRegex = RegExp(r'version:\s*(\d+\.\d+\.\d+(\+\d+)?)');
-    final RegExpMatch? versionMatch = versionRegex.firstMatch(pubspecContent);
-    if (versionMatch != null) {
-      final String currentVersion = versionMatch.group(1)!;
-      final String newVersion = _bumpVersion(currentVersion);
-      pubspecFile.writeAsStringSync(
-        pubspecContent.replaceFirst(versionRegex, 'version: $newVersion'),
-      );
-
-      final String changelogContent = changelogFile.readAsStringSync();
-      changelogFile.writeAsStringSync('''
-## $newVersion
-
-* Document how Dash likes getting pictures taken with takePicture.
-
-$changelogContent''');
-    }
-  }
+  updateVersionAndChangelog('Document how Dash likes getting pictures taken with takePicture.');
 
   Process.runSync('git', <String>['add', readmeFile.path, 'pubspec.yaml', 'CHANGELOG.md']);
   Process.runSync('git', <String>[
@@ -68,6 +35,32 @@ $changelogContent''');
     '-m',
     'Add Dash documentation and changelog entry without backticks',
   ]);
+}
+
+/// Updates the package version in `pubspec.yaml` and prepends the new entry to `CHANGELOG.md`.
+void updateVersionAndChangelog(String changelogEntry) {
+  final pubspecFile = File('pubspec.yaml');
+  final String pubspecContent = pubspecFile.readAsStringSync();
+  final versionRegex = RegExp(r'version:\s*(\d+\.\d+\.\d+(\+\d+)?)');
+  final RegExpMatch? versionMatch = versionRegex.firstMatch(pubspecContent);
+  if (versionMatch == null) {
+    throw StateError('Could not find version in pubspec.yaml');
+  }
+
+  final String currentVersion = versionMatch.group(1)!;
+  final String newVersion = _bumpVersion(currentVersion);
+  pubspecFile.writeAsStringSync(
+    pubspecContent.replaceFirst(versionRegex, 'version: $newVersion'),
+  );
+
+  final changelogFile = File('CHANGELOG.md');
+  final String changelogContent = changelogFile.readAsStringSync();
+  changelogFile.writeAsStringSync('''
+## $newVersion
+
+* $changelogEntry
+
+$changelogContent''');
 }
 
 String _bumpVersion(String version) {
