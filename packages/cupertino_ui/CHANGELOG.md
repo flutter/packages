@@ -1,3 +1,7 @@
+## 1.0.0+1
+
+- Internal changes
+
 ## 1.0.0
 
 - README updated for the full release of cupertino_ui.
