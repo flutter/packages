@@ -120,11 +120,7 @@ If this command fails, the code WAS NOT ready to push.
 The required version bump and changelog entry must be made
 and committed before code can be pushed.
 
-Additionally, verify that `CHANGELOG.md` strictly conforms to the repository CHANGELOG rules:
-1. **Present tense indicative**: Start entries with active verbs in present tense (e.g., "Adds", "Fixes", "Updates", not "Added", "Fixed", or "Add").
-2. **Trailing period**: Every entry must end with a period (`.`).
-3. **Breaking changes**: Prefix breaking changes with `**BREAKING CHANGE**`.
-4. **Code References in Backticks**: Enclose all code elements, class names, method names, and identifiers in backticks (e.g. `` `takePicture` ``, `` `CameraPreview` ``).
+Additionally, ensure `CHANGELOG.md` formatting follows the [CHANGELOG style guide](https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changelog-style).
 
 ## 7. Check License Headers
 
