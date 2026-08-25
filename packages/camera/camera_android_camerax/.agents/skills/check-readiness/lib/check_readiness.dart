@@ -45,6 +45,9 @@ class ReadinessChecker {
       if (!await _checkDependencies(workspaceRoot)) {
         isReady = false;
       }
+      if (!await _activateFlutterPluginTools(workspaceRoot)) {
+        isReady = false;
+      }
     }
 
     if (isReady) {
@@ -136,5 +139,49 @@ class ReadinessChecker {
     }
     _log('Dependencies are resolved and ready.');
     return true;
+  }
+
+  Future<bool> _activateFlutterPluginTools(String workspaceRoot) async {
+    _log('5. Activating flutter_plugin_tools...');
+    final String? repoRoot = _findRepoRoot(workspaceRoot);
+    if (repoRoot == null) {
+      _log('Error: Failed to find repository root (no .git directory found).');
+      return false;
+    }
+    final ProcessResult activateResult = await _processManager.run(
+      [
+        'dart',
+        'pub',
+        'global',
+        'activate',
+        '--source',
+        'path',
+        _fileSystem.path.join(repoRoot, 'script', 'tool')
+      ],
+      workingDirectory: workspaceRoot,
+    );
+    if (activateResult.exitCode != 0) {
+      _log('Error: Failed to globally activate flutter_plugin_tools.');
+      _log(activateResult.stderr);
+      return false;
+    }
+    _log('flutter_plugin_tools activated successfully.');
+    return true;
+  }
+
+  String? _findRepoRoot(String startPath) {
+    Directory dir = _fileSystem.directory(startPath);
+    while (true) {
+      final String gitPath = _fileSystem.path.join(dir.path, '.git');
+      if (_fileSystem.typeSync(gitPath) != FileSystemEntityType.notFound) {
+        return dir.path;
+      }
+      final Directory parent = dir.parent;
+      if (parent.path == dir.path) {
+        break;
+      }
+      dir = parent;
+    }
+    return null;
   }
 }

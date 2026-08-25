@@ -1638,7 +1638,7 @@ void main() {
   });
 
   // Regression test for https://github.com/flutter/flutter/issues/167621.
-  testWidgets('CarouselView.weigted weigths are applied when viewport dimension is updated', (
+  testWidgets('CarouselView.weighted weights are applied when viewport dimension is updated', (
     WidgetTester tester,
   ) async {
     addTearDown(() => tester.binding.setSurfaceSize(null));
