@@ -110,7 +110,7 @@ class CustomMagnifier extends StatelessWidget {
             // Decorate it however we'd like!
             decoration: const MagnifierDecoration(
               shape: StarBorder(
-                side: BorderSide(color: Color(0xFF00FF00), width: 2),
+                side: BorderSide(color: CupertinoColors.activeGreen, width: 2),
               ),
             ),
             size: magnifierSize,
