@@ -55,7 +55,7 @@ void main(List<String> args) {
   final ProcessResult result = Process.runSync('git', <String>[
     'log',
     '$remote/$baseBranch..$head',
-    '--format=full',
+    '--format=%h | Author: %an <%ae> | Committer: %cn <%ce> | %s',
   ]);
 
   if (result.exitCode != 0) {

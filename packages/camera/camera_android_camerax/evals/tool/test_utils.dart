@@ -34,7 +34,7 @@ String detectDefaultRemote() {
     final String url = parts[1];
     remoteNames.add(name);
 
-    if (url.contains(RegExp(r'/flutter/packages(\.git)?$'))) {
+    if (url.contains(RegExp(r'/flutter/packages(\.git)?/?$'))) {
       return name;
     }
   }
