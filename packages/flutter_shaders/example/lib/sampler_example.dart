@@ -70,10 +70,7 @@ class SampledText extends StatelessWidget {
 
         shader.setImageSampler(0, image);
 
-        canvas.drawRect(
-          Rect.fromLTWH(0, 0, size.width, size.height),
-          Paint()..shader = shader,
-        );
+        canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), Paint()..shader = shader);
       }, child: Text(text, style: const TextStyle(fontSize: 20)));
     }, assetKey: 'packages/flutter_shaders/shaders/pixelation.frag');
   }

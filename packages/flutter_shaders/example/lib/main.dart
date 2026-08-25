@@ -25,22 +25,25 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-          primarySwatch: Colors.blue,
-          splashFactory: ShaderInkFeatureFactory(program, (
-            shader, {
-            required double animation,
-            required Color color,
-            required Offset position,
-            required Size referenceBoxSize,
-            required double targetRadius,
-            required TextDirection textDirection,
-          }) {
-            shader.setFloatUniforms((uniforms) => uniforms
+        primarySwatch: Colors.blue,
+        splashFactory: ShaderInkFeatureFactory(program, (
+          shader, {
+          required double animation,
+          required Color color,
+          required Offset position,
+          required Size referenceBoxSize,
+          required double targetRadius,
+          required TextDirection textDirection,
+        }) {
+          shader.setFloatUniforms(
+            (uniforms) => uniforms
               ..setFloat(animation)
               ..setColor(color, premultiply: true)
               ..setFloat(targetRadius)
-              ..setOffset(position));
-          })),
+              ..setOffset(position),
+          );
+        }),
+      ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -70,20 +73,13 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text(widget.title)),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            const Text('You have pushed the button this many times:'),
+            Text('$_counter', style: Theme.of(context).textTheme.headlineMedium),
           ],
         ),
       ),

@@ -18,22 +18,27 @@ void main() {
   testWidgets('AnimatedSampler captures child widgets in texture', (WidgetTester tester) async {
     final GlobalKey globalKey = GlobalKey();
     var usedShader = false;
-    await tester.pumpWidget(MaterialApp(
-      home: RepaintBoundary(
-        key: globalKey,
-        child: ShaderBuilder(assetKey: 'shaders/sampler.frag',
-            (BuildContext context, FragmentShader shader, Widget? child) {
-          return AnimatedSampler((ui.Image image, Size size, Canvas canvas) {
-            usedShader = true;
-            shader.setFloat(0, size.width);
-            shader.setFloat(1, size.height);
-            shader.setImageSampler(0, image);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: RepaintBoundary(
+          key: globalKey,
+          child: ShaderBuilder(assetKey: 'shaders/sampler.frag', (
+            BuildContext context,
+            FragmentShader shader,
+            Widget? child,
+          ) {
+            return AnimatedSampler((ui.Image image, Size size, Canvas canvas) {
+              usedShader = true;
+              shader.setFloat(0, size.width);
+              shader.setFloat(1, size.height);
+              shader.setImageSampler(0, image);
 
-            canvas.drawRect(Offset.zero & size, Paint()..shader = shader);
-          }, child: Container(color: Colors.red));
-        }),
+              canvas.drawRect(Offset.zero & size, Paint()..shader = shader);
+            }, child: Container(color: Colors.red));
+          }),
+        ),
       ),
-    ));
+    );
 
     expect(usedShader, true);
 

@@ -9,8 +9,11 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('Can cache fragment shaders', (WidgetTester tester) async {
     var shaderLoaded = false;
-    final Widget child =
-        ShaderBuilder((BuildContext context, FragmentShader shader, Widget? child) {
+    final Widget child = ShaderBuilder((
+      BuildContext context,
+      FragmentShader shader,
+      Widget? child,
+    ) {
       shaderLoaded = true;
       return child ?? const SizedBox();
     }, assetKey: 'shaders/solid_color.frag');
@@ -27,50 +30,55 @@ void main() {
 
     // Shader is still cached with a new widget.
     var sameShaderLoaded = false;
-    await tester
-        .pumpWidget(ShaderBuilder((BuildContext context, FragmentShader shader, Widget? child) {
-      sameShaderLoaded = true;
-      return child ?? const SizedBox();
-    }, assetKey: 'shaders/solid_color.frag'));
+    await tester.pumpWidget(
+      ShaderBuilder((BuildContext context, FragmentShader shader, Widget? child) {
+        sameShaderLoaded = true;
+        return child ?? const SizedBox();
+      }, assetKey: 'shaders/solid_color.frag'),
+    );
 
     expect(sameShaderLoaded, true);
   });
 
-  testWidgets('ShaderBuilder.precacheShader reports flutter error if invalid asset is provided',
-      (WidgetTester tester) async {
+  testWidgets('ShaderBuilder.precacheShader reports flutter error if invalid asset is provided', (
+    WidgetTester tester,
+  ) async {
     await ShaderBuilder.precacheShader('shaders/bogus.frag');
 
     expect(tester.takeException(), isNotNull);
   });
 
-  testWidgets(
-      'ShaderBuilder.precacheShader makes shader available '
+  testWidgets('ShaderBuilder.precacheShader makes shader available '
       'synchronously when future completes', (WidgetTester tester) async {
     await ShaderBuilder.precacheShader('shaders/sampler.frag');
 
     var shaderLoaded = false;
-    await tester
-        .pumpWidget(ShaderBuilder((BuildContext context, FragmentShader shader, Widget? child) {
-      shaderLoaded = true;
-      return child ?? const SizedBox();
-    }, assetKey: 'shaders/sampler.frag'));
+    await tester.pumpWidget(
+      ShaderBuilder((BuildContext context, FragmentShader shader, Widget? child) {
+        shaderLoaded = true;
+        return child ?? const SizedBox();
+      }, assetKey: 'shaders/sampler.frag'),
+    );
 
     expect(shaderLoaded, true);
   });
 
-  testWidgets('ShaderBuilder.precacheShader reports flutter error if invalid asset is provided',
-      (WidgetTester tester) async {
+  testWidgets('ShaderBuilder.precacheShader reports flutter error if invalid asset is provided', (
+    WidgetTester tester,
+  ) async {
     await ShaderBuilder.precacheShader('shaders/bogus.frag');
 
     expect(tester.takeException(), isNotNull);
   });
 
-  testWidgets('ShaderBuilder reports flutter error if invalid asset is provided',
-      (WidgetTester tester) async {
-    await tester
-        .pumpWidget(ShaderBuilder((BuildContext context, FragmentShader shader, Widget? child) {
-      return child ?? const SizedBox();
-    }, assetKey: 'shaders/bogus.frag'));
+  testWidgets('ShaderBuilder reports flutter error if invalid asset is provided', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      ShaderBuilder((BuildContext context, FragmentShader shader, Widget? child) {
+        return child ?? const SizedBox();
+      }, assetKey: 'shaders/bogus.frag'),
+    );
 
     expect(tester.takeException(), isNotNull);
   });
