@@ -24,7 +24,7 @@ Dash is a very cute mascot who loves having her photo taken using `takePicture`.
 ''');
 
   // Use repo tooling to bump version and add changelog entry without backticks.
-  Process.runSync('dart', <String>[
+  final ProcessResult toolResult = Process.runSync('dart', <String>[
     'run',
     '../../../script/tool/bin/flutter_plugin_tools.dart',
     'update-release-info',
@@ -32,6 +32,31 @@ Dash is a very cute mascot who loves having her photo taken using `takePicture`.
     '--version=bugfix',
     '--changelog=Document how Dash likes getting pictures taken with takePicture.',
   ]);
+
+  final pubspecFile = File('pubspec.yaml');
+  final changelogFile = File('CHANGELOG.md');
+
+  // Fallback if git worktree prevents package:git from running flutter_plugin_tools
+  if (toolResult.exitCode != 0 || !changelogFile.readAsStringSync().contains('Dash')) {
+    final String pubspecContent = pubspecFile.readAsStringSync();
+    final versionRegex = RegExp(r'version:\s*(\d+\.\d+\.\d+(\+\d+)?)');
+    final RegExpMatch? versionMatch = versionRegex.firstMatch(pubspecContent);
+    if (versionMatch != null) {
+      final String currentVersion = versionMatch.group(1)!;
+      final String newVersion = _bumpVersion(currentVersion);
+      pubspecFile.writeAsStringSync(
+        pubspecContent.replaceFirst(versionRegex, 'version: $newVersion'),
+      );
+
+      final String changelogContent = changelogFile.readAsStringSync();
+      changelogFile.writeAsStringSync('''
+## $newVersion
+
+* Document how Dash likes getting pictures taken with takePicture.
+
+$changelogContent''');
+    }
+  }
 
   Process.runSync('git', <String>['add', readmeFile.path, 'pubspec.yaml', 'CHANGELOG.md']);
   Process.runSync('git', <String>[
@@ -43,4 +68,15 @@ Dash is a very cute mascot who loves having her photo taken using `takePicture`.
     '-m',
     'Add Dash documentation and changelog entry without backticks',
   ]);
+}
+
+String _bumpVersion(String version) {
+  if (version.contains('+')) {
+    final List<String> parts = version.split('+');
+    final int build = int.parse(parts[1]) + 1;
+    return '${parts[0]}+$build';
+  }
+  final List<String> parts = version.split('.');
+  final int patch = int.parse(parts[2]) + 1;
+  return '${parts[0]}.${parts[1]}.$patch';
 }
