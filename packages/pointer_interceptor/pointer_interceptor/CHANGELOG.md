@@ -5,6 +5,8 @@
   versions of the endorsed platform implementations.
   * Applications built with older versions of Flutter will continue to
     use compatible versions of the platform implementations.
+* Adopts `code-excerpt` for the README's Dart snippets so they are validated
+  against compilable, analyzed source.
 
 ## 0.10.1+2
 

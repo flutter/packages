@@ -1,4 +1,5 @@
 # pointer_interceptor
+<?code-excerpt path-base="example/lib"?>
 
 |             | iOS     | Web |
 |-------------|---------|-----|
@@ -47,25 +48,23 @@ There's two ways that the `PointerInterceptor` widget can be used to solve the p
 
 1. Wrapping your button element directly (FAB, Custom Play/Pause button...):
 
-    ```dart
-    PointerInterceptor(
-      child: ElevatedButton(...),
-    )
-    ```
+<?code-excerpt "readme_excerpts.dart (WrapButton)"?>
+```dart
+return PointerInterceptor(
+  child: ElevatedButton(onPressed: () {}, child: const Text('Button')),
+);
+```
 
 2. As a root container for a "layout" element, wrapping a bunch of other elements (like a Drawer):
 
-    ```dart
-    Scaffold(
-      ...
-      drawer: PointerInterceptor(
-        child: Drawer(
-          child: ...
-        ),
-      ),
-      ...
-    )
-    ```
+<?code-excerpt "readme_excerpts.dart (WrapSubtree)"?>
+```dart
+return Scaffold(
+  drawer: PointerInterceptor(
+    child: Drawer(child: ListView(children: const <Widget>[Text('Drawer contents')])),
+  ),
+);
+```
 
 ### `intercepting`
 
@@ -76,24 +75,26 @@ The `intercepting` property allows the `PointerInterceptor` widget to render
 itself (or not) depending on a boolean value, instead of having to manually
 write an `if/else` on the Flutter App widget tree, so code like this:
 
-  ```dart
-  if (someCondition) {
-    return PointerInterceptor(
-      child: ElevatedButton(...),
-    )
-  } else {
-    return ElevatedButton(...),
-  }
-  ```
+<?code-excerpt "readme_excerpts.dart (InterceptingBefore)"?>
+```dart
+if (someCondition) {
+  return PointerInterceptor(
+    child: ElevatedButton(onPressed: () {}, child: const Text('Button')),
+  );
+} else {
+  return ElevatedButton(onPressed: () {}, child: const Text('Button'));
+}
+```
 
 can be rewritten as:
 
-   ```dart
-    return PointerInterceptor(
-      intercepting: someCondition,
-      child: ElevatedButton(...),
-    )
-   ```
+<?code-excerpt "readme_excerpts.dart (InterceptingAfter)"?>
+```dart
+return PointerInterceptor(
+  intercepting: someCondition,
+  child: ElevatedButton(onPressed: () {}, child: const Text('Button')),
+);
+```
 
 Note: when `intercepting` is false, the `PointerInterceptor` will not render
 _anything_ in flutter, and just return its `child`. The code is exactly
