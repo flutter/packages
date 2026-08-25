@@ -1,1 +1,0 @@
-../../shared/RunnerTests/Stubs.m

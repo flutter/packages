@@ -1,3 +1,10 @@
+## 0.4.11+2
+
+* Migrates the StoreKit 1 core (`FIAPaymentQueueHandler`, `FIAObjectTranslator`,
+  `FIAPReceiptManager`, `FIAPRequestHandler`, `FIAPPaymentQueueDelegate`,
+  `FIATransactionCache`, and their protocol shims) from Objective-C to Swift.
+  No functional changes.
+
 ## 0.4.11+1
 
 * Fixes StoreKit 2 restore transactions not grouping purchases into a single event.

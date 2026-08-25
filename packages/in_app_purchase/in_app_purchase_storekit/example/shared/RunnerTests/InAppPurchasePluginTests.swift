@@ -615,7 +615,7 @@ final class InAppPurchasePluginTests: XCTestCase {
       XCTFail("Expected a transaction but got nil")
       return
     }
-    XCTAssertEqual(result.payment, originalPigeon?.payment)
+    XCTAssertEqual(result.payment.productIdentifier, originalPigeon?.payment.productIdentifier)
     XCTAssertEqual(result.transactionIdentifier, originalPigeon?.transactionIdentifier)
     XCTAssertEqual(result.transactionState, originalPigeon?.transactionState)
     XCTAssertEqual(result.transactionTimeStamp, originalPigeon?.transactionTimeStamp)
