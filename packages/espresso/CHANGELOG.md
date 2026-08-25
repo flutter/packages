@@ -1,3 +1,10 @@
+## NEXT
+
+* Adopts `code-excerpt` for the README's Dart driver snippet so it is
+  validated against compilable, analyzed source, and updates it to use
+  `integration_test`'s driver instead of the deprecated `flutter_driver`
+  extension.
+
 ## 0.4.0+25
 
 * Bumps com.google.guava:guava from 33.5.0-android to 33.6.0-android.
