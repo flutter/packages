@@ -44,17 +44,8 @@ struct EnumTests {
     let binaryMessenger = EchoBinaryMessenger(codec: EnumPigeonCodec.shared)
     let api = EnumApi2Flutter(binaryMessenger: binaryMessenger)
 
-    await confirmation { confirmed in
-      api.echo(data: data) { result in
-        switch result {
-        case .success(let res):
-          #expect(res.state == data.state)
-          confirmed()
-        case .failure(let error):
-          Issue.record("Error: \(error) from data \(data)")
-        }
-      }
-    }
+    let res = try await api.echo(data: data)
+    #expect(res.state == data.state)
   }
 
   // Verifies that generated enums conform to `CaseIterable` and that
