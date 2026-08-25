@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('does not call builder when not enabled', (tester) async {
-    final AnimatedSamplerBuilder builder = expectAsync4((image, size, offset, canvas) {}, count: 0);
+    final AnimatedSamplerBuilder builder = expectAsync3((image, size, canvas) {}, count: 0);
 
     await tester.pumpWidget(
       MaterialApp(home: AnimatedSampler(builder, enabled: false, child: const SizedBox())),
@@ -16,7 +16,7 @@ void main() {
   });
 
   testWidgets('starts calling builder once enabled', (tester) async {
-    final AnimatedSamplerBuilder builder = expectAsync4((image, size, offset, canvas) {});
+    final AnimatedSamplerBuilder builder = expectAsync3((image, size, canvas) {});
 
     await tester.pumpWidget(
       MaterialApp(home: AnimatedSampler(builder, enabled: false, child: const SizedBox())),
@@ -26,7 +26,7 @@ void main() {
   });
 
   testWidgets('rebuilds when child layer is updated', (tester) async {
-    final AnimatedSamplerBuilder builder = expectAsync4((image, size, offset, canvas) {}, count: 2);
+    final AnimatedSamplerBuilder builder = expectAsync3((image, size, canvas) {}, count: 2);
 
     await tester.pumpWidget(
       MaterialApp(

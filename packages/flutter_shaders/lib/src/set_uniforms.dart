@@ -58,20 +58,10 @@ extension SetUniforms on ui.FragmentShader {
   }
 }
 
-/// Helper class for sequentially configuring float uniforms on a fragment shader.
-class UniformsSetter {
-  /// Creates a [UniformsSetter] for the given [shader] starting at [_index].
-  UniformsSetter(this.shader, this._index);
-
-  int _index;
-
-  /// The fragment shader being configured.
-  final ui.FragmentShader shader;
-
+/// An interface for sequentially configuring float uniform values.
+abstract class FloatUniformsSetter {
   /// Sets a single float uniform at the current index.
-  void setFloat(double value) {
-    shader.setFloat(_index++, value);
-  }
+  void setFloat(double value);
 
   /// Sets a list of float uniforms sequentially.
   void setFloats(List<double> values) {
@@ -80,9 +70,8 @@ class UniformsSetter {
 
   /// Sets a [Size] uniform (width and height) at the current index.
   void setSize(Size size) {
-    shader
-      ..setFloat(_index++, size.width)
-      ..setFloat(_index++, size.height);
+    setFloat(size.width);
+    setFloat(size.height);
   }
 
   /// Sets a list of [Size] uniforms sequentially.
@@ -118,9 +107,8 @@ class UniformsSetter {
 
   /// Sets an [Offset] uniform (dx and dy) at the current index.
   void setOffset(Offset offset) {
-    shader
-      ..setFloat(_index++, offset.dx)
-      ..setFloat(_index++, offset.dy);
+    setFloat(offset.dx);
+    setFloat(offset.dy);
   }
 
   /// Sets a list of [Offset] uniforms sequentially.
@@ -166,5 +154,21 @@ class UniformsSetter {
   /// Sets a list of 4x4 matrix uniforms sequentially.
   void setMatrix4s(List<Matrix4> matrix4s) {
     matrix4s.forEach(setMatrix4);
+  }
+}
+
+/// Helper class for sequentially configuring float uniforms on a fragment shader.
+class UniformsSetter extends FloatUniformsSetter {
+  /// Creates a [UniformsSetter] for the given [shader] starting at [_index].
+  UniformsSetter(this.shader, this._index);
+
+  int _index;
+
+  /// The fragment shader being configured.
+  final ui.FragmentShader shader;
+
+  @override
+  void setFloat(double value) {
+    shader.setFloat(_index++, value);
   }
 }
