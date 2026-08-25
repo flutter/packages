@@ -4517,6 +4517,23 @@ void main() {
     expect(size.height, 300.0);
     expect(size.width, 400.0);
   });
+
+  // Regression test for https://github.com/flutter/flutter/issues/177089
+  testWidgets('SearchAnchor.bar can be found by type', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: SearchAnchor.bar(
+            suggestionsBuilder: (BuildContext context, SearchController controller) {
+              return <Widget>[];
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(SearchAnchor), findsOneWidget);
+  });
 }
 
 Future<void> checkSearchBarDefaults(
