@@ -737,7 +737,6 @@ class SegmentedButtonState<T> extends State<SegmentedButton<T>> {
 
 class _SegmentedButtonRenderWidget<T> extends MultiChildRenderObjectWidget {
   const _SegmentedButtonRenderWidget({
-    super.key,
     required this.segments,
     required this.enabledBorder,
     required this.disabledBorder,
