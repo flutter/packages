@@ -73,7 +73,7 @@ void main(List<String> args) {
 
   if (result.exitCode != 0) {
     stderr.writeln(
-      'INFRA_ERROR: Failed to run git log for $remote/$baseBranch..$head:\n${result.stderr}',
+      'SCRIPT_ERROR: Failed to run git log for $remote/$baseBranch..$head:\n${result.stderr}',
     );
     exitCode = 2;
     return;

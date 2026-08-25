@@ -55,7 +55,7 @@ dart run evals/tool/check_eval_commits.dart
 
 - If this command outputs `SUCCESS:` (exits with code `0`), no evaluation commits were detected. Proceed to the next check.
 - If this command exits with code `1`, the branch contains commits authored or committed with evaluation test credentials. The code is **NOT** ready to push. Test commits must be removed or rebased before pushing.
-- If this command exits with code `2`, an infrastructure error occurred (such as git fetch failure). Report the error to the user.
+- If this command exits with code `2`, a script or execution error occurred (such as git log/fetch failure). Report the error to the user.
 
 ## 4. Check Merge Conflicts
 
