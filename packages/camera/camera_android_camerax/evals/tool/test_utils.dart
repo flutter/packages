@@ -10,33 +10,39 @@ const String evalAuthorName = 'Eval Author';
 /// Author email used for evaluation test commits.
 const String evalAuthorEmail = 'eval-author@example.com';
 
-/// Detects the remote pointing to the main flutter/packages repository,
-/// or falls back to 'upstream' or 'origin'.
+/// Returns the git remote to compare against.
+///
+/// Resolves the remote using the following priority:
+/// 1. The first remote whose URL contains `flutter/packages` (the canonical upstream repository).
+/// 2. A remote named `upstream`, if configured.
+/// 3. Falls back to `origin`.
 String detectDefaultRemote() {
   final ProcessResult result = Process.runSync('git', <String>['remote', '-v']);
-  if (result.exitCode == 0) {
-    final stdout = result.stdout.toString();
-    for (final String line in stdout.split('\n')) {
-      if (line.contains('flutter/packages')) {
-        final List<String> parts = line.split(RegExp(r'\s+'));
-        if (parts.isNotEmpty) {
-          return parts.first;
-        }
-      }
+  if (result.exitCode != 0) {
+    return 'origin';
+  }
+
+  final List<String> lines = result.stdout.toString().split('\n');
+  final remoteNames = <String>{};
+
+  for (final line in lines) {
+    final List<String> parts = line.trim().split(RegExp(r'\s+'));
+    if (parts.length < 2) {
+      continue;
     }
-    final List<String> remotes = stdout
-        .split('\n')
-        .map((String line) => line.split(RegExp(r'\s+')).firstOrNull)
-        .whereType<String>()
-        .where((String name) => name.isNotEmpty)
-        .toList();
-    if (remotes.contains('upstream')) {
-      return 'upstream';
-    }
-    if (remotes.contains('origin')) {
-      return 'origin';
+    final String name = parts[0];
+    final String url = parts[1];
+    remoteNames.add(name);
+
+    if (url.contains('flutter/packages')) {
+      return name;
     }
   }
+
+  if (remoteNames.contains('upstream')) {
+    return 'upstream';
+  }
+
   return 'origin';
 }
 
