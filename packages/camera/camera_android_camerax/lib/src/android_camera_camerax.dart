@@ -325,11 +325,49 @@ class AndroidCameraCameraX extends CameraPlatform {
           name: cameraName,
           lensDirection: cameraLensDirection,
           sensorOrientation: cameraSensorOrientation,
+          lensType: await _lensTypeFromCameraInfo(cameraInfo),
         ),
       );
     }
 
     return cameraDescriptions;
+  }
+
+  /// Returns the [CameraLensType] of the camera that [cameraInfo] describes,
+  /// based on its intrinsic zoom ratio.
+  ///
+  /// The intrinsic zoom ratio compares the field of view of a camera to that of
+  /// the default camera with the same lens facing direction, so a ratio smaller
+  /// than 1.0 identifies an ultra wide lens and a ratio larger than 1.0
+  /// identifies a telephoto lens.
+  Future<CameraLensType> _lensTypeFromCameraInfo(CameraInfo cameraInfo) async {
+    final double intrinsicZoomRatio;
+    try {
+      intrinsicZoomRatio = await cameraInfo.getIntrinsicZoomRatio();
+    } on PlatformException {
+      // Reporting a lens type is best effort: a camera that fails to answer the
+      // query must not prevent the remaining cameras from being enumerated.
+      // Pigeon wraps every host-side `Throwable`, as well as channel and codec
+      // failures, in a `PlatformException`, so this covers all failure modes of
+      // the call above.
+      return CameraLensType.unknown;
+    }
+
+    // A ratio of exactly 1.0 is ambiguous and must not be reported as
+    // `CameraLensType.wide`. CameraX documents that the default camera of a
+    // lens facing direction reports 1.0, but 1.0 is also what
+    // `INTRINSIC_ZOOM_RATIO_UNKNOWN` is defined as, which is returned both when
+    // the computation fails and by the default implementation of
+    // `CameraInfo.getIntrinsicZoomRatio()`. Because those cases cannot be told
+    // apart, 1.0 is reported as unknown rather than claiming a lens role that
+    // may be wrong.
+    if (intrinsicZoomRatio < 1.0) {
+      return CameraLensType.ultraWide;
+    }
+    if (intrinsicZoomRatio > 1.0) {
+      return CameraLensType.telephoto;
+    }
+    return CameraLensType.unknown;
   }
 
   /// Creates an uninitialized camera instance with default settings and returns the camera ID.

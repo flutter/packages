@@ -2199,6 +2199,19 @@ abstract class PigeonApiCameraInfo(
       pigeon_instance: androidx.camera.core.CameraInfo
   ): io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper
 
+  /**
+   * Returns the intrinsic zoom ratio of this camera.
+   *
+   * The intrinsic zoom ratio is the ratio of the camera's field of view to that of the default
+   * camera with the same lens facing direction. A ratio smaller than 1.0 describes a wider field of
+   * view than the default camera (an ultra wide lens), and a ratio larger than 1.0 describes a
+   * narrower field of view (a telephoto lens).
+   *
+   * See
+   * https://developer.android.com/reference/androidx/camera/core/CameraInfo#getIntrinsicZoomRatio().
+   */
+  abstract fun getIntrinsicZoomRatio(pigeon_instance: androidx.camera.core.CameraInfo): Double
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiCameraInfo?) {
@@ -2238,6 +2251,28 @@ abstract class PigeonApiCameraInfo(
             val wrapped: List<Any?> =
                 try {
                   listOf(api.getZoomState(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  CameraXLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.camera_android_camerax.CameraInfo.getIntrinsicZoomRatio",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.camera.core.CameraInfo
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getIntrinsicZoomRatio(pigeon_instanceArg))
                 } catch (exception: Throwable) {
                   CameraXLibraryPigeonUtils.wrapError(exception)
                 }
