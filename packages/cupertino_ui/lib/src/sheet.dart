@@ -947,7 +947,6 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
 
 class _CupertinoDragGestureDetector<T> extends StatefulWidget {
   const _CupertinoDragGestureDetector({
-    super.key,
     required this.enabledCallback,
     required this.onStartPopGesture,
     required this.child,
@@ -1327,7 +1326,6 @@ class _CupertinoSheetScrollPosition extends ScrollPositionWithSingleContext {
 
 class _CupertinoDraggableScrollableSheet<T> extends StatefulWidget {
   const _CupertinoDraggableScrollableSheet({
-    super.key,
     required this.enabledCallback,
     required this.onStartPopGesture,
     required this.builder,
