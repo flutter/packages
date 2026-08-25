@@ -39,7 +39,8 @@ void main(List<String> args) {
     stderr.writeln(
       'ERROR: Failed to run git log for $remote/$baseBranch..$head:\n${result.stderr}',
     );
-    exit(result.exitCode);
+    exitCode = result.exitCode;
+    return;
   }
 
   final logOutput = result.stdout.toString();
@@ -72,8 +73,8 @@ void main(List<String> args) {
       '  ${violatingAuthors.toSet().join('\n  ')}\n'
       'Evaluation test commits must not be pushed. Clean or rebase your branch before pushing.',
     );
-    exit(1);
+    exitCode = 1;
+    return;
   }
 
-  stdout.writeln('No evaluation test commits found.');
 }
