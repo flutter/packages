@@ -250,7 +250,6 @@ Future<DateTime?> showDatePicker({
   Icon? switchToInputEntryModeIcon,
   Icon? switchToCalendarEntryModeIcon,
   CalendarDelegate<DateTime> calendarDelegate = const GregorianCalendarDelegate(),
-  List<TextInputFormatter>? inputFormatters,
 }) async {
   initialDate = initialDate == null ? null : calendarDelegate.dateOnly(initialDate);
   firstDate = calendarDelegate.dateOnly(firstDate);
@@ -1392,7 +1391,6 @@ class DateRangePickerDialog extends StatefulWidget {
     this.switchToCalendarEntryModeIcon,
     this.selectableDayPredicate,
     this.calendarDelegate = const GregorianCalendarDelegate(),
-    this.inputFormatters,
   });
 
   /// The date range that the date range picker starts with when it opens.
@@ -1530,9 +1528,6 @@ class DateRangePickerDialog extends StatefulWidget {
 
   /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
-
-  /// Optional text input formatters.
-  final List<TextInputFormatter>? inputFormatters;
 
   @override
   State<DateRangePickerDialog> createState() => _DateRangePickerDialogState();

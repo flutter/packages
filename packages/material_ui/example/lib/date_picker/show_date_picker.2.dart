@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Flutter code sample showing how to use [showDatePicker] with a custom
-/// [CalendarDelegate] and its [keyboardInputFormatters] to
+/// [CalendarDelegate] and its [CustomDateInputDelegate.keyboardInputFormatters] to
 /// synchronize input masking with date parsing and validation.
 
 void main() => runApp(const DatePickerSampleApp());
