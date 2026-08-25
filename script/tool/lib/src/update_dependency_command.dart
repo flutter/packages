@@ -449,14 +449,8 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
       return true;
     }
 
-    print('${indentation}Running pub upgrade...');
-    if (!await runPubCommand(
-      <String>['upgrade'],
-      package,
-      processRunner,
-      platform,
-      streamOutput: false,
-    )) {
+    print('${indentation}Running pub get...');
+    if (!await runPubGet(package, processRunner, platform, streamOutput: false)) {
       printError('${indentation}Fetching dependencies failed');
       return false;
     }
