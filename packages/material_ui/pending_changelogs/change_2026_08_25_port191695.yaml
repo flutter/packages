@@ -1,0 +1,3 @@
+changelog: |
+  - Fix `ThemeData.hintColor` being ignored for hint text under Material 3; a customized `hintColor` is honored again while the Material 3 default (`ColorScheme.onSurfaceVariant`) is used when it is not customized.
+version: patch
