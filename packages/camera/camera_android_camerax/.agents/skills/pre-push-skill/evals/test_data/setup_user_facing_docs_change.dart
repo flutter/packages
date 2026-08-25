@@ -20,6 +20,7 @@ $readmeContent
 Dash is a very cute mascot who loves having her photo taken using `takePicture`.
 ''');
 
+  // Intentionally omits backticks around takePicture to test CHANGELOG style enforcement.
   updateReleaseInfo(
     changelog: 'Documents how Dash likes getting pictures taken with takePicture.',
   );
