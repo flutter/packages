@@ -176,4 +176,24 @@ public class WebSettingsTest {
 
     verify(instance).setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
   }
+
+  @Test
+  public void setAllowFileAccessFromFileURLs() {
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    api.setAllowFileAccessFromFileURLs(instance, true);
+
+    verify(instance).setAllowFileAccessFromFileURLs(true);
+  }
+
+  @Test
+  public void setAllowUniversalAccessFromFileURLs() {
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    api.setAllowUniversalAccessFromFileURLs(instance, true);
+
+    verify(instance).setAllowUniversalAccessFromFileURLs(true);
+  }
 }
