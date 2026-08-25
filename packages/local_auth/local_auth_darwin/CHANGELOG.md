@@ -1,5 +1,6 @@
-## NEXT
+## 2.1.0
 
+* Adds `stopAuthentication` implementation.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.0.3

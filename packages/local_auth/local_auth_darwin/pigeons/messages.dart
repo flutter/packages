@@ -95,4 +95,12 @@ abstract class LocalAuthApi {
   /// [strings] for any UI.
   @async
   AuthResultDetails authenticate(AuthOptions options, AuthStrings strings);
+
+  /// Stops any in-progress authentication.
+  ///
+  /// Returns true if auth was cancelled successfully.
+  /// Returns false if there was no authentication in progress,
+  /// or an error occurred.
+  @async
+  bool stopAuthentication();
 }
