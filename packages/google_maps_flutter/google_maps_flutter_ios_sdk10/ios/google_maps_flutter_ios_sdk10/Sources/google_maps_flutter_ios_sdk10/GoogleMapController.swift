@@ -136,7 +136,8 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   // creation time and there's no mechanism to return non-fatal error details during platform view
   // initialization.
   var styleError: String?
-  /// Whether we are currently observing the "frame" key path on `mapView`.
+  /// Whether there is an observer registered for the "frame" key path on `mapView`. Used to ensure
+  /// that the observer is removed before the controller is deallocated.
   private var isObservingFrame = false
 
   public convenience init(
@@ -164,7 +165,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     )
   }
 
-  public init(
+  init(
     mapView: GMSMapView,
     viewIdentifier viewId: Int64,
     creationParameters: FGMPlatformMapViewCreationParams,
@@ -590,6 +591,7 @@ class MapCallHandler: NSObject, FGMMapsApi {
     controller?.markersController.add(toAdd)
     controller?.markersController.change(toChange)
     controller?.markersController.removeMarkers(withIdentifiers: idsToRemove)
+    // Invoke clustering after markers are added.
     controller?.clusterManagersController.invokeClusteringForEachClusterManager()
   }
 
