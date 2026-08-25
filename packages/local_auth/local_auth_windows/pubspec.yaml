@@ -24,7 +24,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pigeon: ">=26.3.4 <29.0.0"
+  pigeon: ^28.0.0
 
 topics:
   - authentication
