@@ -1,0 +1,3 @@
+changelog: |
+  - Corrects the Material 3 default style documentation for FilledButton to match its implementation.
+version: patch
