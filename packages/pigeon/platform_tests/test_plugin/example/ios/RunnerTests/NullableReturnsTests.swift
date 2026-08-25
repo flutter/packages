@@ -53,3 +53,29 @@ struct NullableReturnsTests {
     #expect(api.x == nil)
   }
 }
+
+/// Regression test for https://github.com/flutter/flutter/issues/191254.
+///
+/// `FlutterStandardReader` substitutes `NSNull` for a `nil` element of a list,
+/// so a null reply for a non-null return value arrives as `NSNull` rather than
+/// as `nil`. Before the fix that value was force-cast to the return type, which
+/// aborted the process instead of reporting an error.
+@MainActor
+struct NullReplyForNonNullReturnTests {
+  let codec = FlutterStandardMessageCodec.sharedInstance()
+
+  @Test
+  func nullReplyForNonNullReturnFailsWithoutCrashing() async throws {
+    let binaryMessenger = MockBinaryMessenger<NSNull>(codec: codec)
+    binaryMessenger.result = NSNull()
+    let api = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
+
+    do {
+      // `sendMultipleNullableTypes` has a non-null return value.
+      _ = try await api.sendMultipleNullableTypes(aBool: nil, anInt: nil, aString: nil)
+      Issue.record("Expected a null-error but the call succeeded.")
+    } catch let error as PigeonError {
+      #expect(error.code == "null-error")
+    }
+  }
+}

@@ -1149,6 +1149,35 @@ void main() {
     expect(code, contains('channel.sendMessage([xArg, yArg] as [Any?]) { response in'));
   });
 
+  test('non-null return from flutter api treats NSNull as null', () {
+    final root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doit',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    // `FlutterStandardReader` substitutes `NSNull` for a `nil` element of a
+    // list, so both need to be treated as a null reply before the value is
+    // cast. See https://github.com/flutter/flutter/issues/191254.
+    expect(code, contains('else if listResponse[0] == nil || listResponse[0] is NSNull {'));
+  });
+
   test('return nullable host', () {
     final root = Root(
       apis: <Api>[
