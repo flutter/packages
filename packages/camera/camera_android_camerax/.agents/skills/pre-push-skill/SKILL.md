@@ -105,6 +105,8 @@ If this command fails, the code WAS NOT ready to push.
 The required version bump and changelog entry must be made
 and committed before code can be pushed.
 
+Additionally, ensure `CHANGELOG.md` formatting follows the [CHANGELOG style guide](https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changelog-style).
+
 ## 6. Check License Headers
 
 All source files in this repository must include
@@ -167,7 +169,7 @@ communicate:
 [x] Check for Required Documentation
 [x] Check for Added Tests
 
-If for some reason you had to skip a check or it partially failed but you still think the code is ready to push then call out the skipped work like this: 
+If for some reason you had to skip a check or it partially failed but you still think the code is ready to push then call out the skipped work like this:
 
 # YES, you are ready to push!
 Unit tests failing for <path to failing test> but failure appears unrelated to the work being pushed.

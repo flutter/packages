@@ -5,7 +5,7 @@
 import 'dart:io';
 
 void main() {
-  final ProcessResult branchResult = Process.runSync('git', ['branch', '--show-current']);
+  final ProcessResult branchResult = Process.runSync('git', <String>['branch', '--show-current']);
   final String branch = branchResult.stdout.toString().trim();
   if (branch == 'main') {
     stdout.writeln('Error: Cannot run setup scripts on main branch.');
@@ -50,14 +50,24 @@ public class DummyEvalFeatureTest {
 }
 ''');
 
-  Process.runSync('git', ['add', javaFile.path, javaTestFile.path]);
-  Process.runSync('git', [
+  // Use repo tooling to bump version and add changelog entry.
+  Process.runSync('dart', <String>[
+    'run',
+    '../../../script/tool/bin/flutter_plugin_tools.dart',
+    'update-release-info',
+    '--packages=camera_android_camerax',
+    '--version=bugfix',
+    '--changelog=Adds `DummyEvalFeature` and tests.',
+  ]);
+
+  Process.runSync('git', <String>['add', javaFile.path, javaTestFile.path, 'pubspec.yaml', 'CHANGELOG.md']);
+  Process.runSync('git', <String>[
     '-c',
     'user.name=Author',
     '-c',
     'user.email=author@example.com',
     'commit',
     '-m',
-    'Add DummyEvalFeature.java and tests',
+    'Add DummyEvalFeature.java, tests, and changelog update',
   ]);
 }
