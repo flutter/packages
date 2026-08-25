@@ -640,6 +640,12 @@ struct SK2ProductPurchaseOptionsMessage: Hashable, CustomStringConvertible {
   var quantity: Int64? = nil
   var promotionalOffer: SK2SubscriptionOfferPurchaseMessage? = nil
   var winBackOfferId: String? = nil
+  /// A compact JWS, signed by the developer's server, that sets the customer's
+  /// eligibility for an introductory offer on this purchase.
+  ///
+  /// This is passed to StoreKit verbatim; it is never parsed or validated
+  /// client-side.
+  var introductoryOfferEligibilityCompactJWS: String? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> SK2ProductPurchaseOptionsMessage? {
@@ -647,12 +653,14 @@ struct SK2ProductPurchaseOptionsMessage: Hashable, CustomStringConvertible {
     let quantity: Int64? = nilOrValue(pigeonVar_list[1])
     let promotionalOffer: SK2SubscriptionOfferPurchaseMessage? = nilOrValue(pigeonVar_list[2])
     let winBackOfferId: String? = nilOrValue(pigeonVar_list[3])
+    let introductoryOfferEligibilityCompactJWS: String? = nilOrValue(pigeonVar_list[4])
 
     return SK2ProductPurchaseOptionsMessage(
       appAccountToken: appAccountToken,
       quantity: quantity,
       promotionalOffer: promotionalOffer,
-      winBackOfferId: winBackOfferId
+      winBackOfferId: winBackOfferId,
+      introductoryOfferEligibilityCompactJWS: introductoryOfferEligibilityCompactJWS
     )
   }
   func toList() -> [Any?] {
@@ -661,6 +669,7 @@ struct SK2ProductPurchaseOptionsMessage: Hashable, CustomStringConvertible {
       quantity,
       promotionalOffer,
       winBackOfferId,
+      introductoryOfferEligibilityCompactJWS,
     ]
   }
   static func == (lhs: SK2ProductPurchaseOptionsMessage, rhs: SK2ProductPurchaseOptionsMessage)
@@ -673,6 +682,8 @@ struct SK2ProductPurchaseOptionsMessage: Hashable, CustomStringConvertible {
       && StoreKit2MessagesPigeonInternal.deepEquals(lhs.quantity, rhs.quantity)
       && StoreKit2MessagesPigeonInternal.deepEquals(lhs.promotionalOffer, rhs.promotionalOffer)
       && StoreKit2MessagesPigeonInternal.deepEquals(lhs.winBackOfferId, rhs.winBackOfferId)
+      && StoreKit2MessagesPigeonInternal.deepEquals(
+        lhs.introductoryOfferEligibilityCompactJWS, rhs.introductoryOfferEligibilityCompactJWS)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -681,11 +692,13 @@ struct SK2ProductPurchaseOptionsMessage: Hashable, CustomStringConvertible {
     StoreKit2MessagesPigeonInternal.deepHash(value: quantity, hasher: &hasher)
     StoreKit2MessagesPigeonInternal.deepHash(value: promotionalOffer, hasher: &hasher)
     StoreKit2MessagesPigeonInternal.deepHash(value: winBackOfferId, hasher: &hasher)
+    StoreKit2MessagesPigeonInternal.deepHash(
+      value: introductoryOfferEligibilityCompactJWS, hasher: &hasher)
   }
 
   public var description: String {
     return
-      "SK2ProductPurchaseOptionsMessage(appAccountToken: \(String(describing: appAccountToken)), quantity: \(String(describing: quantity)), promotionalOffer: \(String(describing: promotionalOffer)), winBackOfferId: \(String(describing: winBackOfferId)))"
+      "SK2ProductPurchaseOptionsMessage(appAccountToken: \(String(describing: appAccountToken)), quantity: \(String(describing: quantity)), promotionalOffer: \(String(describing: promotionalOffer)), winBackOfferId: \(String(describing: winBackOfferId)), introductoryOfferEligibilityCompactJWS: \(String(describing: introductoryOfferEligibilityCompactJWS)))"
   }
 }
 

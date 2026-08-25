@@ -85,6 +85,13 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           }
         }
 
+        // No availability check is needed: `introductoryOfferEligibility` is
+        // back deployed, so it is available on the same iOS 15 / macOS 12
+        // floor as the rest of this StoreKit 2 extension.
+        if let compactJWS = options?.introductoryOfferEligibilityCompactJWS {
+          purchaseOptions.insert(.introductoryOfferEligibility(compactJWS: compactJWS))
+        }
+
         for await verificationResult in Transaction.unfinished {
           switch verificationResult {
           case .verified(let transaction):
