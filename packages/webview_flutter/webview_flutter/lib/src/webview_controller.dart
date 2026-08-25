@@ -236,6 +236,30 @@ class WebViewController {
     return platform.runJavaScript(javaScript);
   }
 
+  /// Adds JavaScript that runs at the start of future document loads.
+  ///
+  /// This method should be called before loading a page if the script needs to
+  /// run for that page. It does not run JavaScript in the currently loaded
+  /// document. Scripts run in the order in which they were added.
+  ///
+  /// The script runs in every frame of a loaded document, regardless of its
+  /// origin, including cross-origin `<iframe>`s, so it should not contain
+  /// sensitive data.
+  ///
+  /// The returned [DocumentStartJavaScriptRegistration] can be used to stop injecting the
+  /// JavaScript into future document loads. It can be discarded if the
+  /// JavaScript should be injected for the lifetime of this controller.
+  ///
+  /// Throws an [UnsupportedError] if the current platform does not support
+  /// document-start JavaScript injection. This is currently the case on the
+  /// web, and on Android when the WebView installed on the device does not
+  /// support the `DOCUMENT_START_SCRIPT` feature.
+  Future<DocumentStartJavaScriptRegistration> addDocumentStartJavaScript(String javaScript) async {
+    return DocumentStartJavaScriptRegistration.fromPlatform(
+      await platform.addDocumentStartJavaScript(javaScript),
+    );
+  }
+
   /// Runs the given JavaScript in the context of the current page, and returns
   /// the result.
   ///
@@ -421,6 +445,22 @@ class WebViewController {
   Future<void> setOverScrollMode(WebViewOverScrollMode mode) async {
     return platform.setOverScrollMode(mode);
   }
+}
+
+/// A registration for JavaScript injected at the start of future document loads.
+///
+/// Returned by [WebViewController.addDocumentStartJavaScript].
+class DocumentStartJavaScriptRegistration {
+  /// Constructs a [DocumentStartJavaScriptRegistration] from a specific platform
+  /// implementation.
+  DocumentStartJavaScriptRegistration.fromPlatform(this.platform);
+
+  /// Implementation of [PlatformDocumentStartJavaScriptRegistration] for the current
+  /// platform.
+  final PlatformDocumentStartJavaScriptRegistration platform;
+
+  /// Deregisters this registration, stopping JavaScript injection into future document loads.
+  Future<void> remove() => platform.remove();
 }
 
 /// Permissions request when web content requests access to protected resources.

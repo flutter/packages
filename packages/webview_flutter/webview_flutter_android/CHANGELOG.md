@@ -1,4 +1,9 @@
+## 4.15.0
+
+* Adds support for `addDocumentStartJavaScript`.
+
 ## 4.14.0
+
 * Adds support for configuring Web Authentication in `AndroidWebViewController` with `setWebAuthenticationSupport` to enable Passkey and other related Authentication.
 
 ## 4.13.0

@@ -111,6 +111,27 @@ const String kLogExamplePage = '''
 </html>
 ''';
 
+const String kDocumentStartExamplePage = '''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Document start script example</title>
+</head>
+<body>
+
+<h1>Document start script demo page</h1>
+<p id="message">The document start script did not run.</p>
+
+<script>
+  document.getElementById('message').textContent =
+      'The document start script set window.exampleValue to: ' +
+      window.exampleValue;
+</script>
+
+</body>
+</html>
+''';
+
 class WebViewExample extends StatefulWidget {
   const WebViewExample({super.key});
 
@@ -303,6 +324,7 @@ enum MenuOptions {
   setCookie,
   logExample,
   basicAuthentication,
+  documentStartJavaScript,
 }
 
 class SampleMenu extends StatelessWidget {
@@ -310,6 +332,8 @@ class SampleMenu extends StatelessWidget {
 
   final WebViewController webViewController;
   late final WebViewCookieManager cookieManager = WebViewCookieManager();
+
+  static DocumentStartJavaScriptRegistration? _documentStartJavaScriptRegistration;
 
   @override
   Widget build(BuildContext context) {
@@ -347,6 +371,8 @@ class SampleMenu extends StatelessWidget {
             _onLogExample();
           case MenuOptions.basicAuthentication:
             _promptForUrl(context);
+          case MenuOptions.documentStartJavaScript:
+            _onDocumentStartJavaScriptExample(context);
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
@@ -398,6 +424,10 @@ class SampleMenu extends StatelessWidget {
         const PopupMenuItem<MenuOptions>(
           value: MenuOptions.basicAuthentication,
           child: Text('Basic Authentication Example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.documentStartJavaScript,
+          child: Text('Document start JavaScript example'),
         ),
       ],
     );
@@ -509,6 +539,35 @@ class SampleMenu extends StatelessWidget {
 
   Future<void> _onTransparentBackground() {
     return webViewController.loadHtmlString(kTransparentBackgroundPage);
+  }
+
+  Future<void> _onDocumentStartJavaScriptExample(BuildContext context) async {
+    // Removing the previously added registration keeps this example from
+    // injecting the same JavaScript again every time it is run.
+    await _documentStartJavaScriptRegistration?.remove();
+    _documentStartJavaScriptRegistration = null;
+
+    try {
+      // #docregion document_start_javascript
+      final DocumentStartJavaScriptRegistration documentStartJavaScriptRegistration =
+          await webViewController.addDocumentStartJavaScript(
+            'window.exampleValue = "Hello from a document start script!";',
+          );
+      // #enddocregion document_start_javascript
+      _documentStartJavaScriptRegistration = documentStartJavaScriptRegistration;
+    } on UnsupportedError {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Document start JavaScript is not supported on this platform.'),
+          ),
+        );
+      }
+      return;
+    }
+
+    // The script only affects documents that are loaded after it is added.
+    await webViewController.loadHtmlString(kDocumentStartExamplePage);
   }
 
   Widget _getCookieList(List<WebViewCookie> cookies) {

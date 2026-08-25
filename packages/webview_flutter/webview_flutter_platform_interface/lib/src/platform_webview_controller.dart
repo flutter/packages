@@ -168,6 +168,29 @@ abstract class PlatformWebViewController extends PlatformInterface {
     throw UnimplementedError('runJavaScript is not implemented on the current platform');
   }
 
+  /// Adds JavaScript that runs at the start of future document loads.
+  ///
+  /// This method should be called before loading a page if the script needs to
+  /// run for that page. It does not run JavaScript in the currently loaded
+  /// document. Implementations must run scripts in the order in which they were
+  /// added.
+  ///
+  /// The script runs in every frame of a loaded document, regardless of its
+  /// origin, including cross-origin `<iframe>`s.
+  ///
+  /// The returned [PlatformDocumentStartJavaScriptRegistration] can be used to stop
+  /// injecting the JavaScript into future document loads.
+  ///
+  /// Implementations that cannot support this feature should throw an
+  /// [UnsupportedError].
+  Future<PlatformDocumentStartJavaScriptRegistration> addDocumentStartJavaScript(
+    String javaScript,
+  ) {
+    throw UnimplementedError(
+      'addDocumentStartJavaScript is not implemented on the current platform',
+    );
+  }
+
   /// Runs the given JavaScript in the context of the current page, and returns the result.
   ///
   /// The Future completes with an error if a JavaScript error occurred, or if the
@@ -327,6 +350,18 @@ abstract class PlatformWebViewController extends PlatformInterface {
   Future<void> setOverScrollMode(WebViewOverScrollMode mode) async {
     throw UnimplementedError('setOverScrollMode is not implemented on the current platform');
   }
+}
+
+/// A registration for JavaScript injected at the start of future document loads.
+///
+/// Returned by [PlatformWebViewController.addDocumentStartJavaScript].
+abstract class PlatformDocumentStartJavaScriptRegistration {
+  /// Creates a [PlatformDocumentStartJavaScriptRegistration].
+  @protected
+  const PlatformDocumentStartJavaScriptRegistration();
+
+  /// Deregisters this registration, stopping JavaScript injection into future document loads.
+  Future<void> remove();
 }
 
 /// Describes the parameters necessary for registering a JavaScript channel.

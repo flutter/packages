@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,11 +20,15 @@ import android.webkit.DownloadListener;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import androidx.webkit.ScriptHandler;
+import androidx.webkit.WebViewCompat;
 import io.flutter.embedding.android.FlutterView;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
 
 public class WebViewTest {
   @Test
@@ -216,6 +221,26 @@ public class WebViewTest {
     final String result = "resultValue";
     callbackCaptor.getValue().onReceiveValue(result);
     assertEquals(resultValue[0], result);
+  }
+
+  @Test
+  public void addDocumentStartJavaScript() {
+    final PigeonApiWebView api = new TestProxyApiRegistrar().getPigeonApiWebView();
+
+    final WebView instance = mock(WebView.class);
+    final String script = "window.test = true;";
+    final ScriptHandler scriptHandler = mock(ScriptHandler.class);
+
+    try (MockedStatic<WebViewCompat> mockedWebViewCompat = mockStatic(WebViewCompat.class)) {
+      mockedWebViewCompat
+          .when(
+              () ->
+                  WebViewCompat.addDocumentStartJavaScript(
+                      instance, script, Collections.singleton("*")))
+          .thenReturn(scriptHandler);
+
+      assertEquals(scriptHandler, api.addDocumentStartJavaScript(instance, script));
+    }
   }
 
   @Test

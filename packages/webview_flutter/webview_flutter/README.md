@@ -61,6 +61,27 @@ See the Dartdocs for [WebViewController](https://pub.dev/documentation/webview_f
 and [WebViewWidget](https://pub.dev/documentation/webview_flutter/latest/webview_flutter/WebViewWidget-class.html)
 for more details.
 
+### Running JavaScript at document start
+
+`WebViewController.addDocumentStartJavaScript` registers JavaScript that runs at the start of every
+document loaded after the call, before the scripts of the loaded page run:
+
+<?code-excerpt "main.dart (document_start_javascript)"?>
+```dart
+final DocumentStartJavaScriptRegistration documentStartJavaScriptRegistration = await webViewController
+    .addDocumentStartJavaScript(
+      'window.exampleValue = "Hello from a document start script!";',
+    );
+```
+
+The script runs in every frame of the document, including cross-origin `<iframe>`s, so it should not
+contain sensitive data. Calling `remove()` on the returned registration deregisters it, stopping
+JavaScript injection into future document loads. The registration can be discarded if the script
+should be injected for the lifetime of the controller.
+
+This feature is not available on the web, or on Android devices whose WebView does not support the
+`DOCUMENT_START_SCRIPT` feature; an `UnsupportedError` is thrown in those cases.
+
 ### Platform-Specific Features
 
 Many classes have a subclass or an underlying implementation that provides access to platform-specific
