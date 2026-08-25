@@ -44,12 +44,15 @@
 * Aligns Dart and Flutter SDK constraints.
 
 ## 2.0.7
+
 * Updates screenshots to use webp compressed animations
 
 ## 2.0.6
+
 * Adds screenshots to pubspec.yaml
 
 ## 2.0.5
+
 * Update `OpenContainer` to use `Visibility` widget internally instead of `Opacity`.
 * Update `OpenContainer` to use `FadeTransition` instead of animating an `Opacity`
   widget internally.
@@ -60,12 +63,15 @@
 * Fixes lint warnings.
 
 ## 2.0.3
+
 * Updates for non-nullable bindings.
 
 ## 2.0.2
+
 * Fixed documentation for `OpenContainer` class; replaced `openBuilder` with `closedBuilder`.
 
 ## 2.0.1
+
 * Add links to the spec and codelab.
 
 ## 2.0.0
@@ -94,11 +100,9 @@ and tappable when it is supposed to be hidden.
 * Add `OpenContainer.onClosed`, which is called with a returned value when the container was popped and has returned to the closed state.
 * Fixes a bug with OpenContainer where a crash occurs when the container is dismissed after the container widget itself is removed.
 
-
 ## 1.0.0+5
 
 * Fix override analyzer ignore placement.
-
 
 ## 1.0.0+4
 
@@ -114,16 +118,13 @@ and tappable when it is supposed to be hidden.
 
 * Update README.md to better describe Material motion
 
-
 ## 1.0.0+2
 
 * Fixes to pubspec.yaml
 
-
 ## 1.0.0+1
 
 * Fixes to pubspec.yaml
-
 
 ## 1.0.0
 

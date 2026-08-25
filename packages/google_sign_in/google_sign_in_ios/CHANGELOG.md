@@ -1,6 +1,6 @@
 ## 6.3.2
 
-* Updates pigeon dev_dependency constraint for analyzer 14 compatibility.
+* Updates pigeon dev_dependency to ^27.3.1 for analyzer 14 compatibility.
 
 ## 6.3.1
 
@@ -10,6 +10,7 @@
 
 * Adds UIScene compatibility.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 6.2.5
 
 * Updates native header visibility for Swift testing.

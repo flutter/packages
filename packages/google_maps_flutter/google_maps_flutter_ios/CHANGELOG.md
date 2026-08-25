@@ -1,10 +1,9 @@
 ## 2.18.6
 
-* Updates pigeon dev_dependency constraint for analyzer 14 compatibility.
+* Updates pigeon dev_dependency to ^27.3.1 for analyzer 14 compatibility.
 
 ## 2.18.5
 
-* Updates pigeon dev_dependency constraint for analyzer 14 compatibility.
 * Updates README to indicate that this package will not receive feature updates
   going forward. Please see the README for information about adopting one of
   the maintained implementation packages.
@@ -28,7 +27,7 @@
 ## 2.18.0
 
 * Adds support for advanced markers.
- 
+
 ## 2.17.5
 
 * Adds UIScene compatibility.

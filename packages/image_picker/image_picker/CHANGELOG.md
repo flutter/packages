@@ -297,12 +297,15 @@ will no longer be able to access images or videos captured unless they are moved
 * Updated Mockito to fix Android tests.
 
 ## 0.7.5+4
+
 * Migrate maven repo from jcenter to mavenCentral.
 
 ## 0.7.5+3
+
 * Localize `UIAlertController` strings.
 
 ## 0.7.5+2
+
 * Implement `UIAlertController` with a preferredStyle of `UIAlertControllerStyleAlert` since `UIAlertView` is deprecated.
 
 ## 0.7.5+1

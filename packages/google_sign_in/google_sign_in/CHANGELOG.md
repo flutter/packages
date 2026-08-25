@@ -591,7 +591,6 @@ allprojects {
 
 * Update to use `GoogleSignIn` CocoaPod
 
-
 ## 0.0.6
 
 * Fix crash on iOS when signing in caused by nil uiDelegate

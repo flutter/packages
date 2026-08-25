@@ -1,6 +1,6 @@
 ## 3.2.3
 
-* Updates pigeon dev_dependency constraint for analyzer 14 compatibility.
+* Updates pigeon dev_dependency to ^27.3.1 for analyzer 14 compatibility.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 3.2.2
@@ -107,9 +107,7 @@
 ## 0.0.1+2
 
 * Check in linux/ directory for example/
-
 # 0.0.1+1
 * README update for endorsement by url_launcher.
-
 # 0.0.1
 * The initial implementation of url_launcher for Linux

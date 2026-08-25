@@ -1,6 +1,6 @@
 ## 3.26.1
 
-* Updates pigeon dev_dependency constraint for analyzer 14 compatibility.
+* Updates pigeon dev_dependency to ^27.3.1 for analyzer 14 compatibility.
 
 ## 3.26.0
 
