@@ -50,7 +50,15 @@ public class DummyEvalFeatureTest {
 }
 ''');
 
-  updateVersionAndChangelog('Adds `DummyEvalFeature` and tests.');
+  // Use repository tooling to bump version and add changelog entry.
+  Process.runSync('dart', <String>[
+    'run',
+    '../../../script/tool/bin/flutter_plugin_tools.dart',
+    'update-release-info',
+    '--packages=camera_android_camerax',
+    '--version=bugfix',
+    '--changelog=Adds `DummyEvalFeature` and tests.',
+  ]);
 
   Process.runSync('git', <String>['add', javaFile.path, javaTestFile.path, 'pubspec.yaml', 'CHANGELOG.md']);
   Process.runSync('git', <String>[
@@ -62,41 +70,4 @@ public class DummyEvalFeatureTest {
     '-m',
     'Add DummyEvalFeature.java, tests, and changelog update',
   ]);
-}
-
-/// Updates the package version in `pubspec.yaml` and prepends the new entry to `CHANGELOG.md`.
-void updateVersionAndChangelog(String changelogEntry) {
-  final pubspecFile = File('pubspec.yaml');
-  final String pubspecContent = pubspecFile.readAsStringSync();
-  final versionRegex = RegExp(r'version:\s*(\d+\.\d+\.\d+(\+\d+)?)');
-  final RegExpMatch? versionMatch = versionRegex.firstMatch(pubspecContent);
-  if (versionMatch == null) {
-    throw StateError('Could not find version in pubspec.yaml');
-  }
-
-  final String currentVersion = versionMatch.group(1)!;
-  final String newVersion = _bumpVersion(currentVersion);
-  pubspecFile.writeAsStringSync(
-    pubspecContent.replaceFirst(versionRegex, 'version: $newVersion'),
-  );
-
-  final changelogFile = File('CHANGELOG.md');
-  final String changelogContent = changelogFile.readAsStringSync();
-  changelogFile.writeAsStringSync('''
-## $newVersion
-
-* $changelogEntry
-
-$changelogContent''');
-}
-
-String _bumpVersion(String version) {
-  if (version.contains('+')) {
-    final List<String> parts = version.split('+');
-    final int build = int.parse(parts[1]) + 1;
-    return '${parts[0]}+$build';
-  }
-  final List<String> parts = version.split('.');
-  final int patch = int.parse(parts[2]) + 1;
-  return '${parts[0]}.${parts[1]}.$patch';
 }

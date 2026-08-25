@@ -23,7 +23,15 @@ $readmeContent
 Dash is a very cute mascot who loves having her photo taken using `takePicture`.
 ''');
 
-  updateVersionAndChangelog('Document how Dash likes getting pictures taken with takePicture.');
+  // Use repository tooling to bump version and add changelog entry without backticks.
+  Process.runSync('dart', <String>[
+    'run',
+    '../../../script/tool/bin/flutter_plugin_tools.dart',
+    'update-release-info',
+    '--packages=camera_android_camerax',
+    '--version=bugfix',
+    '--changelog=Document how Dash likes getting pictures taken with takePicture.',
+  ]);
 
   Process.runSync('git', <String>['add', readmeFile.path, 'pubspec.yaml', 'CHANGELOG.md']);
   Process.runSync('git', <String>[
@@ -35,41 +43,4 @@ Dash is a very cute mascot who loves having her photo taken using `takePicture`.
     '-m',
     'Add Dash documentation and changelog entry without backticks',
   ]);
-}
-
-/// Updates the package version in `pubspec.yaml` and prepends the new entry to `CHANGELOG.md`.
-void updateVersionAndChangelog(String changelogEntry) {
-  final pubspecFile = File('pubspec.yaml');
-  final String pubspecContent = pubspecFile.readAsStringSync();
-  final versionRegex = RegExp(r'version:\s*(\d+\.\d+\.\d+(\+\d+)?)');
-  final RegExpMatch? versionMatch = versionRegex.firstMatch(pubspecContent);
-  if (versionMatch == null) {
-    throw StateError('Could not find version in pubspec.yaml');
-  }
-
-  final String currentVersion = versionMatch.group(1)!;
-  final String newVersion = _bumpVersion(currentVersion);
-  pubspecFile.writeAsStringSync(
-    pubspecContent.replaceFirst(versionRegex, 'version: $newVersion'),
-  );
-
-  final changelogFile = File('CHANGELOG.md');
-  final String changelogContent = changelogFile.readAsStringSync();
-  changelogFile.writeAsStringSync('''
-## $newVersion
-
-* $changelogEntry
-
-$changelogContent''');
-}
-
-String _bumpVersion(String version) {
-  if (version.contains('+')) {
-    final List<String> parts = version.split('+');
-    final int build = int.parse(parts[1]) + 1;
-    return '${parts[0]}+$build';
-  }
-  final List<String> parts = version.split('.');
-  final int patch = int.parse(parts[2]) + 1;
-  return '${parts[0]}.${parts[1]}.$patch';
 }
