@@ -4,6 +4,12 @@
 
 import 'dart:io';
 
+/// Author name used for evaluation test commits.
+const String evalAuthorName = 'Eval Author';
+
+/// Author email used for evaluation test commits.
+const String evalAuthorEmail = 'eval-author@example.com';
+
 /// Asserts that the current git branch is not `main` to prevent modifying the default branch.
 void ensureNotMainBranch() {
   final ProcessResult branchResult = Process.runSync('git', <String>['branch', '--show-current']);
@@ -34,14 +40,14 @@ void updateReleaseInfo({required String changelog, String version = 'bugfix'}) {
   ]);
 }
 
-/// Stages [paths] and commits them with [message] using dummy author metadata.
+/// Stages [paths] and commits them with [message] using evaluation author metadata.
 void commitFiles(List<String> paths, String message) {
   Process.runSync('git', <String>['add', ...paths]);
   Process.runSync('git', <String>[
     '-c',
-    'user.name=Author',
+    'user.name=$evalAuthorName',
     '-c',
-    'user.email=author@example.com',
+    'user.email=$evalAuthorEmail',
     'commit',
     '-m',
     message,
