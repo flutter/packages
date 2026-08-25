@@ -1,8 +1,3 @@
-## 1.0.2
-
-- Fixed some leaks of TextEditingControllers in the cupertino_ui magnifier examples.
-- Fixed an issue where the `CupertinoIcons` font was not included in the cupertino_ui examples.
-
 ## 1.0.1
 
 - Add missing Widget of the Week videos to widget API docs.
