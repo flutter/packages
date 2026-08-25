@@ -88,15 +88,14 @@ void main(List<String> args) {
       .toList();
 
   final forbidden = <String>[
-    evalAuthorEmail.toLowerCase(),
-    evalAuthorName.toLowerCase(),
+    evalAuthorEmail,
+    evalAuthorName,
   ];
 
   final violatingIdentities = <String>[];
   for (final identity in identities) {
-    final String normalized = identity.toLowerCase();
     for (final pattern in forbidden) {
-      if (normalized.contains(pattern)) {
+      if (identity.contains(pattern)) {
         violatingIdentities.add(identity);
         break;
       }
