@@ -114,7 +114,6 @@
 * Adds support for `getStyleError`.
 
 ## 0.5.5
-
 * Migrates to `dart:js_interop` and `package:web` APIs.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
@@ -276,6 +275,7 @@ the returned controller is 100% functional (has bounds, a projection, etc...)
 
 * Make this plugin compatible with the rest of null-safe plugins.
 * Noop tile overlays methods, so they don't crash on web.
+
 **NOTE**: This plugin is **not** null-safe yet!
 
 ## 0.1.2

@@ -9,7 +9,6 @@
   androidx.concurrent.futures.CallbackToFutureAdapter not found" when
   `camera-core`'s Jspecify type annotations are resolved during compilation.
   
-
 ## 0.7.4+5
 
 * Fixes a leaked thread per capture by dispatching the `takePicture` result callback on the main
@@ -581,4 +580,5 @@ this plugin should now be compatible with [google_ml_kit_flutter](https://github
     * Video recording
     * Displaying a live camera preview
     * Image streaming
+
   See [`README.md`](README.md) for more details on the limitations of this implementation.

@@ -13,7 +13,6 @@
 * Clarifies `completePurchase` usage and the consequences of unfinished transactions in the README and docstrings.
 
 ## 3.2.3
-
 * Updates minimum `in_app_purchase_storekit` version to 0.4.0.
 
 ## 3.2.2
@@ -591,6 +590,7 @@ Beta release.
 * Ability to list products, load previous purchases, and make purchases.
 * Simplified Dart API that's been unified for ease of use.
 * Platform-specific APIs more directly exposing `StoreKit` and `BillingClient`.
+
 Includes:
 
 * 5ba657dc [in_app_purchase] Remove extraneous download logic (#1560)

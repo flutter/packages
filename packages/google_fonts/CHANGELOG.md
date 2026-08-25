@@ -695,9 +695,7 @@
   - `Yuji Hentaigana Akebono`
 
 ## 3.0.1
-
 ### Changed
-
 - Improve asset manifest loading errors
 - Improve testing guidance
 

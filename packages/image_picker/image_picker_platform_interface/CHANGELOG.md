@@ -127,6 +127,7 @@
   * `getImage` (will deprecate `pickImage`)
   * `getVideo` (will deprecate `pickVideo`)
   * `getMultiImage` (will deprecate `pickMultiImage`)
+
 _`PickedFile` will also be marked as deprecated in an upcoming release._
 
 ## 2.1.0

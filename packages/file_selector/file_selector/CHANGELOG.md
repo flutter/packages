@@ -88,6 +88,7 @@
     * `openFile`
     * `openFiles`
     * `getSavePath`
+
   can throw `ArgumentError`s if called with any `XTypeGroup`s that
   do not contain appropriate filters for the current platform. For
   example, an `XTypeGroup` that only specifies `webWildCards` will

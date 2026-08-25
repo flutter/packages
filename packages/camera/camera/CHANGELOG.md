@@ -802,12 +802,14 @@ a `MissingPluginException.`
 
 * Added support for video recording.
 * Changed the example app to add video recording.
+
 A lot of **breaking changes** in this version:
 
 Getter changes:
  - Removed `isStarted`
  - Renamed `initialized` to `isInitialized`
  - Added `isRecordingVideo`
+
 Method changes:
  - Renamed `capture` to `takePicture`
  - Removed `start` (the preview starts automatically when `initialize` is called)
