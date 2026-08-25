@@ -19,24 +19,12 @@ void main(List<String> args) {
     ..addOption(
       _remoteFlag,
       defaultsTo: defaultRemote,
-      help: 'The git remote to compare against (defaults to detected flutter/packages remote or origin).',
+      help:
+          'The git remote to compare against (defaults to detected flutter/packages remote or origin).',
     )
-    ..addOption(
-      _baseBranchFlag,
-      defaultsTo: 'main',
-      help: 'The base branch to compare against.',
-    )
-    ..addOption(
-      _headFlag,
-      defaultsTo: 'HEAD',
-      help: 'The head commit or reference to compare.',
-    )
-    ..addFlag(
-      _helpFlag,
-      abbr: 'h',
-      negatable: false,
-      help: 'Prints usage information.',
-    );
+    ..addOption(_baseBranchFlag, defaultsTo: 'main', help: 'The base branch to compare against.')
+    ..addOption(_headFlag, defaultsTo: 'HEAD', help: 'The head commit or reference to compare.')
+    ..addFlag(_helpFlag, abbr: 'h', negatable: false, help: 'Prints usage information.');
 
   final ArgResults argResults;
   try {
@@ -86,10 +74,7 @@ void main(List<String> args) {
       .where((String line) => line.isNotEmpty)
       .toList();
 
-  final forbiddenIdentities = <String>[
-    evalAuthorEmail,
-    evalAuthorName,
-  ];
+  final forbiddenIdentities = <String>[evalAuthorEmail, evalAuthorName];
 
   for (final identity in identities) {
     for (final forbiddenIdentity in forbiddenIdentities) {
@@ -106,5 +91,4 @@ void main(List<String> args) {
   }
 
   stdout.writeln('SUCCESS: No evaluation test commits detected.');
-
 }

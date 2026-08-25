@@ -55,8 +55,9 @@ void main() {
 }
 ''');
 
-  commitFiles(
-    <String>[javaFile.path, dartFile.path, dartTestFile.path],
-    'Add DummyEvalFeature with Dart test but missing Java test',
-  );
+  commitFiles(<String>[
+    javaFile.path,
+    dartFile.path,
+    dartTestFile.path,
+  ], 'Add DummyEvalFeature with Dart test but missing Java test');
 }

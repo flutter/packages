@@ -46,8 +46,10 @@ void main() {
   updateReleaseInfo(changelog: 'Adds `DummyEvalCommitFeature` and tests.');
 
   // Commit using eval author credentials to trigger the check failure.
-  commitFiles(
-    <String>[dartFile.path, dartTestFile.path, 'pubspec.yaml', 'CHANGELOG.md'],
-    'Add DummyEvalCommitFeature with eval author credentials',
-  );
+  commitFiles(<String>[
+    dartFile.path,
+    dartTestFile.path,
+    'pubspec.yaml',
+    'CHANGELOG.md',
+  ], 'Add DummyEvalCommitFeature with eval author credentials');
 }

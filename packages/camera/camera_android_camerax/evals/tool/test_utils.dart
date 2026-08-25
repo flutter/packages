@@ -62,11 +62,10 @@ void updateReleaseInfo({required String changelog, String version = 'bugfix'}) {
   if (scriptToolDir.existsSync()) {
     final packageConfigFile = File('../../../script/tool/.dart_tool/package_config.json');
     if (!packageConfigFile.existsSync()) {
-      final ProcessResult pubGetResult = Process.runSync(
-        'dart',
-        <String>['pub', 'get'],
-        workingDirectory: scriptToolDir.path,
-      );
+      final ProcessResult pubGetResult = Process.runSync('dart', <String>[
+        'pub',
+        'get',
+      ], workingDirectory: scriptToolDir.path);
       if (pubGetResult.exitCode != 0) {
         stderr.writeln('Error: pub get in script/tool failed:\n${pubGetResult.stderr}');
         exit(pubGetResult.exitCode);

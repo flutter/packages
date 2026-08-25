@@ -21,12 +21,11 @@ Dash is a very cute mascot who loves having her photo taken using `takePicture`.
 ''');
 
   // Intentionally omits backticks around takePicture to test CHANGELOG style enforcement.
-  updateReleaseInfo(
-    changelog: 'Documents how Dash likes getting pictures taken with takePicture.',
-  );
+  updateReleaseInfo(changelog: 'Documents how Dash likes getting pictures taken with takePicture.');
 
-  commitFiles(
-    <String>[readmeFile.path, 'pubspec.yaml', 'CHANGELOG.md'],
-    'Add Dash documentation and changelog entry without backticks',
-  );
+  commitFiles(<String>[
+    readmeFile.path,
+    'pubspec.yaml',
+    'CHANGELOG.md',
+  ], 'Add Dash documentation and changelog entry without backticks');
 }
