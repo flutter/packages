@@ -338,43 +338,45 @@ class RouteMatch extends RouteMatchBase {
 
 class _ShellRoutePageKey extends ValueKey<String> {
   _ShellRoutePageKey(ShellRouteBase route, [ValueKey<String>? imperativePageKey])
-    : _route = route,
+    : _routeIdentity = route.pageIdentity,
       _imperativePageKey = imperativePageKey,
       super(
         imperativePageKey == null
-            ? route.hashCode.toString()
-            : '${route.hashCode}-${imperativePageKey.value}',
+            ? identityHashCode(route.pageIdentity).toString()
+            : '${identityHashCode(route.pageIdentity)}-${imperativePageKey.value}',
       );
 
-  final ShellRouteBase _route;
+  final Object _routeIdentity;
   final ValueKey<String>? _imperativePageKey;
 
   @override
   bool operator ==(Object other) {
     return other is _ShellRoutePageKey &&
-        identical(other._route, _route) &&
+        identical(other._routeIdentity, _routeIdentity) &&
         other._imperativePageKey == _imperativePageKey;
   }
 
   @override
-  int get hashCode => Object.hash(identityHashCode(_route), _imperativePageKey);
+  int get hashCode => Object.hash(identityHashCode(_routeIdentity), _imperativePageKey);
 }
 
 class _ShellRouteNavigatorKey extends GlobalKey<NavigatorState> {
-  const _ShellRouteNavigatorKey(this.route, this.imperativePageKey) : super.constructor();
+  _ShellRouteNavigatorKey(ShellRouteBase route, this.imperativePageKey)
+    : _routeIdentity = route.pageIdentity,
+      super.constructor();
 
-  final ShellRouteBase route;
+  final Object _routeIdentity;
   final ValueKey<String> imperativePageKey;
 
   @override
   bool operator ==(Object other) {
     return other is _ShellRouteNavigatorKey &&
-        identical(other.route, route) &&
+        identical(other._routeIdentity, _routeIdentity) &&
         other.imperativePageKey == imperativePageKey;
   }
 
   @override
-  int get hashCode => Object.hash(identityHashCode(route), imperativePageKey);
+  int get hashCode => Object.hash(identityHashCode(_routeIdentity), imperativePageKey);
 }
 
 /// An matched result by matching a [ShellRoute] against a location.
