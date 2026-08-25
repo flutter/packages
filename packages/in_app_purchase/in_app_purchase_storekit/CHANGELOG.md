@@ -1,3 +1,7 @@
+## 0.4.11+2
+
+* Updates pigeon dev_dependency lower bound for analyzer 14 compatibility.
+
 ## 0.4.11+1
 
 * Fixes StoreKit 2 restore transactions not grouping purchases into a single event.

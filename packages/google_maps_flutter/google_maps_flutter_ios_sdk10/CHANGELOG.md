@@ -1,3 +1,7 @@
+## 2.18.6
+
+* Updates pigeon dev_dependency lower bound for analyzer 14 compatibility.
+
 ## 2.18.5
 
 * Fixes a potential compilation issue in tile downscaling.

@@ -2,7 +2,7 @@ name: shared_preferences_android
 description: Android implementation of the shared_preferences plugin
 repository: https://github.com/flutter/packages/tree/main/packages/shared_preferences/shared_preferences_android
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+shared_preferences%22
-version: 2.4.27
+version: 2.4.28
 
 environment:
   sdk: ^3.12.0
@@ -26,7 +26,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pigeon: ^26.3.4
+  pigeon: ^28.0.0
 
 topics:
   - persistence

@@ -1,3 +1,7 @@
+## 2.0.10
+
+* Updates pigeon dev_dependency lower bound for analyzer 14 compatibility.
+
 ## 2.0.9
 
 * Migrates to Built-in Kotlin to support AGP 9.

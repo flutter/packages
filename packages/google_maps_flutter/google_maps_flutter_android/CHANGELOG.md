@@ -1,3 +1,7 @@
+## 2.19.13
+
+* Updates pigeon dev_dependency lower bound for analyzer 14 compatibility.
+
 ## 2.19.12
 
 * Bumps the androidx group across 10 directories with 1 update.

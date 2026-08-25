@@ -1,3 +1,7 @@
+## 6.4.2
+
+* Updates pigeon dev_dependency lower bound for analyzer 14 compatibility.
+
 ## 6.4.1
 
 * Updates example app to current APIs.

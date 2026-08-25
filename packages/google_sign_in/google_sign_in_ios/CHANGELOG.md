@@ -1,3 +1,7 @@
+## 6.3.2
+
+* Updates pigeon dev_dependency lower bound for analyzer 14 compatibility.
+
 ## 6.3.1
 
 * Improves testability of iOS scene URL handling.

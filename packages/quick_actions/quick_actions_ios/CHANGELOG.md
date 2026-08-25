@@ -1,3 +1,7 @@
+## 1.2.5
+
+* Updates pigeon dev_dependency lower bound for analyzer 14 compatibility.
+
 ## 1.2.4
 
 * Adds support for UIScene lifecycle.

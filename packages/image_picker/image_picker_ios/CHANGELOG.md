@@ -1,3 +1,7 @@
+## 0.8.13+7
+
+* Updates pigeon dev_dependency lower bound for analyzer 14 compatibility.
+
 ## 0.8.13+6
 
 * Replaces deprecated `kUTTypeGIF` with `UTTypeGIF` to fix iOS 15+ deprecation warnings.

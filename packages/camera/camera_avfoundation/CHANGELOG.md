@@ -1,3 +1,7 @@
+## 0.10.3
+
+* Updates pigeon dev_dependency lower bound for analyzer 14 compatibility.
+
 ## 0.10.2
 
 * Adds `setJpegImageQuality` for controlling JPEG compression quality.

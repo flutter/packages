@@ -1,3 +1,7 @@
+## 1.0.33
+
+* Updates pigeon dev_dependency lower bound for analyzer 14 compatibility.
+
 ## 1.0.32
 
 * Bumps the androidx group across 10 directories with 1 update.

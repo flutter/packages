@@ -1,3 +1,7 @@
+## 2.11.1
+
+* Updates pigeon dev_dependency lower bound for analyzer 14 compatibility.
+
 ## 2.11.0
 
 * Implements `setPreventsDisplaySleepDuringVideoPlayback` using

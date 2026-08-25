@@ -1,3 +1,7 @@
+## 0.5.2+10
+
+* Updates pigeon dev_dependency lower bound for analyzer 14 compatibility.
+
 ## 0.5.2+9
 
 * Fixes a crash when a selected file cannot be copied to a readable location (for
