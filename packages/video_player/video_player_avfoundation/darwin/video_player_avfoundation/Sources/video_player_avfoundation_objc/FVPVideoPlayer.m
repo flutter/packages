@@ -407,7 +407,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   NSAssert(!_isInitialized, @"reportInitializedIfReadyToPlay should only be called once.");
 
   _isInitialized = YES;
-  [self setPreferredAudioLanguage];
+  [self selectPreferredAudioLanguage];
   [self.eventListener videoPlayerDidInitializeWithDuration:self.duration
                                                       size:currentItem.presentationSize];
 }
@@ -415,7 +415,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 /// Selects the audio track whose locale language code matches self.preferredAudioLanguage.
 /// Does nothing if preferredAudioLanguage is nil, the player is not yet initialized, or no
 /// matching track is found.
-- (void)setPreferredAudioLanguage {
+- (void)selectPreferredAudioLanguage {
   if (!self.preferredAudioLanguage || !_isInitialized) {
     return;
   }
