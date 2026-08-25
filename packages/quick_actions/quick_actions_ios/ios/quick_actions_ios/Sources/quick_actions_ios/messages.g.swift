@@ -62,7 +62,7 @@ private func createConnectionError(withChannelName channelName: String) -> Pigeo
   return PigeonError(code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.", details: "")
 }
 
-enum messagesPigeonInternal {
+enum MessagesPigeonInternal {
   static func isNullish(_ value: Any?) -> Bool {
     guard let innerValue = value else {
       return true
@@ -231,15 +231,15 @@ struct ShortcutItemMessage: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return messagesPigeonInternal.deepEquals(lhs.type, rhs.type) && messagesPigeonInternal.deepEquals(lhs.localizedTitle, rhs.localizedTitle) && messagesPigeonInternal.deepEquals(lhs.localizedSubtitle, rhs.localizedSubtitle) && messagesPigeonInternal.deepEquals(lhs.icon, rhs.icon)
+    return MessagesPigeonInternal.deepEquals(lhs.type, rhs.type) && MessagesPigeonInternal.deepEquals(lhs.localizedTitle, rhs.localizedTitle) && MessagesPigeonInternal.deepEquals(lhs.localizedSubtitle, rhs.localizedSubtitle) && MessagesPigeonInternal.deepEquals(lhs.icon, rhs.icon)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("ShortcutItemMessage")
-    messagesPigeonInternal.deepHash(value: type, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: localizedTitle, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: localizedSubtitle, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: icon, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: type, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: localizedTitle, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: localizedSubtitle, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: icon, hasher: &hasher)
   }
 
   public var description: String {

@@ -58,7 +58,7 @@ private func wrapError(_ error: Any) -> [Any?] {
   ]
 }
 
-enum messagesPigeonInternal {
+enum MessagesPigeonInternal {
   static func isNullish(_ value: Any?) -> Bool {
     guard let innerValue = value else {
       return true
@@ -221,13 +221,13 @@ struct UrlLauncherBoolResult: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return messagesPigeonInternal.deepEquals(lhs.value, rhs.value) && messagesPigeonInternal.deepEquals(lhs.error, rhs.error)
+    return MessagesPigeonInternal.deepEquals(lhs.value, rhs.value) && MessagesPigeonInternal.deepEquals(lhs.error, rhs.error)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("UrlLauncherBoolResult")
-    messagesPigeonInternal.deepHash(value: value, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: error, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: value, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: error, hasher: &hasher)
   }
 
   public var description: String {

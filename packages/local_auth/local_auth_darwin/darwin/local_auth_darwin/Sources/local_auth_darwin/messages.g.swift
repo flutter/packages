@@ -58,7 +58,7 @@ private func wrapError(_ error: Any) -> [Any?] {
   ]
 }
 
-enum messagesPigeonInternal {
+enum MessagesPigeonInternal {
   static func isNullish(_ value: Any?) -> Bool {
     guard let innerValue = value else {
       return true
@@ -251,14 +251,14 @@ struct AuthStrings: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return messagesPigeonInternal.deepEquals(lhs.reason, rhs.reason) && messagesPigeonInternal.deepEquals(lhs.cancelButton, rhs.cancelButton) && messagesPigeonInternal.deepEquals(lhs.localizedFallbackTitle, rhs.localizedFallbackTitle)
+    return MessagesPigeonInternal.deepEquals(lhs.reason, rhs.reason) && MessagesPigeonInternal.deepEquals(lhs.cancelButton, rhs.cancelButton) && MessagesPigeonInternal.deepEquals(lhs.localizedFallbackTitle, rhs.localizedFallbackTitle)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("AuthStrings")
-    messagesPigeonInternal.deepHash(value: reason, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: cancelButton, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: localizedFallbackTitle, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: reason, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: cancelButton, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: localizedFallbackTitle, hasher: &hasher)
   }
 
   public var description: String {
@@ -292,13 +292,13 @@ struct AuthOptions: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return messagesPigeonInternal.deepEquals(lhs.biometricOnly, rhs.biometricOnly) && messagesPigeonInternal.deepEquals(lhs.sticky, rhs.sticky)
+    return MessagesPigeonInternal.deepEquals(lhs.biometricOnly, rhs.biometricOnly) && MessagesPigeonInternal.deepEquals(lhs.sticky, rhs.sticky)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("AuthOptions")
-    messagesPigeonInternal.deepHash(value: biometricOnly, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: sticky, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: biometricOnly, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: sticky, hasher: &hasher)
   }
 
   public var description: String {
@@ -339,14 +339,14 @@ struct AuthResultDetails: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return messagesPigeonInternal.deepEquals(lhs.result, rhs.result) && messagesPigeonInternal.deepEquals(lhs.errorMessage, rhs.errorMessage) && messagesPigeonInternal.deepEquals(lhs.errorDetails, rhs.errorDetails)
+    return MessagesPigeonInternal.deepEquals(lhs.result, rhs.result) && MessagesPigeonInternal.deepEquals(lhs.errorMessage, rhs.errorMessage) && MessagesPigeonInternal.deepEquals(lhs.errorDetails, rhs.errorDetails)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("AuthResultDetails")
-    messagesPigeonInternal.deepHash(value: result, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: errorMessage, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: errorDetails, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: result, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: errorMessage, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: errorDetails, hasher: &hasher)
   }
 
   public var description: String {

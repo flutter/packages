@@ -58,7 +58,7 @@ private func wrapError(_ error: Any) -> [Any?] {
   ]
 }
 
-enum messagesPigeonInternal {
+enum MessagesPigeonInternal {
   static func isNullish(_ value: Any?) -> Bool {
     guard let innerValue = value else {
       return true

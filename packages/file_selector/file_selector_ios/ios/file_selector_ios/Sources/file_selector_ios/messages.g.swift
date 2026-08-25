@@ -58,7 +58,7 @@ private func wrapError(_ error: Any) -> [Any?] {
   ]
 }
 
-enum messagesPigeonInternal {
+enum MessagesPigeonInternal {
   static func isNullish(_ value: Any?) -> Bool {
     guard let innerValue = value else {
       return true
@@ -213,13 +213,13 @@ struct FileSelectorConfig: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return messagesPigeonInternal.deepEquals(lhs.utis, rhs.utis) && messagesPigeonInternal.deepEquals(lhs.allowMultiSelection, rhs.allowMultiSelection)
+    return MessagesPigeonInternal.deepEquals(lhs.utis, rhs.utis) && MessagesPigeonInternal.deepEquals(lhs.allowMultiSelection, rhs.allowMultiSelection)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("FileSelectorConfig")
-    messagesPigeonInternal.deepHash(value: utis, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: allowMultiSelection, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: utis, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: allowMultiSelection, hasher: &hasher)
   }
 
   public var description: String {

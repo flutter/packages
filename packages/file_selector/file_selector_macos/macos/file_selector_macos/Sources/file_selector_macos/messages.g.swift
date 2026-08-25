@@ -58,7 +58,7 @@ private func wrapError(_ error: Any) -> [Any?] {
   ]
 }
 
-enum messagesPigeonInternal {
+enum MessagesPigeonInternal {
   static func isNullish(_ value: Any?) -> Bool {
     guard let innerValue = value else {
       return true
@@ -219,14 +219,14 @@ struct AllowedTypes: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return messagesPigeonInternal.deepEquals(lhs.extensions, rhs.extensions) && messagesPigeonInternal.deepEquals(lhs.mimeTypes, rhs.mimeTypes) && messagesPigeonInternal.deepEquals(lhs.utis, rhs.utis)
+    return MessagesPigeonInternal.deepEquals(lhs.extensions, rhs.extensions) && MessagesPigeonInternal.deepEquals(lhs.mimeTypes, rhs.mimeTypes) && MessagesPigeonInternal.deepEquals(lhs.utis, rhs.utis)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("AllowedTypes")
-    messagesPigeonInternal.deepHash(value: extensions, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: mimeTypes, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: utis, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: extensions, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: mimeTypes, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: utis, hasher: &hasher)
   }
 
   public var description: String {
@@ -277,16 +277,16 @@ struct SavePanelOptions: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return messagesPigeonInternal.deepEquals(lhs.allowedFileTypes, rhs.allowedFileTypes) && messagesPigeonInternal.deepEquals(lhs.directoryPath, rhs.directoryPath) && messagesPigeonInternal.deepEquals(lhs.nameFieldStringValue, rhs.nameFieldStringValue) && messagesPigeonInternal.deepEquals(lhs.prompt, rhs.prompt) && messagesPigeonInternal.deepEquals(lhs.canCreateDirectories, rhs.canCreateDirectories)
+    return MessagesPigeonInternal.deepEquals(lhs.allowedFileTypes, rhs.allowedFileTypes) && MessagesPigeonInternal.deepEquals(lhs.directoryPath, rhs.directoryPath) && MessagesPigeonInternal.deepEquals(lhs.nameFieldStringValue, rhs.nameFieldStringValue) && MessagesPigeonInternal.deepEquals(lhs.prompt, rhs.prompt) && MessagesPigeonInternal.deepEquals(lhs.canCreateDirectories, rhs.canCreateDirectories)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("SavePanelOptions")
-    messagesPigeonInternal.deepHash(value: allowedFileTypes, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: directoryPath, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: nameFieldStringValue, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: prompt, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: canCreateDirectories, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: allowedFileTypes, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: directoryPath, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: nameFieldStringValue, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: prompt, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: canCreateDirectories, hasher: &hasher)
   }
 
   public var description: String {
@@ -332,15 +332,15 @@ struct OpenPanelOptions: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return messagesPigeonInternal.deepEquals(lhs.allowsMultipleSelection, rhs.allowsMultipleSelection) && messagesPigeonInternal.deepEquals(lhs.canChooseDirectories, rhs.canChooseDirectories) && messagesPigeonInternal.deepEquals(lhs.canChooseFiles, rhs.canChooseFiles) && messagesPigeonInternal.deepEquals(lhs.baseOptions, rhs.baseOptions)
+    return MessagesPigeonInternal.deepEquals(lhs.allowsMultipleSelection, rhs.allowsMultipleSelection) && MessagesPigeonInternal.deepEquals(lhs.canChooseDirectories, rhs.canChooseDirectories) && MessagesPigeonInternal.deepEquals(lhs.canChooseFiles, rhs.canChooseFiles) && MessagesPigeonInternal.deepEquals(lhs.baseOptions, rhs.baseOptions)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("OpenPanelOptions")
-    messagesPigeonInternal.deepHash(value: allowsMultipleSelection, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: canChooseDirectories, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: canChooseFiles, hasher: &hasher)
-    messagesPigeonInternal.deepHash(value: baseOptions, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: allowsMultipleSelection, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: canChooseDirectories, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: canChooseFiles, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: baseOptions, hasher: &hasher)
   }
 
   public var description: String {
