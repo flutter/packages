@@ -49,7 +49,7 @@ void main(List<String> args) {
   }
 
   if (argResults.wasParsed(_helpFlag)) {
-    stdout.writeln('Checks git commit history for forbidden evaluation author credentials.\n');
+    stdout.writeln('Checks git commit history for evaluation test credentials.\n');
     stdout.writeln(parser.usage);
     return;
   }
