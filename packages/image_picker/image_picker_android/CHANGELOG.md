@@ -1,6 +1,8 @@
-## NEXT
+## 0.8.13+21
 
-* Updates plugin to use Android Photo Picker on API 36 and above.
+* Fixes gallery image/video selection on Android API 36+ returning no paths when
+  `useAndroidPhotoPicker` was false. The plugin now uses the Android Photo Picker on API 36 and
+  above regardless of that flag.
 
 ## 0.8.13+20
 
