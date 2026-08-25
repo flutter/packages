@@ -8,6 +8,7 @@ on:
 jobs:
   release:
     permissions:
+      # Release needs to push a tag back to the repo.
       contents: write
     uses: ./.github/workflows/reusable_release.yml
     with:
@@ -23,6 +24,7 @@ jobs:
     if: github.repository_owner == 'flutter' && needs.release.result == 'success'
     runs-on: ubuntu-latest
     permissions:
+      # Need write permission to create PR.
       contents: write
       pull-requests: write
     steps:
