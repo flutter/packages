@@ -3,7 +3,10 @@
 // found in the LICENSE file.
 
 import GoogleMaps
-import google_maps_flutter_ios_objc
+
+#if canImport(google_maps_flutter_ios_objc)
+  import google_maps_flutter_ios_objc
+#endif
 
 /// Defines polyline controllable by Flutter.
 class PolylineController: NSObject {

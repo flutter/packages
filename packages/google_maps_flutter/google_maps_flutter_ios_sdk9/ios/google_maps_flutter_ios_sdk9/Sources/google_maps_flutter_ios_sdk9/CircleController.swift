@@ -3,7 +3,10 @@
 // found in the LICENSE file.
 
 import GoogleMaps
-import google_maps_flutter_ios_sdk9_objc
+
+#if canImport(google_maps_flutter_ios_sdk9_objc)
+  import google_maps_flutter_ios_sdk9_objc
+#endif
 
 /// Defines circle controllable by Flutter.
 class CircleController: NSObject {
