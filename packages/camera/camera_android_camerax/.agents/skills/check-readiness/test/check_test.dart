@@ -241,6 +241,16 @@ void main() {
       expect(printLogs.any((line) => line.contains('Found broken symlinks in .agents/skills:')),
           isTrue);
     });
+
+    test('passes when git hooks use Windows backslashes', () async {
+      processManager.runMock['git config --get core.hooksPath'] =
+          ProcessResult(0, 0, r'script\githooks' '\n', '');
+      processManager.runMock['git status --porcelain'] = ProcessResult(0, 0, '', '');
+
+      final bool result = await winChecker.checkReadiness(winWorkspaceRoot);
+      expect(result, isTrue);
+      expect(printLogs, contains('Git hooks are configured correctly.'));
+    });
   });
 
   group('findPackageDir', () {

@@ -131,7 +131,7 @@ class ReadinessChecker {
     }
 
     final String hooksPath = (result.stdout as String).trim();
-    if (result.exitCode != 0 || hooksPath != 'script/githooks') {
+    if (result.exitCode != 0 || !_fileSystem.path.equals(hooksPath, 'script/githooks')) {
       _log(
         'Error: Git hooks are not configured correctly (core.hooksPath is "$hooksPath", expected "script/githooks").',
       );
