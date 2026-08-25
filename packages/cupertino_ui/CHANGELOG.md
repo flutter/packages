@@ -1,7 +1,3 @@
-## NEXT
-
-- Internal changes
-
 ## 1.0.1
 
 - Add missing Widget of the Week videos to widget API docs.
