@@ -949,10 +949,15 @@ struct GoogleSignInPluginTests {
       let plugin = GoogleSignInPlugin(
         signIn: GIDSignInWrapper(), viewProvider: TestViewProvider())
       await confirmation("completion called") { confirmed in
-        plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
-          #expect(result == nil)
-          #expect(error?.code == "google_sign_in: 0")
-          #expect(error?.message == "No host view available to present Google Sign-In.")
+        plugin.signIn(scopeHint: [], nonce: nil) { result in
+          switch result {
+          case .success:
+            Issue.record("Expected a PigeonError when no presenter is available")
+          case .failure(let error):
+            let pigeonError = error as! PigeonError
+            #expect(pigeonError.code == "google_sign_in: 0")
+            #expect(pigeonError.message == "No host view available to present Google Sign-In.")
+          }
           confirmed()
         }
       }
