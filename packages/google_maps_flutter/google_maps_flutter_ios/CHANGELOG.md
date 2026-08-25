@@ -1,3 +1,7 @@
+## 2.18.6
+
+* Updates pigeon dev_dependency constraint for analyzer 14 compatibility.
+
 ## 2.18.5
 
 * Updates pigeon dev_dependency constraint for analyzer 14 compatibility.
