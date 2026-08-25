@@ -43,6 +43,7 @@ class MethodChannelQuickActions extends QuickActionsPlatform {
       'localizedTitle': item.localizedTitle,
       if (item.localizedSubtitle != null) 'localizedSubtitle': item.localizedSubtitle,
       'icon': item.icon,
+      if (item.iosSystemIcon != null) 'iosSystemIcon': item.iosSystemIcon,
     };
   }
 }
