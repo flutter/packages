@@ -10,12 +10,11 @@ package io.flutter.plugins.imagepicker
 import android.util.Log
 import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MessageCodec
-import io.flutter.plugin.common.StandardMethodCodec
 import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+
 private object MessagesPigeonUtils {
 
   fun wrapResult(result: Any?): List<Any?> {
@@ -24,19 +23,15 @@ private object MessagesPigeonUtils {
 
   fun wrapError(exception: Throwable): List<Any?> {
     return if (exception is FlutterError) {
-      listOf(
-        exception.code,
-        exception.message,
-        exception.details
-      )
+      listOf(exception.code, exception.message, exception.details)
     } else {
       listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
-      )
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
     }
   }
+
   fun doubleEquals(a: Double, b: Double): Boolean {
     // Normalize -0.0 to 0.0 and handle NaN equality.
     return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
@@ -180,19 +175,19 @@ private object MessagesPigeonUtils {
       else -> value.hashCode()
     }
   }
-
 }
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
+ *
  * @property code The error code.
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
-class FlutterError (
-  val code: String,
-  override val message: String? = null,
-  val details: Any? = null
+class FlutterError(
+    val code: String,
+    override val message: String? = null,
+    val details: Any? = null
 ) : RuntimeException()
 
 enum class SourceCamera(val raw: Int) {
@@ -229,12 +224,11 @@ enum class CacheRetrievalType(val raw: Int) {
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class GeneralOptions (
-  val allowMultiple: Boolean,
-  val usePhotoPicker: Boolean,
-  val limit: Long? = null
-)
- {
+data class GeneralOptions(
+    val allowMultiple: Boolean,
+    val usePhotoPicker: Boolean,
+    val limit: Long? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): GeneralOptions {
       val allowMultiple = pigeonVar_list[0] as Boolean
@@ -243,13 +237,15 @@ data class GeneralOptions (
       return GeneralOptions(allowMultiple, usePhotoPicker, limit)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      allowMultiple,
-      usePhotoPicker,
-      limit,
+        allowMultiple,
+        usePhotoPicker,
+        limit,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -258,7 +254,9 @@ data class GeneralOptions (
       return true
     }
     val other = other as GeneralOptions
-    return MessagesPigeonUtils.deepEquals(this.allowMultiple, other.allowMultiple) && MessagesPigeonUtils.deepEquals(this.usePhotoPicker, other.usePhotoPicker) && MessagesPigeonUtils.deepEquals(this.limit, other.limit)
+    return MessagesPigeonUtils.deepEquals(this.allowMultiple, other.allowMultiple) &&
+        MessagesPigeonUtils.deepEquals(this.usePhotoPicker, other.usePhotoPicker) &&
+        MessagesPigeonUtils.deepEquals(this.limit, other.limit)
   }
 
   override fun hashCode(): Int {
@@ -268,6 +266,7 @@ data class GeneralOptions (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.limit)
     return result
   }
+
   override fun toString(): String {
     return "GeneralOptions(allowMultiple=$allowMultiple, usePhotoPicker=$usePhotoPicker, limit=$limit)"
   }
@@ -278,19 +277,18 @@ data class GeneralOptions (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class ImageSelectionOptions (
-  /** If set, the max width that the image should be resized to fit in. */
-  val maxWidth: Double? = null,
-  /** If set, the max height that the image should be resized to fit in. */
-  val maxHeight: Double? = null,
-  /**
-   * The quality of the output image, from 0-100.
-   *
-   * 100 indicates original quality.
-   */
-  val quality: Long
-)
- {
+data class ImageSelectionOptions(
+    /** If set, the max width that the image should be resized to fit in. */
+    val maxWidth: Double? = null,
+    /** If set, the max height that the image should be resized to fit in. */
+    val maxHeight: Double? = null,
+    /**
+     * The quality of the output image, from 0-100.
+     *
+     * 100 indicates original quality.
+     */
+    val quality: Long
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): ImageSelectionOptions {
       val maxWidth = pigeonVar_list[0] as Double?
@@ -299,13 +297,15 @@ data class ImageSelectionOptions (
       return ImageSelectionOptions(maxWidth, maxHeight, quality)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      maxWidth,
-      maxHeight,
-      quality,
+        maxWidth,
+        maxHeight,
+        quality,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -314,7 +314,9 @@ data class ImageSelectionOptions (
       return true
     }
     val other = other as ImageSelectionOptions
-    return MessagesPigeonUtils.deepEquals(this.maxWidth, other.maxWidth) && MessagesPigeonUtils.deepEquals(this.maxHeight, other.maxHeight) && MessagesPigeonUtils.deepEquals(this.quality, other.quality)
+    return MessagesPigeonUtils.deepEquals(this.maxWidth, other.maxWidth) &&
+        MessagesPigeonUtils.deepEquals(this.maxHeight, other.maxHeight) &&
+        MessagesPigeonUtils.deepEquals(this.quality, other.quality)
   }
 
   override fun hashCode(): Int {
@@ -324,27 +326,27 @@ data class ImageSelectionOptions (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.quality)
     return result
   }
+
   override fun toString(): String {
     return "ImageSelectionOptions(maxWidth=$maxWidth, maxHeight=$maxHeight, quality=$quality)"
   }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class MediaSelectionOptions (
-  val imageSelectionOptions: ImageSelectionOptions
-)
- {
+data class MediaSelectionOptions(val imageSelectionOptions: ImageSelectionOptions) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): MediaSelectionOptions {
       val imageSelectionOptions = pigeonVar_list[0] as ImageSelectionOptions
       return MediaSelectionOptions(imageSelectionOptions)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      imageSelectionOptions,
+        imageSelectionOptions,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -361,6 +363,7 @@ data class MediaSelectionOptions (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.imageSelectionOptions)
     return result
   }
+
   override fun toString(): String {
     return "MediaSelectionOptions(imageSelectionOptions=$imageSelectionOptions)"
   }
@@ -371,22 +374,23 @@ data class MediaSelectionOptions (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class VideoSelectionOptions (
-  /** The maximum desired length for the video, in seconds. */
-  val maxDurationSeconds: Long? = null
-)
- {
+data class VideoSelectionOptions(
+    /** The maximum desired length for the video, in seconds. */
+    val maxDurationSeconds: Long? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): VideoSelectionOptions {
       val maxDurationSeconds = pigeonVar_list[0] as Long?
       return VideoSelectionOptions(maxDurationSeconds)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      maxDurationSeconds,
+        maxDurationSeconds,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -403,6 +407,7 @@ data class VideoSelectionOptions (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.maxDurationSeconds)
     return result
   }
+
   override fun toString(): String {
     return "VideoSelectionOptions(maxDurationSeconds=$maxDurationSeconds)"
   }
@@ -413,11 +418,7 @@ data class VideoSelectionOptions (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class SourceSpecification (
-  val type: SourceType,
-  val camera: SourceCamera? = null
-)
- {
+data class SourceSpecification(val type: SourceType, val camera: SourceCamera? = null) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): SourceSpecification {
       val type = pigeonVar_list[0] as SourceType
@@ -425,12 +426,14 @@ data class SourceSpecification (
       return SourceSpecification(type, camera)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      type,
-      camera,
+        type,
+        camera,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -439,7 +442,8 @@ data class SourceSpecification (
       return true
     }
     val other = other as SourceSpecification
-    return MessagesPigeonUtils.deepEquals(this.type, other.type) && MessagesPigeonUtils.deepEquals(this.camera, other.camera)
+    return MessagesPigeonUtils.deepEquals(this.type, other.type) &&
+        MessagesPigeonUtils.deepEquals(this.camera, other.camera)
   }
 
   override fun hashCode(): Int {
@@ -448,6 +452,7 @@ data class SourceSpecification (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.camera)
     return result
   }
+
   override fun toString(): String {
     return "SourceSpecification(type=$type, camera=$camera)"
   }
@@ -460,11 +465,7 @@ data class SourceSpecification (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class CacheRetrievalError (
-  val code: String,
-  val message: String? = null
-)
- {
+data class CacheRetrievalError(val code: String, val message: String? = null) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): CacheRetrievalError {
       val code = pigeonVar_list[0] as String
@@ -472,12 +473,14 @@ data class CacheRetrievalError (
       return CacheRetrievalError(code, message)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      code,
-      message,
+        code,
+        message,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -486,7 +489,8 @@ data class CacheRetrievalError (
       return true
     }
     val other = other as CacheRetrievalError
-    return MessagesPigeonUtils.deepEquals(this.code, other.code) && MessagesPigeonUtils.deepEquals(this.message, other.message)
+    return MessagesPigeonUtils.deepEquals(this.code, other.code) &&
+        MessagesPigeonUtils.deepEquals(this.message, other.message)
   }
 
   override fun hashCode(): Int {
@@ -495,6 +499,7 @@ data class CacheRetrievalError (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.message)
     return result
   }
+
   override fun toString(): String {
     return "CacheRetrievalError(code=$code, message=$message)"
   }
@@ -505,15 +510,14 @@ data class CacheRetrievalError (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class CacheRetrievalResult (
-  /** The type of the retrieved data. */
-  val type: CacheRetrievalType,
-  /** The error from the last selection, if any. */
-  val error: CacheRetrievalError? = null,
-  /** The results from the last selection, if any. */
-  val paths: List<String>
-)
- {
+data class CacheRetrievalResult(
+    /** The type of the retrieved data. */
+    val type: CacheRetrievalType,
+    /** The error from the last selection, if any. */
+    val error: CacheRetrievalError? = null,
+    /** The results from the last selection, if any. */
+    val paths: List<String>
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): CacheRetrievalResult {
       val type = pigeonVar_list[0] as CacheRetrievalType
@@ -522,13 +526,15 @@ data class CacheRetrievalResult (
       return CacheRetrievalResult(type, error, paths)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      type,
-      error,
-      paths,
+        type,
+        error,
+        paths,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -537,7 +543,9 @@ data class CacheRetrievalResult (
       return true
     }
     val other = other as CacheRetrievalResult
-    return MessagesPigeonUtils.deepEquals(this.type, other.type) && MessagesPigeonUtils.deepEquals(this.error, other.error) && MessagesPigeonUtils.deepEquals(this.paths, other.paths)
+    return MessagesPigeonUtils.deepEquals(this.type, other.type) &&
+        MessagesPigeonUtils.deepEquals(this.error, other.error) &&
+        MessagesPigeonUtils.deepEquals(this.paths, other.paths)
   }
 
   override fun hashCode(): Int {
@@ -547,67 +555,50 @@ data class CacheRetrievalResult (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.paths)
     return result
   }
+
   override fun toString(): String {
     return "CacheRetrievalResult(type=$type, error=$error, paths=$paths)"
   }
 }
+
 private open class MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          SourceCamera.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { SourceCamera.ofRaw(it.toInt()) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          SourceType.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { SourceType.ofRaw(it.toInt()) }
       }
       131.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          CacheRetrievalType.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { CacheRetrievalType.ofRaw(it.toInt()) }
       }
       132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          GeneralOptions.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { GeneralOptions.fromList(it) }
       }
       133.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          ImageSelectionOptions.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { ImageSelectionOptions.fromList(it) }
       }
       134.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          MediaSelectionOptions.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { MediaSelectionOptions.fromList(it) }
       }
       135.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          VideoSelectionOptions.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { VideoSelectionOptions.fromList(it) }
       }
       136.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          SourceSpecification.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { SourceSpecification.fromList(it) }
       }
       137.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          CacheRetrievalError.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { CacheRetrievalError.fromList(it) }
       }
       138.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          CacheRetrievalResult.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { CacheRetrievalResult.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
   }
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
       is SourceCamera -> {
         stream.write(129)
@@ -654,37 +645,59 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
   }
 }
 
-
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface ImagePickerApi {
   /** Selects images and returns their paths. */
-  fun pickImages(source: SourceSpecification, options: ImageSelectionOptions, generalOptions: GeneralOptions, callback: (Result<List<String>>) -> Unit)
+  fun pickImages(
+      source: SourceSpecification,
+      options: ImageSelectionOptions,
+      generalOptions: GeneralOptions,
+      callback: (Result<List<String>>) -> Unit
+  )
   /** Selects video and returns their paths. */
-  fun pickVideos(source: SourceSpecification, options: VideoSelectionOptions, generalOptions: GeneralOptions, callback: (Result<List<String>>) -> Unit)
+  fun pickVideos(
+      source: SourceSpecification,
+      options: VideoSelectionOptions,
+      generalOptions: GeneralOptions,
+      callback: (Result<List<String>>) -> Unit
+  )
   /** Selects images and videos and returns their paths. */
-  fun pickMedia(mediaSelectionOptions: MediaSelectionOptions, generalOptions: GeneralOptions, callback: (Result<List<String>>) -> Unit)
+  fun pickMedia(
+      mediaSelectionOptions: MediaSelectionOptions,
+      generalOptions: GeneralOptions,
+      callback: (Result<List<String>>) -> Unit
+  )
   /** Returns results from a previous app session, if any. */
   fun retrieveLostResults(): CacheRetrievalResult?
 
   companion object {
     /** The codec used by ImagePickerApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      MessagesPigeonCodec()
-    }
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
     /** Sets up an instance of `ImagePickerApi` to handle messages through the `binaryMessenger`. */
     @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: ImagePickerApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: ImagePickerApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickImages$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickImages$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val sourceArg = args[0] as SourceSpecification
             val optionsArg = args[1] as ImageSelectionOptions
             val generalOptionsArg = args[2] as GeneralOptions
-            api.pickImages(sourceArg, optionsArg, generalOptionsArg) { result: Result<List<String>> ->
+            api.pickImages(sourceArg, optionsArg, generalOptionsArg) { result: Result<List<String>>
+              ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(MessagesPigeonUtils.wrapError(error))
@@ -699,14 +712,20 @@ interface ImagePickerApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickVideos$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickVideos$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val sourceArg = args[0] as SourceSpecification
             val optionsArg = args[1] as VideoSelectionOptions
             val generalOptionsArg = args[2] as GeneralOptions
-            api.pickVideos(sourceArg, optionsArg, generalOptionsArg) { result: Result<List<String>> ->
+            api.pickVideos(sourceArg, optionsArg, generalOptionsArg) { result: Result<List<String>>
+              ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(MessagesPigeonUtils.wrapError(error))
@@ -721,13 +740,18 @@ interface ImagePickerApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickMedia$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickMedia$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val mediaSelectionOptionsArg = args[0] as MediaSelectionOptions
             val generalOptionsArg = args[1] as GeneralOptions
-            api.pickMedia(mediaSelectionOptionsArg, generalOptionsArg) { result: Result<List<String>> ->
+            api.pickMedia(mediaSelectionOptionsArg, generalOptionsArg) {
+                result: Result<List<String>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(MessagesPigeonUtils.wrapError(error))
@@ -742,14 +766,20 @@ interface ImagePickerApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.image_picker_android.ImagePickerApi.retrieveLostResults$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.image_picker_android.ImagePickerApi.retrieveLostResults$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.retrieveLostResults())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.retrieveLostResults())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {

@@ -13,9 +13,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-    List<Object?>? replyList,
-    String channelName, {
-    required bool isNullValid,
+  List<Object?>? replyList,
+  String channelName, {
+  required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -37,7 +37,6 @@ Object? _extractReplyValueOrThrow(
   return replyList.firstOrNull;
 }
 
-
 List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
@@ -47,6 +46,7 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
   }
   return <Object?>[error.code, error.message, error.details];
 }
+
 bool _deepEquals(Object? a, Object? b) {
   if (identical(a, b)) {
     return true;
@@ -59,8 +59,7 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -109,7 +108,6 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
-
 /// Pigeon version of Java BillingClient.BillingResponseCode.
 enum PlatformBillingResponse {
   serviceTimeout,
@@ -134,6 +132,7 @@ enum PlatformInAppMessageResponse {
   /// Note: The API callback won't indicate whether message is dismissed by the
   /// user or there is no message available to the user.
   noActionNeeded,
+
   /// The subscription status changed.
   ///
   /// For example, a subscription has been recovered from a suspended state.
@@ -152,10 +151,7 @@ enum PlatformReplacementMode {
 }
 
 /// Pigeon version of Java BillingClient.ProductType.
-enum PlatformProductType {
-  inapp,
-  subs,
-}
+enum PlatformProductType { inapp, subs }
 
 /// Pigeon version of billing_client_wrapper.dart's BillingChoiceMode.
 enum PlatformBillingChoiceMode {
@@ -163,8 +159,10 @@ enum PlatformBillingChoiceMode {
   ///
   /// Default state.
   playBillingOnly,
+
   /// Billing through app provided flow.
   alternativeBillingOnly,
+
   /// Users can choose Play billing or alternative billing.
   userChoiceBilling,
 }
@@ -182,39 +180,26 @@ enum PlatformBillingClientFeature {
 }
 
 /// Pigeon version of Java Purchase.PurchaseState.
-enum PlatformPurchaseState {
-  unspecified,
-  purchased,
-  pending,
-}
+enum PlatformPurchaseState { unspecified, purchased, pending }
 
 /// Pigeon version of Java ProductDetails.RecurrenceMode.
-enum PlatformRecurrenceMode {
-  finiteRecurring,
-  infiniteRecurring,
-  nonRecurring,
-}
+enum PlatformRecurrenceMode { finiteRecurring, infiniteRecurring, nonRecurring }
 
 /// Pigeon version of Java QueryProductDetailsParams.Product.
 class PlatformQueryProduct {
-  PlatformQueryProduct({
-    required this.productId,
-    required this.productType,
-  });
+  PlatformQueryProduct({required this.productId, required this.productType});
 
   String productId;
 
   PlatformProductType productType;
 
   List<Object?> _toList() {
-    return <Object?>[
-      productId,
-      productType,
-    ];
+    return <Object?>[productId, productType];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformQueryProduct decode(Object result) {
     result as List<Object?>;
@@ -248,24 +233,19 @@ class PlatformQueryProduct {
 
 /// Pigeon version of Java AccountIdentifiers.
 class PlatformAccountIdentifiers {
-  PlatformAccountIdentifiers({
-    this.obfuscatedAccountId,
-    this.obfuscatedProfileId,
-  });
+  PlatformAccountIdentifiers({this.obfuscatedAccountId, this.obfuscatedProfileId});
 
   String? obfuscatedAccountId;
 
   String? obfuscatedProfileId;
 
   List<Object?> _toList() {
-    return <Object?>[
-      obfuscatedAccountId,
-      obfuscatedProfileId,
-    ];
+    return <Object?>[obfuscatedAccountId, obfuscatedProfileId];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformAccountIdentifiers decode(Object result) {
     result as List<Object?>;
@@ -284,7 +264,8 @@ class PlatformAccountIdentifiers {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(obfuscatedAccountId, other.obfuscatedAccountId) && _deepEquals(obfuscatedProfileId, other.obfuscatedProfileId);
+    return _deepEquals(obfuscatedAccountId, other.obfuscatedAccountId) &&
+        _deepEquals(obfuscatedProfileId, other.obfuscatedProfileId);
   }
 
   @override
@@ -312,15 +293,12 @@ class PlatformBillingResult {
   int subResponseCode;
 
   List<Object?> _toList() {
-    return <Object?>[
-      responseCode,
-      debugMessage,
-      subResponseCode,
-    ];
+    return <Object?>[responseCode, debugMessage, subResponseCode];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformBillingResult decode(Object result) {
     result as List<Object?>;
@@ -340,7 +318,9 @@ class PlatformBillingResult {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(responseCode, other.responseCode) && _deepEquals(debugMessage, other.debugMessage) && _deepEquals(subResponseCode, other.subResponseCode);
+    return _deepEquals(responseCode, other.responseCode) &&
+        _deepEquals(debugMessage, other.debugMessage) &&
+        _deepEquals(subResponseCode, other.subResponseCode);
   }
 
   @override
@@ -368,15 +348,12 @@ class PlatformOneTimePurchaseOfferDetails {
   String priceCurrencyCode;
 
   List<Object?> _toList() {
-    return <Object?>[
-      priceAmountMicros,
-      formattedPrice,
-      priceCurrencyCode,
-    ];
+    return <Object?>[priceAmountMicros, formattedPrice, priceCurrencyCode];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformOneTimePurchaseOfferDetails decode(Object result) {
     result as List<Object?>;
@@ -396,7 +373,9 @@ class PlatformOneTimePurchaseOfferDetails {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(priceAmountMicros, other.priceAmountMicros) && _deepEquals(formattedPrice, other.formattedPrice) && _deepEquals(priceCurrencyCode, other.priceCurrencyCode);
+    return _deepEquals(priceAmountMicros, other.priceAmountMicros) &&
+        _deepEquals(formattedPrice, other.formattedPrice) &&
+        _deepEquals(priceCurrencyCode, other.priceCurrencyCode);
   }
 
   @override
@@ -452,7 +431,8 @@ class PlatformProductDetails {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformProductDetails decode(Object result) {
     result as List<Object?>;
@@ -463,8 +443,10 @@ class PlatformProductDetails {
       productType: result[3]! as PlatformProductType,
       title: result[4]! as String,
       oneTimePurchaseOfferDetails: result[5] as PlatformOneTimePurchaseOfferDetails?,
-      oneTimePurchaseOfferDetailsList: (result[6] as List<Object?>?)?.cast<PlatformOneTimePurchaseOfferDetails>(),
-      subscriptionOfferDetails: (result[7] as List<Object?>?)?.cast<PlatformSubscriptionOfferDetails>(),
+      oneTimePurchaseOfferDetailsList: (result[6] as List<Object?>?)
+          ?.cast<PlatformOneTimePurchaseOfferDetails>(),
+      subscriptionOfferDetails: (result[7] as List<Object?>?)
+          ?.cast<PlatformSubscriptionOfferDetails>(),
     );
   }
 
@@ -477,7 +459,14 @@ class PlatformProductDetails {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(description, other.description) && _deepEquals(name, other.name) && _deepEquals(productId, other.productId) && _deepEquals(productType, other.productType) && _deepEquals(title, other.title) && _deepEquals(oneTimePurchaseOfferDetails, other.oneTimePurchaseOfferDetails) && _deepEquals(oneTimePurchaseOfferDetailsList, other.oneTimePurchaseOfferDetailsList) && _deepEquals(subscriptionOfferDetails, other.subscriptionOfferDetails);
+    return _deepEquals(description, other.description) &&
+        _deepEquals(name, other.name) &&
+        _deepEquals(productId, other.productId) &&
+        _deepEquals(productType, other.productType) &&
+        _deepEquals(title, other.title) &&
+        _deepEquals(oneTimePurchaseOfferDetails, other.oneTimePurchaseOfferDetails) &&
+        _deepEquals(oneTimePurchaseOfferDetailsList, other.oneTimePurchaseOfferDetailsList) &&
+        _deepEquals(subscriptionOfferDetails, other.subscriptionOfferDetails);
   }
 
   @override
@@ -506,15 +495,12 @@ class PlatformProductDetailsResponse {
   List<PlatformUnfetchedProduct> unfetchedProductList;
 
   List<Object?> _toList() {
-    return <Object?>[
-      billingResult,
-      productDetails,
-      unfetchedProductList,
-    ];
+    return <Object?>[billingResult, productDetails, unfetchedProductList];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformProductDetailsResponse decode(Object result) {
     result as List<Object?>;
@@ -534,7 +520,9 @@ class PlatformProductDetailsResponse {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(billingResult, other.billingResult) && _deepEquals(productDetails, other.productDetails) && _deepEquals(unfetchedProductList, other.unfetchedProductList);
+    return _deepEquals(billingResult, other.billingResult) &&
+        _deepEquals(productDetails, other.productDetails) &&
+        _deepEquals(unfetchedProductList, other.unfetchedProductList);
   }
 
   @override
@@ -561,14 +549,12 @@ class PlatformAlternativeBillingOnlyReportingDetailsResponse {
   String externalTransactionToken;
 
   List<Object?> _toList() {
-    return <Object?>[
-      billingResult,
-      externalTransactionToken,
-    ];
+    return <Object?>[billingResult, externalTransactionToken];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformAlternativeBillingOnlyReportingDetailsResponse decode(Object result) {
     result as List<Object?>;
@@ -581,13 +567,15 @@ class PlatformAlternativeBillingOnlyReportingDetailsResponse {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformAlternativeBillingOnlyReportingDetailsResponse || other.runtimeType != runtimeType) {
+    if (other is! PlatformAlternativeBillingOnlyReportingDetailsResponse ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(billingResult, other.billingResult) && _deepEquals(externalTransactionToken, other.externalTransactionToken);
+    return _deepEquals(billingResult, other.billingResult) &&
+        _deepEquals(externalTransactionToken, other.externalTransactionToken);
   }
 
   @override
@@ -602,10 +590,7 @@ class PlatformAlternativeBillingOnlyReportingDetailsResponse {
 
 /// Results related to in-app messaging.
 class PlatformInAppMessageResult {
-  PlatformInAppMessageResult({
-    required this.responseCode,
-    this.purchaseToken,
-  });
+  PlatformInAppMessageResult({required this.responseCode, this.purchaseToken});
 
   /// Returns response code for the in-app messaging API call.
   PlatformInAppMessageResponse responseCode;
@@ -614,14 +599,12 @@ class PlatformInAppMessageResult {
   String? purchaseToken;
 
   List<Object?> _toList() {
-    return <Object?>[
-      responseCode,
-      purchaseToken,
-    ];
+    return <Object?>[responseCode, purchaseToken];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformInAppMessageResult decode(Object result) {
     result as List<Object?>;
@@ -640,7 +623,8 @@ class PlatformInAppMessageResult {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(responseCode, other.responseCode) && _deepEquals(purchaseToken, other.purchaseToken);
+    return _deepEquals(responseCode, other.responseCode) &&
+        _deepEquals(purchaseToken, other.purchaseToken);
   }
 
   @override
@@ -656,24 +640,19 @@ class PlatformInAppMessageResult {
 /// Pigeon version of BillingConfigWrapper, which contains the components of the
 /// Java BillingConfigResponseListener callback.
 class PlatformBillingConfigResponse {
-  PlatformBillingConfigResponse({
-    required this.billingResult,
-    required this.countryCode,
-  });
+  PlatformBillingConfigResponse({required this.billingResult, required this.countryCode});
 
   PlatformBillingResult billingResult;
 
   String countryCode;
 
   List<Object?> _toList() {
-    return <Object?>[
-      billingResult,
-      countryCode,
-    ];
+    return <Object?>[billingResult, countryCode];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformBillingConfigResponse decode(Object result) {
     result as List<Object?>;
@@ -692,7 +671,8 @@ class PlatformBillingConfigResponse {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(billingResult, other.billingResult) && _deepEquals(countryCode, other.countryCode);
+    return _deepEquals(billingResult, other.billingResult) &&
+        _deepEquals(countryCode, other.countryCode);
   }
 
   @override
@@ -744,7 +724,8 @@ class PlatformBillingFlowParams {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformBillingFlowParams decode(Object result) {
     result as List<Object?>;
@@ -768,7 +749,13 @@ class PlatformBillingFlowParams {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(product, other.product) && _deepEquals(replacementMode, other.replacementMode) && _deepEquals(offerToken, other.offerToken) && _deepEquals(accountId, other.accountId) && _deepEquals(obfuscatedProfileId, other.obfuscatedProfileId) && _deepEquals(oldProduct, other.oldProduct) && _deepEquals(purchaseToken, other.purchaseToken);
+    return _deepEquals(product, other.product) &&
+        _deepEquals(replacementMode, other.replacementMode) &&
+        _deepEquals(offerToken, other.offerToken) &&
+        _deepEquals(accountId, other.accountId) &&
+        _deepEquals(obfuscatedProfileId, other.obfuscatedProfileId) &&
+        _deepEquals(oldProduct, other.oldProduct) &&
+        _deepEquals(purchaseToken, other.purchaseToken);
   }
 
   @override
@@ -816,7 +803,8 @@ class PlatformPricingPhase {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformPricingPhase decode(Object result) {
     result as List<Object?>;
@@ -839,7 +827,12 @@ class PlatformPricingPhase {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(billingCycleCount, other.billingCycleCount) && _deepEquals(recurrenceMode, other.recurrenceMode) && _deepEquals(priceAmountMicros, other.priceAmountMicros) && _deepEquals(billingPeriod, other.billingPeriod) && _deepEquals(formattedPrice, other.formattedPrice) && _deepEquals(priceCurrencyCode, other.priceCurrencyCode);
+    return _deepEquals(billingCycleCount, other.billingCycleCount) &&
+        _deepEquals(recurrenceMode, other.recurrenceMode) &&
+        _deepEquals(priceAmountMicros, other.priceAmountMicros) &&
+        _deepEquals(billingPeriod, other.billingPeriod) &&
+        _deepEquals(formattedPrice, other.formattedPrice) &&
+        _deepEquals(priceCurrencyCode, other.priceCurrencyCode);
   }
 
   @override
@@ -921,7 +914,8 @@ class PlatformPurchase {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformPurchase decode(Object result) {
     result as List<Object?>;
@@ -952,7 +946,20 @@ class PlatformPurchase {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(orderId, other.orderId) && _deepEquals(packageName, other.packageName) && _deepEquals(purchaseTime, other.purchaseTime) && _deepEquals(purchaseToken, other.purchaseToken) && _deepEquals(signature, other.signature) && _deepEquals(products, other.products) && _deepEquals(isAutoRenewing, other.isAutoRenewing) && _deepEquals(originalJson, other.originalJson) && _deepEquals(developerPayload, other.developerPayload) && _deepEquals(isAcknowledged, other.isAcknowledged) && _deepEquals(quantity, other.quantity) && _deepEquals(purchaseState, other.purchaseState) && _deepEquals(accountIdentifiers, other.accountIdentifiers) && _deepEquals(pendingPurchaseUpdate, other.pendingPurchaseUpdate);
+    return _deepEquals(orderId, other.orderId) &&
+        _deepEquals(packageName, other.packageName) &&
+        _deepEquals(purchaseTime, other.purchaseTime) &&
+        _deepEquals(purchaseToken, other.purchaseToken) &&
+        _deepEquals(signature, other.signature) &&
+        _deepEquals(products, other.products) &&
+        _deepEquals(isAutoRenewing, other.isAutoRenewing) &&
+        _deepEquals(originalJson, other.originalJson) &&
+        _deepEquals(developerPayload, other.developerPayload) &&
+        _deepEquals(isAcknowledged, other.isAcknowledged) &&
+        _deepEquals(quantity, other.quantity) &&
+        _deepEquals(purchaseState, other.purchaseState) &&
+        _deepEquals(accountIdentifiers, other.accountIdentifiers) &&
+        _deepEquals(pendingPurchaseUpdate, other.pendingPurchaseUpdate);
   }
 
   @override
@@ -969,24 +976,19 @@ class PlatformPurchase {
 ///
 /// See also PendingPurchaseUpdateWrapper on the Dart side.
 class PlatformPendingPurchaseUpdate {
-  PlatformPendingPurchaseUpdate({
-    required this.products,
-    required this.purchaseToken,
-  });
+  PlatformPendingPurchaseUpdate({required this.products, required this.purchaseToken});
 
   List<String> products;
 
   String purchaseToken;
 
   List<Object?> _toList() {
-    return <Object?>[
-      products,
-      purchaseToken,
-    ];
+    return <Object?>[products, purchaseToken];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformPendingPurchaseUpdate decode(Object result) {
     result as List<Object?>;
@@ -1059,7 +1061,8 @@ class PlatformPurchaseHistoryRecord {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformPurchaseHistoryRecord decode(Object result) {
     result as List<Object?>;
@@ -1083,7 +1086,13 @@ class PlatformPurchaseHistoryRecord {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(quantity, other.quantity) && _deepEquals(purchaseTime, other.purchaseTime) && _deepEquals(developerPayload, other.developerPayload) && _deepEquals(originalJson, other.originalJson) && _deepEquals(purchaseToken, other.purchaseToken) && _deepEquals(signature, other.signature) && _deepEquals(products, other.products);
+    return _deepEquals(quantity, other.quantity) &&
+        _deepEquals(purchaseTime, other.purchaseTime) &&
+        _deepEquals(developerPayload, other.developerPayload) &&
+        _deepEquals(originalJson, other.originalJson) &&
+        _deepEquals(purchaseToken, other.purchaseToken) &&
+        _deepEquals(signature, other.signature) &&
+        _deepEquals(products, other.products);
   }
 
   @override
@@ -1099,24 +1108,19 @@ class PlatformPurchaseHistoryRecord {
 /// Pigeon version of PurchasesHistoryResult, which contains the components of
 /// the Java PurchaseHistoryResponseListener callback.
 class PlatformPurchaseHistoryResponse {
-  PlatformPurchaseHistoryResponse({
-    required this.billingResult,
-    required this.purchases,
-  });
+  PlatformPurchaseHistoryResponse({required this.billingResult, required this.purchases});
 
   PlatformBillingResult billingResult;
 
   List<PlatformPurchaseHistoryRecord> purchases;
 
   List<Object?> _toList() {
-    return <Object?>[
-      billingResult,
-      purchases,
-    ];
+    return <Object?>[billingResult, purchases];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformPurchaseHistoryResponse decode(Object result) {
     result as List<Object?>;
@@ -1135,7 +1139,8 @@ class PlatformPurchaseHistoryResponse {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(billingResult, other.billingResult) && _deepEquals(purchases, other.purchases);
+    return _deepEquals(billingResult, other.billingResult) &&
+        _deepEquals(purchases, other.purchases);
   }
 
   @override
@@ -1151,24 +1156,19 @@ class PlatformPurchaseHistoryResponse {
 /// Pigeon version of PurchasesResultWrapper, which contains the components of
 /// the Java PurchasesResponseListener callback.
 class PlatformPurchasesResponse {
-  PlatformPurchasesResponse({
-    required this.billingResult,
-    required this.purchases,
-  });
+  PlatformPurchasesResponse({required this.billingResult, required this.purchases});
 
   PlatformBillingResult billingResult;
 
   List<PlatformPurchase> purchases;
 
   List<Object?> _toList() {
-    return <Object?>[
-      billingResult,
-      purchases,
-    ];
+    return <Object?>[billingResult, purchases];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformPurchasesResponse decode(Object result) {
     result as List<Object?>;
@@ -1187,7 +1187,8 @@ class PlatformPurchasesResponse {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(billingResult, other.billingResult) && _deepEquals(purchases, other.purchases);
+    return _deepEquals(billingResult, other.billingResult) &&
+        _deepEquals(purchases, other.purchases);
   }
 
   @override
@@ -1235,7 +1236,8 @@ class PlatformSubscriptionOfferDetails {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformSubscriptionOfferDetails decode(Object result) {
     result as List<Object?>;
@@ -1258,7 +1260,12 @@ class PlatformSubscriptionOfferDetails {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(basePlanId, other.basePlanId) && _deepEquals(offerId, other.offerId) && _deepEquals(offerToken, other.offerToken) && _deepEquals(offerTags, other.offerTags) && _deepEquals(pricingPhases, other.pricingPhases) && _deepEquals(installmentPlanDetails, other.installmentPlanDetails);
+    return _deepEquals(basePlanId, other.basePlanId) &&
+        _deepEquals(offerId, other.offerId) &&
+        _deepEquals(offerToken, other.offerToken) &&
+        _deepEquals(offerTags, other.offerTags) &&
+        _deepEquals(pricingPhases, other.pricingPhases) &&
+        _deepEquals(installmentPlanDetails, other.installmentPlanDetails);
   }
 
   @override
@@ -1286,15 +1293,12 @@ class PlatformUserChoiceDetails {
   List<PlatformUserChoiceProduct> products;
 
   List<Object?> _toList() {
-    return <Object?>[
-      originalExternalTransactionId,
-      externalTransactionToken,
-      products,
-    ];
+    return <Object?>[originalExternalTransactionId, externalTransactionToken, products];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformUserChoiceDetails decode(Object result) {
     result as List<Object?>;
@@ -1314,7 +1318,9 @@ class PlatformUserChoiceDetails {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(originalExternalTransactionId, other.originalExternalTransactionId) && _deepEquals(externalTransactionToken, other.externalTransactionToken) && _deepEquals(products, other.products);
+    return _deepEquals(originalExternalTransactionId, other.originalExternalTransactionId) &&
+        _deepEquals(externalTransactionToken, other.externalTransactionToken) &&
+        _deepEquals(products, other.products);
   }
 
   @override
@@ -1329,11 +1335,7 @@ class PlatformUserChoiceDetails {
 
 /// Pigeon version of UserChoiseDetails.Product.
 class PlatformUserChoiceProduct {
-  PlatformUserChoiceProduct({
-    required this.id,
-    this.offerToken,
-    required this.type,
-  });
+  PlatformUserChoiceProduct({required this.id, this.offerToken, required this.type});
 
   String id;
 
@@ -1342,15 +1344,12 @@ class PlatformUserChoiceProduct {
   PlatformProductType type;
 
   List<Object?> _toList() {
-    return <Object?>[
-      id,
-      offerToken,
-      type,
-    ];
+    return <Object?>[id, offerToken, type];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformUserChoiceProduct decode(Object result) {
     result as List<Object?>;
@@ -1370,7 +1369,9 @@ class PlatformUserChoiceProduct {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(id, other.id) && _deepEquals(offerToken, other.offerToken) && _deepEquals(type, other.type);
+    return _deepEquals(id, other.id) &&
+        _deepEquals(offerToken, other.offerToken) &&
+        _deepEquals(type, other.type);
   }
 
   @override
@@ -1396,14 +1397,12 @@ class PlatformInstallmentPlanDetails {
   int subsequentCommitmentPaymentsCount;
 
   List<Object?> _toList() {
-    return <Object?>[
-      commitmentPaymentsCount,
-      subsequentCommitmentPaymentsCount,
-    ];
+    return <Object?>[commitmentPaymentsCount, subsequentCommitmentPaymentsCount];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformInstallmentPlanDetails decode(Object result) {
     result as List<Object?>;
@@ -1422,7 +1421,8 @@ class PlatformInstallmentPlanDetails {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(commitmentPaymentsCount, other.commitmentPaymentsCount) && _deepEquals(subsequentCommitmentPaymentsCount, other.subsequentCommitmentPaymentsCount);
+    return _deepEquals(commitmentPaymentsCount, other.commitmentPaymentsCount) &&
+        _deepEquals(subsequentCommitmentPaymentsCount, other.subsequentCommitmentPaymentsCount);
   }
 
   @override
@@ -1437,26 +1437,21 @@ class PlatformInstallmentPlanDetails {
 
 /// Pigeon version of Java PendingPurchasesParams.
 class PlatformPendingPurchasesParams {
-  PlatformPendingPurchasesParams({
-    required this.enablePrepaidPlans,
-  });
+  PlatformPendingPurchasesParams({required this.enablePrepaidPlans});
 
   bool enablePrepaidPlans;
 
   List<Object?> _toList() {
-    return <Object?>[
-      enablePrepaidPlans,
-    ];
+    return <Object?>[enablePrepaidPlans];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformPendingPurchasesParams decode(Object result) {
     result as List<Object?>;
-    return PlatformPendingPurchasesParams(
-      enablePrepaidPlans: result[0]! as bool,
-    );
+    return PlatformPendingPurchasesParams(enablePrepaidPlans: result[0]! as bool);
   }
 
   @override
@@ -1483,26 +1478,21 @@ class PlatformPendingPurchasesParams {
 
 /// Pigeon version of Java [UnfetchedProduct](https://developer.android.com/reference/com/android/billingclient/api/QueryProductDetailsParams.Product).
 class PlatformUnfetchedProduct {
-  PlatformUnfetchedProduct({
-    required this.productId,
-  });
+  PlatformUnfetchedProduct({required this.productId});
 
   String productId;
 
   List<Object?> _toList() {
-    return <Object?>[
-      productId,
-    ];
+    return <Object?>[productId];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformUnfetchedProduct decode(Object result) {
     result as List<Object?>;
-    return PlatformUnfetchedProduct(
-      productId: result[0]! as String,
-    );
+    return PlatformUnfetchedProduct(productId: result[0]! as String);
   }
 
   @override
@@ -1527,7 +1517,6 @@ class PlatformUnfetchedProduct {
   }
 }
 
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -1535,94 +1524,94 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is PlatformBillingResponse) {
+    } else if (value is PlatformBillingResponse) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformInAppMessageResponse) {
+    } else if (value is PlatformInAppMessageResponse) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformReplacementMode) {
+    } else if (value is PlatformReplacementMode) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformProductType) {
+    } else if (value is PlatformProductType) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformBillingChoiceMode) {
+    } else if (value is PlatformBillingChoiceMode) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformBillingClientFeature) {
+    } else if (value is PlatformBillingClientFeature) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformPurchaseState) {
+    } else if (value is PlatformPurchaseState) {
       buffer.putUint8(135);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformRecurrenceMode) {
+    } else if (value is PlatformRecurrenceMode) {
       buffer.putUint8(136);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformQueryProduct) {
+    } else if (value is PlatformQueryProduct) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformAccountIdentifiers) {
+    } else if (value is PlatformAccountIdentifiers) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformBillingResult) {
+    } else if (value is PlatformBillingResult) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformOneTimePurchaseOfferDetails) {
+    } else if (value is PlatformOneTimePurchaseOfferDetails) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformProductDetails) {
+    } else if (value is PlatformProductDetails) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformProductDetailsResponse) {
+    } else if (value is PlatformProductDetailsResponse) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformAlternativeBillingOnlyReportingDetailsResponse) {
+    } else if (value is PlatformAlternativeBillingOnlyReportingDetailsResponse) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformInAppMessageResult) {
+    } else if (value is PlatformInAppMessageResult) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformBillingConfigResponse) {
+    } else if (value is PlatformBillingConfigResponse) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformBillingFlowParams) {
+    } else if (value is PlatformBillingFlowParams) {
       buffer.putUint8(146);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformPricingPhase) {
+    } else if (value is PlatformPricingPhase) {
       buffer.putUint8(147);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformPurchase) {
+    } else if (value is PlatformPurchase) {
       buffer.putUint8(148);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformPendingPurchaseUpdate) {
+    } else if (value is PlatformPendingPurchaseUpdate) {
       buffer.putUint8(149);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformPurchaseHistoryRecord) {
+    } else if (value is PlatformPurchaseHistoryRecord) {
       buffer.putUint8(150);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformPurchaseHistoryResponse) {
+    } else if (value is PlatformPurchaseHistoryResponse) {
       buffer.putUint8(151);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformPurchasesResponse) {
+    } else if (value is PlatformPurchasesResponse) {
       buffer.putUint8(152);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformSubscriptionOfferDetails) {
+    } else if (value is PlatformSubscriptionOfferDetails) {
       buffer.putUint8(153);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformUserChoiceDetails) {
+    } else if (value is PlatformUserChoiceDetails) {
       buffer.putUint8(154);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformUserChoiceProduct) {
+    } else if (value is PlatformUserChoiceProduct) {
       buffer.putUint8(155);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformInstallmentPlanDetails) {
+    } else if (value is PlatformInstallmentPlanDetails) {
       buffer.putUint8(156);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformPendingPurchasesParams) {
+    } else if (value is PlatformPendingPurchasesParams) {
       buffer.putUint8(157);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformUnfetchedProduct) {
+    } else if (value is PlatformUnfetchedProduct) {
       buffer.putUint8(158);
       writeValue(buffer, value.encode());
     } else {
@@ -1712,8 +1701,10 @@ class InAppPurchaseApi {
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   InAppPurchaseApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -1722,7 +1713,8 @@ class InAppPurchaseApi {
 
   /// Wraps BillingClient#isReady.
   Future<bool> isReady() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isReady$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isReady$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -1732,37 +1724,45 @@ class InAppPurchaseApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as bool;
   }
 
   /// Wraps BillingClient#startConnection(BillingClientStateListener).
-  Future<PlatformBillingResult> startConnection(int callbackHandle, PlatformBillingChoiceMode billingMode, PlatformPendingPurchasesParams pendingPurchasesParams) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.startConnection$pigeonVar_messageChannelSuffix';
+  Future<PlatformBillingResult> startConnection(
+    int callbackHandle,
+    PlatformBillingChoiceMode billingMode,
+    PlatformPendingPurchasesParams pendingPurchasesParams,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.startConnection$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[callbackHandle, billingMode, pendingPurchasesParams]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      callbackHandle,
+      billingMode,
+      pendingPurchasesParams,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as PlatformBillingResult;
   }
 
   /// Wraps BillingClient#endConnection(BillingClientStateListener).
   Future<void> endConnection() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.endConnection$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.endConnection$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -1771,17 +1771,13 @@ class InAppPurchaseApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Wraps BillingClient#getBillingConfigAsync(GetBillingConfigParams, BillingConfigResponseListener).
   Future<PlatformBillingConfigResponse> getBillingConfigAsync() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.getBillingConfigAsync$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.getBillingConfigAsync$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -1791,17 +1787,17 @@ class InAppPurchaseApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as PlatformBillingConfigResponse;
   }
 
   /// Wraps BillingClient#launchBillingFlow(Activity, BillingFlowParams).
   Future<PlatformBillingResult> launchBillingFlow(PlatformBillingFlowParams params) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.launchBillingFlow$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.launchBillingFlow$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -1811,17 +1807,17 @@ class InAppPurchaseApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as PlatformBillingResult;
   }
 
   /// Wraps BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener).
   Future<PlatformBillingResult> acknowledgePurchase(String purchaseToken) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.acknowledgePurchase$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.acknowledgePurchase$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -1831,17 +1827,17 @@ class InAppPurchaseApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as PlatformBillingResult;
   }
 
   /// Wraps BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener).
   Future<PlatformBillingResult> consumeAsync(String purchaseToken) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.consumeAsync$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.consumeAsync$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -1851,17 +1847,17 @@ class InAppPurchaseApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as PlatformBillingResult;
   }
 
   /// Wraps BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener).
   Future<PlatformPurchasesResponse> queryPurchasesAsync(PlatformProductType productType) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchasesAsync$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchasesAsync$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -1871,17 +1867,19 @@ class InAppPurchaseApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as PlatformPurchasesResponse;
   }
 
   /// Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener).
-  Future<PlatformProductDetailsResponse> queryProductDetailsAsync(List<PlatformQueryProduct> products) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryProductDetailsAsync$pigeonVar_messageChannelSuffix';
+  Future<PlatformProductDetailsResponse> queryProductDetailsAsync(
+    List<PlatformQueryProduct> products,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryProductDetailsAsync$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -1891,17 +1889,17 @@ class InAppPurchaseApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as PlatformProductDetailsResponse;
   }
 
   /// Wraps BillingClient#isFeatureSupported(String).
   Future<bool> isFeatureSupported(PlatformBillingClientFeature feature) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isFeatureSupported$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isFeatureSupported$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -1911,17 +1909,17 @@ class InAppPurchaseApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as bool;
   }
 
   /// Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync().
   Future<PlatformBillingResult> isAlternativeBillingOnlyAvailableAsync() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isAlternativeBillingOnlyAvailableAsync$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isAlternativeBillingOnlyAvailableAsync$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -1931,17 +1929,17 @@ class InAppPurchaseApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as PlatformBillingResult;
   }
 
   /// Wraps BillingClient#showAlternativeBillingOnlyInformationDialog().
   Future<PlatformBillingResult> showAlternativeBillingOnlyInformationDialog() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.showAlternativeBillingOnlyInformationDialog$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.showAlternativeBillingOnlyInformationDialog$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -1951,17 +1949,18 @@ class InAppPurchaseApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as PlatformBillingResult;
   }
 
   /// Wraps BillingClient#createAlternativeBillingOnlyReportingDetailsAsync(AlternativeBillingOnlyReportingDetailsListener).
-  Future<PlatformAlternativeBillingOnlyReportingDetailsResponse> createAlternativeBillingOnlyReportingDetailsAsync() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.createAlternativeBillingOnlyReportingDetailsAsync$pigeonVar_messageChannelSuffix';
+  Future<PlatformAlternativeBillingOnlyReportingDetailsResponse>
+  createAlternativeBillingOnlyReportingDetailsAsync() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.createAlternativeBillingOnlyReportingDetailsAsync$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -1971,17 +1970,17 @@ class InAppPurchaseApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as PlatformAlternativeBillingOnlyReportingDetailsResponse;
   }
 
   /// Wraps BillingClient#showInAppMessages().
   Future<PlatformInAppMessageResult> showInAppMessages() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.showInAppMessages$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.showInAppMessages$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -1991,11 +1990,10 @@ class InAppPurchaseApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as PlatformInAppMessageResult;
   }
 }
@@ -2012,12 +2010,18 @@ abstract class InAppPurchaseCallbackApi {
   /// Called for `UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails)`.
   void userSelectedalternativeBilling(PlatformUserChoiceDetails details);
 
-  static void setUp(InAppPurchaseCallbackApi? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
+  static void setUp(
+    InAppPurchaseCallbackApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onBillingServiceDisconnected$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onBillingServiceDisconnected$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2029,16 +2033,20 @@ abstract class InAppPurchaseCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onPurchasesUpdated$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onPurchasesUpdated$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2050,16 +2058,20 @@ abstract class InAppPurchaseCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.userSelectedalternativeBilling$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.userSelectedalternativeBilling$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2071,8 +2083,10 @@ abstract class InAppPurchaseCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }

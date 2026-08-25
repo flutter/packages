@@ -13,9 +13,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-    List<Object?>? replyList,
-    String channelName, {
-    required bool isNullValid,
+  List<Object?>? replyList,
+  String channelName, {
+  required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -49,8 +49,7 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -99,26 +98,33 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
-
 enum GetCredentialFailureType {
   /// Indicates that a credential was returned, but it was not of the expected
   /// type.
   unexpectedCredentialType,
+
   /// Indicates that a server client ID was not provided.
   missingServerClientId,
+
   /// Indicates that the user needs to be prompted for authorization, but there
   /// is no current activity to prompt in.
   noActivity,
+
   /// The request was internally interrupted.
   interrupted,
+
   /// The request was canceled by the user.
   canceled,
+
   /// No matching credential was found.
   noCredential,
+
   /// The provider was not properly configured.
   providerConfigurationIssue,
+
   /// The credential manager is not supported on this device.
   unsupported,
+
   /// The request failed for an unknown reason.
   unknown,
 }
@@ -129,15 +135,19 @@ enum AuthorizeFailureType {
   /// This is returned only if promptIfUnauthorized is false, indicating that
   /// the user would need to be prompted for authorization.
   unauthorized,
+
   /// Indicates that the call to AuthorizationClient.authorize itself failed.
   authorizeFailure,
+
   /// Corresponds to SendIntentException, indicating that the pending intent is
   /// no longer available.
   pendingIntentException,
+
   /// Corresponds to an SendIntentException in onActivityResult, indicating that
   /// either authorization failed, or the result was not available for some
   /// reason.
   apiException,
+
   /// Indicates that the user needs to be prompted for authorization, but there
   /// is no current activity to prompt in.
   noActivity,
@@ -165,16 +175,12 @@ class PlatformAuthorizationRequest {
   String? serverClientIdForForcedRefreshToken;
 
   List<Object?> _toList() {
-    return <Object?>[
-      scopes,
-      hostedDomain,
-      accountEmail,
-      serverClientIdForForcedRefreshToken,
-    ];
+    return <Object?>[scopes, hostedDomain, accountEmail, serverClientIdForForcedRefreshToken];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformAuthorizationRequest decode(Object result) {
     result as List<Object?>;
@@ -195,7 +201,10 @@ class PlatformAuthorizationRequest {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(scopes, other.scopes) && _deepEquals(hostedDomain, other.hostedDomain) && _deepEquals(accountEmail, other.accountEmail) && _deepEquals(serverClientIdForForcedRefreshToken, other.serverClientIdForForcedRefreshToken);
+    return _deepEquals(scopes, other.scopes) &&
+        _deepEquals(hostedDomain, other.hostedDomain) &&
+        _deepEquals(accountEmail, other.accountEmail) &&
+        _deepEquals(serverClientIdForForcedRefreshToken, other.serverClientIdForForcedRefreshToken);
   }
 
   @override
@@ -239,17 +248,12 @@ class GetCredentialRequestParams {
   String? nonce;
 
   List<Object?> _toList() {
-    return <Object?>[
-      useButtonFlow,
-      googleIdOptionParams,
-      serverClientId,
-      hostedDomain,
-      nonce,
-    ];
+    return <Object?>[useButtonFlow, googleIdOptionParams, serverClientId, hostedDomain, nonce];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static GetCredentialRequestParams decode(Object result) {
     result as List<Object?>;
@@ -271,7 +275,11 @@ class GetCredentialRequestParams {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(useButtonFlow, other.useButtonFlow) && _deepEquals(googleIdOptionParams, other.googleIdOptionParams) && _deepEquals(serverClientId, other.serverClientId) && _deepEquals(hostedDomain, other.hostedDomain) && _deepEquals(nonce, other.nonce);
+    return _deepEquals(useButtonFlow, other.useButtonFlow) &&
+        _deepEquals(googleIdOptionParams, other.googleIdOptionParams) &&
+        _deepEquals(serverClientId, other.serverClientId) &&
+        _deepEquals(hostedDomain, other.hostedDomain) &&
+        _deepEquals(nonce, other.nonce);
   }
 
   @override
@@ -295,14 +303,12 @@ class GetCredentialRequestGoogleIdOptionParams {
   bool autoSelectEnabled;
 
   List<Object?> _toList() {
-    return <Object?>[
-      filterToAuthorized,
-      autoSelectEnabled,
-    ];
+    return <Object?>[filterToAuthorized, autoSelectEnabled];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static GetCredentialRequestGoogleIdOptionParams decode(Object result) {
     result as List<Object?>;
@@ -321,7 +327,8 @@ class GetCredentialRequestGoogleIdOptionParams {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(filterToAuthorized, other.filterToAuthorized) && _deepEquals(autoSelectEnabled, other.autoSelectEnabled);
+    return _deepEquals(filterToAuthorized, other.filterToAuthorized) &&
+        _deepEquals(autoSelectEnabled, other.autoSelectEnabled);
   }
 
   @override
@@ -339,10 +346,7 @@ class GetCredentialRequestGoogleIdOptionParams {
 /// Corresponds to the native RevokeAccessRequest.
 /// https://developers.google.com/android/reference/com/google/android/gms/auth/api/identity/RevokeAccessRequest
 class PlatformRevokeAccessRequest {
-  PlatformRevokeAccessRequest({
-    required this.accountEmail,
-    required this.scopes,
-  });
+  PlatformRevokeAccessRequest({required this.accountEmail, required this.scopes});
 
   /// The email for the Google account to revoke authorizations for.
   String accountEmail;
@@ -354,14 +358,12 @@ class PlatformRevokeAccessRequest {
   List<String> scopes;
 
   List<Object?> _toList() {
-    return <Object?>[
-      accountEmail,
-      scopes,
-    ];
+    return <Object?>[accountEmail, scopes];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformRevokeAccessRequest decode(Object result) {
     result as List<Object?>;
@@ -432,7 +434,8 @@ class PlatformGoogleIdTokenCredential {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformGoogleIdTokenCredential decode(Object result) {
     result as List<Object?>;
@@ -456,7 +459,13 @@ class PlatformGoogleIdTokenCredential {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(displayName, other.displayName) && _deepEquals(familyName, other.familyName) && _deepEquals(givenName, other.givenName) && _deepEquals(email, other.email) && _deepEquals(uniqueId, other.uniqueId) && _deepEquals(idToken, other.idToken) && _deepEquals(profilePictureUri, other.profilePictureUri);
+    return _deepEquals(displayName, other.displayName) &&
+        _deepEquals(familyName, other.familyName) &&
+        _deepEquals(givenName, other.givenName) &&
+        _deepEquals(email, other.email) &&
+        _deepEquals(uniqueId, other.uniqueId) &&
+        _deepEquals(idToken, other.idToken) &&
+        _deepEquals(profilePictureUri, other.profilePictureUri);
   }
 
   @override
@@ -475,16 +484,11 @@ class PlatformGoogleIdTokenCredential {
 /// response type hierarchy and two-part callback in this interface layer would
 /// add a lot of complexity that is not needed for the plugin's use case. It is
 /// instead a processed version of the results of those callbacks.
-sealed class GetCredentialResult {
-}
+sealed class GetCredentialResult {}
 
 /// An authentication failure.
 class GetCredentialFailure extends GetCredentialResult {
-  GetCredentialFailure({
-    required this.type,
-    this.message,
-    this.details,
-  });
+  GetCredentialFailure({required this.type, this.message, this.details});
 
   /// The type of failure.
   GetCredentialFailureType type;
@@ -496,15 +500,12 @@ class GetCredentialFailure extends GetCredentialResult {
   String? details;
 
   List<Object?> _toList() {
-    return <Object?>[
-      type,
-      message,
-      details,
-    ];
+    return <Object?>[type, message, details];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static GetCredentialFailure decode(Object result) {
     result as List<Object?>;
@@ -524,7 +525,9 @@ class GetCredentialFailure extends GetCredentialResult {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(type, other.type) && _deepEquals(message, other.message) && _deepEquals(details, other.details);
+    return _deepEquals(type, other.type) &&
+        _deepEquals(message, other.message) &&
+        _deepEquals(details, other.details);
   }
 
   @override
@@ -539,26 +542,21 @@ class GetCredentialFailure extends GetCredentialResult {
 
 /// A successful authentication result.
 class GetCredentialSuccess extends GetCredentialResult {
-  GetCredentialSuccess({
-    required this.credential,
-  });
+  GetCredentialSuccess({required this.credential});
 
   PlatformGoogleIdTokenCredential credential;
 
   List<Object?> _toList() {
-    return <Object?>[
-      credential,
-    ];
+    return <Object?>[credential];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static GetCredentialSuccess decode(Object result) {
     result as List<Object?>;
-    return GetCredentialSuccess(
-      credential: result[0]! as PlatformGoogleIdTokenCredential,
-    );
+    return GetCredentialSuccess(credential: result[0]! as PlatformGoogleIdTokenCredential);
   }
 
   @override
@@ -584,16 +582,11 @@ class GetCredentialSuccess extends GetCredentialResult {
 }
 
 /// The response from an `authorize` call.
-sealed class AuthorizeResult {
-}
+sealed class AuthorizeResult {}
 
 /// An authorization failure
 class AuthorizeFailure extends AuthorizeResult {
-  AuthorizeFailure({
-    required this.type,
-    this.message,
-    this.details,
-  });
+  AuthorizeFailure({required this.type, this.message, this.details});
 
   /// The type of failure.
   AuthorizeFailureType type;
@@ -605,15 +598,12 @@ class AuthorizeFailure extends AuthorizeResult {
   String? details;
 
   List<Object?> _toList() {
-    return <Object?>[
-      type,
-      message,
-      details,
-    ];
+    return <Object?>[type, message, details];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static AuthorizeFailure decode(Object result) {
     result as List<Object?>;
@@ -633,7 +623,9 @@ class AuthorizeFailure extends AuthorizeResult {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(type, other.type) && _deepEquals(message, other.message) && _deepEquals(details, other.details);
+    return _deepEquals(type, other.type) &&
+        _deepEquals(message, other.message) &&
+        _deepEquals(details, other.details);
   }
 
   @override
@@ -650,11 +642,7 @@ class AuthorizeFailure extends AuthorizeResult {
 ///
 /// Corresponds to a native AuthorizationResult.
 class PlatformAuthorizationResult extends AuthorizeResult {
-  PlatformAuthorizationResult({
-    this.accessToken,
-    this.serverAuthCode,
-    required this.grantedScopes,
-  });
+  PlatformAuthorizationResult({this.accessToken, this.serverAuthCode, required this.grantedScopes});
 
   String? accessToken;
 
@@ -663,15 +651,12 @@ class PlatformAuthorizationResult extends AuthorizeResult {
   List<String> grantedScopes;
 
   List<Object?> _toList() {
-    return <Object?>[
-      accessToken,
-      serverAuthCode,
-      grantedScopes,
-    ];
+    return <Object?>[accessToken, serverAuthCode, grantedScopes];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformAuthorizationResult decode(Object result) {
     result as List<Object?>;
@@ -691,7 +676,9 @@ class PlatformAuthorizationResult extends AuthorizeResult {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(accessToken, other.accessToken) && _deepEquals(serverAuthCode, other.serverAuthCode) && _deepEquals(grantedScopes, other.grantedScopes);
+    return _deepEquals(accessToken, other.accessToken) &&
+        _deepEquals(serverAuthCode, other.serverAuthCode) &&
+        _deepEquals(grantedScopes, other.grantedScopes);
   }
 
   @override
@@ -704,7 +691,6 @@ class PlatformAuthorizationResult extends AuthorizeResult {
   }
 }
 
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -712,37 +698,37 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is GetCredentialFailureType) {
+    } else if (value is GetCredentialFailureType) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is AuthorizeFailureType) {
+    } else if (value is AuthorizeFailureType) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformAuthorizationRequest) {
+    } else if (value is PlatformAuthorizationRequest) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    }    else if (value is GetCredentialRequestParams) {
+    } else if (value is GetCredentialRequestParams) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    }    else if (value is GetCredentialRequestGoogleIdOptionParams) {
+    } else if (value is GetCredentialRequestGoogleIdOptionParams) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformRevokeAccessRequest) {
+    } else if (value is PlatformRevokeAccessRequest) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformGoogleIdTokenCredential) {
+    } else if (value is PlatformGoogleIdTokenCredential) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    }    else if (value is GetCredentialFailure) {
+    } else if (value is GetCredentialFailure) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    }    else if (value is GetCredentialSuccess) {
+    } else if (value is GetCredentialSuccess) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    }    else if (value is AuthorizeFailure) {
+    } else if (value is AuthorizeFailure) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformAuthorizationResult) {
+    } else if (value is PlatformAuthorizationResult) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
     } else {
@@ -788,8 +774,10 @@ class GoogleSignInApi {
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   GoogleSignInApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -799,7 +787,8 @@ class GoogleSignInApi {
   /// Returns the server client ID parsed from google-services.json by the
   /// google-services Gradle script, if any.
   Future<String?> getGoogleServicesJsonServerClientId() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getGoogleServicesJsonServerClientId$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getGoogleServicesJsonServerClientId$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -809,18 +798,18 @@ class GoogleSignInApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
     return pigeonVar_replyValue as String?;
   }
 
   /// Requests an authentication credential (sign in) via CredentialManager's
   /// getCredential.
   Future<GetCredentialResult> getCredential(GetCredentialRequestParams params) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getCredential$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getCredential$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -830,17 +819,17 @@ class GoogleSignInApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as GetCredentialResult;
   }
 
   /// Clears CredentialManager credential state.
   Future<void> clearCredentialState() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearCredentialState$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearCredentialState$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -849,17 +838,13 @@ class GoogleSignInApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Clears the authorization cache for the given token.
   Future<void> clearAuthorizationToken(String token) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearAuthorizationToken$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearAuthorizationToken$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -868,36 +853,38 @@ class GoogleSignInApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[token]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Requests authorization tokens via AuthorizationClient.
-  Future<AuthorizeResult> authorize(PlatformAuthorizationRequest params, {required bool promptIfUnauthorized}) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.authorize$pigeonVar_messageChannelSuffix';
+  Future<AuthorizeResult> authorize(
+    PlatformAuthorizationRequest params, {
+    required bool promptIfUnauthorized,
+  }) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.authorize$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[params, promptIfUnauthorized]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      params,
+      promptIfUnauthorized,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as AuthorizeResult;
   }
 
   Future<void> revokeAccess(PlatformRevokeAccessRequest params) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.revokeAccess$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.revokeAccess$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -906,11 +893,6 @@ class GoogleSignInApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[params]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 }

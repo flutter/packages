@@ -10,12 +10,11 @@ package dev.flutter.packages.file_selector_android
 import android.util.Log
 import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MessageCodec
-import io.flutter.plugin.common.StandardMethodCodec
 import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+
 private object GeneratedFileSelectorApiPigeonUtils {
 
   fun wrapResult(result: Any?): List<Any?> {
@@ -24,19 +23,15 @@ private object GeneratedFileSelectorApiPigeonUtils {
 
   fun wrapError(exception: Throwable): List<Any?> {
     return if (exception is FlutterError) {
-      listOf(
-        exception.code,
-        exception.message,
-        exception.details
-      )
+      listOf(exception.code, exception.message, exception.details)
     } else {
       listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
-      )
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
     }
   }
+
   fun doubleEquals(a: Double, b: Double): Boolean {
     // Normalize -0.0 to 0.0 and handle NaN equality.
     return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
@@ -180,19 +175,19 @@ private object GeneratedFileSelectorApiPigeonUtils {
       else -> value.hashCode()
     }
   }
-
 }
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
+ *
  * @property code The error code.
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
-class FlutterError (
-  val code: String,
-  override val message: String? = null,
-  val details: Any? = null
+class FlutterError(
+    val code: String,
+    override val message: String? = null,
+    val details: Any? = null
 ) : RuntimeException()
 
 enum class FileSelectorExceptionCode(val raw: Int) {
@@ -209,11 +204,10 @@ enum class FileSelectorExceptionCode(val raw: Int) {
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class FileSelectorNativeException (
-  val fileSelectorExceptionCode: FileSelectorExceptionCode,
-  val message: String
-)
- {
+data class FileSelectorNativeException(
+    val fileSelectorExceptionCode: FileSelectorExceptionCode,
+    val message: String
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): FileSelectorNativeException {
       val fileSelectorExceptionCode = pigeonVar_list[0] as FileSelectorExceptionCode
@@ -221,12 +215,14 @@ data class FileSelectorNativeException (
       return FileSelectorNativeException(fileSelectorExceptionCode, message)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      fileSelectorExceptionCode,
-      message,
+        fileSelectorExceptionCode,
+        message,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -235,30 +231,33 @@ data class FileSelectorNativeException (
       return true
     }
     val other = other as FileSelectorNativeException
-    return GeneratedFileSelectorApiPigeonUtils.deepEquals(this.fileSelectorExceptionCode, other.fileSelectorExceptionCode) && GeneratedFileSelectorApiPigeonUtils.deepEquals(this.message, other.message)
+    return GeneratedFileSelectorApiPigeonUtils.deepEquals(
+        this.fileSelectorExceptionCode, other.fileSelectorExceptionCode) &&
+        GeneratedFileSelectorApiPigeonUtils.deepEquals(this.message, other.message)
   }
 
   override fun hashCode(): Int {
     var result = javaClass.hashCode()
-    result = 31 * result + GeneratedFileSelectorApiPigeonUtils.deepHash(this.fileSelectorExceptionCode)
+    result =
+        31 * result + GeneratedFileSelectorApiPigeonUtils.deepHash(this.fileSelectorExceptionCode)
     result = 31 * result + GeneratedFileSelectorApiPigeonUtils.deepHash(this.message)
     return result
   }
+
   override fun toString(): String {
     return "FileSelectorNativeException(fileSelectorExceptionCode=$fileSelectorExceptionCode, message=$message)"
   }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class FileResponse (
-  val path: String,
-  val mimeType: String? = null,
-  val name: String? = null,
-  val size: Long,
-  val bytes: ByteArray,
-  val fileSelectorNativeException: FileSelectorNativeException? = null
-)
- {
+data class FileResponse(
+    val path: String,
+    val mimeType: String? = null,
+    val name: String? = null,
+    val size: Long,
+    val bytes: ByteArray,
+    val fileSelectorNativeException: FileSelectorNativeException? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): FileResponse {
       val path = pigeonVar_list[0] as String
@@ -270,16 +269,18 @@ data class FileResponse (
       return FileResponse(path, mimeType, name, size, bytes, fileSelectorNativeException)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      path,
-      mimeType,
-      name,
-      size,
-      bytes,
-      fileSelectorNativeException,
+        path,
+        mimeType,
+        name,
+        size,
+        bytes,
+        fileSelectorNativeException,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -288,7 +289,13 @@ data class FileResponse (
       return true
     }
     val other = other as FileResponse
-    return GeneratedFileSelectorApiPigeonUtils.deepEquals(this.path, other.path) && GeneratedFileSelectorApiPigeonUtils.deepEquals(this.mimeType, other.mimeType) && GeneratedFileSelectorApiPigeonUtils.deepEquals(this.name, other.name) && GeneratedFileSelectorApiPigeonUtils.deepEquals(this.size, other.size) && GeneratedFileSelectorApiPigeonUtils.deepEquals(this.bytes, other.bytes) && GeneratedFileSelectorApiPigeonUtils.deepEquals(this.fileSelectorNativeException, other.fileSelectorNativeException)
+    return GeneratedFileSelectorApiPigeonUtils.deepEquals(this.path, other.path) &&
+        GeneratedFileSelectorApiPigeonUtils.deepEquals(this.mimeType, other.mimeType) &&
+        GeneratedFileSelectorApiPigeonUtils.deepEquals(this.name, other.name) &&
+        GeneratedFileSelectorApiPigeonUtils.deepEquals(this.size, other.size) &&
+        GeneratedFileSelectorApiPigeonUtils.deepEquals(this.bytes, other.bytes) &&
+        GeneratedFileSelectorApiPigeonUtils.deepEquals(
+            this.fileSelectorNativeException, other.fileSelectorNativeException)
   }
 
   override fun hashCode(): Int {
@@ -298,20 +305,18 @@ data class FileResponse (
     result = 31 * result + GeneratedFileSelectorApiPigeonUtils.deepHash(this.name)
     result = 31 * result + GeneratedFileSelectorApiPigeonUtils.deepHash(this.size)
     result = 31 * result + GeneratedFileSelectorApiPigeonUtils.deepHash(this.bytes)
-    result = 31 * result + GeneratedFileSelectorApiPigeonUtils.deepHash(this.fileSelectorNativeException)
+    result =
+        31 * result + GeneratedFileSelectorApiPigeonUtils.deepHash(this.fileSelectorNativeException)
     return result
   }
+
   override fun toString(): String {
     return "FileResponse(path=$path, mimeType=$mimeType, name=$name, size=$size, bytes=${bytes.contentToString()}, fileSelectorNativeException=$fileSelectorNativeException)"
   }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class FileTypes (
-  val mimeTypes: List<String>,
-  val extensions: List<String>
-)
- {
+data class FileTypes(val mimeTypes: List<String>, val extensions: List<String>) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): FileTypes {
       val mimeTypes = pigeonVar_list[0] as List<String>
@@ -319,12 +324,14 @@ data class FileTypes (
       return FileTypes(mimeTypes, extensions)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      mimeTypes,
-      extensions,
+        mimeTypes,
+        extensions,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -333,7 +340,8 @@ data class FileTypes (
       return true
     }
     val other = other as FileTypes
-    return GeneratedFileSelectorApiPigeonUtils.deepEquals(this.mimeTypes, other.mimeTypes) && GeneratedFileSelectorApiPigeonUtils.deepEquals(this.extensions, other.extensions)
+    return GeneratedFileSelectorApiPigeonUtils.deepEquals(this.mimeTypes, other.mimeTypes) &&
+        GeneratedFileSelectorApiPigeonUtils.deepEquals(this.extensions, other.extensions)
   }
 
   override fun hashCode(): Int {
@@ -342,37 +350,32 @@ data class FileTypes (
     result = 31 * result + GeneratedFileSelectorApiPigeonUtils.deepHash(this.extensions)
     return result
   }
+
   override fun toString(): String {
     return "FileTypes(mimeTypes=$mimeTypes, extensions=$extensions)"
   }
 }
+
 private open class GeneratedFileSelectorApiPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          FileSelectorExceptionCode.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { FileSelectorExceptionCode.ofRaw(it.toInt()) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          FileSelectorNativeException.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { FileSelectorNativeException.fromList(it) }
       }
       131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          FileResponse.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { FileResponse.fromList(it) }
       }
       132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          FileTypes.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { FileTypes.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
   }
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
       is FileSelectorExceptionCode -> {
         stream.write(129)
@@ -395,7 +398,6 @@ private open class GeneratedFileSelectorApiPigeonCodec : StandardMessageCodec() 
   }
 }
 
-
 /**
  * An API to call to native code to select files or directories.
  *
@@ -407,12 +409,19 @@ interface FileSelectorApi {
    *
    * Returns `null` if user cancels the operation.
    */
-  fun openFile(initialDirectory: String?, allowedTypes: FileTypes, callback: (Result<FileResponse?>) -> Unit)
+  fun openFile(
+      initialDirectory: String?,
+      allowedTypes: FileTypes,
+      callback: (Result<FileResponse?>) -> Unit
+  )
   /**
-   * Opens a file dialog for loading files and returns a list of file responses
-   * chosen by the user.
+   * Opens a file dialog for loading files and returns a list of file responses chosen by the user.
    */
-  fun openFiles(initialDirectory: String?, allowedTypes: FileTypes, callback: (Result<List<FileResponse>>) -> Unit)
+  fun openFiles(
+      initialDirectory: String?,
+      allowedTypes: FileTypes,
+      callback: (Result<List<FileResponse>>) -> Unit
+  )
   /**
    * Opens a file dialog for loading directories and returns a directory path.
    *
@@ -422,15 +431,24 @@ interface FileSelectorApi {
 
   companion object {
     /** The codec used by FileSelectorApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      GeneratedFileSelectorApiPigeonCodec()
-    }
-    /** Sets up an instance of `FileSelectorApi` to handle messages through the `binaryMessenger`. */
+    val codec: MessageCodec<Any?> by lazy { GeneratedFileSelectorApiPigeonCodec() }
+    /**
+     * Sets up an instance of `FileSelectorApi` to handle messages through the `binaryMessenger`.
+     */
     @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: FileSelectorApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: FileSelectorApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.file_selector_android.FileSelectorApi.openFile$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.file_selector_android.FileSelectorApi.openFile$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -451,13 +469,18 @@ interface FileSelectorApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.file_selector_android.FileSelectorApi.openFiles$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.file_selector_android.FileSelectorApi.openFiles$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val initialDirectoryArg = args[0] as String?
             val allowedTypesArg = args[1] as FileTypes
-            api.openFiles(initialDirectoryArg, allowedTypesArg) { result: Result<List<FileResponse>> ->
+            api.openFiles(initialDirectoryArg, allowedTypesArg) { result: Result<List<FileResponse>>
+              ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(GeneratedFileSelectorApiPigeonUtils.wrapError(error))
@@ -472,7 +495,11 @@ interface FileSelectorApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.file_selector_android.FileSelectorApi.getDirectoryPath$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.file_selector_android.FileSelectorApi.getDirectoryPath$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>

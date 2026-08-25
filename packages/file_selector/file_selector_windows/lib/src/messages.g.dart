@@ -13,9 +13,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-    List<Object?>? replyList,
-    String channelName, {
-    required bool isNullValid,
+  List<Object?>? replyList,
+  String channelName, {
+  required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -49,8 +49,7 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -99,26 +98,20 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
-
 class TypeGroup {
-  TypeGroup({
-    required this.label,
-    required this.extensions,
-  });
+  TypeGroup({required this.label, required this.extensions});
 
   String label;
 
   List<String> extensions;
 
   List<Object?> _toList() {
-    return <Object?>[
-      label,
-      extensions,
-    ];
+    return <Object?>[label, extensions];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static TypeGroup decode(Object result) {
     result as List<Object?>;
@@ -164,15 +157,12 @@ class SelectionOptions {
   List<TypeGroup> allowedTypes;
 
   List<Object?> _toList() {
-    return <Object?>[
-      allowMultiple,
-      selectFolders,
-      allowedTypes,
-    ];
+    return <Object?>[allowMultiple, selectFolders, allowedTypes];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static SelectionOptions decode(Object result) {
     result as List<Object?>;
@@ -192,7 +182,9 @@ class SelectionOptions {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(allowMultiple, other.allowMultiple) && _deepEquals(selectFolders, other.selectFolders) && _deepEquals(allowedTypes, other.allowedTypes);
+    return _deepEquals(allowMultiple, other.allowMultiple) &&
+        _deepEquals(selectFolders, other.selectFolders) &&
+        _deepEquals(allowedTypes, other.allowedTypes);
   }
 
   @override
@@ -207,10 +199,7 @@ class SelectionOptions {
 
 /// The result from an open or save dialog.
 class FileDialogResult {
-  FileDialogResult({
-    required this.paths,
-    this.typeGroupIndex,
-  });
+  FileDialogResult({required this.paths, this.typeGroupIndex});
 
   /// The selected paths.
   ///
@@ -224,14 +213,12 @@ class FileDialogResult {
   int? typeGroupIndex;
 
   List<Object?> _toList() {
-    return <Object?>[
-      paths,
-      typeGroupIndex,
-    ];
+    return <Object?>[paths, typeGroupIndex];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static FileDialogResult decode(Object result) {
     result as List<Object?>;
@@ -263,7 +250,6 @@ class FileDialogResult {
   }
 }
 
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -271,13 +257,13 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is TypeGroup) {
+    } else if (value is TypeGroup) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    }    else if (value is SelectionOptions) {
+    } else if (value is SelectionOptions) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    }    else if (value is FileDialogResult) {
+    } else if (value is FileDialogResult) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
@@ -305,49 +291,69 @@ class FileSelectorApi {
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   FileSelectorApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
 
-  Future<FileDialogResult> showOpenDialog(SelectionOptions options, String? initialDirectory, String? confirmButtonText) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.file_selector_windows.FileSelectorApi.showOpenDialog$pigeonVar_messageChannelSuffix';
+  Future<FileDialogResult> showOpenDialog(
+    SelectionOptions options,
+    String? initialDirectory,
+    String? confirmButtonText,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.file_selector_windows.FileSelectorApi.showOpenDialog$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[options, initialDirectory, confirmButtonText]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      options,
+      initialDirectory,
+      confirmButtonText,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as FileDialogResult;
   }
 
-  Future<FileDialogResult> showSaveDialog(SelectionOptions options, String? initialDirectory, String? suggestedName, String? confirmButtonText) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.file_selector_windows.FileSelectorApi.showSaveDialog$pigeonVar_messageChannelSuffix';
+  Future<FileDialogResult> showSaveDialog(
+    SelectionOptions options,
+    String? initialDirectory,
+    String? suggestedName,
+    String? confirmButtonText,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.file_selector_windows.FileSelectorApi.showSaveDialog$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[options, initialDirectory, suggestedName, confirmButtonText]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      options,
+      initialDirectory,
+      suggestedName,
+      confirmButtonText,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return pigeonVar_replyValue! as FileDialogResult;
   }
 }

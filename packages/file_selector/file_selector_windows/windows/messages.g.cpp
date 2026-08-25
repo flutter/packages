@@ -35,32 +35,36 @@ FlutterError CreateConnectionError(const std::string channel_name) {
 }
 
 namespace {
-template<typename T>
+template <typename T>
 bool PigeonInternalDeepEquals(const T& a, const T& b);
 
 bool PigeonInternalDeepEquals(const double& a, const double& b);
 
-template<typename T>
+template <typename T>
 bool PigeonInternalDeepEquals(const std::vector<T>& a, const std::vector<T>& b);
 
-template<typename K, typename V>
+template <typename K, typename V>
 bool PigeonInternalDeepEquals(const std::map<K, V>& a, const std::map<K, V>& b);
 
-template<typename T>
-bool PigeonInternalDeepEquals(const std::optional<T>& a, const std::optional<T>& b);
+template <typename T>
+bool PigeonInternalDeepEquals(const std::optional<T>& a,
+                              const std::optional<T>& b);
 
-template<typename T>
-bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a, const std::unique_ptr<T>& b);
+template <typename T>
+bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a,
+                              const std::unique_ptr<T>& b);
 
-bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a, const ::flutter::EncodableValue& b);
+bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
+                              const ::flutter::EncodableValue& b);
 
-template<typename T>
+template <typename T>
 bool PigeonInternalDeepEquals(const T& a, const T& b) {
   return a == b;
 }
 
-template<typename T>
-bool PigeonInternalDeepEquals(const std::vector<T>& a, const std::vector<T>& b) {
+template <typename T>
+bool PigeonInternalDeepEquals(const std::vector<T>& a,
+                              const std::vector<T>& b) {
   if (a.size() != b.size()) {
     return false;
   }
@@ -73,7 +77,8 @@ bool PigeonInternalDeepEquals(const std::vector<T>& a, const std::vector<T>& b) 
 }
 
 template <typename K, typename V>
-bool PigeonInternalDeepEquals(const std::map<K, V>& a, const std::map<K, V>& b) {
+bool PigeonInternalDeepEquals(const std::map<K, V>& a,
+                              const std::map<K, V>& b) {
   if (a.size() != b.size()) {
     return false;
   }
@@ -101,8 +106,9 @@ bool PigeonInternalDeepEquals(const double& a, const double& b) {
   return (a == b) || (std::isnan(a) && std::isnan(b));
 }
 
-template<typename T>
-bool PigeonInternalDeepEquals(const std::optional<T>& a, const std::optional<T>& b) {
+template <typename T>
+bool PigeonInternalDeepEquals(const std::optional<T>& a,
+                              const std::optional<T>& b) {
   if (!a && !b) {
     return true;
   }
@@ -112,8 +118,9 @@ bool PigeonInternalDeepEquals(const std::optional<T>& a, const std::optional<T>&
   return PigeonInternalDeepEquals(*a, *b);
 }
 
-template<typename T>
-bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a, const std::unique_ptr<T>& b) {
+template <typename T>
+bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a,
+                              const std::unique_ptr<T>& b) {
   if (a.get() == b.get()) {
     return true;
   }
@@ -123,15 +130,18 @@ bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a, const std::unique_ptr
   return PigeonInternalDeepEquals(*a, *b);
 }
 
-bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a, const ::flutter::EncodableValue& b) {
+bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
+                              const ::flutter::EncodableValue& b) {
   if (a.index() != b.index()) {
     return false;
   }
   if (const double* da = std::get_if<double>(&a)) {
     return PigeonInternalDeepEquals(*da, std::get<double>(b));
-  } else if (const ::flutter::EncodableList* la = std::get_if<::flutter::EncodableList>(&a)) {
+  } else if (const ::flutter::EncodableList* la =
+                 std::get_if<::flutter::EncodableList>(&a)) {
     return PigeonInternalDeepEquals(*la, std::get<::flutter::EncodableList>(b));
-  } else if (const ::flutter::EncodableMap* ma = std::get_if<::flutter::EncodableMap>(&a)) {
+  } else if (const ::flutter::EncodableMap* ma =
+                 std::get_if<::flutter::EncodableMap>(&a)) {
     return PigeonInternalDeepEquals(*ma, std::get<::flutter::EncodableMap>(b));
   }
   return a == b;
@@ -174,7 +184,8 @@ template <typename K, typename V>
 size_t PigeonInternalDeepHash(const std::map<K, V>& v) {
   size_t result = 0;
   for (const auto& kv : v) {
-    result += ((PigeonInternalDeepHash(kv.first) * 31) ^ PigeonInternalDeepHash(kv.second));
+    result += ((PigeonInternalDeepHash(kv.first) * 31) ^
+               PigeonInternalDeepHash(kv.second));
   }
   return result;
 }
@@ -286,7 +297,8 @@ std::string PigeonInternalToString(const std::map<K, V>& v) {
       ss << ", ";
     }
     first = false;
-    ss << PigeonInternalToString(kv.first) << ": " << PigeonInternalToString(kv.second);
+    ss << PigeonInternalToString(kv.first) << ": "
+       << PigeonInternalToString(kv.second);
   }
   ss << "}";
   return ss.str();
@@ -312,7 +324,8 @@ std::string PigeonInternalToString(const ::flutter::EncodableValue& v) {
           return val ? std::string("true") : std::string("false");
         } else if constexpr (std::is_same_v<T, std::string>) {
           return "\"" + val + "\"";
-        } else if constexpr (std::is_same_v<T, ::flutter::CustomEncodableValue>) {
+        } else if constexpr (std::is_same_v<T,
+                                            ::flutter::CustomEncodableValue>) {
           return std::string("[custom]");
         } else {
           return PigeonInternalToString(val);
@@ -324,29 +337,18 @@ std::string PigeonInternalToString(const ::flutter::EncodableValue& v) {
 }  // namespace
 // TypeGroup
 
-TypeGroup::TypeGroup(
-  const std::string& label,
-  const EncodableList& extensions)
- : label_(label),
-    extensions_(extensions) {}
+TypeGroup::TypeGroup(const std::string& label, const EncodableList& extensions)
+    : label_(label), extensions_(extensions) {}
 
-const std::string& TypeGroup::label() const {
-  return label_;
-}
+const std::string& TypeGroup::label() const { return label_; }
 
-void TypeGroup::set_label(std::string_view value_arg) {
-  label_ = value_arg;
-}
+void TypeGroup::set_label(std::string_view value_arg) { label_ = value_arg; }
 
-
-const EncodableList& TypeGroup::extensions() const {
-  return extensions_;
-}
+const EncodableList& TypeGroup::extensions() const { return extensions_; }
 
 void TypeGroup::set_extensions(const EncodableList& value_arg) {
   extensions_ = value_arg;
 }
-
 
 EncodableList TypeGroup::ToEncodableList() const {
   EncodableList list;
@@ -357,14 +359,14 @@ EncodableList TypeGroup::ToEncodableList() const {
 }
 
 TypeGroup TypeGroup::FromEncodableList(const EncodableList& list) {
-  TypeGroup decoded(
-    std::get<std::string>(list[0]),
-    std::get<EncodableList>(list[1]));
+  TypeGroup decoded(std::get<std::string>(list[0]),
+                    std::get<EncodableList>(list[1]));
   return decoded;
 }
 
 bool TypeGroup::operator==(const TypeGroup& other) const {
-  return PigeonInternalDeepEquals(label_, other.label_) && PigeonInternalDeepEquals(extensions_, other.extensions_);
+  return PigeonInternalDeepEquals(label_, other.label_) &&
+         PigeonInternalDeepEquals(extensions_, other.extensions_);
 }
 
 bool TypeGroup::operator!=(const TypeGroup& other) const {
@@ -378,9 +380,7 @@ size_t TypeGroup::Hash() const {
   return result;
 }
 
-std::ostream& operator<<(
-  std::ostream& os,
-  const TypeGroup& obj) {
+std::ostream& operator<<(std::ostream& os, const TypeGroup& obj) {
   os << "TypeGroup(";
   os << "label: ";
   os << PigeonInternalToString(obj.label_);
@@ -390,37 +390,27 @@ std::ostream& operator<<(
   return os;
 }
 
-size_t PigeonInternalDeepHash(const TypeGroup& v) {
-  return v.Hash();
-}
+size_t PigeonInternalDeepHash(const TypeGroup& v) { return v.Hash(); }
 
 // SelectionOptions
 
-SelectionOptions::SelectionOptions(
-  bool allow_multiple,
-  bool select_folders,
-  const EncodableList& allowed_types)
- : allow_multiple_(allow_multiple),
-    select_folders_(select_folders),
-    allowed_types_(allowed_types) {}
+SelectionOptions::SelectionOptions(bool allow_multiple, bool select_folders,
+                                   const EncodableList& allowed_types)
+    : allow_multiple_(allow_multiple),
+      select_folders_(select_folders),
+      allowed_types_(allowed_types) {}
 
-bool SelectionOptions::allow_multiple() const {
-  return allow_multiple_;
-}
+bool SelectionOptions::allow_multiple() const { return allow_multiple_; }
 
 void SelectionOptions::set_allow_multiple(bool value_arg) {
   allow_multiple_ = value_arg;
 }
 
-
-bool SelectionOptions::select_folders() const {
-  return select_folders_;
-}
+bool SelectionOptions::select_folders() const { return select_folders_; }
 
 void SelectionOptions::set_select_folders(bool value_arg) {
   select_folders_ = value_arg;
 }
-
 
 const EncodableList& SelectionOptions::allowed_types() const {
   return allowed_types_;
@@ -429,7 +419,6 @@ const EncodableList& SelectionOptions::allowed_types() const {
 void SelectionOptions::set_allowed_types(const EncodableList& value_arg) {
   allowed_types_ = value_arg;
 }
-
 
 EncodableList SelectionOptions::ToEncodableList() const {
   EncodableList list;
@@ -440,16 +429,17 @@ EncodableList SelectionOptions::ToEncodableList() const {
   return list;
 }
 
-SelectionOptions SelectionOptions::FromEncodableList(const EncodableList& list) {
-  SelectionOptions decoded(
-    std::get<bool>(list[0]),
-    std::get<bool>(list[1]),
-    std::get<EncodableList>(list[2]));
+SelectionOptions SelectionOptions::FromEncodableList(
+    const EncodableList& list) {
+  SelectionOptions decoded(std::get<bool>(list[0]), std::get<bool>(list[1]),
+                           std::get<EncodableList>(list[2]));
   return decoded;
 }
 
 bool SelectionOptions::operator==(const SelectionOptions& other) const {
-  return PigeonInternalDeepEquals(allow_multiple_, other.allow_multiple_) && PigeonInternalDeepEquals(select_folders_, other.select_folders_) && PigeonInternalDeepEquals(allowed_types_, other.allowed_types_);
+  return PigeonInternalDeepEquals(allow_multiple_, other.allow_multiple_) &&
+         PigeonInternalDeepEquals(select_folders_, other.select_folders_) &&
+         PigeonInternalDeepEquals(allowed_types_, other.allowed_types_);
 }
 
 bool SelectionOptions::operator!=(const SelectionOptions& other) const {
@@ -464,9 +454,7 @@ size_t SelectionOptions::Hash() const {
   return result;
 }
 
-std::ostream& operator<<(
-  std::ostream& os,
-  const SelectionOptions& obj) {
+std::ostream& operator<<(std::ostream& os, const SelectionOptions& obj) {
   os << "SelectionOptions(";
   os << "allow_multiple: ";
   os << PigeonInternalToString(obj.allow_multiple_);
@@ -478,54 +466,51 @@ std::ostream& operator<<(
   return os;
 }
 
-size_t PigeonInternalDeepHash(const SelectionOptions& v) {
-  return v.Hash();
-}
+size_t PigeonInternalDeepHash(const SelectionOptions& v) { return v.Hash(); }
 
 // FileDialogResult
 
 FileDialogResult::FileDialogResult(const EncodableList& paths)
- : paths_(paths) {}
+    : paths_(paths) {}
 
-FileDialogResult::FileDialogResult(
-  const EncodableList& paths,
-  const int64_t* type_group_index)
- : paths_(paths),
-    type_group_index_(type_group_index ? std::optional<int64_t>(*type_group_index) : std::nullopt) {}
+FileDialogResult::FileDialogResult(const EncodableList& paths,
+                                   const int64_t* type_group_index)
+    : paths_(paths),
+      type_group_index_(type_group_index
+                            ? std::optional<int64_t>(*type_group_index)
+                            : std::nullopt) {}
 
-const EncodableList& FileDialogResult::paths() const {
-  return paths_;
-}
+const EncodableList& FileDialogResult::paths() const { return paths_; }
 
 void FileDialogResult::set_paths(const EncodableList& value_arg) {
   paths_ = value_arg;
 }
-
 
 const int64_t* FileDialogResult::type_group_index() const {
   return type_group_index_ ? &(*type_group_index_) : nullptr;
 }
 
 void FileDialogResult::set_type_group_index(const int64_t* value_arg) {
-  type_group_index_ = value_arg ? std::optional<int64_t>(*value_arg) : std::nullopt;
+  type_group_index_ =
+      value_arg ? std::optional<int64_t>(*value_arg) : std::nullopt;
 }
 
 void FileDialogResult::set_type_group_index(int64_t value_arg) {
   type_group_index_ = value_arg;
 }
 
-
 EncodableList FileDialogResult::ToEncodableList() const {
   EncodableList list;
   list.reserve(2);
   list.push_back(EncodableValue(paths_));
-  list.push_back(type_group_index_ ? EncodableValue(*type_group_index_) : EncodableValue());
+  list.push_back(type_group_index_ ? EncodableValue(*type_group_index_)
+                                   : EncodableValue());
   return list;
 }
 
-FileDialogResult FileDialogResult::FromEncodableList(const EncodableList& list) {
-  FileDialogResult decoded(
-    std::get<EncodableList>(list[0]));
+FileDialogResult FileDialogResult::FromEncodableList(
+    const EncodableList& list) {
+  FileDialogResult decoded(std::get<EncodableList>(list[0]));
   auto& encodable_type_group_index = list[1];
   if (!encodable_type_group_index.IsNull()) {
     decoded.set_type_group_index(std::get<int64_t>(encodable_type_group_index));
@@ -534,7 +519,8 @@ FileDialogResult FileDialogResult::FromEncodableList(const EncodableList& list) 
 }
 
 bool FileDialogResult::operator==(const FileDialogResult& other) const {
-  return PigeonInternalDeepEquals(paths_, other.paths_) && PigeonInternalDeepEquals(type_group_index_, other.type_group_index_);
+  return PigeonInternalDeepEquals(paths_, other.paths_) &&
+         PigeonInternalDeepEquals(type_group_index_, other.type_group_index_);
 }
 
 bool FileDialogResult::operator!=(const FileDialogResult& other) const {
@@ -548,65 +534,69 @@ size_t FileDialogResult::Hash() const {
   return result;
 }
 
-std::ostream& operator<<(
-  std::ostream& os,
-  const FileDialogResult& obj) {
+std::ostream& operator<<(std::ostream& os, const FileDialogResult& obj) {
   os << "FileDialogResult(";
   os << "paths: ";
   os << PigeonInternalToString(obj.paths_);
   os << ", type_group_index: ";
   if (obj.type_group_index_) {
     os << PigeonInternalToString(*obj.type_group_index_);
-  }
-  else {
+  } else {
     os << "null";
   }
   os << ")";
   return os;
 }
 
-size_t PigeonInternalDeepHash(const FileDialogResult& v) {
-  return v.Hash();
-}
-
+size_t PigeonInternalDeepHash(const FileDialogResult& v) { return v.Hash(); }
 
 PigeonInternalCodecSerializer::PigeonInternalCodecSerializer() {}
 
 EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
-  uint8_t type,
-  ::flutter::ByteStreamReader* stream) const {
+    uint8_t type, ::flutter::ByteStreamReader* stream) const {
   switch (type) {
     case 129: {
-        return CustomEncodableValue(TypeGroup::FromEncodableList(std::get<EncodableList>(ReadValue(stream))));
-      }
+      return CustomEncodableValue(TypeGroup::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
+    }
     case 130: {
-        return CustomEncodableValue(SelectionOptions::FromEncodableList(std::get<EncodableList>(ReadValue(stream))));
-      }
+      return CustomEncodableValue(SelectionOptions::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
+    }
     case 131: {
-        return CustomEncodableValue(FileDialogResult::FromEncodableList(std::get<EncodableList>(ReadValue(stream))));
-      }
+      return CustomEncodableValue(FileDialogResult::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
+    }
     default:
       return ::flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
-    }
+  }
 }
 
 void PigeonInternalCodecSerializer::WriteValue(
-  const EncodableValue& value,
-  ::flutter::ByteStreamWriter* stream) const {
-  if (const CustomEncodableValue* custom_value = std::get_if<CustomEncodableValue>(&value)) {
+    const EncodableValue& value, ::flutter::ByteStreamWriter* stream) const {
+  if (const CustomEncodableValue* custom_value =
+          std::get_if<CustomEncodableValue>(&value)) {
     if (custom_value->type() == typeid(TypeGroup)) {
       stream->WriteByte(129);
-      WriteValue(EncodableValue(std::any_cast<TypeGroup>(*custom_value).ToEncodableList()), stream);
+      WriteValue(EncodableValue(
+                     std::any_cast<TypeGroup>(*custom_value).ToEncodableList()),
+                 stream);
       return;
     }
     if (custom_value->type() == typeid(SelectionOptions)) {
       stream->WriteByte(130);
-      WriteValue(EncodableValue(std::any_cast<SelectionOptions>(*custom_value).ToEncodableList()), stream);
+      WriteValue(
+          EncodableValue(
+              std::any_cast<SelectionOptions>(*custom_value).ToEncodableList()),
+          stream);
       return;
     }
     if (custom_value->type() == typeid(FileDialogResult)) {
       stream->WriteByte(131);
-      WriteValue(EncodableValue(std::any_cast<FileDialogResult>(*custom_value).ToEncodableList()), stream);
+      WriteValue(
+          EncodableValue(
+              std::any_cast<FileDialogResult>(*custom_value).ToEncodableList()),
+          stream);
       return;
     }
   }
@@ -615,83 +605,110 @@ void PigeonInternalCodecSerializer::WriteValue(
 
 /// The codec used by FileSelectorApi.
 const ::flutter::StandardMessageCodec& FileSelectorApi::GetCodec() {
-  return ::flutter::StandardMessageCodec::GetInstance(&PigeonInternalCodecSerializer::GetInstance());
+  return ::flutter::StandardMessageCodec::GetInstance(
+      &PigeonInternalCodecSerializer::GetInstance());
 }
 
-// Sets up an instance of `FileSelectorApi` to handle messages through the `binary_messenger`.
-void FileSelectorApi::SetUp(
-  ::flutter::BinaryMessenger* binary_messenger,
-  FileSelectorApi* api) {
+// Sets up an instance of `FileSelectorApi` to handle messages through the
+// `binary_messenger`.
+void FileSelectorApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
+                            FileSelectorApi* api) {
   FileSelectorApi::SetUp(binary_messenger, api, "");
 }
 
-void FileSelectorApi::SetUp(
-  ::flutter::BinaryMessenger* binary_messenger,
-  FileSelectorApi* api,
-  const std::string& message_channel_suffix) {
-  const std::string prepended_suffix = message_channel_suffix.length() > 0 ? std::string(".") + message_channel_suffix : "";
+void FileSelectorApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
+                            FileSelectorApi* api,
+                            const std::string& message_channel_suffix) {
+  const std::string prepended_suffix =
+      message_channel_suffix.length() > 0
+          ? std::string(".") + message_channel_suffix
+          : "";
   {
-    BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.file_selector_windows.FileSelectorApi.showOpenDialog" + prepended_suffix, &GetCodec());
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.file_selector_windows."
+                                  "FileSelectorApi.showOpenDialog" +
+                                      prepended_suffix,
+                                  &GetCodec());
     if (api != nullptr) {
-      channel.SetMessageHandler([api](const EncodableValue& message, const ::flutter::MessageReply<EncodableValue>& reply) {
-        try {
-          const auto& args = std::get<EncodableList>(message);
-          const auto& encodable_options_arg = args.at(0);
-          if (encodable_options_arg.IsNull()) {
-            reply(WrapError("options_arg unexpectedly null."));
-            return;
-          }
-          const auto& options_arg = std::any_cast<const SelectionOptions&>(std::get<CustomEncodableValue>(encodable_options_arg));
-          const auto& encodable_initial_directory_arg = args.at(1);
-          const auto* initial_directory_arg = std::get_if<std::string>(&encodable_initial_directory_arg);
-          const auto& encodable_confirm_button_text_arg = args.at(2);
-          const auto* confirm_button_text_arg = std::get_if<std::string>(&encodable_confirm_button_text_arg);
-          ErrorOr<FileDialogResult> output = api->ShowOpenDialog(options_arg, initial_directory_arg, confirm_button_text_arg);
-          if (output.has_error()) {
-            reply(WrapError(output.error()));
-            return;
-          }
-          EncodableList wrapped;
-          wrapped.push_back(CustomEncodableValue(std::move(output).TakeValue()));
-          reply(EncodableValue(std::move(wrapped)));
-        } catch (const std::exception& exception) {
-          reply(WrapError(exception.what()));
-        }
-      });
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const ::flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_options_arg = args.at(0);
+              if (encodable_options_arg.IsNull()) {
+                reply(WrapError("options_arg unexpectedly null."));
+                return;
+              }
+              const auto& options_arg = std::any_cast<const SelectionOptions&>(
+                  std::get<CustomEncodableValue>(encodable_options_arg));
+              const auto& encodable_initial_directory_arg = args.at(1);
+              const auto* initial_directory_arg =
+                  std::get_if<std::string>(&encodable_initial_directory_arg);
+              const auto& encodable_confirm_button_text_arg = args.at(2);
+              const auto* confirm_button_text_arg =
+                  std::get_if<std::string>(&encodable_confirm_button_text_arg);
+              ErrorOr<FileDialogResult> output = api->ShowOpenDialog(
+                  options_arg, initial_directory_arg, confirm_button_text_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(
+                  CustomEncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
     } else {
       channel.SetMessageHandler(nullptr);
     }
   }
   {
-    BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.file_selector_windows.FileSelectorApi.showSaveDialog" + prepended_suffix, &GetCodec());
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.file_selector_windows."
+                                  "FileSelectorApi.showSaveDialog" +
+                                      prepended_suffix,
+                                  &GetCodec());
     if (api != nullptr) {
-      channel.SetMessageHandler([api](const EncodableValue& message, const ::flutter::MessageReply<EncodableValue>& reply) {
-        try {
-          const auto& args = std::get<EncodableList>(message);
-          const auto& encodable_options_arg = args.at(0);
-          if (encodable_options_arg.IsNull()) {
-            reply(WrapError("options_arg unexpectedly null."));
-            return;
-          }
-          const auto& options_arg = std::any_cast<const SelectionOptions&>(std::get<CustomEncodableValue>(encodable_options_arg));
-          const auto& encodable_initial_directory_arg = args.at(1);
-          const auto* initial_directory_arg = std::get_if<std::string>(&encodable_initial_directory_arg);
-          const auto& encodable_suggested_name_arg = args.at(2);
-          const auto* suggested_name_arg = std::get_if<std::string>(&encodable_suggested_name_arg);
-          const auto& encodable_confirm_button_text_arg = args.at(3);
-          const auto* confirm_button_text_arg = std::get_if<std::string>(&encodable_confirm_button_text_arg);
-          ErrorOr<FileDialogResult> output = api->ShowSaveDialog(options_arg, initial_directory_arg, suggested_name_arg, confirm_button_text_arg);
-          if (output.has_error()) {
-            reply(WrapError(output.error()));
-            return;
-          }
-          EncodableList wrapped;
-          wrapped.push_back(CustomEncodableValue(std::move(output).TakeValue()));
-          reply(EncodableValue(std::move(wrapped)));
-        } catch (const std::exception& exception) {
-          reply(WrapError(exception.what()));
-        }
-      });
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const ::flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_options_arg = args.at(0);
+              if (encodable_options_arg.IsNull()) {
+                reply(WrapError("options_arg unexpectedly null."));
+                return;
+              }
+              const auto& options_arg = std::any_cast<const SelectionOptions&>(
+                  std::get<CustomEncodableValue>(encodable_options_arg));
+              const auto& encodable_initial_directory_arg = args.at(1);
+              const auto* initial_directory_arg =
+                  std::get_if<std::string>(&encodable_initial_directory_arg);
+              const auto& encodable_suggested_name_arg = args.at(2);
+              const auto* suggested_name_arg =
+                  std::get_if<std::string>(&encodable_suggested_name_arg);
+              const auto& encodable_confirm_button_text_arg = args.at(3);
+              const auto* confirm_button_text_arg =
+                  std::get_if<std::string>(&encodable_confirm_button_text_arg);
+              ErrorOr<FileDialogResult> output = api->ShowSaveDialog(
+                  options_arg, initial_directory_arg, suggested_name_arg,
+                  confirm_button_text_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(
+                  CustomEncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
     } else {
       channel.SetMessageHandler(nullptr);
     }
@@ -699,19 +716,15 @@ void FileSelectorApi::SetUp(
 }
 
 EncodableValue FileSelectorApi::WrapError(std::string_view error_message) {
-  return EncodableValue(EncodableList{
-    EncodableValue(std::string(error_message)),
-    EncodableValue("Error"),
-    EncodableValue()
-  });
+  return EncodableValue(
+      EncodableList{EncodableValue(std::string(error_message)),
+                    EncodableValue("Error"), EncodableValue()});
 }
 
 EncodableValue FileSelectorApi::WrapError(const FlutterError& error) {
-  return EncodableValue(EncodableList{
-    EncodableValue(error.code()),
-    EncodableValue(error.message()),
-    error.details()
-  });
+  return EncodableValue(EncodableList{EncodableValue(error.code()),
+                                      EncodableValue(error.message()),
+                                      error.details()});
 }
 
 }  // namespace file_selector_windows

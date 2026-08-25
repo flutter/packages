@@ -20,6 +20,7 @@ dependencies:
   flutter:
     sdk: flutter
   google_maps_flutter_platform_interface: ^2.14.2
+  meta: ^1.10.0
   stream_transform: ^2.0.0
 
 dev_dependencies:

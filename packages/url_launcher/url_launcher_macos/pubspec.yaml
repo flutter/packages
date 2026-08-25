@@ -20,6 +20,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
+  meta: ^1.10.0
   url_launcher_platform_interface: ^2.2.0
 
 dev_dependencies:

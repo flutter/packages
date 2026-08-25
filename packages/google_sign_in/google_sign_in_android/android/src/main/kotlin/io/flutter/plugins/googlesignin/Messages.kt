@@ -10,12 +10,11 @@ package io.flutter.plugins.googlesignin
 import android.util.Log
 import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MessageCodec
-import io.flutter.plugin.common.StandardMethodCodec
 import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+
 private object MessagesPigeonUtils {
 
   fun wrapResult(result: Any?): List<Any?> {
@@ -24,19 +23,15 @@ private object MessagesPigeonUtils {
 
   fun wrapError(exception: Throwable): List<Any?> {
     return if (exception is FlutterError) {
-      listOf(
-        exception.code,
-        exception.message,
-        exception.details
-      )
+      listOf(exception.code, exception.message, exception.details)
     } else {
       listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
-      )
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
     }
   }
+
   fun doubleEquals(a: Double, b: Double): Boolean {
     // Normalize -0.0 to 0.0 and handle NaN equality.
     return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
@@ -180,32 +175,29 @@ private object MessagesPigeonUtils {
       else -> value.hashCode()
     }
   }
-
 }
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
+ *
  * @property code The error code.
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
-class FlutterError (
-  val code: String,
-  override val message: String? = null,
-  val details: Any? = null
+class FlutterError(
+    val code: String,
+    override val message: String? = null,
+    val details: Any? = null
 ) : RuntimeException()
 
 enum class GetCredentialFailureType(val raw: Int) {
-  /**
-   * Indicates that a credential was returned, but it was not of the expected
-   * type.
-   */
+  /** Indicates that a credential was returned, but it was not of the expected type. */
   UNEXPECTED_CREDENTIAL_TYPE(0),
   /** Indicates that a server client ID was not provided. */
   MISSING_SERVER_CLIENT_ID(1),
   /**
-   * Indicates that the user needs to be prompted for authorization, but there
-   * is no current activity to prompt in.
+   * Indicates that the user needs to be prompted for authorization, but there is no current
+   * activity to prompt in.
    */
   NO_ACTIVITY(2),
   /** The request was internally interrupted. */
@@ -232,26 +224,24 @@ enum class AuthorizeFailureType(val raw: Int) {
   /**
    * Indicates that the requested types are not currently authorized.
    *
-   * This is returned only if promptIfUnauthorized is false, indicating that
-   * the user would need to be prompted for authorization.
+   * This is returned only if promptIfUnauthorized is false, indicating that the user would need to
+   * be prompted for authorization.
    */
   UNAUTHORIZED(0),
   /** Indicates that the call to AuthorizationClient.authorize itself failed. */
   AUTHORIZE_FAILURE(1),
   /**
-   * Corresponds to SendIntentException, indicating that the pending intent is
-   * no longer available.
+   * Corresponds to SendIntentException, indicating that the pending intent is no longer available.
    */
   PENDING_INTENT_EXCEPTION(2),
   /**
-   * Corresponds to an SendIntentException in onActivityResult, indicating that
-   * either authorization failed, or the result was not available for some
-   * reason.
+   * Corresponds to an SendIntentException in onActivityResult, indicating that either authorization
+   * failed, or the result was not available for some reason.
    */
   API_EXCEPTION(3),
   /**
-   * Indicates that the user needs to be prompted for authorization, but there
-   * is no current activity to prompt in.
+   * Indicates that the user needs to be prompted for authorization, but there is no current
+   * activity to prompt in.
    */
   NO_ACTIVITY(4);
 
@@ -265,36 +255,38 @@ enum class AuthorizeFailureType(val raw: Int) {
 /**
  * The information necessary to build an authorization request.
  *
- * Corresponds to the native AuthorizationRequest object, but only contains
- * the fields used by this plugin.
+ * Corresponds to the native AuthorizationRequest object, but only contains the fields used by this
+ * plugin.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformAuthorizationRequest (
-  val scopes: List<String>,
-  val hostedDomain: String? = null,
-  val accountEmail: String? = null,
-  /** If set, adds a call to requestOfflineAccess(this string, true); */
-  val serverClientIdForForcedRefreshToken: String? = null
-)
- {
+data class PlatformAuthorizationRequest(
+    val scopes: List<String>,
+    val hostedDomain: String? = null,
+    val accountEmail: String? = null,
+    /** If set, adds a call to requestOfflineAccess(this string, true); */
+    val serverClientIdForForcedRefreshToken: String? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformAuthorizationRequest {
       val scopes = pigeonVar_list[0] as List<String>
       val hostedDomain = pigeonVar_list[1] as String?
       val accountEmail = pigeonVar_list[2] as String?
       val serverClientIdForForcedRefreshToken = pigeonVar_list[3] as String?
-      return PlatformAuthorizationRequest(scopes, hostedDomain, accountEmail, serverClientIdForForcedRefreshToken)
+      return PlatformAuthorizationRequest(
+          scopes, hostedDomain, accountEmail, serverClientIdForForcedRefreshToken)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      scopes,
-      hostedDomain,
-      accountEmail,
-      serverClientIdForForcedRefreshToken,
+        scopes,
+        hostedDomain,
+        accountEmail,
+        serverClientIdForForcedRefreshToken,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -303,7 +295,11 @@ data class PlatformAuthorizationRequest (
       return true
     }
     val other = other as PlatformAuthorizationRequest
-    return MessagesPigeonUtils.deepEquals(this.scopes, other.scopes) && MessagesPigeonUtils.deepEquals(this.hostedDomain, other.hostedDomain) && MessagesPigeonUtils.deepEquals(this.accountEmail, other.accountEmail) && MessagesPigeonUtils.deepEquals(this.serverClientIdForForcedRefreshToken, other.serverClientIdForForcedRefreshToken)
+    return MessagesPigeonUtils.deepEquals(this.scopes, other.scopes) &&
+        MessagesPigeonUtils.deepEquals(this.hostedDomain, other.hostedDomain) &&
+        MessagesPigeonUtils.deepEquals(this.accountEmail, other.accountEmail) &&
+        MessagesPigeonUtils.deepEquals(
+            this.serverClientIdForForcedRefreshToken, other.serverClientIdForForcedRefreshToken)
   }
 
   override fun hashCode(): Int {
@@ -314,6 +310,7 @@ data class PlatformAuthorizationRequest (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.serverClientIdForForcedRefreshToken)
     return result
   }
+
   override fun toString(): String {
     return "PlatformAuthorizationRequest(scopes=$scopes, hostedDomain=$hostedDomain, accountEmail=$accountEmail, serverClientIdForForcedRefreshToken=$serverClientIdForForcedRefreshToken)"
   }
@@ -322,30 +319,28 @@ data class PlatformAuthorizationRequest (
 /**
  * The information necessary to build a credential request.
  *
- * Combines the parts of the native GetCredentialRequest and CredentialOption
- * classes that are used for this plugin.
+ * Combines the parts of the native GetCredentialRequest and CredentialOption classes that are used
+ * for this plugin.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class GetCredentialRequestParams (
-  /**
-   * Whether to use the Sign in with Google button flow
-   * (GetSignInWithGoogleOption), corresponding to an explicit sign-in request,
-   * or not (GetGoogleIdOption), corresponding to an implicit potential
-   * sign-in.
-   */
-  val useButtonFlow: Boolean,
-  /**
-   * Parameters specific to GetGoogleIdOption.
-   *
-   * Ignored if useButtonFlow is true.
-   */
-  val googleIdOptionParams: GetCredentialRequestGoogleIdOptionParams,
-  val serverClientId: String? = null,
-  val hostedDomain: String? = null,
-  val nonce: String? = null
-)
- {
+data class GetCredentialRequestParams(
+    /**
+     * Whether to use the Sign in with Google button flow (GetSignInWithGoogleOption), corresponding
+     * to an explicit sign-in request, or not (GetGoogleIdOption), corresponding to an implicit
+     * potential sign-in.
+     */
+    val useButtonFlow: Boolean,
+    /**
+     * Parameters specific to GetGoogleIdOption.
+     *
+     * Ignored if useButtonFlow is true.
+     */
+    val googleIdOptionParams: GetCredentialRequestGoogleIdOptionParams,
+    val serverClientId: String? = null,
+    val hostedDomain: String? = null,
+    val nonce: String? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): GetCredentialRequestParams {
       val useButtonFlow = pigeonVar_list[0] as Boolean
@@ -353,18 +348,21 @@ data class GetCredentialRequestParams (
       val serverClientId = pigeonVar_list[2] as String?
       val hostedDomain = pigeonVar_list[3] as String?
       val nonce = pigeonVar_list[4] as String?
-      return GetCredentialRequestParams(useButtonFlow, googleIdOptionParams, serverClientId, hostedDomain, nonce)
+      return GetCredentialRequestParams(
+          useButtonFlow, googleIdOptionParams, serverClientId, hostedDomain, nonce)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      useButtonFlow,
-      googleIdOptionParams,
-      serverClientId,
-      hostedDomain,
-      nonce,
+        useButtonFlow,
+        googleIdOptionParams,
+        serverClientId,
+        hostedDomain,
+        nonce,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -373,7 +371,11 @@ data class GetCredentialRequestParams (
       return true
     }
     val other = other as GetCredentialRequestParams
-    return MessagesPigeonUtils.deepEquals(this.useButtonFlow, other.useButtonFlow) && MessagesPigeonUtils.deepEquals(this.googleIdOptionParams, other.googleIdOptionParams) && MessagesPigeonUtils.deepEquals(this.serverClientId, other.serverClientId) && MessagesPigeonUtils.deepEquals(this.hostedDomain, other.hostedDomain) && MessagesPigeonUtils.deepEquals(this.nonce, other.nonce)
+    return MessagesPigeonUtils.deepEquals(this.useButtonFlow, other.useButtonFlow) &&
+        MessagesPigeonUtils.deepEquals(this.googleIdOptionParams, other.googleIdOptionParams) &&
+        MessagesPigeonUtils.deepEquals(this.serverClientId, other.serverClientId) &&
+        MessagesPigeonUtils.deepEquals(this.hostedDomain, other.hostedDomain) &&
+        MessagesPigeonUtils.deepEquals(this.nonce, other.nonce)
   }
 
   override fun hashCode(): Int {
@@ -385,17 +387,17 @@ data class GetCredentialRequestParams (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.nonce)
     return result
   }
+
   override fun toString(): String {
     return "GetCredentialRequestParams(useButtonFlow=$useButtonFlow, googleIdOptionParams=$googleIdOptionParams, serverClientId=$serverClientId, hostedDomain=$hostedDomain, nonce=$nonce)"
   }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class GetCredentialRequestGoogleIdOptionParams (
-  val filterToAuthorized: Boolean,
-  val autoSelectEnabled: Boolean
-)
- {
+data class GetCredentialRequestGoogleIdOptionParams(
+    val filterToAuthorized: Boolean,
+    val autoSelectEnabled: Boolean
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): GetCredentialRequestGoogleIdOptionParams {
       val filterToAuthorized = pigeonVar_list[0] as Boolean
@@ -403,12 +405,14 @@ data class GetCredentialRequestGoogleIdOptionParams (
       return GetCredentialRequestGoogleIdOptionParams(filterToAuthorized, autoSelectEnabled)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      filterToAuthorized,
-      autoSelectEnabled,
+        filterToAuthorized,
+        autoSelectEnabled,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -417,7 +421,8 @@ data class GetCredentialRequestGoogleIdOptionParams (
       return true
     }
     val other = other as GetCredentialRequestGoogleIdOptionParams
-    return MessagesPigeonUtils.deepEquals(this.filterToAuthorized, other.filterToAuthorized) && MessagesPigeonUtils.deepEquals(this.autoSelectEnabled, other.autoSelectEnabled)
+    return MessagesPigeonUtils.deepEquals(this.filterToAuthorized, other.filterToAuthorized) &&
+        MessagesPigeonUtils.deepEquals(this.autoSelectEnabled, other.autoSelectEnabled)
   }
 
   override fun hashCode(): Int {
@@ -426,6 +431,7 @@ data class GetCredentialRequestGoogleIdOptionParams (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.autoSelectEnabled)
     return result
   }
+
   override fun toString(): String {
     return "GetCredentialRequestGoogleIdOptionParams(filterToAuthorized=$filterToAuthorized, autoSelectEnabled=$autoSelectEnabled)"
   }
@@ -439,18 +445,17 @@ data class GetCredentialRequestGoogleIdOptionParams (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformRevokeAccessRequest (
-  /** The email for the Google account to revoke authorizations for. */
-  val accountEmail: String,
-  /**
-   * A list of requested scopes.
-   *
-   * Per docs, all granted scopes will be revoked, not only the ones passed
-   * here. However, at least one currently-granted scope must be provided.
-   */
-  val scopes: List<String>
-)
- {
+data class PlatformRevokeAccessRequest(
+    /** The email for the Google account to revoke authorizations for. */
+    val accountEmail: String,
+    /**
+     * A list of requested scopes.
+     *
+     * Per docs, all granted scopes will be revoked, not only the ones passed here. However, at
+     * least one currently-granted scope must be provided.
+     */
+    val scopes: List<String>
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformRevokeAccessRequest {
       val accountEmail = pigeonVar_list[0] as String
@@ -458,12 +463,14 @@ data class PlatformRevokeAccessRequest (
       return PlatformRevokeAccessRequest(accountEmail, scopes)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      accountEmail,
-      scopes,
+        accountEmail,
+        scopes,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -472,7 +479,8 @@ data class PlatformRevokeAccessRequest (
       return true
     }
     val other = other as PlatformRevokeAccessRequest
-    return MessagesPigeonUtils.deepEquals(this.accountEmail, other.accountEmail) && MessagesPigeonUtils.deepEquals(this.scopes, other.scopes)
+    return MessagesPigeonUtils.deepEquals(this.accountEmail, other.accountEmail) &&
+        MessagesPigeonUtils.deepEquals(this.scopes, other.scopes)
   }
 
   override fun hashCode(): Int {
@@ -481,6 +489,7 @@ data class PlatformRevokeAccessRequest (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.scopes)
     return result
   }
+
   override fun toString(): String {
     return "PlatformRevokeAccessRequest(accountEmail=$accountEmail, scopes=$scopes)"
   }
@@ -491,16 +500,15 @@ data class PlatformRevokeAccessRequest (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformGoogleIdTokenCredential (
-  val displayName: String? = null,
-  val familyName: String? = null,
-  val givenName: String? = null,
-  val email: String,
-  val uniqueId: String,
-  val idToken: String,
-  val profilePictureUri: String? = null
-)
- {
+data class PlatformGoogleIdTokenCredential(
+    val displayName: String? = null,
+    val familyName: String? = null,
+    val givenName: String? = null,
+    val email: String,
+    val uniqueId: String,
+    val idToken: String,
+    val profilePictureUri: String? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformGoogleIdTokenCredential {
       val displayName = pigeonVar_list[0] as String?
@@ -510,20 +518,23 @@ data class PlatformGoogleIdTokenCredential (
       val uniqueId = pigeonVar_list[4] as String
       val idToken = pigeonVar_list[5] as String
       val profilePictureUri = pigeonVar_list[6] as String?
-      return PlatformGoogleIdTokenCredential(displayName, familyName, givenName, email, uniqueId, idToken, profilePictureUri)
+      return PlatformGoogleIdTokenCredential(
+          displayName, familyName, givenName, email, uniqueId, idToken, profilePictureUri)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      displayName,
-      familyName,
-      givenName,
-      email,
-      uniqueId,
-      idToken,
-      profilePictureUri,
+        displayName,
+        familyName,
+        givenName,
+        email,
+        uniqueId,
+        idToken,
+        profilePictureUri,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -532,7 +543,13 @@ data class PlatformGoogleIdTokenCredential (
       return true
     }
     val other = other as PlatformGoogleIdTokenCredential
-    return MessagesPigeonUtils.deepEquals(this.displayName, other.displayName) && MessagesPigeonUtils.deepEquals(this.familyName, other.familyName) && MessagesPigeonUtils.deepEquals(this.givenName, other.givenName) && MessagesPigeonUtils.deepEquals(this.email, other.email) && MessagesPigeonUtils.deepEquals(this.uniqueId, other.uniqueId) && MessagesPigeonUtils.deepEquals(this.idToken, other.idToken) && MessagesPigeonUtils.deepEquals(this.profilePictureUri, other.profilePictureUri)
+    return MessagesPigeonUtils.deepEquals(this.displayName, other.displayName) &&
+        MessagesPigeonUtils.deepEquals(this.familyName, other.familyName) &&
+        MessagesPigeonUtils.deepEquals(this.givenName, other.givenName) &&
+        MessagesPigeonUtils.deepEquals(this.email, other.email) &&
+        MessagesPigeonUtils.deepEquals(this.uniqueId, other.uniqueId) &&
+        MessagesPigeonUtils.deepEquals(this.idToken, other.idToken) &&
+        MessagesPigeonUtils.deepEquals(this.profilePictureUri, other.profilePictureUri)
   }
 
   override fun hashCode(): Int {
@@ -546,6 +563,7 @@ data class PlatformGoogleIdTokenCredential (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.profilePictureUri)
     return result
   }
+
   override fun toString(): String {
     return "PlatformGoogleIdTokenCredential(displayName=$displayName, familyName=$familyName, givenName=$givenName, email=$email, uniqueId=$uniqueId, idToken=$idToken, profilePictureUri=$profilePictureUri)"
   }
@@ -554,29 +572,27 @@ data class PlatformGoogleIdTokenCredential (
 /**
  * The response from a `getCredential` call.
  *
- * This is not the same as a native GetCredentialResponse since modeling the
- * response type hierarchy and two-part callback in this interface layer would
- * add a lot of complexity that is not needed for the plugin's use case. It is
- * instead a processed version of the results of those callbacks.
+ * This is not the same as a native GetCredentialResponse since modeling the response type hierarchy
+ * and two-part callback in this interface layer would add a lot of complexity that is not needed
+ * for the plugin's use case. It is instead a processed version of the results of those callbacks.
  *
- * Generated class from Pigeon that represents data sent in messages.
- * This class should not be extended by any user class outside of the generated file.
+ * Generated class from Pigeon that represents data sent in messages. This class should not be
+ * extended by any user class outside of the generated file.
  */
-sealed class GetCredentialResult 
+sealed class GetCredentialResult
 /**
  * An authentication failure.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class GetCredentialFailure (
-  /** The type of failure. */
-  val type: GetCredentialFailureType,
-  /** The message associated with the failure, if any. */
-  val message: String? = null,
-  /** Extra details about the failure, if any. */
-  val details: String? = null
-) : GetCredentialResult()
- {
+data class GetCredentialFailure(
+    /** The type of failure. */
+    val type: GetCredentialFailureType,
+    /** The message associated with the failure, if any. */
+    val message: String? = null,
+    /** Extra details about the failure, if any. */
+    val details: String? = null
+) : GetCredentialResult() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): GetCredentialFailure {
       val type = pigeonVar_list[0] as GetCredentialFailureType
@@ -585,13 +601,15 @@ data class GetCredentialFailure (
       return GetCredentialFailure(type, message, details)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      type,
-      message,
-      details,
+        type,
+        message,
+        details,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -600,7 +618,9 @@ data class GetCredentialFailure (
       return true
     }
     val other = other as GetCredentialFailure
-    return MessagesPigeonUtils.deepEquals(this.type, other.type) && MessagesPigeonUtils.deepEquals(this.message, other.message) && MessagesPigeonUtils.deepEquals(this.details, other.details)
+    return MessagesPigeonUtils.deepEquals(this.type, other.type) &&
+        MessagesPigeonUtils.deepEquals(this.message, other.message) &&
+        MessagesPigeonUtils.deepEquals(this.details, other.details)
   }
 
   override fun hashCode(): Int {
@@ -610,6 +630,7 @@ data class GetCredentialFailure (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.details)
     return result
   }
+
   override fun toString(): String {
     return "GetCredentialFailure(type=$type, message=$message, details=$details)"
   }
@@ -620,21 +641,21 @@ data class GetCredentialFailure (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class GetCredentialSuccess (
-  val credential: PlatformGoogleIdTokenCredential
-) : GetCredentialResult()
- {
+data class GetCredentialSuccess(val credential: PlatformGoogleIdTokenCredential) :
+    GetCredentialResult() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): GetCredentialSuccess {
       val credential = pigeonVar_list[0] as PlatformGoogleIdTokenCredential
       return GetCredentialSuccess(credential)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      credential,
+        credential,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -651,6 +672,7 @@ data class GetCredentialSuccess (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.credential)
     return result
   }
+
   override fun toString(): String {
     return "GetCredentialSuccess(credential=$credential)"
   }
@@ -659,24 +681,23 @@ data class GetCredentialSuccess (
 /**
  * The response from an `authorize` call.
  *
- * Generated class from Pigeon that represents data sent in messages.
- * This class should not be extended by any user class outside of the generated file.
+ * Generated class from Pigeon that represents data sent in messages. This class should not be
+ * extended by any user class outside of the generated file.
  */
-sealed class AuthorizeResult 
+sealed class AuthorizeResult
 /**
  * An authorization failure
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class AuthorizeFailure (
-  /** The type of failure. */
-  val type: AuthorizeFailureType,
-  /** The message associated with the failure, if any. */
-  val message: String? = null,
-  /** Extra details about the failure, if any. */
-  val details: String? = null
-) : AuthorizeResult()
- {
+data class AuthorizeFailure(
+    /** The type of failure. */
+    val type: AuthorizeFailureType,
+    /** The message associated with the failure, if any. */
+    val message: String? = null,
+    /** Extra details about the failure, if any. */
+    val details: String? = null
+) : AuthorizeResult() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): AuthorizeFailure {
       val type = pigeonVar_list[0] as AuthorizeFailureType
@@ -685,13 +706,15 @@ data class AuthorizeFailure (
       return AuthorizeFailure(type, message, details)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      type,
-      message,
-      details,
+        type,
+        message,
+        details,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -700,7 +723,9 @@ data class AuthorizeFailure (
       return true
     }
     val other = other as AuthorizeFailure
-    return MessagesPigeonUtils.deepEquals(this.type, other.type) && MessagesPigeonUtils.deepEquals(this.message, other.message) && MessagesPigeonUtils.deepEquals(this.details, other.details)
+    return MessagesPigeonUtils.deepEquals(this.type, other.type) &&
+        MessagesPigeonUtils.deepEquals(this.message, other.message) &&
+        MessagesPigeonUtils.deepEquals(this.details, other.details)
   }
 
   override fun hashCode(): Int {
@@ -710,6 +735,7 @@ data class AuthorizeFailure (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.details)
     return result
   }
+
   override fun toString(): String {
     return "AuthorizeFailure(type=$type, message=$message, details=$details)"
   }
@@ -722,12 +748,11 @@ data class AuthorizeFailure (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformAuthorizationResult (
-  val accessToken: String? = null,
-  val serverAuthCode: String? = null,
-  val grantedScopes: List<String>
-) : AuthorizeResult()
- {
+data class PlatformAuthorizationResult(
+    val accessToken: String? = null,
+    val serverAuthCode: String? = null,
+    val grantedScopes: List<String>
+) : AuthorizeResult() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformAuthorizationResult {
       val accessToken = pigeonVar_list[0] as String?
@@ -736,13 +761,15 @@ data class PlatformAuthorizationResult (
       return PlatformAuthorizationResult(accessToken, serverAuthCode, grantedScopes)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      accessToken,
-      serverAuthCode,
-      grantedScopes,
+        accessToken,
+        serverAuthCode,
+        grantedScopes,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -751,7 +778,9 @@ data class PlatformAuthorizationResult (
       return true
     }
     val other = other as PlatformAuthorizationResult
-    return MessagesPigeonUtils.deepEquals(this.accessToken, other.accessToken) && MessagesPigeonUtils.deepEquals(this.serverAuthCode, other.serverAuthCode) && MessagesPigeonUtils.deepEquals(this.grantedScopes, other.grantedScopes)
+    return MessagesPigeonUtils.deepEquals(this.accessToken, other.accessToken) &&
+        MessagesPigeonUtils.deepEquals(this.serverAuthCode, other.serverAuthCode) &&
+        MessagesPigeonUtils.deepEquals(this.grantedScopes, other.grantedScopes)
   }
 
   override fun hashCode(): Int {
@@ -761,32 +790,26 @@ data class PlatformAuthorizationResult (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.grantedScopes)
     return result
   }
+
   override fun toString(): String {
     return "PlatformAuthorizationResult(accessToken=$accessToken, serverAuthCode=$serverAuthCode, grantedScopes=$grantedScopes)"
   }
 }
+
 private open class MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          GetCredentialFailureType.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { GetCredentialFailureType.ofRaw(it.toInt()) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          AuthorizeFailureType.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { AuthorizeFailureType.ofRaw(it.toInt()) }
       }
       131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformAuthorizationRequest.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformAuthorizationRequest.fromList(it) }
       }
       132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          GetCredentialRequestParams.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { GetCredentialRequestParams.fromList(it) }
       }
       133.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
@@ -794,9 +817,7 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         }
       }
       134.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformRevokeAccessRequest.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformRevokeAccessRequest.fromList(it) }
       }
       135.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
@@ -804,29 +825,22 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         }
       }
       136.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          GetCredentialFailure.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { GetCredentialFailure.fromList(it) }
       }
       137.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          GetCredentialSuccess.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { GetCredentialSuccess.fromList(it) }
       }
       138.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          AuthorizeFailure.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { AuthorizeFailure.fromList(it) }
       }
       139.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformAuthorizationResult.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformAuthorizationResult.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
   }
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
       is GetCredentialFailureType -> {
         stream.write(129)
@@ -877,45 +891,59 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
   }
 }
 
-
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface GoogleSignInApi {
   /**
-   * Returns the server client ID parsed from google-services.json by the
-   * google-services Gradle script, if any.
+   * Returns the server client ID parsed from google-services.json by the google-services Gradle
+   * script, if any.
    */
   fun getGoogleServicesJsonServerClientId(): String?
-  /**
-   * Requests an authentication credential (sign in) via CredentialManager's
-   * getCredential.
-   */
-  fun getCredential(params: GetCredentialRequestParams, callback: (Result<GetCredentialResult>) -> Unit)
+  /** Requests an authentication credential (sign in) via CredentialManager's getCredential. */
+  fun getCredential(
+      params: GetCredentialRequestParams,
+      callback: (Result<GetCredentialResult>) -> Unit
+  )
   /** Clears CredentialManager credential state. */
   fun clearCredentialState(callback: (Result<Unit>) -> Unit)
   /** Clears the authorization cache for the given token. */
   fun clearAuthorizationToken(token: String, callback: (Result<Unit>) -> Unit)
   /** Requests authorization tokens via AuthorizationClient. */
-  fun authorize(params: PlatformAuthorizationRequest, promptIfUnauthorized: Boolean, callback: (Result<AuthorizeResult>) -> Unit)
+  fun authorize(
+      params: PlatformAuthorizationRequest,
+      promptIfUnauthorized: Boolean,
+      callback: (Result<AuthorizeResult>) -> Unit
+  )
+
   fun revokeAccess(params: PlatformRevokeAccessRequest, callback: (Result<Unit>) -> Unit)
 
   companion object {
     /** The codec used by GoogleSignInApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      MessagesPigeonCodec()
-    }
-    /** Sets up an instance of `GoogleSignInApi` to handle messages through the `binaryMessenger`. */
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
+    /**
+     * Sets up an instance of `GoogleSignInApi` to handle messages through the `binaryMessenger`.
+     */
     @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: GoogleSignInApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: GoogleSignInApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getGoogleServicesJsonServerClientId$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getGoogleServicesJsonServerClientId$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.getGoogleServicesJsonServerClientId())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getGoogleServicesJsonServerClientId())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -923,7 +951,11 @@ interface GoogleSignInApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getCredential$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getCredential$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -943,10 +975,14 @@ interface GoogleSignInApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearCredentialState$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearCredentialState$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.clearCredentialState{ result: Result<Unit> ->
+            api.clearCredentialState { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(MessagesPigeonUtils.wrapError(error))
@@ -960,7 +996,11 @@ interface GoogleSignInApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearAuthorizationToken$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearAuthorizationToken$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -979,7 +1019,11 @@ interface GoogleSignInApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.authorize$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.authorize$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -1000,7 +1044,11 @@ interface GoogleSignInApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.revokeAccess$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.revokeAccess$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>

@@ -10,16 +10,17 @@ package io.flutter.plugins.googlemaps
 import android.util.Log
 import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MessageCodec
-import io.flutter.plugin.common.StandardMethodCodec
 import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+
 private object MessagesPigeonUtils {
 
   fun createConnectionError(channelName: String): FlutterError {
-    return FlutterError("channel-error",  "Unable to establish connection on channel: '$channelName'.", "")  }
+    return FlutterError(
+        "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
+  }
 
   fun wrapResult(result: Any?): List<Any?> {
     return listOf(result)
@@ -27,19 +28,15 @@ private object MessagesPigeonUtils {
 
   fun wrapError(exception: Throwable): List<Any?> {
     return if (exception is FlutterError) {
-      listOf(
-        exception.code,
-        exception.message,
-        exception.details
-      )
+      listOf(exception.code, exception.message, exception.details)
     } else {
       listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
-      )
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
     }
   }
+
   fun doubleEquals(a: Double, b: Double): Boolean {
     // Normalize -0.0 to 0.0 and handle NaN equality.
     return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
@@ -183,19 +180,19 @@ private object MessagesPigeonUtils {
       else -> value.hashCode()
     }
   }
-
 }
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
+ *
  * @property code The error code.
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
-class FlutterError (
-  val code: String,
-  override val message: String? = null,
-  val details: Any? = null
+class FlutterError(
+    val code: String,
+    override val message: String? = null,
+    val details: Any? = null
 ) : RuntimeException()
 
 /** Pigeon equivalent of MapType */
@@ -250,9 +247,9 @@ enum class PlatformJointType(val raw: Int) {
 }
 
 /**
- * Enumeration of possible types of PlatformCap, corresponding to the
- * subclasses of Cap in the Google Maps Android SDK.
- * See https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
+ * Enumeration of possible types of PlatformCap, corresponding to the subclasses of Cap in the
+ * Google Maps Android SDK. See
+ * https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
  */
 enum class PlatformCapType(val raw: Int) {
   BUTT_CAP(0),
@@ -308,13 +305,12 @@ enum class PlatformMapBitmapScaling(val raw: Int) {
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformCameraPosition (
-  val bearing: Double,
-  val target: PlatformLatLng,
-  val tilt: Double,
-  val zoom: Double
-)
- {
+data class PlatformCameraPosition(
+    val bearing: Double,
+    val target: PlatformLatLng,
+    val tilt: Double,
+    val zoom: Double
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformCameraPosition {
       val bearing = pigeonVar_list[0] as Double
@@ -324,14 +320,16 @@ data class PlatformCameraPosition (
       return PlatformCameraPosition(bearing, target, tilt, zoom)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      bearing,
-      target,
-      tilt,
-      zoom,
+        bearing,
+        target,
+        tilt,
+        zoom,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -340,7 +338,10 @@ data class PlatformCameraPosition (
       return true
     }
     val other = other as PlatformCameraPosition
-    return MessagesPigeonUtils.deepEquals(this.bearing, other.bearing) && MessagesPigeonUtils.deepEquals(this.target, other.target) && MessagesPigeonUtils.deepEquals(this.tilt, other.tilt) && MessagesPigeonUtils.deepEquals(this.zoom, other.zoom)
+    return MessagesPigeonUtils.deepEquals(this.bearing, other.bearing) &&
+        MessagesPigeonUtils.deepEquals(this.target, other.target) &&
+        MessagesPigeonUtils.deepEquals(this.tilt, other.tilt) &&
+        MessagesPigeonUtils.deepEquals(this.zoom, other.zoom)
   }
 
   override fun hashCode(): Int {
@@ -351,6 +352,7 @@ data class PlatformCameraPosition (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.zoom)
     return result
   }
+
   override fun toString(): String {
     return "PlatformCameraPosition(bearing=$bearing, target=$target, tilt=$tilt, zoom=$zoom)"
   }
@@ -361,29 +363,28 @@ data class PlatformCameraPosition (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformCameraUpdate (
-  /**
-   * This Object shall be any of the below classes prefixed with
-   * PlatformCameraUpdate. Each such class represents a different type of
-   * camera update, and each holds a different set of data, preventing the
-   * use of a single unified class. Pigeon does not support inheritance, which
-   * prevents a more strict type bound.
-   * See https://github.com/flutter/flutter/issues/117819.
-   */
-  val cameraUpdate: Any
-)
- {
+data class PlatformCameraUpdate(
+    /**
+     * This Object shall be any of the below classes prefixed with PlatformCameraUpdate. Each such
+     * class represents a different type of camera update, and each holds a different set of data,
+     * preventing the use of a single unified class. Pigeon does not support inheritance, which
+     * prevents a more strict type bound. See https://github.com/flutter/flutter/issues/117819.
+     */
+    val cameraUpdate: Any
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformCameraUpdate {
       val cameraUpdate = pigeonVar_list[0] as Any
       return PlatformCameraUpdate(cameraUpdate)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      cameraUpdate,
+        cameraUpdate,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -400,6 +401,7 @@ data class PlatformCameraUpdate (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.cameraUpdate)
     return result
   }
+
   override fun toString(): String {
     return "PlatformCameraUpdate(cameraUpdate=$cameraUpdate)"
   }
@@ -410,21 +412,20 @@ data class PlatformCameraUpdate (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformCameraUpdateNewCameraPosition (
-  val cameraPosition: PlatformCameraPosition
-)
- {
+data class PlatformCameraUpdateNewCameraPosition(val cameraPosition: PlatformCameraPosition) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformCameraUpdateNewCameraPosition {
       val cameraPosition = pigeonVar_list[0] as PlatformCameraPosition
       return PlatformCameraUpdateNewCameraPosition(cameraPosition)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      cameraPosition,
+        cameraPosition,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -441,6 +442,7 @@ data class PlatformCameraUpdateNewCameraPosition (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.cameraPosition)
     return result
   }
+
   override fun toString(): String {
     return "PlatformCameraUpdateNewCameraPosition(cameraPosition=$cameraPosition)"
   }
@@ -451,21 +453,20 @@ data class PlatformCameraUpdateNewCameraPosition (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformCameraUpdateNewLatLng (
-  val latLng: PlatformLatLng
-)
- {
+data class PlatformCameraUpdateNewLatLng(val latLng: PlatformLatLng) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformCameraUpdateNewLatLng {
       val latLng = pigeonVar_list[0] as PlatformLatLng
       return PlatformCameraUpdateNewLatLng(latLng)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      latLng,
+        latLng,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -482,6 +483,7 @@ data class PlatformCameraUpdateNewLatLng (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.latLng)
     return result
   }
+
   override fun toString(): String {
     return "PlatformCameraUpdateNewLatLng(latLng=$latLng)"
   }
@@ -492,11 +494,10 @@ data class PlatformCameraUpdateNewLatLng (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformCameraUpdateNewLatLngBounds (
-  val bounds: PlatformLatLngBounds,
-  val padding: Double
-)
- {
+data class PlatformCameraUpdateNewLatLngBounds(
+    val bounds: PlatformLatLngBounds,
+    val padding: Double
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformCameraUpdateNewLatLngBounds {
       val bounds = pigeonVar_list[0] as PlatformLatLngBounds
@@ -504,12 +505,14 @@ data class PlatformCameraUpdateNewLatLngBounds (
       return PlatformCameraUpdateNewLatLngBounds(bounds, padding)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      bounds,
-      padding,
+        bounds,
+        padding,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -518,7 +521,8 @@ data class PlatformCameraUpdateNewLatLngBounds (
       return true
     }
     val other = other as PlatformCameraUpdateNewLatLngBounds
-    return MessagesPigeonUtils.deepEquals(this.bounds, other.bounds) && MessagesPigeonUtils.deepEquals(this.padding, other.padding)
+    return MessagesPigeonUtils.deepEquals(this.bounds, other.bounds) &&
+        MessagesPigeonUtils.deepEquals(this.padding, other.padding)
   }
 
   override fun hashCode(): Int {
@@ -527,6 +531,7 @@ data class PlatformCameraUpdateNewLatLngBounds (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.padding)
     return result
   }
+
   override fun toString(): String {
     return "PlatformCameraUpdateNewLatLngBounds(bounds=$bounds, padding=$padding)"
   }
@@ -537,11 +542,7 @@ data class PlatformCameraUpdateNewLatLngBounds (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformCameraUpdateNewLatLngZoom (
-  val latLng: PlatformLatLng,
-  val zoom: Double
-)
- {
+data class PlatformCameraUpdateNewLatLngZoom(val latLng: PlatformLatLng, val zoom: Double) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformCameraUpdateNewLatLngZoom {
       val latLng = pigeonVar_list[0] as PlatformLatLng
@@ -549,12 +550,14 @@ data class PlatformCameraUpdateNewLatLngZoom (
       return PlatformCameraUpdateNewLatLngZoom(latLng, zoom)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      latLng,
-      zoom,
+        latLng,
+        zoom,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -563,7 +566,8 @@ data class PlatformCameraUpdateNewLatLngZoom (
       return true
     }
     val other = other as PlatformCameraUpdateNewLatLngZoom
-    return MessagesPigeonUtils.deepEquals(this.latLng, other.latLng) && MessagesPigeonUtils.deepEquals(this.zoom, other.zoom)
+    return MessagesPigeonUtils.deepEquals(this.latLng, other.latLng) &&
+        MessagesPigeonUtils.deepEquals(this.zoom, other.zoom)
   }
 
   override fun hashCode(): Int {
@@ -572,6 +576,7 @@ data class PlatformCameraUpdateNewLatLngZoom (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.zoom)
     return result
   }
+
   override fun toString(): String {
     return "PlatformCameraUpdateNewLatLngZoom(latLng=$latLng, zoom=$zoom)"
   }
@@ -582,11 +587,7 @@ data class PlatformCameraUpdateNewLatLngZoom (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformCameraUpdateScrollBy (
-  val dx: Double,
-  val dy: Double
-)
- {
+data class PlatformCameraUpdateScrollBy(val dx: Double, val dy: Double) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformCameraUpdateScrollBy {
       val dx = pigeonVar_list[0] as Double
@@ -594,12 +595,14 @@ data class PlatformCameraUpdateScrollBy (
       return PlatformCameraUpdateScrollBy(dx, dy)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      dx,
-      dy,
+        dx,
+        dy,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -608,7 +611,8 @@ data class PlatformCameraUpdateScrollBy (
       return true
     }
     val other = other as PlatformCameraUpdateScrollBy
-    return MessagesPigeonUtils.deepEquals(this.dx, other.dx) && MessagesPigeonUtils.deepEquals(this.dy, other.dy)
+    return MessagesPigeonUtils.deepEquals(this.dx, other.dx) &&
+        MessagesPigeonUtils.deepEquals(this.dy, other.dy)
   }
 
   override fun hashCode(): Int {
@@ -617,6 +621,7 @@ data class PlatformCameraUpdateScrollBy (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.dy)
     return result
   }
+
   override fun toString(): String {
     return "PlatformCameraUpdateScrollBy(dx=$dx, dy=$dy)"
   }
@@ -627,11 +632,7 @@ data class PlatformCameraUpdateScrollBy (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformCameraUpdateZoomBy (
-  val amount: Double,
-  val focus: PlatformDoublePair? = null
-)
- {
+data class PlatformCameraUpdateZoomBy(val amount: Double, val focus: PlatformDoublePair? = null) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformCameraUpdateZoomBy {
       val amount = pigeonVar_list[0] as Double
@@ -639,12 +640,14 @@ data class PlatformCameraUpdateZoomBy (
       return PlatformCameraUpdateZoomBy(amount, focus)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      amount,
-      focus,
+        amount,
+        focus,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -653,7 +656,8 @@ data class PlatformCameraUpdateZoomBy (
       return true
     }
     val other = other as PlatformCameraUpdateZoomBy
-    return MessagesPigeonUtils.deepEquals(this.amount, other.amount) && MessagesPigeonUtils.deepEquals(this.focus, other.focus)
+    return MessagesPigeonUtils.deepEquals(this.amount, other.amount) &&
+        MessagesPigeonUtils.deepEquals(this.focus, other.focus)
   }
 
   override fun hashCode(): Int {
@@ -662,6 +666,7 @@ data class PlatformCameraUpdateZoomBy (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.focus)
     return result
   }
+
   override fun toString(): String {
     return "PlatformCameraUpdateZoomBy(amount=$amount, focus=$focus)"
   }
@@ -672,21 +677,20 @@ data class PlatformCameraUpdateZoomBy (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformCameraUpdateZoom (
-  val out: Boolean
-)
- {
+data class PlatformCameraUpdateZoom(val out: Boolean) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformCameraUpdateZoom {
       val out = pigeonVar_list[0] as Boolean
       return PlatformCameraUpdateZoom(out)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      out,
+        out,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -703,6 +707,7 @@ data class PlatformCameraUpdateZoom (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.out)
     return result
   }
+
   override fun toString(): String {
     return "PlatformCameraUpdateZoom(out=$out)"
   }
@@ -713,21 +718,20 @@ data class PlatformCameraUpdateZoom (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformCameraUpdateZoomTo (
-  val zoom: Double
-)
- {
+data class PlatformCameraUpdateZoomTo(val zoom: Double) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformCameraUpdateZoomTo {
       val zoom = pigeonVar_list[0] as Double
       return PlatformCameraUpdateZoomTo(zoom)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      zoom,
+        zoom,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -744,6 +748,7 @@ data class PlatformCameraUpdateZoomTo (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.zoom)
     return result
   }
+
   override fun toString(): String {
     return "PlatformCameraUpdateZoomTo(zoom=$zoom)"
   }
@@ -754,18 +759,17 @@ data class PlatformCameraUpdateZoomTo (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformCircle (
-  val consumeTapEvents: Boolean,
-  val fillColor: PlatformColor,
-  val strokeColor: PlatformColor,
-  val visible: Boolean,
-  val strokeWidth: Long,
-  val zIndex: Double,
-  val center: PlatformLatLng,
-  val radius: Double,
-  val circleId: String
-)
- {
+data class PlatformCircle(
+    val consumeTapEvents: Boolean,
+    val fillColor: PlatformColor,
+    val strokeColor: PlatformColor,
+    val visible: Boolean,
+    val strokeWidth: Long,
+    val zIndex: Double,
+    val center: PlatformLatLng,
+    val radius: Double,
+    val circleId: String
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformCircle {
       val consumeTapEvents = pigeonVar_list[0] as Boolean
@@ -777,22 +781,33 @@ data class PlatformCircle (
       val center = pigeonVar_list[6] as PlatformLatLng
       val radius = pigeonVar_list[7] as Double
       val circleId = pigeonVar_list[8] as String
-      return PlatformCircle(consumeTapEvents, fillColor, strokeColor, visible, strokeWidth, zIndex, center, radius, circleId)
+      return PlatformCircle(
+          consumeTapEvents,
+          fillColor,
+          strokeColor,
+          visible,
+          strokeWidth,
+          zIndex,
+          center,
+          radius,
+          circleId)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      consumeTapEvents,
-      fillColor,
-      strokeColor,
-      visible,
-      strokeWidth,
-      zIndex,
-      center,
-      radius,
-      circleId,
+        consumeTapEvents,
+        fillColor,
+        strokeColor,
+        visible,
+        strokeWidth,
+        zIndex,
+        center,
+        radius,
+        circleId,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -801,7 +816,15 @@ data class PlatformCircle (
       return true
     }
     val other = other as PlatformCircle
-    return MessagesPigeonUtils.deepEquals(this.consumeTapEvents, other.consumeTapEvents) && MessagesPigeonUtils.deepEquals(this.fillColor, other.fillColor) && MessagesPigeonUtils.deepEquals(this.strokeColor, other.strokeColor) && MessagesPigeonUtils.deepEquals(this.visible, other.visible) && MessagesPigeonUtils.deepEquals(this.strokeWidth, other.strokeWidth) && MessagesPigeonUtils.deepEquals(this.zIndex, other.zIndex) && MessagesPigeonUtils.deepEquals(this.center, other.center) && MessagesPigeonUtils.deepEquals(this.radius, other.radius) && MessagesPigeonUtils.deepEquals(this.circleId, other.circleId)
+    return MessagesPigeonUtils.deepEquals(this.consumeTapEvents, other.consumeTapEvents) &&
+        MessagesPigeonUtils.deepEquals(this.fillColor, other.fillColor) &&
+        MessagesPigeonUtils.deepEquals(this.strokeColor, other.strokeColor) &&
+        MessagesPigeonUtils.deepEquals(this.visible, other.visible) &&
+        MessagesPigeonUtils.deepEquals(this.strokeWidth, other.strokeWidth) &&
+        MessagesPigeonUtils.deepEquals(this.zIndex, other.zIndex) &&
+        MessagesPigeonUtils.deepEquals(this.center, other.center) &&
+        MessagesPigeonUtils.deepEquals(this.radius, other.radius) &&
+        MessagesPigeonUtils.deepEquals(this.circleId, other.circleId)
   }
 
   override fun hashCode(): Int {
@@ -817,6 +840,7 @@ data class PlatformCircle (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.circleId)
     return result
   }
+
   override fun toString(): String {
     return "PlatformCircle(consumeTapEvents=$consumeTapEvents, fillColor=$fillColor, strokeColor=$strokeColor, visible=$visible, strokeWidth=$strokeWidth, zIndex=$zIndex, center=$center, radius=$radius, circleId=$circleId)"
   }
@@ -827,15 +851,14 @@ data class PlatformCircle (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformHeatmap (
-  val heatmapId: String,
-  val data: List<PlatformWeightedLatLng>,
-  val gradient: PlatformHeatmapGradient? = null,
-  val opacity: Double,
-  val radius: Long,
-  val maxIntensity: Double? = null
-)
- {
+data class PlatformHeatmap(
+    val heatmapId: String,
+    val data: List<PlatformWeightedLatLng>,
+    val gradient: PlatformHeatmapGradient? = null,
+    val opacity: Double,
+    val radius: Long,
+    val maxIntensity: Double? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformHeatmap {
       val heatmapId = pigeonVar_list[0] as String
@@ -847,16 +870,18 @@ data class PlatformHeatmap (
       return PlatformHeatmap(heatmapId, data, gradient, opacity, radius, maxIntensity)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      heatmapId,
-      data,
-      gradient,
-      opacity,
-      radius,
-      maxIntensity,
+        heatmapId,
+        data,
+        gradient,
+        opacity,
+        radius,
+        maxIntensity,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -865,7 +890,12 @@ data class PlatformHeatmap (
       return true
     }
     val other = other as PlatformHeatmap
-    return MessagesPigeonUtils.deepEquals(this.heatmapId, other.heatmapId) && MessagesPigeonUtils.deepEquals(this.data, other.data) && MessagesPigeonUtils.deepEquals(this.gradient, other.gradient) && MessagesPigeonUtils.deepEquals(this.opacity, other.opacity) && MessagesPigeonUtils.deepEquals(this.radius, other.radius) && MessagesPigeonUtils.deepEquals(this.maxIntensity, other.maxIntensity)
+    return MessagesPigeonUtils.deepEquals(this.heatmapId, other.heatmapId) &&
+        MessagesPigeonUtils.deepEquals(this.data, other.data) &&
+        MessagesPigeonUtils.deepEquals(this.gradient, other.gradient) &&
+        MessagesPigeonUtils.deepEquals(this.opacity, other.opacity) &&
+        MessagesPigeonUtils.deepEquals(this.radius, other.radius) &&
+        MessagesPigeonUtils.deepEquals(this.maxIntensity, other.maxIntensity)
   }
 
   override fun hashCode(): Int {
@@ -878,6 +908,7 @@ data class PlatformHeatmap (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.maxIntensity)
     return result
   }
+
   override fun toString(): String {
     return "PlatformHeatmap(heatmapId=$heatmapId, data=$data, gradient=$gradient, opacity=$opacity, radius=$radius, maxIntensity=$maxIntensity)"
   }
@@ -886,18 +917,17 @@ data class PlatformHeatmap (
 /**
  * Pigeon equivalent of the HeatmapGradient class.
  *
- * The Java Gradient structure is slightly different from HeatmapGradient, so
- * this matches the Android API so that conversion can be done on the Dart side
- * where the structures are easier to work with.
+ * The Java Gradient structure is slightly different from HeatmapGradient, so this matches the
+ * Android API so that conversion can be done on the Dart side where the structures are easier to
+ * work with.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformHeatmapGradient (
-  val colors: List<PlatformColor>,
-  val startPoints: List<Double>,
-  val colorMapSize: Long
-)
- {
+data class PlatformHeatmapGradient(
+    val colors: List<PlatformColor>,
+    val startPoints: List<Double>,
+    val colorMapSize: Long
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformHeatmapGradient {
       val colors = pigeonVar_list[0] as List<PlatformColor>
@@ -906,13 +936,15 @@ data class PlatformHeatmapGradient (
       return PlatformHeatmapGradient(colors, startPoints, colorMapSize)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      colors,
-      startPoints,
-      colorMapSize,
+        colors,
+        startPoints,
+        colorMapSize,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -921,7 +953,9 @@ data class PlatformHeatmapGradient (
       return true
     }
     val other = other as PlatformHeatmapGradient
-    return MessagesPigeonUtils.deepEquals(this.colors, other.colors) && MessagesPigeonUtils.deepEquals(this.startPoints, other.startPoints) && MessagesPigeonUtils.deepEquals(this.colorMapSize, other.colorMapSize)
+    return MessagesPigeonUtils.deepEquals(this.colors, other.colors) &&
+        MessagesPigeonUtils.deepEquals(this.startPoints, other.startPoints) &&
+        MessagesPigeonUtils.deepEquals(this.colorMapSize, other.colorMapSize)
   }
 
   override fun hashCode(): Int {
@@ -931,6 +965,7 @@ data class PlatformHeatmapGradient (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.colorMapSize)
     return result
   }
+
   override fun toString(): String {
     return "PlatformHeatmapGradient(colors=$colors, startPoints=$startPoints, colorMapSize=$colorMapSize)"
   }
@@ -941,11 +976,7 @@ data class PlatformHeatmapGradient (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformWeightedLatLng (
-  val point: PlatformLatLng,
-  val weight: Double
-)
- {
+data class PlatformWeightedLatLng(val point: PlatformLatLng, val weight: Double) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformWeightedLatLng {
       val point = pigeonVar_list[0] as PlatformLatLng
@@ -953,12 +984,14 @@ data class PlatformWeightedLatLng (
       return PlatformWeightedLatLng(point, weight)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      point,
-      weight,
+        point,
+        weight,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -967,7 +1000,8 @@ data class PlatformWeightedLatLng (
       return true
     }
     val other = other as PlatformWeightedLatLng
-    return MessagesPigeonUtils.deepEquals(this.point, other.point) && MessagesPigeonUtils.deepEquals(this.weight, other.weight)
+    return MessagesPigeonUtils.deepEquals(this.point, other.point) &&
+        MessagesPigeonUtils.deepEquals(this.weight, other.weight)
   }
 
   override fun hashCode(): Int {
@@ -976,6 +1010,7 @@ data class PlatformWeightedLatLng (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.weight)
     return result
   }
+
   override fun toString(): String {
     return "PlatformWeightedLatLng(point=$point, weight=$weight)"
   }
@@ -986,21 +1021,20 @@ data class PlatformWeightedLatLng (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformClusterManager (
-  val identifier: String
-)
- {
+data class PlatformClusterManager(val identifier: String) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformClusterManager {
       val identifier = pigeonVar_list[0] as String
       return PlatformClusterManager(identifier)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      identifier,
+        identifier,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1017,6 +1051,7 @@ data class PlatformClusterManager (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.identifier)
     return result
   }
+
   override fun toString(): String {
     return "PlatformClusterManager(identifier=$identifier)"
   }
@@ -1027,11 +1062,7 @@ data class PlatformClusterManager (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformDoublePair (
-  val x: Double,
-  val y: Double
-)
- {
+data class PlatformDoublePair(val x: Double, val y: Double) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformDoublePair {
       val x = pigeonVar_list[0] as Double
@@ -1039,12 +1070,14 @@ data class PlatformDoublePair (
       return PlatformDoublePair(x, y)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      x,
-      y,
+        x,
+        y,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1053,7 +1086,8 @@ data class PlatformDoublePair (
       return true
     }
     val other = other as PlatformDoublePair
-    return MessagesPigeonUtils.deepEquals(this.x, other.x) && MessagesPigeonUtils.deepEquals(this.y, other.y)
+    return MessagesPigeonUtils.deepEquals(this.x, other.x) &&
+        MessagesPigeonUtils.deepEquals(this.y, other.y)
   }
 
   override fun hashCode(): Int {
@@ -1062,6 +1096,7 @@ data class PlatformDoublePair (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.y)
     return result
   }
+
   override fun toString(): String {
     return "PlatformDoublePair(x=$x, y=$y)"
   }
@@ -1074,21 +1109,20 @@ data class PlatformDoublePair (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformColor (
-  val argbValue: Long
-)
- {
+data class PlatformColor(val argbValue: Long) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformColor {
       val argbValue = pigeonVar_list[0] as Long
       return PlatformColor(argbValue)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      argbValue,
+        argbValue,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1105,6 +1139,7 @@ data class PlatformColor (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.argbValue)
     return result
   }
+
   override fun toString(): String {
     return "PlatformColor(argbValue=$argbValue)"
   }
@@ -1115,12 +1150,11 @@ data class PlatformColor (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformInfoWindow (
-  val title: String? = null,
-  val snippet: String? = null,
-  val anchor: PlatformDoublePair
-)
- {
+data class PlatformInfoWindow(
+    val title: String? = null,
+    val snippet: String? = null,
+    val anchor: PlatformDoublePair
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformInfoWindow {
       val title = pigeonVar_list[0] as String?
@@ -1129,13 +1163,15 @@ data class PlatformInfoWindow (
       return PlatformInfoWindow(title, snippet, anchor)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      title,
-      snippet,
-      anchor,
+        title,
+        snippet,
+        anchor,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1144,7 +1180,9 @@ data class PlatformInfoWindow (
       return true
     }
     val other = other as PlatformInfoWindow
-    return MessagesPigeonUtils.deepEquals(this.title, other.title) && MessagesPigeonUtils.deepEquals(this.snippet, other.snippet) && MessagesPigeonUtils.deepEquals(this.anchor, other.anchor)
+    return MessagesPigeonUtils.deepEquals(this.title, other.title) &&
+        MessagesPigeonUtils.deepEquals(this.snippet, other.snippet) &&
+        MessagesPigeonUtils.deepEquals(this.anchor, other.anchor)
   }
 
   override fun hashCode(): Int {
@@ -1154,6 +1192,7 @@ data class PlatformInfoWindow (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.anchor)
     return result
   }
+
   override fun toString(): String {
     return "PlatformInfoWindow(title=$title, snippet=$snippet, anchor=$anchor)"
   }
@@ -1164,23 +1203,22 @@ data class PlatformInfoWindow (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformMarker (
-  val alpha: Double,
-  val anchor: PlatformDoublePair,
-  val consumeTapEvents: Boolean,
-  val draggable: Boolean,
-  val flat: Boolean,
-  val icon: PlatformBitmap,
-  val infoWindow: PlatformInfoWindow,
-  val position: PlatformLatLng,
-  val rotation: Double,
-  val visible: Boolean,
-  val zIndex: Double,
-  val markerId: String,
-  val clusterManagerId: String? = null,
-  val collisionBehavior: PlatformMarkerCollisionBehavior
-)
- {
+data class PlatformMarker(
+    val alpha: Double,
+    val anchor: PlatformDoublePair,
+    val consumeTapEvents: Boolean,
+    val draggable: Boolean,
+    val flat: Boolean,
+    val icon: PlatformBitmap,
+    val infoWindow: PlatformInfoWindow,
+    val position: PlatformLatLng,
+    val rotation: Double,
+    val visible: Boolean,
+    val zIndex: Double,
+    val markerId: String,
+    val clusterManagerId: String? = null,
+    val collisionBehavior: PlatformMarkerCollisionBehavior
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformMarker {
       val alpha = pigeonVar_list[0] as Double
@@ -1197,27 +1235,43 @@ data class PlatformMarker (
       val markerId = pigeonVar_list[11] as String
       val clusterManagerId = pigeonVar_list[12] as String?
       val collisionBehavior = pigeonVar_list[13] as PlatformMarkerCollisionBehavior
-      return PlatformMarker(alpha, anchor, consumeTapEvents, draggable, flat, icon, infoWindow, position, rotation, visible, zIndex, markerId, clusterManagerId, collisionBehavior)
+      return PlatformMarker(
+          alpha,
+          anchor,
+          consumeTapEvents,
+          draggable,
+          flat,
+          icon,
+          infoWindow,
+          position,
+          rotation,
+          visible,
+          zIndex,
+          markerId,
+          clusterManagerId,
+          collisionBehavior)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      alpha,
-      anchor,
-      consumeTapEvents,
-      draggable,
-      flat,
-      icon,
-      infoWindow,
-      position,
-      rotation,
-      visible,
-      zIndex,
-      markerId,
-      clusterManagerId,
-      collisionBehavior,
+        alpha,
+        anchor,
+        consumeTapEvents,
+        draggable,
+        flat,
+        icon,
+        infoWindow,
+        position,
+        rotation,
+        visible,
+        zIndex,
+        markerId,
+        clusterManagerId,
+        collisionBehavior,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1226,7 +1280,20 @@ data class PlatformMarker (
       return true
     }
     val other = other as PlatformMarker
-    return MessagesPigeonUtils.deepEquals(this.alpha, other.alpha) && MessagesPigeonUtils.deepEquals(this.anchor, other.anchor) && MessagesPigeonUtils.deepEquals(this.consumeTapEvents, other.consumeTapEvents) && MessagesPigeonUtils.deepEquals(this.draggable, other.draggable) && MessagesPigeonUtils.deepEquals(this.flat, other.flat) && MessagesPigeonUtils.deepEquals(this.icon, other.icon) && MessagesPigeonUtils.deepEquals(this.infoWindow, other.infoWindow) && MessagesPigeonUtils.deepEquals(this.position, other.position) && MessagesPigeonUtils.deepEquals(this.rotation, other.rotation) && MessagesPigeonUtils.deepEquals(this.visible, other.visible) && MessagesPigeonUtils.deepEquals(this.zIndex, other.zIndex) && MessagesPigeonUtils.deepEquals(this.markerId, other.markerId) && MessagesPigeonUtils.deepEquals(this.clusterManagerId, other.clusterManagerId) && MessagesPigeonUtils.deepEquals(this.collisionBehavior, other.collisionBehavior)
+    return MessagesPigeonUtils.deepEquals(this.alpha, other.alpha) &&
+        MessagesPigeonUtils.deepEquals(this.anchor, other.anchor) &&
+        MessagesPigeonUtils.deepEquals(this.consumeTapEvents, other.consumeTapEvents) &&
+        MessagesPigeonUtils.deepEquals(this.draggable, other.draggable) &&
+        MessagesPigeonUtils.deepEquals(this.flat, other.flat) &&
+        MessagesPigeonUtils.deepEquals(this.icon, other.icon) &&
+        MessagesPigeonUtils.deepEquals(this.infoWindow, other.infoWindow) &&
+        MessagesPigeonUtils.deepEquals(this.position, other.position) &&
+        MessagesPigeonUtils.deepEquals(this.rotation, other.rotation) &&
+        MessagesPigeonUtils.deepEquals(this.visible, other.visible) &&
+        MessagesPigeonUtils.deepEquals(this.zIndex, other.zIndex) &&
+        MessagesPigeonUtils.deepEquals(this.markerId, other.markerId) &&
+        MessagesPigeonUtils.deepEquals(this.clusterManagerId, other.clusterManagerId) &&
+        MessagesPigeonUtils.deepEquals(this.collisionBehavior, other.collisionBehavior)
   }
 
   override fun hashCode(): Int {
@@ -1247,6 +1314,7 @@ data class PlatformMarker (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.collisionBehavior)
     return result
   }
+
   override fun toString(): String {
     return "PlatformMarker(alpha=$alpha, anchor=$anchor, consumeTapEvents=$consumeTapEvents, draggable=$draggable, flat=$flat, icon=$icon, infoWindow=$infoWindow, position=$position, rotation=$rotation, visible=$visible, zIndex=$zIndex, markerId=$markerId, clusterManagerId=$clusterManagerId, collisionBehavior=$collisionBehavior)"
   }
@@ -1257,19 +1325,18 @@ data class PlatformMarker (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformPolygon (
-  val polygonId: String,
-  val consumesTapEvents: Boolean,
-  val fillColor: PlatformColor,
-  val geodesic: Boolean,
-  val points: List<PlatformLatLng>,
-  val holes: List<List<PlatformLatLng>>,
-  val visible: Boolean,
-  val strokeColor: PlatformColor,
-  val strokeWidth: Long,
-  val zIndex: Long
-)
- {
+data class PlatformPolygon(
+    val polygonId: String,
+    val consumesTapEvents: Boolean,
+    val fillColor: PlatformColor,
+    val geodesic: Boolean,
+    val points: List<PlatformLatLng>,
+    val holes: List<List<PlatformLatLng>>,
+    val visible: Boolean,
+    val strokeColor: PlatformColor,
+    val strokeWidth: Long,
+    val zIndex: Long
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformPolygon {
       val polygonId = pigeonVar_list[0] as String
@@ -1282,23 +1349,35 @@ data class PlatformPolygon (
       val strokeColor = pigeonVar_list[7] as PlatformColor
       val strokeWidth = pigeonVar_list[8] as Long
       val zIndex = pigeonVar_list[9] as Long
-      return PlatformPolygon(polygonId, consumesTapEvents, fillColor, geodesic, points, holes, visible, strokeColor, strokeWidth, zIndex)
+      return PlatformPolygon(
+          polygonId,
+          consumesTapEvents,
+          fillColor,
+          geodesic,
+          points,
+          holes,
+          visible,
+          strokeColor,
+          strokeWidth,
+          zIndex)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      polygonId,
-      consumesTapEvents,
-      fillColor,
-      geodesic,
-      points,
-      holes,
-      visible,
-      strokeColor,
-      strokeWidth,
-      zIndex,
+        polygonId,
+        consumesTapEvents,
+        fillColor,
+        geodesic,
+        points,
+        holes,
+        visible,
+        strokeColor,
+        strokeWidth,
+        zIndex,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1307,7 +1386,16 @@ data class PlatformPolygon (
       return true
     }
     val other = other as PlatformPolygon
-    return MessagesPigeonUtils.deepEquals(this.polygonId, other.polygonId) && MessagesPigeonUtils.deepEquals(this.consumesTapEvents, other.consumesTapEvents) && MessagesPigeonUtils.deepEquals(this.fillColor, other.fillColor) && MessagesPigeonUtils.deepEquals(this.geodesic, other.geodesic) && MessagesPigeonUtils.deepEquals(this.points, other.points) && MessagesPigeonUtils.deepEquals(this.holes, other.holes) && MessagesPigeonUtils.deepEquals(this.visible, other.visible) && MessagesPigeonUtils.deepEquals(this.strokeColor, other.strokeColor) && MessagesPigeonUtils.deepEquals(this.strokeWidth, other.strokeWidth) && MessagesPigeonUtils.deepEquals(this.zIndex, other.zIndex)
+    return MessagesPigeonUtils.deepEquals(this.polygonId, other.polygonId) &&
+        MessagesPigeonUtils.deepEquals(this.consumesTapEvents, other.consumesTapEvents) &&
+        MessagesPigeonUtils.deepEquals(this.fillColor, other.fillColor) &&
+        MessagesPigeonUtils.deepEquals(this.geodesic, other.geodesic) &&
+        MessagesPigeonUtils.deepEquals(this.points, other.points) &&
+        MessagesPigeonUtils.deepEquals(this.holes, other.holes) &&
+        MessagesPigeonUtils.deepEquals(this.visible, other.visible) &&
+        MessagesPigeonUtils.deepEquals(this.strokeColor, other.strokeColor) &&
+        MessagesPigeonUtils.deepEquals(this.strokeWidth, other.strokeWidth) &&
+        MessagesPigeonUtils.deepEquals(this.zIndex, other.zIndex)
   }
 
   override fun hashCode(): Int {
@@ -1324,6 +1412,7 @@ data class PlatformPolygon (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.zIndex)
     return result
   }
+
   override fun toString(): String {
     return "PlatformPolygon(polygonId=$polygonId, consumesTapEvents=$consumesTapEvents, fillColor=$fillColor, geodesic=$geodesic, points=$points, holes=$holes, visible=$visible, strokeColor=$strokeColor, strokeWidth=$strokeWidth, zIndex=$zIndex)"
   }
@@ -1334,27 +1423,26 @@ data class PlatformPolygon (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformPolyline (
-  val polylineId: String,
-  val consumesTapEvents: Boolean,
-  val color: PlatformColor,
-  val geodesic: Boolean,
-  /** The joint type. */
-  val jointType: PlatformJointType,
-  /** The pattern data, as a list of pattern items. */
-  val patterns: List<PlatformPatternItem>,
-  val points: List<PlatformLatLng>,
-  /**
-   * The cap at the start and end vertex of a polyline.
-   * See https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
-   */
-  val startCap: PlatformCap,
-  val endCap: PlatformCap,
-  val visible: Boolean,
-  val width: Long,
-  val zIndex: Long
-)
- {
+data class PlatformPolyline(
+    val polylineId: String,
+    val consumesTapEvents: Boolean,
+    val color: PlatformColor,
+    val geodesic: Boolean,
+    /** The joint type. */
+    val jointType: PlatformJointType,
+    /** The pattern data, as a list of pattern items. */
+    val patterns: List<PlatformPatternItem>,
+    val points: List<PlatformLatLng>,
+    /**
+     * The cap at the start and end vertex of a polyline. See
+     * https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
+     */
+    val startCap: PlatformCap,
+    val endCap: PlatformCap,
+    val visible: Boolean,
+    val width: Long,
+    val zIndex: Long
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformPolyline {
       val polylineId = pigeonVar_list[0] as String
@@ -1369,25 +1457,39 @@ data class PlatformPolyline (
       val visible = pigeonVar_list[9] as Boolean
       val width = pigeonVar_list[10] as Long
       val zIndex = pigeonVar_list[11] as Long
-      return PlatformPolyline(polylineId, consumesTapEvents, color, geodesic, jointType, patterns, points, startCap, endCap, visible, width, zIndex)
+      return PlatformPolyline(
+          polylineId,
+          consumesTapEvents,
+          color,
+          geodesic,
+          jointType,
+          patterns,
+          points,
+          startCap,
+          endCap,
+          visible,
+          width,
+          zIndex)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      polylineId,
-      consumesTapEvents,
-      color,
-      geodesic,
-      jointType,
-      patterns,
-      points,
-      startCap,
-      endCap,
-      visible,
-      width,
-      zIndex,
+        polylineId,
+        consumesTapEvents,
+        color,
+        geodesic,
+        jointType,
+        patterns,
+        points,
+        startCap,
+        endCap,
+        visible,
+        width,
+        zIndex,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1396,7 +1498,18 @@ data class PlatformPolyline (
       return true
     }
     val other = other as PlatformPolyline
-    return MessagesPigeonUtils.deepEquals(this.polylineId, other.polylineId) && MessagesPigeonUtils.deepEquals(this.consumesTapEvents, other.consumesTapEvents) && MessagesPigeonUtils.deepEquals(this.color, other.color) && MessagesPigeonUtils.deepEquals(this.geodesic, other.geodesic) && MessagesPigeonUtils.deepEquals(this.jointType, other.jointType) && MessagesPigeonUtils.deepEquals(this.patterns, other.patterns) && MessagesPigeonUtils.deepEquals(this.points, other.points) && MessagesPigeonUtils.deepEquals(this.startCap, other.startCap) && MessagesPigeonUtils.deepEquals(this.endCap, other.endCap) && MessagesPigeonUtils.deepEquals(this.visible, other.visible) && MessagesPigeonUtils.deepEquals(this.width, other.width) && MessagesPigeonUtils.deepEquals(this.zIndex, other.zIndex)
+    return MessagesPigeonUtils.deepEquals(this.polylineId, other.polylineId) &&
+        MessagesPigeonUtils.deepEquals(this.consumesTapEvents, other.consumesTapEvents) &&
+        MessagesPigeonUtils.deepEquals(this.color, other.color) &&
+        MessagesPigeonUtils.deepEquals(this.geodesic, other.geodesic) &&
+        MessagesPigeonUtils.deepEquals(this.jointType, other.jointType) &&
+        MessagesPigeonUtils.deepEquals(this.patterns, other.patterns) &&
+        MessagesPigeonUtils.deepEquals(this.points, other.points) &&
+        MessagesPigeonUtils.deepEquals(this.startCap, other.startCap) &&
+        MessagesPigeonUtils.deepEquals(this.endCap, other.endCap) &&
+        MessagesPigeonUtils.deepEquals(this.visible, other.visible) &&
+        MessagesPigeonUtils.deepEquals(this.width, other.width) &&
+        MessagesPigeonUtils.deepEquals(this.zIndex, other.zIndex)
   }
 
   override fun hashCode(): Int {
@@ -1415,6 +1528,7 @@ data class PlatformPolyline (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.zIndex)
     return result
   }
+
   override fun toString(): String {
     return "PlatformPolyline(polylineId=$polylineId, consumesTapEvents=$consumesTapEvents, color=$color, geodesic=$geodesic, jointType=$jointType, patterns=$patterns, points=$points, startCap=$startCap, endCap=$endCap, visible=$visible, width=$width, zIndex=$zIndex)"
   }
@@ -1426,12 +1540,11 @@ data class PlatformPolyline (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformCap (
-  val type: PlatformCapType,
-  val bitmapDescriptor: PlatformBitmap? = null,
-  val refWidth: Double? = null
-)
- {
+data class PlatformCap(
+    val type: PlatformCapType,
+    val bitmapDescriptor: PlatformBitmap? = null,
+    val refWidth: Double? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformCap {
       val type = pigeonVar_list[0] as PlatformCapType
@@ -1440,13 +1553,15 @@ data class PlatformCap (
       return PlatformCap(type, bitmapDescriptor, refWidth)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      type,
-      bitmapDescriptor,
-      refWidth,
+        type,
+        bitmapDescriptor,
+        refWidth,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1455,7 +1570,9 @@ data class PlatformCap (
       return true
     }
     val other = other as PlatformCap
-    return MessagesPigeonUtils.deepEquals(this.type, other.type) && MessagesPigeonUtils.deepEquals(this.bitmapDescriptor, other.bitmapDescriptor) && MessagesPigeonUtils.deepEquals(this.refWidth, other.refWidth)
+    return MessagesPigeonUtils.deepEquals(this.type, other.type) &&
+        MessagesPigeonUtils.deepEquals(this.bitmapDescriptor, other.bitmapDescriptor) &&
+        MessagesPigeonUtils.deepEquals(this.refWidth, other.refWidth)
   }
 
   override fun hashCode(): Int {
@@ -1465,6 +1582,7 @@ data class PlatformCap (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.refWidth)
     return result
   }
+
   override fun toString(): String {
     return "PlatformCap(type=$type, bitmapDescriptor=$bitmapDescriptor, refWidth=$refWidth)"
   }
@@ -1475,11 +1593,7 @@ data class PlatformCap (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformPatternItem (
-  val type: PlatformPatternItemType,
-  val length: Double? = null
-)
- {
+data class PlatformPatternItem(val type: PlatformPatternItemType, val length: Double? = null) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformPatternItem {
       val type = pigeonVar_list[0] as PlatformPatternItemType
@@ -1487,12 +1601,14 @@ data class PlatformPatternItem (
       return PlatformPatternItem(type, length)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      type,
-      length,
+        type,
+        length,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1501,7 +1617,8 @@ data class PlatformPatternItem (
       return true
     }
     val other = other as PlatformPatternItem
-    return MessagesPigeonUtils.deepEquals(this.type, other.type) && MessagesPigeonUtils.deepEquals(this.length, other.length)
+    return MessagesPigeonUtils.deepEquals(this.type, other.type) &&
+        MessagesPigeonUtils.deepEquals(this.length, other.length)
   }
 
   override fun hashCode(): Int {
@@ -1510,6 +1627,7 @@ data class PlatformPatternItem (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.length)
     return result
   }
+
   override fun toString(): String {
     return "PlatformPatternItem(type=$type, length=$length)"
   }
@@ -1520,12 +1638,7 @@ data class PlatformPatternItem (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformTile (
-  val width: Long,
-  val height: Long,
-  val data: ByteArray? = null
-)
- {
+data class PlatformTile(val width: Long, val height: Long, val data: ByteArray? = null) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformTile {
       val width = pigeonVar_list[0] as Long
@@ -1534,13 +1647,15 @@ data class PlatformTile (
       return PlatformTile(width, height, data)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      width,
-      height,
-      data,
+        width,
+        height,
+        data,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1549,7 +1664,9 @@ data class PlatformTile (
       return true
     }
     val other = other as PlatformTile
-    return MessagesPigeonUtils.deepEquals(this.width, other.width) && MessagesPigeonUtils.deepEquals(this.height, other.height) && MessagesPigeonUtils.deepEquals(this.data, other.data)
+    return MessagesPigeonUtils.deepEquals(this.width, other.width) &&
+        MessagesPigeonUtils.deepEquals(this.height, other.height) &&
+        MessagesPigeonUtils.deepEquals(this.data, other.data)
   }
 
   override fun hashCode(): Int {
@@ -1559,6 +1676,7 @@ data class PlatformTile (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.data)
     return result
   }
+
   override fun toString(): String {
     return "PlatformTile(width=$width, height=$height, data=${data?.contentToString()})"
   }
@@ -1569,15 +1687,14 @@ data class PlatformTile (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformTileOverlay (
-  val tileOverlayId: String,
-  val fadeIn: Boolean,
-  val transparency: Double,
-  val zIndex: Long,
-  val visible: Boolean,
-  val tileSize: Long
-)
- {
+data class PlatformTileOverlay(
+    val tileOverlayId: String,
+    val fadeIn: Boolean,
+    val transparency: Double,
+    val zIndex: Long,
+    val visible: Boolean,
+    val tileSize: Long
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformTileOverlay {
       val tileOverlayId = pigeonVar_list[0] as String
@@ -1589,16 +1706,18 @@ data class PlatformTileOverlay (
       return PlatformTileOverlay(tileOverlayId, fadeIn, transparency, zIndex, visible, tileSize)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      tileOverlayId,
-      fadeIn,
-      transparency,
-      zIndex,
-      visible,
-      tileSize,
+        tileOverlayId,
+        fadeIn,
+        transparency,
+        zIndex,
+        visible,
+        tileSize,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1607,7 +1726,12 @@ data class PlatformTileOverlay (
       return true
     }
     val other = other as PlatformTileOverlay
-    return MessagesPigeonUtils.deepEquals(this.tileOverlayId, other.tileOverlayId) && MessagesPigeonUtils.deepEquals(this.fadeIn, other.fadeIn) && MessagesPigeonUtils.deepEquals(this.transparency, other.transparency) && MessagesPigeonUtils.deepEquals(this.zIndex, other.zIndex) && MessagesPigeonUtils.deepEquals(this.visible, other.visible) && MessagesPigeonUtils.deepEquals(this.tileSize, other.tileSize)
+    return MessagesPigeonUtils.deepEquals(this.tileOverlayId, other.tileOverlayId) &&
+        MessagesPigeonUtils.deepEquals(this.fadeIn, other.fadeIn) &&
+        MessagesPigeonUtils.deepEquals(this.transparency, other.transparency) &&
+        MessagesPigeonUtils.deepEquals(this.zIndex, other.zIndex) &&
+        MessagesPigeonUtils.deepEquals(this.visible, other.visible) &&
+        MessagesPigeonUtils.deepEquals(this.tileSize, other.tileSize)
   }
 
   override fun hashCode(): Int {
@@ -1620,6 +1744,7 @@ data class PlatformTileOverlay (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.tileSize)
     return result
   }
+
   override fun toString(): String {
     return "PlatformTileOverlay(tileOverlayId=$tileOverlayId, fadeIn=$fadeIn, transparency=$transparency, zIndex=$zIndex, visible=$visible, tileSize=$tileSize)"
   }
@@ -1630,13 +1755,12 @@ data class PlatformTileOverlay (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformEdgeInsets (
-  val top: Double,
-  val bottom: Double,
-  val left: Double,
-  val right: Double
-)
- {
+data class PlatformEdgeInsets(
+    val top: Double,
+    val bottom: Double,
+    val left: Double,
+    val right: Double
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformEdgeInsets {
       val top = pigeonVar_list[0] as Double
@@ -1646,14 +1770,16 @@ data class PlatformEdgeInsets (
       return PlatformEdgeInsets(top, bottom, left, right)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      top,
-      bottom,
-      left,
-      right,
+        top,
+        bottom,
+        left,
+        right,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1662,7 +1788,10 @@ data class PlatformEdgeInsets (
       return true
     }
     val other = other as PlatformEdgeInsets
-    return MessagesPigeonUtils.deepEquals(this.top, other.top) && MessagesPigeonUtils.deepEquals(this.bottom, other.bottom) && MessagesPigeonUtils.deepEquals(this.left, other.left) && MessagesPigeonUtils.deepEquals(this.right, other.right)
+    return MessagesPigeonUtils.deepEquals(this.top, other.top) &&
+        MessagesPigeonUtils.deepEquals(this.bottom, other.bottom) &&
+        MessagesPigeonUtils.deepEquals(this.left, other.left) &&
+        MessagesPigeonUtils.deepEquals(this.right, other.right)
   }
 
   override fun hashCode(): Int {
@@ -1673,6 +1802,7 @@ data class PlatformEdgeInsets (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.right)
     return result
   }
+
   override fun toString(): String {
     return "PlatformEdgeInsets(top=$top, bottom=$bottom, left=$left, right=$right)"
   }
@@ -1683,11 +1813,7 @@ data class PlatformEdgeInsets (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformLatLng (
-  val latitude: Double,
-  val longitude: Double
-)
- {
+data class PlatformLatLng(val latitude: Double, val longitude: Double) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformLatLng {
       val latitude = pigeonVar_list[0] as Double
@@ -1695,12 +1821,14 @@ data class PlatformLatLng (
       return PlatformLatLng(latitude, longitude)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      latitude,
-      longitude,
+        latitude,
+        longitude,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1709,7 +1837,8 @@ data class PlatformLatLng (
       return true
     }
     val other = other as PlatformLatLng
-    return MessagesPigeonUtils.deepEquals(this.latitude, other.latitude) && MessagesPigeonUtils.deepEquals(this.longitude, other.longitude)
+    return MessagesPigeonUtils.deepEquals(this.latitude, other.latitude) &&
+        MessagesPigeonUtils.deepEquals(this.longitude, other.longitude)
   }
 
   override fun hashCode(): Int {
@@ -1718,6 +1847,7 @@ data class PlatformLatLng (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.longitude)
     return result
   }
+
   override fun toString(): String {
     return "PlatformLatLng(latitude=$latitude, longitude=$longitude)"
   }
@@ -1728,11 +1858,7 @@ data class PlatformLatLng (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformLatLngBounds (
-  val northeast: PlatformLatLng,
-  val southwest: PlatformLatLng
-)
- {
+data class PlatformLatLngBounds(val northeast: PlatformLatLng, val southwest: PlatformLatLng) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformLatLngBounds {
       val northeast = pigeonVar_list[0] as PlatformLatLng
@@ -1740,12 +1866,14 @@ data class PlatformLatLngBounds (
       return PlatformLatLngBounds(northeast, southwest)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      northeast,
-      southwest,
+        northeast,
+        southwest,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1754,7 +1882,8 @@ data class PlatformLatLngBounds (
       return true
     }
     val other = other as PlatformLatLngBounds
-    return MessagesPigeonUtils.deepEquals(this.northeast, other.northeast) && MessagesPigeonUtils.deepEquals(this.southwest, other.southwest)
+    return MessagesPigeonUtils.deepEquals(this.northeast, other.northeast) &&
+        MessagesPigeonUtils.deepEquals(this.southwest, other.southwest)
   }
 
   override fun hashCode(): Int {
@@ -1763,6 +1892,7 @@ data class PlatformLatLngBounds (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.southwest)
     return result
   }
+
   override fun toString(): String {
     return "PlatformLatLngBounds(northeast=$northeast, southwest=$southwest)"
   }
@@ -1773,13 +1903,12 @@ data class PlatformLatLngBounds (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformCluster (
-  val clusterManagerId: String,
-  val position: PlatformLatLng,
-  val bounds: PlatformLatLngBounds,
-  val markerIds: List<String>
-)
- {
+data class PlatformCluster(
+    val clusterManagerId: String,
+    val position: PlatformLatLng,
+    val bounds: PlatformLatLngBounds,
+    val markerIds: List<String>
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformCluster {
       val clusterManagerId = pigeonVar_list[0] as String
@@ -1789,14 +1918,16 @@ data class PlatformCluster (
       return PlatformCluster(clusterManagerId, position, bounds, markerIds)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      clusterManagerId,
-      position,
-      bounds,
-      markerIds,
+        clusterManagerId,
+        position,
+        bounds,
+        markerIds,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1805,7 +1936,10 @@ data class PlatformCluster (
       return true
     }
     val other = other as PlatformCluster
-    return MessagesPigeonUtils.deepEquals(this.clusterManagerId, other.clusterManagerId) && MessagesPigeonUtils.deepEquals(this.position, other.position) && MessagesPigeonUtils.deepEquals(this.bounds, other.bounds) && MessagesPigeonUtils.deepEquals(this.markerIds, other.markerIds)
+    return MessagesPigeonUtils.deepEquals(this.clusterManagerId, other.clusterManagerId) &&
+        MessagesPigeonUtils.deepEquals(this.position, other.position) &&
+        MessagesPigeonUtils.deepEquals(this.bounds, other.bounds) &&
+        MessagesPigeonUtils.deepEquals(this.markerIds, other.markerIds)
   }
 
   override fun hashCode(): Int {
@@ -1816,6 +1950,7 @@ data class PlatformCluster (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.markerIds)
     return result
   }
+
   override fun toString(): String {
     return "PlatformCluster(clusterManagerId=$clusterManagerId, position=$position, bounds=$bounds, markerIds=$markerIds)"
   }
@@ -1826,21 +1961,20 @@ data class PlatformCluster (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformGroundOverlay (
-  val groundOverlayId: String,
-  val image: PlatformBitmap,
-  val position: PlatformLatLng? = null,
-  val bounds: PlatformLatLngBounds? = null,
-  val width: Double? = null,
-  val height: Double? = null,
-  val anchor: PlatformDoublePair? = null,
-  val transparency: Double,
-  val bearing: Double,
-  val zIndex: Long,
-  val visible: Boolean,
-  val clickable: Boolean
-)
- {
+data class PlatformGroundOverlay(
+    val groundOverlayId: String,
+    val image: PlatformBitmap,
+    val position: PlatformLatLng? = null,
+    val bounds: PlatformLatLngBounds? = null,
+    val width: Double? = null,
+    val height: Double? = null,
+    val anchor: PlatformDoublePair? = null,
+    val transparency: Double,
+    val bearing: Double,
+    val zIndex: Long,
+    val visible: Boolean,
+    val clickable: Boolean
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformGroundOverlay {
       val groundOverlayId = pigeonVar_list[0] as String
@@ -1855,25 +1989,39 @@ data class PlatformGroundOverlay (
       val zIndex = pigeonVar_list[9] as Long
       val visible = pigeonVar_list[10] as Boolean
       val clickable = pigeonVar_list[11] as Boolean
-      return PlatformGroundOverlay(groundOverlayId, image, position, bounds, width, height, anchor, transparency, bearing, zIndex, visible, clickable)
+      return PlatformGroundOverlay(
+          groundOverlayId,
+          image,
+          position,
+          bounds,
+          width,
+          height,
+          anchor,
+          transparency,
+          bearing,
+          zIndex,
+          visible,
+          clickable)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      groundOverlayId,
-      image,
-      position,
-      bounds,
-      width,
-      height,
-      anchor,
-      transparency,
-      bearing,
-      zIndex,
-      visible,
-      clickable,
+        groundOverlayId,
+        image,
+        position,
+        bounds,
+        width,
+        height,
+        anchor,
+        transparency,
+        bearing,
+        zIndex,
+        visible,
+        clickable,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1882,7 +2030,18 @@ data class PlatformGroundOverlay (
       return true
     }
     val other = other as PlatformGroundOverlay
-    return MessagesPigeonUtils.deepEquals(this.groundOverlayId, other.groundOverlayId) && MessagesPigeonUtils.deepEquals(this.image, other.image) && MessagesPigeonUtils.deepEquals(this.position, other.position) && MessagesPigeonUtils.deepEquals(this.bounds, other.bounds) && MessagesPigeonUtils.deepEquals(this.width, other.width) && MessagesPigeonUtils.deepEquals(this.height, other.height) && MessagesPigeonUtils.deepEquals(this.anchor, other.anchor) && MessagesPigeonUtils.deepEquals(this.transparency, other.transparency) && MessagesPigeonUtils.deepEquals(this.bearing, other.bearing) && MessagesPigeonUtils.deepEquals(this.zIndex, other.zIndex) && MessagesPigeonUtils.deepEquals(this.visible, other.visible) && MessagesPigeonUtils.deepEquals(this.clickable, other.clickable)
+    return MessagesPigeonUtils.deepEquals(this.groundOverlayId, other.groundOverlayId) &&
+        MessagesPigeonUtils.deepEquals(this.image, other.image) &&
+        MessagesPigeonUtils.deepEquals(this.position, other.position) &&
+        MessagesPigeonUtils.deepEquals(this.bounds, other.bounds) &&
+        MessagesPigeonUtils.deepEquals(this.width, other.width) &&
+        MessagesPigeonUtils.deepEquals(this.height, other.height) &&
+        MessagesPigeonUtils.deepEquals(this.anchor, other.anchor) &&
+        MessagesPigeonUtils.deepEquals(this.transparency, other.transparency) &&
+        MessagesPigeonUtils.deepEquals(this.bearing, other.bearing) &&
+        MessagesPigeonUtils.deepEquals(this.zIndex, other.zIndex) &&
+        MessagesPigeonUtils.deepEquals(this.visible, other.visible) &&
+        MessagesPigeonUtils.deepEquals(this.clickable, other.clickable)
   }
 
   override fun hashCode(): Int {
@@ -1901,6 +2060,7 @@ data class PlatformGroundOverlay (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.clickable)
     return result
   }
+
   override fun toString(): String {
     return "PlatformGroundOverlay(groundOverlayId=$groundOverlayId, image=$image, position=$position, bounds=$bounds, width=$width, height=$height, anchor=$anchor, transparency=$transparency, bearing=$bearing, zIndex=$zIndex, visible=$visible, clickable=$clickable)"
   }
@@ -1909,26 +2069,25 @@ data class PlatformGroundOverlay (
 /**
  * Pigeon equivalent of CameraTargetBounds.
  *
- * As with the Dart version, it exists to distinguish between not setting a
- * a target, and having an explicitly unbounded target (null [bounds]).
+ * As with the Dart version, it exists to distinguish between not setting a a target, and having an
+ * explicitly unbounded target (null [bounds]).
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformCameraTargetBounds (
-  val bounds: PlatformLatLngBounds? = null
-)
- {
+data class PlatformCameraTargetBounds(val bounds: PlatformLatLngBounds? = null) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformCameraTargetBounds {
       val bounds = pigeonVar_list[0] as PlatformLatLngBounds?
       return PlatformCameraTargetBounds(bounds)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      bounds,
+        bounds,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1945,6 +2104,7 @@ data class PlatformCameraTargetBounds (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.bounds)
     return result
   }
+
   override fun toString(): String {
     return "PlatformCameraTargetBounds(bounds=$bounds)"
   }
@@ -1955,19 +2115,18 @@ data class PlatformCameraTargetBounds (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformMapViewCreationParams (
-  val initialCameraPosition: PlatformCameraPosition,
-  val mapConfiguration: PlatformMapConfiguration,
-  val initialCircles: List<PlatformCircle>,
-  val initialMarkers: List<PlatformMarker>,
-  val initialPolygons: List<PlatformPolygon>,
-  val initialPolylines: List<PlatformPolyline>,
-  val initialHeatmaps: List<PlatformHeatmap>,
-  val initialTileOverlays: List<PlatformTileOverlay>,
-  val initialClusterManagers: List<PlatformClusterManager>,
-  val initialGroundOverlays: List<PlatformGroundOverlay>
-)
- {
+data class PlatformMapViewCreationParams(
+    val initialCameraPosition: PlatformCameraPosition,
+    val mapConfiguration: PlatformMapConfiguration,
+    val initialCircles: List<PlatformCircle>,
+    val initialMarkers: List<PlatformMarker>,
+    val initialPolygons: List<PlatformPolygon>,
+    val initialPolylines: List<PlatformPolyline>,
+    val initialHeatmaps: List<PlatformHeatmap>,
+    val initialTileOverlays: List<PlatformTileOverlay>,
+    val initialClusterManagers: List<PlatformClusterManager>,
+    val initialGroundOverlays: List<PlatformGroundOverlay>
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformMapViewCreationParams {
       val initialCameraPosition = pigeonVar_list[0] as PlatformCameraPosition
@@ -1980,23 +2139,35 @@ data class PlatformMapViewCreationParams (
       val initialTileOverlays = pigeonVar_list[7] as List<PlatformTileOverlay>
       val initialClusterManagers = pigeonVar_list[8] as List<PlatformClusterManager>
       val initialGroundOverlays = pigeonVar_list[9] as List<PlatformGroundOverlay>
-      return PlatformMapViewCreationParams(initialCameraPosition, mapConfiguration, initialCircles, initialMarkers, initialPolygons, initialPolylines, initialHeatmaps, initialTileOverlays, initialClusterManagers, initialGroundOverlays)
+      return PlatformMapViewCreationParams(
+          initialCameraPosition,
+          mapConfiguration,
+          initialCircles,
+          initialMarkers,
+          initialPolygons,
+          initialPolylines,
+          initialHeatmaps,
+          initialTileOverlays,
+          initialClusterManagers,
+          initialGroundOverlays)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      initialCameraPosition,
-      mapConfiguration,
-      initialCircles,
-      initialMarkers,
-      initialPolygons,
-      initialPolylines,
-      initialHeatmaps,
-      initialTileOverlays,
-      initialClusterManagers,
-      initialGroundOverlays,
+        initialCameraPosition,
+        mapConfiguration,
+        initialCircles,
+        initialMarkers,
+        initialPolygons,
+        initialPolylines,
+        initialHeatmaps,
+        initialTileOverlays,
+        initialClusterManagers,
+        initialGroundOverlays,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -2005,7 +2176,17 @@ data class PlatformMapViewCreationParams (
       return true
     }
     val other = other as PlatformMapViewCreationParams
-    return MessagesPigeonUtils.deepEquals(this.initialCameraPosition, other.initialCameraPosition) && MessagesPigeonUtils.deepEquals(this.mapConfiguration, other.mapConfiguration) && MessagesPigeonUtils.deepEquals(this.initialCircles, other.initialCircles) && MessagesPigeonUtils.deepEquals(this.initialMarkers, other.initialMarkers) && MessagesPigeonUtils.deepEquals(this.initialPolygons, other.initialPolygons) && MessagesPigeonUtils.deepEquals(this.initialPolylines, other.initialPolylines) && MessagesPigeonUtils.deepEquals(this.initialHeatmaps, other.initialHeatmaps) && MessagesPigeonUtils.deepEquals(this.initialTileOverlays, other.initialTileOverlays) && MessagesPigeonUtils.deepEquals(this.initialClusterManagers, other.initialClusterManagers) && MessagesPigeonUtils.deepEquals(this.initialGroundOverlays, other.initialGroundOverlays)
+    return MessagesPigeonUtils.deepEquals(
+        this.initialCameraPosition, other.initialCameraPosition) &&
+        MessagesPigeonUtils.deepEquals(this.mapConfiguration, other.mapConfiguration) &&
+        MessagesPigeonUtils.deepEquals(this.initialCircles, other.initialCircles) &&
+        MessagesPigeonUtils.deepEquals(this.initialMarkers, other.initialMarkers) &&
+        MessagesPigeonUtils.deepEquals(this.initialPolygons, other.initialPolygons) &&
+        MessagesPigeonUtils.deepEquals(this.initialPolylines, other.initialPolylines) &&
+        MessagesPigeonUtils.deepEquals(this.initialHeatmaps, other.initialHeatmaps) &&
+        MessagesPigeonUtils.deepEquals(this.initialTileOverlays, other.initialTileOverlays) &&
+        MessagesPigeonUtils.deepEquals(this.initialClusterManagers, other.initialClusterManagers) &&
+        MessagesPigeonUtils.deepEquals(this.initialGroundOverlays, other.initialGroundOverlays)
   }
 
   override fun hashCode(): Int {
@@ -2022,6 +2203,7 @@ data class PlatformMapViewCreationParams (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.initialGroundOverlays)
     return result
   }
+
   override fun toString(): String {
     return "PlatformMapViewCreationParams(initialCameraPosition=$initialCameraPosition, mapConfiguration=$mapConfiguration, initialCircles=$initialCircles, initialMarkers=$initialMarkers, initialPolygons=$initialPolygons, initialPolylines=$initialPolylines, initialHeatmaps=$initialHeatmaps, initialTileOverlays=$initialTileOverlays, initialClusterManagers=$initialClusterManagers, initialGroundOverlays=$initialGroundOverlays)"
   }
@@ -2032,30 +2214,29 @@ data class PlatformMapViewCreationParams (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformMapConfiguration (
-  val compassEnabled: Boolean? = null,
-  val cameraTargetBounds: PlatformCameraTargetBounds? = null,
-  val mapType: PlatformMapType? = null,
-  val minMaxZoomPreference: PlatformZoomRange? = null,
-  val mapToolbarEnabled: Boolean? = null,
-  val rotateGesturesEnabled: Boolean? = null,
-  val scrollGesturesEnabled: Boolean? = null,
-  val tiltGesturesEnabled: Boolean? = null,
-  val trackCameraPosition: Boolean? = null,
-  val zoomControlsEnabled: Boolean? = null,
-  val zoomGesturesEnabled: Boolean? = null,
-  val myLocationEnabled: Boolean? = null,
-  val myLocationButtonEnabled: Boolean? = null,
-  val padding: PlatformEdgeInsets? = null,
-  val indoorViewEnabled: Boolean? = null,
-  val trafficEnabled: Boolean? = null,
-  val buildingsEnabled: Boolean? = null,
-  val liteModeEnabled: Boolean? = null,
-  val markerType: PlatformMarkerType,
-  val mapId: String? = null,
-  val style: String? = null
-)
- {
+data class PlatformMapConfiguration(
+    val compassEnabled: Boolean? = null,
+    val cameraTargetBounds: PlatformCameraTargetBounds? = null,
+    val mapType: PlatformMapType? = null,
+    val minMaxZoomPreference: PlatformZoomRange? = null,
+    val mapToolbarEnabled: Boolean? = null,
+    val rotateGesturesEnabled: Boolean? = null,
+    val scrollGesturesEnabled: Boolean? = null,
+    val tiltGesturesEnabled: Boolean? = null,
+    val trackCameraPosition: Boolean? = null,
+    val zoomControlsEnabled: Boolean? = null,
+    val zoomGesturesEnabled: Boolean? = null,
+    val myLocationEnabled: Boolean? = null,
+    val myLocationButtonEnabled: Boolean? = null,
+    val padding: PlatformEdgeInsets? = null,
+    val indoorViewEnabled: Boolean? = null,
+    val trafficEnabled: Boolean? = null,
+    val buildingsEnabled: Boolean? = null,
+    val liteModeEnabled: Boolean? = null,
+    val markerType: PlatformMarkerType,
+    val mapId: String? = null,
+    val style: String? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformMapConfiguration {
       val compassEnabled = pigeonVar_list[0] as Boolean?
@@ -2079,34 +2260,57 @@ data class PlatformMapConfiguration (
       val markerType = pigeonVar_list[18] as PlatformMarkerType
       val mapId = pigeonVar_list[19] as String?
       val style = pigeonVar_list[20] as String?
-      return PlatformMapConfiguration(compassEnabled, cameraTargetBounds, mapType, minMaxZoomPreference, mapToolbarEnabled, rotateGesturesEnabled, scrollGesturesEnabled, tiltGesturesEnabled, trackCameraPosition, zoomControlsEnabled, zoomGesturesEnabled, myLocationEnabled, myLocationButtonEnabled, padding, indoorViewEnabled, trafficEnabled, buildingsEnabled, liteModeEnabled, markerType, mapId, style)
+      return PlatformMapConfiguration(
+          compassEnabled,
+          cameraTargetBounds,
+          mapType,
+          minMaxZoomPreference,
+          mapToolbarEnabled,
+          rotateGesturesEnabled,
+          scrollGesturesEnabled,
+          tiltGesturesEnabled,
+          trackCameraPosition,
+          zoomControlsEnabled,
+          zoomGesturesEnabled,
+          myLocationEnabled,
+          myLocationButtonEnabled,
+          padding,
+          indoorViewEnabled,
+          trafficEnabled,
+          buildingsEnabled,
+          liteModeEnabled,
+          markerType,
+          mapId,
+          style)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      compassEnabled,
-      cameraTargetBounds,
-      mapType,
-      minMaxZoomPreference,
-      mapToolbarEnabled,
-      rotateGesturesEnabled,
-      scrollGesturesEnabled,
-      tiltGesturesEnabled,
-      trackCameraPosition,
-      zoomControlsEnabled,
-      zoomGesturesEnabled,
-      myLocationEnabled,
-      myLocationButtonEnabled,
-      padding,
-      indoorViewEnabled,
-      trafficEnabled,
-      buildingsEnabled,
-      liteModeEnabled,
-      markerType,
-      mapId,
-      style,
+        compassEnabled,
+        cameraTargetBounds,
+        mapType,
+        minMaxZoomPreference,
+        mapToolbarEnabled,
+        rotateGesturesEnabled,
+        scrollGesturesEnabled,
+        tiltGesturesEnabled,
+        trackCameraPosition,
+        zoomControlsEnabled,
+        zoomGesturesEnabled,
+        myLocationEnabled,
+        myLocationButtonEnabled,
+        padding,
+        indoorViewEnabled,
+        trafficEnabled,
+        buildingsEnabled,
+        liteModeEnabled,
+        markerType,
+        mapId,
+        style,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -2115,7 +2319,28 @@ data class PlatformMapConfiguration (
       return true
     }
     val other = other as PlatformMapConfiguration
-    return MessagesPigeonUtils.deepEquals(this.compassEnabled, other.compassEnabled) && MessagesPigeonUtils.deepEquals(this.cameraTargetBounds, other.cameraTargetBounds) && MessagesPigeonUtils.deepEquals(this.mapType, other.mapType) && MessagesPigeonUtils.deepEquals(this.minMaxZoomPreference, other.minMaxZoomPreference) && MessagesPigeonUtils.deepEquals(this.mapToolbarEnabled, other.mapToolbarEnabled) && MessagesPigeonUtils.deepEquals(this.rotateGesturesEnabled, other.rotateGesturesEnabled) && MessagesPigeonUtils.deepEquals(this.scrollGesturesEnabled, other.scrollGesturesEnabled) && MessagesPigeonUtils.deepEquals(this.tiltGesturesEnabled, other.tiltGesturesEnabled) && MessagesPigeonUtils.deepEquals(this.trackCameraPosition, other.trackCameraPosition) && MessagesPigeonUtils.deepEquals(this.zoomControlsEnabled, other.zoomControlsEnabled) && MessagesPigeonUtils.deepEquals(this.zoomGesturesEnabled, other.zoomGesturesEnabled) && MessagesPigeonUtils.deepEquals(this.myLocationEnabled, other.myLocationEnabled) && MessagesPigeonUtils.deepEquals(this.myLocationButtonEnabled, other.myLocationButtonEnabled) && MessagesPigeonUtils.deepEquals(this.padding, other.padding) && MessagesPigeonUtils.deepEquals(this.indoorViewEnabled, other.indoorViewEnabled) && MessagesPigeonUtils.deepEquals(this.trafficEnabled, other.trafficEnabled) && MessagesPigeonUtils.deepEquals(this.buildingsEnabled, other.buildingsEnabled) && MessagesPigeonUtils.deepEquals(this.liteModeEnabled, other.liteModeEnabled) && MessagesPigeonUtils.deepEquals(this.markerType, other.markerType) && MessagesPigeonUtils.deepEquals(this.mapId, other.mapId) && MessagesPigeonUtils.deepEquals(this.style, other.style)
+    return MessagesPigeonUtils.deepEquals(this.compassEnabled, other.compassEnabled) &&
+        MessagesPigeonUtils.deepEquals(this.cameraTargetBounds, other.cameraTargetBounds) &&
+        MessagesPigeonUtils.deepEquals(this.mapType, other.mapType) &&
+        MessagesPigeonUtils.deepEquals(this.minMaxZoomPreference, other.minMaxZoomPreference) &&
+        MessagesPigeonUtils.deepEquals(this.mapToolbarEnabled, other.mapToolbarEnabled) &&
+        MessagesPigeonUtils.deepEquals(this.rotateGesturesEnabled, other.rotateGesturesEnabled) &&
+        MessagesPigeonUtils.deepEquals(this.scrollGesturesEnabled, other.scrollGesturesEnabled) &&
+        MessagesPigeonUtils.deepEquals(this.tiltGesturesEnabled, other.tiltGesturesEnabled) &&
+        MessagesPigeonUtils.deepEquals(this.trackCameraPosition, other.trackCameraPosition) &&
+        MessagesPigeonUtils.deepEquals(this.zoomControlsEnabled, other.zoomControlsEnabled) &&
+        MessagesPigeonUtils.deepEquals(this.zoomGesturesEnabled, other.zoomGesturesEnabled) &&
+        MessagesPigeonUtils.deepEquals(this.myLocationEnabled, other.myLocationEnabled) &&
+        MessagesPigeonUtils.deepEquals(
+            this.myLocationButtonEnabled, other.myLocationButtonEnabled) &&
+        MessagesPigeonUtils.deepEquals(this.padding, other.padding) &&
+        MessagesPigeonUtils.deepEquals(this.indoorViewEnabled, other.indoorViewEnabled) &&
+        MessagesPigeonUtils.deepEquals(this.trafficEnabled, other.trafficEnabled) &&
+        MessagesPigeonUtils.deepEquals(this.buildingsEnabled, other.buildingsEnabled) &&
+        MessagesPigeonUtils.deepEquals(this.liteModeEnabled, other.liteModeEnabled) &&
+        MessagesPigeonUtils.deepEquals(this.markerType, other.markerType) &&
+        MessagesPigeonUtils.deepEquals(this.mapId, other.mapId) &&
+        MessagesPigeonUtils.deepEquals(this.style, other.style)
   }
 
   override fun hashCode(): Int {
@@ -2143,6 +2368,7 @@ data class PlatformMapConfiguration (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.style)
     return result
   }
+
   override fun toString(): String {
     return "PlatformMapConfiguration(compassEnabled=$compassEnabled, cameraTargetBounds=$cameraTargetBounds, mapType=$mapType, minMaxZoomPreference=$minMaxZoomPreference, mapToolbarEnabled=$mapToolbarEnabled, rotateGesturesEnabled=$rotateGesturesEnabled, scrollGesturesEnabled=$scrollGesturesEnabled, tiltGesturesEnabled=$tiltGesturesEnabled, trackCameraPosition=$trackCameraPosition, zoomControlsEnabled=$zoomControlsEnabled, zoomGesturesEnabled=$zoomGesturesEnabled, myLocationEnabled=$myLocationEnabled, myLocationButtonEnabled=$myLocationButtonEnabled, padding=$padding, indoorViewEnabled=$indoorViewEnabled, trafficEnabled=$trafficEnabled, buildingsEnabled=$buildingsEnabled, liteModeEnabled=$liteModeEnabled, markerType=$markerType, mapId=$mapId, style=$style)"
   }
@@ -2153,11 +2379,7 @@ data class PlatformMapConfiguration (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformPoint (
-  val x: Long,
-  val y: Long
-)
- {
+data class PlatformPoint(val x: Long, val y: Long) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformPoint {
       val x = pigeonVar_list[0] as Long
@@ -2165,12 +2387,14 @@ data class PlatformPoint (
       return PlatformPoint(x, y)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      x,
-      y,
+        x,
+        y,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -2179,7 +2403,8 @@ data class PlatformPoint (
       return true
     }
     val other = other as PlatformPoint
-    return MessagesPigeonUtils.deepEquals(this.x, other.x) && MessagesPigeonUtils.deepEquals(this.y, other.y)
+    return MessagesPigeonUtils.deepEquals(this.x, other.x) &&
+        MessagesPigeonUtils.deepEquals(this.y, other.y)
   }
 
   override fun hashCode(): Int {
@@ -2188,6 +2413,7 @@ data class PlatformPoint (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.y)
     return result
   }
+
   override fun toString(): String {
     return "PlatformPoint(x=$x, y=$y)"
   }
@@ -2198,13 +2424,12 @@ data class PlatformPoint (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformTileLayer (
-  val visible: Boolean,
-  val fadeIn: Boolean,
-  val transparency: Double,
-  val zIndex: Double
-)
- {
+data class PlatformTileLayer(
+    val visible: Boolean,
+    val fadeIn: Boolean,
+    val transparency: Double,
+    val zIndex: Double
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformTileLayer {
       val visible = pigeonVar_list[0] as Boolean
@@ -2214,14 +2439,16 @@ data class PlatformTileLayer (
       return PlatformTileLayer(visible, fadeIn, transparency, zIndex)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      visible,
-      fadeIn,
-      transparency,
-      zIndex,
+        visible,
+        fadeIn,
+        transparency,
+        zIndex,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -2230,7 +2457,10 @@ data class PlatformTileLayer (
       return true
     }
     val other = other as PlatformTileLayer
-    return MessagesPigeonUtils.deepEquals(this.visible, other.visible) && MessagesPigeonUtils.deepEquals(this.fadeIn, other.fadeIn) && MessagesPigeonUtils.deepEquals(this.transparency, other.transparency) && MessagesPigeonUtils.deepEquals(this.zIndex, other.zIndex)
+    return MessagesPigeonUtils.deepEquals(this.visible, other.visible) &&
+        MessagesPigeonUtils.deepEquals(this.fadeIn, other.fadeIn) &&
+        MessagesPigeonUtils.deepEquals(this.transparency, other.transparency) &&
+        MessagesPigeonUtils.deepEquals(this.zIndex, other.zIndex)
   }
 
   override fun hashCode(): Int {
@@ -2241,6 +2471,7 @@ data class PlatformTileLayer (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.zIndex)
     return result
   }
+
   override fun toString(): String {
     return "PlatformTileLayer(visible=$visible, fadeIn=$fadeIn, transparency=$transparency, zIndex=$zIndex)"
   }
@@ -2251,11 +2482,7 @@ data class PlatformTileLayer (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformZoomRange (
-  val min: Double? = null,
-  val max: Double? = null
-)
- {
+data class PlatformZoomRange(val min: Double? = null, val max: Double? = null) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformZoomRange {
       val min = pigeonVar_list[0] as Double?
@@ -2263,12 +2490,14 @@ data class PlatformZoomRange (
       return PlatformZoomRange(min, max)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      min,
-      max,
+        min,
+        max,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -2277,7 +2506,8 @@ data class PlatformZoomRange (
       return true
     }
     val other = other as PlatformZoomRange
-    return MessagesPigeonUtils.deepEquals(this.min, other.min) && MessagesPigeonUtils.deepEquals(this.max, other.max)
+    return MessagesPigeonUtils.deepEquals(this.min, other.min) &&
+        MessagesPigeonUtils.deepEquals(this.max, other.max)
   }
 
   override fun hashCode(): Int {
@@ -2286,42 +2516,42 @@ data class PlatformZoomRange (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.max)
     return result
   }
+
   override fun toString(): String {
     return "PlatformZoomRange(min=$min, max=$max)"
   }
 }
 
 /**
- * Pigeon equivalent of [BitmapDescriptor]. As there are multiple disjoint
- * types of [BitmapDescriptor], [PlatformBitmap] contains a single field which
- * may hold the pigeon equivalent type of any of them.
+ * Pigeon equivalent of [BitmapDescriptor]. As there are multiple disjoint types of
+ * [BitmapDescriptor], [PlatformBitmap] contains a single field which may hold the pigeon equivalent
+ * type of any of them.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformBitmap (
-  /**
-   * One of [PlatformBitmapAssetMap], [PlatformBitmapAsset],
-   * [PlatformBitmapAssetImage], [PlatformBitmapBytesMap],
-   * [PlatformBitmapBytes], or [PlatformBitmapDefaultMarker].
-   * As Pigeon does not currently support data class inheritance, this
-   * approach allows for the different bitmap implementations to be valid
-   * argument and return types of the API methods. See
-   * https://github.com/flutter/flutter/issues/117819.
-   */
-  val bitmap: Any
-)
- {
+data class PlatformBitmap(
+    /**
+     * One of [PlatformBitmapAssetMap], [PlatformBitmapAsset], [PlatformBitmapAssetImage],
+     * [PlatformBitmapBytesMap], [PlatformBitmapBytes], or [PlatformBitmapDefaultMarker]. As Pigeon
+     * does not currently support data class inheritance, this approach allows for the different
+     * bitmap implementations to be valid argument and return types of the API methods. See
+     * https://github.com/flutter/flutter/issues/117819.
+     */
+    val bitmap: Any
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformBitmap {
       val bitmap = pigeonVar_list[0] as Any
       return PlatformBitmap(bitmap)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      bitmap,
+        bitmap,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -2338,6 +2568,7 @@ data class PlatformBitmap (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.bitmap)
     return result
   }
+
   override fun toString(): String {
     return "PlatformBitmap(bitmap=$bitmap)"
   }
@@ -2349,21 +2580,20 @@ data class PlatformBitmap (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformBitmapDefaultMarker (
-  val hue: Double? = null
-)
- {
+data class PlatformBitmapDefaultMarker(val hue: Double? = null) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformBitmapDefaultMarker {
       val hue = pigeonVar_list[0] as Double?
       return PlatformBitmapDefaultMarker(hue)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      hue,
+        hue,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -2380,6 +2610,7 @@ data class PlatformBitmapDefaultMarker (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.hue)
     return result
   }
+
   override fun toString(): String {
     return "PlatformBitmapDefaultMarker(hue=$hue)"
   }
@@ -2391,11 +2622,7 @@ data class PlatformBitmapDefaultMarker (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformBitmapBytes (
-  val byteData: ByteArray,
-  val size: PlatformDoublePair? = null
-)
- {
+data class PlatformBitmapBytes(val byteData: ByteArray, val size: PlatformDoublePair? = null) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformBitmapBytes {
       val byteData = pigeonVar_list[0] as ByteArray
@@ -2403,12 +2630,14 @@ data class PlatformBitmapBytes (
       return PlatformBitmapBytes(byteData, size)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      byteData,
-      size,
+        byteData,
+        size,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -2417,7 +2646,8 @@ data class PlatformBitmapBytes (
       return true
     }
     val other = other as PlatformBitmapBytes
-    return MessagesPigeonUtils.deepEquals(this.byteData, other.byteData) && MessagesPigeonUtils.deepEquals(this.size, other.size)
+    return MessagesPigeonUtils.deepEquals(this.byteData, other.byteData) &&
+        MessagesPigeonUtils.deepEquals(this.size, other.size)
   }
 
   override fun hashCode(): Int {
@@ -2426,6 +2656,7 @@ data class PlatformBitmapBytes (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.size)
     return result
   }
+
   override fun toString(): String {
     return "PlatformBitmapBytes(byteData=${byteData.contentToString()}, size=$size)"
   }
@@ -2437,11 +2668,7 @@ data class PlatformBitmapBytes (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformBitmapAsset (
-  val name: String,
-  val pkg: String? = null
-)
- {
+data class PlatformBitmapAsset(val name: String, val pkg: String? = null) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformBitmapAsset {
       val name = pigeonVar_list[0] as String
@@ -2449,12 +2676,14 @@ data class PlatformBitmapAsset (
       return PlatformBitmapAsset(name, pkg)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      name,
-      pkg,
+        name,
+        pkg,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -2463,7 +2692,8 @@ data class PlatformBitmapAsset (
       return true
     }
     val other = other as PlatformBitmapAsset
-    return MessagesPigeonUtils.deepEquals(this.name, other.name) && MessagesPigeonUtils.deepEquals(this.pkg, other.pkg)
+    return MessagesPigeonUtils.deepEquals(this.name, other.name) &&
+        MessagesPigeonUtils.deepEquals(this.pkg, other.pkg)
   }
 
   override fun hashCode(): Int {
@@ -2472,6 +2702,7 @@ data class PlatformBitmapAsset (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.pkg)
     return result
   }
+
   override fun toString(): String {
     return "PlatformBitmapAsset(name=$name, pkg=$pkg)"
   }
@@ -2483,12 +2714,11 @@ data class PlatformBitmapAsset (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformBitmapAssetImage (
-  val name: String,
-  val scale: Double,
-  val size: PlatformDoublePair? = null
-)
- {
+data class PlatformBitmapAssetImage(
+    val name: String,
+    val scale: Double,
+    val size: PlatformDoublePair? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformBitmapAssetImage {
       val name = pigeonVar_list[0] as String
@@ -2497,13 +2727,15 @@ data class PlatformBitmapAssetImage (
       return PlatformBitmapAssetImage(name, scale, size)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      name,
-      scale,
-      size,
+        name,
+        scale,
+        size,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -2512,7 +2744,9 @@ data class PlatformBitmapAssetImage (
       return true
     }
     val other = other as PlatformBitmapAssetImage
-    return MessagesPigeonUtils.deepEquals(this.name, other.name) && MessagesPigeonUtils.deepEquals(this.scale, other.scale) && MessagesPigeonUtils.deepEquals(this.size, other.size)
+    return MessagesPigeonUtils.deepEquals(this.name, other.name) &&
+        MessagesPigeonUtils.deepEquals(this.scale, other.scale) &&
+        MessagesPigeonUtils.deepEquals(this.size, other.size)
   }
 
   override fun hashCode(): Int {
@@ -2522,6 +2756,7 @@ data class PlatformBitmapAssetImage (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.size)
     return result
   }
+
   override fun toString(): String {
     return "PlatformBitmapAssetImage(name=$name, scale=$scale, size=$size)"
   }
@@ -2533,14 +2768,13 @@ data class PlatformBitmapAssetImage (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformBitmapAssetMap (
-  val assetName: String,
-  val bitmapScaling: PlatformMapBitmapScaling,
-  val imagePixelRatio: Double,
-  val width: Double? = null,
-  val height: Double? = null
-)
- {
+data class PlatformBitmapAssetMap(
+    val assetName: String,
+    val bitmapScaling: PlatformMapBitmapScaling,
+    val imagePixelRatio: Double,
+    val width: Double? = null,
+    val height: Double? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformBitmapAssetMap {
       val assetName = pigeonVar_list[0] as String
@@ -2551,15 +2785,17 @@ data class PlatformBitmapAssetMap (
       return PlatformBitmapAssetMap(assetName, bitmapScaling, imagePixelRatio, width, height)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      assetName,
-      bitmapScaling,
-      imagePixelRatio,
-      width,
-      height,
+        assetName,
+        bitmapScaling,
+        imagePixelRatio,
+        width,
+        height,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -2568,7 +2804,11 @@ data class PlatformBitmapAssetMap (
       return true
     }
     val other = other as PlatformBitmapAssetMap
-    return MessagesPigeonUtils.deepEquals(this.assetName, other.assetName) && MessagesPigeonUtils.deepEquals(this.bitmapScaling, other.bitmapScaling) && MessagesPigeonUtils.deepEquals(this.imagePixelRatio, other.imagePixelRatio) && MessagesPigeonUtils.deepEquals(this.width, other.width) && MessagesPigeonUtils.deepEquals(this.height, other.height)
+    return MessagesPigeonUtils.deepEquals(this.assetName, other.assetName) &&
+        MessagesPigeonUtils.deepEquals(this.bitmapScaling, other.bitmapScaling) &&
+        MessagesPigeonUtils.deepEquals(this.imagePixelRatio, other.imagePixelRatio) &&
+        MessagesPigeonUtils.deepEquals(this.width, other.width) &&
+        MessagesPigeonUtils.deepEquals(this.height, other.height)
   }
 
   override fun hashCode(): Int {
@@ -2580,6 +2820,7 @@ data class PlatformBitmapAssetMap (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.height)
     return result
   }
+
   override fun toString(): String {
     return "PlatformBitmapAssetMap(assetName=$assetName, bitmapScaling=$bitmapScaling, imagePixelRatio=$imagePixelRatio, width=$width, height=$height)"
   }
@@ -2591,14 +2832,13 @@ data class PlatformBitmapAssetMap (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformBitmapBytesMap (
-  val byteData: ByteArray,
-  val bitmapScaling: PlatformMapBitmapScaling,
-  val imagePixelRatio: Double,
-  val width: Double? = null,
-  val height: Double? = null
-)
- {
+data class PlatformBitmapBytesMap(
+    val byteData: ByteArray,
+    val bitmapScaling: PlatformMapBitmapScaling,
+    val imagePixelRatio: Double,
+    val width: Double? = null,
+    val height: Double? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformBitmapBytesMap {
       val byteData = pigeonVar_list[0] as ByteArray
@@ -2609,15 +2849,17 @@ data class PlatformBitmapBytesMap (
       return PlatformBitmapBytesMap(byteData, bitmapScaling, imagePixelRatio, width, height)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      byteData,
-      bitmapScaling,
-      imagePixelRatio,
-      width,
-      height,
+        byteData,
+        bitmapScaling,
+        imagePixelRatio,
+        width,
+        height,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -2626,7 +2868,11 @@ data class PlatformBitmapBytesMap (
       return true
     }
     val other = other as PlatformBitmapBytesMap
-    return MessagesPigeonUtils.deepEquals(this.byteData, other.byteData) && MessagesPigeonUtils.deepEquals(this.bitmapScaling, other.bitmapScaling) && MessagesPigeonUtils.deepEquals(this.imagePixelRatio, other.imagePixelRatio) && MessagesPigeonUtils.deepEquals(this.width, other.width) && MessagesPigeonUtils.deepEquals(this.height, other.height)
+    return MessagesPigeonUtils.deepEquals(this.byteData, other.byteData) &&
+        MessagesPigeonUtils.deepEquals(this.bitmapScaling, other.bitmapScaling) &&
+        MessagesPigeonUtils.deepEquals(this.imagePixelRatio, other.imagePixelRatio) &&
+        MessagesPigeonUtils.deepEquals(this.width, other.width) &&
+        MessagesPigeonUtils.deepEquals(this.height, other.height)
   }
 
   override fun hashCode(): Int {
@@ -2638,6 +2884,7 @@ data class PlatformBitmapBytesMap (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.height)
     return result
   }
+
   override fun toString(): String {
     return "PlatformBitmapBytesMap(byteData=${byteData.contentToString()}, bitmapScaling=$bitmapScaling, imagePixelRatio=$imagePixelRatio, width=$width, height=$height)"
   }
@@ -2648,15 +2895,14 @@ data class PlatformBitmapBytesMap (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformBitmapPinConfig (
-  val backgroundColor: PlatformColor? = null,
-  val borderColor: PlatformColor? = null,
-  val glyphColor: PlatformColor? = null,
-  val glyphBitmap: PlatformBitmap? = null,
-  val glyphText: String? = null,
-  val glyphTextColor: PlatformColor? = null
-)
- {
+data class PlatformBitmapPinConfig(
+    val backgroundColor: PlatformColor? = null,
+    val borderColor: PlatformColor? = null,
+    val glyphColor: PlatformColor? = null,
+    val glyphBitmap: PlatformBitmap? = null,
+    val glyphText: String? = null,
+    val glyphTextColor: PlatformColor? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformBitmapPinConfig {
       val backgroundColor = pigeonVar_list[0] as PlatformColor?
@@ -2665,19 +2911,22 @@ data class PlatformBitmapPinConfig (
       val glyphBitmap = pigeonVar_list[3] as PlatformBitmap?
       val glyphText = pigeonVar_list[4] as String?
       val glyphTextColor = pigeonVar_list[5] as PlatformColor?
-      return PlatformBitmapPinConfig(backgroundColor, borderColor, glyphColor, glyphBitmap, glyphText, glyphTextColor)
+      return PlatformBitmapPinConfig(
+          backgroundColor, borderColor, glyphColor, glyphBitmap, glyphText, glyphTextColor)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      backgroundColor,
-      borderColor,
-      glyphColor,
-      glyphBitmap,
-      glyphText,
-      glyphTextColor,
+        backgroundColor,
+        borderColor,
+        glyphColor,
+        glyphBitmap,
+        glyphText,
+        glyphTextColor,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -2686,7 +2935,12 @@ data class PlatformBitmapPinConfig (
       return true
     }
     val other = other as PlatformBitmapPinConfig
-    return MessagesPigeonUtils.deepEquals(this.backgroundColor, other.backgroundColor) && MessagesPigeonUtils.deepEquals(this.borderColor, other.borderColor) && MessagesPigeonUtils.deepEquals(this.glyphColor, other.glyphColor) && MessagesPigeonUtils.deepEquals(this.glyphBitmap, other.glyphBitmap) && MessagesPigeonUtils.deepEquals(this.glyphText, other.glyphText) && MessagesPigeonUtils.deepEquals(this.glyphTextColor, other.glyphTextColor)
+    return MessagesPigeonUtils.deepEquals(this.backgroundColor, other.backgroundColor) &&
+        MessagesPigeonUtils.deepEquals(this.borderColor, other.borderColor) &&
+        MessagesPigeonUtils.deepEquals(this.glyphColor, other.glyphColor) &&
+        MessagesPigeonUtils.deepEquals(this.glyphBitmap, other.glyphBitmap) &&
+        MessagesPigeonUtils.deepEquals(this.glyphText, other.glyphText) &&
+        MessagesPigeonUtils.deepEquals(this.glyphTextColor, other.glyphTextColor)
   }
 
   override fun hashCode(): Int {
@@ -2699,22 +2953,20 @@ data class PlatformBitmapPinConfig (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.glyphTextColor)
     return result
   }
+
   override fun toString(): String {
     return "PlatformBitmapPinConfig(backgroundColor=$backgroundColor, borderColor=$borderColor, glyphColor=$glyphColor, glyphBitmap=$glyphBitmap, glyphText=$glyphText, glyphTextColor=$glyphTextColor)"
   }
 }
+
 private open class MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          PlatformMapType.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { PlatformMapType.ofRaw(it.toInt()) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          PlatformRendererType.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { PlatformRendererType.ofRaw(it.toInt()) }
       }
       131.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
@@ -2722,39 +2974,25 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         }
       }
       132.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          PlatformJointType.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { PlatformJointType.ofRaw(it.toInt()) }
       }
       133.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          PlatformCapType.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { PlatformCapType.ofRaw(it.toInt()) }
       }
       134.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          PlatformPatternItemType.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { PlatformPatternItemType.ofRaw(it.toInt()) }
       }
       135.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          PlatformMarkerType.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { PlatformMarkerType.ofRaw(it.toInt()) }
       }
       136.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          PlatformMapBitmapScaling.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { PlatformMapBitmapScaling.ofRaw(it.toInt()) }
       }
       137.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformCameraPosition.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformCameraPosition.fromList(it) }
       }
       138.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformCameraUpdate.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformCameraUpdate.fromList(it) }
       }
       139.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
@@ -2777,129 +3015,79 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         }
       }
       143.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformCameraUpdateScrollBy.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformCameraUpdateScrollBy.fromList(it) }
       }
       144.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformCameraUpdateZoomBy.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformCameraUpdateZoomBy.fromList(it) }
       }
       145.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformCameraUpdateZoom.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformCameraUpdateZoom.fromList(it) }
       }
       146.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformCameraUpdateZoomTo.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformCameraUpdateZoomTo.fromList(it) }
       }
       147.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformCircle.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformCircle.fromList(it) }
       }
       148.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformHeatmap.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformHeatmap.fromList(it) }
       }
       149.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformHeatmapGradient.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformHeatmapGradient.fromList(it) }
       }
       150.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformWeightedLatLng.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformWeightedLatLng.fromList(it) }
       }
       151.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformClusterManager.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformClusterManager.fromList(it) }
       }
       152.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformDoublePair.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformDoublePair.fromList(it) }
       }
       153.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformColor.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformColor.fromList(it) }
       }
       154.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformInfoWindow.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformInfoWindow.fromList(it) }
       }
       155.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformMarker.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformMarker.fromList(it) }
       }
       156.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformPolygon.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformPolygon.fromList(it) }
       }
       157.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformPolyline.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformPolyline.fromList(it) }
       }
       158.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformCap.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformCap.fromList(it) }
       }
       159.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformPatternItem.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformPatternItem.fromList(it) }
       }
       160.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformTile.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformTile.fromList(it) }
       }
       161.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformTileOverlay.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformTileOverlay.fromList(it) }
       }
       162.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformEdgeInsets.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformEdgeInsets.fromList(it) }
       }
       163.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformLatLng.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformLatLng.fromList(it) }
       }
       164.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformLatLngBounds.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformLatLngBounds.fromList(it) }
       }
       165.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformCluster.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformCluster.fromList(it) }
       }
       166.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformGroundOverlay.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformGroundOverlay.fromList(it) }
       }
       167.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformCameraTargetBounds.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformCameraTargetBounds.fromList(it) }
       }
       168.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
@@ -2907,69 +3095,46 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         }
       }
       169.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformMapConfiguration.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformMapConfiguration.fromList(it) }
       }
       170.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformPoint.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformPoint.fromList(it) }
       }
       171.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformTileLayer.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformTileLayer.fromList(it) }
       }
       172.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformZoomRange.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformZoomRange.fromList(it) }
       }
       173.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformBitmap.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformBitmap.fromList(it) }
       }
       174.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformBitmapDefaultMarker.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformBitmapDefaultMarker.fromList(it) }
       }
       175.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformBitmapBytes.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformBitmapBytes.fromList(it) }
       }
       176.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformBitmapAsset.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformBitmapAsset.fromList(it) }
       }
       177.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformBitmapAssetImage.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformBitmapAssetImage.fromList(it) }
       }
       178.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformBitmapAssetMap.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformBitmapAssetMap.fromList(it) }
       }
       179.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformBitmapBytesMap.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformBitmapBytesMap.fromList(it) }
       }
       180.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformBitmapPinConfig.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformBitmapPinConfig.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
   }
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
       is PlatformMapType -> {
         stream.write(129)
@@ -3184,7 +3349,6 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
   }
 }
 
-
 /**
  * Interface for non-test interactions with the native SDK.
  *
@@ -3198,40 +3362,65 @@ interface MapsApi {
   /**
    * Updates the map's configuration options.
    *
-   * Only non-null configuration values will result in updates; options with
-   * null values will remain unchanged.
+   * Only non-null configuration values will result in updates; options with null values will remain
+   * unchanged.
    */
   fun updateMapConfiguration(configuration: PlatformMapConfiguration)
   /** Updates the set of circles on the map. */
-  fun updateCircles(toAdd: List<PlatformCircle>, toChange: List<PlatformCircle>, idsToRemove: List<String>)
+  fun updateCircles(
+      toAdd: List<PlatformCircle>,
+      toChange: List<PlatformCircle>,
+      idsToRemove: List<String>
+  )
   /** Updates the set of heatmaps on the map. */
-  fun updateHeatmaps(toAdd: List<PlatformHeatmap>, toChange: List<PlatformHeatmap>, idsToRemove: List<String>)
+  fun updateHeatmaps(
+      toAdd: List<PlatformHeatmap>,
+      toChange: List<PlatformHeatmap>,
+      idsToRemove: List<String>
+  )
   /** Updates the set of custer managers for clusters on the map. */
   fun updateClusterManagers(toAdd: List<PlatformClusterManager>, idsToRemove: List<String>)
   /** Updates the set of markers on the map. */
-  fun updateMarkers(toAdd: List<PlatformMarker>, toChange: List<PlatformMarker>, idsToRemove: List<String>)
+  fun updateMarkers(
+      toAdd: List<PlatformMarker>,
+      toChange: List<PlatformMarker>,
+      idsToRemove: List<String>
+  )
   /** Updates the set of polygonss on the map. */
-  fun updatePolygons(toAdd: List<PlatformPolygon>, toChange: List<PlatformPolygon>, idsToRemove: List<String>)
+  fun updatePolygons(
+      toAdd: List<PlatformPolygon>,
+      toChange: List<PlatformPolygon>,
+      idsToRemove: List<String>
+  )
   /** Updates the set of polylines on the map. */
-  fun updatePolylines(toAdd: List<PlatformPolyline>, toChange: List<PlatformPolyline>, idsToRemove: List<String>)
+  fun updatePolylines(
+      toAdd: List<PlatformPolyline>,
+      toChange: List<PlatformPolyline>,
+      idsToRemove: List<String>
+  )
   /** Updates the set of tile overlays on the map. */
-  fun updateTileOverlays(toAdd: List<PlatformTileOverlay>, toChange: List<PlatformTileOverlay>, idsToRemove: List<String>)
+  fun updateTileOverlays(
+      toAdd: List<PlatformTileOverlay>,
+      toChange: List<PlatformTileOverlay>,
+      idsToRemove: List<String>
+  )
   /** Updates the set of ground overlays on the map. */
-  fun updateGroundOverlays(toAdd: List<PlatformGroundOverlay>, toChange: List<PlatformGroundOverlay>, idsToRemove: List<String>)
+  fun updateGroundOverlays(
+      toAdd: List<PlatformGroundOverlay>,
+      toChange: List<PlatformGroundOverlay>,
+      idsToRemove: List<String>
+  )
   /** Gets the screen coordinate for the given map location. */
   fun getScreenCoordinate(latLng: PlatformLatLng): PlatformPoint
   /** Gets the map location for the given screen coordinate. */
   fun getLatLng(screenCoordinate: PlatformPoint): PlatformLatLng
   /** Gets the map region currently displayed on the map. */
   fun getVisibleRegion(): PlatformLatLngBounds
-  /**
-   * Moves the camera according to [cameraUpdate] immediately, with no
-   * animation.
-   */
+  /** Moves the camera according to [cameraUpdate] immediately, with no animation. */
   fun moveCamera(cameraUpdate: PlatformCameraUpdate)
   /**
-   * Moves the camera according to [cameraUpdate], animating the update using a
-   * duration in milliseconds if provided.
+   * Moves the camera according to [cameraUpdate], animating the update using a duration in
+   * milliseconds if provided.
    */
   fun animateCamera(cameraUpdate: PlatformCameraUpdate, durationMilliseconds: Long?)
   /** Gets the current map zoom level. */
@@ -3240,32 +3429,27 @@ interface MapsApi {
   fun showInfoWindow(markerId: String)
   /** Hide the info window for the marker with the given ID. */
   fun hideInfoWindow(markerId: String)
-  /**
-   * Returns true if the marker with the given ID is currently displaying its
-   * info window.
-   */
+  /** Returns true if the marker with the given ID is currently displaying its info window. */
   fun isInfoWindowShown(markerId: String): Boolean
   /**
-   * Sets the style to the given map style string, where an empty string
-   * indicates that the style should be cleared.
+   * Sets the style to the given map style string, where an empty string indicates that the style
+   * should be cleared.
    *
-   * Returns false if there was an error setting the style, such as an invalid
-   * style string.
+   * Returns false if there was an error setting the style, such as an invalid style string.
    */
   fun setStyle(style: String): Boolean
   /**
-   * Returns true if the last attempt to set a style, either via initial map
-   * style or setMapStyle, succeeded.
+   * Returns true if the last attempt to set a style, either via initial map style or setMapStyle,
+   * succeeded.
    *
-   * This allows checking asynchronously for initial style failures, as there
-   * is no way to return failures from map initialization.
+   * This allows checking asynchronously for initial style failures, as there is no way to return
+   * failures from map initialization.
    */
   fun didLastStyleSucceed(): Boolean
   /**
    * Returns true if this map supports advanced markers.
    *
-   * This allows checking if the map supports advanced markers before
-   * attempting to use them.
+   * This allows checking if the map supports advanced markers before attempting to use them.
    */
   fun isAdvancedMarkersAvailable(): Boolean
   /** Clears the cache of tiles previously requseted from the tile provider. */
@@ -3275,18 +3459,21 @@ interface MapsApi {
 
   companion object {
     /** The codec used by MapsApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      MessagesPigeonCodec()
-    }
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
     /** Sets up an instance of `MapsApi` to handle messages through the `binaryMessenger`. */
     @JvmOverloads
     fun setUp(binaryMessenger: BinaryMessenger, api: MapsApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.waitForMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.waitForMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.waitForMap{ result: Result<Unit> ->
+            api.waitForMap { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(MessagesPigeonUtils.wrapError(error))
@@ -3300,17 +3487,22 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateMapConfiguration$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateMapConfiguration$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val configurationArg = args[0] as PlatformMapConfiguration
-            val wrapped: List<Any?> = try {
-              api.updateMapConfiguration(configurationArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.updateMapConfiguration(configurationArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3318,19 +3510,24 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateCircles$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateCircles$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val toAddArg = args[0] as List<PlatformCircle>
             val toChangeArg = args[1] as List<PlatformCircle>
             val idsToRemoveArg = args[2] as List<String>
-            val wrapped: List<Any?> = try {
-              api.updateCircles(toAddArg, toChangeArg, idsToRemoveArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.updateCircles(toAddArg, toChangeArg, idsToRemoveArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3338,19 +3535,24 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateHeatmaps$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateHeatmaps$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val toAddArg = args[0] as List<PlatformHeatmap>
             val toChangeArg = args[1] as List<PlatformHeatmap>
             val idsToRemoveArg = args[2] as List<String>
-            val wrapped: List<Any?> = try {
-              api.updateHeatmaps(toAddArg, toChangeArg, idsToRemoveArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.updateHeatmaps(toAddArg, toChangeArg, idsToRemoveArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3358,18 +3560,23 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateClusterManagers$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateClusterManagers$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val toAddArg = args[0] as List<PlatformClusterManager>
             val idsToRemoveArg = args[1] as List<String>
-            val wrapped: List<Any?> = try {
-              api.updateClusterManagers(toAddArg, idsToRemoveArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.updateClusterManagers(toAddArg, idsToRemoveArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3377,19 +3584,24 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateMarkers$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateMarkers$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val toAddArg = args[0] as List<PlatformMarker>
             val toChangeArg = args[1] as List<PlatformMarker>
             val idsToRemoveArg = args[2] as List<String>
-            val wrapped: List<Any?> = try {
-              api.updateMarkers(toAddArg, toChangeArg, idsToRemoveArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.updateMarkers(toAddArg, toChangeArg, idsToRemoveArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3397,19 +3609,24 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updatePolygons$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updatePolygons$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val toAddArg = args[0] as List<PlatformPolygon>
             val toChangeArg = args[1] as List<PlatformPolygon>
             val idsToRemoveArg = args[2] as List<String>
-            val wrapped: List<Any?> = try {
-              api.updatePolygons(toAddArg, toChangeArg, idsToRemoveArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.updatePolygons(toAddArg, toChangeArg, idsToRemoveArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3417,19 +3634,24 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updatePolylines$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updatePolylines$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val toAddArg = args[0] as List<PlatformPolyline>
             val toChangeArg = args[1] as List<PlatformPolyline>
             val idsToRemoveArg = args[2] as List<String>
-            val wrapped: List<Any?> = try {
-              api.updatePolylines(toAddArg, toChangeArg, idsToRemoveArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.updatePolylines(toAddArg, toChangeArg, idsToRemoveArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3437,19 +3659,24 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateTileOverlays$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateTileOverlays$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val toAddArg = args[0] as List<PlatformTileOverlay>
             val toChangeArg = args[1] as List<PlatformTileOverlay>
             val idsToRemoveArg = args[2] as List<String>
-            val wrapped: List<Any?> = try {
-              api.updateTileOverlays(toAddArg, toChangeArg, idsToRemoveArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.updateTileOverlays(toAddArg, toChangeArg, idsToRemoveArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3457,19 +3684,24 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateGroundOverlays$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateGroundOverlays$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val toAddArg = args[0] as List<PlatformGroundOverlay>
             val toChangeArg = args[1] as List<PlatformGroundOverlay>
             val idsToRemoveArg = args[2] as List<String>
-            val wrapped: List<Any?> = try {
-              api.updateGroundOverlays(toAddArg, toChangeArg, idsToRemoveArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.updateGroundOverlays(toAddArg, toChangeArg, idsToRemoveArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3477,16 +3709,21 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getScreenCoordinate$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getScreenCoordinate$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val latLngArg = args[0] as PlatformLatLng
-            val wrapped: List<Any?> = try {
-              listOf(api.getScreenCoordinate(latLngArg))
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getScreenCoordinate(latLngArg))
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3494,16 +3731,21 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getLatLng$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getLatLng$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val screenCoordinateArg = args[0] as PlatformPoint
-            val wrapped: List<Any?> = try {
-              listOf(api.getLatLng(screenCoordinateArg))
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getLatLng(screenCoordinateArg))
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3511,14 +3753,19 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getVisibleRegion$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getVisibleRegion$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.getVisibleRegion())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getVisibleRegion())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3526,17 +3773,22 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.moveCamera$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.moveCamera$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val cameraUpdateArg = args[0] as PlatformCameraUpdate
-            val wrapped: List<Any?> = try {
-              api.moveCamera(cameraUpdateArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.moveCamera(cameraUpdateArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3544,18 +3796,23 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.animateCamera$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.animateCamera$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val cameraUpdateArg = args[0] as PlatformCameraUpdate
             val durationMillisecondsArg = args[1] as Long?
-            val wrapped: List<Any?> = try {
-              api.animateCamera(cameraUpdateArg, durationMillisecondsArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.animateCamera(cameraUpdateArg, durationMillisecondsArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3563,14 +3820,19 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getZoomLevel$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getZoomLevel$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.getZoomLevel())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getZoomLevel())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3578,17 +3840,22 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.showInfoWindow$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.showInfoWindow$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val markerIdArg = args[0] as String
-            val wrapped: List<Any?> = try {
-              api.showInfoWindow(markerIdArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.showInfoWindow(markerIdArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3596,17 +3863,22 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.hideInfoWindow$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.hideInfoWindow$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val markerIdArg = args[0] as String
-            val wrapped: List<Any?> = try {
-              api.hideInfoWindow(markerIdArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.hideInfoWindow(markerIdArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3614,16 +3886,21 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.isInfoWindowShown$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.isInfoWindowShown$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val markerIdArg = args[0] as String
-            val wrapped: List<Any?> = try {
-              listOf(api.isInfoWindowShown(markerIdArg))
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.isInfoWindowShown(markerIdArg))
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3631,16 +3908,21 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.setStyle$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.setStyle$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val styleArg = args[0] as String
-            val wrapped: List<Any?> = try {
-              listOf(api.setStyle(styleArg))
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.setStyle(styleArg))
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3648,14 +3930,19 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.didLastStyleSucceed$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.didLastStyleSucceed$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.didLastStyleSucceed())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.didLastStyleSucceed())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3663,14 +3950,19 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.isAdvancedMarkersAvailable$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.isAdvancedMarkersAvailable$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.isAdvancedMarkersAvailable())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.isAdvancedMarkersAvailable())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3678,17 +3970,22 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.clearTileCache$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.clearTileCache$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val tileOverlayIdArg = args[0] as String
-            val wrapped: List<Any?> = try {
-              api.clearTileCache(tileOverlayIdArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.clearTileCache(tileOverlayIdArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3696,10 +3993,14 @@ interface MapsApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.takeSnapshot$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.takeSnapshot$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.takeSnapshot{ result: Result<ByteArray> ->
+            api.takeSnapshot { result: Result<ByteArray> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(MessagesPigeonUtils.wrapError(error))
@@ -3717,18 +4018,20 @@ interface MapsApi {
   }
 }
 /** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */
-class MapsCallbackApi(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") {
+class MapsCallbackApi(
+    private val binaryMessenger: BinaryMessenger,
+    private val messageChannelSuffix: String = ""
+) {
   companion object {
     /** The codec used by MapsCallbackApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      MessagesPigeonCodec()
-    }
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
   }
   /** Called when the map camera starts moving. */
-  fun onCameraMoveStarted(callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMoveStarted$separatedMessageChannelSuffix"
+  fun onCameraMoveStarted(callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMoveStarted$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(null) {
       if (it is List<*>) {
@@ -3739,14 +4042,15 @@ class MapsCallbackApi(private val binaryMessenger: BinaryMessenger, private val 
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Called when the map camera moves. */
-  fun onCameraMove(cameraPositionArg: PlatformCameraPosition, callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMove$separatedMessageChannelSuffix"
+  fun onCameraMove(cameraPositionArg: PlatformCameraPosition, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMove$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(cameraPositionArg)) {
       if (it is List<*>) {
@@ -3757,14 +4061,15 @@ class MapsCallbackApi(private val binaryMessenger: BinaryMessenger, private val 
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Called when the map camera stops moving. */
-  fun onCameraIdle(callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraIdle$separatedMessageChannelSuffix"
+  fun onCameraIdle(callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraIdle$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(null) {
       if (it is List<*>) {
@@ -3775,14 +4080,15 @@ class MapsCallbackApi(private val binaryMessenger: BinaryMessenger, private val 
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Called when the map, not a specifc map object, is tapped. */
-  fun onTap(positionArg: PlatformLatLng, callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onTap$separatedMessageChannelSuffix"
+  fun onTap(positionArg: PlatformLatLng, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onTap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(positionArg)) {
       if (it is List<*>) {
@@ -3793,14 +4099,15 @@ class MapsCallbackApi(private val binaryMessenger: BinaryMessenger, private val 
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Called when the map, not a specifc map object, is long pressed. */
-  fun onLongPress(positionArg: PlatformLatLng, callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onLongPress$separatedMessageChannelSuffix"
+  fun onLongPress(positionArg: PlatformLatLng, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onLongPress$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(positionArg)) {
       if (it is List<*>) {
@@ -3811,14 +4118,15 @@ class MapsCallbackApi(private val binaryMessenger: BinaryMessenger, private val 
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Called when a marker is tapped. */
-  fun onMarkerTap(markerIdArg: String, callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerTap$separatedMessageChannelSuffix"
+  fun onMarkerTap(markerIdArg: String, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerTap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(markerIdArg)) {
       if (it is List<*>) {
@@ -3829,14 +4137,19 @@ class MapsCallbackApi(private val binaryMessenger: BinaryMessenger, private val 
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Called when a marker drag starts. */
-  fun onMarkerDragStart(markerIdArg: String, positionArg: PlatformLatLng, callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragStart$separatedMessageChannelSuffix"
+  fun onMarkerDragStart(
+      markerIdArg: String,
+      positionArg: PlatformLatLng,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragStart$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(markerIdArg, positionArg)) {
       if (it is List<*>) {
@@ -3847,14 +4160,19 @@ class MapsCallbackApi(private val binaryMessenger: BinaryMessenger, private val 
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Called when a marker drag updates. */
-  fun onMarkerDrag(markerIdArg: String, positionArg: PlatformLatLng, callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDrag$separatedMessageChannelSuffix"
+  fun onMarkerDrag(
+      markerIdArg: String,
+      positionArg: PlatformLatLng,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDrag$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(markerIdArg, positionArg)) {
       if (it is List<*>) {
@@ -3865,14 +4183,19 @@ class MapsCallbackApi(private val binaryMessenger: BinaryMessenger, private val 
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Called when a marker drag ends. */
-  fun onMarkerDragEnd(markerIdArg: String, positionArg: PlatformLatLng, callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragEnd$separatedMessageChannelSuffix"
+  fun onMarkerDragEnd(
+      markerIdArg: String,
+      positionArg: PlatformLatLng,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragEnd$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(markerIdArg, positionArg)) {
       if (it is List<*>) {
@@ -3883,14 +4206,15 @@ class MapsCallbackApi(private val binaryMessenger: BinaryMessenger, private val 
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Called when a marker's info window is tapped. */
-  fun onInfoWindowTap(markerIdArg: String, callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onInfoWindowTap$separatedMessageChannelSuffix"
+  fun onInfoWindowTap(markerIdArg: String, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onInfoWindowTap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(markerIdArg)) {
       if (it is List<*>) {
@@ -3901,14 +4225,15 @@ class MapsCallbackApi(private val binaryMessenger: BinaryMessenger, private val 
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Called when a circle is tapped. */
-  fun onCircleTap(circleIdArg: String, callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCircleTap$separatedMessageChannelSuffix"
+  fun onCircleTap(circleIdArg: String, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCircleTap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(circleIdArg)) {
       if (it is List<*>) {
@@ -3919,14 +4244,15 @@ class MapsCallbackApi(private val binaryMessenger: BinaryMessenger, private val 
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Called when a marker cluster is tapped. */
-  fun onClusterTap(clusterArg: PlatformCluster, callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onClusterTap$separatedMessageChannelSuffix"
+  fun onClusterTap(clusterArg: PlatformCluster, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onClusterTap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(clusterArg)) {
       if (it is List<*>) {
@@ -3937,14 +4263,15 @@ class MapsCallbackApi(private val binaryMessenger: BinaryMessenger, private val 
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Called when a polygon is tapped. */
-  fun onPolygonTap(polygonIdArg: String, callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolygonTap$separatedMessageChannelSuffix"
+  fun onPolygonTap(polygonIdArg: String, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolygonTap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(polygonIdArg)) {
       if (it is List<*>) {
@@ -3955,14 +4282,15 @@ class MapsCallbackApi(private val binaryMessenger: BinaryMessenger, private val 
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Called when a polyline is tapped. */
-  fun onPolylineTap(polylineIdArg: String, callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolylineTap$separatedMessageChannelSuffix"
+  fun onPolylineTap(polylineIdArg: String, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolylineTap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(polylineIdArg)) {
       if (it is List<*>) {
@@ -3973,14 +4301,15 @@ class MapsCallbackApi(private val binaryMessenger: BinaryMessenger, private val 
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Called when a ground overlay is tapped. */
-  fun onGroundOverlayTap(groundOverlayIdArg: String, callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onGroundOverlayTap$separatedMessageChannelSuffix"
+  fun onGroundOverlayTap(groundOverlayIdArg: String, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onGroundOverlayTap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(groundOverlayIdArg)) {
       if (it is List<*>) {
@@ -3991,28 +4320,39 @@ class MapsCallbackApi(private val binaryMessenger: BinaryMessenger, private val 
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Called to get data for a map tile. */
-  fun getTileOverlayTile(tileOverlayIdArg: String, locationArg: PlatformPoint, zoomArg: Long, callback: (Result<PlatformTile>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile$separatedMessageChannelSuffix"
+  fun getTileOverlayTile(
+      tileOverlayIdArg: String,
+      locationArg: PlatformPoint,
+      zoomArg: Long,
+      callback: (Result<PlatformTile>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(tileOverlayIdArg, locationArg, zoomArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as PlatformTile
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
 }
@@ -4027,27 +4367,38 @@ interface MapsInitializerApi {
    *
    * A null renderer preference will result in the default renderer.
    *
-   * Calling this more than once in the lifetime of an application will result
-   * in an error.
+   * Calling this more than once in the lifetime of an application will result in an error.
    */
-  fun initializeWithPreferredRenderer(type: PlatformRendererType?, callback: (Result<PlatformRendererType>) -> Unit)
+  fun initializeWithPreferredRenderer(
+      type: PlatformRendererType?,
+      callback: (Result<PlatformRendererType>) -> Unit
+  )
   /**
-   * Attempts to trigger any thread-blocking work
-   * the Google Maps SDK normally does when a map is shown for the first time.
+   * Attempts to trigger any thread-blocking work the Google Maps SDK normally does when a map is
+   * shown for the first time.
    */
   fun warmup()
 
   companion object {
     /** The codec used by MapsInitializerApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      MessagesPigeonCodec()
-    }
-    /** Sets up an instance of `MapsInitializerApi` to handle messages through the `binaryMessenger`. */
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
+    /**
+     * Sets up an instance of `MapsInitializerApi` to handle messages through the `binaryMessenger`.
+     */
     @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: MapsInitializerApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: MapsInitializerApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInitializerApi.initializeWithPreferredRenderer$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInitializerApi.initializeWithPreferredRenderer$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -4067,15 +4418,20 @@ interface MapsInitializerApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInitializerApi.warmup$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInitializerApi.warmup$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              api.warmup()
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.warmup()
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -4086,9 +4442,8 @@ interface MapsInitializerApi {
   }
 }
 /**
- * Dummy interface to force generation of the platform view creation params,
- * which are not used in any Pigeon calls, only the platform view creation
- * call made internally by Flutter.
+ * Dummy interface to force generation of the platform view creation params, which are not used in
+ * any Pigeon calls, only the platform view creation call made internally by Flutter.
  *
  * Generated interface from Pigeon that represents a handler of messages from Flutter.
  */
@@ -4097,25 +4452,36 @@ interface MapsPlatformViewApi {
 
   companion object {
     /** The codec used by MapsPlatformViewApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      MessagesPigeonCodec()
-    }
-    /** Sets up an instance of `MapsPlatformViewApi` to handle messages through the `binaryMessenger`. */
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
+    /**
+     * Sets up an instance of `MapsPlatformViewApi` to handle messages through the
+     * `binaryMessenger`.
+     */
     @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: MapsPlatformViewApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: MapsPlatformViewApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsPlatformViewApi.createView$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsPlatformViewApi.createView$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val typeArg = args[0] as PlatformMapViewCreationParams?
-            val wrapped: List<Any?> = try {
-              api.createView(typeArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.createView(typeArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -4132,40 +4498,65 @@ interface MapsPlatformViewApi {
  */
 interface MapsInspectorApi {
   fun areBuildingsEnabled(): Boolean
+
   fun areRotateGesturesEnabled(): Boolean
+
   fun areZoomControlsEnabled(): Boolean
+
   fun areScrollGesturesEnabled(): Boolean
+
   fun areTiltGesturesEnabled(): Boolean
+
   fun areZoomGesturesEnabled(): Boolean
+
   fun isCompassEnabled(): Boolean
+
   fun isLiteModeEnabled(): Boolean?
+
   fun isMapToolbarEnabled(): Boolean
+
   fun isMyLocationButtonEnabled(): Boolean
+
   fun isTrafficEnabled(): Boolean
+
   fun getTileOverlayInfo(tileOverlayId: String): PlatformTileLayer?
+
   fun getGroundOverlayInfo(groundOverlayId: String): PlatformGroundOverlay?
+
   fun getZoomRange(): PlatformZoomRange
+
   fun getClusters(clusterManagerId: String): List<PlatformCluster>
+
   fun getCameraPosition(): PlatformCameraPosition
 
   companion object {
     /** The codec used by MapsInspectorApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      MessagesPigeonCodec()
-    }
-    /** Sets up an instance of `MapsInspectorApi` to handle messages through the `binaryMessenger`. */
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
+    /**
+     * Sets up an instance of `MapsInspectorApi` to handle messages through the `binaryMessenger`.
+     */
     @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: MapsInspectorApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: MapsInspectorApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areBuildingsEnabled$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areBuildingsEnabled$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.areBuildingsEnabled())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.areBuildingsEnabled())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -4173,14 +4564,19 @@ interface MapsInspectorApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areRotateGesturesEnabled$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areRotateGesturesEnabled$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.areRotateGesturesEnabled())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.areRotateGesturesEnabled())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -4188,14 +4584,19 @@ interface MapsInspectorApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areZoomControlsEnabled$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areZoomControlsEnabled$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.areZoomControlsEnabled())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.areZoomControlsEnabled())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -4203,14 +4604,19 @@ interface MapsInspectorApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areScrollGesturesEnabled$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areScrollGesturesEnabled$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.areScrollGesturesEnabled())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.areScrollGesturesEnabled())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -4218,14 +4624,19 @@ interface MapsInspectorApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areTiltGesturesEnabled$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areTiltGesturesEnabled$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.areTiltGesturesEnabled())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.areTiltGesturesEnabled())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -4233,14 +4644,19 @@ interface MapsInspectorApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areZoomGesturesEnabled$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areZoomGesturesEnabled$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.areZoomGesturesEnabled())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.areZoomGesturesEnabled())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -4248,14 +4664,19 @@ interface MapsInspectorApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isCompassEnabled$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isCompassEnabled$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.isCompassEnabled())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.isCompassEnabled())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -4263,14 +4684,19 @@ interface MapsInspectorApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isLiteModeEnabled$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isLiteModeEnabled$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.isLiteModeEnabled())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.isLiteModeEnabled())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -4278,14 +4704,19 @@ interface MapsInspectorApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isMapToolbarEnabled$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isMapToolbarEnabled$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.isMapToolbarEnabled())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.isMapToolbarEnabled())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -4293,14 +4724,19 @@ interface MapsInspectorApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isMyLocationButtonEnabled$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isMyLocationButtonEnabled$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.isMyLocationButtonEnabled())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.isMyLocationButtonEnabled())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -4308,14 +4744,19 @@ interface MapsInspectorApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isTrafficEnabled$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isTrafficEnabled$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.isTrafficEnabled())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.isTrafficEnabled())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -4323,16 +4764,21 @@ interface MapsInspectorApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getTileOverlayInfo$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getTileOverlayInfo$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val tileOverlayIdArg = args[0] as String
-            val wrapped: List<Any?> = try {
-              listOf(api.getTileOverlayInfo(tileOverlayIdArg))
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getTileOverlayInfo(tileOverlayIdArg))
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -4340,16 +4786,21 @@ interface MapsInspectorApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getGroundOverlayInfo$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getGroundOverlayInfo$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val groundOverlayIdArg = args[0] as String
-            val wrapped: List<Any?> = try {
-              listOf(api.getGroundOverlayInfo(groundOverlayIdArg))
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getGroundOverlayInfo(groundOverlayIdArg))
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -4357,14 +4808,19 @@ interface MapsInspectorApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getZoomRange$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getZoomRange$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.getZoomRange())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getZoomRange())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -4372,16 +4828,21 @@ interface MapsInspectorApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getClusters$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getClusters$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val clusterManagerIdArg = args[0] as String
-            val wrapped: List<Any?> = try {
-              listOf(api.getClusters(clusterManagerIdArg))
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getClusters(clusterManagerIdArg))
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -4389,14 +4850,19 @@ interface MapsInspectorApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getCameraPosition$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getCameraPosition$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.getCameraPosition())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getCameraPosition())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {

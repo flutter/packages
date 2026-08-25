@@ -13,9 +13,9 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-    List<Object?>? replyList,
-    String channelName, {
-    required bool isNullValid,
+  List<Object?>? replyList,
+  String channelName, {
+  required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -49,8 +49,7 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -99,28 +98,14 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
+enum SourceCamera { rear, front }
 
-enum SourceCamera {
-  rear,
-  front,
-}
+enum SourceType { camera, gallery }
 
-enum SourceType {
-  camera,
-  gallery,
-}
-
-enum CacheRetrievalType {
-  image,
-  video,
-}
+enum CacheRetrievalType { image, video }
 
 class GeneralOptions {
-  GeneralOptions({
-    required this.allowMultiple,
-    required this.usePhotoPicker,
-    this.limit,
-  });
+  GeneralOptions({required this.allowMultiple, required this.usePhotoPicker, this.limit});
 
   bool allowMultiple;
 
@@ -129,15 +114,12 @@ class GeneralOptions {
   int? limit;
 
   List<Object?> _toList() {
-    return <Object?>[
-      allowMultiple,
-      usePhotoPicker,
-      limit,
-    ];
+    return <Object?>[allowMultiple, usePhotoPicker, limit];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static GeneralOptions decode(Object result) {
     result as List<Object?>;
@@ -157,7 +139,9 @@ class GeneralOptions {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(allowMultiple, other.allowMultiple) && _deepEquals(usePhotoPicker, other.usePhotoPicker) && _deepEquals(limit, other.limit);
+    return _deepEquals(allowMultiple, other.allowMultiple) &&
+        _deepEquals(usePhotoPicker, other.usePhotoPicker) &&
+        _deepEquals(limit, other.limit);
   }
 
   @override
@@ -172,11 +156,7 @@ class GeneralOptions {
 
 /// Options for image selection and output.
 class ImageSelectionOptions {
-  ImageSelectionOptions({
-    this.maxWidth,
-    this.maxHeight,
-    required this.quality,
-  });
+  ImageSelectionOptions({this.maxWidth, this.maxHeight, required this.quality});
 
   /// If set, the max width that the image should be resized to fit in.
   double? maxWidth;
@@ -190,15 +170,12 @@ class ImageSelectionOptions {
   int quality;
 
   List<Object?> _toList() {
-    return <Object?>[
-      maxWidth,
-      maxHeight,
-      quality,
-    ];
+    return <Object?>[maxWidth, maxHeight, quality];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static ImageSelectionOptions decode(Object result) {
     result as List<Object?>;
@@ -218,7 +195,9 @@ class ImageSelectionOptions {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(maxWidth, other.maxWidth) && _deepEquals(maxHeight, other.maxHeight) && _deepEquals(quality, other.quality);
+    return _deepEquals(maxWidth, other.maxWidth) &&
+        _deepEquals(maxHeight, other.maxHeight) &&
+        _deepEquals(quality, other.quality);
   }
 
   @override
@@ -232,26 +211,21 @@ class ImageSelectionOptions {
 }
 
 class MediaSelectionOptions {
-  MediaSelectionOptions({
-    required this.imageSelectionOptions,
-  });
+  MediaSelectionOptions({required this.imageSelectionOptions});
 
   ImageSelectionOptions imageSelectionOptions;
 
   List<Object?> _toList() {
-    return <Object?>[
-      imageSelectionOptions,
-    ];
+    return <Object?>[imageSelectionOptions];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static MediaSelectionOptions decode(Object result) {
     result as List<Object?>;
-    return MediaSelectionOptions(
-      imageSelectionOptions: result[0]! as ImageSelectionOptions,
-    );
+    return MediaSelectionOptions(imageSelectionOptions: result[0]! as ImageSelectionOptions);
   }
 
   @override
@@ -278,27 +252,22 @@ class MediaSelectionOptions {
 
 /// Options for image selection and output.
 class VideoSelectionOptions {
-  VideoSelectionOptions({
-    this.maxDurationSeconds,
-  });
+  VideoSelectionOptions({this.maxDurationSeconds});
 
   /// The maximum desired length for the video, in seconds.
   int? maxDurationSeconds;
 
   List<Object?> _toList() {
-    return <Object?>[
-      maxDurationSeconds,
-    ];
+    return <Object?>[maxDurationSeconds];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static VideoSelectionOptions decode(Object result) {
     result as List<Object?>;
-    return VideoSelectionOptions(
-      maxDurationSeconds: result[0] as int?,
-    );
+    return VideoSelectionOptions(maxDurationSeconds: result[0] as int?);
   }
 
   @override
@@ -325,31 +294,23 @@ class VideoSelectionOptions {
 
 /// Specification for the source of an image or video selection.
 class SourceSpecification {
-  SourceSpecification({
-    required this.type,
-    this.camera,
-  });
+  SourceSpecification({required this.type, this.camera});
 
   SourceType type;
 
   SourceCamera? camera;
 
   List<Object?> _toList() {
-    return <Object?>[
-      type,
-      camera,
-    ];
+    return <Object?>[type, camera];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static SourceSpecification decode(Object result) {
     result as List<Object?>;
-    return SourceSpecification(
-      type: result[0]! as SourceType,
-      camera: result[1] as SourceCamera?,
-    );
+    return SourceSpecification(type: result[0]! as SourceType, camera: result[1] as SourceCamera?);
   }
 
   @override
@@ -378,31 +339,23 @@ class SourceSpecification {
 ///
 /// The data here maps to the `PlatformException` that will be created from it.
 class CacheRetrievalError {
-  CacheRetrievalError({
-    required this.code,
-    this.message,
-  });
+  CacheRetrievalError({required this.code, this.message});
 
   String code;
 
   String? message;
 
   List<Object?> _toList() {
-    return <Object?>[
-      code,
-      message,
-    ];
+    return <Object?>[code, message];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static CacheRetrievalError decode(Object result) {
     result as List<Object?>;
-    return CacheRetrievalError(
-      code: result[0]! as String,
-      message: result[1] as String?,
-    );
+    return CacheRetrievalError(code: result[0]! as String, message: result[1] as String?);
   }
 
   @override
@@ -429,11 +382,7 @@ class CacheRetrievalError {
 
 /// The result of retrieving cached results from a previous run.
 class CacheRetrievalResult {
-  CacheRetrievalResult({
-    required this.type,
-    this.error,
-    this.paths = const <String>[],
-  });
+  CacheRetrievalResult({required this.type, this.error, this.paths = const <String>[]});
 
   /// The type of the retrieved data.
   CacheRetrievalType type;
@@ -445,15 +394,12 @@ class CacheRetrievalResult {
   List<String> paths;
 
   List<Object?> _toList() {
-    return <Object?>[
-      type,
-      error,
-      paths,
-    ];
+    return <Object?>[type, error, paths];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static CacheRetrievalResult decode(Object result) {
     result as List<Object?>;
@@ -473,7 +419,9 @@ class CacheRetrievalResult {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(type, other.type) && _deepEquals(error, other.error) && _deepEquals(paths, other.paths);
+    return _deepEquals(type, other.type) &&
+        _deepEquals(error, other.error) &&
+        _deepEquals(paths, other.paths);
   }
 
   @override
@@ -486,7 +434,6 @@ class CacheRetrievalResult {
   }
 }
 
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -494,34 +441,34 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is SourceCamera) {
+    } else if (value is SourceCamera) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is SourceType) {
+    } else if (value is SourceType) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is CacheRetrievalType) {
+    } else if (value is CacheRetrievalType) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    }    else if (value is GeneralOptions) {
+    } else if (value is GeneralOptions) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    }    else if (value is ImageSelectionOptions) {
+    } else if (value is ImageSelectionOptions) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    }    else if (value is MediaSelectionOptions) {
+    } else if (value is MediaSelectionOptions) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    }    else if (value is VideoSelectionOptions) {
+    } else if (value is VideoSelectionOptions) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    }    else if (value is SourceSpecification) {
+    } else if (value is SourceSpecification) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    }    else if (value is CacheRetrievalError) {
+    } else if (value is CacheRetrievalError) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    }    else if (value is CacheRetrievalResult) {
+    } else if (value is CacheRetrievalResult) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
     } else {
@@ -566,8 +513,10 @@ class ImagePickerApi {
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   ImagePickerApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -575,68 +524,91 @@ class ImagePickerApi {
   final String pigeonVar_messageChannelSuffix;
 
   /// Selects images and returns their paths.
-  Future<List<String>> pickImages(SourceSpecification source, ImageSelectionOptions options, GeneralOptions generalOptions) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickImages$pigeonVar_messageChannelSuffix';
+  Future<List<String>> pickImages(
+    SourceSpecification source,
+    ImageSelectionOptions options,
+    GeneralOptions generalOptions,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickImages$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[source, options, generalOptions]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      source,
+      options,
+      generalOptions,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return (pigeonVar_replyValue! as List<Object?>).cast<String>();
   }
 
   /// Selects video and returns their paths.
-  Future<List<String>> pickVideos(SourceSpecification source, VideoSelectionOptions options, GeneralOptions generalOptions) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickVideos$pigeonVar_messageChannelSuffix';
+  Future<List<String>> pickVideos(
+    SourceSpecification source,
+    VideoSelectionOptions options,
+    GeneralOptions generalOptions,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickVideos$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[source, options, generalOptions]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      source,
+      options,
+      generalOptions,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return (pigeonVar_replyValue! as List<Object?>).cast<String>();
   }
 
   /// Selects images and videos and returns their paths.
-  Future<List<String>> pickMedia(MediaSelectionOptions mediaSelectionOptions, GeneralOptions generalOptions) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickMedia$pigeonVar_messageChannelSuffix';
+  Future<List<String>> pickMedia(
+    MediaSelectionOptions mediaSelectionOptions,
+    GeneralOptions generalOptions,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickMedia$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[mediaSelectionOptions, generalOptions]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      mediaSelectionOptions,
+      generalOptions,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: false,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
     return (pigeonVar_replyValue! as List<Object?>).cast<String>();
   }
 
   /// Returns results from a previous app session, if any.
   Future<CacheRetrievalResult?> retrieveLostResults() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.image_picker_android.ImagePickerApi.retrieveLostResults$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.image_picker_android.ImagePickerApi.retrieveLostResults$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -646,11 +618,10 @@ class ImagePickerApi {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
     return pigeonVar_replyValue as CacheRetrievalResult?;
   }
 }

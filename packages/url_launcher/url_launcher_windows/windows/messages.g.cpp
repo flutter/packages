@@ -35,32 +35,36 @@ FlutterError CreateConnectionError(const std::string channel_name) {
 }
 
 namespace {
-template<typename T>
+template <typename T>
 bool PigeonInternalDeepEquals(const T& a, const T& b);
 
 bool PigeonInternalDeepEquals(const double& a, const double& b);
 
-template<typename T>
+template <typename T>
 bool PigeonInternalDeepEquals(const std::vector<T>& a, const std::vector<T>& b);
 
-template<typename K, typename V>
+template <typename K, typename V>
 bool PigeonInternalDeepEquals(const std::map<K, V>& a, const std::map<K, V>& b);
 
-template<typename T>
-bool PigeonInternalDeepEquals(const std::optional<T>& a, const std::optional<T>& b);
+template <typename T>
+bool PigeonInternalDeepEquals(const std::optional<T>& a,
+                              const std::optional<T>& b);
 
-template<typename T>
-bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a, const std::unique_ptr<T>& b);
+template <typename T>
+bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a,
+                              const std::unique_ptr<T>& b);
 
-bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a, const ::flutter::EncodableValue& b);
+bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
+                              const ::flutter::EncodableValue& b);
 
-template<typename T>
+template <typename T>
 bool PigeonInternalDeepEquals(const T& a, const T& b) {
   return a == b;
 }
 
-template<typename T>
-bool PigeonInternalDeepEquals(const std::vector<T>& a, const std::vector<T>& b) {
+template <typename T>
+bool PigeonInternalDeepEquals(const std::vector<T>& a,
+                              const std::vector<T>& b) {
   if (a.size() != b.size()) {
     return false;
   }
@@ -73,7 +77,8 @@ bool PigeonInternalDeepEquals(const std::vector<T>& a, const std::vector<T>& b) 
 }
 
 template <typename K, typename V>
-bool PigeonInternalDeepEquals(const std::map<K, V>& a, const std::map<K, V>& b) {
+bool PigeonInternalDeepEquals(const std::map<K, V>& a,
+                              const std::map<K, V>& b) {
   if (a.size() != b.size()) {
     return false;
   }
@@ -101,8 +106,9 @@ bool PigeonInternalDeepEquals(const double& a, const double& b) {
   return (a == b) || (std::isnan(a) && std::isnan(b));
 }
 
-template<typename T>
-bool PigeonInternalDeepEquals(const std::optional<T>& a, const std::optional<T>& b) {
+template <typename T>
+bool PigeonInternalDeepEquals(const std::optional<T>& a,
+                              const std::optional<T>& b) {
   if (!a && !b) {
     return true;
   }
@@ -112,8 +118,9 @@ bool PigeonInternalDeepEquals(const std::optional<T>& a, const std::optional<T>&
   return PigeonInternalDeepEquals(*a, *b);
 }
 
-template<typename T>
-bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a, const std::unique_ptr<T>& b) {
+template <typename T>
+bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a,
+                              const std::unique_ptr<T>& b) {
   if (a.get() == b.get()) {
     return true;
   }
@@ -123,15 +130,18 @@ bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a, const std::unique_ptr
   return PigeonInternalDeepEquals(*a, *b);
 }
 
-bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a, const ::flutter::EncodableValue& b) {
+bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
+                              const ::flutter::EncodableValue& b) {
   if (a.index() != b.index()) {
     return false;
   }
   if (const double* da = std::get_if<double>(&a)) {
     return PigeonInternalDeepEquals(*da, std::get<double>(b));
-  } else if (const ::flutter::EncodableList* la = std::get_if<::flutter::EncodableList>(&a)) {
+  } else if (const ::flutter::EncodableList* la =
+                 std::get_if<::flutter::EncodableList>(&a)) {
     return PigeonInternalDeepEquals(*la, std::get<::flutter::EncodableList>(b));
-  } else if (const ::flutter::EncodableMap* ma = std::get_if<::flutter::EncodableMap>(&a)) {
+  } else if (const ::flutter::EncodableMap* ma =
+                 std::get_if<::flutter::EncodableMap>(&a)) {
     return PigeonInternalDeepEquals(*ma, std::get<::flutter::EncodableMap>(b));
   }
   return a == b;
@@ -174,7 +184,8 @@ template <typename K, typename V>
 size_t PigeonInternalDeepHash(const std::map<K, V>& v) {
   size_t result = 0;
   for (const auto& kv : v) {
-    result += ((PigeonInternalDeepHash(kv.first) * 31) ^ PigeonInternalDeepHash(kv.second));
+    result += ((PigeonInternalDeepHash(kv.first) * 31) ^
+               PigeonInternalDeepHash(kv.second));
   }
   return result;
 }
@@ -286,7 +297,8 @@ std::string PigeonInternalToString(const std::map<K, V>& v) {
       ss << ", ";
     }
     first = false;
-    ss << PigeonInternalToString(kv.first) << ": " << PigeonInternalToString(kv.second);
+    ss << PigeonInternalToString(kv.first) << ": "
+       << PigeonInternalToString(kv.second);
   }
   ss << "}";
   return ss.str();
@@ -312,7 +324,8 @@ std::string PigeonInternalToString(const ::flutter::EncodableValue& v) {
           return val ? std::string("true") : std::string("false");
         } else if constexpr (std::is_same_v<T, std::string>) {
           return "\"" + val + "\"";
-        } else if constexpr (std::is_same_v<T, ::flutter::CustomEncodableValue>) {
+        } else if constexpr (std::is_same_v<T,
+                                            ::flutter::CustomEncodableValue>) {
           return std::string("[custom]");
         } else {
           return PigeonInternalToString(val);
@@ -326,86 +339,99 @@ std::string PigeonInternalToString(const ::flutter::EncodableValue& v) {
 PigeonInternalCodecSerializer::PigeonInternalCodecSerializer() {}
 
 EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
-  uint8_t type,
-  ::flutter::ByteStreamReader* stream) const {
+    uint8_t type, ::flutter::ByteStreamReader* stream) const {
   return ::flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
 }
 
 void PigeonInternalCodecSerializer::WriteValue(
-  const EncodableValue& value,
-  ::flutter::ByteStreamWriter* stream) const {
+    const EncodableValue& value, ::flutter::ByteStreamWriter* stream) const {
   ::flutter::StandardCodecSerializer::WriteValue(value, stream);
 }
 
 /// The codec used by UrlLauncherApi.
 const ::flutter::StandardMessageCodec& UrlLauncherApi::GetCodec() {
-  return ::flutter::StandardMessageCodec::GetInstance(&PigeonInternalCodecSerializer::GetInstance());
+  return ::flutter::StandardMessageCodec::GetInstance(
+      &PigeonInternalCodecSerializer::GetInstance());
 }
 
-// Sets up an instance of `UrlLauncherApi` to handle messages through the `binary_messenger`.
-void UrlLauncherApi::SetUp(
-  ::flutter::BinaryMessenger* binary_messenger,
-  UrlLauncherApi* api) {
+// Sets up an instance of `UrlLauncherApi` to handle messages through the
+// `binary_messenger`.
+void UrlLauncherApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
+                           UrlLauncherApi* api) {
   UrlLauncherApi::SetUp(binary_messenger, api, "");
 }
 
-void UrlLauncherApi::SetUp(
-  ::flutter::BinaryMessenger* binary_messenger,
-  UrlLauncherApi* api,
-  const std::string& message_channel_suffix) {
-  const std::string prepended_suffix = message_channel_suffix.length() > 0 ? std::string(".") + message_channel_suffix : "";
+void UrlLauncherApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
+                           UrlLauncherApi* api,
+                           const std::string& message_channel_suffix) {
+  const std::string prepended_suffix =
+      message_channel_suffix.length() > 0
+          ? std::string(".") + message_channel_suffix
+          : "";
   {
-    BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.url_launcher_windows.UrlLauncherApi.canLaunchUrl" + prepended_suffix, &GetCodec());
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.url_launcher_windows.UrlLauncherApi.canLaunchUrl" +
+            prepended_suffix,
+        &GetCodec());
     if (api != nullptr) {
-      channel.SetMessageHandler([api](const EncodableValue& message, const ::flutter::MessageReply<EncodableValue>& reply) {
-        try {
-          const auto& args = std::get<EncodableList>(message);
-          const auto& encodable_url_arg = args.at(0);
-          if (encodable_url_arg.IsNull()) {
-            reply(WrapError("url_arg unexpectedly null."));
-            return;
-          }
-          const auto& url_arg = std::get<std::string>(encodable_url_arg);
-          ErrorOr<bool> output = api->CanLaunchUrl(url_arg);
-          if (output.has_error()) {
-            reply(WrapError(output.error()));
-            return;
-          }
-          EncodableList wrapped;
-          wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
-          reply(EncodableValue(std::move(wrapped)));
-        } catch (const std::exception& exception) {
-          reply(WrapError(exception.what()));
-        }
-      });
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const ::flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_url_arg = args.at(0);
+              if (encodable_url_arg.IsNull()) {
+                reply(WrapError("url_arg unexpectedly null."));
+                return;
+              }
+              const auto& url_arg = std::get<std::string>(encodable_url_arg);
+              ErrorOr<bool> output = api->CanLaunchUrl(url_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
     } else {
       channel.SetMessageHandler(nullptr);
     }
   }
   {
-    BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.url_launcher_windows.UrlLauncherApi.launchUrl" + prepended_suffix, &GetCodec());
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.url_launcher_windows.UrlLauncherApi.launchUrl" +
+            prepended_suffix,
+        &GetCodec());
     if (api != nullptr) {
-      channel.SetMessageHandler([api](const EncodableValue& message, const ::flutter::MessageReply<EncodableValue>& reply) {
-        try {
-          const auto& args = std::get<EncodableList>(message);
-          const auto& encodable_url_arg = args.at(0);
-          if (encodable_url_arg.IsNull()) {
-            reply(WrapError("url_arg unexpectedly null."));
-            return;
-          }
-          const auto& url_arg = std::get<std::string>(encodable_url_arg);
-          ErrorOr<bool> output = api->LaunchUrl(url_arg);
-          if (output.has_error()) {
-            reply(WrapError(output.error()));
-            return;
-          }
-          EncodableList wrapped;
-          wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
-          reply(EncodableValue(std::move(wrapped)));
-        } catch (const std::exception& exception) {
-          reply(WrapError(exception.what()));
-        }
-      });
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const ::flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_url_arg = args.at(0);
+              if (encodable_url_arg.IsNull()) {
+                reply(WrapError("url_arg unexpectedly null."));
+                return;
+              }
+              const auto& url_arg = std::get<std::string>(encodable_url_arg);
+              ErrorOr<bool> output = api->LaunchUrl(url_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
     } else {
       channel.SetMessageHandler(nullptr);
     }
@@ -413,19 +439,15 @@ void UrlLauncherApi::SetUp(
 }
 
 EncodableValue UrlLauncherApi::WrapError(std::string_view error_message) {
-  return EncodableValue(EncodableList{
-    EncodableValue(std::string(error_message)),
-    EncodableValue("Error"),
-    EncodableValue()
-  });
+  return EncodableValue(
+      EncodableList{EncodableValue(std::string(error_message)),
+                    EncodableValue("Error"), EncodableValue()});
 }
 
 EncodableValue UrlLauncherApi::WrapError(const FlutterError& error) {
-  return EncodableValue(EncodableList{
-    EncodableValue(error.code()),
-    EncodableValue(error.message()),
-    error.details()
-  });
+  return EncodableValue(EncodableList{EncodableValue(error.code()),
+                                      EncodableValue(error.message()),
+                                      error.details()});
 }
 
 }  // namespace url_launcher_windows

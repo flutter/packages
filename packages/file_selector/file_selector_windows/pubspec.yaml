@@ -21,6 +21,7 @@ dependencies:
   file_selector_platform_interface: ^2.6.0
   flutter:
     sdk: flutter
+  meta: ^1.10.0
 
 dev_dependencies:
   flutter_test:

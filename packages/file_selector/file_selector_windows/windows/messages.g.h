@@ -18,17 +18,16 @@
 
 namespace file_selector_windows {
 
-
 // Generated class from Pigeon.
 
 class FlutterError {
  public:
-  explicit FlutterError(const std::string& code)
-    : code_(code) {}
+  explicit FlutterError(const std::string& code) : code_(code) {}
   explicit FlutterError(const std::string& code, const std::string& message)
-    : code_(code), message_(message) {}
-  explicit FlutterError(const std::string& code, const std::string& message, const ::flutter::EncodableValue& details)
-    : code_(code), message_(message), details_(details) {}
+      : code_(code), message_(message) {}
+  explicit FlutterError(const std::string& code, const std::string& message,
+                        const ::flutter::EncodableValue& details)
+      : code_(code), message_(message), details_(details) {}
 
   const std::string& code() const { return code_; }
   const std::string& message() const { return message_; }
@@ -40,7 +39,8 @@ class FlutterError {
   ::flutter::EncodableValue details_;
 };
 
-template<class T> class ErrorOr {
+template <class T>
+class ErrorOr {
  public:
   ErrorOr(const T& rhs) : v_(rhs) {}
   ErrorOr(const T&& rhs) : v_(std::move(rhs)) {}
@@ -59,15 +59,12 @@ template<class T> class ErrorOr {
   std::variant<T, FlutterError> v_;
 };
 
-
-
 // Generated class from Pigeon that represents data sent in messages.
 class TypeGroup {
  public:
   // Constructs an object setting all fields.
-  explicit TypeGroup(
-    const std::string& label,
-    const ::flutter::EncodableList& extensions);
+  explicit TypeGroup(const std::string& label,
+                     const ::flutter::EncodableList& extensions);
 
   const std::string& label() const;
   void set_label(std::string_view value_arg);
@@ -77,10 +74,12 @@ class TypeGroup {
 
   bool operator==(const TypeGroup& other) const;
   bool operator!=(const TypeGroup& other) const;
-  /// Returns a hash code value for the object. This method is supported for the benefit of hash tables.
+  /// Returns a hash code value for the object. This method is supported for the
+  /// benefit of hash tables.
   size_t Hash() const;
   /// Stream output operator for formatted string representation.
   friend std::ostream& operator<<(std::ostream& os, const TypeGroup& obj);
+
  private:
   static TypeGroup FromEncodableList(const ::flutter::EncodableList& list);
   ::flutter::EncodableList ToEncodableList() const;
@@ -90,15 +89,12 @@ class TypeGroup {
   ::flutter::EncodableList extensions_;
 };
 
-
 // Generated class from Pigeon that represents data sent in messages.
 class SelectionOptions {
  public:
   // Constructs an object setting all fields.
-  explicit SelectionOptions(
-    bool allow_multiple,
-    bool select_folders,
-    const ::flutter::EncodableList& allowed_types);
+  explicit SelectionOptions(bool allow_multiple, bool select_folders,
+                            const ::flutter::EncodableList& allowed_types);
 
   bool allow_multiple() const;
   void set_allow_multiple(bool value_arg);
@@ -111,12 +107,16 @@ class SelectionOptions {
 
   bool operator==(const SelectionOptions& other) const;
   bool operator!=(const SelectionOptions& other) const;
-  /// Returns a hash code value for the object. This method is supported for the benefit of hash tables.
+  /// Returns a hash code value for the object. This method is supported for the
+  /// benefit of hash tables.
   size_t Hash() const;
   /// Stream output operator for formatted string representation.
-  friend std::ostream& operator<<(std::ostream& os, const SelectionOptions& obj);
+  friend std::ostream& operator<<(std::ostream& os,
+                                  const SelectionOptions& obj);
+
  private:
-  static SelectionOptions FromEncodableList(const ::flutter::EncodableList& list);
+  static SelectionOptions FromEncodableList(
+      const ::flutter::EncodableList& list);
   ::flutter::EncodableList ToEncodableList() const;
   friend class FileSelectorApi;
   friend class PigeonInternalCodecSerializer;
@@ -124,7 +124,6 @@ class SelectionOptions {
   bool select_folders_;
   ::flutter::EncodableList allowed_types_;
 };
-
 
 // The result from an open or save dialog.
 //
@@ -135,9 +134,8 @@ class FileDialogResult {
   explicit FileDialogResult(const ::flutter::EncodableList& paths);
 
   // Constructs an object setting all fields.
-  explicit FileDialogResult(
-    const ::flutter::EncodableList& paths,
-    const int64_t* type_group_index);
+  explicit FileDialogResult(const ::flutter::EncodableList& paths,
+                            const int64_t* type_group_index);
 
   // The selected paths.
   //
@@ -155,12 +153,16 @@ class FileDialogResult {
 
   bool operator==(const FileDialogResult& other) const;
   bool operator!=(const FileDialogResult& other) const;
-  /// Returns a hash code value for the object. This method is supported for the benefit of hash tables.
+  /// Returns a hash code value for the object. This method is supported for the
+  /// benefit of hash tables.
   size_t Hash() const;
   /// Stream output operator for formatted string representation.
-  friend std::ostream& operator<<(std::ostream& os, const FileDialogResult& obj);
+  friend std::ostream& operator<<(std::ostream& os,
+                                  const FileDialogResult& obj);
+
  private:
-  static FileDialogResult FromEncodableList(const ::flutter::EncodableList& list);
+  static FileDialogResult FromEncodableList(
+      const ::flutter::EncodableList& list);
   ::flutter::EncodableList ToEncodableList() const;
   friend class FileSelectorApi;
   friend class PigeonInternalCodecSerializer;
@@ -168,8 +170,8 @@ class FileDialogResult {
   std::optional<int64_t> type_group_index_;
 };
 
-
-class PigeonInternalCodecSerializer : public ::flutter::StandardCodecSerializer {
+class PigeonInternalCodecSerializer
+    : public ::flutter::StandardCodecSerializer {
  public:
   PigeonInternalCodecSerializer();
   inline static PigeonInternalCodecSerializer& GetInstance() {
@@ -177,43 +179,41 @@ class PigeonInternalCodecSerializer : public ::flutter::StandardCodecSerializer 
     return sInstance;
   }
 
-  void WriteValue(
-    const ::flutter::EncodableValue& value,
-    ::flutter::ByteStreamWriter* stream) const override;
+  void WriteValue(const ::flutter::EncodableValue& value,
+                  ::flutter::ByteStreamWriter* stream) const override;
+
  protected:
   ::flutter::EncodableValue ReadValueOfType(
-    uint8_t type,
-    ::flutter::ByteStreamReader* stream) const override;
+      uint8_t type, ::flutter::ByteStreamReader* stream) const override;
 };
 
-// Generated interface from Pigeon that represents a handler of messages from Flutter.
+// Generated interface from Pigeon that represents a handler of messages from
+// Flutter.
 class FileSelectorApi {
  public:
   FileSelectorApi(const FileSelectorApi&) = delete;
   FileSelectorApi& operator=(const FileSelectorApi&) = delete;
   virtual ~FileSelectorApi() {}
   virtual ErrorOr<FileDialogResult> ShowOpenDialog(
-    const SelectionOptions& options,
-    const std::string* initial_directory,
-    const std::string* confirm_button_text) = 0;
+      const SelectionOptions& options, const std::string* initial_directory,
+      const std::string* confirm_button_text) = 0;
   virtual ErrorOr<FileDialogResult> ShowSaveDialog(
-    const SelectionOptions& options,
-    const std::string* initial_directory,
-    const std::string* suggested_name,
-    const std::string* confirm_button_text) = 0;
+      const SelectionOptions& options, const std::string* initial_directory,
+      const std::string* suggested_name,
+      const std::string* confirm_button_text) = 0;
 
   // The codec used by FileSelectorApi.
   static const ::flutter::StandardMessageCodec& GetCodec();
-  // Sets up an instance of `FileSelectorApi` to handle messages through the `binary_messenger`.
-  static void SetUp(
-    ::flutter::BinaryMessenger* binary_messenger,
-    FileSelectorApi* api);
-  static void SetUp(
-    ::flutter::BinaryMessenger* binary_messenger,
-    FileSelectorApi* api,
-    const std::string& message_channel_suffix);
+  // Sets up an instance of `FileSelectorApi` to handle messages through the
+  // `binary_messenger`.
+  static void SetUp(::flutter::BinaryMessenger* binary_messenger,
+                    FileSelectorApi* api);
+  static void SetUp(::flutter::BinaryMessenger* binary_messenger,
+                    FileSelectorApi* api,
+                    const std::string& message_channel_suffix);
   static ::flutter::EncodableValue WrapError(std::string_view error_message);
   static ::flutter::EncodableValue WrapError(const FlutterError& error);
+
  protected:
   FileSelectorApi() = default;
 };

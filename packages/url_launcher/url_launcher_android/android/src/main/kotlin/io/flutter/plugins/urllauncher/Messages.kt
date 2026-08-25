@@ -10,12 +10,11 @@ package io.flutter.plugins.urllauncher
 import android.util.Log
 import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MessageCodec
-import io.flutter.plugin.common.StandardMethodCodec
 import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+
 private object MessagesPigeonUtils {
 
   fun wrapResult(result: Any?): List<Any?> {
@@ -24,19 +23,15 @@ private object MessagesPigeonUtils {
 
   fun wrapError(exception: Throwable): List<Any?> {
     return if (exception is FlutterError) {
-      listOf(
-        exception.code,
-        exception.message,
-        exception.details
-      )
+      listOf(exception.code, exception.message, exception.details)
     } else {
       listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
-      )
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
     }
   }
+
   fun doubleEquals(a: Double, b: Double): Boolean {
     // Normalize -0.0 to 0.0 and handle NaN equality.
     return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
@@ -180,19 +175,19 @@ private object MessagesPigeonUtils {
       else -> value.hashCode()
     }
   }
-
 }
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
+ *
  * @property code The error code.
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
-class FlutterError (
-  val code: String,
-  override val message: String? = null,
-  val details: Any? = null
+class FlutterError(
+    val code: String,
+    override val message: String? = null,
+    val details: Any? = null
 ) : RuntimeException()
 
 /**
@@ -200,12 +195,11 @@ class FlutterError (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class WebViewOptions (
-  val enableJavaScript: Boolean,
-  val enableDomStorage: Boolean,
-  val headers: Map<String, String>
-)
- {
+data class WebViewOptions(
+    val enableJavaScript: Boolean,
+    val enableDomStorage: Boolean,
+    val headers: Map<String, String>
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): WebViewOptions {
       val enableJavaScript = pigeonVar_list[0] as Boolean
@@ -214,13 +208,15 @@ data class WebViewOptions (
       return WebViewOptions(enableJavaScript, enableDomStorage, headers)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      enableJavaScript,
-      enableDomStorage,
-      headers,
+        enableJavaScript,
+        enableDomStorage,
+        headers,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -229,7 +225,9 @@ data class WebViewOptions (
       return true
     }
     val other = other as WebViewOptions
-    return MessagesPigeonUtils.deepEquals(this.enableJavaScript, other.enableJavaScript) && MessagesPigeonUtils.deepEquals(this.enableDomStorage, other.enableDomStorage) && MessagesPigeonUtils.deepEquals(this.headers, other.headers)
+    return MessagesPigeonUtils.deepEquals(this.enableJavaScript, other.enableJavaScript) &&
+        MessagesPigeonUtils.deepEquals(this.enableDomStorage, other.enableDomStorage) &&
+        MessagesPigeonUtils.deepEquals(this.headers, other.headers)
   }
 
   override fun hashCode(): Int {
@@ -239,6 +237,7 @@ data class WebViewOptions (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.headers)
     return result
   }
+
   override fun toString(): String {
     return "WebViewOptions(enableJavaScript=$enableJavaScript, enableDomStorage=$enableDomStorage, headers=$headers)"
   }
@@ -249,22 +248,23 @@ data class WebViewOptions (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class BrowserOptions (
-  /** Whether or not to show the webpage title. */
-  val showTitle: Boolean
-)
- {
+data class BrowserOptions(
+    /** Whether or not to show the webpage title. */
+    val showTitle: Boolean
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): BrowserOptions {
       val showTitle = pigeonVar_list[0] as Boolean
       return BrowserOptions(showTitle)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      showTitle,
+        showTitle,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -281,27 +281,26 @@ data class BrowserOptions (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.showTitle)
     return result
   }
+
   override fun toString(): String {
     return "BrowserOptions(showTitle=$showTitle)"
   }
 }
+
 private open class MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          WebViewOptions.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { WebViewOptions.fromList(it) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          BrowserOptions.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { BrowserOptions.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
   }
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
       is WebViewOptions -> {
         stream.write(129)
@@ -322,35 +321,46 @@ interface UrlLauncherApi {
   fun canLaunchUrl(url: String): Boolean
   /** Opens the URL externally, returning true if successful. */
   fun launchUrl(url: String, headers: Map<String, String>, requireNonBrowser: Boolean): Boolean
-  /**
-   * Opens the URL in an in-app Custom Tab or WebView, returning true if it
-   * opens successfully.
-   */
-  fun openUrlInApp(url: String, allowCustomTab: Boolean, webViewOptions: WebViewOptions, browserOptions: BrowserOptions): Boolean
+  /** Opens the URL in an in-app Custom Tab or WebView, returning true if it opens successfully. */
+  fun openUrlInApp(
+      url: String,
+      allowCustomTab: Boolean,
+      webViewOptions: WebViewOptions,
+      browserOptions: BrowserOptions
+  ): Boolean
+
   fun supportsCustomTabs(): Boolean
   /** Closes the view opened by [openUrlInSafariViewController]. */
   fun closeWebView()
 
   companion object {
     /** The codec used by UrlLauncherApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      MessagesPigeonCodec()
-    }
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
     /** Sets up an instance of `UrlLauncherApi` to handle messages through the `binaryMessenger`. */
     @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: UrlLauncherApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: UrlLauncherApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.canLaunchUrl$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.canLaunchUrl$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val urlArg = args[0] as String
-            val wrapped: List<Any?> = try {
-              listOf(api.canLaunchUrl(urlArg))
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.canLaunchUrl(urlArg))
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -358,18 +368,23 @@ interface UrlLauncherApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.launchUrl$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.launchUrl$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val urlArg = args[0] as String
             val headersArg = args[1] as Map<String, String>
             val requireNonBrowserArg = args[2] as Boolean
-            val wrapped: List<Any?> = try {
-              listOf(api.launchUrl(urlArg, headersArg, requireNonBrowserArg))
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.launchUrl(urlArg, headersArg, requireNonBrowserArg))
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -377,7 +392,11 @@ interface UrlLauncherApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.openUrlInApp$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.openUrlInApp$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -385,11 +404,14 @@ interface UrlLauncherApi {
             val allowCustomTabArg = args[1] as Boolean
             val webViewOptionsArg = args[2] as WebViewOptions
             val browserOptionsArg = args[3] as BrowserOptions
-            val wrapped: List<Any?> = try {
-              listOf(api.openUrlInApp(urlArg, allowCustomTabArg, webViewOptionsArg, browserOptionsArg))
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(
+                      api.openUrlInApp(
+                          urlArg, allowCustomTabArg, webViewOptionsArg, browserOptionsArg))
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -397,14 +419,19 @@ interface UrlLauncherApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.supportsCustomTabs$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.supportsCustomTabs$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.supportsCustomTabs())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.supportsCustomTabs())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -412,15 +439,20 @@ interface UrlLauncherApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.closeWebView$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.closeWebView$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              api.closeWebView()
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.closeWebView()
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {

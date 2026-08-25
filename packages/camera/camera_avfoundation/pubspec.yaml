@@ -21,6 +21,7 @@ dependencies:
   camera_platform_interface: ^2.13.0
   flutter:
     sdk: flutter
+  meta: ^1.10.0
   stream_transform: ^2.0.0
 
 dev_dependencies:

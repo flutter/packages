@@ -10,12 +10,11 @@ package io.flutter.plugins.localauth
 import android.util.Log
 import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MessageCodec
-import io.flutter.plugin.common.StandardMethodCodec
 import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+
 private object MessagesPigeonUtils {
 
   fun wrapResult(result: Any?): List<Any?> {
@@ -24,19 +23,15 @@ private object MessagesPigeonUtils {
 
   fun wrapError(exception: Throwable): List<Any?> {
     return if (exception is FlutterError) {
-      listOf(
-        exception.code,
-        exception.message,
-        exception.details
-      )
+      listOf(exception.code, exception.message, exception.details)
     } else {
       listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
-      )
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
     }
   }
+
   fun doubleEquals(a: Double, b: Double): Boolean {
     // Normalize -0.0 to 0.0 and handle NaN equality.
     return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
@@ -180,29 +175,26 @@ private object MessagesPigeonUtils {
       else -> value.hashCode()
     }
   }
-
 }
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
+ *
  * @property code The error code.
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
-class FlutterError (
-  val code: String,
-  override val message: String? = null,
-  val details: Any? = null
+class FlutterError(
+    val code: String,
+    override val message: String? = null,
+    val details: Any? = null
 ) : RuntimeException()
 
 /** Possible outcomes of an authentication attempt. */
 enum class AuthResultCode(val raw: Int) {
   /** The user authenticated successfully. */
   SUCCESS(0),
-  /**
-   * The user pressed the negative button, which corresponds to
-   * [AuthStrings.cancelButton].
-   */
+  /** The user pressed the negative button, which corresponds to [AuthStrings.cancelButton]. */
   NEGATIVE_BUTTON(1),
   /**
    * The user canceled authentication without pressing the negative button.
@@ -230,10 +222,7 @@ enum class AuthResultCode(val raw: Int) {
   NOT_ENROLLED(11),
   /** The user is locked out temporarily due to too many failed attempts. */
   LOCKED_OUT_TEMPORARILY(12),
-  /**
-   * The user is locked out until they log in another way due to too many
-   * failed attempts.
-   */
+  /** The user is locked out until they log in another way due to too many failed attempts. */
   LOCKED_OUT_PERMANENTLY(13),
   /** The device does not have enough storage to complete authentication. */
   NO_SPACE(14),
@@ -268,13 +257,12 @@ enum class AuthClassification(val raw: Int) {
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class AuthStrings (
-  val reason: String,
-  val signInHint: String,
-  val cancelButton: String,
-  val signInTitle: String
-)
- {
+data class AuthStrings(
+    val reason: String,
+    val signInHint: String,
+    val cancelButton: String,
+    val signInTitle: String
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): AuthStrings {
       val reason = pigeonVar_list[0] as String
@@ -284,14 +272,16 @@ data class AuthStrings (
       return AuthStrings(reason, signInHint, cancelButton, signInTitle)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      reason,
-      signInHint,
-      cancelButton,
-      signInTitle,
+        reason,
+        signInHint,
+        cancelButton,
+        signInTitle,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -300,7 +290,10 @@ data class AuthStrings (
       return true
     }
     val other = other as AuthStrings
-    return MessagesPigeonUtils.deepEquals(this.reason, other.reason) && MessagesPigeonUtils.deepEquals(this.signInHint, other.signInHint) && MessagesPigeonUtils.deepEquals(this.cancelButton, other.cancelButton) && MessagesPigeonUtils.deepEquals(this.signInTitle, other.signInTitle)
+    return MessagesPigeonUtils.deepEquals(this.reason, other.reason) &&
+        MessagesPigeonUtils.deepEquals(this.signInHint, other.signInHint) &&
+        MessagesPigeonUtils.deepEquals(this.cancelButton, other.cancelButton) &&
+        MessagesPigeonUtils.deepEquals(this.signInTitle, other.signInTitle)
   }
 
   override fun hashCode(): Int {
@@ -311,6 +304,7 @@ data class AuthStrings (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.signInTitle)
     return result
   }
+
   override fun toString(): String {
     return "AuthStrings(reason=$reason, signInHint=$signInHint, cancelButton=$cancelButton, signInTitle=$signInTitle)"
   }
@@ -321,13 +315,12 @@ data class AuthStrings (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class AuthResult (
-  /** The specific result returned from the SDK. */
-  val code: AuthResultCode,
-  /** The error message associated with the result, if any. */
-  val errorMessage: String? = null
-)
- {
+data class AuthResult(
+    /** The specific result returned from the SDK. */
+    val code: AuthResultCode,
+    /** The error message associated with the result, if any. */
+    val errorMessage: String? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): AuthResult {
       val code = pigeonVar_list[0] as AuthResultCode
@@ -335,12 +328,14 @@ data class AuthResult (
       return AuthResult(code, errorMessage)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      code,
-      errorMessage,
+        code,
+        errorMessage,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -349,7 +344,8 @@ data class AuthResult (
       return true
     }
     val other = other as AuthResult
-    return MessagesPigeonUtils.deepEquals(this.code, other.code) && MessagesPigeonUtils.deepEquals(this.errorMessage, other.errorMessage)
+    return MessagesPigeonUtils.deepEquals(this.code, other.code) &&
+        MessagesPigeonUtils.deepEquals(this.errorMessage, other.errorMessage)
   }
 
   override fun hashCode(): Int {
@@ -358,18 +354,18 @@ data class AuthResult (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.errorMessage)
     return result
   }
+
   override fun toString(): String {
     return "AuthResult(code=$code, errorMessage=$errorMessage)"
   }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class AuthOptions (
-  val biometricOnly: Boolean,
-  val sensitiveTransaction: Boolean,
-  val sticky: Boolean
-)
- {
+data class AuthOptions(
+    val biometricOnly: Boolean,
+    val sensitiveTransaction: Boolean,
+    val sticky: Boolean
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): AuthOptions {
       val biometricOnly = pigeonVar_list[0] as Boolean
@@ -378,13 +374,15 @@ data class AuthOptions (
       return AuthOptions(biometricOnly, sensitiveTransaction, sticky)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      biometricOnly,
-      sensitiveTransaction,
-      sticky,
+        biometricOnly,
+        sensitiveTransaction,
+        sticky,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -393,7 +391,9 @@ data class AuthOptions (
       return true
     }
     val other = other as AuthOptions
-    return MessagesPigeonUtils.deepEquals(this.biometricOnly, other.biometricOnly) && MessagesPigeonUtils.deepEquals(this.sensitiveTransaction, other.sensitiveTransaction) && MessagesPigeonUtils.deepEquals(this.sticky, other.sticky)
+    return MessagesPigeonUtils.deepEquals(this.biometricOnly, other.biometricOnly) &&
+        MessagesPigeonUtils.deepEquals(this.sensitiveTransaction, other.sensitiveTransaction) &&
+        MessagesPigeonUtils.deepEquals(this.sticky, other.sticky)
   }
 
   override fun hashCode(): Int {
@@ -403,42 +403,35 @@ data class AuthOptions (
     result = 31 * result + MessagesPigeonUtils.deepHash(this.sticky)
     return result
   }
+
   override fun toString(): String {
     return "AuthOptions(biometricOnly=$biometricOnly, sensitiveTransaction=$sensitiveTransaction, sticky=$sticky)"
   }
 }
+
 private open class MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          AuthResultCode.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { AuthResultCode.ofRaw(it.toInt()) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          AuthClassification.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { AuthClassification.ofRaw(it.toInt()) }
       }
       131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          AuthStrings.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { AuthStrings.fromList(it) }
       }
       132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          AuthResult.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { AuthResult.fromList(it) }
       }
       133.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          AuthOptions.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { AuthOptions.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
   }
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
       is AuthResultCode -> {
         stream.write(129)
@@ -465,55 +458,63 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
   }
 }
 
-
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface LocalAuthApi {
   /** Returns true if this device supports authentication. */
   fun isDeviceSupported(): Boolean
   /**
-   * Returns true if this device can support biometric authentication, whether
-   * any biometrics are enrolled or not.
+   * Returns true if this device can support biometric authentication, whether any biometrics are
+   * enrolled or not.
    */
   fun deviceCanSupportBiometrics(): Boolean
   /**
    * Cancels any in-progress authentication.
    *
-   * Returns true only if authentication was in progress, and was successfully
-   * cancelled.
+   * Returns true only if authentication was in progress, and was successfully cancelled.
    */
   fun stopAuthentication(): Boolean
   /**
-   * Returns the biometric types that are enrolled, and can thus be used
-   * without additional setup.
+   * Returns the biometric types that are enrolled, and can thus be used without additional setup.
    *
-   * Returns null if there is no activity, in which case the enrolled
-   * biometrics can't be determined.
+   * Returns null if there is no activity, in which case the enrolled biometrics can't be
+   * determined.
    */
   fun getEnrolledBiometrics(): List<AuthClassification>?
   /**
-   * Attempts to authenticate the user with the provided [options], and using
-   * [strings] for any UI.
+   * Attempts to authenticate the user with the provided [options], and using [strings] for any UI.
    */
-  fun authenticate(options: AuthOptions, strings: AuthStrings, callback: (Result<AuthResult>) -> Unit)
+  fun authenticate(
+      options: AuthOptions,
+      strings: AuthStrings,
+      callback: (Result<AuthResult>) -> Unit
+  )
 
   companion object {
     /** The codec used by LocalAuthApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      MessagesPigeonCodec()
-    }
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
     /** Sets up an instance of `LocalAuthApi` to handle messages through the `binaryMessenger`. */
     @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: LocalAuthApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: LocalAuthApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.local_auth_android.LocalAuthApi.isDeviceSupported$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.local_auth_android.LocalAuthApi.isDeviceSupported$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.isDeviceSupported())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.isDeviceSupported())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -521,14 +522,19 @@ interface LocalAuthApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.local_auth_android.LocalAuthApi.deviceCanSupportBiometrics$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.local_auth_android.LocalAuthApi.deviceCanSupportBiometrics$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.deviceCanSupportBiometrics())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.deviceCanSupportBiometrics())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -536,14 +542,19 @@ interface LocalAuthApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.local_auth_android.LocalAuthApi.stopAuthentication$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.local_auth_android.LocalAuthApi.stopAuthentication$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.stopAuthentication())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.stopAuthentication())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -551,14 +562,19 @@ interface LocalAuthApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.local_auth_android.LocalAuthApi.getEnrolledBiometrics$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.local_auth_android.LocalAuthApi.getEnrolledBiometrics$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.getEnrolledBiometrics())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getEnrolledBiometrics())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -566,7 +582,11 @@ interface LocalAuthApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.local_auth_android.LocalAuthApi.authenticate$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.local_auth_android.LocalAuthApi.authenticate$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
