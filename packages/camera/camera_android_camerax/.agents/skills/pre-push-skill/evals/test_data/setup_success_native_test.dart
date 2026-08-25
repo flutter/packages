@@ -4,13 +4,10 @@
 
 import 'dart:io';
 
+import 'test_utils.dart';
+
 void main() {
-  final ProcessResult branchResult = Process.runSync('git', <String>['branch', '--show-current']);
-  final String branch = branchResult.stdout.toString().trim();
-  if (branch == 'main') {
-    stdout.writeln('Error: Cannot run setup scripts on main branch.');
-    exit(1);
-  }
+  ensureNotMainBranch();
 
   final javaFile = File('android/src/main/java/io/flutter/plugins/camerax/DummyEvalFeature.java');
   javaFile.createSync(recursive: true);
@@ -60,14 +57,8 @@ public class DummyEvalFeatureTest {
     '--changelog=Adds `DummyEvalFeature` and tests.',
   ]);
 
-  Process.runSync('git', <String>['add', javaFile.path, javaTestFile.path, 'pubspec.yaml', 'CHANGELOG.md']);
-  Process.runSync('git', <String>[
-    '-c',
-    'user.name=Author',
-    '-c',
-    'user.email=author@example.com',
-    'commit',
-    '-m',
+  commitFiles(
+    <String>[javaFile.path, javaTestFile.path, 'pubspec.yaml', 'CHANGELOG.md'],
     'Add DummyEvalFeature.java, tests, and changelog update',
-  ]);
+  );
 }
