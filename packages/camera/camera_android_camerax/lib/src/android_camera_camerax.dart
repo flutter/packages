@@ -518,6 +518,12 @@ class AndroidCameraCameraX extends CameraPlatform {
     await processCameraProvider?.unbindAll();
     await imageAnalysis?.clearAnalyzer();
     await deviceOrientationManager.stopListeningForDeviceOrientationChange();
+
+    // `processCameraProvider.unbindAll()` implicitly finalizes active recordings natively.
+    // Clear the Dart state here to prevent an exception on resume.
+    recording = null;
+    pendingRecording = null;
+    videoOutputPath = null;
   }
 
   /// The camera with ID [cameraId] has been initialized.
@@ -1554,7 +1560,11 @@ class AndroidCameraCameraX extends CameraPlatform {
       case ResolutionPreset.max:
         // Automatically set strategy to choose highest available.
         resolutionStrategy = ResolutionStrategy.highestAvailableStrategy;
-        return ResolutionSelector(resolutionStrategy: resolutionStrategy);
+        return ResolutionSelector(
+          resolutionStrategy: resolutionStrategy,
+          allowedResolutionMode:
+              ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
+        );
       case null:
         // If no preset is specified, default to CameraX's default behavior
         // for each UseCase.

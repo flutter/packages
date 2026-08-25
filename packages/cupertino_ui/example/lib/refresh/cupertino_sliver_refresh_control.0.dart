@@ -43,9 +43,6 @@ class _RefreshControlExampleState extends State<RefreshControlExample> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('CupertinoSliverRefreshControl Sample'),
-      ),
       child: CustomScrollView(
         physics: const BouncingScrollPhysics(
           parent: AlwaysScrollableScrollPhysics(),

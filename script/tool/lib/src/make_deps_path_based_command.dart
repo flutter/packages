@@ -236,7 +236,10 @@ class MakeDepsPathBasedCommand extends PackageCommand {
 
         // Find the relative path from the common base to the local package.
         final List<String> repoRelativePathComponents = path.split(
-          path.relative(localDependencies[packageName]!.path, from: repoRootPath),
+          path.relative(
+            localDependencies[packageName]!.directory.absolute.path,
+            from: repoRootPath,
+          ),
         );
         final String pathValue = p.posix.joinAll(<String>[
           ...relativeBasePathComponents,
@@ -272,11 +275,14 @@ ${newOverrideLines.join('\n')}
     // example app doesn't. Since integration tests are run in the example app,
     // it needs the overrides in order for tests to pass.
     for (final RepositoryPackage example in package.getExamples()) {
+      final String parentPackageName = package.parsePubspec().name;
       await _addDependencyOverridesIfNecessary(
         example,
-        localDependencies,
+        <String, RepositoryPackage>{...localDependencies, parentPackageName: package},
         versions,
-        additionalPackagesToOverride: packagesToOverride,
+        // Add an override to the parent package in case a transitive dependency has a dependency on it,
+        // since that (non-path) dependency would conflict with the path-based dependency in the example.
+        additionalPackagesToOverride: <String>{...packagesToOverride, parentPackageName},
       );
     }
 

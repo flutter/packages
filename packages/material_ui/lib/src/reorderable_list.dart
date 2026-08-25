@@ -2,9 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:flutter_test/flutter_test.dart';
-///
 /// @docImport 'card.dart';
+/// @docImport 'paginated_data_table.dart';
 library;
 
 import 'dart:ui' show lerpDouble;
@@ -37,9 +36,9 @@ import 'theme.dart';
 ///
 /// </callout-box>
 ///
-/// By default, on [TargetPlatformVariant.desktop] platforms each item will
+/// By default, on desktop platforms each item will
 /// have a drag handle added on top of it that will allow the user to grab it
-/// to move the item. On [TargetPlatformVariant.mobile], no drag handle will be
+/// to move the item. On mobile platforms, no drag handle will be
 /// added, but when the user long presses anywhere on the item it will start
 /// moving the item. Displaying drag handles can be controlled with
 /// [ReorderableListView.buildDefaultDragHandles].
@@ -321,8 +320,8 @@ class ReorderableListView extends StatefulWidget {
   /// {@macro flutter.widgets.scroll_view.controller}
   final ScrollController? scrollController;
 
-  /// {@macro flutter.widgets.scroll_view.primary}
-
+  /// {@macro material_ui.paginated_data_table.primary}
+  ///
   /// Defaults to true when [scrollDirection] is [Axis.vertical] and
   /// [scrollController] is null.
   final bool? primary;

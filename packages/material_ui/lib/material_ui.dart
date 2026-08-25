@@ -14,7 +14,6 @@
 ///    for a catalog of commonly-used Material component widgets.
 ///  * [m3.material.io](https://m3.material.io/) for the Material 3 specification
 ///  * [m2.material.io](https://m2.material.io/) for the Material 2 specification
-/// @docImport 'package:flutter_test/flutter_test.dart';
 /// @docImport 'package:intl/intl.dart';
 library material_ui;
 
@@ -129,6 +128,7 @@ export 'src/menu_button_theme.dart';
 export 'src/menu_style.dart';
 export 'src/menu_theme.dart';
 export 'src/mergeable_material.dart';
+export 'src/migration_utility.dart';
 export 'src/motion.dart';
 export 'src/navigation_bar.dart';
 export 'src/navigation_bar_theme.dart';
