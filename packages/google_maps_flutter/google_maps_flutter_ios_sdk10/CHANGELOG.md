@@ -1,6 +1,7 @@
 ## 2.18.6
 
 * Updates pigeon dev_dependency constraint for analyzer 14 compatibility.
+* Converts parts of the implementation to Swift.
 
 ## 2.18.5
 

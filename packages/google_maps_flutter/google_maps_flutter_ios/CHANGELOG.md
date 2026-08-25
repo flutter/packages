@@ -1,6 +1,9 @@
 ## 2.18.5
 
 * Updates pigeon dev_dependency constraint for analyzer 14 compatibility.
+* Updates README to indicate that this package will not receive feature updates
+  going forward. Please see the README for information about adopting one of
+  the maintained implementation packages.
 
 ## 2.18.4
 
