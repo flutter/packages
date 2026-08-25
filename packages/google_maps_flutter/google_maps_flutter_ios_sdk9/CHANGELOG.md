@@ -1,3 +1,7 @@
+## 2.18.7
+
+* Converts parts of the implementation to Swift.
+
 ## 2.18.6
 
 * Fixes a potential compilation issue in tile downscaling.
