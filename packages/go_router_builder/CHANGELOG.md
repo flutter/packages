@@ -1,3 +1,7 @@
+## 4.4.1
+
+* Adds support for analyzer 14.
+
 ## 4.4.0
 
 - Adds `hasOverriddenOnExit` parameter to `GoRouteData.$route` and `RelativeGoRouteData.$route` helper methods for type-safe routes. When set to `true`, enables custom `onExit` callback invocation from route data classes extending `GoRouteData` or `RelativeGoRouteData` when the route is removed from the navigation stack.
