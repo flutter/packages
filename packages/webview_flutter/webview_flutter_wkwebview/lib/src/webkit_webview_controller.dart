@@ -953,7 +953,7 @@ class WebKitWebViewWidgetCreationParams extends PlatformWebViewWidgetCreationPar
     required super.controller,
     super.layoutDirection,
     super.gestureRecognizers,
-    this.gestureBlockingPolicy = UiKitViewGestureBlockingPolicy.fallbackToPluginDefault,
+    this.gestureBlockingPolicy = .fallbackToPluginDefault,
   });
 
   /// Constructs a [WebKitWebViewWidgetCreationParams] using a
@@ -967,19 +967,22 @@ class WebKitWebViewWidgetCreationParams extends PlatformWebViewWidgetCreationPar
         gestureRecognizers: params.gestureRecognizers,
       );
 
-  /// How the gesture recognizers of the underlying `WKWebView` are blocked by
-  /// Flutter.
+  /// When Flutter blocks the `UIGestureRecognizer`s that the underlying
+  /// `WKWebView` installs on itself.
+  ///
+  /// Blocking them is what lets a Flutter gesture win over a gesture inside the
+  /// web view; the policy controls how that decision is made.
   ///
   /// This is only used on iOS; the value is ignored on macOS.
   ///
   /// Defaults to [UiKitViewGestureBlockingPolicy.fallbackToPluginDefault],
   /// which uses the policy the plugin registers the platform view with.
   ///
-  /// Setting this to [UiKitViewGestureBlockingPolicy.doNotBlockGesture]
-  /// derives the blocking decision from hit testing instead of Flutter's
-  /// gesture arena, which can work around a web view that stops responding to
-  /// touches, at the cost of the web view potentially recognizing a gesture
-  /// that should have been blocked.
+  /// With [UiKitViewGestureBlockingPolicy.doNotBlockGesture], Flutter never
+  /// blocks touches that land on the web view: they are handled by the web view
+  /// and are not disambiguated through Flutter's gesture arena. That can work
+  /// around a web view that stops responding to touches, at the cost of the web
+  /// view recognizing gestures that should have been blocked.
   final UiKitViewGestureBlockingPolicy gestureBlockingPolicy;
 
   @override
