@@ -18,6 +18,9 @@ protocol AuthContext {
   /// Direct passthrough to LAContext's localizedFallbackTitle.
   var localizedFallbackTitle: String? { get set }
 
+  /// Direct passthrough to LAContext's localizedCancelTitle.
+  var localizedCancelTitle: String? { get set }
+
   /// Direct passthrough to LAContext's biometry type.
   var biometryType: LABiometryType { get }
 
