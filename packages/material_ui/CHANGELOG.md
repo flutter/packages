@@ -3,10 +3,6 @@
 - README updated for the full release of material_ui.
 - Promotes the pre-release to 1.0.0.
 
-## 0.0.3+2
-
-- Replace usages of `WidgetStatesController setter` with the recommended update method
-
 ## 0.0.3+1
 
 - Replace unresolvable doc imports
