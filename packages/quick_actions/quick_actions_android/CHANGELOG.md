@@ -1,3 +1,7 @@
+## 1.0.33
+
+* Fixes `getLaunchAction` throwing when there is no attached activity.
+
 ## 1.0.32
 
 * Bumps the androidx group across 10 directories with 1 update.

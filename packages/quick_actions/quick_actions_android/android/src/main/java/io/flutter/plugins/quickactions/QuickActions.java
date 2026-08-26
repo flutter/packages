@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
+import android.util.Log;
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,6 +29,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 
 final class QuickActions implements AndroidQuickActionsApi {
+  private static final String TAG = "QuickActionsAndroid";
   static final String EXTRA_ACTION = "some unique action key";
 
   private final Context context;
@@ -102,10 +104,12 @@ final class QuickActions implements AndroidQuickActionsApi {
       return null;
     }
     if (activity == null) {
-      throw new FlutterError(
-          "quick_action_getlaunchaction_no_activity",
-          "There is no activity available when launching action",
-          null);
+      // The engine can run without an attached activity, for instance when it is cached and warmed
+      // up by a background service. Nothing launched the app in that case, so there is no launch
+      // action to report. Any action that arrives later is reported through the plugin's
+      // onNewIntent listener once an activity attaches.
+      Log.d(TAG, "There is no activity available when getting the launch action.");
+      return null;
     }
     final Intent intent = activity.getIntent();
     final String launchAction = intent.getStringExtra(EXTRA_ACTION);
