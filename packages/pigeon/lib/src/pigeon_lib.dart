@@ -902,24 +902,28 @@ ${_argParser.usage}''';
     }
 
     if (useJni) {
-      final String? targetConfigDir =
-          internalOptions.kotlinOptions?.configDirectory ?? internalOptions.configDirectory;
-      final String fullConfigDir =
-          (internalOptions.basePath != null &&
-              targetConfigDir != null &&
-              targetConfigDir.isNotEmpty &&
-              !targetConfigDir.startsWith(internalOptions.basePath!))
-          ? path.join(internalOptions.basePath!, targetConfigDir)
-          : (targetConfigDir ?? internalOptions.basePath ?? '');
       final Map<String, String> env = await _getJniEnvironment(dartExecutable);
-      final bool success = await _runJnigen(
-        fullConfigDir,
-        internalOptions.input,
-        dartExecutable,
-        env,
-      );
-      if (!success) {
-        return 1;
+      if (!await _hasJavaRuntime(env)) {
+        print('JNI Multi-step: Skipping JNIgen because no Java runtime was found.');
+      } else {
+        final String? targetConfigDir =
+            internalOptions.kotlinOptions?.configDirectory ?? internalOptions.configDirectory;
+        final String fullConfigDir =
+            (internalOptions.basePath != null &&
+                targetConfigDir != null &&
+                targetConfigDir.isNotEmpty &&
+                !targetConfigDir.startsWith(internalOptions.basePath!))
+            ? path.join(internalOptions.basePath!, targetConfigDir)
+            : (targetConfigDir ?? internalOptions.basePath ?? '');
+        final bool success = await _runJnigen(
+          fullConfigDir,
+          internalOptions.input,
+          dartExecutable,
+          env,
+        );
+        if (!success) {
+          return 1;
+        }
       }
     }
 
@@ -1005,6 +1009,30 @@ ${_argParser.usage}''';
     return env;
   }
 
+  /// Checks whether a Java runtime is available to execute JNIgen.
+  static Future<bool> _hasJavaRuntime(Map<String, String> env) async {
+    final String? javaHome = env['JAVA_HOME'];
+    if (javaHome != null && javaHome.isNotEmpty) {
+      final String javaExecutable = path.join(javaHome, 'bin', 'java');
+      try {
+        final ProcessResult result = await Process.run(javaExecutable, <String>[
+          '-version',
+        ], environment: env);
+        return result.exitCode == 0;
+      } catch (_) {
+        return false;
+      }
+    }
+    try {
+      final ProcessResult result = await Process.run('java', <String>[
+        '-version',
+      ], environment: env);
+      return result.exitCode == 0;
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// Runs JNIgen in JNI multi-step generation.
   static Future<bool> _runJnigen(
     String appDir,
@@ -1012,6 +1040,10 @@ ${_argParser.usage}''';
     String dartExecutable,
     Map<String, String> env,
   ) async {
+    if (!await _hasJavaRuntime(env)) {
+      print('JNI Multi-step: Skipping JNIgen because no Java runtime was found.');
+      return true;
+    }
     final String configFile = getJnigenConfigPath(appDir, inputPath);
     print('JNI Multi-step: Running JNIgen for $configFile...');
     final ProcessResult jnigenResult = await Process.run(dartExecutable, [
