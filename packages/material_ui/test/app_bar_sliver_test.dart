@@ -2012,17 +2012,17 @@ void main() {
   ) async {
     final semantics = SemanticsTester(tester); // enables semantics tree generation
 
-    const kItemHeight = 100.0;
-    const kExpandedAppBarHeight = 56.0;
+    const itemHeight = 100.0;
+    const expandedAppBarHeight = 56.0;
 
     final containers = List<Widget>.generate(
       80,
       (int i) => MergeSemantics(
-        child: SizedBox(height: kItemHeight, child: Text('container $i')),
+        child: SizedBox(height: itemHeight, child: Text('container $i')),
       ),
     );
 
-    final scrollController = ScrollController(initialScrollOffset: kItemHeight / 2);
+    final scrollController = ScrollController(initialScrollOffset: itemHeight / 2);
     addTearDown(scrollController.dispose);
 
     await tester.pumpWidget(
@@ -2044,7 +2044,7 @@ void main() {
                   slivers: <Widget>[
                     const SliverAppBar(
                       pinned: true,
-                      expandedHeight: kExpandedAppBarHeight,
+                      expandedHeight: expandedAppBarHeight,
                       flexibleSpace: FlexibleSpaceBar(title: Text('App Bar')),
                     ),
                     SliverList.list(children: containers),
@@ -2057,7 +2057,7 @@ void main() {
       ),
     );
 
-    expect(scrollController.offset, kItemHeight / 2);
+    expect(scrollController.offset, itemHeight / 2);
 
     final int firstContainerId = tester
         .renderObject(find.byWidget(containers.first))
@@ -2067,9 +2067,8 @@ void main() {
       firstContainerId,
       SemanticsAction.showOnScreen,
     );
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 5));
-    expect(tester.getTopLeft(find.byWidget(containers.first)).dy, kExpandedAppBarHeight);
+    await tester.pumpAndSettle();
+    expect(tester.getTopLeft(find.byWidget(containers.first)).dy, expandedAppBarHeight);
 
     semantics.dispose();
   });
@@ -2079,20 +2078,20 @@ void main() {
   ) async {
     final semantics = SemanticsTester(tester); // enables semantics tree generation
 
-    const kItemHeight = 72.0;
-    const kInitialScrollOffset = 250.0;
-    const kExpandedAppBarHeight = 256.0;
+    const itemHeight = 72.0;
+    const initialScrollOffset = 250.0;
+    const expandedAppBarHeight = 256.0;
 
     final children = <Widget>[];
     final slivers = List<Widget>.generate(30, (int i) {
       final Widget child = MergeSemantics(
-        child: SizedBox(height: kItemHeight, child: Text('Item $i')),
+        child: SizedBox(height: itemHeight, child: Text('Item $i')),
       );
       children.add(child);
       return SliverToBoxAdapter(child: child);
     });
 
-    final scrollController = ScrollController(initialScrollOffset: kInitialScrollOffset);
+    final scrollController = ScrollController(initialScrollOffset: initialScrollOffset);
     addTearDown(scrollController.dispose);
 
     await tester.pumpWidget(
@@ -2114,7 +2113,7 @@ void main() {
                   slivers: <Widget>[
                     const SliverAppBar(
                       pinned: true,
-                      expandedHeight: kExpandedAppBarHeight,
+                      expandedHeight: expandedAppBarHeight,
                       flexibleSpace: FlexibleSpaceBar(title: Text('App Bar')),
                     ),
                     ...slivers,
@@ -2127,12 +2126,11 @@ void main() {
       ),
     );
 
-    expect(scrollController.offset, kInitialScrollOffset);
+    expect(scrollController.offset, initialScrollOffset);
 
     final int id0 = tester.renderObject(find.byWidget(children[0])).debugSemantics!.id;
     tester.binding.pipelineOwner.semanticsOwner!.performAction(id0, SemanticsAction.showOnScreen);
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
     expect(tester.getTopLeft(find.byWidget(children[0])).dy, kToolbarHeight);
 
     semantics.dispose();
