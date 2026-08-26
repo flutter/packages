@@ -28,6 +28,7 @@ export 'maps_object_updates.dart';
 export 'marker.dart';
 export 'marker_updates.dart';
 export 'pattern_item.dart';
+export 'platform_map_configuration.dart';
 export 'polygon.dart';
 export 'polygon_updates.dart';
 export 'polyline.dart';

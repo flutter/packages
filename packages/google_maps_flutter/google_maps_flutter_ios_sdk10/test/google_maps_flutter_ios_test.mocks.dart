@@ -23,6 +23,7 @@ import 'package:mockito/src/dummies.dart' as _i3;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakePlatformPoint_0 extends _i1.SmartFake implements _i2.PlatformPoint {
   _FakePlatformPoint_0(Object parent, Invocation parentInvocation)
@@ -71,6 +72,17 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
   _i4.Future<void> updateMapConfiguration(_i2.PlatformMapConfiguration? configuration) =>
       (super.noSuchMethod(
             Invocation.method(#updateMapConfiguration, [configuration]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setMarkerUpdateAnimationConfiguration(
+    _i2.PlatformMarkerUpdateAnimationConfiguration? configuration,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#setMarkerUpdateAnimationConfiguration, [configuration]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )

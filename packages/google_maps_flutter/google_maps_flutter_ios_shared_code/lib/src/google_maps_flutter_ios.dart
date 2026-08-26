@@ -8,7 +8,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart'
+    hide PlatformMapConfiguration;
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart'
+    as platform_interface
+    show PlatformMapConfiguration;
 import 'package:stream_transform/stream_transform.dart';
 
 import 'google_map_inspector_ios.dart';
@@ -38,6 +42,22 @@ class UnknownMapIDError extends Error {
     }
     return 'Unknown map ID $mapId';
   }
+}
+
+/// Platform-specific configuration for a Google Map on iOS.
+@immutable
+class GoogleMapsFlutterIOSMapConfiguration extends platform_interface.PlatformMapConfiguration {
+  /// Creates an iOS map configuration.
+  const GoogleMapsFlutterIOSMapConfiguration({
+    this.markerPositionAnimationsEnabled = true,
+    this.markerRotationAnimationsEnabled = true,
+  });
+
+  /// Whether marker position updates should use native iOS implicit animations.
+  final bool markerPositionAnimationsEnabled;
+
+  /// Whether marker rotation updates should use native iOS implicit animations.
+  final bool markerRotationAnimationsEnabled;
 }
 
 /// An implementation of [GoogleMapsFlutterPlatform] for iOS.
@@ -207,6 +227,19 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     return _hostApi(
       mapId,
     ).updateMapConfiguration(_platformMapConfigurationFromMapConfiguration(configuration));
+  }
+
+  @override
+  Future<void> setPlatformConfiguration(
+    platform_interface.PlatformMapConfiguration configuration, {
+    required int mapId,
+  }) {
+    if (configuration is GoogleMapsFlutterIOSMapConfiguration) {
+      return _hostApi(mapId).setMarkerUpdateAnimationConfiguration(
+        _platformMarkerUpdateAnimationConfigurationFromMapConfiguration(configuration),
+      );
+    }
+    return Future<void>.value();
   }
 
   @override
@@ -632,6 +665,16 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       collisionBehavior: marker is AdvancedMarker
           ? platformMarkerCollisionBehaviorFromMarkerCollisionBehavior(marker.collisionBehavior)
           : null,
+    );
+  }
+
+  static PlatformMarkerUpdateAnimationConfiguration
+  _platformMarkerUpdateAnimationConfigurationFromMapConfiguration(
+    GoogleMapsFlutterIOSMapConfiguration configuration,
+  ) {
+    return PlatformMarkerUpdateAnimationConfiguration(
+      positionAnimationsEnabled: configuration.markerPositionAnimationsEnabled,
+      rotationAnimationsEnabled: configuration.markerRotationAnimationsEnabled,
     );
   }
 

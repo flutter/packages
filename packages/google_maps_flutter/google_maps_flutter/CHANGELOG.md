@@ -1,3 +1,8 @@
+## 2.19.0
+
+* Adds `GoogleMapController.setPlatformConfiguration` for configuring
+  platform-specific map options.
+
 ## 2.18.0
 
 * Adds support for mapTypeControlEnabled, fullscreenControlEnabled, and streetViewControlEnabled on web.

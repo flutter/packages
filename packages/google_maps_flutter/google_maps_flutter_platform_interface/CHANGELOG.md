@@ -1,3 +1,7 @@
+## 2.17.0
+
+* Adds support for platform-specific map configuration.
+
 ## 2.16.1
 
 * Fixes the `PinConfig` code sample in the `BitmapDescriptor` documentation.

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import GoogleMaps
+import QuartzCore
 import Testing
 
 @testable import google_maps_flutter_ios_sdk10
@@ -35,6 +36,70 @@ import Testing
 
   func placeholderBitmap() -> FGMPlatformBitmap {
     return FGMPlatformBitmap.make(withBitmap: FGMPlatformBitmapDefaultMarker.make(withHue: 0))
+  }
+
+  func platformMarker(
+    collisionBehavior: FGMPlatformMarkerCollisionBehaviorBox?
+  ) -> FGMPlatformMarker {
+    return FGMPlatformMarker.make(
+      withAlpha: 1.0,
+      anchor: FGMPlatformPoint.makeWith(x: 0, y: 0),
+      consumeTapEvents: true,
+      draggable: true,
+      flat: true,
+      icon: placeholderBitmap(),
+      infoWindow: FGMPlatformInfoWindow.make(
+        withTitle: "info title",
+        snippet: "info snippet",
+        anchor: FGMPlatformPoint.makeWith(x: 0, y: 0)
+      ),
+      position: FGMPlatformLatLng.make(withLatitude: 0, longitude: 0),
+      rotation: 0,
+      visible: true,
+      zIndex: 0,
+      markerId: "marker",
+      clusterManagerId: nil,
+      collisionBehavior: collisionBehavior
+    )
+  }
+
+  func markerUpdateAnimationConfiguration(
+    positionAnimationsEnabled: Bool,
+    rotationAnimationsEnabled: Bool
+  ) -> FGMPlatformMarkerUpdateAnimationConfiguration {
+    return FGMPlatformMarkerUpdateAnimationConfiguration.make(
+      withPositionAnimationsEnabled: positionAnimationsEnabled,
+      rotationAnimationsEnabled: rotationAnimationsEnabled
+    )
+  }
+
+  func updateAnimationValidatingMarker(
+    _ marker: MarkerUpdateAnimationValidatingMarker,
+    configuration: FGMPlatformMarkerUpdateAnimationConfiguration?
+  ) {
+    FGMMarkerController.update(
+      marker,
+      from: platformMarker(collisionBehavior: nil),
+      with: MarkerControllerTests.mapView(),
+      assetProvider: TestAssetProvider(),
+      screenScale: 1,
+      markerUpdateAnimationConfiguration: configuration,
+      usingOpacityForVisibility: false
+    )
+  }
+
+  func updateAnimationValidatingMarker(
+    _ marker: MarkerUpdateAnimationValidatingMarker,
+    positionAnimationsEnabled: Bool,
+    rotationAnimationsEnabled: Bool
+  ) {
+    updateAnimationValidatingMarker(
+      marker,
+      configuration: markerUpdateAnimationConfiguration(
+        positionAnimationsEnabled: positionAnimationsEnabled,
+        rotationAnimationsEnabled: rotationAnimationsEnabled
+      )
+    )
   }
 
   @Test func setsMarkerNumericProperties() throws {
@@ -256,32 +321,83 @@ import Testing
     )
     FGMMarkerController.update(
       marker,
-      from: FGMPlatformMarker.make(
-        withAlpha: 1.0,
-        anchor: FGMPlatformPoint.makeWith(x: 0, y: 0),
-        consumeTapEvents: true,
-        draggable: true,
-        flat: true,
-        icon: placeholderBitmap(),
-        infoWindow: FGMPlatformInfoWindow.make(
-          withTitle: "info title",
-          snippet: "info snippet",
-          anchor: FGMPlatformPoint.makeWith(x: 0, y: 0)
-        ),
-        position: FGMPlatformLatLng.make(withLatitude: 0, longitude: 0),
-        rotation: 0,
-        visible: true,
-        zIndex: 0,
-        markerId: "marker",
-        clusterManagerId: nil,
-        collisionBehavior: collisionBehavior
-      ),
+      from: platformMarker(collisionBehavior: collisionBehavior),
       with: MarkerControllerTests.mapView(),
       assetProvider: TestAssetProvider(),
       screenScale: 1,
+      markerUpdateAnimationConfiguration: markerUpdateAnimationConfiguration(
+        positionAnimationsEnabled: true,
+        rotationAnimationsEnabled: true
+      ),
       usingOpacityForVisibility: false
     )
     #expect(marker.hasSetMap)
+  }
+
+  @Test func updateMarkerWithDefaultConfigurationDoesNotDisableActions() {
+    let marker = MarkerUpdateAnimationValidatingMarker()
+    updateAnimationValidatingMarker(
+      marker,
+      positionAnimationsEnabled: true,
+      rotationAnimationsEnabled: true
+    )
+
+    #expect(marker.hasSetPosition)
+    #expect(!marker.wereActionsDisabledWhenSettingPosition)
+    #expect(marker.hasSetRotation)
+    #expect(!marker.wereActionsDisabledWhenSettingRotation)
+  }
+
+  @Test func updateMarkerWithNilConfigurationDoesNotDisableActions() {
+    let marker = MarkerUpdateAnimationValidatingMarker()
+    updateAnimationValidatingMarker(marker, configuration: nil)
+
+    #expect(marker.hasSetPosition)
+    #expect(!marker.wereActionsDisabledWhenSettingPosition)
+    #expect(marker.hasSetRotation)
+    #expect(!marker.wereActionsDisabledWhenSettingRotation)
+  }
+
+  @Test func updateMarkerCanDisablePositionAndRotationAnimations() {
+    let marker = MarkerUpdateAnimationValidatingMarker()
+    updateAnimationValidatingMarker(
+      marker,
+      positionAnimationsEnabled: false,
+      rotationAnimationsEnabled: false
+    )
+
+    #expect(marker.hasSetPosition)
+    #expect(marker.wereActionsDisabledWhenSettingPosition)
+    #expect(marker.hasSetRotation)
+    #expect(marker.wereActionsDisabledWhenSettingRotation)
+  }
+
+  @Test func updateMarkerCanDisableOnlyPositionAnimations() {
+    let marker = MarkerUpdateAnimationValidatingMarker()
+    updateAnimationValidatingMarker(
+      marker,
+      positionAnimationsEnabled: false,
+      rotationAnimationsEnabled: true
+    )
+
+    #expect(marker.hasSetPosition)
+    #expect(marker.wereActionsDisabledWhenSettingPosition)
+    #expect(marker.hasSetRotation)
+    #expect(!marker.wereActionsDisabledWhenSettingRotation)
+  }
+
+  @Test func updateMarkerCanDisableOnlyRotationAnimations() {
+    let marker = MarkerUpdateAnimationValidatingMarker()
+    updateAnimationValidatingMarker(
+      marker,
+      positionAnimationsEnabled: true,
+      rotationAnimationsEnabled: false
+    )
+
+    #expect(marker.hasSetPosition)
+    #expect(!marker.wereActionsDisabledWhenSettingPosition)
+    #expect(marker.hasSetRotation)
+    #expect(marker.wereActionsDisabledWhenSettingRotation)
   }
 
   @Test func assetProviderIsRetained() {
@@ -301,6 +417,31 @@ import Testing
     }
     #expect(markerController != nil)
     #expect(weakAssetProvider != nil)
+  }
+}
+
+class MarkerUpdateAnimationValidatingMarker: GMSMarker {
+  var hasSetPosition = false
+  var wereActionsDisabledWhenSettingPosition = false
+  var hasSetRotation = false
+  var wereActionsDisabledWhenSettingRotation = false
+
+  override var position: CLLocationCoordinate2D {
+    get { super.position }
+    set {
+      wereActionsDisabledWhenSettingPosition = CATransaction.disableActions()
+      hasSetPosition = true
+      super.position = newValue
+    }
+  }
+
+  override var rotation: CLLocationDegrees {
+    get { super.rotation }
+    set {
+      wereActionsDisabledWhenSettingRotation = CATransaction.disableActions()
+      hasSetRotation = true
+      super.rotation = newValue
+    }
   }
 }
 
