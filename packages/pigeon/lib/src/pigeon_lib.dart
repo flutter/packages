@@ -882,18 +882,22 @@ ${_argParser.usage}''';
     }
 
     if (useFfi) {
-      final String? targetConfigDir =
-          internalOptions.swiftOptions?.configDirectory ?? internalOptions.configDirectory;
-      final String fullConfigDir =
-          (internalOptions.basePath != null &&
-              targetConfigDir != null &&
-              targetConfigDir.isNotEmpty &&
-              !targetConfigDir.startsWith(internalOptions.basePath!))
-          ? path.join(internalOptions.basePath!, targetConfigDir)
-          : (targetConfigDir ?? internalOptions.basePath ?? '');
-      final int exitCode = await _runFfigen(fullConfigDir, internalOptions.input, dartExecutable);
-      if (exitCode != 0) {
-        return exitCode;
+      if (!Platform.isMacOS) {
+        print('FFI Multi-step: Skipping FFIgen on non-macOS platform.');
+      } else {
+        final String? targetConfigDir =
+            internalOptions.swiftOptions?.configDirectory ?? internalOptions.configDirectory;
+        final String fullConfigDir =
+            (internalOptions.basePath != null &&
+                targetConfigDir != null &&
+                targetConfigDir.isNotEmpty &&
+                !targetConfigDir.startsWith(internalOptions.basePath!))
+            ? path.join(internalOptions.basePath!, targetConfigDir)
+            : (targetConfigDir ?? internalOptions.basePath ?? '');
+        final int exitCode = await _runFfigen(fullConfigDir, internalOptions.input, dartExecutable);
+        if (exitCode != 0) {
+          return exitCode;
+        }
       }
     }
 
@@ -943,6 +947,10 @@ ${_argParser.usage}''';
     String? inputPath,
     String dartExecutable,
   ) async {
+    if (!Platform.isMacOS) {
+      print('FFI Multi-step: Skipping FFIgen on non-macOS platform.');
+      return 0;
+    }
     final String configFile = getFfigenConfigPath(swiftAppDir, inputPath);
     if (File(configFile).existsSync()) {
       print('FFI Multi-step: Running FFIgen for $configFile...');

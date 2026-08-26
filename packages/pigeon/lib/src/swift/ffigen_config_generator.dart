@@ -57,7 +57,7 @@ class FfigenConfigGenerator extends Generator<InternalFfigenConfigOptions> {
     }
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
-    indent.writeln('// ignore_for_file: depend_on_referenced_packages');
+    indent.writeln('// ignore_for_file: avoid_print, depend_on_referenced_packages');
     indent.newln();
     indent.format('''
 import 'dart:io';
@@ -119,6 +119,12 @@ import 'package:swiftgen/swiftgen.dart';
         : 'Runner';
 
     indent.writeScoped('Future<void> main(List<String> args) async {', '}', () {
+      indent.format('''
+  if (!Platform.isMacOS) {
+    print('FFI generation is only supported on macOS.');
+    return;
+  }
+''');
       indent.writeln("  Directory.current = Platform.script.resolve('../..').toFilePath();");
       indent.format('''
   Uri sdk;
@@ -258,6 +264,9 @@ ${hasAsyncFlutterApi ? '''
     });
     indent.format('''
 Future<Uri> _getAppleSdk() async {
+  if (!Platform.isMacOS) {
+    return Uri.directory('/');
+  }
   try {
     final ProcessResult result = await Process.run('xcrun', <String>['--sdk', 'iphoneos', '--show-sdk-path']);
     if (result.exitCode == 0) {
