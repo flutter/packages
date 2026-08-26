@@ -969,6 +969,26 @@ class CameraController extends ValueNotifier<CameraValue> {
     }
   }
 
+  /// Sets the JPEG compression quality for still image capture.
+  ///
+  /// This only applies to images captured in JPEG format.
+  /// The [quality] must be between 1 (lowest) and 100 (highest).
+  ///
+  /// This is a best-effort setting: platforms that do not support controlling
+  /// the JPEG quality ignore it rather than throwing. See
+  /// https://github.com/flutter/flutter/issues/191790 for the current state of
+  /// platform support.
+  Future<void> setJpegImageQuality(int quality) async {
+    if (quality < 1 || quality > 100) {
+      throw ArgumentError.value(quality, 'quality', 'Must be between 1 and 100.');
+    }
+    try {
+      await CameraPlatform.instance.setJpegImageQuality(_cameraId, quality);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
   /// Check whether the camera platform supports image streaming.
   bool supportsImageStreaming() => CameraPlatform.instance.supportsImageStreaming();
 
