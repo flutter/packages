@@ -59,9 +59,7 @@ private func wrapError(_ error: Any) -> [Any?] {
 }
 
 private func createConnectionError(withChannelName channelName: String) -> PigeonError {
-  return PigeonError(
-    code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.",
-    details: "")
+  return PigeonError(code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.", details: "")
 }
 
 private func isNullish(_ value: Any?) -> Bool {
@@ -79,7 +77,7 @@ private func doubleEqualsMessages(_ lhs: Double, _ rhs: Double) -> Bool {
 
 private func doubleHashMessages(_ value: Double, _ hasher: inout Hasher) {
   if value.isNaN {
-    hasher.combine(0x7FF8_0000_0000_0000)
+    hasher.combine(0x7FF8000000000000)
   } else {
     // Normalize -0.0 to 0.0
     hasher.combine(value == 0 ? 0 : value)
@@ -182,6 +180,7 @@ func deepHashMessages(value: Any?, hasher: inout Hasher) {
   }
 }
 
+
 enum PlatformCameraLensDirection: Int {
   /// Front facing camera (a user looking at the screen is seen by the camera).
   case front = 0
@@ -262,6 +261,7 @@ struct PlatformCameraDescription: Hashable {
   /// The type of the camera lens.
   var lensType: PlatformCameraLensType
 
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PlatformCameraDescription? {
     let name = pigeonVar_list[0] as! String
@@ -285,9 +285,7 @@ struct PlatformCameraDescription: Hashable {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return deepEqualsMessages(lhs.name, rhs.name)
-      && deepEqualsMessages(lhs.lensDirection, rhs.lensDirection)
-      && deepEqualsMessages(lhs.lensType, rhs.lensType)
+    return deepEqualsMessages(lhs.name, rhs.name) && deepEqualsMessages(lhs.lensDirection, rhs.lensDirection) && deepEqualsMessages(lhs.lensType, rhs.lensType)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -310,6 +308,7 @@ struct PlatformCameraState: Hashable {
   var exposurePointSupported: Bool
   /// Whether setting focus points is supported.
   var focusPointSupported: Bool
+
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PlatformCameraState? {
@@ -340,11 +339,7 @@ struct PlatformCameraState: Hashable {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return deepEqualsMessages(lhs.previewSize, rhs.previewSize)
-      && deepEqualsMessages(lhs.exposureMode, rhs.exposureMode)
-      && deepEqualsMessages(lhs.focusMode, rhs.focusMode)
-      && deepEqualsMessages(lhs.exposurePointSupported, rhs.exposurePointSupported)
-      && deepEqualsMessages(lhs.focusPointSupported, rhs.focusPointSupported)
+    return deepEqualsMessages(lhs.previewSize, rhs.previewSize) && deepEqualsMessages(lhs.exposureMode, rhs.exposureMode) && deepEqualsMessages(lhs.focusMode, rhs.focusMode) && deepEqualsMessages(lhs.exposurePointSupported, rhs.exposurePointSupported) && deepEqualsMessages(lhs.focusPointSupported, rhs.focusPointSupported)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -367,6 +362,7 @@ struct PlatformCameraImageData: Hashable {
   var lensAperture: Double
   var sensorExposureTimeNanoseconds: Int64
   var sensorSensitivity: Double
+
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PlatformCameraImageData? {
@@ -403,12 +399,7 @@ struct PlatformCameraImageData: Hashable {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return deepEqualsMessages(lhs.formatCode, rhs.formatCode)
-      && deepEqualsMessages(lhs.width, rhs.width) && deepEqualsMessages(lhs.height, rhs.height)
-      && deepEqualsMessages(lhs.planes, rhs.planes)
-      && deepEqualsMessages(lhs.lensAperture, rhs.lensAperture)
-      && deepEqualsMessages(lhs.sensorExposureTimeNanoseconds, rhs.sensorExposureTimeNanoseconds)
-      && deepEqualsMessages(lhs.sensorSensitivity, rhs.sensorSensitivity)
+    return deepEqualsMessages(lhs.formatCode, rhs.formatCode) && deepEqualsMessages(lhs.width, rhs.width) && deepEqualsMessages(lhs.height, rhs.height) && deepEqualsMessages(lhs.planes, rhs.planes) && deepEqualsMessages(lhs.lensAperture, rhs.lensAperture) && deepEqualsMessages(lhs.sensorExposureTimeNanoseconds, rhs.sensorExposureTimeNanoseconds) && deepEqualsMessages(lhs.sensorSensitivity, rhs.sensorSensitivity)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -429,6 +420,7 @@ struct PlatformCameraImagePlane: Hashable {
   var bytesPerRow: Int64
   var width: Int64
   var height: Int64
+
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PlatformCameraImagePlane? {
@@ -456,9 +448,7 @@ struct PlatformCameraImagePlane: Hashable {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return deepEqualsMessages(lhs.bytes, rhs.bytes)
-      && deepEqualsMessages(lhs.bytesPerRow, rhs.bytesPerRow)
-      && deepEqualsMessages(lhs.width, rhs.width) && deepEqualsMessages(lhs.height, rhs.height)
+    return deepEqualsMessages(lhs.bytes, rhs.bytes) && deepEqualsMessages(lhs.bytesPerRow, rhs.bytesPerRow) && deepEqualsMessages(lhs.width, rhs.width) && deepEqualsMessages(lhs.height, rhs.height)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -477,6 +467,7 @@ struct PlatformMediaSettings: Hashable {
   var videoBitrate: Int64? = nil
   var audioBitrate: Int64? = nil
   var enableAudio: Bool
+
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PlatformMediaSettings? {
@@ -507,11 +498,7 @@ struct PlatformMediaSettings: Hashable {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return deepEqualsMessages(lhs.resolutionPreset, rhs.resolutionPreset)
-      && deepEqualsMessages(lhs.framesPerSecond, rhs.framesPerSecond)
-      && deepEqualsMessages(lhs.videoBitrate, rhs.videoBitrate)
-      && deepEqualsMessages(lhs.audioBitrate, rhs.audioBitrate)
-      && deepEqualsMessages(lhs.enableAudio, rhs.enableAudio)
+    return deepEqualsMessages(lhs.resolutionPreset, rhs.resolutionPreset) && deepEqualsMessages(lhs.framesPerSecond, rhs.framesPerSecond) && deepEqualsMessages(lhs.videoBitrate, rhs.videoBitrate) && deepEqualsMessages(lhs.audioBitrate, rhs.audioBitrate) && deepEqualsMessages(lhs.enableAudio, rhs.enableAudio)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -528,6 +515,7 @@ struct PlatformMediaSettings: Hashable {
 struct PlatformPoint: Hashable {
   var x: Double
   var y: Double
+
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PlatformPoint? {
@@ -563,6 +551,7 @@ struct PlatformPoint: Hashable {
 struct PlatformSize: Hashable {
   var width: Double
   var height: Double
+
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PlatformSize? {
@@ -750,22 +739,17 @@ class MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
   static let shared = MessagesPigeonCodec(readerWriter: MessagesPigeonCodecReaderWriter())
 }
 
-var messagesPigeonMethodCodec = FlutterStandardMethodCodec(
-  readerWriter: MessagesPigeonCodecReaderWriter())
+var messagesPigeonMethodCodec = FlutterStandardMethodCodec(readerWriter: MessagesPigeonCodecReaderWriter());
+
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol CameraApi {
   /// Returns the list of available cameras.
-  func getAvailableCameras(
-    completion: @escaping (Result<[PlatformCameraDescription], Error>) -> Void)
+  func getAvailableCameras(completion: @escaping (Result<[PlatformCameraDescription], Error>) -> Void)
   /// Create a new camera with the given settings, and returns its ID.
-  func create(
-    cameraName: String, settings: PlatformMediaSettings,
-    completion: @escaping (Result<Int64, Error>) -> Void)
+  func create(cameraName: String, settings: PlatformMediaSettings, completion: @escaping (Result<Int64, Error>) -> Void)
   /// Initializes the camera with the given ID.
-  func initialize(
-    cameraId: Int64, imageFormat: PlatformImageFormatGroup,
-    completion: @escaping (Result<Void, Error>) -> Void)
+  func initialize(cameraId: Int64, imageFormat: PlatformImageFormatGroup, completion: @escaping (Result<Void, Error>) -> Void)
   /// Begins streaming frames from the camera.
   func startImageStream(completion: @escaping (Result<Void, Error>) -> Void)
   /// Stops streaming frames from the camera.
@@ -779,8 +763,7 @@ protocol CameraApi {
   /// and any associated resources can be cleaned up.
   func dispose(cameraId: Int64, completion: @escaping (Result<Void, Error>) -> Void)
   /// Locks the camera capture to the current device orientation.
-  func lockCaptureOrientation(
-    orientation: PlatformDeviceOrientation, completion: @escaping (Result<Void, Error>) -> Void)
+  func lockCaptureOrientation(orientation: PlatformDeviceOrientation, completion: @escaping (Result<Void, Error>) -> Void)
   /// Unlocks camera capture orientation, allowing it to automatically adapt to
   /// device orientation.
   func unlockCaptureOrientation(completion: @escaping (Result<Void, Error>) -> Void)
@@ -791,9 +774,7 @@ protocol CameraApi {
   func prepareForVideoRecording(completion: @escaping (Result<Void, Error>) -> Void)
   /// Begins recording video, optionally enabling streaming to Dart at the same
   /// time.
-  func startVideoRecording(
-    enableStream: Bool, videoOutputPath: String?,
-    completion: @escaping (Result<Void, Error>) -> Void)
+  func startVideoRecording(enableStream: Bool, videoOutputPath: String?, completion: @escaping (Result<Void, Error>) -> Void)
   /// Stops recording video, and results the path to the resulting file.
   func stopVideoRecording(completion: @escaping (Result<String, Error>) -> Void)
   /// Pauses video recording.
@@ -803,8 +784,7 @@ protocol CameraApi {
   /// Switches the camera to the given flash mode.
   func setFlashMode(mode: PlatformFlashMode, completion: @escaping (Result<Void, Error>) -> Void)
   /// Switches the camera to the given exposure mode.
-  func setExposureMode(
-    mode: PlatformExposureMode, completion: @escaping (Result<Void, Error>) -> Void)
+  func setExposureMode(mode: PlatformExposureMode, completion: @escaping (Result<Void, Error>) -> Void)
   /// Anchors auto-exposure to the given point in (0,1) coordinate space.
   ///
   /// A null value resets to the default exposure point.
@@ -828,11 +808,9 @@ protocol CameraApi {
   /// Sets the zoom factor.
   func setZoomLevel(zoom: Double, completion: @escaping (Result<Void, Error>) -> Void)
   /// Sets the video stabilization mode.
-  func setVideoStabilizationMode(
-    mode: PlatformVideoStabilizationMode, completion: @escaping (Result<Void, Error>) -> Void)
+  func setVideoStabilizationMode(mode: PlatformVideoStabilizationMode, completion: @escaping (Result<Void, Error>) -> Void)
   /// Gets if the given video stabilization mode is supported.
-  func isVideoStabilizationModeSupported(
-    mode: PlatformVideoStabilizationMode, completion: @escaping (Result<Bool, Error>) -> Void)
+  func isVideoStabilizationModeSupported(mode: PlatformVideoStabilizationMode, completion: @escaping (Result<Bool, Error>) -> Void)
   /// Pauses streaming of preview frames.
   func pausePreview(completion: @escaping (Result<Void, Error>) -> Void)
   /// Resumes a previously paused preview stream.
@@ -840,28 +818,21 @@ protocol CameraApi {
   /// Changes the camera used while recording video.
   ///
   /// This should only be called while video recording is active.
-  func updateDescriptionWhileRecording(
-    cameraName: String, completion: @escaping (Result<Void, Error>) -> Void)
+  func updateDescriptionWhileRecording(cameraName: String, completion: @escaping (Result<Void, Error>) -> Void)
   /// Sets the file format used for taking pictures.
-  func setImageFileFormat(
-    format: PlatformImageFileFormat, completion: @escaping (Result<Void, Error>) -> Void)
+  func setImageFileFormat(format: PlatformImageFileFormat, completion: @escaping (Result<Void, Error>) -> Void)
   /// Sets the JPEG compression quality for still image capture.
-  func setJpegImageQuality(
-    quality: Int64, completion: @escaping (Result<Void, Error>) -> Void)
+  func setJpegImageQuality(quality: Int64, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class CameraApiSetup {
   static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
   /// Sets up an instance of `CameraApi` to handle messages through the `binaryMessenger`.
-  static func setUp(
-    binaryMessenger: FlutterBinaryMessenger, api: CameraApi?, messageChannelSuffix: String = ""
-  ) {
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: CameraApi?, messageChannelSuffix: String = "") {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     /// Returns the list of available cameras.
-    let getAvailableCamerasChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.getAvailableCameras\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let getAvailableCamerasChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.getAvailableCameras\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getAvailableCamerasChannel.setMessageHandler { _, reply in
         api.getAvailableCameras { result in
@@ -877,9 +848,7 @@ class CameraApiSetup {
       getAvailableCamerasChannel.setMessageHandler(nil)
     }
     /// Create a new camera with the given settings, and returns its ID.
-    let createChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.create\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let createChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.create\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       createChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -898,9 +867,7 @@ class CameraApiSetup {
       createChannel.setMessageHandler(nil)
     }
     /// Initializes the camera with the given ID.
-    let initializeChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.initialize\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let initializeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.initialize\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       initializeChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -919,9 +886,7 @@ class CameraApiSetup {
       initializeChannel.setMessageHandler(nil)
     }
     /// Begins streaming frames from the camera.
-    let startImageStreamChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.startImageStream\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let startImageStreamChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.startImageStream\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       startImageStreamChannel.setMessageHandler { _, reply in
         api.startImageStream { result in
@@ -937,9 +902,7 @@ class CameraApiSetup {
       startImageStreamChannel.setMessageHandler(nil)
     }
     /// Stops streaming frames from the camera.
-    let stopImageStreamChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.stopImageStream\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let stopImageStreamChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.stopImageStream\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       stopImageStreamChannel.setMessageHandler { _, reply in
         api.stopImageStream { result in
@@ -958,10 +921,7 @@ class CameraApiSetup {
     /// frame sent.
     ///
     /// This is used to throttle sending frames across the channel.
-    let receivedImageStreamDataChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.camera_avfoundation.CameraApi.receivedImageStreamData\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let receivedImageStreamDataChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.receivedImageStreamData\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       receivedImageStreamDataChannel.setMessageHandler { _, reply in
         api.receivedImageStreamData { result in
@@ -978,9 +938,7 @@ class CameraApiSetup {
     }
     /// Indicates that the given camera is no longer being used on the Dart side,
     /// and any associated resources can be cleaned up.
-    let disposeChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.dispose\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let disposeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.dispose\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       disposeChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -998,10 +956,7 @@ class CameraApiSetup {
       disposeChannel.setMessageHandler(nil)
     }
     /// Locks the camera capture to the current device orientation.
-    let lockCaptureOrientationChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.camera_avfoundation.CameraApi.lockCaptureOrientation\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let lockCaptureOrientationChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.lockCaptureOrientation\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       lockCaptureOrientationChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -1020,10 +975,7 @@ class CameraApiSetup {
     }
     /// Unlocks camera capture orientation, allowing it to automatically adapt to
     /// device orientation.
-    let unlockCaptureOrientationChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.camera_avfoundation.CameraApi.unlockCaptureOrientation\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let unlockCaptureOrientationChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.unlockCaptureOrientation\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       unlockCaptureOrientationChannel.setMessageHandler { _, reply in
         api.unlockCaptureOrientation { result in
@@ -1040,9 +992,7 @@ class CameraApiSetup {
     }
     /// Takes a picture with the current settings, and returns the path to the
     /// resulting file.
-    let takePictureChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.takePicture\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let takePictureChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.takePicture\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       takePictureChannel.setMessageHandler { _, reply in
         api.takePicture { result in
@@ -1058,10 +1008,7 @@ class CameraApiSetup {
       takePictureChannel.setMessageHandler(nil)
     }
     /// Does any preprocessing necessary before beginning to record video.
-    let prepareForVideoRecordingChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.camera_avfoundation.CameraApi.prepareForVideoRecording\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let prepareForVideoRecordingChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.prepareForVideoRecording\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       prepareForVideoRecordingChannel.setMessageHandler { _, reply in
         api.prepareForVideoRecording { result in
@@ -1078,16 +1025,13 @@ class CameraApiSetup {
     }
     /// Begins recording video, optionally enabling streaming to Dart at the same
     /// time.
-    let startVideoRecordingChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.startVideoRecording\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let startVideoRecordingChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.startVideoRecording\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       startVideoRecordingChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let enableStreamArg = args[0] as! Bool
         let videoOutputPathArg: String? = nilOrValue(args[1])
-        api.startVideoRecording(enableStream: enableStreamArg, videoOutputPath: videoOutputPathArg)
-        { result in
+        api.startVideoRecording(enableStream: enableStreamArg, videoOutputPath: videoOutputPathArg) { result in
           switch result {
           case .success:
             reply(wrapResult(nil))
@@ -1100,9 +1044,7 @@ class CameraApiSetup {
       startVideoRecordingChannel.setMessageHandler(nil)
     }
     /// Stops recording video, and results the path to the resulting file.
-    let stopVideoRecordingChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.stopVideoRecording\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let stopVideoRecordingChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.stopVideoRecording\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       stopVideoRecordingChannel.setMessageHandler { _, reply in
         api.stopVideoRecording { result in
@@ -1118,9 +1060,7 @@ class CameraApiSetup {
       stopVideoRecordingChannel.setMessageHandler(nil)
     }
     /// Pauses video recording.
-    let pauseVideoRecordingChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.pauseVideoRecording\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let pauseVideoRecordingChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.pauseVideoRecording\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pauseVideoRecordingChannel.setMessageHandler { _, reply in
         api.pauseVideoRecording { result in
@@ -1136,9 +1076,7 @@ class CameraApiSetup {
       pauseVideoRecordingChannel.setMessageHandler(nil)
     }
     /// Resumes a previously paused video recording.
-    let resumeVideoRecordingChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.resumeVideoRecording\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let resumeVideoRecordingChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.resumeVideoRecording\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       resumeVideoRecordingChannel.setMessageHandler { _, reply in
         api.resumeVideoRecording { result in
@@ -1154,9 +1092,7 @@ class CameraApiSetup {
       resumeVideoRecordingChannel.setMessageHandler(nil)
     }
     /// Switches the camera to the given flash mode.
-    let setFlashModeChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setFlashMode\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let setFlashModeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setFlashMode\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setFlashModeChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -1174,9 +1110,7 @@ class CameraApiSetup {
       setFlashModeChannel.setMessageHandler(nil)
     }
     /// Switches the camera to the given exposure mode.
-    let setExposureModeChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setExposureMode\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let setExposureModeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setExposureMode\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setExposureModeChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -1196,9 +1130,7 @@ class CameraApiSetup {
     /// Anchors auto-exposure to the given point in (0,1) coordinate space.
     ///
     /// A null value resets to the default exposure point.
-    let setExposurePointChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setExposurePoint\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let setExposurePointChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setExposurePoint\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setExposurePointChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -1216,9 +1148,7 @@ class CameraApiSetup {
       setExposurePointChannel.setMessageHandler(nil)
     }
     /// Returns the minimum exposure offset supported by the camera.
-    let getMinExposureOffsetChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.getMinExposureOffset\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let getMinExposureOffsetChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.getMinExposureOffset\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getMinExposureOffsetChannel.setMessageHandler { _, reply in
         api.getMinExposureOffset { result in
@@ -1234,9 +1164,7 @@ class CameraApiSetup {
       getMinExposureOffsetChannel.setMessageHandler(nil)
     }
     /// Returns the maximum exposure offset supported by the camera.
-    let getMaxExposureOffsetChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.getMaxExposureOffset\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let getMaxExposureOffsetChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.getMaxExposureOffset\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getMaxExposureOffsetChannel.setMessageHandler { _, reply in
         api.getMaxExposureOffset { result in
@@ -1252,9 +1180,7 @@ class CameraApiSetup {
       getMaxExposureOffsetChannel.setMessageHandler(nil)
     }
     /// Sets the exposure offset manually to the given value.
-    let setExposureOffsetChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setExposureOffset\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let setExposureOffsetChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setExposureOffset\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setExposureOffsetChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -1272,9 +1198,7 @@ class CameraApiSetup {
       setExposureOffsetChannel.setMessageHandler(nil)
     }
     /// Switches the camera to the given focus mode.
-    let setFocusModeChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setFocusMode\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let setFocusModeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setFocusMode\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setFocusModeChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -1294,9 +1218,7 @@ class CameraApiSetup {
     /// Anchors auto-focus to the given point in (0,1) coordinate space.
     ///
     /// A null value resets to the default focus point.
-    let setFocusPointChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setFocusPoint\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let setFocusPointChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setFocusPoint\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setFocusPointChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -1314,9 +1236,7 @@ class CameraApiSetup {
       setFocusPointChannel.setMessageHandler(nil)
     }
     /// Returns the minimum zoom level supported by the camera.
-    let getMinZoomLevelChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.getMinZoomLevel\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let getMinZoomLevelChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.getMinZoomLevel\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getMinZoomLevelChannel.setMessageHandler { _, reply in
         api.getMinZoomLevel { result in
@@ -1332,9 +1252,7 @@ class CameraApiSetup {
       getMinZoomLevelChannel.setMessageHandler(nil)
     }
     /// Returns the maximum zoom level supported by the camera.
-    let getMaxZoomLevelChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.getMaxZoomLevel\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let getMaxZoomLevelChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.getMaxZoomLevel\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getMaxZoomLevelChannel.setMessageHandler { _, reply in
         api.getMaxZoomLevel { result in
@@ -1350,9 +1268,7 @@ class CameraApiSetup {
       getMaxZoomLevelChannel.setMessageHandler(nil)
     }
     /// Sets the zoom factor.
-    let setZoomLevelChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setZoomLevel\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let setZoomLevelChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setZoomLevel\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setZoomLevelChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -1370,10 +1286,7 @@ class CameraApiSetup {
       setZoomLevelChannel.setMessageHandler(nil)
     }
     /// Sets the video stabilization mode.
-    let setVideoStabilizationModeChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.camera_avfoundation.CameraApi.setVideoStabilizationMode\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let setVideoStabilizationModeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setVideoStabilizationMode\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setVideoStabilizationModeChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -1391,10 +1304,7 @@ class CameraApiSetup {
       setVideoStabilizationModeChannel.setMessageHandler(nil)
     }
     /// Gets if the given video stabilization mode is supported.
-    let isVideoStabilizationModeSupportedChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.camera_avfoundation.CameraApi.isVideoStabilizationModeSupported\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let isVideoStabilizationModeSupportedChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.isVideoStabilizationModeSupported\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       isVideoStabilizationModeSupportedChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -1412,9 +1322,7 @@ class CameraApiSetup {
       isVideoStabilizationModeSupportedChannel.setMessageHandler(nil)
     }
     /// Pauses streaming of preview frames.
-    let pausePreviewChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.pausePreview\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let pausePreviewChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.pausePreview\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pausePreviewChannel.setMessageHandler { _, reply in
         api.pausePreview { result in
@@ -1430,9 +1338,7 @@ class CameraApiSetup {
       pausePreviewChannel.setMessageHandler(nil)
     }
     /// Resumes a previously paused preview stream.
-    let resumePreviewChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.resumePreview\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let resumePreviewChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.resumePreview\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       resumePreviewChannel.setMessageHandler { _, reply in
         api.resumePreview { result in
@@ -1450,10 +1356,7 @@ class CameraApiSetup {
     /// Changes the camera used while recording video.
     ///
     /// This should only be called while video recording is active.
-    let updateDescriptionWhileRecordingChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.camera_avfoundation.CameraApi.updateDescriptionWhileRecording\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let updateDescriptionWhileRecordingChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.updateDescriptionWhileRecording\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       updateDescriptionWhileRecordingChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -1471,9 +1374,7 @@ class CameraApiSetup {
       updateDescriptionWhileRecordingChannel.setMessageHandler(nil)
     }
     /// Sets the file format used for taking pictures.
-    let setImageFileFormatChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setImageFileFormat\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let setImageFileFormatChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setImageFileFormat\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setImageFileFormatChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -1491,13 +1392,11 @@ class CameraApiSetup {
       setImageFileFormatChannel.setMessageHandler(nil)
     }
     /// Sets the JPEG compression quality for still image capture.
-    let setJpegImageQualityChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setJpegImageQuality\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let setJpegImageQualityChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setJpegImageQuality\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setJpegImageQualityChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let qualityArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+        let qualityArg = args[0] as! Int64
         api.setJpegImageQuality(quality: qualityArg) { result in
           switch result {
           case .success:
@@ -1563,31 +1462,25 @@ class PigeonEventSink<ReturnType> {
 }
 
 class ImageDataStreamStreamHandler: PigeonEventChannelWrapper<PlatformCameraImageData> {
-  static func register(
-    with messenger: FlutterBinaryMessenger,
-    instanceName: String = "",
-    streamHandler: ImageDataStreamStreamHandler
-  ) {
-    var channelName =
-      "dev.flutter.pigeon.camera_avfoundation.CameraImageStreamEventApi.imageDataStream"
+  static func register(with messenger: FlutterBinaryMessenger,
+                      instanceName: String = "",
+                      streamHandler: ImageDataStreamStreamHandler) {
+    var channelName = "dev.flutter.pigeon.camera_avfoundation.CameraImageStreamEventApi.imageDataStream"
     if !instanceName.isEmpty {
       channelName += ".\(instanceName)"
     }
     let internalStreamHandler = PigeonStreamHandler<PlatformCameraImageData>(wrapper: streamHandler)
-    let channel = FlutterEventChannel(
-      name: channelName, binaryMessenger: messenger, codec: messagesPigeonMethodCodec)
+    let channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger, codec: messagesPigeonMethodCodec)
     channel.setStreamHandler(internalStreamHandler)
   }
 }
-
+      
 /// Handler for native callbacks that are not tied to a specific camera ID.
 ///
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol CameraGlobalEventApiProtocol {
   /// Called when the device's physical orientation changes.
-  func deviceOrientationChanged(
-    orientation orientationArg: PlatformDeviceOrientation,
-    completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func deviceOrientationChanged(orientation orientationArg: PlatformDeviceOrientation, completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 class CameraGlobalEventApi: CameraGlobalEventApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -1600,14 +1493,9 @@ class CameraGlobalEventApi: CameraGlobalEventApiProtocol {
     return MessagesPigeonCodec.shared
   }
   /// Called when the device's physical orientation changes.
-  func deviceOrientationChanged(
-    orientation orientationArg: PlatformDeviceOrientation,
-    completion: @escaping (Result<Void, PigeonError>) -> Void
-  ) {
-    let channelName: String =
-      "dev.flutter.pigeon.camera_avfoundation.CameraGlobalEventApi.deviceOrientationChanged\(messageChannelSuffix)"
-    let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+  func deviceOrientationChanged(orientation orientationArg: PlatformDeviceOrientation, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.camera_avfoundation.CameraGlobalEventApi.deviceOrientationChanged\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([orientationArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -1631,9 +1519,7 @@ class CameraGlobalEventApi: CameraGlobalEventApiProtocol {
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol CameraEventApiProtocol {
   /// Called when the camera is inialitized for use.
-  func initialized(
-    initialState initialStateArg: PlatformCameraState,
-    completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func initialized(initialState initialStateArg: PlatformCameraState, completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Called when an error occurs in the camera.
   ///
   /// This should be used for errors that occur outside of the context of
@@ -1651,14 +1537,9 @@ class CameraEventApi: CameraEventApiProtocol {
     return MessagesPigeonCodec.shared
   }
   /// Called when the camera is inialitized for use.
-  func initialized(
-    initialState initialStateArg: PlatformCameraState,
-    completion: @escaping (Result<Void, PigeonError>) -> Void
-  ) {
-    let channelName: String =
-      "dev.flutter.pigeon.camera_avfoundation.CameraEventApi.initialized\(messageChannelSuffix)"
-    let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+  func initialized(initialState initialStateArg: PlatformCameraState, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.camera_avfoundation.CameraEventApi.initialized\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([initialStateArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -1678,12 +1559,9 @@ class CameraEventApi: CameraEventApiProtocol {
   ///
   /// This should be used for errors that occur outside of the context of
   /// handling a specific HostApi call, such as during streaming.
-  func error(message messageArg: String, completion: @escaping (Result<Void, PigeonError>) -> Void)
-  {
-    let channelName: String =
-      "dev.flutter.pigeon.camera_avfoundation.CameraEventApi.error\(messageChannelSuffix)"
-    let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+  func error(message messageArg: String, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.camera_avfoundation.CameraEventApi.error\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([messageArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
