@@ -38,8 +38,6 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
   private var flutterSmallApiTwo: FlutterSmallApi? = null
   private var proxyApiRegistrar: ProxyApiRegistrar? = null
   private var niMessageApi: NativeInteropHostIntegrationCoreApiRegistrar? = null
-  // private var niSmallApiOne: NIHostSmallApiRegistrar? = null
-  // private var niSmallApiTwo: NIHostSmallApiRegistrar? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
@@ -1035,7 +1033,7 @@ class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
   override fun echoAnotherEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum {
     return anotherEnum
   }
-  //
+
   override fun echoNamedDefaultString(aString: String): String {
     return aString
   }
@@ -1494,7 +1492,7 @@ class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
   override fun callFlutterEchoDouble(aDouble: Double): Double {
     return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoDouble(aDouble)
   }
-  //
+
   override fun callFlutterEchoString(aString: String): String {
     return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance()!!.echoString(aString)
   }
@@ -2128,16 +2126,6 @@ class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
     return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance(name) == null
   }
 }
-
-//   class NIHostSmallApiTests : NIHostSmallApi() {
-//     override suspend fun echo(aString: String): String {
-//       return aString
-//     }
-//
-//     override suspend fun voidVoid() {
-//       return
-//     }
-// }
 
 object SendInts : StreamIntsStreamHandler() {
   val handler = Handler(Looper.getMainLooper())
