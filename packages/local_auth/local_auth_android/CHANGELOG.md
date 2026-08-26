@@ -1,3 +1,7 @@
+## 2.1.0
+
+* Converts the implementation to Kotlin.
+
 ## 2.0.9
 
 * Migrates to Built-in Kotlin to support AGP 9.
