@@ -21,7 +21,7 @@ dependencies:
   flutter:
     sdk: flutter
   meta: ^1.10.0
-  video_player_platform_interface: ^6.10.0
+  video_player_platform_interface: ^6.9.0
 
 dev_dependencies:
   build_runner: ^2.3.3
