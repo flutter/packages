@@ -1629,7 +1629,7 @@ void main() {
       expect(
         valueIndicatorBox,
         paints
-          // Represents the raised button wth next text.
+          // Represents the raised button with next text.
           ..path(color: Colors.black)
           ..paragraph()
           // Represents the range slider.
@@ -1726,10 +1726,10 @@ void main() {
     expect(values.end, moreOrLessEquals(0.5, epsilon: 0.03));
     await tester.pumpAndSettle();
 
+    // The drag gesture has finished, so no overlayColor should show up.
     expect(
       sliderBox,
       paints
-        ..circle(color: sliderTheme.overlayColor)
         ..circle(color: sliderTheme.thumbColor)
         ..circle(color: sliderTheme.overlappingShapeStrokeColor)
         ..circle(color: sliderTheme.thumbColor),
@@ -3537,7 +3537,7 @@ void main() {
     );
   });
 
-  // Regression test for hhttps://github.com/flutter/flutter/issues/161805
+  // Regression test for https://github.com/flutter/flutter/issues/161805
   testWidgets('Discrete RangeSlider does not apply thumb padding in a non-rounded track shape', (
     WidgetTester tester,
   ) async {
@@ -3897,6 +3897,207 @@ void main() {
     expect(tester.getSize(find.byType(RangeSlider)), Size.zero);
   });
 
+  testWidgets('RangeSlider keeps drag overlay when touch moves outside thumb', (
+    WidgetTester tester,
+  ) async {
+    tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTouch;
+    addTearDown(() {
+      tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.automatic;
+    });
+
+    const overlayColor = Color(0xff800080);
+    var values = const RangeValues(0.3, 0.7);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return RangeSlider(
+                  values: values,
+                  overlayColor: const WidgetStatePropertyAll<Color>(overlayColor),
+                  onChanged: (RangeValues newValues) {
+                    setState(() {
+                      values = newValues;
+                    });
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final Offset topLeft = tester.getTopLeft(find.byType(RangeSlider));
+    final Offset bottomRight = tester.getBottomRight(find.byType(RangeSlider));
+    final Offset startThumbPos = topLeft + (bottomRight - topLeft) * 0.3;
+    final TestGesture gesture = await tester.startGesture(startThumbPos);
+    await gesture.moveBy(const Offset(40.0, -80.0));
+    await tester.pumpAndSettle();
+
+    expect(
+      Material.of(tester.element(find.byType(RangeSlider))),
+      paints..circle(color: overlayColor),
+    );
+
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    expect(
+      Material.of(tester.element(find.byType(RangeSlider))),
+      isNot(paints..circle(color: overlayColor)),
+    );
+  });
+
+  testWidgets('RangeSlider touch focus does not show persistent overlay', (
+    WidgetTester tester,
+  ) async {
+    tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTouch;
+    addTearDown(() {
+      tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.automatic;
+    });
+
+    const overlayColor = Color(0xff800080);
+    var values = const RangeValues(0.3, 0.7);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return RangeSlider(
+                  values: values,
+                  overlayColor: const WidgetStatePropertyAll<Color>(overlayColor),
+                  onChanged: (RangeValues newValues) {
+                    setState(() {
+                      values = newValues;
+                    });
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final Offset topLeft = tester.getTopLeft(find.byType(RangeSlider));
+    final Offset bottomRight = tester.getBottomRight(find.byType(RangeSlider));
+    final Offset startThumbPos = topLeft + (bottomRight - topLeft) * 0.3;
+    final TestGesture gesture = await tester.startGesture(startThumbPos);
+    await tester.pump();
+    await gesture.moveBy(const Offset(10.0, 0.0));
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    final startFocusNode =
+        (tester.state(find.byType(RangeSlider)) as dynamic).startFocusNode as FocusNode;
+    expect(startFocusNode.hasFocus, isTrue);
+    expect(
+      Material.of(tester.element(find.byType(RangeSlider))),
+      isNot(paints..circle(color: overlayColor)),
+    );
+  });
+
+  testWidgets('RangeSlider keyboard focus shows focused overlay', (WidgetTester tester) async {
+    tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
+    addTearDown(() {
+      tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.automatic;
+    });
+
+    const overlayColor = Color(0xff800080);
+    var values = const RangeValues(0.3, 0.7);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return RangeSlider(
+                  values: values,
+                  overlayColor: const WidgetStatePropertyAll<Color>(overlayColor),
+                  onChanged: (RangeValues newValues) {
+                    setState(() {
+                      values = newValues;
+                    });
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pumpAndSettle();
+
+    final startFocusNode =
+        (tester.state(find.byType(RangeSlider)) as dynamic).startFocusNode as FocusNode;
+    expect(startFocusNode.hasFocus, isTrue);
+    expect(
+      Material.of(tester.element(find.byType(RangeSlider))),
+      paints..circle(color: overlayColor),
+    );
+  });
+
+  testWidgets('RangeSlider overlayColor resolves focused state', (WidgetTester tester) async {
+    tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
+    addTearDown(() {
+      tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.automatic;
+    });
+
+    const focusedColor = Color(0xff800080);
+    var values = const RangeValues(0.3, 0.7);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return RangeSlider(
+                  values: values,
+                  overlayColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+                    if (states.contains(WidgetState.focused)) {
+                      return focusedColor;
+                    }
+                    return null;
+                  }),
+                  onChanged: (RangeValues newValues) {
+                    setState(() {
+                      values = newValues;
+                    });
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      Material.of(tester.element(find.byType(RangeSlider))),
+      isNot(paints..circle(color: focusedColor)),
+    );
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pumpAndSettle();
+
+    final startFocusNode =
+        (tester.state(find.byType(RangeSlider)) as dynamic).startFocusNode as FocusNode;
+    expect(startFocusNode.hasFocus, isTrue);
+    expect(
+      Material.of(tester.element(find.byType(RangeSlider))),
+      paints..circle(color: focusedColor),
+    );
+  });
+
   testWidgets('RangeSlider taps should set focus on start/end thumbs', (WidgetTester tester) async {
     var values = const RangeValues(0.3, 0.7);
 
@@ -4073,13 +4274,56 @@ void main() {
     expect(endFocusNode.hasFocus, isTrue, reason: 'End thumb should have focus after tab');
     expect(FocusManager.instance.primaryFocus, equals(endFocusNode));
   });
+
+  testWidgets('RangeSlider labels respect horizontal buffer and avoid screen overflow', (
+    WidgetTester tester,
+  ) async {
+    final logPainters = <TextPainter>[];
+    final shape = LoggingRangeSliderValueIndicatorShape(<InlineSpan>[], logPainters);
+
+    const longLabelStart = 'A very long start label string that exceeds standard screen widths';
+    const longLabelEnd = 'A very long end label string that exceeds standard screen widths';
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SliderTheme(
+            data: SliderThemeData(
+              showValueIndicator: ShowValueIndicator.always,
+              rangeValueIndicatorShape: shape,
+            ),
+            child: RangeSlider(
+              values: const RangeValues(0.2, 0.8),
+              divisions: 10,
+              labels: const RangeLabels(longLabelStart, longLabelEnd),
+              onChanged: (RangeValues values) {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Press the range slider to trigger the value indicators
+    final TestGesture gesture = await tester.startGesture(
+      tester.getCenter(find.byType(RangeSlider)),
+    );
+    await tester.pumpAndSettle();
+
+    final double screenWidth = tester.view.physicalSize.width / tester.view.devicePixelRatio;
+
+    expect(logPainters, isNotEmpty);
+    expect(logPainters.last.width, lessThanOrEqualTo(screenWidth - 64.0));
+
+    await gesture.up();
+  });
 }
 
 // A value indicator shape to log labelPainter text.
 class LoggingRangeSliderValueIndicatorShape extends RangeSliderValueIndicatorShape {
-  LoggingRangeSliderValueIndicatorShape(this.logLabel);
+  LoggingRangeSliderValueIndicatorShape(this.logLabel, [this.logPainter]);
 
   final List<InlineSpan> logLabel;
+  final List<TextPainter>? logPainter;
 
   @override
   Size getPreferredSize(
@@ -4109,5 +4353,6 @@ class LoggingRangeSliderValueIndicatorShape extends RangeSliderValueIndicatorSha
     Thumb? thumb,
   }) {
     logLabel.add(labelPainter.text!);
+    logPainter?.add(labelPainter);
   }
 }
