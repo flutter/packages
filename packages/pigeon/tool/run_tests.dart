@@ -117,9 +117,14 @@ Future<void> _validateGeneratedFiles(
       .map((GeneratorLanguage lang) => _extensionsForLanguage(lang))
       .flattened
       .toSet();
-  final Iterable<String> filteredFiles = modifiedFiles.where(
-    (String path) => extensions.contains(p.extension(path).replaceFirst('.', '')),
-  );
+  final Iterable<String> filteredFiles = modifiedFiles.where((String path) {
+    // Ignore ffigen output (e.g., Swift-generated Objective-C compatibility
+    // files in _objc_gen directories).
+    if (p.split(path).any((String part) => part.endsWith('_objc_gen'))) {
+      return false;
+    }
+    return extensions.contains(p.extension(path).replaceFirst('.', ''));
+  });
 
   if (filteredFiles.isEmpty) {
     return;
