@@ -16,7 +16,7 @@ let package = Package(
     .library(name: "google-maps-flutter-ios-sdk9", targets: ["google_maps_flutter_ios_sdk9"])
   ],
   dependencies: [
-    .package(url: "https://github.com/googlemaps/ios-maps-sdk", "9.0.0"..<"10.0.0"),
+    .package(url: "https://github.com/googlemaps/ios-maps-sdk", "9.2.0"..<"10.0.0"),
     // 6.1.3+ requires SDK 10.
     .package(url: "https://github.com/googlemaps/google-maps-ios-utils", "6.0.0"..<"6.1.3"),
   ],
@@ -24,6 +24,7 @@ let package = Package(
     .target(
       name: "google_maps_flutter_ios_sdk9",
       dependencies: [
+        "google_maps_flutter_ios_sdk9_objc",
         .product(
           name: "GoogleMapsUtils",
           package: "google-maps-ios-utils"
@@ -35,10 +36,23 @@ let package = Package(
       ],
       resources: [
         .process("Resources")
+      ]
+    ),
+    .target(
+      name: "google_maps_flutter_ios_sdk9_objc",
+      dependencies: [
+        .product(
+          name: "GoogleMapsUtils",
+          package: "google-maps-ios-utils"
+        ),
+        .product(
+          name: "GoogleMaps",
+          package: "ios-maps-sdk"
+        ),
       ],
       cSettings: [
-        .headerSearchPath("include/google_maps_flutter_ios_sdk9")
+        .headerSearchPath("include/google_maps_flutter_ios_sdk9_objc")
       ]
-    )
+    ),
   ]
 )
