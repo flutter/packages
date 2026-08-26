@@ -4,7 +4,7 @@
 
 ## 8.2.0
 
-- Extracts the class `Config` to its own file and rename it `GoogleFontsConfig`. The `Config` class is now deprecated.
+- Extract the class `Config` to its own file and rename it `GoogleFontsConfig`. The `Config` class is now deprecated.
 - Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 8.1.0
@@ -21,7 +21,7 @@
 
 ## 8.0.0
 
-- Adds fonts:
+- Added fonts:
   - `Amarna`
   - `BBH Bartle`
   - `BBH Bogle`
@@ -42,7 +42,7 @@
   - `Stack Sans Headline`
   - `Stack Sans Notch`
   - `Stack Sans Text`
-- Removes fonts:
+- Removed fonts:
   - `Chiron GoRound TC`
   - `Chiron Sung HK`
 
