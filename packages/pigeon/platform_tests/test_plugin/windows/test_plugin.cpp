@@ -64,8 +64,65 @@ void TestPlugin::RegisterWithRegistrar(
                                              std::move(host_small_api_two));
 
   HostIntegrationCoreApi::SetUp(registrar->messenger(), plugin.get());
+  HostCallbackCoreApi::SetUp(registrar->messenger(), plugin.get());
 
   registrar->AddPlugin(std::move(plugin));
+}
+
+void TestPlugin::Noop(
+    std::function<
+        void(std::optional<core_tests_pigeontest::FlutterError> reply)>
+        result) {
+  result(std::nullopt);
+}
+
+void TestPlugin::EchoString(
+    const std::string& a_string,
+    std::function<void(core_tests_pigeontest::ErrorOr<std::string> reply)>
+        result) {
+  result(a_string);
+}
+
+void TestPlugin::EchoAllTypes(
+    const core_tests_pigeontest::AllTypes& everything,
+    std::function<void(
+        core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypes> reply)>
+        result) {
+  result(everything);
+}
+
+void TestPlugin::EchoNullableString(
+    const std::string* a_string,
+    std::function<
+        void(core_tests_pigeontest::ErrorOr<std::optional<std::string>> reply)>
+        result) {
+  if (a_string) {
+    result(std::optional<std::string>(*a_string));
+  } else {
+    result(std::optional<std::string>());
+  }
+}
+
+void TestPlugin::ThrowError(
+    std::function<void(
+        core_tests_pigeontest::ErrorOr<std::optional<::flutter::EncodableValue>>
+            reply)>
+        result) {
+  result(core_tests_pigeontest::FlutterError(
+      "code", "message", flutter::EncodableValue("details")));
+}
+
+void TestPlugin::ThrowErrorFromVoid(
+    std::function<
+        void(std::optional<core_tests_pigeontest::FlutterError> reply)>
+        result) {
+  result(core_tests_pigeontest::FlutterError(
+      "code", "message", flutter::EncodableValue("details")));
+}
+
+void TestPlugin::TaskQueueIsBackgroundThread(
+    std::function<void(core_tests_pigeontest::ErrorOr<bool> reply)> result) {
+  result(std::this_thread::get_id() != main_thread_id_);
 }
 
 TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger,
@@ -79,6 +136,9 @@ TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger,
       host_small_api_two_(std::move(host_small_api_two)),
       flutter_api_(
           std::make_unique<FlutterIntegrationCoreApi>(binary_messenger)),
+      flutter_callback_api_(
+          std::make_unique<core_tests_pigeontest::FlutterCallbackCoreApi>(
+              binary_messenger)),
       main_thread_id_(std::this_thread::get_id()) {}
 
 TestPlugin::~TestPlugin() {}
@@ -755,6 +815,11 @@ ErrorOr<bool> TestPlugin::TaskQueueIsBackgroundThread() {
   return std::this_thread::get_id() != main_thread_id_;
 }
 
+void TestPlugin::AsyncTaskQueueIsBackgroundThread(
+    std::function<void(ErrorOr<bool> reply)> result) {
+  result(std::this_thread::get_id() != main_thread_id_);
+}
+
 void TestPlugin::CallFlutterNoop(
     std::function<void(std::optional<FlutterError> reply)> result) {
   flutter_api_->Noop([result]() { result(std::nullopt); },
@@ -1252,6 +1317,45 @@ void TestPlugin::CallFlutterSmallApiEchoString(
             },
             [result](const FlutterError& error) { result(error); });
       },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterCallbackNoop(
+    std::function<
+        void(std::optional<core_tests_pigeontest::FlutterError> reply)>
+        result) {
+  flutter_callback_api_->Noop(
+      [result]() { result(std::nullopt); },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterCallbackEchoString(
+    const std::string& a_string,
+    std::function<void(core_tests_pigeontest::ErrorOr<std::string> reply)>
+        result) {
+  flutter_callback_api_->EchoString(
+      a_string, [result](const std::string& echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterCallbackThrowError(
+    std::function<void(
+        core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableValue>>
+            reply)>
+        result) {
+  flutter_callback_api_->ThrowError(
+      [result](const EncodableValue* echo) {
+        result(echo ? std::optional<EncodableValue>(*echo) : std::nullopt);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterCallbackThrowErrorFromVoid(
+    std::function<
+        void(std::optional<core_tests_pigeontest::FlutterError> reply)>
+        result) {
+  flutter_callback_api_->ThrowErrorFromVoid(
+      [result]() { result(std::nullopt); },
       [result](const FlutterError& error) { result(error); });
 }
 

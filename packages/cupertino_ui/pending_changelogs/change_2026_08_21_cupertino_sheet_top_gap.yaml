@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes lower routes being revealed through the top gap when multiple `CupertinoSheetRoute`s are stacked.
+version: patch

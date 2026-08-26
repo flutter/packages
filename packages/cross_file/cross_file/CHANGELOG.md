@@ -1,3 +1,4 @@
+<<<<<<< HEAD:packages/cross_file/cross_file/CHANGELOG.md
 ## 0.4.0
 
 * Updates `cross_file` to a package-separated federated plugin.
@@ -16,6 +17,13 @@
 * **Breaking Change** Removes `XFile.path`. This has been replaced by `FileSystemXFile.path`.
 * **Breaking Change** Changes `XFile.name` to a method that returns `Future<String>` rather than a
   field that returns `String`.
+=======
+## 0.3.5+5
+
+* Fixes native `readAsString` returning mojibake for `XFile.fromData`, which
+  decoded the bytes as UTF-16 code units instead of using the `encoding`
+  argument.
+>>>>>>> 4797ae24bad34888df7a6f0e96054bb86f0b635e:packages/cross_file/CHANGELOG.md
 
 ## 0.3.5+4
 
