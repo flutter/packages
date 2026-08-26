@@ -1,4 +1,4 @@
-## 0.10.12
+## 0.10.11+1
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
 
