@@ -28,7 +28,7 @@ abstract base class XDirectory extends XEntity {
   }
 
   /// Instantiates a [ScopedStorageXFile] as a reference to a directory
-  /// (or folder) on the file system within a devices scoped storage.
+  /// (or folder) on the file system within a device's scoped storage.
   factory XDirectory.scopedStorage({required String uri}) {
     return ScopedStorageXDirectory(uri: uri);
   }

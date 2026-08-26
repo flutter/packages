@@ -7,7 +7,7 @@ import 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 import 'android_library.g.dart';
 import 'android_scoped_storage_cross_file.dart';
 
-/// Implementation of [PlatformScopedStorageXDirectory] for iOS and macOS.
+/// Implementation of [PlatformScopedStorageXDirectory] for Android.
 base class AndroidScopedStorageXDirectory extends PlatformScopedStorageXDirectory {
   /// Constructs an [AndroidScopedStorageXDirectory].
   AndroidScopedStorageXDirectory(super.params) : super.implementation();

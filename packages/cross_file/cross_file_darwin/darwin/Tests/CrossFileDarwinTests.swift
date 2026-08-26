@@ -14,9 +14,13 @@ import Testing
   #error("Unsupported platform.")
 #endif
 
-// Placeholder for adding tests.
+// This plugin doesn't include native unit tests because getting access to files that are part of
+// iOS App Sandbox requires user interactions outside of the app.
+//
+// This also serves as a placeholder for a native test because the CI of flutter/packages requires
+// native tests for all iOS plugins.
 struct CrossFileDarwinTests {
-  @Test func placeHoldertTest() throws {
+  @Test func placeHolderTest() throws {
     #expect(true == true)
   }
 }

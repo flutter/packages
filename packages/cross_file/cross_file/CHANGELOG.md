@@ -1,4 +1,3 @@
-<<<<<<< HEAD:packages/cross_file/cross_file/CHANGELOG.md
 ## 0.4.0
 
 * Updates `cross_file` to a package-separated federated plugin.
@@ -6,24 +5,24 @@
 * Adds implementation for file systems. See `FileSystemXFile` and `FileSystemXDirectory`.
 * Adds implementation for scoped storage APIs that use ephemeral URLS. See `ScopedStorageXFile`
   and `ScopedStorageXDirectory`.
-* **Breaking Change** Replaces `XFile(String path)` with `XFile.fileSystem({required String path})`
-  or `FileSystem(String path)`.
-* **Breaking Change** Removes `XFile.fromData`. `XFile`s can no longer be instantiated with a
-  `Uint8List`. For web, see README for an example to create one from a `Blob`/`File`.
-* **Breaking Change** Removes `XFile.saveTo()`. `FileSystemXFile.writeAsBytes` has been added
-  and the web implementation can use `WebScopedStorageXFileExtension.download`. See README to see
-  how to access platform-specific feature.
-* **Breaking Change** Removes `XFile.mimeType`.
-* **Breaking Change** Removes `XFile.path`. This has been replaced by `FileSystemXFile.path`.
-* **Breaking Change** Changes `XFile.name` to a method that returns `Future<String>` rather than a
-  field that returns `String`.
-=======
+* **BREAKING CHANGES**:
+  * Replaces `XFile(String path)` with `XFile.fileSystem({required String path})`
+    or `FileSystem(String path)`.
+  * Removes `XFile.fromData`. `XFile`s can no longer be instantiated with a
+    `Uint8List`. For web, see README for an example to create one from a `Blob`/`File`.
+  * Removes `XFile.saveTo()`. `FileSystemXFile.writeAsBytes` has been added
+    and the web implementation can use `WebScopedStorageXFileExtension.download`. See README to see
+    how to access platform-specific features.
+  * Removes `XFile.mimeType`.
+  * Removes `XFile.path`. This has been replaced by `FileSystemXFile.path`.
+  * Changes `XFile.name` to a method that returns `Future<String>` rather than a
+    field that returns `String`.
+
 ## 0.3.5+5
 
 * Fixes native `readAsString` returning mojibake for `XFile.fromData`, which
   decoded the bytes as UTF-16 code units instead of using the `encoding`
   argument.
->>>>>>> 4797ae24bad34888df7a6f0e96054bb86f0b635e:packages/cross_file/CHANGELOG.md
 
 ## 0.3.5+4
 

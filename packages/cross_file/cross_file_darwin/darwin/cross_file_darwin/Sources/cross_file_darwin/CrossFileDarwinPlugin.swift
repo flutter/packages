@@ -26,6 +26,8 @@ public class CrossFileDarwinPlugin: NSObject, FlutterPlugin {
 
     let plugin = CrossFileDarwinPlugin(binaryMessenger: messenger)
 
+    // The plugin is only published so that `detachFromEngine` is called when the plugin is removed
+    // from the engine.
     registrar.publish(plugin)
   }
 

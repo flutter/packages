@@ -46,8 +46,8 @@ class AssetResourceReader {
       let options = PHImageRequestOptions()
       options.isNetworkAccessAllowed = true
       manager.requestImageDataAndOrientation(for: asset, options: options) { (data, _, _, _) in
-        if data != nil {
-          completion(.success(data!))
+        if let data = data {
+          completion(.success(data))
         } else {
           completion(
             .failure(
