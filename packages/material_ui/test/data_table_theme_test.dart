@@ -38,6 +38,7 @@ void main() {
     expect(themeData.headingRowColor, null);
     expect(themeData.headingRowHeight, null);
     expect(themeData.headingTextStyle, null);
+    expect(themeData.secondaryHeadingRowColor, null);
     expect(themeData.horizontalMargin, null);
     expect(themeData.columnSpacing, null);
     expect(themeData.dividerThickness, null);
@@ -56,6 +57,7 @@ void main() {
     expect(theme.data.headingRowColor, null);
     expect(theme.data.headingRowHeight, null);
     expect(theme.data.headingTextStyle, null);
+    expect(theme.data.secondaryHeadingRowColor, null);
     expect(theme.data.horizontalMargin, null);
     expect(theme.data.columnSpacing, null);
     expect(theme.data.dividerThickness, null);
@@ -92,6 +94,7 @@ void main() {
       ),
       headingRowHeight: 52.0,
       headingTextStyle: const TextStyle(fontSize: 14.0),
+      secondaryHeadingRowColor: const Color(0xfffffff3),
       horizontalMargin: 3.0,
       columnSpacing: 4.0,
       dividerThickness: 5.0,
@@ -114,13 +117,17 @@ void main() {
     expect(description[5], "headingRowColor: Instance of '_WidgetStatePropertyWith<Color>'");
     expect(description[6], 'headingRowHeight: 52.0');
     expect(description[7], 'headingTextStyle: TextStyle(inherit: true, size: 14.0)');
-    expect(description[8], 'horizontalMargin: 3.0');
-    expect(description[9], 'columnSpacing: 4.0');
-    expect(description[10], 'dividerThickness: 5.0');
-    expect(description[11], 'checkboxHorizontalMargin: 6.0');
-    expect(description[12], 'headingCellCursor: WidgetStatePropertyAll(SystemMouseCursor(grab))');
-    expect(description[13], 'dataRowCursor: WidgetStatePropertyAll(SystemMouseCursor(forbidden))');
-    expect(description[14], 'headingRowAlignment: center');
+    expect(
+      description[8],
+      'secondaryHeadingRowColor: Color(alpha: 1.0000, red: 1.0000, green: 1.0000, blue: 0.9529, colorSpace: ColorSpace.sRGB)',
+    );
+    expect(description[9], 'horizontalMargin: 3.0');
+    expect(description[10], 'columnSpacing: 4.0');
+    expect(description[11], 'dividerThickness: 5.0');
+    expect(description[12], 'checkboxHorizontalMargin: 6.0');
+    expect(description[13], 'headingCellCursor: WidgetStatePropertyAll(SystemMouseCursor(grab))');
+    expect(description[14], 'dataRowCursor: WidgetStatePropertyAll(SystemMouseCursor(forbidden))');
+    expect(description[15], 'headingRowAlignment: center');
   });
 
   testWidgets('DataTable is themeable', (WidgetTester tester) async {
@@ -459,6 +466,7 @@ void main() {
     );
     const globalThemeHeadingRowHeight = 51.0;
     const globalThemeHeadingTextStyle = TextStyle(fontSize: 13.5);
+    const globalThemeSecondaryHeadingRowColor = Color(0xfffffff1);
     const globalThemeHorizontalMargin = 2.0;
     const globalThemeColumnSpacing = 3.0;
     const globalThemeDividerThickness = 4.0;
@@ -478,6 +486,7 @@ void main() {
     );
     const localThemeHeadingRowHeight = 52.0;
     const localThemeHeadingTextStyle = TextStyle(fontSize: 14.5);
+    const localThemeSecondaryHeadingRowColor = Color(0xfffffff2);
     const localThemeHorizontalMargin = 3.0;
     const localThemeColumnSpacing = 4.0;
     const localThemeDividerThickness = 5.0;
@@ -498,6 +507,7 @@ void main() {
             headingRowColor: globalThemeHeadingRowColor,
             headingRowHeight: globalThemeHeadingRowHeight,
             headingTextStyle: globalThemeHeadingTextStyle,
+            secondaryHeadingRowColor: globalThemeSecondaryHeadingRowColor,
             horizontalMargin: globalThemeHorizontalMargin,
             columnSpacing: globalThemeColumnSpacing,
             dividerThickness: globalThemeDividerThickness,
@@ -516,6 +526,7 @@ void main() {
               headingRowColor: localThemeHeadingRowColor,
               headingRowHeight: localThemeHeadingRowHeight,
               headingTextStyle: localThemeHeadingTextStyle,
+              secondaryHeadingRowColor: localThemeSecondaryHeadingRowColor,
               horizontalMargin: localThemeHorizontalMargin,
               columnSpacing: localThemeColumnSpacing,
               dividerThickness: localThemeDividerThickness,
@@ -580,6 +591,11 @@ void main() {
     expect(
       tester.getTopLeft(find.text('Data 2')).dx - tester.getTopRight(find.text('Data')).dx,
       localThemeColumnSpacing,
+    );
+
+    expect(
+      _tableRowBoxDecoration(tester: tester, index: 0).color,
+      localThemeSecondaryHeadingRowColor,
     );
 
     final TestGesture gesture = await tester.createGesture(

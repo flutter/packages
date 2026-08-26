@@ -682,8 +682,8 @@ class ThemeData with Diagnosticable {
       unselectedWidgetColor: unselectedWidgetColor,
       // TYPOGRAPHY & ICONOGRAPHY
       iconTheme: iconTheme,
-      typography: typography,
       textTheme: textTheme,
+      typography: typography,
       // COMPONENT THEMES
       actionIconTheme: actionIconTheme,
       // TODO(huycozy): Remove this type cast when appBarTheme is explicitly set to appBarThemeData
@@ -1812,7 +1812,7 @@ class ThemeData with Diagnosticable {
     )
     Color? secondaryHeaderColor,
     @Deprecated(
-      'Use ColorScheme.surface instead. '
+      'Use ColorScheme.shadow instead. '
       'This feature was deprecated after material_ui v1.1.0.',
     )
     Color? shadowColor,
