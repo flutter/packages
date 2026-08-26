@@ -1,7 +1,3 @@
-## NEXT
-
-* Formats generated Swift and Objective-C test fixtures and example files.
-
 ## 28.0.0
 
 * **Breaking Change** Updates Kotlin and Swift generators to generate `suspend` functions and `async throws` signatures for `@FlutterApi` methods by default, and for `@HostApi` methods annotated with `@async`.

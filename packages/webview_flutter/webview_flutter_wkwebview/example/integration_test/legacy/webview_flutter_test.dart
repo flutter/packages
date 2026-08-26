@@ -76,24 +76,22 @@ Future<void> main() async {
     expect(currentUrl, primaryUrl);
   });
 
-  testWidgets(
-    'withWeakRefenceTo allows encapsulating class to be garbage collected',
-    (WidgetTester tester) async {
-      final gcCompleter = Completer<int>();
-      final instanceManager = PigeonInstanceManager(onWeakReferenceRemoved: gcCompleter.complete);
+  testWidgets('withWeakRefenceTo allows encapsulating class to be garbage collected', (
+    WidgetTester tester,
+  ) async {
+    final gcCompleter = Completer<int>();
+    final instanceManager = PigeonInstanceManager(onWeakReferenceRemoved: gcCompleter.complete);
 
-      ClassWithCallbackClass? instance = ClassWithCallbackClass();
-      instanceManager.addDartCreatedInstance(instance.callbackClass);
-      instance = null;
+    ClassWithCallbackClass? instance = ClassWithCallbackClass();
+    instanceManager.addDartCreatedInstance(instance.callbackClass);
+    instance = null;
 
-      // Force garbage collection.
-      await forceGC();
+    // Force garbage collection.
+    await forceGC();
 
-      final int gcIdentifier = await gcCompleter.future;
-      expect(gcIdentifier, 0);
-    },
-    timeout: const Timeout(Duration(seconds: 10)),
-  );
+    final int gcIdentifier = await gcCompleter.future;
+    expect(gcIdentifier, 0);
+  }, timeout: const Timeout(Duration(seconds: 10)));
 
   testWidgets('loadUrl', (WidgetTester tester) async {
     final controllerCompleter = Completer<WebViewController>();
@@ -457,112 +455,104 @@ Future<void> main() async {
         skip: Platform.isIOS,
       );
 
-      testWidgets(
-        'Video plays inline when allowsInlineMediaPlayback is true',
-        (WidgetTester tester) async {
-          final String videoTestBase64 = await getTestVideoBase64();
-          final controllerCompleter = Completer<WebViewController>();
-          final pageLoaded = Completer<void>();
-          final videoPlaying = Completer<void>();
+      testWidgets('Video plays inline when allowsInlineMediaPlayback is true', (
+        WidgetTester tester,
+      ) async {
+        final String videoTestBase64 = await getTestVideoBase64();
+        final controllerCompleter = Completer<WebViewController>();
+        final pageLoaded = Completer<void>();
+        final videoPlaying = Completer<void>();
 
-          await tester.pumpWidget(
-            Directionality(
-              textDirection: TextDirection.ltr,
-              child: WebView(
-                initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
-                onWebViewCreated: (WebViewController controller) {
-                  controllerCompleter.complete(controller);
-                },
-                javascriptMode: JavascriptMode.unrestricted,
-                javascriptChannels: <JavascriptChannel>{
-                  JavascriptChannel(
-                    name: 'VideoTestTime',
-                    onMessageReceived: (JavascriptMessage message) {
-                      final double currentTime = double.parse(message.message);
-                      // Let it play for at least 1 second to make sure the related video's properties are set.
-                      if (currentTime > 1 && !videoPlaying.isCompleted) {
-                        videoPlaying.complete(null);
-                      }
-                    },
-                  ),
-                },
-                onPageFinished: (String url) {
-                  pageLoaded.complete(null);
-                },
-                initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
-                allowsInlineMediaPlayback: true,
-              ),
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: WebView(
+              initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
+              onWebViewCreated: (WebViewController controller) {
+                controllerCompleter.complete(controller);
+              },
+              javascriptMode: JavascriptMode.unrestricted,
+              javascriptChannels: <JavascriptChannel>{
+                JavascriptChannel(
+                  name: 'VideoTestTime',
+                  onMessageReceived: (JavascriptMessage message) {
+                    final double currentTime = double.parse(message.message);
+                    // Let it play for at least 1 second to make sure the related video's properties are set.
+                    if (currentTime > 1 && !videoPlaying.isCompleted) {
+                      videoPlaying.complete(null);
+                    }
+                  },
+                ),
+              },
+              onPageFinished: (String url) {
+                pageLoaded.complete(null);
+              },
+              initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+              allowsInlineMediaPlayback: true,
             ),
-          );
-          final WebViewController controller = await controllerCompleter.future;
-          await pageLoaded.future;
+          ),
+        );
+        final WebViewController controller = await controllerCompleter.future;
+        await pageLoaded.future;
 
-          // Pump once to trigger the video play.
-          await tester.pump();
+        // Pump once to trigger the video play.
+        await tester.pump();
 
-          // Makes sure we get the correct event that indicates the video is actually playing.
-          await videoPlaying.future;
+        // Makes sure we get the correct event that indicates the video is actually playing.
+        await videoPlaying.future;
 
-          final String fullScreen = await controller.runJavascriptReturningResult(
-            'isFullScreen();',
-          );
-          expect(fullScreen, _webviewBool(false));
-        },
-        skip: Platform.isMacOS || skipOnIosFor154676,
-      );
+        final String fullScreen = await controller.runJavascriptReturningResult('isFullScreen();');
+        expect(fullScreen, _webviewBool(false));
+      }, skip: Platform.isMacOS || skipOnIosFor154676);
 
-      testWidgets(
-        'Video plays full screen when allowsInlineMediaPlayback is false',
-        (WidgetTester tester) async {
-          final String videoTestBase64 = await getTestVideoBase64();
-          final controllerCompleter = Completer<WebViewController>();
-          final pageLoaded = Completer<void>();
-          final videoPlaying = Completer<void>();
+      testWidgets('Video plays full screen when allowsInlineMediaPlayback is false', (
+        WidgetTester tester,
+      ) async {
+        final String videoTestBase64 = await getTestVideoBase64();
+        final controllerCompleter = Completer<WebViewController>();
+        final pageLoaded = Completer<void>();
+        final videoPlaying = Completer<void>();
 
-          await tester.pumpWidget(
-            Directionality(
-              textDirection: TextDirection.ltr,
-              child: WebView(
-                initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
-                onWebViewCreated: (WebViewController controller) {
-                  controllerCompleter.complete(controller);
-                },
-                javascriptMode: JavascriptMode.unrestricted,
-                javascriptChannels: <JavascriptChannel>{
-                  JavascriptChannel(
-                    name: 'VideoTestTime',
-                    onMessageReceived: (JavascriptMessage message) {
-                      final double currentTime = double.parse(message.message);
-                      // Let it play for at least 1 second to make sure the related video's properties are set.
-                      if (currentTime > 1 && !videoPlaying.isCompleted) {
-                        videoPlaying.complete(null);
-                      }
-                    },
-                  ),
-                },
-                onPageFinished: (String url) {
-                  pageLoaded.complete(null);
-                },
-                initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
-              ),
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: WebView(
+              initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
+              onWebViewCreated: (WebViewController controller) {
+                controllerCompleter.complete(controller);
+              },
+              javascriptMode: JavascriptMode.unrestricted,
+              javascriptChannels: <JavascriptChannel>{
+                JavascriptChannel(
+                  name: 'VideoTestTime',
+                  onMessageReceived: (JavascriptMessage message) {
+                    final double currentTime = double.parse(message.message);
+                    // Let it play for at least 1 second to make sure the related video's properties are set.
+                    if (currentTime > 1 && !videoPlaying.isCompleted) {
+                      videoPlaying.complete(null);
+                    }
+                  },
+                ),
+              },
+              onPageFinished: (String url) {
+                pageLoaded.complete(null);
+              },
+              initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
             ),
-          );
-          final WebViewController controller = await controllerCompleter.future;
-          await pageLoaded.future;
+          ),
+        );
+        final WebViewController controller = await controllerCompleter.future;
+        await pageLoaded.future;
 
-          // Pump once to trigger the video play.
-          await tester.pump();
+        // Pump once to trigger the video play.
+        await tester.pump();
 
-          // Makes sure we get the correct event that indicates the video is actually playing.
-          await videoPlaying.future;
+        // Makes sure we get the correct event that indicates the video is actually playing.
+        await videoPlaying.future;
 
-          final String fullScreen = await controller.runJavascriptReturningResult(
-            'isFullScreen();',
-          );
-          expect(fullScreen, _webviewBool(true));
-        },
-        skip: Platform.isMacOS || skipOnIosFor154676,
-      );
+        final String fullScreen = await controller.runJavascriptReturningResult('isFullScreen();');
+        expect(fullScreen, _webviewBool(true));
+      }, skip: Platform.isMacOS || skipOnIosFor154676);
     },
     // allowsInlineMediaPlayback has no effect on macOS.
     skip: Platform.isMacOS,
