@@ -892,6 +892,8 @@ class _CupertinoNavigationBarState extends State<CupertinoNavigationBar> {
 
 /// An iOS-styled navigation bar with iOS-11-style large titles using slivers.
 ///
+/// Learn more about [CupertinoSliverNavigationBar] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=xiTuAwvKxBY).
+///
 /// The [CupertinoSliverNavigationBar] must be placed in a sliver group such
 /// as the [CustomScrollView].
 ///
