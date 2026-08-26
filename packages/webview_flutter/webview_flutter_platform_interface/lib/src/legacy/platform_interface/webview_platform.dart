@@ -61,8 +61,6 @@ abstract class WebViewPlatform {
   /// Returns true if cookies were present before clearing, else false.
   /// Soon to be deprecated. 'Use `WebViewCookieManagerPlatform.clearCookies` instead.
   Future<bool> clearCookies() {
-    throw UnimplementedError(
-      'WebView clearCookies is not implemented on the current platform',
-    );
+    throw UnimplementedError('WebView clearCookies is not implemented on the current platform');
   }
 }

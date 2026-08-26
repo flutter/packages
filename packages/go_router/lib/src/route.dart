@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: doc_directive_unknown
+
 import 'dart:async';
 
 import 'package:collection/collection.dart';
@@ -18,12 +20,10 @@ import 'router.dart';
 import 'state.dart';
 
 /// The page builder for [GoRoute].
-typedef GoRouterPageBuilder =
-    Page<dynamic> Function(BuildContext context, GoRouterState state);
+typedef GoRouterPageBuilder = Page<dynamic> Function(BuildContext context, GoRouterState state);
 
 /// The widget builder for [GoRoute].
-typedef GoRouterWidgetBuilder =
-    Widget Function(BuildContext context, GoRouterState state);
+typedef GoRouterWidgetBuilder = Widget Function(BuildContext context, GoRouterState state);
 
 /// The widget builder for [ShellRoute].
 typedef ShellRouteBuilder =
@@ -31,11 +31,7 @@ typedef ShellRouteBuilder =
 
 /// The page builder for [ShellRoute].
 typedef ShellRoutePageBuilder =
-    Page<dynamic> Function(
-      BuildContext context,
-      GoRouterState state,
-      Widget child,
-    );
+    Page<dynamic> Function(BuildContext context, GoRouterState state, Widget child);
 
 /// The widget builder for [StatefulShellRoute].
 typedef StatefulShellRouteBuilder =
@@ -67,8 +63,7 @@ typedef NavigatorBuilder =
 ///
 /// If the return value is true or the future resolve to true, the route will
 /// exit as usual. Otherwise, the operation will abort.
-typedef ExitCallback =
-    FutureOr<bool> Function(BuildContext context, GoRouterState state);
+typedef ExitCallback = FutureOr<bool> Function(BuildContext context, GoRouterState state);
 
 /// The base class for [GoRoute] and [ShellRoute].
 ///
@@ -160,6 +155,7 @@ typedef ExitCallback =
 abstract class RouteBase with Diagnosticable {
   const RouteBase._({
     this.redirect,
+    this.metadata,
     required this.routes,
     required this.parentNavigatorKey,
   });
@@ -230,12 +226,21 @@ abstract class RouteBase with Diagnosticable {
   /// Navigator instead of the nearest ShellRoute ancestor.
   final GlobalKey<NavigatorState>? parentNavigatorKey;
 
+  /// Application-defined metadata associated with this route.
+  ///
+  /// This can be used to attach static information that is useful while
+  /// building the matched page, such as analytics labels, page titles,
+  /// permissions, or feature flags. The merged metadata for the current match
+  /// is available from [GoRouterState.metadata].
+  ///
+  /// Metadata is inherited from parent routes and child route values override
+  /// parent values with the same key.
+  final Map<String, dynamic>? metadata;
+
   /// Builds a lists containing the provided routes along with all their
   /// descendant [routes].
   static Iterable<RouteBase> routesRecursively(Iterable<RouteBase> routes) {
-    return routes.expand(
-      (RouteBase e) => <RouteBase>[e, ...routesRecursively(e.routes)],
-    );
+    return routes.expand((RouteBase e) => <RouteBase>[e, ...routesRecursively(e.routes)]);
   }
 
   @override
@@ -243,10 +248,7 @@ abstract class RouteBase with Diagnosticable {
     super.debugFillProperties(properties);
     if (parentNavigatorKey != null) {
       properties.add(
-        DiagnosticsProperty<GlobalKey<NavigatorState>>(
-          'parentNavKey',
-          parentNavigatorKey,
-        ),
+        DiagnosticsProperty<GlobalKey<NavigatorState>>('parentNavKey', parentNavigatorKey),
       );
     }
   }
@@ -279,6 +281,7 @@ class GoRoute extends RouteBase {
     this.pageBuilder,
     super.parentNavigatorKey,
     super.redirect,
+    super.metadata,
     this.onExit,
     this.caseSensitive = true,
     super.routes = const <RouteBase>[],
@@ -294,11 +297,7 @@ class GoRoute extends RouteBase {
        ),
        super._() {
     // cache the path regexp and parameters
-    _pathRE = patternToRegExp(
-      path,
-      pathParameters,
-      caseSensitive: caseSensitive,
-    );
+    _pathRE = patternToRegExp(path, pathParameters, caseSensitive: caseSensitive);
   }
 
   /// Whether this [GoRoute] only redirects to another route.
@@ -360,6 +359,19 @@ class GoRoute extends RouteBase {
   /// matches all URIs start with `/family/...`, e.g. `/family/123`,
   /// `/family/456` and etc. The parameter values are stored in [GoRouterState]
   /// that are passed into [pageBuilder] and [builder].
+  ///
+  /// A path parameter may optionally be constrained to a regular expression
+  /// by appending the expression in parentheses after the parameter name:
+  /// `:paramName(regex)`.
+  ///
+  /// {@example /example/lib/path_parameter_regex.dart}
+  ///
+  /// The path matches `/users/42` but not `/users/settings`. If a path segment
+  /// does not satisfy the regular expression, route matching continues with
+  /// other route candidates.
+  ///
+  /// The regular expression is interpreted as a Dart [RegExp] pattern and must
+  /// not contain nested parentheses.
   ///
   /// The query parameter are also capture during the route parsing and stored
   /// in [GoRouterState].
@@ -482,9 +494,7 @@ class GoRoute extends RouteBase {
     super.debugFillProperties(properties);
     properties.add(StringProperty('name', name));
     properties.add(StringProperty('path', path));
-    properties.add(
-      FlagProperty('redirect', value: redirectOnly, ifTrue: 'Redirect Only'),
-    );
+    properties.add(FlagProperty('redirect', value: redirectOnly, ifTrue: 'Redirect Only'));
   }
 
   late final RegExp _pathRE;
@@ -498,6 +508,7 @@ abstract class ShellRouteBase extends RouteBase {
     super.redirect,
     required super.routes,
     required super.parentNavigatorKey,
+    super.metadata,
     this.notifyRootObserver = true,
   }) : super._();
 
@@ -515,8 +526,7 @@ abstract class ShellRouteBase extends RouteBase {
   ) {
     for (final route in subRoutes) {
       assert(
-        route.parentNavigatorKey == null ||
-            route.parentNavigatorKey == navigatorKey,
+        route.parentNavigatorKey == null || route.parentNavigatorKey == navigatorKey,
         "sub-route's parent navigator key must either be null or has the same navigator key as parent's key",
       );
       if (route is GoRoute && route.redirectOnly) {
@@ -594,9 +604,7 @@ class ShellRouteContext {
     final effectiveObservers = <NavigatorObserver>[...?observers];
 
     if (notifyRootObserver) {
-      final List<NavigatorObserver>? rootObservers = GoRouter.maybeOf(
-        context,
-      )?.observers;
+      final List<NavigatorObserver>? rootObservers = GoRouter.maybeOf(context)?.observers;
       if (rootObservers != null) {
         effectiveObservers.add(_MergedNavigatorObserver(rootObservers));
       }
@@ -715,6 +723,7 @@ class ShellRoute extends ShellRouteBase {
     this.pageBuilder,
     super.notifyRootObserver,
     this.observers,
+    super.metadata,
     required super.routes,
     super.parentNavigatorKey,
     GlobalKey<NavigatorState>? navigatorKey,
@@ -723,10 +732,7 @@ class ShellRoute extends ShellRouteBase {
        navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
        super._() {
     assert(() {
-      ShellRouteBase._debugCheckSubRouteParentNavigatorKeys(
-        routes,
-        this.navigatorKey,
-      );
+      ShellRouteBase._debugCheckSubRouteParentNavigatorKeys(routes, this.navigatorKey);
       return true;
     }());
   }
@@ -807,12 +813,7 @@ class ShellRoute extends ShellRouteBase {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(
-      DiagnosticsProperty<GlobalKey<NavigatorState>>(
-        'navigatorKey',
-        navigatorKey,
-      ),
-    );
+    properties.add(DiagnosticsProperty<GlobalKey<NavigatorState>>('navigatorKey', navigatorKey));
   }
 }
 
@@ -900,6 +901,7 @@ class StatefulShellRoute extends ShellRouteBase {
     super.notifyRootObserver,
     required this.navigatorContainerBuilder,
     super.parentNavigatorKey,
+    super.metadata,
     this.restorationScopeId,
     GlobalKey<StatefulNavigationShellState>? key,
   }) : assert(branches.isNotEmpty),
@@ -1021,11 +1023,7 @@ class StatefulShellRoute extends ShellRouteBase {
     ShellRouteContext shellRouteContext,
   ) {
     if (pageBuilder != null) {
-      return pageBuilder!(
-        context,
-        state,
-        _createShell(context, shellRouteContext),
-      );
+      return pageBuilder!(context, state, _createShell(context, shellRouteContext));
     }
     return null;
   }
@@ -1042,14 +1040,12 @@ class StatefulShellRoute extends ShellRouteBase {
   Iterable<GlobalKey<NavigatorState>> get _navigatorKeys =>
       branches.map((StatefulShellBranch b) => b.navigatorKey);
 
-  StatefulNavigationShell _createShell(
-    BuildContext context,
-    ShellRouteContext shellRouteContext,
-  ) => StatefulNavigationShell(
-    shellRouteContext: shellRouteContext,
-    router: GoRouter.of(context),
-    containerBuilder: navigatorContainerBuilder,
-  );
+  StatefulNavigationShell _createShell(BuildContext context, ShellRouteContext shellRouteContext) =>
+      StatefulNavigationShell(
+        shellRouteContext: shellRouteContext,
+        router: GoRouter.of(context),
+        containerBuilder: navigatorContainerBuilder,
+      );
 
   static Widget _indexedStackContainerBuilder(
     BuildContext context,
@@ -1067,19 +1063,14 @@ class StatefulShellRoute extends ShellRouteBase {
 
   static Set<GlobalKey<NavigatorState>> _debugUniqueNavigatorKeys(
     List<StatefulShellBranch> branches,
-  ) => Set<GlobalKey<NavigatorState>>.from(
-    branches.map((StatefulShellBranch e) => e.navigatorKey),
-  );
+  ) => Set<GlobalKey<NavigatorState>>.from(branches.map((StatefulShellBranch e) => e.navigatorKey));
 
-  static bool _debugValidateParentNavigatorKeys(
-    List<StatefulShellBranch> branches,
-  ) {
+  static bool _debugValidateParentNavigatorKeys(List<StatefulShellBranch> branches) {
     for (final branch in branches) {
       for (final RouteBase route in branch.routes) {
         if (route is GoRoute) {
           assert(
-            route.parentNavigatorKey == null ||
-                route.parentNavigatorKey == branch.navigatorKey,
+            route.parentNavigatorKey == null || route.parentNavigatorKey == branch.navigatorKey,
           );
         }
       }
@@ -1091,10 +1082,7 @@ class StatefulShellRoute extends ShellRouteBase {
     String? restorationScopeId,
     List<StatefulShellBranch> branches,
   ) {
-    if (branches
-        .map((StatefulShellBranch e) => e.restorationScopeId)
-        .nonNulls
-        .isNotEmpty) {
+    if (branches.map((StatefulShellBranch e) => e.restorationScopeId).nonNulls.isNotEmpty) {
       assert(
         restorationScopeId != null,
         'A restorationScopeId must be set for '
@@ -1109,10 +1097,7 @@ class StatefulShellRoute extends ShellRouteBase {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(
-      DiagnosticsProperty<Iterable<GlobalKey<NavigatorState>>>(
-        'navigatorKeys',
-        _navigatorKeys,
-      ),
+      DiagnosticsProperty<Iterable<GlobalKey<NavigatorState>>>('navigatorKeys', _navigatorKeys),
     );
   }
 }
@@ -1144,10 +1129,7 @@ class StatefulShellBranch {
     this.preload = false,
   }) : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>() {
     assert(() {
-      ShellRouteBase._debugCheckSubRouteParentNavigatorKeys(
-        routes,
-        this.navigatorKey,
-      );
+      ShellRouteBase._debugCheckSubRouteParentNavigatorKeys(routes, this.navigatorKey);
       return true;
     }());
   }
@@ -1199,8 +1181,7 @@ class StatefulShellBranch {
   ///
   /// This route will be used when loading the branch for the first time, if
   /// an [initialLocation] has not been provided.
-  GoRoute? get defaultRoute =>
-      RouteBase.routesRecursively(routes).whereType<GoRoute>().firstOrNull;
+  GoRoute? get defaultRoute => RouteBase.routesRecursively(routes).whereType<GoRoute>().firstOrNull;
 }
 
 /// Builder for a custom container for the branch Navigators of a
@@ -1235,17 +1216,14 @@ class StatefulNavigationShell extends StatefulWidget {
   /// Constructs an [StatefulNavigationShell].
   StatefulNavigationShell({
     required this.shellRouteContext,
-    required GoRouter router,
+    required this._router,
     required this.containerBuilder,
   }) : assert(shellRouteContext.route is StatefulShellRoute),
-       _router = router,
        currentIndex = _indexOfBranchNavigatorKey(
          shellRouteContext.route as StatefulShellRoute,
          shellRouteContext.navigatorKey,
        ),
-       super(
-         key: (shellRouteContext.route as StatefulShellRoute)._shellStateKey,
-       );
+       super(key: (shellRouteContext.route as StatefulShellRoute)._shellStateKey);
 
   /// The ShellRouteContext responsible for building the Navigator for the
   /// current [StatefulShellBranch].
@@ -1275,8 +1253,7 @@ class StatefulNavigationShell extends StatefulWidget {
   // class.
   void goBranch(int index, {bool initialLocation = false}) {
     final route = shellRouteContext.route as StatefulShellRoute;
-    final StatefulNavigationShellState? shellState =
-        route._shellStateKey.currentState;
+    final StatefulNavigationShellState? shellState = route._shellStateKey.currentState;
     if (shellState != null) {
       shellState.goBranch(index, initialLocation: initialLocation);
     } else {
@@ -1288,8 +1265,7 @@ class StatefulNavigationShell extends StatefulWidget {
   /// associated with it).
   @visibleForTesting
   List<StatefulShellBranch> get debugLoadedBranches =>
-      route._shellStateKey.currentState?._loadedBranches ??
-      <StatefulShellBranch>[];
+      route._shellStateKey.currentState?._loadedBranches ?? <StatefulShellBranch>[];
 
   /// Gets the effective initial location for the branch at the provided index
   /// in the associated [StatefulShellRoute].
@@ -1308,17 +1284,10 @@ class StatefulNavigationShell extends StatefulWidget {
       /// find the first GoRoute, from which a full path will be derived.
       final GoRoute route = branch.defaultRoute!;
       final parameters = <String>[];
-      patternToRegExp(
-        route.path,
-        parameters,
-        caseSensitive: route.caseSensitive,
-      );
+      patternToRegExp(route.path, parameters, caseSensitive: route.caseSensitive);
       assert(parameters.isEmpty);
       final String fullPath = _router.configuration.locationForRoute(route)!;
-      return patternToPath(
-        fullPath,
-        shellRouteContext.routerState.pathParameters,
-      );
+      return patternToPath(fullPath, shellRouteContext.routerState.pathParameters);
     }
   }
 
@@ -1355,8 +1324,7 @@ class StatefulNavigationShell extends StatefulWidget {
 }
 
 /// State for StatefulNavigationShell.
-class StatefulNavigationShellState extends State<StatefulNavigationShell>
-    with RestorationMixin {
+class StatefulNavigationShellState extends State<StatefulNavigationShell> with RestorationMixin {
   final Map<StatefulShellBranch, _StatefulShellBranchState> _branchState =
       <StatefulShellBranch, _StatefulShellBranchState>{};
 
@@ -1365,8 +1333,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
 
   GoRouter get _router => widget._router;
 
-  bool _isBranchLoaded(StatefulShellBranch branch) =>
-      _branchState[branch] != null;
+  bool _isBranchLoaded(StatefulShellBranch branch) => _branchState[branch] != null;
 
   List<StatefulShellBranch> get _loadedBranches => _branchState.keys.toList();
 
@@ -1382,19 +1349,13 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
         : identityHashCode(branch).toString();
   }
 
-  _StatefulShellBranchState _branchStateFor(
-    StatefulShellBranch branch, [
-    bool register = true,
-  ]) {
+  _StatefulShellBranchState _branchStateFor(StatefulShellBranch branch, [bool register = true]) {
     return _branchState.putIfAbsent(branch, () {
       final branchState = _StatefulShellBranchState(
         location: _RestorableRouteMatchList(_router.configuration),
       );
       if (register) {
-        registerForRestoration(
-          branchState.location,
-          _branchLocationRestorationScopeId(branch),
-        );
+        registerForRestoration(branchState.location, _branchLocationRestorationScopeId(branch));
       }
       return branchState;
     });
@@ -1433,14 +1394,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
 
     final StatefulShellBranch branch = route.branches[widget.currentIndex];
     final ShellRouteContext shellRouteContext = widget.shellRouteContext;
-    final RouteMatchList currentBranchLocation = _scopedMatchList(
-      shellRouteContext.routeMatchList,
-    );
+    final RouteMatchList currentBranchLocation = _scopedMatchList(shellRouteContext.routeMatchList);
 
-    final _StatefulShellBranchState branchState = _branchStateFor(
-      branch,
-      false,
-    );
+    final _StatefulShellBranchState branchState = _branchStateFor(branch, false);
     final RouteMatchList previousBranchLocation = branchState.location.value;
     branchState.location.value = currentBranchLocation;
     final hasExistingNavigator = branchState.navigator != null;
@@ -1484,10 +1440,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
           branch.restorationScopeId,
         );
 
-        final _StatefulShellBranchState branchState = _branchStateFor(
-          branch,
-          false,
-        );
+        final _StatefulShellBranchState branchState = _branchStateFor(branch, false);
         branchState.location.value = matchList;
         branchState.navigator = navigator;
       }
@@ -1495,10 +1448,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   }
 
   void _cleanUpObsoleteBranches() {
-    _branchState.removeWhere((
-      StatefulShellBranch branch,
-      _StatefulShellBranchState branchState,
-    ) {
+    _branchState.removeWhere((StatefulShellBranch branch, _StatefulShellBranchState branchState) {
       if (!route.branches.contains(branch)) {
         branchState.dispose();
         return true;
@@ -1521,9 +1471,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   /// the branch (see [StatefulShellBranch.initialLocation]).
   void goBranch(int index, {bool initialLocation = false}) {
     assert(index >= 0 && index < route.branches.length);
-    final RouteMatchList? matchList = initialLocation
-        ? null
-        : _matchListForBranch(index);
+    final RouteMatchList? matchList = initialLocation ? null : _matchListForBranch(index);
     if (matchList != null && matchList.isNotEmpty) {
       _router.restore(matchList);
     } else {
@@ -1563,8 +1511,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
           (StatefulShellBranch branch) => _BranchNavigatorProxy(
             key: ObjectKey(branch),
             branch: branch,
-            navigatorForBranch: (StatefulShellBranch branch) =>
-                _branchState[branch]?.navigator,
+            navigatorForBranch: (StatefulShellBranch branch) => _branchState[branch]?.navigator,
           ),
         )
         .toList();
@@ -1635,11 +1582,7 @@ typedef _NavigatorForBranch = Widget? Function(StatefulShellBranch);
 /// important for container implementations that cache child widgets,
 /// such as [TabBarView].
 class _BranchNavigatorProxy extends StatefulWidget {
-  const _BranchNavigatorProxy({
-    super.key,
-    required this.branch,
-    required this.navigatorForBranch,
-  });
+  const _BranchNavigatorProxy({super.key, required this.branch, required this.navigatorForBranch});
 
   final StatefulShellBranch branch;
   final _NavigatorForBranch navigatorForBranch;
@@ -1666,10 +1609,7 @@ class _BranchNavigatorProxyState extends State<_BranchNavigatorProxy>
 /// Default implementation of a container widget for the [Navigator]s of the
 /// route branches. This implementation uses an [IndexedStack] as a container.
 class _IndexedStackedRouteBranchContainer extends StatelessWidget {
-  const _IndexedStackedRouteBranchContainer({
-    required this.currentIndex,
-    required this.children,
-  });
+  const _IndexedStackedRouteBranchContainer({required this.currentIndex, required this.children});
 
   final int currentIndex;
 
@@ -1687,11 +1627,7 @@ class _IndexedStackedRouteBranchContainer extends StatelessWidget {
     return IndexedStack(index: currentIndex, children: stackItems);
   }
 
-  Widget _buildRouteBranchContainer(
-    BuildContext context,
-    bool isActive,
-    Widget child,
-  ) {
+  Widget _buildRouteBranchContainer(BuildContext context, bool isActive, Widget child) {
     return Offstage(
       offstage: !isActive,
       child: TickerMode(enabled: isActive, child: child),
@@ -1746,10 +1682,7 @@ class _MergedNavigatorObserver extends NavigatorObserver {
   }
 
   @override
-  void didStartUserGesture(
-    Route<dynamic> route,
-    Route<dynamic>? previousRoute,
-  ) {
+  void didStartUserGesture(Route<dynamic> route, Route<dynamic>? previousRoute) {
     for (final NavigatorObserver observer in observers) {
       observer.didStartUserGesture(route, previousRoute);
     }

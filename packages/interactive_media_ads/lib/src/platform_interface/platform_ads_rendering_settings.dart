@@ -109,9 +109,7 @@ base class PlatformAdsRenderingSettingsCreationParams {
 /// Defines parameters that control the rendering of ads.
 abstract base class PlatformAdsRenderingSettings {
   /// Creates a new [PlatformAdsRenderingSettings]
-  factory PlatformAdsRenderingSettings(
-    PlatformAdsRenderingSettingsCreationParams params,
-  ) {
+  factory PlatformAdsRenderingSettings(PlatformAdsRenderingSettingsCreationParams params) {
     assert(
       InteractiveMediaAdsPlatform.instance != null,
       'A platform implementation for `interactive_media_ads` has not been set. '
@@ -120,9 +118,8 @@ abstract base class PlatformAdsRenderingSettings {
       'unit testing, `InteractiveMediaAdsPlatform.instance` can be set with '
       'your own test implementation.',
     );
-    final PlatformAdsRenderingSettings implementation =
-        InteractiveMediaAdsPlatform.instance!
-            .createPlatformAdsRenderingSettings(params);
+    final PlatformAdsRenderingSettings implementation = InteractiveMediaAdsPlatform.instance!
+        .createPlatformAdsRenderingSettings(params);
     return implementation;
   }
 

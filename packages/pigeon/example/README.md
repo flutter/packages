@@ -23,8 +23,7 @@ needed for your project.
     gobjectHeaderOut: 'linux/messages.g.h',
     gobjectSourceOut: 'linux/messages.g.cc',
     gobjectOptions: GObjectOptions(),
-    kotlinOut:
-        'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/Messages.g.kt',
+    kotlinOut: 'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/Messages.g.kt',
     kotlinOptions: KotlinOptions(),
     javaOut: 'android/app/src/main/java/io/flutter/plugins/Messages.java',
     javaOptions: JavaOptions(),
@@ -62,7 +61,7 @@ enum Code { one, two }
 class MessageData {
   MessageData({required this.code, required this.data});
   String? name;
-  String? description;
+  String? messageDescription;
   Code code;
   Map<String, String> data;
 }
@@ -79,6 +78,7 @@ abstract class ExampleHostApi {
   @async
   bool sendMessage(MessageData message);
 }
+
 ```
 
 ### Dart
@@ -106,7 +106,7 @@ Future<bool> sendMessage(String messageText) {
   final message = MessageData(
     code: Code.one,
     data: <String, String>{'header': 'this is a header'},
-    description: 'uri text',
+    messageDescription: 'uri text',
   );
   try {
     return _api.sendMessage(message);
@@ -115,6 +115,7 @@ Future<bool> sendMessage(String messageText) {
     return Future<bool>(() => true);
   }
 }
+
 ```
 
 ### Swift
@@ -135,12 +136,11 @@ private class PigeonApiImplementation: ExampleHostApi {
     return a + b
   }
 
-  func sendMessage(message: MessageData, completion: @escaping (Result<Bool, Error>) -> Void) {
+  func sendMessage(message: MessageData) async throws -> Bool {
     if message.code == Code.one {
-      completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
-      return
+      throw PigeonError(code: "code", message: "message", details: "details")
     }
-    completion(.success(true))
+    return true
   }
 }
 ```
@@ -160,12 +160,11 @@ private class PigeonApiImplementation : ExampleHostApi {
     return a + b
   }
 
-  override fun sendMessage(message: MessageData, callback: (Result<Boolean>) -> Unit) {
+  override suspend fun sendMessage(message: MessageData): Boolean {
     if (message.code == Code.ONE) {
-      callback(Result.failure(FlutterError("code", "message", "details")))
-      return
+      throw FlutterError("code", "message", "details")
     }
-    callback(Result.success(true))
+    return true
   }
 }
 ```
@@ -268,6 +267,7 @@ class _ExampleFlutterApi implements MessageFlutterApi {
     return aString ?? '';
   }
 }
+
 // ···
   MessageFlutterApi.setUp(_ExampleFlutterApi());
 ```
@@ -283,12 +283,8 @@ private class PigeonFlutterApi {
     flutterAPI = MessageFlutterApi(binaryMessenger: binaryMessenger)
   }
 
-  func callFlutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void
-  ) {
-    flutterAPI.flutterMethod(aString: aStringArg) {
-      completion($0)
-    }
+  func callFlutterMethod(aString aStringArg: String?) async throws -> String {
+    return try await flutterAPI.flutterMethod(aString: aStringArg)
   }
 }
 ```
@@ -304,8 +300,8 @@ private class PigeonFlutterApi(binding: FlutterPlugin.FlutterPluginBinding) {
     flutterApi = MessageFlutterApi(binding.binaryMessenger)
   }
 
-  fun callFlutterMethod(aString: String, callback: (Result<String>) -> Unit) {
-    flutterApi!!.flutterMethod(aString) { echo -> callback(echo) }
+  suspend fun callFlutterMethod(aString: String): String {
+    return flutterApi!!.flutterMethod(aString)
   }
 }
 ```
@@ -397,6 +393,7 @@ Stream<String> getEventStream() async* {
     }
   }
 }
+
 ```
 
 ### Swift
@@ -436,8 +433,7 @@ Register the handler with the generated method.
 <?code-excerpt "ios/Runner/AppDelegate.swift (swift-init-event)"?>
 ```swift
 let eventListener = EventListener()
-StreamEventsStreamHandler.register(
-  with: controller.binaryMessenger, streamHandler: eventListener)
+StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: eventListener)
 ```
 
 ### Kotlin

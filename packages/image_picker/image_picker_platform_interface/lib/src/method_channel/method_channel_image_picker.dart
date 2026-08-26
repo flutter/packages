@@ -61,11 +61,7 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
     int? limit,
   }) {
     if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
-      throw ArgumentError.value(
-        imageQuality,
-        'imageQuality',
-        'must be between 0 and 100',
-      );
+      throw ArgumentError.value(imageQuality, 'imageQuality', 'must be between 0 and 100');
     }
 
     if (maxWidth != null && maxWidth < 0) {
@@ -76,14 +72,13 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
       throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
     }
 
-    return _channel
-        .invokeMethod<List<dynamic>?>('pickMultiImage', <String, dynamic>{
-          'maxWidth': maxWidth,
-          'maxHeight': maxHeight,
-          'imageQuality': imageQuality,
-          'requestFullMetadata': requestFullMetadata,
-          'limit': limit,
-        });
+    return _channel.invokeMethod<List<dynamic>?>('pickMultiImage', <String, dynamic>{
+      'maxWidth': maxWidth,
+      'maxHeight': maxHeight,
+      'imageQuality': imageQuality,
+      'requestFullMetadata': requestFullMetadata,
+      'limit': limit,
+    });
   }
 
   Future<String?> _getImagePath({
@@ -95,11 +90,7 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
     bool requestFullMetadata = true,
   }) {
     if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
-      throw ArgumentError.value(
-        imageQuality,
-        'imageQuality',
-        'must be between 0 and 100',
-      );
+      throw ArgumentError.value(imageQuality, 'imageQuality', 'must be between 0 and 100');
     }
 
     if (maxWidth != null && maxWidth < 0) {
@@ -148,8 +139,9 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
 
   @override
   Future<LostData> retrieveLostData() async {
-    final Map<String, dynamic>? result = await _channel
-        .invokeMapMethod<String, dynamic>('retrieve');
+    final Map<String, dynamic>? result = await _channel.invokeMapMethod<String, dynamic>(
+      'retrieve',
+    );
 
     if (result == null) {
       return LostData.empty();
@@ -269,8 +261,7 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
     final List<XFile>? paths = await _channel
         .invokeMethod<List<dynamic>?>('pickMedia', args)
         .then(
-          (List<dynamic>? paths) =>
-              paths?.map((dynamic path) => XFile(path as String)).toList(),
+          (List<dynamic>? paths) => paths?.map((dynamic path) => XFile(path as String)).toList(),
         );
 
     return paths ?? <XFile>[];
@@ -294,8 +285,9 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
   Future<LostDataResponse> getLostData() async {
     List<XFile>? pickedFileList;
 
-    final Map<String, dynamic>? result = await _channel
-        .invokeMapMethod<String, dynamic>('retrieve');
+    final Map<String, dynamic>? result = await _channel.invokeMapMethod<String, dynamic>(
+      'retrieve',
+    );
 
     if (result == null) {
       return LostDataResponse.empty();
@@ -326,8 +318,7 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
 
     final path = result['path'] as String?;
 
-    final List<String>? pathList = (result['pathList'] as List<dynamic>?)
-        ?.cast<String>();
+    final List<String>? pathList = (result['pathList'] as List<dynamic>?)?.cast<String>();
     if (pathList != null) {
       pickedFileList = <XFile>[];
       for (final String path in pathList) {

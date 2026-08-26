@@ -1,3 +1,31 @@
+## 18.0.0
+
+- Migrates to material_ui and cupertino_ui.
+- Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 17.5.0
+
+- Adds route `metadata` support, including inheritance and override behavior with exposure on `GoRouterState`.
+- Documents support for regular expression constraints in GoRoute path parameters.
+
+## 17.4.0
+
+- Fixes onExit ignored for GoRoute nested inside ShellRoute
+- Adds `BlockedInitialNavigationException` (a `GoException` subtype), raised when the initial navigation is blocked by `onEnter` with no prior route to restore, so apps can distinguish this case in `onException` without string matching.
+
+## 17.3.0
+
+- Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+- Adds `hasOverriddenOnExit` parameter to `GoRouteData.$route` and `RelativeGoRouteData.$route` helper methods for type-safe routes. When set to `true`, enables custom `onExit` callback invocation from route data classes extending `GoRouteData` or `RelativeGoRouteData` when the route is removed from the navigation stack.
+
+## 17.2.3
+
+- Fixes an assertion failure when navigating to URLs with hash fragments missing a leading slash.
+
+## 17.2.2
+
+- Fixes `pop()` restoring stale configuration when route has `onExit`, which could cause the popped route to reappear with async redirects.
+
 ## 17.2.1
 
 - Fixes chained top-level redirects not being fully resolved (e.g. `/ → /a → /b` stopping at `/a`).

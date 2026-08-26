@@ -2,17 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO(stuartmorgan): Consider merging this with messages_async.dart now that
+//  they both use the Kotlin generator.
+
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
   PigeonOptions(
     input: 'pigeons/messages.dart',
-    javaOut:
-        'android/src/main/java/io/flutter/plugins/sharedpreferences/Messages.java',
-    javaOptions: JavaOptions(
-      className: 'Messages',
-      package: 'io.flutter.plugins.sharedpreferences',
-    ),
+    kotlinOut: 'android/src/main/kotlin/io/flutter/plugins/sharedpreferences/Messages.g.kt',
+    kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.sharedpreferences'),
     dartOut: 'lib/src/messages.g.dart',
     copyrightHeader: 'pigeons/copyright.txt',
   ),

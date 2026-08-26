@@ -34,10 +34,7 @@ void main() {
       RemoteWidget(
         runtime: runtime1,
         data: data,
-        widget: const FullyQualifiedWidgetName(
-          LibraryName(<String>['test']),
-          'root',
-        ),
+        widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
       ),
     );
     expect(find.byType(RemoteWidget), findsOneWidget);
@@ -48,10 +45,7 @@ void main() {
       RemoteWidget(
         runtime: runtime2,
         data: data,
-        widget: const FullyQualifiedWidgetName(
-          LibraryName(<String>['test']),
-          'root',
-        ),
+        widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
       ),
     );
     expect(find.byType(RemoteWidget), findsOneWidget);

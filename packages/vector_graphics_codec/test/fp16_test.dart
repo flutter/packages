@@ -19,11 +19,7 @@ void main() {
     final missed = <List<double>>[];
 
     /// Validate that all numbers between [min] and [max] can be converted within [tolerance].
-    void checkRange({
-      required double min,
-      required double max,
-      required double tolerance,
-    }) {
+    void checkRange({required double min, required double max, required double tolerance}) {
       final byteData = ByteData(8);
       for (var i = min; i < max; i += 1) {
         byteData.setFloat32(0, i);

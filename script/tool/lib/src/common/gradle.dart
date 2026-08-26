@@ -31,8 +31,7 @@ class GradleProject {
   final Platform platform;
 
   /// The project's 'android' directory.
-  Directory get androidDirectory =>
-      flutterProject.platformDirectory(FlutterPlatform.android);
+  Directory get androidDirectory => flutterProject.platformDirectory(FlutterPlatform.android);
 
   /// The path to the Gradle wrapper file for the project.
   File get gradleWrapper => androidDirectory.childFile(

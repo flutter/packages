@@ -29,8 +29,7 @@ class AndroidViewWidget extends StatelessWidget {
   });
 
   /// The unique identifier for the view type to be embedded.
-  static const String _viewType =
-      'interactive_media_ads.packages.flutter.dev/view';
+  static const String _viewType = 'interactive_media_ads.packages.flutter.dev/view';
 
   /// The reference to the Android native view that should be shown.
   final ima.View view;
@@ -53,15 +52,13 @@ class AndroidViewWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return PlatformViewLink(
       viewType: _viewType,
-      surfaceFactory:
-          (BuildContext context, PlatformViewController controller) {
-            return AndroidViewSurface(
-              controller: controller as AndroidViewController,
-              hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-              gestureRecognizers:
-                  const <Factory<OneSequenceGestureRecognizer>>{},
-            );
-          },
+      surfaceFactory: (BuildContext context, PlatformViewController controller) {
+        return AndroidViewSurface(
+          controller: controller as AndroidViewController,
+          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+          gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+        );
+      },
       onCreatePlatformView: (PlatformViewCreationParams params) {
         return _initAndroidView(params)
           ..addOnPlatformViewCreatedListener((int id) {
@@ -74,9 +71,7 @@ class AndroidViewWidget extends StatelessWidget {
   }
 
   AndroidViewController _initAndroidView(PlatformViewCreationParams params) {
-    final int? identifier = ima.PigeonInstanceManager.instance.getIdentifier(
-      view,
-    );
+    final int? identifier = ima.PigeonInstanceManager.instance.getIdentifier(view);
 
     if (displayWithHybridComposition) {
       return platformViewsServiceProxy.initExpensiveAndroidView(

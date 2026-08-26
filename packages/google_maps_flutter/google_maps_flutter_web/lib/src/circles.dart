@@ -47,8 +47,7 @@ class CirclesController extends GeometryController {
   }
 
   void _changeCircle(Circle circle) {
-    final CircleController? circleController =
-        _circleIdToController[circle.circleId];
+    final CircleController? circleController = _circleIdToController[circle.circleId];
     circleController?.update(_circleOptionsFromCircle(circle));
   }
 

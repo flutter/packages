@@ -38,8 +38,7 @@ class AdsManagerDelegate {
     void Function(AdErrorEvent event)? onAdErrorEvent,
   }) : this.fromPlatformCreationParams(
          PlatformAdsManagerDelegateCreationParams(
-           onAdEvent: (PlatformAdEvent event) =>
-               onAdEvent?.call(AdEvent._fromPlatform(event)),
+           onAdEvent: (PlatformAdEvent event) => onAdEvent?.call(AdEvent._fromPlatform(event)),
            onAdErrorEvent: onAdErrorEvent,
          ),
        );
@@ -71,9 +70,8 @@ class AdsManagerDelegate {
   /// );
   /// ```
   /// {@endtemplate}
-  AdsManagerDelegate.fromPlatformCreationParams(
-    PlatformAdsManagerDelegateCreationParams params,
-  ) : this.fromPlatform(PlatformAdsManagerDelegate(params));
+  AdsManagerDelegate.fromPlatformCreationParams(PlatformAdsManagerDelegateCreationParams params)
+    : this.fromPlatform(PlatformAdsManagerDelegate(params));
 
   /// Constructs a [AdsManagerDelegate] from a specific platform implementation.
   AdsManagerDelegate.fromPlatform(this.platform);
@@ -87,8 +85,7 @@ class AdsManagerDelegate {
 
   /// Invoked when there was an error playing the ad. Log the error and resume
   /// playing content.
-  void Function(AdErrorEvent event)? get onAdErrorEvent =>
-      platform.params.onAdErrorEvent;
+  void Function(AdErrorEvent event)? get onAdErrorEvent => platform.params.onAdErrorEvent;
 }
 
 /// Simple data class used to transport ad playback information.

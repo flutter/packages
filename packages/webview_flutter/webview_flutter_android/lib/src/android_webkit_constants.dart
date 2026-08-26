@@ -28,8 +28,7 @@ class PermissionRequestConstants {
   /// Resource belongs to protected media identifier.
   ///
   /// See https://developer.android.com/reference/android/webkit/PermissionRequest#RESOURCE_VIDEO_CAPTURE.
-  static const String protectedMediaId =
-      'android.webkit.resource.PROTECTED_MEDIA_ID';
+  static const String protectedMediaId = 'android.webkit.resource.PROTECTED_MEDIA_ID';
 }
 
 /// Class constants for [WebViewClient].
@@ -127,4 +126,9 @@ class WebViewFeatureConstants {
   ///
   /// See https://developer.android.com/reference/androidx/webkit/WebViewFeature#PAYMENT_REQUEST.
   static const String paymentRequest = 'PAYMENT_REQUEST';
+
+  /// This feature covers [WebSettingsCompat.setWebAuthenticationSupport].
+  ///
+  /// See https://developer.android.com/reference/androidx/webkit/WebViewFeature#WEB_AUTHENTICATION.
+  static const String webAuthentication = 'WEB_AUTHENTICATION';
 }

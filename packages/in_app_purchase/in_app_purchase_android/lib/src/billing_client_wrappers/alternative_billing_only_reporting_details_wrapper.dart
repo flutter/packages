@@ -15,8 +15,7 @@ const String kInvalidAlternativeBillingReportingDetailsErrorMessage =
 
 /// Params containing the response code and the debug message from the Play Billing API response.
 @immutable
-class AlternativeBillingOnlyReportingDetailsWrapper
-    implements HasBillingResponse {
+class AlternativeBillingOnlyReportingDetailsWrapper implements HasBillingResponse {
   /// Constructs the object with [responseCode] and [debugMessage].
   const AlternativeBillingOnlyReportingDetailsWrapper({
     required this.responseCode,
@@ -50,6 +49,5 @@ class AlternativeBillingOnlyReportingDetailsWrapper
   }
 
   @override
-  int get hashCode =>
-      Object.hash(responseCode, debugMessage, externalTransactionToken);
+  int get hashCode => Object.hash(responseCode, debugMessage, externalTransactionToken);
 }

@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'container_transition.dart';
 import 'fade_scale_transition.dart';
@@ -122,11 +122,7 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
 }
 
 class _TransitionListTile extends StatelessWidget {
-  const _TransitionListTile({
-    this.onTap,
-    required this.title,
-    required this.subtitle,
-  });
+  const _TransitionListTile({this.onTap, required this.title, required this.subtitle});
 
   final GestureTapCallback? onTap;
   final String title;

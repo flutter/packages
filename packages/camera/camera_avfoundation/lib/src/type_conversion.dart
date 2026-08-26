@@ -18,18 +18,14 @@ CameraImageData cameraImageFromPlatformData(PlatformCameraImageData data) {
     sensorSensitivity: data.sensorSensitivity,
     planes: List<CameraImagePlane>.unmodifiable(
       data.planes.map<CameraImagePlane>(
-        (PlatformCameraImagePlane planeData) =>
-            _cameraImagePlaneFromPlatformData(planeData),
+        (PlatformCameraImagePlane planeData) => _cameraImagePlaneFromPlatformData(planeData),
       ),
     ),
   );
 }
 
 CameraImageFormat _cameraImageFormatFromPlatformImageFormat(int data) {
-  return CameraImageFormat(
-    _imageFormatGroupFromPlatformImageFormat(data),
-    raw: data,
-  );
+  return CameraImageFormat(_imageFormatGroupFromPlatformImageFormat(data), raw: data);
 }
 
 ImageFormatGroup _imageFormatGroupFromPlatformImageFormat(int data) {
@@ -44,9 +40,7 @@ ImageFormatGroup _imageFormatGroupFromPlatformImageFormat(int data) {
   return ImageFormatGroup.unknown;
 }
 
-CameraImagePlane _cameraImagePlaneFromPlatformData(
-  PlatformCameraImagePlane data,
-) {
+CameraImagePlane _cameraImagePlaneFromPlatformData(PlatformCameraImagePlane data) {
   return CameraImagePlane(
     bytes: data.bytes,
     bytesPerRow: data.bytesPerRow,

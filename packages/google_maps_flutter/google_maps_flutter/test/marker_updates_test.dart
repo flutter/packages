@@ -168,11 +168,7 @@ void main() {
   testWidgets('Update non platform related attr', (WidgetTester tester) async {
     var m1 = const Marker(markerId: MarkerId('marker_1'));
     final prev = <Marker>{m1};
-    m1 = Marker(
-      markerId: const MarkerId('marker_1'),
-      onTap: () {},
-      onDragEnd: (LatLng latLng) {},
-    );
+    m1 = Marker(markerId: const MarkerId('marker_1'), onTap: () {}, onDragEnd: (LatLng latLng) {});
     final cur = <Marker>{m1};
 
     await tester.pumpWidget(_mapWithMarkers(prev));

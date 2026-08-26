@@ -38,11 +38,7 @@ Object? _extractReplyValueOrThrow(
   return replyList.firstOrNull;
 }
 
-List<Object?> wrapResponse({
-  Object? result,
-  PlatformException? error,
-  bool empty = false,
-}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -64,9 +60,7 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(
-          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
-        );
+        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -138,8 +132,7 @@ class NonNullFieldSearchRequest {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! NonNullFieldSearchRequest ||
-        other.runtimeType != runtimeType) {
+    if (other is! NonNullFieldSearchRequest || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -151,6 +144,11 @@ class NonNullFieldSearchRequest {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NonNullFieldSearchRequest(query: $query)';
+  }
 }
 
 class ExtraData {
@@ -170,10 +168,7 @@ class ExtraData {
 
   static ExtraData decode(Object result) {
     result as List<Object?>;
-    return ExtraData(
-      detailA: result[0]! as String,
-      detailB: result[1]! as String,
-    );
+    return ExtraData(detailA: result[0]! as String, detailB: result[1]! as String);
   }
 
   @override
@@ -185,13 +180,17 @@ class ExtraData {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(detailA, other.detailA) &&
-        _deepEquals(detailB, other.detailB);
+    return _deepEquals(detailA, other.detailA) && _deepEquals(detailB, other.detailB);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'ExtraData(detailA: $detailA, detailB: $detailB)';
+  }
 }
 
 class NonNullFieldSearchReply {
@@ -251,6 +250,11 @@ class NonNullFieldSearchReply {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NonNullFieldSearchReply(result: $result, error: $error, indices: $indices, extraData: $extraData, type: $type)';
+  }
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -296,25 +300,21 @@ class _PigeonCodec extends StandardMessageCodec {
 }
 
 class NonNullFieldHostApi {
-  /// Constructor for [NonNullFieldHostApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [NonNullFieldHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  NonNullFieldHostApi({
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-           ? '.$messageChannelSuffix'
-           : '';
+  NonNullFieldHostApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
 
-  Future<NonNullFieldSearchReply> search(
-    NonNullFieldSearchRequest nested,
-  ) async {
+  Future<NonNullFieldSearchReply> search(NonNullFieldSearchRequest nested) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldHostApi.search$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -322,9 +322,7 @@ class NonNullFieldHostApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[nested],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[nested]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -346,9 +344,7 @@ abstract class NonNullFieldFlutterApi {
     BinaryMessenger? binaryMessenger,
     String messageChannelSuffix = '',
   }) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty
-        ? '.$messageChannelSuffix'
-        : '';
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search$messageChannelSuffix',
@@ -360,8 +356,7 @@ abstract class NonNullFieldFlutterApi {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
-          final NonNullFieldSearchRequest arg_request =
-              args[0]! as NonNullFieldSearchRequest;
+          final NonNullFieldSearchRequest arg_request = args[0]! as NonNullFieldSearchRequest;
           try {
             final NonNullFieldSearchReply output = api.search(arg_request);
             return wrapResponse(result: output);

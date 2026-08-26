@@ -6,8 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/android/android_ads_manager.dart';
 import 'package:interactive_media_ads/src/android/android_ads_manager_delegate.dart';
 import 'package:interactive_media_ads/src/android/android_ads_rendering_settings.dart';
-import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
-    as ima;
+import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart' as ima;
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -43,9 +42,9 @@ void main() {
 
       final mockImaSdkFactory = MockImaSdkFactory();
       final mockAdsRenderingSettings = MockAdsRenderingSettings();
-      when(mockImaSdkFactory.createAdsRenderingSettings()).thenAnswer(
-        (_) => Future<ima.AdsRenderingSettings>.value(mockAdsRenderingSettings),
-      );
+      when(
+        mockImaSdkFactory.createAdsRenderingSettings(),
+      ).thenAnswer((_) => Future<ima.AdsRenderingSettings>.value(mockAdsRenderingSettings));
 
       final adsManager = AndroidAdsManager(mockAdsManager);
 
@@ -69,9 +68,7 @@ void main() {
         mockAdsRenderingSettings.setLoadVideoTimeout(2000),
         mockAdsRenderingSettings.setMimeTypes(<String>['value']),
         mockAdsRenderingSettings.setPlayAdsAfterTime(5.0),
-        mockAdsRenderingSettings.setUiElements(<ima.UiElement>[
-          ima.UiElement.countdown,
-        ]),
+        mockAdsRenderingSettings.setUiElements(<ima.UiElement>[ima.UiElement.countdown]),
         mockAdsRenderingSettings.setEnableCustomTabs(true),
         mockAdsManager.init(mockAdsRenderingSettings),
       ]);
@@ -120,13 +117,10 @@ void main() {
     test('onAdEvent', () async {
       final mockAdsManager = MockAdsManager();
 
-      late final void Function(ima.AdEventListener, ima.AdEvent)
-      onAdEventCallback;
+      late final void Function(ima.AdEventListener, ima.AdEvent) onAdEventCallback;
 
       ima.PigeonOverrides.adEventListener_new =
-          ({
-            required void Function(ima.AdEventListener, ima.AdEvent) onAdEvent,
-          }) {
+          ({required void Function(ima.AdEventListener, ima.AdEvent) onAdEvent}) {
             onAdEventCallback = onAdEvent;
             return MockAdEventListener();
           };
@@ -155,17 +149,13 @@ void main() {
     test('onAdErrorEvent', () async {
       final mockAdsManager = MockAdsManager();
 
-      late final void Function(ima.AdErrorListener, ima.AdErrorEvent)
-      onAdErrorCallback;
+      late final void Function(ima.AdErrorListener, ima.AdErrorEvent) onAdErrorCallback;
 
       ima.PigeonOverrides.adEventListener_new = ({required dynamic onAdEvent}) {
         return MockAdEventListener();
       };
       ima.PigeonOverrides.adErrorListener_new =
-          ({
-            required void Function(ima.AdErrorListener, ima.AdErrorEvent)
-            onAdError,
-          }) {
+          ({required void Function(ima.AdErrorListener, ima.AdErrorEvent) onAdError}) {
             onAdErrorCallback = onAdError;
             return MockAdErrorListener();
           };
@@ -173,18 +163,14 @@ void main() {
       final adsManager = AndroidAdsManager(mockAdsManager);
       await adsManager.setAdsManagerDelegate(
         AndroidAdsManagerDelegate(
-          PlatformAdsManagerDelegateCreationParams(
-            onAdErrorEvent: expectAsync1((_) {}),
-          ),
+          PlatformAdsManagerDelegateCreationParams(onAdErrorEvent: expectAsync1((_) {})),
         ),
       );
 
       final mockErrorEvent = MockAdErrorEvent();
       final mockError = MockAdError();
       when(mockError.errorType).thenReturn(ima.AdErrorType.load);
-      when(
-        mockError.errorCode,
-      ).thenReturn(ima.AdErrorCode.adsRequestNetworkError);
+      when(mockError.errorCode).thenReturn(ima.AdErrorCode.adsRequestNetworkError);
       when(mockError.message).thenReturn('error message');
       when(mockErrorEvent.error).thenReturn(mockError);
       onAdErrorCallback(MockAdErrorListener(), mockErrorEvent);

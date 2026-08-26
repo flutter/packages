@@ -24,8 +24,7 @@ sealed class CompanionAdSlotSize {
 /// A slot for a companion ad with a fixed with and height.
 @immutable
 class CompanionAdSlotSizeFixed extends CompanionAdSlotSize {
-  const CompanionAdSlotSizeFixed._({required this.width, required this.height})
-    : super._();
+  const CompanionAdSlotSizeFixed._({required this.width, required this.height}) : super._();
 
   /// The width of the ad slot in pixels.
   final int width;

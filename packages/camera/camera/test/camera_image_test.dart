@@ -47,17 +47,11 @@ void main() {
     // Planes.
     expect(image.planes.length, originalImage.planes.length);
     for (var i = 0; i < image.planes.length; i++) {
-      expect(
-        image.planes[i].bytes.length,
-        originalImage.planes[i].bytes.length,
-      );
+      expect(image.planes[i].bytes.length, originalImage.planes[i].bytes.length);
       for (var j = 0; j < image.planes[i].bytes.length; j++) {
         expect(image.planes[i].bytes[j], originalImage.planes[i].bytes[j]);
       }
-      expect(
-        image.planes[i].bytesPerPixel,
-        originalImage.planes[i].bytesPerPixel,
-      );
+      expect(image.planes[i].bytesPerPixel, originalImage.planes[i].bytesPerPixel);
       expect(image.planes[i].bytesPerRow, originalImage.planes[i].bytesPerRow);
       expect(image.planes[i].width, originalImage.planes[i].width);
       expect(image.planes[i].height, originalImage.planes[i].height);

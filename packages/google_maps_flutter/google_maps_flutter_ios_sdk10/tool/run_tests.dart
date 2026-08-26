@@ -25,9 +25,7 @@ Future<void> main(List<String> args) async {
     exit(0);
   }
 
-  final Directory packageRoot = Directory(
-    p.dirname(Platform.script.path),
-  ).parent;
+  final Directory packageRoot = Directory(p.dirname(Platform.script.path)).parent;
   final String packageName = p.basename(packageRoot.path);
   final sharedSourceRoot = Directory(
     p.join(packageRoot.parent.path, 'google_maps_flutter_ios_shared_code'),
@@ -129,16 +127,11 @@ Future<bool> _validatePackageSharedCode(
   required bool log,
 }) async {
   var hasDiffs = false;
-  for (final FileSystemEntity entity in sharedSourceRoot.listSync(
-    recursive: true,
-  )) {
+  for (final FileSystemEntity entity in sharedSourceRoot.listSync(recursive: true)) {
     if (entity is! File) {
       continue;
     }
-    final String relativePath = p.relative(
-      entity.path,
-      from: sharedSourceRoot.path,
-    );
+    final String relativePath = p.relative(entity.path, from: sharedSourceRoot.path);
     // The shared source README.md is not part of the shared source of truth,
     // just an explanation of this source-sharing system.
     if (relativePath == 'README.md') {

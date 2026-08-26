@@ -16,19 +16,19 @@ struct ListTests {
     let binaryMessenger = EchoBinaryMessenger(codec: CoreTestsPigeonCodec.shared)
     let api = FlutterSmallApi(binaryMessenger: binaryMessenger)
 
-    await confirmation { confirmed in
-      api.echo(top) { result in
-        switch result {
-        case .success(let res):
-          #expect(res.testList?.count == 1)
-          #expect(res.testList?[0] is TestMessage)
-          #expect(equalsList(inside.testList, (res.testList?[0] as! TestMessage).testList))
-          confirmed()
-        case .failure(let error):
-          Issue.record("Failed with error: \(error)")
-        }
-      }
-    }
+    let res = try await api.echo(top)
+    #expect(res.testList?.count == 1)
+    #expect(res.testList?[0] is TestMessage)
+    #expect(equalsList(inside.testList, (res.testList?[0] as! TestMessage).testList))
+  }
+
+  @Test
+  func descriptionSnapshot() {
+    let msg = TestMessage(testList: ["hello", 42])
+    let desc = msg.description
+    #expect(desc.hasPrefix("TestMessage(testList: "))
+    #expect(desc.contains("hello"))
+    #expect(desc.contains("42"))
   }
 
 }

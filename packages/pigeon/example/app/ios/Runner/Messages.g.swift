@@ -14,6 +14,11 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
+public let aStringConstant: String = "stringConstantValue"
+public let anIntConstant: Int64 = 42
+public let aDoubleConstant: Double = 3.14
+public let aBoolConstant: Bool = true
+
 /// Error class for passing custom error details to Dart side.
 final class PigeonError: Error {
   let code: String
@@ -64,8 +69,127 @@ private func createConnectionError(withChannelName channelName: String) -> Pigeo
     details: "")
 }
 
-private func isNullish(_ value: Any?) -> Bool {
-  return value is NSNull || value == nil
+enum MessagesPigeonInternal {
+  static func isNullish(_ value: Any?) -> Bool {
+    guard let innerValue = value else {
+      return true
+    }
+
+    if case Optional<Any>.some(Optional<Any>.none) = value {
+      return true
+    }
+
+    return innerValue is NSNull
+  }
+  static func doubleEquals(_ lhs: Double, _ rhs: Double) -> Bool {
+    return (lhs.isNaN && rhs.isNaN) || lhs == rhs
+  }
+
+  static func doubleHash(_ value: Double, _ hasher: inout Hasher) {
+    if value.isNaN {
+      hasher.combine(0x7FF8_0000_0000_0000)
+    } else {
+      // Normalize -0.0 to 0.0
+      hasher.combine(value == 0 ? 0 : value)
+    }
+  }
+
+  static func deepEquals(_ lhs: Any?, _ rhs: Any?) -> Bool {
+    let cleanLhs = nilOrValue(lhs) as Any?
+    let cleanRhs = nilOrValue(rhs) as Any?
+    switch (cleanLhs, cleanRhs) {
+    case (nil, nil):
+      return true
+
+    case (nil, _), (_, nil):
+      return false
+
+    case (let lhs as AnyObject, let rhs as AnyObject) where lhs === rhs:
+      return true
+
+    case is (Void, Void):
+      return true
+
+    case (let lhsArray, let rhsArray) as ([Any?], [Any?]):
+      guard lhsArray.count == rhsArray.count else { return false }
+      for (index, element) in lhsArray.enumerated() {
+        if !deepEquals(element, rhsArray[index]) {
+          return false
+        }
+      }
+      return true
+
+    case (let lhsArray, let rhsArray) as ([Double], [Double]):
+      guard lhsArray.count == rhsArray.count else { return false }
+      for (index, element) in lhsArray.enumerated() {
+        if !doubleEquals(element, rhsArray[index]) {
+          return false
+        }
+      }
+      return true
+
+    case (let lhsDictionary, let rhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
+      guard lhsDictionary.count == rhsDictionary.count else { return false }
+      for (lhsKey, lhsValue) in lhsDictionary {
+        var found = false
+        for (rhsKey, rhsValue) in rhsDictionary {
+          if deepEquals(lhsKey, rhsKey) {
+            if deepEquals(lhsValue, rhsValue) {
+              found = true
+              break
+            } else {
+              return false
+            }
+          }
+        }
+        if !found { return false }
+      }
+      return true
+
+    case (let lhs as Double, let rhs as Double):
+      return doubleEquals(lhs, rhs)
+
+    case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
+      return lhsHashable == rhsHashable
+
+    default:
+      return false
+    }
+  }
+
+  static func deepHash(value: Any?, hasher: inout Hasher) {
+    let cleanValue = nilOrValue(value) as Any?
+    if let cleanValue = cleanValue {
+      if let doubleValue = cleanValue as? Double {
+        doubleHash(doubleValue, &hasher)
+      } else if let valueList = cleanValue as? [Any?] {
+        for item in valueList {
+          deepHash(value: item, hasher: &hasher)
+        }
+      } else if let valueList = cleanValue as? [Double] {
+        for item in valueList {
+          doubleHash(item, &hasher)
+        }
+      } else if let valueDict = cleanValue as? [AnyHashable: Any?] {
+        var result = 0
+        for (key, value) in valueDict {
+          var entryKeyHasher = Hasher()
+          deepHash(value: key, hasher: &entryKeyHasher)
+          var entryValueHasher = Hasher()
+          deepHash(value: value, hasher: &entryValueHasher)
+          result = result &+ ((entryKeyHasher.finalize() &* 31) ^ entryValueHasher.finalize())
+        }
+        hasher.combine(result)
+      } else if let hashableValue = cleanValue as? AnyHashable {
+        hasher.combine(hashableValue)
+      } else {
+        hasher.combine(String(describing: cleanValue))
+      }
+    } else {
+      hasher.combine(0)
+    }
+  }
+
 }
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
@@ -73,137 +197,28 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-private func doubleEqualsMessages(_ lhs: Double, _ rhs: Double) -> Bool {
-  return (lhs.isNaN && rhs.isNaN) || lhs == rhs
-}
-
-private func doubleHashMessages(_ value: Double, _ hasher: inout Hasher) {
-  if value.isNaN {
-    hasher.combine(0x7FF8_0000_0000_0000)
-  } else {
-    // Normalize -0.0 to 0.0
-    hasher.combine(value == 0 ? 0 : value)
-  }
-}
-
-func deepEqualsMessages(_ lhs: Any?, _ rhs: Any?) -> Bool {
-  let cleanLhs = nilOrValue(lhs) as Any?
-  let cleanRhs = nilOrValue(rhs) as Any?
-  switch (cleanLhs, cleanRhs) {
-  case (nil, nil):
-    return true
-
-  case (nil, _), (_, nil):
-    return false
-
-  case (let lhs as AnyObject, let rhs as AnyObject) where lhs === rhs:
-    return true
-
-  case is (Void, Void):
-    return true
-
-  case (let lhsArray, let rhsArray) as ([Any?], [Any?]):
-    guard lhsArray.count == rhsArray.count else { return false }
-    for (index, element) in lhsArray.enumerated() {
-      if !deepEqualsMessages(element, rhsArray[index]) {
-        return false
-      }
-    }
-    return true
-
-  case (let lhsArray, let rhsArray) as ([Double], [Double]):
-    guard lhsArray.count == rhsArray.count else { return false }
-    for (index, element) in lhsArray.enumerated() {
-      if !doubleEqualsMessages(element, rhsArray[index]) {
-        return false
-      }
-    }
-    return true
-
-  case (let lhsDictionary, let rhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
-    guard lhsDictionary.count == rhsDictionary.count else { return false }
-    for (lhsKey, lhsValue) in lhsDictionary {
-      var found = false
-      for (rhsKey, rhsValue) in rhsDictionary {
-        if deepEqualsMessages(lhsKey, rhsKey) {
-          if deepEqualsMessages(lhsValue, rhsValue) {
-            found = true
-            break
-          } else {
-            return false
-          }
-        }
-      }
-      if !found { return false }
-    }
-    return true
-
-  case (let lhs as Double, let rhs as Double):
-    return doubleEqualsMessages(lhs, rhs)
-
-  case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
-    return lhsHashable == rhsHashable
-
-  default:
-    return false
-  }
-}
-
-func deepHashMessages(value: Any?, hasher: inout Hasher) {
-  let cleanValue = nilOrValue(value) as Any?
-  if let cleanValue = cleanValue {
-    if let doubleValue = cleanValue as? Double {
-      doubleHashMessages(doubleValue, &hasher)
-    } else if let valueList = cleanValue as? [Any?] {
-      for item in valueList {
-        deepHashMessages(value: item, hasher: &hasher)
-      }
-    } else if let valueList = cleanValue as? [Double] {
-      for item in valueList {
-        doubleHashMessages(item, &hasher)
-      }
-    } else if let valueDict = cleanValue as? [AnyHashable: Any?] {
-      var result = 0
-      for (key, value) in valueDict {
-        var entryKeyHasher = Hasher()
-        deepHashMessages(value: key, hasher: &entryKeyHasher)
-        var entryValueHasher = Hasher()
-        deepHashMessages(value: value, hasher: &entryValueHasher)
-        result = result &+ ((entryKeyHasher.finalize() &* 31) ^ entryValueHasher.finalize())
-      }
-      hasher.combine(result)
-    } else if let hashableValue = cleanValue as? AnyHashable {
-      hasher.combine(hashableValue)
-    } else {
-      hasher.combine(String(describing: cleanValue))
-    }
-  } else {
-    hasher.combine(0)
-  }
-}
-
-enum Code: Int {
+enum Code: Int, CaseIterable {
   case one = 0
   case two = 1
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct MessageData: Hashable {
+struct MessageData: Hashable, CustomStringConvertible {
   var name: String? = nil
-  var description: String? = nil
+  var messageDescription: String? = nil
   var code: Code
   var data: [String: String]
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> MessageData? {
     let name: String? = nilOrValue(pigeonVar_list[0])
-    let description: String? = nilOrValue(pigeonVar_list[1])
+    let messageDescription: String? = nilOrValue(pigeonVar_list[1])
     let code = pigeonVar_list[2] as! Code
     let data = pigeonVar_list[3] as! [String: String]
 
     return MessageData(
       name: name,
-      description: description,
+      messageDescription: messageDescription,
       code: code,
       data: data
     )
@@ -211,7 +226,7 @@ struct MessageData: Hashable {
   func toList() -> [Any?] {
     return [
       name,
-      description,
+      messageDescription,
       code,
       data,
     ]
@@ -220,17 +235,23 @@ struct MessageData: Hashable {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return deepEqualsMessages(lhs.name, rhs.name)
-      && deepEqualsMessages(lhs.description, rhs.description)
-      && deepEqualsMessages(lhs.code, rhs.code) && deepEqualsMessages(lhs.data, rhs.data)
+    return MessagesPigeonInternal.deepEquals(lhs.name, rhs.name)
+      && MessagesPigeonInternal.deepEquals(lhs.messageDescription, rhs.messageDescription)
+      && MessagesPigeonInternal.deepEquals(lhs.code, rhs.code)
+      && MessagesPigeonInternal.deepEquals(lhs.data, rhs.data)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("MessageData")
-    deepHashMessages(value: name, hasher: &hasher)
-    deepHashMessages(value: description, hasher: &hasher)
-    deepHashMessages(value: code, hasher: &hasher)
-    deepHashMessages(value: data, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: name, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: messageDescription, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: code, hasher: &hasher)
+    MessagesPigeonInternal.deepHash(value: data, hasher: &hasher)
+  }
+
+  public var description: String {
+    return
+      "MessageData(name: \(String(describing: name)), messageDescription: \(String(describing: messageDescription)), code: \(String(describing: code)), data: \(String(describing: data)))"
   }
 }
 
@@ -283,7 +304,7 @@ class MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
 protocol ExampleHostApi {
   func getHostLanguage() throws -> String
   func add(_ a: Int64, to b: Int64) throws -> Int64
-  func sendMessage(message: MessageData, completion: @escaping (Result<Bool, Error>) -> Void)
+  func sendMessage(message: MessageData) async throws -> Bool
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -335,11 +356,11 @@ class ExampleHostApiSetup {
       sendMessageChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let messageArg = args[0] as! MessageData
-        api.sendMessage(message: messageArg) { result in
-          switch result {
-          case .success(let res):
-            reply(wrapResult(res))
-          case .failure(let error):
+        Task { @MainActor in
+          do {
+            let result = try await api.sendMessage(message: messageArg)
+            reply(wrapResult(result))
+          } catch {
             reply(wrapError(error))
           }
         }
@@ -349,10 +370,10 @@ class ExampleHostApiSetup {
     }
   }
 }
+
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol MessageFlutterApiProtocol {
-  func flutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void)
+  func flutterMethod(aString aStringArg: String?) async throws -> String
 }
 class MessageFlutterApi: MessageFlutterApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -364,32 +385,31 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
   var codec: MessagesPigeonCodec {
     return MessagesPigeonCodec.shared
   }
-  func flutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void
-  ) {
-    let channelName: String =
-      "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod\(messageChannelSuffix)"
-    let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([aStringArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
-        completion(.failure(createConnectionError(withChannelName: channelName)))
-        return
-      }
-      if listResponse.count > 1 {
-        let code: String = listResponse[0] as! String
-        let message: String? = nilOrValue(listResponse[1])
-        let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(PigeonError(code: code, message: message, details: details)))
-      } else if listResponse[0] == nil {
-        completion(
-          .failure(
-            PigeonError(
+  func flutterMethod(aString aStringArg: String?) async throws -> String {
+    return try await withCheckedThrowingContinuation { continuation in
+      let channelName: String =
+        "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod\(messageChannelSuffix)"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage([aStringArg] as [Any?]) { response in
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil {
+          continuation.resume(
+            throwing: PigeonError(
               code: "null-error",
-              message: "Flutter api returned null value for non-null return value.", details: "")))
-      } else {
-        let result = listResponse[0] as! String
-        completion(.success(result))
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! String
+          continuation.resume(returning: result)
+        }
       }
     }
   }

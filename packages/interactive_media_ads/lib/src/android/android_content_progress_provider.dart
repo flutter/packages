@@ -10,8 +10,7 @@ import '../platform_interface/platform_content_progress_provider.dart';
 import 'interactive_media_ads.g.dart' as ima;
 
 /// Android implementation of [PlatformContentProgressProvider].
-base class AndroidContentProgressProvider
-    extends PlatformContentProgressProvider {
+base class AndroidContentProgressProvider extends PlatformContentProgressProvider {
   /// Constructs an [AndroidContentProgressProvider].
   AndroidContentProgressProvider(super.params) : super.implementation();
 
@@ -19,14 +18,10 @@ base class AndroidContentProgressProvider
   ///
   /// This allows the SDK to track progress of the content video.
   @internal
-  late final ima.ContentProgressProvider progressProvider =
-      ima.ContentProgressProvider();
+  late final ima.ContentProgressProvider progressProvider = ima.ContentProgressProvider();
 
   @override
-  Future<void> setProgress({
-    required Duration progress,
-    required Duration duration,
-  }) async {
+  Future<void> setProgress({required Duration progress, required Duration duration}) async {
     return progressProvider.setContentProgress(
       ima.VideoProgressUpdate(
         currentTimeMs: progress.inMilliseconds,

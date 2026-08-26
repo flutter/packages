@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 // This scenario demonstrates the behavior when pushing ShellRoute in various
 // scenario.
@@ -38,9 +38,8 @@ class PushWithShellRouteExampleApp extends StatelessWidget {
           ),
           GoRoute(
             path: '/shell1',
-            pageBuilder: (_, __) => const NoTransitionPage<void>(
-              child: Center(child: Text('shell1 body')),
-            ),
+            pageBuilder: (_, _) =>
+                const NoTransitionPage<void>(child: Center(child: Text('shell1 body'))),
           ),
         ],
       ),

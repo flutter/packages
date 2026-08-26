@@ -55,8 +55,7 @@ void main() {
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
     expect(map.heatmapUpdates.last.heatmapsToAdd.length, 1);
 
-    final Heatmap initializedHeatmap =
-        map.heatmapUpdates.last.heatmapsToAdd.first;
+    final Heatmap initializedHeatmap = map.heatmapUpdates.last.heatmapsToAdd.first;
     expect(initializedHeatmap, equals(h1));
     expect(map.heatmapUpdates.last.heatmapIdsToRemove.isEmpty, true);
     expect(map.heatmapUpdates.last.heatmapsToChange.isEmpty, true);
@@ -100,10 +99,7 @@ void main() {
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
     expect(map.heatmapUpdates.last.heatmapIdsToRemove.length, 1);
-    expect(
-      map.heatmapUpdates.last.heatmapIdsToRemove.first,
-      equals(h1.heatmapId),
-    );
+    expect(map.heatmapUpdates.last.heatmapIdsToRemove.first, equals(h1.heatmapId));
 
     expect(map.heatmapUpdates.last.heatmapsToChange.isEmpty, true);
     expect(map.heatmapUpdates.last.heatmapsToAdd.isEmpty, true);
@@ -227,10 +223,7 @@ void main() {
 
     expect(map.heatmapUpdates.last.heatmapsToChange.first, equals(h2));
     expect(map.heatmapUpdates.last.heatmapsToAdd.first, equals(h1));
-    expect(
-      map.heatmapUpdates.last.heatmapIdsToRemove.first,
-      equals(h3.heatmapId),
-    );
+    expect(map.heatmapUpdates.last.heatmapIdsToRemove.first, equals(h3.heatmapId));
   });
 
   testWidgets('Partial Update', (WidgetTester tester) async {

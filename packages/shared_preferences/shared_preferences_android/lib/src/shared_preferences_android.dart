@@ -51,10 +51,7 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
       case 'Double':
         return api.setDouble(key, value as double);
       case 'StringList':
-        return api.setEncodedStringList(
-          key,
-          '$jsonListPrefix${jsonEncode(value)}',
-        );
+        return api.setEncodedStringList(key, '$jsonListPrefix${jsonEncode(value)}');
     }
     // TODO(tarrinneal): change to ArgumentError across all platforms.
     throw PlatformException(
@@ -65,16 +62,12 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> clear() async {
-    return clearWithParameters(
-      ClearParameters(filter: PreferencesFilter(prefix: _defaultPrefix)),
-    );
+    return clearWithParameters(ClearParameters(filter: PreferencesFilter(prefix: _defaultPrefix)));
   }
 
   @override
   Future<bool> clearWithPrefix(String prefix) async {
-    return clearWithParameters(
-      ClearParameters(filter: PreferencesFilter(prefix: prefix)),
-    );
+    return clearWithParameters(ClearParameters(filter: PreferencesFilter(prefix: prefix)));
   }
 
   @override
@@ -92,26 +85,17 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
 
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
-    return getAllWithParameters(
-      GetAllParameters(filter: PreferencesFilter(prefix: prefix)),
-    );
+    return getAllWithParameters(GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
   }
 
   @override
-  Future<Map<String, Object>> getAllWithParameters(
-    GetAllParameters parameters,
-  ) async {
+  Future<Map<String, Object>> getAllWithParameters(GetAllParameters parameters) async {
     final PreferencesFilter filter = parameters.filter;
-    final Map<String?, Object?> data = await api.getAll(
-      filter.prefix,
-      filter.allowList?.toList(),
-    );
+    final Map<String?, Object?> data = await api.getAll(filter.prefix, filter.allowList?.toList());
     data.forEach((String? key, Object? value) {
-      if (value.runtimeType == String &&
-          (value! as String).startsWith(jsonListPrefix)) {
+      if (value.runtimeType == String && (value! as String).startsWith(jsonListPrefix)) {
         data[key!] =
-            (jsonDecode((value as String).substring(jsonListPrefix.length))
-                    as List<dynamic>)
+            (jsonDecode((value as String).substring(jsonListPrefix.length)) as List<dynamic>)
                 .cast<String>()
                 .toList();
       }

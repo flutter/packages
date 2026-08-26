@@ -26,15 +26,19 @@ import java.util.List;
 import java.util.Map;
 
 /** This plugin handles the native side of the integration tests in example/integration_test/. */
-public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrationCoreApi {
+public class AlternateLanguageTestPlugin
+    implements FlutterPlugin, HostIntegrationCoreApi, CoreTests.HostCallbackCoreApi {
   @Nullable FlutterIntegrationCoreApi flutterApi = null;
+  @Nullable CoreTests.FlutterCallbackCoreApi flutterCallbackApi = null;
   @Nullable FlutterSmallApi flutterSmallApiOne = null;
   @Nullable FlutterSmallApi flutterSmallApiTwo = null;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     HostIntegrationCoreApi.setUp(binding.getBinaryMessenger(), this);
+    CoreTests.HostCallbackCoreApi.setUp(binding.getBinaryMessenger(), this);
     flutterApi = new FlutterIntegrationCoreApi(binding.getBinaryMessenger());
+    flutterCallbackApi = new CoreTests.FlutterCallbackCoreApi(binding.getBinaryMessenger());
     flutterSmallApiOne = new FlutterSmallApi(binding.getBinaryMessenger(), "suffixOne");
     flutterSmallApiTwo = new FlutterSmallApi(binding.getBinaryMessenger(), "suffixTwo");
     TestPluginWithSuffix testSuffixApiOne = new TestPluginWithSuffix();
@@ -44,7 +48,46 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {}
+  public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+    HostIntegrationCoreApi.setUp(binding.getBinaryMessenger(), null);
+    CoreTests.HostCallbackCoreApi.setUp(binding.getBinaryMessenger(), null);
+  }
+
+  // HostCallbackCoreApi
+  @Override
+  public void noop(@NonNull VoidResult result) {
+    result.success();
+  }
+
+  @Override
+  public void echoString(@NonNull String aString, @NonNull Result<String> result) {
+    result.success(aString);
+  }
+
+  @Override
+  public void echoAllTypes(@NonNull AllTypes everything, @NonNull Result<AllTypes> result) {
+    result.success(everything);
+  }
+
+  @Override
+  public void echoNullableString(@Nullable String aString, @NonNull NullableResult<String> result) {
+    result.success(aString);
+  }
+
+  @Override
+  public void throwError(@NonNull NullableResult<Object> result) {
+    result.error(new CoreTests.FlutterError("code", "message", "details"));
+  }
+
+  @Override
+  public void throwErrorFromVoid(@NonNull VoidResult result) {
+    result.error(new CoreTests.FlutterError("code", "message", "details"));
+  }
+
+  @Override
+  public void taskQueueIsBackgroundThread(@NonNull Result<Boolean> result) {
+    result.success(Looper.myLooper() != Looper.getMainLooper());
+  }
 
   // HostIntegrationCoreApi
 
@@ -132,6 +175,26 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   @Override
   public @NonNull List<Object> echoList(@NonNull List<Object> list) {
     return list;
+  }
+
+  @Override
+  public @NonNull List<String> echoStringList(@NonNull List<String> stringList) {
+    return stringList;
+  }
+
+  @Override
+  public @NonNull List<Long> echoIntList(@NonNull List<Long> intList) {
+    return intList;
+  }
+
+  @Override
+  public @NonNull List<Double> echoDoubleList(@NonNull List<Double> doubleList) {
+    return doubleList;
+  }
+
+  @Override
+  public @NonNull List<Boolean> echoBoolList(@NonNull List<Boolean> boolList) {
+    return boolList;
   }
 
   @Override
@@ -644,6 +707,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public void asyncTaskQueueIsBackgroundThread(@NonNull Result<Boolean> result) {
+    result.success(Thread.currentThread() != Looper.getMainLooper().getThread());
+  }
+
+  @Override
   public void callFlutterNoop(@NonNull VoidResult result) {
     assert flutterApi != null;
     flutterApi.noop(result);
@@ -1039,6 +1107,31 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
           }
         };
     flutterSmallApiOne.echoString(aString, resultCallbackOne);
+  }
+
+  @Override
+  public void callFlutterCallbackNoop(@NonNull VoidResult result) {
+    assert flutterCallbackApi != null;
+    flutterCallbackApi.noop(result);
+  }
+
+  @Override
+  public void callFlutterCallbackEchoString(
+      @NonNull String aString, @NonNull Result<String> result) {
+    assert flutterCallbackApi != null;
+    flutterCallbackApi.echoString(aString, result);
+  }
+
+  @Override
+  public void callFlutterCallbackThrowError(@NonNull NullableResult<Object> result) {
+    assert flutterCallbackApi != null;
+    flutterCallbackApi.throwError(result);
+  }
+
+  @Override
+  public void callFlutterCallbackThrowErrorFromVoid(@NonNull VoidResult result) {
+    assert flutterCallbackApi != null;
+    flutterCallbackApi.throwErrorFromVoid(result);
   }
 
   public @NonNull CoreTests.UnusedClass testIfUnusedClassIsGenerated() {

@@ -85,10 +85,7 @@ class ImagePicker {
       requestFullMetadata: requestFullMetadata,
     );
 
-    return platform.getImageFromSource(
-      source: source,
-      options: imagePickerOptions,
-    );
+    return platform.getImageFromSource(source: source, options: imagePickerOptions);
   }
 
   /// Returns a [List<XFile>] object wrapping the images that were picked.
@@ -132,7 +129,23 @@ class ImagePicker {
     int? imageQuality,
     int? limit,
     bool requestFullMetadata = true,
-  }) {
+  }) async {
+    if (limit != null && limit < 1) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 1');
+    }
+    // limit: 1 would fail MultiImagePickerOptions validation (requires >= 2),
+    // so delegate to pickImage which already handles single-image selection.
+    if (limit == 1) {
+      final XFile? image = await pickImage(
+        source: ImageSource.gallery,
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+        imageQuality: imageQuality,
+        requestFullMetadata: requestFullMetadata,
+      );
+      return <XFile>[if (image != null) image];
+    }
+
     final imageOptions = ImageOptions.createAndValidate(
       maxWidth: maxWidth,
       maxHeight: maxHeight,
@@ -141,10 +154,7 @@ class ImagePicker {
     );
 
     return platform.getMultiImageWithOptions(
-      options: MultiImagePickerOptions.createAndValidate(
-        imageOptions: imageOptions,
-        limit: limit,
-      ),
+      options: MultiImagePickerOptions.createAndValidate(imageOptions: imageOptions, limit: limit),
     );
   }
 
@@ -248,7 +258,22 @@ class ImagePicker {
     int? imageQuality,
     int? limit,
     bool requestFullMetadata = true,
-  }) {
+  }) async {
+    if (limit != null && limit < 1) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 1');
+    }
+    // limit: 1 would fail MediaOptions validation (requires >= 2),
+    // so delegate to pickMedia which already handles single-item selection.
+    if (limit == 1) {
+      final XFile? media = await pickMedia(
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+        imageQuality: imageQuality,
+        requestFullMetadata: requestFullMetadata,
+      );
+      return <XFile>[if (media != null) media];
+    }
+
     return platform.getMedia(
       options: MediaOptions.createAndValidate(
         allowMultiple: true,
@@ -270,8 +295,8 @@ class ImagePicker {
   /// The [source] argument controls where the video comes from. This can
   /// be either [ImageSource.camera] or [ImageSource.gallery].
   ///
-  /// The [maxDuration] argument specifies the maximum duration of the captured video. If no [maxDuration] is specified,
-  /// the maximum duration will be infinite.
+  /// The [maxDuration] argument specifies the maximum duration of the captured video when recording from the camera ([ImageSource.camera]),
+  /// and is ignored for [ImageSource.gallery]. If no [maxDuration] is specified, the maximum duration will be infinite.
   ///
   /// Use `preferredCameraDevice` to specify the camera to use when the `source` is [ImageSource.camera].
   /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.

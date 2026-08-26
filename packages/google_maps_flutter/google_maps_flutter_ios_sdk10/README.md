@@ -17,13 +17,33 @@ implementation packages unless you have a compelling reason to do so. Instead,
 just depend on `google_maps_flutter`, so that application developers can
 select the appropriate SDK version for their minimum iOS version target.
 
-## Minimum iOS Version
+## Setup
 
-Google Maps SDK 10.x requires iOS 16, so if your application does not already
-require iOS 16 you must update your minimum iOS deployment version.
+1. Specify your API key in the application delegate `ios/Runner/AppDelegate.swift`:
 
-Alternatively, you could use a [different SDK version][4]
-with a lower iOS version requirement.
+    ```swift
+    import UIKit
+    import Flutter
+    import GoogleMaps
+
+    @UIApplicationMain
+    @objc class AppDelegate: FlutterAppDelegate {
+      override func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+      ) -> Bool {
+        GMSServices.provideAPIKey("YOUR KEY HERE")
+        GeneratedPluginRegistrant.register(with: self)
+        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+      }
+    }
+    ```
+
+2. Google Maps SDK 10.x requires iOS 16, so if your application does not already
+   require iOS 16 you must update your minimum iOS deployment version.
+
+   Alternatively, you could use a [different SDK version][4]
+   with a lower iOS version requirement.
 
 ## Supported Heatmap Options
 

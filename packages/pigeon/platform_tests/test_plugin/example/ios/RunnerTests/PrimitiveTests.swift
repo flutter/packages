@@ -19,7 +19,6 @@ class MockPrimitiveHostApi: PrimitiveHostApi {
   func aStringIntMap(value: [String?: Int64?]) -> [String?: Int64?] { value }
 }
 
-@MainActor
 struct PrimitiveTests {
   let codec = FlutterStandardMessageCodec.sharedInstance()
 
@@ -51,17 +50,8 @@ struct PrimitiveTests {
     let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
 
-    await confirmation { confirmed in
-      api.anInt(value: 1) { result in
-        switch result {
-        case .success(let res):
-          #expect(res == 1)
-          confirmed()
-        case .failure(let error):
-          Issue.record("Failed with error: \(error)")
-        }
-      }
-    }
+    let res = try await api.anInt(value: 1)
+    #expect(res == 1)
   }
 
   @Test
@@ -92,17 +82,8 @@ struct PrimitiveTests {
     let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
 
-    await confirmation { confirmed in
-      api.aBool(value: true) { result in
-        switch result {
-        case .success(let res):
-          #expect(res == true)
-          confirmed()
-        case .failure(let error):
-          Issue.record("Failed with error: \(error)")
-        }
-      }
-    }
+    let res = try await api.aBool(value: true)
+    #expect(res == true)
   }
 
   @Test
@@ -133,18 +114,9 @@ struct PrimitiveTests {
     let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
 
-    await confirmation { confirmed in
-      let arg: Double = 1.5
-      api.aDouble(value: arg) { result in
-        switch result {
-        case .success(let res):
-          #expect(res == arg)
-          confirmed()
-        case .failure(let error):
-          Issue.record("Failed with error: \(error)")
-        }
-      }
-    }
+    let arg: Double = 1.5
+    let res = try await api.aDouble(value: arg)
+    #expect(res == arg)
   }
 
   @Test
@@ -175,18 +147,9 @@ struct PrimitiveTests {
     let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
 
-    await confirmation { confirmed in
-      let arg: String = "hello"
-      api.aString(value: arg) { result in
-        switch result {
-        case .success(let res):
-          #expect(res == arg)
-          confirmed()
-        case .failure(let error):
-          Issue.record("Failed with error: \(error)")
-        }
-      }
-    }
+    let arg: String = "hello"
+    let res = try await api.aString(value: arg)
+    #expect(res == arg)
   }
 
   @Test
@@ -217,18 +180,9 @@ struct PrimitiveTests {
     let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
 
-    await confirmation { confirmed in
-      let arg = ["hello"]
-      api.aList(value: arg) { result in
-        switch result {
-        case .success(let res):
-          #expect(equalsList(arg, res))
-          confirmed()
-        case .failure(let error):
-          Issue.record("Failed with error: \(error)")
-        }
-      }
-    }
+    let arg = ["hello"]
+    let res = try await api.aList(value: arg)
+    #expect(equalsList(arg, res))
   }
 
   @Test
@@ -259,17 +213,8 @@ struct PrimitiveTests {
     let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
 
-    await confirmation { confirmed in
-      let arg = ["hello": 1]
-      api.aMap(value: arg) { result in
-        switch result {
-        case .success(let res):
-          #expect(equalsDictionary(arg, res))
-          confirmed()
-        case .failure(let error):
-          Issue.record("Failed with error: \(error)")
-        }
-      }
-    }
+    let arg = ["hello": 1]
+    let res = try await api.aMap(value: arg)
+    #expect(equalsDictionary(arg, res))
   }
 }

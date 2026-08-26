@@ -58,10 +58,7 @@ void main() {
 
   testWidgets('Updating a tile overlay', (WidgetTester tester) async {
     const t1 = TileOverlay(tileOverlayId: TileOverlayId('tile_overlay_1'));
-    const t2 = TileOverlay(
-      tileOverlayId: TileOverlayId('tile_overlay_1'),
-      zIndex: 10,
-    );
+    const t2 = TileOverlay(tileOverlayId: TileOverlayId('tile_overlay_1'), zIndex: 10);
 
     await tester.pumpWidget(_mapWithTileOverlays(<TileOverlay>{t1}));
     await tester.pumpWidget(_mapWithTileOverlays(<TileOverlay>{t2}));

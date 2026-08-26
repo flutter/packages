@@ -52,9 +52,7 @@ class MockGoogleSignInApi extends _i1.Mock implements _i2.GoogleSignInApi {
           as _i4.Future<String?>);
 
   @override
-  _i4.Future<_i2.GetCredentialResult> getCredential(
-    _i2.GetCredentialRequestParams? params,
-  ) =>
+  _i4.Future<_i2.GetCredentialResult> getCredential(_i2.GetCredentialRequestParams? params) =>
       (super.noSuchMethod(
             Invocation.method(#getCredential, [params]),
             returnValue: _i4.Future<_i2.GetCredentialResult>.value(
@@ -63,13 +61,12 @@ class MockGoogleSignInApi extends _i1.Mock implements _i2.GoogleSignInApi {
                 Invocation.method(#getCredential, [params]),
               ),
             ),
-            returnValueForMissingStub:
-                _i4.Future<_i2.GetCredentialResult>.value(
-                  _i3.dummyValue<_i2.GetCredentialResult>(
-                    this,
-                    Invocation.method(#getCredential, [params]),
-                  ),
-                ),
+            returnValueForMissingStub: _i4.Future<_i2.GetCredentialResult>.value(
+              _i3.dummyValue<_i2.GetCredentialResult>(
+                this,
+                Invocation.method(#getCredential, [params]),
+              ),
+            ),
           )
           as _i4.Future<_i2.GetCredentialResult>);
 
@@ -97,11 +94,7 @@ class MockGoogleSignInApi extends _i1.Mock implements _i2.GoogleSignInApi {
     required bool? promptIfUnauthorized,
   }) =>
       (super.noSuchMethod(
-            Invocation.method(
-              #authorize,
-              [params],
-              {#promptIfUnauthorized: promptIfUnauthorized},
-            ),
+            Invocation.method(#authorize, [params], {#promptIfUnauthorized: promptIfUnauthorized}),
             returnValue: _i4.Future<_i2.AuthorizeResult>.value(
               _i3.dummyValue<_i2.AuthorizeResult>(
                 this,

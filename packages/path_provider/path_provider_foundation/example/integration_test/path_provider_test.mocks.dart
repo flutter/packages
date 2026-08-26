@@ -7,8 +7,7 @@ import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i4;
 import 'package:objective_c/objective_c.dart' as _i2;
 import 'package:path_provider_foundation/src/ffi_bindings.g.dart' as _i3;
-import 'package:path_provider_foundation/src/path_provider_foundation_real.dart'
-    as _i5;
+import 'package:path_provider_foundation/src/path_provider_foundation_real.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -26,8 +25,7 @@ import 'package:path_provider_foundation/src/path_provider_foundation_real.dart'
 // ignore_for_file: invalid_use_of_internal_member
 
 class _FakeObjCObject_0 extends _i1.SmartFake implements _i2.ObjCObject {
-  _FakeObjCObject_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeObjCObject_0(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
 /// A class which mocks [FoundationFFI].
@@ -74,10 +72,7 @@ class MockObjCObject extends _i1.Mock implements _i2.ObjCObject {
   _i2.ObjCObjectRef get ref =>
       (super.noSuchMethod(
             Invocation.getter(#ref),
-            returnValue: _i4.dummyValue<_i2.ObjCObjectRef>(
-              this,
-              Invocation.getter(#ref),
-            ),
+            returnValue: _i4.dummyValue<_i2.ObjCObjectRef>(this, Invocation.getter(#ref)),
             returnValueForMissingStub: _i4.dummyValue<_i2.ObjCObjectRef>(
               this,
               Invocation.getter(#ref),

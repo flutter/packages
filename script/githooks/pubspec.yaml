@@ -1,0 +1,13 @@
+name: githooks
+description: Git hooks for the flutter/packages repository. For more information on the hooks and how to install them, see README.md
+publish_to: none
+
+environment:
+  sdk: ^3.10.0-0
+
+dependencies:
+  args: any
+  path: any
+
+dev_dependencies:
+  test: any

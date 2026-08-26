@@ -4,11 +4,11 @@
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/logging.dart';
 import 'package:logging/logging.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   tearDown(() {
@@ -30,23 +30,20 @@ void main() {
     logger.info('message');
   });
 
-  testWidgets(
-    'It should not log anything the if debugLogDiagnostics is false',
-    (WidgetTester tester) async {
-      testDeveloperLog = expectAsync1((LogRecord data) {}, count: 0);
-      final StreamSubscription<LogRecord> subscription = Logger.root.onRecord
-          .listen(expectAsync1((LogRecord data) {}, count: 0));
-      addTearDown(subscription.cancel);
-      GoRouter(
-        routes: <RouteBase>[
-          GoRoute(
-            path: '/',
-            builder: (_, GoRouterState state) => const Text('home'),
-          ),
-        ],
-      );
-    },
-  );
+  testWidgets('It should not log anything the if debugLogDiagnostics is false', (
+    WidgetTester tester,
+  ) async {
+    testDeveloperLog = expectAsync1((LogRecord data) {}, count: 0);
+    final StreamSubscription<LogRecord> subscription = Logger.root.onRecord.listen(
+      expectAsync1((LogRecord data) {}, count: 0),
+    );
+    addTearDown(subscription.cancel);
+    GoRouter(
+      routes: <RouteBase>[
+        GoRoute(path: '/', builder: (_, GoRouterState state) => const Text('home')),
+      ],
+    );
+  });
 
   testWidgets(
     'It should log the known routes and the initial route if debugLogDiagnostics is true',
@@ -61,10 +58,7 @@ void main() {
       GoRouter(
         debugLogDiagnostics: true,
         routes: <RouteBase>[
-          GoRoute(
-            path: '/',
-            builder: (_, GoRouterState state) => const Text('home'),
-          ),
+          GoRoute(path: '/', builder: (_, GoRouterState state) => const Text('home')),
         ],
       );
 
@@ -90,10 +84,7 @@ void main() {
       GoRouter(
         debugLogDiagnostics: true,
         routes: <RouteBase>[
-          GoRoute(
-            path: '/',
-            builder: (_, GoRouterState state) => const Text('home'),
-          ),
+          GoRoute(path: '/', builder: (_, GoRouterState state) => const Text('home')),
         ],
       );
 

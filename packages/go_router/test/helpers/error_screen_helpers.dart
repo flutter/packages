@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../test_helpers.dart';
 
@@ -35,8 +35,8 @@ WidgetTesterCallback testClickingTheButtonRedirectsToRoot({
     final router = GoRouter(
       initialLocation: '/error',
       routes: <GoRoute>[
-        GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
-        GoRoute(path: '/error', builder: (_, __) => widget),
+        GoRoute(path: '/', builder: (_, _) => const DummyStatefulWidget()),
+        GoRoute(path: '/error', builder: (_, _) => widget),
       ],
     );
     addTearDown(router.dispose);

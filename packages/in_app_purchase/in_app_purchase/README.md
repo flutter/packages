@@ -48,6 +48,8 @@ can start using the plugin. Two basic options are available:
 
 1. A generic, idiomatic Flutter API: [in_app_purchase](https://pub.dev/documentation/in_app_purchase/latest/in_app_purchase/in_app_purchase-library.html).
    This API supports most use cases for loading and making purchases.
+   
+  > **NOTE**: On iOS and macOS, the generic API uses StoreKit 2 by default. If you need to fall back to StoreKit 1, call `InAppPurchaseStoreKitPlatform.enableStoreKit1()` before registering the platform.
 
 2. Platform-specific Dart APIs: [store_kit_wrappers](https://pub.dev/documentation/in_app_purchase_storekit/latest/store_kit_wrappers/store_kit_wrappers-library.html)
    and [billing_client_wrappers](https://pub.dev/documentation/in_app_purchase_android/latest/billing_client_wrappers/billing_client_wrappers-library.html).
@@ -196,6 +198,24 @@ if (_isConsumable(productDetails)) {
 // Updates will be delivered to the `InAppPurchase.instance.purchaseStream`.
 ```
 
+StoreKit 2 Specific Purchases (iOS/macOS)
+When StoreKit 2 is enabled, you can use Sk2PurchaseParam to include StoreKit 2 specific parameters such as win-back offer identifiers or promotional offers with signatures.
+
+```dart
+import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
+
+final productDetails = ...; // Obtained from queryProductDetails
+
+final purchaseParamSk2 = Sk2PurchaseParam(
+  productDetails: productDetails,
+  winBackOfferId: 'your_win_back_offer_id',
+);
+
+await InAppPurchase.instance.buyNonConsumable(
+  purchaseParam: purchaseParamSk2,
+);
+```
+
 ### Completing a purchase
 
 The `InAppPurchase.purchaseStream` will send purchase updates after initiating
@@ -209,7 +229,9 @@ purchase and the store can proceed to finalize the transaction and bill
 the end user's payment account.
 
 > **Warning:** Failure to call `InAppPurchase.completePurchase` and
-> get a successful response within 3 days of the purchase will result a refund.
+> get a successful response within 3 days of the purchase will result in a refund on Android. On iOS/macOS (using StoreKit 1 or StoreKit 2), failing to complete purchases causes the transactions to remain in Apple's unfinished transaction queue, which has two major side effects:
+> 1. The transactions will be repeatedly re-delivered on the `purchaseStream` on every app launch.
+> 2. Any subsequent attempt to purchase the same product ID will immediately fail with an error indicating a duplicate transaction is pending.
 
 ### Upgrading or downgrading an existing in-app subscription
 

@@ -9,12 +9,10 @@ import 'package:ffi/ffi.dart' as pkg_ffi;
 /// Bindings for NSFileManager.
 class FoundationFFI {
   /// Holds the symbol lookup function.
-  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-  _lookup;
+  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) _lookup;
 
   /// The symbols are looked up in [dynamicLibrary].
-  FoundationFFI(ffi.DynamicLibrary dynamicLibrary)
-    : _lookup = dynamicLibrary.lookup;
+  FoundationFFI(ffi.DynamicLibrary dynamicLibrary) : _lookup = dynamicLibrary.lookup;
 
   /// The symbols are looked up with [lookup].
   FoundationFFI.fromLookup(
@@ -27,11 +25,7 @@ class FoundationFFI {
     bool expandTilde,
   ) {
     return objc.NSArray.fromPointer(
-      _NSSearchPathForDirectoriesInDomains(
-        directory.value,
-        domainMask,
-        expandTilde,
-      ),
+      _NSSearchPathForDirectoriesInDomains(directory.value, domainMask, expandTilde),
       retain: true,
       release: true,
     );
@@ -40,11 +34,7 @@ class FoundationFFI {
   late final _NSSearchPathForDirectoriesInDomainsPtr =
       _lookup<
         ffi.NativeFunction<
-          ffi.Pointer<objc.ObjCObjectImpl> Function(
-            ffi.UnsignedLong,
-            ffi.UnsignedLong,
-            ffi.Bool,
-          )
+          ffi.Pointer<objc.ObjCObjectImpl> Function(ffi.UnsignedLong, ffi.UnsignedLong, ffi.Bool)
         >
       >('NSSearchPathForDirectoriesInDomains');
   late final _NSSearchPathForDirectoriesInDomains =
@@ -126,9 +116,7 @@ sealed class NSSearchPathDomainMask {
 }
 
 late final _class_NSURL = objc.getClass("NSURL");
-late final _sel_fileURLWithPathComponents_ = objc.registerName(
-  "fileURLWithPathComponents:",
-);
+late final _sel_fileURLWithPathComponents_ = objc.registerName("fileURLWithPathComponents:");
 final _objc_msgSend_1sotr3r = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -164,9 +152,7 @@ final _objc_msgSend_151sglz = objc.msgSendPointer
     >();
 late final _sel_lastPathComponent = objc.registerName("lastPathComponent");
 late final _sel_pathExtension = objc.registerName("pathExtension");
-late final _sel_URLByAppendingPathComponent_ = objc.registerName(
-  "URLByAppendingPathComponent:",
-);
+late final _sel_URLByAppendingPathComponent_ = objc.registerName("URLByAppendingPathComponent:");
 late final _sel_URLByAppendingPathComponent_isDirectory_ = objc.registerName(
   "URLByAppendingPathComponent:isDirectory:",
 );
@@ -192,12 +178,8 @@ final _objc_msgSend_17amj0z = objc.msgSendPointer
 late final _sel_URLByDeletingLastPathComponent = objc.registerName(
   "URLByDeletingLastPathComponent",
 );
-late final _sel_URLByAppendingPathExtension_ = objc.registerName(
-  "URLByAppendingPathExtension:",
-);
-late final _sel_URLByDeletingPathExtension = objc.registerName(
-  "URLByDeletingPathExtension",
-);
+late final _sel_URLByAppendingPathExtension_ = objc.registerName("URLByAppendingPathExtension:");
+late final _sel_URLByDeletingPathExtension = objc.registerName("URLByDeletingPathExtension");
 late final _sel_checkResourceIsReachableAndReturnError_ = objc.registerName(
   "checkResourceIsReachableAndReturnError:",
 );
@@ -218,12 +200,8 @@ final _objc_msgSend_1dom33q = objc.msgSendPointer
         ffi.Pointer<ffi.Pointer<objc.ObjCObjectImpl>>,
       )
     >();
-late final _sel_URLByStandardizingPath = objc.registerName(
-  "URLByStandardizingPath",
-);
-late final _sel_URLByResolvingSymlinksInPath = objc.registerName(
-  "URLByResolvingSymlinksInPath",
-);
+late final _sel_URLByStandardizingPath = objc.registerName("URLByStandardizingPath");
+late final _sel_URLByResolvingSymlinksInPath = objc.registerName("URLByResolvingSymlinksInPath");
 
 /// NSURLPathUtilities
 extension NSURLPathUtilities on objc.NSURL {
@@ -239,9 +217,7 @@ extension NSURLPathUtilities on objc.NSURL {
       _sel_URLByAppendingPathComponent_,
       pathComponent.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.NSURL.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSURL.fromPointer($ret, retain: true, release: true);
   }
 
   /// URLByAppendingPathComponent:isDirectory:
@@ -260,9 +236,7 @@ extension NSURLPathUtilities on objc.NSURL {
       pathComponent.ref.pointer,
       isDirectory,
     );
-    return $ret.address == 0
-        ? null
-        : objc.NSURL.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSURL.fromPointer($ret, retain: true, release: true);
   }
 
   /// URLByAppendingPathExtension:
@@ -277,9 +251,7 @@ extension NSURLPathUtilities on objc.NSURL {
       _sel_URLByAppendingPathExtension_,
       pathExtension.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.NSURL.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSURL.fromPointer($ret, retain: true, release: true);
   }
 
   /// URLByDeletingLastPathComponent
@@ -289,13 +261,8 @@ extension NSURLPathUtilities on objc.NSURL {
       iOS: (false, (4, 0, 0)),
       macOS: (false, (10, 6, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_URLByDeletingLastPathComponent,
-    );
-    return $ret.address == 0
-        ? null
-        : objc.NSURL.fromPointer($ret, retain: true, release: true);
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_URLByDeletingLastPathComponent);
+    return $ret.address == 0 ? null : objc.NSURL.fromPointer($ret, retain: true, release: true);
   }
 
   /// URLByDeletingPathExtension
@@ -305,13 +272,8 @@ extension NSURLPathUtilities on objc.NSURL {
       iOS: (false, (4, 0, 0)),
       macOS: (false, (10, 6, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_URLByDeletingPathExtension,
-    );
-    return $ret.address == 0
-        ? null
-        : objc.NSURL.fromPointer($ret, retain: true, release: true);
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_URLByDeletingPathExtension);
+    return $ret.address == 0 ? null : objc.NSURL.fromPointer($ret, retain: true, release: true);
   }
 
   /// URLByResolvingSymlinksInPath
@@ -321,13 +283,8 @@ extension NSURLPathUtilities on objc.NSURL {
       iOS: (false, (4, 0, 0)),
       macOS: (false, (10, 6, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_URLByResolvingSymlinksInPath,
-    );
-    return $ret.address == 0
-        ? null
-        : objc.NSURL.fromPointer($ret, retain: true, release: true);
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_URLByResolvingSymlinksInPath);
+    return $ret.address == 0 ? null : objc.NSURL.fromPointer($ret, retain: true, release: true);
   }
 
   /// URLByStandardizingPath
@@ -337,13 +294,8 @@ extension NSURLPathUtilities on objc.NSURL {
       iOS: (false, (4, 0, 0)),
       macOS: (false, (10, 6, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_URLByStandardizingPath,
-    );
-    return $ret.address == 0
-        ? null
-        : objc.NSURL.fromPointer($ret, retain: true, release: true);
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_URLByStandardizingPath);
+    return $ret.address == 0 ? null : objc.NSURL.fromPointer($ret, retain: true, release: true);
   }
 
   /// checkResourceIsReachableAndReturnError:
@@ -374,13 +326,8 @@ extension NSURLPathUtilities on objc.NSURL {
       iOS: (false, (4, 0, 0)),
       macOS: (false, (10, 6, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_lastPathComponent,
-    );
-    return $ret.address == 0
-        ? null
-        : objc.NSString.fromPointer($ret, retain: true, release: true);
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_lastPathComponent);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
   }
 
   /// pathComponents
@@ -390,13 +337,8 @@ extension NSURLPathUtilities on objc.NSURL {
       iOS: (false, (4, 0, 0)),
       macOS: (false, (10, 6, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.pointer,
-      _sel_pathComponents,
-    );
-    return $ret.address == 0
-        ? null
-        : objc.NSArray.fromPointer($ret, retain: true, release: true);
+    final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_pathComponents);
+    return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
   }
 
   /// pathExtension
@@ -407,9 +349,7 @@ extension NSURLPathUtilities on objc.NSURL {
       macOS: (false, (10, 6, 0)),
     );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_pathExtension);
-    return $ret.address == 0
-        ? null
-        : objc.NSString.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
   }
 
   /// fileURLWithPathComponents:
@@ -424,9 +364,7 @@ extension NSURLPathUtilities on objc.NSURL {
       _sel_fileURLWithPathComponents_,
       components.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.NSURL.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSURL.fromPointer($ret, retain: true, release: true);
   }
 }
 
@@ -450,12 +388,12 @@ final _objc_msgSend_19nvye5 = objc.msgSendPointer
       )
     >();
 late final _sel_defaultManager = objc.registerName("defaultManager");
-late final _sel_containerURLForSecurityApplicationGroupIdentifier_ = objc
-    .registerName("containerURLForSecurityApplicationGroupIdentifier:");
+late final _sel_containerURLForSecurityApplicationGroupIdentifier_ = objc.registerName(
+  "containerURLForSecurityApplicationGroupIdentifier:",
+);
 
 /// NSFileManager
-extension type NSFileManager._(objc.ObjCObject object$)
-    implements objc.ObjCObject, objc.NSObject {
+extension type NSFileManager._(objc.ObjCObject object$) implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [NSFileManager] that points to the same underlying object as [other].
   NSFileManager.as(objc.ObjCObject other) : object$ = other {
     assert(isA(object$));
@@ -471,27 +409,19 @@ extension type NSFileManager._(objc.ObjCObject object$)
   }
 
   /// Returns whether [obj] is an instance of [NSFileManager].
-  static bool isA(objc.ObjCObject obj) => _objc_msgSend_19nvye5(
-    obj.ref.pointer,
-    _sel_isKindOfClass_,
-    _class_NSFileManager,
-  );
+  static bool isA(objc.ObjCObject obj) =>
+      _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_, _class_NSFileManager);
 
   /// defaultManager
   static NSFileManager getDefaultManager() {
-    final $ret = _objc_msgSend_151sglz(
-      _class_NSFileManager,
-      _sel_defaultManager,
-    );
+    final $ret = _objc_msgSend_151sglz(_class_NSFileManager, _sel_defaultManager);
     return NSFileManager.fromPointer($ret, retain: true, release: true);
   }
 }
 
 extension NSFileManager$Methods on NSFileManager {
   /// containerURLForSecurityApplicationGroupIdentifier:
-  objc.NSURL? containerURLForSecurityApplicationGroupIdentifier(
-    objc.NSString groupIdentifier,
-  ) {
+  objc.NSURL? containerURLForSecurityApplicationGroupIdentifier(objc.NSString groupIdentifier) {
     objc.checkOsVersionInternal(
       'NSFileManager.containerURLForSecurityApplicationGroupIdentifier:',
       iOS: (false, (7, 0, 0)),
@@ -502,8 +432,6 @@ extension NSFileManager$Methods on NSFileManager {
       _sel_containerURLForSecurityApplicationGroupIdentifier_,
       groupIdentifier.ref.pointer,
     );
-    return $ret.address == 0
-        ? null
-        : objc.NSURL.fromPointer($ret, retain: true, release: true);
+    return $ret.address == 0 ? null : objc.NSURL.fromPointer($ret, retain: true, release: true);
   }
 }

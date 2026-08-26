@@ -7,13 +7,12 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 
 /// Example function for README demonstration of Payment Request API.
 Future<void> enablePaymentRequest() async {
-  final controller = PlatformWebViewController(
-    AndroidWebViewControllerCreationParams(),
-  );
+  final controller = PlatformWebViewController(AndroidWebViewControllerCreationParams());
   final androidController = controller as AndroidWebViewController;
   // #docregion payment_request_example
-  final bool paymentRequestEnabled = await androidController
-      .isWebViewFeatureSupported(WebViewFeatureType.paymentRequest);
+  final bool paymentRequestEnabled = await androidController.isWebViewFeatureSupported(
+    WebViewFeatureType.paymentRequest,
+  );
 
   if (paymentRequestEnabled) {
     await androidController.setPaymentRequestEnabled(true);
@@ -21,14 +20,32 @@ Future<void> enablePaymentRequest() async {
   // #enddocregion payment_request_example
 }
 
+/// Example function for README demonstration of Web Authentication support.
+Future<void> enableWebAuthentication() async {
+  final controller = PlatformWebViewController(AndroidWebViewControllerCreationParams());
+  final androidController = controller as AndroidWebViewController;
+  // #docregion web_authentication_example
+  final bool webAuthenticationSupported = await androidController.isWebViewFeatureSupported(
+    WebViewFeatureType.webAuthentication,
+  );
+
+  if (webAuthenticationSupported) {
+    // Enable WebAuthn for the embedded app
+    await androidController.setWebAuthenticationSupport(WebAuthenticationSupport.forApp);
+    // Or for browser-like behavior supporting any website:
+    // await androidController.setWebAuthenticationSupport(
+    //   WebAuthenticationSupport.forBrowser,
+    // );
+  }
+  // #enddocregion web_authentication_example
+}
+
 /// Example function for README demonstration of geolocation permissions for
 /// a use case where the content is always trusted (for example, it only shows
 /// content from a domain controlled by the app developer) and geolocation
 /// should always be allowed.
 Future<void> setGeolocationPermissionsPrompt() async {
-  final controller = PlatformWebViewController(
-    AndroidWebViewControllerCreationParams(),
-  );
+  final controller = PlatformWebViewController(AndroidWebViewControllerCreationParams());
   final androidController = controller as AndroidWebViewController;
   // #docregion geolocation_example
   await androidController.setGeolocationPermissionsPromptCallbacks(

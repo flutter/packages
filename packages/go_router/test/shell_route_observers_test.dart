@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'test_helpers.dart';
 
@@ -28,50 +28,42 @@ void main() {
     expect(shell.observers!.length, 1);
   });
 
-  testWidgets(
-    'GoRouter observers should be notified when navigating within ShellRoute',
-    (WidgetTester tester) async {
-      final observer = MockObserver();
+  testWidgets('GoRouter observers should be notified when navigating within ShellRoute', (
+    WidgetTester tester,
+  ) async {
+    final observer = MockObserver();
 
-      final root = GlobalKey<NavigatorState>(debugLabel: 'root');
-      await createRouter(
-        <RouteBase>[
-          GoRoute(path: '/', builder: (_, __) => const Text('Home')),
-          ShellRoute(
-            builder: (_, __, Widget child) => child,
-            routes: <RouteBase>[
-              GoRoute(path: '/test1', builder: (_, __) => const Text('Test1')),
-            ],
-          ),
-          StatefulShellRoute.indexedStack(
-            builder: (_, __, Widget child) => child,
-            branches: <StatefulShellBranch>[
-              StatefulShellBranch(
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: '/test2',
-                    builder: (_, __) => const Text('Test2'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-        tester,
-        navigatorKey: root,
-        observers: <NavigatorObserver>[observer],
-      );
-      await tester.pumpAndSettle();
+    final root = GlobalKey<NavigatorState>(debugLabel: 'root');
+    await createRouter(
+      <RouteBase>[
+        GoRoute(path: '/', builder: (_, _) => const Text('Home')),
+        ShellRoute(
+          builder: (_, _, Widget child) => child,
+          routes: <RouteBase>[GoRoute(path: '/test1', builder: (_, _) => const Text('Test1'))],
+        ),
+        StatefulShellRoute.indexedStack(
+          builder: (_, _, Widget child) => child,
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              routes: <RouteBase>[GoRoute(path: '/test2', builder: (_, _) => const Text('Test2'))],
+            ),
+          ],
+        ),
+      ],
+      tester,
+      navigatorKey: root,
+      observers: <NavigatorObserver>[observer],
+    );
+    await tester.pumpAndSettle();
 
-      root.currentContext!.push('/test1');
-      await tester.pumpAndSettle();
-      expect(observer.getCallCount('/test1'), 1);
+    root.currentContext!.push('/test1');
+    await tester.pumpAndSettle();
+    expect(observer.getCallCount('/test1'), 1);
 
-      root.currentContext!.push('/test2');
-      await tester.pumpAndSettle();
-      expect(observer.getCallCount('/test2'), 1);
-    },
-  );
+    root.currentContext!.push('/test2');
+    await tester.pumpAndSettle();
+    expect(observer.getCallCount('/test2'), 1);
+  });
 }
 
 class MockObserver extends NavigatorObserver {

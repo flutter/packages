@@ -20,10 +20,7 @@ class _MergedTableExampleState extends State<MergedTableExample> {
     final MaterialColor primary = Colors.primaries[colorIndex];
     if (vicinity.column == 0) {
       // Leading primary color
-      return (
-        color: primary[500]!,
-        name: '${_getPrimaryNameFor(colorIndex)}, 500',
-      );
+      return (color: primary[500]!, name: '${_getPrimaryNameFor(colorIndex)}, 500');
     }
     final int leadingRow = colorIndex * 3;
     final int middleRow = leadingRow + 1;
@@ -99,8 +96,7 @@ class _MergedTableExampleState extends State<MergedTableExample> {
   TableViewCell _buildCell(BuildContext context, TableVicinity vicinity) {
     final int colorIndex = (vicinity.row / 3).floor();
     final ({String name, Color color}) cell = _getColorForVicinity(vicinity);
-    final Color textColor =
-        ThemeData.estimateBrightnessForColor(cell.color) == Brightness.light
+    final Color textColor = ThemeData.estimateBrightnessForColor(cell.color) == Brightness.light
         ? Colors.black
         : Colors.white;
     final style = TextStyle(
@@ -123,9 +119,7 @@ class _MergedTableExampleState extends State<MergedTableExample> {
       extent: FixedTableSpanExtent(index == 0 ? 220 : 180),
       foregroundDecoration: index == 0
           ? const TableSpanDecoration(
-              border: TableSpanBorder(
-                trailing: BorderSide(width: 5, color: Colors.white),
-              ),
+              border: TableSpanBorder(trailing: BorderSide(width: 5, color: Colors.white)),
             )
           : null,
     );

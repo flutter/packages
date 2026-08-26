@@ -47,12 +47,10 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   GoogleSignInPlugin({
     @visibleForTesting bool debugOverrideLoader = false,
     @visibleForTesting GisSdkClient? debugOverrideGisSdkClient,
-    @visibleForTesting
-    StreamController<AuthenticationEvent>? debugAuthenticationController,
+    @visibleForTesting StreamController<AuthenticationEvent>? debugAuthenticationController,
   }) : _debugOverrideGisSdkClient = debugOverrideGisSdkClient,
        _authenticationController =
-           debugAuthenticationController ??
-           StreamController<AuthenticationEvent>.broadcast() {
+           debugAuthenticationController ?? StreamController<AuthenticationEvent>.broadcast() {
     autoDetectedClientId = web.document
         .querySelector(clientIdMetaSelector)
         ?.getAttribute(clientIdAttributeName);
@@ -121,10 +119,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
       ' or pass clientId when initializing GoogleSignIn',
     );
 
-    assert(
-      params.serverClientId == null,
-      'serverClientId is not supported on Web.',
-    );
+    assert(params.serverClientId == null, 'serverClientId is not supported on Web.');
 
     await _jsSdkLoadedFuture;
 
@@ -160,9 +155,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   bool authorizationRequiresUserInteraction() => true;
 
   @override
-  Future<AuthenticationResults> authenticate(
-    AuthenticateParameters params,
-  ) async {
+  Future<AuthenticationResults> authenticate(AuthenticateParameters params) async {
     throw UnimplementedError(
       'authenticate is not supported on the web. '
       'Instead, use renderButton to create a sign-in widget.',
@@ -195,9 +188,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
       promptIfUnauthorized: params.request.promptIfUnauthorized,
       userHint: params.request.userId,
     );
-    return token == null
-        ? null
-        : ClientAuthorizationTokenData(accessToken: token);
+    return token == null ? null : ClientAuthorizationTokenData(accessToken: token);
   }
 
   @override
@@ -213,12 +204,8 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
       return null;
     }
 
-    final String? code = await _gisSdkClient.requestServerAuthCode(
-      params.request,
-    );
-    return code == null
-        ? null
-        : ServerAuthorizationTokenData(serverAuthCode: code);
+    final String? code = await _gisSdkClient.requestServerAuthCode(params.request);
+    return code == null ? null : ServerAuthorizationTokenData(serverAuthCode: code);
   }
 
   void _validateScopes(List<String> scopes) {
@@ -234,24 +221,19 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   }
 
   @override
-  Future<void> clearAuthorizationToken(
-    ClearAuthorizationTokenParams params,
-  ) async {
+  Future<void> clearAuthorizationToken(ClearAuthorizationTokenParams params) async {
     await _initialized;
     return _gisSdkClient.clearAuthorizationToken(params.accessToken);
   }
 
   @override
-  Stream<AuthenticationEvent> get authenticationEvents =>
-      _authenticationController.stream;
+  Stream<AuthenticationEvent> get authenticationEvents => _authenticationController.stream;
 
   // --------
 
   // Register a factory for the Button HtmlElementView.
   void _registerButtonFactory() {
-    ui_web.platformViewRegistry.registerViewFactory('gsi_login_button', (
-      int viewId,
-    ) {
+    ui_web.platformViewRegistry.registerViewFactory('gsi_login_button', (int viewId) {
       final web.Element element = web.document.createElement('div');
       element.setAttribute(
         'style',
@@ -264,8 +246,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
 
   /// Render the GSI button web experience.
   Widget renderButton({GSIButtonConfiguration? configuration}) {
-    final GSIButtonConfiguration config =
-        configuration ?? GSIButtonConfiguration();
+    final GSIButtonConfiguration config = configuration ?? GSIButtonConfiguration();
     return FutureBuilder<void>(
       key: Key(config.hashCode.toString()),
       future: _initialized,

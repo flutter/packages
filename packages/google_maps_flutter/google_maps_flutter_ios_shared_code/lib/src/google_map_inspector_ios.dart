@@ -14,9 +14,8 @@ import 'messages.g.dart';
 class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
   /// Creates an inspector API instance for a given map ID from
   /// [inspectorProvider].
-  GoogleMapsInspectorIOS(
-    MapsInspectorApi? Function(int mapId) inspectorProvider,
-  ) : _inspectorProvider = inspectorProvider;
+  GoogleMapsInspectorIOS(MapsInspectorApi? Function(int mapId) inspectorProvider)
+    : _inspectorProvider = inspectorProvider;
 
   final MapsInspectorApi? Function(int mapId) _inspectorProvider;
 
@@ -53,17 +52,12 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
 
   @override
   Future<MinMaxZoomPreference> getMinMaxZoomLevels({required int mapId}) async {
-    final PlatformZoomRange zoomLevels = await _inspectorProvider(
-      mapId,
-    )!.getZoomRange();
+    final PlatformZoomRange zoomLevels = await _inspectorProvider(mapId)!.getZoomRange();
     return MinMaxZoomPreference(zoomLevels.min, zoomLevels.max);
   }
 
   @override
-  Future<TileOverlay?> getTileOverlayInfo(
-    TileOverlayId tileOverlayId, {
-    required int mapId,
-  }) async {
+  Future<TileOverlay?> getTileOverlayInfo(TileOverlayId tileOverlayId, {required int mapId}) async {
     final PlatformTileLayer? tileInfo = await _inspectorProvider(
       mapId,
     )!.getTileOverlayInfo(tileOverlayId.value);
@@ -83,10 +77,7 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
   bool supportsGettingHeatmapInfo() => true;
 
   @override
-  Future<Heatmap?> getHeatmapInfo(
-    HeatmapId heatmapId, {
-    required int mapId,
-  }) async {
+  Future<Heatmap?> getHeatmapInfo(HeatmapId heatmapId, {required int mapId}) async {
     final PlatformHeatmap? heatmapInfo = await _inspectorProvider(
       mapId,
     )!.getHeatmapInfo(heatmapId.value);
@@ -140,24 +131,15 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
         transparency: groundOverlayInfo.transparency,
         visible: groundOverlayInfo.visible,
         clickable: groundOverlayInfo.clickable,
-        anchor: Offset(
-          groundOverlayInfo.anchor!.x,
-          groundOverlayInfo.anchor!.y,
-        ),
+        anchor: Offset(groundOverlayInfo.anchor!.x, groundOverlayInfo.anchor!.y),
         zoomLevel: groundOverlayInfo.zoomLevel,
       );
     } else if (bounds != null) {
       return GroundOverlay.fromBounds(
         groundOverlayId: groundOverlayId,
         bounds: LatLngBounds(
-          southwest: LatLng(
-            bounds.southwest.latitude,
-            bounds.southwest.longitude,
-          ),
-          northeast: LatLng(
-            bounds.northeast.latitude,
-            bounds.northeast.longitude,
-          ),
+          southwest: LatLng(bounds.southwest.latitude, bounds.southwest.longitude),
+          northeast: LatLng(bounds.northeast.latitude, bounds.northeast.longitude),
         ),
         image: dummyImage,
         zIndex: groundOverlayInfo.zIndex,
@@ -202,13 +184,8 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
     required int mapId,
     required ClusterManagerId clusterManagerId,
   }) async {
-    return (await _inspectorProvider(
-          mapId,
-        )!.getClusters(clusterManagerId.value))
-        .map(
-          (PlatformCluster cluster) =>
-              GoogleMapsFlutterIOS.clusterFromPlatformCluster(cluster),
-        )
+    return (await _inspectorProvider(mapId)!.getClusters(clusterManagerId.value))
+        .map((PlatformCluster cluster) => GoogleMapsFlutterIOS.clusterFromPlatformCluster(cluster))
         .toList();
   }
 
@@ -221,19 +198,14 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
       mapId,
     )!.getCameraPosition();
     return CameraPosition(
-      target: LatLng(
-        cameraPosition.target.latitude,
-        cameraPosition.target.longitude,
-      ),
+      target: LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude),
       bearing: cameraPosition.bearing,
       tilt: cameraPosition.tilt,
       zoom: cameraPosition.zoom,
     );
   }
 
-  static HeatmapGradient? _deserializeHeatmapGradient(
-    PlatformHeatmapGradient? gradient,
-  ) {
+  static HeatmapGradient? _deserializeHeatmapGradient(PlatformHeatmapGradient? gradient) {
     if (gradient == null) {
       return null;
     }
@@ -243,12 +215,7 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
       _mapEnumerated(
         gradient.colors,
         (PlatformColor color, int i) => HeatmapGradientColor(
-          Color.from(
-            red: color.red,
-            green: color.green,
-            blue: color.blue,
-            alpha: color.alpha,
-          ),
+          Color.from(red: color.red, green: color.green, blue: color.blue, alpha: color.alpha),
           gradient.startPoints[i],
         ),
       ).toList(),
@@ -256,9 +223,7 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
     );
   }
 
-  static WeightedLatLng _deserializeWeightedLatLng(
-    PlatformWeightedLatLng weightedLatLng,
-  ) {
+  static WeightedLatLng _deserializeWeightedLatLng(PlatformWeightedLatLng weightedLatLng) {
     return WeightedLatLng(
       LatLng(weightedLatLng.point.latitude, weightedLatLng.point.longitude),
       weight: weightedLatLng.weight,
@@ -266,10 +231,7 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
   }
 }
 
-Iterable<E> _mapEnumerated<T, E>(
-  Iterable<T> iterable,
-  E Function(T, int) fn,
-) sync* {
+Iterable<E> _mapEnumerated<T, E>(Iterable<T> iterable, E Function(T, int) fn) sync* {
   var index = 0;
   for (final item in iterable) {
     yield fn(item, index++);

@@ -510,12 +510,7 @@ class PlatformSize {
 
 /// Pigeon representation of a color.
 class PlatformColor {
-  PlatformColor({
-    required this.red,
-    required this.green,
-    required this.blue,
-    required this.alpha,
-  });
+  PlatformColor({required this.red, required this.green, required this.blue, required this.alpha});
 
   final double red;
   final double green;
@@ -587,11 +582,7 @@ class PlatformBitmapAsset {
 
 /// Pigeon equivalent of [AssetImageBitmap].
 class PlatformBitmapAssetImage {
-  PlatformBitmapAssetImage({
-    required this.name,
-    required this.scale,
-    this.size,
-  });
+  PlatformBitmapAssetImage({required this.name, required this.scale, this.size});
   final String name;
   final double scale;
   final PlatformSize? size;
@@ -685,10 +676,7 @@ abstract class MapsApi {
 
   /// Updates the set of custer managers for clusters on the map.
   @ObjCSelector('updateClusterManagersByAdding:removing:')
-  void updateClusterManagers(
-    List<PlatformClusterManager> toAdd,
-    List<String> idsToRemove,
-  );
+  void updateClusterManagers(List<PlatformClusterManager> toAdd, List<String> idsToRemove);
 
   /// Updates the set of markers on the map.
   @ObjCSelector('updateMarkersByAdding:changing:removing:')
@@ -750,10 +738,7 @@ abstract class MapsApi {
   /// Moves the camera according to [cameraUpdate], animating the update using a
   /// duration in milliseconds if provided.
   @ObjCSelector('animateCameraWithUpdate:duration:')
-  void animateCamera(
-    PlatformCameraUpdate cameraUpdate,
-    int? durationMilliseconds,
-  );
+  void animateCamera(PlatformCameraUpdate cameraUpdate, int? durationMilliseconds);
 
   /// Gets the current map zoom level.
   @ObjCSelector('currentZoomLevel')
@@ -866,11 +851,7 @@ abstract class MapsCallbackApi {
   /// Called to get data for a map tile.
   @async
   @ObjCSelector('tileWithOverlayIdentifier:location:zoom:')
-  PlatformTile getTileOverlayTile(
-    String tileOverlayId,
-    PlatformPoint location,
-    int zoom,
-  );
+  PlatformTile getTileOverlayTile(String tileOverlayId, PlatformPoint location, int zoom);
 }
 
 /// Dummy interface to force generation of the platform view creation params,

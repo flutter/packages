@@ -21,22 +21,12 @@ void main() {
       late final IMAAdsManagerDelegate delegate;
       PigeonOverrides.iMAAdsManagerDelegate_new =
           ({
-            required void Function(
-              IMAAdsManagerDelegate,
-              IMAAdsManager,
-              IMAAdEvent,
-            )
+            required void Function(IMAAdsManagerDelegate, IMAAdsManager, IMAAdEvent)
             didReceiveAdEvent,
-            required void Function(
-              IMAAdsManagerDelegate,
-              IMAAdsManager,
-              IMAAdError,
-            )
+            required void Function(IMAAdsManagerDelegate, IMAAdsManager, IMAAdError)
             didReceiveAdError,
-            required void Function(IMAAdsManagerDelegate, IMAAdsManager)
-            didRequestContentPause,
-            required void Function(IMAAdsManagerDelegate, IMAAdsManager)
-            didRequestContentResume,
+            required void Function(IMAAdsManagerDelegate, IMAAdsManager) didRequestContentPause,
+            required void Function(IMAAdsManagerDelegate, IMAAdsManager) didRequestContentResume,
           }) {
             didReceiveAdEventCallback = didReceiveAdEvent;
             delegate = IMAAdsManagerDelegate.pigeon_detached(
@@ -69,10 +59,7 @@ void main() {
           typeString: 'typeString',
           ad: createTestAd(
             universalAdIds: <IMAUniversalAdID>[
-              IMAUniversalAdID.pigeon_detached(
-                adIDRegistry: 'unknown',
-                adIDValue: 'unknown',
-              ),
+              IMAUniversalAdID.pigeon_detached(adIDRegistry: 'unknown', adIDValue: 'unknown'),
             ],
           ),
         ),
@@ -86,22 +73,12 @@ void main() {
       late final IMAAdsManagerDelegate delegate;
       PigeonOverrides.iMAAdsManagerDelegate_new =
           ({
-            required void Function(
-              IMAAdsManagerDelegate,
-              IMAAdsManager,
-              IMAAdEvent,
-            )
+            required void Function(IMAAdsManagerDelegate, IMAAdsManager, IMAAdEvent)
             didReceiveAdEvent,
-            required void Function(
-              IMAAdsManagerDelegate,
-              IMAAdsManager,
-              IMAAdError,
-            )
+            required void Function(IMAAdsManagerDelegate, IMAAdsManager, IMAAdError)
             didReceiveAdError,
-            required void Function(IMAAdsManagerDelegate, IMAAdsManager)
-            didRequestContentPause,
-            required void Function(IMAAdsManagerDelegate, IMAAdsManager)
-            didRequestContentResume,
+            required void Function(IMAAdsManagerDelegate, IMAAdsManager) didRequestContentPause,
+            required void Function(IMAAdsManagerDelegate, IMAAdsManager) didRequestContentResume,
           }) {
             didReceiveAdEventCallback = didReceiveAdEvent;
             delegate = IMAAdsManagerDelegate.pigeon_detached(
@@ -133,9 +110,7 @@ void main() {
           type: AdEventType.allAdsCompleted,
           typeString: 'typeString',
           ad: createTestAd(
-            companionAds: <IMACompanionAd>[
-              IMACompanionAd.pigeon_detached(height: 0, width: 0),
-            ],
+            companionAds: <IMACompanionAd>[IMACompanionAd.pigeon_detached(height: 0, width: 0)],
           ),
         ),
       );
@@ -148,22 +123,12 @@ void main() {
       late final IMAAdsManagerDelegate delegate;
       PigeonOverrides.iMAAdsManagerDelegate_new =
           ({
-            required void Function(
-              IMAAdsManagerDelegate,
-              IMAAdsManager,
-              IMAAdEvent,
-            )
+            required void Function(IMAAdsManagerDelegate, IMAAdsManager, IMAAdEvent)
             didReceiveAdEvent,
-            required void Function(
-              IMAAdsManagerDelegate,
-              IMAAdsManager,
-              IMAAdError,
-            )
+            required void Function(IMAAdsManagerDelegate, IMAAdsManager, IMAAdError)
             didReceiveAdError,
-            required void Function(IMAAdsManagerDelegate, IMAAdsManager)
-            didRequestContentPause,
-            required void Function(IMAAdsManagerDelegate, IMAAdsManager)
-            didRequestContentResume,
+            required void Function(IMAAdsManagerDelegate, IMAAdsManager) didRequestContentPause,
+            required void Function(IMAAdsManagerDelegate, IMAAdsManager) didRequestContentResume,
           }) {
             didReceiveAdEventCallback = didReceiveAdEvent;
             delegate = IMAAdsManagerDelegate.pigeon_detached(

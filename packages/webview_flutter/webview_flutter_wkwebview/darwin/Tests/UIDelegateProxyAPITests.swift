@@ -2,21 +2,22 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Foundation
+import Testing
 import WebKit
-import XCTest
 
 @testable import webview_flutter_wkwebview
 
-class UIDelegateProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@Suite struct UIDelegateProxyAPITests {
+  @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKUIDelegate(registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
-    XCTAssertNotNil(instance)
+    #expect(instance != nil)
   }
 
-  @MainActor func testOnCreateWebView() {
+  @MainActor @Test func onCreateWebView() throws {
     let api = TestDelegateApi()
     let registrar = TestProxyApiRegistrar()
     let instance = UIDelegateImpl(api: api, registrar: registrar)
@@ -28,12 +29,12 @@ class UIDelegateProxyAPITests: XCTestCase {
       webView, createWebViewWith: configuration, for: navigationAction,
       windowFeatures: WKWindowFeatures())
 
-    XCTAssertEqual(api.onCreateWebViewArgs, [webView, configuration, navigationAction])
-    XCTAssertNil(result)
+    #expect(api.onCreateWebViewArgs == [webView, configuration, navigationAction])
+    #expect(result == nil)
   }
 
   @available(iOS 15.0, macOS 12.0, *)
-  @MainActor func testRequestMediaCapturePermission() {
+  @MainActor @Test func requestMediaCapturePermission() async throws {
     let api = TestDelegateApi()
     let registrar = TestProxyApiRegistrar()
     let instance = UIDelegateImpl(api: api, registrar: registrar)
@@ -42,23 +43,20 @@ class UIDelegateProxyAPITests: XCTestCase {
     let frame = TestFrameInfo.instance
     let type: WKMediaCaptureType = .camera
 
-    var resultDecision: WKPermissionDecision?
-    let callbackExpectation = expectation(description: "Wait for callback.")
-    instance.webView(
-      webView, requestMediaCapturePermissionFor: origin, initiatedByFrame: frame, type: type
-    ) { decision in
-      resultDecision = decision
-      callbackExpectation.fulfill()
+    let resultDecision = await withCheckedContinuation { continuation in
+      instance.webView(
+        webView, requestMediaCapturePermissionFor: origin, initiatedByFrame: frame, type: type
+      ) { decision in
+        continuation.resume(returning: decision)
+      }
     }
 
-    wait(for: [callbackExpectation], timeout: 1.0)
-
-    XCTAssertEqual(
-      api.requestMediaCapturePermissionArgs, [webView, origin, frame, MediaCaptureType.camera])
-    XCTAssertEqual(resultDecision, .prompt)
+    #expect(
+      api.requestMediaCapturePermissionArgs == [webView, origin, frame, MediaCaptureType.camera])
+    #expect(resultDecision == .prompt)
   }
 
-  @MainActor func testRunJavaScriptAlertPanel() {
+  @MainActor @Test func runJavaScriptAlertPanel() throws {
     let api = TestDelegateApi()
     let registrar = TestProxyApiRegistrar()
     let instance = UIDelegateImpl(api: api, registrar: registrar)
@@ -70,10 +68,10 @@ class UIDelegateProxyAPITests: XCTestCase {
     {
     }
 
-    XCTAssertEqual(api.runJavaScriptAlertPanelArgs, [webView, message, frame])
+    #expect(api.runJavaScriptAlertPanelArgs == [webView, message, frame])
   }
 
-  @MainActor func testRunJavaScriptConfirmPanel() {
+  @MainActor @Test func runJavaScriptConfirmPanel() async throws {
     let api = TestDelegateApi()
     let registrar = TestProxyApiRegistrar()
     let instance = UIDelegateImpl(api: api, registrar: registrar)
@@ -81,22 +79,19 @@ class UIDelegateProxyAPITests: XCTestCase {
     let message = "myString"
     let frame = TestFrameInfo.instance
 
-    var confirmedResult: Bool?
-    let callbackExpectation = expectation(description: "Wait for callback.")
-    instance.webView(
-      webView, runJavaScriptConfirmPanelWithMessage: message, initiatedByFrame: frame
-    ) { confirmed in
-      confirmedResult = confirmed
-      callbackExpectation.fulfill()
+    let confirmedResult = await withCheckedContinuation { continuation in
+      instance.webView(
+        webView, runJavaScriptConfirmPanelWithMessage: message, initiatedByFrame: frame
+      ) { confirmed in
+        continuation.resume(returning: confirmed)
+      }
     }
 
-    wait(for: [callbackExpectation], timeout: 1.0)
-
-    XCTAssertEqual(api.runJavaScriptConfirmPanelArgs, [webView, message, frame])
-    XCTAssertEqual(confirmedResult, true)
+    #expect(api.runJavaScriptConfirmPanelArgs == [webView, message, frame])
+    #expect(confirmedResult == true)
   }
 
-  @MainActor func testRunJavaScriptTextInputPanel() {
+  @MainActor @Test func runJavaScriptTextInputPanel() async throws {
     let api = TestDelegateApi()
     let registrar = TestProxyApiRegistrar()
     let instance = UIDelegateImpl(api: api, registrar: registrar)
@@ -105,20 +100,17 @@ class UIDelegateProxyAPITests: XCTestCase {
     let defaultText = "myString3"
     let frame = TestFrameInfo.instance
 
-    var inputResult: String?
-    let callbackExpectation = expectation(description: "Wait for callback.")
-    instance.webView(
-      webView, runJavaScriptTextInputPanelWithPrompt: prompt, defaultText: defaultText,
-      initiatedByFrame: frame
-    ) { input in
-      inputResult = input
-      callbackExpectation.fulfill()
+    let inputResult = await withCheckedContinuation { continuation in
+      instance.webView(
+        webView, runJavaScriptTextInputPanelWithPrompt: prompt, defaultText: defaultText,
+        initiatedByFrame: frame
+      ) { input in
+        continuation.resume(returning: input)
+      }
     }
 
-    wait(for: [callbackExpectation], timeout: 1.0)
-
-    XCTAssertEqual(api.runJavaScriptTextInputPanelArgs, [webView, prompt, defaultText, frame])
-    XCTAssertEqual(inputResult, "myString2")
+    #expect(api.runJavaScriptTextInputPanelArgs == [webView, prompt, defaultText, frame])
+    #expect(inputResult == "myString2")
   }
 }
 

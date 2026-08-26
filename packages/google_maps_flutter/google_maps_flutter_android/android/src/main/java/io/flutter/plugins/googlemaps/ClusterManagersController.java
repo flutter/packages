@@ -19,12 +19,12 @@ import com.google.maps.android.clustering.view.ClusterRenderer;
 import com.google.maps.android.clustering.view.DefaultAdvancedMarkersClusterRenderer;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.collections.MarkerManager;
-import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
-import io.flutter.plugins.googlemaps.Messages.PlatformMarkerType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import kotlin.Result;
+import kotlin.Unit;
 
 /**
  * Controls cluster managers and exposes interfaces for adding and removing cluster items for
@@ -107,8 +107,8 @@ class ClusterManagersController
   }
 
   /** Adds new ClusterManagers to the controller. */
-  void addClusterManagers(@NonNull List<Messages.PlatformClusterManager> clusterManagersToAdd) {
-    for (Messages.PlatformClusterManager clusterToAdd : clusterManagersToAdd) {
+  void addClusterManagers(@NonNull List<PlatformClusterManager> clusterManagersToAdd) {
+    for (PlatformClusterManager clusterToAdd : clusterManagersToAdd) {
       addClusterManager(clusterToAdd.getIdentifier());
     }
   }
@@ -216,7 +216,7 @@ class ClusterManagersController
       String clusterManagerId) {
     ClusterManager<MarkerBuilder> clusterManager = clusterManagerIdToManager.get(clusterManagerId);
     if (clusterManager == null) {
-      throw new Messages.FlutterError(
+      throw new FlutterError(
           "Invalid clusterManagerId",
           "getClusters called with invalid clusterManagerId:" + clusterManagerId,
           null);
@@ -238,7 +238,8 @@ class ClusterManagersController
       MarkerBuilder[] builders = cluster.getItems().toArray(new MarkerBuilder[0]);
       String clusterManagerId = builders[0].clusterManagerId();
       flutterApi.onClusterTap(
-          Convert.clusterToPigeon(clusterManagerId, cluster), new NoOpVoidResult());
+          Convert.clusterToPigeon(clusterManagerId, cluster),
+          (Result<Unit> result) -> Unit.INSTANCE);
     }
 
     // Return false to allow the default behavior of the cluster click event to occur.

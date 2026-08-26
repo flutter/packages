@@ -1,6 +1,6 @@
 ## NEXT
 
-* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.
   * Applications built with older versions of Flutter will continue to

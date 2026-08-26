@@ -2,15 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
-  debugLabel: 'root',
-);
-final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(
-  debugLabel: 'shell',
-);
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
 // This scenario demonstrates how to set up nested navigation using ShellRoute,
 // which is a pattern where an additional Navigator is placed in the widget tree
@@ -130,10 +126,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'A Screen'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'B Screen',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.business), label: 'B Screen'),
           BottomNavigationBarItem(
             icon: Icon(Icons.notification_important_rounded),
             label: 'C Screen',
@@ -265,10 +258,7 @@ class DetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Details Screen')),
       body: Center(
-        child: Text(
-          'Details for $label',
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
+        child: Text('Details for $label', style: Theme.of(context).textTheme.headlineMedium),
       ),
     );
   }

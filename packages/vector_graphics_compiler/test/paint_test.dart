@@ -7,10 +7,7 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 void main() {
   test('Color tests', () {
-    expect(
-      const Color.fromRGBO(10, 15, 20, .1),
-      const Color.fromARGB(25, 10, 15, 20),
-    );
+    expect(const Color.fromRGBO(10, 15, 20, .1), const Color.fromARGB(25, 10, 15, 20));
 
     expect(
       const Color.fromARGB(255, 10, 15, 20).withOpacity(.1),

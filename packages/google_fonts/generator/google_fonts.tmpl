@@ -11,17 +11,10 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 import 'google_fonts_base.dart';
+import 'google_fonts_config.dart';
 {{#allParts}}
 import '{{partFilePath}}';
 {{/allParts}}
-
-/// A collection of properties used to specify custom behavior of the
-/// GoogleFonts library.
-class Config {
-  /// Whether or not the GoogleFonts library can make requests to
-  /// [fonts.google.com](https://fonts.google.com/) to retrieve font files.
-  bool allowRuntimeFetching = true;
-}
 
 /// Provides configuration, and static methods to obtain [TextStyle]s and [TextTheme]s.
 ///
@@ -41,7 +34,7 @@ class GoogleFonts {
   /// ```dart
   /// GoogleFonts.config.allowRuntimeFetching = false;
   /// ```
-  static final Config config = Config();
+  static final GoogleFontsConfig config = GoogleFontsConfig();
 
   /// Returns a [Future] which resolves when requested fonts have finished
   /// loading and are ready to be rendered on screen.

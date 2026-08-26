@@ -214,13 +214,9 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     List<XFile> files;
 
     if (options.allowMultiple) {
-      files = await fileSelector.openFiles(
-        acceptedTypeGroups: <XTypeGroup>[typeGroup],
-      );
+      files = await fileSelector.openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
     } else {
-      final XFile? file = await fileSelector.openFile(
-        acceptedTypeGroups: <XTypeGroup>[typeGroup],
-      );
+      final XFile? file = await fileSelector.openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
       files = <XFile>[if (file != null) file];
     }
     return files;

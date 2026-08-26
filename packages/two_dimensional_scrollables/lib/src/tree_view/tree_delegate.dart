@@ -36,8 +36,7 @@ typedef TreeViewNodeBuilder<T> =
 class TreeVicinity extends ChildVicinity {
   /// Creates a reference to a [TreeRow] in a [TreeView], with the [xIndex] and
   /// [yIndex] converted to terms of [depth] and [row], respectively.
-  const TreeVicinity({required int depth, required int row})
-    : super(xIndex: depth, yIndex: row);
+  const TreeVicinity({required int depth, required int row}) : super(xIndex: depth, yIndex: row);
 
   /// The row index of the [TreeRow] in the [TreeView].
   ///
@@ -90,8 +89,7 @@ typedef TreeVicinityToRowBuilder = TreeRow Function(TreeVicinity);
 ///
 /// The [rowCount] is determined by the number of active nodes in the
 /// [TreeView].
-class TreeRowBuilderDelegate extends TwoDimensionalChildBuilderDelegate
-    with TreeRowDelegateMixin {
+class TreeRowBuilderDelegate extends TwoDimensionalChildBuilderDelegate with TreeRowDelegateMixin {
   /// Creates a lazy building delegate to use with a [TreeView].
   TreeRowBuilderDelegate({
     required int rowCount,

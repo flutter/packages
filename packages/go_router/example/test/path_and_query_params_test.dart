@@ -12,9 +12,7 @@ void main() {
     expect(find.text(example.App.title), findsOneWidget);
 
     // Directly set the url through platform message.
-    var testRouteInformation = <String, dynamic>{
-      'location': '/family/f1?sort=asc',
-    };
+    var testRouteInformation = <String, dynamic>{'location': '/family/f1?sort=asc'};
     ByteData message = const JSONMethodCodec().encodeMethodCall(
       MethodCall('pushRouteInformation', testRouteInformation),
     );
@@ -26,15 +24,9 @@ void main() {
 
     await tester.pumpAndSettle();
     // 'Chris' should be higher than 'Tom'.
-    expect(
-      tester.getCenter(find.text('Jane')).dy <
-          tester.getCenter(find.text('John')).dy,
-      isTrue,
-    );
+    expect(tester.getCenter(find.text('Jane')).dy < tester.getCenter(find.text('John')).dy, isTrue);
 
-    testRouteInformation = <String, dynamic>{
-      'location': '/family/f1?privacy=false',
-    };
+    testRouteInformation = <String, dynamic>{'location': '/family/f1?privacy=false'};
     message = const JSONMethodCodec().encodeMethodCall(
       MethodCall('pushRouteInformation', testRouteInformation),
     );
@@ -46,10 +38,6 @@ void main() {
 
     await tester.pumpAndSettle();
     // 'Chris' should be lower than 'Tom'.
-    expect(
-      tester.getCenter(find.text('Jane')).dy >
-          tester.getCenter(find.text('John')).dy,
-      isTrue,
-    );
+    expect(tester.getCenter(find.text('Jane')).dy > tester.getCenter(find.text('John')).dy, isTrue);
   });
 }

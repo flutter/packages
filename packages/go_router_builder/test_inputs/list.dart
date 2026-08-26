@@ -8,11 +8,7 @@ mixin $ListRoute {}
 
 @TypedGoRoute<ListRoute>(path: '/list-route')
 class ListRoute extends GoRouteData with $ListRoute {
-  ListRoute({
-    required this.ids,
-    this.nullableIds,
-    this.idsWithDefaultValue = const <int>[0],
-  });
+  ListRoute({required this.ids, this.nullableIds, this.idsWithDefaultValue = const <int>[0]});
   final List<int> ids;
   final List<int>? nullableIds;
   final List<int> idsWithDefaultValue;

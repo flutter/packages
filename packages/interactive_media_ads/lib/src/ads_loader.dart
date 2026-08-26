@@ -92,8 +92,7 @@ class AdsLoader {
   final PlatformAdsLoader platform;
 
   /// Defines general SDK settings.
-  ImaSettings get settings =>
-      ImaSettings.fromPlatform(platform.params.settings);
+  ImaSettings get settings => ImaSettings.fromPlatform(platform.params.settings);
 
   /// Signals to the SDK that the content has completed.
   Future<void> contentComplete() {

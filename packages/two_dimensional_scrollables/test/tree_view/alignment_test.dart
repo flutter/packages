@@ -24,14 +24,12 @@ void main() {
                 height: 400,
                 child: TreeView<String>(
                   tree: tree,
-                  treeNodeBuilder: (context, node, toggleAnimationStyle) =>
-                      SizedBox(
-                        key: const ValueKey<String>('Root'),
-                        height: 100,
-                        child: Text(node.content),
-                      ),
-                  treeRowBuilder: (node) =>
-                      const TreeRow(extent: FixedTreeRowExtent(100)),
+                  treeNodeBuilder: (context, node, toggleAnimationStyle) => SizedBox(
+                    key: const ValueKey<String>('Root'),
+                    height: 100,
+                    child: Text(node.content),
+                  ),
+                  treeRowBuilder: (node) => const TreeRow(extent: FixedTreeRowExtent(100)),
                 ),
               ),
             ),
@@ -39,9 +37,7 @@ void main() {
         ),
       );
 
-      final Offset treeTopLeft = tester.getTopLeft(
-        find.byType(TreeView<String>),
-      );
+      final Offset treeTopLeft = tester.getTopLeft(find.byType(TreeView<String>));
       // Default is Alignment.topLeft (0, 0)
       final Finder root = find.byKey(const ValueKey<String>('Root'));
       expect(tester.getTopLeft(root) - treeTopLeft, Offset.zero);
@@ -65,14 +61,12 @@ void main() {
                 child: TreeView<String>(
                   tree: tree,
                   alignment: Alignment.center,
-                  treeNodeBuilder: (context, node, toggleAnimationStyle) =>
-                      SizedBox(
-                        key: const ValueKey<String>('Root'),
-                        height: 100,
-                        child: Text(node.content),
-                      ),
-                  treeRowBuilder: (node) =>
-                      const TreeRow(extent: FixedTreeRowExtent(100)),
+                  treeNodeBuilder: (context, node, toggleAnimationStyle) => SizedBox(
+                    key: const ValueKey<String>('Root'),
+                    height: 100,
+                    child: Text(node.content),
+                  ),
+                  treeRowBuilder: (node) => const TreeRow(extent: FixedTreeRowExtent(100)),
                 ),
               ),
             ),
@@ -80,9 +74,7 @@ void main() {
         ),
       );
 
-      final Offset treeTopLeft = tester.getTopLeft(
-        find.byType(TreeView<String>),
-      );
+      final Offset treeTopLeft = tester.getTopLeft(find.byType(TreeView<String>));
       // Tree is 100 high, viewport is 600 high. Centered means 250 offset.
       final Finder root = find.byKey(const ValueKey<String>('Root'));
       expect(tester.getTopLeft(root) - treeTopLeft, const Offset(0.0, 250.0));

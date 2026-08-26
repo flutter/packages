@@ -2,24 +2,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'test_helpers.dart';
 
 void main() {
-  testWidgets('GoRouter.push does not trigger unnecessary rebuilds', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('GoRouter.push does not trigger unnecessary rebuilds', (WidgetTester tester) async {
     final routes = <GoRoute>[
-      GoRoute(
-        path: '/',
-        builder: (BuildContext context, __) => const HomePage(),
-      ),
+      GoRoute(path: '/', builder: (BuildContext context, _) => const HomePage()),
       GoRoute(
         path: '/1',
-        builder: (BuildContext context, __) {
+        builder: (BuildContext context, _) {
           return ElevatedButton(
             onPressed: () {
               context.push('/1');

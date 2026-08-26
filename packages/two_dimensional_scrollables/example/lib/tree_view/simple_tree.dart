@@ -33,12 +33,8 @@ class TreeExampleState extends State<TreeExample> {
     TreeViewNode<String>(
       "It's supercalifragilisticexpialidocious",
       children: <TreeViewNode<String>>[
-        TreeViewNode<String>(
-          'Even though the sound of it is something quite atrocious',
-        ),
-        TreeViewNode<String>(
-          "If you say it loud enough you'll always sound precocious",
-        ),
+        TreeViewNode<String>('Even though the sound of it is something quite atrocious'),
+        TreeViewNode<String>("If you say it loud enough you'll always sound precocious"),
       ],
     ),
     TreeViewNode<String>(
@@ -64,19 +60,16 @@ class TreeExampleState extends State<TreeExample> {
     ),
   ];
 
-  Map<Type, GestureRecognizerFactory> _getTapRecognizer(
-    TreeViewNode<String> node,
-  ) {
+  Map<Type, GestureRecognizerFactory> _getTapRecognizer(TreeViewNode<String> node) {
     return <Type, GestureRecognizerFactory>{
-      TapGestureRecognizer:
-          GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-            () => TapGestureRecognizer(),
-            (TapGestureRecognizer t) => t.onTap = () {
-              setState(() {
-                _selectedNode = node;
-              });
-            },
-          ),
+      TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+        () => TapGestureRecognizer(),
+        (TapGestureRecognizer t) => t.onTap = () {
+          setState(() {
+            _selectedNode = node;
+          });
+        },
+      ),
     };
   }
 
@@ -91,12 +84,8 @@ class TreeExampleState extends State<TreeExample> {
           thumbVisibility: true,
           child: TreeView<String>(
             controller: treeController,
-            verticalDetails: ScrollableDetails.vertical(
-              controller: _verticalController,
-            ),
-            horizontalDetails: ScrollableDetails.horizontal(
-              controller: horizontalController,
-            ),
+            verticalDetails: ScrollableDetails.vertical(controller: _verticalController),
+            horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
             tree: _tree,
             onNodeToggle: (TreeViewNode<String> node) {
               setState(() {
@@ -107,9 +96,7 @@ class TreeExampleState extends State<TreeExample> {
               if (_selectedNode == node) {
                 return TreeView.defaultTreeRowBuilder(node).copyWith(
                   recognizerFactories: _getTapRecognizer(node),
-                  backgroundDecoration: TreeRowDecoration(
-                    color: Colors.purple[100],
-                  ),
+                  backgroundDecoration: TreeRowDecoration(color: Colors.purple[100]),
                 );
               }
               return TreeView.defaultTreeRowBuilder(
@@ -138,10 +125,7 @@ class TreeExampleState extends State<TreeExample> {
       body: ScrollConfiguration(
         behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: screenSize.width * 0.25,
-            vertical: 25.0,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.25, vertical: 25.0),
           child: _getTree(),
         ),
       ),

@@ -19,8 +19,7 @@ class CreationParams {
     this.webSettings,
     this.javascriptChannelNames = const <String>{},
     this.userAgent,
-    this.autoMediaPlaybackPolicy =
-        AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
+    this.autoMediaPlaybackPolicy = AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
     this.backgroundColor,
     this.cookies = const <WebViewCookie>[],
   });

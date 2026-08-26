@@ -25,43 +25,36 @@ import 'package:webview_flutter_android/src/android_webkit.g.dart' as _i2;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-class _FakePigeonInstanceManager_0 extends _i1.SmartFake
-    implements _i2.PigeonInstanceManager {
+class _FakePigeonInstanceManager_0 extends _i1.SmartFake implements _i2.PigeonInstanceManager {
   _FakePigeonInstanceManager_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeHttpAuthHandler_1 extends _i1.SmartFake
-    implements _i2.HttpAuthHandler {
+class _FakeHttpAuthHandler_1 extends _i1.SmartFake implements _i2.HttpAuthHandler {
   _FakeHttpAuthHandler_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeDownloadListener_2 extends _i1.SmartFake
-    implements _i2.DownloadListener {
+class _FakeDownloadListener_2 extends _i1.SmartFake implements _i2.DownloadListener {
   _FakeDownloadListener_2(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeSslCertificate_3 extends _i1.SmartFake
-    implements _i2.SslCertificate {
+class _FakeSslCertificate_3 extends _i1.SmartFake implements _i2.SslCertificate {
   _FakeSslCertificate_3(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
 class _FakeSslError_4 extends _i1.SmartFake implements _i2.SslError {
-  _FakeSslError_4(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeSslError_4(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
-class _FakeSslErrorHandler_5 extends _i1.SmartFake
-    implements _i2.SslErrorHandler {
+class _FakeSslErrorHandler_5 extends _i1.SmartFake implements _i2.SslErrorHandler {
   _FakeSslErrorHandler_5(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeX509Certificate_6 extends _i1.SmartFake
-    implements _i2.X509Certificate {
+class _FakeX509Certificate_6 extends _i1.SmartFake implements _i2.X509Certificate {
   _FakeX509Certificate_6(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -115,10 +108,7 @@ class MockHttpAuthHandler extends _i1.Mock implements _i2.HttpAuthHandler {
   _i2.HttpAuthHandler pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeHttpAuthHandler_1(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeHttpAuthHandler_1(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.HttpAuthHandler);
 }
@@ -132,8 +122,7 @@ class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
   }
 
   @override
-  void Function(_i2.DownloadListener, String, String, String, String, int)
-  get onDownloadStart =>
+  void Function(_i2.DownloadListener, String, String, String, String, int) get onDownloadStart =>
       (super.noSuchMethod(
             Invocation.getter(#onDownloadStart),
             returnValue:
@@ -146,14 +135,7 @@ class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
                   int contentLength,
                 ) {},
           )
-          as void Function(
-            _i2.DownloadListener,
-            String,
-            String,
-            String,
-            String,
-            int,
-          ));
+          as void Function(_i2.DownloadListener, String, String, String, String, int));
 
   @override
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
@@ -170,10 +152,7 @@ class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
   _i2.DownloadListener pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeDownloadListener_2(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeDownloadListener_2(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.DownloadListener);
 }
@@ -241,10 +220,7 @@ class MockSslCertificate extends _i1.Mock implements _i2.SslCertificate {
   _i2.SslCertificate pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeSslCertificate_3(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeSslCertificate_3(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.SslCertificate);
 }
@@ -261,10 +237,7 @@ class MockSslError extends _i1.Mock implements _i2.SslError {
   _i2.SslCertificate get certificate =>
       (super.noSuchMethod(
             Invocation.getter(#certificate),
-            returnValue: _FakeSslCertificate_3(
-              this,
-              Invocation.getter(#certificate),
-            ),
+            returnValue: _FakeSslCertificate_3(this, Invocation.getter(#certificate)),
           )
           as _i2.SslCertificate);
 
@@ -291,9 +264,7 @@ class MockSslError extends _i1.Mock implements _i2.SslError {
   _i3.Future<_i2.SslErrorType> getPrimaryError() =>
       (super.noSuchMethod(
             Invocation.method(#getPrimaryError, []),
-            returnValue: _i3.Future<_i2.SslErrorType>.value(
-              _i2.SslErrorType.dateInvalid,
-            ),
+            returnValue: _i3.Future<_i2.SslErrorType>.value(_i2.SslErrorType.dateInvalid),
           )
           as _i3.Future<_i2.SslErrorType>);
 
@@ -309,10 +280,7 @@ class MockSslError extends _i1.Mock implements _i2.SslError {
   _i2.SslError pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeSslError_4(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeSslError_4(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.SslError);
 }
@@ -358,10 +326,7 @@ class MockSslErrorHandler extends _i1.Mock implements _i2.SslErrorHandler {
   _i2.SslErrorHandler pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeSslErrorHandler_5(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeSslErrorHandler_5(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.SslErrorHandler);
 }
@@ -389,10 +354,7 @@ class MockX509Certificate extends _i1.Mock implements _i2.X509Certificate {
   _i2.X509Certificate pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeX509Certificate_6(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeX509Certificate_6(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.X509Certificate);
 

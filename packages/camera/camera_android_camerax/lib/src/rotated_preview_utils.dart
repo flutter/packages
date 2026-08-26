@@ -24,9 +24,7 @@ int getQuarterTurnsFromSurfaceRotationConstant(int surfaceRotationConstant) {
 /// Returns the clockwise quarter turns applied by the CameraPreview widget
 /// based on [orientation], the current device orientation (see
 /// camera/camera/lib/src/camera_preview.dart).
-int getPreAppliedQuarterTurnsRotationFromDeviceOrientation(
-  DeviceOrientation orientation,
-) {
+int getPreAppliedQuarterTurnsRotationFromDeviceOrientation(DeviceOrientation orientation) {
   return switch (orientation) {
     DeviceOrientation.portraitUp => 0,
     DeviceOrientation.landscapeRight => 1,

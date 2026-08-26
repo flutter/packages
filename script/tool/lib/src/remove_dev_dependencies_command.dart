@@ -29,8 +29,7 @@ class RemoveDevDependenciesCommand extends PackageLoopingCommand {
   bool get hasLongOutput => false;
 
   @override
-  PackageLoopingType get packageLoopingType =>
-      PackageLoopingType.includeAllSubpackages;
+  PackageLoopingType get packageLoopingType => PackageLoopingType.includeAllSubpackages;
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
@@ -49,8 +48,6 @@ class RemoveDevDependenciesCommand extends PackageLoopingCommand {
       package.pubspecFile.writeAsStringSync(editablePubspec.toString());
     }
 
-    return changed
-        ? PackageResult.success()
-        : PackageResult.skip('Nothing to remove.');
+    return changed ? PackageResult.success() : PackageResult.skip('Nothing to remove.');
   }
 }

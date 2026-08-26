@@ -53,83 +53,70 @@ void main() {
       testData = InMemorySharedPreferencesStore.empty();
 
       Map<String, Object?> getArgumentDictionary(MethodCall call) {
-        return (call.arguments as Map<Object?, Object?>)
-            .cast<String, Object?>();
+        return (call.arguments as Map<Object?, Object?>).cast<String, Object?>();
       }
 
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-            log.add(methodCall);
-            if (methodCall.method == 'getAll') {
-              return testData.getAll();
-            }
-            if (methodCall.method == 'getAllWithParameters') {
-              final Map<String, Object?> arguments = getArgumentDictionary(
-                methodCall,
-              );
-              final prefix = arguments['prefix']! as String;
-              Set<String>? allowSet;
-              final allowList = arguments['allowList'] as List<dynamic>?;
-              if (allowList != null) {
-                allowSet = <String>{};
-                for (final Object? key in allowList) {
-                  allowSet.add(key! as String);
-                }
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+        channel,
+        (MethodCall methodCall) async {
+          log.add(methodCall);
+          if (methodCall.method == 'getAll') {
+            return testData.getAll();
+          }
+          if (methodCall.method == 'getAllWithParameters') {
+            final Map<String, Object?> arguments = getArgumentDictionary(methodCall);
+            final prefix = arguments['prefix']! as String;
+            Set<String>? allowSet;
+            final allowList = arguments['allowList'] as List<dynamic>?;
+            if (allowList != null) {
+              allowSet = <String>{};
+              for (final Object? key in allowList) {
+                allowSet.add(key! as String);
               }
-              return testData.getAllWithParameters(
-                GetAllParameters(
-                  filter: PreferencesFilter(
-                    prefix: prefix,
-                    allowList: allowSet,
-                  ),
-                ),
-              );
             }
-            if (methodCall.method == 'remove') {
-              final Map<String, Object?> arguments = getArgumentDictionary(
-                methodCall,
-              );
-              final key = arguments['key']! as String;
-              return testData.remove(key);
-            }
-            if (methodCall.method == 'clear') {
-              return testData.clear();
-            }
-            if (methodCall.method == 'clearWithParameters') {
-              final Map<String, Object?> arguments = getArgumentDictionary(
-                methodCall,
-              );
-              final prefix = arguments['prefix']! as String;
-              Set<String>? allowSet;
-              final allowList = arguments['allowList'] as List<dynamic>?;
-              if (allowList != null) {
-                allowSet = <String>{};
-                for (final Object? key in allowList) {
-                  allowSet.add(key! as String);
-                }
+            return testData.getAllWithParameters(
+              GetAllParameters(
+                filter: PreferencesFilter(prefix: prefix, allowList: allowSet),
+              ),
+            );
+          }
+          if (methodCall.method == 'remove') {
+            final Map<String, Object?> arguments = getArgumentDictionary(methodCall);
+            final key = arguments['key']! as String;
+            return testData.remove(key);
+          }
+          if (methodCall.method == 'clear') {
+            return testData.clear();
+          }
+          if (methodCall.method == 'clearWithParameters') {
+            final Map<String, Object?> arguments = getArgumentDictionary(methodCall);
+            final prefix = arguments['prefix']! as String;
+            Set<String>? allowSet;
+            final allowList = arguments['allowList'] as List<dynamic>?;
+            if (allowList != null) {
+              allowSet = <String>{};
+              for (final Object? key in allowList) {
+                allowSet.add(key! as String);
               }
-              return testData.clearWithParameters(
-                ClearParameters(
-                  filter: PreferencesFilter(
-                    prefix: prefix,
-                    allowList: allowSet,
-                  ),
-                ),
-              );
             }
-            final setterRegExp = RegExp(r'set(.*)');
-            final Match? match = setterRegExp.matchAsPrefix(methodCall.method);
-            if (match?.groupCount == 1) {
-              final String valueType = match!.group(1)!;
-              final Map<String, Object?> arguments = getArgumentDictionary(
-                methodCall,
-              );
-              final key = arguments['key']! as String;
-              final Object value = arguments['value']!;
-              return testData.setValue(valueType, key, value);
-            }
-            fail('Unexpected method call: ${methodCall.method}');
-          });
+            return testData.clearWithParameters(
+              ClearParameters(
+                filter: PreferencesFilter(prefix: prefix, allowList: allowSet),
+              ),
+            );
+          }
+          final setterRegExp = RegExp(r'set(.*)');
+          final Match? match = setterRegExp.matchAsPrefix(methodCall.method);
+          if (match?.groupCount == 1) {
+            final String valueType = match!.group(1)!;
+            final Map<String, Object?> arguments = getArgumentDictionary(methodCall);
+            final key = arguments['key']! as String;
+            final Object value = arguments['value']!;
+            return testData.setValue(valueType, key, value);
+          }
+          fail('Unexpected method call: ${methodCall.method}');
+        },
+      );
       store = MethodChannelSharedPreferencesStore();
       log.clear();
     });
@@ -159,10 +146,7 @@ void main() {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
       final Map<String, Object> data = await store.getAllWithParameters(
         GetAllParameters(
-          filter: PreferencesFilter(
-            prefix: 'prefix.',
-            allowList: <String>{'prefix.Bool'},
-          ),
+          filter: PreferencesFilter(prefix: 'prefix.', allowList: <String>{'prefix.Bool'}),
         ),
       );
       expect(data.length, 1);
@@ -254,9 +238,7 @@ void main() {
         isNotEmpty,
       );
       expect(
-        await store.clearWithParameters(
-          ClearParameters(filter: PreferencesFilter(prefix: '')),
-        ),
+        await store.clearWithParameters(ClearParameters(filter: PreferencesFilter(prefix: ''))),
         true,
       );
       expect(
@@ -279,10 +261,7 @@ void main() {
       expect(
         await store.clearWithParameters(
           ClearParameters(
-            filter: PreferencesFilter(
-              prefix: 'prefix.',
-              allowList: <String>{'prefix.String'},
-            ),
+            filter: PreferencesFilter(prefix: 'prefix.', allowList: <String>{'prefix.String'}),
           ),
         ),
         true,

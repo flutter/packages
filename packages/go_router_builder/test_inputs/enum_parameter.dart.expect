@@ -1,5 +1,6 @@
 RouteBase get $enumParam => GoRouteData.$route(
       path: '/:y',
+      hasOverriddenOnExit: false,
       factory: $EnumParam._fromState,
     );
 

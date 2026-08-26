@@ -94,10 +94,7 @@ class HeatmapBodyState extends State<HeatmapBody> {
             width: 350.0,
             height: 300.0,
             child: GoogleMap(
-              initialCameraPosition: const CameraPosition(
-                target: sanFrancisco,
-                zoom: 13,
-              ),
+              initialCameraPosition: const CameraPosition(target: sanFrancisco, zoom: 13),
               heatmaps: <Heatmap>{
                 Heatmap(
                   heatmapId: const HeatmapId('test'),
@@ -126,15 +123,11 @@ class HeatmapBodyState extends State<HeatmapBody> {
                     Column(
                       children: <Widget>[
                         TextButton(
-                          onPressed: disabledPoints.isNotEmpty
-                              ? _addPoint
-                              : null,
+                          onPressed: disabledPoints.isNotEmpty ? _addPoint : null,
                           child: const Text('Add point'),
                         ),
                         TextButton(
-                          onPressed: enabledPoints.isNotEmpty
-                              ? _removePoint
-                              : null,
+                          onPressed: enabledPoints.isNotEmpty ? _removePoint : null,
                           child: const Text('Remove point'),
                         ),
                       ],

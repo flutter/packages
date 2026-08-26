@@ -49,20 +49,11 @@ void main() {
       await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
       // iOS only accepts uniformTypeIdentifiers.
-      expect(
-        listEquals(api.passedConfig?.utis, <String>[
-          'public.text',
-          'public.image',
-        ]),
-        isTrue,
-      );
+      expect(listEquals(api.passedConfig?.utis, <String>['public.text', 'public.image']), isTrue);
       expect(api.passedConfig?.allowMultiSelection, isFalse);
     });
     test('throws for a type group that does not support iOS', () async {
-      const group = XTypeGroup(
-        label: 'images',
-        webWildCards: <String>['images/*'],
-      );
+      const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
 
       await expectLater(
         plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
@@ -72,23 +63,14 @@ void main() {
 
     test('correctly handles no type groups', () async {
       await expectLater(plugin.openFile(), completes);
-      expect(
-        listEquals(api.passedConfig?.utis, <String>['public.data']),
-        isTrue,
-      );
+      expect(listEquals(api.passedConfig?.utis, <String>['public.data']), isTrue);
     });
 
     test('correctly handles a wildcard group', () async {
       const group = XTypeGroup(label: 'text');
 
-      await expectLater(
-        plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
-        completes,
-      );
-      expect(
-        listEquals(api.passedConfig?.utis, <String>['public.data']),
-        isTrue,
-      );
+      await expectLater(plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]), completes);
+      expect(listEquals(api.passedConfig?.utis, <String>['public.data']), isTrue);
     });
   });
 
@@ -115,21 +97,12 @@ void main() {
 
       await plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
-      expect(
-        listEquals(api.passedConfig?.utis, <String>[
-          'public.text',
-          'public.image',
-        ]),
-        isTrue,
-      );
+      expect(listEquals(api.passedConfig?.utis, <String>['public.text', 'public.image']), isTrue);
       expect(api.passedConfig?.allowMultiSelection, isTrue);
     });
 
     test('throws for a type group that does not support iOS', () async {
-      const group = XTypeGroup(
-        label: 'images',
-        webWildCards: <String>['images/*'],
-      );
+      const group = XTypeGroup(label: 'images', webWildCards: <String>['images/*']);
 
       await expectLater(
         plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),
@@ -139,23 +112,14 @@ void main() {
 
     test('correctly handles no type groups', () async {
       await expectLater(plugin.openFiles(), completes);
-      expect(
-        listEquals(api.passedConfig?.utis, <String>['public.data']),
-        isTrue,
-      );
+      expect(listEquals(api.passedConfig?.utis, <String>['public.data']), isTrue);
     });
 
     test('correctly handles a wildcard group', () async {
       const group = XTypeGroup(label: 'text');
 
-      await expectLater(
-        plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),
-        completes,
-      );
-      expect(
-        listEquals(api.passedConfig?.utis, <String>['public.data']),
-        isTrue,
-      );
+      await expectLater(plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]), completes);
+      expect(listEquals(api.passedConfig?.utis, <String>['public.data']), isTrue);
     });
   });
 }

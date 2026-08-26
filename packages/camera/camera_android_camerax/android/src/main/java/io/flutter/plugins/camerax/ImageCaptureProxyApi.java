@@ -9,9 +9,9 @@ import androidx.annotation.Nullable;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
+import androidx.core.content.ContextCompat;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Executors;
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -40,7 +40,8 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
   public ImageCapture pigeon_defaultConstructor(
       @Nullable ResolutionSelector resolutionSelector,
       @Nullable Long targetRotation,
-      @Nullable CameraXFlashMode flashMode) {
+      @Nullable CameraXFlashMode flashMode,
+      @Nullable Long jpegQuality) {
     final ImageCapture.Builder builder = new ImageCapture.Builder();
     if (targetRotation != null) {
       builder.setTargetRotation(targetRotation.intValue());
@@ -61,6 +62,9 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
     }
     if (resolutionSelector != null) {
       builder.setResolutionSelector(resolutionSelector);
+    }
+    if (jpegQuality != null) {
+      builder.setJpegQuality(jpegQuality.intValue());
     }
     return builder.build();
   }
@@ -102,7 +106,9 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
         createOnImageSavedCallback(temporaryCaptureFile, systemServicesManager, callback);
 
     pigeonInstance.takePicture(
-        outputFileOptions, Executors.newSingleThreadExecutor(), onImageSavedCallback);
+        outputFileOptions,
+        ContextCompat.getMainExecutor(getPigeonRegistrar().getContext()),
+        onImageSavedCallback);
   }
 
   @Override

@@ -40,11 +40,6 @@ class WebViewCookie {
 
   /// Serializes the [WebViewCookie] to a `Map<String, String>`.
   Map<String, String> toJson() {
-    return <String, String>{
-      'name': name,
-      'value': value,
-      'domain': domain,
-      'path': path,
-    };
+    return <String, String>{'name': name, 'value': value, 'domain': domain, 'path': path};
   }
 }

@@ -13,6 +13,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern NSString *const PGNAStringConstant;
+extern const NSInteger PGNAnIntConstant;
+extern const double PGNADoubleConstant;
+extern const BOOL PGNABoolConstant;
+
 typedef NS_ENUM(NSUInteger, PGNCode) {
   PGNCodeOne = 0,
   PGNCodeTwo = 1,
@@ -30,11 +35,11 @@ typedef NS_ENUM(NSUInteger, PGNCode) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithName:(nullable NSString *)name
-                 description:(nullable NSString *)description
+          messageDescription:(nullable NSString *)messageDescription
                         code:(PGNCode)code
                         data:(NSDictionary<NSString *, NSString *> *)data;
 @property(nonatomic, copy, nullable) NSString *name;
-@property(nonatomic, copy, nullable) NSString *description;
+@property(nonatomic, copy, nullable) NSString *messageDescription;
 @property(nonatomic, assign) PGNCode code;
 @property(nonatomic, copy) NSDictionary<NSString *, NSString *> *data;
 @end

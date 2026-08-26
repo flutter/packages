@@ -33,17 +33,9 @@ class _App extends StatelessWidget {
         ),
         body: TabBarView(
           children: <Widget>[
-            _ViewTypeTabBar(
-              builder: (VideoViewType viewType) =>
-                  _BumbleBeeRemoteVideo(viewType),
-            ),
-            _ViewTypeTabBar(
-              builder: (VideoViewType viewType) => _RtspRemoteVideo(viewType),
-            ),
-            _ViewTypeTabBar(
-              builder: (VideoViewType viewType) =>
-                  _ButterFlyAssetVideo(viewType),
-            ),
+            _ViewTypeTabBar(builder: (VideoViewType viewType) => _BumbleBeeRemoteVideo(viewType)),
+            _ViewTypeTabBar(builder: (VideoViewType viewType) => _RtspRemoteVideo(viewType)),
+            _ViewTypeTabBar(builder: (VideoViewType viewType) => _ButterFlyAssetVideo(viewType)),
           ],
         ),
       ),
@@ -60,8 +52,7 @@ class _ViewTypeTabBar extends StatefulWidget {
   State<_ViewTypeTabBar> createState() => _ViewTypeTabBarState();
 }
 
-class _ViewTypeTabBarState extends State<_ViewTypeTabBar>
-    with SingleTickerProviderStateMixin {
+class _ViewTypeTabBarState extends State<_ViewTypeTabBar> with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
   @override
@@ -117,10 +108,7 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
   @override
   void initState() {
     super.initState();
-    _controller = MiniController.asset(
-      'assets/Butterfly-209.mp4',
-      viewType: widget.viewType,
-    );
+    _controller = MiniController.asset('assets/Butterfly-209.mp4', viewType: widget.viewType);
 
     _controller.addListener(() {
       setState(() {});

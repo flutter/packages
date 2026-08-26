@@ -77,10 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               // #docregion constraints
               Container(
-                constraints: const BoxConstraints(
-                  maxHeight: 100,
-                  maxWidth: 1200,
-                ),
+                constraints: const BoxConstraints(maxHeight: 100, maxWidth: 1200),
                 padding: const EdgeInsets.only(bottom: 10),
                 child: AdUnitWidget(
                   configuration: AdUnitConfiguration.displayAdUnit(

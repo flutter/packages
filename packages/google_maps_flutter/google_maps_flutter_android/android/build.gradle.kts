@@ -2,6 +2,7 @@ group = "io.flutter.plugins.googlemaps"
 version = "1.0-SNAPSHOT"
 
 buildscript {
+    val kotlinVersion = "2.3.20"
     repositories {
         google()
         mavenCentral()
@@ -9,6 +10,7 @@ buildscript {
 
     dependencies {
         classpath("com.android.tools.build:gradle:8.13.1")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
 
@@ -21,6 +23,12 @@ allprojects {
 
 plugins {
     id("com.android.library")
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+    }
 }
 
 android {
@@ -39,7 +47,7 @@ android {
     }
 
     dependencies {
-        implementation("androidx.annotation:annotation:1.9.1")
+        implementation("androidx.annotation:annotation:1.10.0")
         implementation("com.google.android.gms:play-services-maps:20.0.0")
         implementation("com.google.maps.android:android-maps-utils:4.1.0")
         androidTestImplementation("androidx.test:runner:1.7.0")

@@ -5,8 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:file_selector_platform_interface/file_selector_platform_interface.dart'
-    as _i2;
+import 'package:file_selector_platform_interface/file_selector_platform_interface.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -25,8 +24,7 @@ import 'package:mockito/mockito.dart' as _i1;
 /// A class which mocks [FileSelectorPlatform].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFileSelectorPlatform extends _i1.Mock
-    implements _i2.FileSelectorPlatform {
+class MockFileSelectorPlatform extends _i1.Mock implements _i2.FileSelectorPlatform {
   MockFileSelectorPlatform() {
     _i1.throwOnMissingStub(this);
   }
@@ -96,10 +94,7 @@ class MockFileSelectorPlatform extends _i1.Mock
           as _i3.Future<_i2.FileSaveLocation?>);
 
   @override
-  _i3.Future<String?> getDirectoryPath({
-    String? initialDirectory,
-    String? confirmButtonText,
-  }) =>
+  _i3.Future<String?> getDirectoryPath({String? initialDirectory, String? confirmButtonText}) =>
       (super.noSuchMethod(
             Invocation.method(#getDirectoryPath, [], {
               #initialDirectory: initialDirectory,

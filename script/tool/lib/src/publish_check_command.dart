@@ -25,9 +25,7 @@ class PublishCheckCommand extends PackageLoopingCommand {
     super.platform,
     super.gitDir,
     http.Client? httpClient,
-  }) : _pubVersionFinder = PubVersionFinder(
-         httpClient: httpClient ?? http.Client(),
-       ) {
+  }) : _pubVersionFinder = PubVersionFinder(httpClient: httpClient ?? http.Client()) {
     argParser.addFlag(
       _allowPrereleaseFlag,
       help:
@@ -61,8 +59,7 @@ class PublishCheckCommand extends PackageLoopingCommand {
   List<String> get aliases => <String>['check-publish'];
 
   @override
-  final String description =
-      'Checks to make sure that a package *could* be published.';
+  final String description = 'Checks to make sure that a package *could* be published.';
 
   final PubVersionFinder _pubVersionFinder;
 
@@ -86,9 +83,7 @@ class PublishCheckCommand extends PackageLoopingCommand {
 
     // The pre-publish hook must be run first if it exists, since passing the
     // publish check may rely on its execution.
-    final bool prePublishHookPassesOrNoops = await _validatePrePublishHook(
-      package,
-    );
+    final bool prePublishHookPassesOrNoops = await _validatePrePublishHook(package);
     // Given that, don't run publish check if the pre-publish hook fails.
     _PublishCheckResult result = prePublishHookPassesOrNoops
         ? await _passesPublishCheck(package)
@@ -106,9 +101,7 @@ class PublishCheckCommand extends PackageLoopingCommand {
     if (result.index > _overallResult.index) {
       _overallResult = result;
     }
-    return result == _PublishCheckResult.error
-        ? PackageResult.fail()
-        : PackageResult.success();
+    return result == _PublishCheckResult.error ? PackageResult.fail() : PackageResult.success();
   }
 
   @override
@@ -163,10 +156,11 @@ class PublishCheckCommand extends PackageLoopingCommand {
     await _fetchExampleDeps(package);
 
     print('Running pub publish --dry-run:');
-    final io.Process process = await processRunner.start(
-      flutterCommand,
-      <String>['pub', 'publish', '--', '--dry-run'],
-      workingDirectory: package.directory,
+    final io.Process process = await startPubCommand(
+      <String>['publish', '--dry-run'],
+      package,
+      processRunner,
+      platform,
     );
 
     final outputBuffer = StringBuffer();
@@ -219,9 +213,7 @@ class PublishCheckCommand extends PackageLoopingCommand {
 
   /// Returns the result of the publish check, or null if the package is marked
   /// as unpublishable.
-  Future<_PublishCheckResult> _passesPublishCheck(
-    RepositoryPackage package,
-  ) async {
+  Future<_PublishCheckResult> _passesPublishCheck(RepositoryPackage package) async {
     final String packageName = package.directory.basename;
     final Pubspec? pubspec = _tryParsePubspec(package);
     if (pubspec == null) {
@@ -230,11 +222,10 @@ class PublishCheckCommand extends PackageLoopingCommand {
     }
 
     final Version? version = pubspec.version;
-    final _PublishCheckResult alreadyPublishedResult =
-        await _checkPublishingStatus(
-          packageName: packageName,
-          version: version,
-        );
+    final _PublishCheckResult alreadyPublishedResult = await _checkPublishingStatus(
+      packageName: packageName,
+      version: version,
+    );
     if (alreadyPublishedResult == _PublishCheckResult.error) {
       print('Check pub version failed $packageName');
       return _PublishCheckResult.error;
@@ -246,9 +237,7 @@ class PublishCheckCommand extends PackageLoopingCommand {
     // package is actually published.
     if (await _hasValidPublishCheckRun(package)) {
       if (alreadyPublishedResult == _PublishCheckResult.nothingToPublish) {
-        print(
-          'Package $packageName version: $version has already been published on pub.',
-        );
+        print('Package $packageName version: $version has already been published on pub.');
       } else {
         print('Package $packageName is able to be published.');
       }
@@ -264,8 +253,8 @@ class PublishCheckCommand extends PackageLoopingCommand {
     required String packageName,
     required Version? version,
   }) async {
-    final PubVersionFinderResponse pubVersionFinderResponse =
-        await _pubVersionFinder.getPackageVersion(packageName: packageName);
+    final PubVersionFinderResponse pubVersionFinderResponse = await _pubVersionFinder
+        .getPackageVersion(packageName: packageName);
     switch (pubVersionFinderResponse.result) {
       case PubVersionFinderResult.success:
         return pubVersionFinderResponse.versions.contains(version)
@@ -284,9 +273,7 @@ HTTP response: ${pubVersionFinderResponse.httpResponse.body}
   }
 
   bool _passesAuthorsCheck(RepositoryPackage package) {
-    final List<String> pathComponents = package.directory.fileSystem.path.split(
-      package.path,
-    );
+    final List<String> pathComponents = package.directory.fileSystem.path.split(package.path);
     if (pathComponents.contains('third_party')) {
       // Third-party packages aren't required to have an AUTHORS file.
       return true;
@@ -300,18 +287,12 @@ HTTP response: ${pubVersionFinderResponse.httpResponse.body}
       // If there's no custom step, then it can't block publishing.
       return true;
     }
-    final String relativeScriptPath = getRelativePosixPath(
-      script,
-      from: package.directory,
-    );
+    final String relativeScriptPath = getRelativePosixPath(script, from: package.directory);
     print('Running pre-publish hook $relativeScriptPath...');
 
     // Ensure that dependencies are available.
     if (!await runPubGet(package, processRunner, platform)) {
-      _printImportantStatusMessage(
-        'Failed to get depenedencies',
-        isError: true,
-      );
+      _printImportantStatusMessage('Failed to get depenedencies', isError: true);
       return false;
     }
 

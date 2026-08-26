@@ -17,8 +17,7 @@ import 'route_data.dart';
 import 'state.dart';
 
 /// Signature of a go router builder function with navigator.
-typedef GoRouterBuilderWithNav =
-    Widget Function(BuildContext context, Widget child);
+typedef GoRouterBuilderWithNav = Widget Function(BuildContext context, Widget child);
 
 typedef _PageBuilderForAppType =
     Page<void> Function({
@@ -29,8 +28,7 @@ typedef _PageBuilderForAppType =
       required Widget child,
     });
 
-typedef _ErrorBuilderForAppType =
-    Widget Function(BuildContext context, GoRouterState state);
+typedef _ErrorBuilderForAppType = Widget Function(BuildContext context, GoRouterState state);
 
 /// Signature for a function that takes in a `route` to be popped with
 /// the `result` and returns a boolean decision on whether the pop
@@ -115,6 +113,7 @@ class RouteBuilder {
         onPopPageWithRouteMatch: onPopPageWithRouteMatch,
         matchList: matchList,
         matches: matchList.matches,
+        inheritedMetadata: const <String, dynamic>{},
         configuration: configuration,
         errorBuilder: errorBuilder,
         errorPageBuilder: errorPageBuilder,
@@ -133,6 +132,7 @@ class _CustomNavigator extends StatefulWidget {
     required this.onPopPageWithRouteMatch,
     required this.matchList,
     required this.matches,
+    required this.inheritedMetadata,
     required this.configuration,
     required this.errorBuilder,
     required this.errorPageBuilder,
@@ -148,6 +148,7 @@ class _CustomNavigator extends StatefulWidget {
   /// to build navigator in shell route. In this case, these matches come from
   /// the [ShellRouteMatch.matches].
   final List<RouteMatchBase> matches;
+  final Map<String, dynamic> inheritedMetadata;
   final RouteMatchList matchList;
   final RouteConfiguration configuration;
   final PopPageWithRouteMatchCallback onPopPageWithRouteMatch;
@@ -169,7 +170,8 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   @override
   void didUpdateWidget(_CustomNavigator oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.matchList != oldWidget.matchList) {
+    if (widget.matchList != oldWidget.matchList ||
+        widget.inheritedMetadata != oldWidget.inheritedMetadata) {
       _pages = null;
     }
   }
@@ -207,17 +209,24 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     if (widget.matchList.isError) {
       pages.add(_buildErrorPage(context, widget.matchList));
     } else {
+      Map<String, dynamic> currentInheritedMetadata = widget.inheritedMetadata;
       for (final RouteMatchBase match in widget.matches) {
-        final Page<Object?>? page = _buildPage(context, match);
+        final Map<String, dynamic> metadata = match is ImperativeRouteMatch
+            ? match.matches.topRouteMetadata
+            : RouteMatchList.mergeMetadata(currentInheritedMetadata, match.route.metadata);
+        final GoRouterState state = match.buildState(
+          widget.configuration,
+          widget.matchList,
+          metadata: metadata,
+        );
+        final Page<Object?>? page = _buildPage(context, match, state);
+        currentInheritedMetadata = metadata;
         if (page == null) {
           continue;
         }
         pages.add(page);
         pageToRouteMatchBase[page] = match;
-        registry[page] = match.buildState(
-          widget.configuration,
-          widget.matchList,
-        );
+        registry[page] = state;
       }
     }
     _pages = pages;
@@ -225,26 +234,22 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     _pageToRouteMatchBase = pageToRouteMatchBase;
   }
 
-  Page<Object?>? _buildPage(BuildContext context, RouteMatchBase match) {
+  Page<Object?>? _buildPage(BuildContext context, RouteMatchBase match, GoRouterState state) {
     if (match is RouteMatch) {
       if (match is ImperativeRouteMatch && match.matches.isError) {
         return _buildErrorPage(context, match.matches);
       }
-      return _buildPageForGoRoute(context, match);
+      return _buildPageForGoRoute(context, match, state);
     }
     if (match is ShellRouteMatch) {
-      return _buildPageForShellRoute(context, match);
+      return _buildPageForShellRoute(context, match, state);
     }
     throw GoError('unknown match type ${match.runtimeType}');
   }
 
   /// Builds a [Page] for a [RouteMatch]
-  Page<Object?>? _buildPageForGoRoute(BuildContext context, RouteMatch match) {
+  Page<Object?>? _buildPageForGoRoute(BuildContext context, RouteMatch match, GoRouterState state) {
     final GoRouterPageBuilder? pageBuilder = match.route.pageBuilder;
-    final GoRouterState state = match.buildState(
-      widget.configuration,
-      widget.matchList,
-    );
     if (pageBuilder != null) {
       final Page<Object?> page = pageBuilder(context, state);
       if (page is! NoOpPage) {
@@ -272,11 +277,8 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   Page<Object?> _buildPageForShellRoute(
     BuildContext context,
     ShellRouteMatch match,
+    GoRouterState state,
   ) {
-    final GoRouterState state = match.buildState(
-      widget.configuration,
-      widget.matchList,
-    );
     final GlobalKey<NavigatorState> navigatorKey = match.navigatorKey;
     final shellRouteContext = ShellRouteContext(
       route: match.route,
@@ -305,6 +307,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
                 navigatorKey: navigatorKey,
                 matches: match.matches,
                 matchList: matchList,
+                inheritedMetadata: state.metadata,
                 configuration: widget.configuration,
                 observers: observers ?? const <NavigatorObserver>[],
                 onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
@@ -316,11 +319,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
             );
           },
     );
-    final Page<Object?>? page = match.route.buildPage(
-      context,
-      state,
-      shellRouteContext,
-    );
+    final Page<Object?>? page = match.route.buildPage(context, state, shellRouteContext);
     if (page != null && page is! NoOpPage) {
       return page;
     }
@@ -352,8 +351,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       if (elem != null && isMaterialApp(elem)) {
         log('Using MaterialApp configuration');
         _pageBuilderForAppType = pageBuilderForMaterialApp;
-        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
-            MaterialErrorScreen(s.error);
+        _errorBuilderForAppType = (BuildContext c, GoRouterState s) => MaterialErrorScreen(s.error);
       } else if (elem != null && isCupertinoApp(elem)) {
         log('Using CupertinoApp configuration');
         _pageBuilderForAppType = pageBuilderForCupertinoApp;
@@ -375,8 +373,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
               restorationId: restorationId,
               child: child,
             );
-        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
-            ErrorScreen(s.error);
+        _errorBuilderForAppType = (BuildContext c, GoRouterState s) => ErrorScreen(s.error);
       }
     }
 
@@ -385,20 +382,13 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   }
 
   /// builds the page based on app type, i.e. MaterialApp vs. CupertinoApp
-  Page<Object?> _buildPlatformAdapterPage(
-    BuildContext context,
-    GoRouterState state,
-    Widget child,
-  ) {
+  Page<Object?> _buildPlatformAdapterPage(BuildContext context, GoRouterState state, Widget child) {
     // build the page based on app type
     _cacheAppType(context);
     return _pageBuilderForAppType!(
       key: state.pageKey,
       name: state.name ?? state.path,
-      arguments: <String, String>{
-        ...state.pathParameters,
-        ...state.uri.queryParameters,
-      },
+      arguments: <String, String>{...state.pathParameters, ...state.uri.queryParameters},
       restorationId: state.pageKey.value,
       child: child,
     );
@@ -415,6 +405,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       error: matchList.error,
       pageKey: ValueKey<String>('${matchList.uri}(error)'),
       topRoute: matchList.lastOrNull?.route,
+      metadata: matchList.topRouteMetadata,
     );
   }
 

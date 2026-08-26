@@ -75,10 +75,7 @@ void main() {
     });
 
     test('throws for a type group that does not support Windows', () async {
-      const group = XTypeGroup(
-        label: 'text',
-        mimeTypes: <String>['text/plain'],
-      );
+      const group = XTypeGroup(label: 'text', mimeTypes: <String>['text/plain']);
 
       await expectLater(
         plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
@@ -89,10 +86,7 @@ void main() {
     test('allows a wildcard group', () async {
       const group = XTypeGroup(label: 'text');
 
-      await expectLater(
-        plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
-        completes,
-      );
+      await expectLater(plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]), completes);
     });
   });
 
@@ -147,10 +141,7 @@ void main() {
     });
 
     test('throws for a type group that does not support Windows', () async {
-      const group = XTypeGroup(
-        label: 'text',
-        mimeTypes: <String>['text/plain'],
-      );
+      const group = XTypeGroup(label: 'text', mimeTypes: <String>['text/plain']);
 
       await expectLater(
         plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),
@@ -161,10 +152,7 @@ void main() {
     test('allows a wildcard group', () async {
       const group = XTypeGroup(label: 'text');
 
-      await expectLater(
-        plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),
-        completes,
-      );
+      await expectLater(plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]), completes);
     });
   });
 
@@ -248,9 +236,7 @@ void main() {
         mimeTypes: <String>['image/jpg'],
       );
 
-      await plugin.getSaveLocation(
-        acceptedTypeGroups: <XTypeGroup>[group, groupTwo],
-      );
+      await plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
       expect(
         _typeGroupListsMatch(api.passedOptions!.allowedTypes, <TypeGroup>[
@@ -285,18 +271,14 @@ void main() {
 
     test('passes initialDirectory correctly', () async {
       await plugin.getSaveLocation(
-        options: const SaveDialogOptions(
-          initialDirectory: '/example/directory',
-        ),
+        options: const SaveDialogOptions(initialDirectory: '/example/directory'),
       );
 
       expect(api.passedInitialDirectory, '/example/directory');
     });
 
     test('passes suggestedName correctly', () async {
-      await plugin.getSaveLocation(
-        options: const SaveDialogOptions(suggestedName: 'baz.txt'),
-      );
+      await plugin.getSaveLocation(options: const SaveDialogOptions(suggestedName: 'baz.txt'));
 
       expect(api.passedSuggestedName, 'baz.txt');
     });
@@ -310,10 +292,7 @@ void main() {
     });
 
     test('throws for a type group that does not support Windows', () async {
-      const group = XTypeGroup(
-        label: 'text',
-        mimeTypes: <String>['text/plain'],
-      );
+      const group = XTypeGroup(label: 'text', mimeTypes: <String>['text/plain']);
 
       await expectLater(
         plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]),
@@ -324,10 +303,7 @@ void main() {
     test('allows a wildcard group', () async {
       const group = XTypeGroup(label: 'text');
 
-      await expectLater(
-        plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]),
-        completes,
-      );
+      await expectLater(plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]), completes);
     });
   });
 
@@ -357,9 +333,7 @@ void main() {
         mimeTypes: <String>['image/jpg'],
       );
 
-      await plugin.getSavePath(
-        acceptedTypeGroups: <XTypeGroup>[group, groupTwo],
-      );
+      await plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
       expect(
         _typeGroupListsMatch(api.passedOptions!.allowedTypes, <TypeGroup>[
@@ -389,10 +363,7 @@ void main() {
     });
 
     test('throws for a type group that does not support Windows', () async {
-      const group = XTypeGroup(
-        label: 'text',
-        mimeTypes: <String>['text/plain'],
-      );
+      const group = XTypeGroup(label: 'text', mimeTypes: <String>['text/plain']);
 
       await expectLater(
         plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]),
@@ -403,10 +374,7 @@ void main() {
     test('allows a wildcard group', () async {
       const group = XTypeGroup(label: 'text');
 
-      await expectLater(
-        plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]),
-        completes,
-      );
+      await expectLater(plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]), completes);
     });
   });
 }
@@ -453,10 +421,7 @@ class FakeFileSelectorApi implements FileSelectorApi {
     passedInitialDirectory = initialDirectory;
     passedConfirmButtonText = confirmButtonText;
     passedOptions = options;
-    return FileDialogResult(
-      paths: result,
-      typeGroupIndex: resultTypeGroupIndex,
-    );
+    return FileDialogResult(paths: result, typeGroupIndex: resultTypeGroupIndex);
   }
 
   @override
@@ -470,10 +435,7 @@ class FakeFileSelectorApi implements FileSelectorApi {
     passedConfirmButtonText = confirmButtonText;
     passedSuggestedName = suggestedName;
     passedOptions = options;
-    return FileDialogResult(
-      paths: result,
-      typeGroupIndex: resultTypeGroupIndex,
-    );
+    return FileDialogResult(paths: result, typeGroupIndex: resultTypeGroupIndex);
   }
 
   @override

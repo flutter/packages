@@ -47,10 +47,7 @@ import 'interactive_media_ads_platform.dart';
 base class PlatformCompanionAdSlotCreationParams {
   /// Used by the platform implementation to create a new
   /// [PlatformCompanionAdSlot].
-  const PlatformCompanionAdSlotCreationParams({
-    required this.size,
-    this.onClicked,
-  });
+  const PlatformCompanionAdSlotCreationParams({required this.size, this.onClicked});
 
   /// The size of the slot.
   final CompanionAdSlotSize size;
@@ -63,9 +60,7 @@ base class PlatformCompanionAdSlotCreationParams {
 /// Ad slot for companion ads.
 abstract base class PlatformCompanionAdSlot {
   /// Creates a new [PlatformCompanionAdSlot]
-  factory PlatformCompanionAdSlot(
-    PlatformCompanionAdSlotCreationParams params,
-  ) {
+  factory PlatformCompanionAdSlot(PlatformCompanionAdSlotCreationParams params) {
     assert(
       InteractiveMediaAdsPlatform.instance != null,
       'A platform implementation for `interactive_media_ads` has not been set. '
@@ -74,8 +69,7 @@ abstract base class PlatformCompanionAdSlot {
       'unit testing, `InteractiveMediaAdsPlatform.instance` can be set with '
       'your own test implementation.',
     );
-    final PlatformCompanionAdSlot implementation = InteractiveMediaAdsPlatform
-        .instance!
+    final PlatformCompanionAdSlot implementation = InteractiveMediaAdsPlatform.instance!
         .createPlatformCompanionAdSlot(params);
     return implementation;
   }

@@ -10,9 +10,7 @@ import 'path_provider.g.dart';
 
 /// The Android implementation of [PathProviderPlatform].
 class PathProviderAndroid extends PathProviderPlatform {
-  late final Context _applicationContext = androidApplicationContext.as(
-    Context.type,
-  );
+  late final Context _applicationContext = androidApplicationContext.as(Context.type);
 
   /// Registers this class as the default instance of [PathProviderPlatform].
   static void registerWith() {
@@ -35,10 +33,7 @@ class PathProviderAndroid extends PathProviderPlatform {
   @override
   Future<String?> getApplicationDocumentsPath() async {
     final JString directory = 'flutter'.toJString();
-    final File? file = _applicationContext.getDir(
-      directory,
-      Context.MODE_PRIVATE,
-    );
+    final File? file = _applicationContext.getDir(directory, Context.MODE_PRIVATE);
     final String? path = file?.path?.toDartString(releaseOriginal: true);
     file?.release();
     directory.release();
@@ -57,9 +52,7 @@ class PathProviderAndroid extends PathProviderPlatform {
   Future<String?> getExternalStoragePath() async {
     final File? dir = _applicationContext.getExternalFilesDir(null);
     if (dir != null) {
-      final String? path = dir.absolutePath?.toDartString(
-        releaseOriginal: true,
-      );
+      final String? path = dir.absolutePath?.toDartString(releaseOriginal: true);
       dir.release();
       return path;
     }
@@ -80,15 +73,9 @@ class PathProviderAndroid extends PathProviderPlatform {
   }
 
   @override
-  Future<List<String>?> getExternalStoragePaths({
-    StorageDirectory? type,
-  }) async {
-    final JString? directory = type != null
-        ? _toNativeStorageDirectory(type)
-        : null;
-    final JArray<File?>? files = _applicationContext.getExternalFilesDirs(
-      directory,
-    );
+  Future<List<String>?> getExternalStoragePaths({StorageDirectory? type}) async {
+    final JString? directory = type != null ? _toNativeStorageDirectory(type) : null;
+    final JArray<File?>? files = _applicationContext.getExternalFilesDirs(directory);
     directory?.release();
     if (files != null) {
       final List<String> paths = _toStringList(files);
@@ -101,9 +88,7 @@ class PathProviderAndroid extends PathProviderPlatform {
 
   @override
   Future<String?> getDownloadsPath() async {
-    final List<String>? paths = await getExternalStoragePaths(
-      type: StorageDirectory.downloads,
-    );
+    final List<String>? paths = await getExternalStoragePaths(type: StorageDirectory.downloads);
     return paths?.firstOrNull;
   }
 }
@@ -138,9 +123,7 @@ List<String> _toStringList(JArray<File?> files) {
   final paths = <String>[];
   for (final file in dartList) {
     if (file != null) {
-      final String? path = file.absolutePath?.toDartString(
-        releaseOriginal: true,
-      );
+      final String? path = file.absolutePath?.toDartString(releaseOriginal: true);
       if (path != null) {
         paths.add(path);
       }

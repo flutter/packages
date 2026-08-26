@@ -12,9 +12,7 @@ const String newRoute = '/new';
 
 void main() {
   group('GoRouteInformationProvider', () {
-    testWidgets('notifies its listeners when set by the app', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('notifies its listeners when set by the app', (WidgetTester tester) async {
       late final provider = GoRouteInformationProvider(
         initialLocation: initialRoute,
         initialExtra: null,
@@ -24,18 +22,14 @@ void main() {
       provider.go(newRoute);
     });
 
-    testWidgets('notifies its listeners when set by the platform', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('notifies its listeners when set by the platform', (WidgetTester tester) async {
       late final provider = GoRouteInformationProvider(
         initialLocation: initialRoute,
         initialExtra: null,
       );
       addTearDown(provider.dispose);
       provider.addListener(expectAsync0(() {}));
-      provider.didPushRouteInformation(
-        RouteInformation(uri: Uri.parse(newRoute)),
-      );
+      provider.didPushRouteInformation(RouteInformation(uri: Uri.parse(newRoute)));
     });
 
     testWidgets('didPushRouteInformation maintains uri scheme and host', (
@@ -51,18 +45,14 @@ void main() {
       );
       addTearDown(provider.dispose);
       provider.addListener(expectAsync0(() {}));
-      provider.didPushRouteInformation(
-        RouteInformation(uri: Uri.parse(expectedUriString)),
-      );
+      provider.didPushRouteInformation(RouteInformation(uri: Uri.parse(expectedUriString)));
       expect(provider.value.uri.scheme, 'https');
       expect(provider.value.uri.host, 'www.example.com');
       expect(provider.value.uri.path, '/some/path');
       expect(provider.value.uri.toString(), expectedUriString);
     });
 
-    testWidgets('didPushRoute maintains uri scheme and host', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('didPushRoute maintains uri scheme and host', (WidgetTester tester) async {
       const expectedScheme = 'https';
       const expectedHost = 'www.example.com';
       const expectedPath = '/some/path';
@@ -73,9 +63,7 @@ void main() {
       );
       addTearDown(provider.dispose);
       provider.addListener(expectAsync0(() {}));
-      provider.didPushRouteInformation(
-        RouteInformation(uri: Uri.parse(expectedUriString)),
-      );
+      provider.didPushRouteInformation(RouteInformation(uri: Uri.parse(expectedUriString)));
       expect(provider.value.uri.scheme, 'https');
       expect(provider.value.uri.host, 'www.example.com');
       expect(provider.value.uri.path, '/some/path');
@@ -101,9 +89,7 @@ void main() {
       expect(systemChannelsMock.uriIsNeglected[newRoute], true);
     });
 
-    testWidgets('Route is NOT neglected when routerNeglect is false', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Route is NOT neglected when routerNeglect is false', (WidgetTester tester) async {
       final systemChannelsMock = _SystemChannelsNavigationMock();
       late final provider = GoRouteInformationProvider(
         initialLocation: initialRoute,
@@ -123,19 +109,18 @@ void main() {
 
 class _SystemChannelsNavigationMock {
   _SystemChannelsNavigationMock() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(SystemChannels.navigation, (
-          MethodCall methodCall,
-        ) async {
-          if (methodCall.method == 'routeInformationUpdated' &&
-              methodCall.arguments is Map<String, dynamic>) {
-            final args = methodCall.arguments as Map<String, dynamic>;
-            final String? uri =
-                args['location'] as String? ?? args['uri'] as String?;
-            uriIsNeglected[uri ?? ''] = args['replace'] as bool;
-          }
-          return null;
-        });
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.navigation,
+      (MethodCall methodCall) async {
+        if (methodCall.method == 'routeInformationUpdated' &&
+            methodCall.arguments is Map<String, dynamic>) {
+          final args = methodCall.arguments as Map<String, dynamic>;
+          final String? uri = args['location'] as String? ?? args['uri'] as String?;
+          uriIsNeglected[uri ?? ''] = args['replace'] as bool;
+        }
+        return null;
+      },
+    );
   }
 
   Map<String, bool> uriIsNeglected = <String, bool>{};

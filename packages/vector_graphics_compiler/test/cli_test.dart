@@ -92,12 +92,7 @@ void main() {
     const outTestDir = 'output_vec';
 
     try {
-      await cli.main(<String>[
-        '--input-dir',
-        inputTestDir,
-        '--out-dir',
-        outTestDir,
-      ]);
+      await cli.main(<String>['--input-dir', inputTestDir, '--out-dir', outTestDir]);
 
       var passed = false;
 
@@ -116,10 +111,7 @@ void main() {
             .listSync(recursive: true)
             .whereType<File>()
             .where((File element) => element.path.endsWith('vec'))
-            .map(
-              (File e) =>
-                  p.withoutExtension(p.basenameWithoutExtension(e.path)),
-            )
+            .map((File e) => p.withoutExtension(p.basenameWithoutExtension(e.path)))
             .toList();
 
         if (listEquals(inputTestFiles, outTestFiles)) {

@@ -17,7 +17,7 @@ set -e
 # failure regardless.
 dart ./script/tool/bin/flutter_plugin_tools.dart analyze --run-on-dirty-packages \
     --skip-if-resolving-fails \
-    --log-timing --custom-analysis=script/configs/custom_analysis.yaml
+    --log-timing
 # Restore the tree to a clean state, to avoid accidental issues if
 # other script steps are added to the enclosing task.
 git checkout .

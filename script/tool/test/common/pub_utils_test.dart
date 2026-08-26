@@ -14,15 +14,11 @@ void main() {
   late RecordingProcessRunner processRunner;
 
   setUp(() {
-    (:packagesDir, :processRunner, gitProcessRunner: _, gitDir: _) =
-        configureBaseCommandMocks();
+    (:packagesDir, :processRunner, gitProcessRunner: _, gitDir: _) = configureBaseCommandMocks();
   });
 
-  test('runs with Dart for a non-Flutter package by default', () async {
-    final RepositoryPackage package = createFakePackage(
-      'a_package',
-      packagesDir,
-    );
+  test('runs with Dart for a non-Flutter package', () async {
+    final RepositoryPackage package = createFakePackage('a_package', packagesDir);
     final platform = MockPlatform();
 
     await runPubGet(package, processRunner, platform);
@@ -35,12 +31,8 @@ void main() {
     );
   });
 
-  test('runs with Flutter for a Flutter package by default', () async {
-    final RepositoryPackage package = createFakePackage(
-      'a_package',
-      packagesDir,
-      isFlutter: true,
-    );
+  test('runs with Flutter for a Flutter package', () async {
+    final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
     final platform = MockPlatform();
 
     await runPubGet(package, processRunner, platform);
@@ -53,14 +45,12 @@ void main() {
     );
   });
 
-  test('runs with Flutter for a Dart package when requested', () async {
-    final RepositoryPackage package = createFakePackage(
-      'a_package',
-      packagesDir,
-    );
+  test('runs with Flutter for a non-Flutter package with a Flutter example', () async {
+    final RepositoryPackage package = createFakePackage('a_package', packagesDir, examples: []);
+    createFakePackage('example', package.directory, examples: [], isFlutter: true);
     final platform = MockPlatform();
 
-    await runPubGet(package, processRunner, platform, alwaysUseFlutter: true);
+    await runPubGet(package, processRunner, platform);
 
     expect(
       processRunner.recordedCalls,
@@ -71,11 +61,7 @@ void main() {
   });
 
   test('uses the correct Flutter command on Windows', () async {
-    final RepositoryPackage package = createFakePackage(
-      'a_package',
-      packagesDir,
-      isFlutter: true,
-    );
+    final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
     final platform = MockPlatform(isWindows: true);
 
     await runPubGet(package, processRunner, platform);
@@ -89,10 +75,7 @@ void main() {
   });
 
   test('reports success', () async {
-    final RepositoryPackage package = createFakePackage(
-      'a_package',
-      packagesDir,
-    );
+    final RepositoryPackage package = createFakePackage('a_package', packagesDir);
     final platform = MockPlatform();
 
     final bool result = await runPubGet(package, processRunner, platform);
@@ -101,10 +84,7 @@ void main() {
   });
 
   test('reports failure', () async {
-    final RepositoryPackage package = createFakePackage(
-      'a_package',
-      packagesDir,
-    );
+    final RepositoryPackage package = createFakePackage('a_package', packagesDir);
     final platform = MockPlatform();
 
     processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[

@@ -12,8 +12,7 @@ import 'src/messages.g.dart';
 /// An implementation of [UrlLauncherPlatform] for macOS.
 class UrlLauncherMacOS extends UrlLauncherPlatform {
   /// Creates a new plugin implementation instance.
-  UrlLauncherMacOS({@visibleForTesting UrlLauncherApi? api})
-    : _hostApi = api ?? UrlLauncherApi();
+  UrlLauncherMacOS({@visibleForTesting UrlLauncherApi? api}) : _hostApi = api ?? UrlLauncherApi();
 
   final UrlLauncherApi _hostApi;
 

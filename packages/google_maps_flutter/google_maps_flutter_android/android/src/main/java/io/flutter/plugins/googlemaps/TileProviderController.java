@@ -11,9 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.gms.maps.model.Tile;
 import com.google.android.gms.maps.model.TileProvider;
-import io.flutter.plugins.googlemaps.Messages.FlutterError;
-import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.concurrent.CountDownLatch;
+import kotlin.Unit;
 
 class TileProviderController implements TileProvider {
 
@@ -34,13 +33,13 @@ class TileProviderController implements TileProvider {
     return worker.getTile();
   }
 
-  private final class Worker implements Messages.Result<Messages.PlatformTile> {
+  private final class Worker {
 
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
     private final int x;
     private final int y;
     private final int zoom;
-    private @Nullable Messages.PlatformTile result;
+    private @Nullable PlatformTile tile;
 
     Worker(int x, int y, int zoom) {
       this.x = x;
@@ -50,9 +49,34 @@ class TileProviderController implements TileProvider {
 
     @NonNull
     Tile getTile() {
-      final Messages.PlatformPoint location =
-          new Messages.PlatformPoint.Builder().setX((long) x).setY((long) y).build();
-      handler.post(() -> flutterApi.getTileOverlayTile(tileOverlayId, location, (long) zoom, this));
+      final PlatformPoint location = new PlatformPoint(x, y);
+      handler.post(
+          () ->
+              flutterApi.getTileOverlayTile(
+                  tileOverlayId,
+                  location,
+                  zoom,
+                  ResultCompat.asCompatCallback(
+                      result -> {
+                        tile = result.getOrNull();
+                        if (tile == null) {
+                          final Throwable error = result.exceptionOrNull();
+                          if (error instanceof FlutterError flutterError) {
+                            Log.e(
+                                TAG,
+                                "Can't get tile: errorCode = "
+                                    + flutterError.getCode()
+                                    + ", errorMessage = "
+                                    + flutterError.getMessage()
+                                    + ", date = "
+                                    + flutterError.getDetails());
+                          } else {
+                            Log.e(TAG, "Can't get tile: " + error);
+                          }
+                        }
+                        countDownLatch.countDown();
+                        return Unit.INSTANCE;
+                      })));
       try {
         // `flutterApi.getTileOverlayTile` is async, so use a `countDownLatch` to make it
         // synchronized.
@@ -65,42 +89,18 @@ class TileProviderController implements TileProvider {
         return TileProvider.NO_TILE;
       }
       try {
-        if (result == null) {
+        if (tile == null) {
           Log.e(
               TAG,
               String.format(
                   "Did not receive tile data for tile: x = %d, y= %d, zoom = %d", x, y, zoom));
           return TileProvider.NO_TILE;
         }
-        return Convert.tileFromPigeon(result);
+        return Convert.tileFromPigeon(tile);
       } catch (Exception e) {
         Log.e(TAG, "Can't parse tile data", e);
         return TileProvider.NO_TILE;
       }
-    }
-
-    @Override
-    public void success(@NonNull Messages.PlatformTile result) {
-      this.result = result;
-      countDownLatch.countDown();
-    }
-
-    @Override
-    public void error(@NonNull Throwable error) {
-      if (error instanceof FlutterError flutterError) {
-        Log.e(
-            TAG,
-            "Can't get tile: errorCode = "
-                + flutterError.code
-                + ", errorMessage = "
-                + flutterError.getMessage()
-                + ", date = "
-                + flutterError.details);
-      } else {
-        Log.e(TAG, "Can't get tile: " + error);
-      }
-      result = null;
-      countDownLatch.countDown();
     }
   }
 }

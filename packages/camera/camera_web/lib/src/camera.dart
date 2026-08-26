@@ -97,8 +97,7 @@ class Camera {
   ///
   /// MediaRecorder.error:
   /// https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder/error_event
-  Stream<web.ErrorEvent> get onVideoRecordingError =>
-      videoRecordingErrorController.stream;
+  Stream<web.ErrorEvent> get onVideoRecordingError => videoRecordingErrorController.stream;
 
   /// The stream provider for [MediaRecorder] error events.
   @visibleForTesting
@@ -147,12 +146,10 @@ class Camera {
   /// A builder to merge a list of blobs into a single blob.
   @visibleForTesting
   web.Blob Function(List<web.Blob> blobs, String type) blobBuilder =
-      (List<web.Blob> blobs, String type) =>
-          web.Blob(blobs.toJS, web.BlobPropertyBag(type: type));
+      (List<web.Blob> blobs, String type) => web.Blob(blobs.toJS, web.BlobPropertyBag(type: type));
 
   /// The stream that emits a [VideoRecordedEvent] when a video recording is created.
-  Stream<VideoRecordedEvent> get onVideoRecordedEvent =>
-      videoRecorderController.stream;
+  Stream<VideoRecordedEvent> get onVideoRecordedEvent => videoRecorderController.stream;
 
   /// The stream controller for the [onVideoRecordedEvent] stream.
   @visibleForTesting
@@ -163,10 +160,7 @@ class Camera {
   /// Registers the camera view with [textureId] under [_getViewType] type.
   /// Emits the camera default video track on the [onEnded] stream when it ends.
   Future<void> initialize() async {
-    stream = await _cameraService.getMediaStreamForOptions(
-      options,
-      cameraId: textureId,
-    );
+    stream = await _cameraService.getMediaStreamForOptions(options, cameraId: textureId);
 
     videoElement = web.HTMLVideoElement();
 
@@ -176,10 +170,7 @@ class Camera {
       ..style.setProperty('width', '100%')
       ..append(videoElement);
 
-    ui_web.platformViewRegistry.registerViewFactory(
-      _getViewType(textureId),
-      (_) => divElement,
-    );
+    ui_web.platformViewRegistry.registerViewFactory(_getViewType(textureId), (_) => divElement);
 
     videoElement
       ..autoplay = false
@@ -189,17 +180,15 @@ class Camera {
 
     _applyDefaultVideoStyles(videoElement);
 
-    final List<web.MediaStreamTrack> videoTracks = stream!
-        .getVideoTracks()
-        .toDart;
+    final List<web.MediaStreamTrack> videoTracks = stream!.getVideoTracks().toDart;
 
     if (videoTracks.isNotEmpty) {
       final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
-      _onEndedSubscription = EventStreamProviders.endedEvent
-          .forTarget(defaultVideoTrack)
-          .listen((web.Event _) {
-            onEndedController.add(defaultVideoTrack);
-          });
+      _onEndedSubscription = EventStreamProviders.endedEvent.forTarget(defaultVideoTrack).listen((
+        web.Event _,
+      ) {
+        onEndedController.add(defaultVideoTrack);
+      });
     }
   }
 
@@ -208,10 +197,7 @@ class Camera {
   /// Initializes the camera source if the camera was previously stopped.
   Future<void> play() async {
     if (videoElement.srcObject == null) {
-      stream = await _cameraService.getMediaStreamForOptions(
-        options,
-        cameraId: textureId,
-      );
+      stream = await _cameraService.getMediaStreamForOptions(options, cameraId: textureId);
       videoElement.srcObject = stream;
     }
     await videoElement.play().toDart;
@@ -224,9 +210,7 @@ class Camera {
 
   /// Stops the camera stream and resets the camera source.
   void stop() {
-    final List<web.MediaStreamTrack> videoTracks = stream!
-        .getVideoTracks()
-        .toDart;
+    final List<web.MediaStreamTrack> videoTracks = stream!.getVideoTracks().toDart;
     if (videoTracks.isNotEmpty) {
       onEndedController.add(videoTracks.first);
     }
@@ -246,8 +230,7 @@ class Camera {
   /// Enables the camera flash (torch mode) for a period of taking a picture
   /// if the flash mode is either [FlashMode.auto] or [FlashMode.always].
   Future<XFile> takePicture() async {
-    final bool shouldEnableTorchMode =
-        flashMode == FlashMode.auto || flashMode == FlashMode.always;
+    final bool shouldEnableTorchMode = flashMode == FlashMode.auto || flashMode == FlashMode.always;
 
     if (shouldEnableTorchMode) {
       _setTorchMode(enabled: true);
@@ -267,13 +250,7 @@ class Camera {
         ..scale(-1, 1);
     }
 
-    canvas.context2D.drawImage(
-      videoElement,
-      0,
-      0,
-      videoWidth.toDouble(),
-      videoHeight.toDouble(),
-    );
+    canvas.context2D.drawImage(videoElement, 0, 0, videoWidth.toDouble(), videoHeight.toDouble());
 
     final blobCompleter = Completer<web.Blob>();
     canvas.toBlob(
@@ -306,8 +283,7 @@ class Camera {
 
     final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
 
-    final web.MediaTrackSettings defaultVideoTrackSettings = defaultVideoTrack
-        .getSettings();
+    final web.MediaTrackSettings defaultVideoTrackSettings = defaultVideoTrack.getSettings();
 
     final int width = defaultVideoTrackSettings.width;
     final int height = defaultVideoTrackSettings.height;
@@ -358,13 +334,7 @@ class Camera {
     if (videoTracks.isNotEmpty) {
       final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
       final bool canEnableTorchMode =
-          defaultVideoTrack
-              .getCapabilities()
-              .torchNullable
-              ?.toDart
-              .first
-              .toDart ??
-          false;
+          defaultVideoTrack.getCapabilities().torchNullable?.toDart.first.toDart ?? false;
 
       if (canEnableTorchMode) {
         defaultVideoTrack.applyWebTweakConstraints(
@@ -390,26 +360,24 @@ class Camera {
   ///
   /// Throws a [CameraWebException] if the zoom level is not supported
   /// or the camera has not been initialized or started.
-  double getMaxZoomLevel() =>
-      _cameraService.getZoomLevelCapabilityForCamera(this).maximum;
+  double getMaxZoomLevel() => _cameraService.getZoomLevelCapabilityForCamera(this).maximum;
 
   /// Returns the camera minimum zoom level.
   ///
   /// Throws a [CameraWebException] if the zoom level is not supported
   /// or the camera has not been initialized or started.
-  double getMinZoomLevel() =>
-      _cameraService.getZoomLevelCapabilityForCamera(this).minimum;
+  double getMinZoomLevel() => _cameraService.getZoomLevelCapabilityForCamera(this).minimum;
 
   /// Sets the camera zoom level to [zoom].
   ///
   /// Throws a [CameraWebException] if the zoom level is invalid,
   /// not supported or the camera has not been initialized or started.
   void setZoomLevel(double zoom) {
-    final ZoomLevelCapability zoomLevelCapability = _cameraService
-        .getZoomLevelCapabilityForCamera(this);
+    final ZoomLevelCapability zoomLevelCapability = _cameraService.getZoomLevelCapabilityForCamera(
+      this,
+    );
 
-    if (zoom < zoomLevelCapability.minimum ||
-        zoom > zoomLevelCapability.maximum) {
+    if (zoom < zoomLevelCapability.minimum || zoom > zoomLevelCapability.maximum) {
       throw CameraWebException(
         textureId,
         CameraErrorCode.zoomLevelInvalid,
@@ -436,8 +404,7 @@ class Camera {
     }
 
     final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
-    final web.MediaTrackSettings defaultVideoTrackSettings = defaultVideoTrack
-        .getSettings();
+    final web.MediaTrackSettings defaultVideoTrackSettings = defaultVideoTrack.getSettings();
 
     final String? facingMode = defaultVideoTrackSettings.facingModeNullable;
 
@@ -464,28 +431,17 @@ class Camera {
       options.videoBitsPerSecond = recorderOptions.videoBitrate!;
     }
 
-    mediaRecorder ??= web.MediaRecorder(
-      videoElement.srcObject! as web.MediaStream,
-      options,
-    );
+    mediaRecorder ??= web.MediaRecorder(videoElement.srcObject! as web.MediaStream, options);
 
     _videoAvailableCompleter = Completer<XFile>();
 
-    _videoDataAvailableListener = (web.BlobEvent event) =>
-        _onVideoDataAvailable(event);
+    _videoDataAvailableListener = (web.BlobEvent event) => _onVideoDataAvailable(event);
 
-    _videoRecordingStoppedListener = (web.Event event) =>
-        _onVideoRecordingStopped(event);
+    _videoRecordingStoppedListener = (web.Event event) => _onVideoRecordingStopped(event);
 
-    mediaRecorder!.addEventListener(
-      'dataavailable',
-      _videoDataAvailableListener?.toJS,
-    );
+    mediaRecorder!.addEventListener('dataavailable', _videoDataAvailableListener?.toJS);
 
-    mediaRecorder!.addEventListener(
-      'stop',
-      _videoRecordingStoppedListener?.toJS,
-    );
+    mediaRecorder!.addEventListener('stop', _videoRecordingStoppedListener?.toJS);
 
     _onVideoRecordingErrorSubscription = mediaRecorderOnErrorProvider
         .forTarget(mediaRecorder)
@@ -522,15 +478,9 @@ class Camera {
     }
 
     // Clean up the media recorder with its event listeners and video data.
-    mediaRecorder!.removeEventListener(
-      'dataavailable',
-      _videoDataAvailableListener?.toJS,
-    );
+    mediaRecorder!.removeEventListener('dataavailable', _videoDataAvailableListener?.toJS);
 
-    mediaRecorder!.removeEventListener(
-      'stop',
-      _videoDataAvailableListener?.toJS,
-    );
+    mediaRecorder!.removeEventListener('stop', _videoDataAvailableListener?.toJS);
 
     await _onVideoRecordingErrorSubscription?.cancel();
 
@@ -603,11 +553,7 @@ class Camera {
   /// Throws a [CameraWebException] if the browser does not support
   /// any of the available video mime types.
   String get _videoMimeType {
-    const types = <String>[
-      'video/webm;codecs="vp9,opus"',
-      'video/mp4',
-      'video/webm',
-    ];
+    const types = <String>['video/webm;codecs="vp9,opus"', 'video/mp4', 'video/webm'];
 
     return types.firstWhere(
       (String type) => isVideoTypeSupported(type),
@@ -619,8 +565,7 @@ class Camera {
     );
   }
 
-  CameraWebException
-  get _videoRecordingNotStartedException => CameraWebException(
+  CameraWebException get _videoRecordingNotStartedException => CameraWebException(
     textureId,
     CameraErrorCode.videoRecordingNotStarted,
     'The video recorder is uninitialized. The recording might not have been started. Make sure to call `startVideoRecording` first.',

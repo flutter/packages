@@ -21,4 +21,9 @@ final class AppStore {
   Future<void> sync() {
     return hostApi2.sync();
   }
+
+  /// Presents a sheet that enables users to redeem subscription offer codes.
+  Future<void> presentOfferCodeRedeemSheet() {
+    return hostApi2.presentOfferCodeRedeemSheet();
+  }
 }

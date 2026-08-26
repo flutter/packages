@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../data.dart';
 import '../widgets/book_list.dart';
@@ -20,8 +20,7 @@ class BooksScreen extends StatefulWidget {
   State<BooksScreen> createState() => _BooksScreenState();
 }
 
-class _BooksScreenState extends State<BooksScreen>
-    with SingleTickerProviderStateMixin {
+class _BooksScreenState extends State<BooksScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override

@@ -30,15 +30,11 @@ void main() {
 // import the relative path ../../test/shared_preferences_async_test.dart on the
 // web platform, we had to copy it here for use in this test library.
 base class FakeSharedPreferencesAsync extends SharedPreferencesAsyncPlatform {
-  final InMemorySharedPreferencesAsync backend =
-      InMemorySharedPreferencesAsync.empty();
+  final InMemorySharedPreferencesAsync backend = InMemorySharedPreferencesAsync.empty();
   final List<MethodCall> log = <MethodCall>[];
 
   @override
-  Future<bool> clear(
-    ClearPreferencesParameters parameters,
-    SharedPreferencesOptions options,
-  ) {
+  Future<bool> clear(ClearPreferencesParameters parameters, SharedPreferencesOptions options) {
     log.add(MethodCall('clear', <Object>[...?parameters.filter.allowList]));
     return backend.clear(parameters, options);
   }
@@ -75,9 +71,7 @@ base class FakeSharedPreferencesAsync extends SharedPreferencesAsyncPlatform {
     GetPreferencesParameters parameters,
     SharedPreferencesOptions options,
   ) {
-    log.add(
-      MethodCall('getPreferences', <Object>[...?parameters.filter.allowList]),
-    );
+    log.add(MethodCall('getPreferences', <Object>[...?parameters.filter.allowList]));
     return backend.getPreferences(parameters, options);
   }
 
@@ -88,30 +82,19 @@ base class FakeSharedPreferencesAsync extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<List<String>?> getStringList(
-    String key,
-    SharedPreferencesOptions options,
-  ) {
+  Future<List<String>?> getStringList(String key, SharedPreferencesOptions options) {
     log.add(MethodCall('getStringList', <String>[key]));
     return backend.getStringList(key, options);
   }
 
   @override
-  Future<bool> setBool(
-    String key,
-    bool value,
-    SharedPreferencesOptions options,
-  ) {
+  Future<bool> setBool(String key, bool value, SharedPreferencesOptions options) {
     log.add(MethodCall('setBool', <Object>[key, value]));
     return backend.setBool(key, value, options);
   }
 
   @override
-  Future<bool> setDouble(
-    String key,
-    double value,
-    SharedPreferencesOptions options,
-  ) {
+  Future<bool> setDouble(String key, double value, SharedPreferencesOptions options) {
     log.add(MethodCall('setDouble', <Object>[key, value]));
     return backend.setDouble(key, value, options);
   }
@@ -123,21 +106,13 @@ base class FakeSharedPreferencesAsync extends SharedPreferencesAsyncPlatform {
   }
 
   @override
-  Future<bool> setString(
-    String key,
-    String value,
-    SharedPreferencesOptions options,
-  ) {
+  Future<bool> setString(String key, String value, SharedPreferencesOptions options) {
     log.add(MethodCall('setString', <Object>[key, value]));
     return backend.setString(key, value, options);
   }
 
   @override
-  Future<bool> setStringList(
-    String key,
-    List<String> value,
-    SharedPreferencesOptions options,
-  ) {
+  Future<bool> setStringList(String key, List<String> value, SharedPreferencesOptions options) {
     log.add(MethodCall('setStringList', <Object>[key, value]));
     return backend.setStringList(key, value, options);
   }

@@ -24,6 +24,9 @@ class XFile extends XFileBase {
   /// [length] is ignored; the parameter exists only to match the web version of
   /// the constructor.
   ///
+  /// [mimeType] is not inferred from [path]. The [mimeType] property returns the
+  /// value explicitly provided here, if any.
+  ///
   // ignore: use_super_parameters
   XFile(
     String path, {
@@ -42,6 +45,8 @@ class XFile extends XFileBase {
   ///
   /// [name] is ignored; the parameter exists only to match the web version of
   /// the constructor.
+  ///
+  /// The [mimeType] property returns the value explicitly provided here, if any.
   XFile.fromData(
     Uint8List bytes, {
     String? mimeType,
@@ -107,10 +112,9 @@ class XFile extends XFileBase {
 
   @override
   Future<String> readAsString({Encoding encoding = utf8}) {
-    if (_bytes != null) {
-      // TODO(kevmoo): Remove ignore and fix when the MIN Dart SDK is 3.3
-      // ignore: unnecessary_non_null_assertion
-      return Future<String>.value(String.fromCharCodes(_bytes!));
+    final Uint8List? bytes = _bytes;
+    if (bytes != null) {
+      return Future<String>.sync(() => encoding.decode(bytes));
     }
     return _file.readAsString(encoding: encoding);
   }
@@ -133,9 +137,7 @@ class XFile extends XFileBase {
     if (_bytes != null) {
       return _getBytes(start, end);
     } else {
-      return _file
-          .openRead(start ?? 0, end)
-          .map((List<int> chunk) => Uint8List.fromList(chunk));
+      return _file.openRead(start ?? 0, end).map((List<int> chunk) => Uint8List.fromList(chunk));
     }
   }
 }

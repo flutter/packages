@@ -4,17 +4,15 @@
 
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:leak_tracker_flutter_testing/leak_tracker_flutter_testing.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'test_helpers.dart';
 
 void main() {
-  testWidgets('router rebuild with extra codec works', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('router rebuild with extra codec works', (WidgetTester tester) async {
     const initialString = 'some string';
     const empty = 'empty';
     final router = GoRouter(

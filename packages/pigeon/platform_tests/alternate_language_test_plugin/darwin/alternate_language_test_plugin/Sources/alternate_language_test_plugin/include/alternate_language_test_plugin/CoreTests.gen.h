@@ -14,6 +14,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern NSString *const FLTAStringConstant;
+extern NSString *const FLTAStringConstantWithEscapes;
+extern const NSInteger FLTAnIntConstant;
+extern const double FLTADoubleConstant;
+extern const BOOL FLTABoolConstant;
+
 typedef NS_ENUM(NSUInteger, FLTAnEnum) {
   FLTAnEnumOne = 0,
   FLTAnEnumTwo = 1,
@@ -42,6 +48,7 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @class FLTAllTypes;
 @class FLTAllNullableTypes;
 @class FLTAllNullableTypesWithoutRecursion;
+@class FLTAnEmptyClass;
 @class FLTAllClassesWrapper;
 @class FLTTestMessage;
 
@@ -244,6 +251,10 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSDictionary<id, id> *> *mapMap;
 @end
 
+/// A data class without fields for testing empty classes.
+@interface FLTAnEmptyClass : NSObject
+@end
+
 /// A class for testing nested class handling.
 ///
 /// This is needed to test nested nullable and non-nullable classes,
@@ -263,7 +274,8 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
                             classMap:(NSDictionary<NSNumber *, FLTAllTypes *> *)classMap
                     nullableClassMap:
                         (nullable NSDictionary<NSNumber *, FLTAllNullableTypesWithoutRecursion *> *)
-                            nullableClassMap;
+                            nullableClassMap
+                        anEmptyClass:(nullable FLTAnEmptyClass *)anEmptyClass;
 @property(nonatomic, strong) FLTAllNullableTypes *allNullableTypes;
 @property(nonatomic, strong, nullable)
     FLTAllNullableTypesWithoutRecursion *allNullableTypesWithoutRecursion;
@@ -274,6 +286,7 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy) NSDictionary<NSNumber *, FLTAllTypes *> *classMap;
 @property(nonatomic, copy, nullable)
     NSDictionary<NSNumber *, FLTAllNullableTypesWithoutRecursion *> *nullableClassMap;
+@property(nonatomic, strong, nullable) FLTAnEmptyClass *anEmptyClass;
 @end
 
 /// A data class containing a List, used in unit tests.
@@ -333,6 +346,26 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable NSArray<id> *)echoList:(NSArray<id> *)list
                              error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<NSString *> *)echoStringList:(NSArray<NSString *> *)stringList
+                                           error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<NSNumber *> *)echoIntList:(NSArray<NSNumber *> *)intList
+                                        error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<NSNumber *> *)echoDoubleList:(NSArray<NSNumber *> *)doubleList
+                                           error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<NSNumber *> *)echoBoolList:(NSArray<NSNumber *> *)boolList
+                                         error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the passed list, to test serialization and deserialization.
 ///
 /// @return `nil` only when `error != nil`.
@@ -723,6 +756,10 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable NSNumber *)taskQueueIsBackgroundThreadWithError:
     (FlutterError *_Nullable *_Nonnull)error;
+/// Returns true if the handler is run on a non-main thread, which should be
+/// true for any platform with TaskQueue support.
+- (void)asyncTaskQueueIsBackgroundThreadWithCompletion:
+    (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)callFlutterThrowErrorWithCompletion:(void (^)(id _Nullable,
                                                       FlutterError *_Nullable))completion;
@@ -894,6 +931,14 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 - (void)callFlutterSmallApiEchoString:(NSString *)aString
                            completion:
                                (void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterCallbackNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)callFlutterCallbackEchoString:(NSString *)aString
+                           completion:
+                               (void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterCallbackThrowErrorWithCompletion:(void (^)(id _Nullable,
+                                                              FlutterError *_Nullable))completion;
+- (void)callFlutterCallbackThrowErrorFromVoidWithCompletion:
+    (void (^)(FlutterError *_Nullable))completion;
 @end
 
 extern void SetUpFLTHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
@@ -902,6 +947,18 @@ extern void SetUpFLTHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMess
 extern void SetUpFLTHostIntegrationCoreApiWithSuffix(
     id<FlutterBinaryMessenger> binaryMessenger, NSObject<FLTHostIntegrationCoreApi> *_Nullable api,
     NSString *messageChannelSuffix);
+
+/// A Flutter API using callback-based asynchronous methods (@asyncCallback).
+@interface FLTFlutterCallbackCoreApi : NSObject
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix;
+- (void)noopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)echoString:(NSString *)aString
+        completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)throwErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
+- (void)throwErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+@end
 
 /// The core interface that the Dart platform_test code implements for host
 /// integration tests to call into.
@@ -1110,6 +1167,28 @@ extern void SetUpFLTHostIntegrationCoreApiWithSuffix(
 - (void)echoAsyncString:(NSString *)aString
              completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
+
+/// A Host API using callback-based asynchronous methods (@asyncCallback).
+@protocol FLTHostCallbackCoreApi
+- (void)noopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)echoString:(NSString *)aString
+        completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)echoAllTypes:(FLTAllTypes *)everything
+          completion:(void (^)(FLTAllTypes *_Nullable, FlutterError *_Nullable))completion;
+- (void)echoNullableString:(nullable NSString *)aString
+                completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (void)throwErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
+- (void)throwErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)taskQueueIsBackgroundThreadWithCompletion:(void (^)(NSNumber *_Nullable,
+                                                            FlutterError *_Nullable))completion;
+@end
+
+extern void SetUpFLTHostCallbackCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                        NSObject<FLTHostCallbackCoreApi> *_Nullable api);
+
+extern void SetUpFLTHostCallbackCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                                  NSObject<FLTHostCallbackCoreApi> *_Nullable api,
+                                                  NSString *messageChannelSuffix);
 
 /// An API that can be implemented for minimal, compile-only tests.
 @protocol FLTHostTrivialApi

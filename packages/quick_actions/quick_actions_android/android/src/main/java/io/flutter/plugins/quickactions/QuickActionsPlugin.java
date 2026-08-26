@@ -17,7 +17,7 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.PluginRegistry.NewIntentListener;
-import io.flutter.plugins.quickactions.Messages.AndroidQuickActionsFlutterApi;
+import kotlin.Unit;
 
 /** QuickActionsPlugin */
 public class QuickActionsPlugin implements FlutterPlugin, ActivityAware, NewIntentListener {
@@ -46,13 +46,14 @@ public class QuickActionsPlugin implements FlutterPlugin, ActivityAware, NewInte
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     this.quickActions = new QuickActions(binding.getApplicationContext());
-    Messages.AndroidQuickActionsApi.setUp(binding.getBinaryMessenger(), quickActions);
-    this.quickActionsFlutterApi = new AndroidQuickActionsFlutterApi(binding.getBinaryMessenger());
+    AndroidQuickActionsApi.Companion.setUp(binding.getBinaryMessenger(), quickActions);
+    this.quickActionsFlutterApi =
+        new AndroidQuickActionsFlutterApi(binding.getBinaryMessenger(), "");
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    Messages.AndroidQuickActionsApi.setUp(binding.getBinaryMessenger(), null);
+    AndroidQuickActionsApi.Companion.setUp(binding.getBinaryMessenger(), null);
     this.quickActions = null;
   }
 
@@ -99,15 +100,14 @@ public class QuickActionsPlugin implements FlutterPlugin, ActivityAware, NewInte
       if (shortcutId != null) {
         quickActionsFlutterApi.launchAction(
             shortcutId,
-            new Messages.VoidResult() {
-              @Override
-              public void success() {}
-
-              @Override
-              public void error(@NonNull Throwable error) {
-                Log.e(TAG, "Failed to handle launch action: " + error.getMessage());
-              }
-            });
+            ResultCompat.asCompatCallback(
+                result -> {
+                  Throwable error = result.exceptionOrNull();
+                  if (error != null) {
+                    Log.e(TAG, "Failed to handle launch action: " + error.getMessage());
+                  }
+                  return Unit.INSTANCE;
+                }));
         ShortcutManagerCompat.reportShortcutUsed(context, shortcutId);
       }
     }

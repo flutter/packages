@@ -86,8 +86,7 @@ void main() {
 
       test('when explicitly set overrides the default', () async {
         const expectedNonce = 'third-random-nonce';
-        final otherScript = web.HTMLScriptElement()
-          ..nonce = 'this-is-the-wrong-nonce';
+        final otherScript = web.HTMLScriptElement()..nonce = 'this-is-the-wrong-nonce';
         web.document.head?.appendChild(otherScript);
 
         // This test doesn't simulate the callback that completes the future, and
@@ -102,8 +101,7 @@ void main() {
       });
 
       test('when null disables the feature', () async {
-        final otherScript = web.HTMLScriptElement()
-          ..nonce = 'this-is-the-wrong-nonce';
+        final otherScript = web.HTMLScriptElement()..nonce = 'this-is-the-wrong-nonce';
         web.document.head?.appendChild(otherScript);
 
         // This test doesn't simulate the callback that completes the future, and

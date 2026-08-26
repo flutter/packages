@@ -1,49 +1,61 @@
 RouteBase get $extensionTypeParam => GoRouteData.$route(
       path: '/',
+      hasOverriddenOnExit: false,
       factory: $ExtensionTypeParam._fromState,
       routes: [
         GoRouteData.$route(
           path: 'string/:s',
+          hasOverriddenOnExit: false,
           factory: $ExtensionTypeStringParam._fromState,
         ),
         GoRouteData.$route(
           path: 'string_default/:s',
+          hasOverriddenOnExit: false,
           factory: $ExtensionTypeStringDefaultParam._fromState,
         ),
         GoRouteData.$route(
           path: 'int/:x',
+          hasOverriddenOnExit: false,
           factory: $ExtensionTypeIntParam._fromState,
         ),
         GoRouteData.$route(
           path: 'int_default/:x',
+          hasOverriddenOnExit: false,
           factory: $ExtensionTypeIntDefaultParam._fromState,
         ),
         GoRouteData.$route(
           path: 'double/:d',
+          hasOverriddenOnExit: false,
           factory: $ExtensionTypeDoubleParam._fromState,
         ),
         GoRouteData.$route(
           path: 'num/:n',
+          hasOverriddenOnExit: false,
           factory: $ExtensionTypeNumParam._fromState,
         ),
         GoRouteData.$route(
           path: 'bool/:b',
+          hasOverriddenOnExit: false,
           factory: $ExtensionTypeBoolParam._fromState,
         ),
         GoRouteData.$route(
           path: 'enum/:value',
+          hasOverriddenOnExit: false,
           factory: $ExtensionTypeEnumType._fromState,
         ),
         GoRouteData.$route(
           path: 'bigint/:bi',
+          hasOverriddenOnExit: false,
           factory: $ExtensionTypeBigIntParam._fromState,
         ),
         GoRouteData.$route(
           path: 'datetime/:dt',
+          hasOverriddenOnExit: false,
           factory: $ExtensionTypeDateTimeParam._fromState,
         ),
         GoRouteData.$route(
           path: 'uri/:uri',
+          hasOverriddenOnExit: false,
           factory: $ExtensionTypeUriType._fromState,
         ),
       ],

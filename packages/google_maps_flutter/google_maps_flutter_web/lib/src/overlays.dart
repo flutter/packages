@@ -8,8 +8,7 @@ part of '../google_maps_flutter_web.dart';
 class TileOverlaysController extends GeometryController {
   final Map<TileOverlayId, TileOverlayController> _tileOverlays =
       <TileOverlayId, TileOverlayController>{};
-  final List<TileOverlayController> _visibleTileOverlays =
-      <TileOverlayController>[];
+  final List<TileOverlayController> _visibleTileOverlays = <TileOverlayController>[];
 
   // Inserts `tileOverlayController` into the list of visible overlays, and the current [googleMap].
   //
@@ -57,8 +56,7 @@ class TileOverlaysController extends GeometryController {
   }
 
   void _changeTileOverlay(TileOverlay tileOverlay) {
-    final TileOverlayController controller =
-        _tileOverlays[tileOverlay.tileOverlayId]!;
+    final TileOverlayController controller = _tileOverlays[tileOverlay.tileOverlayId]!;
 
     final bool wasVisible = controller.tileOverlay.visible;
     final bool isVisible = tileOverlay.visible;
@@ -79,9 +77,7 @@ class TileOverlaysController extends GeometryController {
   }
 
   void _removeTileOverlay(TileOverlayId tileOverlayId) {
-    final TileOverlayController? controller = _tileOverlays.remove(
-      tileOverlayId,
-    );
+    final TileOverlayController? controller = _tileOverlays.remove(tileOverlayId);
     if (controller != null) {
       _remove(controller);
     }

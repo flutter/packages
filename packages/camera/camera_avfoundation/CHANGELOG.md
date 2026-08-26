@@ -1,3 +1,8 @@
+## 0.10.2
+
+* Adds `setJpegImageQuality` for controlling JPEG compression quality.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 0.10.1
 
 * Fixes fatal crash on iPhone 17 when using `ResolutionPreset.max`.

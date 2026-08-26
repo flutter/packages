@@ -47,14 +47,16 @@ void main() {
   group('$MethodChannelUrlLauncher', () {
     const channel = MethodChannel('plugins.flutter.io/url_launcher');
     final log = <MethodCall>[];
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-          log.add(methodCall);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
+      channel,
+      (MethodCall methodCall) async {
+        log.add(methodCall);
 
-          // Return null explicitly instead of relying on the implicit null
-          // returned by the method channel if no return statement is specified.
-          return null;
-        });
+        // Return null explicitly instead of relying on the implicit null
+        // returned by the method channel if no return statement is specified.
+        return null;
+      },
+    );
 
     final launcher = MethodChannelUrlLauncher();
 
@@ -65,10 +67,7 @@ void main() {
     test('canLaunch', () async {
       await launcher.canLaunch('http://example.com/');
       expect(log, <Matcher>[
-        isMethodCall(
-          'canLaunch',
-          arguments: <String, Object>{'url': 'http://example.com/'},
-        ),
+        isMethodCall('canLaunch', arguments: <String, Object>{'url': 'http://example.com/'}),
       ]);
     });
 
@@ -311,8 +310,7 @@ class UrlLauncherPlatformMock extends Mock
     with MockPlatformInterfaceMixin
     implements UrlLauncherPlatform {}
 
-class ImplementsUrlLauncherPlatform extends Mock
-    implements UrlLauncherPlatform {}
+class ImplementsUrlLauncherPlatform extends Mock implements UrlLauncherPlatform {}
 
 class ExtendsUrlLauncherPlatform extends UrlLauncherPlatform {
   @override

@@ -41,9 +41,7 @@ void main() {
       expect(lastAdBreakPlacement!.type?.toDart, 'reward');
     });
 
-    testWidgets('can call the adBreakDone callback', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('can call the adBreakDone callback', (WidgetTester tester) async {
       AdBreakDonePlacementInfo? lastPlacementInfo;
 
       void adBreakDoneCallback(AdBreakDonePlacementInfo placementInfo) {
@@ -52,9 +50,7 @@ void main() {
 
       mockAdsByGoogle(
         mockAdBreak(
-          adBreakDonePlacementInfo: AdBreakDonePlacementInfo(
-            breakName: 'ok-for-tests'.toJS,
-          ),
+          adBreakDonePlacementInfo: AdBreakDonePlacementInfo(breakName: 'ok-for-tests'.toJS),
         ),
       );
       await adSense.initialize('_');
@@ -79,10 +75,7 @@ void main() {
       mockAdsByGoogle(mockAdBreak());
       await adSense.initialize('_');
 
-      final adBreakPlacement = AdBreakPlacement(
-        type: BreakType.reward,
-        name: 'my-test-break',
-      );
+      final adBreakPlacement = AdBreakPlacement(type: BreakType.reward, name: 'my-test-break');
 
       h5GamesAds.adBreak(adBreakPlacement);
 

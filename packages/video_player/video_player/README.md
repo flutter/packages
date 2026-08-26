@@ -79,9 +79,7 @@ class _VideoAppState extends State<VideoApp> {
     super.initState();
     _controller =
         VideoPlayerController.networkUrl(
-            Uri.parse(
-              'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
-            ),
+            Uri.parse('https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'),
           )
           ..initialize().then((_) {
             // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
@@ -105,14 +103,10 @@ class _VideoAppState extends State<VideoApp> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             setState(() {
-              _controller.value.isPlaying
-                  ? _controller.pause()
-                  : _controller.play();
+              _controller.value.isPlaying ? _controller.pause() : _controller.play();
             });
           },
-          child: Icon(
-            _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-          ),
+          child: Icon(_controller.value.isPlaying ? Icons.pause : Icons.play_arrow),
         ),
       ),
     );

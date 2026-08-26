@@ -1,3 +1,21 @@
+## 2.18.5
+
+* Updates README to indicate that this package will not receive feature updates
+  going forward. Please see the README for information about adopting one of
+  the maintained implementation packages.
+
+## 2.18.4
+
+* Fixes a potential compilation issue in tile downscaling.
+
+## 2.18.3
+
+* Updates README to include setup information.
+
+## 2.18.2
+
+* Adds attribution ID for Google Maps SDK usage.
+
 ## 2.18.1
 
 * Removes conditional header logic that broke add-to-app builds.

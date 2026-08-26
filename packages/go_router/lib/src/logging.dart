@@ -70,5 +70,4 @@ void _developerLog(LogRecord record) {
 void Function(LogRecord)? testDeveloperLog;
 
 /// The function used to log messages.
-void Function(LogRecord) get _developerLogFunction =>
-    testDeveloperLog ?? _developerLog;
+void Function(LogRecord) get _developerLogFunction => testDeveloperLog ?? _developerLog;

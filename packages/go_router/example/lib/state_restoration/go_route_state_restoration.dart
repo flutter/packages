@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() => runApp(const App());
 
@@ -48,10 +48,7 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      restorationScopeId: 'mainApp',
-      routerConfig: _router,
-    );
+    return MaterialApp.router(restorationScopeId: 'mainApp', routerConfig: _router);
   }
 }
 

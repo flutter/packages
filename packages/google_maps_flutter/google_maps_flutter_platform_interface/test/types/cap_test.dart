@@ -36,10 +36,7 @@ void main() {
   });
 
   test('customCapWithWidth', () {
-    final Cap cap = Cap.customCapFromBitmap(
-      BitmapDescriptor.defaultMarker,
-      refWidth: 100,
-    );
+    final Cap cap = Cap.customCapFromBitmap(BitmapDescriptor.defaultMarker, refWidth: 100);
     expect(
       cap.toJson(),
       equals(<Object>[

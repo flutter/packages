@@ -193,8 +193,39 @@ final RegExp _cssRgbColorMatcher = RegExp(
   caseSensitive: false,
 );
 
+/// Legacy (comma-separated) HSL syntax pattern with named capture groups.
+/// Matches: hsl(H, S, L) or hsla(H, S, L, A)
+final String _legacyHslSyntax =
+    '' // string alignment
+            r'(?<commaHue>%DIGIT%)\s*,\s*'
+            r'(?<commaSaturation>%DIGIT%)\s*,\s*'
+            r'(?<commaLightness>%DIGIT%)'
+            r'(?:\s*,\s*(?<commaHslAlpha>%DIGIT%))?'
+        .replaceAll('%DIGIT%', _cssDigit);
+
+/// Modern (space-separated) HSL syntax pattern with named capture groups.
+/// Matches: hsl(H S L) or hsl(H S L / A)
+final String _modernHslSyntax =
+    '' // string alignment
+            r'(?<spaceHue>%DIGIT%)\s+'
+            r'(?<spaceSaturation>%DIGIT%)\s+'
+            r'(?<spaceLightness>%DIGIT%)'
+            r'(?:\s*\/\s*(?<spaceHslAlpha>%DIGIT%))?'
+        .replaceAll('%DIGIT%', _cssDigit);
+
+/// Combined regex for matching CSS hsl/hsla color functions.
+/// Supports both legacy (comma) and modern (space) syntax.
+/// https://www.w3.org/TR/css-color-4/#the-hsl-notation
+final RegExp _cssHslColorMatcher = RegExp(
+  'hsla?\\(\\s*(?:$_legacyHslSyntax|$_modernHslSyntax)\\s*\\)',
+  caseSensitive: false,
+);
+
 /// Record type representing parsed CSS RGB values as strings.
 typedef CssRgbRecord = ({String r, String g, String b, String a});
+
+/// Record type representing parsed CSS HSL values as strings.
+typedef CssHslRecord = ({String h, String s, String l, String a});
 
 /// Parses a CSS `rgb()` or `rgba()` function string into a record of string values.
 ///
@@ -210,16 +241,34 @@ CssRgbRecord? parseCssRgb(String input) {
   if (match == null) {
     return null;
   }
-  final String? r =
-      match.namedGroup('commaRed') ?? match.namedGroup('spaceRed');
-  final String? g =
-      match.namedGroup('commaGreen') ?? match.namedGroup('spaceGreen');
-  final String? b =
-      match.namedGroup('commaBlue') ?? match.namedGroup('spaceBlue');
-  final String a =
-      match.namedGroup('commaAlpha') ?? match.namedGroup('spaceAlpha') ?? '1';
+  final String? r = match.namedGroup('commaRed') ?? match.namedGroup('spaceRed');
+  final String? g = match.namedGroup('commaGreen') ?? match.namedGroup('spaceGreen');
+  final String? b = match.namedGroup('commaBlue') ?? match.namedGroup('spaceBlue');
+  final String a = match.namedGroup('commaAlpha') ?? match.namedGroup('spaceAlpha') ?? '1';
 
   return (r: r!, g: g!, b: b!, a: a);
+}
+
+/// Parses a CSS `hsl()` or `hsla()` function string into a record of string values.
+///
+/// Returns a record with h, s, l, and a string values if the input matches
+/// valid CSS hsl/hsla syntax, or null if the syntax is invalid.
+///
+/// Both legacy (comma-separated) and modern (space-separated) syntax are supported:
+/// - Legacy: `hsl(270, 100%, 76%)` or `hsla(270, 100%, 76%, 0.5)`
+/// - Modern: `hsl(270 100% 76%)` or `hsl(270 100% 76% / 0.5)`
+@visibleForTesting
+CssHslRecord? parseCssHsl(String input) {
+  final RegExpMatch? match = _cssHslColorMatcher.firstMatch(input);
+  if (match == null) {
+    return null;
+  }
+  final String? h = match.namedGroup('commaHue') ?? match.namedGroup('spaceHue');
+  final String? s = match.namedGroup('commaSaturation') ?? match.namedGroup('spaceSaturation');
+  final String? l = match.namedGroup('commaLightness') ?? match.namedGroup('spaceLightness');
+  final String a = match.namedGroup('commaHslAlpha') ?? match.namedGroup('spaceHslAlpha') ?? '1';
+
+  return (h: h!, s: s!, l: l!, a: a);
 }
 
 /// Parses a CSS `rgb()` or `rgba()` function color string and returns a Color.
@@ -237,13 +286,29 @@ CssRgbRecord? parseCssRgb(String input) {
 Color parseRgbFunction(String colorString) {
   final CssRgbRecord? parsed = parseCssRgb(colorString);
   if (parsed == null) {
-    throw ArgumentError.value(
-      colorString,
-      'colorString',
-      'Invalid CSS rgb/rgba color syntax',
-    );
+    throw ArgumentError.value(colorString, 'colorString', 'Invalid CSS rgb/rgba color syntax');
   }
   return _cssRgbRecordToColor(parsed);
+}
+
+/// Parses a CSS `hsl()` or `hsla()` function color string and returns a Color.
+///
+/// The [colorString] should be the full color string including the function
+/// name (`hsl` or `hsla`) and parentheses.
+///
+/// Both `hsl()` and `hsla()` accept the same syntax variations:
+/// - `hsl(H S L)` or `hsla(H S L)` - modern space-separated
+/// - `hsl(H S L / A)` or `hsla(H S L / A)` - modern with slash before alpha
+/// - `hsl(H,S,L)` or `hsla(H,S,L)` - legacy comma-separated
+/// - `hsl(H,S,L,A)` or `hsla(H,S,L,A)` - legacy with alpha
+///
+/// Throws [ArgumentError] if the color string is invalid.
+Color parseHslFunction(String colorString) {
+  final CssHslRecord? parsed = parseCssHsl(colorString);
+  if (parsed == null) {
+    throw ArgumentError.value(colorString, 'colorString', 'Invalid CSS hsl/hsla color syntax');
+  }
+  return _cssHslRecordToColor(parsed);
 }
 
 /// Converts a [CssRgbRecord] to a [Color].
@@ -263,6 +328,54 @@ Color _cssRgbRecordToColor(CssRgbRecord record) {
   return Color.fromARGB(a, r, g, b);
 }
 
+/// Converts a [CssHslRecord] to a [Color].
+Color _cssHslRecordToColor(CssHslRecord record) {
+  final double hue = _parseHslValue(record.h) / 360 % 1;
+  final double saturation = _parseHslValue(record.s).clamp(0, 100) / 100;
+  final double luminance = _parseHslValue(record.l).clamp(0, 100) / 100;
+  final int alpha = _parseHslAlpha(record.a);
+  double red = 0;
+  double green = 0;
+  double blue = 0;
+
+  if (hue < 1 / 6) {
+    red = 1;
+    green = hue * 6;
+  } else if (hue < 2 / 6) {
+    red = 2 - hue * 6;
+    green = 1;
+  } else if (hue < 3 / 6) {
+    green = 1;
+    blue = hue * 6 - 2;
+  } else if (hue < 4 / 6) {
+    green = 4 - hue * 6;
+    blue = 1;
+  } else if (hue < 5 / 6) {
+    red = hue * 6 - 4;
+    blue = 1;
+  } else {
+    red = 1;
+    blue = 6 - hue * 6;
+  }
+
+  return Color.fromARGB(
+    alpha,
+    _hslChannelToRgb(red, saturation, luminance),
+    _hslChannelToRgb(green, saturation, luminance),
+    _hslChannelToRgb(blue, saturation, luminance),
+  );
+}
+
+int _hslChannelToRgb(double channel, double saturation, double luminance) {
+  channel = channel + (1 - saturation) * (0.5 - channel);
+  if (luminance < 0.5) {
+    channel = luminance * 2 * channel;
+  } else {
+    channel = luminance * 2 * (1 - channel) + 2 * channel - 1;
+  }
+  return (channel.clamp(0, 1) * 255).round();
+}
+
 /// Parses a single color component value and returns an integer 0-255.
 int _parseColorComponent(String value, {required bool isAlpha}) {
   if (value.endsWith('%')) {
@@ -275,4 +388,21 @@ int _parseColorComponent(String value, {required bool isAlpha}) {
     return (numValue.clamp(0, 1) * 255).round();
   }
   return numValue.clamp(0, 255).round();
+}
+
+/// Parses a single HSL component value and returns its numeric value.
+double _parseHslValue(String value) {
+  if (value.endsWith('%')) {
+    value = value.substring(0, value.length - 1);
+  }
+  return double.parse(value);
+}
+
+/// Parses a single HSL alpha value and returns an integer 0-255.
+int _parseHslAlpha(String value) {
+  if (value.endsWith('%')) {
+    // Avoid * 2.55 because floating-point rounding makes 50% produce 127.
+    return (_parseHslValue(value).clamp(0, 100) / 100 * 255).round();
+  }
+  return (double.parse(value).clamp(0, 1) * 255).round();
 }

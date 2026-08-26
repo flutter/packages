@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
+import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
 import 'common/file_filters.dart';
@@ -24,12 +25,7 @@ enum _TestPlatform {
 /// A command to run Dart unit tests for packages.
 class DartTestCommand extends PackageLoopingCommand {
   /// Creates an instance of the test command.
-  DartTestCommand(
-    super.packagesDir, {
-    super.processRunner,
-    super.platform,
-    super.gitDir,
-  }) {
+  DartTestCommand(super.packagesDir, {super.processRunner, super.platform, super.gitDir}) {
     argParser.addOption(
       kEnableExperiment,
       defaultsTo: '',
@@ -44,10 +40,7 @@ class DartTestCommand extends PackageLoopingCommand {
           'Runs tests on the given platform instead of the default platform '
           '("vm" in most cases, "chrome" for web plugin implementations).',
     );
-    argParser.addFlag(
-      kWebWasmFlag,
-      help: 'Compile to WebAssembly rather than JavaScript',
-    );
+    argParser.addFlag(kWebWasmFlag, help: 'Compile to WebAssembly rather than JavaScript');
   }
 
   static const String _platformFlag = 'platform';
@@ -67,8 +60,7 @@ class DartTestCommand extends PackageLoopingCommand {
       'This command requires "flutter" to be in your path.';
 
   @override
-  PackageLoopingType get packageLoopingType =>
-      PackageLoopingType.includeAllSubpackages;
+  PackageLoopingType get packageLoopingType => PackageLoopingType.includeAllSubpackages;
 
   @override
   bool shouldIgnoreFile(String path) {
@@ -91,18 +83,11 @@ class DartTestCommand extends PackageLoopingCommand {
     final bool webPlatform = platform != null && platform != 'vm';
     final explicitVMPlatform = platform == 'vm';
     final bool isWebOnlyPluginImplementation =
-        pluginSupportsPlatform(
-          platformWeb,
-          package,
-          requiredMode: PlatformSupport.inline,
-        ) &&
+        pluginSupportsPlatform(platformWeb, package, requiredMode: PlatformSupport.inline) &&
         package.directory.basename.endsWith('_web');
     if (webPlatform) {
-      if (isFlutterPlugin(package) &&
-          !pluginSupportsPlatform(platformWeb, package)) {
-        return PackageResult.skip(
-          "Non-web plugin tests don't need web testing.",
-        );
+      if (isFlutterPlugin(package) && !pluginSupportsPlatform(platformWeb, package)) {
+        return PackageResult.skip("Non-web plugin tests don't need web testing.");
       }
       if (_testOnTarget(package) == _TestPlatform.vm) {
         // This explict skip is necessary because trying to run tests in a mode
@@ -147,19 +132,15 @@ class DartTestCommand extends PackageLoopingCommand {
   }) async {
     final String experiment = getStringArg(kEnableExperiment);
 
-    final int exitCode = await processRunner.runAndStream(
-      flutterCommand,
-      <String>[
-        'test',
-        '--color',
-        if (experiment.isNotEmpty) '--enable-experiment=$experiment',
-        // Flutter defaults to VM mode (under a different name) and explicitly
-        // setting it is deprecated, so pass nothing in that case.
-        if (platform != null && platform != 'vm') '--platform=$platform',
-        if (wasm) '--wasm',
-      ],
-      workingDir: package.directory,
-    );
+    final int exitCode = await processRunner.runAndStream(flutterCommand, <String>[
+      'test',
+      '--color',
+      if (experiment.isNotEmpty) '--enable-experiment=$experiment',
+      // Flutter defaults to VM mode (under a different name) and explicitly
+      // setting it is deprecated, so pass nothing in that case.
+      if (platform != null && platform != 'vm') '--platform=$platform',
+      if (wasm) '--wasm',
+    ], workingDir: package.directory);
     return exitCode == 0;
   }
 
@@ -197,33 +178,33 @@ class DartTestCommand extends PackageLoopingCommand {
     if (!testConfig.existsSync()) {
       return null;
     }
-    final testOnRegex = RegExp(r'^test_on:\s*([a-z].*[a-z])\s*$');
-    for (final String line in testConfig.readAsLinesSync()) {
-      final RegExpMatch? match = testOnRegex.firstMatch(line);
-      if (match != null) {
-        final String targetFilter = match.group(1)!;
-        // test_on lines can be very complex, but in pratice the packages in
-        // this repo currently only need the ability to require vm or not, so a
-        // simple one-target directive is all that's supported currently.
-        // Making it deliberately strict avoids the possibility of accidentally
-        // skipping vm coverage due to a complex expression that's not handled
-        // correctly.
-        switch (targetFilter) {
-          case 'vm':
-            return _TestPlatform.vm;
-          case 'browser':
-            return _TestPlatform.browser;
-          default:
-            printError(
-              'Unknown "test_on" value: "$targetFilter"\n'
-              "If this value needs to be supported for this package's tests, "
-              'please update the repository tooling to support more test_on '
-              'modes.',
-            );
-            throw ToolExit(_exitUnknownTestPlatform);
-        }
-      }
+    final Object? root = loadYaml(testConfig.readAsStringSync());
+    if (root is! YamlMap) {
+      return null;
     }
-    return null;
+    final Object? targetFilter = root['test_on'];
+    if (targetFilter == null || targetFilter is! String) {
+      return null;
+    }
+    // test_on lines can be very complex, but in pratice the packages in
+    // this repo currently only need the ability to require vm or not, so a
+    // simple one-target directive is all that's supported currently.
+    // Making it deliberately strict avoids the possibility of accidentally
+    // skipping vm coverage due to a complex expression that's not handled
+    // correctly.
+    switch (targetFilter) {
+      case 'vm':
+        return _TestPlatform.vm;
+      case 'browser':
+        return _TestPlatform.browser;
+      default:
+        printError(
+          'Unknown "test_on" value: "$targetFilter"\n'
+          "If this value needs to be supported for this package's tests, "
+          'please update the repository tooling to support more test_on '
+          'modes.',
+        );
+        throw ToolExit(_exitUnknownTestPlatform);
+    }
   }
 }

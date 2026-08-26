@@ -34,10 +34,7 @@ class _LiteModeBody extends StatelessWidget {
           child: SizedBox(
             width: 300.0,
             height: 300.0,
-            child: GoogleMap(
-              initialCameraPosition: _kInitialPosition,
-              liteModeEnabled: true,
-            ),
+            child: GoogleMap(initialCameraPosition: _kInitialPosition, liteModeEnabled: true),
           ),
         ),
       ),

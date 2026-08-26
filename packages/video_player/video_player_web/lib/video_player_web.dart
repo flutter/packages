@@ -78,15 +78,11 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
         uri = assetUrl;
       case DataSourceType.file:
         return Future<int>.error(
-          UnimplementedError(
-            'web implementation of video_player cannot play local files',
-          ),
+          UnimplementedError('web implementation of video_player cannot play local files'),
         );
       case DataSourceType.contentUri:
         return Future<int>.error(
-          UnimplementedError(
-            'web implementation of video_player cannot play content uri',
-          ),
+          UnimplementedError('web implementation of video_player cannot play content uri'),
         );
     }
 
@@ -102,8 +98,7 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
       (int viewId) => videoElement,
     );
 
-    final player = VideoPlayer(videoElement: videoElement)
-      ..initialize(src: uri);
+    final player = VideoPlayer(videoElement: videoElement)..initialize(src: uri);
 
     _videoPlayers[playerId] = player;
 

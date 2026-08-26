@@ -2,6 +2,7 @@ group = "io.flutter.plugins.quickactions"
 version = "1.0-SNAPSHOT"
 
 buildscript {
+    val kotlinVersion = "2.3.20"
     repositories {
         google()
         mavenCentral()
@@ -9,6 +10,7 @@ buildscript {
 
     dependencies {
         classpath("com.android.tools.build:gradle:8.13.1")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
 
@@ -21,6 +23,12 @@ allprojects {
 
 plugins {
     id("com.android.library")
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+    }
 }
 
 android {
@@ -39,7 +47,7 @@ android {
     }
 
     dependencies {
-        implementation("androidx.annotation:annotation:1.9.1")
+        implementation("androidx.annotation:annotation:1.10.0")
         testImplementation("junit:junit:4.13.2")
         testImplementation("org.mockito:mockito-core:5.23.0")
     }

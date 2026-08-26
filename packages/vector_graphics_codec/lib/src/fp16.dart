@@ -28,8 +28,7 @@ const int SHIFTED_EXPONENT_MASK = 0x1f;
 const int SIGNIFICAND_MASK = 0x3ff;
 
 // ignore: non_constant_identifier_names
-final ByteData FP32_DENORMAL_FLOAT = ByteData(4)
-  ..setUint32(0, FP32_DENORMAL_MAGIC);
+final ByteData FP32_DENORMAL_FLOAT = ByteData(4)..setUint32(0, FP32_DENORMAL_MAGIC);
 
 /// Convert the single precision floating point value stored in [byteData] into a half-precision floating point value.
 ///

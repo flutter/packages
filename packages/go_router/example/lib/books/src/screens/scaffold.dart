@@ -3,9 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:adaptive_navigation/adaptive_navigation.dart';
-import 'package:flutter/material.dart';
-
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The enum for scaffold tab.
 enum ScaffoldTab {
@@ -22,11 +21,7 @@ enum ScaffoldTab {
 /// The scaffold for the book store.
 class BookstoreScaffold extends StatelessWidget {
   /// Creates a [BookstoreScaffold].
-  const BookstoreScaffold({
-    required this.selectedTab,
-    required this.child,
-    super.key,
-  });
+  const BookstoreScaffold({required this.selectedTab, required this.child, super.key});
 
   /// Which tab of the scaffold to display.
   final ScaffoldTab selectedTab;

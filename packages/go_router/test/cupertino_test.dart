@@ -2,29 +2,23 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/src/pages/cupertino.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'helpers/error_screen_helpers.dart';
 
 void main() {
   group('isCupertinoApp', () {
-    testWidgets('returns [true] when CupertinoApp is present', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('returns [true] when CupertinoApp is present', (WidgetTester tester) async {
       final key = GlobalKey<_DummyStatefulWidgetState>();
-      await tester.pumpWidget(
-        CupertinoApp(home: DummyStatefulWidget(key: key)),
-      );
+      await tester.pumpWidget(CupertinoApp(home: DummyStatefulWidget(key: key)));
       final bool isCupertino = isCupertinoApp(key.currentContext! as Element);
       expect(isCupertino, true);
     });
 
-    testWidgets('returns [false] when MaterialApp is present', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('returns [false] when MaterialApp is present', (WidgetTester tester) async {
       final key = GlobalKey<_DummyStatefulWidgetState>();
       await tester.pumpWidget(MaterialApp(home: DummyStatefulWidget(key: key)));
       final bool isCupertino = isCupertinoApp(key.currentContext! as Element);
@@ -55,9 +49,7 @@ void main() {
   group('GoRouterCupertinoErrorScreen', () {
     testWidgets(
       'shows "page not found" by default',
-      testPageNotFound(
-        widget: const CupertinoApp(home: CupertinoErrorScreen(null)),
-      ),
+      testPageNotFound(widget: const CupertinoApp(home: CupertinoErrorScreen(null))),
     );
 
     final exception = Exception('Something went wrong!');

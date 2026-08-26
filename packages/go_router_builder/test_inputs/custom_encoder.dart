@@ -7,9 +7,7 @@ import 'dart:convert';
 import 'package:go_router/go_router.dart';
 
 String fromBase64(String value) {
-  return const Utf8Decoder().convert(
-    base64Url.decode(base64Url.normalize(value)),
-  );
+  return const Utf8Decoder().convert(base64Url.decode(base64Url.normalize(value)));
 }
 
 String toBase64(String value) {
@@ -29,8 +27,7 @@ class CustomParameterRoute extends GoRouteData with $CustomParameterRoute {
 mixin $CustomParameterComplexRoute {}
 
 @TypedGoRoute<CustomParameterComplexRoute>(path: '/:id/')
-class CustomParameterComplexRoute extends GoRouteData
-    with $CustomParameterComplexRoute {
+class CustomParameterComplexRoute extends GoRouteData with $CustomParameterComplexRoute {
   CustomParameterComplexRoute({
     required this.id,
     this.dir = '',

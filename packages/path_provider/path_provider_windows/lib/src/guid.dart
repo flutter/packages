@@ -36,10 +36,7 @@ base class GUID extends Struct {
     }
     final bytes = ByteData(16);
     for (var i = 0; i < 16; ++i) {
-      bytes.setUint8(
-        i,
-        int.parse(hexOnly.substring(i * 2, i * 2 + 2), radix: 16),
-      );
+      bytes.setUint8(i, int.parse(hexOnly.substring(i * 2, i * 2 + 2), radix: 16));
     }
     data1 = bytes.getInt32(0);
     data2 = bytes.getInt16(4);

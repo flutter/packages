@@ -25,14 +25,12 @@ import 'package:webview_flutter_wkwebview/src/common/web_kit.g.dart' as _i2;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-class _FakePigeonInstanceManager_0 extends _i1.SmartFake
-    implements _i2.PigeonInstanceManager {
+class _FakePigeonInstanceManager_0 extends _i1.SmartFake implements _i2.PigeonInstanceManager {
   _FakePigeonInstanceManager_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeURLProtectionSpace_1 extends _i1.SmartFake
-    implements _i2.URLProtectionSpace {
+class _FakeURLProtectionSpace_1 extends _i1.SmartFake implements _i2.URLProtectionSpace {
   _FakeURLProtectionSpace_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -44,20 +42,17 @@ class _FakeURLAuthenticationChallenge_2 extends _i1.SmartFake
 }
 
 class _FakeURLRequest_3 extends _i1.SmartFake implements _i2.URLRequest {
-  _FakeURLRequest_3(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeURLRequest_3(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
 class _FakeURL_4 extends _i1.SmartFake implements _i2.URL {
-  _FakeURL_4(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeURL_4(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
 /// A class which mocks [URLAuthenticationChallenge].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockURLAuthenticationChallenge extends _i1.Mock
-    implements _i2.URLAuthenticationChallenge {
+class MockURLAuthenticationChallenge extends _i1.Mock implements _i2.URLAuthenticationChallenge {
   MockURLAuthenticationChallenge() {
     _i1.throwOnMissingStub(this);
   }
@@ -78,10 +73,7 @@ class MockURLAuthenticationChallenge extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#getProtectionSpace, []),
             returnValue: _i3.Future<_i2.URLProtectionSpace>.value(
-              _FakeURLProtectionSpace_1(
-                this,
-                Invocation.method(#getProtectionSpace, []),
-              ),
+              _FakeURLProtectionSpace_1(this, Invocation.method(#getProtectionSpace, [])),
             ),
           )
           as _i3.Future<_i2.URLProtectionSpace>);
@@ -123,8 +115,7 @@ class MockURLAuthenticationChallenge extends _i1.Mock
 /// A class which mocks [URLProtectionSpace].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockURLProtectionSpace extends _i1.Mock
-    implements _i2.URLProtectionSpace {
+class MockURLProtectionSpace extends _i1.Mock implements _i2.URLProtectionSpace {
   MockURLProtectionSpace() {
     _i1.throwOnMissingStub(this);
   }
@@ -138,8 +129,7 @@ class MockURLProtectionSpace extends _i1.Mock
           as String);
 
   @override
-  int get port =>
-      (super.noSuchMethod(Invocation.getter(#port), returnValue: 0) as int);
+  int get port => (super.noSuchMethod(Invocation.getter(#port), returnValue: 0) as int);
 
   @override
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
@@ -164,10 +154,7 @@ class MockURLProtectionSpace extends _i1.Mock
   _i2.URLProtectionSpace pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeURLProtectionSpace_1(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeURLProtectionSpace_1(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.URLProtectionSpace);
 
@@ -215,10 +202,7 @@ class MockURLRequest extends _i1.Mock implements _i2.URLRequest {
 
   @override
   _i3.Future<String?> getUrl() =>
-      (super.noSuchMethod(
-            Invocation.method(#getUrl, []),
-            returnValue: _i3.Future<String?>.value(),
-          )
+      (super.noSuchMethod(Invocation.method(#getUrl, []), returnValue: _i3.Future<String?>.value())
           as _i3.Future<String?>);
 
   @override
@@ -276,10 +260,7 @@ class MockURLRequest extends _i1.Mock implements _i2.URLRequest {
   _i2.URLRequest pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeURLRequest_3(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
+            returnValue: _FakeURLRequest_3(this, Invocation.method(#pigeon_copy, [])),
           )
           as _i2.URLRequest);
 
@@ -330,10 +311,7 @@ class MockURL extends _i1.Mock implements _i2.URL {
       (super.noSuchMethod(
             Invocation.method(#getAbsoluteString, []),
             returnValue: _i3.Future<String>.value(
-              _i4.dummyValue<String>(
-                this,
-                Invocation.method(#getAbsoluteString, []),
-              ),
+              _i4.dummyValue<String>(this, Invocation.method(#getAbsoluteString, [])),
             ),
           )
           as _i3.Future<String>);

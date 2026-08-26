@@ -40,6 +40,7 @@ abstract class SamplePluginPlatform extends PlatformInterface {
 class SamplePluginDefault extends SamplePluginPlatform {
   // A default real implementation of the platform interface would go here.
 }
+
 ```
 
 This guarantees that UrlLauncherPlatform.instance cannot be set to an object that `implements`
@@ -60,6 +61,7 @@ For example, a Mockito mock of a platform interface can be created with:
 class SamplePluginPlatformMock extends Mock
     with MockPlatformInterfaceMixin
     implements SamplePluginPlatform {}
+
 ```
 
 ## A note about `base`

@@ -8,10 +8,8 @@ part of '../google_maps_flutter_web.dart';
 class GroundOverlayController {
   /// Creates a [GroundOverlayController] that wraps a
   /// [gmaps.GroundOverlay] object.
-  GroundOverlayController({
-    required gmaps.GroundOverlay groundOverlay,
-    required VoidCallback onTap,
-  }) : _groundOverlay = groundOverlay {
+  GroundOverlayController({required gmaps.GroundOverlay groundOverlay, required VoidCallback onTap})
+    : _groundOverlay = groundOverlay {
     groundOverlay.onClick.listen((gmaps.MapMouseEvent event) {
       onTap.call();
     });

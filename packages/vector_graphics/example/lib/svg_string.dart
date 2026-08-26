@@ -47,9 +47,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final TextEditingController _controller = TextEditingController(
-    text: _flutterLogoString,
-  );
+  final TextEditingController _controller = TextEditingController(text: _flutterLogoString);
   ByteData? _data;
   Timer? _debounce;
   int _svgLength = 0;

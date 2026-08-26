@@ -15,16 +15,25 @@ let package = Package(
   products: [
     .library(name: "video-player-avfoundation", targets: ["video_player_avfoundation"])
   ],
-  dependencies: [],
+  dependencies: [
+    .package(name: "FlutterFramework", path: "../FlutterFramework")
+  ],
   targets: [
     .target(
       name: "video_player_avfoundation",
       dependencies: [
-        .target(name: "video_player_avfoundation_ios", condition: .when(platforms: [.iOS])),
-        .target(name: "video_player_avfoundation_macos", condition: .when(platforms: [.macOS])),
+        "video_player_avfoundation_objc",
+        .product(name: "FlutterFramework", package: "FlutterFramework"),
       ],
       resources: [
         .process("Resources")
+      ]
+    ),
+    .target(
+      name: "video_player_avfoundation_objc",
+      dependencies: [
+        .target(name: "video_player_avfoundation_ios", condition: .when(platforms: [.iOS])),
+        .target(name: "video_player_avfoundation_macos", condition: .when(platforms: [.macOS])),
       ],
       cSettings: [
         .headerSearchPath("include/video_player_avfoundation")
@@ -33,13 +42,15 @@ let package = Package(
     .target(
       name: "video_player_avfoundation_ios",
       cSettings: [
-        .headerSearchPath("../video_player_avfoundation/include/video_player_avfoundation")
+        .headerSearchPath(
+          "../video_player_avfoundation_objc/include/video_player_avfoundation_objc")
       ]
     ),
     .target(
       name: "video_player_avfoundation_macos",
       cSettings: [
-        .headerSearchPath("../video_player_avfoundation/include/video_player_avfoundation")
+        .headerSearchPath(
+          "../video_player_avfoundation_objc/include/video_player_avfoundation_objc")
       ]
     ),
   ]

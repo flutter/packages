@@ -91,8 +91,7 @@ class Rect {
 
   /// Creates a rectangle representing a circle with centerpoint `x,`y` and
   /// radius `r`.
-  const Rect.fromCircle(double x, double y, double r)
-    : this.fromLTRB(x - r, y - r, x + r, y + r);
+  const Rect.fromCircle(double x, double y, double r) : this.fromLTRB(x - r, y - r, x + r, y + r);
 
   /// A rectangle covering the entire coordinate space, equal to dart:ui's
   /// definition.

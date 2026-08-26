@@ -8,12 +8,10 @@ package.
 Unless you are making changes to this implementation package, this example is
 very unlikely to be relevant.
 
-## Testing
+## Example Structure
 
-This package uses `package:integration_test` to run its tests in a web browser.
-
-See [Plugin Tests > Web Tests](https://github.com/flutter/flutter/blob/master/docs/ecosystem/testing/Plugin-Tests.md#web-tests)
-in the Flutter documentation for instructions to set up and run the tests in this package.
-
-Check [flutter.dev > Integration testing](https://docs.flutter.dev/testing/integration-tests)
-for more info.
+This directory contains two example apps:
+- latest/ uses an unpinned SDK load, so it will use the latest SDK version.
+  This follows the standard recommendation in the package's README.
+- 3-64 pins the SDK to 3.64. This is used for integration tests of the
+  heatmap support, since heatmaps were removed from the SDK in 3.65.

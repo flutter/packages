@@ -17,6 +17,7 @@
 #include <limits>
 #include <map>
 #include <optional>
+#include <sstream>
 #include <string>
 
 namespace pigeon_example {
@@ -238,6 +239,101 @@ size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
   return result;
 }
 
+template <typename T>
+std::string PigeonInternalToString(const T& v);
+
+std::string PigeonInternalToString(const bool& v);
+
+template <typename T>
+std::string PigeonInternalToString(const std::vector<T>& v);
+
+template <typename K, typename V>
+std::string PigeonInternalToString(const std::map<K, V>& v);
+
+template <typename T>
+std::string PigeonInternalToString(const std::optional<T>& v);
+
+template <typename T>
+std::string PigeonInternalToString(const std::unique_ptr<T>& v);
+
+std::string PigeonInternalToString(const ::flutter::EncodableValue& v);
+
+template <typename T>
+std::string PigeonInternalToString(const T& v) {
+  std::stringstream ss;
+  if constexpr (std::is_enum_v<T>) {
+    ss << static_cast<int>(v);
+  } else {
+    ss << v;
+  }
+  return ss.str();
+}
+
+std::string PigeonInternalToString(const bool& v) {
+  return v ? "true" : "false";
+}
+
+template <typename T>
+std::string PigeonInternalToString(const std::vector<T>& v) {
+  std::stringstream ss;
+  ss << "[";
+  for (size_t i = 0; i < v.size(); ++i) {
+    if (i > 0) {
+      ss << ", ";
+    }
+    ss << PigeonInternalToString(v[i]);
+  }
+  ss << "]";
+  return ss.str();
+}
+
+template <typename K, typename V>
+std::string PigeonInternalToString(const std::map<K, V>& v) {
+  std::stringstream ss;
+  ss << "{";
+  bool first = true;
+  for (const auto& kv : v) {
+    if (!first) {
+      ss << ", ";
+    }
+    first = false;
+    ss << PigeonInternalToString(kv.first) << ": "
+       << PigeonInternalToString(kv.second);
+  }
+  ss << "}";
+  return ss.str();
+}
+
+template <typename T>
+std::string PigeonInternalToString(const std::optional<T>& v) {
+  return v ? PigeonInternalToString(*v) : "null";
+}
+
+template <typename T>
+std::string PigeonInternalToString(const std::unique_ptr<T>& v) {
+  return v ? PigeonInternalToString(*v) : "null";
+}
+
+std::string PigeonInternalToString(const ::flutter::EncodableValue& v) {
+  return std::visit(
+      [](const auto& val) {
+        using T = std::decay_t<decltype(val)>;
+        if constexpr (std::is_same_v<T, std::monostate>) {
+          return std::string("null");
+        } else if constexpr (std::is_same_v<T, bool>) {
+          return val ? std::string("true") : std::string("false");
+        } else if constexpr (std::is_same_v<T, std::string>) {
+          return "\"" + val + "\"";
+        } else if constexpr (std::is_same_v<T,
+                                            ::flutter::CustomEncodableValue>) {
+          return std::string("[custom]");
+        } else {
+          return PigeonInternalToString(val);
+        }
+      },
+      v);
+}
+
 }  // namespace
 // MessageData
 
@@ -245,11 +341,12 @@ MessageData::MessageData(const Code& code, const EncodableMap& data)
     : code_(code), data_(data) {}
 
 MessageData::MessageData(const std::string* name,
-                         const std::string* description, const Code& code,
-                         const EncodableMap& data)
+                         const std::string* message_description,
+                         const Code& code, const EncodableMap& data)
     : name_(name ? std::optional<std::string>(*name) : std::nullopt),
-      description_(description ? std::optional<std::string>(*description)
-                               : std::nullopt),
+      message_description_(
+          message_description ? std::optional<std::string>(*message_description)
+                              : std::nullopt),
       code_(code),
       data_(data) {}
 
@@ -263,17 +360,17 @@ void MessageData::set_name(const std::string_view* value_arg) {
 
 void MessageData::set_name(std::string_view value_arg) { name_ = value_arg; }
 
-const std::string* MessageData::description() const {
-  return description_ ? &(*description_) : nullptr;
+const std::string* MessageData::message_description() const {
+  return message_description_ ? &(*message_description_) : nullptr;
 }
 
-void MessageData::set_description(const std::string_view* value_arg) {
-  description_ =
+void MessageData::set_message_description(const std::string_view* value_arg) {
+  message_description_ =
       value_arg ? std::optional<std::string>(*value_arg) : std::nullopt;
 }
 
-void MessageData::set_description(std::string_view value_arg) {
-  description_ = value_arg;
+void MessageData::set_message_description(std::string_view value_arg) {
+  message_description_ = value_arg;
 }
 
 const Code& MessageData::code() const { return code_; }
@@ -288,8 +385,8 @@ EncodableList MessageData::ToEncodableList() const {
   EncodableList list;
   list.reserve(4);
   list.push_back(name_ ? EncodableValue(*name_) : EncodableValue());
-  list.push_back(description_ ? EncodableValue(*description_)
-                              : EncodableValue());
+  list.push_back(message_description_ ? EncodableValue(*message_description_)
+                                      : EncodableValue());
   list.push_back(CustomEncodableValue(code_));
   list.push_back(EncodableValue(data_));
   return list;
@@ -303,16 +400,18 @@ MessageData MessageData::FromEncodableList(const EncodableList& list) {
   if (!encodable_name.IsNull()) {
     decoded.set_name(std::get<std::string>(encodable_name));
   }
-  auto& encodable_description = list[1];
-  if (!encodable_description.IsNull()) {
-    decoded.set_description(std::get<std::string>(encodable_description));
+  auto& encodable_message_description = list[1];
+  if (!encodable_message_description.IsNull()) {
+    decoded.set_message_description(
+        std::get<std::string>(encodable_message_description));
   }
   return decoded;
 }
 
 bool MessageData::operator==(const MessageData& other) const {
   return PigeonInternalDeepEquals(name_, other.name_) &&
-         PigeonInternalDeepEquals(description_, other.description_) &&
+         PigeonInternalDeepEquals(message_description_,
+                                  other.message_description_) &&
          PigeonInternalDeepEquals(code_, other.code_) &&
          PigeonInternalDeepEquals(data_, other.data_);
 }
@@ -324,10 +423,32 @@ bool MessageData::operator!=(const MessageData& other) const {
 size_t MessageData::Hash() const {
   size_t result = 1;
   result = result * 31 + PigeonInternalDeepHash(name_);
-  result = result * 31 + PigeonInternalDeepHash(description_);
+  result = result * 31 + PigeonInternalDeepHash(message_description_);
   result = result * 31 + PigeonInternalDeepHash(code_);
   result = result * 31 + PigeonInternalDeepHash(data_);
   return result;
+}
+
+std::ostream& operator<<(std::ostream& os, const MessageData& obj) {
+  os << "MessageData(";
+  os << "name: ";
+  if (obj.name_) {
+    os << PigeonInternalToString(*obj.name_);
+  } else {
+    os << "null";
+  }
+  os << ", message_description: ";
+  if (obj.message_description_) {
+    os << PigeonInternalToString(*obj.message_description_);
+  } else {
+    os << "null";
+  }
+  os << ", code: ";
+  os << PigeonInternalToString(obj.code_);
+  os << ", data: ";
+  os << PigeonInternalToString(obj.data_);
+  os << ")";
+  return os;
 }
 
 size_t PigeonInternalDeepHash(const MessageData& v) { return v.Hash(); }

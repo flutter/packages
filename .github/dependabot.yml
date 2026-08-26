@@ -73,6 +73,7 @@ updates:
       interval: "weekly"
     labels:
       - "autosubmit"
+      - "triage-android"
     open-pull-requests-limit: 10
     ignore:
       - dependency-name: "*"
@@ -107,6 +108,7 @@ updates:
     open-pull-requests-limit: 10
     labels:
       - "autosubmit"
+      - "triage-android"
     groups:
       test-dependencies:
         patterns:

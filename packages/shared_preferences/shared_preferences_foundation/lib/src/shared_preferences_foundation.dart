@@ -49,16 +49,12 @@ class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> clear() async {
-    return clearWithParameters(
-      ClearParameters(filter: PreferencesFilter(prefix: _defaultPrefix)),
-    );
+    return clearWithParameters(ClearParameters(filter: PreferencesFilter(prefix: _defaultPrefix)));
   }
 
   @override
   Future<bool> clearWithPrefix(String prefix) async {
-    return clearWithParameters(
-      ClearParameters(filter: PreferencesFilter(prefix: prefix)),
-    );
+    return clearWithParameters(ClearParameters(filter: PreferencesFilter(prefix: prefix)));
   }
 
   @override
@@ -76,15 +72,11 @@ class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
 
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
-    return getAllWithParameters(
-      GetAllParameters(filter: PreferencesFilter(prefix: prefix)),
-    );
+    return getAllWithParameters(GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
   }
 
   @override
-  Future<Map<String, Object>> getAllWithParameters(
-    GetAllParameters parameters,
-  ) async {
+  Future<Map<String, Object>> getAllWithParameters(GetAllParameters parameters) async {
     final PreferencesFilter filter = parameters.filter;
     return _api.getAll(filter.prefix, filter.allowList?.toList());
   }

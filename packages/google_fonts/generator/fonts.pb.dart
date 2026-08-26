@@ -43,14 +43,11 @@ class FileSpec extends $pb.GeneratedMessage {
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'FileSpec',
-      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'),
-      createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'FileSpec',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'), createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'filename')
     ..aInt64(2, _omitFieldNames ? '' : 'fileSize')
-    ..a<$core.List<$core.int>>(
-        3, _omitFieldNames ? '' : 'hash', $pb.PbFieldType.OY)
+    ..a<$core.List<$core.int>>(3, _omitFieldNames ? '' : 'hash', $pb.PbFieldType.OY)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -120,10 +117,8 @@ class IntRange extends $pb.GeneratedMessage {
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'IntRange',
-      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'),
-      createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'IntRange',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'), createEmptyInstance: create)
     ..aI(1, _omitFieldNames ? '' : 'start')
     ..aI(2, _omitFieldNames ? '' : 'end')
     ..hasRequiredFields = false;
@@ -188,10 +183,8 @@ class FloatRange extends $pb.GeneratedMessage {
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'FloatRange',
-      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'),
-      createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'FloatRange',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'), createEmptyInstance: create)
     ..aD(1, _omitFieldNames ? '' : 'start', fieldType: $pb.PbFieldType.OF)
     ..aD(2, _omitFieldNames ? '' : 'end', fieldType: $pb.PbFieldType.OF)
     ..hasRequiredFields = false;
@@ -210,8 +203,8 @@ class FloatRange extends $pb.GeneratedMessage {
   @$core.override
   FloatRange createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static FloatRange getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<FloatRange>(create);
+  static FloatRange getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<FloatRange>(create);
   static FloatRange? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -265,18 +258,12 @@ class Font extends $pb.GeneratedMessage {
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'Font',
-      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'),
-      createEmptyInstance: create)
-    ..aOM<FileSpec>(1, _omitFieldNames ? '' : 'file',
-        subBuilder: FileSpec.create)
-    ..aOM<IntRange>(2, _omitFieldNames ? '' : 'weight',
-        subBuilder: IntRange.create)
-    ..aOM<FloatRange>(3, _omitFieldNames ? '' : 'width',
-        subBuilder: FloatRange.create)
-    ..aOM<FloatRange>(4, _omitFieldNames ? '' : 'italic',
-        subBuilder: FloatRange.create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Font',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'), createEmptyInstance: create)
+    ..aOM<FileSpec>(1, _omitFieldNames ? '' : 'file', subBuilder: FileSpec.create)
+    ..aOM<IntRange>(2, _omitFieldNames ? '' : 'weight', subBuilder: IntRange.create)
+    ..aOM<FloatRange>(3, _omitFieldNames ? '' : 'width', subBuilder: FloatRange.create)
+    ..aOM<FloatRange>(4, _omitFieldNames ? '' : 'italic', subBuilder: FloatRange.create)
     ..aI(7, _omitFieldNames ? '' : 'ttcIndex')
     ..aOS(8, _omitFieldNames ? '' : 'postScriptName')
     ..aOB(9, _omitFieldNames ? '' : 'isVf')
@@ -296,8 +283,7 @@ class Font extends $pb.GeneratedMessage {
   @$core.override
   Font createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static Font getDefault() =>
-      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Font>(create);
+  static Font getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Font>(create);
   static Font? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -407,10 +393,8 @@ class FontFamily extends $pb.GeneratedMessage {
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'FontFamily',
-      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'),
-      createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'FontFamily',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'), createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'name')
     ..aI(2, _omitFieldNames ? '' : 'version')
     ..pPM<Font>(4, _omitFieldNames ? '' : 'fonts', subBuilder: Font.create)
@@ -430,8 +414,8 @@ class FontFamily extends $pb.GeneratedMessage {
   @$core.override
   FontFamily createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static FontFamily getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<FontFamily>(create);
+  static FontFamily getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<FontFamily>(create);
   static FontFamily? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -482,12 +466,9 @@ class Directory extends $pb.GeneratedMessage {
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'Directory',
-      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'),
-      createEmptyInstance: create)
-    ..pPM<FontFamily>(1, _omitFieldNames ? '' : 'family',
-        subBuilder: FontFamily.create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Directory',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'), createEmptyInstance: create)
+    ..pPM<FontFamily>(1, _omitFieldNames ? '' : 'family', subBuilder: FontFamily.create)
     ..aI(5, _omitFieldNames ? '' : 'version')
     ..aOS(6, _omitFieldNames ? '' : 'description')
     ..hasRequiredFields = false;
@@ -534,7 +515,5 @@ class Directory extends $pb.GeneratedMessage {
   void clearDescription() => $_clearField(6);
 }
 
-const $core.bool _omitFieldNames =
-    $core.bool.fromEnvironment('protobuf.omit_field_names');
-const $core.bool _omitMessageNames =
-    $core.bool.fromEnvironment('protobuf.omit_message_names');
+const $core.bool _omitFieldNames = $core.bool.fromEnvironment('protobuf.omit_field_names');
+const $core.bool _omitMessageNames = $core.bool.fromEnvironment('protobuf.omit_message_names');

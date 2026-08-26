@@ -30,9 +30,7 @@ abstract class WebViewPlatform extends PlatformInterface {
   /// class that extends [WebViewPlatform] when they register themselves.
   static set instance(WebViewPlatform? instance) {
     if (instance == null) {
-      throw AssertionError(
-        'Platform interfaces can only be set to a non-null instance',
-      );
+      throw AssertionError('Platform interfaces can only be set to a non-null instance');
     }
 
     PlatformInterface.verify(instance, _token);
@@ -79,9 +77,7 @@ abstract class WebViewPlatform extends PlatformInterface {
   ///
   /// This function should only be called by the app-facing package.
   /// Look at using [WebViewWidget] in `webview_flutter` instead.
-  PlatformWebViewWidget createPlatformWebViewWidget(
-    PlatformWebViewWidgetCreationParams params,
-  ) {
+  PlatformWebViewWidget createPlatformWebViewWidget(PlatformWebViewWidgetCreationParams params) {
     throw UnimplementedError(
       'createPlatformWebViewWidget is not implemented on the current platform.',
     );

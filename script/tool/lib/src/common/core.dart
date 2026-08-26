@@ -41,6 +41,9 @@ const String kDoNotLandWarning = 'DO NOT MERGE';
 /// Key for enabling web WASM compilation
 const String kWebWasmFlag = 'wasm';
 
+/// The URL to provide in printed messages to point users to tool documentation.
+const String toolDocsUrl = 'https://github.com/flutter/packages/blob/main/script/tool/README.md';
+
 /// Target platforms supported by Flutter.
 // ignore: public_member_api_docs
 enum FlutterPlatform { android, ios, linux, macos, web, windows }
@@ -98,12 +101,13 @@ final Map<Version, Version> _dartSdkForFlutterSdk = <Version, Version>{
   Version(3, 38, 4): Version(3, 10, 3),
   Version(3, 38, 10): Version(3, 10, 9),
   Version(3, 41, 0): Version(3, 11, 0),
+  Version(3, 41, 9): Version(3, 11, 5),
+  Version(3, 44, 0): Version(3, 12, 0),
 };
 
 /// Returns the version of the Dart SDK that shipped with the given Flutter
 /// SDK.
-Version? getDartSdkForFlutterSdk(Version flutterVersion) =>
-    _dartSdkForFlutterSdk[flutterVersion];
+Version? getDartSdkForFlutterSdk(Version flutterVersion) => _dartSdkForFlutterSdk[flutterVersion];
 
 /// Returns whether the given directory is a Dart package.
 bool isPackage(FileSystemEntity entity) {
@@ -124,7 +128,7 @@ bool isPackage(FileSystemEntity entity) {
 /// While there is no specific definition of the meaning of different non-zero
 /// exit codes for this tool, commands should follow the general convention:
 ///   1: The command ran correctly, but found errors.
-///   2: The command failed to run because the arguments were invalid.
+///   2: The command failed to run because the arguments or config were invalid.
 ///  >2: The command failed to run correctly for some other reason. Ideally,
 ///      each such failure should have a unique exit code within the context of
 ///      that command.
@@ -134,13 +138,26 @@ class ToolExit extends Error {
 
   /// The code that the process should exit with.
   final int exitCode;
+
+  @override
+  String toString() => 'ToolExit(exitCode: $exitCode)';
 }
 
 /// A exit code for [ToolExit] for a successful run that found errors.
 const int exitCommandFoundErrors = 1;
 
-/// A exit code for [ToolExit] for a failure to run due to invalid arguments.
+/// A exit code for [ToolExit] for a failure to run due to invalid arguments
+/// or config.
 const int exitInvalidArguments = 2;
+
+/// The directory for any cached files downloaded or created by the tool.
+Directory toolCacheDirectory(Directory repoRoot) {
+  final Directory cacheDir = repoRoot.childDirectory('.repo_tool_cache');
+  if (!cacheDir.existsSync()) {
+    cacheDir.createSync(recursive: true);
+  }
+  return cacheDir;
+}
 
 /// The directory to which to write logs and other artifacts, if set in CI.
 Directory? ciLogsDirectory(Platform platform, FileSystem fileSystem) {

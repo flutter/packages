@@ -1,3 +1,54 @@
+## 0.7.4+6
+
+* Adds explicit `androidx.concurrent:concurrent-futures:1.2.0` dependency to fix
+  `compileDebugJavaWithJavac` failing with "class file for
+  androidx.concurrent.futures.CallbackToFutureAdapter not found" when
+  `camera-core`'s Jspecify type annotations are resolved during compilation.
+  
+## 0.7.4+5
+
+* Fixes a leaked thread per capture by dispatching the `takePicture` result callback on the main
+  executor.
+
+## 0.7.4+4
+
+* Fix `NullPointerException` when disposing camera during active video recording.
+
+## 0.7.4+3
+
+* Updates `ResolutionPreset.max` to prefer higher resolution over capture rate
+  for CameraX `ResolutionSelector` use cases on Android.
+
+## 0.7.4+2
+
+* Bumps cameraxVersion from 1.6.0 to 1.6.1.
+* Updates androidx.camera:camera-core from 1.6.0 to 1.6.1.
+* Updates androidx.camera:camera-camera2 from 1.6.0 to 1.6.1.
+* Updates androidx.camera:camera-lifecycle from 1.6.0 to 1.6.1.
+* Updates androidx.camera:camera-video from 1.6.0 to 1.6.1.
+
+## 0.7.4+1
+
+* Fixes a `StateError` ("Bad state: No element") in `setFocusMode(FocusMode.auto)`
+  when the current focus and metering action has no auto-focus points.
+
+## 0.7.4
+
+* Adds `setJpegImageQuality` for controlling JPEG compression quality.
+
+## 0.7.3
+
+* Fixes `videoBitrate` configuration being ignored during video recording.
+
+## 0.7.2+1
+
+* Migrates to Built-in Kotlin to support AGP 9.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 0.7.2
+
+* Bumps camerax_version from 1.5.3 to 1.6.0.
+
 ## 0.7.1+2
 
 * Fixes dartdoc comments that accidentally used HTML.

@@ -1,3 +1,12 @@
+## 2.18.0
+
+* Adds support for mapTypeControlEnabled, fullscreenControlEnabled, and streetViewControlEnabled on web.
+
+## 2.17.1
+
+* Updates README to link to implementation packages for platform-specific
+  setup information.
+
 ## 2.17.0
 
 * Adds missing re-exports of classes related to advanced markers.

@@ -68,10 +68,7 @@ class Cap {
   /// [refWidth] is the reference stroke width (in pixels) - the stroke width for which
   /// the cap bitmap at its native dimension is designed. Must be positive. Default value
   /// is 10 pixels.
-  static Cap customCapFromBitmap(
-    BitmapDescriptor bitmapDescriptor, {
-    double refWidth = 10,
-  }) {
+  static Cap customCapFromBitmap(BitmapDescriptor bitmapDescriptor, {double refWidth = 10}) {
     assert(refWidth > 0.0);
     return CustomCap(bitmapDescriptor, refWidth: refWidth);
   }
@@ -93,8 +90,7 @@ class CustomCap extends Cap {
   /// [refWidth] is the reference stroke width (in pixels) - the stroke width for which
   /// the cap bitmap at its native dimension is designed. Must be positive. Default value
   /// is 10 pixels.
-  const CustomCap(this.bitmapDescriptor, {this.refWidth = 10})
-    : super._(CapType.custom);
+  const CustomCap(this.bitmapDescriptor, {this.refWidth = 10}) : super._(CapType.custom);
 
   /// Bitmap overlay centered at the start or end vertex of a [Polyline].
   final BitmapDescriptor bitmapDescriptor;
@@ -104,9 +100,5 @@ class CustomCap extends Cap {
   final double refWidth;
 
   @override
-  Object toJson() => <Object>[
-    _capTypeToJson(type),
-    bitmapDescriptor.toJson(),
-    refWidth,
-  ];
+  Object toJson() => <Object>[_capTypeToJson(type), bitmapDescriptor.toJson(), refWidth];
 }

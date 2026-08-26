@@ -35,10 +35,7 @@ class PatternItem {
   /// [length] has to be non-negative.
   static PatternItem dash(double length) {
     assert(length >= 0.0);
-    return VariableLengthPatternItem._(
-      patternItemType: PatternItemType.dash,
-      length: length,
-    );
+    return VariableLengthPatternItem._(patternItemType: PatternItemType.dash, length: length);
   }
 
   /// A gap used in the stroke pattern for a [Polyline].
@@ -46,10 +43,7 @@ class PatternItem {
   /// [length] has to be non-negative.
   static PatternItem gap(double length) {
     assert(length >= 0.0);
-    return VariableLengthPatternItem._(
-      patternItemType: PatternItemType.gap,
-      length: length,
-    );
+    return VariableLengthPatternItem._(patternItemType: PatternItemType.gap, length: length);
   }
 
   /// The type of rendering used for an item in a pattern.

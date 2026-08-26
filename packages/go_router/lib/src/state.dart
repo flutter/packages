@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
@@ -27,6 +28,7 @@ class GoRouterState {
     this.error,
     required this.pageKey,
     this.topRoute,
+    this.metadata = const <String, dynamic>{},
   });
   final RouteConfiguration _configuration;
 
@@ -83,6 +85,15 @@ class GoRouterState {
   /// associated GoRouterState to be uniquely identified using [GoRoute.name]
   final GoRoute? topRoute;
 
+  /// Merged application-defined metadata for the current route match.
+  ///
+  /// Metadata is inherited from parent routes, and child routes override
+  /// parent values with the same key. For example, if a parent route has
+  /// `{'section': 'library', 'requiresAuth': true}` and the matched child route
+  /// has `{'requiresAuth': false, 'title': 'Preview'}`, this value is
+  /// `{'section': 'library', 'requiresAuth': false, 'title': 'Preview'}`.
+  final Map<String, dynamic> metadata;
+
   /// Gets the [GoRouterState] from context.
   ///
   /// The returned [GoRouterState] will depends on which [GoRoute] or
@@ -125,16 +136,14 @@ class GoRouterState {
       }
       final RouteSettings settings = route.settings;
       if (settings is Page<Object?>) {
-        scope = context
-            .dependOnInheritedWidgetOfExactType<GoRouterStateRegistryScope>();
+        scope = context.dependOnInheritedWidgetOfExactType<GoRouterStateRegistryScope>();
         if (scope == null) {
           throw _noGoRouterStateError;
         }
-        final GoRouterState? state = scope.notifier!
-            ._createPageRouteAssociation(
-              route.settings as Page<Object?>,
-              route,
-            );
+        final GoRouterState? state = scope.notifier!._createPageRouteAssociation(
+          route.settings as Page<Object?>,
+          route,
+        );
         if (state != null) {
           return state;
         }
@@ -182,7 +191,8 @@ class GoRouterState {
         other.pathParameters == pathParameters &&
         other.extra == extra &&
         other.error == error &&
-        other.pageKey == pageKey;
+        other.pageKey == pageKey &&
+        const MapEquality<String, dynamic>().equals(other.metadata, metadata);
   }
 
   @override
@@ -196,6 +206,11 @@ class GoRouterState {
     extra,
     error,
     pageKey,
+    Object.hashAllUnordered(
+      metadata.entries.map<int>(
+        (MapEntry<String, dynamic> entry) => Object.hash(entry.key, entry.value),
+      ),
+    ),
   );
 }
 
@@ -204,8 +219,7 @@ class GoRouterState {
 /// Should not be used directly, consider using [GoRouterState.of] to access
 /// [GoRouterState] from the context.
 @internal
-class GoRouterStateRegistryScope
-    extends InheritedNotifier<GoRouterStateRegistry> {
+class GoRouterStateRegistryScope extends InheritedNotifier<GoRouterStateRegistry> {
   /// Creates a GoRouterStateRegistryScope.
   const GoRouterStateRegistryScope({
     super.key,
@@ -225,16 +239,12 @@ class GoRouterStateRegistry extends ChangeNotifier {
 
   /// A [Map] that maps a [Page] to a [GoRouterState].
   @visibleForTesting
-  final Map<Page<Object?>, GoRouterState> registry =
-      <Page<Object?>, GoRouterState>{};
+  final Map<Page<Object?>, GoRouterState> registry = <Page<Object?>, GoRouterState>{};
 
   final Map<Route<Object?>, Page<Object?>> _routePageAssociation =
       <ModalRoute<Object?>, Page<Object?>>{};
 
-  GoRouterState? _createPageRouteAssociation(
-    Page<Object?> page,
-    ModalRoute<Object?> route,
-  ) {
+  GoRouterState? _createPageRouteAssociation(Page<Object?> page, ModalRoute<Object?> route) {
     assert(route.settings == page);
     if (!registry.containsKey(page)) {
       return null;
@@ -249,9 +259,7 @@ class GoRouterStateRegistry extends ChangeNotifier {
       route.completed.then<void>((Object? result) {
         // Can't use `page` directly because Route.settings may have changed during
         // the lifetime of this route.
-        final Page<Object?> associatedPage = _routePageAssociation.remove(
-          route,
-        )!;
+        final Page<Object?> associatedPage = _routePageAssociation.remove(route)!;
         assert(registry.containsKey(associatedPage));
         registry.remove(associatedPage);
       });
@@ -268,15 +276,12 @@ class GoRouterStateRegistry extends ChangeNotifier {
   /// Updates this registry with new records.
   void updateRegistry(Map<Page<Object?>, GoRouterState> newRegistry) {
     var shouldNotify = false;
-    final Set<Page<Object?>> pagesWithAssociation = _routePageAssociation.values
-        .toSet();
-    for (final MapEntry<Page<Object?>, GoRouterState> entry
-        in newRegistry.entries) {
+    final Set<Page<Object?>> pagesWithAssociation = _routePageAssociation.values.toSet();
+    for (final MapEntry<Page<Object?>, GoRouterState> entry in newRegistry.entries) {
       final GoRouterState? existingState = registry[entry.key];
       if (existingState != null) {
         if (existingState != entry.value) {
-          shouldNotify =
-              shouldNotify || pagesWithAssociation.contains(entry.key);
+          shouldNotify = shouldNotify || pagesWithAssociation.contains(entry.key);
           registry[entry.key] = entry.value;
         }
         continue;

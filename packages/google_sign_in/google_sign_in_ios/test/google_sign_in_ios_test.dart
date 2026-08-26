@@ -59,11 +59,8 @@ void main() {
         ),
       );
 
-      final VerificationResult verification = verify(
-        mockApi.configure(captureAny),
-      );
-      final hostParams =
-          verification.captured[0] as PlatformConfigurationParams;
+      final VerificationResult verification = verify(mockApi.configure(captureAny));
+      final hostParams = verification.captured[0] as PlatformConfigurationParams;
       expect(hostParams.clientId, clientId);
       expect(hostParams.serverClientId, serverClientId);
       expect(hostParams.hostedDomain, hostedDomain);
@@ -89,10 +86,9 @@ void main() {
         ),
       );
 
-      final AuthenticationResults? result = await googleSignIn
-          .attemptLightweightAuthentication(
-            const AttemptLightweightAuthenticationParameters(),
-          );
+      final AuthenticationResults? result = await googleSignIn.attemptLightweightAuthentication(
+        const AttemptLightweightAuthenticationParameters(),
+      );
 
       expect(result?.user, _testUser);
       expect(result?.authenticationTokens.idToken, idToken);
@@ -100,24 +96,20 @@ void main() {
 
     test('returns null for missing auth', () async {
       when(mockApi.restorePreviousSignIn()).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain),
-        ),
+        (_) async =>
+            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain)),
       );
 
-      final AuthenticationResults? result = await googleSignIn
-          .attemptLightweightAuthentication(
-            const AttemptLightweightAuthenticationParameters(),
-          );
+      final AuthenticationResults? result = await googleSignIn.attemptLightweightAuthentication(
+        const AttemptLightweightAuthenticationParameters(),
+      );
 
       expect(result, null);
     });
 
     test('throws for other errors', () async {
       when(mockApi.restorePreviousSignIn()).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.keychainError),
-        ),
+        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.keychainError)),
       );
 
       expect(
@@ -188,9 +180,8 @@ void main() {
 
     test('throws unknown for missing auth', () async {
       when(mockApi.signIn(any, null)).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain),
-        ),
+        (_) async =>
+            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain)),
       );
 
       expect(
@@ -213,9 +204,7 @@ void main() {
 
     test('throws provider configuration error for keychain error', () async {
       when(mockApi.signIn(any, null)).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.keychainError),
-        ),
+        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.keychainError)),
       );
 
       expect(
@@ -232,9 +221,7 @@ void main() {
 
     test('throws provider configuration error for EEM error', () async {
       when(mockApi.signIn(any, null)).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.eemError),
-        ),
+        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.eemError)),
       );
 
       expect(
@@ -251,9 +238,7 @@ void main() {
 
     test('throws canceled from SDK', () async {
       when(mockApi.signIn(any, null)).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.canceled),
-        ),
+        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.canceled)),
       );
 
       expect(
@@ -270,9 +255,7 @@ void main() {
 
     test('throws user mismatch from SDK', () async {
       when(mockApi.signIn(any, null)).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.userMismatch),
-        ),
+        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.userMismatch)),
       );
 
       expect(
@@ -289,9 +272,7 @@ void main() {
 
     test('throws unknown from SDK', () async {
       when(mockApi.signIn(any, null)).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.unknown),
-        ),
+        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.unknown)),
       );
 
       expect(
@@ -317,44 +298,39 @@ void main() {
       promptIfUnauthorized: false,
     );
 
-    test(
-      'passes expected values to addScopes if interaction is allowed',
-      () async {
-        const scopes = <String>['a', 'b'];
-        when(mockApi.addScopes(any, _testUser.id)).thenAnswer(
-          (_) async => SignInResult(
-            success: SignInSuccess(
-              user: UserData(
-                displayName: _testUser.displayName,
-                email: _testUser.email,
-                userId: _testUser.id,
-                photoUrl: _testUser.photoUrl,
-                idToken: '',
-              ),
-              accessToken: '',
-              grantedScopes: scopes,
-            ),
-          ),
-        );
-
-        await googleSignIn.clientAuthorizationTokensForScopes(
-          ClientAuthorizationTokensForScopesParameters(
-            request: AuthorizationRequestDetails(
-              scopes: scopes,
-              userId: _testUser.id,
+    test('passes expected values to addScopes if interaction is allowed', () async {
+      const scopes = <String>['a', 'b'];
+      when(mockApi.addScopes(any, _testUser.id)).thenAnswer(
+        (_) async => SignInResult(
+          success: SignInSuccess(
+            user: UserData(
+              displayName: _testUser.displayName,
               email: _testUser.email,
-              promptIfUnauthorized: true,
+              userId: _testUser.id,
+              photoUrl: _testUser.photoUrl,
+              idToken: '',
             ),
+            accessToken: '',
+            grantedScopes: scopes,
           ),
-        );
+        ),
+      );
 
-        final VerificationResult verification = verify(
-          mockApi.addScopes(captureAny, _testUser.id),
-        );
-        final passedScopes = verification.captured[0] as List<String>;
-        expect(passedScopes, scopes);
-      },
-    );
+      await googleSignIn.clientAuthorizationTokensForScopes(
+        ClientAuthorizationTokensForScopesParameters(
+          request: AuthorizationRequestDetails(
+            scopes: scopes,
+            userId: _testUser.id,
+            email: _testUser.email,
+            promptIfUnauthorized: true,
+          ),
+        ),
+      );
+
+      final VerificationResult verification = verify(mockApi.addScopes(captureAny, _testUser.id));
+      final passedScopes = verification.captured[0] as List<String>;
+      expect(passedScopes, scopes);
+    });
 
     test('passes expected values to getRefreshedAuthorizationTokens if '
         'interaction is not allowed', () async {
@@ -389,86 +365,76 @@ void main() {
       verify(mockApi.getRefreshedAuthorizationTokens(_testUser.id));
     });
 
-    test(
-      'attempts to restore previous sign in if no user is provided',
-      () async {
-        const scopes = <String>['a', 'b'];
-        final signInResult = SignInResult(
-          success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: '',
-            ),
-            accessToken: '',
-            grantedScopes: <String>[],
+    test('attempts to restore previous sign in if no user is provided', () async {
+      const scopes = <String>['a', 'b'];
+      final signInResult = SignInResult(
+        success: SignInSuccess(
+          user: UserData(
+            displayName: _testUser.displayName,
+            email: _testUser.email,
+            userId: _testUser.id,
+            photoUrl: _testUser.photoUrl,
+            idToken: '',
           ),
-        );
-        when(
-          mockApi.restorePreviousSignIn(),
-        ).thenAnswer((_) async => signInResult);
-        when(
-          mockApi.getRefreshedAuthorizationTokens(_testUser.id),
-        ).thenAnswer((_) async => signInResult);
+          accessToken: '',
+          grantedScopes: <String>[],
+        ),
+      );
+      when(mockApi.restorePreviousSignIn()).thenAnswer((_) async => signInResult);
+      when(
+        mockApi.getRefreshedAuthorizationTokens(_testUser.id),
+      ).thenAnswer((_) async => signInResult);
 
-        await googleSignIn.clientAuthorizationTokensForScopes(
-          const ClientAuthorizationTokensForScopesParameters(
-            request: AuthorizationRequestDetails(
-              scopes: scopes,
-              userId: null,
-              email: null,
-              promptIfUnauthorized: false,
-            ),
+      await googleSignIn.clientAuthorizationTokensForScopes(
+        const ClientAuthorizationTokensForScopesParameters(
+          request: AuthorizationRequestDetails(
+            scopes: scopes,
+            userId: null,
+            email: null,
+            promptIfUnauthorized: false,
           ),
-        );
+        ),
+      );
 
-        // With no user ID provided to clientAuthorizationTokensForScopes, the
-        // implementation should attempt to restore an existing sign-in, and then
-        // when that succeeds, get the authorization tokens for that user.
-        verify(mockApi.restorePreviousSignIn());
-        verify(mockApi.getRefreshedAuthorizationTokens(_testUser.id));
-      },
-    );
+      // With no user ID provided to clientAuthorizationTokensForScopes, the
+      // implementation should attempt to restore an existing sign-in, and then
+      // when that succeeds, get the authorization tokens for that user.
+      verify(mockApi.restorePreviousSignIn());
+      verify(mockApi.getRefreshedAuthorizationTokens(_testUser.id));
+    });
 
-    test(
-      'returns null if unauthenticated and interaction is not allowed',
-      () async {
-        when(mockApi.restorePreviousSignIn()).thenAnswer(
-          (_) async => SignInResult(
-            error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain),
-          ),
-        );
+    test('returns null if unauthenticated and interaction is not allowed', () async {
+      when(mockApi.restorePreviousSignIn()).thenAnswer(
+        (_) async =>
+            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain)),
+      );
 
-        final ClientAuthorizationTokenData? result = await googleSignIn
-            .clientAuthorizationTokensForScopes(
-              const ClientAuthorizationTokensForScopesParameters(
-                request: AuthorizationRequestDetails(
-                  scopes: <String>['a', 'b'],
-                  userId: null,
-                  email: null,
-                  promptIfUnauthorized: false,
-                ),
+      final ClientAuthorizationTokenData? result = await googleSignIn
+          .clientAuthorizationTokensForScopes(
+            const ClientAuthorizationTokensForScopesParameters(
+              request: AuthorizationRequestDetails(
+                scopes: <String>['a', 'b'],
+                userId: null,
+                email: null,
+                promptIfUnauthorized: false,
               ),
-            );
+            ),
+          );
 
-        // With no user ID provided to clientAuthorizationTokensForScopes, the
-        // implementation should attempt to restore an existing sign-in, and then
-        // when that fails, return null since without prompting, there is no way
-        // to authenticate.
-        verify(mockApi.restorePreviousSignIn());
-        expect(result, null);
-      },
-    );
+      // With no user ID provided to clientAuthorizationTokensForScopes, the
+      // implementation should attempt to restore an existing sign-in, and then
+      // when that fails, return null since without prompting, there is no way
+      // to authenticate.
+      verify(mockApi.restorePreviousSignIn());
+      expect(result, null);
+    });
 
     test('attempts to authenticate if no user is provided or already signed in '
         'and interaction is allowed', () async {
       const scopes = <String>['a', 'b'];
       when(mockApi.restorePreviousSignIn()).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain),
-        ),
+        (_) async =>
+            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain)),
       );
       when(mockApi.signIn(scopes, null)).thenAnswer(
         (_) async => SignInResult(
@@ -504,42 +470,39 @@ void main() {
       verify(mockApi.signIn(scopes, null));
     });
 
-    test(
-      'passes success data to caller when refreshing existing auth',
-      () async {
-        const scopes = <String>['a', 'b'];
-        const accessToken = 'token';
-        when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
-          (_) async => SignInResult(
-            success: SignInSuccess(
-              user: UserData(
-                displayName: _testUser.displayName,
-                email: _testUser.email,
-                userId: _testUser.id,
-                photoUrl: _testUser.photoUrl,
-                idToken: 'idToken',
-              ),
-              accessToken: accessToken,
-              grantedScopes: scopes,
+    test('passes success data to caller when refreshing existing auth', () async {
+      const scopes = <String>['a', 'b'];
+      const accessToken = 'token';
+      when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
+        (_) async => SignInResult(
+          success: SignInSuccess(
+            user: UserData(
+              displayName: _testUser.displayName,
+              email: _testUser.email,
+              userId: _testUser.id,
+              photoUrl: _testUser.photoUrl,
+              idToken: 'idToken',
             ),
+            accessToken: accessToken,
+            grantedScopes: scopes,
           ),
-        );
+        ),
+      );
 
-        final ClientAuthorizationTokenData? result = await googleSignIn
-            .clientAuthorizationTokensForScopes(
-              ClientAuthorizationTokensForScopesParameters(
-                request: AuthorizationRequestDetails(
-                  scopes: scopes,
-                  userId: _testUser.id,
-                  email: _testUser.email,
-                  promptIfUnauthorized: false,
-                ),
+      final ClientAuthorizationTokenData? result = await googleSignIn
+          .clientAuthorizationTokensForScopes(
+            ClientAuthorizationTokensForScopesParameters(
+              request: AuthorizationRequestDetails(
+                scopes: scopes,
+                userId: _testUser.id,
+                email: _testUser.email,
+                promptIfUnauthorized: false,
               ),
-            );
+            ),
+          );
 
-        expect(result?.accessToken, accessToken);
-      },
-    );
+      expect(result?.accessToken, accessToken);
+    });
 
     test('passes success data to caller when calling addScopes', () async {
       const scopes = <String>['a', 'b'];
@@ -580,11 +543,8 @@ void main() {
       const scopes = <String>['a', 'b'];
       const accessToken = 'token';
       when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(
-            type: GoogleSignInErrorCode.scopesAlreadyGranted,
-          ),
-        ),
+        (_) async =>
+            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.scopesAlreadyGranted)),
       );
       when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
         (_) async => SignInResult(
@@ -620,56 +580,50 @@ void main() {
       expect(result?.accessToken, accessToken);
     });
 
-    test(
-      'returns null if re-using existing auth and scopes are missing',
-      () async {
-        const requestedScopes = <String>['a', 'b'];
-        const grantedScopes = <String>['a'];
-        const accessToken = 'token';
-        when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
-          (_) async => SignInResult(
-            success: SignInSuccess(
-              user: UserData(
-                displayName: _testUser.displayName,
-                email: _testUser.email,
-                userId: _testUser.id,
-                photoUrl: _testUser.photoUrl,
-                idToken: 'idToken',
-              ),
-              accessToken: accessToken,
-              grantedScopes: grantedScopes,
+    test('returns null if re-using existing auth and scopes are missing', () async {
+      const requestedScopes = <String>['a', 'b'];
+      const grantedScopes = <String>['a'];
+      const accessToken = 'token';
+      when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
+        (_) async => SignInResult(
+          success: SignInSuccess(
+            user: UserData(
+              displayName: _testUser.displayName,
+              email: _testUser.email,
+              userId: _testUser.id,
+              photoUrl: _testUser.photoUrl,
+              idToken: 'idToken',
             ),
+            accessToken: accessToken,
+            grantedScopes: grantedScopes,
           ),
-        );
+        ),
+      );
 
-        final ClientAuthorizationTokenData? result = await googleSignIn
-            .clientAuthorizationTokensForScopes(
-              ClientAuthorizationTokensForScopesParameters(
-                request: AuthorizationRequestDetails(
-                  scopes: requestedScopes,
-                  userId: _testUser.id,
-                  email: _testUser.email,
-                  promptIfUnauthorized: false,
-                ),
+      final ClientAuthorizationTokenData? result = await googleSignIn
+          .clientAuthorizationTokensForScopes(
+            ClientAuthorizationTokensForScopesParameters(
+              request: AuthorizationRequestDetails(
+                scopes: requestedScopes,
+                userId: _testUser.id,
+                email: _testUser.email,
+                promptIfUnauthorized: false,
               ),
-            );
+            ),
+          );
 
-        expect(result, null);
-      },
-    );
+      expect(result, null);
+    });
 
     test('returns null when unauthorized', () async {
       when(mockApi.restorePreviousSignIn()).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain),
-        ),
+        (_) async =>
+            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain)),
       );
 
       expect(
         await googleSignIn.clientAuthorizationTokensForScopes(
-          const ClientAuthorizationTokensForScopesParameters(
-            request: defaultAuthRequest,
-          ),
+          const ClientAuthorizationTokensForScopesParameters(request: defaultAuthRequest),
         ),
         null,
       );
@@ -677,9 +631,7 @@ void main() {
 
     test('thows canceled from SDK', () async {
       when(mockApi.addScopes(any, any)).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.canceled),
-        ),
+        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.canceled)),
       );
 
       expect(
@@ -705,9 +657,7 @@ void main() {
 
     test('throws unknown from SDK', () async {
       when(mockApi.addScopes(any, any)).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.unknown),
-        ),
+        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.unknown)),
       );
 
       expect(
@@ -733,9 +683,7 @@ void main() {
 
     test('throws user mismatch from SDK', () async {
       when(mockApi.addScopes(any, any)).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.userMismatch),
-        ),
+        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.userMismatch)),
       );
 
       expect(
@@ -770,44 +718,39 @@ void main() {
       promptIfUnauthorized: false,
     );
 
-    test(
-      'passes expected values to addScopes if interaction is allowed',
-      () async {
-        const scopes = <String>['a', 'b'];
-        when(mockApi.addScopes(any, _testUser.id)).thenAnswer(
-          (_) async => SignInResult(
-            success: SignInSuccess(
-              user: UserData(
-                displayName: _testUser.displayName,
-                email: _testUser.email,
-                userId: _testUser.id,
-                photoUrl: _testUser.photoUrl,
-                idToken: '',
-              ),
-              accessToken: '',
-              grantedScopes: scopes,
-            ),
-          ),
-        );
-
-        await googleSignIn.serverAuthorizationTokensForScopes(
-          ServerAuthorizationTokensForScopesParameters(
-            request: AuthorizationRequestDetails(
-              scopes: scopes,
-              userId: _testUser.id,
+    test('passes expected values to addScopes if interaction is allowed', () async {
+      const scopes = <String>['a', 'b'];
+      when(mockApi.addScopes(any, _testUser.id)).thenAnswer(
+        (_) async => SignInResult(
+          success: SignInSuccess(
+            user: UserData(
+              displayName: _testUser.displayName,
               email: _testUser.email,
-              promptIfUnauthorized: true,
+              userId: _testUser.id,
+              photoUrl: _testUser.photoUrl,
+              idToken: '',
             ),
+            accessToken: '',
+            grantedScopes: scopes,
           ),
-        );
+        ),
+      );
 
-        final VerificationResult verification = verify(
-          mockApi.addScopes(captureAny, _testUser.id),
-        );
-        final passedScopes = verification.captured[0] as List<String>;
-        expect(passedScopes, scopes);
-      },
-    );
+      await googleSignIn.serverAuthorizationTokensForScopes(
+        ServerAuthorizationTokensForScopesParameters(
+          request: AuthorizationRequestDetails(
+            scopes: scopes,
+            userId: _testUser.id,
+            email: _testUser.email,
+            promptIfUnauthorized: true,
+          ),
+        ),
+      );
+
+      final VerificationResult verification = verify(mockApi.addScopes(captureAny, _testUser.id));
+      final passedScopes = verification.captured[0] as List<String>;
+      expect(passedScopes, scopes);
+    });
 
     test('passes expected values to getRefreshedAuthorizationTokens if '
         'interaction is not allowed', () async {
@@ -842,86 +785,76 @@ void main() {
       verify(mockApi.getRefreshedAuthorizationTokens(_testUser.id));
     });
 
-    test(
-      'attempts to restore previous sign in if no user is provided',
-      () async {
-        const scopes = <String>['a', 'b'];
-        final signInResult = SignInResult(
-          success: SignInSuccess(
-            user: UserData(
-              displayName: _testUser.displayName,
-              email: _testUser.email,
-              userId: _testUser.id,
-              photoUrl: _testUser.photoUrl,
-              idToken: '',
-            ),
-            accessToken: '',
-            grantedScopes: <String>[],
+    test('attempts to restore previous sign in if no user is provided', () async {
+      const scopes = <String>['a', 'b'];
+      final signInResult = SignInResult(
+        success: SignInSuccess(
+          user: UserData(
+            displayName: _testUser.displayName,
+            email: _testUser.email,
+            userId: _testUser.id,
+            photoUrl: _testUser.photoUrl,
+            idToken: '',
           ),
-        );
-        when(
-          mockApi.restorePreviousSignIn(),
-        ).thenAnswer((_) async => signInResult);
-        when(
-          mockApi.getRefreshedAuthorizationTokens(_testUser.id),
-        ).thenAnswer((_) async => signInResult);
+          accessToken: '',
+          grantedScopes: <String>[],
+        ),
+      );
+      when(mockApi.restorePreviousSignIn()).thenAnswer((_) async => signInResult);
+      when(
+        mockApi.getRefreshedAuthorizationTokens(_testUser.id),
+      ).thenAnswer((_) async => signInResult);
 
-        await googleSignIn.serverAuthorizationTokensForScopes(
-          const ServerAuthorizationTokensForScopesParameters(
-            request: AuthorizationRequestDetails(
-              scopes: scopes,
-              userId: null,
-              email: null,
-              promptIfUnauthorized: false,
-            ),
+      await googleSignIn.serverAuthorizationTokensForScopes(
+        const ServerAuthorizationTokensForScopesParameters(
+          request: AuthorizationRequestDetails(
+            scopes: scopes,
+            userId: null,
+            email: null,
+            promptIfUnauthorized: false,
           ),
-        );
+        ),
+      );
 
-        // With no user ID provided to serverAuthorizationTokensForScopes, the
-        // implementation should attempt to restore an existing sign-in, and then
-        // when that succeeds, get the authorization tokens for that user.
-        verify(mockApi.restorePreviousSignIn());
-        verify(mockApi.getRefreshedAuthorizationTokens(_testUser.id));
-      },
-    );
+      // With no user ID provided to serverAuthorizationTokensForScopes, the
+      // implementation should attempt to restore an existing sign-in, and then
+      // when that succeeds, get the authorization tokens for that user.
+      verify(mockApi.restorePreviousSignIn());
+      verify(mockApi.getRefreshedAuthorizationTokens(_testUser.id));
+    });
 
-    test(
-      'returns null if unauthenticated and interaction is not allowed',
-      () async {
-        when(mockApi.restorePreviousSignIn()).thenAnswer(
-          (_) async => SignInResult(
-            error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain),
-          ),
-        );
+    test('returns null if unauthenticated and interaction is not allowed', () async {
+      when(mockApi.restorePreviousSignIn()).thenAnswer(
+        (_) async =>
+            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain)),
+      );
 
-        final ServerAuthorizationTokenData? result = await googleSignIn
-            .serverAuthorizationTokensForScopes(
-              const ServerAuthorizationTokensForScopesParameters(
-                request: AuthorizationRequestDetails(
-                  scopes: <String>['a', 'b'],
-                  userId: null,
-                  email: null,
-                  promptIfUnauthorized: false,
-                ),
+      final ServerAuthorizationTokenData? result = await googleSignIn
+          .serverAuthorizationTokensForScopes(
+            const ServerAuthorizationTokensForScopesParameters(
+              request: AuthorizationRequestDetails(
+                scopes: <String>['a', 'b'],
+                userId: null,
+                email: null,
+                promptIfUnauthorized: false,
               ),
-            );
+            ),
+          );
 
-        // With no user ID provided to serverAuthorizationTokensForScopes, the
-        // implementation should attempt to restore an existing sign-in, and then
-        // when that fails, return null since without prompting, there is no way
-        // to authenticate.
-        verify(mockApi.restorePreviousSignIn());
-        expect(result, null);
-      },
-    );
+      // With no user ID provided to serverAuthorizationTokensForScopes, the
+      // implementation should attempt to restore an existing sign-in, and then
+      // when that fails, return null since without prompting, there is no way
+      // to authenticate.
+      verify(mockApi.restorePreviousSignIn());
+      expect(result, null);
+    });
 
     test('attempts to authenticate if no user is provided or already signed in '
         'and interaction is allowed', () async {
       const scopes = <String>['a', 'b'];
       when(mockApi.restorePreviousSignIn()).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain),
-        ),
+        (_) async =>
+            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain)),
       );
       when(mockApi.signIn(scopes, null)).thenAnswer(
         (_) async => SignInResult(
@@ -957,58 +890,53 @@ void main() {
       verify(mockApi.signIn(scopes, null));
     });
 
-    test(
-      'returns cached token from authn when refreshing existing authz',
-      () async {
-        final userData = UserData(
-          displayName: _testUser.displayName,
-          email: _testUser.email,
-          userId: _testUser.id,
-          photoUrl: _testUser.photoUrl,
-          idToken: '',
-        );
-        const scopes = <String>['a', 'b'];
-        const accessToken = 'accessToken';
-        const serverAuthCode = 'authCode';
-        when(mockApi.signIn(scopes, null)).thenAnswer(
-          (_) async => SignInResult(
-            success: SignInSuccess(
-              user: userData,
-              accessToken: accessToken,
-              serverAuthCode: serverAuthCode,
-              grantedScopes: <String>[],
-            ),
+    test('returns cached token from authn when refreshing existing authz', () async {
+      final userData = UserData(
+        displayName: _testUser.displayName,
+        email: _testUser.email,
+        userId: _testUser.id,
+        photoUrl: _testUser.photoUrl,
+        idToken: '',
+      );
+      const scopes = <String>['a', 'b'];
+      const accessToken = 'accessToken';
+      const serverAuthCode = 'authCode';
+      when(mockApi.signIn(scopes, null)).thenAnswer(
+        (_) async => SignInResult(
+          success: SignInSuccess(
+            user: userData,
+            accessToken: accessToken,
+            serverAuthCode: serverAuthCode,
+            grantedScopes: <String>[],
           ),
-        );
-        when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
-          (_) async => SignInResult(
-            success: SignInSuccess(
-              user: userData,
-              accessToken: accessToken,
-              // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
-              grantedScopes: scopes,
-            ),
+        ),
+      );
+      when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
+        (_) async => SignInResult(
+          success: SignInSuccess(
+            user: userData,
+            accessToken: accessToken,
+            // serverAuthCode will always be null for getRefreshedAuthorizationTokens.
+            grantedScopes: scopes,
           ),
-        );
+        ),
+      );
 
-        await googleSignIn.authenticate(
-          const AuthenticateParameters(scopeHint: scopes),
-        );
-        final ServerAuthorizationTokenData? result = await googleSignIn
-            .serverAuthorizationTokensForScopes(
-              ServerAuthorizationTokensForScopesParameters(
-                request: AuthorizationRequestDetails(
-                  scopes: scopes,
-                  userId: _testUser.id,
-                  email: _testUser.email,
-                  promptIfUnauthorized: false,
-                ),
+      await googleSignIn.authenticate(const AuthenticateParameters(scopeHint: scopes));
+      final ServerAuthorizationTokenData? result = await googleSignIn
+          .serverAuthorizationTokensForScopes(
+            ServerAuthorizationTokensForScopesParameters(
+              request: AuthorizationRequestDetails(
+                scopes: scopes,
+                userId: _testUser.id,
+                email: _testUser.email,
+                promptIfUnauthorized: false,
               ),
-            );
+            ),
+          );
 
-        expect(result?.serverAuthCode, serverAuthCode);
-      },
-    );
+      expect(result?.serverAuthCode, serverAuthCode);
+    });
 
     test('does not return cached token from authn if user changes', () async {
       const scopes = <String>['a', 'b'];
@@ -1049,9 +977,7 @@ void main() {
         ),
       );
 
-      await googleSignIn.authenticate(
-        const AuthenticateParameters(scopeHint: scopes),
-      );
+      await googleSignIn.authenticate(const AuthenticateParameters(scopeHint: scopes));
       final ServerAuthorizationTokenData? result = await googleSignIn
           .serverAuthorizationTokensForScopes(
             ServerAuthorizationTokensForScopesParameters(
@@ -1099,9 +1025,7 @@ void main() {
         ),
       );
 
-      await googleSignIn.authenticate(
-        const AuthenticateParameters(scopeHint: scopes),
-      );
+      await googleSignIn.authenticate(const AuthenticateParameters(scopeHint: scopes));
       await googleSignIn.signOut(const SignOutParams());
       final ServerAuthorizationTokenData? result = await googleSignIn
           .serverAuthorizationTokensForScopes(
@@ -1150,9 +1074,7 @@ void main() {
         ),
       );
 
-      await googleSignIn.authenticate(
-        const AuthenticateParameters(scopeHint: scopes),
-      );
+      await googleSignIn.authenticate(const AuthenticateParameters(scopeHint: scopes));
       await googleSignIn.disconnect(const DisconnectParams());
       final ServerAuthorizationTokenData? result = await googleSignIn
           .serverAuthorizationTokensForScopes(
@@ -1169,93 +1091,87 @@ void main() {
       expect(result, null);
     });
 
-    test(
-      'passes returned data to caller when calling addScopes without cache',
-      () async {
-        const scopes = <String>['a', 'b'];
-        const serverAuthCode = 'authCode';
-        when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
-          (_) async => SignInResult(
-            success: SignInSuccess(
-              user: UserData(
-                displayName: _testUser.displayName,
-                email: _testUser.email,
+    test('passes returned data to caller when calling addScopes without cache', () async {
+      const scopes = <String>['a', 'b'];
+      const serverAuthCode = 'authCode';
+      when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
+        (_) async => SignInResult(
+          success: SignInSuccess(
+            user: UserData(
+              displayName: _testUser.displayName,
+              email: _testUser.email,
+              userId: _testUser.id,
+              photoUrl: _testUser.photoUrl,
+              idToken: 'idToken',
+            ),
+            accessToken: 'token',
+            serverAuthCode: serverAuthCode,
+            grantedScopes: scopes,
+          ),
+        ),
+      );
+
+      final ServerAuthorizationTokenData? result = await googleSignIn
+          .serverAuthorizationTokensForScopes(
+            ServerAuthorizationTokensForScopesParameters(
+              request: AuthorizationRequestDetails(
+                scopes: scopes,
                 userId: _testUser.id,
-                photoUrl: _testUser.photoUrl,
-                idToken: 'idToken',
+                email: _testUser.email,
+                promptIfUnauthorized: true,
               ),
-              accessToken: 'token',
-              serverAuthCode: serverAuthCode,
-              grantedScopes: scopes,
             ),
-          ),
-        );
+          );
 
-        final ServerAuthorizationTokenData? result = await googleSignIn
-            .serverAuthorizationTokensForScopes(
-              ServerAuthorizationTokensForScopesParameters(
-                request: AuthorizationRequestDetails(
-                  scopes: scopes,
-                  userId: _testUser.id,
-                  email: _testUser.email,
-                  promptIfUnauthorized: true,
-                ),
+      expect(result?.serverAuthCode, serverAuthCode);
+    });
+
+    test('passes returned data to caller when calling addScopes, not cached data', () async {
+      const scopes = <String>['a', 'b'];
+      final userData = UserData(
+        displayName: _testUser.displayName,
+        email: _testUser.email,
+        userId: _testUser.id,
+        photoUrl: _testUser.photoUrl,
+        idToken: 'idToken',
+      );
+      const serverAuthCode = 'authCode';
+      when(mockApi.signIn(<String>[], null)).thenAnswer(
+        (_) async => SignInResult(
+          success: SignInSuccess(
+            user: userData,
+            accessToken: 'token',
+            serverAuthCode: 'no-scope-auth-code',
+            grantedScopes: <String>[],
+          ),
+        ),
+      );
+      when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
+        (_) async => SignInResult(
+          success: SignInSuccess(
+            user: userData,
+            accessToken: 'token',
+            serverAuthCode: serverAuthCode,
+            grantedScopes: scopes,
+          ),
+        ),
+      );
+
+      await googleSignIn.authenticate(const AuthenticateParameters());
+      final ServerAuthorizationTokenData? result = await googleSignIn
+          .serverAuthorizationTokensForScopes(
+            ServerAuthorizationTokensForScopesParameters(
+              request: AuthorizationRequestDetails(
+                scopes: scopes,
+                userId: _testUser.id,
+                email: _testUser.email,
+                promptIfUnauthorized: true,
               ),
-            );
-
-        expect(result?.serverAuthCode, serverAuthCode);
-      },
-    );
-
-    test(
-      'passes returned data to caller when calling addScopes, not cached data',
-      () async {
-        const scopes = <String>['a', 'b'];
-        final userData = UserData(
-          displayName: _testUser.displayName,
-          email: _testUser.email,
-          userId: _testUser.id,
-          photoUrl: _testUser.photoUrl,
-          idToken: 'idToken',
-        );
-        const serverAuthCode = 'authCode';
-        when(mockApi.signIn(<String>[], null)).thenAnswer(
-          (_) async => SignInResult(
-            success: SignInSuccess(
-              user: userData,
-              accessToken: 'token',
-              serverAuthCode: 'no-scope-auth-code',
-              grantedScopes: <String>[],
             ),
-          ),
-        );
-        when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
-          (_) async => SignInResult(
-            success: SignInSuccess(
-              user: userData,
-              accessToken: 'token',
-              serverAuthCode: serverAuthCode,
-              grantedScopes: scopes,
-            ),
-          ),
-        );
+          );
 
-        await googleSignIn.authenticate(const AuthenticateParameters());
-        final ServerAuthorizationTokenData? result = await googleSignIn
-            .serverAuthorizationTokensForScopes(
-              ServerAuthorizationTokensForScopesParameters(
-                request: AuthorizationRequestDetails(
-                  scopes: scopes,
-                  userId: _testUser.id,
-                  email: _testUser.email,
-                  promptIfUnauthorized: true,
-                ),
-              ),
-            );
-
-        expect(result?.serverAuthCode, serverAuthCode);
-      },
-    );
+      expect(result?.serverAuthCode, serverAuthCode);
+    });
 
     test('successfully returns cached token if addScopes indicates the '
         'requested scopes are already granted', () async {
@@ -1279,11 +1195,8 @@ void main() {
         ),
       );
       when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(
-            type: GoogleSignInErrorCode.scopesAlreadyGranted,
-          ),
-        ),
+        (_) async =>
+            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.scopesAlreadyGranted)),
       );
       when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
         (_) async => SignInResult(
@@ -1296,9 +1209,7 @@ void main() {
         ),
       );
 
-      await googleSignIn.authenticate(
-        const AuthenticateParameters(scopeHint: scopes),
-      );
+      await googleSignIn.authenticate(const AuthenticateParameters(scopeHint: scopes));
       final ServerAuthorizationTokenData? result = await googleSignIn
           .serverAuthorizationTokensForScopes(
             ServerAuthorizationTokensForScopesParameters(
@@ -1317,69 +1228,63 @@ void main() {
       expect(result?.serverAuthCode, serverAuthCode);
     });
 
-    test(
-      'returns null if re-using existing authz and scopes are missing',
-      () async {
-        const requestedScopes = <String>['a', 'b'];
-        const grantedScopes = <String>['a'];
-        const accessToken = 'token';
-        final userData = UserData(
-          displayName: _testUser.displayName,
-          email: _testUser.email,
-          userId: _testUser.id,
-          photoUrl: _testUser.photoUrl,
-          idToken: 'idToken',
-        );
-        when(mockApi.signIn(<String>[], null)).thenAnswer(
-          (_) async => SignInResult(
-            success: SignInSuccess(
-              user: userData,
-              accessToken: 'token',
-              serverAuthCode: 'no-scope-auth-code',
-              grantedScopes: <String>[],
-            ),
+    test('returns null if re-using existing authz and scopes are missing', () async {
+      const requestedScopes = <String>['a', 'b'];
+      const grantedScopes = <String>['a'];
+      const accessToken = 'token';
+      final userData = UserData(
+        displayName: _testUser.displayName,
+        email: _testUser.email,
+        userId: _testUser.id,
+        photoUrl: _testUser.photoUrl,
+        idToken: 'idToken',
+      );
+      when(mockApi.signIn(<String>[], null)).thenAnswer(
+        (_) async => SignInResult(
+          success: SignInSuccess(
+            user: userData,
+            accessToken: 'token',
+            serverAuthCode: 'no-scope-auth-code',
+            grantedScopes: <String>[],
           ),
-        );
-        when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
-          (_) async => SignInResult(
-            success: SignInSuccess(
-              user: userData,
-              accessToken: accessToken,
-              serverAuthCode: 'wrong-scope-auth-code',
-              grantedScopes: grantedScopes,
-            ),
+        ),
+      );
+      when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
+        (_) async => SignInResult(
+          success: SignInSuccess(
+            user: userData,
+            accessToken: accessToken,
+            serverAuthCode: 'wrong-scope-auth-code',
+            grantedScopes: grantedScopes,
           ),
-        );
+        ),
+      );
 
-        await googleSignIn.authenticate(const AuthenticateParameters());
-        final ServerAuthorizationTokenData? result = await googleSignIn
-            .serverAuthorizationTokensForScopes(
-              ServerAuthorizationTokensForScopesParameters(
-                request: AuthorizationRequestDetails(
-                  scopes: requestedScopes,
-                  userId: _testUser.id,
-                  email: _testUser.email,
-                  promptIfUnauthorized: false,
-                ),
+      await googleSignIn.authenticate(const AuthenticateParameters());
+      final ServerAuthorizationTokenData? result = await googleSignIn
+          .serverAuthorizationTokensForScopes(
+            ServerAuthorizationTokensForScopesParameters(
+              request: AuthorizationRequestDetails(
+                scopes: requestedScopes,
+                userId: _testUser.id,
+                email: _testUser.email,
+                promptIfUnauthorized: false,
               ),
-            );
+            ),
+          );
 
-        expect(result, null);
-      },
-    );
+      expect(result, null);
+    });
 
     test('returns null when unauthorized', () async {
       when(mockApi.restorePreviousSignIn()).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain),
-        ),
+        (_) async =>
+            SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain)),
       );
 
       expect(
         await googleSignIn.serverAuthorizationTokensForScopes(
-          const ServerAuthorizationTokensForScopesParameters(
-            request: defaultAuthRequest,
-          ),
+          const ServerAuthorizationTokensForScopesParameters(request: defaultAuthRequest),
         ),
         null,
       );
@@ -1387,9 +1292,7 @@ void main() {
 
     test('thows canceled from SDK', () async {
       when(mockApi.addScopes(any, any)).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.canceled),
-        ),
+        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.canceled)),
       );
 
       expect(
@@ -1415,9 +1318,7 @@ void main() {
 
     test('throws unknown from SDK', () async {
       when(mockApi.addScopes(any, any)).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.unknown),
-        ),
+        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.unknown)),
       );
 
       expect(
@@ -1443,9 +1344,7 @@ void main() {
 
     test('throws user mismatch from SDK', () async {
       when(mockApi.addScopes(any, any)).thenAnswer(
-        (_) async => SignInResult(
-          error: SignInFailure(type: GoogleSignInErrorCode.userMismatch),
-        ),
+        (_) async => SignInResult(error: SignInFailure(type: GoogleSignInErrorCode.userMismatch)),
       );
 
       expect(

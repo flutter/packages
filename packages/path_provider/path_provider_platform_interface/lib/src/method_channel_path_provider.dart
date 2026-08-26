@@ -12,9 +12,7 @@ import '../path_provider_platform_interface.dart';
 class MethodChannelPathProvider extends PathProviderPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
-  MethodChannel methodChannel = const MethodChannel(
-    'plugins.flutter.io/path_provider',
-  );
+  MethodChannel methodChannel = const MethodChannel('plugins.flutter.io/path_provider');
 
   // Ideally, this property shouldn't exist, and each platform should
   // just implement the supported methods. Once all the platforms are
@@ -49,9 +47,7 @@ class MethodChannelPathProvider extends PathProviderPlatform {
 
   @override
   Future<String?> getApplicationDocumentsPath() {
-    return methodChannel.invokeMethod<String>(
-      'getApplicationDocumentsDirectory',
-    );
+    return methodChannel.invokeMethod<String>('getApplicationDocumentsDirectory');
   }
 
   @override
@@ -72,15 +68,11 @@ class MethodChannelPathProvider extends PathProviderPlatform {
     if (!_platform.isAndroid) {
       throw UnsupportedError('Functionality only available on Android');
     }
-    return methodChannel.invokeListMethod<String>(
-      'getExternalCacheDirectories',
-    );
+    return methodChannel.invokeListMethod<String>('getExternalCacheDirectories');
   }
 
   @override
-  Future<List<String>?> getExternalStoragePaths({
-    StorageDirectory? type,
-  }) async {
+  Future<List<String>?> getExternalStoragePaths({StorageDirectory? type}) async {
     if (!_platform.isAndroid) {
       throw UnsupportedError('Functionality only available on Android');
     }

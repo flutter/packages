@@ -12,12 +12,9 @@ import 'messages.g.dart';
 /// Converts a [BillingChoiceMode] to the Pigeon equivalent.
 PlatformBillingChoiceMode platformBillingChoiceMode(BillingChoiceMode mode) {
   return switch (mode) {
-    BillingChoiceMode.playBillingOnly =>
-      PlatformBillingChoiceMode.playBillingOnly,
-    BillingChoiceMode.alternativeBillingOnly =>
-      PlatformBillingChoiceMode.alternativeBillingOnly,
-    BillingChoiceMode.userChoiceBilling =>
-      PlatformBillingChoiceMode.userChoiceBilling,
+    BillingChoiceMode.playBillingOnly => PlatformBillingChoiceMode.playBillingOnly,
+    BillingChoiceMode.alternativeBillingOnly => PlatformBillingChoiceMode.alternativeBillingOnly,
+    BillingChoiceMode.userChoiceBilling => PlatformBillingChoiceMode.userChoiceBilling,
   };
 }
 
@@ -25,6 +22,7 @@ PlatformBillingChoiceMode platformBillingChoiceMode(BillingChoiceMode mode) {
 BillingResultWrapper resultWrapperFromPlatform(PlatformBillingResult result) {
   return BillingResultWrapper(
     responseCode: billingResponseFromPlatform(result.responseCode),
+    subResponseCode: result.subResponseCode,
     debugMessage: result.debugMessage,
   );
 }
@@ -35,16 +33,15 @@ ProductDetailsResponseWrapper productDetailsResponseWrapperFromPlatform(
 ) {
   return ProductDetailsResponseWrapper(
     billingResult: resultWrapperFromPlatform(response.billingResult),
-    productDetailsList: response.productDetails
-        .map(productDetailsWrapperFromPlatform)
+    productDetailsList: response.productDetails.map(productDetailsWrapperFromPlatform).toList(),
+    unfetchedProductList: response.unfetchedProductList
+        .map(unfetchedProductWrapperFromPlatform)
         .toList(),
   );
 }
 
 /// Creates a [ProductDetailsWrapper] from the Pigeon equivalent.
-ProductDetailsWrapper productDetailsWrapperFromPlatform(
-  PlatformProductDetails product,
-) {
+ProductDetailsWrapper productDetailsWrapperFromPlatform(PlatformProductDetails product) {
   return ProductDetailsWrapper(
     description: product.description,
     name: product.name,
@@ -54,15 +51,23 @@ ProductDetailsWrapper productDetailsWrapperFromPlatform(
     oneTimePurchaseOfferDetails: oneTimePurchaseOfferDetailsWrapperFromPlatform(
       product.oneTimePurchaseOfferDetails,
     ),
+    oneTimePurchaseOfferDetailsList: product.oneTimePurchaseOfferDetailsList
+        ?.map(oneTimePurchaseOfferDetailsWrapperFromPlatform)
+        .whereType<OneTimePurchaseOfferDetailsWrapper>()
+        .toList(),
     subscriptionOfferDetails: product.subscriptionOfferDetails
         ?.map(subscriptionOfferDetailsWrapperFromPlatform)
         .toList(),
   );
 }
 
+/// Creates a [UnfetchedProductWrapper] from the Pigeon equivalent.
+UnfetchedProductWrapper unfetchedProductWrapperFromPlatform(PlatformUnfetchedProduct product) {
+  return UnfetchedProductWrapper(productId: product.productId);
+}
+
 /// Creates a [OneTimePurchaseOfferDetailsWrapper] from the Pigeon equivalent.
-OneTimePurchaseOfferDetailsWrapper?
-oneTimePurchaseOfferDetailsWrapperFromPlatform(
+OneTimePurchaseOfferDetailsWrapper? oneTimePurchaseOfferDetailsWrapperFromPlatform(
   PlatformOneTimePurchaseOfferDetails? details,
 ) {
   if (details == null) {
@@ -76,9 +81,7 @@ oneTimePurchaseOfferDetailsWrapperFromPlatform(
 }
 
 /// Creates a [PurchaseHistoryResult] from the Pigeon equivalent.
-PurchasesHistoryResult purchaseHistoryResultFromPlatform(
-  PlatformPurchaseHistoryResponse response,
-) {
+PurchasesHistoryResult purchaseHistoryResultFromPlatform(PlatformPurchaseHistoryResponse response) {
   return PurchasesHistoryResult(
     billingResult: resultWrapperFromPlatform(response.billingResult),
     purchaseHistoryRecordList: response.purchases
@@ -122,22 +125,33 @@ alternativeBillingOnlyReportingDetailsWrapperFromPlatform(
   PlatformAlternativeBillingOnlyReportingDetailsResponse response,
 ) {
   return AlternativeBillingOnlyReportingDetailsWrapper(
-    responseCode: billingResponseFromPlatform(
-      response.billingResult.responseCode,
-    ),
+    responseCode: billingResponseFromPlatform(response.billingResult.responseCode),
     debugMessage: response.billingResult.debugMessage,
     externalTransactionToken: response.externalTransactionToken,
   );
 }
 
+/// Converts [PlatformInAppMessageResponse] to its public API enum equivalent.
+InAppMessageResponse inAppMessageResponseFromPlatform(PlatformInAppMessageResponse responseCode) {
+  return switch (responseCode) {
+    PlatformInAppMessageResponse.noActionNeeded => InAppMessageResponse.noActionNeeded,
+    PlatformInAppMessageResponse.subscriptionStatusUpdated =>
+      InAppMessageResponse.subscriptionStatusUpdated,
+  };
+}
+
+/// Creates a [InAppMessageResultWrapper] from the Pigeon equivalent.
+InAppMessageResultWrapper inAppMessageResultWrapperFromPlatform(PlatformInAppMessageResult result) {
+  return InAppMessageResultWrapper(
+    responseCode: inAppMessageResponseFromPlatform(result.responseCode),
+    purchaseToken: result.purchaseToken,
+  );
+}
+
 /// Creates a [BillingConfigWrapper] from the Pigeon equivalent.
-BillingConfigWrapper billingConfigWrapperFromPlatform(
-  PlatformBillingConfigResponse response,
-) {
+BillingConfigWrapper billingConfigWrapperFromPlatform(PlatformBillingConfigResponse response) {
   return BillingConfigWrapper(
-    responseCode: billingResponseFromPlatform(
-      response.billingResult.responseCode,
-    ),
+    responseCode: billingResponseFromPlatform(response.billingResult.responseCode),
     debugMessage: response.billingResult.debugMessage,
     countryCode: response.countryCode,
   );
@@ -160,9 +174,7 @@ PlatformProductType platformProductTypeFromWrapper(ProductType type) {
 }
 
 /// Creates a [PricingPhaseWrapper] from its Pigeon equivalent.
-PricingPhaseWrapper pricingPhaseWrapperFromPlatform(
-  PlatformPricingPhase phase,
-) {
+PricingPhaseWrapper pricingPhaseWrapperFromPlatform(PlatformPricingPhase phase) {
   return PricingPhaseWrapper(
     billingCycleCount: phase.billingCycleCount,
     billingPeriod: phase.billingPeriod,
@@ -197,9 +209,7 @@ PurchaseWrapper purchaseWrapperFromPlatform(PlatformPurchase purchase) {
     developerPayload: purchase.developerPayload,
     obfuscatedAccountId: purchase.accountIdentifiers?.obfuscatedAccountId,
     obfuscatedProfileId: purchase.accountIdentifiers?.obfuscatedProfileId,
-    pendingPurchaseUpdate: pendingPurchaseUpdateFromPlatform(
-      purchase.pendingPurchaseUpdate,
-    ),
+    pendingPurchaseUpdate: pendingPurchaseUpdateFromPlatform(purchase.pendingPurchaseUpdate),
   );
 }
 
@@ -218,9 +228,7 @@ PendingPurchaseUpdateWrapper? pendingPurchaseUpdateFromPlatform(
 }
 
 /// Creates a [PurchaseStateWrapper] from the Pigeon equivalent.
-PurchaseStateWrapper purchaseStateWrapperFromPlatform(
-  PlatformPurchaseState state,
-) {
+PurchaseStateWrapper purchaseStateWrapperFromPlatform(PlatformPurchaseState state) {
   return switch (state) {
     PlatformPurchaseState.unspecified => PurchaseStateWrapper.unspecified_state,
     PlatformPurchaseState.purchased => PurchaseStateWrapper.purchased,
@@ -241,8 +249,7 @@ PurchaseStatus purchaseStatusFromWrapper(PurchaseStateWrapper purchaseState) {
 RecurrenceMode recurrenceModeFromPlatform(PlatformRecurrenceMode mode) {
   return switch (mode) {
     PlatformRecurrenceMode.finiteRecurring => RecurrenceMode.finiteRecurring,
-    PlatformRecurrenceMode.infiniteRecurring =>
-      RecurrenceMode.infiniteRecurring,
+    PlatformRecurrenceMode.infiniteRecurring => RecurrenceMode.infiniteRecurring,
     PlatformRecurrenceMode.nonRecurring => RecurrenceMode.nonRecurring,
   };
 }
@@ -256,25 +263,17 @@ SubscriptionOfferDetailsWrapper subscriptionOfferDetailsWrapperFromPlatform(
     offerId: offer.offerId,
     offerTags: offer.offerTags,
     offerIdToken: offer.offerToken,
-    pricingPhases: offer.pricingPhases
-        .map(pricingPhaseWrapperFromPlatform)
-        .toList(),
-    installmentPlanDetails: installmentPlanDetailsFromPlatform(
-      offer.installmentPlanDetails,
-    ),
+    pricingPhases: offer.pricingPhases.map(pricingPhaseWrapperFromPlatform).toList(),
+    installmentPlanDetails: installmentPlanDetailsFromPlatform(offer.installmentPlanDetails),
   );
 }
 
 /// Creates a [UserChoiceDetailsWrapper] from the Pigeon equivalent.
-UserChoiceDetailsWrapper userChoiceDetailsFromPlatform(
-  PlatformUserChoiceDetails details,
-) {
+UserChoiceDetailsWrapper userChoiceDetailsFromPlatform(PlatformUserChoiceDetails details) {
   return UserChoiceDetailsWrapper(
     originalExternalTransactionId: details.originalExternalTransactionId ?? '',
     externalTransactionToken: details.externalTransactionToken,
-    products: details.products
-        .map(userChoiceDetailsProductFromPlatform)
-        .toList(),
+    products: details.products.map(userChoiceDetailsProductFromPlatform).toList(),
   );
 }
 
@@ -299,8 +298,7 @@ InstallmentPlanDetailsWrapper? installmentPlanDetailsFromPlatform(
 
   return InstallmentPlanDetailsWrapper(
     commitmentPaymentsCount: details.commitmentPaymentsCount,
-    subsequentCommitmentPaymentsCount:
-        details.subsequentCommitmentPaymentsCount,
+    subsequentCommitmentPaymentsCount: details.subsequentCommitmentPaymentsCount,
   );
 }
 
@@ -308,101 +306,71 @@ InstallmentPlanDetailsWrapper? installmentPlanDetailsFromPlatform(
 PlatformPendingPurchasesParams pendingPurchasesParamsFromWrapper(
   PendingPurchasesParamsWrapper params,
 ) {
-  return PlatformPendingPurchasesParams(
-    enablePrepaidPlans: params.enablePrepaidPlans,
-  );
+  return PlatformPendingPurchasesParams(enablePrepaidPlans: params.enablePrepaidPlans);
 }
 
 /// Converts [PlatformBillingResponse] to its public API enum equivalent.
-BillingResponse billingResponseFromPlatform(
-  PlatformBillingResponse responseCode,
-) {
+BillingResponse billingResponseFromPlatform(PlatformBillingResponse responseCode) {
   return switch (responseCode) {
     PlatformBillingResponse.serviceTimeout => BillingResponse.serviceTimeout,
-    PlatformBillingResponse.featureNotSupported =>
-      BillingResponse.featureNotSupported,
-    PlatformBillingResponse.serviceDisconnected =>
-      BillingResponse.serviceDisconnected,
+    PlatformBillingResponse.featureNotSupported => BillingResponse.featureNotSupported,
+    PlatformBillingResponse.serviceDisconnected => BillingResponse.serviceDisconnected,
     PlatformBillingResponse.ok => BillingResponse.ok,
     PlatformBillingResponse.userCanceled => BillingResponse.userCanceled,
-    PlatformBillingResponse.serviceUnavailable =>
-      BillingResponse.serviceUnavailable,
-    PlatformBillingResponse.billingUnavailable =>
-      BillingResponse.billingUnavailable,
+    PlatformBillingResponse.serviceUnavailable => BillingResponse.serviceUnavailable,
+    PlatformBillingResponse.billingUnavailable => BillingResponse.billingUnavailable,
     PlatformBillingResponse.itemUnavailable => BillingResponse.itemUnavailable,
     PlatformBillingResponse.developerError => BillingResponse.developerError,
     PlatformBillingResponse.error => BillingResponse.error,
-    PlatformBillingResponse.itemAlreadyOwned =>
-      BillingResponse.itemAlreadyOwned,
+    PlatformBillingResponse.itemAlreadyOwned => BillingResponse.itemAlreadyOwned,
     PlatformBillingResponse.itemNotOwned => BillingResponse.itemNotOwned,
     PlatformBillingResponse.networkError => BillingResponse.networkError,
   };
 }
 
 /// Converts a [BillingResponse] to its Pigeon equivalent.
-PlatformBillingResponse billingResponseFromWrapper(
-  BillingResponse responseCode,
-) {
+PlatformBillingResponse billingResponseFromWrapper(BillingResponse responseCode) {
   return switch (responseCode) {
     BillingResponse.serviceTimeout => PlatformBillingResponse.serviceTimeout,
-    BillingResponse.featureNotSupported =>
-      PlatformBillingResponse.featureNotSupported,
-    BillingResponse.serviceDisconnected =>
-      PlatformBillingResponse.serviceDisconnected,
+    BillingResponse.featureNotSupported => PlatformBillingResponse.featureNotSupported,
+    BillingResponse.serviceDisconnected => PlatformBillingResponse.serviceDisconnected,
     BillingResponse.ok => PlatformBillingResponse.ok,
     BillingResponse.userCanceled => PlatformBillingResponse.userCanceled,
-    BillingResponse.serviceUnavailable =>
-      PlatformBillingResponse.serviceUnavailable,
-    BillingResponse.billingUnavailable =>
-      PlatformBillingResponse.billingUnavailable,
+    BillingResponse.serviceUnavailable => PlatformBillingResponse.serviceUnavailable,
+    BillingResponse.billingUnavailable => PlatformBillingResponse.billingUnavailable,
     BillingResponse.itemUnavailable => PlatformBillingResponse.itemUnavailable,
     BillingResponse.developerError => PlatformBillingResponse.developerError,
     BillingResponse.error => PlatformBillingResponse.error,
-    BillingResponse.itemAlreadyOwned =>
-      PlatformBillingResponse.itemAlreadyOwned,
+    BillingResponse.itemAlreadyOwned => PlatformBillingResponse.itemAlreadyOwned,
     BillingResponse.itemNotOwned => PlatformBillingResponse.itemNotOwned,
     BillingResponse.networkError => PlatformBillingResponse.networkError,
   };
 }
 
 /// Converts [ReplacementMode] enum to its Pigeon equivalent.
-PlatformReplacementMode replacementModeFromWrapper(
-  ReplacementMode replacementMode,
-) {
+PlatformReplacementMode replacementModeFromWrapper(ReplacementMode replacementMode) {
   return switch (replacementMode) {
-    ReplacementMode.unknownReplacementMode =>
-      PlatformReplacementMode.unknownReplacementMode,
-    ReplacementMode.withTimeProration =>
-      PlatformReplacementMode.withTimeProration,
-    ReplacementMode.chargeProratedPrice =>
-      PlatformReplacementMode.chargeProratedPrice,
-    ReplacementMode.withoutProration =>
-      PlatformReplacementMode.withoutProration,
+    ReplacementMode.unknownReplacementMode => PlatformReplacementMode.unknownReplacementMode,
+    ReplacementMode.withTimeProration => PlatformReplacementMode.withTimeProration,
+    ReplacementMode.chargeProratedPrice => PlatformReplacementMode.chargeProratedPrice,
+    ReplacementMode.withoutProration => PlatformReplacementMode.withoutProration,
     ReplacementMode.deferred => PlatformReplacementMode.deferred,
     ReplacementMode.chargeFullPrice => PlatformReplacementMode.chargeFullPrice,
   };
 }
 
 /// Converts [BillingClientFeature] enum to its Pigeon equivalent.
-PlatformBillingClientFeature billingClientFeatureFromWrapper(
-  BillingClientFeature feature,
-) {
+PlatformBillingClientFeature billingClientFeatureFromWrapper(BillingClientFeature feature) {
   return switch (feature) {
     BillingClientFeature.alternativeBillingOnly =>
       PlatformBillingClientFeature.alternativeBillingOnly,
     BillingClientFeature.priceChangeConfirmation =>
       PlatformBillingClientFeature.priceChangeConfirmation,
-    BillingClientFeature.productDetails =>
-      PlatformBillingClientFeature.productDetails,
-    BillingClientFeature.subscriptions =>
-      PlatformBillingClientFeature.subscriptions,
-    BillingClientFeature.subscriptionsUpdate =>
-      PlatformBillingClientFeature.subscriptionsUpdate,
-    BillingClientFeature.billingConfig =>
-      PlatformBillingClientFeature.billingConfig,
-    BillingClientFeature.externalOffer =>
-      PlatformBillingClientFeature.externalOffer,
-    BillingClientFeature.inAppMessaging =>
-      PlatformBillingClientFeature.inAppMessaging,
+    BillingClientFeature.productDetails => PlatformBillingClientFeature.productDetails,
+    BillingClientFeature.subscriptions => PlatformBillingClientFeature.subscriptions,
+    BillingClientFeature.subscriptionsUpdate => PlatformBillingClientFeature.subscriptionsUpdate,
+    BillingClientFeature.billingConfig => PlatformBillingClientFeature.billingConfig,
+    BillingClientFeature.externalOffer => PlatformBillingClientFeature.externalOffer,
+    BillingClientFeature.inAppMessaging => PlatformBillingClientFeature.inAppMessaging,
   };
 }

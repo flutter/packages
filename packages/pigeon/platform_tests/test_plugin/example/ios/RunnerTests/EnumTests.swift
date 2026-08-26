@@ -44,17 +44,22 @@ struct EnumTests {
     let binaryMessenger = EchoBinaryMessenger(codec: EnumPigeonCodec.shared)
     let api = EnumApi2Flutter(binaryMessenger: binaryMessenger)
 
-    await confirmation { confirmed in
-      api.echo(data: data) { result in
-        switch result {
-        case .success(let res):
-          #expect(res.state == data.state)
-          confirmed()
-        case .failure(let error):
-          Issue.record("Error: \(error) from data \(data)")
-        }
-      }
-    }
+    let res = try await api.echo(data: data)
+    #expect(res.state == data.state)
+  }
+
+  // Verifies that generated enums conform to `CaseIterable` and that
+  // `allCases` returns every member in declaration order with the
+  // expected raw values.
+  @Test
+  func enumIsCaseIterable() {
+    let allCases = AnEnum.allCases
+    #expect(allCases == [.one, .two, .three, .fortyTwo, .fourHundredTwentyTwo])
+    #expect(allCases.count == 5)
+    #expect(allCases.map { $0.rawValue } == [0, 1, 2, 3, 4])
+
+    // Single-member enums should also conform and report a single case.
+    #expect(AnotherEnum.allCases == [.justInCase])
   }
 
 }

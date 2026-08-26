@@ -7,6 +7,7 @@ package io.flutter.plugins.googlemaps;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
+import com.google.android.gms.maps.MapsApiSettings;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -36,6 +37,8 @@ public class GoogleMapsPlugin implements FlutterPlugin, ActivityAware {
             VIEW_TYPE,
             new GoogleMapFactory(
                 binding.getBinaryMessenger(), binding.getApplicationContext(), () -> lifecycle));
+    MapsApiSettings.addInternalUsageAttributionId(
+        binding.getApplicationContext(), "gmp_flutter_googlemapsflutter_android");
   }
 
   @Override

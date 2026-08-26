@@ -15,8 +15,7 @@ import 'enum_converter_utils.dart';
 import 'interactive_media_ads.g.dart' as ima;
 
 /// Android implementation of [PlatformAdsLoaderCreationParams].
-final class AndroidAdsLoaderCreationParams
-    extends PlatformAdsLoaderCreationParams {
+final class AndroidAdsLoaderCreationParams extends PlatformAdsLoaderCreationParams {
   /// Constructs a [AndroidAdsLoaderCreationParams].
   const AndroidAdsLoaderCreationParams({
     required super.settings,
@@ -45,8 +44,7 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
   AndroidAdsLoader(super.params)
     : assert(params.container is AndroidAdDisplayContainer),
       assert(
-        (params.container as AndroidAdDisplayContainer).adDisplayContainer !=
-            null,
+        (params.container as AndroidAdDisplayContainer).adDisplayContainer != null,
         'Ensure the AdDisplayContainer has been added to the Widget tree before creating an AdsLoader.',
       ),
       super.implementation() {
@@ -59,18 +57,14 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
   late final AndroidAdsLoaderCreationParams _androidParams =
       params is AndroidAdsLoaderCreationParams
       ? params as AndroidAdsLoaderCreationParams
-      : AndroidAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(
-          params,
-        );
+      : AndroidAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(params);
 
   @override
   Future<void> contentComplete() async {
     final Set<ima.VideoAdPlayerCallback> callbacks =
         (params.container as AndroidAdDisplayContainer).videoAdPlayerCallbacks;
     await Future.wait(
-      callbacks.map(
-        (ima.VideoAdPlayerCallback callback) => callback.onContentComplete(),
-      ),
+      callbacks.map((ima.VideoAdPlayerCallback callback) => callback.onContentComplete()),
     );
   }
 
@@ -99,21 +93,16 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
         androidRequest.setContentKeywords(contentKeywords),
       if (request.contentTitle case final String contentTitle)
         androidRequest.setContentTitle(contentTitle),
-      if (request.liveStreamPrefetchMaxWaitTime
-          case final Duration liveStreamPrefetchMaxWaitTime)
+      if (request.liveStreamPrefetchMaxWaitTime case final Duration liveStreamPrefetchMaxWaitTime)
         androidRequest.setLiveStreamPrefetchSeconds(
-          liveStreamPrefetchMaxWaitTime.inMilliseconds /
-              Duration.millisecondsPerSecond,
+          liveStreamPrefetchMaxWaitTime.inMilliseconds / Duration.millisecondsPerSecond,
         ),
       if (request.vastLoadTimeout case final Duration vastLoadTimeout)
-        androidRequest.setVastLoadTimeout(
-          vastLoadTimeout.inMilliseconds.toDouble(),
-        ),
+        androidRequest.setVastLoadTimeout(vastLoadTimeout.inMilliseconds.toDouble()),
       if (request.contentProgressProvider
           case final PlatformContentProgressProvider contentProgressProvider)
         androidRequest.setContentProgressProvider(
-          (contentProgressProvider as AndroidContentProgressProvider)
-              .progressProvider,
+          (contentProgressProvider as AndroidContentProgressProvider).progressProvider,
         ),
       adsLoader.requestAds(androidRequest),
     ]);
@@ -138,10 +127,7 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
   // This value is created in a static method because the callback methods for
   // any wrapped classes must not reference the encapsulating object. This is to
   // prevent a circular reference that prevents garbage collection.
-  static void _addListeners(
-    WeakReference<AndroidAdsLoader> weakThis,
-    ima.AdsLoader adsLoader,
-  ) {
+  static void _addListeners(WeakReference<AndroidAdsLoader> weakThis, ima.AdsLoader adsLoader) {
     adsLoader
       ..addAdsLoadedListener(
         ima.AdsLoadedListener(

@@ -21,7 +21,7 @@ void main() {
   group('TreeRowBuilderDelegate', () {
     test('exposes addAutomaticKeepAlives from super class', () {
       final delegate = TreeRowBuilderDelegate(
-        nodeBuilder: (_, __) => const SizedBox(),
+        nodeBuilder: (_, _) => const SizedBox(),
         rowBuilder: (_) => span,
         rowCount: 6,
         addAutomaticKeepAlives: false,
@@ -34,7 +34,7 @@ void main() {
       expect(
         () {
           delegate = TreeRowBuilderDelegate(
-            nodeBuilder: (_, __) => const SizedBox(),
+            nodeBuilder: (_, _) => const SizedBox(),
             rowBuilder: (_) => span,
             rowCount: -1, // asserts
           );
@@ -53,7 +53,7 @@ void main() {
 
     test('sets max y index (not x) of super class', () {
       final delegate = TreeRowBuilderDelegate(
-        nodeBuilder: (_, __) => const SizedBox(),
+        nodeBuilder: (_, _) => const SizedBox(),
         rowBuilder: (_) => span,
         rowCount: 6,
       );
@@ -66,7 +66,7 @@ void main() {
       TreeRowBuilderDelegate oldDelegate;
 
       final delegate = TreeRowBuilderDelegate(
-        nodeBuilder: (_, __) => const SizedBox(),
+        nodeBuilder: (_, _) => const SizedBox(),
         rowBuilder: (_) => span,
         rowCount: 6,
       );

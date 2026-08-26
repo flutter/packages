@@ -16,8 +16,7 @@ import 'route.dart';
 import 'state.dart';
 
 /// GoRouter implementation of [RouterDelegate].
-class GoRouterDelegate extends RouterDelegate<RouteMatchList>
-    with ChangeNotifier {
+class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifier {
   /// Constructor for GoRouter's implementation of the RouterDelegate base
   /// class.
   GoRouterDelegate({
@@ -71,6 +70,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         currentConfiguration.last.buildState(
           _configuration,
           currentConfiguration,
+          metadata: currentConfiguration.topRouteMetadata,
         ),
       ));
     }
@@ -122,12 +122,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
     RouteMatchBase walker = currentConfiguration.matches.last;
     while (walker is ShellRouteMatch) {
-      final NavigatorState potentialCandidate =
-          walker.navigatorKey.currentState!;
+      final NavigatorState potentialCandidate = walker.navigatorKey.currentState!;
 
-      final ModalRoute<dynamic>? modalRoute = ModalRoute.of(
-        potentialCandidate.context,
-      );
+      final ModalRoute<dynamic>? modalRoute = ModalRoute.of(potentialCandidate.context);
       if (modalRoute == null || !modalRoute.isCurrent) {
         // Stop if there is a pageless route on top of the shell route.
         break;
@@ -138,17 +135,19 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     return states.reversed;
   }
 
-  bool _handlePopPageWithRouteMatch(
-    Route<Object?> route,
-    Object? result,
-    RouteMatchBase match,
-  ) {
+  bool _handlePopPageWithRouteMatch(Route<Object?> route, Object? result, RouteMatchBase match) {
     if (route.willHandlePopInternally) {
       final bool popped = route.didPop(result);
       assert(!popped);
       return popped;
     }
-    final RouteBase routeBase = match.route;
+
+    var leafMatch = match;
+    while (leafMatch is ShellRouteMatch) {
+      leafMatch = leafMatch.matches.last;
+    }
+
+    final RouteBase routeBase = leafMatch.route;
     if (routeBase is! GoRoute || routeBase.onExit == null) {
       route.didPop(result);
       _completeRouteMatch(result, match);
@@ -161,7 +160,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     scheduleMicrotask(() async {
       final bool onExitResult = await routeBase.onExit!(
         navigatorKey.currentContext!,
-        match.buildState(_configuration, currentConfiguration),
+        leafMatch.buildState(
+          _configuration,
+          currentConfiguration,
+          metadata: currentConfiguration.metadataFor(leafMatch),
+        ),
       );
       if (onExitResult) {
         _completeRouteMatch(result, match);
@@ -201,6 +204,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   GoRouterState get state => currentConfiguration.last.buildState(
     _configuration,
     currentConfiguration,
+    metadata: currentConfiguration.topRouteMetadata,
   );
 
   /// For use by the Router architecture as part of the RouterDelegate.
@@ -245,14 +249,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         return true;
       });
 
-      final int compareUntil = math.min(
-        currentGoRouteMatches.length,
-        newGoRouteMatches.length,
-      );
+      final int compareUntil = math.min(currentGoRouteMatches.length, newGoRouteMatches.length);
       var indexOfFirstDiff = 0;
       for (; indexOfFirstDiff < compareUntil; indexOfFirstDiff++) {
-        if (currentGoRouteMatches[indexOfFirstDiff] !=
-            newGoRouteMatches[indexOfFirstDiff]) {
+        if (currentGoRouteMatches[indexOfFirstDiff] != newGoRouteMatches[indexOfFirstDiff]) {
           break;
         }
       }
@@ -297,18 +297,18 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
     Future<bool> handleOnExitResult(bool exit) {
       if (exit) {
-        return _callOnExitStartsAt(
-          index - 1,
-          context: context,
-          matches: matches,
-        );
+        return _callOnExitStartsAt(index - 1, context: context, matches: matches);
       }
       return SynchronousFuture<bool>(false);
     }
 
     final FutureOr<bool> exitFuture = goRoute.onExit!(
       context,
-      match.buildState(_configuration, currentConfiguration),
+      match.buildState(
+        _configuration,
+        currentConfiguration,
+        metadata: currentConfiguration.metadataFor(match),
+      ),
     );
     if (exitFuture is bool) {
       return handleOnExitResult(exitFuture);

@@ -44,7 +44,6 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.WeightedLatLng;
 import io.flutter.FlutterInjector;
-import io.flutter.plugins.googlemaps.Messages.FlutterError;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,18 +53,18 @@ import java.util.function.Consumer;
 /** Conversions between JSON-like values and GoogleMaps data types. */
 class Convert {
   private static BitmapDescriptor toBitmapDescriptor(
-      Messages.PlatformBitmap platformBitmap, AssetManager assetManager, float density) {
+      PlatformBitmap platformBitmap, AssetManager assetManager, float density) {
     return toBitmapDescriptor(
         platformBitmap, assetManager, density, new BitmapDescriptorFactoryWrapper());
   }
 
   private static BitmapDescriptor toBitmapDescriptor(
-      Messages.PlatformBitmap platformBitmap,
+      PlatformBitmap platformBitmap,
       AssetManager assetManager,
       float density,
       BitmapDescriptorFactoryWrapper wrapper) {
     Object bitmap = platformBitmap.getBitmap();
-    if (bitmap instanceof Messages.PlatformBitmapDefaultMarker typedBitmap) {
+    if (bitmap instanceof PlatformBitmapDefaultMarker typedBitmap) {
       if (typedBitmap.getHue() == null) {
         return BitmapDescriptorFactory.defaultMarker();
       } else {
@@ -73,7 +72,7 @@ class Convert {
         return BitmapDescriptorFactory.defaultMarker(hue);
       }
     }
-    if (bitmap instanceof Messages.PlatformBitmapAsset typedBitmap) {
+    if (bitmap instanceof PlatformBitmapAsset typedBitmap) {
       final String assetPath = typedBitmap.getName();
       final String assetPackage = typedBitmap.getPkg();
       if (assetPackage == null) {
@@ -86,22 +85,22 @@ class Convert {
                 .getLookupKeyForAsset(assetPath, assetPackage));
       }
     }
-    if (bitmap instanceof Messages.PlatformBitmapAssetImage typedBitmap) {
+    if (bitmap instanceof PlatformBitmapAssetImage typedBitmap) {
       final String assetImagePath = typedBitmap.getName();
       return BitmapDescriptorFactory.fromAsset(
           FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(assetImagePath));
     }
-    if (bitmap instanceof Messages.PlatformBitmapBytes typedBitmap) {
+    if (bitmap instanceof PlatformBitmapBytes typedBitmap) {
       return getBitmapFromBytesLegacy(typedBitmap);
     }
-    if (bitmap instanceof Messages.PlatformBitmapAssetMap typedBitmap) {
+    if (bitmap instanceof PlatformBitmapAssetMap typedBitmap) {
       return getBitmapFromAsset(
           typedBitmap, assetManager, density, wrapper, new FlutterInjectorWrapper());
     }
-    if (bitmap instanceof Messages.PlatformBitmapBytesMap typedBitmap) {
+    if (bitmap instanceof PlatformBitmapBytesMap typedBitmap) {
       return getBitmapFromBytes(typedBitmap, density, wrapper);
     }
-    if (bitmap instanceof Messages.PlatformBitmapPinConfig pinConfigBitmap) {
+    if (bitmap instanceof PlatformBitmapPinConfig pinConfigBitmap) {
       return getBitmapFromPinConfigBuilder(pinConfigBitmap, assetManager, density, wrapper);
     }
     throw new IllegalArgumentException("PlatformBitmap did not contain a supported subtype.");
@@ -110,8 +109,7 @@ class Convert {
   // Used for deprecated fromBytes bitmap descriptor.
   // Can be removed after support for "fromBytes" bitmap descriptor type is
   // removed.
-  private static BitmapDescriptor getBitmapFromBytesLegacy(
-      Messages.PlatformBitmapBytes bitmapBytes) {
+  private static BitmapDescriptor getBitmapFromBytesLegacy(PlatformBitmapBytes bitmapBytes) {
     try {
       Bitmap bitmap = toBitmap(bitmapBytes.getByteData());
       return BitmapDescriptorFactory.fromBitmap(bitmap);
@@ -134,12 +132,12 @@ class Convert {
    */
   @VisibleForTesting
   public static BitmapDescriptor getBitmapFromBytes(
-      Messages.PlatformBitmapBytesMap bytesMap,
+      PlatformBitmapBytesMap bytesMap,
       float density,
       BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
     try {
       Bitmap bitmap = toBitmap(bytesMap.getByteData());
-      Messages.PlatformMapBitmapScaling scalingMode = bytesMap.getBitmapScaling();
+      PlatformMapBitmapScaling scalingMode = bytesMap.getBitmapScaling();
       switch (scalingMode) {
         case AUTO:
           final Double width = bytesMap.getWidth();
@@ -162,7 +160,7 @@ class Convert {
                 toScaledBitmap(bitmap, targetWidth, targetHeight));
           } else {
             // Scale image using given scale ratio
-            final float scale = density / bytesMap.getImagePixelRatio().floatValue();
+            final float scale = (float) (density / bytesMap.getImagePixelRatio());
             return bitmapDescriptorFactory.fromBitmap(toScaledBitmap(bitmap, scale));
           }
         case NONE:
@@ -175,7 +173,7 @@ class Convert {
   }
 
   public static BitmapDescriptor getBitmapFromPinConfigBuilder(
-      Messages.PlatformBitmapPinConfig pinConfigBitmap,
+      PlatformBitmapPinConfig pinConfigBitmap,
       AssetManager assetManager,
       float density,
       BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
@@ -191,7 +189,7 @@ class Convert {
 
   @VisibleForTesting
   public static PinConfig getPinConfigFromPlatformPinConfig(
-      Messages.PlatformBitmapPinConfig pinConfigBitmap,
+      PlatformBitmapPinConfig pinConfigBitmap,
       AssetManager assetManager,
       float density,
       BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
@@ -209,7 +207,7 @@ class Convert {
   }
 
   private static @Nullable PinConfig.Glyph buildPinGlyph(
-      Messages.PlatformBitmapPinConfig pinConfigBitmap,
+      PlatformBitmapPinConfig pinConfigBitmap,
       AssetManager assetManager,
       float density,
       BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
@@ -221,7 +219,7 @@ class Convert {
           : new PinConfig.Glyph(glyphText);
     }
 
-    final Messages.PlatformBitmap glyphBitmap = pinConfigBitmap.getGlyphBitmap();
+    final PlatformBitmap glyphBitmap = pinConfigBitmap.getGlyphBitmap();
     if (glyphBitmap != null) {
       return new PinConfig.Glyph(
           toBitmapDescriptor(glyphBitmap, assetManager, density, bitmapDescriptorFactory));
@@ -234,8 +232,8 @@ class Convert {
     return null;
   }
 
-  private static @Nullable Integer nullableColor(@Nullable Messages.PlatformColor color) {
-    return color == null ? null : color.getArgbValue().intValue();
+  private static @Nullable Integer nullableColor(@Nullable PlatformColor color) {
+    return color == null ? null : (int) color.getArgbValue();
   }
 
   private static <T> void applyIfNotNull(@Nullable T value, Consumer<T> setter) {
@@ -266,7 +264,7 @@ class Convert {
    */
   @VisibleForTesting
   public static BitmapDescriptor getBitmapFromAsset(
-      Messages.PlatformBitmapAssetMap assetMap,
+      PlatformBitmapAssetMap assetMap,
       AssetManager assetManager,
       float density,
       BitmapDescriptorFactoryWrapper bitmapDescriptorFactory,
@@ -274,7 +272,7 @@ class Convert {
     final String assetName = assetMap.getAssetName();
     final String assetKey = flutterInjector.getLookupKeyForAsset(assetName);
 
-    Messages.PlatformMapBitmapScaling scalingMode = assetMap.getBitmapScaling();
+    PlatformMapBitmapScaling scalingMode = assetMap.getBitmapScaling();
     switch (scalingMode) {
       case AUTO:
         final Double width = assetMap.getWidth();
@@ -299,7 +297,7 @@ class Convert {
                 toScaledBitmap(bitmap, targetWidth, targetHeight));
           } else {
             // Scale image using given scale.
-            final float scale = density / assetMap.getImagePixelRatio().floatValue();
+            final float scale = (float) (density / assetMap.getImagePixelRatio());
             return bitmapDescriptorFactory.fromBitmap(toScaledBitmap(bitmap, scale));
           }
         } catch (Exception e) {
@@ -313,47 +311,47 @@ class Convert {
   }
 
   static @NonNull CameraPosition cameraPositionFromPigeon(
-      @NonNull Messages.PlatformCameraPosition position) {
+      @NonNull PlatformCameraPosition position) {
     final CameraPosition.Builder builder = CameraPosition.builder();
-    builder.bearing(position.getBearing().floatValue());
+    builder.bearing((float) position.getBearing());
     builder.target(latLngFromPigeon(position.getTarget()));
-    builder.tilt(position.getTilt().floatValue());
-    builder.zoom(position.getZoom().floatValue());
+    builder.tilt((float) position.getTilt());
+    builder.zoom((float) position.getZoom());
     return builder.build();
   }
 
-  static CameraUpdate cameraUpdateFromPigeon(Messages.PlatformCameraUpdate update, float density) {
+  static CameraUpdate cameraUpdateFromPigeon(PlatformCameraUpdate update, float density) {
     Object cameraUpdate = update.getCameraUpdate();
-    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewCameraPosition newCameraPosition) {
+    if (cameraUpdate instanceof PlatformCameraUpdateNewCameraPosition newCameraPosition) {
       return CameraUpdateFactory.newCameraPosition(
           cameraPositionFromPigeon(newCameraPosition.getCameraPosition()));
     }
-    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLng newLatLng) {
+    if (cameraUpdate instanceof PlatformCameraUpdateNewLatLng newLatLng) {
       return CameraUpdateFactory.newLatLng(latLngFromPigeon(newLatLng.getLatLng()));
     }
-    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLngZoom newLatLngZoom) {
+    if (cameraUpdate instanceof PlatformCameraUpdateNewLatLngZoom newLatLngZoom) {
       return CameraUpdateFactory.newLatLngZoom(
-          latLngFromPigeon(newLatLngZoom.getLatLng()), newLatLngZoom.getZoom().floatValue());
+          latLngFromPigeon(newLatLngZoom.getLatLng()), (float) newLatLngZoom.getZoom());
     }
-    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLngBounds newLatLngBounds) {
+    if (cameraUpdate instanceof PlatformCameraUpdateNewLatLngBounds newLatLngBounds) {
       return CameraUpdateFactory.newLatLngBounds(
           latLngBoundsFromPigeon(newLatLngBounds.getBounds()),
           (int) (newLatLngBounds.getPadding() * density));
     }
-    if (cameraUpdate instanceof Messages.PlatformCameraUpdateScrollBy scrollBy) {
+    if (cameraUpdate instanceof PlatformCameraUpdateScrollBy scrollBy) {
       return CameraUpdateFactory.scrollBy(
-          scrollBy.getDx().floatValue() * density, scrollBy.getDy().floatValue() * density);
+          (float) scrollBy.getDx() * density, (float) scrollBy.getDy() * density);
     }
-    if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoomBy zoomBy) {
+    if (cameraUpdate instanceof PlatformCameraUpdateZoomBy zoomBy) {
       final Point focus = pointFromPigeon(zoomBy.getFocus(), density);
       return (focus != null)
-          ? CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue(), focus)
-          : CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue());
+          ? CameraUpdateFactory.zoomBy((float) zoomBy.getAmount(), focus)
+          : CameraUpdateFactory.zoomBy((float) zoomBy.getAmount());
     }
-    if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoomTo zoomTo) {
-      return CameraUpdateFactory.zoomTo(zoomTo.getZoom().floatValue());
+    if (cameraUpdate instanceof PlatformCameraUpdateZoomTo zoomTo) {
+      return CameraUpdateFactory.zoomTo((float) zoomTo.getZoom());
     }
-    if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoom zoom) {
+    if (cameraUpdate instanceof PlatformCameraUpdateZoom zoom) {
       return (zoom.getOut()) ? CameraUpdateFactory.zoomOut() : CameraUpdateFactory.zoomIn();
     }
     throw new IllegalArgumentException(
@@ -369,7 +367,7 @@ class Convert {
     return ((Number) o).intValue();
   }
 
-  static int toMapType(@NonNull Messages.PlatformMapType type) {
+  static int toMapType(@NonNull PlatformMapType type) {
     return switch (type) {
       case NONE -> MAP_TYPE_NONE;
       case NORMAL -> MAP_TYPE_NORMAL;
@@ -387,8 +385,7 @@ class Convert {
   // in Dart to actually request the platform default (which is what the server
   // is already doing in practice currently).
   @SuppressWarnings("deprecation")
-  static @Nullable MapsInitializer.Renderer toMapRendererType(
-      @Nullable Messages.PlatformRendererType type) {
+  static @Nullable MapsInitializer.Renderer toMapRendererType(@Nullable PlatformRendererType type) {
     if (type == null) {
       return null;
     }
@@ -398,42 +395,30 @@ class Convert {
     };
   }
 
-  static @NonNull Messages.PlatformCameraPosition cameraPositionToPigeon(
-      @NonNull CameraPosition position) {
-    return new Messages.PlatformCameraPosition.Builder()
-        .setBearing((double) position.bearing)
-        .setTarget(latLngToPigeon(position.target))
-        .setTilt((double) position.tilt)
-        .setZoom((double) position.zoom)
-        .build();
+  static @NonNull PlatformCameraPosition cameraPositionToPigeon(@NonNull CameraPosition position) {
+    return new PlatformCameraPosition(
+        position.bearing, latLngToPigeon(position.target), position.tilt, position.zoom);
   }
 
-  static Messages.PlatformLatLngBounds latLngBoundsToPigeon(LatLngBounds latLngBounds) {
-    return new Messages.PlatformLatLngBounds.Builder()
-        .setNortheast(latLngToPigeon(latLngBounds.northeast))
-        .setSouthwest(latLngToPigeon(latLngBounds.southwest))
-        .build();
+  static PlatformLatLngBounds latLngBoundsToPigeon(LatLngBounds latLngBounds) {
+    return new PlatformLatLngBounds(
+        latLngToPigeon(latLngBounds.northeast), latLngToPigeon(latLngBounds.southwest));
   }
 
-  static @NonNull LatLngBounds latLngBoundsFromPigeon(
-      @NonNull Messages.PlatformLatLngBounds bounds) {
+  static @NonNull LatLngBounds latLngBoundsFromPigeon(@NonNull PlatformLatLngBounds bounds) {
     return new LatLngBounds(
         latLngFromPigeon(bounds.getSouthwest()), latLngFromPigeon(bounds.getNortheast()));
   }
 
-  static Messages.PlatformLatLng latLngToPigeon(LatLng latLng) {
-    return new Messages.PlatformLatLng.Builder()
-        .setLatitude(latLng.latitude)
-        .setLongitude(latLng.longitude)
-        .build();
+  static PlatformLatLng latLngToPigeon(LatLng latLng) {
+    return new PlatformLatLng(latLng.latitude, latLng.longitude);
   }
 
-  static LatLng latLngFromPigeon(Messages.PlatformLatLng latLng) {
+  static LatLng latLngFromPigeon(PlatformLatLng latLng) {
     return new LatLng(latLng.getLatitude(), latLng.getLongitude());
   }
 
-  static Messages.PlatformCluster clusterToPigeon(
-      String clusterManagerId, Cluster<MarkerBuilder> cluster) {
+  static PlatformCluster clusterToPigeon(String clusterManagerId, Cluster<MarkerBuilder> cluster) {
     int clusterSize = cluster.getSize();
     String[] markerIds = new String[clusterSize];
     MarkerBuilder[] markerBuilders = cluster.getItems().toArray(new MarkerBuilder[clusterSize]);
@@ -445,12 +430,11 @@ class Convert {
       markerIds[i] = markerBuilder.markerId();
     }
 
-    return new Messages.PlatformCluster.Builder()
-        .setClusterManagerId(clusterManagerId)
-        .setPosition(latLngToPigeon(cluster.getPosition()))
-        .setBounds(latLngBoundsToPigeon(latLngBoundsBuilder.build()))
-        .setMarkerIds(Arrays.asList(markerIds))
-        .build();
+    return new PlatformCluster(
+        clusterManagerId,
+        latLngToPigeon(cluster.getPosition()),
+        latLngBoundsToPigeon(latLngBoundsBuilder.build()),
+        Arrays.asList(markerIds));
   }
 
   /**
@@ -459,25 +443,25 @@ class Convert {
    * @param weightedLatLng The Pigeon weighted lat/lng.
    * @return The list of WeightedLatLng.
    */
-  static WeightedLatLng weightedLatLngFromPigeon(Messages.PlatformWeightedLatLng weightedLatLng) {
+  static WeightedLatLng weightedLatLngFromPigeon(PlatformWeightedLatLng weightedLatLng) {
     return new WeightedLatLng(
         latLngFromPigeon(weightedLatLng.getPoint()), weightedLatLng.getWeight());
   }
 
-  static Point pointFromPigeon(Messages.PlatformPoint point) {
-    return new Point(point.getX().intValue(), point.getY().intValue());
+  static Point pointFromPigeon(PlatformPoint point) {
+    return new Point((int) point.getX(), (int) point.getY());
   }
 
   @Nullable
-  static Point pointFromPigeon(@Nullable Messages.PlatformDoublePair point, float density) {
+  static Point pointFromPigeon(@Nullable PlatformDoublePair point, float density) {
     if (point == null) {
       return null;
     }
     return new Point((int) (point.getX() * density), (int) (point.getY() * density));
   }
 
-  static Messages.PlatformPoint pointToPigeon(Point point) {
-    return new Messages.PlatformPoint.Builder().setX((long) point.x).setY((long) point.y).build();
+  static PlatformPoint pointToPigeon(Point point) {
+    return new PlatformPoint(point.x, point.y);
   }
 
   private static Bitmap toBitmap(byte[] bmpData) {
@@ -509,10 +493,10 @@ class Convert {
   }
 
   static void interpretMapConfiguration(
-      @NonNull Messages.PlatformMapConfiguration config, @NonNull GoogleMapOptionsSink sink) {
-    final Messages.PlatformCameraTargetBounds cameraTargetBounds = config.getCameraTargetBounds();
+      @NonNull PlatformMapConfiguration config, @NonNull GoogleMapOptionsSink sink) {
+    final PlatformCameraTargetBounds cameraTargetBounds = config.getCameraTargetBounds();
     if (cameraTargetBounds != null) {
-      final @Nullable Messages.PlatformLatLngBounds bounds = cameraTargetBounds.getBounds();
+      final @Nullable PlatformLatLngBounds bounds = cameraTargetBounds.getBounds();
       sink.setCameraTargetBounds(bounds == null ? null : latLngBoundsFromPigeon(bounds));
     }
     final Boolean compassEnabled = config.getCompassEnabled();
@@ -523,23 +507,23 @@ class Convert {
     if (mapToolbarEnabled != null) {
       sink.setMapToolbarEnabled(mapToolbarEnabled);
     }
-    final Messages.PlatformMapType mapType = config.getMapType();
+    final PlatformMapType mapType = config.getMapType();
     if (mapType != null) {
       sink.setMapType(toMapType(mapType));
     }
-    final Messages.PlatformZoomRange minMaxZoomPreference = config.getMinMaxZoomPreference();
+    final PlatformZoomRange minMaxZoomPreference = config.getMinMaxZoomPreference();
     if (minMaxZoomPreference != null) {
       sink.setMinMaxZoomPreference(
           nullableDoubleToFloat(minMaxZoomPreference.getMin()),
           nullableDoubleToFloat(minMaxZoomPreference.getMax()));
     }
-    final Messages.PlatformEdgeInsets padding = config.getPadding();
+    final PlatformEdgeInsets padding = config.getPadding();
     if (padding != null) {
       sink.setPadding(
-          padding.getTop().floatValue(),
-          padding.getLeft().floatValue(),
-          padding.getBottom().floatValue(),
-          padding.getRight().floatValue());
+          (float) padding.getTop(),
+          (float) padding.getLeft(),
+          (float) padding.getBottom(),
+          (float) padding.getRight());
     }
     final Boolean rotateGesturesEnabled = config.getRotateGesturesEnabled();
     if (rotateGesturesEnabled != null) {
@@ -597,42 +581,41 @@ class Convert {
 
   /** Set the options in the given object to marker options sink. */
   static void interpretMarkerOptions(
-      Messages.PlatformMarker marker,
+      PlatformMarker marker,
       MarkerOptionsSink sink,
       AssetManager assetManager,
       float density,
       BitmapDescriptorFactoryWrapper wrapper) {
-    sink.setAlpha(marker.getAlpha().floatValue());
-    sink.setAnchor(marker.getAnchor().getX().floatValue(), marker.getAnchor().getY().floatValue());
+    sink.setAlpha((float) marker.getAlpha());
+    sink.setAnchor((float) marker.getAnchor().getX(), (float) marker.getAnchor().getY());
     sink.setConsumeTapEvents(marker.getConsumeTapEvents());
     sink.setDraggable(marker.getDraggable());
     sink.setFlat(marker.getFlat());
     sink.setIcon(toBitmapDescriptor(marker.getIcon(), assetManager, density, wrapper));
     interpretInfoWindowOptions(sink, marker.getInfoWindow());
     sink.setPosition(latLngFromPigeon(marker.getPosition()));
-    sink.setRotation(marker.getRotation().floatValue());
+    sink.setRotation((float) marker.getRotation());
     sink.setVisible(marker.getVisible());
-    sink.setZIndex(marker.getZIndex().floatValue());
+    sink.setZIndex((float) marker.getZIndex());
     sink.setCollisionBehavior(collisionBehaviorFromPigeon(marker.getCollisionBehavior()));
   }
 
   private static void interpretInfoWindowOptions(
-      MarkerOptionsSink sink, Messages.PlatformInfoWindow infoWindow) {
+      MarkerOptionsSink sink, PlatformInfoWindow infoWindow) {
     String title = infoWindow.getTitle();
     if (title != null) {
       sink.setInfoWindowText(title, infoWindow.getSnippet());
     }
-    Messages.PlatformDoublePair infoWindowAnchor = infoWindow.getAnchor();
-    sink.setInfoWindowAnchor(
-        infoWindowAnchor.getX().floatValue(), infoWindowAnchor.getY().floatValue());
+    PlatformDoublePair infoWindowAnchor = infoWindow.getAnchor();
+    sink.setInfoWindowAnchor((float) infoWindowAnchor.getX(), (float) infoWindowAnchor.getY());
   }
 
-  static String interpretPolygonOptions(Messages.PlatformPolygon polygon, PolygonOptionsSink sink) {
+  static String interpretPolygonOptions(PlatformPolygon polygon, PolygonOptionsSink sink) {
     sink.setConsumeTapEvents(polygon.getConsumesTapEvents());
     sink.setGeodesic(polygon.getGeodesic());
     sink.setVisible(polygon.getVisible());
-    sink.setFillColor(polygon.getFillColor().getArgbValue().intValue());
-    sink.setStrokeColor(polygon.getStrokeColor().getArgbValue().intValue());
+    sink.setFillColor((int) polygon.getFillColor().getArgbValue());
+    sink.setStrokeColor((int) polygon.getStrokeColor().getArgbValue());
     sink.setStrokeWidth(polygon.getStrokeWidth());
     sink.setZIndex(polygon.getZIndex());
     sink.setPoints(pointsFromPigeon(polygon.getPoints()));
@@ -640,7 +623,7 @@ class Convert {
     return polygon.getPolygonId();
   }
 
-  static int jointTypeFromPigeon(Messages.PlatformJointType jointType) {
+  static int jointTypeFromPigeon(PlatformJointType jointType) {
     return switch (jointType) {
       case MITERED -> JointType.DEFAULT;
       case BEVEL -> JointType.BEVEL;
@@ -656,7 +639,7 @@ class Convert {
    * @return The integer constant corresponding to the collision behavior.
    */
   static int collisionBehaviorFromPigeon(
-      @NonNull Messages.PlatformMarkerCollisionBehavior collisionBehavior) {
+      @NonNull PlatformMarkerCollisionBehavior collisionBehavior) {
     return switch (collisionBehavior) {
       case REQUIRED_DISPLAY -> AdvancedMarkerOptions.CollisionBehavior.REQUIRED;
       case OPTIONAL_AND_HIDES_LOWER_PRIORITY ->
@@ -667,12 +650,12 @@ class Convert {
   }
 
   static String interpretPolylineOptions(
-      Messages.PlatformPolyline polyline,
+      PlatformPolyline polyline,
       PolylineOptionsSink sink,
       AssetManager assetManager,
       float density) {
     sink.setConsumeTapEvents(polyline.getConsumesTapEvents());
-    sink.setColor(polyline.getColor().getArgbValue().intValue());
+    sink.setColor((int) polyline.getColor().getArgbValue());
     sink.setEndCap(capFromPigeon(polyline.getEndCap(), assetManager, density));
     sink.setStartCap(capFromPigeon(polyline.getStartCap(), assetManager, density));
     sink.setGeodesic(polyline.getGeodesic());
@@ -685,12 +668,12 @@ class Convert {
     return polyline.getPolylineId();
   }
 
-  static String interpretCircleOptions(Messages.PlatformCircle circle, CircleOptionsSink sink) {
+  static String interpretCircleOptions(PlatformCircle circle, CircleOptionsSink sink) {
     sink.setConsumeTapEvents(circle.getConsumeTapEvents());
-    sink.setFillColor(circle.getFillColor().getArgbValue().intValue());
-    sink.setStrokeColor(circle.getStrokeColor().getArgbValue().intValue());
+    sink.setFillColor((int) circle.getFillColor().getArgbValue());
+    sink.setStrokeColor((int) circle.getStrokeColor().getArgbValue());
     sink.setStrokeWidth(circle.getStrokeWidth());
-    sink.setZIndex(circle.getZIndex().floatValue());
+    sink.setZIndex((float) circle.getZIndex());
     sink.setCenter(latLngFromPigeon(circle.getCenter()));
     sink.setRadius(circle.getRadius());
     sink.setVisible(circle.getVisible());
@@ -705,9 +688,9 @@ class Convert {
    * @return the heatmapId.
    * @throws IllegalArgumentException if heatmapId is null.
    */
-  static String interpretHeatmapOptions(Messages.PlatformHeatmap heatmap, HeatmapOptionsSink sink) {
+  static String interpretHeatmapOptions(PlatformHeatmap heatmap, HeatmapOptionsSink sink) {
     sink.setWeightedData(weightedDataFromPigeon(heatmap.getData()));
-    final Messages.PlatformHeatmapGradient gradient = heatmap.getGradient();
+    final PlatformHeatmapGradient gradient = heatmap.getGradient();
     if (gradient != null) {
       sink.setGradient(gradientFromPigeon(gradient));
     }
@@ -716,14 +699,14 @@ class Convert {
       sink.setMaxIntensity(maxIntensity);
     }
     sink.setOpacity(heatmap.getOpacity());
-    sink.setRadius(heatmap.getRadius().intValue());
+    sink.setRadius((int) heatmap.getRadius());
     return heatmap.getHeatmapId();
   }
 
-  static List<LatLng> pointsFromPigeon(List<Messages.PlatformLatLng> data) {
+  static List<LatLng> pointsFromPigeon(List<PlatformLatLng> data) {
     final List<LatLng> points = new ArrayList<>(data.size());
 
-    for (Messages.PlatformLatLng rawPoint : data) {
+    for (PlatformLatLng rawPoint : data) {
       points.add(new LatLng(rawPoint.getLatitude(), rawPoint.getLongitude()));
     }
     return points;
@@ -736,10 +719,10 @@ class Convert {
    * @return a list of WeightedLatLng objects.
    */
   @VisibleForTesting
-  static List<WeightedLatLng> weightedDataFromPigeon(List<Messages.PlatformWeightedLatLng> data) {
+  static List<WeightedLatLng> weightedDataFromPigeon(List<PlatformWeightedLatLng> data) {
     final List<WeightedLatLng> weightedData = new ArrayList<>(data.size());
 
-    for (Messages.PlatformWeightedLatLng rawWeightedPoint : data) {
+    for (PlatformWeightedLatLng rawWeightedPoint : data) {
       weightedData.add(weightedLatLngFromPigeon(rawWeightedPoint));
     }
     return weightedData;
@@ -752,11 +735,11 @@ class Convert {
    * @return a Gradient object.
    */
   @VisibleForTesting
-  static Gradient gradientFromPigeon(Messages.PlatformHeatmapGradient gradient) {
-    final List<Messages.PlatformColor> colorData = gradient.getColors();
+  static Gradient gradientFromPigeon(PlatformHeatmapGradient gradient) {
+    final List<PlatformColor> colorData = gradient.getColors();
     final int[] colors = new int[colorData.size()];
     for (int i = 0; i < colorData.size(); i++) {
-      colors[i] = colorData.get(i).getArgbValue().intValue();
+      colors[i] = (int) colorData.get(i).getArgbValue();
     }
 
     final List<Double> startPointData = gradient.getStartPoints();
@@ -765,25 +748,24 @@ class Convert {
       startPoints[i] = startPointData.get(i).floatValue();
     }
 
-    return new Gradient(colors, startPoints, gradient.getColorMapSize().intValue());
+    return new Gradient(colors, startPoints, (int) gradient.getColorMapSize());
   }
 
-  private static List<List<LatLng>> toHoles(List<List<Messages.PlatformLatLng>> data) {
+  private static List<List<LatLng>> toHoles(List<List<PlatformLatLng>> data) {
     final List<List<LatLng>> holes = new ArrayList<>(data.size());
 
-    for (List<Messages.PlatformLatLng> hole : data) {
+    for (List<PlatformLatLng> hole : data) {
       holes.add(pointsFromPigeon(hole));
     }
     return holes;
   }
 
-  private static List<PatternItem> patternFromPigeon(
-      List<Messages.PlatformPatternItem> patternItems) {
+  private static List<PatternItem> patternFromPigeon(List<PlatformPatternItem> patternItems) {
     if (patternItems.isEmpty()) {
       return null;
     }
     final List<PatternItem> pattern = new ArrayList<>();
-    for (Messages.PlatformPatternItem patternItem : patternItems) {
+    for (PlatformPatternItem patternItem : patternItems) {
       switch (patternItem.getType()) {
         case DOT:
           pattern.add(new Dot());
@@ -801,8 +783,7 @@ class Convert {
     return pattern;
   }
 
-  private static Cap capFromPigeon(
-      Messages.PlatformCap cap, AssetManager assetManager, float density) {
+  private static Cap capFromPigeon(PlatformCap cap, AssetManager assetManager, float density) {
     return switch (cap.getType()) {
       case BUTT_CAP -> new ButtCap();
       case ROUND_CAP -> new RoundCap();
@@ -818,17 +799,16 @@ class Convert {
     };
   }
 
-  static String interpretTileOverlayOptions(
-      Messages.PlatformTileOverlay tileOverlay, TileOverlaySink sink) {
+  static String interpretTileOverlayOptions(PlatformTileOverlay tileOverlay, TileOverlaySink sink) {
     sink.setFadeIn(tileOverlay.getFadeIn());
-    sink.setTransparency(tileOverlay.getTransparency().floatValue());
+    sink.setTransparency((float) tileOverlay.getTransparency());
     sink.setZIndex(tileOverlay.getZIndex());
     sink.setVisible(tileOverlay.getVisible());
     return tileOverlay.getTileOverlayId();
   }
 
-  static Tile tileFromPigeon(Messages.PlatformTile tile) {
-    return new Tile(tile.getWidth().intValue(), tile.getHeight().intValue(), tile.getData());
+  static Tile tileFromPigeon(PlatformTile tile) {
+    return new Tile((int) tile.getWidth(), (int) tile.getHeight(), tile.getData());
   }
 
   /**
@@ -846,20 +826,19 @@ class Convert {
    * @throws IllegalArgumentException if required fields are missing or invalid.
    */
   static @NonNull String interpretGroundOverlayOptions(
-      @NonNull Messages.PlatformGroundOverlay groundOverlay,
+      @NonNull PlatformGroundOverlay groundOverlay,
       @NonNull GroundOverlaySink sink,
       @NonNull AssetManager assetManager,
       float density,
       @NonNull BitmapDescriptorFactoryWrapper wrapper) {
-    sink.setTransparency(groundOverlay.getTransparency().floatValue());
-    sink.setZIndex(groundOverlay.getZIndex().floatValue());
+    sink.setTransparency((float) groundOverlay.getTransparency());
+    sink.setZIndex((float) groundOverlay.getZIndex());
     sink.setVisible(groundOverlay.getVisible());
     if (groundOverlay.getAnchor() != null) {
       sink.setAnchor(
-          groundOverlay.getAnchor().getX().floatValue(),
-          groundOverlay.getAnchor().getY().floatValue());
+          (float) groundOverlay.getAnchor().getX(), (float) groundOverlay.getAnchor().getY());
     }
-    sink.setBearing(groundOverlay.getBearing().floatValue());
+    sink.setBearing((float) groundOverlay.getBearing());
     sink.setClickable(groundOverlay.getClickable());
     sink.setImage(toBitmapDescriptor(groundOverlay.getImage(), assetManager, density, wrapper));
     if (groundOverlay.getPosition() != null) {
@@ -887,7 +866,7 @@ class Convert {
    * @param isCreatedWithBounds indicates if the GroundOverlay was created with bounds.
    * @return the converted PlatformGroundOverlay object.
    */
-  static @NonNull Messages.PlatformGroundOverlay groundOverlayToPigeon(
+  static @NonNull PlatformGroundOverlay groundOverlayToPigeon(
       @NonNull GroundOverlay groundOverlay,
       @NonNull String groundOverlayId,
       boolean isCreatedWithBounds) {
@@ -898,36 +877,36 @@ class Convert {
     // converted to format google maps uses (BitmapDescription), and the original
     // data is not stored on native code. Therefore placeholder image is used for
     // the image field.
-    Messages.PlatformBitmap dummyImage =
-        new Messages.PlatformBitmap.Builder()
-            .setBitmap(
-                new Messages.PlatformBitmapBytesMap.Builder()
-                    .setByteData(new byte[] {0})
-                    .setImagePixelRatio(1.0)
-                    .setBitmapScaling(Messages.PlatformMapBitmapScaling.NONE)
-                    .build())
-            .build();
+    PlatformBitmap dummyImage =
+        new PlatformBitmap(
+            new PlatformBitmapBytesMap(
+                new byte[] {0},
+                PlatformMapBitmapScaling.NONE,
+                /* imagePixelRatio */ 1.0, /* width */
+                null, /* height */
+                null));
 
-    Messages.PlatformGroundOverlay.Builder builder =
-        new Messages.PlatformGroundOverlay.Builder()
-            .setGroundOverlayId(groundOverlayId)
-            .setImage(dummyImage)
-            .setWidth((double) groundOverlay.getWidth())
-            .setHeight((double) groundOverlay.getHeight())
-            .setBearing((double) groundOverlay.getBearing())
-            .setTransparency((double) groundOverlay.getTransparency())
-            .setZIndex((long) groundOverlay.getZIndex())
-            .setVisible(groundOverlay.isVisible())
-            .setClickable(groundOverlay.isClickable());
-
+    PlatformLatLngBounds bounds = null;
+    PlatformLatLng position = null;
     if (isCreatedWithBounds) {
-      builder.setBounds(Convert.latLngBoundsToPigeon(groundOverlay.getBounds()));
+      bounds = Convert.latLngBoundsToPigeon(groundOverlay.getBounds());
     } else {
-      builder.setPosition(Convert.latLngToPigeon(groundOverlay.getPosition()));
+      position = Convert.latLngToPigeon(groundOverlay.getPosition());
     }
 
-    builder.setAnchor(Convert.buildGroundOverlayAnchorForPigeon(groundOverlay));
-    return builder.build();
+    return new PlatformGroundOverlay(
+        groundOverlayId,
+        dummyImage,
+        position,
+        bounds,
+        (double) groundOverlay.getWidth(),
+        (double) groundOverlay.getHeight(),
+        Convert.buildGroundOverlayAnchorForPigeon(groundOverlay),
+        groundOverlay.getTransparency(),
+        groundOverlay.getBearing(),
+        (long) groundOverlay.getZIndex(),
+        groundOverlay.isVisible(),
+        groundOverlay.isClickable());
   }
 
   /**
@@ -937,10 +916,8 @@ class Convert {
    * @return the PlatformDoublePair representing the anchor point.
    */
   @VisibleForTesting
-  public static @NonNull Messages.PlatformDoublePair buildGroundOverlayAnchorForPigeon(
+  public static @NonNull PlatformDoublePair buildGroundOverlayAnchorForPigeon(
       @NonNull GroundOverlay groundOverlay) {
-    Messages.PlatformDoublePair.Builder anchorBuilder = new Messages.PlatformDoublePair.Builder();
-
     // Position is overlays anchor point. Calculate normalized anchor point based on position and
     // bounds.
     LatLng position = groundOverlay.getPosition();
@@ -967,9 +944,7 @@ class Convert {
                 - west)
             / width;
 
-    anchorBuilder.setX(normalizedLongitude);
-    anchorBuilder.setY(normalizedLatitude);
-    return anchorBuilder.build();
+    return new PlatformDoublePair(/* x */ normalizedLongitude, /* y */ normalizedLatitude);
   }
 
   static class BitmapDescriptorFactoryWrapper {

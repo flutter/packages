@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 2.15.1
 
 * Fixes dartdoc comments that accidentally used HTML.

@@ -10,3 +10,6 @@ git branch main origin/main
 
 cd script/tool
 dart pub get
+
+cd ../flutter_goldens
+flutter pub get
