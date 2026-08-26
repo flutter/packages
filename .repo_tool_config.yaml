@@ -118,7 +118,6 @@ allowed_dependencies:
     # Google-owned packages
     - _discoveryapis_commons
     - adaptive_navigation
-    - dart_skills_lint
     - googleapis
     - googleapis_auth
     - json_annotation
@@ -126,6 +125,7 @@ allowed_dependencies:
     - protobuf
     - quiver
     - sanitize_html
+    - skills_lint
     - source_helper
     - vector_math
     - webkit_inspection_protocol
