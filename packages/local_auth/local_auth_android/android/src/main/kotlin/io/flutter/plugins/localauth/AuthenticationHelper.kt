@@ -165,14 +165,6 @@ internal class AuthenticationHelper(
 
   override fun onActivityDestroyed(activity: Activity) {}
 
-  override fun onDestroy(owner: LifecycleOwner) {}
-
-  override fun onStop(owner: LifecycleOwner) {}
-
-  override fun onStart(owner: LifecycleOwner) {}
-
-  override fun onCreate(owner: LifecycleOwner) {}
-
   internal class UiThreadExecutor : Executor {
     val handler: Handler = Handler(Looper.getMainLooper())
 
