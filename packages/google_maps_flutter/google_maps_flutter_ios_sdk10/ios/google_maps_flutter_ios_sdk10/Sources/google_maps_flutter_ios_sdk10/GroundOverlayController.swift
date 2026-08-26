@@ -123,7 +123,8 @@ class GroundOverlaysController: NSObject {
             latitude: position.latitude,
             longitude: position.longitude
           ),
-          icon: FGMIconFromBitmap(groundOverlay.image, assetProvider, screenScale),
+          // The actual icon will be set in the update() call below.
+          icon: nil,
           zoomLevel: CGFloat(zoomLevel.doubleValue)
         )
       } else {
@@ -146,7 +147,8 @@ class GroundOverlaysController: NSObject {
         )
         gmsOverlay = GMSGroundOverlay(
           bounds: gmsBounds,
-          icon: FGMIconFromBitmap(groundOverlay.image, assetProvider, screenScale)
+          // The actual icon will be set in the update() call below.
+          icon: nil
         )
       }
       let controller = GroundOverlayController(
