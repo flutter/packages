@@ -76,7 +76,7 @@ enum VideoPlayerPluginMessagesPigeonInternal {
 
   static func doubleHash(_ value: Double, _ hasher: inout Hasher) {
     if value.isNaN {
-      hasher.combine(0x7FF8000000000000)
+      hasher.combine(0x7FF8_0000_0000_0000)
     } else {
       // Normalize -0.0 to 0.0
       hasher.combine(value == 0 ? 0 : value)
@@ -186,13 +186,11 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-
 /// Information passed to the platform view creation.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
 struct PlatformVideoViewCreationParams: Hashable, CustomStringConvertible {
   var playerId: Int64
-
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PlatformVideoViewCreationParams? {
@@ -207,7 +205,9 @@ struct PlatformVideoViewCreationParams: Hashable, CustomStringConvertible {
       playerId
     ]
   }
-  static func == (lhs: PlatformVideoViewCreationParams, rhs: PlatformVideoViewCreationParams) -> Bool {
+  static func == (lhs: PlatformVideoViewCreationParams, rhs: PlatformVideoViewCreationParams)
+    -> Bool
+  {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
@@ -229,7 +229,6 @@ struct CreationOptions: Hashable, CustomStringConvertible {
   var uri: String
   var httpHeaders: [String: String]
 
-
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> CreationOptions? {
     let uri = pigeonVar_list[0] as! String
@@ -250,7 +249,8 @@ struct CreationOptions: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return VideoPlayerPluginMessagesPigeonInternal.deepEquals(lhs.uri, rhs.uri) && VideoPlayerPluginMessagesPigeonInternal.deepEquals(lhs.httpHeaders, rhs.httpHeaders)
+    return VideoPlayerPluginMessagesPigeonInternal.deepEquals(lhs.uri, rhs.uri)
+      && VideoPlayerPluginMessagesPigeonInternal.deepEquals(lhs.httpHeaders, rhs.httpHeaders)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -260,7 +260,8 @@ struct CreationOptions: Hashable, CustomStringConvertible {
   }
 
   public var description: String {
-    return "CreationOptions(uri: \(String(describing: uri)), httpHeaders: \(String(describing: httpHeaders)))"
+    return
+      "CreationOptions(uri: \(String(describing: uri)), httpHeaders: \(String(describing: httpHeaders)))"
   }
 }
 
@@ -268,7 +269,6 @@ struct CreationOptions: Hashable, CustomStringConvertible {
 struct TexturePlayerIds: Hashable, CustomStringConvertible {
   var playerId: Int64
   var textureId: Int64
-
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> TexturePlayerIds? {
@@ -290,7 +290,8 @@ struct TexturePlayerIds: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return VideoPlayerPluginMessagesPigeonInternal.deepEquals(lhs.playerId, rhs.playerId) && VideoPlayerPluginMessagesPigeonInternal.deepEquals(lhs.textureId, rhs.textureId)
+    return VideoPlayerPluginMessagesPigeonInternal.deepEquals(lhs.playerId, rhs.playerId)
+      && VideoPlayerPluginMessagesPigeonInternal.deepEquals(lhs.textureId, rhs.textureId)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -300,7 +301,8 @@ struct TexturePlayerIds: Hashable, CustomStringConvertible {
   }
 
   public var description: String {
-    return "TexturePlayerIds(playerId: \(String(describing: playerId)), textureId: \(String(describing: textureId)))"
+    return
+      "TexturePlayerIds(playerId: \(String(describing: playerId)), textureId: \(String(describing: textureId)))"
   }
 }
 
@@ -347,7 +349,8 @@ private class VideoPlayerPluginMessagesPigeonCodecReaderWriter: FlutterStandardR
 }
 
 class VideoPlayerPluginMessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
-  static let shared = VideoPlayerPluginMessagesPigeonCodec(readerWriter: VideoPlayerPluginMessagesPigeonCodecReaderWriter())
+  static let shared = VideoPlayerPluginMessagesPigeonCodec(
+    readerWriter: VideoPlayerPluginMessagesPigeonCodecReaderWriter())
 }
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
@@ -363,9 +366,15 @@ protocol AVFoundationVideoPlayerApi {
 class AVFoundationVideoPlayerApiSetup {
   static var codec: FlutterStandardMessageCodec { VideoPlayerPluginMessagesPigeonCodec.shared }
   /// Sets up an instance of `AVFoundationVideoPlayerApi` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: AVFoundationVideoPlayerApi?, messageChannelSuffix: String = "") {
+  static func setUp(
+    binaryMessenger: FlutterBinaryMessenger, api: AVFoundationVideoPlayerApi?,
+    messageChannelSuffix: String = ""
+  ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
-    let initializeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.initialize\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let initializeChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.initialize\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       initializeChannel.setMessageHandler { _, reply in
         do {
@@ -378,7 +387,10 @@ class AVFoundationVideoPlayerApiSetup {
     } else {
       initializeChannel.setMessageHandler(nil)
     }
-    let createForPlatformViewChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.createForPlatformView\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let createForPlatformViewChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.createForPlatformView\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       createForPlatformViewChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -393,7 +405,10 @@ class AVFoundationVideoPlayerApiSetup {
     } else {
       createForPlatformViewChannel.setMessageHandler(nil)
     }
-    let createForTextureViewChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.createForTextureView\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let createForTextureViewChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.createForTextureView\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       createForTextureViewChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -408,7 +423,10 @@ class AVFoundationVideoPlayerApiSetup {
     } else {
       createForTextureViewChannel.setMessageHandler(nil)
     }
-    let setMixWithOthersChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.setMixWithOthers\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let setMixWithOthersChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.setMixWithOthers\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setMixWithOthersChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -423,7 +441,10 @@ class AVFoundationVideoPlayerApiSetup {
     } else {
       setMixWithOthersChannel.setMessageHandler(nil)
     }
-    let getAssetUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.getAssetUrl\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let getAssetUrlChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.getAssetUrl\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getAssetUrlChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]

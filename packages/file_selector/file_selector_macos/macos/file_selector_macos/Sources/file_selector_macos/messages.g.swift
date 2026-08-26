@@ -76,7 +76,7 @@ enum MessagesPigeonInternal {
 
   static func doubleHash(_ value: Double, _ hasher: inout Hasher) {
     if value.isNaN {
-      hasher.combine(0x7FF8000000000000)
+      hasher.combine(0x7FF8_0000_0000_0000)
     } else {
       // Normalize -0.0 to 0.0
       hasher.combine(value == 0 ? 0 : value)
@@ -186,7 +186,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-
 /// A Pigeon representation of the macOS portion of an `XTypeGroup`.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
@@ -194,7 +193,6 @@ struct AllowedTypes: Hashable, CustomStringConvertible {
   var extensions: [String]
   var mimeTypes: [String]
   var utis: [String]
-
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> AllowedTypes? {
@@ -219,7 +217,9 @@ struct AllowedTypes: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return MessagesPigeonInternal.deepEquals(lhs.extensions, rhs.extensions) && MessagesPigeonInternal.deepEquals(lhs.mimeTypes, rhs.mimeTypes) && MessagesPigeonInternal.deepEquals(lhs.utis, rhs.utis)
+    return MessagesPigeonInternal.deepEquals(lhs.extensions, rhs.extensions)
+      && MessagesPigeonInternal.deepEquals(lhs.mimeTypes, rhs.mimeTypes)
+      && MessagesPigeonInternal.deepEquals(lhs.utis, rhs.utis)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -230,7 +230,8 @@ struct AllowedTypes: Hashable, CustomStringConvertible {
   }
 
   public var description: String {
-    return "AllowedTypes(extensions: \(String(describing: extensions)), mimeTypes: \(String(describing: mimeTypes)), utis: \(String(describing: utis)))"
+    return
+      "AllowedTypes(extensions: \(String(describing: extensions)), mimeTypes: \(String(describing: mimeTypes)), utis: \(String(describing: utis)))"
   }
 }
 
@@ -246,7 +247,6 @@ struct SavePanelOptions: Hashable, CustomStringConvertible {
   var nameFieldStringValue: String? = nil
   var prompt: String? = nil
   var canCreateDirectories: Bool? = nil
-
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> SavePanelOptions? {
@@ -277,7 +277,11 @@ struct SavePanelOptions: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return MessagesPigeonInternal.deepEquals(lhs.allowedFileTypes, rhs.allowedFileTypes) && MessagesPigeonInternal.deepEquals(lhs.directoryPath, rhs.directoryPath) && MessagesPigeonInternal.deepEquals(lhs.nameFieldStringValue, rhs.nameFieldStringValue) && MessagesPigeonInternal.deepEquals(lhs.prompt, rhs.prompt) && MessagesPigeonInternal.deepEquals(lhs.canCreateDirectories, rhs.canCreateDirectories)
+    return MessagesPigeonInternal.deepEquals(lhs.allowedFileTypes, rhs.allowedFileTypes)
+      && MessagesPigeonInternal.deepEquals(lhs.directoryPath, rhs.directoryPath)
+      && MessagesPigeonInternal.deepEquals(lhs.nameFieldStringValue, rhs.nameFieldStringValue)
+      && MessagesPigeonInternal.deepEquals(lhs.prompt, rhs.prompt)
+      && MessagesPigeonInternal.deepEquals(lhs.canCreateDirectories, rhs.canCreateDirectories)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -290,7 +294,8 @@ struct SavePanelOptions: Hashable, CustomStringConvertible {
   }
 
   public var description: String {
-    return "SavePanelOptions(allowedFileTypes: \(String(describing: allowedFileTypes)), directoryPath: \(String(describing: directoryPath)), nameFieldStringValue: \(String(describing: nameFieldStringValue)), prompt: \(String(describing: prompt)), canCreateDirectories: \(String(describing: canCreateDirectories)))"
+    return
+      "SavePanelOptions(allowedFileTypes: \(String(describing: allowedFileTypes)), directoryPath: \(String(describing: directoryPath)), nameFieldStringValue: \(String(describing: nameFieldStringValue)), prompt: \(String(describing: prompt)), canCreateDirectories: \(String(describing: canCreateDirectories)))"
   }
 }
 
@@ -304,7 +309,6 @@ struct OpenPanelOptions: Hashable, CustomStringConvertible {
   var canChooseDirectories: Bool
   var canChooseFiles: Bool
   var baseOptions: SavePanelOptions
-
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> OpenPanelOptions? {
@@ -332,7 +336,11 @@ struct OpenPanelOptions: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return MessagesPigeonInternal.deepEquals(lhs.allowsMultipleSelection, rhs.allowsMultipleSelection) && MessagesPigeonInternal.deepEquals(lhs.canChooseDirectories, rhs.canChooseDirectories) && MessagesPigeonInternal.deepEquals(lhs.canChooseFiles, rhs.canChooseFiles) && MessagesPigeonInternal.deepEquals(lhs.baseOptions, rhs.baseOptions)
+    return MessagesPigeonInternal.deepEquals(
+      lhs.allowsMultipleSelection, rhs.allowsMultipleSelection)
+      && MessagesPigeonInternal.deepEquals(lhs.canChooseDirectories, rhs.canChooseDirectories)
+      && MessagesPigeonInternal.deepEquals(lhs.canChooseFiles, rhs.canChooseFiles)
+      && MessagesPigeonInternal.deepEquals(lhs.baseOptions, rhs.baseOptions)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -344,7 +352,8 @@ struct OpenPanelOptions: Hashable, CustomStringConvertible {
   }
 
   public var description: String {
-    return "OpenPanelOptions(allowsMultipleSelection: \(String(describing: allowsMultipleSelection)), canChooseDirectories: \(String(describing: canChooseDirectories)), canChooseFiles: \(String(describing: canChooseFiles)), baseOptions: \(String(describing: baseOptions)))"
+    return
+      "OpenPanelOptions(allowsMultipleSelection: \(String(describing: allowsMultipleSelection)), canChooseDirectories: \(String(describing: canChooseDirectories)), canChooseFiles: \(String(describing: canChooseFiles)), baseOptions: \(String(describing: baseOptions)))"
   }
 }
 
@@ -394,31 +403,38 @@ class MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
   static let shared = MessagesPigeonCodec(readerWriter: MessagesPigeonCodecReaderWriter())
 }
 
-
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol FileSelectorApi {
   /// Shows an open panel with the given [options], returning the list of
   /// selected paths.
   ///
   /// An empty list corresponds to a cancelled selection.
-  func displayOpenPanel(options: OpenPanelOptions, completion: @escaping (Result<[String], Error>) -> Void)
+  func displayOpenPanel(
+    options: OpenPanelOptions, completion: @escaping (Result<[String], Error>) -> Void)
   /// Shows a save panel with the given [options], returning the selected path.
   ///
   /// A null return corresponds to a cancelled save.
-  func displaySavePanel(options: SavePanelOptions, completion: @escaping (Result<String?, Error>) -> Void)
+  func displaySavePanel(
+    options: SavePanelOptions, completion: @escaping (Result<String?, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class FileSelectorApiSetup {
   static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
   /// Sets up an instance of `FileSelectorApi` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: FileSelectorApi?, messageChannelSuffix: String = "") {
+  static func setUp(
+    binaryMessenger: FlutterBinaryMessenger, api: FileSelectorApi?,
+    messageChannelSuffix: String = ""
+  ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     /// Shows an open panel with the given [options], returning the list of
     /// selected paths.
     ///
     /// An empty list corresponds to a cancelled selection.
-    let displayOpenPanelChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displayOpenPanel\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let displayOpenPanelChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displayOpenPanel\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       displayOpenPanelChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -438,7 +454,10 @@ class FileSelectorApiSetup {
     /// Shows a save panel with the given [options], returning the selected path.
     ///
     /// A null return corresponds to a cancelled save.
-    let displaySavePanelChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displaySavePanel\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let displaySavePanelChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.file_selector_macos.FileSelectorApi.displaySavePanel\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       displaySavePanelChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]

@@ -76,7 +76,7 @@ enum MessagesPigeonInternal {
 
   static func doubleHash(_ value: Double, _ hasher: inout Hasher) {
     if value.isNaN {
-      hasher.combine(0x7FF8000000000000)
+      hasher.combine(0x7FF8_0000_0000_0000)
     } else {
       // Normalize -0.0 to 0.0
       hasher.combine(value == 0 ? 0 : value)
@@ -186,7 +186,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-
 /// Possible error conditions for [UrlLauncherApi] calls.
 enum UrlLauncherError: Int, CaseIterable {
   /// The URL could not be parsed as an NSURL.
@@ -199,7 +198,6 @@ enum UrlLauncherError: Int, CaseIterable {
 struct UrlLauncherBoolResult: Hashable, CustomStringConvertible {
   var value: Bool
   var error: UrlLauncherError? = nil
-
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> UrlLauncherBoolResult? {
@@ -221,7 +219,8 @@ struct UrlLauncherBoolResult: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return MessagesPigeonInternal.deepEquals(lhs.value, rhs.value) && MessagesPigeonInternal.deepEquals(lhs.error, rhs.error)
+    return MessagesPigeonInternal.deepEquals(lhs.value, rhs.value)
+      && MessagesPigeonInternal.deepEquals(lhs.error, rhs.error)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -231,7 +230,8 @@ struct UrlLauncherBoolResult: Hashable, CustomStringConvertible {
   }
 
   public var description: String {
-    return "UrlLauncherBoolResult(value: \(String(describing: value)), error: \(String(describing: error)))"
+    return
+      "UrlLauncherBoolResult(value: \(String(describing: value)), error: \(String(describing: error)))"
   }
 }
 
@@ -292,10 +292,14 @@ protocol UrlLauncherApi {
 class UrlLauncherApiSetup {
   static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
   /// Sets up an instance of `UrlLauncherApi` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: UrlLauncherApi?, messageChannelSuffix: String = "") {
+  static func setUp(
+    binaryMessenger: FlutterBinaryMessenger, api: UrlLauncherApi?, messageChannelSuffix: String = ""
+  ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     /// Returns a true result if the URL can definitely be launched.
-    let canLaunchUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.url_launcher_macos.UrlLauncherApi.canLaunchUrl\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let canLaunchUrlChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.url_launcher_macos.UrlLauncherApi.canLaunchUrl\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       canLaunchUrlChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -311,7 +315,9 @@ class UrlLauncherApiSetup {
       canLaunchUrlChannel.setMessageHandler(nil)
     }
     /// Opens the URL externally, returning a true result if successful.
-    let launchUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.url_launcher_macos.UrlLauncherApi.launchUrl\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let launchUrlChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.url_launcher_macos.UrlLauncherApi.launchUrl\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       launchUrlChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]

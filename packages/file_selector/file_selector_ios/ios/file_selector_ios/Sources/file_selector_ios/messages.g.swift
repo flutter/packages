@@ -76,7 +76,7 @@ enum MessagesPigeonInternal {
 
   static func doubleHash(_ value: Double, _ hasher: inout Hasher) {
     if value.isNaN {
-      hasher.combine(0x7FF8000000000000)
+      hasher.combine(0x7FF8_0000_0000_0000)
     } else {
       // Normalize -0.0 to 0.0
       hasher.combine(value == 0 ? 0 : value)
@@ -186,12 +186,10 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-
 /// Generated class from Pigeon that represents data sent in messages.
 struct FileSelectorConfig: Hashable, CustomStringConvertible {
   var utis: [String]
   var allowMultiSelection: Bool
-
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> FileSelectorConfig? {
@@ -213,7 +211,8 @@ struct FileSelectorConfig: Hashable, CustomStringConvertible {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return MessagesPigeonInternal.deepEquals(lhs.utis, rhs.utis) && MessagesPigeonInternal.deepEquals(lhs.allowMultiSelection, rhs.allowMultiSelection)
+    return MessagesPigeonInternal.deepEquals(lhs.utis, rhs.utis)
+      && MessagesPigeonInternal.deepEquals(lhs.allowMultiSelection, rhs.allowMultiSelection)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -223,7 +222,8 @@ struct FileSelectorConfig: Hashable, CustomStringConvertible {
   }
 
   public var description: String {
-    return "FileSelectorConfig(utis: \(String(describing: utis)), allowMultiSelection: \(String(describing: allowMultiSelection)))"
+    return
+      "FileSelectorConfig(utis: \(String(describing: utis)), allowMultiSelection: \(String(describing: allowMultiSelection)))"
   }
 }
 
@@ -263,7 +263,6 @@ class MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
   static let shared = MessagesPigeonCodec(readerWriter: MessagesPigeonCodecReaderWriter())
 }
 
-
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol FileSelectorApi {
   func openFile(config: FileSelectorConfig, completion: @escaping (Result<[String], Error>) -> Void)
@@ -273,9 +272,14 @@ protocol FileSelectorApi {
 class FileSelectorApiSetup {
   static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
   /// Sets up an instance of `FileSelectorApi` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: FileSelectorApi?, messageChannelSuffix: String = "") {
+  static func setUp(
+    binaryMessenger: FlutterBinaryMessenger, api: FileSelectorApi?,
+    messageChannelSuffix: String = ""
+  ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
-    let openFileChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.file_selector_ios.FileSelectorApi.openFile\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let openFileChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.file_selector_ios.FileSelectorApi.openFile\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       openFileChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
