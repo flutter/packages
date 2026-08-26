@@ -142,7 +142,8 @@ Future<int> generateTestPigeons({required String baseDir, bool includeOverflow =
           : '$outputBase/android/src/main/kotlin/com/example/test_plugin/$pascalCaseName.gen.kt',
       kotlinPackage: 'com.example.test_plugin',
       kotlinErrorClassName: kotlinErrorName,
-      kotlinUseJni: input == 'native_interop_tests',
+      kotlinUseJni:
+          !skipLanguages.contains(GeneratorLanguage.kotlin) && input == 'native_interop_tests',
       kotlinAppDirectory: '$outputBase/example',
       kotlinIncludeErrorClass: input != 'primitive',
       // iOS/macOS
@@ -151,7 +152,8 @@ Future<int> generateTestPigeons({required String baseDir, bool includeOverflow =
           : '$outputBase/darwin/$testPluginName/Sources/$testPluginName/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
       swiftIncludeErrorClass: input != 'primitive',
-      swiftUseFfi: input == 'native_interop_tests',
+      swiftUseFfi:
+          !skipLanguages.contains(GeneratorLanguage.swift) && input == 'native_interop_tests',
       swiftAppDirectory: '$outputBase/example',
       // Linux
       gobjectHeaderOut: skipLanguages.contains(GeneratorLanguage.gobject)

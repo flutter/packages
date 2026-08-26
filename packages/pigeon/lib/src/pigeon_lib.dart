@@ -905,6 +905,8 @@ ${_argParser.usage}''';
       final Map<String, String> env = await _getJniEnvironment(dartExecutable);
       if (!await _hasJavaRuntime(env)) {
         print('JNI Multi-step: Skipping JNIgen because no Java runtime was found.');
+      } else if (!_hasAndroidSdk()) {
+        print('JNI Multi-step: Skipping JNIgen because no Android SDK was found.');
       } else {
         final String? targetConfigDir =
             internalOptions.kotlinOptions?.configDirectory ?? internalOptions.configDirectory;
@@ -1033,6 +1035,13 @@ ${_argParser.usage}''';
     }
   }
 
+  /// Checks whether an Android SDK is available to execute JNIgen.
+  static bool _hasAndroidSdk() {
+    final String? androidHome =
+        Platform.environment['ANDROID_HOME'] ?? Platform.environment['ANDROID_SDK_ROOT'];
+    return androidHome != null && androidHome.isNotEmpty && Directory(androidHome).existsSync();
+  }
+
   /// Runs JNIgen in JNI multi-step generation.
   static Future<bool> _runJnigen(
     String appDir,
@@ -1042,6 +1051,10 @@ ${_argParser.usage}''';
   ) async {
     if (!await _hasJavaRuntime(env)) {
       print('JNI Multi-step: Skipping JNIgen because no Java runtime was found.');
+      return true;
+    }
+    if (!_hasAndroidSdk()) {
+      print('JNI Multi-step: Skipping JNIgen because no Android SDK was found.');
       return true;
     }
     final String configFile = getJnigenConfigPath(appDir, inputPath);
