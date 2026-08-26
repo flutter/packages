@@ -335,6 +335,109 @@ void main() {
       expect(icon.style.height, '${expectedSize}px');
     });
 
+    for (final descriptorFactory in <(String, BitmapDescriptor Function(Uint8List))>[
+      (
+        'BitmapDescriptor.bytes',
+        (Uint8List bytes) => BitmapDescriptor.bytes(bytes, imagePixelRatio: 1),
+      ),
+      ('BytesMapBitmap', (Uint8List bytes) => BytesMapBitmap(bytes, imagePixelRatio: 1)),
+    ]) {
+      testWidgets(
+        'changeMarkers preserves ${descriptorFactory.$1} content across position changes',
+        (WidgetTester tester) async {
+          const markerId = MarkerId('1');
+          final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
+          await controller.addMarkers(<AdvancedMarker>{
+            AdvancedMarker(
+              markerId: markerId,
+              icon: descriptorFactory.$2(bytes),
+              position: const LatLng(1, 2),
+            ),
+          });
+
+          final gmaps.AdvancedMarkerElement? marker = controller.markers[markerId]?.marker;
+          expect(marker, isNotNull);
+          final icon = marker!.content as HTMLImageElement?;
+          expect(icon, isNotNull);
+          final String blobUrl = icon!.src;
+
+          for (final updatedPosition in <LatLng>[
+            const LatLng(3, 4),
+            const LatLng(5, 6),
+            const LatLng(42, 54),
+          ]) {
+            await controller.changeMarkers(<AdvancedMarker>{
+              AdvancedMarker(
+                markerId: markerId,
+                icon: descriptorFactory.$2(bytes),
+                position: updatedPosition,
+              ),
+            });
+
+            final position = marker.position! as gmaps.LatLngLiteral;
+            expect(position.lat, updatedPosition.latitude);
+            expect(position.lng, updatedPosition.longitude);
+            expect(icon.isSameNode(marker.content), isTrue);
+            expect(icon.src, blobUrl);
+          }
+        },
+      );
+    }
+
+    testWidgets('changeMarkers replaces bitmap icon content when alpha changes', (
+      WidgetTester tester,
+    ) async {
+      const markerId = MarkerId('1');
+      final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
+      final markers = <AdvancedMarker>{
+        AdvancedMarker(markerId: markerId, icon: BytesMapBitmap(bytes, imagePixelRatio: 1)),
+      };
+      await controller.addMarkers(markers);
+
+      final gmaps.AdvancedMarkerElement? marker = controller.markers[markerId]?.marker;
+      expect(marker, isNotNull);
+      final icon = marker!.content as HTMLImageElement?;
+      expect(icon, isNotNull);
+
+      final updatedMarkers = <AdvancedMarker>{
+        AdvancedMarker(
+          markerId: markerId,
+          alpha: 0.5,
+          icon: BytesMapBitmap(bytes, imagePixelRatio: 1),
+        ),
+      };
+      await controller.changeMarkers(updatedMarkers);
+
+      final updatedIcon = marker.content as HTMLImageElement?;
+      expect(updatedIcon, isNotNull);
+      expect(updatedIcon!.isSameNode(icon), isFalse);
+      expect(updatedIcon.style.opacity, '0.5');
+    });
+
+    testWidgets('changeMarkers replaces content when the bitmap configuration changes', (
+      WidgetTester tester,
+    ) async {
+      const markerId = MarkerId('1');
+      final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
+      await controller.addMarkers(<AdvancedMarker>{
+        AdvancedMarker(markerId: markerId, icon: BytesMapBitmap(bytes, width: 16)),
+      });
+
+      final gmaps.AdvancedMarkerElement? marker = controller.markers[markerId]?.marker;
+      expect(marker, isNotNull);
+      final icon = marker!.content as HTMLImageElement?;
+      expect(icon, isNotNull);
+
+      await controller.changeMarkers(<AdvancedMarker>{
+        AdvancedMarker(markerId: markerId, icon: BytesMapBitmap(bytes, width: 20)),
+      });
+
+      final updatedIcon = marker.content as HTMLImageElement?;
+      expect(updatedIcon, isNotNull);
+      expect(updatedIcon!.isSameNode(icon), isFalse);
+      expect(updatedIcon.style.width, '20px');
+    });
+
     testWidgets('markers with custom bitmap icon and pixel ratio work', (
       WidgetTester tester,
     ) async {
