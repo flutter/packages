@@ -116,7 +116,11 @@ class GroundOverlaysController: NSObject {
       var isCreatedWithBounds = false
       if let position = groundOverlay.position {
         guard let zoomLevel = groundOverlay.zoomLevel else {
-          fatalError("If ground overlay is initialized with position, zoomLevel is required")
+          // TODO(stuartmorgan): Convert these to Pigeon error handling rather
+          // than being assertions. The original Obj-C code used NSAssert instead of
+          // passing errors back, which isn't how we should handle errors.
+          assertionFailure("If ground overlay is initialized with position, zoomLevel is required")
+          continue
         }
         gmsOverlay = GMSGroundOverlay(
           position: CLLocationCoordinate2D(
@@ -130,10 +134,11 @@ class GroundOverlaysController: NSObject {
       } else {
         isCreatedWithBounds = true
         // TODO(stuartmorgan): Convert these to Pigeon error handling rather
-        // than being fatal. The original Obj-C code used NSAssert instead of
+        // than being assertions. The original Obj-C code used NSAssert instead of
         // passing errors back, which isn't how we should handle errors.
         guard let bounds = groundOverlay.bounds else {
-          fatalError("If ground overlay is initialized without position, bounds are required")
+          assertionFailure("If ground overlay is initialized without position, bounds are required")
+          continue
         }
         let gmsBounds = GMSCoordinateBounds(
           coordinate: CLLocationCoordinate2D(

@@ -111,11 +111,11 @@ class TileProviderController: GMSTileLayer {
 
   override func requestTileFor(x: UInt, y: UInt, zoom: UInt, receiver: any GMSTileReceiver) {
     DispatchQueue.main.async { [weak self] in
-      guard let self = self else {
+      guard let self = self, let tileProviderDelegate = self.tileProviderDelegate else {
         receiver.receiveTileWith(x: x, y: y, zoom: zoom, image: kGMSTileLayerNoTile)
         return
       }
-      self.tileProviderDelegate?.tile(
+      tileProviderDelegate.tile(
         withOverlayIdentifier: self.tileOverlayIdentifier,
         location: FGMPlatformPoint.makeWith(x: Double(x), y: Double(y)),
         zoom: Int(zoom)
