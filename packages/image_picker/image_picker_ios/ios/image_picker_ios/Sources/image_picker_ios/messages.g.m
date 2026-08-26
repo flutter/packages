@@ -412,11 +412,13 @@ void SetUpFLTImagePickerApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
         binaryMessenger:binaryMessenger
                   codec:FLTGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (pickImageWithSource:maxSize:quality:fullMetadata:completion:)],
-                @"FLTImagePickerApi api (%@) doesn't respond to "
-                @"@selector(pickImageWithSource:maxSize:quality:fullMetadata:completion:)",
-                api);
+      NSCAssert(
+          [api
+              respondsToSelector:@selector(
+                                     pickImageWithSource:maxSize:quality:fullMetadata:completion:)],
+          @"FLTImagePickerApi api (%@) doesn't respond to "
+          @"@selector(pickImageWithSource:maxSize:quality:fullMetadata:completion:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         FLTSourceSpecification *arg_source = GetNullableObjectAtIndex(args, 0);
@@ -444,8 +446,8 @@ void SetUpFLTImagePickerApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
         binaryMessenger:binaryMessenger
                   codec:FLTGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (pickMultiImageWithMaxSize:quality:fullMetadata:limit:completion:)],
+      NSCAssert([api respondsToSelector:@selector(pickMultiImageWithMaxSize:quality:fullMetadata:
+                                                  limit:completion:)],
                 @"FLTImagePickerApi api (%@) doesn't respond to "
                 @"@selector(pickMultiImageWithMaxSize:quality:fullMetadata:limit:completion:)",
                 api);
