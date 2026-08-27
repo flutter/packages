@@ -41,7 +41,7 @@ class TestDartFixesCommand extends PackageLoopingCommand {
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     // Only run for packages that have a fix_tests directory.
     if (!package.dartFixTestDirectory.existsSync()) {
-      return PackageResult.skip('No ${package.dartFixTestDirectory} directory.');
+      return PackageResult.skip('No ${package.dartFixTestDirectory.path} directory.');
     }
 
     final Directory testDirectory;

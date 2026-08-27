@@ -61,7 +61,7 @@ void main() {
           contains('Running for package1'),
           contains('Running for package2'),
           contains('Running for package3'),
-          contains("SKIPPING: No MemoryDirectory: '/packages/package3/test_fixes' directory."),
+          contains('SKIPPING: No /packages/package3/test_fixes directory.'),
         ]),
       );
 
