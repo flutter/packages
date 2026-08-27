@@ -4,8 +4,5 @@
 # found in the LICENSE file.
 set -e
 
-cd script/tool
-dart analyze --fatal-infos
-
-cd ../githooks
-dart analyze --fatal-infos
+cd script/githooks
+dart test

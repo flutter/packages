@@ -9,22 +9,41 @@ import 'package:test/test.dart';
 
 void main() {
   group('pre-push hook', () {
+    PrePushCommand createCommand(
+      String gitLogOutput, {
+      int exitCode = 0,
+      String stderr = '',
+      List<List<String>>? capturedArgs,
+    }) {
+      return PrePushCommand(
+        processRunner:
+            (String executable, List<String> arguments, {String? workingDirectory}) async {
+              capturedArgs?.add(arguments);
+              if (executable == 'git' && arguments.contains('log')) {
+                return ProcessResult(0, exitCode, gitLogOutput, stderr);
+              }
+              return ProcessResult(0, 0, 'Success', '');
+            },
+      );
+    }
+
+    String formatCommit({
+      String sha = 'abc1234',
+      String authorName = 'Alice',
+      String authorEmail = 'alice@google.com',
+      String committerName = 'Alice',
+      String committerEmail = 'alice@google.com',
+      String subject = 'Valid commit',
+    }) {
+      return '$sha\u0000$authorName\u0000$authorEmail\u0000$committerName\u0000$committerEmail\u0000$subject\n';
+    }
+
     test('passes when recent commits contain no evaluation credentials', () async {
-      final List<List<String>> executedArguments = <List<String>>[];
-      final command = PrePushCommand(
-        processRunner: (String executable, List<String> arguments, {String? workingDirectory}) async {
-          executedArguments.add(arguments);
-          if (executable == 'git' && arguments.contains('log')) {
-            return ProcessResult(
-              0,
-              0,
-              'abc1234 | Author: Alice <alice@google.com> | Committer: Alice <alice@google.com> | Fix feature\n'
-                  'def5678 | Author: Bob <bob@example.com> | Committer: Bob <bob@example.com> | Add unit tests\n',
-              '',
-            );
-          }
-          return ProcessResult(0, 0, 'Success', '');
-        },
+      final executedArguments = <List<String>>[];
+      final PrePushCommand command = createCommand(
+        '${formatCommit(subject: 'Fix feature')}'
+        '${formatCommit(sha: 'def5678', authorName: 'Bob', authorEmail: 'bob@example.com', committerName: 'Bob', committerEmail: 'bob@example.com', subject: 'Add unit tests')}',
+        capturedArgs: executedArguments,
       );
 
       final bool result = await command.run();
@@ -33,48 +52,30 @@ void main() {
       expect(
         executedArguments,
         anyElement(
-          equals(<String>[
-            'log',
-            '-n',
-            '20',
-            '--format=%h | Author: %an <%ae> | Committer: %cn <%ce> | %s',
-          ]),
+          equals(<String>['log', '-n', '20', '--format=%h%x00%an%x00%ae%x00%cn%x00%ce%x00%s']),
         ),
       );
     });
 
-    test('fails when recent commit is authored by Eval Author', () async {
-      final command = PrePushCommand(
-        processRunner: (String executable, List<String> arguments, {String? workingDirectory}) async {
-          if (executable == 'git' && arguments.contains('log')) {
-            return ProcessResult(
-              0,
-              0,
-              'abc1234 | Author: Eval Author <contributor@example.com> | Committer: Contributor <contributor@example.com> | Eval change\n',
-              '',
-            );
-          }
-          return ProcessResult(0, 0, 'Success', '');
-        },
+    test('passes when commit message contains eval credentials in subject', () async {
+      final PrePushCommand command = createCommand(
+        formatCommit(subject: 'Fix bug with eval-author@example.com and Eval Author'),
       );
+
+      final bool result = await command.run();
+      expect(result, isTrue);
+    });
+
+    test('fails when recent commit is authored by Eval Author', () async {
+      final PrePushCommand command = createCommand(formatCommit(authorName: 'Eval Author'));
 
       final bool result = await command.run();
       expect(result, isFalse);
     });
 
     test('fails when recent commit is authored by eval-author@example.com', () async {
-      final command = PrePushCommand(
-        processRunner: (String executable, List<String> arguments, {String? workingDirectory}) async {
-          if (executable == 'git' && arguments.contains('log')) {
-            return ProcessResult(
-              0,
-              0,
-              'abc1234 | Author: Contributor <eval-author@example.com> | Committer: Contributor <contributor@example.com> | Eval change\n',
-              '',
-            );
-          }
-          return ProcessResult(0, 0, 'Success', '');
-        },
+      final PrePushCommand command = createCommand(
+        formatCommit(authorEmail: 'eval-author@example.com'),
       );
 
       final bool result = await command.run();
@@ -82,37 +83,15 @@ void main() {
     });
 
     test('fails when recent commit is committed by Eval Author', () async {
-      final command = PrePushCommand(
-        processRunner: (String executable, List<String> arguments, {String? workingDirectory}) async {
-          if (executable == 'git' && arguments.contains('log')) {
-            return ProcessResult(
-              0,
-              0,
-              'abc1234 | Author: Contributor <contributor@example.com> | Committer: Eval Author <contributor@example.com> | Eval change\n',
-              '',
-            );
-          }
-          return ProcessResult(0, 0, 'Success', '');
-        },
-      );
+      final PrePushCommand command = createCommand(formatCommit(committerName: 'Eval Author'));
 
       final bool result = await command.run();
       expect(result, isFalse);
     });
 
     test('fails when recent commit is committed by eval-author@example.com', () async {
-      final command = PrePushCommand(
-        processRunner: (String executable, List<String> arguments, {String? workingDirectory}) async {
-          if (executable == 'git' && arguments.contains('log')) {
-            return ProcessResult(
-              0,
-              0,
-              'abc1234 | Author: Contributor <contributor@example.com> | Committer: Contributor <eval-author@example.com> | Eval change\n',
-              '',
-            );
-          }
-          return ProcessResult(0, 0, 'Success', '');
-        },
+      final PrePushCommand command = createCommand(
+        formatCommit(committerEmail: 'eval-author@example.com'),
       );
 
       final bool result = await command.run();
@@ -120,30 +99,14 @@ void main() {
     });
 
     test('fails when git log execution fails', () async {
-      final command = PrePushCommand(
-        processRunner:
-            (String executable, List<String> arguments, {String? workingDirectory}) async {
-              if (executable == 'git' && arguments.contains('log')) {
-                return ProcessResult(0, 1, '', 'Git fatal error');
-              }
-              return ProcessResult(0, 0, 'Success', '');
-            },
-      );
+      final PrePushCommand command = createCommand('', exitCode: 1, stderr: 'Git fatal error');
 
       final bool result = await command.run();
       expect(result, isFalse);
     });
 
     test('passes when git log returns empty output', () async {
-      final command = PrePushCommand(
-        processRunner:
-            (String executable, List<String> arguments, {String? workingDirectory}) async {
-              if (executable == 'git' && arguments.contains('log')) {
-                return ProcessResult(0, 0, '', '');
-              }
-              return ProcessResult(0, 0, 'Success', '');
-            },
-      );
+      final PrePushCommand command = createCommand('');
 
       final bool result = await command.run();
       expect(result, isTrue);
