@@ -1,7 +1,7 @@
 <?code-excerpt path-base="example/native_interop_app"?>
 # Pigeon Native Interop Migration Guide
 
-This guide provides detailed information on migrating from the `MethodChannel`-based Pigeon model to the direct **Native Interop (FFI & JNI)** model.
+This guide provides detailed information on migrating from the platform-channel-based Pigeon model to the direct **Native Interop (FFI & JNI)** model.
 
 For a comprehensive walkthrough on setting up Native Interop from scratch, see the main [Native Interop Guide](./native_interop_guide.md).
 
@@ -9,7 +9,7 @@ For a comprehensive walkthrough on setting up Native Interop from scratch, see t
 
 ## 1. Key Architectural Differences
 
-| Feature | Method Channels | Native Interop (FFI / JNI) |
+| Feature | Platform Channels | Native Interop (FFI / JNI) |
 | :--- | :--- | :--- |
 | **Data Serialization** | Serialized to binary format (`StandardMessageCodec`) | Direct memory mapping or native references |
 | **Threading Model** | Main UI thread or custom background `TaskQueue` | Always runs on the main thread (`TaskQueue` is not supported) |
@@ -84,7 +84,7 @@ If your existing native implementation uses the callback-based completion-handle
 
 ### 3.1 Swift Async Methods
 
-#### Method Channels (Callback Style)
+#### Platform Channels (Callback Style)
 <?code-excerpt "ios/Runner/NativeInteropExample.swift (callback-style)"?>
 ```swift
 func echoAsync(_ value: String, completion: @escaping (Result<String, Error>) -> Void) {
@@ -102,7 +102,7 @@ func echoAsync(_ value: String) async throws -> String {
 
 ### 3.2 Kotlin Async Methods
 
-#### Method Channels (Callback Style)
+#### Platform Channels (Callback Style)
 <?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeonnativeinteropapp/NativeInteropExample.kt (callback-style)"?>
 ```kotlin
 fun echoAsync(value: String, callback: (Result<String>) -> Unit) {
@@ -124,7 +124,7 @@ suspend fun echoAsync(value: String): String {
 
 From the Dart side, the API surface remains largely identical because both models return standard Dart `Future`s for asynchronous calls. However:
 - **Synchronous execution**: Host API methods that are synchronous now block the calling thread until completion, bypassing any message loop scheduling latency.
-- **Type changes**: Some complex data types or generic collections may have stricter typing requirements at the FFI/JNI boundary compared to the MethodChannel message codec. Refer to the [Native Interop Guide](./native_interop_guide.md) for handling specific data types.
+- **Type changes**: Some complex data types or generic collections may have stricter typing requirements at the FFI/JNI boundary compared to the platform channel message codec. Refer to the [Native Interop Guide](./native_interop_guide.md) for handling specific data types.
 
 ---
 

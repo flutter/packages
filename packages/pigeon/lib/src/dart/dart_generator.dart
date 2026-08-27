@@ -34,7 +34,7 @@ const DocumentCommentSpecification docCommentSpec = DocumentCommentSpecification
 const String _pigeonMessageCodec = '_PigeonCodec';
 
 /// Name of field used for host API codec.
-const String _pigeonMethodChannelCodec = 'pigeonMethodCodec';
+const String _pigeonMethodCodec = 'pigeonMethodCodec';
 
 const String _overflowClassName = '_PigeonCodecOverflow';
 
@@ -1220,7 +1220,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     if (root.containsEventChannel) {
       indent.newln();
       indent.writeln(
-        'const StandardMethodCodec $_pigeonMethodChannelCodec = StandardMethodCodec($_pigeonMessageCodec());',
+        'const StandardMethodCodec $_pigeonMethodCodec = StandardMethodCodec($_pigeonMessageCodec());',
       );
     }
   }
@@ -2054,7 +2054,7 @@ ${api.name}({
           instanceName = '.\$instanceName';
         }
         final EventChannel ${func.name}Channel =
-            EventChannel('${makeChannelName(api, func, dartPackageName)}\$instanceName', $_pigeonMethodChannelCodec);
+            EventChannel('${makeChannelName(api, func, dartPackageName)}\$instanceName', $_pigeonMethodCodec);
         return ${func.name}Channel.receiveBroadcastStream().map((dynamic event) {
           return event as ${func.returnType.baseName};
         });

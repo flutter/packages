@@ -1,7 +1,7 @@
 # Skill: Migrating Flutter Plugins to Pigeon Native Interop (FFI & JNI)
 
 ## Overview
-This skill guides AI agents and developers through migrating an existing Flutter plugin package (containing Swift for iOS/macOS and/or Kotlin for Android) from MethodChannel-based Pigeon code to direct **Native Interop** (`useFfi: true` for Swift, `useJni: true` for Kotlin).
+This skill guides AI agents and developers through migrating an existing Flutter plugin package (containing Swift for iOS/macOS and/or Kotlin for Android) from platform-channel-based Pigeon code to direct **Native Interop** (`useFfi: true` for Swift, `useJni: true` for Kotlin).
 
 > [!IMPORTANT]
 > **Golden Rule for Generated Code**: Generated code files (`.g.dart`, `.g.swift`, `.g.kt`, `.g.jni.dart`, `.g.ffi.dart`) should be produced automatically by Pigeon, FFIgen, or JNIgen without manual edits. If you encounter a code generation error or bug that prevents compilation and cannot be resolved through configuration options:
@@ -118,9 +118,9 @@ targets: [
 ## 4. Update Native Plugin Implementations
 
 ### 4.1 Swift Implementation (`<PluginName>.swift`)
-1. **Registration Calls**: Replace MethodChannel setup calls with FFI registration:
+1. **Registration Calls**: Replace platform channel setup calls with FFI registration:
    ```swift
-   // BEFORE (Method Channels):
+   // BEFORE (Platform Channels):
    // LegacyUserDefaultsApiSetup.setUp(binaryMessenger: messenger, api: instance)
 
    // AFTER (Native Interop FFI):
@@ -146,7 +146,7 @@ targets: [
    // BEFORE: class MyPlugin : FlutterPlugin, MyApi
    // AFTER:  class MyPlugin : FlutterPlugin, MyApi()
    ```
-2. **Registration Calls**: Replace MethodChannel setup with JNI registrars:
+2. **Registration Calls**: Replace platform channel setup with JNI registrars:
    ```kotlin
    // BEFORE: MyApi.setUp(messenger, this)
    // AFTER:  MyApiRegistrar().register(this)
@@ -174,7 +174,7 @@ For `@FlutterApi()` interfaces (where host native code calls into Dart):
 - **Dart side**: Register your Dart implementation using `MyFlutterApi.setUp(MyFlutterApiImpl())`.
 - **Swift (FFI)**: Instantiate `MyFlutterApi()` directly without passing a `BinaryMessenger`:
   ```swift
-  // BEFORE (Method Channels):
+  // BEFORE (Platform Channels):
   // let flutterApi = MyFlutterApi(binaryMessenger: messenger)
   // flutterApi.onEvent(data) { result in ... }
 
@@ -184,7 +184,7 @@ For `@FlutterApi()` interfaces (where host native code calls into Dart):
   ```
 - **Kotlin (JNI)**: Instantiate `MyFlutterApi()` directly without passing a `BinaryMessenger`:
   ```kotlin
-  // BEFORE (Method Channels):
+  // BEFORE (Platform Channels):
   // val flutterApi = MyFlutterApi(messenger)
   // flutterApi.onEvent(data) { ... }
 

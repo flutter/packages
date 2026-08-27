@@ -7,15 +7,15 @@ This guide describes Pigeon's Native Interop feature, which allows for direct, h
 
 ## 1. Overview
 
-Pigeon Native Interop allows Dart code to make direct function calls into native platform code, and vice versa, without the overhead of MethodChannel-based message passing. Instead of serializing data into binary buffers, Native Interop establishes direct memory-bound bridges using native pointers and JVM references.
-For a detailed comparison between MethodChannel-based communication and Native Interop—including advantages, limitations, and recommended use cases—see the [Pigeon README](./README.md#communication-options-method-channels-vs-native-interop).
+Pigeon Native Interop allows Dart code to make direct function calls into native platform code, and vice versa, without the overhead of platform-channel-based message passing. Instead of serializing data into binary buffers, Native Interop establishes direct memory-bound bridges using native pointers and JVM references.
+For a detailed comparison between platform-channel-based communication and Native Interop—including advantages, limitations, and recommended use cases—see the [Pigeon README](./README.md#communication-options-platform-channels-vs-native-interop).
 
 ### Threading Model (Main Thread Execution)
 
 Native Interop calls are direct in-process function calls executed synchronously on the calling thread, which in Flutter is the main UI thread.
 
 * **Main Thread Only**: All FFI and JNI Pigeon host API calls must be invoked and handled on the main thread.
-* **`TaskQueue` Not Supported**: The `@TaskQueue` annotation (which dispatches calls to background queues on platform channels) is **not supported** with Native Interop. Specifying `@TaskQueue` when `useFfi: true` or `useJni: true` is enabled will result in a Pigeon code generation error. If your use case requires offloading work to background threads via platform channels, use standard Method Channels instead.
+* **`TaskQueue` Not Supported**: The `@TaskQueue` annotation (which dispatches calls to background queues on platform channels) is **not supported** with Native Interop. Specifying `@TaskQueue` when `useFfi: true` or `useJni: true` is enabled will result in a Pigeon code generation error. If your use case requires offloading work to background threads via platform channels, use standard platform channels instead.
 
 ---
 
@@ -213,6 +213,6 @@ Pigeon writes the interop configuration scripts to `tool/pigeon/jnigen_config.da
 
 ---
 
-## 6. Migration from Method Channels
+## 6. Migration from Platform Channels
 
-If you are migrating an existing Pigeon plugin from the `MethodChannel`-based model to the Native Interop model, see the [Native Interop Migration Guide](./native_interop_migration_guide.md) for a complete comparison of the API models and transition examples.
+If you are migrating an existing Pigeon plugin from the platform-channel-based model to the Native Interop model, see the [Native Interop Migration Guide](./native_interop_migration_guide.md) for a complete comparison of the API models and transition examples.

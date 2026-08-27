@@ -20,6 +20,7 @@ Future<void> main(List<String> args) async {
     print('FFI generation is only supported on macOS.');
     return;
   }
+
   Directory.current = Platform.script.resolve('../..').toFilePath();
   Uri sdk;
   if (args.isNotEmpty) {

@@ -15,9 +15,9 @@ import 'src/generated/core_tests.gen.dart' as core;
 import 'src/generated/native_interop_tests.gen.dart' as native_interop;
 import 'test_types.dart' as core_types;
 
-/// Runs benchmarks comparing MethodChannel to Native Interop.
+/// Runs benchmarks comparing Platform Channels to Native Interop.
 void runComparisonBenchmarks(TargetGenerator targetGenerator) {
-  group('Comparison Benchmarks (MethodChannel vs Native Interop)', () {
+  group('Comparison Benchmarks (Platform Channels vs Native Interop)', () {
     final mcApi = core.HostIntegrationCoreApi();
     final native_interop.NativeInteropHostIntegrationCoreApiForNativeInterop? nativeInteropApi =
         native_interop.NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
@@ -33,7 +33,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
         data[i] = i % 256;
       }
 
-      // MethodChannel
+      // Platform Channel
       final mcStopwatch = Stopwatch()..start();
       await mcApi.echoUint8List(data);
       mcStopwatch.stop();
@@ -60,7 +60,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
         (_) => native_interop_types.recursiveNativeInteropAllNullableTypes,
       );
 
-      // MethodChannel
+      // Platform Channel
       final mcStopwatch = Stopwatch()..start();
       await mcApi.echoClassList(coreList);
       mcStopwatch.stop();
@@ -78,7 +78,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
     testWidgets('Large Int List 200 Comparison', (WidgetTester _) async {
       final list = List<int?>.generate(200, (i) => i);
 
-      // MethodChannel
+      // Platform Channel
       final mcStopwatch = Stopwatch()..start();
       await mcApi.echoList(list);
       mcStopwatch.stop();
@@ -96,7 +96,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
     testWidgets('Large Int Map 200 Comparison', (WidgetTester _) async {
       final map = <int?, int?>{for (var i = 0; i < 200; i++) i: i};
 
-      // MethodChannel
+      // Platform Channel
       final mcStopwatch = Stopwatch()..start();
       await mcApi.echoIntMap(map);
       mcStopwatch.stop();
@@ -114,7 +114,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
     testWidgets('Small String Echo Comparison (x200)', (WidgetTester _) async {
       const text = 'Hello Pigeon Benchmark!';
 
-      // MethodChannel
+      // Platform Channel
       final mcStopwatch = Stopwatch()..start();
       for (var i = 0; i < 200; i++) {
         await mcApi.echoString(text);
@@ -136,7 +136,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
     testWidgets('Small Int Echo Comparison (x200)', (WidgetTester _) async {
       const value = 42;
 
-      // MethodChannel
+      // Platform Channel
       final mcStopwatch = Stopwatch()..start();
       for (var i = 0; i < 200; i++) {
         await mcApi.echoInt(value);
@@ -158,7 +158,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
     testWidgets('Flutter String Echo Comparison (x200)', (WidgetTester _) async {
       const text = 'Hello Pigeon Benchmark!';
 
-      // MethodChannel
+      // Platform Channel
       final mcStopwatch = Stopwatch()..start();
       for (var i = 0; i < 200; i++) {
         await mcApi.callFlutterEchoString(text);
@@ -178,7 +178,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
     testWidgets('Flutter Int Echo Comparison (x200)', (WidgetTester _) async {
       const value = 42;
 
-      // MethodChannel
+      // Platform Channel
       final mcStopwatch = Stopwatch()..start();
       for (var i = 0; i < 200; i++) {
         await mcApi.callFlutterEchoInt(value);
@@ -202,7 +202,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
         data[i] = i % 256;
       }
 
-      // MethodChannel
+      // Platform Channel
       final mcStopwatch = Stopwatch()..start();
       await mcApi.callFlutterEchoUint8List(data);
       mcStopwatch.stop();
@@ -225,7 +225,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
         (_) => native_interop_types.recursiveNativeInteropAllNullableTypes,
       );
 
-      // MethodChannel
+      // Platform Channel
       final mcStopwatch = Stopwatch()..start();
       await mcApi.callFlutterEchoClassList(coreList);
       mcStopwatch.stop();
@@ -241,7 +241,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
     testWidgets('Flutter Large Int List 200 Comparison', (WidgetTester _) async {
       final list = List<int?>.generate(200, (i) => i);
 
-      // MethodChannel
+      // Platform Channel
       final mcStopwatch = Stopwatch()..start();
       await mcApi.callFlutterEchoList(list);
       mcStopwatch.stop();
@@ -257,7 +257,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
     testWidgets('Flutter Large Int Map 200 Comparison', (WidgetTester _) async {
       final map = <int?, int?>{for (var i = 0; i < 200; i++) i: i};
 
-      // MethodChannel
+      // Platform Channel
       final mcStopwatch = Stopwatch()..start();
       await mcApi.callFlutterEchoIntMap(map);
       mcStopwatch.stop();

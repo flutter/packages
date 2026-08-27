@@ -16,6 +16,7 @@ void main() async {
     print('JNI generation requires a Java runtime. Skipping.');
     return;
   }
+
   Directory.current = Platform.script.resolve('../..').toFilePath();
   await generateJniBindings(
     Config(

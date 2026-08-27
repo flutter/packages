@@ -30,7 +30,7 @@ const DocumentCommentSpecification _docCommentSpec = DocumentCommentSpecificatio
 const String _codecName = 'PigeonCodec';
 
 /// Name of field used for host API codec.
-const String _pigeonMethodChannelCodec = 'PigeonMethodCodec';
+const String _pigeonMethodCodec = 'PigeonMethodCodec';
 
 const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
@@ -714,7 +714,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     indent.newln();
     if (root.containsEventChannel) {
       indent.writeln(
-        'val ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodChannelCodec = StandardMethodCodec(${generatorOptions.fileSpecificClassNameComponent}$_codecName())',
+        'val ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodCodec = StandardMethodCodec(${generatorOptions.fileSpecificClassNameComponent}$_codecName())',
       );
       indent.newln();
     }
@@ -1460,7 +1460,7 @@ class ${api.name}Registrar() {
                 channelName += ".\$instanceName"
               }
               val internalStreamHandler = ${generatorOptions.fileSpecificClassNameComponent}PigeonStreamHandler<${_kotlinTypeForDartType(func.returnType)}>(streamHandler)
-              EventChannel(messenger, channelName, ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodChannelCodec).setStreamHandler(internalStreamHandler)
+              EventChannel(messenger, channelName, ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodCodec).setStreamHandler(internalStreamHandler)
             }
           }
         // Implement methods from ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper

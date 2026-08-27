@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-Pigeon Native Interop (NI) provides direct, memory-bound bridges between Dart and host platform languages (Swift via Dart FFI, Kotlin via Dart JNI). By bypassing traditional `MethodChannel` serialization (`StandardMessageCodec`) and thread hops, NI achieves lower latency, synchronous execution support, and type safety.
+Pigeon Native Interop (NI) provides direct, memory-bound bridges between Dart and host platform languages (Swift via Dart FFI, Kotlin via Dart JNI). By bypassing traditional platform channel serialization (`StandardMessageCodec`) and thread hops, NI achieves lower latency, synchronous execution support, and type safety.
 
 This document outlines a roadmap for future design iterations, feature parity expansions, performance optimizations, memory management improvements, and developer ergonomics enhancements across Pigeon's FFI and JNI infrastructure.
 
@@ -41,7 +41,7 @@ Key source files implementing this pipeline include:
 - **Expanded Platform Support**: Lay groundwork for C++ interop on Android NDK, iOS, and Desktop platforms.
 
 ### Non-Goals
-- Replacing standard `MethodChannel` host calls for simple legacy use-cases where message channels are sufficient.
+- Replacing standard platform channel host calls for simple legacy use-cases where message channels are sufficient.
 - Re-implementing underlying `package:ffi` or `package:jni` primitives outside of Pigeon's code generation layer.
 
 ---
@@ -131,9 +131,9 @@ graph TD
 - See TODO in [ffigen_config_generator.dart#L141](lib/src/swift/ffigen_config_generator.dart#L141).
 - **Tracking / Blocker**: Tracked in `swift2objc` target triple options ([dart-lang/native#1782](https://github.com/dart-lang/native/issues/1782)).
 
-#### Selective Native Code Generation (Suppress Unused MethodChannel Files)
-- **Issue**: Currently, enabling Native Interop still emits unused standard MethodChannel helper files (e.g., `Messages.g.kt`, `Messages.g.swift`).
-- **Proposal**: Suppress emitting standard `MethodChannel` code generators when `kotlin_use_jni` or `swift_use_ffi` is active (unless explicitly requested), reducing dead code in generated packages.
+#### Selective Native Code Generation (Suppress Unused Platform Channel Files)
+- **Issue**: Currently, enabling Native Interop still emits unused standard platform channel helper files (e.g., `Messages.g.kt`, `Messages.g.swift`).
+- **Proposal**: Suppress emitting standard platform channel code generators when `kotlin_use_jni` or `swift_use_ffi` is active (unless explicitly requested), reducing dead code in generated packages.
 
 #### In-Process Library-Based Tool Invocation (`package:jnigen` / `package:ffigen` / `package:swiftgen`)
 - **Proposal**: Transition from spawning external sub-process CLI scripts (`dart run jnigen_config.dart` / `ffigen_config.dart`) to importing and invoking native binding generators directly as in-process Dart APIs within Pigeon's execution context.
@@ -162,7 +162,7 @@ graph TD
 
 - **Unification under `StructuredGenerator`**: Fully align native interop code emission in [swift_generator.dart](lib/src/swift/swift_generator.dart) and [kotlin_generator.dart](lib/src/kotlin/kotlin_generator.dart) with the unified generator pattern (`StructuredGenerator`), standardizing AST visitor implementations across all native bridge generators.
 - **Global Class Prefixing & Namespace Collision Prevention**: Ensure all emitted helper classes (e.g., `NumberWrapper`, `PigeonTypedData`, `PigeonInternalNull`) enforce user-configured class prefixes so importing multiple Pigeon schema files into the same Swift or Kotlin target module does not trigger duplicate symbol compilation errors.
-- **Automated Performance Benchmarking Suite**: Implement a continuous benchmark harness comparing round-trip latency, payload throughput, and memory allocations across MethodChannels, Pigeon Native Interop, and raw un-wrapped FFI/JNI across payload scales (small primitives to large object graphs).
+- **Automated Performance Benchmarking Suite**: Implement a continuous benchmark harness comparing round-trip latency, payload throughput, and memory allocations across platform channels, Pigeon Native Interop, and raw un-wrapped FFI/JNI across payload scales (small primitives to large object graphs).
 - **100% Automated Test Suite Parity**: Expand [generate_test_suite.dart](tool/generate_test_suite.dart) to generate Native Interop test variants covering all edge cases (NaN equality, signed zeros, async errors, collection hashing).
 - **Unwind Temporary Example App Workarounds**: Clean up temporary test harnesses and native setup workarounds (e.g., [AppDelegate.swift](example/native_interop_app/ios/Runner/AppDelegate.swift) in [example/native_interop_app](example/native_interop_app)) introduced during initial interop PRs.
 - **Real-World Validation & Experimental Status**: Conduct real-world production plugin testing (e.g., across first-party Flutter plugins) to validate real-world memory stability and performance before removing the experimental flag. Tracked in [flutter/flutter#190148](https://github.com/flutter/flutter/issues/190148).
@@ -180,7 +180,7 @@ Rather than fixed calendar target dates, the following phases outline the estima
 | :--- | :--- | :--- | :--- |
 | **Single-Pass Error Consolidation & UX** | ~1.5 weeks | Consolidate multi-step `ffigen`/`jnigen` error outputs into unified diagnostic frames. | *None* (Pure Pigeon CLI orchestration refactor) |
 | **In-Process Library Tooling Invocation** | ~2.5 weeks | Transition from CLI script execution to importing `package:jnigen`/`package:ffigen` as in-process APIs. | **Blocked**: High complexity across multi-tool chain (`swiftgen` + `swift2objc` + `ffigen` + `jnigen`); in-process Dart APIs currently unavailable ([dart-lang/native#3516](https://github.com/dart-lang/native/pull/3516), [dart-lang/native#1372](https://github.com/dart-lang/native/pull/1372)). |
-| **Selective MethodChannel Emission** | ~1 week | Suppress emitting unused MethodChannel helper files (`Messages.g.kt`, `Messages.g.swift`). | *None* (Internal generator logic) |
+| **Selective Platform Channel Emission** | ~1 week | Suppress emitting unused platform channel helper files (`Messages.g.kt`, `Messages.g.swift`). | *None* (Internal generator logic) |
 | **Configurable Target Triples & OS Versions** | ~1 week | Add options for custom target triples, header search paths, and deployment targets. | **Blocked**: Target property merged in [dart-lang/native#3402](https://github.com/dart-lang/native/pull/3402); full target triple options tracked in [dart-lang/native#1782](https://github.com/dart-lang/native/issues/1782). |
 | **Local JNI Reference Management** | ~1 week | Automatically manage JNI local reference frames (`PushLocalFrame`/`PopLocalFrame`) to prevent leaks. | *None* (Can be implemented in `_PigeonJniCodec` template) |
 
@@ -191,7 +191,7 @@ Rather than fixed calendar target dates, the following phases outline the estima
 
 | Work Item | Estimated Effort | Summary / Focus | Blockers & Upstream Issue Trackers |
 | :--- | :--- | :--- | :--- |
-| **Automated Benchmarking Harness** | ~2.5 weeks | Build continuous latency/throughput benchmark suite (MethodChannel vs NI vs Raw FFI/JNI). | *None* (Integration harness in `script/tool`) |
+| **Automated Benchmarking Harness** | ~2.5 weeks | Build continuous latency/throughput benchmark suite (Platform Channels vs NI vs Raw FFI/JNI). | *None* (Integration harness in `script/tool`) |
 | **Bulk Field Serialization & Integer Type Tags** | ~3.5 weeks | Fix $N+1$ interop boundary hops by packing class fields into flat buffers with $O(1)$ type tags. | *None* (Pigeon codec emission refactor) |
 | **Zero-Copy Buffer Support** | ~2.5 weeks | Direct memory views (`Uint8List`, `JByteBuffer`) eliminating copy allocations for large arrays. | **Blocked**: Tracked in zero-allocation buffer copying ([dart-lang/native#3451](https://github.com/dart-lang/native/issues/3451)). |
 | **`NativeFinalizer` & `JCleaner` Integration** | ~2 weeks | Attach Dart GC finalizers to native wrappers for leak-free object lifetime management. | **Blocked**: Requires `package:jni` `JCleaner` multi-threading API stability across isolate boundaries. |
@@ -216,14 +216,14 @@ Rather than fixed calendar target dates, the following phases outline the estima
 
 1. What is the preferred fallback behavior when `jnigen` or `ffigen` fails on a developer's machine missing JVM 17 or LLVM dependencies?
 2. How can zero-copy byte array management ensure memory safety when native code mutates buffers asynchronously?
-3. Should Native Interop completely disable MethodChannel output by default, or require an explicit flag when side-by-side fallback is desired?
+3. Should Native Interop completely disable platform channel output by default, or require an explicit flag when side-by-side fallback is desired?
 
 ---
 
 ## 7. Related Documentation & Resources
 
 - [Native Interop User Guide](native_interop_guide.md) - Official setup guide, CLI options (`kotlin_use_jni`, `swift_use_ffi`), generated file structures, and system prerequisites.
-- [Native Interop Migration Guide](native_interop_migration_guide.md) - Migration instructions for converting existing `MethodChannel`-based plugins to Native Interop.
+- [Native Interop Migration Guide](native_interop_migration_guide.md) - Migration instructions for converting existing platform-channel-based plugins to Native Interop.
 - [Pigeon README](README.md) - Monorepo package documentation and usage overview for Pigeon.
 - [Native Interop Example App](example/native_interop_app) - Working reference application demonstrating FFI (Swift) and JNI (Kotlin) interop generation.
 - [Test Suite Generator](tool/generate_test_suite.dart) - Tooling script for expanding automated native interop test variants.

@@ -1646,7 +1646,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(sentString, echoStringTwo);
     });
 
-    testWidgets('multiple instances will have different method channel names', (_) async {
+    testWidgets('multiple instances will have different platform channel names', (_) async {
       // The only way to get the channel name back is to throw an exception.
       // These APIs have no corresponding APIs on the host platforms.
       final apiWithSuffixOne = HostSmallApi(messageChannelSuffix: 'suffixWithNoHost');
