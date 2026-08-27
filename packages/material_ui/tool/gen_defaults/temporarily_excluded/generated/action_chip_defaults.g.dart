@@ -16,12 +16,11 @@ class _ActionChipDefaultsM3 extends ChipThemeData {
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   @override
-  double? get elevation =>
-      _chipVariant == _ChipVariant.flat
-          ? 0.0
-          : isEnabled
-          ? 1.0
-          : 0.0;
+  double? get elevation => _chipVariant == _ChipVariant.flat
+      ? 0.0
+      : isEnabled
+      ? 1.0
+      : 0.0;
 
   @override
   double? get pressElevation => 1.0;
@@ -52,12 +51,11 @@ class _ActionChipDefaultsM3 extends ChipThemeData {
   Color? get deleteIconColor => null;
 
   @override
-  BorderSide? get side =>
-      _chipVariant == _ChipVariant.flat
-          ? isEnabled
-              ? BorderSide(color: _colors.outlineVariant)
-              : BorderSide(color: _colors.onSurface.withOpacity(0.12))
-          : const BorderSide(color: Colors.transparent);
+  BorderSide? get side => _chipVariant == _ChipVariant.flat
+      ? isEnabled
+            ? BorderSide(color: _colors.outlineVariant)
+            : BorderSide(color: _colors.onSurface.withOpacity(0.12))
+      : const BorderSide(color: Colors.transparent);
 
   @override
   IconThemeData? get iconTheme =>

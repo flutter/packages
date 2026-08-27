@@ -8,7 +8,8 @@ class TextFieldTemplate extends TokenTemplate {
   const TextFieldTemplate(super.blockName, super.fileName, super.tokens);
 
   @override
-  String generate() => '''
+  String generate() =>
+      '''
 TextStyle? _m3StateInputStyle(BuildContext context) => WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
   if (states.contains(WidgetState.disabled)) {
     return TextStyle(color: ${textStyle("md.comp.filled-text-field.label-text")}!.color?.withOpacity(0.38));
