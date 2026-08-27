@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:devtools_app_shared/utils.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import 'async_state.dart';
 import 'shared_preferences_state.dart';
