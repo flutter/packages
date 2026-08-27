@@ -38,7 +38,8 @@ Future<void> main() async {
     final String expectResult = expectFile.readAsStringSync().trim();
     test('verify $fileName', () async {
       // Normalize path separators for cross-platform compatibility
-      final String path = file.path.replaceAll(r'\', '/');
+      final String path = file.path.replaceAll(r'\', '/').replaceAll('\r\n', '\n');
+
       final targetLibraryAssetId = '__test__|$path';
       final LibraryElement element = await resolveSources<LibraryElement>(
         <String, String>{targetLibraryAssetId: file.readAsStringSync()},
