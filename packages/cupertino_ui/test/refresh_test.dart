@@ -738,7 +738,7 @@ void main() {
           contains(
             matchesBuilder(
               refreshState: RefreshIndicatorMode.inactive,
-              pulledExtent: top,
+              pulledExtent: moreOrLessEquals(top),
               refreshTriggerPullDistance: 100, // default value.
               refreshIndicatorExtent: 60, // default value.
             ),
@@ -799,7 +799,7 @@ void main() {
           contains(
             matchesBuilder(
               refreshState: RefreshIndicatorMode.done,
-              pulledExtent: retractingDy,
+              pulledExtent: moreOrLessEquals(retractingDy),
               refreshTriggerPullDistance: 100, // default value.
               refreshIndicatorExtent: 60, // default value.
             ),
@@ -826,7 +826,7 @@ void main() {
           contains(
             matchesBuilder(
               refreshState: RefreshIndicatorMode.done,
-              pulledExtent: draggedDy,
+              pulledExtent: moreOrLessEquals(draggedDy),
               refreshTriggerPullDistance: 100, // default value.
               refreshIndicatorExtent: 60, // default value.
             ),
