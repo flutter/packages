@@ -1,3 +1,7 @@
+## NEXT
+
+* Removes unnecessary Material imports.
+
 ## 0.12.1
 
 * Adds `setJpegImageQuality` for controlling JPEG compression quality.
