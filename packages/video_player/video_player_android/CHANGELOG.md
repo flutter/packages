@@ -1,3 +1,7 @@
+## 2.13.0
+
+* Adds support for setting a preferred audio language during player creation via `VideoPlayerOptions.preferredAudioLanguage`.
+
 ## 2.12.0
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/176575) where some videos report an incorrect duration when initialized without a video duration.
