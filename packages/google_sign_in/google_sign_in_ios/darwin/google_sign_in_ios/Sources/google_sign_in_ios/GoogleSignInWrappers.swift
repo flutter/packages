@@ -122,7 +122,7 @@ final class GIDSignInResultWrapper: GIDSignInResultProtocol {
   }
 
   var user: GIDGoogleUserProtocol {
-    return GIDGoogleUserWrapper(user: result.user)!
+    return GIDGoogleUserWrapper(user: result.user)
   }
 
   var serverAuthCode: String? {
@@ -135,9 +135,13 @@ final class GIDGoogleUserWrapper: GIDGoogleUserProtocol {
   /// The underlying GIDGoogleUser instance.
   let user: GIDGoogleUser
 
-  init?(user: GIDGoogleUser?) {
-    guard let user else { return nil }
+  init(user: GIDGoogleUser) {
     self.user = user
+  }
+
+  convenience init?(user: GIDGoogleUser?) {
+    guard let user else { return nil }
+    self.init(user: user)
   }
 
   var userID: String? {
@@ -153,11 +157,11 @@ final class GIDGoogleUserWrapper: GIDGoogleUserProtocol {
   }
 
   var accessToken: GIDTokenProtocol {
-    return GIDTokenWrapper(token: user.accessToken)!
+    return GIDTokenWrapper(token: user.accessToken)
   }
 
   var refreshToken: GIDTokenProtocol {
-    return GIDTokenWrapper(token: user.refreshToken)!
+    return GIDTokenWrapper(token: user.refreshToken)
   }
 
   var idToken: GIDTokenProtocol? {
@@ -238,9 +242,13 @@ final class GIDTokenWrapper: GIDTokenProtocol {
   /// The underlying GIDToken instance.
   let token: GIDToken
 
-  init?(token: GIDToken?) {
-    guard let token else { return nil }
+  init(token: GIDToken) {
     self.token = token
+  }
+
+  convenience init?(token: GIDToken?) {
+    guard let token else { return nil }
+    self.init(token: token)
   }
 
   var tokenString: String {
