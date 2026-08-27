@@ -5,7 +5,10 @@
 import Flutter
 import GoogleMaps
 import UIKit
-import google_maps_flutter_ios_sdk9_objc
+
+#if canImport(google_maps_flutter_ios_sdk9_objc)
+  import google_maps_flutter_ios_sdk9_objc
+#endif
 
 /// Defines marker controllable by Flutter.
 class MarkerController: NSObject {
