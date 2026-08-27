@@ -1,6 +1,7 @@
 ## NEXT
 
-* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+* Migrates to use `cupertino_ui` instead of `flutter/cupertino.dart`.
 
 ## 1.0.9
 

@@ -5,17 +5,16 @@
 /// This test file is primarily here to serve as a source for code excerpts.
 library;
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Cupertino Icon Test', (WidgetTester tester) async {
     // #docregion CupertinoIcon
-    const icon = Icon(CupertinoIcons.heart_fill, color: Colors.pink, size: 24.0);
+    const icon = Icon(CupertinoIcons.heart_fill, color: CupertinoColors.systemPink, size: 24.0);
     // #enddocregion CupertinoIcon
 
-    await tester.pumpWidget(const MaterialApp(home: Scaffold(body: icon)));
+    await tester.pumpWidget(const CupertinoApp(home: icon));
 
     expect(find.byType(Icon), findsOne);
   });
