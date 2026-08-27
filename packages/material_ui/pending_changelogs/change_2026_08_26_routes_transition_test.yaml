@@ -1,3 +1,0 @@
-changelog: |
-  - Ports the Material route transition test suite from `flutter/flutter`.
-version: patch
