@@ -1,3 +1,7 @@
+## 0.4.12
+
+* Exposes expirationDate on SK2PurchaseDetails.
+
 ## 0.4.11+1
 
 * Fixes StoreKit 2 restore transactions not grouping purchases into a single event.
