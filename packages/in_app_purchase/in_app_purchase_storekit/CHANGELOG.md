@@ -1,3 +1,7 @@
+## NEXT
+
+* Removes unnecessary Material imports.
+
 ## 0.4.12
 
 * Adds support for setting introductory offer eligibility from a server-signed
