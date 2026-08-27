@@ -11,7 +11,7 @@ import Testing
 
   @Test func updatePolygonSetsVisibilityLast() {
     let polygon = PropertyOrderValidatingPolygon()
-    FGMPolygonController.update(
+    PolygonController.update(
       polygon,
       from: FGMPlatformPolygon.make(
         withPolygonId: "polygon",
