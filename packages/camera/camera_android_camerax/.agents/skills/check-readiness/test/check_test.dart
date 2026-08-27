@@ -18,9 +18,9 @@ import 'package:test/test.dart';
 import '../tool/check.dart';
 
 class FakeProcessManager implements ProcessManager {
-  final Map<String, bool> canRunMock = {};
-  final Map<String, ProcessResult> runMock = {};
-  final List<List<String>> runInvocations = [];
+  final Map<String, bool> canRunMock = <String, bool>{};
+  final Map<String, ProcessResult> runMock = <String, ProcessResult>{};
+  final List<List<String>> runInvocations = <List<String>>[];
 
   @override
   bool canRun(dynamic executable, {String? workingDirectory}) {
@@ -56,7 +56,7 @@ void main() {
   late FakeProcessManager processManager;
   late ReadinessChecker checker;
   late String workspaceRoot;
-  final List<String> printLogs = [];
+  final List<String> printLogs = <String>[];
 
   setUp(() {
     fileSystem = MemoryFileSystem.test();
@@ -68,6 +68,9 @@ void main() {
     );
     workspaceRoot = fileSystem.path.absolute('workspace');
     fileSystem.file(fileSystem.path.join(workspaceRoot, '.git')).createSync(recursive: true);
+    fileSystem
+        .file(fileSystem.path.join(workspaceRoot, 'script', 'githooks', 'pre-push'))
+        .createSync(recursive: true);
     processManager.runMock['git config --get core.hooksPath'] =
         ProcessResult(0, 0, 'script/githooks\n', '');
     printLogs.clear();
@@ -92,6 +95,49 @@ void main() {
     expect(printLogs, contains('Environment is fully ready!'));
   });
 
+  test('fails when git hooks are not configured', () async {
+    fileSystem
+        .directory(fileSystem.path.join(workspaceRoot, '.agents', 'skills'))
+        .createSync(recursive: true);
+
+    processManager.runMock['git config --get core.hooksPath'] = ProcessResult(0, 1, '', 'not set');
+
+    final bool result = await runChecker();
+    expect(result, isFalse);
+    expect(
+      printLogs.any((line) => line.contains('Git hooks are not configured correctly')),
+      isTrue,
+    );
+    expect(printLogs.any((line) => line.contains('dart run bin/install_hooks.dart')), isTrue);
+  });
+
+  test('fails when git hooks path is wrong', () async {
+    fileSystem
+        .directory(fileSystem.path.join(workspaceRoot, '.agents', 'skills'))
+        .createSync(recursive: true);
+
+    processManager.runMock['git config --get core.hooksPath'] =
+        ProcessResult(0, 0, '.git/hooks\n', '');
+
+    final bool result = await runChecker();
+    expect(result, isFalse);
+    expect(printLogs.any((line) => line.contains('expected "script/githooks"')), isTrue);
+  });
+
+  test('fails when pre-push hook file is missing', () async {
+    fileSystem
+        .directory(fileSystem.path.join(workspaceRoot, '.agents', 'skills'))
+        .createSync(recursive: true);
+
+    fileSystem
+        .file(fileSystem.path.join(workspaceRoot, 'script', 'githooks', 'pre-push'))
+        .deleteSync();
+
+    final bool result = await runChecker();
+    expect(result, isFalse);
+    expect(printLogs.any((line) => line.contains('Git pre-push hook is missing')), isTrue);
+  });
+
   test('fails when a broken symlink is present', () async {
     final Directory skillsDir = fileSystem
         .directory(fileSystem.path.join(workspaceRoot, '.agents', 'skills'))
@@ -104,7 +150,9 @@ void main() {
     final bool result = await runChecker();
     expect(result, isFalse);
     expect(
-        printLogs.any((line) => line.contains('Found broken symlinks in .agents/skills:')), isTrue);
+      printLogs.any((line) => line.contains('Found broken symlinks in .agents/skills:')),
+      isTrue,
+    );
   });
 
   test('fails when git is dirty', () async {
@@ -117,39 +165,10 @@ void main() {
     final bool result = await runChecker();
     expect(result, isFalse);
     expect(
-        printLogs,
-        contains(
-            'Error: Git working directory is not clean. Please commit or stash your changes before starting new work.'));
-  });
-
-  test('fails when git hooks are not configured', () async {
-    fileSystem
-        .directory(fileSystem.path.join(workspaceRoot, '.agents', 'skills'))
-        .createSync(recursive: true);
-
-    processManager.runMock['git config --get core.hooksPath'] = ProcessResult(0, 1, '', '');
-
-    final bool result = await runChecker();
-    expect(result, isFalse);
-    expect(
-      printLogs.any((line) => line.contains('Git hooks are not configured correctly')),
-      isTrue,
-    );
-  });
-
-  test('fails when git hooks point to incorrect path', () async {
-    fileSystem
-        .directory(fileSystem.path.join(workspaceRoot, '.agents', 'skills'))
-        .createSync(recursive: true);
-
-    processManager.runMock['git config --get core.hooksPath'] =
-        ProcessResult(0, 0, 'other/hooks\n', '');
-
-    final bool result = await runChecker();
-    expect(result, isFalse);
-    expect(
-      printLogs.any((line) => line.contains('Git hooks are not configured correctly')),
-      isTrue,
+      printLogs,
+      contains(
+        'Error: Git working directory is not clean. Please commit or stash your changes before starting new work.',
+      ),
     );
   });
 
@@ -190,24 +209,26 @@ void main() {
     expect(printLogs, contains('Error: Failed to resolve dependencies.'));
   });
 
-  test('does not return early and reports multiple failures if git is dirty and tools are missing',
-      () async {
-    fileSystem
-        .directory(fileSystem.path.join(workspaceRoot, '.agents', 'skills'))
-        .createSync(recursive: true);
+  test(
+    'does not return early and reports multiple failures if git is dirty and tools are missing',
+    () async {
+      fileSystem
+          .directory(fileSystem.path.join(workspaceRoot, '.agents', 'skills'))
+          .createSync(recursive: true);
 
-    // Git returns dirty
-    processManager.runMock['git status --porcelain'] = ProcessResult(0, 0, ' M file.txt\n', '');
-    // Flutter is missing
-    processManager.canRunMock['flutter'] = false;
+      // Git returns dirty
+      processManager.runMock['git status --porcelain'] = ProcessResult(0, 0, ' M file.txt\n', '');
+      // Flutter is missing
+      processManager.canRunMock['flutter'] = false;
 
-    final bool result = await runChecker();
-    expect(result, isFalse);
+      final bool result = await runChecker();
+      expect(result, isFalse);
 
-    // Both errors should be printed
-    expect(printLogs.any((line) => line.contains('Git working directory is not clean')), isTrue);
-    expect(printLogs.any((line) => line.contains("'flutter' is not on the PATH")), isTrue);
-  });
+      // Both errors should be printed
+      expect(printLogs.any((line) => line.contains('Git working directory is not clean')), isTrue);
+      expect(printLogs.any((line) => line.contains("'flutter' is not on the PATH")), isTrue);
+    },
+  );
 
   group('Windows style', () {
     late MemoryFileSystem winFileSystem;
@@ -225,7 +246,21 @@ void main() {
       winFileSystem
           .file(winFileSystem.path.join(winWorkspaceRoot, '.git'))
           .createSync(recursive: true);
+      winFileSystem
+          .file(winFileSystem.path.join(winWorkspaceRoot, 'script', 'githooks', 'pre-push'))
+          .createSync(recursive: true);
+      processManager.runMock['git config --get core.hooksPath'] =
+          ProcessResult(0, 0, r'script\githooks' '\n', '');
       printLogs.clear();
+    });
+
+    test('passes when core.hooksPath uses backslashes on Windows', () async {
+      winFileSystem
+          .directory(winFileSystem.path.join(winWorkspaceRoot, '.agents', 'skills'))
+          .createSync(recursive: true);
+
+      final bool result = await winChecker.checkReadiness(winWorkspaceRoot);
+      expect(result, isTrue);
     });
 
     test('fails when a broken symlink is present on Windows', () async {
@@ -238,18 +273,10 @@ void main() {
 
       final bool result = await winChecker.checkReadiness(winWorkspaceRoot);
       expect(result, isFalse);
-      expect(printLogs.any((line) => line.contains('Found broken symlinks in .agents/skills:')),
-          isTrue);
-    });
-
-    test('passes when git hooks use Windows backslashes', () async {
-      processManager.runMock['git config --get core.hooksPath'] =
-          ProcessResult(0, 0, r'script\githooks' '\n', '');
-      processManager.runMock['git status --porcelain'] = ProcessResult(0, 0, '', '');
-
-      final bool result = await winChecker.checkReadiness(winWorkspaceRoot);
-      expect(result, isTrue);
-      expect(printLogs, contains('Git hooks are configured correctly.'));
+      expect(
+        printLogs.any((line) => line.contains('Found broken symlinks in .agents/skills:')),
+        isTrue,
+      );
     });
   });
 
