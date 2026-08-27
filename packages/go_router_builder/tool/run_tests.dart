@@ -38,7 +38,7 @@ Future<void> main() async {
     final String expectResult = expectFile.readAsStringSync().trim();
     test('verify $fileName', () async {
       // Normalize path separators for cross-platform compatibility
-      final String path = file.path.replaceAll(r'\', '/').replaceAll('\r\n', '\n');
+      final String path = file.path.replaceAll(r'\', '/');
 
       final targetLibraryAssetId = '__test__|$path';
       final LibraryElement element = await resolveSources<LibraryElement>(
@@ -59,8 +59,11 @@ Future<void> main() async {
       }
 
       // Apply consistent formatting to both generated and expected code for comparison.
-      final String generated = formatter.format(results.join('\n\n').trim());
-      final String expected = formatter.format(expectResult.trim());
+      // Changes Windows-style CRLF line endings to Unix-style LF line endings.
+      final String generated = formatter
+          .format(results.join('\n\n').trim())
+          .replaceAll('\r\n', '\n');
+      final String expected = formatter.format(expectResult.trim()).replaceAll('\r\n', '\n');
       expect(generated, equals(expected));
     }, timeout: const Timeout(Duration(seconds: 100)));
   }
