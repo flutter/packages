@@ -212,6 +212,27 @@ void main() {
     expect(() => controller.removeJavaScriptChannel('test'), throwsUnimplementedError);
   });
 
+  test('Default implementation of addDocumentStartJavaScript should throw unimplemented error', () {
+    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+
+    expect(
+      () => controller.addDocumentStartJavaScript(
+        const DocumentStartJavaScriptParams(source: 'window.injected = true;'),
+      ),
+      throwsUnimplementedError,
+    );
+  });
+
+  test('Default implementation of supportsAddDocumentStartJavaScript returns false', () async {
+    final PlatformWebViewController controller = ExtendsPlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+
+    await expectLater(controller.supportsAddDocumentStartJavaScript(), completion(isFalse));
+  });
+
   test('Default implementation of getTitle should throw unimplemented error', () {
     final PlatformWebViewController controller = ExtendsPlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),

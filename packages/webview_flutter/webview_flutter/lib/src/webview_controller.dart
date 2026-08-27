@@ -247,6 +247,40 @@ class WebViewController {
     return platform.runJavaScriptReturningResult(javaScript);
   }
 
+  /// Injects JavaScript that runs when the document element is created,
+  /// before any other content of the page loads.
+  ///
+  /// Registered scripts run on the current page and every page loaded
+  /// afterwards. This can be used to set up state that the page's own scripts
+  /// rely on before they run:
+  ///
+  /// ```dart
+  /// final WebViewController controller = WebViewController();
+  /// controller.addDocumentStartJavaScript(
+  ///   const DocumentStartJavaScriptParams(
+  ///     source: "localStorage.setItem('theme', 'dark');",
+  ///   ),
+  /// );
+  /// ```
+  ///
+  /// Platform implementations may extend [DocumentStartJavaScriptParams] with
+  /// additional platform-specific parameters, such as the origins a script is
+  /// allowed to run in.
+  ///
+  /// May not be supported on all platforms and WebView versions; check
+  /// [supportsAddDocumentStartJavaScript] before calling this method.
+  Future<void> addDocumentStartJavaScript(DocumentStartJavaScriptParams params) {
+    return platform.addDocumentStartJavaScript(params);
+  }
+
+  /// Returns true if the current platform and WebView implementation support
+  /// injecting JavaScript at document start.
+  ///
+  /// See [addDocumentStartJavaScript].
+  Future<bool> supportsAddDocumentStartJavaScript() {
+    return platform.supportsAddDocumentStartJavaScript();
+  }
+
   /// Adds a new JavaScript channel to the set of enabled channels.
   ///
   /// The JavaScript code can then call `postMessage` on that object to send a

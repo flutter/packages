@@ -42,6 +42,27 @@ void main() {
     verify(mockPlatformWebViewController.loadHtmlString('html', baseUrl: 'baseUrl'));
   });
 
+  test('addDocumentStartJavaScript', () async {
+    final mockPlatformWebViewController = MockPlatformWebViewController();
+
+    final webViewController = WebViewController.fromPlatform(mockPlatformWebViewController);
+
+    const params = DocumentStartJavaScriptParams(source: 'window.injected = true;');
+    await webViewController.addDocumentStartJavaScript(params);
+    verify(mockPlatformWebViewController.addDocumentStartJavaScript(params));
+  });
+
+  test('supportsAddDocumentStartJavaScript', () async {
+    final mockPlatformWebViewController = MockPlatformWebViewController();
+    when(
+      mockPlatformWebViewController.supportsAddDocumentStartJavaScript(),
+    ).thenAnswer((_) => Future<bool>.value(true));
+
+    final webViewController = WebViewController.fromPlatform(mockPlatformWebViewController);
+
+    await expectLater(webViewController.supportsAddDocumentStartJavaScript(), completion(true));
+  });
+
   test('loadRequest', () async {
     final mockPlatformWebViewController = MockPlatformWebViewController();
 

@@ -65,6 +65,33 @@ base class WebKitLoadFileParams extends LoadFileParams {
   final String readAccessPath;
 }
 
+/// Object specifying parameters for injecting JavaScript at document start in
+/// a [WebKitWebViewController].
+@immutable
+base class WebKitDocumentStartJavaScriptParams extends DocumentStartJavaScriptParams {
+  /// Constructs a [WebKitDocumentStartJavaScriptParams], the subclass of a
+  /// [DocumentStartJavaScriptParams].
+  const WebKitDocumentStartJavaScriptParams({required super.source, this.forMainFrameOnly = true});
+
+  /// Constructs a [WebKitDocumentStartJavaScriptParams] using a
+  /// [DocumentStartJavaScriptParams].
+  factory WebKitDocumentStartJavaScriptParams.fromDocumentStartJavaScriptParams(
+    DocumentStartJavaScriptParams params, {
+    bool forMainFrameOnly = true,
+  }) {
+    return WebKitDocumentStartJavaScriptParams(
+      source: params.source,
+      forMainFrameOnly: forMainFrameOnly,
+    );
+  }
+
+  /// Whether the script should only be injected into the main frame.
+  ///
+  /// Specify true to inject the script only into the main frame, or false to
+  /// inject it into all frames. Defaults to true.
+  final bool forMainFrameOnly;
+}
+
 /// Object specifying creation parameters for a [WebKitWebViewController].
 @immutable
 class WebKitWebViewControllerCreationParams extends PlatformWebViewControllerCreationParams {
@@ -317,6 +344,9 @@ class WebKitWebViewController extends PlatformWebViewController {
   final Map<String, WebKitJavaScriptChannelParams> _javaScriptChannelParams =
       <String, WebKitJavaScriptChannelParams>{};
 
+  final List<WebKitDocumentStartJavaScriptParams> _userScripts =
+      <WebKitDocumentStartJavaScriptParams>[];
+
   bool _zoomEnabled = true;
   WebKitNavigationDelegate? _currentNavigationDelegate;
 
@@ -454,6 +484,33 @@ class WebKitWebViewController extends PlatformWebViewController {
       return;
     }
     await _resetUserScripts(removedJavaScriptChannel: javaScriptChannelName);
+  }
+
+  @override
+  Future<void> addDocumentStartJavaScript(DocumentStartJavaScriptParams params) async {
+    switch (params) {
+      case final WebKitDocumentStartJavaScriptParams params:
+        _userScripts.add(params);
+
+        final userScript = WKUserScript(
+          source: params.source,
+          injectionTime: UserScriptInjectionTime.atDocumentStart,
+          isForMainFrameOnly: params.forMainFrameOnly,
+        );
+
+        final WKUserContentController contentController = await _webView.configuration
+            .getUserContentController();
+        await contentController.addUserScript(userScript);
+      default:
+        await addDocumentStartJavaScript(
+          WebKitDocumentStartJavaScriptParams.fromDocumentStartJavaScriptParams(params),
+        );
+    }
+  }
+
+  @override
+  Future<bool> supportsAddDocumentStartJavaScript() {
+    return Future<bool>.value(true);
   }
 
   @override
@@ -806,9 +863,21 @@ class WebKitWebViewController extends PlatformWebViewController {
     remainingChannelParams.remove(removedJavaScriptChannel);
     _javaScriptChannelParams.clear();
 
+    final userScripts = List<WebKitDocumentStartJavaScriptParams>.of(_userScripts);
+    _userScripts.clear();
+
     await Future.wait(<Future<void>>[
       for (final JavaScriptChannelParams params in remainingChannelParams.values)
         addJavaScriptChannel(params),
+    ]);
+
+    await Future.wait(<Future<void>>[
+      // User scripts are removed with `removeAllUserScripts`, so this adds
+      // back the scripts registered with `addDocumentStartJavaScript`. This
+      // runs after the JavaScript channels are re-registered above, so that
+      // scripts that run at document start can rely on the channels.
+      for (final WebKitDocumentStartJavaScriptParams params in userScripts)
+        addDocumentStartJavaScript(params),
       // Zoom is disabled with a WKUserScript, so this adds it back if it was
       // removed above.
       if (!_zoomEnabled) _disableZoom(),
