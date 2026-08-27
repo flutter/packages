@@ -114,7 +114,7 @@ void commitFiles(
     message,
   ]);
   if (commitResult.exitCode != 0) {
-    stderr.writeln('Error: git commit failed:\n${commitResult.stderr}');
+    stderr.writeln('Error: git commit failed:\n${commitResult.stdout}\n${commitResult.stderr}');
     exit(commitResult.exitCode);
   }
 }
