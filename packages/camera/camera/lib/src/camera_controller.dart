@@ -38,7 +38,7 @@ class CameraValue {
     required this.isRecordingVideo,
     required this.isTakingPicture,
     required this.isStreamingImages,
-    required bool isRecordingPaused,
+    required this._isRecordingPaused,
     required this.flashMode,
     required this.exposureMode,
     required this.focusMode,
@@ -51,7 +51,7 @@ class CameraValue {
     this.isPreviewPaused = false,
     this.previewPauseOrientation,
     this.videoStabilizationMode = VideoStabilizationMode.off,
-  }) : _isRecordingPaused = isRecordingPaused;
+  });
 
   /// Creates a new camera controller state for an uninitialized controller.
   const CameraValue.uninitialized(CameraDescription description)
