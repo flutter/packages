@@ -1,0 +1,3 @@
+changelog: |
+  - Prevents stale asynchronous suggestions from replacing newer `SearchAnchor` results.
+version: patch
