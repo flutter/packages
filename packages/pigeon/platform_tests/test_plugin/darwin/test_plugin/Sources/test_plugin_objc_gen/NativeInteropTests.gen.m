@@ -59,22 +59,22 @@ _julz8q_NativeInteropFlutterIntegrationCoreApiBridge(void) {
 }
 
 typedef id (^_ProtocolTrampoline)(void *sel, id arg1, id arg2);
-__attribute__((visibility("default"))) __attribute__((used)) id
-_julz8q_protocolTrampoline_zi5eed(id target, void *sel, id arg1, id arg2) {
+__attribute__((visibility("default"))) __attribute__((used)) id _julz8q_protocolTrampoline_zi5eed(
+    id target, void *sel, id arg1, id arg2) {
   return ((_ProtocolTrampoline)((id(*)(id, SEL, SEL))objc_msgSend)(
       target, @selector(getDOBJCDartProtocolMethodForSelector:), sel))(sel, arg1, arg2);
 }
 
 typedef id (^_ProtocolTrampoline_1)(void *sel, id arg1);
-__attribute__((visibility("default"))) __attribute__((used)) id
-_julz8q_protocolTrampoline_xr62hr(id target, void *sel, id arg1) {
+__attribute__((visibility("default"))) __attribute__((used)) id _julz8q_protocolTrampoline_xr62hr(
+    id target, void *sel, id arg1) {
   return ((_ProtocolTrampoline_1)((id(*)(id, SEL, SEL))objc_msgSend)(
       target, @selector(getDOBJCDartProtocolMethodForSelector:), sel))(sel, arg1);
 }
 
 typedef id (^_ProtocolTrampoline_2)(void *sel, id arg1, id arg2, id arg3, id arg4);
-__attribute__((visibility("default"))) __attribute__((used)) id
-_julz8q_protocolTrampoline_qfyidt(id target, void *sel, id arg1, id arg2, id arg3, id arg4) {
+__attribute__((visibility("default"))) __attribute__((used)) id _julz8q_protocolTrampoline_qfyidt(
+    id target, void *sel, id arg1, id arg2, id arg3, id arg4) {
   return ((_ProtocolTrampoline_2)((id(*)(id, SEL, SEL))objc_msgSend)(
       target, @selector(getDOBJCDartProtocolMethodForSelector:), sel))(sel, arg1, arg2, arg3, arg4);
 }
