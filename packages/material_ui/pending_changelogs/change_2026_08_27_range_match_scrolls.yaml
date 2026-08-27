@@ -1,1 +1,3 @@
+changelog: |
+  - Relaxes overly strict position assertions by replacing hardcoded floating-point numbers with range matchers (inExclusiveRange) and relative assertions.
 version: skip
