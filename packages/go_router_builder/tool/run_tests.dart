@@ -53,20 +53,20 @@ Future<void> main() async {
       try {
         generator.generateForAnnotation(reader, results, <String>{});
       } on InvalidGenerationSourceError catch (e) {
-        expectWithNormalizedNewline(e.message.trim(), expectResult);
+        expectWithNormalizedNewlines(e.message.trim(), expectResult);
         return;
       }
 
       // Apply consistent formatting to both generated and expected code for comparison.
       final String generated = formatter.format(results.join('\n\n').trim());
       final String expected = formatter.format(expectResult);
-      expectWithNormalizedNewline(generated, expected);
+      expectWithNormalizedNewlines(generated, expected);
     }, timeout: const Timeout(Duration(seconds: 100)));
   }
 }
 
 /// Compares two strings after normalizing CRLF line endings to LF.
-void expectWithNormalizedNewline(String actual, String expected) {
+void expectWithNormalizedNewlines(String actual, String expected) {
   expect(
     actual.replaceAll('\r\n', '\n'),
     equals(expected.replaceAll('\r\n', '\n')),
