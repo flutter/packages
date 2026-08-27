@@ -26,15 +26,9 @@ class TestDartFixesCommand extends PackageLoopingCommand {
   final String name = 'test-dart-fixes';
 
   @override
-  List<String> get aliases => <String>[];
-
-  @override
   final String description =
       'Runs the Dart fix tests for all packages.\n\n'
       'This command requires "flutter" to be in your path.';
-
-  @override
-  PackageLoopingType get packageLoopingType => PackageLoopingType.topLevelOnly;
 
   @override
   bool shouldIgnoreFile(String path) {
@@ -59,11 +53,10 @@ class TestDartFixesCommand extends PackageLoopingCommand {
 
     PackageResult result;
     try {
-      final bool success = await _runDartFixTests(testDirectory);
-      if (!success) {
-        throw Exception('Failed to run dart fix tests.');
-      }
-      result = PackageResult.success();
+      final int exitCode = await _runDartFixTests(testDirectory);
+      result = exitCode == 0
+          ? PackageResult.success()
+          : PackageResult.fail(['Dart fix tests failed.']);
     } catch (error) {
       result = PackageResult.fail(['Dart fix tests failed: $error']);
     }
@@ -126,21 +119,19 @@ dependencies:
 
   /// Run the dart fix tests for the package in the given temporary directory.
   ///
-  /// Resolves with the status code of the command.
-  Future<bool> _runDartFixTests(Directory testDirectory) async {
+  /// Resolves with the exit code of the command.
+  Future<int> _runDartFixTests(Directory testDirectory) async {
     // Run flutter pub get in the temp directory to set it up.
     final bool success = await runPubGet(RepositoryPackage(testDirectory), processRunner, platform);
 
     if (!success) {
-      return success;
+      throw Exception('Pub get failed.');
     }
 
     // Run dart fix --compare-to-golden in the temp directory.
-    final int exitCode = await processRunner.runAndStream('dart', <String>[
+    return processRunner.runAndStream('dart', <String>[
       'fix',
       '--compare-to-golden',
     ], workingDir: testDirectory);
-
-    return exitCode == 0;
   }
 }
