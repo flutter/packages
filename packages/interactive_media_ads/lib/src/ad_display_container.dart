@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 
 import 'companion_ad_slot.dart';
 import 'platform_interface/platform_interface.dart';
