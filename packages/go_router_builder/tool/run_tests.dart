@@ -67,10 +67,7 @@ Future<void> main() async {
 
 /// Compares two strings after normalizing CRLF line endings to LF.
 void _expectWithNormalizedNewlines(String actual, String expected) {
-  expect(
-    actual.replaceAll('\r\n', '\n'),
-    equals(expected.replaceAll('\r\n', '\n')),
-  );
+  expect(actual.replaceAll('\r\n', '\n'), equals(expected.replaceAll('\r\n', '\n')));
 }
 
 Future<Version> _packageVersion() async {
