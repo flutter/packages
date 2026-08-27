@@ -1,4 +1,4 @@
-## NEXT
+## 0.4.0+26
 
 * Adopts `code-excerpt` for the README's Dart driver snippet so it is
   validated against compilable, analyzed source, and updates it to use
