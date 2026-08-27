@@ -22,16 +22,6 @@ typedef GoRouterRedirect = FutureOr<String?> Function(BuildContext context, GoRo
 
 typedef _NamedPath = ({String path, bool caseSensitive});
 
-Iterable<ImperativeRouteMatch> _imperativeMatches(List<RouteMatchBase> matches) sync* {
-  for (final match in matches) {
-    if (match is ImperativeRouteMatch) {
-      yield match;
-    } else if (match is ShellRouteMatch) {
-      yield* _imperativeMatches(match.matches);
-    }
-  }
-}
-
 /// The route configuration for GoRouter configured by the app.
 class RouteConfiguration {
   /// Constructs a [RouteConfiguration].
@@ -350,14 +340,18 @@ class RouteConfiguration {
   RouteMatchList reparse(RouteMatchList matchList) {
     RouteMatchList result = findMatch(matchList.uri, extra: matchList.extra);
 
-    for (final ImperativeRouteMatch imperativeMatch in _imperativeMatches(matchList.matches)) {
-      final match = ImperativeRouteMatch(
-        pageKey: imperativeMatch.pageKey,
-        matches: findMatch(imperativeMatch.matches.uri, extra: imperativeMatch.matches.extra),
-        completer: imperativeMatch.completer,
-      );
-      result = result.push(match);
-    }
+    matchList.visitRouteMatches((RouteMatchBase match) {
+      if (match is ImperativeRouteMatch) {
+        result = result.push(
+          ImperativeRouteMatch(
+            pageKey: match.pageKey,
+            matches: findMatch(match.matches.uri, extra: match.matches.extra),
+            completer: match.completer,
+          ),
+        );
+      }
+      return true;
+    });
     return result;
   }
 
