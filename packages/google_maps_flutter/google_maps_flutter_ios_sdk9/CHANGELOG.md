@@ -1,3 +1,7 @@
+## 2.18.10
+
+* Converts marker controllers to Swift.
+
 ## 2.18.9
 
 * Converts overlay controllers to Swift.
