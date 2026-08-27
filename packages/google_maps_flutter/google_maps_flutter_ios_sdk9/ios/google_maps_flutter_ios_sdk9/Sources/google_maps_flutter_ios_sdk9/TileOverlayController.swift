@@ -4,7 +4,10 @@
 
 import GoogleMaps
 import UIKit
-import google_maps_flutter_ios_sdk9_objc
+
+#if canImport(google_maps_flutter_ios_sdk9_objc)
+  import google_maps_flutter_ios_sdk9_objc
+#endif
 
 /// Protocol for requesting tiles from the Dart side.
 // TODO(stuartmorgan): Adjust this to match the Swift API once the Pigeon

@@ -4,7 +4,10 @@
 
 import GoogleMaps
 import UIKit
-import google_maps_flutter_ios_sdk10_objc
+
+#if canImport(google_maps_flutter_ios_sdk10_objc)
+  import google_maps_flutter_ios_sdk10_objc
+#endif
 
 /// Controller of a single ground overlay on the map.
 class GroundOverlayController: NSObject {
