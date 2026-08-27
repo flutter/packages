@@ -10,10 +10,12 @@
 func pigeonCluster(for cluster: GMUCluster, clusterManagerIdentifier: String) -> FGMPlatformCluster
 {
   var bounds = GMSCoordinateBounds()
+  for item in cluster.items {
+    bounds = bounds.includingCoordinate(item.position)
+  }
 
-  let markerIds = cluster.items.filter { $0 is GMSMarker }.compactMap { marker in
-    bounds = bounds.includingCoordinate(marker.position)
-    return markerIdentifierFromMarker(marker as! GMSMarker)
+  let markerIds = cluster.items.filter { $0 is GMSMarker }.compactMap {
+    markerIdentifierFromMarker($0 as! GMSMarker)
   }
 
   return FGMPlatformCluster.make(
