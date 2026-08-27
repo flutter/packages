@@ -113,4 +113,55 @@ public class VideoPlayerPluginTest {
       assertTrue(videoPlayers.get(ids.getPlayerId()) instanceof TextureVideoPlayer);
     }
   }
+
+  @Test
+  public void videoAssetProviderOverridesDefaultAsset() throws Exception {
+    final VideoAsset providedAsset = mock(VideoAsset.class);
+    final String uri = "https://example.com/video.m3u8";
+    final String[] requestedUri = new String[1];
+
+    VideoPlayerPlugin.setVideoAssetProvider(
+        (context, requested) -> {
+          requestedUri[0] = requested;
+          return providedAsset;
+        });
+
+    try (MockedStatic<TextureVideoPlayer> mockedTextureVideoPlayerStatic =
+        mockStatic(TextureVideoPlayer.class)) {
+      mockedTextureVideoPlayerStatic
+          .when(() -> TextureVideoPlayer.create(any(), any(), any(), any(), any()))
+          .thenReturn(mock(TextureVideoPlayer.class));
+
+      plugin.createForTextureView(new CreationOptions(uri, null, new HashMap<>(), null, null));
+
+      assertEquals(uri, requestedUri[0]);
+      mockedTextureVideoPlayerStatic.verify(
+          () -> TextureVideoPlayer.create(any(), any(), any(), eq(providedAsset), any()));
+    } finally {
+      VideoPlayerPlugin.setVideoAssetProvider(null);
+    }
+  }
+
+  @Test
+  public void videoAssetProviderReturningNullFallsBackToDefault() throws Exception {
+    VideoPlayerPlugin.setVideoAssetProvider((context, requested) -> null);
+
+    try (MockedStatic<TextureVideoPlayer> mockedTextureVideoPlayerStatic =
+        mockStatic(TextureVideoPlayer.class)) {
+      mockedTextureVideoPlayerStatic
+          .when(() -> TextureVideoPlayer.create(any(), any(), any(), any(), any()))
+          .thenReturn(mock(TextureVideoPlayer.class));
+
+      final TexturePlayerIds ids =
+          plugin.createForTextureView(
+              new CreationOptions(
+                  "https://example.com/video.m3u8", null, new HashMap<>(), null, null));
+
+      // The default handling still produced a working player.
+      final LongSparseArray<VideoPlayer> videoPlayers = getVideoPlayers();
+      assertTrue(videoPlayers.get(ids.getPlayerId()) instanceof TextureVideoPlayer);
+    } finally {
+      VideoPlayerPlugin.setVideoAssetProvider(null);
+    }
+  }
 }

@@ -27,6 +27,21 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   private final VideoPlayerOptions sharedOptions = new VideoPlayerOptions();
   private long nextPlayerIdentifier = 1;
 
+  private static @Nullable VideoAssetProvider videoAssetProvider;
+
+  /**
+   * Sets the provider consulted before this plugin's own URI handling, or null to clear it.
+   *
+   * <p>Lets another component take over how a URI is played; see {@link VideoAssetProvider}. This
+   * is process-wide rather than per-plugin-instance because it is typically registered once at
+   * startup, before any player exists.
+   *
+   * @param provider the provider to consult, or null for default handling only.
+   */
+  public static void setVideoAssetProvider(@Nullable VideoAssetProvider provider) {
+    videoAssetProvider = provider;
+  }
+
   /** Register this with the v2 embedding for the plugin to respond to lifecycle callbacks. */
   public VideoPlayerPlugin() {}
 
@@ -126,6 +141,15 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
 
   private @NonNull VideoAsset videoAssetWithOptions(@NonNull CreationOptions options) {
     final @NonNull String uri = options.getUri();
+
+    VideoAssetProvider provider = videoAssetProvider;
+    if (provider != null) {
+      VideoAsset providedAsset = provider.getAsset(flutterState.applicationContext, uri);
+      if (providedAsset != null) {
+        return providedAsset;
+      }
+    }
+
     if (uri.startsWith("asset:")) {
       return VideoAsset.fromAssetUrl(uri);
     } else if (uri.startsWith("rtsp:")) {
