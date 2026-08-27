@@ -26,6 +26,7 @@ dependencies:
   stream_transform: ^2.1.0
 
 dev_dependencies:
+  args: ^2.5.0
   build_runner: ^2.2.0
   cognitive_complexity: 0.2.1
   flutter_test:
