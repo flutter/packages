@@ -5,7 +5,7 @@ import 'dart:js_interop';
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
 /// An HTMLElementView widget that resizes with its contents.
