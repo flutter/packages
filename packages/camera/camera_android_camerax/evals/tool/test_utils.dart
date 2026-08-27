@@ -109,6 +109,7 @@ void commitFiles(
     '-c',
     'user.email=$authorEmail',
     'commit',
+    '--no-verify',
     '-m',
     message,
   ]);
