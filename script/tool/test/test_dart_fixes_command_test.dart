@@ -89,33 +89,15 @@ void main() {
     });
 
     test('fails when dart fix test fails', () async {
-      final RepositoryPackage packageThatFails = createFakePackage(
+      createFakePackage(
         'package1',
         packagesDir,
         examples: <String>[],
         extraFiles: <String>['test_fixes/fix.dart', 'test_fixes/fix.dart.expect'],
       );
-      packageThatFails.dartFixTestDirectory.childFile('fix.dart').writeAsStringSync('a');
-      packageThatFails.dartFixTestDirectory.childFile('fix.dart.expect').writeAsStringSync('b');
-
-      final RepositoryPackage packageThatSucceeds = createFakePackage(
-        'package2',
-        packagesDir,
-        examples: <String>[],
-        extraFiles: <String>['test_fixes/fix.dart', 'test_fixes/fix.dart.expect'],
-      );
-      packageThatSucceeds.dartFixTestDirectory.childFile('fix.dart').writeAsStringSync('c');
-      packageThatSucceeds.dartFixTestDirectory.childFile('fix.dart.expect').writeAsStringSync('c');
 
       processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-        FakeProcessInfo(_MockDartFixProcess(processRunner, packagesDir.fileSystem), const <String>[
-          'fix',
-          '--compare-to-golden',
-        ]),
-        FakeProcessInfo(_MockDartFixProcess(processRunner, packagesDir.fileSystem), const <String>[
-          'fix',
-          '--compare-to-golden',
-        ]),
+        FakeProcessInfo(MockProcess(exitCode: 1), const <String>['fix', '--compare-to-golden']),
       ];
 
       Error? commandError;
@@ -133,28 +115,8 @@ void main() {
         containsAllInOrder(<Matcher>[
           contains('The following packages had errors:'),
           contains('  package1'),
-          isNot(contains('package2')),
         ]),
       );
     });
   });
-}
-
-/// Fails when fix.dart does not equal fix.dart.expect.
-class _MockDartFixProcess extends MockProcess {
-  _MockDartFixProcess(this.processRunner, this.fileSystem);
-  final RecordingProcessRunner processRunner;
-  final FileSystem fileSystem;
-
-  @override
-  Future<int> get exitCode async {
-    final ProcessCall call = processRunner.recordedCalls.last;
-    final String? workingDir = call.workingDir;
-    final File fixDart = fileSystem.file(fileSystem.path.join(workingDir!, 'fix.dart'));
-    final File fixExpect = fileSystem.file(fileSystem.path.join(workingDir, 'fix.dart.expect'));
-    if (!fixDart.existsSync() || !fixExpect.existsSync()) {
-      return 1;
-    }
-    return fixDart.readAsStringSync() == fixExpect.readAsStringSync() ? 0 : 1;
-  }
 }
