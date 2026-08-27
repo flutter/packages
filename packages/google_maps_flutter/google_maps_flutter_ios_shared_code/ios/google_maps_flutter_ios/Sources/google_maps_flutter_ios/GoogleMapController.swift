@@ -128,8 +128,8 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   let polylinesController: PolylinesController
   let circlesController: CirclesController
   let heatmapsController: FGMHeatmapsController
-  let tileOverlaysController: FGMTileOverlaysController
-  let groundOverlaysController: FGMGroundOverlaysController
+  let tileOverlaysController: TileOverlaysController
+  let groundOverlaysController: GroundOverlaysController
 
   // The resulting error message, if any, from the last attempt to set the map style.
   // This is used to provide access to errors after the fact, since the map style is generally set at
@@ -223,11 +223,11 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     )
     heatmapsController = FGMHeatmapsController(mapView: mapView)
     tileProvider = ConcreteTileProvider(dartCallbackHandler: dartCallbackHandler)
-    tileOverlaysController = FGMTileOverlaysController(
+    tileOverlaysController = TileOverlaysController(
       mapView: mapView,
       tileProvider: tileProvider
     )
-    groundOverlaysController = FGMGroundOverlaysController(
+    groundOverlaysController = GroundOverlaysController(
       mapView: mapView,
       eventDelegate: mapEventHandler,
       assetProvider: assetProvider
@@ -517,7 +517,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
 // TODO(stuartmorgan): Remove this in favor of an extension to add FGMTileProviderDelegate to
 // the Pigeon Flutter API object once this plugin has switched to Swift Pigeon generation
 // (adjusting the protocol to match the Swift version of the signature).
-private class ConcreteTileProvider: NSObject, FGMTileProviderDelegate {
+private class ConcreteTileProvider: NSObject, TileProviderDelegate {
   let handler: FGMMapsCallbackApi
 
   init(dartCallbackHandler: FGMMapsCallbackApi) {

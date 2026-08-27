@@ -87,7 +87,10 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
   }
 
   @Test func handleResultTileDownsamplesWideGamutImages() throws {
-    let controller = FGMTileProviderController()
+    let controller = TileProviderController(
+      tileOverlayIdentifier: "test",
+      tileProvider: TestTileProvider(onTileCalled: {})
+    )
 
     let bundle = Bundle(for: MockCATransaction.self)
     let imagePath = try #require(
