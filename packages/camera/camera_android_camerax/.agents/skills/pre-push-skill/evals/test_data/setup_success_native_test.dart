@@ -49,12 +49,10 @@ public class DummyEvalFeatureTest {
 
   updateReleaseInfo(changelog: 'Adds `DummyEvalFeature` and tests.');
 
-  // Overrides eval author credentials so this success fixture passes the commit author check.
-  // Risk: When run on a working branch, check_eval_commits.dart will not detect or prevent these test commits from being pushed.
-  commitFiles(
-    <String>[javaFile.path, javaTestFile.path, 'pubspec.yaml', 'CHANGELOG.md'],
-    'Add DummyEvalFeature.java, tests, and changelog update',
-    authorName: 'Contributor',
-    authorEmail: 'contributor@example.com',
-  );
+  commitFiles(<String>[
+    javaFile.path,
+    javaTestFile.path,
+    'pubspec.yaml',
+    'CHANGELOG.md',
+  ], 'Add DummyEvalFeature.java, tests, and changelog update');
 }

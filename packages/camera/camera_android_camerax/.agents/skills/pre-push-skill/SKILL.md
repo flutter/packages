@@ -42,22 +42,7 @@ inform the user that this skill is for working on
 the camera_android_camerax repo and not ready for
 work on other packages.
 
-## 3. Check for Evaluation Test Commits
-
-Ensure that no commits in this branch were authored or committed with evaluation test credentials.
-Command to run:
-
-```bash
-dart run evals/tool/check_eval_commits.dart
-```
-
-*Note: The script automatically discovers the remote pointing to `flutter/packages` (falling back to `upstream` or `origin`). You can optionally specify `--remote=<remote>`, `--base-branch=<branch>` (defaults to `main`), or `--head=<ref>` (defaults to `HEAD`) if comparing against a custom upstream repository, branch, or reference.*
-
-- If this command outputs `SUCCESS:` (exits with code `0`), no evaluation commits were detected. Proceed to the next check.
-- If this command exits with code `1`, the branch contains commits authored or committed with evaluation test credentials. The code is **NOT** ready to push. Test commits must be removed or rebased before pushing.
-- If this command exits with code `2`, a script or execution error occurred (such as git log/fetch failure). Report the error to the user.
-
-## 4. Check Merge Conflicts
+## 3. Check Merge Conflicts
 
 Ensure the current branch is up to date with the main branch
 and has no merge conflicts.
@@ -76,7 +61,7 @@ The code is NOT ready to push.
 The latest changes from `main` must be pulled first,
 and then merge conflicts must be resolved.
 
-## 5. Check Unit Tests Pass
+## 4. Check Unit Tests Pass
 
 Tests ensure that your changes do not break existing functionality
 and that new features work as expected.
@@ -104,7 +89,7 @@ so prompt the user to review all found errors
 and fix the newly introduced failures before pushing any code.
 Then, move on to the next verification step.
 
-## 6. Publish Check (Version and CHANGELOG updates)
+## 5. Publish Check (Version and CHANGELOG updates)
 
 Any pull request that changes non-test code
 must increment the package version in `pubspec.yaml`
@@ -122,7 +107,7 @@ and committed before code can be pushed.
 
 Additionally, ensure `CHANGELOG.md` formatting follows the [CHANGELOG style guide](https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changelog-style).
 
-## 7. Check License Headers
+## 6. Check License Headers
 
 All source files in this repository must include
 the standard copyright and license header.
@@ -135,13 +120,13 @@ dart pub global run flutter_plugin_tools license-check --packages camera_android
 If this command fails, the code WAS NOT ready to push.
 Those license errors must be fixed and committed before code is pushed.
 
-## 8. Check for Required Documentation
+## 7. Check for Required Documentation
 
 Check if the modified or newly added public APIs
 include Dart doc comments (`///`). If not, the code IS NOT ready to
 be pushed.
 
-## 9. Check for Added Tests
+## 8. Check for Added Tests
 
 Virtually all changes require a test.
 See [Test Documentation](https://github.com/flutter/flutter/blob/master/docs/ecosystem/testing/Plugin-Tests.md).
@@ -177,7 +162,6 @@ communicate:
 # YES, you are ready to push!
 [x] Initial Clean Working Tree
 [x] Check for Changed Files
-[x] Check for Evaluation Test Commits
 [x] Check Merge Conflicts
 [x] Check Unit Tests Pass
 [x] Check Publish Check (Version and CHANGELOG updates)
@@ -192,7 +176,6 @@ Unit tests failing for <path to failing test> but failure appears unrelated to t
 Publish check failed but the PR is exempt.
 [x] Initial Clean Working Tree
 [x] Check for Changed Files
-[x] Check for Evaluation Test Commits
 [x] Check Merge Conflicts
 [ ] Check Unit Tests Pass
 [ ] Check Publish Check (Version and CHANGELOG updates)
