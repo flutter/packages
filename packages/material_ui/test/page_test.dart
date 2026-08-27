@@ -1196,6 +1196,44 @@ void main() {
     }),
   );
 
+  testWidgets('MaterialPageRoute can opt out of route semantics', (WidgetTester tester) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        onGenerateRoute: (RouteSettings settings) {
+          return MaterialPageRoute<void>(
+            includeRouteSemantics: false,
+            builder: (BuildContext context) => const Text('Page'),
+          );
+        },
+      ),
+    );
+
+    expect(find.semantics.byFlag(SemanticsFlag.scopesRoute), findsNothing);
+    handle.dispose();
+  });
+
+  testWidgets('MaterialPage can opt out of route semantics', (WidgetTester tester) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+
+    await tester.pumpWidget(
+      buildNavigator(
+        view: tester.view,
+        pages: const <Page<void>>[
+          MaterialPage<void>(includeRouteSemantics: false, child: Text('Page')),
+        ],
+        onPopPage: (Route<dynamic> route, dynamic result) {
+          assert(false); // The test shouldn't call this.
+          return true;
+        },
+      ),
+    );
+
+    expect(find.semantics.byFlag(SemanticsFlag.scopesRoute), findsNothing);
+    handle.dispose();
+  });
+
   testWidgets('MaterialPage works', (WidgetTester tester) async {
     final LocalKey pageKey = UniqueKey();
     final detector = TransitionDetector();

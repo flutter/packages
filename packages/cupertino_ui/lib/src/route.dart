@@ -97,6 +97,8 @@ mixin CupertinoRouteTransitionMixin<T> on PageRoute<T> {
   @protected
   Widget buildContent(BuildContext context);
 
+  bool get _includeRouteSemantics => true;
+
   /// {@template cupertino_ui.CupertinoRouteTransitionMixin.title}
   /// A title string for this route.
   ///
@@ -194,6 +196,9 @@ mixin CupertinoRouteTransitionMixin<T> on PageRoute<T> {
     Animation<double> secondaryAnimation,
   ) {
     final Widget child = buildContent(context);
+    if (!_includeRouteSemantics) {
+      return child;
+    }
     return Semantics(scopesRoute: true, explicitChildNodes: true, child: child);
   }
 
@@ -309,6 +314,7 @@ class CupertinoPageRoute<T> extends PageRoute<T> with CupertinoRouteTransitionMi
     this.maintainState = true,
     super.fullscreenDialog,
     super.allowSnapshotting = true,
+    this.includeRouteSemantics = true,
     super.barrierDismissible = false,
   }) {
     assert(opaque);
@@ -329,6 +335,21 @@ class CupertinoPageRoute<T> extends PageRoute<T> with CupertinoRouteTransitionMi
 
   @override
   final bool maintainState;
+
+  /// {@template cupertino_ui.CupertinoPageRoute.includeRouteSemantics}
+  /// Whether this route introduces a route scope in the semantics tree.
+  ///
+  /// Defaults to true. When true, screen readers can treat pushes and pops of
+  /// this route as navigation to a new screen and announce the change to users.
+  ///
+  /// Set this to false for routes that update only part of the screen, such as
+  /// tab or shell content in a nested navigator. This prevents screen readers
+  /// from treating the route as a new screen.
+  /// {@endtemplate}
+  final bool includeRouteSemantics;
+
+  @override
+  bool get _includeRouteSemantics => includeRouteSemantics;
 
   @override
   String get debugLabel => '${super.debugLabel}(${settings.name})';
@@ -363,6 +384,9 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T> with CupertinoRouteTr
   bool get fullscreenDialog => _page.fullscreenDialog;
 
   @override
+  bool get _includeRouteSemantics => _page.includeRouteSemantics;
+
+  @override
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 }
 
@@ -390,6 +414,7 @@ class CupertinoPage<T> extends Page<T> {
     this.title,
     this.fullscreenDialog = false,
     this.allowSnapshotting = true,
+    this.includeRouteSemantics = true,
     super.canPop,
     super.onPopInvoked,
     super.key,
@@ -412,6 +437,9 @@ class CupertinoPage<T> extends Page<T> {
 
   /// {@macro flutter.widgets.TransitionRoute.allowSnapshotting}
   final bool allowSnapshotting;
+
+  /// {@macro cupertino_ui.CupertinoPageRoute.includeRouteSemantics}
+  final bool includeRouteSemantics;
 
   @override
   Route<T> createRoute(BuildContext context) {

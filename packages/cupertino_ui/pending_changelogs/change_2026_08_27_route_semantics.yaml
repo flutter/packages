@@ -1,0 +1,3 @@
+changelog: |
+  - Adds an option for `CupertinoPageRoute` and `CupertinoPage` to opt out of introducing a semantics route scope.
+version: minor
