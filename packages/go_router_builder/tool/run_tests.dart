@@ -39,7 +39,6 @@ Future<void> main() async {
     test('verify $fileName', () async {
       // Normalize path separators for cross-platform compatibility
       final String path = file.path.replaceAll(r'\', '/');
-
       final targetLibraryAssetId = '__test__|$path';
       final LibraryElement element = await resolveSources<LibraryElement>(
         <String, String>{targetLibraryAssetId: file.readAsStringSync()},
@@ -58,8 +57,8 @@ Future<void> main() async {
         return;
       }
 
-      // Apply consistent formatting to both generated and expected code for comparison.
-      // Changes Windows-style CRLF line endings to Unix-style LF line endings.
+      // Apply consistent formatting and line endings to both generated and expected
+      // code for comparison.
       final String generated = formatter
           .format(results.join('\n\n').trim())
           .replaceAll('\r\n', '\n');
