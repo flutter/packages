@@ -1,3 +1,7 @@
+## 1.2.0
+
+* Adds `sortIconBuilder` parameter to `DataTable`, `PaginatedDataTable`, and `DataTableThemeData` for custom sorting indicators.
+
 ## 1.1.0
 
 - Add missing Widget of the Week videos to widget API docs.
