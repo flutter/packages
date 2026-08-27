@@ -5,7 +5,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 
 import 'file_selector_api.g.dart';
 import 'types/native_illegal_argument_exception.dart';
