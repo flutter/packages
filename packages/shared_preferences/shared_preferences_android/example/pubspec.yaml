@@ -23,6 +23,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  jnigen: ^0.17.0
 
 flutter:
   uses-material-design: true

@@ -55,7 +55,7 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   private fun setUp(messenger: BinaryMessenger, context: Context) {
     this.context = context
     try {
-      SharedPreferencesAsyncApi.setUp(messenger, this, "data_store")
+      SharedPreferencesAsyncApiRegistrar().register(this, "data_store")
       backend = SharedPreferencesBackend(messenger, context, listEncoder)
     } catch (ex: Exception) {
       Log.e(TAG, "Received exception while setting up SharedPreferencesPlugin", ex)
@@ -68,7 +68,7 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-    SharedPreferencesAsyncApi.setUp(binding.binaryMessenger, null, "data_store")
+    SharedPreferencesAsyncApiRegistrar().register(null, "data_store")
     backend?.tearDown()
     backend = null
   }
@@ -284,14 +284,14 @@ class SharedPreferencesBackend(
 
   init {
     try {
-      SharedPreferencesAsyncApi.setUp(messenger, this, "shared_preferences")
+      SharedPreferencesAsyncApiRegistrar().register(this, "shared_preferences")
     } catch (ex: Exception) {
       Log.e(TAG, "Received exception while setting up SharedPreferencesBackend", ex)
     }
   }
 
   fun tearDown() {
-    SharedPreferencesAsyncApi.setUp(messenger, null, "shared_preferences")
+    SharedPreferencesAsyncApiRegistrar().register(null, "shared_preferences")
   }
 
   private fun createSharedPreferences(options: SharedPreferencesPigeonOptions): SharedPreferences {
