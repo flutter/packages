@@ -118,6 +118,7 @@ class RouteBuilder {
         errorBuilder: errorBuilder,
         errorPageBuilder: errorPageBuilder,
         requestFocus: requestFocus,
+        clipBehavior: Clip.hardEdge,
       ),
     );
   }
@@ -137,6 +138,7 @@ class _CustomNavigator extends StatefulWidget {
     required this.errorBuilder,
     required this.errorPageBuilder,
     required this.requestFocus,
+    required this.clipBehavior,
   });
 
   final GlobalKey<NavigatorState> navigatorKey;
@@ -156,6 +158,9 @@ class _CustomNavigator extends StatefulWidget {
   final GoRouterWidgetBuilder? errorBuilder;
   final GoRouterPageBuilder? errorPageBuilder;
   final bool requestFocus;
+
+  /// The clip behavior forwarded to the [Navigator] built by this widget.
+  final Clip clipBehavior;
 
   @override
   State<StatefulWidget> createState() => _CustomNavigatorState();
@@ -292,8 +297,9 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
             ShellRouteMatch match,
             RouteMatchList matchList,
             List<NavigatorObserver>? observers,
-            String? restorationScopeId,
-          ) {
+            String? restorationScopeId, {
+            Clip clipBehavior = Clip.hardEdge,
+          }) {
             return PopScope(
               // Prevent ShellRoute from being popped, for example
               // by an iOS back gesture, when the route has active sub-routes.
@@ -315,6 +321,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
                 errorBuilder: widget.errorBuilder,
                 errorPageBuilder: widget.errorPageBuilder,
                 requestFocus: widget.requestFocus,
+                clipBehavior: clipBehavior,
               ),
             );
           },
@@ -454,6 +461,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
           pages: _pages!,
           observers: widget.observers,
           onPopPage: _handlePopPage,
+          clipBehavior: widget.clipBehavior,
         ),
       ),
     );
