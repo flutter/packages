@@ -419,8 +419,8 @@ void main() {
 
         _mockCallsForFlutterAnalyze(
           processRunner,
-          extraDartCalls: [
-            FakeProcessInfo(MockProcess(), <String>['run', 'cognitive_complexity']),
+          extraFlutterCalls: [
+            FakeProcessInfo(MockProcess(), <String>['pub', 'run', 'cognitive_complexity']),
           ],
         );
 
@@ -431,7 +431,8 @@ void main() {
           orderedEquals(<ProcessCall>[
             ProcessCall('flutter', const <String>['pub', 'get'], package.path),
             ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
-            ProcessCall('dart', const <String>[
+            ProcessCall('flutter', const <String>[
+              'pub',
               'run',
               'cognitive_complexity',
               'lib/lib.dart',
@@ -611,8 +612,8 @@ void main() {
 
         _mockCallsForFlutterAnalyze(
           processRunner,
-          extraDartCalls: [
-            FakeProcessInfo(MockProcess(exitCode: 1), <String>['run', 'cognitive_complexity']),
+          extraFlutterCalls: [
+            FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'run', 'cognitive_complexity']),
           ],
         );
 
@@ -652,8 +653,8 @@ cognitive_complexity:
 
         _mockCallsForFlutterAnalyze(
           processRunner,
-          extraDartCalls: [
-            FakeProcessInfo(MockProcess(exitCode: 1), <String>['run', 'cognitive_complexity']),
+          extraFlutterCalls: [
+            FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'run', 'cognitive_complexity']),
           ],
         );
 
@@ -671,7 +672,8 @@ cognitive_complexity:
           orderedEquals(<ProcessCall>[
             ProcessCall('flutter', const <String>['pub', 'get'], package.path),
             ProcessCall('dart', const <String>['analyze', '--fatal-infos'], package.path),
-            ProcessCall('dart', const <String>[
+            ProcessCall('flutter', const <String>[
+              'pub',
               'run',
               'cognitive_complexity',
               '--threshold',
@@ -824,14 +826,15 @@ cognitive_complexity:
 
           processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
             FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
+            FakeProcessInfo(MockProcess(exitCode: 1), <String>[
+              'pub',
+              'run',
+              'cognitive_complexity',
+            ]), // custom linter
           ];
           processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
             FakeProcessInfo(MockProcess(exitCode: 1), <String>['analyze']), // main package
             FakeProcessInfo(MockProcess(exitCode: 1), <String>['analyze']), // skills package
-            FakeProcessInfo(MockProcess(exitCode: 1), <String>[
-              'run',
-              'cognitive_complexity',
-            ]), // custom linter
           ];
 
           Error? commandError;

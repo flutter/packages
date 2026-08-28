@@ -389,7 +389,10 @@ class AnalyzeCommand extends PackageLoopingCommand {
 
     print('Running cognitive_complexity analysis...');
     final int? threshold = _getLinterThreshold(package);
+    final bool requiresFlutter = package.requiresFlutter();
+    final String binaryPath = requiresFlutter ? flutterCommand : _dartBinaryPath;
     final args = <String>[
+      if (requiresFlutter) 'pub',
       'run',
       'cognitive_complexity',
       if (threshold != null) ...<String>[
@@ -404,7 +407,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
       ...filesToAnalyze,
     ];
     final int linterExitCode = await processRunner.runAndStream(
-      _dartBinaryPath,
+      binaryPath,
       args,
       workingDir: package.directory,
     );
