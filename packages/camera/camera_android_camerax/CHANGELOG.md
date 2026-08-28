@@ -2,6 +2,10 @@
 
 * Adds support for custom video output path in video recording.
 
+## 0.7.4+7
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
 ## 0.7.4+6
 
 * Adds explicit `androidx.concurrent:concurrent-futures:1.2.0` dependency to fix
