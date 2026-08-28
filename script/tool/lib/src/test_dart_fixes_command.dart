@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:file/file.dart';
 import 'package:meta/meta.dart';
+import 'package:path/path.dart' as p;
 
 import 'common/file_filters.dart';
 import 'common/package_looping_command.dart';
@@ -41,7 +42,11 @@ class TestDartFixesCommand extends PackageLoopingCommand {
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     // Only run for packages that have a fix_tests directory.
     if (!package.dartFixTestDirectory.existsSync()) {
-      return PackageResult.skip('No ${package.dartFixTestDirectory.path} directory.');
+      final String localDartFixPath = p.relative(
+        package.dartFixTestDirectory.path,
+        from: package.directory.path,
+      );
+      return PackageResult.skip('No $localDartFixPath directory.');
     }
 
     final Directory testDirectory;
