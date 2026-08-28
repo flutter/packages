@@ -2,6 +2,8 @@
 
 * Adds support for batch release of pre-1.0 packages.
 * Exempts `AGENTS.md` from requiring version and changelog changes.
+* Adds `--shardCost` argument to support cost-weighted greedy sharding across
+  packages and subpackages.
 
 ## 0.14.4
 
