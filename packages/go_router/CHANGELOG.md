@@ -1,3 +1,8 @@
+## 18.0.0
+
+- Migrates to material_ui and cupertino_ui.
+- Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 17.5.0
 
 - Adds route `metadata` support, including inheritance and override behavior with exposure on `GoRouterState`.

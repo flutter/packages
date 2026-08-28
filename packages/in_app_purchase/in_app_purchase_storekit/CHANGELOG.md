@@ -1,9 +1,13 @@
-## 0.4.11+2
+## 0.4.11+3
 
 * Migrates the StoreKit 1 core (`FIAPaymentQueueHandler`, `FIAObjectTranslator`,
   `FIAPReceiptManager`, `FIAPRequestHandler`, `FIAPPaymentQueueDelegate`,
   `FIATransactionCache`, and their protocol shims) from Objective-C to Swift.
   No functional changes.
+
+## 0.4.11+2
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
 
 ## 0.4.11+1
 
