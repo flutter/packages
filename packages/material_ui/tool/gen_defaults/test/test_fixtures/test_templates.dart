@@ -48,8 +48,19 @@ class M3IconButtonTemplate extends M3TokenTemplate {
   String generateContents(String className) {
     return '''
 class $className {
+  $className(this.context);
+
+  final BuildContext context;
+  late final ColorScheme _colors = Theme.of(context).colorScheme;
+
   static const double height = ${TokenIconButton.height};
   static const double borderRadius = ${TokenIconButton.borderRadius};
+  Color get iconColor => ${color(TokenIconButton.iconColor, '_colors')};
+  Color get disabledIconColor =>
+      ${colorWithOpacity(TokenIconButton.disabledIconColor, TokenIconButton.disabledIconOpacity, '_colors')};
+  Color get hoveredStateLayerColor =>
+      ${colorWithOpacity(TokenIconButton.hoveredStateLayerColor, TokenIconButton.hoveredStateLayerOpacity, '_colors')};
+  OutlinedBorder get shape => ${shape(TokenIconButton.pressedContainerShape)};
 }
 ''';
   }
