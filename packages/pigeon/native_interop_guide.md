@@ -10,12 +10,20 @@ This guide describes Pigeon's Native Interop feature, which allows for direct, h
 Pigeon Native Interop allows Dart code to make direct function calls into native platform code, and vice versa, without the overhead of platform-channel-based message passing. Instead of serializing data into binary buffers, Native Interop establishes direct memory-bound bridges using native pointers and JVM references.
 For a detailed comparison between platform-channel-based communication and Native Interop—including advantages, limitations, and recommended use cases—see the [Pigeon README](./README.md#communication-options-platform-channels-vs-native-interop).
 
-### Threading Model (Main Thread Execution)
+### Threading & Isolates Model
 
-Native Interop calls are direct in-process function calls executed synchronously on the calling thread, which in Flutter is the main UI thread.
+Native Interop calls are direct in-process function calls across the C ABI (FFI) or JNI boundary rather than asynchronous messages queued through the Flutter engine:
 
-* **Main Thread Only**: All FFI and JNI Pigeon host API calls must be invoked and handled on the main thread.
-* **`TaskQueue` Not Supported**: The `@TaskQueue` annotation (which dispatches calls to background queues on platform channels) is **not supported** with Native Interop. Specifying `@TaskQueue` when `useFfi: true` or `useJni: true` is enabled will result in a Pigeon code generation error. If your use case requires offloading work to background threads via platform channels, use standard platform channels instead.
+* **Host APIs (Dart → Native)**:
+  * **Execution Thread**: Host methods run directly on the OS thread of the calling Dart isolate. Calls from Flutter's root isolate run on the platform's main UI thread.
+  * **Background Isolates**: Host APIs can be called directly from worker isolates (e.g., via `Isolate.run`) without requiring `BackgroundIsolateBinaryMessenger` or engine tokens.
+  * **Synchronous Calls Block**: Synchronous methods block the calling isolate until native execution returns. Avoid long-running synchronous calls on the main UI isolate.
+  * **Platform UI Affinity**: Native APIs that manipulate UI (such as UIKit views or Android `Activity`/views) must run on the platform's main thread. If invoked from a background isolate, native code must explicitly dispatch to the main thread (`DispatchQueue.main.async` in Swift, `Handler(Looper.getMainLooper()).post` in Kotlin).
+* **Flutter APIs (Native → Dart)**:
+  * Synchronous callbacks into Dart are isolate-local and must be invoked from the isolate that registered them.
+* **`@TaskQueue` Not Supported**:
+  * Platform channels queue work onto engine background threads; Native Interop executes directly on the caller thread. Specifying `@TaskQueue` results in a code generation error.
+  * To run host operations on background threads, annotate the method with `@async` in the Pigeon file and implement it using Swift `async throws` or Kotlin `suspend` functions (with `DispatchQueue.global` or `Dispatchers.IO`).
 
 ---
 

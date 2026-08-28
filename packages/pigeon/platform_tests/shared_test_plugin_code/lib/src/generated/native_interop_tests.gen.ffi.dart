@@ -14919,6 +14919,22 @@ extension type NativeInteropHostIntegrationCoreApiSetup._(objc.ObjCObject object
 
 extension NativeInteropHostIntegrationCoreApiSetup$Methods
     on NativeInteropHostIntegrationCoreApiSetup {
+  /// Returns true if the async handler runs on a background thread.
+  void asyncIsBackgroundThreadWithWrappedError(
+    NativeInteropTestsError wrappedError, {
+    required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final _$$ref$2 = completionHandler.ref;
+    _objc_msgSend_o762yo(
+      _$$ref.pointer,
+      _sel_asyncIsBackgroundThreadWithWrappedError_completionHandler_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
+  }
+
   /// callFlutterEchoAnotherAsyncEnumWithAnotherEnum:wrappedError:completionHandler:
   void callFlutterEchoAnotherAsyncEnumWithAnotherEnum(
     NativeInteropAnotherEnum anotherEnum, {
@@ -16858,18 +16874,6 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
         : NativeInteropAllClassesWrapperBridge.fromPointer($ret, retain: true, release: true);
   }
 
-  /// Returns true if the handler is run on a main thread.
-  objc.NSNumber? defaultIsMainThreadWithWrappedError(NativeInteropTestsError wrappedError) {
-    final _$$ref = object$.ref;
-    final _$$ref$1 = wrappedError.ref;
-    final $ret = _objc_msgSend_1sotr3r(
-      _$$ref.pointer,
-      _sel_defaultIsMainThreadWithWrappedError_,
-      _$$ref$1.pointer,
-    );
-    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
-  }
-
   /// Returns the passed object, to test serialization and deserialization.
   NativeInteropAllNullableTypesBridge? echoAllNullableTypesWithEverything(
     NativeInteropAllNullableTypesBridge? everything, {
@@ -18795,6 +18799,19 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
   }
 
+  /// Tests that zero-argument methods starting with ‘get’ are correctly
+  /// invoked as JNI property getters with decapitalized names (e.g., <code>_jniApi.getter</code>).
+  objc.NSNumber? getGetterWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_getGetterWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
   /// init
   NativeInteropHostIntegrationCoreApiSetup init() {
     final _$$ref$2 = object$.ref;
@@ -18805,6 +18822,31 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     );
     final $ret = _objc_msgSend_151sglz(_$$ref$2.retainAndReturnPointer(), _sel_init);
     return NativeInteropHostIntegrationCoreApiSetup.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// Tests that zero-argument boolean methods starting with ‘is’ are correctly
+  /// invoked as JNI property getters (e.g., <code>_jniApi.isGetter</code>).
+  objc.NSNumber? isGetterWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_isGetterWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Returns true if the handler is run on a main thread.
+  objc.NSNumber? isMainThreadWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_isMainThreadWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
   /// A no-op function taking no arguments and returning no value, to sanity
@@ -18901,6 +18943,19 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
             retain: true,
             release: true,
           );
+  }
+
+  /// Tests that single-argument void methods starting with ‘set’ are correctly
+  /// invoked as JNI property setters with decapitalized names (e.g., <code>_jniApi.setter = value</code>).
+  void setSetterWithValue(int value, {required NativeInteropTestsError wrappedError}) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    _objc_msgSend_mpxix1(
+      _$$ref.pointer,
+      _sel_setSetterWithValue_wrappedError_,
+      value,
+      _$$ref$1.pointer,
+    );
   }
 
   /// Tests that calling a deregistered Flutter API under [name] fails / returns null.
@@ -28750,6 +28805,25 @@ final _objc_msgSend_jfo4g1 = objc.msgSendPointer
         int,
       )
     >();
+final _objc_msgSend_mpxix1 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Int64,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
 final _objc_msgSend_nkb3zz = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -28956,6 +29030,9 @@ late final _sel_arg0 = objc.registerName("arg0");
 late final _sel_arg1 = objc.registerName("arg1");
 late final _sel_arg2 = objc.registerName("arg2");
 late final _sel_arg3 = objc.registerName("arg3");
+late final _sel_asyncIsBackgroundThreadWithWrappedError_completionHandler_ = objc.registerName(
+  "asyncIsBackgroundThreadWithWrappedError:completionHandler:",
+);
 late final _sel_boolList = objc.registerName("boolList");
 late final _sel_callFlutterEchoAnotherAsyncEnumWithAnotherEnum_wrappedError_completionHandler_ =
     objc.registerName(
@@ -29268,9 +29345,6 @@ late final _sel_credentialWithUser_password_persistence_ = objc.registerName(
   "credentialWithUser:password:persistence:",
 );
 late final _sel_data = objc.registerName("data");
-late final _sel_defaultIsMainThreadWithWrappedError_ = objc.registerName(
-  "defaultIsMainThreadWithWrappedError:",
-);
 late final _sel_details = objc.registerName("details");
 late final _sel_doubleList = objc.registerName("doubleList");
 late final _sel_echoAllNullableTypesWithEverything_wrappedError_ = objc.registerName(
@@ -29827,6 +29901,7 @@ late final _sel_enumMap = objc.registerName("enumMap");
 late final _sel_extractNestedNullableStringWithWrapper_wrappedError_ = objc.registerName(
   "extractNestedNullableStringWithWrapper:wrappedError:",
 );
+late final _sel_getGetterWithWrappedError_ = objc.registerName("getGetterWithWrappedError:");
 late final _sel_getInstanceWithName_ = objc.registerName("getInstanceWithName:");
 late final _sel_hasPassword = objc.registerName("hasPassword");
 late final _sel_hash = objc.registerName("hash");
@@ -29863,7 +29938,9 @@ late final _sel_initWithUser_password_persistence_ = objc.registerName(
 late final _sel_intList = objc.registerName("intList");
 late final _sel_intMap = objc.registerName("intMap");
 late final _sel_isEqual_ = objc.registerName("isEqual:");
+late final _sel_isGetterWithWrappedError_ = objc.registerName("isGetterWithWrappedError:");
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
+late final _sel_isMainThreadWithWrappedError_ = objc.registerName("isMainThreadWithWrappedError:");
 late final _sel_list = objc.registerName("list");
 late final _sel_listList = objc.registerName("listList");
 late final _sel_listMap = objc.registerName("listMap");
@@ -29963,6 +30040,9 @@ late final _sel_setObjectList_ = objc.registerName("setObjectList:");
 late final _sel_setObjectMap_ = objc.registerName("setObjectMap:");
 late final _sel_setRecursiveClassList_ = objc.registerName("setRecursiveClassList:");
 late final _sel_setRecursiveClassMap_ = objc.registerName("setRecursiveClassMap:");
+late final _sel_setSetterWithValue_wrappedError_ = objc.registerName(
+  "setSetterWithValue:wrappedError:",
+);
 late final _sel_setStringList_ = objc.registerName("setStringList:");
 late final _sel_setStringMap_ = objc.registerName("setStringMap:");
 late final _sel_setType_ = objc.registerName("setType:");

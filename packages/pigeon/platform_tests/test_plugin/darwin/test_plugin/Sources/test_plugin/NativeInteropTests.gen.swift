@@ -2449,7 +2449,18 @@ protocol NativeInteropHostIntegrationCoreApi {
   func callFlutterEchoAnotherAsyncNullableEnum(anotherEnum: NativeInteropAnotherEnum?) async throws
     -> NativeInteropAnotherEnum?
   /// Returns true if the handler is run on a main thread.
-  func defaultIsMainThread() throws -> Bool
+  func isMainThread() throws -> Bool
+  /// Returns true if the async handler runs on a background thread.
+  func asyncIsBackgroundThread() async throws -> Bool
+  /// Tests that zero-argument boolean methods starting with 'is' are correctly
+  /// invoked as JNI property getters (e.g., `_jniApi.isGetter`).
+  func isGetter() throws -> Bool
+  /// Tests that zero-argument methods starting with 'get' are correctly
+  /// invoked as JNI property getters with decapitalized names (e.g., `_jniApi.getter`).
+  func getGetter() throws -> Int64
+  /// Tests that single-argument void methods starting with 'set' are correctly
+  /// invoked as JNI property setters with decapitalized names (e.g., `_jniApi.setter = value`).
+  func setSetter(value: Int64) throws
   /// Spawns a background thread and calls `noop` on the [NativeInteropFlutterIntegrationCoreApi].
   ///
   /// Returns the result of whether the flutter call was successful.
@@ -6676,9 +6687,9 @@ protocol NativeInteropHostIntegrationCoreApi {
     return nil
   }
   /// Returns true if the handler is run on a main thread.
-  @objc func defaultIsMainThread(wrappedError: NativeInteropTestsError) -> NSNumber? {
+  @objc func isMainThread(wrappedError: NativeInteropTestsError) -> NSNumber? {
     do {
-      return try NSNumber(value: api!.defaultIsMainThread())
+      return try NSNumber(value: api!.isMainThread())
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -6689,6 +6700,69 @@ protocol NativeInteropHostIntegrationCoreApi {
       wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
     }
     return nil
+  }
+  /// Returns true if the async handler runs on a background thread.
+  @objc func asyncIsBackgroundThread(wrappedError: NativeInteropTestsError) async -> NSNumber? {
+    do {
+      return try await NSNumber(value: api!.asyncIsBackgroundThread())
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Tests that zero-argument boolean methods starting with 'is' are correctly
+  /// invoked as JNI property getters (e.g., `_jniApi.isGetter`).
+  @objc func isGetter(wrappedError: NativeInteropTestsError) -> NSNumber? {
+    do {
+      return try NSNumber(value: api!.isGetter())
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Tests that zero-argument methods starting with 'get' are correctly
+  /// invoked as JNI property getters with decapitalized names (e.g., `_jniApi.getter`).
+  @objc func getGetter(wrappedError: NativeInteropTestsError) -> NSNumber? {
+    do {
+      return try NSNumber(value: api!.getGetter())
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Tests that single-argument void methods starting with 'set' are correctly
+  /// invoked as JNI property setters with decapitalized names (e.g., `_jniApi.setter = value`).
+  @objc func setSetter(value: Int64, wrappedError: NativeInteropTestsError) {
+    do {
+      return try api!.setSetter(value: value)
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return
   }
   /// Spawns a background thread and calls `noop` on the [NativeInteropFlutterIntegrationCoreApi].
   ///

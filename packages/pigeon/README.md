@@ -114,7 +114,8 @@ Pigeon supports two distinct models for communication between Dart and native co
 | :--- | :--- | :--- |
 | **Communication Mechanism** | Asynchronous message passing over platform channels | Direct memory-bound function calls (Dart FFI / JNI) |
 | **Platform Support** | All supported platforms (Android, iOS, macOS, Windows, Linux) | Android, iOS, and macOS |
-| **Threading Model** | Main UI thread or custom background `TaskQueue` | Always runs on the main thread (`TaskQueue` is not supported) |
+| **Threading Model** | Main UI thread or custom background `TaskQueue` | Direct execution on caller thread (`TaskQueue` is not supported) |
+| **Dart Isolate Support** | Requires `BackgroundIsolateBinaryMessenger` | Supported for Host APIs |
 | **Serialization Overhead** | High (serialization and multiple copies) | Low (minimal copying) |
 | **Latency** | Higher (requires message loop scheduling) | Extremely low (direct execution) |
 | **Synchronous Host Calls** | Not supported | Fully supported |
@@ -132,6 +133,7 @@ Pigeon supports two distinct models for communication between Dart and native co
   - Your plugin targets only Android, iOS, and/or macOS.
   - Your plugin handles high-frequency messaging, large typed arrays (e.g., image processing, sensor data streams), or latency-sensitive communication where serialization overhead is a bottleneck.
   - You need synchronous execution for platform APIs on the host thread.
+  - You want to call Host APIs directly from background Dart isolates without Flutter Engine channel initialization.
 
 For detailed information on setup, prerequisites, and instructions on how to use Native Interop, see the [Native Interop Guide](./native_interop_guide.md).
 

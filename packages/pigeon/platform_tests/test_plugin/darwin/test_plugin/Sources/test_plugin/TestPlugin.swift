@@ -1982,8 +1982,30 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     return try await flutterApi.echoAsyncNullableIntMap(intMap: intMap)
   }
 
-  func defaultIsMainThread() throws -> Bool {
+  func isMainThread() throws -> Bool {
     return Thread.isMainThread
+  }
+
+  func asyncIsBackgroundThread() async throws -> Bool {
+    return await withCheckedContinuation { continuation in
+      DispatchQueue.global(qos: .background).async {
+        continuation.resume(returning: !Thread.isMainThread)
+      }
+    }
+  }
+
+  private var getterValue: Int64 = 0
+
+  func isGetter() throws -> Bool {
+    return true
+  }
+
+  func getGetter() throws -> Int64 {
+    return getterValue
+  }
+
+  func setSetter(value: Int64) throws {
+    getterValue = value
   }
 
   func callFlutterNoopOnBackgroundThread() async throws -> Bool {

@@ -12,7 +12,8 @@ For a comprehensive walkthrough on setting up Native Interop from scratch, see t
 | Feature | Platform Channels | Native Interop (FFI / JNI) |
 | :--- | :--- | :--- |
 | **Data Serialization** | Serialized to binary format (`StandardMessageCodec`) | Direct memory mapping or native references |
-| **Threading Model** | Main UI thread or custom background `TaskQueue` | Always runs on the main thread (`TaskQueue` is not supported) |
+| **Threading Model** | Main UI thread or custom background `TaskQueue` | Direct execution on caller thread (`TaskQueue` is not supported) |
+| **Isolate Support** | Requires `BackgroundIsolateBinaryMessenger` | Supported for Host APIs |
 | **Synchronous Calls** | Asynchronous only | Supports both true synchronous and asynchronous calls |
 | **Swift Concurrency** | Callback-based completion handlers | Modern `async/await` syntax |
 | **Kotlin Concurrency** | Callback-based interfaces | Kotlin Coroutines (`suspend` functions) |
@@ -118,12 +119,38 @@ suspend fun echoAsync(value: String): String {
 }
 ```
 
+### 3.3 Migrating from `@TaskQueue`
+
+If your existing Pigeon interface uses `@TaskQueue` to process method calls off the main thread, you have two options:
+
+#### Option A: Adopt Native Concurrency (Recommended)
+
+1. **Update the Pigeon Definition**: Replace `@TaskQueue(...)` with `@async` in your Pigeon file:
+   ```dart
+   @HostApi()
+   abstract class ExampleHostApi {
+     @async
+     String doSomething(String value);
+   }
+   ```
+2. **Implement Using Native Concurrency**: In your native implementation, implement the generated asynchronous signature:
+   - In **Swift**: Implement the generated `async throws` method and perform background execution (e.g., using `Task` or `DispatchQueue.global(qos: .userInitiated)`).
+   - In **Kotlin**: Implement the generated `suspend` function and perform background execution (e.g., using `withContext(Dispatchers.IO)`).
+
+#### Option B: Offload via Dart Isolates
+
+Keep the method synchronous in the Pigeon file and native code, and invoke it from a worker isolate on the Dart side:
+```dart
+final String result = await Isolate.run(() => api.doSomething(value));
+```
+
 ---
 
 ## 4. Dart Client Adaptation
 
 From the Dart side, the API surface remains largely identical because both models return standard Dart `Future`s for asynchronous calls. However:
 - **Synchronous execution**: Host API methods that are synchronous now block the calling thread until completion, bypassing any message loop scheduling latency.
+- **Dart Isolates**: Host API calls can be made directly from any background Dart isolate without initializing `BackgroundIsolateBinaryMessenger` or passing a `RootIsolateToken`.
 - **Type changes**: Some complex data types or generic collections may have stricter typing requirements at the FFI/JNI boundary compared to the platform channel message codec. Refer to the [Native Interop Guide](./native_interop_guide.md) for handling specific data types.
 
 ---

@@ -2216,4 +2216,54 @@ name: foobar
 
     expect(code, contains(r'type: jniClass.type$1'));
   });
+
+  test('native interop host api invokes jni methods correctly', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'isGetter',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'bool', isNullable: false),
+            ),
+            Method(
+              name: 'getGetter',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+            ),
+            Method(
+              name: 'setSetter',
+              location: ApiLocation.host,
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'value',
+                  type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                ),
+              ],
+              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(
+      const InternalDartOptions(ignoreLints: false, useJni: true, dartOut: 'lib/foo.dart'),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains('return _jniApi.isGetter;'));
+    expect(code, contains('return _jniApi.getter;'));
+    expect(code, contains('_jniApi.setter = value;'));
+  });
 }

@@ -2083,8 +2083,28 @@ class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
         .echoAnotherAsyncNullableEnum(anotherEnum)
   }
 
-  override fun defaultIsMainThread(): Boolean {
+  override fun isMainThread(): Boolean {
     return Thread.currentThread() == Looper.getMainLooper().thread
+  }
+
+  override suspend fun asyncIsBackgroundThread(): Boolean {
+    return withContext(Dispatchers.Default) {
+      Thread.currentThread() != Looper.getMainLooper().thread
+    }
+  }
+
+  private var getterValue: Long = 0L
+
+  override fun isGetter(): Boolean {
+    return true
+  }
+
+  override fun getGetter(): Long {
+    return getterValue
+  }
+
+  override fun setSetter(value: Long) {
+    getterValue = value
   }
 
   override suspend fun callFlutterNoopOnBackgroundThread(): Boolean {

@@ -278,9 +278,38 @@ void _errorOnTaskQueueInNativeInterop(List<Error> errors, String generator, Root
         errors.add(
           Error(
             message:
-                '$generator does not support TaskQueue because native interop calls always run on the main thread (in method "${method.name}" in API "${api.name}").',
+                '$generator does not support TaskQueue because native interop calls bypass Flutter Engine message queues and run directly on the caller\'s thread (in method "${method.name}" in API "${api.name}").',
           ),
         );
+      }
+    }
+  }
+}
+
+void _errorOnJniPropertyCollisions(List<Error> errors, Root root) {
+  for (final Api api in root.apis) {
+    final Set<String> methodNames = api.methods.map((Method m) => m.name).toSet();
+    for (final Method method in api.methods) {
+      final bool isGetter =
+          !method.isAsynchronous &&
+          method.parameters.isEmpty &&
+          !method.returnType.isVoid &&
+          RegExp(r'^get[A-Z]').hasMatch(method.name);
+      final bool isSetter =
+          !method.isAsynchronous &&
+          method.parameters.length == 1 &&
+          method.returnType.isVoid &&
+          RegExp(r'^set[A-Z]').hasMatch(method.name);
+      if (isGetter || isSetter) {
+        final propertyName = '${method.name[3].toLowerCase()}${method.name.substring(4)}';
+        if (methodNames.contains(propertyName)) {
+          errors.add(
+            Error(
+              message:
+                  'Method "${method.name}" in API "${api.name}" collides with method "$propertyName" under JNI generation because JavaBean property naming maps "${method.name}" to "$propertyName".',
+            ),
+          );
+        }
       }
     }
   }
@@ -685,6 +714,7 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
     final errors = <Error>[];
     if (options.kotlinOptions?.useJni ?? false) {
       _errorOnTaskQueueInNativeInterop(errors, 'Kotlin JNI', root);
+      _errorOnJniPropertyCollisions(errors, root);
     }
     return errors;
   }
@@ -732,6 +762,7 @@ class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
     }
     final errors = <Error>[];
     _errorOnTaskQueueInNativeInterop(errors, 'Kotlin JNI', root);
+    _errorOnJniPropertyCollisions(errors, root);
     errors.addAll(
       _validateDependencies(
         appDirectory: options.kotlinOptions?.appDirectory ?? options.appDirectory,

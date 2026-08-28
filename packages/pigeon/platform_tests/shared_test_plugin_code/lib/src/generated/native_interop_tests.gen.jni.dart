@@ -1923,9 +1923,29 @@ extension type NativeInteropHostIntegrationCoreApi._(jni$_.JObject _$this)
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'defaultIsMainThread()Z') {
-        final $r = _$impls[$p]!.defaultIsMainThread();
+      if ($d == r'isMainThread()Z') {
+        final $r = _$impls[$p]!.isMainThread();
         return $r.toJBoolean().reference.toPointer();
+      }
+      if ($d == r'asyncIsBackgroundThread(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![0] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.asyncIsBackgroundThread());
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'isGetter()Z') {
+        final $r = _$impls[$p]!.isGetter();
+        return $r.toJBoolean().reference.toPointer();
+      }
+      if ($d == r'getGetter()J') {
+        final $r = _$impls[$p]!.getGetter();
+        return $r.toJLong().reference.toPointer();
+      }
+      if ($d == r'setSetter(J)V') {
+        _$impls[$p]!.setSetter(($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true));
+        return jni$_.nullptr;
       }
       if ($d ==
           r'callFlutterNoopOnBackgroundThread(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
@@ -1980,6 +2000,7 @@ extension type NativeInteropHostIntegrationCoreApi._(jni$_.JObject _$this)
           if ($impl.throwErrorFromVoid$async) r'throwErrorFromVoid()V',
           if ($impl.callFlutterNoop$async) r'callFlutterNoop()V',
           if ($impl.callFlutterThrowErrorFromVoid$async) r'callFlutterThrowErrorFromVoid()V',
+          if ($impl.setSetter$async) r'setSetter(J)V',
           if ($impl.registerAndImmediatelyDeregisterHostApi$async)
             r'registerAndImmediatelyDeregisterHostApi(Ljava/lang/String;)V',
         ]);
@@ -11826,10 +11847,12 @@ extension NativeInteropHostIntegrationCoreApi$$Methods on NativeInteropHostInteg
     return $o?.as<NativeInteropAnotherEnum>(NativeInteropAnotherEnum.type, releaseOriginal: true);
   }
 
-  static final _id_defaultIsMainThread = NativeInteropHostIntegrationCoreApi._class
-      .instanceMethodId(r'defaultIsMainThread', r'()Z');
+  static final _id_isMainThread = NativeInteropHostIntegrationCoreApi._class.instanceMethodId(
+    r'isMainThread',
+    r'()Z',
+  );
 
-  static final _defaultIsMainThread =
+  static final _isMainThread =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -11837,10 +11860,127 @@ extension NativeInteropHostIntegrationCoreApi$$Methods on NativeInteropHostInteg
           >('globalEnv_CallBooleanMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun defaultIsMainThread(): kotlin.Boolean`
-  core$_.bool defaultIsMainThread() {
+  /// from: `public fun isMainThread(): kotlin.Boolean`
+  core$_.bool isMainThread() {
     final _$$selfRef = reference;
-    return _defaultIsMainThread(_$$selfRef.pointer, _id_defaultIsMainThread.pointer).boolean;
+    return _isMainThread(_$$selfRef.pointer, _id_isMainThread.pointer).boolean;
+  }
+
+  static final _id_asyncIsBackgroundThread = NativeInteropHostIntegrationCoreApi._class
+      .instanceMethodId(
+        r'asyncIsBackgroundThread',
+        r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _asyncIsBackgroundThread =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun asyncIsBackgroundThread(): kotlin.Boolean`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JBoolean> asyncIsBackgroundThread() async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final $r = _asyncIsBackgroundThread(
+      _$$selfRef.pointer,
+      _id_asyncIsBackgroundThread.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_isGetter = NativeInteropHostIntegrationCoreApi._class.instanceMethodId(
+    r'isGetter',
+    r'()Z',
+  );
+
+  static final _isGetter =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallBooleanMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun isGetter(): kotlin.Boolean`
+  core$_.bool isGetter() {
+    final _$$selfRef = reference;
+    return _isGetter(_$$selfRef.pointer, _id_isGetter.pointer).boolean;
+  }
+
+  static final _id_getGetter = NativeInteropHostIntegrationCoreApi._class.instanceMethodId(
+    r'getGetter',
+    r'()J',
+  );
+
+  static final _getGetter =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallLongMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun getGetter(): kotlin.Long`
+  core$_.int getGetter() {
+    final _$$selfRef = reference;
+    return _getGetter(_$$selfRef.pointer, _id_getGetter.pointer).long;
+  }
+
+  static final _id_setSetter = NativeInteropHostIntegrationCoreApi._class.instanceMethodId(
+    r'setSetter',
+    r'(J)V',
+  );
+
+  static final _setSetter =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int64,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
+          >();
+
+  /// from: `public fun setSetter(value: kotlin.Long): kotlin.Unit`
+  void setSetter(core$_.int j) {
+    final _$$selfRef = reference;
+    _setSetter(_$$selfRef.pointer, _id_setSetter.pointer, j).check();
   }
 
   static final _id_callFlutterNoopOnBackgroundThread = NativeInteropHostIntegrationCoreApi._class
@@ -12562,7 +12702,12 @@ abstract base mixin class $NativeInteropHostIntegrationCoreApi {
       NativeInteropAnotherEnum? nativeInteropAnotherEnum,
     )
     callFlutterEchoAnotherAsyncNullableEnum,
-    required core$_.bool Function() defaultIsMainThread,
+    required core$_.bool Function() isMainThread,
+    required core$_.Future<jni$_.JBoolean> Function() asyncIsBackgroundThread,
+    required core$_.bool Function() isGetter,
+    required core$_.int Function() getGetter,
+    required void Function(core$_.int j) setSetter,
+    core$_.bool setSetter$async,
     required core$_.Future<jni$_.JBoolean> Function() callFlutterNoopOnBackgroundThread,
     required core$_.bool Function() testDeregisterHostApi,
     required core$_.bool Function() testDeregisterFlutterApi,
@@ -13022,7 +13167,12 @@ abstract base mixin class $NativeInteropHostIntegrationCoreApi {
   core$_.Future<NativeInteropAnotherEnum?> callFlutterEchoAnotherAsyncNullableEnum(
     NativeInteropAnotherEnum? nativeInteropAnotherEnum,
   );
-  core$_.bool defaultIsMainThread();
+  core$_.bool isMainThread();
+  core$_.Future<jni$_.JBoolean> asyncIsBackgroundThread();
+  core$_.bool isGetter();
+  core$_.int getGetter();
+  void setSetter(core$_.int j);
+  core$_.bool get setSetter$async => false;
   core$_.Future<jni$_.JBoolean> callFlutterNoopOnBackgroundThread();
   core$_.bool testDeregisterHostApi();
   core$_.bool testDeregisterFlutterApi();
@@ -13593,7 +13743,12 @@ final class _$NativeInteropHostIntegrationCoreApi with $NativeInteropHostIntegra
       NativeInteropAnotherEnum? nativeInteropAnotherEnum,
     )
     callFlutterEchoAnotherAsyncNullableEnum,
-    required core$_.bool Function() defaultIsMainThread,
+    required core$_.bool Function() isMainThread,
+    required core$_.Future<jni$_.JBoolean> Function() asyncIsBackgroundThread,
+    required core$_.bool Function() isGetter,
+    required core$_.int Function() getGetter,
+    required void Function(core$_.int j) setSetter,
+    this.setSetter$async = false,
     required core$_.Future<jni$_.JBoolean> Function() callFlutterNoopOnBackgroundThread,
     required core$_.bool Function() testDeregisterHostApi,
     required core$_.bool Function() testDeregisterFlutterApi,
@@ -13825,7 +13980,11 @@ final class _$NativeInteropHostIntegrationCoreApi with $NativeInteropHostIntegra
        _callFlutterEchoAsyncNullableClassMap = callFlutterEchoAsyncNullableClassMap,
        _callFlutterEchoAsyncNullableEnum = callFlutterEchoAsyncNullableEnum,
        _callFlutterEchoAnotherAsyncNullableEnum = callFlutterEchoAnotherAsyncNullableEnum,
-       _defaultIsMainThread = defaultIsMainThread,
+       _isMainThread = isMainThread,
+       _asyncIsBackgroundThread = asyncIsBackgroundThread,
+       _isGetter = isGetter,
+       _getGetter = getGetter,
+       _setSetter = setSetter,
        _callFlutterNoopOnBackgroundThread = callFlutterNoopOnBackgroundThread,
        _testDeregisterHostApi = testDeregisterHostApi,
        _testDeregisterFlutterApi = testDeregisterFlutterApi,
@@ -14368,7 +14527,12 @@ final class _$NativeInteropHostIntegrationCoreApi with $NativeInteropHostIntegra
     NativeInteropAnotherEnum? nativeInteropAnotherEnum,
   )
   _callFlutterEchoAnotherAsyncNullableEnum;
-  final core$_.bool Function() _defaultIsMainThread;
+  final core$_.bool Function() _isMainThread;
+  final core$_.Future<jni$_.JBoolean> Function() _asyncIsBackgroundThread;
+  final core$_.bool Function() _isGetter;
+  final core$_.int Function() _getGetter;
+  final void Function(core$_.int j) _setSetter;
+  final core$_.bool setSetter$async;
   final core$_.Future<jni$_.JBoolean> Function() _callFlutterNoopOnBackgroundThread;
   final core$_.bool Function() _testDeregisterHostApi;
   final core$_.bool Function() _testDeregisterFlutterApi;
@@ -15490,8 +15654,24 @@ final class _$NativeInteropHostIntegrationCoreApi with $NativeInteropHostIntegra
     return _callFlutterEchoAnotherAsyncNullableEnum(nativeInteropAnotherEnum);
   }
 
-  core$_.bool defaultIsMainThread() {
-    return _defaultIsMainThread();
+  core$_.bool isMainThread() {
+    return _isMainThread();
+  }
+
+  core$_.Future<jni$_.JBoolean> asyncIsBackgroundThread() {
+    return _asyncIsBackgroundThread();
+  }
+
+  core$_.bool isGetter() {
+    return _isGetter();
+  }
+
+  core$_.int getGetter() {
+    return _getGetter();
+  }
+
+  void setSetter(core$_.int j) {
+    return _setSetter(j);
   }
 
   core$_.Future<jni$_.JBoolean> callFlutterNoopOnBackgroundThread() {
@@ -25442,10 +25622,10 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<NativeInteropAnotherEnum>(NativeInteropAnotherEnum.type, releaseOriginal: true);
   }
 
-  static final _id_defaultIsMainThread = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'defaultIsMainThread', r'()Z');
+  static final _id_get$isMainThread = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'isMainThread', r'()Z');
 
-  static final _defaultIsMainThread =
+  static final _get$isMainThread =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -25453,10 +25633,121 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
           >('globalEnv_CallBooleanMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun defaultIsMainThread(): kotlin.Boolean`
-  core$_.bool defaultIsMainThread() {
+  /// from: `public fun isMainThread(): kotlin.Boolean`
+  core$_.bool get isMainThread {
     final _$$selfRef = reference;
-    return _defaultIsMainThread(_$$selfRef.pointer, _id_defaultIsMainThread.pointer).boolean;
+    return _get$isMainThread(_$$selfRef.pointer, _id_get$isMainThread.pointer).boolean;
+  }
+
+  static final _id_asyncIsBackgroundThread = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(
+        r'asyncIsBackgroundThread',
+        r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _asyncIsBackgroundThread =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun asyncIsBackgroundThread(): kotlin.Boolean`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JBoolean> asyncIsBackgroundThread() async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final $r = _asyncIsBackgroundThread(
+      _$$selfRef.pointer,
+      _id_asyncIsBackgroundThread.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_get$isGetter = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'isGetter', r'()Z');
+
+  static final _get$isGetter =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallBooleanMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun isGetter(): kotlin.Boolean`
+  core$_.bool get isGetter {
+    final _$$selfRef = reference;
+    return _get$isGetter(_$$selfRef.pointer, _id_get$isGetter.pointer).boolean;
+  }
+
+  static final _id_get$getter = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'getGetter', r'()J');
+
+  static final _get$getter =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallLongMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun getGetter(): kotlin.Long`
+  core$_.int get getter {
+    final _$$selfRef = reference;
+    return _get$getter(_$$selfRef.pointer, _id_get$getter.pointer).long;
+  }
+
+  static final _id_set$setter = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'setSetter', r'(J)V');
+
+  static final _set$setter =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int64,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
+          >();
+
+  /// from: `public fun setSetter(value: kotlin.Long): kotlin.Unit`
+  set setter(core$_.int j) {
+    final _$$selfRef = reference;
+    _set$setter(_$$selfRef.pointer, _id_set$setter.pointer, j).check();
   }
 
   static final _id_callFlutterNoopOnBackgroundThread = NativeInteropHostIntegrationCoreApiRegistrar

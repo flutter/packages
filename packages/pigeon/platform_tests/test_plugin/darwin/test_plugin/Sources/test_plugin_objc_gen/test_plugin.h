@@ -2890,8 +2890,28 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
                                                  NSNumber* _Nullable))
                                                  completionHandler;
 /// Returns true if the handler is run on a main thread.
-- (NSNumber* _Nullable)defaultIsMainThreadWithWrappedError:
+- (NSNumber* _Nullable)isMainThreadWithWrappedError:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// Returns true if the async handler runs on a background thread.
+- (void)asyncIsBackgroundThreadWithWrappedError:
+            (NativeInteropTestsError* _Nonnull)wrappedError
+                              completionHandler:
+                                  (void (^_Nonnull)(NSNumber* _Nullable))
+                                      completionHandler;
+/// Tests that zero-argument boolean methods starting with ‘is’ are correctly
+/// invoked as JNI property getters (e.g., <code>_jniApi.isGetter</code>).
+- (NSNumber* _Nullable)isGetterWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// Tests that zero-argument methods starting with ‘get’ are correctly
+/// invoked as JNI property getters with decapitalized names (e.g.,
+/// <code>_jniApi.getter</code>).
+- (NSNumber* _Nullable)getGetterWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// Tests that single-argument void methods starting with ‘set’ are correctly
+/// invoked as JNI property setters with decapitalized names (e.g.,
+/// <code>_jniApi.setter = value</code>).
+- (void)setSetterWithValue:(int64_t)value
+              wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError;
 /// Spawns a background thread and calls <code>noop</code> on the
 /// [NativeInteropFlutterIntegrationCoreApi]. Returns the result of whether the
 /// flutter call was successful.

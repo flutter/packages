@@ -1679,16 +1679,51 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
               if (generatorOptions.useJni) {
                 indent.writeScoped('if (_jniApi != null) {', '}', () {
                   final _JniType returnType = _JniType.fromTypeDeclaration(method.returnType);
-                  final methodCallReturnString =
-                      returnType.type.baseName == 'void' && method.isAsynchronous
-                      ? ''
-                      : (!returnType.nonNullableNeedsUnwrapping &&
-                            !method.returnType.isNullable &&
-                            !method.isAsynchronous)
-                      ? 'return '
-                      : 'final ${returnType.getJniCallReturnType(method.isAsynchronous)} res = ';
+                  final bool isJniGetter =
+                      !method.isAsynchronous &&
+                      method.parameters.isEmpty &&
+                      ((RegExp(r'^is[A-Z]').hasMatch(method.name) &&
+                              method.returnType.baseName == 'bool') ||
+                          (RegExp(r'^get[A-Z]').hasMatch(method.name) &&
+                              !method.returnType.isVoid));
+                  final bool isJniSetter =
+                      !method.isAsynchronous &&
+                      method.parameters.length == 1 &&
+                      method.returnType.isVoid &&
+                      RegExp(r'^set[A-Z]').hasMatch(method.name);
+
+                  final String jniAccess;
+                  final String methodCallReturnString;
+
+                  if (isJniSetter) {
+                    final propertyName =
+                        '${method.name[3].toLowerCase()}${method.name.substring(4)}';
+                    final String arg = _getJniMethodCallArguments(method.parameters);
+                    jniAccess = '$propertyName = $arg';
+                    methodCallReturnString = '';
+                  } else if (isJniGetter) {
+                    final String propertyName = RegExp(r'^is[A-Z]').hasMatch(method.name)
+                        ? method.name
+                        : '${method.name[3].toLowerCase()}${method.name.substring(4)}';
+                    jniAccess = propertyName;
+                    methodCallReturnString =
+                        (!returnType.nonNullableNeedsUnwrapping && !method.returnType.isNullable)
+                        ? 'return '
+                        : 'final ${returnType.getJniCallReturnType(false)} res = ';
+                  } else {
+                    jniAccess = '${method.name}(${_getJniMethodCallArguments(method.parameters)})';
+                    methodCallReturnString =
+                        returnType.type.baseName == 'void' && method.isAsynchronous
+                        ? ''
+                        : (!returnType.nonNullableNeedsUnwrapping &&
+                              !method.returnType.isNullable &&
+                              !method.isAsynchronous)
+                        ? 'return '
+                        : 'final ${returnType.getJniCallReturnType(method.isAsynchronous)} res = ';
+                  }
+
                   indent.writeln(
-                    '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_jniApi.${method.name}(${_getJniMethodCallArguments(method.parameters)});',
+                    '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_jniApi.$jniAccess;',
                   );
                   if ((method.returnType.isNullable ||
                           method.isAsynchronous ||

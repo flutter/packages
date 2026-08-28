@@ -1389,7 +1389,25 @@ abstract class NativeInteropHostIntegrationCoreApi {
   // ========== Threading tests ==========
 
   /// Returns true if the handler is run on a main thread.
-  bool defaultIsMainThread();
+  bool isMainThread();
+
+  /// Returns true if the async handler runs on a background thread.
+  @async
+  bool asyncIsBackgroundThread();
+
+  // ========== JavaBean property getter and setter tests ==========
+
+  /// Tests that zero-argument boolean methods starting with 'is' are correctly
+  /// invoked as JNI property getters (e.g., `_jniApi.isGetter`).
+  bool isGetter();
+
+  /// Tests that zero-argument methods starting with 'get' are correctly
+  /// invoked as JNI property getters with decapitalized names (e.g., `_jniApi.getter`).
+  int getGetter();
+
+  /// Tests that single-argument void methods starting with 'set' are correctly
+  /// invoked as JNI property setters with decapitalized names (e.g., `_jniApi.setter = value`).
+  void setSetter(int value);
 
   /// Spawns a background thread and calls `noop` on the [NativeInteropFlutterIntegrationCoreApi].
   ///

@@ -1588,7 +1588,24 @@ interface NativeInteropHostIntegrationCoreApi {
       anotherEnum: NativeInteropAnotherEnum?
   ): NativeInteropAnotherEnum?
   /** Returns true if the handler is run on a main thread. */
-  fun defaultIsMainThread(): Boolean
+  fun isMainThread(): Boolean
+  /** Returns true if the async handler runs on a background thread. */
+  suspend fun asyncIsBackgroundThread(): Boolean
+  /**
+   * Tests that zero-argument boolean methods starting with 'is' are correctly invoked as JNI
+   * property getters (e.g., `_jniApi.isGetter`).
+   */
+  fun isGetter(): Boolean
+  /**
+   * Tests that zero-argument methods starting with 'get' are correctly invoked as JNI property
+   * getters with decapitalized names (e.g., `_jniApi.getter`).
+   */
+  fun getGetter(): Long
+  /**
+   * Tests that single-argument void methods starting with 'set' are correctly invoked as JNI
+   * property setters with decapitalized names (e.g., `_jniApi.setter = value`).
+   */
+  fun setSetter(value: Long)
   /**
    * Spawns a background thread and calls `noop` on the [NativeInteropFlutterIntegrationCoreApi].
    *
@@ -4216,10 +4233,63 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
     error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
   /** Returns true if the handler is run on a main thread. */
-  override fun defaultIsMainThread(): Boolean {
+  override fun isMainThread(): Boolean {
     api?.let {
       try {
-        return it.defaultIsMainThread()
+        return it.isMainThread()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
+  }
+  /** Returns true if the async handler runs on a background thread. */
+  override suspend fun asyncIsBackgroundThread(): Boolean {
+    api?.let {
+      try {
+        return it.asyncIsBackgroundThread()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
+  }
+  /**
+   * Tests that zero-argument boolean methods starting with 'is' are correctly invoked as JNI
+   * property getters (e.g., `_jniApi.isGetter`).
+   */
+  override fun isGetter(): Boolean {
+    api?.let {
+      try {
+        return it.isGetter()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
+  }
+  /**
+   * Tests that zero-argument methods starting with 'get' are correctly invoked as JNI property
+   * getters with decapitalized names (e.g., `_jniApi.getter`).
+   */
+  override fun getGetter(): Long {
+    api?.let {
+      try {
+        return it.getGetter()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropHostIntegrationCoreApi has not been registered")
+  }
+  /**
+   * Tests that single-argument void methods starting with 'set' are correctly invoked as JNI
+   * property setters with decapitalized names (e.g., `_jniApi.setter = value`).
+   */
+  override fun setSetter(value: Long) {
+    api?.let {
+      try {
+        return it.setSetter(value)
       } catch (e: Exception) {
         throw e
       }

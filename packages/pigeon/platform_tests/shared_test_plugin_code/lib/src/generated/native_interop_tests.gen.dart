@@ -9406,16 +9406,97 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
     }
   }
 
-  bool defaultIsMainThread() {
+  bool isMainThread() {
     try {
       if (_jniApi != null) {
-        return _jniApi.defaultIsMainThread();
+        return _jniApi.isMainThread;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? res = _ffiApi.defaultIsMainThreadWithWrappedError(error);
+        final NSNumber? res = _ffiApi.isMainThreadWithWrappedError(error);
         _throwIfFfiError(error);
         final bool dartTypeRes = res!.boolValue;
         return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  Future<bool> asyncIsBackgroundThread() async {
+    try {
+      if (_jniApi != null) {
+        final JBoolean res = await _jniApi.asyncIsBackgroundThread();
+        final bool dartTypeRes = res.toDartBool(releaseOriginal: true);
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final error = ffi_bridge.NativeInteropTestsError();
+        final Completer<bool> completer = Completer<bool>();
+        _ffiApi.asyncIsBackgroundThreadWithWrappedError(
+          error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((NSNumber? res) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(res!.boolValue);
+            }
+          }),
+        );
+        return await completer.future;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  bool isGetter() {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.isGetter;
+      } else if (_ffiApi != null) {
+        final error = ffi_bridge.NativeInteropTestsError();
+        final NSNumber? res = _ffiApi.isGetterWithWrappedError(error);
+        _throwIfFfiError(error);
+        final bool dartTypeRes = res!.boolValue;
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  int getGetter() {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.getter;
+      } else if (_ffiApi != null) {
+        final error = ffi_bridge.NativeInteropTestsError();
+        final NSNumber? res = _ffiApi.getGetterWithWrappedError(error);
+        _throwIfFfiError(error);
+        final int dartTypeRes = res!.longValue;
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  void setSetter(int value) {
+    try {
+      if (_jniApi != null) {
+        _jniApi.setter = value;
+      } else if (_ffiApi != null) {
+        final error = ffi_bridge.NativeInteropTestsError();
+        _ffiApi.setSetterWithValue(value, wrappedError: error);
+        _throwIfFfiError(error);
+        return;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -14730,12 +14811,12 @@ class NativeInteropHostIntegrationCoreApi {
   }
 
   /// Returns true if the handler is run on a main thread.
-  Future<bool> defaultIsMainThread() async {
+  Future<bool> isMainThread() async {
     if (_nativeInteropApi != null) {
-      return _nativeInteropApi.defaultIsMainThread();
+      return _nativeInteropApi.isMainThread();
     }
     final pigeonVar_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.defaultIsMainThread$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.isMainThread$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -14750,6 +14831,96 @@ class NativeInteropHostIntegrationCoreApi {
       isNullValid: false,
     );
     return pigeonVar_replyValue! as bool;
+  }
+
+  /// Returns true if the async handler runs on a background thread.
+  Future<bool> asyncIsBackgroundThread() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.asyncIsBackgroundThread();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.asyncIsBackgroundThread$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as bool;
+  }
+
+  /// Tests that zero-argument boolean methods starting with 'is' are correctly
+  /// invoked as JNI property getters (e.g., `_jniApi.isGetter`).
+  Future<bool> isGetter() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.isGetter();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.isGetter$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as bool;
+  }
+
+  /// Tests that zero-argument methods starting with 'get' are correctly
+  /// invoked as JNI property getters with decapitalized names (e.g., `_jniApi.getter`).
+  Future<int> getGetter() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.getGetter();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.getGetter$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as int;
+  }
+
+  /// Tests that single-argument void methods starting with 'set' are correctly
+  /// invoked as JNI property setters with decapitalized names (e.g., `_jniApi.setter = value`).
+  Future<void> setSetter(int value) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.setSetter(value);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.setSetter$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 
   /// Spawns a background thread and calls `noop` on the [NativeInteropFlutterIntegrationCoreApi].

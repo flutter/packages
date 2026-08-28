@@ -4,6 +4,8 @@
 
 // ignore_for_file: unused_local_variable
 
+import 'dart:isolate';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -2799,12 +2801,33 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
     });
   });
 
+  group('JavaBean property getter and setter tests', () {
+    testWidgets('getters and setters work correctly', (WidgetTester _) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+      expect(api!.isGetter(), true);
+      api.setSetter(42);
+      expect(api.getGetter(), 42);
+      api.setSetter(100);
+      expect(api.getGetter(), 100);
+    });
+  });
+
   group('Threading tests', () {
     testWidgets('default calls land on main thread', (WidgetTester _) async {
       final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
           NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
-      final bool isMainThread = api!.defaultIsMainThread();
+      final bool isMainThread = api!.isMainThread();
       expect(isMainThread, true);
+    });
+
+    testWidgets('native concurrency with @async runs on a background thread (Option A)', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+      final bool isBackground = await api!.asyncIsBackgroundThread();
+      expect(isBackground, true);
     });
 
     testWidgets('calls back to flutter can be made on background thread', (WidgetTester _) async {
@@ -2812,6 +2835,36 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
           NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
       final bool success = await api!.callFlutterNoopOnBackgroundThread();
       expect(success, true);
+    });
+
+    testWidgets('host calls can be made synchronously from a background isolate', (
+      WidgetTester _,
+    ) async {
+      final (
+        bool isMainThread,
+        int echoedInt,
+        NativeInteropAllTypes echoedTypes,
+      ) = await Isolate.run(() {
+        final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+            NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+        api!.noop();
+        final bool isMainThread = api.isMainThread();
+        final int echo = api.echoInt(42);
+        final NativeInteropAllTypes allTypes = api.echoAllTypes(genericNativeInteropAllTypes);
+        return (isMainThread, echo, allTypes);
+      });
+      expect(isMainThread, false);
+      expect(echoedInt, 42);
+      expect(echoedTypes, genericNativeInteropAllTypes);
+    });
+
+    testWidgets('host async calls can be made from a background isolate', (WidgetTester _) async {
+      final int echoedAsync = await Isolate.run(() async {
+        final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+            NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+        return api!.echoAsyncInt(100);
+      });
+      expect(echoedAsync, 100);
     });
   });
 

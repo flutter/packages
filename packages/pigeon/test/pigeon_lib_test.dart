@@ -2368,6 +2368,84 @@ dev_dependencies:
       expect(errors, hasLength(1));
       expect(errors[0].message, contains('Kotlin JNI does not support TaskQueue'));
     });
+
+    test('KotlinGeneratorAdapter errors on JNI property name collisions', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'Api',
+            methods: <Method>[
+              Method(
+                name: 'getFish',
+                returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
+                parameters: <Parameter>[],
+                location: ApiLocation.host,
+              ),
+              Method(
+                name: 'fish',
+                returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+                parameters: <Parameter>[],
+                location: ApiLocation.host,
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      const adapter = KotlinGeneratorAdapter();
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          kotlinOut: 'android/Messages.g.kt',
+          kotlinOptions: KotlinOptions(useJni: true),
+        ),
+      );
+      final List<Error> errors = adapter.validate(options, root);
+      expect(errors, hasLength(1));
+      expect(errors[0].message, contains('collides with method "fish" under JNI generation'));
+    });
+
+    test('JnigenConfigGeneratorAdapter errors on JNI property name collisions', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'Api',
+            methods: <Method>[
+              Method(
+                name: 'setFish',
+                returnType: const TypeDeclaration.voidDeclaration(),
+                parameters: <Parameter>[
+                  Parameter(
+                    name: 'value',
+                    type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                  ),
+                ],
+                location: ApiLocation.host,
+              ),
+              Method(
+                name: 'fish',
+                returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+                parameters: <Parameter>[],
+                location: ApiLocation.host,
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      const adapter = JnigenConfigGeneratorAdapter();
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          dartOut: 'lib/messages.g.dart',
+          kotlinOut: 'android/Messages.g.kt',
+          kotlinOptions: KotlinOptions(useJni: true),
+        ),
+      );
+      final List<Error> errors = adapter.validate(options, root);
+      expect(errors, hasLength(1));
+      expect(errors[0].message, contains('collides with method "fish" under JNI generation'));
+    });
   });
 
   group('constants parsing', () {
