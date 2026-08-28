@@ -94,8 +94,8 @@ final class ImagePickerUtils {
    * androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia} (Android Photo
    * Picker) instead of {@link android.content.Intent#ACTION_GET_CONTENT}.
    *
-   * <p>On Android API 36+, {@code ACTION_GET_CONTENT} for images may be handled by the system
-   * photo picker's {@code PhotopickerGetContentActivity}. That path combined with {@code
+   * <p>On Android API 36+, {@code ACTION_GET_CONTENT} for images may be handled by the system photo
+   * picker's {@code PhotopickerGetContentActivity}. That path combined with {@code
    * startActivityForResult} can return {@link android.app.Activity#RESULT_OK} without {@link
    * android.content.Intent#getData()} or usable {@link android.content.ClipData}, so the plugin
    * would complete with no paths. The {@code PickVisualMedia} contract uses the Activity Result API
