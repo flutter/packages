@@ -195,7 +195,7 @@ bool _isInAccessibilityMode(BuildContext context) {
 
 /// An iOS-style alert dialog.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=75CsnyRXf5I}
+/// Learn more about [CupertinoAlertDialog] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=75CsnyRXf5I).
 ///
 /// An alert dialog informs the user about situations that require
 /// acknowledgment. An alert dialog has an optional title, optional content,
@@ -1052,7 +1052,7 @@ class _ActionSheetGestureDetector extends StatelessWidget {
 
 /// An iOS-style action sheet.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=U-ao8p4A82k}
+/// Learn more about [CupertinoActionSheet] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=U-ao8p4A82k).
 ///
 /// An action sheet is a specific style of alert that presents the user
 /// with a set of two or more choices related to the current context.

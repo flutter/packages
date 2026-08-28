@@ -150,7 +150,7 @@ enum DropdownMenuCloseBehavior {
 /// A dropdown menu that can be opened from a [TextField]. The selected
 /// menu item is displayed in that field.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=giV9AbM2gd8}
+/// Learn more about [DropdownMenu] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=giV9AbM2gd8).
 ///
 /// This widget is used to help people make a choice from a menu and put the
 /// selected item into the text input field. People can also filter the list based
@@ -1287,7 +1287,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
         final MaterialLocalizations localizations = MaterialLocalizations.of(context);
         final Widget textField = Semantics(
           button: isButton,
-          // This is set specificly for iOS because iOS does not have any native
+          // This is set specifically for iOS because iOS does not have any native
           // APIs to show whether the menu is expanded or collapsed.
           hint: Theme.of(context).platform == TargetPlatform.iOS
               ? _controller.isOpen

@@ -105,7 +105,7 @@ typedef _GetSheetDragged = bool Function();
 /// Shows a Cupertino-style sheet widget that slides up from the bottom of the
 /// screen and stacks the previous route behind the new sheet.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=5H-WvH5O29I}
+/// Learn more about [CupertinoSheetRoute] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=5H-WvH5O29I).
 ///
 /// This is a convenience method for displaying [CupertinoSheetRoute] for most
 /// use cases. The Widget returned from `scrollableBuilder` will be used to display
@@ -552,13 +552,13 @@ class _CupertinoSheetTransitionState extends State<CupertinoSheetTransition>
         child: AnimatedBuilder(
           animation: _stretchDragAnimation,
           builder: (BuildContext context, Widget? child) {
-            return Padding(
-              padding: EdgeInsets.only(
-                top: MediaQuery.heightOf(context) * _stretchDragAnimation.value,
-              ),
-              child: _coverSheetSecondaryTransition(
-                widget.secondaryRouteAnimation,
-                _coverSheetPrimaryTransition(
+            return _coverSheetSecondaryTransition(
+              widget.secondaryRouteAnimation,
+              Padding(
+                padding: EdgeInsets.only(
+                  top: MediaQuery.heightOf(context) * _stretchDragAnimation.value,
+                ),
+                child: _coverSheetPrimaryTransition(
                   context,
                   widget.primaryRouteAnimation,
                   widget.linearTransition,
@@ -591,7 +591,7 @@ class _StretchDragControllerProvider extends InheritedWidget {
 
 /// Route for displaying an iOS sheet styled page.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=5H-WvH5O29I}
+/// Learn more about [CupertinoSheetRoute] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=5H-WvH5O29I).
 ///
 /// The `CupertinoSheetRoute` will slide up from the bottom of the screen and stop
 /// below the top of the screen. If the previous route is a non-sheet route, then
@@ -947,7 +947,6 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
 
 class _CupertinoDragGestureDetector<T> extends StatefulWidget {
   const _CupertinoDragGestureDetector({
-    super.key,
     required this.enabledCallback,
     required this.onStartPopGesture,
     required this.child,
@@ -1327,7 +1326,6 @@ class _CupertinoSheetScrollPosition extends ScrollPositionWithSingleContext {
 
 class _CupertinoDraggableScrollableSheet<T> extends StatefulWidget {
   const _CupertinoDraggableScrollableSheet({
-    super.key,
     required this.enabledCallback,
     required this.onStartPopGesture,
     required this.builder,

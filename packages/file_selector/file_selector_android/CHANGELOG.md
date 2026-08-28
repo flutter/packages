@@ -1,3 +1,12 @@
+## 0.5.2+10
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
+## 0.5.2+9
+
+* Fixes a crash when a selected file cannot be copied to a readable location (for
+  example, on a `SecurityException`).
+
 ## 0.5.2+8
 
 * Bumps the androidx group across 10 directories with 1 update.

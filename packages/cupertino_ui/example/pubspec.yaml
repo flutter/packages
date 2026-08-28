@@ -7,8 +7,6 @@ version: 1.0.0
 environment:
   sdk: ^3.12.0
 
-resolution: workspace
-
 dependencies:
   flutter:
     sdk: flutter
@@ -17,11 +15,9 @@ dependencies:
   test: ^1.31.0
   vector_math: ^2.2.0
   web: ^1.1.1
+  cupertino_icons: ^1.0.9
   cupertino_ui:
     path: ..
-  material_ui:
-    # TODO(justinmc): Use the pub.dev package when published.
-    path: ../../material_ui
 
 dev_dependencies:
   integration_test:
@@ -37,6 +33,3 @@ dev_dependencies:
   flutter_web_plugins:
     sdk: flutter
   flutter_lints: ^6.0.0
-
-flutter:
-  uses-material-design: true

@@ -388,7 +388,7 @@ class DataCell {
 /// [Material 2](https://material.io/go/design-data-tables)
 /// design specification.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=ktTajqbhIcY}
+/// Learn more about [DataTable] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=ktTajqbhIcY).
 ///
 /// ## Performance considerations
 ///

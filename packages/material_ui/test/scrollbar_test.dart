@@ -2,13 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(gspencergoog): Remove this tag once this test's state leaks/test
-// dependencies have been fixed.
-// https://github.com/flutter/flutter/issues/85160
-// Fails with "flutter test --test-randomize-ordering-seed=20230313"
-@Tags(<String>['no-shuffle'])
-library;
-
 import 'dart:ui' as ui;
 
 import 'package:cupertino_ui/cupertino_ui.dart';
@@ -1367,38 +1360,44 @@ void main() {
     final GlobalKey key2 = GlobalKey();
     final GlobalKey outerKey = GlobalKey();
     final GlobalKey innerKey = GlobalKey();
+
+    final theme = ThemeData.light();
+
     await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: MediaQuery(
-          data: const MediaQueryData(),
-          child: ScrollConfiguration(
-            behavior: const NoScrollbarBehavior(),
-            child: Scrollbar(
-              key: key2,
-              child: SingleChildScrollView(
-                key: outerKey,
-                child: SizedBox(
-                  height: 1000.0,
-                  width: double.infinity,
-                  child: Column(
-                    children: <Widget>[
-                      Scrollbar(
-                        key: key1,
-                        child: SizedBox(
-                          height: 300.0,
-                          width: double.infinity,
-                          child: SingleChildScrollView(
-                            key: innerKey,
-                            child: const SizedBox(
-                              key: Key('Inner scrollable'),
-                              height: 1000.0,
-                              width: double.infinity,
+      Theme(
+        data: theme,
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: MediaQuery(
+            data: const MediaQueryData(),
+            child: ScrollConfiguration(
+              behavior: const NoScrollbarBehavior(),
+              child: Scrollbar(
+                key: key2,
+                child: SingleChildScrollView(
+                  key: outerKey,
+                  child: SizedBox(
+                    height: 1000.0,
+                    width: double.infinity,
+                    child: Column(
+                      children: <Widget>[
+                        Scrollbar(
+                          key: key1,
+                          child: SizedBox(
+                            height: 300.0,
+                            width: double.infinity,
+                            child: SingleChildScrollView(
+                              key: innerKey,
+                              child: const SizedBox(
+                                key: Key('Inner scrollable'),
+                                height: 1000.0,
+                                width: double.infinity,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -1414,12 +1413,24 @@ void main() {
     // Scrollbar fully showing.
     await tester.pump(const Duration(milliseconds: 500));
 
-    expect(
-      tester.renderObject(find.byKey(key2)),
-      paintsExactlyCountTimes(#drawRect, 2), // Each bar will call [drawRect] twice.
-    );
-
-    expect(tester.renderObject(find.byKey(key1)), paintsExactlyCountTimes(#drawRect, 2));
+    switch (theme.platform) {
+      case TargetPlatform.android:
+        // On android, draws two rectangles for the track and thumb.
+        expect(tester.renderObject(find.byKey(key2)), paintsExactlyCountTimes(#drawRect, 2));
+        expect(tester.renderObject(find.byKey(key2)), paintsExactlyCountTimes(#drawRRect, 0));
+        expect(tester.renderObject(find.byKey(key1)), paintsExactlyCountTimes(#drawRect, 2));
+        expect(tester.renderObject(find.byKey(key1)), paintsExactlyCountTimes(#drawRRect, 0));
+      case TargetPlatform.iOS:
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+        // Draws a rectangle for the track and a rounded rectangle for the thumb.
+        expect(tester.renderObject(find.byKey(key2)), paintsExactlyCountTimes(#drawRect, 1));
+        expect(tester.renderObject(find.byKey(key2)), paintsExactlyCountTimes(#drawRRect, 1));
+        expect(tester.renderObject(find.byKey(key1)), paintsExactlyCountTimes(#drawRect, 1));
+        expect(tester.renderObject(find.byKey(key1)), paintsExactlyCountTimes(#drawRRect, 1));
+    }
   }, variant: TargetPlatformVariant.all());
 
   testWidgets('Scrollbar dragging can be disabled', (WidgetTester tester) async {

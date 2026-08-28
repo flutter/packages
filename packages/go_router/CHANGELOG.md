@@ -1,3 +1,18 @@
+## 18.0.0
+
+- Migrates to material_ui and cupertino_ui.
+- Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
+## 17.5.0
+
+- Adds route `metadata` support, including inheritance and override behavior with exposure on `GoRouterState`.
+- Documents support for regular expression constraints in GoRoute path parameters.
+
+## 17.4.0
+
+- Fixes onExit ignored for GoRoute nested inside ShellRoute
+- Adds `BlockedInitialNavigationException` (a `GoException` subtype), raised when the initial navigation is blocked by `onEnter` with no prior route to restore, so apps can distinguish this case in `onException` without string matching.
+
 ## 17.3.0
 
 - Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.

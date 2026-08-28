@@ -1,3 +1,11 @@
+## 1.3.0
+
+* An unrecognized `font-weight` value is now ignored with a warning (and still
+  throws when `warningsAsErrors` is set) instead of always throwing. This
+  preserves an inherited weight, or the initial normal weight at the root, and
+  lets the compiler tolerate non-standard values such as `regular` emitted by
+  some SVG generators.
+
 ## 1.2.6
 
 * Fixes `linux-arm64` host support by selecting the Flutter engine
