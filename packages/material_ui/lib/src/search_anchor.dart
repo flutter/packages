@@ -607,6 +607,7 @@ class _SearchAnchorState extends State<SearchAnchor> {
       child: IgnorePointer(
         ignoring: !widget.enabled,
         child: GestureDetector(
+          // Avoid providing duplicate semantics actions.
           excludeFromSemantics: true,
           onTap: _openView,
           child: widget.builder(context, _searchController),
