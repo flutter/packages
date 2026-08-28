@@ -1584,7 +1584,7 @@ release:
         );
       });
       test(
-        'ignores changelog and pubspec yaml version modifications check with override: skip-batch-release-repo-check label',
+        'ignores changelog and pubspec yaml version modifications check with override: batch-<package> label',
         () async {
           final RepositoryPackage package = createFakePackage(
             'package',
@@ -1615,7 +1615,7 @@ packages/package/pubspec.yaml
           final List<String> output = await runCapturingPrint(runner, <String>[
             'validate',
             '--base-sha=main',
-            '--pr-labels=override: skip-batch-release-repo-check-package',
+            '--pr-labels=override: batch-package',
           ]);
 
           expect(
@@ -1826,6 +1826,95 @@ packages/package/pending_changelogs/some_change.yaml
         ];
         gitProcessRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+        ];
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'validate',
+          '--base-sha=main',
+          '--check-for-missing-changes',
+        ]);
+
+        expect(output, containsAllInOrder(<Matcher>[contains('No issues found!')]));
+      });
+
+      test('fails for batch release package with version promote on post-1.0 package', () async {
+        final RepositoryPackage package = createFakePackage(
+          'package',
+          packagesDir,
+          version: '1.0.0',
+        );
+        package.ciConfigFile.writeAsStringSync('''
+release:
+  batch: true
+''');
+        package.libDirectory.childFile('foo.dart').writeAsStringSync('void foo() {}');
+        final Directory pendingChangelogs = package.directory.childDirectory('pending_changelogs');
+        pendingChangelogs.createSync();
+        pendingChangelogs.childFile('some_change.yaml').writeAsStringSync('''
+changelog: "Promoting"
+version: promote
+''');
+
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
+packages/package/lib/foo.dart
+packages/package/pending_changelogs/some_change.yaml
+''',
+            ),
+          ),
+        ];
+        gitProcessRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+        ];
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['validate', '--base-sha=main', '--check-for-missing-changes'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[contains('"promote" is only valid for pre-1.0 packages.')]),
+        );
+      });
+
+      test('passes for batch release package with version promote on pre-1.0 package', () async {
+        final RepositoryPackage package = createFakePackage(
+          'package',
+          packagesDir,
+          version: '0.9.0',
+        );
+        package.ciConfigFile.writeAsStringSync('''
+release:
+  batch: true
+''');
+        package.libDirectory.childFile('foo.dart').writeAsStringSync('void foo() {}');
+        final Directory pendingChangelogs = package.directory.childDirectory('pending_changelogs');
+        pendingChangelogs.createSync();
+        pendingChangelogs.childFile('some_change.yaml').writeAsStringSync('''
+changelog: "Promoting"
+version: promote
+''');
+
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
+packages/package/lib/foo.dart
+packages/package/pending_changelogs/some_change.yaml
+''',
+            ),
+          ),
+        ];
+        gitProcessRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'version: 0.9.0')),
         ];
 
         final List<String> output = await runCapturingPrint(runner, <String>[

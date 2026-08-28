@@ -183,7 +183,7 @@ class MenuStyle with Diagnosticable {
 
   /// Defines how compact the menu's layout will be.
   ///
-  /// {@macro flutter.material.themedata.visualDensity}
+  /// {@macro material_ui.themedata.visualDensity}
   ///
   /// See also:
   ///

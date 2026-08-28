@@ -483,7 +483,7 @@ index abc123..def456 100644
 ''';
 
     gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(stdout: changedFileOutput), <String>['--name-only']),
+      FakeProcessInfo(MockProcess(stdout: changedFileOutput), <String>['-z', '--name-only']),
       FakeProcessInfo(MockProcess(stdout: implementationChanges), <String>[
         '',
         'HEAD',
@@ -556,7 +556,7 @@ index abc123..def456 100644
 ''';
 
     gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(stdout: changedFileOutput), <String>['--name-only']),
+      FakeProcessInfo(MockProcess(stdout: changedFileOutput), <String>['-z', '--name-only']),
       FakeProcessInfo(MockProcess(stdout: implementationChanges), <String>[
         '',
         'HEAD',

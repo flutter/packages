@@ -19,6 +19,8 @@ import 'theme.dart';
 
 /// A Material Design "badge".
 ///
+/// Learn more about [Badge] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=_CIHLJHVoN8).
+///
 /// A badge's [label] conveys a small amount of information about its
 /// [child], like a count or status. If the label is null then this is
 /// a "small" badge that's displayed as a [smallSize] diameter filled
@@ -31,15 +33,18 @@ import 'theme.dart';
 /// configuration is intended to work well with a default sized (24)
 /// [Icon].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to create a [Badge] with label and count
 /// wrapped on an icon in an [IconButton].
 ///
-/// {@example /example/lib/badge/badge.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/badge/badge.0.dart#body}
+///
+/// </callout-box>
 class Badge extends StatelessWidget {
   /// Create a Badge that stacks [label] on top of [child].
   ///

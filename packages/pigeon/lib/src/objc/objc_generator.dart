@@ -207,6 +207,32 @@ class ObjcHeaderGenerator extends StructuredGenerator<InternalObjcOptions> {
   }
 
   @override
+  void writeConstants(
+    InternalObjcOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    if (root.constants.isEmpty) {
+      return;
+    }
+    indent.newln();
+    for (final Constant constant in root.constants) {
+      addDocumentationComments(indent, constant.documentationComments, _docCommentSpec);
+      final String constantName = _constantName(generatorOptions.prefix, constant.name);
+      final String type = constant.type.baseName;
+      if (type == 'String') {
+        indent.writeln('extern NSString *const $constantName;');
+      } else if (type == 'bool') {
+        indent.writeln('extern const BOOL $constantName;');
+      } else {
+        final _ObjcType objcType = _objcTypeForDartType(generatorOptions.prefix, constant.type);
+        indent.writeln('extern const $objcType $constantName;');
+      }
+    }
+  }
+
+  @override
   void writeEnum(
     InternalObjcOptions generatorOptions,
     Root root,
@@ -467,8 +493,33 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
     indent.writeln('@import Flutter;');
     indent.writeln('#endif');
     indent.newln();
-    _writeDeepEquals(indent);
-    _writeDeepHash(indent);
+  }
+
+  @override
+  void writeConstants(
+    InternalObjcOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    if (root.constants.isEmpty) {
+      return;
+    }
+    indent.newln();
+    for (final Constant constant in root.constants) {
+      final String constantName = _constantName(generatorOptions.prefix, constant.name);
+      final String type = constant.type.baseName;
+      if (type == 'String') {
+        final String escaped = escapeStringDoubleQuotes(constant.value.toString());
+        indent.writeln('NSString *const $constantName = @"$escaped";');
+      } else if (type == 'bool') {
+        final boolVal = (constant.value as bool) ? 'YES' : 'NO';
+        indent.writeln('const BOOL $constantName = $boolVal;');
+      } else {
+        final _ObjcType objcType = _objcTypeForDartType(generatorOptions.prefix, constant.type);
+        indent.writeln('const $objcType $constantName = ${constant.value};');
+      }
+    }
   }
 
   @override
@@ -519,7 +570,9 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
     final String className = _className(generatorOptions.prefix, classDefinition.name);
 
     indent.writeln('@implementation $className');
-    _writeObjcSourceClassInitializer(generatorOptions, root, indent, classDefinition, className);
+    if (classDefinition.fields.isNotEmpty) {
+      _writeObjcSourceClassInitializer(generatorOptions, root, indent, classDefinition, className);
+    }
     writeClassDecode(
       generatorOptions,
       root,
@@ -554,21 +607,21 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
       indent.writeScoped('if (![object isKindOfClass:[self class]]) {', '}', () {
         indent.writeln('return NO;');
       });
-      indent.writeln('$className *other = ($className *)object;');
-      final Iterable<String> checks = classDefinition.fields.map((NamedType field) {
-        final String name = field.name;
-        if (_usesPrimitive(field.type)) {
-          if (field.type.baseName == 'double') {
-            return '(self.$name == other.$name || (isnan(self.$name) && isnan(other.$name)))';
-          }
-          return 'self.$name == other.$name';
-        } else {
-          return 'FLTPigeonDeepEquals(self.$name, other.$name)';
-        }
-      });
-      if (checks.isEmpty) {
+      if (classDefinition.fields.isEmpty) {
         indent.writeln('return YES;');
       } else {
+        indent.writeln('$className *other = ($className *)object;');
+        final Iterable<String> checks = classDefinition.fields.map((NamedType field) {
+          final String name = field.name;
+          if (_usesPrimitive(field.type)) {
+            if (field.type.baseName == 'double') {
+              return '(self.$name == other.$name || (isnan(self.$name) && isnan(other.$name)))';
+            }
+            return 'self.$name == other.$name';
+          } else {
+            return 'FLTPigeonDeepEquals(self.$name, other.$name)';
+          }
+        });
         indent.writeln('return ${checks.join(' && ')};');
       }
     });
@@ -1005,6 +1058,9 @@ if (self.wrapped == nil) {
     Indent indent, {
     required String dartPackageName,
   }) {
+    _writeDeepEquals(indent);
+    _writeDeepHash(indent);
+    indent.newln();
     if (root.containsHostApi) {
       _writeWrapError(indent);
       indent.newln();
@@ -1432,6 +1488,15 @@ String _className(String? prefix, String className) {
     return '$prefix$className';
   } else {
     return className;
+  }
+}
+
+/// Calculates the ObjC constant name, converting to UpperCamelCase when prefixed.
+String _constantName(String? prefix, String constantName) {
+  if (prefix != null && prefix.isNotEmpty) {
+    return '$prefix${toUpperCamelCase(constantName)}';
+  } else {
+    return constantName;
   }
 }
 
@@ -1900,10 +1965,8 @@ void _writeDataClassDeclaration(
   addDocumentationComments(indent, classDefinition.documentationComments, _docCommentSpec);
 
   indent.writeln('@interface ${_className(prefix, classDefinition.name)} : NSObject');
-  if (getFieldsInSerializationOrder(classDefinition).isNotEmpty) {
-    if (getFieldsInSerializationOrder(
-      classDefinition,
-    ).map((NamedType e) => !e.type.isNullable).any((bool e) => e)) {
+  if (classDefinition.fields.isNotEmpty) {
+    if (classDefinition.fields.any((NamedType e) => !e.type.isNullable)) {
       indent.writeln(
         '$_docCommentPrefix `init` unavailable to enforce nonnull fields, see the `make` class method.',
       );

@@ -1,3 +1,12 @@
+## 2.11.1
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
+## 2.11.0
+
+* Implements `setPreventsDisplaySleepDuringVideoPlayback` using
+  `AVPlayer.preventsDisplaySleepDuringVideoPlayback`.
+
 ## 2.10.0
 
 * Implements `getVideoTracks()` and `selectVideoTrack()` methods for video track (quality) selection using AVFoundation.

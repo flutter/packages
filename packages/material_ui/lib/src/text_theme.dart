@@ -237,8 +237,8 @@ class TextTheme with Diagnosticable {
   /// the typography styles in the Material Design specification, as a starting
   /// point.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -268,7 +268,7 @@ class TextTheme with Diagnosticable {
   /// }
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -329,8 +329,8 @@ class TextTheme with Diagnosticable {
   /// [TextTheme] has only some fields defined, and you want to define the rest
   /// by merging it with a default theme.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -358,7 +358,7 @@ class TextTheme with Diagnosticable {
   /// }
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///

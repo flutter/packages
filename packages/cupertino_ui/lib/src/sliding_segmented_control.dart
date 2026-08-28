@@ -101,7 +101,7 @@ const Duration _kHighlightAnimationDuration = Duration(milliseconds: 200);
 
 class _Segment<T> extends StatefulWidget {
   const _Segment({
-    required ValueKey<T> key,
+    required ValueKey<T> super.key,
     required this.child,
     required this.pressed,
     required this.highlighted,
@@ -109,7 +109,7 @@ class _Segment<T> extends StatefulWidget {
     required this.enabled,
     required this.segmentLocation,
     required this.isMomentary,
-  }) : super(key: key);
+  });
 
   final Widget child;
 
@@ -238,8 +238,7 @@ class _SegmentState<T> extends State<_Segment<T>> with TickerProviderStateMixin<
 
 // Fadeout the separator when either adjacent segment is highlighted.
 class _SegmentSeparator extends StatefulWidget {
-  const _SegmentSeparator({required ValueKey<int> key, required this.highlighted})
-    : super(key: key);
+  const _SegmentSeparator({required ValueKey<int> super.key, required this.highlighted});
 
   final bool highlighted;
 
@@ -309,7 +308,7 @@ class _SegmentSeparatorState extends State<_SegmentSeparator>
 
 /// An iOS 13 style segmented control.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=esnBf6V4C34}
+/// Learn more about [CupertinoSlidingSegmentedControl] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=esnBf6V4C34).
 ///
 /// Displays the widgets provided in the [Map] of [children] in a horizontal list.
 /// It allows the user to select between a number of mutually exclusive options,
@@ -340,8 +339,7 @@ class _SegmentSeparatorState extends State<_SegmentSeparator>
 /// [thumbColor], [backgroundColor] arguments can be used to override the
 /// segmented control's colors from its defaults.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a [CupertinoSlidingSegmentedControl] with an enum type.
 ///
@@ -349,9 +347,14 @@ class _SegmentSeparatorState extends State<_SegmentSeparator>
 /// the parent [StatefulWidget] using the [State.setState] method, so that
 /// the parent gets rebuilt; for example:
 ///
-/// {@example /example/lib/segmented_control/cupertino_sliding_segmented_control.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/segmented_control/cupertino_sliding_segmented_control.0.dart#body}
+///
+/// </callout-box>
+///
 /// See also:
 ///
 ///  * <https://developer.apple.com/design/human-interface-guidelines/ios/controls/segmented-controls/>
@@ -427,8 +430,8 @@ class CupertinoSlidingSegmentedControl<T extends Object> extends StatefulWidget 
   /// the parent [StatefulWidget] using the [State.setState] method, so that
   /// the parent gets rebuilt; for example:
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -464,7 +467,7 @@ class CupertinoSlidingSegmentedControl<T extends Object> extends StatefulWidget 
   /// }
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   final ValueChanged<T?> onValueChanged;
 
   /// The color used to paint the rounded rect behind the [children] and the separators.
@@ -508,16 +511,19 @@ class CupertinoSlidingSegmentedControl<T extends Object> extends StatefulWidget 
   ///
   /// Defaults to false.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example shows a [CupertinoSlidingSegmentedControl] with [isMomentary] set
   /// to true, providing feedback to the user when the segment is selected with a
   /// text scaling effect.
   ///
-  /// {@example /example/lib/segmented_control/cupertino_sliding_segmented_control.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro cupertino_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/segmented_control/cupertino_sliding_segmented_control.0.dart#body}
+  ///
+  /// </callout-box>
   final bool isMomentary;
 
   @override

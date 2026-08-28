@@ -124,8 +124,8 @@ class TextSelectionThemeData with Diagnosticable {
 /// Values specified here are used for [TextField] and [SelectableText]
 /// properties that are not given an explicit non-null value.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -142,7 +142,7 @@ class TextSelectionThemeData with Diagnosticable {
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// This widget also creates a [DefaultSelectionStyle] for its subtree with
 /// [data].

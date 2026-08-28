@@ -50,48 +50,48 @@ class SwitchThemeData with Diagnosticable {
     this.padding,
   });
 
-  /// {@macro flutter.material.switch.thumbColor}
+  /// {@macro material_ui.switch.thumbColor}
   ///
   /// If specified, overrides the default value of [Switch.thumbColor].
   final WidgetStateProperty<Color?>? thumbColor;
 
-  /// {@macro flutter.material.switch.trackColor}
+  /// {@macro material_ui.switch.trackColor}
   ///
   /// If specified, overrides the default value of [Switch.trackColor].
   final WidgetStateProperty<Color?>? trackColor;
 
-  /// {@macro flutter.material.switch.trackOutlineColor}
+  /// {@macro material_ui.switch.trackOutlineColor}
   ///
   /// If specified, overrides the default value of [Switch.trackOutlineColor].
   final WidgetStateProperty<Color?>? trackOutlineColor;
 
-  /// {@macro flutter.material.switch.trackOutlineWidth}
+  /// {@macro material_ui.switch.trackOutlineWidth}
   ///
   /// If specified, overrides the default value of [Switch.trackOutlineWidth].
   final WidgetStateProperty<double?>? trackOutlineWidth;
 
-  /// {@macro flutter.material.switch.materialTapTargetSize}
+  /// {@macro material_ui.switch.materialTapTargetSize}
   ///
   /// If specified, overrides the default value of
   /// [Switch.materialTapTargetSize].
   final MaterialTapTargetSize? materialTapTargetSize;
 
-  /// {@macro flutter.material.switch.mouseCursor}
+  /// {@macro material_ui.switch.mouseCursor}
   ///
   /// If specified, overrides the default value of [Switch.mouseCursor].
   final WidgetStateProperty<MouseCursor?>? mouseCursor;
 
-  /// {@macro flutter.material.switch.overlayColor}
+  /// {@macro material_ui.switch.overlayColor}
   ///
   /// If specified, overrides the default value of [Switch.overlayColor].
   final WidgetStateProperty<Color?>? overlayColor;
 
-  /// {@macro flutter.material.switch.splashRadius}
+  /// {@macro material_ui.switch.splashRadius}
   ///
   /// If specified, overrides the default value of [Switch.splashRadius].
   final double? splashRadius;
 
-  /// {@macro flutter.material.switch.thumbIcon}
+  /// {@macro material_ui.switch.thumbIcon}
   ///
   /// It is overridden by [Switch.thumbIcon].
   final WidgetStateProperty<Icon?>? thumbIcon;

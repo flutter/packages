@@ -37,6 +37,9 @@ class MapConfiguration {
     this.indoorViewEnabled,
     this.trafficEnabled,
     this.buildingsEnabled,
+    this.mapTypeControlEnabled,
+    this.fullscreenControlEnabled,
+    this.streetViewControlEnabled,
     String? mapId,
     @Deprecated('cloudMapId is deprecated. Use mapId instead.') String? cloudMapId,
     this.style,
@@ -66,6 +69,21 @@ class MapConfiguration {
 
   /// True if the map toolbar should be shown.
   final bool? mapToolbarEnabled;
+
+  /// True if map type control should be shown.
+  ///
+  /// Web only.
+  final bool? mapTypeControlEnabled;
+
+  /// True if fullscreen control should be shown.
+  ///
+  /// Web only.
+  final bool? fullscreenControlEnabled;
+
+  /// True if street view control should be shown.
+  ///
+  /// Web only.
+  final bool? streetViewControlEnabled;
 
   /// The bounds to display.
   final CameraTargetBounds? cameraTargetBounds;
@@ -210,6 +228,15 @@ class MapConfiguration {
       indoorViewEnabled: indoorViewEnabled != other.indoorViewEnabled ? indoorViewEnabled : null,
       trafficEnabled: trafficEnabled != other.trafficEnabled ? trafficEnabled : null,
       buildingsEnabled: buildingsEnabled != other.buildingsEnabled ? buildingsEnabled : null,
+      mapTypeControlEnabled: mapTypeControlEnabled != other.mapTypeControlEnabled
+          ? mapTypeControlEnabled
+          : null,
+      fullscreenControlEnabled: fullscreenControlEnabled != other.fullscreenControlEnabled
+          ? fullscreenControlEnabled
+          : null,
+      streetViewControlEnabled: streetViewControlEnabled != other.streetViewControlEnabled
+          ? streetViewControlEnabled
+          : null,
       mapId: mapId != other.mapId ? mapId : null,
       style: style != other.style ? style : null,
       markerType: markerType != other.markerType ? markerType : null,
@@ -244,6 +271,9 @@ class MapConfiguration {
       indoorViewEnabled: diff.indoorViewEnabled ?? indoorViewEnabled,
       trafficEnabled: diff.trafficEnabled ?? trafficEnabled,
       buildingsEnabled: diff.buildingsEnabled ?? buildingsEnabled,
+      mapTypeControlEnabled: diff.mapTypeControlEnabled ?? mapTypeControlEnabled,
+      fullscreenControlEnabled: diff.fullscreenControlEnabled ?? fullscreenControlEnabled,
+      streetViewControlEnabled: diff.streetViewControlEnabled ?? streetViewControlEnabled,
       mapId: diff.mapId ?? mapId,
       style: diff.style ?? style,
       markerType: diff.markerType ?? markerType,
@@ -275,6 +305,9 @@ class MapConfiguration {
       indoorViewEnabled == null &&
       trafficEnabled == null &&
       buildingsEnabled == null &&
+      mapTypeControlEnabled == null &&
+      fullscreenControlEnabled == null &&
+      streetViewControlEnabled == null &&
       mapId == null &&
       style == null &&
       markerType == null &&
@@ -311,6 +344,9 @@ class MapConfiguration {
         indoorViewEnabled == other.indoorViewEnabled &&
         trafficEnabled == other.trafficEnabled &&
         buildingsEnabled == other.buildingsEnabled &&
+        mapTypeControlEnabled == other.mapTypeControlEnabled &&
+        fullscreenControlEnabled == other.fullscreenControlEnabled &&
+        streetViewControlEnabled == other.streetViewControlEnabled &&
         mapId == other.mapId &&
         style == other.style &&
         markerType == other.markerType &&
@@ -341,6 +377,9 @@ class MapConfiguration {
     indoorViewEnabled,
     trafficEnabled,
     buildingsEnabled,
+    mapTypeControlEnabled,
+    fullscreenControlEnabled,
+    streetViewControlEnabled,
     mapId,
     style,
     markerType,

@@ -35,7 +35,7 @@ export 'package:flutter/services.dart' show SmartDashesType, SmartQuotesType;
 /// If a [controller] is not specified, [initialValue] can be used to give
 /// the automatically generated controller an initial value.
 ///
-/// {@macro flutter.material.textfield.wantKeepAlive}
+/// {@macro cupertino_ui.textfield.wantKeepAlive}
 ///
 /// Remember to call [TextEditingController.dispose] of the [TextEditingController]
 /// when it is no longer needed. This will ensure any resources used by the object
@@ -47,8 +47,8 @@ export 'package:flutter/services.dart' show SmartDashesType, SmartQuotesType;
 ///
 /// For a documentation about the various parameters, see [TextField].
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -75,27 +75,33 @@ export 'package:flutter/services.dart' show SmartDashesType, SmartQuotesType;
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to move the focus to the next field when the user
 /// presses the SPACE key.
 ///
-/// {@example /example/lib/text_form_field/text_form_field.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/text_form_field/text_form_field.1.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to force an error text to the field after making
 /// an asynchronous call.
 ///
-/// {@example /example/lib/text_form_field/text_form_field.2.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/text_form_field/text_form_field.2.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -333,10 +339,7 @@ class TextFormField extends FormField<String> {
   /// {@macro flutter.widgets.editableText.groupId}
   final Object groupId;
 
-  /// {@template flutter.material.TextFormField.onChanged}
-  /// Called when the user initiates a change to the TextField's
-  /// value: when they have inserted or deleted text or reset the form.
-  /// {@endtemplate}
+  /// {@macro cupertino_ui.TextFormField.onChanged}
   final ValueChanged<String>? onChanged;
 
   static Widget _defaultContextMenuBuilder(

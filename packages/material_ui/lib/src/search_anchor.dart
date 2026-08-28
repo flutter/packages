@@ -70,6 +70,8 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 /// Manages a "search view" route that allows the user to select one of the
 /// suggested completions for a search query.
 ///
+/// Learn more about [SearchAnchor] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=vM2dC8OCZoY).
+///
 /// The search view's route can either be shown by creating a [SearchController]
 /// and then calling [SearchController.openView] or by tapping on an anchor.
 /// When the anchor is tapped or [SearchController.openView] is called, the search view either
@@ -86,44 +88,56 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 /// is in full-screen mode, changing the window size, such as rotating a mobile
 /// device from portrait mode to landscape mode, will not close the search view.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to use an IconButton to open a search view in a [SearchAnchor].
 /// It also shows how to use [SearchController] to open or close the search view route.
 ///
-/// {@example /example/lib/search_anchor/search_anchor.2.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/search_anchor/search_anchor.2.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to set up a floating (or pinned) AppBar with a
 /// [SearchAnchor] for a title.
 ///
-/// {@example /example/lib/search_anchor/search_anchor.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/search_anchor/search_anchor.1.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to fetch the search suggestions from a remote API.
 ///
-/// {@example /example/lib/search_anchor/search_anchor.3.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/search_anchor/search_anchor.3.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example demonstrates fetching the search suggestions asynchronously and
 /// debouncing network calls.
 ///
-/// {@example /example/lib/search_anchor/search_anchor.4.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/search_anchor/search_anchor.4.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -174,15 +188,18 @@ class SearchAnchor extends StatefulWidget {
   /// All the barX parameters are used to customize the anchor. Similarly, all the
   /// viewX parameters are used to override the view's defaults.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example shows how to use a [SearchAnchor.bar] which uses a default search
   /// bar to open a search view route.
   ///
-  /// {@example /example/lib/search_anchor/search_anchor.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/search_anchor/search_anchor.0.dart#body}
+  ///
+  /// </callout-box>
   factory SearchAnchor.bar({
     Widget? barLeading,
     Iterable<Widget>? barTrailing,
@@ -414,7 +431,7 @@ class SearchAnchor extends StatefulWidget {
   /// To get a different layout, use [viewBuilder] to override.
   final SuggestionsBuilder suggestionsBuilder;
 
-  /// {@macro flutter.widgets.TextField.textInputAction}
+  /// {@macro material_ui.TextField.textInputAction}
   final TextInputAction? textInputAction;
 
   /// The type of action button to use for the keyboard.
@@ -957,6 +974,8 @@ class _ViewContentState extends State<_ViewContent> {
   Iterable<Widget> result = <Widget>[];
   String? searchValue;
   Timer? _timer;
+  // Identifies the latest call so that older async results cannot replace newer ones.
+  int _suggestionsCallId = 0;
 
   @override
   void initState() {
@@ -993,14 +1012,9 @@ class _ViewContentState extends State<_ViewContent> {
       _timer?.cancel();
       _timer = Timer(Duration.zero, () async {
         searchValue = _controller.text;
-        final Iterable<Widget> suggestions = await widget.suggestionsBuilder(context, _controller);
+        await _buildSuggestions();
         _timer?.cancel();
         _timer = null;
-        if (mounted) {
-          setState(() {
-            result = suggestions;
-          });
-        }
       });
     }
   }
@@ -1041,13 +1055,19 @@ class _ViewContentState extends State<_ViewContent> {
   Future<void> updateSuggestions() async {
     if (searchValue != _controller.text) {
       searchValue = _controller.text;
-      final Iterable<Widget> suggestions = await widget.suggestionsBuilder(context, _controller);
-      if (mounted) {
-        setState(() {
-          result = suggestions;
-        });
-      }
+      await _buildSuggestions();
     }
+  }
+
+  Future<void> _buildSuggestions() async {
+    final int callId = ++_suggestionsCallId;
+    final Iterable<Widget> suggestions = await widget.suggestionsBuilder(context, _controller);
+    if (!mounted || callId != _suggestionsCallId) {
+      return;
+    }
+    setState(() {
+      result = suggestions;
+    });
   }
 
   @override
@@ -1123,114 +1143,126 @@ class _ViewContentState extends State<_ViewContent> {
       child: const Divider(height: 1),
     );
 
-    return Align(
-      alignment: Alignment.topLeft,
-      child: Transform.translate(
-        offset: _viewRect.topLeft,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            minWidth: minWidth,
-            maxWidth: _viewRect.width,
-            minHeight: minHeight,
-            maxHeight: _viewRect.height,
-          ),
-          child: Padding(
-            padding: widget.showFullScreenView
-                ? EdgeInsets.zero
-                : (effectivePadding ?? EdgeInsets.zero),
-            child: Material(
-              clipBehavior: Clip.antiAlias,
-              shape: effectiveShape,
-              color: effectiveBackgroundColor,
-              surfaceTintColor: effectiveSurfaceTint,
-              elevation: effectiveElevation,
-              child: OverflowBox(
-                alignment: Alignment.topLeft,
-                maxWidth: math.min(widget.viewMaxWidth, _screenSize!.width),
-                minWidth: 0,
-                fit: OverflowBoxFit.deferToChild,
-                child: FadeTransition(
-                  opacity: viewIconsFadeCurve,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(top: widget.topPadding),
-                        child: SafeArea(
-                          top: false,
-                          bottom: false,
-                          child: SearchBar(
-                            autoFocus: true,
-                            constraints:
-                                headerConstraints ??
-                                (widget.showFullScreenView
-                                    ? BoxConstraints(
-                                        minHeight: _SearchViewDefaultsM3.fullScreenBarHeight,
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return Align(
+          alignment: Alignment.topLeft,
+          child: Transform.translate(
+            offset: _viewRect.topLeft,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: minWidth,
+                maxWidth: widget.showFullScreenView
+                    ? math.max(constraints.maxWidth, minWidth)
+                    : _viewRect.width,
+                minHeight: minHeight,
+                maxHeight: widget.showFullScreenView
+                    ? math.max(constraints.maxHeight, minHeight)
+                    : _viewRect.height,
+              ),
+              child: Padding(
+                padding: widget.showFullScreenView
+                    ? EdgeInsets.zero
+                    : (effectivePadding ?? EdgeInsets.zero),
+                child: Material(
+                  clipBehavior: Clip.antiAlias,
+                  shape: effectiveShape,
+                  color: effectiveBackgroundColor,
+                  surfaceTintColor: effectiveSurfaceTint,
+                  elevation: effectiveElevation,
+                  child: OverflowBox(
+                    alignment: Alignment.topLeft,
+                    maxWidth: widget.showFullScreenView
+                        ? constraints.maxWidth
+                        : math.min(widget.viewMaxWidth, constraints.maxWidth),
+                    minWidth: 0,
+                    fit: OverflowBoxFit.deferToChild,
+                    child: FadeTransition(
+                      opacity: viewIconsFadeCurve,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(top: widget.topPadding),
+                            child: SafeArea(
+                              top: false,
+                              bottom: false,
+                              child: SearchBar(
+                                autoFocus: true,
+                                constraints:
+                                    headerConstraints ??
+                                    (widget.showFullScreenView
+                                        ? BoxConstraints(
+                                            minHeight: _SearchViewDefaultsM3.fullScreenBarHeight,
+                                          )
+                                        : null),
+                                padding: WidgetStatePropertyAll<EdgeInsetsGeometry?>(
+                                  effectiveBarPadding,
+                                ),
+                                leading: widget.viewLeading ?? defaultLeading,
+                                trailing: widget.viewTrailing ?? defaultTrailing,
+                                hintText: widget.viewHintText,
+                                backgroundColor: const MaterialStatePropertyAll<Color>(
+                                  Colors.transparent,
+                                ),
+                                overlayColor: const MaterialStatePropertyAll<Color>(
+                                  Colors.transparent,
+                                ),
+                                elevation: const MaterialStatePropertyAll<double>(0.0),
+                                textStyle: MaterialStatePropertyAll<TextStyle?>(effectiveTextStyle),
+                                hintStyle: MaterialStatePropertyAll<TextStyle?>(effectiveHintStyle),
+                                controller: _controller,
+                                onChanged: (String value) {
+                                  widget.viewOnChanged?.call(value);
+                                  updateSuggestions();
+                                },
+                                onSubmitted: widget.viewOnSubmitted,
+                                textCapitalization: widget.textCapitalization,
+                                textInputAction: widget.textInputAction,
+                                keyboardType: widget.keyboardType,
+                                smartDashesType: widget.smartDashesType,
+                                smartQuotesType: widget.smartQuotesType,
+                              ),
+                            ),
+                          ),
+                          if (!effectiveShrinkWrap ||
+                              minHeight > 0 ||
+                              widget.showFullScreenView ||
+                              result.isNotEmpty) ...<Widget>[
+                            FadeTransition(opacity: viewDividerFadeCurve, child: viewDivider),
+                            Flexible(
+                              fit: (effectiveShrinkWrap && !widget.showFullScreenView)
+                                  ? FlexFit.loose
+                                  : FlexFit.tight,
+                              child: FadeTransition(
+                                opacity: viewListFadeOnIntervalCurve,
+                                child: widget.viewBuilder == null
+                                    ? MediaQuery.removePadding(
+                                        context: context,
+                                        removeTop: true,
+                                        child: ListView(
+                                          padding: EdgeInsets.only(
+                                            bottom: MediaQuery.viewInsetsOf(context).bottom,
+                                          ),
+                                          shrinkWrap: effectiveShrinkWrap,
+                                          children: result.toList(),
+                                        ),
                                       )
-                                    : null),
-                            padding: WidgetStatePropertyAll<EdgeInsetsGeometry?>(
-                              effectiveBarPadding,
+                                    : widget.viewBuilder!(result),
+                              ),
                             ),
-                            leading: widget.viewLeading ?? defaultLeading,
-                            trailing: widget.viewTrailing ?? defaultTrailing,
-                            hintText: widget.viewHintText,
-                            backgroundColor: const MaterialStatePropertyAll<Color>(
-                              Colors.transparent,
-                            ),
-                            overlayColor: const MaterialStatePropertyAll<Color>(Colors.transparent),
-                            elevation: const MaterialStatePropertyAll<double>(0.0),
-                            textStyle: MaterialStatePropertyAll<TextStyle?>(effectiveTextStyle),
-                            hintStyle: MaterialStatePropertyAll<TextStyle?>(effectiveHintStyle),
-                            controller: _controller,
-                            onChanged: (String value) {
-                              widget.viewOnChanged?.call(value);
-                              updateSuggestions();
-                            },
-                            onSubmitted: widget.viewOnSubmitted,
-                            textCapitalization: widget.textCapitalization,
-                            textInputAction: widget.textInputAction,
-                            keyboardType: widget.keyboardType,
-                            smartDashesType: widget.smartDashesType,
-                            smartQuotesType: widget.smartQuotesType,
-                          ),
-                        ),
+                          ],
+                        ],
                       ),
-                      if (!effectiveShrinkWrap ||
-                          minHeight > 0 ||
-                          widget.showFullScreenView ||
-                          result.isNotEmpty) ...<Widget>[
-                        FadeTransition(opacity: viewDividerFadeCurve, child: viewDivider),
-                        Flexible(
-                          fit: (effectiveShrinkWrap && !widget.showFullScreenView)
-                              ? FlexFit.loose
-                              : FlexFit.tight,
-                          child: FadeTransition(
-                            opacity: viewListFadeOnIntervalCurve,
-                            child: widget.viewBuilder == null
-                                ? MediaQuery.removePadding(
-                                    context: context,
-                                    removeTop: true,
-                                    child: ListView(
-                                      padding: EdgeInsets.only(
-                                        bottom: MediaQuery.viewInsetsOf(context).bottom,
-                                      ),
-                                      shrinkWrap: effectiveShrinkWrap,
-                                      children: result.toList(),
-                                    ),
-                                  )
-                                : widget.viewBuilder!(result),
-                          ),
-                        ),
-                      ],
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -1385,6 +1417,8 @@ class SearchController extends TextEditingController {
 
 /// A Material Design search bar.
 ///
+/// Learn more about [SearchBar] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=vM2dC8OCZoY).
+///
 /// A [SearchBar] looks like a [TextField]. Tapping a SearchBar typically shows a
 /// "search view" route: a route with the search bar at the top and a list of
 /// suggested completions for the search bar's text below. [SearchBar]s are
@@ -1402,16 +1436,19 @@ class SearchController extends TextEditingController {
 /// These actions can represent additional modes of searching (like voice search),
 /// a separate high-level action (such as current location) or an overflow menu.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example demonstrates how to use a [SearchBar] as the return value of the
 /// [SearchAnchor.builder] property. The [SearchBar] also includes a leading search
 /// icon and a trailing action to toggle the brightness.
 ///
-/// {@example /example/lib/search_anchor/search_bar.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/search_anchor/search_bar.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1590,7 +1627,7 @@ class SearchBar extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.autofocus}
   final bool autoFocus;
 
-  /// {@macro flutter.widgets.TextField.textInputAction}
+  /// {@macro material_ui.TextField.textInputAction}
   final TextInputAction? textInputAction;
 
   /// The type of action button to use for the keyboard.

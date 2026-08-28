@@ -37,6 +37,8 @@ abstract class StructuredGenerator<T extends InternalOptions> extends Generator<
 
     writeOpenNamespace(generatorOptions, root, indent, dartPackageName: dartPackageName);
 
+    writeConstants(generatorOptions, root, indent, dartPackageName: dartPackageName);
+
     writeGeneralUtilities(generatorOptions, root, indent, dartPackageName: dartPackageName);
 
     if (root.apis.any((Api api) => api is AstProxyApi)) {
@@ -100,6 +102,16 @@ abstract class StructuredGenerator<T extends InternalOptions> extends Generator<
   ///
   /// This method is not required, and does not need to be overridden.
   void writeGeneralUtilities(
+    T generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {}
+
+  /// Writes all constants to [indent].
+  ///
+  /// This method is not required, and does not need to be overridden.
+  void writeConstants(
     T generatorOptions,
     Root root,
     Indent indent, {

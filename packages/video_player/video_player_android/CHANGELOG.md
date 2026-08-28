@@ -1,3 +1,15 @@
+## 2.12.1
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
+## 2.12.0
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/176575) where some videos report an incorrect duration when initialized without a video duration.
+
+## 2.11.0
+
+* Adds `backBufferDurationMs` to `CreationOptions` to configure ExoPlayer `DefaultLoadControl` back buffer duration.
+
 ## 2.10.0
 
 * Implements `getVideoTracks()` and `selectVideoTrack()` methods for video track (quality) selection using ExoPlayer.

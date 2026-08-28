@@ -243,6 +243,15 @@
       - packages/*/*_windows/**/*
       - packages/**/windows/**/*
 
+'triage-design':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/animations/**/*
+      - packages/cupertino_ui/**/*
+      - packages/google_fonts/**/*
+      - packages/material_ui/**/*
+      - third_party/packages/cupertino_icons/**/*
+
 'triage-engine':
   - changed-files:
     - any-glob-to-any-file:
@@ -251,16 +260,3 @@
       - packages/vector_graphics_compiler/**/*
       - third_party/packages/flutter_svg/**/*
       - third_party/packages/flutter_svg_test/**/*
-
-'triage-framework':
-  - changed-files:
-    - any-glob-to-any-file:
-      - packages/animations/**/*
-      - packages/cupertino_ui/**/*
-      - packages/flutter_lints/**/*
-      - packages/go_router/**/*
-      - packages/go_router_builder/**/*
-      - packages/google_fonts/**/*
-      - packages/material_ui/**/*
-      - packages/two_dimensional_scrollables/**/*
-      - third_party/packages/cupertino_icons/**/*

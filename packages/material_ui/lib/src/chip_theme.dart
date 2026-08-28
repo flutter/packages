@@ -62,8 +62,8 @@ class ChipTheme extends InheritedTheme {
   /// Defaults to the ambient [ThemeData.chipTheme] if there is no
   /// [ChipTheme] in the given build context.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -84,7 +84,7 @@ class ChipTheme extends InheritedTheme {
   /// }
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -126,8 +126,8 @@ class ChipTheme extends InheritedTheme {
 /// you get from [ChipTheme.of], or create an entirely new one with
 /// [ChipThemeData.fromDefaults].
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -160,7 +160,7 @@ class ChipTheme extends InheritedTheme {
 /// }
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// See also:
 ///

@@ -349,7 +349,24 @@ packages/plugin1/plugin1/plugin1.dart
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['sample', '--packages-for-branch', '--packages=plugin1'],
+          <String>['sample', '--packages-for-branch', '--run-on-changed-packages'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[contains('Only one of the package selection arguments')]),
+        );
+      });
+
+      test('does not allow --run-on-dirty-packages with --run-on-staged-packages', () async {
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['sample', '--run-on-dirty-packages', '--run-on-staged-packages'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -1018,6 +1035,55 @@ packages/b_package/lib/src/foo.dart
         expect(command.plugins, unorderedEquals(<String>[packageA.path]));
       });
     });
+
+    group('test run-on-staged-packages', () {
+      test('no packages should be tested if there are no changes.', () async {
+        createFakePackage('a_package', packagesDir);
+        await runCapturingPrint(runner, <String>['sample', '--run-on-staged-packages']);
+
+        expect(command.plugins, unorderedEquals(<String>[]));
+      });
+
+      test('Only changed packages should be tested.', () async {
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: 'packages/a_package/lib/a_package.dart')),
+        ];
+        final RepositoryPackage packageA = createFakePackage('a_package', packagesDir);
+        createFakePlugin('b_package', packagesDir);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'sample',
+          '--run-on-staged-packages',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for all packages that have staged changes'),
+          ]),
+        );
+
+        expect(command.plugins, unorderedEquals(<String>[packageA.path]));
+      });
+
+      test('multiple packages changed should test all the changed packages', () async {
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(
+              stdout: '''
+packages/a_package/lib/a_package.dart
+packages/b_package/lib/src/foo.dart
+''',
+            ),
+          ),
+        ];
+        final RepositoryPackage packageA = createFakePackage('a_package', packagesDir);
+        final RepositoryPackage packageB = createFakePackage('b_package', packagesDir);
+        createFakePackage('c_package', packagesDir);
+        await runCapturingPrint(runner, <String>['sample', '--run-on-staged-packages']);
+
+        expect(command.plugins, unorderedEquals(<String>[packageA.path, packageB.path]));
+      });
+    });
   });
 
   group('--packages-for-branch', () {
@@ -1053,7 +1119,9 @@ packages/b_package/lib/src/foo.dart
       // Ensure that it's diffing against the merge-base.
       expect(
         gitProcessRunner.recordedCalls,
-        contains(const ProcessCall('git-diff', <String>['--name-only', 'abc123', 'HEAD'], null)),
+        contains(
+          const ProcessCall('git-diff', <String>['-z', '--name-only', 'abc123', 'HEAD'], null),
+        ),
       );
     });
 
@@ -1084,7 +1152,9 @@ packages/b_package/lib/src/foo.dart
       // Ensure that it's diffing against the prior commit.
       expect(
         gitProcessRunner.recordedCalls,
-        contains(const ProcessCall('git-diff', <String>['--name-only', 'HEAD~', 'HEAD'], null)),
+        contains(
+          const ProcessCall('git-diff', <String>['-z', '--name-only', 'HEAD~', 'HEAD'], null),
+        ),
       );
     });
 
@@ -1116,7 +1186,9 @@ packages/b_package/lib/src/foo.dart
       // Ensure that it's diffing against the prior commit.
       expect(
         gitProcessRunner.recordedCalls,
-        contains(const ProcessCall('git-diff', <String>['--name-only', 'HEAD~', 'HEAD'], null)),
+        contains(
+          const ProcessCall('git-diff', <String>['-z', '--name-only', 'HEAD~', 'HEAD'], null),
+        ),
       );
     });
 
@@ -1160,7 +1232,9 @@ packages/b_package/lib/src/foo.dart
       // Ensure that it's diffing against the prior commit.
       expect(
         gitProcessRunner.recordedCalls,
-        contains(const ProcessCall('git-diff', <String>['--name-only', 'HEAD~', 'HEAD'], null)),
+        contains(
+          const ProcessCall('git-diff', <String>['-z', '--name-only', 'HEAD~', 'HEAD'], null),
+        ),
       );
     });
 
@@ -1191,7 +1265,9 @@ packages/b_package/lib/src/foo.dart
       // Ensure that it's diffing against the prior commit.
       expect(
         gitProcessRunner.recordedCalls,
-        contains(const ProcessCall('git-diff', <String>['--name-only', 'HEAD~', 'HEAD'], null)),
+        contains(
+          const ProcessCall('git-diff', <String>['-z', '--name-only', 'HEAD~', 'HEAD'], null),
+        ),
       );
     });
 

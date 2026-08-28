@@ -1,5 +1,6 @@
 RouteBase get $nullableRequiredParamNotInPath => GoRouteData.$route(
       path: 'bob',
+      hasOverriddenOnExit: false,
       factory: $NullableRequiredParamNotInPath._fromState,
     );
 

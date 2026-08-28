@@ -22,9 +22,12 @@ const Duration _kScrollbarTimeToFade = Duration(milliseconds: 600);
 /// To add a scrollbar to a [ScrollView], wrap the scroll view
 /// widget in a [Scrollbar] widget.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=DbkIQSvwnZc}
+/// Learn more about [Scrollbar] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=DbkIQSvwnZc).
 ///
-/// {@macro flutter.widgets.Scrollbar}
+/// For more information, see [RawScrollbar].
+// TODO(dkwingsmt): Migrate the doc back to macro
+// flutter.widgets.Scrollbar
+// https://github.com/flutter/flutter/issues/189629
 ///
 /// Dynamically changes to a [CupertinoScrollbar], an iOS style scrollbar, by
 /// default on the iOS platform.
@@ -33,19 +36,21 @@ const Duration _kScrollbarTimeToFade = Duration(milliseconds: 600);
 /// or [WidgetState.hovered] on desktop and web platforms. These stateful
 /// color choices can be changed using [ScrollbarThemeData.thumbColor].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows a [Scrollbar] that executes a fade animation as scrolling
 /// occurs. The Scrollbar will fade into view as the user scrolls, and fade out
 /// when scrolling stops.
 ///
-/// {@example /example/lib/scrollbar/scrollbar.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/scrollbar/scrollbar.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// When [thumbVisibility] is true, the scrollbar thumb will remain visible
 /// without the fade animation. This requires that a [ScrollController] is
@@ -55,9 +60,13 @@ const Duration _kScrollbarTimeToFade = Duration(milliseconds: 600);
 /// that the [Scrollbar] is always visible, since scrolling in the horizontal
 /// axis is less discoverable.
 ///
-/// {@example /example/lib/scrollbar/scrollbar.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/scrollbar/scrollbar.1.dart#body}
+///
+/// </callout-box>
 ///
 /// A scrollbar track can be added using [trackVisibility]. This can also be
 /// drawn when triggered by a hover event, or based on any [WidgetState] by
@@ -105,10 +114,21 @@ class Scrollbar extends StatelessWidget {
   /// {@macro flutter.widgets.Scrollbar.child}
   final Widget child;
 
-  /// {@macro flutter.widgets.Scrollbar.controller}
+  /// The [ScrollController] used to implement Scrollbar dragging.
+  ///
+  /// For more information, see [RawScrollbar.controller].
+  // TODO(dkwingsmt): Migrate the doc back to macro
+  // flutter.widgets.Scrollbar.controller
+  // https://github.com/flutter/flutter/issues/189629
   final ScrollController? controller;
 
-  /// {@macro flutter.widgets.Scrollbar.thumbVisibility}
+  /// Indicates that the scrollbar thumb should be visible, even when a scroll
+  /// is not underway.
+  ///
+  /// For more information, see [RawScrollbar.thumbVisibility].
+  // TODO(dkwingsmt): Migrate the doc back to macro
+  // flutter.widgets.Scrollbar.thumbVisibility
+  // https://github.com/flutter/flutter/issues/189629
   ///
   /// If this property is null, then [ScrollbarThemeData.thumbVisibility] of
   /// [ThemeData.scrollbarTheme] is used. If that is also null, the default value

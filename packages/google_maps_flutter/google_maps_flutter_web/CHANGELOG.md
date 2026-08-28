@@ -1,3 +1,7 @@
+## 0.6.3
+
+* Adds support for mapTypeControlEnabled, fullscreenControlEnabled, and streetViewControlEnabled.
+
 ## 0.6.2+3
 
 * Updates README to include setup information.

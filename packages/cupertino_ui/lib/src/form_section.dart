@@ -56,7 +56,7 @@ const EdgeInsetsDirectional _kFormDefaultInsetGroupedRowsMargin = EdgeInsetsDire
 /// The [backgroundColor] parameter sets the background color behind the section.
 /// If null, defaults to [CupertinoColors.systemGroupedBackground].
 ///
-/// {@macro flutter.material.Material.clipBehavior}
+/// {@macro cupertino_ui.Material.clipBehavior}
 ///
 /// See also:
 ///
@@ -95,7 +95,7 @@ class CupertinoFormSection extends StatelessWidget {
   /// The [backgroundColor] parameter sets the background color behind the
   /// section. If null, defaults to [CupertinoColors.systemGroupedBackground].
   ///
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   const CupertinoFormSection({
     super.key,
     required this.children,
@@ -141,7 +141,7 @@ class CupertinoFormSection extends StatelessWidget {
   /// The [backgroundColor] parameter sets the background color behind the
   /// section. If null, defaults to [CupertinoColors.systemGroupedBackground].
   ///
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   const CupertinoFormSection.insetGrouped({
     super.key,
     required this.children,
@@ -194,7 +194,7 @@ class CupertinoFormSection extends StatelessWidget {
   /// Defaults to [CupertinoColors.systemGroupedBackground].
   final Color backgroundColor;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;

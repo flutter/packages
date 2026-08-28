@@ -45,10 +45,9 @@ typedef PaintRangeValueIndicator = void Function(PaintingContext context, Offset
 ///
 /// Used to select a range from a range of values.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=ufb4gIPDmEs}
+/// Learn more about [RangeSlider] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=ufb4gIPDmEs).
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// ![A range slider widget, consisting of 5 divisions and showing the default
 /// value indicator.](https://flutter.github.io/assets-for-api-docs/assets/material/range_slider.png)
@@ -57,9 +56,13 @@ typedef PaintRangeValueIndicator = void Function(PaintingContext context, Offset
 /// divisions, from 0 to 100. This means are values are split between 0, 20, 40,
 /// 60, 80, and 100. The range values are initialized with 40 and 80 in this demo.
 ///
-/// {@example /example/lib/range_slider/range_slider.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/range_slider/range_slider.0.dart#body}
+///
+/// </callout-box>
 ///
 /// A range slider can be used to select from either a continuous or a discrete
 /// set of values. The default is to use a continuous range of values from [min]
@@ -200,8 +203,8 @@ class RangeSlider extends StatefulWidget {
   /// [StatefulWidget] using the [State.setState] method, so that the parent
   /// gets rebuilt; for example:
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -218,7 +221,7 @@ class RangeSlider extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -236,8 +239,8 @@ class RangeSlider extends StatefulWidget {
   /// The values passed will be the last [values] that the slider had before the
   /// change began.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -257,7 +260,7 @@ class RangeSlider extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -275,8 +278,8 @@ class RangeSlider extends StatefulWidget {
   /// [onChanged] for that). Rather, it should be used to know when the user has
   /// completed selecting a new [values] by ending a drag or a click.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -296,7 +299,7 @@ class RangeSlider extends StatefulWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -392,8 +395,8 @@ class RangeSlider extends StatefulWidget {
   /// This is used by accessibility frameworks like TalkBack on Android to
   /// inform users what the currently selected value is with more context.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -416,7 +419,7 @@ class RangeSlider extends StatefulWidget {
   ///  )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   final SemanticFormatterCallback? semanticFormatterCallback;
 
   /// Determines the padding around the [RangeSlider].
@@ -503,6 +506,24 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
   bool get _enabled => widget.onChanged != null;
 
   bool _dragging = false;
+
+  bool _showStartFocusHighlight = false;
+  void _handleStartFocusHighlightChanged(bool showFocusHighlight) {
+    if (showFocusHighlight != _showStartFocusHighlight) {
+      setState(() {
+        _showStartFocusHighlight = showFocusHighlight;
+      });
+    }
+  }
+
+  bool _showEndFocusHighlight = false;
+  void _handleEndFocusHighlightChanged(bool showFocusHighlight) {
+    if (showFocusHighlight != _showEndFocusHighlight) {
+      setState(() {
+        _showEndFocusHighlight = showFocusHighlight;
+      });
+    }
+  }
 
   bool _hovering = false;
   bool _showHoverHighlight = false;
@@ -619,6 +640,19 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
     return RangeValues(_unlerp(values.start), _unlerp(values.end));
   }
 
+  Widget _buildThumbFocusDetector({
+    required FocusNode focusNode,
+    required ValueChanged<bool> onShowFocusHighlight,
+  }) {
+    return FocusableActionDetector(
+      focusNode: focusNode,
+      enabled: _enabled,
+      includeFocusSemantics: false,
+      onShowFocusHighlight: onShowFocusHighlight,
+      child: const SizedBox.shrink(),
+    );
+  }
+
   // Finds the closest thumb. If both thumbs are close to each other and within
   // the touch radius, neither is selected immediately while the drag
   // displacement is zero. The first non-zero displacement determines which
@@ -687,6 +721,7 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
     final states = <WidgetState>{
       if (!_enabled) WidgetState.disabled,
       if (_hovering) WidgetState.hovered,
+      if (_showStartFocusHighlight || _showEndFocusHighlight) WidgetState.focused,
       if (_dragging) WidgetState.dragged,
     };
 
@@ -789,6 +824,8 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
           state: this,
           semanticFormatterCallback: widget.semanticFormatterCallback,
           hovering: _showHoverHighlight,
+          startThumbShowFocusHighlight: _showStartFocusHighlight,
+          endThumbShowFocusHighlight: _showEndFocusHighlight,
         ),
       ),
     );
@@ -803,12 +840,14 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
         // Adds two invisible focus nodes to the range slider for its two thumbs.
         Row(
           children: <Widget>[
-            Focus(
+            _buildThumbFocusDetector(
               focusNode: startFocusNode,
-              includeSemantics: false,
-              child: const SizedBox.shrink(),
+              onShowFocusHighlight: _handleStartFocusHighlightChanged,
             ),
-            Focus(focusNode: endFocusNode, includeSemantics: false, child: const SizedBox.shrink()),
+            _buildThumbFocusDetector(
+              focusNode: endFocusNode,
+              onShowFocusHighlight: _handleEndFocusHighlightChanged,
+            ),
           ],
         ),
         MouseRegion(
@@ -854,6 +893,8 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
     required this.state,
     required this.semanticFormatterCallback,
     required this.hovering,
+    required this.startThumbShowFocusHighlight,
+    required this.endThumbShowFocusHighlight,
   });
 
   final RangeValues values;
@@ -868,6 +909,8 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
   final SemanticFormatterCallback? semanticFormatterCallback;
   final _RangeSliderState state;
   final bool hovering;
+  final bool startThumbShowFocusHighlight;
+  final bool endThumbShowFocusHighlight;
 
   @override
   _RenderRangeSlider createRenderObject(BuildContext context) {
@@ -887,6 +930,8 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
       semanticFormatterCallback: semanticFormatterCallback,
       platform: Theme.of(context).platform,
       hovering: hovering,
+      startThumbShowFocusHighlight: startThumbShowFocusHighlight,
+      endThumbShowFocusHighlight: endThumbShowFocusHighlight,
       gestureSettings: MediaQuery.gestureSettingsOf(context),
     );
   }
@@ -910,6 +955,8 @@ class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
       ..semanticFormatterCallback = semanticFormatterCallback
       ..platform = Theme.of(context).platform
       ..hovering = hovering
+      ..startThumbShowFocusHighlight = startThumbShowFocusHighlight
+      ..endThumbShowFocusHighlight = endThumbShowFocusHighlight
       ..gestureSettings = MediaQuery.gestureSettingsOf(context);
   }
 }
@@ -931,6 +978,8 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     required this._state,
     required this._textDirection,
     required this._hovering,
+    required this._startThumbShowFocusHighlight,
+    required this._endThumbShowFocusHighlight,
     required DeviceGestureSettings gestureSettings,
   }) : assert(_values.start >= 0.0 && _values.start <= 1.0),
        assert(_values.end >= 0.0 && _values.end <= 1.0) {
@@ -967,6 +1016,13 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
 
   // This value is the touch target, 48, multiplied by 3.
   static const double _minPreferredTrackWidth = 144.0;
+
+  // Buffer to account for the internal padding of standard Material value indicator shapes,
+  // preventing them from bleeding off the screen edges.
+  //
+  // The value 64.0 is a heuristic that covers the minimum size of the shape
+  // (padding + minimum label width) at a text scale factor of roughly 2.0.
+  static const double _kValueIndicatorHorizontalBuffer = 64.0;
 
   // Compute the largest width and height needed to paint the slider shapes,
   // other than the track shape. It is assumed that these shapes are vertically
@@ -1182,6 +1238,28 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     _updateForHover(_hovering);
   }
 
+  /// True if the start thumb should show the focus highlight.
+  bool get startThumbShowFocusHighlight => _startThumbShowFocusHighlight;
+  bool _startThumbShowFocusHighlight;
+  set startThumbShowFocusHighlight(bool value) {
+    if (value == _startThumbShowFocusHighlight) {
+      return;
+    }
+    _startThumbShowFocusHighlight = value;
+    markNeedsPaint();
+  }
+
+  /// True if the end thumb should show the focus highlight.
+  bool get endThumbShowFocusHighlight => _endThumbShowFocusHighlight;
+  bool _endThumbShowFocusHighlight;
+  set endThumbShowFocusHighlight(bool value) {
+    if (value == _endThumbShowFocusHighlight) {
+      return;
+    }
+    _endThumbShowFocusHighlight = value;
+    markNeedsPaint();
+  }
+
   /// True if the slider is interactive and the start thumb is being
   /// hovered over by a pointer.
   bool _hoveringStartThumb = false;
@@ -1211,7 +1289,11 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     if (hovered && (hoveringStartThumb || hoveringEndThumb)) {
       _state.overlayController.forward();
     } else {
-      _state.overlayController.reverse();
+      // Keep the active drag overlay visible even if the pointer moves outside
+      // the thumb bounds during an in-progress drag.
+      if (!_active) {
+        _state.overlayController.reverse();
+      }
     }
   }
 
@@ -1259,11 +1341,22 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       Thumb.end => (labels.end, _endLabelPainter),
     };
 
+    // Reserve space for the bubble's internal padding and screen margins.
+    final double safeMaxWidth = math.max(0.0, screenSize.width - _kValueIndicatorHorizontalBuffer);
+
     labelPainter
       ..text = TextSpan(style: _sliderTheme.valueIndicatorTextStyle, text: text)
       ..textDirection = textDirection
-      ..textScaleFactor = textScaleFactor
-      ..layout();
+      ..textScaler = TextScaler.linear(textScaleFactor)
+      ..maxLines = 1
+      ..ellipsis =
+          '\u2026' // Standard Unicode ellipsis
+      ..layout(
+        maxWidth: screenSize.width.isFinite && screenSize.width > 0
+            ? safeMaxWidth
+            : double.infinity,
+      );
+
     // Changing the textDirection can result in the layout changing, because the
     // bidi algorithm might line up the glyphs differently which can result in
     // different ligatures, different shapes, etc. So we always markNeedsLayout.
@@ -1620,7 +1713,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
     final bool endThumbSelected = _lastThumbSelection == Thumb.end && !hoveringStartThumb;
     final Size resolvedscreenSize = screenSize.isEmpty ? size : screenSize;
 
-    if (_state.startFocusNode.hasFocus) {
+    if (startThumbShowFocusHighlight) {
       _sliderTheme.overlayShape!.paint(
         context,
         _startThumbCenter,
@@ -1637,7 +1730,7 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       );
     }
 
-    if (_state.endFocusNode.hasFocus) {
+    if (endThumbShowFocusHighlight) {
       _sliderTheme.overlayShape!.paint(
         context,
         _endThumbCenter,
