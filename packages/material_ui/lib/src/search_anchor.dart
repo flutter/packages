@@ -606,7 +606,11 @@ class _SearchAnchorState extends State<SearchAnchor> {
       duration: _kAnchorFadeDuration,
       child: IgnorePointer(
         ignoring: !widget.enabled,
-        child: GestureDetector(onTap: _openView, child: widget.builder(context, _searchController)),
+        child: GestureDetector(
+          excludeFromSemantics: true,
+          onTap: _openView,
+          child: widget.builder(context, _searchController),
+        ),
       ),
     );
   }
@@ -1825,6 +1829,10 @@ class _SearchBarState extends State<SearchBar> {
           child: IgnorePointer(
             ignoring: !widget.enabled,
             child: InkWell(
+              canRequestFocus: false,
+              // Avoid providing duplicate semantics actions that the TextField
+              // already provides.
+              excludeFromSemantics: true,
               onTap: () {
                 widget.onTap?.call();
                 if (!_focusNode.hasFocus) {

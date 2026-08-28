@@ -3407,6 +3407,80 @@ void main() {
     semantics.dispose();
   });
 
+  testWidgets('SearchBar meets labeledTapTargetGuideline', (WidgetTester tester) async {
+    final semantics = SemanticsTester(tester);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: SearchBar(
+              hintText: 'Search...',
+              trailing: <Widget>[
+                IconButton(tooltip: 'Clear', icon: const Icon(Icons.clear), onPressed: () {}),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+    semantics.dispose();
+  });
+
+  testWidgets('SearchAnchor.bar meets labeledTapTargetGuideline', (WidgetTester tester) async {
+    final semantics = SemanticsTester(tester);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SearchAnchor.bar(
+            barHintText: 'Search...',
+            barTrailing: <Widget>[
+              IconButton(tooltip: 'Clear', icon: const Icon(Icons.clear), onPressed: () {}),
+            ],
+            suggestionsBuilder: (BuildContext context, SearchController controller) {
+              return <Widget>[];
+            },
+          ),
+        ),
+      ),
+    );
+
+    await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+    semantics.dispose();
+  });
+
+  testWidgets('SearchBar does not produce an intermediate unlabeled semantics node', (
+    WidgetTester tester,
+  ) async {
+    final semantics = SemanticsTester(tester);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: SearchBar(
+              hintText: 'Search...',
+              trailing: <Widget>[
+                IconButton(tooltip: 'Clear', icon: const Icon(Icons.clear), onPressed: () {}),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    for (final SemanticsNode node in semantics.nodesWith(
+      actions: <SemanticsAction>[SemanticsAction.tap],
+    )) {
+      final bool isTextField = node.hasFlag(SemanticsFlag.isTextField);
+      final bool hasLabel = node.label.isNotEmpty;
+      final bool hasTooltip = node.tooltip.isNotEmpty;
+      final bool hasValue = node.value.isNotEmpty;
+      expect(isTextField || hasLabel || hasTooltip || hasValue, isTrue);
+    }
+    semantics.dispose();
+  });
+
   testWidgets('Check SearchBar opacity when disabled', (WidgetTester tester) async {
     await tester.pumpWidget(
       const MaterialApp(
