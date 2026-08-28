@@ -20,6 +20,7 @@
 - (void)showCamera:(UIImagePickerControllerCameraDevice)device
     withImagePicker:(UIImagePickerController *)imagePickerController;
 - (UIViewController *)presentingViewControllerForImagePickerInNewWindow;
+- (NSNumber *)getDesiredImageQuality:(NSNumber *)imageQuality;
 @end
 
 @interface MockViewController : UIViewController
@@ -898,70 +899,22 @@
   [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
-- (void)testDesiredImageQualityClampsOutOfRangeValues API_AVAILABLE(ios(14)) {
-  id mockPickerViewController = OCMClassMock([PHPickerViewController class]);
-  NSURL *pngURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"pngImage"
-                                                           withExtension:@"png"];
-  NSItemProvider *pngItemProvider = [[NSItemProvider alloc] initWithContentsOfURL:pngURL];
-  PHPickerResult *pngResult = OCMClassMock([PHPickerResult class]);
-  OCMStub([pngResult itemProvider]).andReturn(pngItemProvider);
-
+- (void)testDesiredImageQualityClampsOutOfRangeValues {
   FLTImagePickerPlugin *plugin =
       [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
-  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"saved"];
-  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
-      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
-        XCTAssertEqual(result.count, 1);
-        XCTAssertNil(error);
-        [resultExpectation fulfill];
-      }];
-  plugin.callContext.imageQuality = @(-1);
-  [plugin picker:mockPickerViewController didFinishPicking:@[ pngResult ]];
-  [self waitForExpectationsWithTimeout:30 handler:nil];
+  XCTAssertEqualWithAccuracy([plugin getDesiredImageQuality:@(-1)].doubleValue, 1.0, 0.0001);
 }
 
-- (void)testDesiredImageQualityScalesValidPercent API_AVAILABLE(ios(14)) {
-  id mockPickerViewController = OCMClassMock([PHPickerViewController class]);
-  NSURL *pngURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"pngImage"
-                                                           withExtension:@"png"];
-  NSItemProvider *pngItemProvider = [[NSItemProvider alloc] initWithContentsOfURL:pngURL];
-  PHPickerResult *pngResult = OCMClassMock([PHPickerResult class]);
-  OCMStub([pngResult itemProvider]).andReturn(pngItemProvider);
-
+- (void)testDesiredImageQualityScalesValidPercent {
   FLTImagePickerPlugin *plugin =
       [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
-  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"saved"];
-  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
-      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
-        XCTAssertEqual(result.count, 1);
-        XCTAssertNil(error);
-        [resultExpectation fulfill];
-      }];
-  plugin.callContext.imageQuality = @50;
-  plugin.callContext.maxSize = [FLTMaxSize makeWithWidth:@3 height:@2];
-  [plugin picker:mockPickerViewController didFinishPicking:@[ pngResult ]];
-  [self waitForExpectationsWithTimeout:30 handler:nil];
+  XCTAssertEqualWithAccuracy([plugin getDesiredImageQuality:@50].doubleValue, 0.5, 0.0001);
 }
 
-- (void)testDesiredImageQualityOver100IsClamped API_AVAILABLE(ios(14)) {
-  id mockPickerViewController = OCMClassMock([PHPickerViewController class]);
-  NSURL *pngURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"pngImage"
-                                                           withExtension:@"png"];
-  NSItemProvider *pngItemProvider = [[NSItemProvider alloc] initWithContentsOfURL:pngURL];
-  PHPickerResult *pngResult = OCMClassMock([PHPickerResult class]);
-  OCMStub([pngResult itemProvider]).andReturn(pngItemProvider);
-
+- (void)testDesiredImageQualityOver100IsClamped {
   FLTImagePickerPlugin *plugin =
       [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
-  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"saved"];
-  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
-      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
-        XCTAssertEqual(result.count, 1);
-        [resultExpectation fulfill];
-      }];
-  plugin.callContext.imageQuality = @150;
-  [plugin picker:mockPickerViewController didFinishPicking:@[ pngResult ]];
-  [self waitForExpectationsWithTimeout:30 handler:nil];
+  XCTAssertEqualWithAccuracy([plugin getDesiredImageQuality:@150].doubleValue, 1.0, 0.0001);
 }
 
 - (void)testCameraAccessDeniedReturnsError {
@@ -1165,6 +1118,7 @@
                  fullMetadata:YES
                    completion:^(NSString *result, FlutterError *error) {
                      XCTAssertNil(result);
+                     XCTAssertNil(error);
                      [resultExpectation fulfill];
                    }];
   [self waitForExpectationsWithTimeout:30 handler:nil];
