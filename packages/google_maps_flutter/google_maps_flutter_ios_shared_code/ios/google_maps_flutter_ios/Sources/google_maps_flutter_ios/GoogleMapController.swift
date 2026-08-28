@@ -124,9 +124,9 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   /// Sub-controllers for managing individual map features.
   let clusterManagersController: FGMClusterManagersController
   let markersController: FGMMarkersController
-  let polygonsController: FGMPolygonsController
-  let polylinesController: FGMPolylinesController
-  let circlesController: FGMCirclesController
+  let polygonsController: PolygonsController
+  let polylinesController: PolylinesController
+  let circlesController: CirclesController
   let heatmapsController: FGMHeatmapsController
   let tileOverlaysController: FGMTileOverlaysController
   let groundOverlaysController: FGMGroundOverlaysController
@@ -209,15 +209,15 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
       assetProvider: assetProvider,
       markerType: markerType
     )
-    polygonsController = FGMPolygonsController(
+    polygonsController = PolygonsController(
       mapView: mapView,
       eventDelegate: mapEventHandler
     )
-    polylinesController = FGMPolylinesController(
+    polylinesController = PolylinesController(
       mapView: mapView,
       eventDelegate: mapEventHandler
     )
-    circlesController = FGMCirclesController(
+    circlesController = CirclesController(
       mapView: mapView,
       eventDelegate: mapEventHandler
     )
