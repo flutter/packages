@@ -1,3 +1,11 @@
+## 2.18.10
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
+## 2.18.9
+
+* Converts overlay controllers to Swift.
+
 ## 2.18.8
 
 * Converts circle, polygon, and polyline controllers to Swift.
