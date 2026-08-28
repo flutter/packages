@@ -12,7 +12,7 @@ void main() {
     PrePushCommand createCommand(
       String gitLogOutput, {
       int exitCode = 0,
-      dynamic stderr = '',
+      String? stderr = '',
       List<List<String>>? capturedArgs,
     }) {
       return PrePushCommand(
