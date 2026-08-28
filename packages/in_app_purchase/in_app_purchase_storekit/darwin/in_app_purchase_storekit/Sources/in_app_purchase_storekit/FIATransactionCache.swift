@@ -20,8 +20,7 @@ public class FIATransactionCache: NSObject {
   /// array will be appended to the existing array.
   @objc(addObjects:forKey:)
   public func add(_ objects: [Any], for key: TransactionCacheKey) {
-    let cachedObjects = cache[key]
-    cache[key] = cachedObjects != nil ? cachedObjects! + objects : objects
+    cache[key, default: []].append(contentsOf: objects)
   }
 
   /// Gets the array of objects stored at the given key.

@@ -15,13 +15,13 @@ public class FIAObjectTranslator: NSObject {
   public static func getMapFrom(_ product: SKProduct) -> [String: Any] {
     return [
       "discounts": getMapArrayFrom(product.discounts),
-      "introductoryPrice": product.introductoryPrice.map { getMapFrom($0) } as Any,
+      "introductoryPrice": product.introductoryPrice.map { getMapFrom($0) } ?? NSNull(),
       "localizedDescription": product.localizedDescription,
       "localizedTitle": product.localizedTitle,
       "productIdentifier": product.productIdentifier,
       "price": product.price.description,
-      "subscriptionGroupIdentifier": product.subscriptionGroupIdentifier as Any,
-      "subscriptionPeriod": product.subscriptionPeriod.map { getMapFrom($0) } as Any,
+      "subscriptionGroupIdentifier": product.subscriptionGroupIdentifier ?? NSNull(),
+      "subscriptionPeriod": product.subscriptionPeriod.map { getMapFrom($0) } ?? NSNull(),
       "priceLocale": getMapFrom(product.priceLocale),
     ]
   }
@@ -36,7 +36,7 @@ public class FIAObjectTranslator: NSObject {
 
   public static func getMapFrom(_ discount: SKProductDiscount) -> [String: Any] {
     return [
-      "identifier": discount.identifier as Any,
+      "identifier": discount.identifier ?? NSNull(),
       "numberOfPeriods": discount.numberOfPeriods,
       "paymentMode": discount.paymentMode.rawValue,
       "price": discount.price.description,
@@ -56,10 +56,10 @@ public class FIAObjectTranslator: NSObject {
 
   public static func getMapFrom(_ payment: SKPayment) -> [String: Any] {
     return [
-      "applicationUsername": payment.applicationUsername as Any,
-      "productIdentifier": payment.productIdentifier as Any,
+      "applicationUsername": payment.applicationUsername ?? NSNull(),
+      "productIdentifier": payment.productIdentifier,
       "quantity": payment.quantity,
-      "requestData": payment.requestData.flatMap { String(data: $0, encoding: .utf8) } as Any,
+      "requestData": payment.requestData.flatMap { String(data: $0, encoding: .utf8) } ?? NSNull(),
       "simulatesAskToBuyInSandbox": payment.simulatesAskToBuyInSandbox,
     ]
   }
@@ -69,9 +69,9 @@ public class FIAObjectTranslator: NSObject {
   public static func getMapFrom(_ locale: Locale) -> [String: Any] {
     let nsLocale = locale as NSLocale
     return [
-      "currencySymbol": nsLocale.object(forKey: .currencySymbol) as Any,
-      "currencyCode": nsLocale.object(forKey: .currencyCode) as Any,
-      "countryCode": nsLocale.object(forKey: .countryCode) as Any,
+      "currencySymbol": nsLocale.object(forKey: .currencySymbol) ?? NSNull(),
+      "currencyCode": nsLocale.object(forKey: .currencyCode) ?? NSNull(),
+      "countryCode": nsLocale.object(forKey: .countryCode) ?? NSNull(),
     ]
   }
 
@@ -90,11 +90,12 @@ public class FIAObjectTranslator: NSObject {
 
   public static func getMapFrom(_ transaction: SKPaymentTransaction) -> [String: Any] {
     return [
-      "error": transaction.error.map { getMapFrom($0 as NSError) } as Any,
-      "payment": (transaction.value(forKey: "payment") as? SKPayment).map { getMapFrom($0) } as Any,
-      "originalTransaction": transaction.original.map { getMapFrom($0) } as Any,
-      "transactionTimeStamp": transaction.transactionDate?.timeIntervalSince1970 as Any,
-      "transactionIdentifier": transaction.transactionIdentifier as Any,
+      "error": transaction.error.map { getMapFrom($0 as NSError) } ?? NSNull(),
+      "payment": (transaction.value(forKey: "payment") as? SKPayment).map { getMapFrom($0) }
+        ?? NSNull(),
+      "originalTransaction": transaction.original.map { getMapFrom($0) } ?? NSNull(),
+      "transactionTimeStamp": transaction.transactionDate?.timeIntervalSince1970 ?? NSNull(),
+      "transactionIdentifier": transaction.transactionIdentifier ?? NSNull(),
       "transactionState": transaction.transactionState.rawValue,
     ]
   }
