@@ -29,4 +29,5 @@
 - **Testing Guidelines**: You MUST read and follow all rules in [TESTING.md](TESTING.md) BEFORE writing or modifying any tests. This is CRITICAL for preventing CI flakiness.
 - **Native Unit Tests**: When modifying `.java` or `.kt` files in `android/src/main/` (excluding Pigeon generated files like `.g.java` or `.g.kt`) with logic changes, you MUST add or update corresponding native unit test files in `android/src/test/`.
 - **CRITICAL**: When spawning subagents, NEVER provide absolute file paths in prompts. ALWAYS use relative paths. Passing absolute paths breaks `Workspace: branch` isolation and causes state bleed into the active workspace.
+- **Repository Guidelines**: Adhere to all repository-wide principles in the root [AGENTS.md](../../../AGENTS.md).
 - **Validation**: Never run `.ci/scripts/*` or `script/tool_runner.sh` globally to validate local changes. They are slow and modify the entire repository. Always use targeted skills (like `dart-run-static-analysis` or `pre-push-skill`) to run the repo tool scoped to this package.
