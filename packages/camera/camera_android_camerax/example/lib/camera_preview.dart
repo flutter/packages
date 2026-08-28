@@ -25,12 +25,14 @@ class CameraPreview extends StatelessWidget {
             valueListenable: controller,
             builder: (BuildContext context, Object? value, Widget? child) {
               return AspectRatio(
-                aspectRatio: _isLandscape(context)
+                aspectRatio: _isLandscape()
                     ? controller.value.aspectRatio
                     : (1 / controller.value.aspectRatio),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: <Widget>[controller.buildPreview(), child ?? Container()],
+                child: ClipRect(
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: <Widget>[controller.buildPreview(), child ?? Container()],
+                  ),
                 ),
               );
             },
@@ -39,36 +41,11 @@ class CameraPreview extends StatelessWidget {
         : Container();
   }
 
-  int _getQuarterTurns() {
-    final Map<DeviceOrientation, int> turns = <DeviceOrientation, int>{
-      DeviceOrientation.portraitUp: 0,
-      DeviceOrientation.landscapeRight: 1,
-      DeviceOrientation.portraitDown: 2,
-      DeviceOrientation.landscapeLeft: 3,
-    };
-    int deviceTurns = turns[controller.value.deviceOrientation] ?? 0;
-    int targetTurns = turns[_getApplicableOrientation()] ?? 0;
-    int quarterTurns = (targetTurns - deviceTurns) % 4;
-    if (quarterTurns < 0) {
-      quarterTurns += 4;
-    }
-    return quarterTurns;
-  }
-
-  bool _isLandscape(BuildContext context) {
-    if (controller.value.isRecordingVideo) {
-      return <DeviceOrientation>[
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ].contains(controller.value.recordingOrientation);
-    }
-    if (controller.value.lockedCaptureOrientation != null) {
-      return <DeviceOrientation>[
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ].contains(controller.value.lockedCaptureOrientation);
-    }
-    return MediaQuery.of(context).orientation == Orientation.landscape;
+  bool _isLandscape() {
+    return <DeviceOrientation>[
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ].contains(_getApplicableOrientation());
   }
 
   DeviceOrientation _getApplicableOrientation() {

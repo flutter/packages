@@ -72,10 +72,7 @@ public class DeviceOrientationManager {
     return new OrientationEventListener(getContext()) {
       @Override
       public void onOrientationChanged(int orientation) {
-        if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
-          return;
-        }
-        handleSensorOrientationChange(orientation);
+        handleUiOrientationChange();
       }
     };
   }
