@@ -99,10 +99,10 @@ private func pigeonErrorCode(for gidSignInErrorCode: Int) -> GoogleSignInErrorCo
 public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi {
   /// Instance used to manage Google Sign In authentication including
   /// sign in, sign out, and requesting additional scopes.
-  let signIn: GIDSignInProtocol
+  let signIn: any GIDSignInProtocol
 
   /// A mapping of user IDs to GIDGoogleUser instances to use for follow-up calls.
-  var usersByIdentifier: [String: GIDGoogleUserProtocol] = [:]
+  var usersByIdentifier: [String: any GIDGoogleUserProtocol] = [:]
 
   /// The contents of GoogleService-Info.plist, if it exists.
   private let googleServiceProperties: [String: Any]?
@@ -129,7 +129,7 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
   }
 
   /// Inject `GIDSignInProtocol` for testing.
-  convenience init(signIn: GIDSignInProtocol, viewProvider: ViewProvider) {
+  convenience init(signIn: any GIDSignInProtocol, viewProvider: ViewProvider) {
     self.init(
       signIn: signIn,
       viewProvider: viewProvider,
@@ -138,7 +138,7 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
 
   /// Inject `GIDSignInProtocol` and `googleServiceProperties` for testing.
   init(
-    signIn: GIDSignInProtocol,
+    signIn: any GIDSignInProtocol,
     viewProvider: ViewProvider,
     googleServiceProperties: [String: Any]?
   ) {
@@ -333,7 +333,7 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
   /// Swift frames is undefined behavior.
   private func performAddScopes(
     _ scopes: [String],
-    for user: GIDGoogleUserProtocol,
+    for user: any GIDGoogleUserProtocol,
     completion: @escaping (GIDSignInResultProtocol?, Error?) -> Void
   ) -> NSException? {
     #if os(macOS)
@@ -371,7 +371,7 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
   }
 
   private func handleAuthResult(
-    user: GIDGoogleUserProtocol?,
+    user: (any GIDGoogleUserProtocol)?,
     serverAuthCode: String?,
     error: Error?,
     completion: @escaping (Result<SignInResult, Error>) -> Void
@@ -399,14 +399,14 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
       completion(
         .failure(
           PigeonError(
-            code: String(format: "%@: %ld", "(null)", 0),
+            code: "(null): 0",
             message: nil,
             details: sanitizedUserInfo(nil) as Sendable)))
     }
   }
 
   private func didSignIn(
-    for user: GIDGoogleUserProtocol,
+    for user: any GIDGoogleUserProtocol,
     serverAuthCode: String?,
     completion: @escaping (Result<SignInResult, Error>) -> Void
   ) {

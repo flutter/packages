@@ -510,7 +510,7 @@ struct GoogleSignInPluginTests {
           switch result {
           case .success(let signInResult):
             // Known errors from the SDK are returned as structured data, not
-            // FlutterError.
+            // PigeonError.
             #expect(signInResult.success == nil)
             #expect(signInResult.error?.type == .canceled)
           case .failure(let error):
@@ -532,14 +532,17 @@ struct GoogleSignInPluginTests {
         plugin.signIn(scopeHint: [], nonce: nil) { result in
           switch result {
           case .success:
-            Issue.record("Expected a FlutterError for the runtime exception")
+            Issue.record("Expected a PigeonError for the runtime exception")
           case .failure(let error):
             // Unexpected errors, such as runtime exceptions, are returned as
-            // FlutterError.
-            let flutterError = error as! PigeonError
-            #expect(flutterError.code == "google_sign_in")
-            #expect(flutterError.message == "MockReason")
-            #expect(flutterError.details as? String == "MockName")
+            // PigeonError.
+            guard let pigeonError = error as? PigeonError else {
+              Issue.record("Expected PigeonError, got \(error)")
+              break
+            }
+            #expect(pigeonError.code == "google_sign_in")
+            #expect(pigeonError.message == "MockReason")
+            #expect(pigeonError.details as? String == "MockName")
           }
           confirmed()
         }
@@ -634,11 +637,14 @@ struct GoogleSignInPluginTests {
         plugin.getRefreshedAuthorizationTokens(userId: fakeUser.userID!) { result in
           switch result {
           case .success:
-            Issue.record("Expected a FlutterError for a non-GID error domain")
+            Issue.record("Expected a PigeonError for a non-GID error domain")
           case .failure(let error):
-            let flutterError = error as! PigeonError
+            guard let pigeonError = error as? PigeonError else {
+              Issue.record("Expected PigeonError, got \(error)")
+              break
+            }
             let expectedCode = "\(errorDomain): \(errorCode)"
-            #expect(flutterError.code == expectedCode)
+            #expect(pigeonError.code == expectedCode)
           }
           confirmed()
         }
@@ -727,10 +733,13 @@ struct GoogleSignInPluginTests {
         plugin.addScopes(scopes: ["mockScope1"], userId: fakeUser.userID!) { result in
           switch result {
           case .success:
-            Issue.record("Expected a FlutterError for an unknown error domain")
+            Issue.record("Expected a PigeonError for an unknown error domain")
           case .failure(let error):
-            let flutterError = error as! PigeonError
-            #expect(flutterError.code == "BogusDomain: 42")
+            guard let pigeonError = error as? PigeonError else {
+              Issue.record("Expected PigeonError, got \(error)")
+              break
+            }
+            #expect(pigeonError.code == "BogusDomain: 42")
           }
           confirmed()
         }
@@ -750,12 +759,15 @@ struct GoogleSignInPluginTests {
         plugin.addScopes(scopes: [], userId: fakeUser.userID!) { result in
           switch result {
           case .success:
-            Issue.record("Expected a FlutterError for the runtime exception")
+            Issue.record("Expected a PigeonError for the runtime exception")
           case .failure(let error):
-            let flutterError = error as! PigeonError
-            #expect(flutterError.code == "request_scopes")
-            #expect(flutterError.message == "MockReason")
-            #expect(flutterError.details as? String == "MockName")
+            guard let pigeonError = error as? PigeonError else {
+              Issue.record("Expected PigeonError, got \(error)")
+              break
+            }
+            #expect(pigeonError.code == "request_scopes")
+            #expect(pigeonError.message == "MockReason")
+            #expect(pigeonError.details as? String == "MockName")
           }
           confirmed()
         }
@@ -863,9 +875,12 @@ struct GoogleSignInPluginTests {
           case .success:
             Issue.record("Expected a PigeonError for a non-GID error domain")
           case .failure(let error):
-            let flutterError = error as! PigeonError
-            #expect(flutterError.code == "BogusDomain: 7")
-            let details = flutterError.details as? [String: Any]
+            guard let pigeonError = error as? PigeonError else {
+              Issue.record("Expected PigeonError, got \(error)")
+              break
+            }
+            #expect(pigeonError.code == "BogusDomain: 7")
+            let details = pigeonError.details as? [String: Any]
             #expect(details?["string"] as? String == "ok")
             #expect(details?["number"] as? NSNumber == NSNumber(value: 42))
             #expect(details?["url"] as? String == "https://example.com/path")
@@ -895,9 +910,12 @@ struct GoogleSignInPluginTests {
           case .success:
             Issue.record("Expected a PigeonError for a failed disconnect")
           case .failure(let error):
-            let flutterError = error as! PigeonError
-            #expect(flutterError.code == "DisconnectDomain: 3")
-            #expect((flutterError.details as? [String: Any])?["reason"] as? String == "failed")
+            guard let pigeonError = error as? PigeonError else {
+              Issue.record("Expected PigeonError, got \(error)")
+              break
+            }
+            #expect(pigeonError.code == "DisconnectDomain: 3")
+            #expect((pigeonError.details as? [String: Any])?["reason"] as? String == "failed")
           }
           confirmed()
         }
@@ -954,7 +972,10 @@ struct GoogleSignInPluginTests {
           case .success:
             Issue.record("Expected a PigeonError when no presenter is available")
           case .failure(let error):
-            let pigeonError = error as! PigeonError
+            guard let pigeonError = error as? PigeonError else {
+              Issue.record("Expected PigeonError, got \(error)")
+              break
+            }
             #expect(pigeonError.code == "google_sign_in: 0")
             #expect(pigeonError.message == "No host view available to present Google Sign-In.")
           }
