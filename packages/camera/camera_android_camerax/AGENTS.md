@@ -31,3 +31,6 @@
 - **CRITICAL**: When spawning subagents, NEVER provide absolute file paths in prompts. ALWAYS use relative paths. Passing absolute paths breaks `Workspace: branch` isolation and causes state bleed into the active workspace.
 - **Repository Guidelines**: Adhere to all repository-wide principles in the root [AGENTS.md](../../../AGENTS.md).
 - **Validation**: Never run `.ci/scripts/*` or `script/tool_runner.sh` globally to validate local changes. They are slow and modify the entire repository. Always use targeted skills (like `dart-run-static-analysis` or `pre-push-skill`) to run the repo tool scoped to this package.
+- **Presubmit Sweep Fixes**: When monitoring PR presubmit checks on Cocoon/LUCI, wait until all builder targets have finished running before pushing. Reproduce and fix all failures locally, then push in one consolidated commit.
+- **Cross-Platform Paths in Tests**: When asserting on CLI arguments or file paths in tests, always construct them using `package:path` (`p.join` / `p.joinAll`) rather than hardcoded `/` to avoid false failures on Windows CI bots.
+- **Preserve Test Order**: When modifying or adding tests to existing test files, maintain the exact sequence of existing tests to keep review diffs minimal and readable.
