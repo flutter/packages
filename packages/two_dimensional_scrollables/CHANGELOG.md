@@ -1,3 +1,7 @@
+## 0.5.5
+
+* Fixes `TableView` laying out and painting trailing pinned rows and columns twice, which could throw when the table was scrolled to the end.
+
 ## 0.5.4
 
 * Fixes memory leaks.

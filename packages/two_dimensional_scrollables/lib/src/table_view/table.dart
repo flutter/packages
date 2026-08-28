@@ -1087,7 +1087,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       (span) => !span.isPinned && span.trailingOffset >= _targetTrailingColumnPixel,
     );
     if (_firstNonPinnedColumn != null) {
-      _lastNonPinnedColumn ??= _columnMetrics.length - 1;
+      // Trailing pinned columns are laid out and painted separately, so the
+      // range of regular columns must never extend into them.
+      _lastNonPinnedColumn ??= _lastRegularColumnIndex ?? _columnMetrics.length - 1;
     }
 
     if (_rowMetrics.isNotEmpty) {
@@ -1116,7 +1118,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       (span) => !span.isPinned && span.trailingOffset >= _targetTrailingRowPixel,
     );
     if (_firstNonPinnedRow != null) {
-      _lastNonPinnedRow ??= _rowMetrics.length - 1;
+      // Trailing pinned rows are laid out and painted separately, so the range
+      // of regular rows must never extend into them.
+      _lastNonPinnedRow ??= _lastRegularRowIndex ?? _rowMetrics.length - 1;
     }
   }
 
