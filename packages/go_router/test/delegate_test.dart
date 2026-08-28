@@ -367,6 +367,39 @@ void main() {
       // Should not throw "Null check operator used on a null value".
       expect(await goRouter.routerDelegate.popRoute(), isFalse);
     });
+
+    testWidgets('popRoute does not throw when a stateful shell navigator in the '
+        'configuration is not mounted', (WidgetTester tester) async {
+      // Same transient state as above, on a root route of a
+      // StatefulShellRoute. Nothing can pop here, so the expected outcome is
+      // `false` (the platform backgrounds the app), not an exception.
+      final GoRouter goRouter = await createRouter(
+        <RouteBase>[
+          GoRoute(path: '/login', builder: (_, _) => const Text('Login')),
+          StatefulShellRoute.indexedStack(
+            builder: (_, _, StatefulNavigationShell shell) => shell,
+            branches: <StatefulShellBranch>[
+              StatefulShellBranch(
+                routes: <RouteBase>[GoRoute(path: '/', builder: (_, _) => const Text('Home'))],
+              ),
+              StatefulShellBranch(
+                routes: <RouteBase>[
+                  GoRoute(path: '/settings', builder: (_, _) => const Text('Settings')),
+                ],
+              ),
+            ],
+          ),
+        ],
+        tester,
+        initialLocation: '/login',
+      );
+
+      goRouter.routerDelegate.currentConfiguration = goRouter.configuration.findMatch(
+        Uri.parse('/'),
+      );
+
+      expect(await goRouter.routerDelegate.popRoute(), isFalse);
+    });
   });
 
   group('push', () {
