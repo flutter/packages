@@ -58,20 +58,9 @@ class MaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTransitionMixi
   @override
   final bool maintainState;
 
-  /// {@template material_ui.MaterialPageRoute.includeRouteSemantics}
-  /// Whether this route introduces a route scope in the semantics tree.
-  ///
-  /// Defaults to true. When true, screen readers can treat pushes and pops of
-  /// this route as navigation to a new screen and announce the change to users.
-  ///
-  /// Set this to false for routes that update only part of the screen, such as
-  /// tab or shell content in a nested navigator. This prevents screen readers
-  /// from treating the route as a new screen.
-  /// {@endtemplate}
-  final bool includeRouteSemantics;
-
+  /// {@macro material_ui.MaterialRouteTransitionMixin.includeRouteSemantics}
   @override
-  bool get _includeRouteSemantics => includeRouteSemantics;
+  final bool includeRouteSemantics;
 
   @override
   String get debugLabel => '${super.debugLabel}(${settings.name})';
@@ -103,7 +92,17 @@ mixin MaterialRouteTransitionMixin<T> on PageRoute<T> {
   @protected
   Widget buildContent(BuildContext context);
 
-  bool get _includeRouteSemantics => true;
+  /// {@template material_ui.MaterialRouteTransitionMixin.includeRouteSemantics}
+  /// Whether this route introduces a route scope in the semantics tree.
+  ///
+  /// Defaults to true. When true, screen readers can treat pushes and pops of
+  /// this route as navigation to a new screen and announce the change to users.
+  ///
+  /// Set this to false for routes that update only part of the screen, such as
+  /// tab or shell content in a nested navigator. This prevents screen readers
+  /// from treating the route as a new screen.
+  /// {@endtemplate}
+  bool get includeRouteSemantics => true;
 
   @override
   Duration get transitionDuration =>
@@ -209,7 +208,7 @@ mixin MaterialRouteTransitionMixin<T> on PageRoute<T> {
     Animation<double> secondaryAnimation,
   ) {
     final Widget result = buildContent(context);
-    if (!_includeRouteSemantics) {
+    if (!includeRouteSemantics) {
       return result;
     }
     return Semantics(scopesRoute: true, explicitChildNodes: true, child: result);
@@ -275,7 +274,7 @@ class MaterialPage<T> extends Page<T> {
   /// {@macro flutter.widgets.TransitionRoute.allowSnapshotting}
   final bool allowSnapshotting;
 
-  /// {@macro material_ui.MaterialPageRoute.includeRouteSemantics}
+  /// {@macro material_ui.MaterialRouteTransitionMixin.includeRouteSemantics}
   final bool includeRouteSemantics;
 
   @override
@@ -308,7 +307,7 @@ class _PageBasedMaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTran
   bool get fullscreenDialog => _page.fullscreenDialog;
 
   @override
-  bool get _includeRouteSemantics => _page.includeRouteSemantics;
+  bool get includeRouteSemantics => _page.includeRouteSemantics;
 
   @override
   String get debugLabel => '${super.debugLabel}(${_page.name})';
