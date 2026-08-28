@@ -11,7 +11,7 @@ import Testing
 
   @Test func updateTileOverlaySetsVisibilityLast() {
     let tileLayer = PropertyOrderValidatingTileLayer()
-    FGMTileOverlayController.update(
+    TileOverlayController.update(
       tileLayer,
       from: FGMPlatformTileOverlay.make(
         withTileOverlayId: "overlay",
