@@ -57,7 +57,7 @@ A typical app can use the following localization delegate from `material_ui` to
 cover all of the localization strings in Flutter, Material, and Cupertino:
 
 ```dart
-  localizationDelegates: GlobalMaterialLocalizations.delegates,
+  localizationsDelegates: GlobalMaterialLocalizations.delegates,
 ```
 
 ### Step 3: Bridge legacy dependencies (if needed)
@@ -106,7 +106,7 @@ Scaffold(
 
 ## Features
 
-The `material_ui` packcage contains everything you need to create a
+The `material_ui` package contains everything you need to create a
 fully-featured Material app, such as:
 
 * **App Structure & Navigation**: `MaterialApp`, `Scaffold`, `AppBar`,
