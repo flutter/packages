@@ -1,3 +1,15 @@
+## 2.18.8
+
+* Converts overlay controllers to Swift.
+
+## 2.18.7
+
+* Converts circle, polygon, and polyline controllers to Swift.
+
+## 2.18.6
+
+* Converts parts of the implementation to Swift.
+
 ## 2.18.5
 
 * Fixes a potential compilation issue in tile downscaling.

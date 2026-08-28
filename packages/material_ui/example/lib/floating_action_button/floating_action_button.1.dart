@@ -38,6 +38,7 @@ class FloatingActionButtonExample extends StatelessWidget {
                 //
                 // https://m3.material.io/components/floating-action-button/specs#669a1be8-7271-48cb-a74d-dd502d73bda4
                 FloatingActionButton.small(
+                  heroTag: 'small',
                   onPressed: () {
                     // Add your onPressed code here!
                   },
@@ -54,6 +55,7 @@ class FloatingActionButtonExample extends StatelessWidget {
                 //
                 // https://m3.material.io/components/floating-action-button/specs#71504201-7bd1-423d-8bb7-07e0291743e5
                 FloatingActionButton(
+                  heroTag: 'regular',
                   onPressed: () {
                     // Add your onPressed code here!
                   },
@@ -70,6 +72,7 @@ class FloatingActionButtonExample extends StatelessWidget {
                 //
                 // https://m3.material.io/components/floating-action-button/specs#9d7d3d6a-bab7-47cb-be32-5596fbd660fe
                 FloatingActionButton.large(
+                  heroTag: 'large',
                   onPressed: () {
                     // Add your onPressed code here!
                   },
@@ -86,6 +89,7 @@ class FloatingActionButtonExample extends StatelessWidget {
                 //
                 // https://m3.material.io/components/extended-fab/specs#686cb8af-87c9-48e8-a3e1-db9da6f6c69b
                 FloatingActionButton.extended(
+                  heroTag: 'extended',
                   onPressed: () {
                     // Add your onPressed code here!
                   },

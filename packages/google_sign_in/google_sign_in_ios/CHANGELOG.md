@@ -1,3 +1,7 @@
+## 6.3.1
+
+* Improves testability of iOS scene URL handling.
+
 ## 6.3.0
 
 * Adds UIScene compatibility.

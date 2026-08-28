@@ -98,6 +98,21 @@ class RoutingConfig {
   /// When a deep link opens the app and `onEnter` returns [Block], GoRouter
   /// will stay on the current route or redirect to the initial route.
   ///
+  /// [onEnter] is evaluated exactly once per navigation, against the literal
+  /// URI being navigated to. It runs strictly before both the legacy top-level
+  /// [redirect] and any [GoRoute.redirect] chains, and is not re-invoked as
+  /// those redirects resolve intermediate locations. This means `next.uri.path`
+  /// will never equal a path that is only reached through a redirect callback.
+  ///
+  /// For example, given a route at `/` that redirects to `/a`, an [onEnter] guard
+  /// checking if `next` equals `/a` will never match when navigating to `/`,
+  /// because `next` reflects the pre-redirect target (`/`). If you need to guard
+  /// a location that only exists as a redirect destination, put that check inside
+  /// a `redirect` callback instead (top-level or route-level) -- `redirect`
+  /// callbacks see each resolved hop in the chain as they produce it. Reserve
+  /// [onEnter] for guarding the literal, user- or app-initiated navigation
+  /// target (deep links, [GoRouter.go] or [GoRouter.push] calls, etc.).
+  ///
   /// Example:
   /// ```dart
   /// final GoRouter router = GoRouter(
@@ -222,7 +237,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   ///
   /// See [routing_config.dart](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/routing_config.dart).
   GoRouter.routingConfig({
-    required ValueListenable<RoutingConfig> routingConfig,
+    required this._routingConfig,
     Codec<Object?, Object?>? extraCodec,
     GoExceptionHandler? onException,
     GoRouterPageBuilder? errorPageBuilder,
@@ -237,8 +252,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
     bool requestFocus = true,
-  }) : _routingConfig = routingConfig,
-       backButtonDispatcher = RootBackButtonDispatcher(),
+  }) : backButtonDispatcher = RootBackButtonDispatcher(),
        assert(
          initialExtra == null || initialLocation != null,
          'initialLocation must be set in order to use initialExtra',

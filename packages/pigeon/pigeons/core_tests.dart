@@ -873,6 +873,12 @@ abstract class HostIntegrationCoreApi {
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   bool taskQueueIsBackgroundThread();
 
+  /// Returns true if the handler is run on a non-main thread, which should be
+  /// true for any platform with TaskQueue support.
+  @async
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+  bool asyncTaskQueueIsBackgroundThread();
+
   // ========== Flutter API test wrappers ==========
 
   @async
@@ -1139,6 +1145,38 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('callFlutterSmallApiEchoString:')
   @SwiftFunction('callFlutterSmallApiEcho(_:)')
   String callFlutterSmallApiEchoString(String aString);
+
+  @async
+  void callFlutterCallbackNoop();
+
+  @async
+  @ObjCSelector('callFlutterCallbackEchoString:')
+  @SwiftFunction('callFlutterCallbackEcho(_:)')
+  String callFlutterCallbackEchoString(String aString);
+
+  @async
+  Object? callFlutterCallbackThrowError();
+
+  @async
+  void callFlutterCallbackThrowErrorFromVoid();
+}
+
+/// A Flutter API using callback-based asynchronous methods (@asyncCallback).
+@FlutterApi()
+abstract class FlutterCallbackCoreApi {
+  @asyncCallback
+  void noop();
+
+  @asyncCallback
+  @ObjCSelector('echoString:')
+  @SwiftFunction('echo(string:)')
+  String echoString(String aString);
+
+  @asyncCallback
+  Object? throwError();
+
+  @asyncCallback
+  void throwErrorFromVoid();
 }
 
 /// The core interface that the Dart platform_test code implements for host
@@ -1423,6 +1461,38 @@ abstract class FlutterIntegrationCoreApi {
   @ObjCSelector('echoAsyncString:')
   @SwiftFunction('echoAsync(_:)')
   String echoAsyncString(String aString);
+}
+
+/// A Host API using callback-based asynchronous methods (@asyncCallback).
+@HostApi()
+abstract class HostCallbackCoreApi {
+  @asyncCallback
+  void noop();
+
+  @asyncCallback
+  @ObjCSelector('echoString:')
+  @SwiftFunction('echo(_:)')
+  String echoString(String aString);
+
+  @asyncCallback
+  @ObjCSelector('echoAllTypes:')
+  @SwiftFunction('echo(_:)')
+  AllTypes echoAllTypes(AllTypes everything);
+
+  @asyncCallback
+  @ObjCSelector('echoNullableString:')
+  @SwiftFunction('echoNullable(_:)')
+  String? echoNullableString(String? aString);
+
+  @asyncCallback
+  Object? throwError();
+
+  @asyncCallback
+  void throwErrorFromVoid();
+
+  @asyncCallback
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+  bool taskQueueIsBackgroundThread();
 }
 
 /// An API that can be implemented for minimal, compile-only tests.

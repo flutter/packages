@@ -17749,7 +17749,7 @@ void main() {
       expect(magnifierController, isNotNull);
       expect(magnifierController!.shown, false);
 
-      // Keep draging to select 'one two three four five' while the position continues to
+      // Keep dragging to select 'one two three four five' while the position continues to
       // exceed the `hideBelowThreshold` keeping the magnifier hidden.
       await gesture.moveTo(textOffsetToPosition(tester, 20) + const Offset(0.0, 50.0));
       await tester.pumpAndSettle();

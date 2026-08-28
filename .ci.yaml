@@ -7,9 +7,9 @@
 #  * https://github.com/flutter/cocoon/blob/main/CI_YAML.md
 enabled_branches:
   - main
-  - release-go_router-\d+\.\d+\.\d+
-  - release-cupertino_ui-\d+\.\d+\.\d+
-  - release-material_ui-\d+\.\d+\.\d+
+  - release-go_router-\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)?
+  - release-cupertino_ui-\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)?
+  - release-material_ui-\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)?
 
 platform_properties:
   linux:
@@ -73,7 +73,7 @@ platform_properties:
       device_type: none
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+          {"dependency": "chrome_and_driver", "version": "version:145.0.7632.117"}
         ]
   windows_arm64:
     properties:
@@ -217,6 +217,14 @@ targets:
       channel: stable
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 0 --shardCount 3"
+      # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
+      # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
+      # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
+      # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+        ]
 
   - name: Linux_web web_dart_unit_test_shard_2 stable
     recipe: packages/packages
@@ -226,6 +234,14 @@ targets:
       channel: stable
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 1 --shardCount 3"
+      # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
+      # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
+      # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
+      # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+        ]
 
   - name: Linux_web web_dart_unit_test_shard_3 stable
     recipe: packages/packages
@@ -235,6 +251,14 @@ targets:
       channel: stable
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 2 --shardCount 3"
+      # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
+      # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
+      # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
+      # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+        ]
 
   # Wasm unit tests in master
   # TODO(stuartmorgan): Switch to testing wasm on master and stable and non-wasm
@@ -321,7 +345,7 @@ targets:
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+          {"dependency": "chrome_and_driver", "version": "version:145.0.7632.117"}
         ]
       channel: master
 
@@ -334,6 +358,10 @@ targets:
       version_file: flutter_stable.version
       target_file: linux_custom_package_tests.yaml
       # See comments on 'master' version above.
+      # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
+      # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
+      # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
+      # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"},
@@ -722,6 +750,14 @@ targets:
       version_file: flutter_stable.version
       channel: stable
       package_sharding: "--shardIndex 0 --shardCount 3"
+      # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
+      # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
+      # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
+      # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+        ]
 
   - name: Linux_web web_platform_tests_shard_2 stable
     recipe: packages/packages
@@ -731,6 +767,14 @@ targets:
       version_file: flutter_stable.version
       channel: stable
       package_sharding: "--shardIndex 1 --shardCount 3"
+      # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
+      # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
+      # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
+      # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+        ]
 
   - name: Linux_web web_platform_tests_shard_3 stable
     recipe: packages/packages
@@ -740,6 +784,14 @@ targets:
       version_file: flutter_stable.version
       channel: stable
       package_sharding: "--shardIndex 2 --shardCount 3"
+      # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
+      # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
+      # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
+      # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+        ]
 
   ### Linux desktop tasks
   - name: Linux_desktop build_all_packages master
@@ -769,7 +821,7 @@ targets:
       # Install Chrome as a default handler for schemes for url_launcher.
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+          {"dependency": "chrome_and_driver", "version": "version:145.0.7632.117"}
         ]
 
   - name: Linux_desktop platform_tests stable
@@ -781,6 +833,10 @@ targets:
       target_file: linux_platform_tests.yaml
       channel: stable
       # Install Chrome as a default handler for schemes for url_launcher.
+      # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
+      # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
+      # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
+      # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
       dependencies: >-
         [
           {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}

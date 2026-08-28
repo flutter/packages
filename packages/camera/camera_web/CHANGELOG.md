@@ -1,3 +1,7 @@
+## 0.3.5+5
+
+* Removes invalid @JS annotation from extension type constructors.
+
 ## 0.3.5+4
 
 * Fixes a `TypeError` in `availableCameras()` caused by browsers (e.g. Firefox) returning

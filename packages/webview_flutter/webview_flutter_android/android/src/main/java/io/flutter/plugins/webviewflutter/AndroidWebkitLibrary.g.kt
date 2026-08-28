@@ -6826,6 +6826,8 @@ abstract class PigeonApiWebSettingsCompat(
 ) {
   abstract fun setPaymentRequestEnabled(webSettings: android.webkit.WebSettings, enabled: Boolean)
 
+  abstract fun setWebAuthenticationSupport(webSettings: android.webkit.WebSettings, support: Long)
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiWebSettingsCompat?) {
@@ -6844,6 +6846,30 @@ abstract class PigeonApiWebSettingsCompat(
             val wrapped: List<Any?> =
                 try {
                   api.setPaymentRequestEnabled(webSettingsArg, enabledArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  AndroidWebkitLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.WebSettingsCompat.setWebAuthenticationSupport",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val webSettingsArg = args[0] as android.webkit.WebSettings
+            val supportArg = args[1] as Long
+            val wrapped: List<Any?> =
+                try {
+                  api.setWebAuthenticationSupport(webSettingsArg, supportArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   AndroidWebkitLibraryPigeonUtils.wrapError(exception)

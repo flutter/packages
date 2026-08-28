@@ -552,13 +552,13 @@ class _CupertinoSheetTransitionState extends State<CupertinoSheetTransition>
         child: AnimatedBuilder(
           animation: _stretchDragAnimation,
           builder: (BuildContext context, Widget? child) {
-            return Padding(
-              padding: EdgeInsets.only(
-                top: MediaQuery.heightOf(context) * _stretchDragAnimation.value,
-              ),
-              child: _coverSheetSecondaryTransition(
-                widget.secondaryRouteAnimation,
-                _coverSheetPrimaryTransition(
+            return _coverSheetSecondaryTransition(
+              widget.secondaryRouteAnimation,
+              Padding(
+                padding: EdgeInsets.only(
+                  top: MediaQuery.heightOf(context) * _stretchDragAnimation.value,
+                ),
+                child: _coverSheetPrimaryTransition(
                   context,
                   widget.primaryRouteAnimation,
                   widget.linearTransition,
@@ -947,7 +947,6 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
 
 class _CupertinoDragGestureDetector<T> extends StatefulWidget {
   const _CupertinoDragGestureDetector({
-    super.key,
     required this.enabledCallback,
     required this.onStartPopGesture,
     required this.child,
@@ -1327,7 +1326,6 @@ class _CupertinoSheetScrollPosition extends ScrollPositionWithSingleContext {
 
 class _CupertinoDraggableScrollableSheet<T> extends StatefulWidget {
   const _CupertinoDraggableScrollableSheet({
-    super.key,
     required this.enabledCallback,
     required this.onStartPopGesture,
     required this.builder,
