@@ -3160,6 +3160,75 @@ void main() {
     );
   });
 
+  // Regression test for https://github.com/flutter/flutter/issues/188837.
+  testWidgets('TabBar.indicatorWeight can be zero when the indicator comes from the theme', (
+    WidgetTester tester,
+  ) async {
+    const indicatorColor = Color(0xFF00FF00);
+    const tabBarTheme = TabBarThemeData(
+      indicator: BoxDecoration(color: indicatorColor),
+      indicatorSize: TabBarIndicatorSize.tab,
+    );
+
+    final tabs = List<Widget>.generate(2, (int index) => Tab(text: 'Tab $index'));
+
+    Widget buildTabBar({bool secondaryTabBar = false}) {
+      final TabController controller = createTabController(
+        vsync: const TestVSync(),
+        length: tabs.length,
+      );
+      return boilerplate(
+        useMaterial3: false,
+        tabBarTheme: tabBarTheme,
+        child: Container(
+          alignment: Alignment.topLeft,
+          child: secondaryTabBar
+              ? TabBar.secondary(indicatorWeight: 0.0, controller: controller, tabs: tabs)
+              : TabBar(indicatorWeight: 0.0, controller: controller, tabs: tabs),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildTabBar());
+    expect(tester.takeException(), isNull);
+
+    RenderBox tabBarBox = tester.firstRenderObject<RenderBox>(find.byType(TabBar));
+    // 46 = _kTabHeight(46) + indicatorWeight(0.0)
+    expect(tabBarBox.size.height, 46.0);
+    expect(
+      tabBarBox,
+      paints..rect(rect: const Rect.fromLTRB(0.0, 0.0, 400.0, 46.0), color: indicatorColor),
+    );
+
+    await tester.pumpWidget(buildTabBar(secondaryTabBar: true));
+    expect(tester.takeException(), isNull);
+
+    tabBarBox = tester.firstRenderObject<RenderBox>(find.byType(TabBar));
+    expect(tabBarBox.size.height, 46.0);
+    expect(
+      tabBarBox,
+      paints..rect(rect: const Rect.fromLTRB(0.0, 0.0, 400.0, 46.0), color: indicatorColor),
+    );
+  });
+
+  testWidgets('TabBar asserts when indicatorWeight is zero and no indicator is provided', (
+    WidgetTester tester,
+  ) async {
+    final tabs = List<Widget>.generate(2, (int index) => Tab(text: 'Tab $index'));
+    final TabController controller = createTabController(
+      vsync: const TestVSync(),
+      length: tabs.length,
+    );
+
+    await tester.pumpWidget(
+      boilerplate(
+        child: TabBar(indicatorWeight: 0.0, controller: controller, tabs: tabs),
+      ),
+    );
+
+    expect(tester.takeException(), isAssertionError);
+  });
+
   testWidgets('TabBar with indicatorWeight, indicatorPadding (LTR)', (WidgetTester tester) async {
     const indicatorColor = Color(0xFF00FF00);
     const indicatorWeight = 8.0;

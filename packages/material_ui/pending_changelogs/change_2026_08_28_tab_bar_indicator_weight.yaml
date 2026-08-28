@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `TabBar` asserting on construction when `indicatorWeight` is zero and the indicator is provided by `TabBarThemeData.indicator`.
+version: patch
