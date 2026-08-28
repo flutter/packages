@@ -5,7 +5,9 @@
 set -e
 
 cd script/tool
+dart pub get
 dart analyze --fatal-infos
 
 cd ../githooks
+dart pub get
 dart analyze --fatal-infos

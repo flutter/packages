@@ -5,4 +5,5 @@
 set -e
 
 cd script/githooks
+dart pub get
 dart test
