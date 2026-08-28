@@ -8,6 +8,7 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
     swiftOut: 'darwin/google_sign_in_ios/Sources/google_sign_in_ios/messages.g.swift',
+    swiftOptions: SwiftOptions(fileSpecificClassNameComponent: 'Messages'),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
