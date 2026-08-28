@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes unlabeled tap target semantics in `SearchBar`.
+version: patch
