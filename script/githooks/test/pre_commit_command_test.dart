@@ -10,13 +10,7 @@ import 'package:test/test.dart';
 
 void main() {
   final String repoRoot = p.joinAll(<String>['mock', 'repo', 'root']);
-  final String toolScript = p.join(
-    repoRoot,
-    'script',
-    'tool',
-    'bin',
-    'flutter_plugin_tools.dart',
-  );
+  final String toolScript = p.join(repoRoot, 'script', 'tool', 'bin', 'flutter_plugin_tools.dart');
 
   group('pre-commit hook', () {
     test('passes when both format and analyze succeed', () async {

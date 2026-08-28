@@ -12,7 +12,7 @@ void main() {
     PrePushCommand createCommand(
       String gitLogOutput, {
       int exitCode = 0,
-      String stderr = '',
+      dynamic stderr = '',
       List<List<String>>? capturedArgs,
     }) {
       return PrePushCommand(
@@ -100,6 +100,13 @@ void main() {
 
     test('fails when git log execution fails', () async {
       final PrePushCommand command = createCommand('', exitCode: 1, stderr: 'Git fatal error');
+
+      final bool result = await command.run();
+      expect(result, isFalse);
+    });
+
+    test('fails when git log execution fails with null stderr', () async {
+      final PrePushCommand command = createCommand('', exitCode: 1, stderr: null);
 
       final bool result = await command.run();
       expect(result, isFalse);

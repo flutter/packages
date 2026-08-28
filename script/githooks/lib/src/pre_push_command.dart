@@ -61,13 +61,14 @@ class PrePushCommand extends Command<bool> {
 
     if (logResult.exitCode != 0) {
       print('Failed to check git commit history.');
-      if (logResult.stderr.toString().isNotEmpty) {
-        print(logResult.stderr);
+      final String stderr = logResult.stderr?.toString().trim() ?? '';
+      if (stderr.isNotEmpty) {
+        print(stderr);
       }
       return false;
     }
 
-    final stdoutStr = logResult.stdout as String;
+    final String stdoutStr = logResult.stdout?.toString() ?? '';
     final List<String> commitEntries = stdoutStr
         .split('\n')
         .map((String line) => line.trim())
