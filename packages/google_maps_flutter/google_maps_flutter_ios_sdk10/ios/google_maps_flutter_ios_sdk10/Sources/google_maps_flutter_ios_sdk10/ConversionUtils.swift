@@ -7,8 +7,10 @@
 #endif
 
 /// Converts a GMUCluster to its Pigeon representation.
-func pigeonCluster(for cluster: GMUCluster, clusterManagerIdentifier: String) -> FGMPlatformCluster
-{
+func pigeonCluster(
+  for cluster: GMUCluster,
+  clusterManagerIdentifier: String
+) -> FGMPlatformCluster {
   var bounds = GMSCoordinateBounds()
   for item in cluster.items {
     bounds = bounds.includingCoordinate(item.position)
