@@ -1064,7 +1064,7 @@ class MenuItemButton extends StatefulWidget {
 
   /// The direction in which the menu item expands.
   ///
-  /// If the menu item button is a descendent of [MenuAnchor] or [MenuBar], then
+  /// If the menu item button is a descendant of [MenuAnchor] or [MenuBar], then
   /// this property is ignored.
   ///
   /// If [overflowAxis] is [Axis.vertical], the menu will be expanded vertically.
