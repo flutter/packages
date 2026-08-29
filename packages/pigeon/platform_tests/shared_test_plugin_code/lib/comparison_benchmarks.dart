@@ -15,9 +15,9 @@ import 'src/generated/core_tests.gen.dart' as core;
 import 'src/generated/native_interop_tests.gen.dart' as native_interop;
 import 'test_types.dart' as core_types;
 
-/// Runs benchmarks comparing Platform Channels to Native Interop.
+/// Runs benchmarks comparing platform channels to Native Interop.
 void runComparisonBenchmarks(TargetGenerator targetGenerator) {
-  group('Comparison Benchmarks (Platform Channels vs Native Interop)', () {
+  group('Comparison Benchmarks (platform channels vs Native Interop)', () {
     final mcApi = core.HostIntegrationCoreApi();
     final native_interop.NativeInteropHostIntegrationCoreApiForNativeInterop? nativeInteropApi =
         native_interop.NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();

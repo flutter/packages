@@ -60,24 +60,22 @@ To use Native Interop, your development environment and the corresponding extern
 
 ### Step 1: Add Dependencies
 
-Add the required runtime dependencies (`ffi`, `objective_c` for Swift FFI, or `jni` for Kotlin JNI) to `dependencies`, and code generators (`ffigen` or `jnigen`) to `dev_dependencies` in your `pubspec.yaml`:
+Add the required runtime dependencies to `dependencies` and code generators to `dev_dependencies`. Using `flutter pub add` ensures runtime packages resolve to the latest compatible versions:
 
-```yaml
-dependencies:
-  flutter:
-    sdk: flutter
-  # For iOS/macOS Swift FFI:
-  ffi: ^2.1.0
-  objective_c: ^9.0.0
-  # For Android Kotlin JNI:
-  jni: ^0.14.0
+```bash
+# Add Pigeon:
+flutter pub add dev:pigeon
 
-dev_dependencies:
-  pigeon: ^26.0.0
-  # For iOS/macOS Swift FFI:
-  ffigen: ^16.0.0
-  # For Android Kotlin JNI:
-  jnigen: ^0.14.0
+# For iOS/macOS Swift FFI:
+flutter pub add ffi
+flutter pub add objective_c
+# Pigeon requires this specific version for compatibility with its generated FFIgen configuration:
+flutter pub add dev:ffigen@21.0.0
+
+# For Android Kotlin JNI:
+flutter pub add jni
+# Pigeon requires this specific version for compatibility with its generated JNIgen configuration:
+flutter pub add dev:jnigen@0.17.0
 ```
 
 ### Step 2: Configure Pigeon Options
@@ -148,7 +146,7 @@ Because Dart FFI cannot directly call Swift symbols, the FFI toolchain generates
 - **`.m` (Bridging Implementation)**: Generated when the schema contains callbacks, closures, Flutter APIs, or Objective-C blocks requiring trampoline implementations.
 - **`.o` (Temporary Object Files)**: Intermediate binary files generated during `ffigen`/`swiftgen` AST extraction. These are **not** needed after code generation and must **not** be committed to version control.
 
-To compile the generated Objective-C files alongside your Swift code, you must configure your iOS/macOS build systems (both CocoaPods and Swift Package Manager (SwiftPM) are expected to be supported by Flutter plugins):
+To compile the generated Objective-C files alongside your Swift code, you must configure your iOS/macOS build systems:
 
 #### CocoaPods Configuration
 Ensure your `.podspec` file matches Swift, Objective-C implementations (`.m`), and headers (`.h`):

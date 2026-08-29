@@ -177,6 +177,7 @@ import 'package:swiftgen/swiftgen.dart';
           ? '// ${generatorOptions.swiftOptions.copyrightHeader!.join(r'\n// ')}\n'
           : '';
       // TODO(tarrinneal): Make minimum OS versions configurable (ios/macos in externalVersions below).
+      // see https://github.com/flutter/flutter/issues/192008.
       indent.format('''
   var targetTriple = '${configuredSdkTriple ?? ''}';
   if (targetTriple.isEmpty) {

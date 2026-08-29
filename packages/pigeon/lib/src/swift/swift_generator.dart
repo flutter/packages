@@ -70,8 +70,7 @@ class SwiftOptions {
   /// The path to the Apple SDK to use for FFI generation.
   ///
   /// If not provided, Pigeon will attempt to find the iOS SDK path using
-  /// `xcrun --sdk iphoneos --show-sdk-path`. If that fails, it falls back
-  /// to a hardcoded default path.
+  /// `xcrun --sdk iphoneos --show-sdk-path`.
   final String? appleSdkPath;
 
   /// The Apple target triple to use for FFI generation.
@@ -198,8 +197,7 @@ class InternalSwiftOptions extends InternalOptions {
   /// The path to the Apple SDK to use for FFI generation.
   ///
   /// If not provided, Pigeon will attempt to find the iOS SDK path using
-  /// `xcrun --sdk iphoneos --show-sdk-path`. If that fails, it falls back
-  /// to a hardcoded default path.
+  /// `xcrun --sdk iphoneos --show-sdk-path`.
   final String? appleSdkPath;
 
   /// The Apple target triple to use for FFI generation.

@@ -10,31 +10,25 @@ This skill guides AI agents and developers through migrating an existing Flutter
 
 ---
 
-## 1. Update `pubspec.yaml` Dependencies
+## 1. Add Dependencies
 
-Add the required runtime and dev dependencies to the plugin's `pubspec.yaml` and its `example/pubspec.yaml` (if applicable):
+Add the required runtime dependencies to `dependencies` and code generators to `dev_dependencies` (in both the plugin and its `example/` app, if applicable). Using `flutter pub add` ensures runtime packages resolve to the latest compatible versions:
 
-```yaml
-dependencies:
-  flutter:
-    sdk: flutter
-  # For iOS/macOS Swift FFI:
-  ffi: ^2.1.4
-  objective_c: ^9.2.1
-  # For Android Kotlin JNI:
-  jni: ^1.0.0
+```bash
+# Add Pigeon (if not already added):
+flutter pub add dev:pigeon
 
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  pigeon: ^27.3.0
-  # For iOS/macOS Swift FFI:
-  ffigen: ^16.0.0
-  # For Android Kotlin JNI:
-  jnigen: ^0.17.0
+# For iOS/macOS Swift FFI:
+flutter pub add ffi
+flutter pub add objective_c
+# Pigeon requires this specific version for compatibility with its generated FFIgen configuration:
+flutter pub add dev:ffigen@21.0.0
+
+# For Android Kotlin JNI:
+flutter pub add jni
+# Pigeon requires this specific version for compatibility with its generated JNIgen configuration:
+flutter pub add dev:jnigen@0.17.0
 ```
-
-*Run `dart pub get` (and `dart pub get` in `example/`) after updating `pubspec.yaml`.*
 
 ---
 
@@ -124,7 +118,7 @@ targets: [
 ### 4.1 Swift Implementation (`<PluginName>.swift`)
 1. **Registration Calls**: Replace platform channel setup calls with FFI registration:
    ```swift
-   // BEFORE (Platform Channels):
+   // BEFORE (platform channels):
    // LegacyUserDefaultsApiSetup.setUp(binaryMessenger: messenger, api: instance)
 
    // AFTER (Native Interop FFI):
@@ -178,7 +172,7 @@ For `@FlutterApi()` interfaces (where host native code calls into Dart):
 - **Dart side**: Register your Dart implementation using `MyFlutterApi.setUp(MyFlutterApiImpl())`.
 - **Swift (FFI)**: Instantiate `MyFlutterApi()` directly without passing a `BinaryMessenger`:
   ```swift
-  // BEFORE (Platform Channels):
+  // BEFORE (platform channels):
   // let flutterApi = MyFlutterApi(binaryMessenger: messenger)
   // flutterApi.onEvent(data) { result in ... }
 
@@ -188,7 +182,7 @@ For `@FlutterApi()` interfaces (where host native code calls into Dart):
   ```
 - **Kotlin (JNI)**: Instantiate `MyFlutterApi()` directly without passing a `BinaryMessenger`:
   ```kotlin
-  // BEFORE (Platform Channels):
+  // BEFORE (platform channels):
   // val flutterApi = MyFlutterApi(messenger)
   // flutterApi.onEvent(data) { ... }
 

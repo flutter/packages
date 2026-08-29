@@ -5,7 +5,7 @@ Pigeon is a code generator tool to make communication between Flutter and the
 host platform type-safe, easier, and faster.
 
 Pigeon removes the necessity to manage strings across multiple platforms and languages.
-It also improves efficiency over common platform channel patterns. Most importantly though,
+It also improves efficiency over common method channel patterns. Most importantly though,
 it removes the need to write custom platform channel code, since pigeon generates it for you.
 
 For usage examples, see the [Example README](./example/README.md).
@@ -94,7 +94,7 @@ When targeting a Flutter version that supports the
 the threading model for handling HostApi methods can be selected with the
 `TaskQueue` annotation.
 
-> **Note**: `TaskQueue` is only supported with Platform Channels. Native Interop (FFI/JNI) calls execute directly in-process and always run on the main thread; specifying `@TaskQueue` with Native Interop will result in a code generation error.
+> **Note**: `TaskQueue` is only supported with platform channels. Native Interop (FFI/JNI) calls execute directly on the caller's thread; specifying `@TaskQueue` with Native Interop will result in a code generation error.
 
 ### Multi-Instance Support
 
@@ -105,8 +105,8 @@ to the api to allow for multiple instances to be created and operate in parallel
 
 Pigeon supports two distinct models for communication between Dart and native code:
 
-1. **Platform Channels (Message-Passing)**: The standard Flutter communication model. It serializes data into binary buffers via `StandardMessageCodec` and transmits them asynchronously over platform channels.
-2. **Native Interop (Direct FFI & JNI)\*Experimental\***: A direct, memory-bound function call model utilizing Dart FFI (for Swift/Objective-C on iOS/macOS) and JNI (for Kotlin/Java on Android).
+1. **Platform Channels**: The standard Flutter communication model. It serializes data into binary buffers via `StandardMessageCodec` and transmits them asynchronously over platform channels.
+2. **Native Interop (Direct FFI & JNI) \*Experimental\***: A direct, memory-bound function call model utilizing Dart FFI (for Swift/Objective-C on iOS/macOS) and JNI (for Kotlin/Java on Android).
 
 #### Quick Comparison
 
@@ -120,17 +120,16 @@ Pigeon supports two distinct models for communication between Dart and native co
 | **Latency** | Higher (requires message loop scheduling) | Extremely low (direct execution) |
 | **Synchronous Host Calls** | Not supported | Fully supported |
 | **Setup Complexity** | Simple | Complex (requires external tools) |
-| **Code Generation Steps** | Single-step (running Pigeon generates everything) | Multi-step (requires running Pigeon, then running generated config scripts) |
+| **Code Generation Steps** | Single-step (running Pigeon generates everything) | Multi-step (running Pigeon automatically runs the generated config scripts) |
 
 #### When to Choose Which Model
 
 - **Consider Platform Channels if**:
-  - Your plugin targets Windows or Linux (Native Interop is not supported on these platforms).
+  - Your plugin targets Windows or Linux (Native Interop is not supported on these platforms, though you can generate platform channel code for them from the same pigeon file alongside Native Interop).
   - Your plugin primarily passes simple data objects or has low-frequency communication.
   - You want a simpler setup with no external dependencies or additional command-line tools.
   - Your data classes contain many nested fields or custom collections where conversion overhead might offset performance gains. There are plans to address this issue in the future.
 - **Consider Native Interop if**:
-  - Your plugin targets only Android, iOS, and/or macOS.
   - Your plugin handles high-frequency messaging, large typed arrays (e.g., image processing, sensor data streams), or latency-sensitive communication where serialization overhead is a bottleneck.
   - You need synchronous execution for platform APIs on the host thread.
   - You want to call Host APIs directly from background Dart isolates without Flutter Engine channel initialization.
@@ -225,7 +224,7 @@ denotes APIs that live in Flutter but are invoked from the host platform.
 
 ## Stability of generated code
 
-Pigeon is intended to replace direct use of platform channels in the internal
+Pigeon is intended to replace direct use of method channels in the internal
 implementation of plugins and applications. Because the expected use of Pigeon
 is as an internal implementation detail, its development strongly favors
 improvements to generated code over consistency with previous generated code,

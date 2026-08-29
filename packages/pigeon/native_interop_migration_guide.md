@@ -14,9 +14,7 @@ For a comprehensive walkthrough on setting up Native Interop from scratch, see t
 | **Data Serialization** | Serialized to binary format (`StandardMessageCodec`) | Direct memory mapping or native references |
 | **Threading Model** | Main UI thread or custom background `TaskQueue` | Direct execution on caller thread (`TaskQueue` is not supported) |
 | **Isolate Support** | Requires `BackgroundIsolateBinaryMessenger` | Supported for Host APIs |
-| **Synchronous Calls** | Asynchronous only | Supports both true synchronous and asynchronous calls |
-| **Swift Concurrency** | Callback-based completion handlers | Modern `async/await` syntax |
-| **Kotlin Concurrency** | Callback-based interfaces | Kotlin Coroutines (`suspend` functions) |
+| **Synchronous Calls** | Asynchronous only | Supports both synchronous and asynchronous calls |
 
 ---
 
@@ -24,26 +22,24 @@ For a comprehensive walkthrough on setting up Native Interop from scratch, see t
 
 To migrate an existing Pigeon plugin or app to Native Interop, follow these initial steps:
 
-### 2.1 Add Dependencies to `pubspec.yaml`
+### 2.1 Add Dependencies
 
-Add the required runtime packages (`ffi`, `objective_c` for Swift FFI, or `jni` for Kotlin JNI) to `dependencies`, and code generators (`ffigen` or `jnigen`) to `dev_dependencies`:
+Add the required runtime dependencies to `dependencies` and code generators to `dev_dependencies` (in both the plugin and its `example/` app, if applicable). Using `flutter pub add` ensures runtime packages resolve to the latest compatible versions:
 
-```yaml
-dependencies:
-  flutter:
-    sdk: flutter
-  # For iOS/macOS Swift FFI:
-  ffi: ^2.1.0
-  objective_c: ^9.0.0
-  # For Android Kotlin JNI:
-  jni: ^0.14.0
+```bash
+# Add Pigeon (if not already added):
+flutter pub add dev:pigeon
 
-dev_dependencies:
-  pigeon: ^26.0.0
-  # For iOS/macOS Swift FFI:
-  ffigen: ^16.0.0
-  # For Android Kotlin JNI:
-  jnigen: ^0.14.0
+# For iOS/macOS Swift FFI:
+flutter pub add ffi
+flutter pub add objective_c
+# Pigeon requires this specific version for compatibility with its generated FFIgen configuration:
+flutter pub add dev:ffigen@21.0.0
+
+# For Android Kotlin JNI:
+flutter pub add jni
+# Pigeon requires this specific version for compatibility with its generated JNIgen configuration:
+flutter pub add dev:jnigen@0.17.0
 ```
 
 ### 2.2 Update Pigeon Configuration Options
