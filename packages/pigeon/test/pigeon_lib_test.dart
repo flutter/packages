@@ -2406,45 +2406,59 @@ dev_dependencies:
     });
 
     test('JnigenConfigGeneratorAdapter errors on JNI property name collisions', () {
-      final root = Root(
-        apis: <Api>[
-          AstHostApi(
-            name: 'Api',
-            methods: <Method>[
-              Method(
-                name: 'setFish',
-                returnType: const TypeDeclaration.voidDeclaration(),
-                parameters: <Parameter>[
-                  Parameter(
-                    name: 'value',
-                    type: const TypeDeclaration(baseName: 'int', isNullable: false),
-                  ),
-                ],
-                location: ApiLocation.host,
-              ),
-              Method(
-                name: 'fish',
-                returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
-                parameters: <Parameter>[],
-                location: ApiLocation.host,
-              ),
-            ],
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_collision_test_');
+      try {
+        final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+        pubspecFile.writeAsStringSync('''
+name: my_package
+dependencies:
+  jni: ^1.0.0
+dev_dependencies:
+  jnigen: ^1.0.0
+''');
+        final root = Root(
+          apis: <Api>[
+            AstHostApi(
+              name: 'Api',
+              methods: <Method>[
+                Method(
+                  name: 'setFish',
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[
+                    Parameter(
+                      name: 'value',
+                      type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                    ),
+                  ],
+                  location: ApiLocation.host,
+                ),
+                Method(
+                  name: 'fish',
+                  returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+                  parameters: <Parameter>[],
+                  location: ApiLocation.host,
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        const adapter = JnigenConfigGeneratorAdapter();
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            dartOut: '${tempDir.path}/lib/messages.g.dart',
+            kotlinOut: '${tempDir.path}/android/Messages.g.kt',
+            kotlinOptions: const KotlinOptions(useJni: true),
+            dartPackageName: 'my_package',
           ),
-        ],
-        classes: <Class>[],
-        enums: <Enum>[],
-      );
-      const adapter = JnigenConfigGeneratorAdapter();
-      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
-        const PigeonOptions(
-          dartOut: 'lib/messages.g.dart',
-          kotlinOut: 'android/Messages.g.kt',
-          kotlinOptions: KotlinOptions(useJni: true),
-        ),
-      );
-      final List<Error> errors = adapter.validate(options, root);
-      expect(errors, hasLength(1));
-      expect(errors[0].message, contains('collides with method "fish" under JNI generation'));
+        );
+        final List<Error> errors = adapter.validate(options, root);
+        expect(errors, hasLength(1));
+        expect(errors[0].message, contains('collides with method "fish" under JNI generation'));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
     });
   });
 

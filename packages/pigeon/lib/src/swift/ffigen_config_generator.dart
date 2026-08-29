@@ -233,8 +233,7 @@ ${hasAsyncFlutterApi ? '''
                 decl.originalName == 'NSURLSessionAuthChallengeDisposition') {
               return '$moduleName';
             }
-''' : ''}
-            return decl.originalName.startsWith('NS') ? null : '$moduleName';
+''' : ''}            return decl.originalName.startsWith('NS') ? null : '$moduleName';
           }
         ),
         protocols: fg.Protocols(
@@ -250,8 +249,7 @@ ${hasAsyncFlutterApi ? '''
                 decl.originalName == 'NSURLSessionAuthChallengeDisposition') {
               return '$moduleName';
             }
-''' : ''}
-            return decl.originalName.startsWith('NS') ? null : '$moduleName';
+''' : ''}            return decl.originalName.startsWith('NS') ? null : '$moduleName';
           },
         ),
       ),

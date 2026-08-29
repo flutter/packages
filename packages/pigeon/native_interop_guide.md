@@ -93,7 +93,7 @@ Enable Native Interop for your target platforms by setting the configuration opt
     dartOptions: DartOptions(),
     kotlinOptions: KotlinOptions(
       useJni: true,
-      // Optional: Paths to search for compiled local classes (primarily needed for standalone Apps)
+      // Optional: Paths to search for compiled local classes (primarily needed for standalone apps)
       jniClassPaths: <String>['build/app/tmp/kotlin-classes/release'],
     ),
     swiftOptions: SwiftOptions(useFfi: true, ffiModuleName: 'Runner'),

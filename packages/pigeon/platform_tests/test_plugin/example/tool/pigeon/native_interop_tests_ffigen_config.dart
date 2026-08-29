@@ -114,7 +114,6 @@ Future<void> main(List<String> args) async {
                 decl.originalName == 'NSURLSessionAuthChallengeDisposition') {
               return 'test_plugin';
             }
-
             return decl.originalName.startsWith('NS') ? null : 'test_plugin';
           },
         ),
@@ -130,7 +129,6 @@ Future<void> main(List<String> args) async {
                 decl.originalName == 'NSURLSessionAuthChallengeDisposition') {
               return 'test_plugin';
             }
-
             return decl.originalName.startsWith('NS') ? null : 'test_plugin';
           },
         ),

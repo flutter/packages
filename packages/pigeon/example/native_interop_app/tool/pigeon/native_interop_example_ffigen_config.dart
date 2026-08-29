@@ -90,7 +90,6 @@ Future<void> main(List<String> args) async {
             // package:objective_c) rather than generating local module wrappers for them.
             // Specific types (like NSURLCredential) return 'Runner' so ffigen generates the
             // explicit Dart FFI bindings required by this plugin.
-
             return decl.originalName.startsWith('NS') ? null : 'Runner';
           },
         ),
@@ -102,7 +101,6 @@ Future<void> main(List<String> args) async {
             // package:objective_c) rather than generating local module wrappers for them.
             // Specific types (like NSURLCredential) return 'Runner' so ffigen generates the
             // explicit Dart FFI bindings required by this plugin.
-
             return decl.originalName.startsWith('NS') ? null : 'Runner';
           },
         ),

@@ -577,6 +577,7 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
       _validateDependencies(
         appDirectory: options.swiftOptions?.appDirectory ?? options.appDirectory,
         dartOutPath: options.dartOptions?.dartOut,
+        basePath: options.basePath,
         apiName: 'Swift FFI',
         requiredDeps: const <String>['ffi', 'objective_c'],
         requiredDevDeps: const <String>['ffigen'],
@@ -767,6 +768,7 @@ class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
       _validateDependencies(
         appDirectory: options.kotlinOptions?.appDirectory ?? options.appDirectory,
         dartOutPath: options.dartOptions?.dartOut,
+        basePath: options.basePath,
         apiName: 'Kotlin JNI',
         requiredDeps: const <String>['jni'],
         requiredDevDeps: const <String>['jnigen'],
@@ -2443,6 +2445,7 @@ int calculateLineNumber(String contents, int offset) {
 List<Error> _validateDependencies({
   required String? appDirectory,
   required String? dartOutPath,
+  String? basePath,
   required String apiName,
   required List<String> requiredDeps,
   List<String> requiredDevDeps = const <String>[],
@@ -2451,10 +2454,21 @@ List<Error> _validateDependencies({
 
   String? pubspecPath;
   if (dartOutPath != null && dartOutPath.isNotEmpty) {
-    pubspecPath = findPubspecPath(File(dartOutPath).parent);
+    final String fullDartOut =
+        (basePath != null && basePath.isNotEmpty && !dartOutPath.startsWith(basePath))
+        ? path.join(basePath, dartOutPath)
+        : dartOutPath;
+    pubspecPath = findPubspecPath(File(fullDartOut).parent);
   }
   if (pubspecPath == null && appDirectory != null && appDirectory.isNotEmpty) {
-    pubspecPath = findPubspecPath(Directory(appDirectory));
+    final String fullAppDir =
+        (basePath != null && basePath.isNotEmpty && !appDirectory.startsWith(basePath))
+        ? path.join(basePath, appDirectory)
+        : appDirectory;
+    pubspecPath = findPubspecPath(Directory(fullAppDir));
+  }
+  if (pubspecPath == null && basePath != null && basePath.isNotEmpty) {
+    pubspecPath = findPubspecPath(Directory(basePath));
   }
   if (pubspecPath == null &&
       (appDirectory == null || appDirectory.isEmpty) &&
