@@ -726,6 +726,7 @@ void main() {
       await tester.pump();
 
       expect(_findPredictiveBackPageTransition(pageTransitionsBuilder), findsOneWidget);
+      expect(_findFallbackPageTransition(pageTransitionsBuilder), findsNothing);
 
       // Drag from right edge — page should shift to the left (negative dx).
       final ByteData updateMessage = const StandardMethodCodec().encodeMethodCall(
@@ -799,9 +800,6 @@ void main() {
     if (defaultTargetPlatform != TargetPlatform.android) {
       return;
     }
-
-    expect(_findPredictiveBackPageTransition(pageTransitionsBuilder), findsNothing);
-    expect(_findFallbackPageTransition(pageTransitionsBuilder), findsOneWidget);
 
     // Android button-triggered back events report a zero touch offset and
     // zero progress. handleStartBackGesture treats these as isButtonEvent
