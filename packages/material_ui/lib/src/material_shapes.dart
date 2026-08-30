@@ -46,8 +46,7 @@ abstract final class MaterialShapes {
   static final circle = RoundedPolygon.circle(
     numVertices: 10,
     radius: 0.5,
-    centerX: 0.5,
-    centerY: 0.5,
+    center: const Point(0.5, 0.5),
   );
 
   /// A square shape.
@@ -55,8 +54,7 @@ abstract final class MaterialShapes {
     width: 1,
     height: 1,
     rounding: _cornerRound30,
-    centerX: 0.5,
-    centerY: 0.5,
+    center: const Point(0.5, 0.5),
   );
 
   /// A slanted square shape.
@@ -432,8 +430,7 @@ abstract final class MaterialShapes {
     return RoundedPolygon.fromVertices(
       vertices,
       perVertexRounding: perVertexRounding,
-      centerX: center.x,
-      centerY: center.y,
+      center: center,
     );
   }
 

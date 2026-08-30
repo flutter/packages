@@ -81,7 +81,7 @@ void main() {
       expectCircleShape(bigCircle.cubics, radius: 3);
 
       const center = Point(1, 2);
-      final offsetCircle = RoundedPolygon.circle(centerX: center.x, centerY: center.y);
+      final offsetCircle = RoundedPolygon.circle(center: center);
       expectCircleShape(offsetCircle.cubics, center: center);
     });
 
@@ -99,12 +99,7 @@ void main() {
       }
 
       const center = Point(1, 2);
-      star = RoundedPolygon.star(
-        numVerticesPerRadius: 4,
-        innerRadius: innerRadius,
-        centerX: center.x,
-        centerY: center.y,
-      );
+      star = RoundedPolygon.star(numVerticesPerRadius: 4, innerRadius: innerRadius, center: center);
       shape = star.cubics;
       for (final cubic in shape) {
         expectCubicOnRadii(cubic, radius, innerRadius, center);

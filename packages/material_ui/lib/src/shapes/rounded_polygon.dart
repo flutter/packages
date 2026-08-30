@@ -21,7 +21,7 @@ import 'utils.dart';
 /// either the number of vertices desired or an ordered list of vertices.
 @immutable
 class RoundedPolygon {
-  RoundedPolygon._(this.features, this.center) : cubics = <CubicBezier>[] {
+  RoundedPolygon._(this.features, this._center) : cubics = <CubicBezier>[] {
     _initCubics();
 
     assert(() {
@@ -64,11 +64,8 @@ class RoundedPolygon {
   /// the initial size of the object, but it can be transformed later by using
   /// the [transformed] function.
   ///
-  /// [centerX] is the X coordinate of the center of the polygon, around which
-  /// all vertices will be placed. The default center is at (0,0).
-  ///
-  /// [centerY] is the Y coordinate of the center of the polygon, around which
-  /// all vertices will be placed. The default center is at (0,0).
+  /// [center] is the center of the polygon, around which all vertices will be
+  /// placed. The default center is at (0,0).
   ///
   /// [rounding] is the [CornerRounding] properties of all vertices. If some
   /// vertices should have different rounding properties, then use
@@ -88,8 +85,7 @@ class RoundedPolygon {
   factory RoundedPolygon.fromVerticesNum(
     int numVertices, {
     double radius = 1,
-    double centerX = 0,
-    double centerY = 0,
+    Offset center = Offset.zero,
     CornerRounding rounding = CornerRounding.unrounded,
     List<CornerRounding>? perVertexRounding,
   }) {
@@ -98,11 +94,10 @@ class RoundedPolygon {
     }
 
     return RoundedPolygon.fromVertices(
-      _verticesFromNumVerts(numVertices, radius, centerX, centerY),
+      _verticesFromNumVerts(numVertices, radius, center),
       rounding: rounding,
       perVertexRounding: perVertexRounding,
-      centerX: centerX,
-      centerY: centerY,
+      center: center,
     );
   }
 
@@ -133,11 +128,9 @@ class RoundedPolygon {
   /// [vertices]. If this parameter is null, then the polygon will use the
   /// [rounding] parameter for every vertex instead. The default value is null.
   ///
-  /// [centerX] is the X coordinate of the center of the polygon, around which
-  /// all vertices will be placed. The default center is at (0,0).
-  ///
-  /// [centerY] is the Y coordinate of the center of the polygon, around which
-  /// all vertices will be placed. The default center is at (0,0).
+  /// [center] is the center of the polygon, around which all vertices will be
+  /// placed. If `null` (the default value), the center is estimated by
+  /// averaging the [vertices].
   ///
   /// Throws [ArgumentError] if the number of vertices is less than 3 (the
   /// [vertices] parameter has less than 6 Floats). Or if the
@@ -150,8 +143,7 @@ class RoundedPolygon {
     List<double> vertices, {
     CornerRounding rounding = CornerRounding.unrounded,
     List<CornerRounding>? perVertexRounding,
-    double centerX = double.minPositive,
-    double centerY = double.minPositive,
+    Offset? center,
   }) {
     if (vertices.length < 6) {
       throw ArgumentError('Polygons must have at least 3 vertices.');
@@ -257,19 +249,7 @@ class RoundedPolygon {
         );
     }
 
-    final double cX;
-    final double cY;
-
-    if (centerX == double.minPositive || centerY == double.minPositive) {
-      final Point center = calculateCenter(vertices);
-      cX = center.x;
-      cY = center.y;
-    } else {
-      cX = centerX;
-      cY = centerY;
-    }
-
-    return RoundedPolygon.fromFeatures(tempFeatures, centerX: cX, centerY: cY);
+    return RoundedPolygon.fromFeatures(tempFeatures, center: center ?? calculateCenter(vertices));
   }
 
   /// Takes a list of [Feature] objects that define the polygon's shape and
@@ -280,52 +260,37 @@ class RoundedPolygon {
   /// start polygon, [Morph] will map it to another convex curve in the end
   /// polygon.
   ///
-  /// The [centerX] and [centerY] parameters are optional. If not supplied,
-  /// they will be estimated by calculating the average of all cubic anchor
-  /// points.
+  /// The [center] parameter is optional. If not supplied, it will be estimated
+  /// by calculating the average of all cubic anchor points.
   ///
   /// [features] are the [Feature]s that describe the characteristics of each
   /// outline segment of the polygon.
   ///
-  /// [centerX] is the X coordinate of the center of the polygon, around which
-  /// all vertices will be placed. If none provided, the center will be
-  /// averaged.
-  ///
-  /// [centerY] is the Y coordinate of the center of the polygon, around which
-  /// all vertices will be placed. If none provided, the center will be
-  /// averaged.
+  /// [center] is the center of the polygon, around which all vertices will be
+  /// placed. If null (the default value), the center will be averaged.
   ///
   /// Throws [ArgumentError] if [features] length is less than 2 or if they
   /// don't describe a closed shape.
-  factory RoundedPolygon.fromFeatures(
-    List<Feature> features, {
-    double centerX = double.nan,
-    double centerY = double.nan,
-  }) {
+  factory RoundedPolygon.fromFeatures(List<Feature> features, {Offset? center}) {
     if (features.length < 2) {
       throw ArgumentError('Polygons must have at least 2 features.');
     }
 
-    if (centerX.isNaN || centerY.isNaN) {
-      final vertices = <double>[];
-
-      for (final feature in features) {
-        for (final CubicBezier cubic in feature.cubics) {
-          vertices
-            ..add(cubic.anchor0X)
-            ..add(cubic.anchor0Y);
-        }
-      }
-
-      final Point center = calculateCenter(vertices);
-
-      final double cX = centerX.isNaN ? center.x : centerX;
-      final double cY = centerY.isNaN ? center.y : centerY;
-
-      return RoundedPolygon._(features, Point(cX, cY));
+    if (center != null) {
+      return RoundedPolygon._(features, center);
     }
 
-    return RoundedPolygon._(features, Point(centerX, centerY));
+    final vertices = <double>[];
+
+    for (final feature in features) {
+      for (final CubicBezier cubic in feature.cubics) {
+        vertices
+          ..add(cubic.anchor0X)
+          ..add(cubic.anchor0Y);
+      }
+    }
+
+    return RoundedPolygon._(features, calculateCenter(vertices));
   }
 
   /// Creates a circular shape, approximating the rounding of the shape around
@@ -337,18 +302,14 @@ class RoundedPolygon {
   ///
   /// [radius] is the optional radius for the circle, default value is 1.0.
   ///
-  /// [centerX] is the X coordinate of optional center for the circle, default
-  /// value is 0.
-  ///
-  /// [centerY] is the Y coordinate of optional center for the circle, default
-  /// value is 0.
+  /// [center] is the optional center for the circle, default value is
+  /// [Offset.zero].
   ///
   /// Throws [ArgumentError] when [numVertices] is less than 3.
   factory RoundedPolygon.circle({
     int numVertices = 8,
     double radius = 1,
-    double centerX = 0,
-    double centerY = 0,
+    Offset center = Offset.zero,
   }) {
     if (numVertices < 3) {
       throw ArgumentError('Circle must have at least three vertices.');
@@ -362,8 +323,7 @@ class RoundedPolygon {
     return RoundedPolygon.fromVerticesNum(
       numVertices,
       radius: polygonRadius,
-      centerX: centerX,
-      centerY: centerY,
+      center: center,
       rounding: CornerRounding(radius: radius),
     );
   }
@@ -394,31 +354,25 @@ class RoundedPolygon {
   /// use the [rounding] parameter for every vertex instead. The default value
   /// is null.
   ///
-  /// [centerX] is the X coordinate of the center of the rectangle, around which
-  /// all vertices will be placed equidistantly. The default center is at (0,0).
-  ///
-  /// [centerY] is the Y coordinate of the center of the rectangle, around
-  /// which all vertices will be placed equidistantly. The default center is
-  /// at (0,0).
+  /// [center] is the center of the rectangle, around which all vertices will
+  /// be placed equidistantly. The default center is at (0,0).
   factory RoundedPolygon.rectangle({
     double width = 2,
     double height = 2,
     CornerRounding rounding = CornerRounding.unrounded,
     List<CornerRounding>? perVertexRounding,
-    double centerX = 0,
-    double centerY = 0,
+    Offset center = Offset.zero,
   }) {
-    final double left = centerX - width / 2;
-    final double top = centerY - height / 2;
-    final double right = centerX + width / 2;
-    final double bottom = centerY + height / 2;
+    final double left = center.x - width / 2;
+    final double top = center.y - height / 2;
+    final double right = center.x + width / 2;
+    final double bottom = center.y + height / 2;
 
     return RoundedPolygon.fromVertices(
       [right, bottom, left, bottom, left, top, right, top],
       rounding: rounding,
       perVertexRounding: perVertexRounding,
-      centerX: centerX,
-      centerY: centerY,
+      center: center,
     );
   }
 
@@ -456,11 +410,8 @@ class RoundedPolygon {
   /// will use the [rounding] parameter for every vertex instead. The default
   /// value is null.
   ///
-  /// [centerX] is the X coordinate of the center of the polygon, around which
-  /// all vertices will be placed. The default center is at (0,0).
-  ///
-  /// [centerY] is the Y coordinate of the center of the polygon, around which
-  /// all vertices will be placed. The default center is at (0,0).
+  /// [center] is the center of the polygon, around which all vertices will be
+  /// placed. The default center is at (0,0).
   ///
   /// Throws [ArgumentError] if either [radius] or [innerRadius] are <= 0 or
   /// [innerRadius] > [radius].
@@ -471,8 +422,7 @@ class RoundedPolygon {
     CornerRounding rounding = CornerRounding.unrounded,
     CornerRounding? innerRounding,
     List<CornerRounding>? perVertexRounding,
-    double centerX = 0,
-    double centerY = 0,
+    Offset center = Offset.zero,
   }) {
     if (radius <= 0 || innerRadius <= 0) {
       throw ArgumentError('Star radii must both be greater than 0.');
@@ -494,11 +444,10 @@ class RoundedPolygon {
     // Star polygon is just a polygon with all vertices supplied (where we
     // generate those vertices to be on the inner/outer radii).
     return RoundedPolygon.fromVertices(
-      _starVerticesFromNumVerts(numVerticesPerRadius, radius, innerRadius, centerX, centerY),
+      _starVerticesFromNumVerts(numVerticesPerRadius, radius, innerRadius, center),
       rounding: rounding,
       perVertexRounding: pvRounding,
-      centerX: centerX,
-      centerY: centerY,
+      center: center,
     );
   }
 
@@ -514,19 +463,15 @@ class RoundedPolygon {
   /// endcaps. A value of 0 (no smoothing) indicates that the corner is rounded
   /// by only a circular arc.
   ///
-  /// [centerX] is the X coordinate of the center of the polygon, around which
-  /// all vertices will be placed. The default center is at (0,0).
-  ///
-  /// [centerY] is the Y coordinate of the center of the polygon, around which
-  /// all vertices will be placed. The default center is at (0,0).
+  /// [center] is the center of the polygon, around which all vertices will be
+  /// placed. The default center is at (0,0).
   ///
   /// Throws [ArgumentError] if either [width] or [height] are <= 0.
   factory RoundedPolygon.pill({
     double width = 2,
     double height = 1,
     double smoothing = 0,
-    double centerX = 0,
-    double centerY = 0,
+    Offset center = Offset.zero,
   }) {
     if (width <= 0 || height <= 0) {
       throw ArgumentError('Pill shapes must have positive width and height.');
@@ -537,18 +482,17 @@ class RoundedPolygon {
 
     return RoundedPolygon.fromVertices(
       [
-        wHalf + centerX,
-        hHalf + centerY,
-        -wHalf + centerX,
-        hHalf + centerY,
-        -wHalf + centerX,
-        -hHalf + centerY,
-        wHalf + centerX,
-        -hHalf + centerY,
+        wHalf + center.x,
+        hHalf + center.y,
+        -wHalf + center.x,
+        hHalf + center.y,
+        -wHalf + center.x,
+        -hHalf + center.y,
+        wHalf + center.x,
+        -hHalf + center.y,
       ],
       rounding: CornerRounding(radius: math.min(wHalf, hHalf), smoothing: smoothing),
-      centerX: centerX,
-      centerY: centerY,
+      center: center,
     );
   }
 
@@ -620,11 +564,8 @@ class RoundedPolygon {
   /// it might matter where that path outline begins and ends. The default
   /// value is 0.
   ///
-  /// [centerX] is the X coordinate of the center of the polygon, around which
-  /// all vertices will be placed. The default center is at (0,0).
-  ///
-  /// [centerY] is the Y coordinate of the center of the polygon, around which
-  /// all vertices will be placed. The default center is at (0,0).
+  /// [center] is the center of the polygon, around which all vertices will be
+  /// placed. The default center is at (0,0).
   ///
   /// Throws [ArgumentError] if either [width] or [height] are <= 0 or
   ///  if [innerRadiusRatio] is outside the range of (0, 1].
@@ -638,8 +579,7 @@ class RoundedPolygon {
     List<CornerRounding>? perVertexRounding,
     double vertexSpacing = 0.5,
     double startLocation = 0,
-    double centerX = 0,
-    double centerY = 0,
+    Offset center = Offset.zero,
   }) {
     if (width <= 0 || height <= 0) {
       throw ArgumentError('Pill shapes must have positive width and height.');
@@ -672,31 +612,24 @@ class RoundedPolygon {
         innerRadiusRatio,
         vertexSpacing,
         startLocation,
-        centerX,
-        centerY,
+        center,
       ),
       rounding: rounding,
       perVertexRounding: pvRounding,
-      centerX: centerX,
-      centerY: centerY,
+      center: center,
     );
   }
 
   /// The [Feature]s this polygon is composed of.
   final List<Feature> features;
 
-  /// The center of this polygon, around which all vertices are placed.
-  @internal
-  final Point center;
+  final Point _center;
 
   /// A flattened version of the [Feature]s, as a `List<CubicBezier>`.
   final List<CubicBezier> cubics;
 
-  /// The X coordinate of the center of this polygon.
-  double get centerX => center.x;
-
-  /// The Y coordinate of the center of this polygon.
-  double get centerY => center.y;
+  /// The center of this polygon, around which all vertices are placed.
+  Offset get center => _center;
 
   void _initCubics() {
     // The first/last mechanism here ensures that the final anchor point in the
@@ -773,9 +706,9 @@ class RoundedPolygon {
       );
     } else {
       // Empty / 0-sized polygon.
-      cubics.add(
-        CubicBezier(centerX, centerY, centerX, centerY, centerX, centerY, centerX, centerY),
-      );
+      final double cX = _center.x;
+      final double cY = _center.y;
+      cubics.add(CubicBezier(cX, cY, cX, cY, cX, cY, cX, cY));
     }
   }
 
@@ -786,10 +719,9 @@ class RoundedPolygon {
   ///
   /// [f] is the [PointTransformer] used to transform this [RoundedPolygon].
   RoundedPolygon transformed(PointTransformer f) {
-    final Point center = this.center.transformed(f);
     return RoundedPolygon._([
       for (var i = 0; i < features.length; i++) features[i].transformed(f),
-    ], center);
+    ], _center.transformed(f));
   }
 
   /// Creates a new RoundedPolygon, moving and resizing this one, so it's
@@ -818,13 +750,13 @@ class RoundedPolygon {
     for (var i = 0; i < cubics.length; i++) {
       final CubicBezier cubic = cubics[i];
       final double anchorDistance = distanceSquared(
-        cubic.anchor0X - centerX,
-        cubic.anchor0Y - centerY,
+        cubic.anchor0X - _center.x,
+        cubic.anchor0Y - _center.y,
       );
       final Point middlePoint = cubic.pointOnCurve(0.5);
       final double middleDistance = distanceSquared(
-        middlePoint.x - centerX,
-        middlePoint.y - centerY,
+        middlePoint.x - _center.x,
+        middlePoint.y - _center.y,
       );
       maxDistSquared = math.max(maxDistSquared, math.max(anchorDistance, middleDistance));
     }
@@ -832,10 +764,10 @@ class RoundedPolygon {
     final double distance = math.sqrt(maxDistSquared);
 
     return Rect.fromLTRB(
-      centerX - distance,
-      centerY - distance,
-      centerX + distance,
-      centerY + distance,
+      _center.x - distance,
+      _center.y - distance,
+      _center.x + distance,
+      _center.y + distance,
     );
   }
 
@@ -864,9 +796,9 @@ class RoundedPolygon {
   /// [path] is a [Path] to reset and set with the new path data.
   ///
   /// [startAngle] is an angle (in degrees) to rotate the [Path] to start
-  /// drawing from. The rotation pivot is set to be the polygon's centerX and
-  /// centerY coordinates. If [startAngle] is non zero, then caller has to use
-  /// the returned [Path], as path transformation creates a new path.
+  /// drawing from. The rotation pivot is set to be the polygon's [center].
+  /// If [startAngle] is non zero, then caller has to use the returned [Path],
+  /// as path transformation creates a new path.
   ///
   /// [repeatPath] is whether or not to repeat the [Path] twice before closing
   /// it. This flag is useful when the caller would like to draw parts of the
@@ -882,8 +814,8 @@ class RoundedPolygon {
       startAngle: startAngle,
       repeatPath: repeatPath,
       closePath: closePath,
-      rotationPivotX: centerX,
-      rotationPivotY: centerY,
+      rotationPivotX: _center.x,
+      rotationPivotY: _center.y,
     );
   }
 
@@ -892,7 +824,7 @@ class RoundedPolygon {
     return '[RoundedPolygon. '
         'Cubics = ${cubics.join(", ")}'
         ' || Features = ${features.join(", ")}'
-        ' || Center = ($centerX, $centerY)]';
+        ' || Center = (${_center.x}, ${_center.y})]';
   }
 
   @override
@@ -1212,13 +1144,12 @@ class _RoundedCorner {
   }
 }
 
-List<double> _verticesFromNumVerts(int numVertices, double radius, double centerX, double centerY) {
+List<double> _verticesFromNumVerts(int numVertices, double radius, Point center) {
   final result = List<double>.filled(numVertices * 2, 0);
 
   var arrayIndex = 0;
   for (var i = 0; i < numVertices; i++) {
-    final Point vertex =
-        radialToCartesian(radius, math.pi / numVertices * 2 * i) + Point(centerX, centerY);
+    final Point vertex = radialToCartesian(radius, math.pi / numVertices * 2 * i) + center;
 
     result[arrayIndex++] = vertex.x;
     result[arrayIndex++] = vertex.y;
@@ -1234,8 +1165,7 @@ List<double> _pillStarVerticesFromNumVerts(
   double innerRadius,
   double vertexSpacing,
   double startLocation,
-  double centerX,
-  double centerY,
+  Point center,
 ) {
   // The general approach here is to get the perimeter of the underlying pill
   // outline, then the t value for each vertex as we walk that perimeter. This
@@ -1343,8 +1273,8 @@ List<double> _pillStarVerticesFromNumVerts(
       // 8
       _ => Point(currRadius, -vSegHalf + tProportion * vSegHalf),
     };
-    result[arrayIndex++] = vertex.x + centerX;
-    result[arrayIndex++] = vertex.y + centerY;
+    result[arrayIndex++] = vertex.x + center.x;
+    result[arrayIndex++] = vertex.y + center.y;
     t += tPerVertex;
     inner = !inner;
   }
@@ -1356,19 +1286,18 @@ List<double> _starVerticesFromNumVerts(
   int numVerticesPerRadius,
   double radius,
   double innerRadius,
-  double centerX,
-  double centerY,
+  Point center,
 ) {
   final result = List<double>.filled(numVerticesPerRadius * 4, 0);
   var arrayIndex = 0;
 
   for (var i = 0; i < numVerticesPerRadius; i++) {
     Point vertex = radialToCartesian(radius, math.pi / numVerticesPerRadius * 2 * i);
-    result[arrayIndex++] = vertex.x + centerX;
-    result[arrayIndex++] = vertex.y + centerY;
+    result[arrayIndex++] = vertex.x + center.x;
+    result[arrayIndex++] = vertex.y + center.y;
     vertex = radialToCartesian(innerRadius, math.pi / numVerticesPerRadius * (2 * i + 1));
-    result[arrayIndex++] = vertex.x + centerX;
-    result[arrayIndex++] = vertex.y + centerY;
+    result[arrayIndex++] = vertex.x + center.x;
+    result[arrayIndex++] = vertex.y + center.y;
   }
 
   return result;

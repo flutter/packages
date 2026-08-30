@@ -67,11 +67,7 @@ void main() {
         p3.x + offset.x,
         p3.y + offset.y,
       ];
-      final manualSquareOffset = RoundedPolygon.fromVertices(
-        offsetVerts,
-        centerX: offset.x,
-        centerY: offset.y,
-      );
+      final manualSquareOffset = RoundedPolygon.fromVertices(offsetVerts, center: offset);
       min = const Point(0, 1);
       max = const Point(2, 3);
       expectInBounds(manualSquareOffset.cubics, min, max);
@@ -168,8 +164,7 @@ void main() {
 
     test('computes center', () {
       final polygon = RoundedPolygon.fromVertices(const [0, 0, 1, 0, 0, 1, 1, 1]);
-      expect(0.5, polygon.centerX);
-      expect(0.5, polygon.centerY);
+      expect(const Point(0.5, 0.5), polygon.center);
     });
 
     List<double> pointsToFloats(List<Point> points) {
@@ -326,8 +321,7 @@ void main() {
         innerRadius: innerRadius,
         rounding: const CornerRounding(radius: radius * roundingFactor),
         innerRounding: const CornerRounding(radius: radius * roundingFactor),
-        centerX: radius,
-        centerY: radius,
+        center: const Point(radius, radius),
       ).transformed((x, y) => ((x - radius) / radius, (y - radius) / radius));
 
       final canonicalShape = RoundedPolygon.star(

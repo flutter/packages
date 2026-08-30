@@ -237,17 +237,17 @@ class Morph {
   ///
   /// [rotationPivotX] is the rotation pivot on the X axis. By default it's set
   /// to 0, and that should align with Morph instances that were created for
-  /// [RoundedPolygon] with zero centerX. In case the [RoundedPolygon] were
-  /// normalized (i. e. moved to (0.5, 0.5)), or where created with a different
-  /// centerX coordinated, this pivot point may need to be aligned to support a
-  /// proper rotation.
+  /// [RoundedPolygon] with a zero [RoundedPolygon.center]. In case the
+  /// [RoundedPolygon] was normalized (i.e. moved to (0.5, 0.5)), or was
+  /// created with a different center, this pivot point may need to be aligned
+  /// to support a proper rotation.
   ///
   /// [rotationPivotY] is the rotation pivot on the Y axis. By default it's set
   /// to 0, and that should align with Morph instances that were created for
-  /// [RoundedPolygon] with zero centerY. In case the RoundedPolygon were
-  /// normalized (i. e. moves to (0.5, 0.5)), or where created with a different
-  /// centerY coordinated, this pivot point may need to be aligned to support a
-  /// proper rotation.
+  /// [RoundedPolygon] with a zero [RoundedPolygon.center]. In case the
+  /// [RoundedPolygon] was normalized (i.e. moved to (0.5, 0.5)), or was
+  /// created with a different center, this pivot point may need to be aligned
+  /// to support a proper rotation.
   Path toPath({
     required double progress,
     int startAngle = 0,

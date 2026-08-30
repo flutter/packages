@@ -34,7 +34,7 @@ void main() {
       max = max * 2;
       expectInBounds(doubleSquare.cubics, min, max);
 
-      final offsetSquare = RoundedPolygon.fromVerticesNum(4, centerX: 1, centerY: 2);
+      final offsetSquare = RoundedPolygon.fromVerticesNum(4, center: const Point(1, 2));
       min = const Point(0, 1);
       max = const Point(2, 3);
       expectInBounds(offsetSquare.cubics, min, max);
@@ -67,20 +67,16 @@ void main() {
       final Point p1Offset = p1 + offset;
       final Point p2Offset = p2 + offset;
       final Point p3Offset = p3 + offset;
-      final manualSquareOffset = RoundedPolygon.fromVertices(
-        [
-          p0Offset.x,
-          p0Offset.y,
-          p1Offset.x,
-          p1Offset.y,
-          p2Offset.x,
-          p2Offset.y,
-          p3Offset.x,
-          p3Offset.y,
-        ],
-        centerX: offset.x,
-        centerY: offset.y,
-      );
+      final manualSquareOffset = RoundedPolygon.fromVertices([
+        p0Offset.x,
+        p0Offset.y,
+        p1Offset.x,
+        p1Offset.y,
+        p2Offset.x,
+        p2Offset.y,
+        p3Offset.x,
+        p3Offset.y,
+      ], center: offset);
       min = const Point(0, 1);
       max = const Point(2, 3);
       expectInBounds(manualSquareOffset.cubics, min, max);
@@ -115,7 +111,7 @@ void main() {
     });
 
     test('center', () {
-      expectPointsEqualish(Point.zero, Point(square.centerX, square.centerY));
+      expectPointsEqualish(Point.zero, square.center);
     });
 
     test('transform', () {
