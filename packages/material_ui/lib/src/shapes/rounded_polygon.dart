@@ -111,10 +111,9 @@ class RoundedPolygon {
   /// vertices (or not) as specified. The result is a list of [CubicBezier] curves
   /// which represent the geometry of the final shape.
   ///
-  /// [vertices] is the list of vertices in this polygon specified as pairs of
-  /// x/y coordinates in this `List<double>`. This should be an ordered list
-  /// (with the outline of the shape going from each vertex to the next in
-  /// order of this list), otherwise the results will be undefined.
+  /// [vertices] is the list of vertices in this polygon. This should be an
+  /// ordered list (with the outline of the shape going from each vertex to the
+  /// next in order of this list), otherwise the results will be undefined.
   ///
   /// [rounding] is the [CornerRounding] properties of all vertices. If some
   /// vertices should have different rounding properties, then use
@@ -132,45 +131,36 @@ class RoundedPolygon {
   /// placed. If `null` (the default value), the center is estimated by
   /// averaging the [vertices].
   ///
-  /// Throws [ArgumentError] if the number of vertices is less than 3 (the
-  /// [vertices] parameter has less than 6 Floats). Or if the
-  /// [perVertexRounding] parameter is not null and the size doesn't match the
-  /// number vertices.
+  /// Throws [ArgumentError] if the number of vertices is less than 3, or if
+  /// the [perVertexRounding] parameter is not null and its size doesn't match
+  /// the number of vertices.
   ///
   // TODO(performance): Update the map calls to more efficient code that
   // doesn't allocate Iterators unnecessarily.
   factory RoundedPolygon.fromVertices(
-    List<double> vertices, {
+    List<Offset> vertices, {
     CornerRounding rounding = CornerRounding.unrounded,
     List<CornerRounding>? perVertexRounding,
     Offset? center,
   }) {
-    if (vertices.length < 6) {
+    if (vertices.length < 3) {
       throw ArgumentError('Polygons must have at least 3 vertices.');
     }
-    if (vertices.length.isOdd) {
-      throw ArgumentError('The vertices array should have even size.');
-    }
-    if (perVertexRounding != null && perVertexRounding.length * 2 != vertices.length) {
+    if (perVertexRounding != null && perVertexRounding.length != vertices.length) {
       throw ArgumentError(
         'perVertexRounding list should be either null or '
-        'the same size as the number of vertices (vertices.size / 2).',
+        'the same size as the number of vertices.',
       );
     }
     final corners = <List<CubicBezier>>[];
-    final int n = vertices.length ~/ 2;
+    final int n = vertices.length;
     final roundedCorners = <_RoundedCorner>[];
     for (var i = 0; i < n; i++) {
       final CornerRounding vtxRounding = perVertexRounding?[i] ?? rounding;
-      final int prevIndex = ((i + n - 1) % n) * 2;
-      final int nextIndex = ((i + 1) % n) * 2;
+      final int prevIndex = (i + n - 1) % n;
+      final int nextIndex = (i + 1) % n;
       roundedCorners.add(
-        _RoundedCorner(
-          Point(vertices[prevIndex], vertices[prevIndex + 1]),
-          Point(vertices[i * 2], vertices[i * 2 + 1]),
-          Point(vertices[nextIndex], vertices[nextIndex + 1]),
-          vtxRounding,
-        ),
+        _RoundedCorner(vertices[prevIndex], vertices[i], vertices[nextIndex], vtxRounding),
       );
     }
 
@@ -186,11 +176,9 @@ class RoundedPolygon {
           roundedCorners[ix].expectedRoundCut + roundedCorners[(ix + 1) % n].expectedRoundCut;
       final double expectedCut =
           roundedCorners[ix].expectedCut + roundedCorners[(ix + 1) % n].expectedCut;
-      final double vtxX = vertices[ix * 2];
-      final double vtxY = vertices[ix * 2 + 1];
-      final double nextVtxX = vertices[((ix + 1) % n) * 2];
-      final double nextVtxY = vertices[((ix + 1) % n) * 2 + 1];
-      final double sideSize = distance(vtxX - nextVtxX, vtxY - nextVtxY);
+      final Point vtx = vertices[ix];
+      final Point nextVtx = vertices[(ix + 1) % n];
+      final double sideSize = distance(vtx.x - nextVtx.x, vtx.y - nextVtx.y);
 
       // Check expectedRoundCut first, and ensure we fulfill rounding needs
       // first for both corners before using space for smoothing.
@@ -227,13 +215,9 @@ class RoundedPolygon {
     // those corners.
     final tempFeatures = <Feature>[];
     for (var i = 0; i < n; i++) {
-      // Note that these indices are for pairs of values (points), they need to
-      // be doubled to access the xy values in the vertices float array.
-      final int prevVtxIndex = (i + n - 1) % n;
-      final int nextVtxIndex = (i + 1) % n;
-      final currVertex = Point(vertices[i * 2], vertices[i * 2 + 1]);
-      final prevVertex = Point(vertices[prevVtxIndex * 2], vertices[prevVtxIndex * 2 + 1]);
-      final nextVertex = Point(vertices[nextVtxIndex * 2], vertices[nextVtxIndex * 2 + 1]);
+      final Point currVertex = vertices[i];
+      final Point prevVertex = vertices[(i + n - 1) % n];
+      final Point nextVertex = vertices[(i + 1) % n];
       final bool cvx = convex(prevVertex, currVertex, nextVertex);
       tempFeatures
         ..add(CornerFeature(corners[i], convex: cvx))
@@ -280,13 +264,11 @@ class RoundedPolygon {
       return RoundedPolygon._(features, center);
     }
 
-    final vertices = <double>[];
+    final vertices = <Point>[];
 
     for (final feature in features) {
       for (final CubicBezier cubic in feature.cubics) {
-        vertices
-          ..add(cubic.anchor0X)
-          ..add(cubic.anchor0Y);
+        vertices.add(Point(cubic.anchor0X, cubic.anchor0Y));
       }
     }
 
@@ -369,7 +351,7 @@ class RoundedPolygon {
     final double bottom = center.y + height / 2;
 
     return RoundedPolygon.fromVertices(
-      [right, bottom, left, bottom, left, top, right, top],
+      [Point(right, bottom), Point(left, bottom), Point(left, top), Point(right, top)],
       rounding: rounding,
       perVertexRounding: perVertexRounding,
       center: center,
@@ -482,14 +464,10 @@ class RoundedPolygon {
 
     return RoundedPolygon.fromVertices(
       [
-        wHalf + center.x,
-        hHalf + center.y,
-        -wHalf + center.x,
-        hHalf + center.y,
-        -wHalf + center.x,
-        -hHalf + center.y,
-        wHalf + center.x,
-        -hHalf + center.y,
+        Point(wHalf + center.x, hHalf + center.y),
+        Point(-wHalf + center.x, hHalf + center.y),
+        Point(-wHalf + center.x, -hHalf + center.y),
+        Point(wHalf + center.x, -hHalf + center.y),
       ],
       rounding: CornerRounding(radius: math.min(wHalf, hHalf), smoothing: smoothing),
       center: center,
@@ -864,15 +842,14 @@ class RoundedPolygon {
 /// be taken into account automatically since the center calculation is an
 /// average of the current location of all cubic anchor points.
 @internal
-Point calculateCenter(List<double> vertices) {
+Point calculateCenter(List<Point> vertices) {
   var cumulativeX = 0.0;
   var cumulativeY = 0.0;
-  var index = 0;
-  while (index < vertices.length) {
-    cumulativeX += vertices[index++];
-    cumulativeY += vertices[index++];
+  for (final vertex in vertices) {
+    cumulativeX += vertex.x;
+    cumulativeY += vertex.y;
   }
-  return Point(cumulativeX / (vertices.length / 2), cumulativeY / (vertices.length / 2));
+  return Point(cumulativeX / vertices.length, cumulativeY / vertices.length);
 }
 
 /// Private utility class that holds the information about each corner in a
@@ -1144,21 +1121,14 @@ class _RoundedCorner {
   }
 }
 
-List<double> _verticesFromNumVerts(int numVertices, double radius, Point center) {
-  final result = List<double>.filled(numVertices * 2, 0);
-
-  var arrayIndex = 0;
-  for (var i = 0; i < numVertices; i++) {
-    final Point vertex = radialToCartesian(radius, math.pi / numVertices * 2 * i) + center;
-
-    result[arrayIndex++] = vertex.x;
-    result[arrayIndex++] = vertex.y;
-  }
-
-  return result;
+List<Point> _verticesFromNumVerts(int numVertices, double radius, Point center) {
+  return List<Point>.generate(
+    numVertices,
+    (i) => radialToCartesian(radius, math.pi / numVertices * 2 * i) + center,
+  );
 }
 
-List<double> _pillStarVerticesFromNumVerts(
+List<Point> _pillStarVerticesFromNumVerts(
   int numVerticesPerRadius,
   double width,
   double height,
@@ -1228,8 +1198,7 @@ List<double> _pillStarVerticesFromNumVerts(
   // varies the location anywhere on the perimeter of the shape.
   double t = startLocation * perimeter;
   // The list of vertices to be returned.
-  final result = List<double>.filled(numVerticesPerRadius * 4, 0);
-  var arrayIndex = 0;
+  final result = List<Point>.filled(numVerticesPerRadius * 2, Point.zero);
   final rectBR = Point(hSegHalf, vSegHalf);
   final rectBL = Point(-hSegHalf, vSegHalf);
   final rectTL = Point(-hSegHalf, -vSegHalf);
@@ -1273,8 +1242,7 @@ List<double> _pillStarVerticesFromNumVerts(
       // 8
       _ => Point(currRadius, -vSegHalf + tProportion * vSegHalf),
     };
-    result[arrayIndex++] = vertex.x + center.x;
-    result[arrayIndex++] = vertex.y + center.y;
+    result[i] = vertex + center;
     t += tPerVertex;
     inner = !inner;
   }
@@ -1282,22 +1250,20 @@ List<double> _pillStarVerticesFromNumVerts(
   return result;
 }
 
-List<double> _starVerticesFromNumVerts(
+List<Point> _starVerticesFromNumVerts(
   int numVerticesPerRadius,
   double radius,
   double innerRadius,
   Point center,
 ) {
-  final result = List<double>.filled(numVerticesPerRadius * 4, 0);
+  final result = List<Point>.filled(numVerticesPerRadius * 2, Point.zero);
   var arrayIndex = 0;
 
   for (var i = 0; i < numVerticesPerRadius; i++) {
-    Point vertex = radialToCartesian(radius, math.pi / numVerticesPerRadius * 2 * i);
-    result[arrayIndex++] = vertex.x + center.x;
-    result[arrayIndex++] = vertex.y + center.y;
-    vertex = radialToCartesian(innerRadius, math.pi / numVerticesPerRadius * (2 * i + 1));
-    result[arrayIndex++] = vertex.x + center.x;
-    result[arrayIndex++] = vertex.y + center.y;
+    result[arrayIndex++] =
+        radialToCartesian(radius, math.pi / numVerticesPerRadius * 2 * i) + center;
+    result[arrayIndex++] =
+        radialToCartesian(innerRadius, math.pi / numVerticesPerRadius * (2 * i + 1)) + center;
   }
 
   return result;

@@ -48,16 +48,7 @@ void main() {
       const p1 = Point(0, 1);
       const p2 = Point(-1, 0);
       const p3 = Point(0, -1);
-      final manualSquare = RoundedPolygon.fromVertices([
-        p0.x,
-        p0.y,
-        p1.x,
-        p1.y,
-        p2.x,
-        p2.y,
-        p3.x,
-        p3.y,
-      ]);
+      final manualSquare = RoundedPolygon.fromVertices(const [p0, p1, p2, p3]);
       min = const Point(-1, -1);
       max = const Point(1, 1);
       expectInBounds(manualSquare.cubics, min, max);
@@ -68,14 +59,10 @@ void main() {
       final Point p2Offset = p2 + offset;
       final Point p3Offset = p3 + offset;
       final manualSquareOffset = RoundedPolygon.fromVertices([
-        p0Offset.x,
-        p0Offset.y,
-        p1Offset.x,
-        p1Offset.y,
-        p2Offset.x,
-        p2Offset.y,
-        p3Offset.x,
-        p3Offset.y,
+        p0Offset,
+        p1Offset,
+        p2Offset,
+        p3Offset,
       ], center: offset);
       min = const Point(0, 1);
       max = const Point(2, 3);
@@ -215,9 +202,14 @@ void main() {
 
     test('empty side', () {
       // Triangle with one point repeated.
-      final poly1 = RoundedPolygon.fromVertices(const [0, 0, 1, 0, 1, 0, 0, 1]);
+      final poly1 = RoundedPolygon.fromVertices(const [
+        Point.zero,
+        Point(1, 0),
+        Point(1, 0),
+        Point(0, 1),
+      ]);
       // Triangle.
-      final poly2 = RoundedPolygon.fromVertices(const [0, 0, 1, 0, 0, 1]);
+      final poly2 = RoundedPolygon.fromVertices(const [Point.zero, Point(1, 0), Point(0, 1)]);
       expectCubicListsEqualish(poly1.cubics, poly2.cubics);
     });
   });

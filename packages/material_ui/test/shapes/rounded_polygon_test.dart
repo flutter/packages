@@ -47,9 +47,9 @@ void main() {
       const p1 = Point(0, 1);
       const p2 = Point(-1, 0);
       const p3 = Point(0, -1);
-      final List<double> verts = [p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y];
+      const verts = [p0, p1, p2, p3];
 
-      expect(() => RoundedPolygon.fromVertices([p0.x, p0.y, p1.x, p1.y]), throwsArgumentError);
+      expect(() => RoundedPolygon.fromVertices(const [p0, p1]), throwsArgumentError);
 
       final manualSquare = RoundedPolygon.fromVertices(verts);
       var min = const Point(-1, -1);
@@ -57,16 +57,7 @@ void main() {
       expectInBounds(manualSquare.cubics, min, max);
 
       const offset = Point(1, 2);
-      final List<double> offsetVerts = [
-        p0.x + offset.x,
-        p0.y + offset.y,
-        p1.x + offset.x,
-        p1.y + offset.y,
-        p2.x + offset.x,
-        p2.y + offset.y,
-        p3.x + offset.x,
-        p3.y + offset.y,
-      ];
+      final List<Point> offsetVerts = [p0 + offset, p1 + offset, p2 + offset, p3 + offset];
       final manualSquareOffset = RoundedPolygon.fromVertices(offsetVerts, center: offset);
       min = const Point(0, 1);
       max = const Point(2, 3);
@@ -163,19 +154,14 @@ void main() {
     });
 
     test('computes center', () {
-      final polygon = RoundedPolygon.fromVertices(const [0, 0, 1, 0, 0, 1, 1, 1]);
+      final polygon = RoundedPolygon.fromVertices(const [
+        Point.zero,
+        Point(1, 0),
+        Point(0, 1),
+        Point(1, 1),
+      ]);
       expect(const Point(0.5, 0.5), polygon.center);
     });
-
-    List<double> pointsToFloats(List<Point> points) {
-      final result = List<double>.filled(points.length * 2, 0);
-      var index = 0;
-      for (final point in points) {
-        result[index++] = point.x;
-        result[index++] = point.y;
-      }
-      return result;
-    }
 
     test('rounding space usage', () {
       const Point p0 = Point.zero;
@@ -187,7 +173,7 @@ void main() {
         CornerRounding.unrounded,
       ];
       final polygon = RoundedPolygon.fromVertices(
-        pointsToFloats([p0, p1, p2]),
+        const [p0, p1, p2],
         perVertexRounding: pvRounding,
       );
 
@@ -242,7 +228,7 @@ void main() {
         rounding3,
       ];
       final polygon = RoundedPolygon.fromVertices(
-        pointsToFloats([p0, p1, p2, p3]),
+        const [p0, p1, p2, p3],
         perVertexRounding: pvRounding,
       );
 

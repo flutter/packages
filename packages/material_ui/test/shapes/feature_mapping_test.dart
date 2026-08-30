@@ -5,6 +5,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/src/shapes/corner_rounding.dart';
 import 'package:material_ui/src/shapes/feature_mapping.dart';
+import 'package:material_ui/src/shapes/point.dart';
 import 'package:material_ui/src/shapes/polygon_measure.dart';
 import 'package:material_ui/src/shapes/rounded_polygon.dart';
 
@@ -98,20 +99,13 @@ void main() {
       // Verify that complicated shapes can me matched (this used to crash
       // before).
       final RoundedPolygon checkmark = RoundedPolygon.fromVertices(const [
-        400,
-        -304,
-        240,
-        -464,
-        296,
-        -520,
-        400,
-        -416,
-        664,
-        -680,
-        720,
-        -624,
-        400,
-        -304,
+        Point(400, -304),
+        Point(240, -464),
+        Point(296, -520),
+        Point(400, -416),
+        Point(664, -680),
+        Point(720, -624),
+        Point(400, -304),
       ]).normalized();
 
       final RoundedPolygon verySunny = RoundedPolygon.star(

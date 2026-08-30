@@ -9,6 +9,7 @@ import 'package:material_ui/src/shapes/corner_rounding.dart';
 import 'package:material_ui/src/shapes/cubic.dart';
 import 'package:material_ui/src/shapes/feature_mapping.dart';
 import 'package:material_ui/src/shapes/features.dart';
+import 'package:material_ui/src/shapes/point.dart';
 import 'package:material_ui/src/shapes/polygon_measure.dart';
 import 'package:material_ui/src/shapes/rounded_polygon.dart';
 
@@ -135,7 +136,7 @@ void main() {
     test('measure irregular triangle angle', () {
       irregularPolygonMeasure(
         RoundedPolygon.fromVertices(
-          const [0, -1, 1, 1, 0, 0.5, -1, 1],
+          const [Point(0, -1), Point(1, 1), Point(0, 0.5), Point(-1, 1)],
           perVertexRounding: const [
             CornerRounding(radius: 0.2, smoothing: 0.5),
             CornerRounding(radius: 0.2, smoothing: 0.5),
@@ -149,7 +150,7 @@ void main() {
     test('measure quarter angle', () {
       irregularPolygonMeasure(
         RoundedPolygon.fromVertices(
-          const [-1, -1, 1, -1, 1, 1, -1, 1],
+          const [Point(-1, -1), Point(1, -1), Point(1, 1), Point(-1, 1)],
           perVertexRounding: const [
             CornerRounding.unrounded,
             CornerRounding.unrounded,
@@ -164,21 +165,15 @@ void main() {
       // Regression test: Legacy measurer (AngleMeasurer) would skip the
       // diagonal sides as they are 0 degrees from the center.
       const unit = 1.0;
-      final coordinates = <double>[
+      const coordinates = <Point>[
         // lower glass
-        0,
-        0,
-        unit,
-        unit,
-        -unit,
-        unit,
+        Point.zero,
+        Point(unit, unit),
+        Point(-unit, unit),
         // upper glass
-        0,
-        0,
-        -unit,
-        -unit,
-        unit,
-        -unit,
+        Point.zero,
+        Point(-unit, -unit),
+        Point(unit, -unit),
       ];
 
       final double diagonal = math.sqrt(unit * unit + unit * unit);

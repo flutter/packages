@@ -412,24 +412,9 @@ abstract final class MaterialShapes {
   }) {
     final List<_PointNRound> actualPoints = _doRepeat(pnr, reps, center, mirroring);
 
-    final vertices = List<double>.filled(actualPoints.length * 2, 0);
-    final perVertexRounding = List<CornerRounding>.filled(
-      actualPoints.length,
-      CornerRounding.unrounded,
-    );
-
-    for (var i = 0; i < actualPoints.length; i++) {
-      final _PointNRound ap = actualPoints[i];
-      perVertexRounding[i] = ap.r;
-
-      final int j = i * 2;
-      vertices[j] = ap.p.x;
-      vertices[j + 1] = ap.p.y;
-    }
-
     return RoundedPolygon.fromVertices(
-      vertices,
-      perVertexRounding: perVertexRounding,
+      actualPoints.map((_PointNRound ap) => ap.p).toList(),
+      perVertexRounding: actualPoints.map((_PointNRound ap) => ap.r).toList(),
       center: center,
     );
   }
