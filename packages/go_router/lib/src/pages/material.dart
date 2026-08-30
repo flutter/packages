@@ -4,13 +4,22 @@
 
 // ignore_for_file: diagnostic_describe_all_properties
 
+// Unprefixed [MaterialApp] is material_ui's; the framework's is aliased.
+import 'package:flutter/material.dart' as flutter_material;
 import 'package:material_ui/material_ui.dart';
 
 import '../misc/extensions.dart';
 
 /// Checks for MaterialApp in the widget tree.
+///
+/// During the Material/Cupertino decoupling (flutter/flutter#184093) an app may
+/// use the framework's or material_ui's [MaterialApp] — distinct types, and
+/// [findAncestorWidgetOfExactType] matches only one — so both are checked to
+/// install the right HeroController for shell-route Hero flights
+/// (flutter/flutter#192043). Drop the framework check once it is sunset.
 bool isMaterialApp(BuildContext context) =>
-    context.findAncestorWidgetOfExactType<MaterialApp>() != null;
+    context.findAncestorWidgetOfExactType<MaterialApp>() != null ||
+    context.findAncestorWidgetOfExactType<flutter_material.MaterialApp>() != null;
 
 /// Creates a Material HeroController.
 HeroController createMaterialHeroController() => MaterialApp.createMaterialHeroController();

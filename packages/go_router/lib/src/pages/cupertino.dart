@@ -4,12 +4,22 @@
 
 // ignore_for_file: diagnostic_describe_all_properties
 
+// Unprefixed [CupertinoApp] is cupertino_ui's; the framework's is aliased.
 import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:flutter/cupertino.dart' as flutter_cupertino;
+
 import '../misc/extensions.dart';
 
 /// Checks for CupertinoApp in the widget tree.
+///
+/// During the Material/Cupertino decoupling (flutter/flutter#184093) an app may
+/// use the framework's or cupertino_ui's [CupertinoApp] — distinct types, and
+/// [findAncestorWidgetOfExactType] matches only one — so both are checked to
+/// install the right HeroController for shell-route Hero flights
+/// (flutter/flutter#192043). Drop the framework check once it is sunset.
 bool isCupertinoApp(BuildContext context) =>
-    context.findAncestorWidgetOfExactType<CupertinoApp>() != null;
+    context.findAncestorWidgetOfExactType<CupertinoApp>() != null ||
+    context.findAncestorWidgetOfExactType<flutter_cupertino.CupertinoApp>() != null;
 
 /// Creates a Cupertino HeroController.
 HeroController createCupertinoHeroController() => CupertinoApp.createCupertinoHeroController();
