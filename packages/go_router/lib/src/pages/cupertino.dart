@@ -18,8 +18,8 @@ import '../misc/extensions.dart';
 /// install the right HeroController for shell-route Hero flights
 /// (flutter/flutter#192043). Drop the framework check once it is sunset.
 bool isCupertinoApp(BuildContext context) =>
-    context.findAncestorWidgetOfExactType<CupertinoApp>() != null ||
-    context.findAncestorWidgetOfExactType<flutter_cupertino.CupertinoApp>() != null;
+    context.findAncestorWidgetOfExactType<flutter_cupertino.CupertinoApp>() != null ||
+    context.findAncestorWidgetOfExactType<CupertinoApp>() != null;
 
 /// Creates a Cupertino HeroController.
 HeroController createCupertinoHeroController() => CupertinoApp.createCupertinoHeroController();

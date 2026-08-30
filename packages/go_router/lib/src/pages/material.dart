@@ -18,8 +18,8 @@ import '../misc/extensions.dart';
 /// install the right HeroController for shell-route Hero flights
 /// (flutter/flutter#192043). Drop the framework check once it is sunset.
 bool isMaterialApp(BuildContext context) =>
-    context.findAncestorWidgetOfExactType<MaterialApp>() != null ||
-    context.findAncestorWidgetOfExactType<flutter_material.MaterialApp>() != null;
+    context.findAncestorWidgetOfExactType<flutter_material.MaterialApp>() != null ||
+    context.findAncestorWidgetOfExactType<MaterialApp>() != null;
 
 /// Creates a Material HeroController.
 HeroController createMaterialHeroController() => MaterialApp.createMaterialHeroController();
