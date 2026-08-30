@@ -1,3 +1,11 @@
+## 18.0.1
+
+- Fixes Hero flight animations not playing for routes nested inside a
+  `ShellRoute` or `StatefulShellRoute` when the app uses Flutter's `MaterialApp`
+  or `CupertinoApp`. App-type detection is now package-agnostic, matching both
+  Flutter's `MaterialApp`/`CupertinoApp` and the `material_ui`/`cupertino_ui`
+  variants.
+
 ## 18.0.0
 
 - Migrates to material_ui and cupertino_ui.
