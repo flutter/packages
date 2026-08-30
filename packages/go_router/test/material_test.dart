@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:flutter/material.dart' as flutter_material;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/src/pages/material.dart';
 import 'package:material_ui/material_ui.dart';
@@ -11,9 +12,26 @@ import 'helpers/error_screen_helpers.dart';
 
 void main() {
   group('isMaterialApp', () {
-    testWidgets('returns [true] when MaterialApp is present', (WidgetTester tester) async {
+    testWidgets('returns [true] when the material_ui MaterialApp is present', (
+      WidgetTester tester,
+    ) async {
       final key = GlobalKey<_DummyStatefulWidgetState>();
       await tester.pumpWidget(MaterialApp(home: DummyStatefulWidget(key: key)));
+      final bool isMaterial = isMaterialApp(key.currentContext! as Element);
+      expect(isMaterial, true);
+    });
+
+    testWidgets('returns [true] when the framework MaterialApp is present', (
+      WidgetTester tester,
+    ) async {
+      // Regression test for the Material/Cupertino decoupling
+      // (https://github.com/flutter/flutter/issues/184093): a standard Flutter
+      // app uses package:flutter/material.dart's MaterialApp, which is a
+      // distinct type from material_ui's MaterialApp. Detection must recognize
+      // both so shell-route Hero flights keep working
+      // (https://github.com/flutter/flutter/issues/192043).
+      final key = GlobalKey<_DummyStatefulWidgetState>();
+      await tester.pumpWidget(flutter_material.MaterialApp(home: DummyStatefulWidget(key: key)));
       final bool isMaterial = isMaterialApp(key.currentContext! as Element);
       expect(isMaterial, true);
     });

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:flutter/cupertino.dart' as flutter_cupertino;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/src/pages/cupertino.dart';
 import 'package:material_ui/material_ui.dart';
@@ -14,6 +15,18 @@ void main() {
     testWidgets('returns [true] when CupertinoApp is present', (WidgetTester tester) async {
       final key = GlobalKey<_DummyStatefulWidgetState>();
       await tester.pumpWidget(CupertinoApp(home: DummyStatefulWidget(key: key)));
+      final bool isCupertino = isCupertinoApp(key.currentContext! as Element);
+      expect(isCupertino, true);
+    });
+
+    testWidgets("returns [true] when Flutter's CupertinoApp is present", (
+      WidgetTester tester,
+    ) async {
+      // Regression test for https://github.com/flutter/flutter/issues/192043.
+      // A standard Flutter app uses package:flutter/cupertino.dart's
+      // CupertinoApp, which is a distinct type from cupertino_ui's CupertinoApp.
+      final key = GlobalKey<_DummyStatefulWidgetState>();
+      await tester.pumpWidget(flutter_cupertino.CupertinoApp(home: DummyStatefulWidget(key: key)));
       final bool isCupertino = isCupertinoApp(key.currentContext! as Element);
       expect(isCupertino, true);
     });
