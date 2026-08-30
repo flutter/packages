@@ -796,14 +796,12 @@ class RoundedPolygon {
   /// completely inside the (0, 0) -> (1, 1) square, centered if there extra
   /// space in one direction.
   RoundedPolygon normalized() {
-    final List<double> bounds = calculateBounds();
-    final double width = bounds[2] - bounds[0];
-    final double height = bounds[3] - bounds[1];
-    final double side = math.max(width, height);
+    final Rect bounds = calculateBounds();
+    final double side = math.max(bounds.width, bounds.height);
 
     // Center the shape if bounds are not a square.
-    final double offsetX = (side - width) / 2 - bounds[0]; /* left */
-    final double offsetY = (side - height) / 2 - bounds[1]; /* top */
+    final double offsetX = (side - bounds.width) / 2 - bounds.left;
+    final double offsetY = (side - bounds.height) / 2 - bounds.top;
 
     return transformed((x, y) => ((x + offsetX) / side, (y + offsetY) / side));
   }
@@ -815,20 +813,7 @@ class RoundedPolygon {
   /// which can be used to hold the object in any rotation. This function can
   /// be used, for example, to calculate the max size of a UI element meant to
   /// hold this shape in any rotation.
-  ///
-  /// [bounds] is a buffer to hold the results. If not supplied, a temporary
-  /// buffer will be created.
-  ///
-  /// Returns the axis-aligned max bounding box for this object, where the
-  /// rectangles left, top, right, and bottom values will be stored in entries
-  /// 0, 1, 2, and 3, in that order.
-  List<double> calculateMaxBounds([List<double>? bounds]) {
-    bounds ??= List.filled(4, 0);
-
-    if (bounds.length < 4) {
-      throw ArgumentError('Required bounds size of 4.');
-    }
-
+  Rect calculateMaxBounds() {
     var maxDistSquared = 0.0;
     for (var i = 0; i < cubics.length; i++) {
       final CubicBezier cubic = cubics[i];
@@ -846,50 +831,25 @@ class RoundedPolygon {
 
     final double distance = math.sqrt(maxDistSquared);
 
-    bounds[0] = centerX - distance;
-    bounds[1] = centerY - distance;
-    bounds[2] = centerX + distance;
-    bounds[3] = centerY + distance;
-
-    return bounds;
+    return Rect.fromLTRB(
+      centerX - distance,
+      centerY - distance,
+      centerX + distance,
+      centerY + distance,
+    );
   }
 
   /// Calculates the axis-aligned bounds of the object.
   ///
-  /// [bounds] is a buffer to hold the results. If not supplied, a temporary
-  /// buffer will be created.
-  ///
   /// [approximate] when true, uses a faster calculation to create the bounding
   /// box based on the min/max values of all anchor and control points that
   /// make up the shape. Default value is true.
-  ///
-  /// Returns the axis-aligned bounding box for this object, where the
-  /// rectangles left, top, right, and bottom values will be stored in entries
-  /// 0, 1, 2, and 3, in that order.
-  List<double> calculateBounds({List<double>? bounds, bool approximate = true}) {
-    bounds ??= List.filled(4, 0);
+  Rect calculateBounds({bool approximate = true}) {
+    Rect bounds = cubics.first.calculateBounds(approximate: approximate);
 
-    if (bounds.length < 4) {
-      throw ArgumentError('Required bounds size of 4.');
+    for (var i = 1; i < cubics.length; i++) {
+      bounds = bounds.expandToInclude(cubics[i].calculateBounds(approximate: approximate));
     }
-
-    double minX = double.maxFinite;
-    double minY = double.maxFinite;
-    double maxX = double.minPositive;
-    double maxY = double.minPositive;
-
-    for (var i = 0; i < cubics.length; i++) {
-      cubics[i].calculateBounds(bounds, approximate: approximate);
-      minX = math.min(minX, bounds[0]);
-      minY = math.min(minY, bounds[1]);
-      maxX = math.max(maxX, bounds[2]);
-      maxY = math.max(maxY, bounds[3]);
-    }
-
-    bounds[0] = minX;
-    bounds[1] = minY;
-    bounds[2] = maxX;
-    bounds[3] = maxY;
 
     return bounds;
   }

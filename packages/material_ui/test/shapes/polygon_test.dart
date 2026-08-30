@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ui';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/src/shapes/corner_rounding.dart';
 import 'package:material_ui/src/shapes/cubic.dart';
@@ -85,34 +87,31 @@ void main() {
     });
 
     test('bounds', () {
-      List<double> bounds = square.calculateBounds();
-      expectEqualish(-1, bounds[0]); // Left
-      expectEqualish(-1, bounds[1]); // Top
-      expectEqualish(1, bounds[2]); // Right
-      expectEqualish(1, bounds[3]); // Bottom
+      Rect bounds = square.calculateBounds();
+      expectEqualish(-1, bounds.left);
+      expectEqualish(-1, bounds.top);
+      expectEqualish(1, bounds.right);
+      expectEqualish(1, bounds.bottom);
 
-      List<double> betterBounds = square.calculateBounds(approximate: false);
-      expectEqualish(-1, betterBounds[0]); // Left
-      expectEqualish(-1, betterBounds[1]); // Top
-      expectEqualish(1, betterBounds[2]); // Right
-      expectEqualish(1, betterBounds[3]); // Bottom
+      Rect betterBounds = square.calculateBounds(approximate: false);
+      expectEqualish(-1, betterBounds.left);
+      expectEqualish(-1, betterBounds.top);
+      expectEqualish(1, betterBounds.right);
+      expectEqualish(1, betterBounds.bottom);
 
       // roundedSquare's approximate bounds will be larger due to control
       // points.
       bounds = roundedSquare.calculateBounds();
       betterBounds = roundedSquare.calculateBounds(approximate: false);
       expect(
-        betterBounds[2] - betterBounds[0] < bounds[2] - bounds[0],
+        betterBounds.width < bounds.width,
         isTrue,
-        reason:
-            'bounds ${bounds[0]}, ${bounds[1]}, ${bounds[2]}, ${bounds[3]}, '
-            'betterBounds = ${betterBounds[0]}, ${betterBounds[1]}, '
-            '${betterBounds[2]}, ${betterBounds[3]}',
+        reason: 'bounds = $bounds, betterBounds = $betterBounds',
       );
 
       bounds = pentagon.calculateBounds();
-      final List<double> maxBounds = pentagon.calculateMaxBounds();
-      expect(maxBounds[2] - maxBounds[0] > bounds[2] - bounds[0], isTrue);
+      final Rect maxBounds = pentagon.calculateMaxBounds();
+      expect(maxBounds.width > bounds.width, isTrue);
     });
 
     test('center', () {

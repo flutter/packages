@@ -213,21 +213,17 @@ class CubicBezier {
 
   bool _zeroIsh(double value) => value.abs() < distanceEpsilon;
 
-  /// Returns the true bounds of this curve, filling [bounds] with the
-  /// axis-aligned bounding box values for left, top, right, and bottom,
-  /// in that order.
-  @internal
-  void calculateBounds(List<double> bounds, {bool approximate = false}) {
-    assert(bounds.length == 4, 'Bounds array size should be 4.');
-
+  /// Calculates the axis-aligned bounding box of this curve.
+  ///
+  /// When [approximate] is true, uses a faster calculation which bounds the two
+  /// anchor points and the two control points, rather than solving for the
+  /// curve's actual extrema. The result is never smaller than the true bounds,
+  /// but can be larger. Defaults to false.
+  Rect calculateBounds({bool approximate = false}) {
     // A curve might be of zero-length, with both anchors co-lated.
     // Just return the point itself.
     if (zeroLength()) {
-      bounds[0] = anchor0X;
-      bounds[1] = anchor0Y;
-      bounds[2] = anchor0X;
-      bounds[3] = anchor0Y;
-      return;
+      return Rect.fromLTRB(anchor0X, anchor0Y, anchor0X, anchor0Y);
     }
 
     double minX = math.min(anchor0X, anchor1X);
@@ -238,11 +234,12 @@ class CubicBezier {
     if (approximate) {
       // Approximate bounds use the bounding box of all anchors and
       // controls.
-      bounds[0] = math.min(minX, math.min(control0X, control1X));
-      bounds[1] = math.min(minY, math.min(control0Y, control1Y));
-      bounds[2] = math.max(maxX, math.max(control0X, control1X));
-      bounds[3] = math.max(maxY, math.max(control0Y, control1Y));
-      return;
+      return Rect.fromLTRB(
+        math.min(minX, math.min(control0X, control1X)),
+        math.min(minY, math.min(control0Y, control1Y)),
+        math.max(maxX, math.max(control0X, control1X)),
+        math.max(maxY, math.max(control0Y, control1Y)),
+      );
     }
 
     // Find the derivative, which is a quadratic Bezier. Then we can solve
@@ -337,10 +334,7 @@ class CubicBezier {
       }
     }
 
-    bounds[0] = minX;
-    bounds[1] = minY;
-    bounds[2] = maxX;
-    bounds[3] = maxY;
+    return Rect.fromLTRB(minX, minY, maxX, maxY);
   }
 
   /// Returns two [CubicBezier]s, created by splitting this curve at the given

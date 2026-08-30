@@ -141,29 +141,13 @@ class Morph {
 
   /// Calculates the axis-aligned bounds of the object.
   ///
-  /// [approximate] when true, uses a faster calculation to create the bounding
-  /// box based on the min/max values of all anchor and control points that
-  /// make up the shape. Default value is true.
-  ///
-  /// [bounds] is a buffer to hold the results. If not supplied, a temporary
-  /// buffer will be created.
-  ///
-  /// Returns the axis-aligned bounding box for this object, where the
-  /// rectangles left, top, right, and bottom values will be stored in entries
-  /// 0, 1, 2, and 3, in that order.
-  List<double> calculateBounds({List<double>? bounds, bool approximate = true}) {
-    bounds ??= List.filled(4, 0);
-    _start.calculateBounds(bounds: bounds, approximate: approximate);
-    final double minX = bounds[0];
-    final double minY = bounds[1];
-    final double maxX = bounds[2];
-    final double maxY = bounds[3];
-    _end.calculateBounds(bounds: bounds, approximate: approximate);
-    bounds[0] = math.min(minX, bounds[0]);
-    bounds[1] = math.min(minY, bounds[1]);
-    bounds[2] = math.max(maxX, bounds[2]);
-    bounds[3] = math.max(maxY, bounds[3]);
-    return bounds;
+  /// When [approximate] is true, uses a faster calculation to create the
+  /// bounding box based on the min/max values of all anchor and control points
+  /// that make up the shape. Defaults to true.
+  Rect calculateBounds({bool approximate = true}) {
+    return _start
+        .calculateBounds(approximate: approximate)
+        .expandToInclude(_end.calculateBounds(approximate: approximate));
   }
 
   /// Like [calculateBounds], this function calculates the axis-aligned bounds
@@ -173,26 +157,8 @@ class Morph {
   /// which can be used to hold the object in any rotation. This function can
   /// be used, for example, to calculate the max size of a UI element meant to
   /// hold this shape in any rotation.
-  ///
-  /// [bounds] is a buffer to hold the results. If not supplied, a temporary
-  /// buffer will be created.
-  ///
-  /// Returns the axis-aligned max bounding box for this object, where the
-  /// rectangles left, top, right, and bottom values will be stored in entries
-  /// 0, 1, 2, and 3, in that order.
-  List<double> calculateMaxBounds([List<double>? bounds]) {
-    bounds ??= List.filled(4, 0);
-    _start.calculateMaxBounds(bounds);
-    final double minX = bounds[0];
-    final double minY = bounds[1];
-    final double maxX = bounds[2];
-    final double maxY = bounds[3];
-    _end.calculateMaxBounds(bounds);
-    bounds[0] = math.min(minX, bounds[0]);
-    bounds[1] = math.min(minY, bounds[1]);
-    bounds[2] = math.max(maxX, bounds[2]);
-    bounds[3] = math.max(maxY, bounds[3]);
-    return bounds;
+  Rect calculateMaxBounds() {
+    return _start.calculateMaxBounds().expandToInclude(_end.calculateMaxBounds());
   }
 
   /// Returns a representation of the morph object at a given [progress] value
