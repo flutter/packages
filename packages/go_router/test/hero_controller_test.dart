@@ -51,8 +51,8 @@ int _goRouterMaterialControllerCount(WidgetTester tester) {
 
 void main() {
   testWidgets('ShellRoute navigators get the Material HeroController under a Flutter MaterialApp', (
-      WidgetTester tester,
-      ) async {
+    WidgetTester tester,
+  ) async {
     final router = GoRouter(
       initialLocation: '/a',
       routes: <RouteBase>[
@@ -80,13 +80,13 @@ void main() {
 
   testWidgets(
     'StatefulShellRoute navigators get the Material HeroController under a Flutter MaterialApp',
-        (WidgetTester tester) async {
+    (WidgetTester tester) async {
       final router = GoRouter(
         initialLocation: '/a',
         routes: <RouteBase>[
           StatefulShellRoute.indexedStack(
             builder: (BuildContext context, GoRouterState state, StatefulNavigationShell shell) =>
-            shell,
+                shell,
             branches: <StatefulShellBranch>[
               StatefulShellBranch(
                 routes: <RouteBase>[
