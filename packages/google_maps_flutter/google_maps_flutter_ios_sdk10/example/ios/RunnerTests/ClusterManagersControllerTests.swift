@@ -20,12 +20,12 @@ import Testing
     let mapView = PartiallyMockedMapView(options: mapViewOptions)
     let eventHandler = TestMapEventHandler()
 
-    let clusterManagersController = FGMClusterManagersController(
+    let clusterManagersController = ClusterManagersController(
       mapView: mapView,
       eventDelegate: eventHandler
     )
 
-    let markersController = FGMMarkersController(
+    let markersController = MarkersController(
       mapView: mapView,
       eventDelegate: eventHandler,
       clusterManagersController: clusterManagersController,

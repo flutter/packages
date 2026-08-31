@@ -4,8 +4,6 @@
 
 #import "FGMConversionUtils.h"
 
-#import "FGMMarkerUserData.h"
-
 CGPoint FGMGetCGPointForPigeonPoint(FGMPlatformPoint *point) {
   return CGPointMake(point.x, point.y);
 }
@@ -101,23 +99,6 @@ GMSCollisionBehavior FGMGetCollisionBehaviorForPigeonCollisionBehavior(
     case FGMPlatformMarkerCollisionBehaviorRequiredAndHidesOptional:
       return GMSCollisionBehaviorRequiredAndHidesOptional;
   }
-}
-
-FGMPlatformCluster *FGMGetPigeonCluster(GMUStaticCluster *cluster,
-                                        NSString *clusterManagerIdentifier) {
-  NSMutableArray *markerIDs = [[NSMutableArray alloc] initWithCapacity:cluster.items.count];
-  GMSCoordinateBounds *bounds = [[GMSCoordinateBounds alloc] init];
-
-  for (GMSMarker *marker in cluster.items) {
-    [markerIDs addObject:FGMGetMarkerIdentifierFromMarker(marker)];
-    bounds = [bounds includingCoordinate:marker.position];
-  }
-
-  return [FGMPlatformCluster
-      makeWithClusterManagerId:clusterManagerIdentifier
-                      position:FGMGetPigeonLatLngForCoordinate(cluster.position)
-                        bounds:FGMGetPigeonLatLngBoundsForCoordinateBounds(bounds)
-                     markerIds:markerIDs];
 }
 
 FGMPlatformGroundOverlay *FGMGetPigeonGroundOverlay(GMSGroundOverlay *groundOverlay,
