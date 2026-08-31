@@ -139,27 +139,27 @@ class Morph {
     return ret;
   }
 
-  /// Calculates the axis-aligned bounds of the object.
+  /// The axis-aligned bounds of this morph, covering both of its shapes.
   ///
-  /// When [approximate] is true, uses a faster calculation to create the
-  /// bounding box based on the min/max values of all anchor and control points
-  /// that make up the shape. Defaults to true.
-  Rect calculateBounds({bool approximate = true}) {
-    return _start
-        .calculateBounds(approximate: approximate)
-        .expandToInclude(_end.calculateBounds(approximate: approximate));
-  }
+  /// This solves for the actual extrema of every curve. See
+  /// [approximateBounds] for a cheaper result that is never smaller than this
+  /// one.
+  Rect get bounds => _start.bounds.expandToInclude(_end.bounds);
 
-  /// Like [calculateBounds], this function calculates the axis-aligned bounds
-  /// of the object and returns that rectangle. But this function determines
-  /// the max dimension of the shape (by calculating the distance from its
-  /// center to the start and midpoint of each curve) and returns a square
-  /// which can be used to hold the object in any rotation. This function can
-  /// be used, for example, to calculate the max size of a UI element meant to
-  /// hold this shape in any rotation.
-  Rect calculateMaxBounds() {
-    return _start.calculateMaxBounds().expandToInclude(_end.calculateMaxBounds());
-  }
+  /// A cheaper alternative to [bounds], based on the min/max values of all
+  /// anchor and control points that make up the two shapes.
+  ///
+  /// The result is never smaller than [bounds], but can be larger.
+  Rect get approximateBounds => _start.approximateBounds.expandToInclude(_end.approximateBounds);
+
+  /// Like [bounds], the axis-aligned bounds of this morph, but determining the
+  /// max dimension of the shapes (by calculating the distance from their
+  /// center to the start and midpoint of each curve) and returning a square
+  /// which can be used to hold the morph in any rotation.
+  ///
+  /// This can be used, for example, to calculate the max size of a UI element
+  /// meant to hold this morph in any rotation.
+  Rect get maxBounds => _start.maxBounds.expandToInclude(_end.maxBounds);
 
   /// Returns a representation of the morph object at a given [progress] value
   /// as a list of [CubicBezier]s. Note that this function causes a new list to be
