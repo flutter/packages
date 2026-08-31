@@ -28,7 +28,7 @@ void main() {
     // curves equivalent to those in that shape.
     test('cubics', () {
       final List<CubicBezier> p1Cubics = poly1.cubics;
-      final List<CubicBezier> cubics11 = morph11.asCubics(0);
+      final List<CubicBezier> cubics11 = morph11.toCubics(0);
       expect(cubics11, isNotEmpty);
 
       // The structure of a morph and its component shapes may not match

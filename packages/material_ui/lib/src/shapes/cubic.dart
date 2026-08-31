@@ -444,7 +444,7 @@ class _MutableCubicBezier extends CubicBezier {
 ///
 /// This is the building block behind [RoundedPolygon.toPath] and
 /// [Morph.toPath], and is useful when working with a list of curves obtained
-/// from [Morph.asCubics] directly.
+/// from [Morph.toCubics] directly.
 ///
 /// [startAngle] places the start point of the first curve at that angle, in
 /// radians, around [rotationPivot], rotating the whole path to get it there.

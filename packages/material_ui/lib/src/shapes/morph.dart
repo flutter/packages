@@ -175,7 +175,7 @@ class Morph {
   /// The range is generally [0..1] and values outside could result in
   /// undefined shapes, but values close to (but outside) the range can be used
   /// to get an exaggerated effect (e.g., for a bounce or overshoot animation).
-  List<CubicBezier> asCubics(double progress) {
+  List<CubicBezier> toCubics(double progress) {
     final result = <CubicBezier>[];
 
     // The first/last mechanism here ensures that the final anchor point in the
@@ -226,7 +226,7 @@ class Morph {
   /// Zero is to the right of the pivot and `pi / 2` below it, since y grows
   /// downwards.
   /// The default of zero is special: it skips the rotation entirely and leaves
-  /// the curves as [asCubics] produced them.
+  /// the curves as [toCubics] produced them.
   ///
   /// [repeatPath] is whether or not to repeat the [Path] twice before closing
   /// it. This flag is useful when the caller would like to draw parts of the
@@ -249,7 +249,7 @@ class Morph {
     Offset rotationPivot = Offset.zero,
   }) {
     return pathFromCubics(
-      asCubics(progress),
+      toCubics(progress),
       startAngle: startAngle,
       repeatPath: repeatPath,
       closePath: closePath,

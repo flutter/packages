@@ -128,7 +128,7 @@ class MaterialShapeBorder extends OutlinedBorder {
     }
 
     return MaterialShapeBorder._fromCubics(
-      cubics: _morphBetween(start, end).asCubics(progress),
+      cubics: _morphBetween(start, end).toCubics(progress),
       lerpStart: start,
       lerpEnd: end,
       lerpProgress: progress,
