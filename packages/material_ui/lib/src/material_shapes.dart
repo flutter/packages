@@ -61,28 +61,20 @@ abstract final class MaterialShapes {
   static final RoundedPolygon slanted = _customPolygon(const [
     _PointNRound(Point(0.926, 0.970), CornerRounding(radius: 0.189, smoothing: 0.811)),
     _PointNRound(Point(-0.021, 0.967), CornerRounding(radius: 0.187, smoothing: 0.057)),
-  ], 2).normalized();
+  ], 2).normalized;
 
   /// An arch shape.
-  static final RoundedPolygon arch =
-      RoundedPolygon(
-            4,
-            perVertexRounding: const [
-              _cornerRound100,
-              _cornerRound100,
-              _cornerRound20,
-              _cornerRound20,
-            ],
-          )
-          .transformed((Matrix4.identity()..rotateZ(_negative135Radians)).asPointTransformer())
-          .normalized();
+  static final RoundedPolygon arch = RoundedPolygon(
+    4,
+    perVertexRounding: const [_cornerRound100, _cornerRound100, _cornerRound20, _cornerRound20],
+  ).transformed((Matrix4.identity()..rotateZ(_negative135Radians)).asPointTransformer()).normalized;
 
   /// A semi-circle shape.
   static final RoundedPolygon semiCircle = RoundedPolygon.rectangle(
     width: 1.6,
     height: 1,
     perVertexRounding: const [_cornerRound20, _cornerRound20, _cornerRound100, _cornerRound100],
-  ).normalized();
+  ).normalized;
 
   /// An oval shape.
   static final RoundedPolygon oval = RoundedPolygon.circle()
@@ -92,7 +84,7 @@ abstract final class MaterialShapes {
               ..scale(1.0, 0.64))
             .asPointTransformer(),
       )
-      .normalized();
+      .normalized;
 
   /// An pill shape.
   static final RoundedPolygon pill = _customPolygon(
@@ -103,12 +95,13 @@ abstract final class MaterialShapes {
     ],
     2,
     mirroring: true,
-  ).normalized();
+  ).normalized;
 
   /// A triangle shape.
-  static final RoundedPolygon triangle = RoundedPolygon(3, rounding: _cornerRound20)
-      .transformed((Matrix4.identity()..rotateZ(_negative90Radians)).asPointTransformer())
-      .normalized();
+  static final RoundedPolygon triangle = RoundedPolygon(
+    3,
+    rounding: _cornerRound20,
+  ).transformed((Matrix4.identity()..rotateZ(_negative90Radians)).asPointTransformer()).normalized;
 
   /// An arrow shape.
   static final RoundedPolygon arrow = _customPolygon([
@@ -116,7 +109,7 @@ abstract final class MaterialShapes {
     const _PointNRound(Point(-0.216, 1.05), CornerRounding(radius: 0.207)),
     const _PointNRound(Point(0.499, -0.16), CornerRounding(radius: 0.215, smoothing: 1)),
     const _PointNRound(Point(1.225, 1.06), CornerRounding(radius: 0.211)),
-  ], 1).normalized();
+  ], 1).normalized;
 
   /// A fan shape.
   static final RoundedPolygon fan = _customPolygon([
@@ -124,20 +117,20 @@ abstract final class MaterialShapes {
     const _PointNRound(Point(0, 1), CornerRounding(radius: 0.151)),
     const _PointNRound(Point(0, -0.003), CornerRounding(radius: 0.148)),
     const _PointNRound(Point(0.978, 0.02), CornerRounding(radius: 0.803)),
-  ], 1).normalized();
+  ], 1).normalized;
 
   /// A diamond shape.
   static final RoundedPolygon diamond = _customPolygon([
     const _PointNRound(Point(0.5, 1.096), CornerRounding(radius: 0.151, smoothing: 0.524)),
     const _PointNRound(Point(0.04, 0.5), CornerRounding(radius: .159)),
-  ], 2).normalized();
+  ], 2).normalized;
 
   /// A clam-shell shape.
   static final RoundedPolygon clamShell = _customPolygon([
     const _PointNRound(Point(0.171, 0.841), CornerRounding(radius: 0.159)),
     const _PointNRound(Point(-0.02, 0.5), CornerRounding(radius: 0.140)),
     const _PointNRound(Point(0.17, 0.159), CornerRounding(radius: 0.159)),
-  ], 2).normalized();
+  ], 2).normalized;
 
   /// A pentagon shape.
   static final RoundedPolygon pentagon = _customPolygon(
@@ -148,7 +141,7 @@ abstract final class MaterialShapes {
     ],
     1,
     mirroring: true,
-  ).normalized();
+  ).normalized;
 
   /// A gem shape.
   static final RoundedPolygon gem = _customPolygon(
@@ -160,50 +153,53 @@ abstract final class MaterialShapes {
     ],
     1,
     mirroring: true,
-  ).normalized();
+  ).normalized;
 
   /// A sunny shape.
   static final RoundedPolygon sunny = RoundedPolygon.star(
     numVerticesPerRadius: 8,
     innerRadius: 0.8,
     rounding: _cornerRound15,
-  ).normalized();
+  ).normalized;
 
   /// A very-sunny shape.
   static final RoundedPolygon verySunny = _customPolygon([
     const _PointNRound(Point(0.5, 1.080), CornerRounding(radius: 0.085)),
     const _PointNRound(Point(0.358, 0.843), CornerRounding(radius: 0.085)),
-  ], 8).normalized();
+  ], 8).normalized;
 
   /// A 4-sided cookie shape.
   static final RoundedPolygon cookie4Sided = _customPolygon([
     const _PointNRound(Point(1.237, 1.236), CornerRounding(radius: 0.258)),
     const _PointNRound(Point(0.5, 0.918), CornerRounding(radius: 0.233)),
-  ], 4).normalized();
+  ], 4).normalized;
 
   /// A 6-sided cookie shape.
   static final RoundedPolygon cookie6Sided = _customPolygon([
     const _PointNRound(Point(0.723, 0.884), CornerRounding(radius: 0.394)),
     const _PointNRound(Point(0.5, 1.099), CornerRounding(radius: 0.398)),
-  ], 6).normalized();
+  ], 6).normalized;
 
   /// A 7-sided cookie shape.
-  static final RoundedPolygon cookie7Sided =
-      RoundedPolygon.star(numVerticesPerRadius: 7, innerRadius: 0.75, rounding: _cornerRound50)
-          .transformed((Matrix4.identity()..rotateZ(_negative90Radians)).asPointTransformer())
-          .normalized();
+  static final RoundedPolygon cookie7Sided = RoundedPolygon.star(
+    numVerticesPerRadius: 7,
+    innerRadius: 0.75,
+    rounding: _cornerRound50,
+  ).transformed((Matrix4.identity()..rotateZ(_negative90Radians)).asPointTransformer()).normalized;
 
   /// A 9-sided cookie shape.
-  static final RoundedPolygon cookie9Sided =
-      RoundedPolygon.star(numVerticesPerRadius: 9, innerRadius: 0.8, rounding: _cornerRound50)
-          .transformed((Matrix4.identity()..rotateZ(_negative90Radians)).asPointTransformer())
-          .normalized();
+  static final RoundedPolygon cookie9Sided = RoundedPolygon.star(
+    numVerticesPerRadius: 9,
+    innerRadius: 0.8,
+    rounding: _cornerRound50,
+  ).transformed((Matrix4.identity()..rotateZ(_negative90Radians)).asPointTransformer()).normalized;
 
   /// A 12-sided cookie shape.
-  static final RoundedPolygon cookie12Sided =
-      RoundedPolygon.star(numVerticesPerRadius: 12, innerRadius: 0.8, rounding: _cornerRound50)
-          .transformed((Matrix4.identity()..rotateZ(_negative90Radians)).asPointTransformer())
-          .normalized();
+  static final RoundedPolygon cookie12Sided = RoundedPolygon.star(
+    numVerticesPerRadius: 12,
+    innerRadius: 0.8,
+    rounding: _cornerRound50,
+  ).transformed((Matrix4.identity()..rotateZ(_negative90Radians)).asPointTransformer()).normalized;
 
   /// A 4-leaf clover shape.
   static final RoundedPolygon clover4Leaf = _customPolygon(
@@ -213,31 +209,31 @@ abstract final class MaterialShapes {
     ],
     4,
     mirroring: true,
-  ).normalized();
+  ).normalized;
 
   /// A 8-leaf clover shape.
   static final RoundedPolygon clover8Leaf = _customPolygon([
     const _PointNRound(Point(0.5, 0.036)),
     const _PointNRound(Point(0.758, -0.101), CornerRounding(radius: 0.209)),
-  ], 8).normalized();
+  ], 8).normalized;
 
   /// A burst shape.
   static final RoundedPolygon burst = _customPolygon([
     const _PointNRound(Point(0.5, -0.006), CornerRounding(radius: 0.006)),
     const _PointNRound(Point(0.592, 0.158), CornerRounding(radius: 0.006)),
-  ], 12).normalized();
+  ], 12).normalized;
 
   /// A soft-burst shape.
   static final RoundedPolygon softBurst = _customPolygon([
     const _PointNRound(Point(0.193, 0.277), CornerRounding(radius: 0.053)),
     const _PointNRound(Point(0.176, 0.055), CornerRounding(radius: 0.053)),
-  ], 10).normalized();
+  ], 10).normalized;
 
   /// A boom shape.
   static final RoundedPolygon boom = _customPolygon([
     const _PointNRound(Point(0.457, 0.296), CornerRounding(radius: 0.007)),
     const _PointNRound(Point(0.5, -0.051), CornerRounding(radius: 0.007)),
-  ], 15).normalized();
+  ], 15).normalized;
 
   /// A soft-boom shape.
   static final RoundedPolygon softBoom = _customPolygon(
@@ -249,7 +245,7 @@ abstract final class MaterialShapes {
     ],
     16,
     mirroring: true,
-  ).normalized();
+  ).normalized;
 
   /// A flower shape.
   static final RoundedPolygon flower = _customPolygon(
@@ -260,7 +256,7 @@ abstract final class MaterialShapes {
     ],
     8,
     mirroring: true,
-  ).normalized();
+  ).normalized;
 
   /// A puffy shape.
   static final RoundedPolygon puffy = _customPolygon(
@@ -279,7 +275,7 @@ abstract final class MaterialShapes {
     ],
     2,
     mirroring: true,
-  ).transformed((Matrix4.identity()..scale(1.0, 0.742)).asPointTransformer()).normalized();
+  ).transformed((Matrix4.identity()..scale(1.0, 0.742)).asPointTransformer()).normalized;
 
   /// A puffy-diamond shape.
   static final RoundedPolygon puffyDiamond = _customPolygon(
@@ -290,7 +286,7 @@ abstract final class MaterialShapes {
     ],
     4,
     mirroring: true,
-  ).normalized();
+  ).normalized;
 
   /// A ghostish shape.
   static final RoundedPolygon ghostish = _customPolygon(
@@ -302,7 +298,7 @@ abstract final class MaterialShapes {
     ],
     1,
     mirroring: true,
-  ).normalized();
+  ).normalized;
 
   /// A pixel-circle shape.
   static final RoundedPolygon pixelCircle = _customPolygon(
@@ -318,7 +314,7 @@ abstract final class MaterialShapes {
     ],
     2,
     mirroring: true,
-  ).normalized();
+  ).normalized;
 
   /// A pixel-triangle shape.
   static final RoundedPolygon pixelTriangle = _customPolygon(
@@ -339,7 +335,7 @@ abstract final class MaterialShapes {
     ],
     1,
     mirroring: true,
-  ).normalized();
+  ).normalized;
 
   /// A bun shape.
   static final RoundedPolygon bun = _customPolygon(
@@ -351,7 +347,7 @@ abstract final class MaterialShapes {
     ],
     2,
     mirroring: true,
-  ).normalized();
+  ).normalized;
 
   /// A heart shape.
   static final RoundedPolygon heart = _customPolygon(
@@ -363,7 +359,7 @@ abstract final class MaterialShapes {
     ],
     1,
     mirroring: true,
-  ).normalized();
+  ).normalized;
 
   /// A list of all available shapes.
   static final UnmodifiableListView<RoundedPolygon> all = UnmodifiableListView(<RoundedPolygon>[

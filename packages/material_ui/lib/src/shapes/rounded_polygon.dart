@@ -692,10 +692,10 @@ class RoundedPolygon {
     ], _center.transformed(f));
   }
 
-  /// Creates a new RoundedPolygon, moving and resizing this one, so it's
-  /// completely inside the (0, 0) -> (1, 1) square, centered if there extra
-  /// space in one direction.
-  RoundedPolygon normalized() {
+  /// A new [RoundedPolygon], moving and resizing this one, so it's completely
+  /// inside the (0, 0) -> (1, 1) square, centered if there extra space in one
+  /// direction.
+  RoundedPolygon get normalized {
     final Rect bounds = approximateBounds;
     final double side = math.max(bounds.width, bounds.height);
 

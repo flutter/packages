@@ -101,13 +101,13 @@ void main() {
         Point(664, -680),
         Point(720, -624),
         Point(400, -304),
-      ]).normalized();
+      ]).normalized;
 
       final RoundedPolygon verySunny = RoundedPolygon.star(
         numVerticesPerRadius: 8,
         innerRadius: 0.65,
         rounding: const CornerRounding(radius: 0.15),
-      ).normalized();
+      ).normalized;
 
       verifyMapping(checkmark, verySunny, (distances) {
         // Most vertices on the checkmark map to a feature in the second
