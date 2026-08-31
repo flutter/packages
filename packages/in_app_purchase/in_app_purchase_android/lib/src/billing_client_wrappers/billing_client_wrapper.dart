@@ -380,10 +380,19 @@ enum BillingResponse {
   /// The user pressed back or canceled a dialog.
   userCanceled,
 
-  /// The network connection is down.
+  /// The service is currently unavailable.
+  ///
+  /// This is a transient state; the request can be retried later. Note that
+  /// Play no longer returns [BillingResponse.serviceTimeout], and timeouts are
+  /// reported here instead.
   serviceUnavailable,
 
-  /// The billing API version is not supported for the type requested.
+  /// A user billing error occurred during processing.
+  ///
+  /// As of Google Play Billing Library 9, this is also returned when the Play
+  /// Store app is blocked by the system (for example, in OEM-customized kids
+  /// mode), a case that previously surfaced as [BillingResponse.error]. Such
+  /// results carry a `Play Store is blocked` debug message.
   billingUnavailable,
 
   /// The requested product is not available for purchase.
