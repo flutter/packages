@@ -41,8 +41,8 @@ void main() {
       double? radius2,
       Point center = zero,
     ]) {
-      expectPointOnRadii(Point(cubic.anchor0X, cubic.anchor0Y), radius1, radius2, center);
-      expectPointOnRadii(Point(cubic.anchor1X, cubic.anchor1Y), radius1, radius2, center);
+      expectPointOnRadii(cubic.anchor0, radius1, radius2, center);
+      expectPointOnRadii(cubic.anchor1, radius1, radius2, center);
     }
 
     // Tests points along the curve of the cubic by comparing the distance

@@ -17,48 +17,16 @@ import 'point.dart';
 import 'utils.dart';
 
 /// This class holds the anchor and control point data for a single cubic
-/// Bézier curve, with anchor points ([anchor0X], [anchor0Y]) and ([anchor1X],
-/// [anchor1Y]) at either end and control points ([control0X], [control0Y])
-/// and ([control1X], [control1Y]) determining the slope of the curve between
-/// the anchor points.
+/// Bézier curve, with anchor points [anchor0] and [anchor1] at either end and
+/// control points [control0] and [control1] determining the slope of the curve
+/// between the anchor points.
 @immutable
 class CubicBezier {
   /// Creates a [CubicBezier] that holds the anchor and control point data for a
-  /// single Bézier curve, with anchor points ([anchor0X], [anchor0Y]) and
-  /// ([anchor1X], [anchor1Y]) at either end and control points ([control0X],
-  /// [control0Y]) and ([control1X], [control1Y]) determining the slope of the
-  /// curve between the anchor points.
-  CubicBezier(
-    double anchor0X,
-    double anchor0Y,
-    double control0X,
-    double control0Y,
-    double control1X,
-    double control1Y,
-    double anchor1X,
-    double anchor1Y,
-  ) : this.raw([
-        anchor0X,
-        anchor0Y,
-        control0X,
-        control0Y,
-        control1X,
-        control1Y,
-        anchor1X,
-        anchor1Y,
-      ]);
-
-  /// Creates a [CubicBezier] directly from the flat list of its eight anchor and
-  /// control point coordinates, in the order used by [points].
-  @internal
-  const CubicBezier.raw(List<double> points)
-    : assert(points.length == 8, 'Points array size should be 8.'),
-      _points = points;
-
-  /// Creates a [CubicBezier] from its two anchor points and its two control
-  /// points.
-  @internal
-  CubicBezier.fromPoints(Point anchor0, Point control0, Point control1, Point anchor1)
+  /// single Bézier curve, with anchor points [anchor0] and [anchor1] at either
+  /// end and control points [control0] and [control1] determining the slope of
+  /// the curve between the anchor points.
+  CubicBezier(Offset anchor0, Offset control0, Offset control1, Offset anchor1)
     : this.raw([
         anchor0.x,
         anchor0.y,
@@ -70,72 +38,74 @@ class CubicBezier {
         anchor1.y,
       ]);
 
+  /// Creates a [CubicBezier] directly from the flat list of its eight anchor
+  /// and control point coordinates, in the order used by [points].
+  @internal
+  const CubicBezier.raw(List<double> points)
+    : assert(points.length == 8, 'Points array size should be 8.'),
+      _points = points;
+
   /// Generates a bezier curve that is a straight line between the given anchor
-  /// points. The control points lie 1/3 of the distance from their respective
-  /// anchor points.
-  factory CubicBezier.straightLine(double x0, double y0, double x1, double y1) {
+  /// points [p0] and [p1]. The control points lie 1/3 of the distance from
+  /// their respective anchor points.
+  factory CubicBezier.straightLine(Offset p0, Offset p1) {
     return CubicBezier.raw([
-      x0,
-      y0,
-      lerp(x0, x1, 1 / 3),
-      lerp(y0, y1, 1 / 3),
-      lerp(x0, x1, 2 / 3),
-      lerp(y0, y1, 2 / 3),
-      x1,
-      y1,
+      p0.x,
+      p0.y,
+      lerp(p0.x, p1.x, 1 / 3),
+      lerp(p0.y, p1.y, 1 / 3),
+      lerp(p0.x, p1.x, 2 / 3),
+      lerp(p0.y, p1.y, 2 / 3),
+      p1.x,
+      p1.y,
     ]);
   }
 
-  /// Generates a bezier curve that approximates a circular arc, with p0 and
-  /// p1 as the starting and ending anchor points. The curve generated is the
-  /// smallest of the two possible arcs around the entire 360-degree circle.
-  /// Arcs of greater than 180 degrees should use more than one arc together.
-  /// Note that p0 and p1 should be equidistant from the center.
-  factory CubicBezier.circularArc(
-    double centerX,
-    double centerY,
-    double x0,
-    double y0,
-    double x1,
-    double y1,
-  ) {
-    final Point p0d = directionVector(x0 - centerX, y0 - centerY);
-    final Point p1d = directionVector(x1 - centerX, y1 - centerY);
+  /// Generates a bezier curve that approximates a circular arc around [center],
+  /// with [p0] and [p1] as the starting and ending anchor points. The curve
+  /// generated is the smallest of the two possible arcs around the entire
+  /// 360-degree circle. Arcs of greater than 180 degrees should use more than
+  /// one arc together. Note that [p0] and [p1] should be equidistant from
+  /// [center].
+  factory CubicBezier.circularArc(Offset center, Offset p0, Offset p1) {
+    final Point p0d = directionVector(p0.x - center.x, p0.y - center.y);
+    final Point p1d = directionVector(p1.x - center.x, p1.y - center.y);
     final Point rotatedP0 = p0d.rotate90();
     final Point rotatedP1 = p1d.rotate90();
-    final bool clockwise = rotatedP0.dotProductXY(x1 - centerX, y1 - centerY) >= 0;
+    final bool clockwise = rotatedP0.dotProductXY(p1.x - center.x, p1.y - center.y) >= 0;
     final double cosa = p0d.dotProduct(p1d);
 
     // p0 ~= p1
     if (cosa > 0.999) {
-      return CubicBezier.straightLine(x0, y0, x1, y1);
+      return CubicBezier.straightLine(p0, p1);
     }
 
     final double k =
-        distance(x0 - centerX, y0 - centerY) *
+        distance(p0.x - center.x, p0.y - center.y) *
         4 /
         3 *
         (math.sqrt(2 * (1 - cosa)) - math.sqrt(1 - cosa * cosa)) /
         (1 - cosa) *
         (clockwise ? 1 : -1);
 
-    return CubicBezier(
-      x0,
-      y0,
-      x0 + rotatedP0.x * k,
-      y0 + rotatedP0.y * k,
-      x1 - rotatedP1.x * k,
-      y1 - rotatedP1.y * k,
-      x1,
-      y1,
-    );
+    return CubicBezier.raw([
+      p0.x,
+      p0.y,
+      p0.x + rotatedP0.x * k,
+      p0.y + rotatedP0.y * k,
+      p1.x - rotatedP1.x * k,
+      p1.y - rotatedP1.y * k,
+      p1.x,
+      p1.y,
+    ]);
   }
 
-  /// Generates an empty [CubicBezier] defined at (x0, y0).
+  /// Generates an empty [CubicBezier] defined at [point].
   ///
   /// Both anchor points and both control points coincide, so the curve has
   /// zero length. See [zeroLength].
-  CubicBezier.empty(double x0, double y0) : this.raw([x0, y0, x0, y0, x0, y0, x0, y0]);
+  CubicBezier.empty(Offset point)
+    : this.raw([point.x, point.y, point.x, point.y, point.x, point.y, point.x, point.y]);
 
   final List<double> _points;
 
@@ -147,22 +117,34 @@ class CubicBezier {
   /// that expects a coordinate buffer.
   List<double> get points => UnmodifiableListView(_points);
 
+  /// The anchor point at the start of the curve.
+  Offset get anchor0 => Offset(_points[0], _points[1]);
+
+  /// The control point closest to [anchor0].
+  Offset get control0 => Offset(_points[2], _points[3]);
+
+  /// The control point closest to [anchor1].
+  Offset get control1 => Offset(_points[4], _points[5]);
+
+  /// The anchor point at the end of the curve.
+  Offset get anchor1 => Offset(_points[6], _points[7]);
+
   /// The X coordinate of the anchor point at the start of the curve.
   double get anchor0X => _points[0];
 
   /// The Y coordinate of the anchor point at the start of the curve.
   double get anchor0Y => _points[1];
 
-  /// The X coordinate of the control point closest to [anchor0X].
+  /// The X coordinate of the control point closest to [anchor0].
   double get control0X => _points[2];
 
-  /// The Y coordinate of the control point closest to [anchor0Y].
+  /// The Y coordinate of the control point closest to [anchor0].
   double get control0Y => _points[3];
 
-  /// The X coordinate of the control point closest to [anchor1X].
+  /// The X coordinate of the control point closest to [anchor1].
   double get control1X => _points[4];
 
-  /// The Y coordinate of the control point closest to [anchor1Y].
+  /// The Y coordinate of the control point closest to [anchor1].
   double get control1Y => _points[5];
 
   /// The X coordinate of the anchor point at the end of the curve.
@@ -173,14 +155,13 @@ class CubicBezier {
 
   /// Returns a point on the curve for parameter [t], representing the
   /// proportional distance along the curve between its starting point at
-  /// anchor0 and ending point at anchor1.
+  /// [anchor0] and ending point at [anchor1].
   ///
   /// [t] is the distance along the curve between the anchor points, where 0
-  /// is at anchor0 and 1 is at anchor1
-  @internal
-  Point pointOnCurve(double t) {
+  /// is at [anchor0] and 1 is at [anchor1].
+  Offset pointOnCurve(double t) {
     final double u = 1 - t;
-    return Point(
+    return Offset(
       anchor0X * (u * u * u) +
           control0X * (3 * t * u * u) +
           control1X * (3 * t * t * u) +
@@ -204,12 +185,7 @@ class CubicBezier {
 
   /// Whether the corner formed by this curve and [next] turns convexly.
   @internal
-  bool convexTo(CubicBezier next) {
-    final prevVertex = Point(anchor0X, anchor0Y);
-    final currVertex = Point(anchor1X, anchor1Y);
-    final nextVertex = Point(next.anchor1X, next.anchor1Y);
-    return convex(prevVertex, currVertex, nextVertex);
-  }
+  bool convexTo(CubicBezier next) => convex(anchor0, anchor1, next.anchor1);
 
   bool _zeroIsh(double value) => value.abs() < distanceEpsilon;
 
@@ -344,7 +320,7 @@ class CubicBezier {
     final Point point = pointOnCurve(t);
 
     return (
-      CubicBezier(
+      CubicBezier.raw([
         anchor0X,
         anchor0Y,
         anchor0X * u + control0X * t,
@@ -353,8 +329,8 @@ class CubicBezier {
         anchor0Y * (u * u) + control0Y * (2 * u * t) + control1Y * (t * t),
         point.x,
         point.y,
-      ),
-      CubicBezier(
+      ]),
+      CubicBezier.raw([
         point.x,
         point.y,
         control0X * (u * u) + control1X * (2 * u * t) + anchor1X * (t * t),
@@ -363,12 +339,12 @@ class CubicBezier {
         control1Y * u + anchor1Y * t,
         anchor1X,
         anchor1Y,
-      ),
+      ]),
     );
   }
 
   /// Utility function to reverse the control/anchor points for this curve.
-  CubicBezier reverse() => CubicBezier(
+  CubicBezier reverse() => CubicBezier.raw([
     anchor1X,
     anchor1Y,
     control1X,
@@ -377,7 +353,7 @@ class CubicBezier {
     control0Y,
     anchor0X,
     anchor0Y,
-  );
+  ]);
 
   /// Returns a curve whose coordinates are the sums of this curve's and [o]'s
   /// corresponding coordinates.

@@ -22,10 +22,10 @@ bool pointsEqualish(Point p0, Point p1) {
 }
 
 bool cubicsEqualish(CubicBezier c0, CubicBezier c1) {
-  return pointsEqualish(Point(c0.anchor0X, c0.anchor0Y), Point(c1.anchor0X, c1.anchor0Y)) &&
-      pointsEqualish(Point(c0.anchor1X, c0.anchor1Y), Point(c1.anchor1X, c1.anchor1Y)) &&
-      pointsEqualish(Point(c0.control0X, c0.control0Y), Point(c1.control0X, c1.control0Y)) &&
-      pointsEqualish(Point(c0.control1X, c0.control1Y), Point(c1.control1X, c1.control1Y));
+  return pointsEqualish(c0.anchor0, c1.anchor0) &&
+      pointsEqualish(c0.anchor1, c1.anchor1) &&
+      pointsEqualish(c0.control0, c1.control0) &&
+      pointsEqualish(c0.control1, c1.control1);
 }
 
 // Test points equality within epsilon.
@@ -36,22 +36,10 @@ void expectPointsEqualish(Point expected, Point actual) {
 }
 
 void expectCubicsEqualish(CubicBezier expected, CubicBezier actual) {
-  expectPointsEqualish(
-    Point(expected.anchor0X, expected.anchor0Y),
-    Point(actual.anchor0X, actual.anchor0Y),
-  );
-  expectPointsEqualish(
-    Point(expected.control0X, expected.control0Y),
-    Point(actual.control0X, actual.control0Y),
-  );
-  expectPointsEqualish(
-    Point(expected.control1X, expected.control1Y),
-    Point(actual.control1X, actual.control1Y),
-  );
-  expectPointsEqualish(
-    Point(expected.anchor1X, expected.anchor1Y),
-    Point(actual.anchor1X, actual.anchor1Y),
-  );
+  expectPointsEqualish(expected.anchor0, actual.anchor0);
+  expectPointsEqualish(expected.control0, actual.control0);
+  expectPointsEqualish(expected.control1, actual.control1);
+  expectPointsEqualish(expected.anchor1, actual.anchor1);
 }
 
 void expectCubicListsEqualish(List<CubicBezier> expected, List<CubicBezier> actual) {
@@ -95,14 +83,14 @@ void expectEqualish(double expected, double actual, [String? message]) {
 
 void expectInBounds(List<CubicBezier> shape, Point minPoint, Point maxPoint) {
   for (final cubic in shape) {
-    expectPointGreaterish(minPoint, Point(cubic.anchor0X, cubic.anchor0Y));
-    expectPointLessish(maxPoint, Point(cubic.anchor0X, cubic.anchor0Y));
-    expectPointGreaterish(minPoint, Point(cubic.control0X, cubic.control0Y));
-    expectPointLessish(maxPoint, Point(cubic.control0X, cubic.control0Y));
-    expectPointGreaterish(minPoint, Point(cubic.control1X, cubic.control1Y));
-    expectPointLessish(maxPoint, Point(cubic.control1X, cubic.control1Y));
-    expectPointGreaterish(minPoint, Point(cubic.anchor1X, cubic.anchor1Y));
-    expectPointLessish(maxPoint, Point(cubic.anchor1X, cubic.anchor1Y));
+    expectPointGreaterish(minPoint, cubic.anchor0);
+    expectPointLessish(maxPoint, cubic.anchor0);
+    expectPointGreaterish(minPoint, cubic.control0);
+    expectPointLessish(maxPoint, cubic.control0);
+    expectPointGreaterish(minPoint, cubic.control1);
+    expectPointLessish(maxPoint, cubic.control1);
+    expectPointGreaterish(minPoint, cubic.anchor1);
+    expectPointLessish(maxPoint, cubic.anchor1);
   }
 }
 

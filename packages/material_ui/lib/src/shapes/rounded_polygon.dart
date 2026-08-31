@@ -223,12 +223,7 @@ class RoundedPolygon {
         ..add(CornerFeature(corners[i], convex: cvx))
         ..add(
           EdgeFeature([
-            CubicBezier.straightLine(
-              corners[i].last.anchor1X,
-              corners[i].last.anchor1Y,
-              corners[(i + 1) % n].first.anchor0X,
-              corners[(i + 1) % n].first.anchor0Y,
-            ),
+            CubicBezier.straightLine(corners[i].last.anchor1, corners[(i + 1) % n].first.anchor0),
           ]),
         );
     }
@@ -671,7 +666,7 @@ class RoundedPolygon {
 
     if (lastCubic != null && firstCubic != null) {
       cubics.add(
-        CubicBezier(
+        CubicBezier.raw([
           lastCubic.anchor0X,
           lastCubic.anchor0Y,
           lastCubic.control0X,
@@ -680,13 +675,11 @@ class RoundedPolygon {
           lastCubic.control1Y,
           firstCubic.anchor0X,
           firstCubic.anchor0Y,
-        ),
+        ]),
       );
     } else {
       // Empty / 0-sized polygon.
-      final double cX = _center.x;
-      final double cY = _center.y;
-      cubics.add(CubicBezier(cX, cY, cX, cY, cX, cY, cX, cY));
+      cubics.add(CubicBezier.empty(_center));
     }
   }
 
@@ -961,7 +954,7 @@ class _RoundedCorner {
         allowedCut < distanceEpsilon ||
         cornerRadius < distanceEpsilon) {
       center = p1;
-      return [CubicBezier.straightLine(p1.x, p1.y, p1.x, p1.y)];
+      return [CubicBezier.straightLine(p1, p1)];
     }
 
     // How much of the cut is required for the rounding part.
@@ -1003,14 +996,7 @@ class _RoundedCorner {
 
     return [
       flanking0,
-      CubicBezier.circularArc(
-        center.x,
-        center.y,
-        flanking0.anchor1X,
-        flanking0.anchor1Y,
-        flanking2.anchor0X,
-        flanking2.anchor0Y,
-      ),
+      CubicBezier.circularArc(center, flanking0.anchor1, flanking2.anchor0),
       flanking2,
     ];
   }
@@ -1095,7 +1081,7 @@ class _RoundedCorner {
     // 2/3 seems to come from design tools?
     final Point anchorStart = (curveStart + anchorEnd * 2) / 3;
 
-    return CubicBezier.fromPoints(curveStart, anchorStart, anchorEnd, curveEnd);
+    return CubicBezier(curveStart, anchorStart, anchorEnd, curveEnd);
   }
 
   /// Returns the intersection point of the two lines d0->d1 and p0->p1, or

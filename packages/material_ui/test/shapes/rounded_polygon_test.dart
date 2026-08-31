@@ -82,15 +82,15 @@ void main() {
         expect(() => RoundedPolygon.fromFeatures(const []), throwsArgumentError);
         expect(
           () => RoundedPolygon.fromFeatures([
-            CornerFeature([CubicBezier.empty(0, 0)]),
+            CornerFeature([CubicBezier.empty(Point.zero)]),
           ]),
           throwsArgumentError,
         );
       });
 
       test('throws for non continuous features', () {
-        final cubic1 = CubicBezier.straightLine(0, 0, 1, 0);
-        final cubic2 = CubicBezier.straightLine(10, 10, 20, 20);
+        final cubic1 = CubicBezier.straightLine(Point.zero, const Point(1, 0));
+        final cubic2 = CubicBezier.straightLine(const Point(10, 10), const Point(20, 20));
         expect(
           () => RoundedPolygon.fromFeatures([Feature.buildEdge(cubic1), Feature.buildEdge(cubic2)]),
           throwsArgumentError,
@@ -172,10 +172,11 @@ void main() {
         const CornerRounding(radius: 1, smoothing: 1),
         CornerRounding.unrounded,
       ];
-      final polygon = RoundedPolygon.fromVertices(
-        const [p0, p1, p2],
-        perVertexRounding: pvRounding,
-      );
+      final polygon = RoundedPolygon.fromVertices(const [
+        p0,
+        p1,
+        p2,
+      ], perVertexRounding: pvRounding);
 
       // Since there is not enough room in the p0 -> p1 side even for the
       // roundings, we shouldn't take smoothing into account, so the corners
@@ -227,10 +228,12 @@ void main() {
         CornerRounding.unrounded,
         rounding3,
       ];
-      final polygon = RoundedPolygon.fromVertices(
-        const [p0, p1, p2, p3],
-        perVertexRounding: pvRounding,
-      );
+      final polygon = RoundedPolygon.fromVertices(const [
+        p0,
+        p1,
+        p2,
+        p3,
+      ], perVertexRounding: pvRounding);
 
       final [EdgeFeature e01, _, _, EdgeFeature e30] = polygon.features
           .whereType<EdgeFeature>()

@@ -120,22 +120,10 @@ void main() {
       final List<CubicBezier> translatedSquareCubics = square.transformed(translator).cubics;
 
       for (var i = 0; i < squareCubics.length; i++) {
-        expectPointsEqualish(
-          Point(squareCubics[i].anchor0X, squareCubics[i].anchor0Y) + offset,
-          Point(translatedSquareCubics[i].anchor0X, translatedSquareCubics[i].anchor0Y),
-        );
-        expectPointsEqualish(
-          Point(squareCubics[i].control0X, squareCubics[i].control0Y) + offset,
-          Point(translatedSquareCubics[i].control0X, translatedSquareCubics[i].control0Y),
-        );
-        expectPointsEqualish(
-          Point(squareCubics[i].control1X, squareCubics[i].control1Y) + offset,
-          Point(translatedSquareCubics[i].control1X, translatedSquareCubics[i].control1Y),
-        );
-        expectPointsEqualish(
-          Point(squareCubics[i].anchor1X, squareCubics[i].anchor1Y) + offset,
-          Point(translatedSquareCubics[i].anchor1X, translatedSquareCubics[i].anchor1Y),
-        );
+        expectPointsEqualish(squareCubics[i].anchor0 + offset, translatedSquareCubics[i].anchor0);
+        expectPointsEqualish(squareCubics[i].control0 + offset, translatedSquareCubics[i].control0);
+        expectPointsEqualish(squareCubics[i].control1 + offset, translatedSquareCubics[i].control1);
+        expectPointsEqualish(squareCubics[i].anchor1 + offset, translatedSquareCubics[i].anchor1);
       }
     });
 

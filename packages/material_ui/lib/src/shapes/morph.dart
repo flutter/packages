@@ -201,7 +201,7 @@ class Morph {
 
     if (lastCubic != null && firstCubic != null) {
       result.add(
-        CubicBezier(
+        CubicBezier.raw([
           lastCubic.anchor0X,
           lastCubic.anchor0Y,
           lastCubic.control0X,
@@ -210,7 +210,7 @@ class Morph {
           lastCubic.control1Y,
           firstCubic.anchor0X,
           firstCubic.anchor0Y,
-        ),
+        ]),
       );
     }
 
