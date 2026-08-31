@@ -62,6 +62,14 @@ void main() {
       expect(border.hashCode, other.hashCode);
     });
 
+    test('== compares shapes by value', () {
+      final border = MaterialShapeBorder(shape: RoundedPolygon.circle());
+      final other = MaterialShapeBorder(shape: RoundedPolygon.circle());
+
+      expect(border, other);
+      expect(border.hashCode, other.hashCode);
+    });
+
     test('copyWith, ==, hashCode', () {
       final border = MaterialShapeBorder(
         shape: MaterialShapes.circle,

@@ -173,6 +173,17 @@ void main() {
       expect(first.hashCode, second.hashCode);
     });
 
+    test('== compares features by value', () {
+      final circle = RoundedPolygon.circle();
+      final equalCircle = RoundedPolygon.circle();
+      final otherCircle = RoundedPolygon.circle(numVertices: 12);
+
+      expect(identical(circle, equalCircle), isFalse);
+      expect(circle, equalCircle);
+      expect(circle.hashCode, equalCircle.hashCode);
+      expect(circle, isNot(otherCircle));
+    });
+
     test('toPath rotates around the polygon center', () {
       // A diamond filling the unit square, with its first vertex at angle zero
       // from its center.

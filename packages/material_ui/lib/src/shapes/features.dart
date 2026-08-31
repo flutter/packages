@@ -28,6 +28,7 @@ import 'point.dart';
 ///
 /// By using features, you can manipulate polygon shapes with more context and
 /// control.
+@immutable
 abstract class Feature {
   /// Creates a [Feature] spanning the given [cubics].
   ///
@@ -136,6 +137,20 @@ abstract class Feature {
   /// Returns a new [Feature] with the points that define the shape of this
   /// [Feature] in reversed order.
   Feature reversed();
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+
+    return other is Feature &&
+        other.runtimeType == runtimeType &&
+        listEquals(other._cubics, _cubics);
+  }
+
+  @override
+  int get hashCode => Object.hashAll(_cubics);
 }
 
 /// Edges have only a list of the cubic curves which make up the edge. Edges
@@ -144,7 +159,7 @@ abstract class Feature {
 @internal
 class EdgeFeature extends Feature {
   /// Creates an [EdgeFeature] from the given cubics.
-  EdgeFeature(super._cubics);
+  const EdgeFeature(super._cubics);
 
   @override
   Feature transformed(PointTransformer f) =>
@@ -217,4 +232,11 @@ class CornerFeature extends Feature {
     return 'Corner: cubics=${_cubics.map((c) => '[$c]').join(', ')} '
         'convex=$convex';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      super == other && other is CornerFeature && other.convex == convex;
+
+  @override
+  int get hashCode => Object.hash(Object.hashAll(_cubics), convex);
 }
