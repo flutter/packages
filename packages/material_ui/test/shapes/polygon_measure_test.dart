@@ -53,9 +53,7 @@ void main() {
     }
 
     void regularPolygonMeasure(int sides, [CornerRounding rounding = CornerRounding.unrounded]) {
-      irregularPolygonMeasure(RoundedPolygon.fromVerticesNum(sides, rounding: rounding), (
-        measuredPolygon,
-      ) {
+      irregularPolygonMeasure(RoundedPolygon(sides, rounding: rounding), (measuredPolygon) {
         expect(sides, measuredPolygon.length);
 
         for (var index = 0; index < measuredPolygon.length; index++) {
@@ -100,21 +98,15 @@ void main() {
     });
 
     test('measure slightly rounded hexagon', () {
-      irregularPolygonMeasure(
-        RoundedPolygon.fromVerticesNum(6, rounding: const CornerRounding(radius: 0.15)),
-      );
+      irregularPolygonMeasure(RoundedPolygon(6, rounding: const CornerRounding(radius: 0.15)));
     });
 
     test('measure medium rounded hexagon', () {
-      irregularPolygonMeasure(
-        RoundedPolygon.fromVerticesNum(6, rounding: const CornerRounding(radius: 0.5)),
-      );
+      irregularPolygonMeasure(RoundedPolygon(6, rounding: const CornerRounding(radius: 0.5)));
     });
 
     test('measure maximum rounded hexagon', () {
-      irregularPolygonMeasure(
-        RoundedPolygon.fromVerticesNum(6, rounding: const CornerRounding(radius: 1)),
-      );
+      irregularPolygonMeasure(RoundedPolygon(6, rounding: const CornerRounding(radius: 1)));
     });
 
     test('measure circle', () {

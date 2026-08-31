@@ -19,25 +19,25 @@ void main() {
     const rounding = CornerRounding(radius: 0.1);
     final perVtxRounded = [rounding, rounding, rounding, rounding];
 
-    test('fromVerticesNum', () {
-      expect(() => RoundedPolygon.fromVerticesNum(2), throwsArgumentError);
+    test('default constructor', () {
+      expect(() => RoundedPolygon(2), throwsArgumentError);
 
-      final square = RoundedPolygon.fromVerticesNum(4);
+      final square = RoundedPolygon(4);
       var min = const Point(-1, -1);
       var max = const Point(1, 1);
       expectInBounds(square.cubics, min, max);
 
-      final doubleSquare = RoundedPolygon.fromVerticesNum(4, radius: 2);
+      final doubleSquare = RoundedPolygon(4, radius: 2);
       min *= 2;
       max *= 2;
       expectInBounds(doubleSquare.cubics, min, max);
 
-      final squareRounded = RoundedPolygon.fromVerticesNum(4, rounding: rounding);
+      final squareRounded = RoundedPolygon(4, rounding: rounding);
       min = const Point(-1, -1);
       max = const Point(1, 1);
       expectInBounds(squareRounded.cubics, min, max);
 
-      final squarePVRounded = RoundedPolygon.fromVerticesNum(4, perVertexRounding: perVtxRounded);
+      final squarePVRounded = RoundedPolygon(4, perVertexRounding: perVtxRounded);
       min = const Point(-1, -1);
       max = const Point(1, 1);
       expectInBounds(squarePVRounded.cubics, min, max);

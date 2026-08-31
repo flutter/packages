@@ -13,15 +13,10 @@ import 'test_utils.dart';
 
 void main() {
   group('FeatureMapping', () {
-    final triangleWithRoundings = RoundedPolygon.fromVerticesNum(
-      3,
-      rounding: const CornerRounding(radius: 0.2),
-    );
-    final triangle = RoundedPolygon.fromVerticesNum(3);
-    final square = RoundedPolygon.fromVerticesNum(4);
-    final RoundedPolygon squareRotated = RoundedPolygon.fromVerticesNum(
-      4,
-    ).transformed(pointRotator(45));
+    final triangleWithRoundings = RoundedPolygon(3, rounding: const CornerRounding(radius: 0.2));
+    final triangle = RoundedPolygon(3);
+    final square = RoundedPolygon(4);
+    final RoundedPolygon squareRotated = RoundedPolygon(4).transformed(pointRotator(45));
 
     void verifyMapping(
       RoundedPolygon p1,

@@ -41,7 +41,7 @@ class CornerRounding {
   /// This is an absolute size that should relate to the overall size of the
   /// shape. If the shape is in screen coordinates, the radius should be sized
   /// accordingly; if the shape is in a canonical form, such as the bounds of
-  /// (-1, -1) to (1, 1) that [RoundedPolygon.fromVerticesNum] produces by
+  /// (-1, -1) to (1, 1) that [RoundedPolygon.new] produces by
   /// default, the radius should be relative to that size. The radius is scaled
   /// when the shape itself is transformed, since it produces curves which round
   /// the corner and so are transformed along with the overall shape.

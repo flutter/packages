@@ -19,8 +19,8 @@ void main() {
     const radius = 50.0;
     const scale = radius;
 
-    final poly1 = RoundedPolygon.fromVerticesNum(3, center: const Point(0.5, 0.5));
-    final poly2 = RoundedPolygon.fromVerticesNum(4, center: const Point(0.5, 0.5));
+    final poly1 = RoundedPolygon(3, center: const Point(0.5, 0.5));
+    final poly2 = RoundedPolygon(4, center: const Point(0.5, 0.5));
     final morph11 = Morph(poly1, poly1);
     final morph12 = Morph(poly1, poly2);
 

@@ -65,7 +65,7 @@ abstract final class MaterialShapes {
 
   /// An arch shape.
   static final RoundedPolygon arch =
-      RoundedPolygon.fromVerticesNum(
+      RoundedPolygon(
             4,
             perVertexRounding: const [
               _cornerRound100,
@@ -106,7 +106,7 @@ abstract final class MaterialShapes {
   ).normalized();
 
   /// A triangle shape.
-  static final RoundedPolygon triangle = RoundedPolygon.fromVerticesNum(3, rounding: _cornerRound20)
+  static final RoundedPolygon triangle = RoundedPolygon(3, rounding: _cornerRound20)
       .transformed((Matrix4.identity()..rotateZ(_negative90Radians)).asPointTransformer())
       .normalized();
 

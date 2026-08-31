@@ -21,30 +21,6 @@ import 'utils.dart';
 /// either the number of vertices desired or an ordered list of vertices.
 @immutable
 class RoundedPolygon {
-  RoundedPolygon._(this.features, this._center) : cubics = <CubicBezier>[] {
-    _initCubics();
-
-    assert(() {
-      CubicBezier prevCubic = cubics[cubics.length - 1];
-
-      for (var index = 0; index < cubics.length; index++) {
-        final CubicBezier cubic = cubics[index];
-
-        if ((cubic.anchor0X - prevCubic.anchor1X).abs() > distanceEpsilon ||
-            (cubic.anchor0Y - prevCubic.anchor1Y).abs() > distanceEpsilon) {
-          throw ArgumentError(
-            'RoundedPolygon must be contiguous, with the anchor points of all '
-            'curves matching the anchor points of the preceding and succeeding '
-            'cubics.',
-          );
-        }
-        prevCubic = cubic;
-      }
-
-      return true;
-    }());
-  }
-
   /// This constructor takes the number of vertices in the resulting polygon.
   /// These vertices are positioned on a virtual circle around a given center
   /// with each vertex positioned [radius] distance from that center, equally
@@ -82,7 +58,7 @@ class RoundedPolygon {
   /// Throws [ArgumentError] if [perVertexRounding] is not null and its size
   /// is not equal to [numVertices].
   /// Throws [ArgumentError] when [numVertices] is less than 3.
-  factory RoundedPolygon.fromVerticesNum(
+  factory RoundedPolygon(
     int numVertices, {
     double radius = 1,
     Offset center = Offset.zero,
@@ -101,9 +77,33 @@ class RoundedPolygon {
     );
   }
 
+  RoundedPolygon._raw(this.features, this._center) : cubics = <CubicBezier>[] {
+    _initCubics();
+
+    assert(() {
+      CubicBezier prevCubic = cubics[cubics.length - 1];
+
+      for (var index = 0; index < cubics.length; index++) {
+        final CubicBezier cubic = cubics[index];
+
+        if ((cubic.anchor0X - prevCubic.anchor1X).abs() > distanceEpsilon ||
+            (cubic.anchor0Y - prevCubic.anchor1Y).abs() > distanceEpsilon) {
+          throw ArgumentError(
+            'RoundedPolygon must be contiguous, with the anchor points of all '
+            'curves matching the anchor points of the preceding and succeeding '
+            'cubics.',
+          );
+        }
+        prevCubic = cubic;
+      }
+
+      return true;
+    }());
+  }
+
   /// Creates a copy of the given [RoundedPolygon].
   RoundedPolygon.from(RoundedPolygon roundedPolygon)
-    : this._(roundedPolygon.features, roundedPolygon.center);
+    : this._raw(roundedPolygon.features, roundedPolygon.center);
 
   /// This function takes the vertices (either supplied or calculated,
   /// depending on the constructor called), plus [CornerRounding] parameters,
@@ -134,9 +134,6 @@ class RoundedPolygon {
   /// Throws [ArgumentError] if the number of vertices is less than 3, or if
   /// the [perVertexRounding] parameter is not null and its size doesn't match
   /// the number of vertices.
-  ///
-  // TODO(performance): Update the map calls to more efficient code that
-  // doesn't allocate Iterators unnecessarily.
   factory RoundedPolygon.fromVertices(
     List<Offset> vertices, {
     CornerRounding rounding = CornerRounding.unrounded,
@@ -256,7 +253,7 @@ class RoundedPolygon {
     }
 
     if (center != null) {
-      return RoundedPolygon._(features, center);
+      return RoundedPolygon._raw(features, center);
     }
 
     final vertices = <Point>[];
@@ -267,7 +264,7 @@ class RoundedPolygon {
       }
     }
 
-    return RoundedPolygon._(features, calculateCenter(vertices));
+    return RoundedPolygon._raw(features, calculateCenter(vertices));
   }
 
   /// Creates a circular shape, approximating the rounding of the shape around
@@ -297,7 +294,7 @@ class RoundedPolygon {
     // Radius of the underlying RoundedPolygon object given the desired radius
     // of the circle.
     final double polygonRadius = radius / math.cos(theta);
-    return RoundedPolygon.fromVerticesNum(
+    return RoundedPolygon(
       numVertices,
       radius: polygonRadius,
       center: center,
@@ -690,7 +687,7 @@ class RoundedPolygon {
   ///
   /// [f] is the [PointTransformer] used to transform this [RoundedPolygon].
   RoundedPolygon transformed(PointTransformer f) {
-    return RoundedPolygon._([
+    return RoundedPolygon._raw([
       for (var i = 0; i < features.length; i++) features[i].transformed(f),
     ], _center.transformed(f));
   }

@@ -15,12 +15,9 @@ import 'test_utils.dart';
 
 void main() {
   group('Polygon', () {
-    final square = RoundedPolygon.fromVerticesNum(4);
-    final roundedSquare = RoundedPolygon.fromVerticesNum(
-      4,
-      rounding: const CornerRounding(radius: 0.2),
-    );
-    final pentagon = RoundedPolygon.fromVerticesNum(5);
+    final square = RoundedPolygon(4);
+    final roundedSquare = RoundedPolygon(4, rounding: const CornerRounding(radius: 0.2));
+    final pentagon = RoundedPolygon(5);
 
     test('construction', () {
       // We can't be too specific on how exactly the square is constructed, but
@@ -29,12 +26,12 @@ void main() {
       var max = const Point(1, 1);
       expectInBounds(square.cubics, min, max);
 
-      final doubleSquare = RoundedPolygon.fromVerticesNum(4, radius: 2);
+      final doubleSquare = RoundedPolygon(4, radius: 2);
       min = min * 2;
       max = max * 2;
       expectInBounds(doubleSquare.cubics, min, max);
 
-      final offsetSquare = RoundedPolygon.fromVerticesNum(4, center: const Point(1, 2));
+      final offsetSquare = RoundedPolygon(4, center: const Point(1, 2));
       min = const Point(0, 1);
       max = const Point(2, 3);
       expectInBounds(offsetSquare.cubics, min, max);
@@ -151,11 +148,8 @@ void main() {
     });
 
     test('transform keeps contiguous anchors equal', () {
-      final RoundedPolygon poly =
-          RoundedPolygon.fromVerticesNum(
-            4,
-            rounding: const CornerRounding(radius: 7 / 15),
-          ).transformed((x, y) {
+      final RoundedPolygon poly = RoundedPolygon(4, rounding: const CornerRounding(radius: 7 / 15))
+          .transformed((x, y) {
             final Point point = Point(x, y).rotate(45).scale(648, 648).translate(540, 1212);
             return (point.x, point.y);
           });
@@ -176,11 +170,7 @@ void main() {
     });
 
     test('empty', () {
-      final poly = RoundedPolygon.fromVerticesNum(
-        6,
-        radius: 0,
-        rounding: const CornerRounding(radius: 0.1),
-      );
+      final poly = RoundedPolygon(6, radius: 0, rounding: const CornerRounding(radius: 0.1));
       expect(poly.cubics.length, 1);
 
       final RoundedPolygon stillEmpty = poly.transformed(scaleTransform(10, 20));
