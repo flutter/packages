@@ -221,11 +221,12 @@ class Morph {
   ///
   /// [progress] is the [Morph]'s progress.
   ///
-  /// [path] is a [Path] to reset and set with the new path data.
-  ///
-  /// [startAngle] is an angle (in degrees) to rotate the [Path] to start
-  /// drawing from. If [startAngle] is non zero, then caller has to use the
-  /// returned [Path], as path transformation creates a new path.
+  /// [startAngle] places the start point of the first curve at that angle, in
+  /// radians, around [rotationPivot], rotating the whole path to get it there.
+  /// Zero is to the right of the pivot and `pi / 2` below it, since y grows
+  /// downwards.
+  /// The default of zero is special: it skips the rotation entirely and leaves
+  /// the curves as [asCubics] produced them.
   ///
   /// [repeatPath] is whether or not to repeat the [Path] twice before closing
   /// it. This flag is useful when the caller would like to draw parts of the
@@ -235,36 +236,24 @@ class Morph {
   ///
   /// [closePath] is whether or not to close the created [Path].
   ///
-  /// [rotationPivotX] is the rotation pivot on the X axis. By default it's set
-  /// to 0, and that should align with Morph instances that were created for
-  /// [RoundedPolygon] with a zero [RoundedPolygon.center]. In case the
-  /// [RoundedPolygon] was normalized (i.e. moved to (0.5, 0.5)), or was
-  /// created with a different center, this pivot point may need to be aligned
-  /// to support a proper rotation.
-  ///
-  /// [rotationPivotY] is the rotation pivot on the Y axis. By default it's set
-  /// to 0, and that should align with Morph instances that were created for
-  /// [RoundedPolygon] with a zero [RoundedPolygon.center]. In case the
-  /// [RoundedPolygon] was normalized (i.e. moved to (0.5, 0.5)), or was
-  /// created with a different center, this pivot point may need to be aligned
-  /// to support a proper rotation.
-  Path toPath({
-    required double progress,
-    int startAngle = 0,
+  /// [rotationPivot] is the point [startAngle] rotates the path around, and the
+  /// point its angle is measured from. It defaults to the origin, which suits a
+  /// [Morph] between polygons with a zero [RoundedPolygon.center]. A [Morph]
+  /// between polygons centered elsewhere should pass their center, (0.5, 0.5)
+  /// for normalized ones.
+  Path toPath(
+    double progress, {
+    double startAngle = 0,
     bool repeatPath = false,
     bool closePath = true,
-    double rotationPivotX = 0,
-    double rotationPivotY = 0,
-    Path? path,
+    Offset rotationPivot = Offset.zero,
   }) {
     return pathFromCubics(
-      cubics: asCubics(progress),
-      path: path,
+      asCubics(progress),
       startAngle: startAngle,
       repeatPath: repeatPath,
       closePath: closePath,
-      rotationPivotX: rotationPivotX,
-      rotationPivotY: rotationPivotY,
+      rotationPivot: rotationPivot,
     );
   }
 }

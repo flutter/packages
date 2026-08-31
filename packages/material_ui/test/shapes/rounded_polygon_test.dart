@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:math' as math;
+import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/src/shapes/corner_rounding.dart';
@@ -163,6 +164,26 @@ void main() {
       expect(const Point(0.5, 0.5), polygon.center);
     });
 
+    test('toPath rotates around the polygon center', () {
+      // A diamond filling the unit square, with its first vertex at angle zero
+      // from its center.
+      final diamond = RoundedPolygon.fromVertices(const [
+        Point(1, 0.5),
+        Point(0.5, 1),
+        Point(0, 0.5),
+        Point(0.5, 0),
+      ]);
+      expect(diamond.center, const Point(0.5, 0.5));
+
+      final Path path = diamond.toPath(startAngle: math.pi / 2);
+
+      // A quarter turn gives back the same diamond, so the bounds do not move.
+      // Only the start point changes, landing on the next vertex. Rotating
+      // about the origin would push the diamond out of the unit square.
+      expectPointsEqualish(const Point(0.5, 0.5), path.getBounds().center);
+      expectPointsEqualish(const Point(0.5, 1), pathStartPoint(path));
+    });
+
     test('rounding space usage', () {
       const Point p0 = Point.zero;
       const p1 = Point(1, 0);
@@ -192,8 +213,7 @@ void main() {
     });
 
     // In the following tests, we check how much was cut for the top left
-    // (vertex 0) and bottom
-    // left corner (vertex 3).
+    // (vertex 0) and bottom left corner (vertex 3).
     // In particular, both vertex are competing for space in the left side.
     //
     //   Vertex 0            Vertex 1

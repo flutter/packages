@@ -446,12 +446,12 @@ class _MutableCubicBezier extends CubicBezier {
 /// [Morph.toPath], and is useful when working with a list of curves obtained
 /// from [Morph.asCubics] directly.
 ///
-/// [path] is a [Path] to reset and set with the new path data. A new [Path] is
-/// created when none is given.
-///
-/// [startAngle] is an angle (in degrees) to rotate the [Path] to start
-/// drawing from. If [startAngle] is non zero, then caller has to use the
-/// returned [Path], as path transformation creates a new path.
+/// [startAngle] places the start point of the first curve at that angle, in
+/// radians, around [rotationPivot], rotating the whole path to get it there.
+/// Zero is to the right of the pivot and `pi / 2` below it, since y grows
+/// downwards.
+/// The default of zero is special: it skips the rotation entirely and leaves
+/// the curves as given.
 ///
 /// [repeatPath] is whether or not to repeat the [Path] twice before closing
 /// it. This flag is useful when the caller would like to draw parts of the
@@ -461,24 +461,20 @@ class _MutableCubicBezier extends CubicBezier {
 ///
 /// [closePath] is whether or not to close the created [Path].
 ///
-/// [rotationPivotX] is the rotation pivot on the X axis.
-///
-/// [rotationPivotY] is the rotation pivot on the Y axis.
-Path pathFromCubics({
-  required List<CubicBezier> cubics,
-  Path? path,
-  int startAngle = 0,
+/// [rotationPivot] is the point [startAngle] rotates the path around, and the
+/// point its angle is measured from. It defaults to the origin, which suits
+/// curves laid out around [Offset.zero].
+Path pathFromCubics(
+  List<CubicBezier> cubics, {
+  double startAngle = 0,
   bool repeatPath = false,
   bool closePath = true,
-  double rotationPivotX = 0,
-  double rotationPivotY = 0,
+  Offset rotationPivot = Offset.zero,
 }) {
-  path ??= Path();
+  var path = Path();
 
   var first = true;
   CubicBezier? firstCubic;
-
-  path.reset();
 
   for (final cubic in cubics) {
     if (first) {
@@ -524,12 +520,16 @@ Path pathFromCubics({
 
   if (startAngle != 0 && firstCubic != null) {
     final double angleToFirstCubic = math.atan2(
-      cubics[0].anchor0Y - rotationPivotY,
-      cubics[0].anchor0X - rotationPivotX,
+      cubics[0].anchor0Y - rotationPivot.dy,
+      cubics[0].anchor0X - rotationPivot.dx,
     );
-    // Rotate the Path to to start from the given angle.
+    // Rotate the path around the pivot so that it starts from the given angle.
     path = path.transform(
-      (Matrix4.identity()..rotateZ(-angleToFirstCubic + (startAngle * math.pi / 180))).storage,
+      (Matrix4.identity()
+            ..translateByDouble(rotationPivot.dx, rotationPivot.dy, 0, 1)
+            ..rotateZ(-angleToFirstCubic + startAngle)
+            ..translateByDouble(-rotationPivot.dx, -rotationPivot.dy, 0, 1))
+          .storage,
     );
   }
 

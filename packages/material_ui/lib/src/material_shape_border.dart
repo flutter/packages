@@ -171,7 +171,7 @@ class MaterialShapeBorder extends OutlinedBorder {
       ..translate(actualRect.left, actualRect.top)
       ..scale(scale.dx, scale.dy);
 
-    return pathFromCubics(cubics: _cubics).transform(matrix.storage);
+    return pathFromCubics(_cubics).transform(matrix.storage);
   }
 
   @override

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:math' as math;
+import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/src/shapes/cubic.dart';
@@ -149,6 +150,57 @@ void main() {
 
     test('empty CubicBezier has zero length', () {
       expect(CubicBezier.empty(const Point(10, 10)).zeroLength(), isTrue);
+    });
+  });
+
+  group('pathFromCubics', () {
+    // A triangle whose first curve starts one unit along the positive X-axis,
+    // so its start angle around the origin is zero.
+    final triangle = [
+      CubicBezier.straightLine(const Point(1, 0), const Point(0, 1)),
+      CubicBezier.straightLine(const Point(0, 1), const Point(0, -1)),
+      CubicBezier.straightLine(const Point(0, -1), const Point(1, 0)),
+    ];
+
+    test('startAngle is in radians', () {
+      // A quarter turn moves the start point to one unit along the positive
+      // Y-axis.
+      final Path path = pathFromCubics(triangle, startAngle: math.pi / 2);
+      expectPointsEqualish(const Point(0, 1), pathStartPoint(path));
+    });
+
+    test('startAngle rotates around rotationPivot', () {
+      const pivot = Point(5, 5);
+      // A diamond around the pivot, whose first curve starts at angle zero
+      // from it.
+      final diamond = [
+        CubicBezier.straightLine(const Point(6, 5), const Point(5, 6)),
+        CubicBezier.straightLine(const Point(5, 6), const Point(4, 5)),
+        CubicBezier.straightLine(const Point(4, 5), const Point(5, 4)),
+        CubicBezier.straightLine(const Point(5, 4), const Point(6, 5)),
+      ];
+
+      final Path path = pathFromCubics(diamond, startAngle: math.pi / 2, rotationPivot: pivot);
+
+      // A quarter turn gives back the same diamond, so the bounds stay centered
+      // on the pivot. Only the start point changes, landing on the next vertex.
+      // Rotating about the origin would move the bounds instead.
+      expectPointsEqualish(pivot, path.getBounds().center);
+      expectPointsEqualish(const Point(5, 6), pathStartPoint(path));
+    });
+
+    test('repeatPath doubles the contour', () {
+      final double single = pathFromCubics(triangle).computeMetrics().first.length;
+      final double doubled = pathFromCubics(
+        triangle,
+        repeatPath: true,
+      ).computeMetrics().first.length;
+      expectEqualish(single * 2, doubled);
+    });
+
+    test('closePath closes the contour', () {
+      expect(pathFromCubics(triangle).computeMetrics().first.isClosed, isTrue);
+      expect(pathFromCubics(triangle, closePath: false).computeMetrics().first.isClosed, isFalse);
     });
   });
 }

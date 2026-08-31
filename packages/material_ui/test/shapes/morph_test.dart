@@ -97,8 +97,8 @@ void main() {
 
       final ui.Path poly1Path = poly1.toPath().transform(matrix.storage);
       final ui.Path poly2Path = poly2.toPath().transform(matrix.storage);
-      final ui.Path morph120Path = morph12.toPath(progress: 0).transform(matrix.storage);
-      final ui.Path morph121Path = morph12.toPath(progress: 1).transform(matrix.storage);
+      final ui.Path morph120Path = morph12.toPath(0).transform(matrix.storage);
+      final ui.Path morph121Path = morph12.toPath(1).transform(matrix.storage);
 
       await comparePathsVisually(poly1Path, morph120Path, radius * 2);
       await comparePathsVisually(poly2Path, morph121Path, radius * 2);

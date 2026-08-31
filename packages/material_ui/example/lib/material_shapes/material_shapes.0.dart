@@ -177,7 +177,7 @@ class _MorphPainter extends CustomPainter {
     canvas
       ..save()
       ..scale(size.width)
-      ..drawPath(morph.value.toPath(progress: progress.value), _paint)
+      ..drawPath(morph.value.toPath(progress.value), _paint)
       ..restore();
   }
 

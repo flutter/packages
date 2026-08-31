@@ -757,19 +757,14 @@ class RoundedPolygon {
     return bounds;
   }
 
-  /// Returns a [Path] representation for a [RoundedPolygon] shape. Note that
-  /// there is some rounding happening (to the nearest thousandth), to work
-  /// around rendering artifacts introduced by some points being just slightly
-  /// off from each other (far less than a pixel). This also allows for a more
-  /// optimal path, as redundant curves (usually a single point) can be
-  /// detected and not added to the resulting path.
+  /// Returns a [Path] representation for a [RoundedPolygon] shape.
   ///
-  /// [path] is a [Path] to reset and set with the new path data.
-  ///
-  /// [startAngle] is an angle (in degrees) to rotate the [Path] to start
-  /// drawing from. The rotation pivot is set to be the polygon's [center].
-  /// If [startAngle] is non zero, then caller has to use the returned [Path],
-  /// as path transformation creates a new path.
+  /// [startAngle] places the start point of the polygon's first curve at that
+  /// angle, in radians, around the polygon's [center], rotating the polygon
+  /// about that center to get it there. Zero is to the right of the center and
+  /// `pi / 2` below it, since y grows downwards.
+  /// The default of zero is special: it skips the rotation entirely and leaves
+  /// the polygon as it was built.
   ///
   /// [repeatPath] is whether or not to repeat the [Path] twice before closing
   /// it. This flag is useful when the caller would like to draw parts of the
@@ -778,15 +773,13 @@ class RoundedPolygon {
   /// progress indicator advances).
   ///
   /// [closePath] is whether or not to close the created [Path].
-  Path toPath({int startAngle = 0, bool repeatPath = false, bool closePath = true, Path? path}) {
+  Path toPath({double startAngle = 0, bool repeatPath = false, bool closePath = true}) {
     return pathFromCubics(
-      cubics: cubics,
-      path: path,
+      cubics,
       startAngle: startAngle,
       repeatPath: repeatPath,
       closePath: closePath,
-      rotationPivotX: _center.x,
-      rotationPivotY: _center.y,
+      rotationPivot: _center,
     );
   }
 
