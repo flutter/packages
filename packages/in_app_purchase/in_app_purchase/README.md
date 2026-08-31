@@ -1,3 +1,4 @@
+<?code-excerpt path-base="example/lib"?>
 A storefront-independent API for purchases in Flutter apps.
 
 <!-- If this package were in its own repo, we'd put badges here -->
@@ -84,6 +85,7 @@ You should always start listening to purchase update as early as possible to be 
 to catch all purchase updates, including the ones from the previous app session.
 To listen to the update:
 
+<?code-excerpt "readme_examples.dart (purchase-updates)"?>
 ```dart
 class _MyAppState extends State<MyApp> {
   StreamSubscription<List<PurchaseDetails>> _subscription;
@@ -111,6 +113,7 @@ class _MyAppState extends State<MyApp> {
 
 Here is an example of how to handle purchase updates:
 
+<?code-excerpt "readme_examples.dart (purchase-updates-handler)"?>
 ```dart
 void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
   purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
@@ -139,6 +142,7 @@ void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
 
 ### Connecting to the underlying store
 
+<?code-excerpt "readme_examples.dart (store-availability)"?>
 ```dart
 final bool available = await InAppPurchase.instance.isAvailable();
 if (!available) {
@@ -148,6 +152,7 @@ if (!available) {
 
 ### Loading products for sale
 
+<?code-excerpt "readme_examples.dart (product-query)"?>
 ```dart
 // Set literals require Dart 2.2. Alternatively, use
 // `Set<String> _kIds = <String>['product1', 'product2'].toSet()`.
@@ -170,6 +175,7 @@ underlying store:
 * [Verifying Google Play purchases](https://developer.android.com/google/play/billing/security#verify)
 
 
+<?code-excerpt "readme_examples.dart (restore-purchases)"?>
 ```dart
 await InAppPurchase.instance.restorePurchases();
 ```
@@ -186,6 +192,7 @@ Both underlying stores handle consumable and non-consumable products differently
 you're using `InAppPurchase`, you need to make a distinction here and
 call the right purchase method for each type.
 
+<?code-excerpt "readme_examples.dart (purchase-flow)"?>
 ```dart
 final ProductDetails productDetails = ... // Saved earlier from queryProductDetails().
 final PurchaseParam purchaseParam = PurchaseParam(productDetails: productDetails);
@@ -201,6 +208,7 @@ if (_isConsumable(productDetails)) {
 StoreKit 2 Specific Purchases (iOS/macOS)
 When StoreKit 2 is enabled, you can use Sk2PurchaseParam to include StoreKit 2 specific parameters such as win-back offer identifiers or promotional offers with signatures.
 
+<?code-excerpt "readme_examples.dart (sk2-purchase)"?>
 ```dart
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 
@@ -248,6 +256,7 @@ users from accidentally purchasing multiple subscriptions. Refer to the
 [Creating a Subscription Group](https://developer.apple.com/app-store/subscriptions/#groups) section of
 [Apple's subscription guide](https://developer.apple.com/app-store/subscriptions/).
 
+<?code-excerpt "readme_examples.dart (upgrade-subscription)"?>
 ```dart
 final PurchaseDetails oldPurchaseDetails = ...;
 PurchaseParam purchaseParam = GooglePlayPurchaseParam(
@@ -294,6 +303,7 @@ popup at a different time, for example after clicking a button.
 To know when the App Store wants to show a popup and prevent this from happening a queue delegate can be registered.
 The `InAppPurchaseStoreKitPlatformAddition` contains a `setDelegate(SKPaymentQueueDelegateWrapper? delegate)` function that
 can be used to set a delegate or remove one by setting it to `null`.
+<?code-excerpt "readme_examples.dart (price-consent-delegate)"?>
 ```dart
 //import for InAppPurchaseStoreKitPlatformAddition
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
@@ -319,6 +329,7 @@ The delegate that is set should implement `SKPaymentQueueDelegateWrapper` and ha
 `shouldShowPriceConsent`. When setting `shouldShowPriceConsent` to false the default popup will not be shown and the app
 needs to show this later.
 
+<?code-excerpt "readme_examples.dart (price-consent-delegate)"?>
 ```dart
 // import for SKPaymentQueueDelegateWrapper
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
@@ -339,6 +350,7 @@ class ExamplePaymentQueueDelegate implements SKPaymentQueueDelegateWrapper {
 
 The dialog can be shown by calling `showPriceConsentIfNeeded` on the `InAppPurchaseStoreKitPlatformAddition`. This future
 will complete immediately when the dialog is shown. A confirmed transaction will be delivered on the `purchaseStream`.
+<?code-excerpt "readme_examples.dart (price-consent-show)"?>
 ```dart
 if (Platform.isIOS) {
   var iapStoreKitPlatformAddition = _inAppPurchase
@@ -355,6 +367,7 @@ containing properties only available on all endorsed platforms. However, in some
 when the platform is Android and `AppStoreProductDetails` on iOS. Accessing the skuDetails (on Android) or the skProduct (on iOS) provides all the information that is available in the original platform objects.
 
 This is an example on how to get the `introductoryPricePeriod` on Android:
+<?code-excerpt "readme_examples.dart (android-product-details)"?>
 ```dart
 //import for GooglePlayProductDetails
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
@@ -368,6 +381,7 @@ if (productDetails is GooglePlayProductDetails) {
 ```
 
 And this is the way to get the subscriptionGroupIdentifier of a subscription on iOS:
+<?code-excerpt "readme_examples.dart (ios-product-details)"?>
 ```dart
 //import for AppStoreProductDetails
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
@@ -395,6 +409,7 @@ when the platform is Android and `AppStorePurchaseDetails` on iOS. Accessing the
 skPaymentTransaction provides all the information that is available in the original platform objects.
 
 This is an example on how to get the `originalJson` on Android:
+<?code-excerpt "readme_examples.dart (android-purchase-details)"?>
 ```dart
 //import for GooglePlayPurchaseDetails
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
@@ -408,6 +423,7 @@ if (purchaseDetails is GooglePlayPurchaseDetails) {
 ```
 
 How to get the `transactionState` of a purchase in iOS, using the original StoreKit API:
+<?code-excerpt "readme_examples.dart (ios-purchase-details)"?>
 ```dart
 //import for AppStorePurchaseDetails
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
@@ -421,6 +437,7 @@ if (purchaseDetails is AppStorePurchaseDetails) {
 ```
 
 How to get the `jsonRepresentation` of a transaction in iOS, using StoreKit 2:
+<?code-excerpt "readme_examples.dart (sk2-transaction)"?>
 ```dart
 //import for SK2TransactionWrapper
 import 'package:in_app_purchase_storekit/store_kit_2_wrappers.dart';
@@ -437,6 +454,7 @@ The following code brings up a sheet that enables the user to redeem offer
 codes that you've set up in App Store Connect. For more information on
 redeeming offer codes, see [Implementing Offer Codes in Your App](https://developer.apple.com/documentation/storekit/in-app_purchase/subscriptions_and_offers/implementing_offer_codes_in_your_app).
 
+<?code-excerpt "readme_examples.dart (code-redemption)"?>
 ```dart
 InAppPurchaseStoreKitPlatformAddition iosPlatformAddition =
   InAppPurchase.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
