@@ -93,7 +93,7 @@ void main() {
         final cubic1 = CubicBezier.straightLine(Point.zero, const Point(1, 0));
         final cubic2 = CubicBezier.straightLine(const Point(10, 10), const Point(20, 20));
         expect(
-          () => RoundedPolygon.fromFeatures([Feature.buildEdge(cubic1), Feature.buildEdge(cubic2)]),
+          () => RoundedPolygon.fromFeatures([Feature.edge(cubic1), Feature.edge(cubic2)]),
           throwsArgumentError,
         );
       });

@@ -11,44 +11,44 @@ import 'test_utils.dart';
 void main() {
   group('$Feature', () {
     test('Cannot build empty features', () {
-      expect(() => Feature.buildConvexCorner(const []), throwsArgumentError);
-      expect(() => Feature.buildConcaveCorner(const []), throwsArgumentError);
-      expect(() => Feature.buildIgnorableFeature(const []), throwsArgumentError);
+      expect(() => Feature.convexCorner(const []), throwsArgumentError);
+      expect(() => Feature.concaveCorner(const []), throwsArgumentError);
+      expect(() => Feature.ignorable(const []), throwsArgumentError);
     });
 
     test('Cannot build non continuous features', () {
       final cubic1 = CubicBezier.straightLine(Offset.zero, const Offset(1, 1));
       final cubic2 = CubicBezier.straightLine(const Offset(10, 10), const Offset(11, 11));
 
-      expect(() => Feature.buildConvexCorner([cubic1, cubic2]), throwsArgumentError);
-      expect(() => Feature.buildConcaveCorner([cubic1, cubic2]), throwsArgumentError);
-      expect(() => Feature.buildIgnorableFeature([cubic1, cubic2]), throwsArgumentError);
+      expect(() => Feature.convexCorner([cubic1, cubic2]), throwsArgumentError);
+      expect(() => Feature.concaveCorner([cubic1, cubic2]), throwsArgumentError);
+      expect(() => Feature.ignorable([cubic1, cubic2]), throwsArgumentError);
     });
 
     test('Builds concave corner', () {
       final cubic = CubicBezier.straightLine(Offset.zero, const Offset(1, 0));
-      final actual = Feature.buildConcaveCorner([cubic]);
+      final actual = Feature.concaveCorner([cubic]);
       final expected = CornerFeature([cubic], convex: false);
       expectFeaturesEqualish(expected, actual);
     });
 
     test('Builds convex corner', () {
       final cubic = CubicBezier.straightLine(Offset.zero, const Offset(1, 0));
-      final actual = Feature.buildConvexCorner([cubic]);
+      final actual = Feature.convexCorner([cubic]);
       final expected = CornerFeature([cubic]);
       expectFeaturesEqualish(expected, actual);
     });
 
     test('Builds edge', () {
       final cubic = CubicBezier.straightLine(Offset.zero, const Offset(1, 0));
-      final actual = Feature.buildEdge(cubic);
+      final actual = Feature.edge(cubic);
       final expected = EdgeFeature([cubic]);
       expectFeaturesEqualish(expected, actual);
     });
 
     test('Builds ignorable as edge', () {
       final cubic = CubicBezier.straightLine(Offset.zero, const Offset(1, 0));
-      final actual = Feature.buildIgnorableFeature([cubic]);
+      final actual = Feature.ignorable([cubic]);
       final expected = EdgeFeature([cubic]);
       expectFeaturesEqualish(expected, actual);
     });
