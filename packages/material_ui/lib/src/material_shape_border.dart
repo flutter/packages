@@ -21,15 +21,25 @@ class MaterialShapeBorder extends OutlinedBorder {
   /// Creates a [MaterialShapeBorder].
   MaterialShapeBorder({required RoundedPolygon this.shape, super.side, this.squash = 0})
     : _cubics = shape.cubics,
+      _lerpStart = null,
+      _lerpEnd = null,
+      _lerpProgress = null,
       assert(squash >= 0 && squash <= 1, 'squash has to be in range [0, 1]');
 
-  const MaterialShapeBorder._fromCubics({required this._cubics, super.side, this.squash = 0})
-    : shape = null,
-      assert(squash >= 0 && squash <= 1, 'squash has to be in range [0, 1]');
+  const MaterialShapeBorder._fromCubics({
+    required this._cubics,
+    required RoundedPolygon this._lerpStart,
+    required RoundedPolygon this._lerpEnd,
+    required double this._lerpProgress,
+    super.side,
+    this.squash = 0,
+  }) : shape = null,
+       assert(squash >= 0 && squash <= 1, 'squash has to be in range [0, 1]');
 
   /// The shape this border represents.
   ///
-  /// This value could be `null` if border is the result of lerp.
+  /// This value is `null` if the border is the result of a lerp, which stores
+  /// its morph instead.
   final RoundedPolygon? shape;
 
   /// How much of the aspect ratio of the attached widget to take on.
@@ -52,26 +62,121 @@ class MaterialShapeBorder extends OutlinedBorder {
 
   final List<CubicBezier> _cubics;
 
-  // The number 5 was chosen without any real science or research behind it. It
-  // just seemed like a number that's not too big (a handful of morphs fits in
-  // memory comfortably) and not too small (few screens animate between more
-  // than 5 distinct pairs of shapes at once).
+  // The morph this border was lerped from, and how far along it the geometry
+  // sits. All three are null when [shape] is set and non-null otherwise, which
+  // is what lets an interrupted transition resume along the same morph.
+  final RoundedPolygon? _lerpStart;
+  final RoundedPolygon? _lerpEnd;
+  final double? _lerpProgress;
+
+  // The number 5 was chosen without any real science behind it. It is small
+  // enough that the cached morphs fit comfortably in memory, and large enough
+  // for the few pairs of shapes a screen animates between at once.
   static const int _morphCacheSize = 5;
 
   /// Caches the mapping between pairs of shapes to speed up [lerpFrom] and
   /// [lerpTo].
   static final _morphCache = _FifoCache<_MorphCacheKey, Morph>(_morphCacheSize);
 
-  /// Returns the [Morph] between [start] and [end], reusing a previously
-  /// computed one when it is still cached.
+  /// Returns the [Morph] between [start] and [end], reusing a cached one when
+  /// possible.
   ///
-  /// A [Morph] matches the curves of its two shapes at construction time, which
-  /// is far more expensive than evaluating it at a progress value, and the
-  /// mapping it produces depends only on those two shapes. A transition asks
-  /// for the same pair on every frame, so computing the mapping once and
-  /// keeping it is what makes lerping affordable.
+  /// Creating a [Morph] matches up the curves of both shapes, which is much
+  /// more expensive than evaluating it at a progress value. A transition asks
+  /// for the same pair of shapes on every frame, so the result is worth
+  /// keeping.
   static Morph _morphBetween(RoundedPolygon start, RoundedPolygon end) {
     return _morphCache.putIfAbsent(_MorphCacheKey(start, end), () => Morph(start, end));
+  }
+
+  /// Interpolates from [a] to [b] at [t], or returns `null` if the two borders
+  /// have no morph in common.
+  ///
+  /// Both [lerpFrom] and [lerpTo] delegate here so that they always give the
+  /// same answer. [ShapeBorder.lerp] tries them in both directions, so a pair
+  /// accepted by one but declined by another would animate backwards or never
+  /// reach the snapping fallback.
+  static MaterialShapeBorder? _lerp(MaterialShapeBorder a, MaterialShapeBorder b, double t) {
+    final RoundedPolygon? aShape = a.shape;
+    final RoundedPolygon? bShape = b.shape;
+
+    final RoundedPolygon start;
+    final RoundedPolygon end;
+    final double progress;
+
+    if (aShape != null && bShape != null) {
+      start = aShape;
+      end = bShape;
+      progress = t;
+    } else {
+      // One or both sides came from an earlier lerp, as happens when an
+      // implicit animation is interrupted. Such a border can only be
+      // interpolated along the morph it came from, so both sides must sit on
+      // that same morph.
+      final lerped = aShape == null ? a : b;
+      start = lerped._lerpStart!;
+      end = lerped._lerpEnd!;
+
+      final double? from = a._progressAlong(start, end);
+      final double? to = b._progressAlong(start, end);
+
+      if (from == null || to == null) {
+        return null;
+      }
+
+      progress = ui.lerpDouble(from, to, t)!;
+    }
+
+    return MaterialShapeBorder._fromCubics(
+      cubics: _morphBetween(start, end).asCubics(progress),
+      lerpStart: start,
+      lerpEnd: end,
+      lerpProgress: progress,
+      side: BorderSide.lerp(a.side, b.side, t),
+      squash: ui.lerpDouble(a.squash, b.squash, t)!,
+    );
+  }
+
+  /// How far along the morph from [start] to [end] this border sits, or null if
+  /// it is not on that morph.
+  ///
+  /// Shapes are compared by value, so a border rebuilt with an equal but newly
+  /// constructed shape still resumes its morph instead of snapping.
+  /// [_MorphCacheKey] makes the opposite trade, since hashing a polygon is
+  /// expensive.
+  double? _progressAlong(RoundedPolygon start, RoundedPolygon end) {
+    final RoundedPolygon? shape = this.shape;
+
+    if (shape == null) {
+      return _lerpStart == start && _lerpEnd == end ? _lerpProgress : null;
+    }
+
+    if (shape == start) {
+      return 0;
+    }
+
+    if (shape == end) {
+      return 1;
+    }
+
+    return null;
+  }
+
+  /// Returns a copy of this lerp result with a different [side] or [squash].
+  ///
+  /// The geometry and the morph carry over unchanged, so the copy can still be
+  /// lerped. Only valid when [shape] is null.
+  MaterialShapeBorder _lerpResultWith({BorderSide? side, double? squash}) {
+    assert(shape == null);
+
+    return MaterialShapeBorder._fromCubics(
+      cubics: _cubics,
+      lerpStart: _lerpStart!,
+      lerpEnd: _lerpEnd!,
+      lerpProgress: _lerpProgress!,
+      side: side ?? this.side,
+      squash: squash ?? this.squash,
+    );
   }
 
   @override
@@ -82,7 +187,7 @@ class MaterialShapeBorder extends OutlinedBorder {
       return MaterialShapeBorder(shape: shape, side: side.scale(t), squash: squash);
     }
 
-    return MaterialShapeBorder._fromCubics(cubics: _cubics, side: side.scale(t), squash: squash);
+    return _lerpResultWith(side: side.scale(t));
   }
 
   @override
@@ -96,22 +201,7 @@ class MaterialShapeBorder extends OutlinedBorder {
     }
 
     if (a is MaterialShapeBorder) {
-      final RoundedPolygon? aShape = a.shape;
-      final RoundedPolygon? shape = this.shape;
-
-      if (aShape == null || shape == null) {
-        throw StateError(
-          'Lerping requires both MaterialShapeBorders to have non-null shapes. '
-          'This border is likely the result of a previous lerp and cannot be '
-          'used for further interpolation.',
-        );
-      }
-
-      return MaterialShapeBorder._fromCubics(
-        cubics: _morphBetween(aShape, shape).asCubics(t),
-        side: BorderSide.lerp(a.side, side, t),
-        squash: ui.lerpDouble(a.squash, squash, t)!,
-      );
+      return _lerp(a, this, t);
     }
 
     return super.lerpFrom(a, t);
@@ -128,22 +218,7 @@ class MaterialShapeBorder extends OutlinedBorder {
     }
 
     if (b is MaterialShapeBorder) {
-      final RoundedPolygon? bShape = b.shape;
-      final RoundedPolygon? shape = this.shape;
-
-      if (bShape == null || shape == null) {
-        throw StateError(
-          'Lerping requires both MaterialShapeBorders to have non-null shapes. '
-          'This border is likely the result of a previous lerp and cannot be '
-          'used for further interpolation.',
-        );
-      }
-
-      return MaterialShapeBorder._fromCubics(
-        cubics: _morphBetween(shape, bShape).asCubics(t),
-        side: BorderSide.lerp(side, b.side, t),
-        squash: ui.lerpDouble(squash, b.squash, t)!,
-      );
+      return _lerp(this, b, t);
     }
 
     return super.lerpTo(b, t);
@@ -169,11 +244,7 @@ class MaterialShapeBorder extends OutlinedBorder {
       );
     }
 
-    return MaterialShapeBorder._fromCubics(
-      cubics: _cubics,
-      side: side ?? this.side,
-      squash: squash ?? this.squash,
-    );
+    return _lerpResultWith(side: side, squash: squash);
   }
 
   Path _getPathFromRect(Rect rect) {
@@ -230,12 +301,23 @@ class MaterialShapeBorder extends OutlinedBorder {
     return other is MaterialShapeBorder &&
         other.shape == shape &&
         listEquals(other._cubics, _cubics) &&
+        other._lerpStart == _lerpStart &&
+        other._lerpEnd == _lerpEnd &&
+        other._lerpProgress == _lerpProgress &&
         other.side == side &&
         other.squash == squash;
   }
 
   @override
-  int get hashCode => Object.hash(shape, Object.hashAll(_cubics), side, squash);
+  int get hashCode => Object.hash(
+    shape,
+    Object.hashAll(_cubics),
+    _lerpStart,
+    _lerpEnd,
+    _lerpProgress,
+    side,
+    squash,
+  );
 
   @override
   String toString() {
@@ -246,11 +328,10 @@ class MaterialShapeBorder extends OutlinedBorder {
 
 /// The pair of shapes a cached [Morph] was built from.
 ///
-/// Keys compare by identity rather than by value. [RoundedPolygon.hashCode]
-/// walks every coordinate of every feature, which would cost a sizeable
-/// fraction of the work the cache saves, on every lookup rather than only on a
-/// miss. A pair that misses is simply rebuilt, so identity only ever costs a
-/// cache hit.
+/// Keys compare by identity rather than by value, because
+/// [RoundedPolygon.hashCode] walks every coordinate of every feature and would
+/// cost a sizeable fraction of what the cache saves. A pair that misses is
+/// simply rebuilt.
 @immutable
 class _MorphCacheKey {
   const _MorphCacheKey(this.start, this.end);

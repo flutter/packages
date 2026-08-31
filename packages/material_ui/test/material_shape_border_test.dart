@@ -272,7 +272,7 @@ void main() {
       expect(copy.copyWith(side: lerped.side, squash: lerped.squash), lerped);
     });
 
-    test('copyWith with a shape makes a lerped border lerpable again', () {
+    test('copyWith with a shape turns a lerped border back into a shaped one', () {
       final start = MaterialShapeBorder(shape: MaterialShapes.circle);
       final end = MaterialShapeBorder(shape: MaterialShapes.square);
 
@@ -280,7 +280,29 @@ void main() {
       final MaterialShapeBorder restored = lerped.copyWith(shape: MaterialShapes.square);
 
       expect(restored.shape, same(MaterialShapes.square));
-      expect(() => restored.lerpTo(end, 0.5), returnsNormally);
+      // A lerped border interpolates on its own now, so this is a way of
+      // discarding the morph rather than the only way of escaping it.
+      expect(restored.lerpTo(end, 0.5), end.lerpFrom(restored, 0.5));
+    });
+
+    test('scale and copyWith keep a lerped border on its morph', () {
+      final start = MaterialShapeBorder(shape: MaterialShapes.circle);
+      final end = MaterialShapeBorder(shape: MaterialShapes.square);
+
+      final lerped = start.lerpTo(end, 0.5)! as MaterialShapeBorder;
+      final expected = start.lerpTo(end, 0.25)! as MaterialShapeBorder;
+
+      // Both carry the morph through, so a transition interrupted after its
+      // current value was scaled or copied still resumes instead of snapping.
+      // The side and the squash are normalized away because those are what
+      // scale and copyWith set out to change.
+      final scaled = lerped.scale(2.0) as MaterialShapeBorder;
+      final resumedFromScale = scaled.lerpTo(start, 0.5)! as MaterialShapeBorder;
+      expect(resumedFromScale.copyWith(side: expected.side), expected);
+
+      final MaterialShapeBorder copy = lerped.copyWith(squash: 1.0);
+      final resumedFromCopy = copy.lerpTo(start, 0.5)! as MaterialShapeBorder;
+      expect(resumedFromCopy.copyWith(squash: expected.squash), expected);
     });
 
     test('lerp returns the endpoints at zero and one', () {
@@ -320,19 +342,117 @@ void main() {
       expect(backward.squash, 0.25);
     });
 
-    test('lerp throws when a border is already the result of a lerp', () {
+    test('lerp resumes the morph of an already lerped border', () {
       final start = MaterialShapeBorder(shape: MaterialShapes.circle);
       final end = MaterialShapeBorder(shape: MaterialShapes.square);
 
       final lerped = start.lerpTo(end, 0.5)! as MaterialShapeBorder;
       expect(lerped.shape, isNull);
 
-      expect(() => lerped.lerpTo(end, 0.5), throwsStateError);
-      expect(() => lerped.lerpFrom(start, 0.5), throwsStateError);
-      expect(() => start.lerpTo(lerped, 0.5), throwsStateError);
-      expect(() => end.lerpFrom(lerped, 0.5), throwsStateError);
-      // ShapeBorder.lerp tries lerpFrom on the second border first.
-      expect(() => ShapeBorder.lerp(lerped, end, 0.5), throwsStateError);
+      // Halfway from progress 0.5 back to the start is progress 0.25 on the
+      // same morph, which is what the uninterrupted transition drew there.
+      // ShapeBorder.lerp reaches this through lerpFrom on the second border.
+      expect(lerped.lerpTo(start, 0.5), start.lerpTo(end, 0.25));
+      expect(ShapeBorder.lerp(lerped, start, 0.5), start.lerpTo(end, 0.25));
+
+      // The lerped border can sit on either side of the call, and the target
+      // can be either endpoint of its morph, so there are four orderings and
+      // each has its own direction to get backwards.
+      expect(lerped.lerpTo(end, 0.5), start.lerpTo(end, 0.75));
+      expect(start.lerpTo(lerped, 0.5), start.lerpTo(end, 0.25));
+      expect(end.lerpTo(lerped, 0.5), start.lerpTo(end, 0.75));
+    });
+
+    test('lerp interpolates between two results of the same morph', () {
+      final start = MaterialShapeBorder(shape: MaterialShapes.circle);
+      final end = MaterialShapeBorder(shape: MaterialShapes.square);
+
+      final quarter = start.lerpTo(end, 0.25)! as MaterialShapeBorder;
+      final threeQuarters = start.lerpTo(end, 0.75)! as MaterialShapeBorder;
+
+      expect(quarter.lerpTo(threeQuarters, 0.5), start.lerpTo(end, 0.5));
+    });
+
+    test('lerp resumes the morph for an equal but freshly built shape', () {
+      final start = MaterialShapeBorder(shape: MaterialShapes.circle);
+      final end = MaterialShapeBorder(shape: MaterialShapes.square);
+
+      final lerped = start.lerpTo(end, 0.5)! as MaterialShapeBorder;
+
+      // A widget that builds its border inline hands over a new polygon on
+      // every build, so matching the endpoints by identity would snap here.
+      final rebuilt = MaterialShapeBorder(
+        shape: RoundedPolygon.fromFeatures(List<Feature>.of(MaterialShapes.circle.features)),
+      );
+
+      expect(rebuilt.shape, isNot(same(MaterialShapes.circle)));
+      expect(lerped.lerpTo(rebuilt, 0.5), start.lerpTo(end, 0.25));
+    });
+
+    test('lerp keeps the morph across a second interruption', () {
+      final start = MaterialShapeBorder(shape: MaterialShapes.circle);
+      final end = MaterialShapeBorder(shape: MaterialShapes.square);
+
+      final first = start.lerpTo(end, 0.5)! as MaterialShapeBorder;
+      final second = first.lerpTo(start, 0.5)! as MaterialShapeBorder;
+
+      expect(second, start.lerpTo(end, 0.25));
+      // The result of the first interruption is on the morph too, so a second
+      // one resumes instead of falling off it.
+      expect(second.lerpTo(end, 0.5), start.lerpTo(end, 0.625));
+    });
+
+    test('lerp snaps instead of throwing when there is no shared morph', () {
+      final start = MaterialShapeBorder(shape: MaterialShapes.circle);
+      final end = MaterialShapeBorder(shape: MaterialShapes.square);
+      final third = MaterialShapeBorder(shape: MaterialShapes.triangle);
+
+      final lerped = start.lerpTo(end, 0.5)! as MaterialShapeBorder;
+      final other = start.lerpTo(third, 0.5)! as MaterialShapeBorder;
+
+      // A third shape is on neither end of the morph, and the two lerped
+      // borders are on different morphs. All four of ShapeBorder.lerp's
+      // attempts decline, which is what lets it reach its own fallback.
+      expect(lerped.lerpTo(third, 0.5), isNull);
+      expect(third.lerpFrom(lerped, 0.5), isNull);
+      expect(lerped.lerpFrom(third, 0.5), isNull);
+      expect(third.lerpTo(lerped, 0.5), isNull);
+      expect(lerped.lerpTo(other, 0.5), isNull);
+
+      expect(ShapeBorder.lerp(lerped, third, 0.25), same(lerped));
+      expect(ShapeBorder.lerp(lerped, third, 0.75), same(third));
+    });
+
+    testWidgets('an interrupted AnimatedContainer transition does not throw', (
+      WidgetTester tester,
+    ) async {
+      Widget buildFrame(RoundedPolygon shape) {
+        return Directionality(
+          textDirection: TextDirection.ltr,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            width: 100,
+            height: 100,
+            decoration: ShapeDecoration(
+              color: const Color(0xFF00FF00),
+              shape: MaterialShapeBorder(shape: shape),
+            ),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buildFrame(MaterialShapes.circle));
+      await tester.pumpWidget(buildFrame(MaterialShapes.square));
+      await tester.pump(const Duration(milliseconds: 150));
+
+      // Each of these restarts the tween from the half-morphed border that is
+      // on screen, which is the value that used to have no shape to lerp with.
+      await tester.pumpWidget(buildFrame(MaterialShapes.circle));
+      await tester.pump(const Duration(milliseconds: 150));
+      await tester.pumpWidget(buildFrame(MaterialShapes.triangle));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
     });
 
     test('lerp keeps a separate morph for each pair of shapes', () {
