@@ -1,3 +1,7 @@
+## 2.18.11
+
+* Converts marker controllers to Swift.
+
 ## 2.18.10
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.

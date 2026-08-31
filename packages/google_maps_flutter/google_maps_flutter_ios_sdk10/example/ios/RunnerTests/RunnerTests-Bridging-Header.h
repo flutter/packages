@@ -4,4 +4,3 @@
 
 // Import private _Test.h headers from the plugin framework
 #import <google_maps_flutter_ios_sdk10_objc/FGMHeatmapController_Test.h>
-#import <google_maps_flutter_ios_sdk10_objc/FGMMarkerController_Test.h>

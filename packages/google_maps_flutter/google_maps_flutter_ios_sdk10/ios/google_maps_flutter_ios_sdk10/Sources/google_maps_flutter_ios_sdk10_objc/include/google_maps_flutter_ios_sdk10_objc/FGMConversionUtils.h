@@ -54,10 +54,6 @@ extern GMSMapViewType FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapType type)
 extern GMSCollisionBehavior FGMGetCollisionBehaviorForPigeonCollisionBehavior(
     FGMPlatformMarkerCollisionBehavior collisionBehavior);
 
-/// Converts a GMUStaticCluster to its Pigeon representation.
-extern FGMPlatformCluster *FGMGetPigeonCluster(GMUStaticCluster *cluster,
-                                               NSString *clusterManagerIdentifier);
-
 /// Converts a GMSGroundOverlay to its Pigeon representation.
 extern FGMPlatformGroundOverlay *FGMGetPigeonGroundOverlay(GMSGroundOverlay *groundOverlay,
                                                            NSString *overlayId,
