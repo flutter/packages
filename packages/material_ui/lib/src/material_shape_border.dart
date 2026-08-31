@@ -207,13 +207,13 @@ class MaterialShapeBorder extends OutlinedBorder {
 
     return other is MaterialShapeBorder &&
         other.shape == shape &&
-        other._cubics == _cubics &&
+        listEquals(other._cubics, _cubics) &&
         other.side == side &&
         other.squash == squash;
   }
 
   @override
-  int get hashCode => Object.hash(shape, _cubics, squash, side.hashCode);
+  int get hashCode => Object.hash(shape, Object.hashAll(_cubics), side, squash);
 
   @override
   String toString() {

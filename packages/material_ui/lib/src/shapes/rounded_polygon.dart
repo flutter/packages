@@ -815,7 +815,7 @@ class RoundedPolygon {
   }
 
   @override
-  int get hashCode => features.hashCode;
+  int get hashCode => Object.hashAll(features);
 }
 
 /// Calculates an estimated center position for the polygon, returning it. This

@@ -164,6 +164,15 @@ void main() {
       expect(const Point(0.5, 0.5), polygon.center);
     });
 
+    test('hashCode agrees with ==', () {
+      final List<Feature> features = RoundedPolygon.circle().features;
+      final first = RoundedPolygon.fromFeatures(features);
+      final second = RoundedPolygon.fromFeatures(List<Feature>.of(features));
+
+      expect(first, second);
+      expect(first.hashCode, second.hashCode);
+    });
+
     test('toPath rotates around the polygon center', () {
       // A diamond filling the unit square, with its first vertex at angle zero
       // from its center.
