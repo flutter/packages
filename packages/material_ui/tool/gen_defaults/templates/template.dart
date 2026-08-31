@@ -12,16 +12,16 @@ import '../data/shape_struct.dart';
 enum _MaterialVersion { material3, material3Expressive }
 
 /// A template for generating Material 3 component defaults.
-abstract class M3TokenTemplate extends TokenTemplate {
-  const M3TokenTemplate();
+abstract class TokenTemplateM3 extends TokenTemplate {
+  const TokenTemplateM3();
 
   @override
   _MaterialVersion get _version => _MaterialVersion.material3;
 }
 
 /// A template for generating Material 3 Expressive component defaults.
-abstract class M3ETokenTemplate extends TokenTemplate {
-  const M3ETokenTemplate();
+abstract class TokenTemplateM3E extends TokenTemplate {
+  const TokenTemplateM3E();
 
   @override
   _MaterialVersion get _version => _MaterialVersion.material3Expressive;
@@ -52,7 +52,7 @@ abstract class TokenTemplate {
   static final RegExp _nameRegExp = RegExp(r'^[A-Z][a-zA-Z0-9]*( [A-Z][a-zA-Z0-9]*)*$');
 
   /// The name of the template, which corresponds to the target file name.
-  /// E.g., 'Icon Button' for generating 'icon_button_m3_defaults.g.dart'.
+  /// E.g., 'Icon Button' for generating 'icon_button_defaults_m3.g.dart'.
   String get name;
 
   /// The path of the parent file relative to `lib/src`.
@@ -154,8 +154,8 @@ abstract class TokenTemplate {
   void generateFile({bool verbose = false}) {
     final String snakeName = name.toLowerCase().replaceAll(' ', '_');
     final String outputFileName = switch (_version) {
-      _MaterialVersion.material3 => '${snakeName}_m3_defaults.g.dart',
-      _MaterialVersion.material3Expressive => '${snakeName}_m3e_defaults.g.dart',
+      _MaterialVersion.material3 => '${snakeName}_defaults_m3.g.dart',
+      _MaterialVersion.material3Expressive => '${snakeName}_defaults_m3e.g.dart',
     };
     final fileName = '$materialLib/$outputFileName';
     if (verbose) {
