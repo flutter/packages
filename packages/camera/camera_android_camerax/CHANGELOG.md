@@ -1,3 +1,10 @@
+## 0.7.4+8
+
+* Bumps cameraxVersion from 1.6.1 to 1.6.2, which includes an upstream fix
+  removing the need for the explicit `androidx.concurrent:concurrent-futures`
+  dependency workaround. Removes that workaround dependency and its
+  regression test accordingly.
+
 ## 0.7.4+7
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
