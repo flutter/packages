@@ -23,8 +23,8 @@ import Testing
   func markersController(
     withMapView mapView: GMSMapView,
     eventDelegate: NSObject & FGMMapEventDelegate
-  ) -> FGMMarkersController {
-    return FGMMarkersController(
+  ) -> MarkersController {
+    return MarkersController(
       mapView: mapView,
       eventDelegate: eventDelegate,
       clusterManagersController: nil,
@@ -73,10 +73,8 @@ import Testing
       )
     ])
 
-    let markerController = try #require(
-      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
-    )
-    let marker = try #require(markerController.marker)
+    let markerController = try #require(controller.markerIdentifierToController[markerIdentifier])
+    let marker = markerController.marker
 
     let delta = 0.0001
     #expect(abs(Double(marker.opacity) - alpha) <= delta)
@@ -117,10 +115,8 @@ import Testing
       )
     ])
 
-    let markerController = try #require(
-      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
-    )
-    let marker = try #require(markerController.marker)
+    let markerController = try #require(controller.markerIdentifierToController[markerIdentifier])
+    let marker = markerController.marker
 
     #expect(marker.isDraggable)
   }
@@ -156,10 +152,8 @@ import Testing
       )
     ])
 
-    let markerController = try #require(
-      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
-    )
-    let marker = try #require(markerController.marker)
+    let markerController = try #require(controller.markerIdentifierToController[markerIdentifier])
+    let marker = markerController.marker
 
     #expect(marker.isFlat)
   }
@@ -195,10 +189,8 @@ import Testing
       )
     ])
 
-    let markerController = try #require(
-      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
-    )
-    let marker = try #require(markerController.marker)
+    let markerController = try #require(controller.markerIdentifierToController[markerIdentifier])
+    let marker = markerController.marker
 
     // Visibility is controlled by being set to a map.
     #expect(marker.map != nil)
@@ -237,10 +229,8 @@ import Testing
       )
     ])
 
-    let markerController = try #require(
-      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
-    )
-    let marker = try #require(markerController.marker)
+    let markerController = try #require(controller.markerIdentifierToController[markerIdentifier])
+    let marker = markerController.marker
 
     let delta = 0.0001
     #expect(abs(Double(marker.infoWindowAnchor.x) - anchorX) <= delta)
@@ -254,7 +244,7 @@ import Testing
     let collisionBehavior = FGMPlatformMarkerCollisionBehaviorBox(
       value: .requiredAndHidesOptional
     )
-    FGMMarkerController.update(
+    MarkerController.update(
       marker,
       from: FGMPlatformMarker.make(
         withAlpha: 1.0,
@@ -276,7 +266,7 @@ import Testing
         clusterManagerId: nil,
         collisionBehavior: collisionBehavior
       ),
-      with: MarkerControllerTests.mapView(),
+      mapView: MarkerControllerTests.mapView(),
       assetProvider: TestAssetProvider(),
       screenScale: 1,
       usingOpacityForVisibility: false
@@ -285,13 +275,13 @@ import Testing
   }
 
   @Test func assetProviderIsRetained() {
-    var markerController: FGMMarkersController?
+    var markerController: MarkersController?
     weak var weakAssetProvider: TestAssetProvider?
     autoreleasepool {
       let assetProvider = TestAssetProvider()
       weakAssetProvider = assetProvider
 
-      markerController = FGMMarkersController(
+      markerController = MarkersController(
         mapView: MarkerControllerTests.mapView(),
         eventDelegate: TestMapEventHandler(),
         clusterManagersController: nil,

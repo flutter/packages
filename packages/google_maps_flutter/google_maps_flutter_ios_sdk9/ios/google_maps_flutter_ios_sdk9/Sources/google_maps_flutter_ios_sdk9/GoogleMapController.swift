@@ -122,8 +122,8 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   var trackCameraPosition = false
 
   /// Sub-controllers for managing individual map features.
-  let clusterManagersController: FGMClusterManagersController
-  let markersController: FGMMarkersController
+  let clusterManagersController: ClusterManagersController
+  let markersController: MarkersController
   let polygonsController: PolygonsController
   let polylinesController: PolylinesController
   let circlesController: CirclesController
@@ -198,11 +198,11 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
 
     let markerType = creationParameters.mapConfiguration.markerType
 
-    clusterManagersController = FGMClusterManagersController(
+    clusterManagersController = ClusterManagersController(
       mapView: mapView,
       eventDelegate: mapEventHandler
     )
-    markersController = FGMMarkersController(
+    markersController = MarkersController(
       mapView: mapView,
       eventDelegate: mapEventHandler,
       clusterManagersController: clusterManagersController,
@@ -374,32 +374,32 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
       clusterManagersController.didTap(cluster)
       return false
     }
-    if let markerId = FGMGetMarkerIdentifierFromMarker(marker) {
+    if let markerId = markerIdentifierFromMarker(marker) {
       return markersController.didTapMarker(withIdentifier: markerId)
     }
     return false
   }
 
   public func mapView(_ mapView: GMSMapView, didEndDragging marker: GMSMarker) {
-    if let markerId = FGMGetMarkerIdentifierFromMarker(marker) {
+    if let markerId = markerIdentifierFromMarker(marker) {
       markersController.didEndDraggingMarker(withIdentifier: markerId, location: marker.position)
     }
   }
 
   public func mapView(_ mapView: GMSMapView, didBeginDragging marker: GMSMarker) {
-    if let markerId = FGMGetMarkerIdentifierFromMarker(marker) {
+    if let markerId = markerIdentifierFromMarker(marker) {
       markersController.didStartDraggingMarker(withIdentifier: markerId, location: marker.position)
     }
   }
 
   public func mapView(_ mapView: GMSMapView, didDrag marker: GMSMarker) {
-    if let markerId = FGMGetMarkerIdentifierFromMarker(marker) {
+    if let markerId = markerIdentifierFromMarker(marker) {
       markersController.didDragMarker(withIdentifier: markerId, location: marker.position)
     }
   }
 
   public func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker) {
-    if let markerId = FGMGetMarkerIdentifierFromMarker(marker) {
+    if let markerId = markerIdentifierFromMarker(marker) {
       markersController.didTapInfoWindowOfMarker(withIdentifier: markerId)
     }
   }
