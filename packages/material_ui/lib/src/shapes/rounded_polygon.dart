@@ -685,11 +685,12 @@ class RoundedPolygon {
   /// level API and there should be more platform idiomatic ways to transform
   /// a [RoundedPolygon] provided by the platform specific wrapper.
   ///
-  /// [f] is the [PointTransformer] used to transform this [RoundedPolygon].
-  RoundedPolygon transformed(PointTransformer f) {
+  /// [transformer] is the [PointTransformer] used to transform this
+  /// [RoundedPolygon].
+  RoundedPolygon transformed(PointTransformer transformer) {
     return RoundedPolygon._raw([
-      for (var i = 0; i < features.length; i++) features[i].transformed(f),
-    ], _center.transformed(f));
+      for (var i = 0; i < features.length; i++) features[i].transformed(transformer),
+    ], _center.transformed(transformer));
   }
 
   /// A new [RoundedPolygon], moving and resizing this one, so it's completely

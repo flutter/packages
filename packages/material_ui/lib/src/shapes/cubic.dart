@@ -374,14 +374,14 @@ class CubicBezier {
   /// Returns a curve whose coordinates are this curve's divided by [x].
   CubicBezier operator /(double x) => this * (1.0 / x);
 
-  /// Returns a copy of this curve with [f] applied to each of its anchor and
-  /// control points.
-  CubicBezier transformed(PointTransformer f) {
+  /// Returns a copy of this curve with [transformer] applied to each of its
+  /// anchor and control points.
+  CubicBezier transformed(PointTransformer transformer) {
     final newCubic = _MutableCubicBezier();
     for (var i = 0; i < 8; i++) {
       newCubic._points[i] = _points[i];
     }
-    newCubic.transform(f);
+    newCubic.transform(transformer);
     return newCubic;
   }
 

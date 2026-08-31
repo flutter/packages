@@ -129,9 +129,9 @@ abstract class Feature {
   /// Whether this Feature is a concave corner (inward indentation in a shape).
   bool get isConcaveCorner;
 
-  /// Transforms the points in this [Feature] with the given [PointTransformer]
-  /// and returns a new [Feature].
-  Feature transformed(PointTransformer f);
+  /// Transforms the points in this [Feature] with the given [transformer] and
+  /// returns a new [Feature].
+  Feature transformed(PointTransformer transformer);
 
   /// A new [Feature] with the points that define the shape of this [Feature]
   /// in reversed order.
@@ -161,8 +161,8 @@ class EdgeFeature extends Feature {
   const EdgeFeature(super._cubics);
 
   @override
-  Feature transformed(PointTransformer f) =>
-      EdgeFeature(List.generate(_cubics.length, (i) => _cubics[i].transformed(f)));
+  Feature transformed(PointTransformer transformer) =>
+      EdgeFeature(List.generate(_cubics.length, (i) => _cubics[i].transformed(transformer)));
 
   @override
   Feature get reversed =>
@@ -200,8 +200,8 @@ class CornerFeature extends Feature {
   final bool convex;
 
   @override
-  Feature transformed(PointTransformer f) => CornerFeature(
-    List.generate(_cubics.length, (i) => _cubics[i].transformed(f)),
+  Feature transformed(PointTransformer transformer) => CornerFeature(
+    List.generate(_cubics.length, (i) => _cubics[i].transformed(transformer)),
     convex: convex,
   );
 
