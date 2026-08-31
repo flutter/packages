@@ -149,7 +149,7 @@ void main() {
     });
 
     test('empty CubicBezier has zero length', () {
-      expect(CubicBezier.empty(const Point(10, 10)).zeroLength(), isTrue);
+      expect(CubicBezier.empty(const Point(10, 10)).isZeroLength, isTrue);
     });
   });
 

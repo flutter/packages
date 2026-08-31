@@ -103,7 +103,7 @@ class CubicBezier {
   /// Generates an empty [CubicBezier] defined at [point].
   ///
   /// Both anchor points and both control points coincide, so the curve has
-  /// zero length. See [zeroLength].
+  /// zero length. See [isZeroLength].
   CubicBezier.empty(Offset point)
     : this.raw([point.x, point.y, point.x, point.y, point.x, point.y, point.x, point.y]);
 
@@ -179,7 +179,7 @@ class CubicBezier {
   /// Coincidence is measured with a small tolerance rather than exactly, so a
   /// curve whose anchors differ only by rounding error still counts as zero
   /// length. Note that the control points are not considered.
-  bool zeroLength() =>
+  bool get isZeroLength =>
       (anchor0X - anchor1X).abs() < distanceEpsilon &&
       (anchor0Y - anchor1Y).abs() < distanceEpsilon;
 
@@ -198,7 +198,7 @@ class CubicBezier {
   Rect calculateBounds({bool approximate = false}) {
     // A curve might be of zero-length, with both anchors co-lated.
     // Just return the point itself.
-    if (zeroLength()) {
+    if (isZeroLength) {
       return Rect.fromLTRB(anchor0X, anchor0Y, anchor0X, anchor0Y);
     }
 

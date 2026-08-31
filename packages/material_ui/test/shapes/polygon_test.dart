@@ -129,7 +129,7 @@ void main() {
 
     test('features', () {
       List<CubicBezier> nonZeroCubics(List<CubicBezier> original) {
-        return original.where((c) => !c.zeroLength()).toList();
+        return original.where((c) => !c.isZeroLength).toList();
       }
 
       final List<Feature> squareFeatures = square.features;
@@ -185,7 +185,7 @@ void main() {
 
       final RoundedPolygon stillEmpty = poly.transformed(scaleTransform(10, 20));
       expect(stillEmpty.cubics.length, 1);
-      expect(stillEmpty.cubics.first.zeroLength(), isTrue);
+      expect(stillEmpty.cubics.first.isZeroLength, isTrue);
     });
 
     test('empty side', () {

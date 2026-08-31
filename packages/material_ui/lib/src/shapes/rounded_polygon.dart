@@ -643,7 +643,7 @@ class RoundedPolygon {
         // artifacts.
         final CubicBezier cubic = featureCubics[j];
 
-        if (!cubic.zeroLength()) {
+        if (!cubic.isZeroLength) {
           if (lastCubic != null) {
             cubics.add(lastCubic);
           }
