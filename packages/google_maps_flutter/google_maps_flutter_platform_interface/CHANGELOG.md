@@ -1,3 +1,7 @@
+## 2.17.0
+
+* Adds support for configuring the color displayed behind unloaded map tiles.
+
 ## 2.16.1
 
 * Fixes the `PinConfig` code sample in the `BitmapDescriptor` documentation.

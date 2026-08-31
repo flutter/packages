@@ -604,6 +604,22 @@ void main() {
     expect(map.mapConfiguration.style, '');
   });
 
+  testWidgets('Initial backgroundColor is forwarded', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+          backgroundColor: Color(0xFF123456),
+        ),
+      ),
+    );
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.mapConfiguration.backgroundColor, const Color(0xFF123456));
+  });
+
   testWidgets('Update state from widget only when mounted', (WidgetTester tester) async {
     await tester.pumpWidget(
       const Directionality(
