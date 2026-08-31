@@ -286,7 +286,7 @@ class BottomNavigationBar extends StatefulWidget {
        ),
        assert(selectedFontSize >= 0.0),
        assert(unselectedFontSize >= 0.0),
-       assert(splashRadius == null || splashRadius > 0),
+       assert(splashRadius == null || splashRadius > 0.0),
        selectedItemColor = selectedItemColor ?? fixedColor;
 
   /// Defines the appearance of the button items that are arrayed within the
