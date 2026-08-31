@@ -101,10 +101,6 @@ class RoundedPolygon {
     }());
   }
 
-  /// Creates a copy of the given [RoundedPolygon].
-  RoundedPolygon.from(RoundedPolygon roundedPolygon)
-    : this._raw(roundedPolygon.features, roundedPolygon.center);
-
   /// This function takes the vertices (either supplied or calculated,
   /// depending on the constructor called), plus [CornerRounding] parameters,
   /// and creates the actual [RoundedPolygon] shape, rounding around the

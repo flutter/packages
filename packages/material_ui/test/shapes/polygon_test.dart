@@ -36,11 +36,6 @@ void main() {
       max = const Point(2, 3);
       expectInBounds(offsetSquare.cubics, min, max);
 
-      final squareCopy = RoundedPolygon.from(square);
-      min = const Point(-1, -1);
-      max = const Point(1, 1);
-      expectInBounds(squareCopy.cubics, min, max);
-
       const p0 = Point(1, 0);
       const p1 = Point(0, 1);
       const p2 = Point(-1, 0);
@@ -135,16 +130,10 @@ void main() {
       // polygon.
       // Note the Equalish test since some points may be adjusted in conversion
       // from raw cubics in the feature to the cubics list for the shape.
-      List<CubicBezier> nonzeroCubics = nonZeroCubics(
+      final List<CubicBezier> nonzeroCubics = nonZeroCubics(
         squareFeatures.expand((f) => f.cubics).toList(),
       );
       expectCubicListsEqualish(square.cubics, nonzeroCubics);
-
-      // Same as the first polygon test, but with a copy of that polygon.
-      final squareCopy = RoundedPolygon.from(square);
-      final List<Feature> squareCopyFeatures = squareCopy.features;
-      nonzeroCubics = nonZeroCubics(squareCopyFeatures.expand((f) => f.cubics).toList());
-      expectCubicListsEqualish(squareCopy.cubics, nonzeroCubics);
     });
 
     test('transform keeps contiguous anchors equal', () {
