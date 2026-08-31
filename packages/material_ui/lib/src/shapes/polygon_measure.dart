@@ -380,7 +380,7 @@ class LengthMeasurer implements Measurer {
 
     for (var i = 0; i <= _segments; i++) {
       final double progress = i / _segments;
-      final Point point = cubic.pointOnCurve(progress);
+      final Point point = cubic.pointAt(progress);
       final double segment = (point - prev).getDistance();
 
       if (segment >= remainder) {

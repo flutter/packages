@@ -119,11 +119,11 @@ void main() {
       expectBetween(cubic.anchor0, cubic.anchor1, split1.anchor0);
     });
 
-    test('pointOnCurve', () {
-      Point halfway = cubic.pointOnCurve(0.5);
+    test('pointAt', () {
+      Point halfway = cubic.pointAt(0.5);
       expectBetween(cubic.anchor0, cubic.anchor1, halfway);
       final straightLineCubic = CubicBezier.straightLine(p0, p3);
-      halfway = straightLineCubic.pointOnCurve(0.5);
+      halfway = straightLineCubic.pointAt(0.5);
       final computedHalfway = Point(p0.x + 0.5 * (p3.x - p0.x), p0.y + 0.5 * (p3.y - p0.y));
       expectPointsEqualish(computedHalfway, halfway);
     });

@@ -718,7 +718,7 @@ class RoundedPolygon {
         cubic.anchor0X - _center.x,
         cubic.anchor0Y - _center.y,
       );
-      final Point middlePoint = cubic.pointOnCurve(0.5);
+      final Point middlePoint = cubic.pointAt(0.5);
       final double middleDistance = distanceSquared(
         middlePoint.x - _center.x,
         middlePoint.y - _center.y,

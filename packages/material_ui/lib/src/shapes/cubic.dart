@@ -159,7 +159,7 @@ class CubicBezier {
   ///
   /// [t] is the distance along the curve between the anchor points, where 0
   /// is at [anchor0] and 1 is at [anchor1].
-  Offset pointOnCurve(double t) {
+  Offset pointAt(double t) {
     final double u = 1 - t;
     return Offset(
       anchor0X * (u * u * u) +
@@ -236,7 +236,7 @@ class CubicBezier {
       if (xb != 0) {
         final double t = 2 * xc / (-2 * xb);
         if (t >= 0 && t <= 1) {
-          final double x = pointOnCurve(t).x;
+          final double x = pointAt(t).x;
           if (x < minX) {
             minX = x;
           }
@@ -250,7 +250,7 @@ class CubicBezier {
       if (xs >= 0) {
         final double t1 = (-xb + math.sqrt(xs)) / (2 * xa);
         if (t1 >= 0 && t1 <= 1) {
-          final double x = pointOnCurve(t1).x;
+          final double x = pointAt(t1).x;
           if (x < minX) {
             minX = x;
           }
@@ -261,7 +261,7 @@ class CubicBezier {
 
         final double t2 = (-xb - math.sqrt(xs)) / (2 * xa);
         if (t2 >= 0 && t2 <= 1) {
-          final double x = pointOnCurve(t2).x;
+          final double x = pointAt(t2).x;
           if (x < minX) {
             minX = x;
           }
@@ -281,7 +281,7 @@ class CubicBezier {
       if (yb != 0) {
         final double t = 2 * yc / (-2 * yb);
         if (t >= 0 && t <= 1) {
-          final double y = pointOnCurve(t).y;
+          final double y = pointAt(t).y;
           if (y < minY) {
             minY = y;
           }
@@ -295,7 +295,7 @@ class CubicBezier {
       if (ys >= 0) {
         final double t1 = (-yb + math.sqrt(ys)) / (2 * ya);
         if (t1 >= 0 && t1 <= 1) {
-          final double y = pointOnCurve(t1).y;
+          final double y = pointAt(t1).y;
           if (y < minY) {
             minY = y;
           }
@@ -306,7 +306,7 @@ class CubicBezier {
 
         final double t2 = (-yb - math.sqrt(ys)) / (2 * ya);
         if (t2 >= 0 && t2 <= 1) {
-          final double y = pointOnCurve(t2).y;
+          final double y = pointAt(t2).y;
           if (y < minY) {
             minY = y;
           }
@@ -324,7 +324,7 @@ class CubicBezier {
   /// distance of [t] between the original starting and ending anchor points.
   (CubicBezier, CubicBezier) split(double t) {
     final double u = 1 - t;
-    final Point point = pointOnCurve(t);
+    final Point point = pointAt(t);
 
     return (
       CubicBezier.raw([

@@ -52,7 +52,7 @@ void main() {
     void expectCircularCubic(CubicBezier cubic, double radius, Point center) {
       var t = 0.0;
       while (t <= 1) {
-        final Point pointOnCurve = cubic.pointOnCurve(t);
+        final Point pointOnCurve = cubic.pointAt(t);
         final double distanceToPoint = distance(center, pointOnCurve);
         expect(radius, moreOrLessEquals(distanceToPoint, epsilon: epsilon));
         t += 0.1;
