@@ -52,6 +52,28 @@ class MaterialShapeBorder extends OutlinedBorder {
 
   final List<CubicBezier> _cubics;
 
+  // The number 5 was chosen without any real science or research behind it. It
+  // just seemed like a number that's not too big (a handful of morphs fits in
+  // memory comfortably) and not too small (few screens animate between more
+  // than 5 distinct pairs of shapes at once).
+  static const int _morphCacheSize = 5;
+
+  /// Caches the mapping between pairs of shapes to speed up [lerpFrom] and
+  /// [lerpTo].
+  static final _morphCache = _FifoCache<_MorphCacheKey, Morph>(_morphCacheSize);
+
+  /// Returns the [Morph] between [start] and [end], reusing a previously
+  /// computed one when it is still cached.
+  ///
+  /// A [Morph] matches the curves of its two shapes at construction time, which
+  /// is far more expensive than evaluating it at a progress value, and the
+  /// mapping it produces depends only on those two shapes. A transition asks
+  /// for the same pair on every frame, so computing the mapping once and
+  /// keeping it is what makes lerping affordable.
+  static Morph _morphBetween(RoundedPolygon start, RoundedPolygon end) {
+    return _morphCache.putIfAbsent(_MorphCacheKey(start, end), () => Morph(start, end));
+  }
+
   @override
   ShapeBorder scale(double t) {
     final RoundedPolygon? shape = this.shape;
@@ -86,7 +108,7 @@ class MaterialShapeBorder extends OutlinedBorder {
       }
 
       return MaterialShapeBorder._fromCubics(
-        cubics: Morph(aShape, shape).asCubics(t),
+        cubics: _morphBetween(aShape, shape).asCubics(t),
         side: BorderSide.lerp(a.side, side, t),
         squash: ui.lerpDouble(a.squash, squash, t)!,
       );
@@ -118,7 +140,7 @@ class MaterialShapeBorder extends OutlinedBorder {
       }
 
       return MaterialShapeBorder._fromCubics(
-        cubics: Morph(shape, bShape).asCubics(t),
+        cubics: _morphBetween(shape, bShape).asCubics(t),
         side: BorderSide.lerp(side, b.side, t),
         squash: ui.lerpDouble(squash, b.squash, t)!,
       );
@@ -219,5 +241,65 @@ class MaterialShapeBorder extends OutlinedBorder {
   String toString() {
     return '${objectRuntimeType(this, 'MaterialShapeBorder')}'
         '(side: $side, squash: $squash)';
+  }
+}
+
+/// The pair of shapes a cached [Morph] was built from.
+///
+/// Keys compare by identity rather than by value. [RoundedPolygon.hashCode]
+/// walks every coordinate of every feature, which would cost a sizeable
+/// fraction of the work the cache saves, on every lookup rather than only on a
+/// miss. A pair that misses is simply rebuilt, so identity only ever costs a
+/// cache hit.
+@immutable
+class _MorphCacheKey {
+  const _MorphCacheKey(this.start, this.end);
+
+  final RoundedPolygon start;
+
+  final RoundedPolygon end;
+
+  @override
+  int get hashCode => Object.hash(identityHashCode(start), identityHashCode(end));
+
+  @override
+  bool operator ==(Object other) {
+    return other is _MorphCacheKey && identical(other.start, start) && identical(other.end, end);
+  }
+}
+
+/// Cache of objects of limited size that uses the first in first out eviction
+/// strategy (a.k.a least recently inserted).
+///
+/// The key that was inserted before all other keys is evicted first, i.e. the
+/// one inserted least recently.
+class _FifoCache<K, V> {
+  _FifoCache(this._maximumSize) : assert(_maximumSize > 0);
+
+  /// In Dart the map literal uses a linked hash-map implementation, whose keys
+  /// are stored such that [Map.keys] returns them in the order they were
+  /// inserted.
+  final Map<K, V> _cache = <K, V>{};
+
+  /// Maximum number of entries to store in the cache.
+  ///
+  /// Once this many entries have been cached, the entry inserted least recently
+  /// is evicted when adding a new entry.
+  final int _maximumSize;
+
+  /// Returns the previously cached value for the given key, if available;
+  /// if not, calls the given callback to obtain it first.
+  V putIfAbsent(K key, V Function() loader) {
+    final V? result = _cache[key];
+
+    if (result != null) {
+      return result;
+    }
+
+    if (_cache.length == _maximumSize) {
+      _cache.remove(_cache.keys.first);
+    }
+
+    return _cache[key] = loader();
   }
 }

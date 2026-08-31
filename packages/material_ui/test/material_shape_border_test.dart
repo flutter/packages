@@ -335,6 +335,48 @@ void main() {
       expect(() => ShapeBorder.lerp(lerped, end, 0.5), throwsStateError);
     });
 
+    test('lerp keeps a separate morph for each pair of shapes', () {
+      final circle = MaterialShapeBorder(shape: MaterialShapes.circle);
+      final square = MaterialShapeBorder(shape: MaterialShapes.square);
+      final triangle = MaterialShapeBorder(shape: MaterialShapes.triangle);
+
+      final ShapeBorder? toSquare = circle.lerpTo(square, 0.5);
+      final ShapeBorder? toTriangle = circle.lerpTo(triangle, 0.5);
+
+      expect(toSquare, isNot(toTriangle));
+      // Both pairs are cached at once, and neither hands back the other's
+      // morph.
+      expect(circle.lerpTo(square, 0.5), toSquare);
+      expect(circle.lerpTo(triangle, 0.5), toTriangle);
+    });
+
+    test('lerp keeps a separate morph for each direction', () {
+      final circle = MaterialShapeBorder(shape: MaterialShapes.circle);
+      final square = MaterialShapeBorder(shape: MaterialShapes.square);
+
+      final ShapeBorder? forward = circle.lerpTo(square, 0.25);
+      final ShapeBorder? backward = square.lerpTo(circle, 0.25);
+
+      expect(forward, isNot(backward));
+      expect(circle.lerpTo(square, 0.25), forward);
+      expect(square.lerpTo(circle, 0.25), backward);
+    });
+
+    test('lerp stays correct once the morph cache evicts entries', () {
+      final circle = MaterialShapeBorder(shape: MaterialShapes.circle);
+      final square = MaterialShapeBorder(shape: MaterialShapes.square);
+
+      final ShapeBorder? expected = circle.lerpTo(square, 0.5);
+
+      // More distinct pairs than the cache holds, so the pair above is pushed
+      // out of it.
+      for (final RoundedPolygon shape in MaterialShapes.all.take(10)) {
+        circle.lerpTo(MaterialShapeBorder(shape: shape), 0.5);
+      }
+
+      expect(circle.lerpTo(square, 0.5), expected);
+    });
+
     test('lerp falls back to the superclass for other border types', () {
       final border = MaterialShapeBorder(shape: unitSquare, side: const BorderSide(width: 4.0));
 
