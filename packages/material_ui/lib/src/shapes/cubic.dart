@@ -100,11 +100,11 @@ class CubicBezier {
     ]);
   }
 
-  /// Generates an empty [CubicBezier] defined at [point].
+  /// Generates a zero-length [CubicBezier] at [point].
   ///
   /// Both anchor points and both control points coincide, so the curve has
   /// zero length. See [isZeroLength].
-  CubicBezier.empty(Offset point)
+  CubicBezier.point(Offset point)
     : this.raw([point.x, point.y, point.x, point.y, point.x, point.y, point.x, point.y]);
 
   final List<double> _points;

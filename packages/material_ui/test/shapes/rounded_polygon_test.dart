@@ -83,7 +83,7 @@ void main() {
         expect(() => RoundedPolygon.fromFeatures(const []), throwsArgumentError);
         expect(
           () => RoundedPolygon.fromFeatures([
-            CornerFeature([CubicBezier.empty(Point.zero)]),
+            CornerFeature([CubicBezier.point(Point.zero)]),
           ]),
           throwsArgumentError,
         );

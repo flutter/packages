@@ -672,7 +672,7 @@ class RoundedPolygon {
       );
     } else {
       // Empty / 0-sized polygon.
-      cubics.add(CubicBezier.empty(_center));
+      cubics.add(CubicBezier.point(_center));
     }
   }
 

@@ -148,8 +148,8 @@ void main() {
       expectPointsEqualish(cubic.anchor1 + translationVector, transformedCubic.anchor1);
     });
 
-    test('empty CubicBezier has zero length', () {
-      expect(CubicBezier.empty(const Point(10, 10)).isZeroLength, isTrue);
+    test('point CubicBezier has zero length', () {
+      expect(CubicBezier.point(const Point(10, 10)).isZeroLength, isTrue);
     });
   });
 
