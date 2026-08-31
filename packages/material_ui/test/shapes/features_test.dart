@@ -124,13 +124,13 @@ void main() {
         const Offset(4, 2),
       );
 
-      expect(EdgeFeature([cubic]).reversed(), EdgeFeature([reversedCubic]));
+      expect(EdgeFeature([cubic]).reversed, EdgeFeature([reversedCubic]));
       expect(
         EdgeFeature([cubic]).transformed(translateTransform(1, 2)),
         EdgeFeature([translatedCubic]),
       );
 
-      expect(CornerFeature([cubic]).reversed(), CornerFeature([reversedCubic], convex: false));
+      expect(CornerFeature([cubic]).reversed, CornerFeature([reversedCubic], convex: false));
       expect(
         CornerFeature([cubic]).transformed(translateTransform(1, 2)),
         CornerFeature([translatedCubic]),

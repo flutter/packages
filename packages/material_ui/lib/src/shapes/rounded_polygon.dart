@@ -982,7 +982,7 @@ class _RoundedCorner {
       circleIntersection0,
       center,
       actualR,
-    ).reverse();
+    ).reversed;
 
     return [
       flanking0,

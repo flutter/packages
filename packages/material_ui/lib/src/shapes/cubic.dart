@@ -343,8 +343,9 @@ class CubicBezier {
     );
   }
 
-  /// Utility function to reverse the control/anchor points for this curve.
-  CubicBezier reverse() => CubicBezier.raw([
+  /// This curve with its control and anchor points in reverse order, so it
+  /// runs from [anchor1] to [anchor0].
+  CubicBezier get reversed => CubicBezier.raw([
     anchor1X,
     anchor1Y,
     control1X,

@@ -133,9 +133,9 @@ abstract class Feature {
   /// and returns a new [Feature].
   Feature transformed(PointTransformer f);
 
-  /// Returns a new [Feature] with the points that define the shape of this
-  /// [Feature] in reversed order.
-  Feature reversed();
+  /// A new [Feature] with the points that define the shape of this [Feature]
+  /// in reversed order.
+  Feature get reversed;
 
   @override
   bool operator ==(Object other) {
@@ -165,8 +165,8 @@ class EdgeFeature extends Feature {
       EdgeFeature(List.generate(_cubics.length, (i) => _cubics[i].transformed(f)));
 
   @override
-  Feature reversed() =>
-      EdgeFeature(List.generate(_cubics.length, (i) => _cubics[_cubics.length - 1 - i].reverse()));
+  Feature get reversed =>
+      EdgeFeature(List.generate(_cubics.length, (i) => _cubics[_cubics.length - 1 - i].reversed));
 
   @override
   bool get isIgnorable => true;
@@ -206,8 +206,8 @@ class CornerFeature extends Feature {
   );
 
   @override
-  Feature reversed() => CornerFeature(
-    List.generate(_cubics.length, (i) => _cubics[_cubics.length - 1 - i].reverse()),
+  Feature get reversed => CornerFeature(
+    List.generate(_cubics.length, (i) => _cubics[_cubics.length - 1 - i].reversed),
     convex: !convex,
   );
 

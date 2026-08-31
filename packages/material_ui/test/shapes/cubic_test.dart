@@ -84,8 +84,8 @@ void main() {
       expectPointsEqualish(p3 + offsetCubic.anchor1, plusCubic.anchor1);
     });
 
-    test('reverse', () {
-      final CubicBezier reverseCubic = cubic.reverse();
+    test('reversed', () {
+      final CubicBezier reverseCubic = cubic.reversed;
       expect(p3, reverseCubic.anchor0);
       expect(p2, reverseCubic.control0);
       expect(p1, reverseCubic.control1);
