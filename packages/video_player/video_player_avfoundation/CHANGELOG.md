@@ -3,6 +3,10 @@
 * Adds `FairPlayDrmConfiguration`, allowing playback of FairPlay-protected
   network streams on iOS and macOS.
 
+## 2.11.1
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
 ## 2.11.0
 
 * Implements `setPreventsDisplaySleepDuringVideoPlayback` using
