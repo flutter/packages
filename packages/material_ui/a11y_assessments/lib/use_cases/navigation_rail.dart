@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:material_ui/material_ui.dart';
-import '../utils.dart';
 import 'use_cases.dart';
 
 class NavigationRailUseCase extends UseCase {
@@ -35,8 +34,6 @@ class _NavRailExampleState extends State<NavRailExample> {
   bool showLeading = false;
   bool showTrailing = false;
   double groupAlignment = -1.0;
-
-  String pageTitle = getUseCaseName(NavigationRailUseCase());
 
   @override
   Widget build(BuildContext context) {

@@ -47,7 +47,6 @@ class _NavigationDrawerExampleState extends State<NavigationDrawerExample> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   int screenIndex = 0;
-  late bool showNavigationDrawer;
 
   void handleScreenChanged(int selectedScreen) {
     setState(() {

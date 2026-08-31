@@ -30,8 +30,6 @@ class MainWidget extends StatefulWidget {
 }
 
 class MainWidgetState extends State<MainWidget> {
-  bool favorite = false;
-
   String pageTitle = getUseCaseName(ActionChipUseCase());
 
   @override
