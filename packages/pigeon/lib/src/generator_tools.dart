@@ -75,14 +75,12 @@ String getJnigenConfigPath(String appDirectory, [String? inputPath]) {
 /// Computes a posix relative path from [fromPath] to [targetPath], safely
 /// handling empty strings, unnormalized paths, and cross-directory steps.
 String makeRelative(String targetPath, String fromPath) {
-  final String normalizedTarget = posixPath(targetPath);
-  final String normalizedFrom = posixPath(fromPath);
-  final String absTarget = path.posix.isAbsolute(normalizedTarget)
-      ? path.posix.normalize(normalizedTarget)
-      : path.posix.normalize(path.posix.join('/root', normalizedTarget));
-  final String absFrom = path.posix.isAbsolute(normalizedFrom)
-      ? path.posix.normalize(normalizedFrom)
-      : path.posix.normalize(path.posix.join('/root', normalizedFrom));
+  final String absTarget = path.isAbsolute(targetPath)
+      ? posixPath(path.normalize(targetPath))
+      : posixPath(path.normalize(path.absolute(targetPath)));
+  final String absFrom = path.isAbsolute(fromPath)
+      ? posixPath(path.normalize(fromPath))
+      : posixPath(path.normalize(path.absolute(fromPath)));
   return path.posix.relative(absTarget, from: absFrom);
 }
 
