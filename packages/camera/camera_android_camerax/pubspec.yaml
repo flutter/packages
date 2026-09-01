@@ -36,11 +36,7 @@ dev_dependencies:
   mockito: ^5.4.4
   path: ^1.8.0
   pigeon: ^27.3.2
-  skills_lint:
-    git:
-      url: https://github.com/google/skills_lint.dart.git
-      path: packages/skills_lint
-      ref: e6e695e1550f81342fe5acd4dbe65040b5aa44c3
+  skills_lint: ^0.5.1
 
 topics:
   - camera
