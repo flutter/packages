@@ -25,92 +25,93 @@ func makeIcon(
   let bitmap = platformBitmap.bitmap
   var image: UIImage?
 
-  if let bitmapDefaultMarker = bitmap as? FGMPlatformBitmapDefaultMarker {
-    let hue = bitmapDefaultMarker.hue?.doubleValue ?? 0
+  switch bitmap {
+  case let bitmap as FGMPlatformBitmapDefaultMarker:
+    let hue = bitmap.hue?.doubleValue ?? 0
     image = GMSMarker.markerImage(
       with: UIColor(
         hue: CGFloat(hue) / 360.0,
         saturation: 1.0,
         brightness: 0.7,
         alpha: 1.0))
-  } else if let bitmapAsset = bitmap as? FGMPlatformBitmapAsset {
+  case let bitmap as FGMPlatformBitmapAsset:
     // Deprecated: This message handling for 'fromAsset' has been replaced by 'asset'.
     // Refer to the flutter google_maps_flutter_platform_interface package for details.
-    if let pkg = bitmapAsset.pkg {
-      if let key = assetProvider.lookupKey(forAsset: bitmapAsset.name, fromPackage: pkg) {
+    if let pkg = bitmap.pkg {
+      if let key = assetProvider.lookupKey(forAsset: bitmap.name, fromPackage: pkg) {
         image = assetProvider.imageNamed(key)
       }
     } else {
-      if let key = assetProvider.lookupKey(forAsset: bitmapAsset.name) {
+      if let key = assetProvider.lookupKey(forAsset: bitmap.name) {
         image = assetProvider.imageNamed(key)
       }
     }
-  } else if let bitmapAssetImage = bitmap as? FGMPlatformBitmapAssetImage {
+  case let bitmap as FGMPlatformBitmapAssetImage:
     // Deprecated: This message handling for 'fromAssetImage' has been replaced by 'asset'.
     // Refer to the flutter google_maps_flutter_platform_interface package for details.
-    if let key = assetProvider.lookupKey(forAsset: bitmapAssetImage.name) {
+    if let key = assetProvider.lookupKey(forAsset: bitmap.name) {
       if let assetImage = assetProvider.imageNamed(key) {
-        image = scaledImage(assetImage, scale: bitmapAssetImage.scale)
+        image = scaledImage(assetImage, scale: bitmap.scale)
       }
     }
-  } else if let bitmapBytes = bitmap as? FGMPlatformBitmapBytes {
+  case let bitmap as FGMPlatformBitmapBytes:
     // Deprecated: This message handling for 'fromBytes' has been replaced by 'bytes'.
     // Refer to the flutter google_maps_flutter_platform_interface package for details.
-    image = UIImage(data: bitmapBytes.byteData.data, scale: screenScale)
-  } else if let bitmapAssetMap = bitmap as? FGMPlatformBitmapAssetMap {
-    if let key = assetProvider.lookupKey(forAsset: bitmapAssetMap.assetName) {
+    image = UIImage(data: bitmap.byteData.data, scale: screenScale)
+  case let bitmap as FGMPlatformBitmapAssetMap:
+    if let key = assetProvider.lookupKey(forAsset: bitmap.assetName) {
       image = assetProvider.imageNamed(key)
     }
-    if let currentImage = image, bitmapAssetMap.bitmapScaling == .auto {
-      let width = bitmapAssetMap.width
-      let height = bitmapAssetMap.height
+    if let currentImage = image, bitmap.bitmapScaling == .auto {
+      let width = bitmap.width
+      let height = bitmap.height
       if width != nil || height != nil {
         let tempImage = scaledImage(currentImage, scale: screenScale)
         image = scaledImage(tempImage, width: width, height: height, screenScale: screenScale)
       } else {
-        image = scaledImage(currentImage, scale: CGFloat(bitmapAssetMap.imagePixelRatio))
+        image = scaledImage(currentImage, scale: CGFloat(bitmap.imagePixelRatio))
       }
     }
-  } else if let bitmapBytesMap = bitmap as? FGMPlatformBitmapBytesMap {
-    let bytes = bitmapBytesMap.byteData
+  case let bitmap as FGMPlatformBitmapBytesMap:
+    let bytes = bitmap.byteData
     image = UIImage(data: bytes.data, scale: screenScale)
     if let currentImage = image {
-      if bitmapBytesMap.bitmapScaling == .auto {
-        let width = bitmapBytesMap.width
-        let height = bitmapBytesMap.height
+      if bitmap.bitmapScaling == .auto {
+        let width = bitmap.width
+        let height = bitmap.height
         if width != nil || height != nil {
           // Before scaling the image, image must be in screenScale.
           let tempImage = scaledImage(currentImage, scale: screenScale)
           image = scaledImage(tempImage, width: width, height: height, screenScale: screenScale)
         } else {
-          image = scaledImage(currentImage, scale: CGFloat(bitmapBytesMap.imagePixelRatio))
+          image = scaledImage(currentImage, scale: CGFloat(bitmap.imagePixelRatio))
         }
       } else {
         // No scaling, load image from bytes without scale parameter.
         image = UIImage(data: bytes.data)
       }
     }
-  } else if let pinConfig = bitmap as? FGMPlatformBitmapPinConfig {
+  case let bitmap as FGMPlatformBitmapPinConfig:
     let options = GMSPinImageOptions()
-    if let backgroundColor = pinConfig.backgroundColor {
+    if let backgroundColor = bitmap.backgroundColor {
       options.backgroundColor = backgroundColor.toUIColor()
     }
-    if let borderColor = pinConfig.borderColor {
+    if let borderColor = bitmap.borderColor {
       options.borderColor = borderColor.toUIColor()
     }
 
     var glyph: GMSPinImageGlyph?
-    if let glyphText = pinConfig.glyphText {
+    if let glyphText = bitmap.glyphText {
       let glyphTextColor: UIColor
-      if let textColor = pinConfig.glyphTextColor {
+      if let textColor = bitmap.glyphTextColor {
         glyphTextColor = textColor.toUIColor()
       } else {
         glyphTextColor = .black
       }
       glyph = GMSPinImageGlyph(text: glyphText, textColor: glyphTextColor)
-    } else if let glyphColorValue = pinConfig.glyphColor {
+    } else if let glyphColorValue = bitmap.glyphColor {
       glyph = GMSPinImageGlyph(glyphColor: glyphColorValue.toUIColor())
-    } else if let glyphBitmap = pinConfig.glyphBitmap {
+    } else if let glyphBitmap = bitmap.glyphBitmap {
       if let glyphImage = makeIcon(
         from: glyphBitmap, assetProvider: assetProvider, screenScale: screenScale)
       {
@@ -119,6 +120,8 @@ func makeIcon(
     }
     options.glyph = glyph
     image = GMSPinImage(options: options)
+  default:
+    break
   }
 
   return image

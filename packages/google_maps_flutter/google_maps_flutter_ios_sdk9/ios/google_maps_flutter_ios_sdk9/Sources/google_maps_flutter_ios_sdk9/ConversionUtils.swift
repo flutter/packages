@@ -16,7 +16,7 @@ extension FGMPlatformPoint {
     return FGMPlatformPoint.makeWith(x: point.x, y: point.y)
   }
 
-  /// Converts a CGPoint from its Pigeon equivalent.
+  /// Returns the equivalent CGPoint.
   func toCGPoint() -> CGPoint {
     return CGPoint(x: x, y: y)
   }
@@ -29,9 +29,14 @@ extension FGMPlatformLatLng {
       withLatitude: coordinate.latitude, longitude: coordinate.longitude)
   }
 
-  /// Creates a CLLocationCoordinate2D from its Pigeon representation.
-  func toCLCoordinate() -> CLLocationCoordinate2D {
+  /// Returns the equivalent CLLocationCoordinate2D.
+  func toCLLocationCoordinate2D() -> CLLocationCoordinate2D {
     return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+  }
+
+  /// Returns the equivalent CLLocation.
+  func toCLLocation() -> CLLocation {
+    return CLLocation(latitude: latitude, longitude: longitude)
   }
 }
 
@@ -44,11 +49,11 @@ extension FGMPlatformLatLngBounds {
     )
   }
 
-  /// Creates a GMSCoordinateBounds from its Pigeon representation.
-  func toGMSBounds() -> GMSCoordinateBounds {
+  /// Returns the equivalent GMSCoordinateBounds.
+  func toGMSCoordinateBounds() -> GMSCoordinateBounds {
     return GMSCoordinateBounds(
-      coordinate: northeast.toCLCoordinate(),
-      coordinate: southwest.toCLCoordinate()
+      coordinate: northeast.toCLLocationCoordinate2D(),
+      coordinate: southwest.toCLLocationCoordinate2D()
     )
   }
 }
@@ -64,25 +69,15 @@ extension FGMPlatformCameraPosition {
     )
   }
 
-  /// Creates a GMSCameraPosition from its Pigeon representation.
+  /// Returns the equivalent GMSCameraPosition.
   func toGMSCameraPosition() -> GMSCameraPosition {
     return GMSCameraPosition(
-      target: target.toCLCoordinate(),
+      target: target.toCLLocationCoordinate2D(),
       zoom: Float(zoom),
       bearing: bearing,
       viewingAngle: tilt
     )
   }
-}
-
-/// Creates a CLLocation array from its Pigeon equivalent.
-func makePoints(from pigeonPoints: [FGMPlatformLatLng]) -> [CLLocation] {
-  return pigeonPoints.map { CLLocation(latitude: $0.latitude, longitude: $0.longitude) }
-}
-
-/// Creates a CLLocation array array, representing a set of holes, from its Pigeon equivalent.
-func makeHoles(from pigeonHolePoints: [[FGMPlatformLatLng]]) -> [[CLLocation]] {
-  return pigeonHolePoints.map { makePoints(from: $0) }
 }
 
 /// Creates a GMSMutablePath from points.
@@ -94,37 +89,33 @@ func makePath(from points: [CLLocation]) -> GMSMutablePath {
   return path
 }
 
-/// Creates a GMSMapViewType from its Pigeon representation.
-func mapViewType(from type: FGMPlatformMapType) -> GMSMapViewType {
-  switch type {
-  case .none:
-    return .none
-  case .normal:
-    return .normal
-  case .satellite:
-    return .satellite
-  case .terrain:
-    return .terrain
-  case .hybrid:
-    return .hybrid
-  @unknown default:
-    return .normal
+extension FGMPlatformMapType {
+  /// The corresponding GMSMapViewType.
+  var gmsMapViewType: GMSMapViewType {
+    switch self {
+    case .none: return .none
+    case .normal: return .normal
+    case .satellite: return .satellite
+    case .terrain: return .terrain
+    case .hybrid: return .hybrid
+    @unknown default: return .normal
+    }
   }
 }
 
-/// Creates a GMSCollisionBehavior from its Pigeon representation.
-func collisionBehavior(from collisionBehavior: FGMPlatformMarkerCollisionBehavior)
-  -> GMSCollisionBehavior
-{
-  switch collisionBehavior {
-  case .requiredDisplay:
-    return .required
-  case .optionalAndHidesLowerPriority:
-    return .optionalAndHidesLowerPriority
-  case .requiredAndHidesOptional:
-    return .requiredAndHidesOptional
-  @unknown default:
-    return .required
+extension FGMPlatformMarkerCollisionBehavior {
+  /// The corresponding GMSCollisionBehavior.
+  var gmsCollisionBehavior: GMSCollisionBehavior {
+    switch self {
+    case .requiredDisplay:
+      return .required
+    case .optionalAndHidesLowerPriority:
+      return .optionalAndHidesLowerPriority
+    case .requiredAndHidesOptional:
+      return .requiredAndHidesOptional
+    @unknown default:
+      return .required
+    }
   }
 }
 
@@ -143,17 +134,8 @@ extension FGMPlatformGroundOverlay {
         withGroundOverlayId: overlayId,
         image: placeholderImage,
         position: nil,
-        bounds: FGMPlatformLatLngBounds.make(
-          withNortheast: FGMPlatformLatLng.make(
-            withLatitude: bounds.northEast.latitude,
-            longitude: bounds.northEast.longitude
-          ),
-          southwest: FGMPlatformLatLng.make(
-            withLatitude: bounds.southWest.latitude,
-            longitude: bounds.southWest.longitude
-          )
-        ),
-        anchor: FGMPlatformPoint.makeWith(x: groundOverlay.anchor.x, y: groundOverlay.anchor.y),
+        bounds: FGMPlatformLatLngBounds.make(from: bounds),
+        anchor: FGMPlatformPoint.make(from: groundOverlay.anchor),
         transparency: 1.0 - Double(groundOverlay.opacity),
         bearing: groundOverlay.bearing,
         zIndex: Int(groundOverlay.zIndex),
@@ -165,12 +147,9 @@ extension FGMPlatformGroundOverlay {
       return FGMPlatformGroundOverlay.make(
         withGroundOverlayId: overlayId,
         image: placeholderImage,
-        position: FGMPlatformLatLng.make(
-          withLatitude: groundOverlay.position.latitude,
-          longitude: groundOverlay.position.longitude
-        ),
+        position: FGMPlatformLatLng.make(from: groundOverlay.position),
         bounds: nil,
-        anchor: FGMPlatformPoint.makeWith(x: groundOverlay.anchor.x, y: groundOverlay.anchor.y),
+        anchor: FGMPlatformPoint.make(from: groundOverlay.anchor),
         transparency: 1.0 - Double(groundOverlay.opacity),
         bearing: groundOverlay.bearing,
         zIndex: Int(groundOverlay.zIndex),
@@ -193,7 +172,7 @@ extension FGMPlatformHeatmapGradient {
     )
   }
 
-  /// Creates a GMUGradient from its Pigeon representation.
+  /// Returns the equivalent GMUGradient.
   func toGMUGradient() -> GMUGradient {
     let colors = colors.map { $0.toUIColor() }
     return GMUGradient(
@@ -204,26 +183,19 @@ extension FGMPlatformHeatmapGradient {
   }
 }
 
-/// Creates a GMUWeightedLatLng array from its Pigeon equivalent.
-func makeWeightedData(from weightedLatLngs: [FGMPlatformWeightedLatLng]) -> [GMUWeightedLatLng] {
-  return weightedLatLngs.map {
-    GMUWeightedLatLng(
-      coordinate: $0.point.toCLCoordinate(),
-      intensity: Float($0.weight)
-    )
-  }
-}
-
-/// Converts a GMUWeightedLatLng array to its Pigeon equivalent.
-func makePigeonWeightedData(from weightedLatLngs: [GMUWeightedLatLng])
-  -> [FGMPlatformWeightedLatLng]
-{
-  return weightedLatLngs.map {
-    let point = GMSMapPoint(x: $0.point().x, y: $0.point().y)
+extension FGMPlatformWeightedLatLng {
+  /// Converts a GMUWeightedLatLng to its Pigeon representation.
+  static func make(from weightedLatLng: GMUWeightedLatLng) -> FGMPlatformWeightedLatLng {
+    let point = GMSMapPoint(x: weightedLatLng.point().x, y: weightedLatLng.point().y)
     return FGMPlatformWeightedLatLng.make(
       withPoint: FGMPlatformLatLng.make(from: GMSUnproject(point)),
-      weight: Double($0.intensity)
+      weight: Double(weightedLatLng.intensity)
     )
+  }
+
+  /// Returns the equivalent GMUWeightedLatLng.
+  func toGMUWeightedLatLng() -> GMUWeightedLatLng {
+    return GMUWeightedLatLng(coordinate: point.toCLLocationCoordinate2D(), intensity: Float(weight))
   }
 }
 
@@ -235,15 +207,15 @@ extension FGMPlatformCameraUpdate {
     case let newCameraPosition as FGMPlatformCameraUpdateNewCameraPosition:
       return GMSCameraUpdate.setCamera(newCameraPosition.cameraPosition.toGMSCameraPosition())
     case let newLatLng as FGMPlatformCameraUpdateNewLatLng:
-      return GMSCameraUpdate.setTarget(newLatLng.latLng.toCLCoordinate())
+      return GMSCameraUpdate.setTarget(newLatLng.latLng.toCLLocationCoordinate2D())
     case let newLatLngBounds as FGMPlatformCameraUpdateNewLatLngBounds:
       return GMSCameraUpdate.fit(
-        newLatLngBounds.bounds.toGMSBounds(),
+        newLatLngBounds.bounds.toGMSCoordinateBounds(),
         withPadding: CGFloat(newLatLngBounds.padding)
       )
     case let newLatLngZoom as FGMPlatformCameraUpdateNewLatLngZoom:
       return GMSCameraUpdate.setTarget(
-        newLatLngZoom.latLng.toCLCoordinate(),
+        newLatLngZoom.latLng.toCLLocationCoordinate2D(),
         zoom: Float(newLatLngZoom.zoom)
       )
     case let scrollBy as FGMPlatformCameraUpdateScrollBy:
@@ -265,11 +237,6 @@ extension FGMPlatformCameraUpdate {
 }
 
 extension FGMPlatformColor {
-  /// Creates a UIColor from its Pigeon representation.
-  func toUIColor() -> UIColor {
-    return UIColor(red: red, green: green, blue: blue, alpha: alpha)
-  }
-
   /// Converts a UIColor to its Pigeon representation.
   static func make(from color: UIColor) -> FGMPlatformColor {
     var red: CGFloat = 0
@@ -280,21 +247,24 @@ extension FGMPlatformColor {
     return FGMPlatformColor.make(
       withRed: Double(red), green: Double(green), blue: Double(blue), alpha: Double(alpha))
   }
-}
 
-/// Creates an array of GMSStrokeStyles using the given patterns and stroke color.
-func makeStrokeStyles(
-  from patterns: [FGMPlatformPatternItem], strokeColor: UIColor
-) -> [GMSStrokeStyle] {
-  return patterns.map { pattern in
-    let color = pattern.type == .gap ? UIColor.clear : strokeColor
-    return GMSStrokeStyle.solidColor(color)
+  /// Returns the equivalent UIColor.
+  func toUIColor() -> UIColor {
+    return UIColor(red: red, green: green, blue: blue, alpha: alpha)
   }
 }
 
-/// Creates an array of span lengths using the given patterns.
-func makeSpanLengths(from patterns: [FGMPlatformPatternItem]) -> [NSNumber] {
-  return patterns.map { $0.length ?? 0 }
+extension FGMPlatformPatternItem {
+  /// The GMSStrokeStyle expression of this pattern, using the given stroke color.
+  func gmsStrokeStyle(strokeColor: UIColor) -> GMSStrokeStyle {
+    let color = type == .gap ? UIColor.clear : strokeColor
+    return GMSStrokeStyle.solidColor(color)
+  }
+
+  /// The span length for this pattern, in the form expected by GMSStyleSpans.
+  func gmsStyleSpanLength() -> NSNumber {
+    return length ?? 0
+  }
 }
 
 extension FGMPlatformCluster {
@@ -308,8 +278,8 @@ extension FGMPlatformCluster {
       bounds = bounds.includingCoordinate(item.position)
     }
 
-    let markerIds = cluster.items.filter { $0 is GMSMarker }.compactMap {
-      markerIdentifierFromMarker($0 as! GMSMarker)
+    let markerIds = cluster.items.compactMap { $0 as? GMSMarker }.compactMap {
+      markerIdentifierFromMarker($0)
     }
 
     return FGMPlatformCluster.make(

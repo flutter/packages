@@ -42,7 +42,7 @@ class CircleController: NSObject {
   ) {
     circle.isTappable = platformCircle.consumeTapEvents
     circle.zIndex = Int32(platformCircle.zIndex)
-    circle.position = platformCircle.center.toCLCoordinate()
+    circle.position = platformCircle.center.toCLLocationCoordinate2D()
     circle.radius = platformCircle.radius
     circle.strokeColor = platformCircle.strokeColor.toUIColor()
     circle.strokeWidth = CGFloat(platformCircle.strokeWidth)

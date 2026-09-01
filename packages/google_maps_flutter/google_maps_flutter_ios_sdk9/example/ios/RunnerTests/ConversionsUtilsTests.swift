@@ -46,40 +46,11 @@ import google_maps_flutter_ios_sdk9_objc
     #expect(abs(alpha - platformColor.alpha) <= CGFloat.ulpOfOne)
   }
 
-  @Test func pointsFromLatLongs() {
-    let latlongs = [
-      FGMPlatformLatLng.make(withLatitude: 1, longitude: 2),
-      FGMPlatformLatLng.make(withLatitude: 3, longitude: 4),
-    ]
-    let locations = makePoints(from: latlongs)
-    #expect(locations.count == 2)
-    #expect(locations[0].coordinate.latitude == 1)
-    #expect(locations[0].coordinate.longitude == 2)
-    #expect(locations[1].coordinate.latitude == 3)
-    #expect(locations[1].coordinate.longitude == 4)
-  }
-
-  @Test func holesFromPointsArray() {
-    let pointsArray = [
-      [
-        FGMPlatformLatLng.make(withLatitude: 1, longitude: 2),
-        FGMPlatformLatLng.make(withLatitude: 3, longitude: 4),
-      ],
-      [
-        FGMPlatformLatLng.make(withLatitude: 5, longitude: 6),
-        FGMPlatformLatLng.make(withLatitude: 7, longitude: 8),
-      ],
-    ]
-    let holes = makeHoles(from: pointsArray)
-    #expect(holes.count == 2)
-    #expect(holes[0][0].coordinate.latitude == 1)
-    #expect(holes[0][0].coordinate.longitude == 2)
-    #expect(holes[0][1].coordinate.latitude == 3)
-    #expect(holes[0][1].coordinate.longitude == 4)
-    #expect(holes[1][0].coordinate.latitude == 5)
-    #expect(holes[1][0].coordinate.longitude == 6)
-    #expect(holes[1][1].coordinate.latitude == 7)
-    #expect(holes[1][1].coordinate.longitude == 8)
+  @Test func pointFromLatLong() {
+    let latlong = FGMPlatformLatLng.make(withLatitude: 1, longitude: 2)
+    let location = latlong.toCLLocation()
+    #expect(location.coordinate.latitude == 1)
+    #expect(location.coordinate.longitude == 2)
   }
 
   @Test func getPigeonCameraPositionForPosition() {
@@ -151,7 +122,7 @@ import google_maps_flutter_ios_sdk9_objc
       southwest: FGMPlatformLatLng.make(withLatitude: 1, longitude: 2)
     )
 
-    let bounds = pigeonBounds.toGMSBounds()
+    let bounds = pigeonBounds.toGMSCoordinateBounds()
 
     let accuracy: Double = 0.001
     #expect(abs(bounds.southWest.latitude - 1) <= accuracy)
@@ -161,11 +132,11 @@ import google_maps_flutter_ios_sdk9_objc
   }
 
   @Test func mapViewTypeFromPigeonType() {
-    #expect(GMSMapViewType.normal == mapViewType(from: .normal))
-    #expect(GMSMapViewType.satellite == mapViewType(from: .satellite))
-    #expect(GMSMapViewType.terrain == mapViewType(from: .terrain))
-    #expect(GMSMapViewType.hybrid == mapViewType(from: .hybrid))
-    #expect(GMSMapViewType.none == mapViewType(from: .none))
+    #expect(GMSMapViewType.normal == FGMPlatformMapType.normal.gmsMapViewType)
+    #expect(GMSMapViewType.satellite == FGMPlatformMapType.satellite.gmsMapViewType)
+    #expect(GMSMapViewType.terrain == FGMPlatformMapType.terrain.gmsMapViewType)
+    #expect(GMSMapViewType.hybrid == FGMPlatformMapType.hybrid.gmsMapViewType)
+    #expect(GMSMapViewType.none == FGMPlatformMapType.none.gmsMapViewType)
   }
 
   @Test func cameraUpdateFromNewCameraPosition() {
@@ -203,7 +174,7 @@ import google_maps_flutter_ios_sdk9_objc
       withNortheast: FGMPlatformLatLng.make(withLatitude: 1, longitude: 2),
       southwest: FGMPlatformLatLng.make(withLatitude: 3, longitude: 4)
     )
-    let bounds = pigeonBounds.toGMSBounds()
+    let bounds = pigeonBounds.toGMSCoordinateBounds()
 
     let padding: Double = 20
     let platformUpdate = FGMPlatformCameraUpdateNewLatLngBounds.make(
@@ -303,56 +274,41 @@ import google_maps_flutter_ios_sdk9_objc
     // implementation would be about as complex as the conversion function itself.
   }
 
-  @Test func strokeStylesFromPatterns() {
-    let patterns = [
-      FGMPlatformPatternItem.make(with: .gap, length: 1),
-      FGMPlatformPatternItem.make(with: .dash, length: 1),
-    ]
+  @Test func strokeStyleFromPattern() {
+    let pattern = FGMPlatformPatternItem.make(with: .dash, length: 1)
     let strokeColor = UIColor.red
 
-    let patternStrokeStyle = makeStrokeStyles(from: patterns, strokeColor: strokeColor)
-
-    #expect(patternStrokeStyle.count == 2)
-    // None of the parameters of `patternStrokeStyle` is observable, so we limit to testing
-    // the length of this output array.
+    _ = pattern.gmsStrokeStyle(strokeColor: strokeColor)
+    // GMSStrokeStyle is not inspectable, so this test just ensures that the codepath
+    // doesn't throw.
   }
 
-  @Test func lengthsFromPatterns() {
-    let gapLength: Double = 10
-    let dashLength: Double = 6.4
-    let patterns = [
-      FGMPlatformPatternItem.make(with: .gap, length: gapLength as NSNumber),
-      FGMPlatformPatternItem.make(with: .dash, length: dashLength as NSNumber),
-    ]
+  @Test func nonNullLengthFromPatternItem() {
+    let length: Double = 6.4
+    let pattern = FGMPlatformPatternItem.make(with: .gap, length: length as NSNumber)
 
-    let spanLengths = makeSpanLengths(from: patterns)
+    let spanLength = pattern.gmsStyleSpanLength()
 
-    #expect(spanLengths.count == 2)
-
-    let firstSpanLength = spanLengths[0]
-    let secondSpanLength = spanLengths[1]
-
-    #expect(firstSpanLength.doubleValue == gapLength)
-    #expect(secondSpanLength.doubleValue == dashLength)
+    #expect(spanLength.doubleValue == length)
   }
 
-  @Test func weightedDataFromPlatformWeightedData() {
-    let intensity1: Double = 3.0
-    let intensity2: Double = 6.0
-    let data = [
-      FGMPlatformWeightedLatLng.make(
-        withPoint: FGMPlatformLatLng.make(withLatitude: 10, longitude: 20),
-        weight: intensity1
-      ),
-      FGMPlatformWeightedLatLng.make(
-        withPoint: FGMPlatformLatLng.make(withLatitude: 30, longitude: 40),
-        weight: intensity2
-      ),
-    ]
+  @Test func nullLengthFromPatternItem() {
+    let pattern = FGMPlatformPatternItem.make(with: .dot, length: nil)
 
-    let weightedData = makeWeightedData(from: data)
-    #expect(Double(weightedData[0].intensity) == intensity1)
-    #expect(Double(weightedData[1].intensity) == intensity2)
+    let spanLength = pattern.gmsStyleSpanLength()
+
+    #expect(spanLength.doubleValue == 0)
+  }
+
+  @Test func weightedLatLngFromPlatformWeightedLatLng() {
+    let intensity: Double = 3.0
+    let data = FGMPlatformWeightedLatLng.make(
+      withPoint: FGMPlatformLatLng.make(withLatitude: 10, longitude: 20),
+      weight: intensity
+    )
+
+    let weightedData = data.toGMUWeightedLatLng()
+    #expect(Double(weightedData.intensity) == intensity)
   }
 
   @Test func gradientFromPlatformGradient() {

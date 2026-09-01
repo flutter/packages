@@ -451,7 +451,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   ) -> (Bool, String?) {
     if let cameraTargetBounds = config.cameraTargetBounds {
       if let bounds = cameraTargetBounds.bounds {
-        mapView.cameraTargetBounds = bounds.toGMSBounds()
+        mapView.cameraTargetBounds = bounds.toGMSCoordinateBounds()
       } else {
         mapView.cameraTargetBounds = nil
       }
@@ -469,7 +469,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
       mapView.isBuildingsEnabled = buildingsEnabled.boolValue
     }
     if let mapType = config.mapType {
-      mapView.mapType = mapViewType(from: mapType.value)
+      mapView.mapType = mapType.value.gmsMapViewType
     }
     if let zoomData = config.minMaxZoomPreference {
       let minZoom = zoomData.min?.floatValue ?? kGMSMinZoomLevel
@@ -666,7 +666,7 @@ class MapCallHandler: NSObject, FGMMapsApi {
       )
       return nil
     }
-    let location = latLng.toCLCoordinate()
+    let location = latLng.toCLLocationCoordinate2D()
     let point = mapView.projection.point(for: location)
     return FGMPlatformPoint.make(from: point)
   }

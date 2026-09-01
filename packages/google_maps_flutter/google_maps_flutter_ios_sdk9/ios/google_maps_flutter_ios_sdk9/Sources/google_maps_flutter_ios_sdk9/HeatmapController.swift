@@ -39,7 +39,7 @@ class HeatmapController: NSObject {
     from platformHeatmap: FGMPlatformHeatmap,
     mapView: GMSMapView
   ) {
-    heatmapTileLayer.weightedData = makeWeightedData(from: platformHeatmap.data)
+    heatmapTileLayer.weightedData = platformHeatmap.data.map({ $0.toGMUWeightedLatLng() })
     if let gradient = platformHeatmap.gradient {
       heatmapTileLayer.gradient = gradient.toGMUGradient()
     }
@@ -104,7 +104,7 @@ class HeatmapsController: NSObject {
     let heatmap = controller.heatmapTileLayer
     return FGMPlatformHeatmap.make(
       withHeatmapId: identifier,
-      data: makePigeonWeightedData(from: heatmap.weightedData),
+      data: heatmap.weightedData.map { FGMPlatformWeightedLatLng.make(from: $0) },
       gradient: FGMPlatformHeatmapGradient.make(from: heatmap.gradient),
       opacity: Double(heatmap.opacity),
       radius: Int(heatmap.radius),

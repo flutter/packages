@@ -87,7 +87,7 @@ class MarkerController: NSObject {
     marker.icon = makeIcon(
       from: platformMarker.icon, assetProvider: assetProvider, screenScale: screenScale)
     marker.isFlat = platformMarker.flat
-    marker.position = platformMarker.position.toCLCoordinate()
+    marker.position = platformMarker.position.toCLLocationCoordinate2D()
     marker.rotation = platformMarker.rotation
     marker.zIndex = Int32(platformMarker.zIndex)
     let infoWindow = platformMarker.infoWindow
@@ -100,7 +100,7 @@ class MarkerController: NSObject {
     if let advancedMarker = marker as? GMSAdvancedMarker,
       let collisionBehaviorValue = platformMarker.collisionBehavior
     {
-      advancedMarker.collisionBehavior = collisionBehavior(from: collisionBehaviorValue.value)
+      advancedMarker.collisionBehavior = collisionBehaviorValue.value.gmsCollisionBehavior
     }
 
     // This must be done last, to avoid visual flickers of default property values.
@@ -145,7 +145,7 @@ class MarkersController: NSObject {
 
   private func addMarker(_ markerToAdd: FGMPlatformMarker) {
     guard let mapView = mapView else { return }
-    let position = markerToAdd.position.toCLCoordinate()
+    let position = markerToAdd.position.toCLLocationCoordinate2D()
     let markerIdentifier = markerToAdd.markerId
     let clusterManagerIdentifier = markerToAdd.clusterManagerId
 
