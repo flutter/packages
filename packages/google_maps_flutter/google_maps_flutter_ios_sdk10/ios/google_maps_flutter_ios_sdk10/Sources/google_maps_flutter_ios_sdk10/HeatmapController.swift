@@ -4,8 +4,8 @@
 
 import GoogleMaps
 
-#if canImport(google_maps_flutter_ios_sdk9_objc)
-  import google_maps_flutter_ios_sdk9_objc
+#if canImport(google_maps_flutter_ios_sdk10_objc)
+  import google_maps_flutter_ios_sdk10_objc
 #endif
 
 /// Controller of a single Heatmap on the map.
