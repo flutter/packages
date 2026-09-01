@@ -1,8 +1,8 @@
 RouteBase get $nullableRequiredParamNotInPath => GoRouteData.$route(
-  path: 'bob',
-  hasOverriddenOnExit: false,
-  factory: $NullableRequiredParamNotInPath._fromState,
-);
+      path: 'bob',
+      hasOverriddenOnExit: false,
+      factory: $NullableRequiredParamNotInPath._fromState,
+    );
 
 mixin $NullableRequiredParamNotInPath on GoRouteData {
   static NullableRequiredParamNotInPath _fromState(GoRouterState state) =>
@@ -15,9 +15,11 @@ mixin $NullableRequiredParamNotInPath on GoRouteData {
 
   @override
   String get location => GoRouteData.$location(
-    'bob',
-    queryParams: {if (_self.id != null) 'id': _self.id!.toString()},
-  );
+        'bob',
+        queryParams: {
+          if (_self.id != null) 'id': _self.id!.toString(),
+        },
+      );
 
   @override
   void go(BuildContext context) => context.go(location);

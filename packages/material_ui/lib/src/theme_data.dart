@@ -121,7 +121,7 @@ class Adaptation<T> {
 
 /// An interface that defines custom additions to a [ThemeData] object.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=8-szcYzFVao}
+/// Learn more about [ThemeExtension] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=8-szcYzFVao).
 ///
 /// Typically used for custom colors. To use, subclass [ThemeExtension],
 /// define a number of fields (e.g. [Color]s), and implement the [copyWith] and
@@ -272,7 +272,7 @@ class ThemeData with Diagnosticable {
   /// When [useSystemColors] is true and the platform supports system colors, then the system colors
   /// will be used to override certain theme colors. The [colorScheme], [textTheme],
   /// [elevatedButtonTheme], [outlinedButtonTheme], [textButtonTheme], [filledButtonTheme], and
-  /// [floatingActionButtonTheme] are overriden by the system colors.
+  /// [floatingActionButtonTheme] are overridden by the system colors.
   ///
   /// See also:
   ///

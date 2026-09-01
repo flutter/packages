@@ -2,30 +2,31 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Foundation
+import Testing
 import WebKit
-import XCTest
 
 @testable import webview_flutter_wkwebview
 
-class ScriptMessageProxyAPITests: XCTestCase {
-  @MainActor func testName() {
+@Suite struct ScriptMessageProxyAPITests {
+  @MainActor @Test func name() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKScriptMessage(registrar)
 
     let instance = TestScriptMessage()
     let value = try? api.pigeonDelegate.name(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.name)
+    #expect(value == instance.name)
   }
 
-  @MainActor func testBody() {
+  @MainActor @Test func body() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKScriptMessage(registrar)
 
     let instance = TestScriptMessage()
-    let value = try? api.pigeonDelegate.body(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.body(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value as! Int, 23)
+    #expect(value as! Int == 23)
   }
 }
 

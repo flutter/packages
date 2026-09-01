@@ -1,3 +1,7 @@
+## 8.2.1
+
+- Fixes `pendingFonts()` retaining failed font loads.
+
 ## 8.2.0
 
 - Extract the class `Config` to its own file and rename it `GoogleFontsConfig`. The `Config` class is now deprecated.

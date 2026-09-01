@@ -347,8 +347,8 @@ RouteBase get $myShellRouteData => ShellRouteData.$route(
   routes: [
     GoRouteData.$route(
       path: 'my-go-route',
-      parentNavigatorKey: MyGoRouteData.$parentNavigatorKey,
       hasOverriddenOnExit: false,
+      parentNavigatorKey: MyGoRouteData.$parentNavigatorKey,
       factory: $MyGoRouteData._fromState,
     ),
   ],

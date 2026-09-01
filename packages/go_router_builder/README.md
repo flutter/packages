@@ -13,7 +13,7 @@ dependencies:
 dev_dependencies:
   # ...along with your other dev-dependencies
   build_runner: ^2.6.0
-  go_router_builder: ^4.3.2
+  go_router_builder: ^4.4.2
 ```
 
 ### Source code

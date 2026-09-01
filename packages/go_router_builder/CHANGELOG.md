@@ -1,10 +1,16 @@
-## 4.3.2
+## 4.4.2
 
 * Fixes generated routes so `onExit` is only enabled when the route data class overrides it,
   preventing spurious Navigator assertion crashes during rapid back navigation
   (flutter/flutter#189503).
-* Bumps the documented and example minimum `go_router` constraint to `^17.3.0`
-  to require the `hasOverriddenOnExit` route helper.
+
+## 4.4.1
+
+* Adds support for analyzer 14.
+
+## 4.4.0
+
+- Adds `hasOverriddenOnExit` parameter to `GoRouteData.$route` and `RelativeGoRouteData.$route` helper methods for type-safe routes. When set to `true`, enables custom `onExit` callback invocation from route data classes extending `GoRouteData` or `RelativeGoRouteData` when the route is removed from the navigation stack.
 
 ## 4.3.1
 

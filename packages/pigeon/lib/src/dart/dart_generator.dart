@@ -187,6 +187,65 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   }
 
   @override
+  void writeConstants(
+    InternalDartOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    if (root.constants.isEmpty) {
+      return;
+    }
+    indent.newln();
+    for (final Constant constant in root.constants) {
+      addDocumentationComments(indent, constant.documentationComments, docCommentSpec);
+      final String formattedValue = _formatValue(constant.type.baseName, constant.value);
+      indent.writeln('const ${constant.type.baseName} ${constant.name} = $formattedValue;');
+    }
+  }
+
+  String _formatValue(String type, Object value) =>
+      type == 'String' ? _makeDartStringLiteral(value.toString()) : value.toString();
+
+  String _makeDartStringLiteral(String valStr) {
+    final bool hasSpecial =
+        valStr.contains(r'\') ||
+        valStr.contains(r'$') ||
+        valStr.contains('\n') ||
+        valStr.contains('\r');
+
+    if (!hasSpecial) {
+      if (!valStr.contains("'")) {
+        return "'$valStr'";
+      }
+      if (!valStr.contains('"')) {
+        return '"$valStr"';
+      }
+      return "'${escapeStringSingleQuotes(valStr)}'";
+    }
+
+    if (!valStr.contains('\n') && !valStr.contains('\r')) {
+      if (!valStr.contains("'")) {
+        return "r'$valStr'";
+      }
+      if (!valStr.contains('"')) {
+        return 'r"$valStr"';
+      }
+      return "'${escapeStringSingleQuotes(valStr)}'";
+    }
+
+    if (!valStr.contains("'''")) {
+      return "r'''$valStr'''";
+    }
+    if (!valStr.contains('"""')) {
+      return 'r"""$valStr"""';
+    }
+
+    final String escaped = escapeStringSingleQuotes(valStr);
+    return "'$escaped'";
+  }
+
+  @override
   void writeEnum(
     InternalDartOptions generatorOptions,
     Root root,
@@ -901,7 +960,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         ..fields.addAll(<cb.Field>[
           if (api.constructors.isNotEmpty ||
               api.attachedFields.any((ApiField field) => !field.isStatic) ||
-              api.hostMethods.isNotEmpty)
+              api.hostMethods.any((Method method) => !method.isStatic))
             proxy_api_helper.codecInstanceField(
               codecInstanceName: codecInstanceName,
               codecName: codecName,

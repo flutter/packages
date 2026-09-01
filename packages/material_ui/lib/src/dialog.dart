@@ -50,7 +50,7 @@ const EdgeInsets _defaultInsetPadding = EdgeInsets.symmetric(horizontal: 40.0, v
 ///
 /// </callout-box>
 ///
-/// ## Contraints
+/// ## Constraints
 /// The Material 3 guideline recommends that a dialog should have a maximal width of 560dp.
 /// For historical reasons, Flutter's [Dialog] widget does not come with this constraint by default.
 /// For applications targeting large screens such as desktop or Web, it is recommended to
@@ -327,7 +327,7 @@ class Dialog extends StatelessWidget {
 /// title and an optional list of actions. The title is displayed above the
 /// content and the actions are displayed below the content.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=75CsnyRXf5I}
+/// Learn more about [AlertDialog] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=75CsnyRXf5I).
 ///
 /// For dialogs that offer the user a choice between several options, consider
 /// using a [SimpleDialog].

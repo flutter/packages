@@ -34,7 +34,8 @@ import 'types/task_queue.dart';
 export 'types/task_queue.dart' show TaskQueueType;
 
 class _Asynchronous {
-  const _Asynchronous();
+  const _Asynchronous({this.useCallback = false});
+  final bool useCallback;
 }
 
 class _Attached {
@@ -45,8 +46,11 @@ class _Static {
   const _Static();
 }
 
-/// Metadata to annotate a Api method as asynchronous
+/// Metadata to annotate an Api method as asynchronous using native coroutines/async-await.
 const Object async = _Asynchronous();
+
+/// Metadata to annotate an Api method as asynchronous using callback-based completions.
+const Object asyncCallback = _Asynchronous(useCallback: true);
 
 /// Metadata to annotate the field of a ProxyApi as an Attached Field.
 ///

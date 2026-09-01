@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "run-evals": {
+      "source": "flutter/agent-plugins",
+      "sourceType": "github",
+      "skillPath": "tool/dart_skills_lint/.agents/skills/run-evals/SKILL.md",
+      "computedHash": "4d471f91a771be1bb49a90a8545f46d04ca01adada8fe08f1c5c64193a4fa6c5"
+    }
+  }
+}

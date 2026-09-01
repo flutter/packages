@@ -101,7 +101,7 @@ const Duration _kHighlightAnimationDuration = Duration(milliseconds: 200);
 
 class _Segment<T> extends StatefulWidget {
   const _Segment({
-    required ValueKey<T> key,
+    required ValueKey<T> super.key,
     required this.child,
     required this.pressed,
     required this.highlighted,
@@ -109,7 +109,7 @@ class _Segment<T> extends StatefulWidget {
     required this.enabled,
     required this.segmentLocation,
     required this.isMomentary,
-  }) : super(key: key);
+  });
 
   final Widget child;
 
@@ -238,8 +238,7 @@ class _SegmentState<T> extends State<_Segment<T>> with TickerProviderStateMixin<
 
 // Fadeout the separator when either adjacent segment is highlighted.
 class _SegmentSeparator extends StatefulWidget {
-  const _SegmentSeparator({required ValueKey<int> key, required this.highlighted})
-    : super(key: key);
+  const _SegmentSeparator({required ValueKey<int> super.key, required this.highlighted});
 
   final bool highlighted;
 
@@ -309,7 +308,7 @@ class _SegmentSeparatorState extends State<_SegmentSeparator>
 
 /// An iOS 13 style segmented control.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=esnBf6V4C34}
+/// Learn more about [CupertinoSlidingSegmentedControl] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=esnBf6V4C34).
 ///
 /// Displays the widgets provided in the [Map] of [children] in a horizontal list.
 /// It allows the user to select between a number of mutually exclusive options,
