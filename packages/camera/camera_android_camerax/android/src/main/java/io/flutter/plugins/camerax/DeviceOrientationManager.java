@@ -58,6 +58,7 @@ public class DeviceOrientationManager {
     // typical screen orientation changes.
     orientationEventListener = createOrientationEventListener();
     orientationEventListener.enable();
+    handleUiOrientationChange();
   }
 
   @VisibleForTesting

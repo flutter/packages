@@ -105,7 +105,18 @@ class PreviewProxyApi extends PigeonApiPreview {
 
   @Override
   public void setTargetRotation(Preview pigeonInstance, long rotation) {
-    pigeonInstance.setTargetRotation((int) rotation);
+    final int targetRotation = (int) rotation;
+    if (targetRotation >= 0 && pigeonInstance.getTargetRotation() == targetRotation) {
+      // If CameraX already recorded targetRotation as the default (e.g. 0 by default from
+      // Camera2UseCaseConfigFactory), setTargetRotationInternal() evaluates currentTargetRotation
+      // == rotation
+      // and skips dispatching the new transformation info to PreviewView. Cycling through an
+      // alternate
+      // rotation ensures CameraX evaluates a change and updates PreviewView with the locked
+      // orientation.
+      pigeonInstance.setTargetRotation((targetRotation + 1) % 4);
+    }
+    pigeonInstance.setTargetRotation(targetRotation);
   }
 
   @NonNull

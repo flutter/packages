@@ -1799,7 +1799,7 @@ void main() {
   test('initializeCamera sends expected CameraInitializedEvent', () async {
     final camera = AndroidCameraCameraX();
 
-    const cameraId = 10;
+    const cameraId = 0;
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
     const testSensorOrientation = 90;
     const testCameraDescription = CameraDescription(
@@ -1913,8 +1913,8 @@ void main() {
 
     final testCameraInitializedEvent = CameraInitializedEvent(
       cameraId,
-      resolutionHeight.toDouble(),
       resolutionWidth.toDouble(),
+      resolutionHeight.toDouble(),
       ExposureMode.auto,
       true,
       FocusMode.auto,
@@ -4288,11 +4288,18 @@ void main() {
       final mockImageAnalysis = MockImageAnalysis();
       final mockImageCapture = MockImageCapture();
       final mockVideoCapture = MockVideoCapture();
+      final mockPreview = MockPreview();
+      final mockPreviewView = MockPreviewView();
+      final mockSurfaceProvider = MockSurfaceProvider();
+
+      when(mockPreviewView.getSurfaceProvider()).thenAnswer((_) async => mockSurfaceProvider);
 
       // Set directly for test versus calling createCamera.
       camera.imageAnalysis = mockImageAnalysis;
       camera.imageCapture = mockImageCapture;
       camera.videoCapture = mockVideoCapture;
+      camera.preview = mockPreview;
+      camera.previewView = mockPreviewView;
 
       for (final DeviceOrientation orientation in DeviceOrientation.values) {
         int? expectedTargetRotation;
@@ -4312,6 +4319,7 @@ void main() {
         verify(mockImageAnalysis.setTargetRotation(expectedTargetRotation));
         verify(mockImageCapture.setTargetRotation(expectedTargetRotation));
         verify(mockVideoCapture.setTargetRotation(expectedTargetRotation));
+        verify(mockPreview.setTargetRotation(expectedTargetRotation));
         expect(camera.captureOrientationLocked, isTrue);
         expect(camera.shouldSetDefaultRotation, isTrue);
 
@@ -4323,14 +4331,56 @@ void main() {
   );
 
   test(
-    'unlockCaptureOrientation sets capture-related use case target rotations to current photo/video orientation',
+    'unlockCaptureOrientation restores preview target rotation to default display rotation',
     () async {
+      const int defaultRotation = Surface.rotation180;
+      final mockDeviceOrientationManager = MockDeviceOrientationManager();
+      when(
+        mockDeviceOrientationManager.getDefaultDisplayRotation(),
+      ).thenAnswer((_) async => defaultRotation);
+      PigeonOverrides.deviceOrientationManager_new =
+          ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) =>
+              mockDeviceOrientationManager;
+
       final camera = AndroidCameraCameraX();
       const cameraId = 57;
+      final mockPreview = MockPreview();
+
+      camera.preview = mockPreview;
 
       camera.captureOrientationLocked = true;
       await camera.unlockCaptureOrientation(cameraId);
       expect(camera.captureOrientationLocked, isFalse);
+      verify(mockPreview.setTargetRotation(defaultRotation));
+    },
+  );
+
+  test(
+    'onDeviceOrientationChanged updates preview target rotation when orientation unlocked and shouldSetDefaultRotation is true',
+    () async {
+      const int defaultRotation = Surface.rotation90;
+      late final void Function(DeviceOrientationManager, String) onDeviceOrientationChangedCallback;
+      final mockDeviceOrientationManager = MockDeviceOrientationManager();
+      when(
+        mockDeviceOrientationManager.getDefaultDisplayRotation(),
+      ).thenAnswer((_) async => defaultRotation);
+      PigeonOverrides.deviceOrientationManager_new =
+          ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) {
+            onDeviceOrientationChangedCallback = onDeviceOrientationChanged;
+            return mockDeviceOrientationManager;
+          };
+
+      final camera = AndroidCameraCameraX();
+      expect(camera.deviceOrientationManager, isNotNull);
+      final mockPreview = MockPreview();
+      camera.preview = mockPreview;
+      camera.shouldSetDefaultRotation = true;
+      camera.captureOrientationLocked = false;
+
+      onDeviceOrientationChangedCallback(mockDeviceOrientationManager, 'LANDSCAPE_LEFT');
+      await pumpEventQueue();
+
+      verify(mockPreview.setTargetRotation(defaultRotation));
     },
   );
 
@@ -5800,7 +5850,6 @@ void main() {
       verifyNoMoreInteractions(camera.camera);
     },
   );
-
 }
 
 class TestMeteringPoint extends MeteringPoint {

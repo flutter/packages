@@ -52,7 +52,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   Preview? preview;
 
-
   /// The [VideoCapture] instance that can be instantiated and configured to
   /// handle video recording
   @visibleForTesting
@@ -83,11 +82,15 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Handles retrieving media orientation for a device.
   late final DeviceOrientationManager deviceOrientationManager = DeviceOrientationManager(
-    onDeviceOrientationChanged: (_, String orientation) {
+    onDeviceOrientationChanged: (_, String orientation) async {
       final DeviceOrientation deviceOrientation = _deserializeDeviceOrientation(orientation);
       deviceOrientationChangedStreamController.add(
         DeviceOrientationChangedEvent(deviceOrientation),
       );
+      if (shouldSetDefaultRotation && !captureOrientationLocked && preview != null) {
+        final int targetRotation = await deviceOrientationManager.getDefaultDisplayRotation();
+        await preview!.setTargetRotation(targetRotation);
+      }
     },
   );
 
@@ -280,8 +283,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The configured format of outputted images from image streaming.
   int? _imageAnalysisOutputImageFormat;
 
-  // Platform view camera preview.
-  PreviewView? _previewView;
+  /// The [PreviewView] instance used for platform view preview.
+  @visibleForTesting
+  PreviewView? previewView;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -404,13 +408,13 @@ class AndroidCameraCameraX extends CameraPlatform {
       targetFpsRange: _targetFpsRange,
     );
 
-    if (_previewView == null) {
-      _previewView = PreviewView();
-      await _previewView!.registerPreviewView();
+    if (previewView == null) {
+      previewView = PreviewView();
+      await previewView!.registerPreviewView();
     }
-    await _previewView!.setImplementationMode(ImplementationMode.compatible);
+    await previewView!.setImplementationMode(ImplementationMode.compatible);
 
-    final SurfaceProvider surfaceProvider = await _previewView!.getSurfaceProvider();
+    final SurfaceProvider surfaceProvider = await previewView!.getSurfaceProvider();
     await preview!.setSurfaceProvider(surfaceProvider);
     _cameraId = _nextCameraId++;
 
@@ -579,6 +583,11 @@ class AndroidCameraCameraX extends CameraPlatform {
     await imageCapture!.setTargetRotation(targetLockedRotation);
     await imageAnalysis!.setTargetRotation(targetLockedRotation);
     await videoCapture!.setTargetRotation(targetLockedRotation);
+
+    // Visually lock the preview.
+    if (preview != null) {
+      await preview!.setTargetRotation(targetLockedRotation);
+    }
   }
 
   /// Unlocks the capture orientation of camera with ID [cameraId].
@@ -587,6 +596,11 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Flag that default rotation should be set for UseCases as needed.
     captureOrientationLocked = false;
     _lockedCaptureOrientation = null;
+
+    // Restore preview to the default display rotation so it acts as an auto-rotating viewfinder again.
+    if (preview != null) {
+      await preview!.setTargetRotation(await deviceOrientationManager.getDefaultDisplayRotation());
+    }
   }
 
   /// Sets the exposure point for automatically determining the exposure values for
