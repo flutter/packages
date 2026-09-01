@@ -1913,8 +1913,8 @@ void main() {
 
     final testCameraInitializedEvent = CameraInitializedEvent(
       cameraId,
-      resolutionWidth.toDouble(),
       resolutionHeight.toDouble(),
+      resolutionWidth.toDouble(),
       ExposureMode.auto,
       true,
       FocusMode.auto,
