@@ -426,6 +426,11 @@ class CupertinoSheetTransition extends StatefulWidget {
           position: slideAnimation,
           child: ScaleTransition(
             scale: scaleAnimation,
+            // During animation, FilterQuality.medium uses an ImageFilterLayer, which is
+            // usually worthwhile for animated transforms and avoids the observed subpixel
+            // drift. A null filter quality always uses a TransformLayer to keep platform
+            // views synchronized with the host. When not animating, filterQuality is ignored
+            // and both options have the same effect.
             filterQuality: hasPlatformViews ? null : FilterQuality.medium,
             alignment: Alignment.topCenter,
             child: AnimatedBuilder(
