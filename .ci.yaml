@@ -189,7 +189,7 @@ targets:
       target_file: web_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
-      package_sharding: "--shardIndex 0 --shardCount 3 --shardCost=script/configs/dart_unit_tests_web_costs.yaml"
+      package_sharding: "--shardIndex 0 --shardCount 3 --shardCost script/configs/dart_unit_tests_web_costs.yaml"
 
   - name: Linux_web web_dart_unit_test_shard_2 master
     recipe: packages/packages
@@ -198,7 +198,7 @@ targets:
       target_file: web_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
-      package_sharding: "--shardIndex 1 --shardCount 3 --shardCost=script/configs/dart_unit_tests_web_costs.yaml"
+      package_sharding: "--shardIndex 1 --shardCount 3 --shardCost script/configs/dart_unit_tests_web_costs.yaml"
 
   - name: Linux_web web_dart_unit_test_shard_3 master
     recipe: packages/packages
@@ -207,7 +207,7 @@ targets:
       target_file: web_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
-      package_sharding: "--shardIndex 2 --shardCount 3 --shardCost=script/configs/dart_unit_tests_web_costs.yaml"
+      package_sharding: "--shardIndex 2 --shardCount 3 --shardCost script/configs/dart_unit_tests_web_costs.yaml"
 
   - name: Linux_web web_dart_unit_test_shard_1 stable
     recipe: packages/packages
@@ -216,7 +216,7 @@ targets:
       target_file: web_dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
-      package_sharding: "--shardIndex 0 --shardCount 3 --shardCost=script/configs/dart_unit_web_tests_costs.yaml"
+      package_sharding: "--shardIndex 0 --shardCount 3 --shardCost script/configs/dart_unit_web_tests_costs.yaml"
       # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
       # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
       # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
@@ -233,7 +233,7 @@ targets:
       target_file: web_dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
-      package_sharding: "--shardIndex 1 --shardCount 3 --shardCost=script/configs/dart_unit_web_tests_costs.yaml"
+      package_sharding: "--shardIndex 1 --shardCount 3 --shardCost script/configs/dart_unit_web_tests_costs.yaml"
       # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
       # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
       # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
@@ -250,7 +250,7 @@ targets:
       target_file: web_dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
-      package_sharding: "--shardIndex 2 --shardCount 3 --shardCost=script/configs/dart_unit_web_tests_costs.yaml"
+      package_sharding: "--shardIndex 2 --shardCount 3 --shardCost script/configs/dart_unit_web_tests_costs.yaml"
       # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
       # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
       # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
@@ -272,7 +272,7 @@ targets:
       target_file: web_dart_unit_tests_wasm.yaml
       channel: master
       version_file: flutter_master.version
-      package_sharding: "--shardIndex 0 --shardCount 2 --shardCost=script/configs/dart_unit_web_tests_costs.yaml"
+      package_sharding: "--shardIndex 0 --shardCount 2 --shardCost script/configs/dart_unit_web_tests_costs.yaml"
 
   - name: Linux_web web_dart_unit_test_wasm_shard_2 master
     recipe: packages/packages
@@ -281,7 +281,7 @@ targets:
       target_file: web_dart_unit_tests_wasm.yaml
       channel: master
       version_file: flutter_master.version
-      package_sharding: "--shardIndex 1 --shardCount 2 --shardCost=script/configs/dart_unit_web_tests_costs.yaml"
+      package_sharding: "--shardIndex 1 --shardCount 2 --shardCost script/configs/dart_unit_web_tests_costs.yaml"
 
   - name: Linux analyze master
     recipe: packages/packages
