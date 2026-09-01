@@ -1,3 +1,16 @@
+## 0.4.11+2
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
+## 0.4.11+1
+
+* Fixes StoreKit 2 restore transactions not grouping purchases into a single event.
+  
+## 0.4.11
+
+* Fixes StoreKit 2 date format does not match in_app_purchase_platform_interface PurchaseDetails.transactionDate format.
+  Fixes both `SK2Transaction.purchaseDate` and `SK2Transaction.expirationDate`.
+
 ## 0.4.10+1
 
 * Fixes SK2Transaction to expose the real purchased quantity instead of defaulting to 1.

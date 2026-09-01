@@ -12,50 +12,62 @@ List<RouteBase> get $appRoutes => [$allTypesBaseRoute];
 
 RouteBase get $allTypesBaseRoute => GoRouteData.$route(
   path: '/',
+  hasOverriddenOnExit: false,
   factory: $AllTypesBaseRoute._fromState,
   routes: [
     GoRouteData.$route(
       path: 'big-int-route/:requiredBigIntField',
+      hasOverriddenOnExit: false,
       factory: $BigIntExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'bool-route/:requiredBoolField',
+      hasOverriddenOnExit: false,
       factory: $BoolExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'date-time-route/:requiredDateTimeField',
+      hasOverriddenOnExit: false,
       factory: $DateTimeExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'double-route/:requiredDoubleField',
+      hasOverriddenOnExit: false,
       factory: $DoubleExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'int-route/:requiredIntField',
+      hasOverriddenOnExit: false,
       factory: $IntExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'num-route/:requiredNumField',
+      hasOverriddenOnExit: false,
       factory: $NumExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'double-route/:requiredDoubleField',
+      hasOverriddenOnExit: false,
       factory: $DoubleExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'enum-route/:requiredEnumField',
+      hasOverriddenOnExit: false,
       factory: $EnumExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'enhanced-enum-route/:requiredEnumField',
+      hasOverriddenOnExit: false,
       factory: $EnhancedEnumExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'string-route/:requiredStringField',
+      hasOverriddenOnExit: false,
       factory: $StringExtensionRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'uri-route/:requiredUriField',
+      hasOverriddenOnExit: false,
       factory: $UriExtensionRoute._fromState,
     ),
   ],

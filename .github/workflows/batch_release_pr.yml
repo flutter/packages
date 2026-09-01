@@ -70,7 +70,7 @@ jobs:
             --head "${HEAD_BRANCH_NAME}" \
             --title "[${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE}] Batch release" \
             --body "This PR was created automatically to batch release the \`${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE}\`." \
-            --label "override: skip-batch-release-repo-check-${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE}"
+            --label "override: batch-${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE}"
         env:
           NEEDS_CREATE_BATCH_RELEASE_BRANCH_OUTPUTS_RELEASE_BRANCH: ${{ needs.create_batch_release_branch.outputs.release_branch }}
           GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE: ${{ github.event.client_payload.package }}

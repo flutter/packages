@@ -1,3 +1,8 @@
+## NEXT
+
+* Adds support for batch release of pre-1.0 packages.
+* Exempts `AGENTS.md` from requiring version and changelog changes.
+
 ## 0.14.4
 
 * Adds `--run-on-staged-packages` argument to support running commands only

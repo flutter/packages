@@ -12,18 +12,22 @@ List<RouteBase> get $appRoutes => [$homeRoute, $loginRoute];
 
 RouteBase get $homeRoute => GoRouteData.$route(
   path: '/',
+  hasOverriddenOnExit: false,
   factory: $HomeRoute._fromState,
   routes: [
     GoRouteData.$route(
       path: 'family/:fid',
+      hasOverriddenOnExit: false,
       factory: $FamilyRoute._fromState,
       routes: [
         GoRouteData.$route(
           path: 'person/:pid',
+          hasOverriddenOnExit: false,
           factory: $PersonRoute._fromState,
           routes: [
             GoRouteData.$route(
               path: 'details/:details',
+              hasOverriddenOnExit: false,
               factory: $PersonDetailsRoute._fromState,
             ),
           ],
@@ -32,6 +36,7 @@ RouteBase get $homeRoute => GoRouteData.$route(
     ),
     GoRouteData.$route(
       path: 'family-count/:count',
+      hasOverriddenOnExit: false,
       factory: $FamilyCountRoute._fromState,
     ),
   ],
@@ -176,8 +181,11 @@ extension<T extends Enum> on Map<T, String> {
       entries.where((element) => element.value == value).firstOrNull?.key;
 }
 
-RouteBase get $loginRoute =>
-    GoRouteData.$route(path: '/login', factory: $LoginRoute._fromState);
+RouteBase get $loginRoute => GoRouteData.$route(
+  path: '/login',
+  hasOverriddenOnExit: false,
+  factory: $LoginRoute._fromState,
+);
 
 mixin $LoginRoute on GoRouteData {
   static LoginRoute _fromState(GoRouterState state) =>

@@ -559,7 +559,6 @@ class _SegmentedControlState<T extends Object> extends State<CupertinoSegmentedC
 
 class _SegmentedControlRenderWidget<T> extends MultiChildRenderObjectWidget {
   const _SegmentedControlRenderWidget({
-    super.key,
     super.children,
     required this.selectedIndex,
     required this.pressedIndex,

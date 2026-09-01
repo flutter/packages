@@ -228,6 +228,7 @@ void main() {
           AspectRatioStrategy? aspectRatioStrategy,
           ResolutionStrategy? resolutionStrategy,
           ResolutionFilter? resolutionFilter,
+          int? allowedResolutionMode,
         }) {
           final mockResolutionSelector = MockResolutionSelector();
           when(mockResolutionSelector.getAspectRatioStrategy()).thenAnswer(
@@ -235,6 +236,7 @@ void main() {
           );
           when(mockResolutionSelector.resolutionStrategy).thenReturn(resolutionStrategy);
           when(mockResolutionSelector.resolutionFilter).thenReturn(resolutionFilter);
+          when(mockResolutionSelector.allowedResolutionMode).thenReturn(allowedResolutionMode);
           return mockResolutionSelector;
         };
     PigeonOverrides.qualitySelector_from =
@@ -578,6 +580,7 @@ void main() {
             AspectRatioStrategy? aspectRatioStrategy,
             ResolutionStrategy? resolutionStrategy,
             ResolutionFilter? resolutionFilter,
+            int? allowedResolutionMode,
           }) {
             return MockResolutionSelector();
           };
@@ -779,6 +782,9 @@ void main() {
           await camera.imageAnalysis!.resolutionSelector!.resolutionStrategy!.getFallbackRule(),
           ResolutionStrategyFallbackRule.closestLowerThenHigher,
         );
+        expect(camera.preview!.resolutionSelector!.allowedResolutionMode, isNull);
+        expect(camera.imageCapture!.resolutionSelector!.allowedResolutionMode, isNull);
+        expect(camera.imageAnalysis!.resolutionSelector!.allowedResolutionMode, isNull);
       }
 
       // Test max case.
@@ -796,6 +802,19 @@ void main() {
         camera.imageAnalysis!.resolutionSelector!.resolutionStrategy,
         equals(ResolutionStrategy.highestAvailableStrategy),
       );
+      expect(
+        camera.preview!.resolutionSelector!.allowedResolutionMode,
+        ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
+      );
+      expect(
+        camera.imageCapture!.resolutionSelector!.allowedResolutionMode,
+        ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
+      );
+      expect(
+        camera.imageAnalysis!.resolutionSelector!.allowedResolutionMode,
+        ResolutionSelectorAllowedResolutionMode.preferHigherResolutionOverCaptureRate,
+      );
+      expect(camera.preview!.resolutionSelector, same(camera.imageCapture!.resolutionSelector));
 
       // Test null case.
       final int flutterSurfaceTextureId = await camera.createCamera(testCameraDescription, null);
@@ -1099,6 +1118,7 @@ void main() {
             AspectRatioStrategy? aspectRatioStrategy,
             ResolutionStrategy? resolutionStrategy,
             ResolutionFilter? resolutionFilter,
+            int? allowedResolutionMode,
           }) {
             return MockResolutionSelector();
           };
@@ -1509,6 +1529,7 @@ void main() {
           AspectRatioStrategy? aspectRatioStrategy,
           ResolutionStrategy? resolutionStrategy,
           ResolutionFilter? resolutionFilter,
+          int? allowedResolutionMode,
         }) {
           return MockResolutionSelector();
         };
@@ -1517,6 +1538,7 @@ void main() {
           AspectRatioStrategy? aspectRatioStrategy,
           ResolutionStrategy? resolutionStrategy,
           ResolutionFilter? resolutionFilter,
+          int? allowedResolutionMode,
         }) {
           return MockResolutionSelector();
         };
@@ -1849,6 +1871,7 @@ void main() {
           AspectRatioStrategy? aspectRatioStrategy,
           ResolutionStrategy? resolutionStrategy,
           ResolutionFilter? resolutionFilter,
+          int? allowedResolutionMode,
         }) => MockResolutionSelector();
     PigeonOverrides.fallbackStrategy_lowerQualityOrHigherThan = ({required VideoQuality quality}) =>
         MockFallbackStrategy();
@@ -1956,6 +1979,10 @@ void main() {
       camera.liveCameraState = MockLiveCameraState();
       camera.imageAnalysis = MockImageAnalysis();
 
+      camera.recording = MockRecording();
+      camera.pendingRecording = MockPendingRecording();
+      camera.videoOutputPath = 'test/path.mp4';
+
       await camera.dispose(3);
 
       verify(camera.preview!.setSurfaceProvider(null));
@@ -1963,6 +1990,10 @@ void main() {
       verify(camera.processCameraProvider!.unbindAll());
       verify(camera.imageAnalysis!.clearAnalyzer());
       expect(stoppedListeningForDeviceOrientationChange, isTrue);
+
+      expect(camera.recording, isNull);
+      expect(camera.pendingRecording, isNull);
+      expect(camera.videoOutputPath, isNull);
     },
   );
 
