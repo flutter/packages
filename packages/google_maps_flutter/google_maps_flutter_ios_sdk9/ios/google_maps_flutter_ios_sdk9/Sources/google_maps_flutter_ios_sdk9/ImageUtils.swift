@@ -13,7 +13,7 @@ import UIKit
 extension FGMPlatformBitmap {
   /// Creates a UIImage from the Pigeon bitmap representation, suitable for use as a marker icon.
   func createIcon(
-    assetProvider: FGMAssetProvider,
+    assetProvider: AssetProvider,
     screenScale: CGFloat
   ) -> UIImage? {
     assert(screenScale > 0, "Screen scale must be greater than 0")

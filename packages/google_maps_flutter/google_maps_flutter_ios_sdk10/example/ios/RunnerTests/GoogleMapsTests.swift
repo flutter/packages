@@ -9,7 +9,7 @@ import google_maps_flutter_ios_sdk10_objc
 
 @testable import google_maps_flutter_ios_sdk10
 
-class MockCATransaction: NSObject, FGMCATransactionProtocol {
+class MockCATransaction: NSObject, MapAnimationCATransactionProtocol {
   var beginCalled = false
   var commitCalled = false
   var animationDuration: CFTimeInterval = 0.0

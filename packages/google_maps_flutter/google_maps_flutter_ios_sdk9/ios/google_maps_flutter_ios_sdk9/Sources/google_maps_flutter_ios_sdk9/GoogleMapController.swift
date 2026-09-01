@@ -10,13 +10,34 @@ import GoogleMapsUtils
   import google_maps_flutter_ios_sdk9_objc
 #endif
 
-/// Non-test implementation of FGMAssetProvider, wrapping a Flutter plugin registrar.
-class DefaultAssetProvider: NSObject, FGMAssetProvider {
+/// Protocol for CATransaction to allow mocking in tests.
+protocol MapAnimationCATransactionProtocol {
+  func begin()
+  func commit()
+  func setAnimationDuration(_ duration: CFTimeInterval)
+}
+
+/// Non-test implementation of MapAnimationCATransactionProtocol.
+class DefaultMapAnimationCATransaction: MapAnimationCATransactionProtocol {
+  func begin() {
+    CATransaction.begin()
+  }
+
+  func commit() {
+    CATransaction.commit()
+  }
+
+  func setAnimationDuration(_ duration: CFTimeInterval) {
+    CATransaction.setAnimationDuration(duration)
+  }
+}
+
+/// Non-test implementation of AssetProvider, wrapping a Flutter plugin registrar.
+class DefaultAssetProvider: AssetProvider {
   weak var registrar: FlutterPluginRegistrar?
 
   init(registrar: FlutterPluginRegistrar) {
     self.registrar = registrar
-    super.init()
   }
 
   func lookupKey(forAsset asset: String) -> String? {
@@ -32,13 +53,12 @@ class DefaultAssetProvider: NSObject, FGMAssetProvider {
   }
 }
 
-/// Non-test implementation of FGMMapEventDelegate, wrapping a FGMMapsCallbackApi instance.
-class DefaultMapEventHandler: NSObject, FGMMapEventDelegate {
+/// Non-test implementation of MapEventDelegate, wrapping a FGMMapsCallbackApi instance.
+class DefaultMapEventHandler: MapEventDelegate {
   let callbackHandler: FGMMapsCallbackApi
 
   init(callbackHandler: FGMMapsCallbackApi) {
     self.callbackHandler = callbackHandler
-    super.init()
   }
 
   func didStartCameraMove() {
@@ -53,11 +73,11 @@ class DefaultMapEventHandler: NSObject, FGMMapEventDelegate {
     callbackHandler.didIdleCamera { _ in }
   }
 
-  func didTap(atPosition position: FGMPlatformLatLng) {
+  func didTap(at position: FGMPlatformLatLng) {
     callbackHandler.didTap(atPosition: position) { _ in }
   }
 
-  func didLongPress(atPosition position: FGMPlatformLatLng) {
+  func didLongPress(at position: FGMPlatformLatLng) {
     callbackHandler.didLongPress(atPosition: position) { _ in }
   }
 
@@ -66,17 +86,16 @@ class DefaultMapEventHandler: NSObject, FGMMapEventDelegate {
   }
 
   func didStartDragForMarker(
-    withIdentifier markerId: String, atPosition position: FGMPlatformLatLng
+    withIdentifier markerId: String, at position: FGMPlatformLatLng
   ) {
     callbackHandler.didStartDragForMarker(withIdentifier: markerId, atPosition: position) { _ in }
   }
 
-  func didDragMarker(withIdentifier markerId: String, atPosition position: FGMPlatformLatLng) {
+  func didDragMarker(withIdentifier markerId: String, at position: FGMPlatformLatLng) {
     callbackHandler.didDragMarker(withIdentifier: markerId, atPosition: position) { _ in }
   }
 
-  func didEndDragForMarker(withIdentifier markerId: String, atPosition position: FGMPlatformLatLng)
-  {
+  func didEndDragForMarker(withIdentifier markerId: String, at position: FGMPlatformLatLng) {
     callbackHandler.didEndDragForMarker(withIdentifier: markerId, atPosition: position) { _ in }
   }
 
@@ -88,7 +107,7 @@ class DefaultMapEventHandler: NSObject, FGMMapEventDelegate {
     callbackHandler.didTapCircle(withIdentifier: circleId) { _ in }
   }
 
-  func didTap(_ cluster: FGMPlatformCluster) {
+  func didTapCluster(_ cluster: FGMPlatformCluster) {
     callbackHandler.didTap(cluster) { _ in }
   }
 
@@ -168,7 +187,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     mapView: GMSMapView,
     viewIdentifier viewId: Int64,
     creationParameters: FGMPlatformMapViewCreationParams,
-    assetProvider: FGMAssetProvider,
+    assetProvider: AssetProvider,
     binaryMessenger: FlutterBinaryMessenger
   ) {
     self.mapView = mapView
@@ -421,11 +440,11 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   }
 
   public func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
-    mapEventHandler.didTap(atPosition: FGMPlatformLatLng.make(from: coordinate))
+    mapEventHandler.didTap(at: FGMPlatformLatLng.make(from: coordinate))
   }
 
   public func mapView(_ mapView: GMSMapView, didLongPressAt coordinate: CLLocationCoordinate2D) {
-    mapEventHandler.didLongPress(atPosition: FGMPlatformLatLng.make(from: coordinate))
+    mapEventHandler.didLongPress(at: FGMPlatformLatLng.make(from: coordinate))
   }
 
   func interpretMapConfiguration(_ config: FGMPlatformMapConfiguration) {
@@ -542,7 +561,7 @@ class MapCallHandler: NSObject, FGMMapsApi {
   weak var controller: GoogleMapController?
   let messenger: FlutterBinaryMessenger
   let pigeonSuffix: String
-  var transactionWrapper: FGMCATransactionProtocol
+  var transactionWrapper: MapAnimationCATransactionProtocol
 
   init(
     messenger: FlutterBinaryMessenger,
@@ -550,7 +569,7 @@ class MapCallHandler: NSObject, FGMMapsApi {
   ) {
     self.messenger = messenger
     self.pigeonSuffix = suffix
-    self.transactionWrapper = FGMCATransactionWrapper()
+    self.transactionWrapper = DefaultMapAnimationCATransaction()
     super.init()
   }
 

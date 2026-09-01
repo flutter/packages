@@ -3,37 +3,37 @@
 // found in the LICENSE file.
 
 import Foundation
-import google_maps_flutter_ios_sdk10
 import google_maps_flutter_ios_sdk10_objc
 
+@testable import google_maps_flutter_ios_sdk10
+
 /// Fake implementation of FGMMapEventDelegate for unit tests.
-class TestMapEventHandler: NSObject, FGMMapEventDelegate {
+class TestMapEventHandler: MapEventDelegate {
   func didStartCameraMove() {}
 
   func didMoveCamera(to cameraPosition: FGMPlatformCameraPosition) {}
 
   func didIdleCamera() {}
 
-  func didTap(atPosition position: FGMPlatformLatLng) {}
+  func didTap(at position: FGMPlatformLatLng) {}
 
-  func didLongPress(atPosition position: FGMPlatformLatLng) {}
+  func didLongPress(at position: FGMPlatformLatLng) {}
 
   func didTapMarker(withIdentifier markerId: String) {}
 
   func didStartDragForMarker(
-    withIdentifier markerId: String, atPosition position: FGMPlatformLatLng
+    withIdentifier markerId: String, at position: FGMPlatformLatLng
   ) {}
 
-  func didDragMarker(withIdentifier markerId: String, atPosition position: FGMPlatformLatLng) {}
+  func didDragMarker(withIdentifier markerId: String, at position: FGMPlatformLatLng) {}
 
-  func didEndDragForMarker(withIdentifier markerId: String, atPosition position: FGMPlatformLatLng)
-  {}
+  func didEndDragForMarker(withIdentifier markerId: String, at position: FGMPlatformLatLng) {}
 
   func didTapInfoWindowOfMarker(withIdentifier markerId: String) {}
 
   func didTapCircle(withIdentifier circleId: String) {}
 
-  func didTap(_ cluster: FGMPlatformCluster) {}
+  func didTapCluster(_ cluster: FGMPlatformCluster) {}
 
   func didTapPolygon(withIdentifier polygonId: String) {}
 

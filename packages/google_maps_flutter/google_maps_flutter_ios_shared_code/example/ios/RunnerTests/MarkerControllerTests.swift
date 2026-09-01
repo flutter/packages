@@ -23,7 +23,7 @@ import google_maps_flutter_ios_objc
   /// The mapView should outlive the controller, as the controller keeps a weak reference to it.
   func markersController(
     withMapView mapView: GMSMapView,
-    eventDelegate: NSObject & FGMMapEventDelegate
+    eventDelegate: MapEventDelegate
   ) -> MarkersController {
     return MarkersController(
       mapView: mapView,

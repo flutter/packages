@@ -56,10 +56,10 @@ class PolygonController: NSObject {
 
 class PolygonsController: NSObject {
   private var polygonIdentifierToController: [String: PolygonController] = [:]
-  private weak var eventDelegate: FGMMapEventDelegate?
+  private weak var eventDelegate: MapEventDelegate?
   private weak var mapView: GMSMapView?
 
-  init(mapView: GMSMapView, eventDelegate: FGMMapEventDelegate) {
+  init(mapView: GMSMapView, eventDelegate: MapEventDelegate) {
     self.mapView = mapView
     self.eventDelegate = eventDelegate
     super.init()

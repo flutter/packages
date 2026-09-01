@@ -54,11 +54,11 @@ class CircleController: NSObject {
 }
 
 class CirclesController: NSObject {
-  private weak var eventDelegate: FGMMapEventDelegate?
+  private weak var eventDelegate: MapEventDelegate?
   private weak var mapView: GMSMapView?
   private var circleIdToController: [String: CircleController] = [:]
 
-  init(mapView: GMSMapView, eventDelegate: FGMMapEventDelegate) {
+  init(mapView: GMSMapView, eventDelegate: MapEventDelegate) {
     self.mapView = mapView
     self.eventDelegate = eventDelegate
     super.init()

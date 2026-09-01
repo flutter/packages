@@ -4,6 +4,7 @@
 
 import Flutter
 import GoogleMaps
+import GoogleMapsUtils
 
 #if canImport(google_maps_flutter_ios_sdk9_objc)
   import google_maps_flutter_ios_sdk9_objc
@@ -12,10 +13,10 @@ import GoogleMaps
 /// A controller that manages all of the cluster managers on a map.
 class ClusterManagersController: NSObject {
   private var clusterManagerIdentifierToManagers: [String: GMUClusterManager] = [:]
-  private weak var eventDelegate: FGMMapEventDelegate?
+  private weak var eventDelegate: MapEventDelegate?
   private weak var mapView: GMSMapView?
 
-  init(mapView: GMSMapView, eventDelegate: FGMMapEventDelegate) {
+  init(mapView: GMSMapView, eventDelegate: MapEventDelegate) {
     self.mapView = mapView
     self.eventDelegate = eventDelegate
     super.init()
@@ -81,7 +82,7 @@ class ClusterManagersController: NSObject {
     guard let clusterManagerId = clusterManagerIdentifier(for: cluster) else { return }
     let platformCluster = FGMPlatformCluster.make(
       from: cluster, clusterManagerIdentifier: clusterManagerId)
-    eventDelegate?.didTap(platformCluster)
+    eventDelegate?.didTapCluster(platformCluster)
   }
 
   /// Returns the cluster manager identifier for given cluster.

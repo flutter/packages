@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import GoogleMaps
+import GoogleMapsUtils
 import UIKit
 
 #if canImport(google_maps_flutter_ios_sdk10_objc)
@@ -35,7 +36,7 @@ class GroundOverlayController: NSObject {
   ///
   /// Setting the ground overlay to visible will set its map to the controller's mapView.
   func update(
-    from platformGroundOverlay: FGMPlatformGroundOverlay, assetProvider: FGMAssetProvider,
+    from platformGroundOverlay: FGMPlatformGroundOverlay, assetProvider: AssetProvider,
     screenScale: CGFloat
   ) {
     if let mapView = mapView {
@@ -57,7 +58,7 @@ class GroundOverlayController: NSObject {
     _ groundOverlay: GMSGroundOverlay,
     from platformGroundOverlay: FGMPlatformGroundOverlay,
     mapView: GMSMapView,
-    assetProvider: FGMAssetProvider,
+    assetProvider: AssetProvider,
     screenScale: CGFloat,
     usingBounds useBounds: Bool
   ) {
@@ -102,11 +103,11 @@ class GroundOverlayController: NSObject {
 /// Controller of multiple ground overlays on the map.
 class GroundOverlaysController: NSObject {
   private var groundOverlayControllerByIdentifier: [String: GroundOverlayController] = [:]
-  private weak var eventDelegate: FGMMapEventDelegate?
-  private let assetProvider: FGMAssetProvider
+  private weak var eventDelegate: MapEventDelegate?
+  private let assetProvider: AssetProvider
   private weak var mapView: GMSMapView?
 
-  init(mapView: GMSMapView, eventDelegate: FGMMapEventDelegate, assetProvider: FGMAssetProvider) {
+  init(mapView: GMSMapView, eventDelegate: MapEventDelegate, assetProvider: AssetProvider) {
     self.mapView = mapView
     self.eventDelegate = eventDelegate
     self.assetProvider = assetProvider

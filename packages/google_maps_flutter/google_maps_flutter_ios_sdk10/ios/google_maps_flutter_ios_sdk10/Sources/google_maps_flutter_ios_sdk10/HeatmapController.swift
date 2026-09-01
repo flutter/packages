@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import GoogleMaps
+import GoogleMapsUtils
 
 #if canImport(google_maps_flutter_ios_sdk10_objc)
   import google_maps_flutter_ios_sdk10_objc
