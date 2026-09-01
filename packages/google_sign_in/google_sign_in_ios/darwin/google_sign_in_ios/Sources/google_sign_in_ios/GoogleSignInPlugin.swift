@@ -31,17 +31,17 @@ private func loadGoogleServiceInfo() -> [String: Any]? {
   return NSDictionary(contentsOfFile: plistPath) as? [String: Any]
 }
 
-/// Deep-converts values to something that can be safely encoded with the standard message codec,
-/// for use in making NSError userInfo values safe to send as FlutterError details.
-private func sanitizedUserInfo(_ value: Any?) -> Any {
+/// Deep-converts a value to something that can be encoded with the standard
+/// message codec, for use as Pigeon error details.
+private func sanitizedCodecValue(_ value: Any) -> any Sendable {
   switch value {
   case let error as NSError:
     return [
       "domain": error.domain,
       "code": "\(error.code)",
       "localizedDescription": error.localizedDescription,
-      "userInfo": sanitizedUserInfo(error.userInfo),
-    ]
+      "userInfo": error.sanitizedUserInfo,
+    ] as [String: any Sendable]
   case let string as String:
     return string
   case let url as URL:
@@ -49,19 +49,28 @@ private func sanitizedUserInfo(_ value: Any?) -> Any {
   case let number as NSNumber:
     return number
   case let array as [Any]:
-    return array.map { sanitizedUserInfo($0) }
+    return array.map { sanitizedCodecValue($0) }
   case let dict as [AnyHashable: Any]:
-    var safeValues: [AnyHashable: Any] = [:]
-    safeValues.reserveCapacity(dict.count)
-    for (key, nestedValue) in dict {
-      safeValues[key] = sanitizedUserInfo(nestedValue)
-    }
-    return safeValues
+    return sanitizedCodecDictionary(dict)
   default:
-    if let value {
-      return "[Unsupported type: \(String(describing: type(of: value)))]"
-    }
-    return "[Unsupported type: nil]"
+    return "[Unsupported type: \(String(describing: type(of: value)))]"
+  }
+}
+
+private func sanitizedCodecDictionary(_ dict: [AnyHashable: Any]) -> [String: any Sendable] {
+  var safeValues: [String: any Sendable] = [:]
+  safeValues.reserveCapacity(dict.count)
+  for (key, nestedValue) in dict {
+    let stringKey = key as? String ?? String(describing: key)
+    safeValues[stringKey] = sanitizedCodecValue(nestedValue)
+  }
+  return safeValues
+}
+
+extension NSError {
+  /// `userInfo` values that can be sent through the standard message codec.
+  var sanitizedUserInfo: [String: any Sendable] {
+    sanitizedCodecDictionary(userInfo)
   }
 }
 
@@ -73,7 +82,7 @@ private func pigeonError(from error: NSError) -> PigeonError {
   return PigeonError(
     code: "\(error.domain): \(error.code)",
     message: error.localizedDescription,
-    details: sanitizedUserInfo(error.userInfo) as Sendable)
+    details: error.sanitizedUserInfo)
 }
 
 /// Maps a GIDSignInErrorCode to the corresponding Pigeon GoogleSignInErrorCode.
@@ -392,16 +401,18 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
             error: SignInFailure(
               type: pigeonErrorCode(for: nsError.code),
               message: nsError.localizedDescription,
-              details: sanitizedUserInfo(nsError.userInfo)))))
+              details: nsError.sanitizedUserInfo))))
     } else if let nsError {
       completion(.failure(pigeonError(from: nsError)))
     } else {
+      // GIDSignIn is expected to provide a user or an error. Keep a defensive
+      // fallback with a clear message rather than reporting a codec placeholder.
       completion(
         .failure(
           PigeonError(
-            code: "(null): 0",
-            message: nil,
-            details: sanitizedUserInfo(nil) as Sendable)))
+            code: "google_sign_in",
+            message: "Sign-in completed without a user or an error.",
+            details: nil)))
     }
   }
 

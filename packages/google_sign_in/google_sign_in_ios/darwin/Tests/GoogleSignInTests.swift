@@ -376,6 +376,28 @@ struct GoogleSignInPluginTests {
         }
       }
     }
+
+    @Test func restorePreviousSignInWithoutUserOrError() async {
+      let (plugin, _) = createTestPlugin()
+
+      await confirmation("completion called") { confirmed in
+        plugin.restorePreviousSignIn { result in
+          switch result {
+          case .success:
+            Issue.record("Expected a PigeonError when the SDK returns neither a user nor an error")
+          case .failure(let error):
+            guard let pigeonError = error as? PigeonError else {
+              Issue.record("Expected PigeonError, got \(error)")
+              break
+            }
+            #expect(pigeonError.code == "google_sign_in")
+            #expect(pigeonError.message == "Sign-in completed without a user or an error.")
+            #expect(pigeonError.details == nil)
+          }
+          confirmed()
+        }
+      }
+    }
   }
 
   @Suite("signIn") struct SignInTests {
@@ -880,13 +902,13 @@ struct GoogleSignInPluginTests {
               break
             }
             #expect(pigeonError.code == "BogusDomain: 7")
-            let details = pigeonError.details as? [String: Any]
+            let details = pigeonError.details as? [String: any Sendable]
             #expect(details?["string"] as? String == "ok")
             #expect(details?["number"] as? NSNumber == NSNumber(value: 42))
             #expect(details?["url"] as? String == "https://example.com/path")
-            #expect((details?["array"] as? [Any])?.count == 2)
-            #expect((details?["dict"] as? [String: Any])?["inner"] as? String == "value")
-            let nestedDetails = details?[NSUnderlyingErrorKey] as? [String: Any]
+            #expect((details?["array"] as? [any Sendable])?.count == 2)
+            #expect((details?["dict"] as? [String: any Sendable])?["inner"] as? String == "value")
+            let nestedDetails = details?[NSUnderlyingErrorKey] as? [String: any Sendable]
             #expect(nestedDetails?["domain"] as? String == "NestedDomain")
             #expect(nestedDetails?["code"] as? String == "99")
             let unsupported = details?["unsupported"] as? String
