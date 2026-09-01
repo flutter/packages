@@ -207,7 +207,7 @@ enum StyleVariant {
   ///
   /// See also:
   ///
-  /// * the [Material Design 3 Expressive updates](https://m3.material.io/#9f2db05b-ebbb-47c2-892d-1cca35afa386) for design guidelines.
+  ///  * [Material Design 3 Expressive updates](https://m3.material.io/#9f2db05b-ebbb-47c2-892d-1cca35afa386) for design guidelines.
   material3Expressive,
 }
 
