@@ -1,5 +1,6 @@
 ## NEXT
 
+* Adds validation that the root README package table is sorted alphabetically.
 * Adds support for batch release of pre-1.0 packages.
 * Exempts `AGENTS.md` from requiring version and changelog changes.
 
