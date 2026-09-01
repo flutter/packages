@@ -495,7 +495,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
           child = Transform(
             transform: Matrix4.identity()
               ..translateByDouble(pictureInfo.size.width, 0, 0, 1)
-              ..scaledByDouble(-1, 1, -1, 1),
+              ..scaleByDouble(-1, 1, -1, 1),
             child: child,
           );
         }
