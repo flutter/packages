@@ -74,6 +74,9 @@ class RepositoryPackage {
   /// The test directory containing the package's Dart tests.
   Directory get testDirectory => directory.childDirectory('test');
 
+  /// The test directory containing the tests for the package's dart fixes.
+  Directory get dartFixTestDirectory => directory.childDirectory('test_fixes');
+
   /// The path to the script that is run by the `custom-test` command.
   File get customTestScript => directory.childDirectory('tool').childFile('run_tests.dart');
 

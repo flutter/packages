@@ -5,6 +5,9 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
+import '../data/color_role.dart';
+import '../data/shape_struct.dart';
+import '../templates/app_bar_template.dart';
 import '../templates/template.dart';
 import 'test_fixtures/test_templates.dart';
 
@@ -23,16 +26,16 @@ void main() {
 
     for (final isM3E in <bool>[true, false]) {
       TokenTemplate buttonTemplate() =>
-          isM3E ? M3EIconButtonTemplate(testPath()) : M3IconButtonTemplate(testPath());
+          isM3E ? IconButtonTemplateM3E(testPath()) : IconButtonTemplateM3(testPath());
 
       String filePath() {
-        final fileName = 'icon_button_m3${isM3E ? 'e' : ''}_defaults.g.dart';
+        final fileName = 'icon_button_defaults_m3${isM3E ? 'e' : ''}.g.dart';
         return '${testPath()}/$fileName';
       }
 
       group(isM3E ? 'M3E Template' : 'M3 Template', () {
         test(
-          'will generate a part file ending in icon_button_m3${isM3E ? 'e' : ''}_defaults.g.dart',
+          'will generate a part file ending in icon_button_defaults_m3${isM3E ? 'e' : ''}.g.dart',
           () {
             buttonTemplate().generateFile(verbose: true);
             expect(File(filePath()).existsSync(), isTrue);
@@ -66,11 +69,101 @@ void main() {
       });
     }
 
+    test('color generates color expression', () {
+      final template = IconButtonTemplateM3(testPath());
+      expect(template.color(TokenColorRole.onSurface, '_colors'), '_colors.onSurface');
+    });
+
+    test('colorWithOpacity generates color expression with opacity', () {
+      final template = IconButtonTemplateM3(testPath());
+      expect(
+        template.colorWithOpacity(TokenColorRole.onSurface, 0.12, '_colors'),
+        '_colors.onSurface.withOpacity(0.12)',
+      );
+      expect(
+        template.colorWithOpacity(TokenColorRole.onSurface, 1.0, '_colors'),
+        '_colors.onSurface',
+      );
+    });
+
+    test('shape generates shape expressions', () {
+      final template = IconButtonTemplateM3(testPath());
+      expect(
+        template.shape(
+          const ShapeStruct(
+            family: 'SHAPE_FAMILY_ROUNDED_CORNERS',
+            topLeft: 8.0,
+            topRight: 8.0,
+            bottomLeft: 8.0,
+            bottomRight: 8.0,
+          ),
+        ),
+        'const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)))',
+      );
+      expect(
+        template.shape(
+          const ShapeStruct(
+            family: 'SHAPE_FAMILY_ROUNDED_CORNERS',
+            topLeft: 8.0,
+            topRight: 8.0,
+            bottomLeft: 4.0,
+            bottomRight: 4.0,
+          ),
+        ),
+        'const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(8.0), bottom: Radius.circular(4.0)))',
+      );
+      expect(
+        template.shape(
+          const ShapeStruct(
+            family: 'SHAPE_FAMILY_CIRCULAR',
+            topLeft: 0.0,
+            topRight: 0.0,
+            bottomLeft: 0.0,
+            bottomRight: 0.0,
+          ),
+        ),
+        'const StadiumBorder()',
+      );
+    });
+
+    test('shape throws UnsupportedError for unsupported shape family', () {
+      final template = IconButtonTemplateM3(testPath());
+      expect(
+        () => template.shape(
+          const ShapeStruct(
+            family: 'SHAPE_FAMILY_UNKNOWN',
+            topLeft: 0.0,
+            topRight: 0.0,
+            bottomLeft: 0.0,
+            bottomRight: 0.0,
+          ),
+        ),
+        throwsA(
+          isA<UnsupportedError>().having(
+            (UnsupportedError e) => e.message,
+            'message',
+            'Unsupported shape family type: SHAPE_FAMILY_UNKNOWN',
+          ),
+        ),
+      );
+    });
+
+    test('AppBarTemplateM3 emits M3 AppBar defaults from app bar tokens', () {
+      final String contents = const AppBarTemplateM3().generateContents('_AppBarDefaultsM3');
+      expect(contents, contains('class _AppBarDefaultsM3 extends AppBarThemeData'));
+      expect(contents, contains('scrolledUnderElevation: 3.0'));
+      expect(contents, contains('toolbarHeight: 64.0'));
+      expect(contents, contains('Color? get backgroundColor => _colors.surface'));
+      expect(contents, contains('Color? get foregroundColor => _colors.onSurface'));
+      expect(contents, contains('color: _colors.onSurfaceVariant'));
+      expect(contents, contains('static const double expandedHeight = 112.0'));
+      expect(contents, contains('static const double expandedHeight = 152.0'));
+    });
     test('will run dart format over the generated file', () {
       final template = UnformattedTemplate(testPath());
       template.generateFile();
 
-      final file = File('${testPath()}/unformatted_m3_defaults.g.dart');
+      final file = File('${testPath()}/unformatted_defaults_m3.g.dart');
       expect(file.readAsStringSync(), contains(formattedClass));
     });
 
@@ -115,21 +208,33 @@ const _fileHeader = '''
 ''';
 
 const _buttonExpressiveDefaultsClass = '''
-class _M3EIconButtonDefaults {
+class _IconButtonDefaultsM3E {
   static const double height = 40.0;
   static const double borderRadius = 8.0;
 }
 ''';
 
 const _buttonDefaultsClass = '''
-class _M3IconButtonDefaults {
+class _IconButtonDefaultsM3 {
+  _IconButtonDefaultsM3(this.context);
+
+  final BuildContext context;
+  late final ColorScheme _colors = Theme.of(context).colorScheme;
+
   static const double height = 40.0;
   static const double borderRadius = 8.0;
+  Color get iconColor => _colors.onSurfaceVariant;
+  Color get disabledIconColor => _colors.onSurface.withOpacity(0.38);
+  Color get hoveredStateLayerColor =>
+      _colors.onSurfaceVariant.withOpacity(0.08);
+  OutlinedBorder get shape => const RoundedRectangleBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+  );
 }
 ''';
 
 const formattedClass = '''
-class _M3UnformattedDefaults {
+class _UnformattedDefaultsM3 {
   final int x = 1;
   final String y = 'hello';
 }
