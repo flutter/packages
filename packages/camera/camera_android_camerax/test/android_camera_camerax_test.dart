@@ -5801,14 +5801,6 @@ void main() {
     },
   );
 
-  test('setPreviewMode sets previewMode on AndroidCameraCameraX', () {
-    final camera = AndroidCameraCameraX();
-    expect(camera.previewMode, equals(ImplementationMode.compatible));
-
-    camera.setPreviewMode(ImplementationMode.performance);
-
-    expect(camera.previewMode, equals(ImplementationMode.performance));
-  });
 }
 
 class TestMeteringPoint extends MeteringPoint {

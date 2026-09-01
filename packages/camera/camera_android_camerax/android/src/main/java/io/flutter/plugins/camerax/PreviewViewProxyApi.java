@@ -10,8 +10,6 @@ import androidx.camera.core.Preview;
 import androidx.camera.view.PreviewView;
 
 class PreviewViewProxyApi extends PigeonApiPreviewView {
-  // Cached previewView.
-  PreviewView previewView;
 
   PreviewViewProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);

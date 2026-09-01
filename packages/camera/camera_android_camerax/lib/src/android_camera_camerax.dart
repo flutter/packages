@@ -10,13 +10,7 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart' show Factory, Uint8List;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart'
-    show
-        AndroidViewController,
-        DeviceOrientation,
-        PlatformException,
-        PlatformViewsService,
-        StandardMessageCodec;
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' hide AspectRatio;
 import 'package:stream_transform/stream_transform.dart';
 import 'camerax_library.dart';
@@ -58,19 +52,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   Preview? preview;
 
-  /// The [ImplementationMode] of the [PreviewView].
-  ///
-  /// Defaults to [ImplementationMode.compatible].
-  @visibleForTesting
-  ImplementationMode previewMode = ImplementationMode.compatible;
-
-  /// Sets the implementation mode of the [PreviewView].
-  ///
-  /// Must be called before [createCameraWithSettings].
-  // ignore: use_setters_to_change_properties
-  void setPreviewMode(ImplementationMode mode) {
-    previewMode = mode;
-  }
 
   /// The [VideoCapture] instance that can be instantiated and configured to
   /// handle video recording
@@ -427,7 +408,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       _previewView = PreviewView();
       await _previewView!.registerPreviewView();
     }
-    await _previewView!.setImplementationMode(previewMode);
+    await _previewView!.setImplementationMode(ImplementationMode.compatible);
 
     final SurfaceProvider surfaceProvider = await _previewView!.getSurfaceProvider();
     await preview!.setSurfaceProvider(surfaceProvider);
@@ -598,18 +579,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     await imageCapture!.setTargetRotation(targetLockedRotation);
     await imageAnalysis!.setTargetRotation(targetLockedRotation);
     await videoCapture!.setTargetRotation(targetLockedRotation);
-
-    // Fall back to COMPATIBLE mode and set target rotation to visually lock the preview.
-    if (preview != null) {
-      await preview!.setTargetRotation(targetLockedRotation);
-    }
-    if (_previewView != null) {
-      await _previewView!.setImplementationMode(ImplementationMode.compatible);
-      if (preview != null) {
-        final SurfaceProvider surfaceProvider = await _previewView!.getSurfaceProvider();
-        await preview!.setSurfaceProvider(surfaceProvider);
-      }
-    }
   }
 
   /// Unlocks the capture orientation of camera with ID [cameraId].
@@ -618,15 +587,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Flag that default rotation should be set for UseCases as needed.
     captureOrientationLocked = false;
     _lockedCaptureOrientation = null;
-
-    // Restore preview to configured previewMode so it acts as a natively rotating viewfinder again.
-    if (_previewView != null) {
-      await _previewView!.setImplementationMode(previewMode);
-      if (preview != null) {
-        final SurfaceProvider surfaceProvider = await _previewView!.getSurfaceProvider();
-        await preview!.setSurfaceProvider(surfaceProvider);
-      }
-    }
   }
 
   /// Sets the exposure point for automatically determining the exposure values for

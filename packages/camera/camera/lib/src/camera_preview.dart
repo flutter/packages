@@ -27,7 +27,7 @@ class CameraPreview extends StatelessWidget {
             valueListenable: controller,
             builder: (BuildContext context, Object? value, Widget? child) {
               return AspectRatio(
-                aspectRatio: _isLandscape()
+                aspectRatio: _isLandscape(context)
                     ? controller.value.aspectRatio
                     : (1 / controller.value.aspectRatio),
                 child: Stack(
@@ -45,14 +45,38 @@ class CameraPreview extends StatelessWidget {
   }
 
   Widget _wrapInRotatedBox({required Widget child}) {
-    if (kIsWeb ||  CameraPlatform.instance.handlesRotationNatively() || defaultTargetPlatform != TargetPlatform.android) {
+    if (kIsWeb ||
+        CameraPlatform.instance.handlesRotationNatively() ||
+        defaultTargetPlatform != TargetPlatform.android) {
       return child;
     }
 
     return RotatedBox(quarterTurns: _getQuarterTurns(), child: child);
   }
 
-  bool _isLandscape() {
+  bool _isLandscape(BuildContext context) {
+    if (controller.value.isRecordingVideo) {
+      return <DeviceOrientation>[
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ].contains(controller.value.recordingOrientation);
+    }
+    if (controller.value.previewPauseOrientation != null) {
+      return <DeviceOrientation>[
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ].contains(controller.value.previewPauseOrientation);
+    }
+    if (controller.value.lockedCaptureOrientation != null) {
+      return <DeviceOrientation>[
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ].contains(controller.value.lockedCaptureOrientation);
+    }
+    if (CameraPlatform.instance.handlesRotationNatively()) {
+      return MediaQuery.of(context).orientation == Orientation.landscape;
+    }
+
     return <DeviceOrientation>[
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,

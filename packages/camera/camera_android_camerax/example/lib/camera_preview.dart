@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -32,21 +30,13 @@ class CameraPreview extends StatelessWidget {
                     : (1 / controller.value.aspectRatio),
                 child: Stack(
                   fit: StackFit.expand,
-                  children: <Widget>[
-                    _wrapInRotatedBox(child: controller.buildPreview()),
-                    child ?? Container(),
-                  ],
+                  children: <Widget>[controller.buildPreview(), child ?? Container()],
                 ),
               );
             },
             child: child,
           )
         : Container();
-  }
-
-  Widget _wrapInRotatedBox({required Widget child}) {
-    // camera_android_camerax handles rotation natively.
-    return child;
   }
 
   bool _isLandscape(BuildContext context) {
@@ -69,23 +59,5 @@ class CameraPreview extends StatelessWidget {
       ].contains(controller.value.lockedCaptureOrientation);
     }
     return MediaQuery.of(context).orientation == Orientation.landscape;
-  }
-
-  int _getQuarterTurns() {
-    final turns = <DeviceOrientation, int>{
-      DeviceOrientation.portraitUp: 0,
-      DeviceOrientation.landscapeRight: 1,
-      DeviceOrientation.portraitDown: 2,
-      DeviceOrientation.landscapeLeft: 3,
-    };
-    return turns[_getApplicableOrientation()]!;
-  }
-
-  DeviceOrientation _getApplicableOrientation() {
-    return controller.value.isRecordingVideo
-        ? controller.value.recordingOrientation!
-        : (controller.value.previewPauseOrientation ??
-              controller.value.lockedCaptureOrientation ??
-              controller.value.deviceOrientation);
   }
 }
