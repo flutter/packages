@@ -22,9 +22,13 @@ class CameraPreviewView implements PlatformView {
       @NonNull Context context,
       int id,
       @Nullable Map<String, Object> creationParams,
-      PreviewView previewView) {
+      @NonNull PreviewView previewView) {
     this.previewView = previewView;
 
+    // CameraX's PreviewView internally updates the child transform matrix and scale factors
+    // on layout change, but only when (width != oldWidth || height != oldHeight). On 180-degree
+    // device rotations or layout passes where dimensions do not change, CameraX skips updating
+    // the transform. Listening to layout changes ensures the transform is always refreshed.
     this.previewView.addOnLayoutChangeListener(
         new View.OnLayoutChangeListener() {
           @Override
@@ -42,23 +46,12 @@ class CameraPreviewView implements PlatformView {
           }
         });
 
-    this.previewView.setOnHierarchyChangeListener(
-        new ViewGroup.OnHierarchyChangeListener() {
-          @Override
-          public void onChildViewAdded(View parent, View child) {
-            previewView.post(
-                new Runnable() {
-                  @Override
-                  public void run() {
-                    refreshTransform();
-                  }
-                });
-          }
-
-          @Override
-          public void onChildViewRemoved(View parent, View child) {}
-        });
-
+    // When switching cameras (e.g. front to back) while remaining in the same device orientation,
+    // PreviewView's outer dimensions do not change, so no layout pass occurs on PreviewView.
+    // CameraX recreates the internal preview surface child (e.g. TextureView) initialized to the
+    // raw stream resolution (e.g. 320x240) with scale (1.0, 1.0). Observing STREAMING ensures
+    // that as soon as frames begin flowing from the new camera, refreshTransform() is called to
+    // scale the child view to fill the container, preventing the "tiny preview" bug.
     this.streamStateObserver =
         new Observer<PreviewView.StreamState>() {
           @Override
@@ -77,11 +70,18 @@ class CameraPreviewView implements PlatformView {
     this.previewView.getPreviewStreamState().observeForever(this.streamStateObserver);
   }
 
+  /**
+   * Forces CameraX to recalculate and apply scale and rotation transformations to the internal
+   * preview child view (TextureView/SurfaceView).
+   *
+   * <p>Setting the scale type triggers CameraX's internal redrawPreview() and transformView() logic
+   * without requiring access to package-private APIs.
+   */
   private void refreshTransform() {
     try {
       previewView.setScaleType(previewView.getScaleType());
     } catch (Exception e) {
-      // Ignored if view is not ready yet.
+      // Ignored if the view or camera stream is not ready yet.
     }
   }
 
@@ -89,23 +89,14 @@ class CameraPreviewView implements PlatformView {
   @Override
   public View getView() {
     refreshTransform();
-    previewView.requestLayout();
-    previewView.post(
-        new Runnable() {
-          @Override
-          public void run() {
-            refreshTransform();
-            previewView.requestLayout();
-            previewView.invalidate();
-          }
-        });
     return previewView;
   }
 
   @Override
   public void dispose() {
-    this.previewView.getPreviewStreamState().removeObserver(this.streamStateObserver);
-    this.previewView.setOnHierarchyChangeListener(null);
+    previewView.getPreviewStreamState().removeObserver(streamStateObserver);
+    // Detach the shared PreviewView from its parent container when this platform
+    // view is disposed to prevent holding onto old view hierarchy references.
     if (previewView.getParent() instanceof ViewGroup) {
       ((ViewGroup) previewView.getParent()).removeView(previewView);
     }

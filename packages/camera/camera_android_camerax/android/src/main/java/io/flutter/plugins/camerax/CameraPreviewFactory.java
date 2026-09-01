@@ -27,6 +27,8 @@ class CameraPreviewFactory extends PlatformViewFactory {
   @SuppressWarnings("unchecked")
   public PlatformView create(@NonNull Context context, int viewId, @Nullable Object args) {
     final Map<String, Object> creationParams = (Map<String, Object>) args;
+    // Ensure the shared PreviewView is detached from any previous parent container
+    // before Flutter attaches it to a new PlatformViewWrapper.
     if (previewView.getParent() instanceof ViewGroup) {
       ((ViewGroup) previewView.getParent()).removeView(previewView);
     }
