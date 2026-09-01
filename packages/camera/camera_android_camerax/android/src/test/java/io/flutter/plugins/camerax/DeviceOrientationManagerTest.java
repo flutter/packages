@@ -183,8 +183,7 @@ public class DeviceOrientationManagerTest {
         .getDeviceDefaultOrientation();
 
     assertEquals(
-        DeviceOrientation.PORTRAIT_UP,
-        deviceOrientationManagerSpy.calculateSensorOrientation(0));
+        DeviceOrientation.PORTRAIT_UP, deviceOrientationManagerSpy.calculateSensorOrientation(0));
     assertEquals(
         DeviceOrientation.LANDSCAPE_LEFT,
         deviceOrientationManagerSpy.calculateSensorOrientation(90));
@@ -213,16 +212,14 @@ public class DeviceOrientationManagerTest {
         DeviceOrientation.LANDSCAPE_RIGHT,
         deviceOrientationManagerSpy.calculateSensorOrientation(180));
     assertEquals(
-        DeviceOrientation.PORTRAIT_UP,
-        deviceOrientationManagerSpy.calculateSensorOrientation(270));
+        DeviceOrientation.PORTRAIT_UP, deviceOrientationManagerSpy.calculateSensorOrientation(270));
   }
 
   @Test
   public void getDeviceDefaultOrientation_returnsExpectedOrientation() {
     setUpUIOrientationMocks(Configuration.ORIENTATION_PORTRAIT, Surface.ROTATION_0);
     assertEquals(
-        Configuration.ORIENTATION_PORTRAIT,
-        deviceOrientationManager.getDeviceDefaultOrientation());
+        Configuration.ORIENTATION_PORTRAIT, deviceOrientationManager.getDeviceDefaultOrientation());
 
     setUpUIOrientationMocks(Configuration.ORIENTATION_LANDSCAPE, Surface.ROTATION_0);
     assertEquals(

@@ -20,37 +20,23 @@ class CameraPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('CAMILLE_DEBUG: CameraPreview.build() isInitialized: ${controller.value.isInitialized}');
     return controller.value.isInitialized
         ? ValueListenableBuilder<CameraValue>(
             valueListenable: controller,
             builder: (BuildContext context, Object? value, Widget? child) {
               final bool isLandscape = _isLandscape(context);
               final double baseAspectRatio = controller.value.aspectRatio;
-              final double landscapeRatio = baseAspectRatio < 1.0 ? (1.0 / baseAspectRatio) : baseAspectRatio;
+              final double landscapeRatio = baseAspectRatio < 1.0
+                  ? (1.0 / baseAspectRatio)
+                  : baseAspectRatio;
               final double finalAspectRatio = isLandscape ? landscapeRatio : (1.0 / landscapeRatio);
-              
-              print('CAMILLE_DEBUG: [CameraPreview] _isLandscape(): $isLandscape');
-              print('CAMILLE_DEBUG: [CameraPreview] controller.value.aspectRatio: $baseAspectRatio');
-              print('CAMILLE_DEBUG: [CameraPreview] Final applied aspectRatio: $finalAspectRatio');
-              print('CAMILLE_DEBUG: [CameraPreview] MediaQuery.orientation: ${MediaQuery.of(context).orientation}');
-              
+
               return AspectRatio(
                 aspectRatio: finalAspectRatio,
                 child: ClipRect(
                   child: Stack(
                     fit: StackFit.expand,
-                    children: <Widget>[
-                      LayoutBuilder(
-                        builder: (BuildContext context, BoxConstraints constraints) {
-                          print(
-                            'CAMILLE_DEBUG: [CameraPreview Constraints] ${constraints.maxWidth} x ${constraints.maxHeight}',
-                          );
-                          return controller.buildPreview();
-                        },
-                      ),
-                      child ?? Container(),
-                    ],
+                    children: <Widget>[controller.buildPreview(), child ?? Container()],
                   ),
                 ),
               );

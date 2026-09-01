@@ -5,9 +5,6 @@
 package io.flutter.plugins.camerax;
 
 import android.content.Context;
-import android.graphics.Matrix;
-import android.util.Log;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
@@ -41,37 +38,7 @@ class CameraPreviewView implements PlatformView {
               int oldTop,
               int oldRight,
               int oldBottom) {
-            int w = right - left;
-            int h = bottom - top;
-            Log.d("CAMILLE_DEBUG", "Native PreviewView bounds: " + w + "x" + h);
             refreshTransform();
-            for (int i = 0; i < previewView.getChildCount(); i++) {
-              View child = previewView.getChildAt(i);
-              Matrix matrix = new Matrix();
-              if (child instanceof TextureView) {
-                ((TextureView) child).getTransform(matrix);
-              }
-              Log.d(
-                  "CAMILLE_DEBUG",
-                  "  PreviewView child["
-                      + i
-                      + "] ("
-                      + child.getClass().getSimpleName()
-                      + "): "
-                      + child.getWidth()
-                      + "x"
-                      + child.getHeight()
-                      + ", scale=("
-                      + child.getScaleX()
-                      + ", "
-                      + child.getScaleY()
-                      + "), trans=("
-                      + child.getTranslationX()
-                      + ", "
-                      + child.getTranslationY()
-                      + "), matrix="
-                      + matrix);
-            }
           }
         });
 
@@ -79,9 +46,6 @@ class CameraPreviewView implements PlatformView {
         new ViewGroup.OnHierarchyChangeListener() {
           @Override
           public void onChildViewAdded(View parent, View child) {
-            Log.d(
-                "CAMILLE_DEBUG",
-                "PreviewView child view added: " + child.getClass().getSimpleName());
             previewView.post(
                 new Runnable() {
                   @Override
@@ -92,18 +56,13 @@ class CameraPreviewView implements PlatformView {
           }
 
           @Override
-          public void onChildViewRemoved(View parent, View child) {
-            Log.d(
-                "CAMILLE_DEBUG",
-                "PreviewView child view removed: " + child.getClass().getSimpleName());
-          }
+          public void onChildViewRemoved(View parent, View child) {}
         });
 
     this.streamStateObserver =
         new Observer<PreviewView.StreamState>() {
           @Override
           public void onChanged(PreviewView.StreamState streamState) {
-            Log.d("CAMILLE_DEBUG", "PreviewView streamState changed to: " + streamState);
             if (streamState == PreviewView.StreamState.STREAMING) {
               previewView.post(
                   new Runnable() {
@@ -122,7 +81,7 @@ class CameraPreviewView implements PlatformView {
     try {
       previewView.setScaleType(previewView.getScaleType());
     } catch (Exception e) {
-      Log.w("CAMILLE_DEBUG", "Could not refresh PreviewView scaleType: " + e.getMessage());
+      // Ignored if view is not ready yet.
     }
   }
 

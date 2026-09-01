@@ -117,24 +117,18 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final CameraController? cameraController = controller;
 
-    print('CAMILLE_DEBUG: [main] didChangeAppLifecycleState: $state');
-
     // App state changed before we got the chance to initialize.
     if (cameraController == null || !cameraController.value.isInitialized) {
       return;
     }
 
     if (state == AppLifecycleState.hidden || state == AppLifecycleState.paused) {
-      print('CAMILLE_DEBUG: [main] Disposing camera due to lifecycle state $state');
       cameraController.dispose();
       _isCameraDisposed = true;
     } else if (state == AppLifecycleState.resumed) {
       if (_isCameraDisposed) {
-        print('CAMILLE_DEBUG: [main] Re-initializing camera due to lifecycle state $state');
         _initializeCameraController(cameraController.description);
         _isCameraDisposed = false;
-      } else {
-        print('CAMILLE_DEBUG: [main] Skipping re-initialization because camera was not disposed');
       }
     }
   }

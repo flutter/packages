@@ -388,7 +388,6 @@ abstract class Preview extends UseCase {
   /// Sets a SurfaceProvider to provide a Surface for Preview.
   void setSurfaceProvider(SurfaceProvider? surfaceProvider);
 
-
   /// Releases the `SurfaceProducer` created in `setSurfaceProvider` if one was
   /// created.
   void releaseSurfaceProvider();
@@ -1186,16 +1185,9 @@ abstract class DisplayOrientedMeteringPointFactory extends MeteringPointFactory 
   DisplayOrientedMeteringPointFactory(CameraInfo cameraInfo, double width, double height);
 }
 
-enum ImplementationMode {
-  performance,
-  compatible,
-}
+enum ImplementationMode { performance, compatible }
 
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'androidx.camera.view.PreviewView',
-  ),
-)
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'androidx.camera.view.PreviewView'))
 abstract class PreviewView {
   PreviewView();
 

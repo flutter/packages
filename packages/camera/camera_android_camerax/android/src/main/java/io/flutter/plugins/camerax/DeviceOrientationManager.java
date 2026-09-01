@@ -128,11 +128,12 @@ public class DeviceOrientationManager {
     // Determine the orientation
     angle = angle % 360;
     return new PlatformChannel.DeviceOrientation[] {
-      PlatformChannel.DeviceOrientation.PORTRAIT_UP,
-      PlatformChannel.DeviceOrientation.LANDSCAPE_LEFT,
-      PlatformChannel.DeviceOrientation.PORTRAIT_DOWN,
-      PlatformChannel.DeviceOrientation.LANDSCAPE_RIGHT,
-    }[angle / 90];
+          PlatformChannel.DeviceOrientation.PORTRAIT_UP,
+          PlatformChannel.DeviceOrientation.LANDSCAPE_LEFT,
+          PlatformChannel.DeviceOrientation.PORTRAIT_DOWN,
+          PlatformChannel.DeviceOrientation.LANDSCAPE_RIGHT,
+        }
+        [angle / 90];
   }
 
   /**
@@ -242,7 +243,6 @@ public class DeviceOrientationManager {
         result = PlatformChannel.DeviceOrientation.PORTRAIT_UP;
         break;
     }
-    android.util.Log.d("CAMILLE_DEBUG", "getUiOrientation() -> orientation=" + orientation + ", rotation=" + rotation + ", result=" + result);
     return result;
   }
 
