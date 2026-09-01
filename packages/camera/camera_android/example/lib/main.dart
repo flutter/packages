@@ -111,6 +111,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     super.dispose();
   }
 
+  bool _isCameraDisposed = false;
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final CameraController? cameraController = controller;
@@ -120,10 +122,15 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       return;
     }
 
-    if (state == AppLifecycleState.inactive) {
+    if (state == AppLifecycleState.hidden ||
+        state == AppLifecycleState.paused) {
       cameraController.dispose();
+      _isCameraDisposed = true;
     } else if (state == AppLifecycleState.resumed) {
-      _initializeCameraController(cameraController.description);
+      if (_isCameraDisposed) {
+        _initializeCameraController(cameraController.description);
+        _isCameraDisposed = false;
+      }
     }
   }
 
