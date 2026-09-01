@@ -72,7 +72,10 @@ public class DeviceOrientationManager {
     return new OrientationEventListener(getContext()) {
       @Override
       public void onOrientationChanged(int orientation) {
-        handleUiOrientationChange();
+        if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
+          return;
+        }
+        handleSensorOrientationChange(orientation);
       }
     };
   }
@@ -216,25 +219,31 @@ public class DeviceOrientationManager {
   PlatformChannel.DeviceOrientation getUiOrientation() {
     final int rotation = getDefaultRotation();
     final int orientation = getContext().getResources().getConfiguration().orientation;
+    PlatformChannel.DeviceOrientation result = PlatformChannel.DeviceOrientation.PORTRAIT_UP;
 
     switch (orientation) {
       case Configuration.ORIENTATION_PORTRAIT:
         if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_90) {
-          return PlatformChannel.DeviceOrientation.PORTRAIT_UP;
+          result = PlatformChannel.DeviceOrientation.PORTRAIT_UP;
         } else {
-          return PlatformChannel.DeviceOrientation.PORTRAIT_DOWN;
+          result = PlatformChannel.DeviceOrientation.PORTRAIT_DOWN;
         }
+        break;
       case Configuration.ORIENTATION_LANDSCAPE:
         if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_90) {
-          return PlatformChannel.DeviceOrientation.LANDSCAPE_LEFT;
+          result = PlatformChannel.DeviceOrientation.LANDSCAPE_LEFT;
         } else {
-          return PlatformChannel.DeviceOrientation.LANDSCAPE_RIGHT;
+          result = PlatformChannel.DeviceOrientation.LANDSCAPE_RIGHT;
         }
+        break;
       case Configuration.ORIENTATION_SQUARE:
       case Configuration.ORIENTATION_UNDEFINED:
       default:
-        return PlatformChannel.DeviceOrientation.PORTRAIT_UP;
+        result = PlatformChannel.DeviceOrientation.PORTRAIT_UP;
+        break;
     }
+    android.util.Log.d("CAMILLE_DEBUG", "getUiOrientation() -> orientation=" + orientation + ", rotation=" + rotation + ", result=" + result);
+    return result;
   }
 
   /**

@@ -111,9 +111,13 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   }
 
   // #docregion AppLifecycle
+  bool _isCameraDisposed = false;
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final CameraController? cameraController = controller;
+
+    print('CAMILLE_DEBUG: [main] didChangeAppLifecycleState: $state');
 
     // App state changed before we got the chance to initialize.
     if (cameraController == null || !cameraController.value.isInitialized) {
@@ -121,9 +125,17 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     }
 
     if (state == AppLifecycleState.hidden || state == AppLifecycleState.paused) {
+      print('CAMILLE_DEBUG: [main] Disposing camera due to lifecycle state $state');
       cameraController.dispose();
+      _isCameraDisposed = true;
     } else if (state == AppLifecycleState.resumed) {
-      _initializeCameraController(cameraController.description);
+      if (_isCameraDisposed) {
+        print('CAMILLE_DEBUG: [main] Re-initializing camera due to lifecycle state $state');
+        _initializeCameraController(cameraController.description);
+        _isCameraDisposed = false;
+      } else {
+        print('CAMILLE_DEBUG: [main] Skipping re-initialization because camera was not disposed');
+      }
     }
   }
 
@@ -583,6 +595,12 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   }
 
   Future<void> _initializeCameraController(CameraDescription cameraDescription) async {
+    final CameraController? oldController = controller;
+    if (oldController != null) {
+      controller = null;
+      await oldController.dispose();
+    }
+
     final cameraController = CameraController(
       cameraDescription,
       mediaSettings: MediaSettings(

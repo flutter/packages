@@ -505,6 +505,9 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Retrieve preview resolution.
     final ResolutionInfo previewResolutionInfo = (await preview!.getResolutionInfo())!;
+    final double resWidth = previewResolutionInfo.resolution.width.toDouble();
+    final double resHeight = previewResolutionInfo.resolution.height.toDouble();
+    print('CAMILLE_DEBUG: [initializeCamera] CameraX reported ResolutionInfo: width=$resWidth, height=$resHeight');
 
     // Mark auto-focus, auto-exposure and setting points for focus & exposure
     // as available operations as CameraX does its best across devices to
@@ -517,8 +520,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     cameraEventStreamController.add(
       CameraInitializedEvent(
         cameraId,
-        previewResolutionInfo.resolution.width.toDouble(),
-        previewResolutionInfo.resolution.height.toDouble(),
+        resWidth,
+        resHeight,
         exposureMode,
         exposurePointSupported,
         focusMode,

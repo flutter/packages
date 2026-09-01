@@ -5,6 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import android.content.Context;
+import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.view.PreviewView;
@@ -26,6 +27,9 @@ class CameraPreviewFactory extends PlatformViewFactory {
   @SuppressWarnings("unchecked")
   public PlatformView create(@NonNull Context context, int viewId, @Nullable Object args) {
     final Map<String, Object> creationParams = (Map<String, Object>) args;
+    if (previewView.getParent() instanceof ViewGroup) {
+      ((ViewGroup) previewView.getParent()).removeView(previewView);
+    }
     return new CameraPreviewView(context, viewId, creationParams, previewView);
   }
 }

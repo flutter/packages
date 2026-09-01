@@ -11,6 +11,8 @@ public class ReproPlatformView implements PlatformView {
   public ReproPlatformView(@NonNull Context context, @NonNull String nativeViewType) {
     if ("texture".equalsIgnoreCase(nativeViewType)) {
       this.view = new ReproTextureView(context);
+    } else if ("red_box".equalsIgnoreCase(nativeViewType)) {
+      this.view = new ReproRedBoxView(context);
     } else {
       this.view = new ReproSurfaceView(context);
     }
