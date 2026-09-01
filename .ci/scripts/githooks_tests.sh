@@ -4,10 +4,6 @@
 # found in the LICENSE file.
 set -e
 
-cd script/tool
+cd script/githooks
 dart pub get
-dart analyze --fatal-infos
-
-cd ../githooks
-dart pub get
-dart analyze --fatal-infos
+dart test
