@@ -982,6 +982,7 @@ packages/plugin/example/ios/RunnerTests/Foo.m
 packages/plugin/example/ios/RunnerUITests/info.plist
 packages/plugin/darwin/Tests/Foo.swift
 packages/plugin/analysis_options.yaml
+packages/plugin/AGENTS.md
 packages/plugin/CHANGELOG.md
 ''',
             ),

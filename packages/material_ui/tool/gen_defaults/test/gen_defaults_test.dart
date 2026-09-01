@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:test/test.dart';
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
+import '../templates/app_bar_template.dart';
 import '../templates/template.dart';
 import 'test_fixtures/test_templates.dart';
 
@@ -25,16 +26,16 @@ void main() {
 
     for (final isM3E in <bool>[true, false]) {
       TokenTemplate buttonTemplate() =>
-          isM3E ? M3EIconButtonTemplate(testPath()) : M3IconButtonTemplate(testPath());
+          isM3E ? IconButtonTemplateM3E(testPath()) : IconButtonTemplateM3(testPath());
 
       String filePath() {
-        final fileName = 'icon_button_m3${isM3E ? 'e' : ''}_defaults.g.dart';
+        final fileName = 'icon_button_defaults_m3${isM3E ? 'e' : ''}.g.dart';
         return '${testPath()}/$fileName';
       }
 
       group(isM3E ? 'M3E Template' : 'M3 Template', () {
         test(
-          'will generate a part file ending in icon_button_m3${isM3E ? 'e' : ''}_defaults.g.dart',
+          'will generate a part file ending in icon_button_defaults_m3${isM3E ? 'e' : ''}.g.dart',
           () {
             buttonTemplate().generateFile(verbose: true);
             expect(File(filePath()).existsSync(), isTrue);
@@ -69,12 +70,12 @@ void main() {
     }
 
     test('color generates color expression', () {
-      final template = M3IconButtonTemplate(testPath());
+      final template = IconButtonTemplateM3(testPath());
       expect(template.color(TokenColorRole.onSurface, '_colors'), '_colors.onSurface');
     });
 
     test('colorWithOpacity generates color expression with opacity', () {
-      final template = M3IconButtonTemplate(testPath());
+      final template = IconButtonTemplateM3(testPath());
       expect(
         template.colorWithOpacity(TokenColorRole.onSurface, 0.12, '_colors'),
         '_colors.onSurface.withOpacity(0.12)',
@@ -86,7 +87,7 @@ void main() {
     });
 
     test('shape generates shape expressions', () {
-      final template = M3IconButtonTemplate(testPath());
+      final template = IconButtonTemplateM3(testPath());
       expect(
         template.shape(
           const ShapeStruct(
@@ -126,7 +127,7 @@ void main() {
     });
 
     test('shape throws UnsupportedError for unsupported shape family', () {
-      final template = M3IconButtonTemplate(testPath());
+      final template = IconButtonTemplateM3(testPath());
       expect(
         () => template.shape(
           const ShapeStruct(
@@ -147,11 +148,22 @@ void main() {
       );
     });
 
+    test('AppBarTemplateM3 emits M3 AppBar defaults from app bar tokens', () {
+      final String contents = const AppBarTemplateM3().generateContents('_AppBarDefaultsM3');
+      expect(contents, contains('class _AppBarDefaultsM3 extends AppBarThemeData'));
+      expect(contents, contains('scrolledUnderElevation: 3.0'));
+      expect(contents, contains('toolbarHeight: 64.0'));
+      expect(contents, contains('Color? get backgroundColor => _colors.surface'));
+      expect(contents, contains('Color? get foregroundColor => _colors.onSurface'));
+      expect(contents, contains('color: _colors.onSurfaceVariant'));
+      expect(contents, contains('static const double expandedHeight = 112.0'));
+      expect(contents, contains('static const double expandedHeight = 152.0'));
+    });
     test('will run dart format over the generated file', () {
       final template = UnformattedTemplate(testPath());
       template.generateFile();
 
-      final file = File('${testPath()}/unformatted_m3_defaults.g.dart');
+      final file = File('${testPath()}/unformatted_defaults_m3.g.dart');
       expect(file.readAsStringSync(), contains(formattedClass));
     });
 
