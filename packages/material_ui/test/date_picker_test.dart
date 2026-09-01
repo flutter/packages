@@ -1749,7 +1749,7 @@ void main() {
         expect(
           tester.getSemantics(switchToInputIcon),
           matchesSemantics(
-            tooltip: 'Switch to input',
+            label: 'Switch to input',
             isButton: true,
             hasTapAction: true,
             hasFocusAction: true,
@@ -1834,7 +1834,7 @@ void main() {
         expect(
           tester.getSemantics(switchToCalendarIcon),
           matchesSemantics(
-            tooltip: 'Switch to calendar',
+            label: 'Switch to calendar',
             isButton: true,
             hasTapAction: true,
             hasFocusAction: true,
@@ -1884,6 +1884,45 @@ void main() {
           tester.getSemantics(find.text('CANCEL')),
           matchesSemantics(
             label: 'CANCEL',
+            isButton: true,
+            hasTapAction: true,
+            hasFocusAction: true,
+            isEnabled: true,
+            hasEnabledState: true,
+            isFocusable: true,
+          ),
+        );
+      });
+      semantics.dispose();
+    });
+
+    // Regression test for https://github.com/flutter/flutter/issues/155224.
+    testWidgets('Entry mode toggle buttons are labeled instead of relying on their tooltip', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle semantics = tester.ensureSemantics();
+
+      await prepareDatePicker(tester, (Future<DateTime?> date) async {
+        expect(
+          tester.getSemantics(switchToInputIcon),
+          matchesSemantics(
+            label: 'Switch to input',
+            isButton: true,
+            hasTapAction: true,
+            hasFocusAction: true,
+            isEnabled: true,
+            hasEnabledState: true,
+            isFocusable: true,
+          ),
+        );
+
+        await tester.tap(switchToInputIcon);
+        await tester.pumpAndSettle();
+
+        expect(
+          tester.getSemantics(switchToCalendarIcon),
+          matchesSemantics(
+            label: 'Switch to calendar',
             isButton: true,
             hasTapAction: true,
             hasFocusAction: true,
