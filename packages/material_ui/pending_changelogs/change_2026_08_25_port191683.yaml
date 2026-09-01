@@ -1,0 +1,3 @@
+changelog: |
+  - Fix `AlertDialog.adaptive`, `AboutDialog.adaptive` and `SearchAnchor.bar` returning private subclasses, so `find.byType` and other type checks against the public class now match them.
+version: patch
