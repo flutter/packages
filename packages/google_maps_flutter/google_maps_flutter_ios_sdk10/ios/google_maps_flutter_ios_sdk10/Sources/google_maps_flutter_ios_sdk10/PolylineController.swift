@@ -41,7 +41,7 @@ class PolylineController: NSObject {
   ) {
     polyline.isTappable = platformPolyline.consumesTapEvents
     polyline.zIndex = Int32(platformPolyline.zIndex)
-    let gmsPath = makePath(from: platformPolyline.points.map({ $0.toCLLocation() }))
+    let gmsPath = makePath(from: platformPolyline.points.map({ $0.toCLLocationCoordinate2D() }))
     polyline.path = gmsPath
     let strokeColor = platformPolyline.color.toUIColor()
     polyline.strokeColor = strokeColor

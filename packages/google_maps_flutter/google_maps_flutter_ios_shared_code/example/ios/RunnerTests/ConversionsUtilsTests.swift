@@ -48,9 +48,9 @@ import google_maps_flutter_ios_objc
 
   @Test func pointFromLatLong() {
     let latlong = FGMPlatformLatLng.make(withLatitude: 1, longitude: 2)
-    let location = latlong.toCLLocation()
-    #expect(location.coordinate.latitude == 1)
-    #expect(location.coordinate.longitude == 2)
+    let location = latlong.toCLLocationCoordinate2D()
+    #expect(location.latitude == 1)
+    #expect(location.longitude == 2)
   }
 
   @Test func getPigeonCameraPositionForPosition() {

@@ -33,11 +33,6 @@ extension FGMPlatformLatLng {
   func toCLLocationCoordinate2D() -> CLLocationCoordinate2D {
     return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
   }
-
-  /// Returns the equivalent CLLocation.
-  func toCLLocation() -> CLLocation {
-    return CLLocation(latitude: latitude, longitude: longitude)
-  }
 }
 
 extension FGMPlatformLatLngBounds {
@@ -81,10 +76,10 @@ extension FGMPlatformCameraPosition {
 }
 
 /// Creates a GMSMutablePath from points.
-func makePath(from points: [CLLocation]) -> GMSMutablePath {
+func makePath(from points: [CLLocationCoordinate2D]) -> GMSMutablePath {
   let path = GMSMutablePath()
   for location in points {
-    path.add(location.coordinate)
+    path.add(location)
   }
   return path
 }
