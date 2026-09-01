@@ -55,25 +55,10 @@ class CameraPreview extends StatelessWidget {
   }
 
   bool _isLandscape(BuildContext context) {
-    if (controller.value.isRecordingVideo) {
-      return <DeviceOrientation>[
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ].contains(controller.value.recordingOrientation);
-    }
-    if (controller.value.previewPauseOrientation != null) {
-      return <DeviceOrientation>[
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ].contains(controller.value.previewPauseOrientation);
-    }
-    if (controller.value.lockedCaptureOrientation != null) {
-      return <DeviceOrientation>[
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ].contains(controller.value.lockedCaptureOrientation);
-    }
-    if (CameraPlatform.instance.handlesRotationNatively()) {
+    if (CameraPlatform.instance.handlesRotationNatively() &&
+        !controller.value.isRecordingVideo &&
+        controller.value.previewPauseOrientation == null &&
+        controller.value.lockedCaptureOrientation == null) {
       return MediaQuery.of(context).orientation == Orientation.landscape;
     }
 
