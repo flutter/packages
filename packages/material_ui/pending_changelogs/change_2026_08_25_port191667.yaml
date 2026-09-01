@@ -1,0 +1,3 @@
+changelog: |
+  - Add regression coverage for a `ListTile` below an `ExpansionTile` not repainting its `tileColor` at the new position when the tile expands, fixed in the framework's `Expansible`.
+version: patch
