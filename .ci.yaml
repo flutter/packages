@@ -31,10 +31,10 @@ platform_properties:
       device_type: none
       dependencies: >-
         [
-          {"dependency": "android_sdk", "version": "version:36v3"},
+          {"dependency": "android_sdk", "version": "version:37v2"},
           {"dependency": "open_jdk", "version": "version:21"},
           {"dependency": "curl", "version": "version:7.64.0"},
-          {"dependency": "avd_cipd_version", "version": "build_id:8719362231152674241"},
+          {"dependency": "avd_cipd_version", "version": "build_id:8676079533761240945"},
           {"dependency": "ninja", "version": "version:1.9.0"}
         ]
   linux_android_legacy:
@@ -336,12 +336,12 @@ targets:
       add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: linux_custom_package_tests.yaml
-      # Pigeon tests need Andoid deps (thus the Linux_android base), emulator,
+      # Pigeon tests need Android deps (thus the Linux_android base), emulator,
       # and Linux desktop deps.
       # web_benchmarks needs Chrome.
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"},
+          {"dependency": "android_virtual_device", "version": "android_37_google_apis_x64.textpb"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
@@ -364,7 +364,7 @@ targets:
       # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"},
+          {"dependency": "android_virtual_device", "version": "android_37_google_apis_x64.textpb"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
@@ -402,7 +402,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_37_google_apis_x64.textpb"}
         ]
 
   - name: Linux_android android_platform_tests_shard_2 master
@@ -415,7 +415,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_37_google_apis_x64.textpb"}
         ]
 
   - name: Linux_android android_platform_tests_shard_3 master
@@ -428,7 +428,7 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_37_google_apis_x64.textpb"}
         ]
 
   - name: Linux_android android_platform_tests_shard_4 master
@@ -441,7 +441,7 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_37_google_apis_x64.textpb"}
         ]
 
   - name: Linux_android android_platform_tests_shard_5 master
@@ -454,7 +454,7 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_37_google_apis_x64.textpb"}
         ]
 
   - name: Linux_android android_platform_tests_shard_6 master
@@ -467,7 +467,7 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_37_google_apis_x64.textpb"}
         ]
 
   - name: Linux_android android_platform_tests_shard_1 stable
@@ -481,7 +481,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_37_google_apis_x64.textpb"}
         ]
 
   - name: Linux_android android_platform_tests_shard_2 stable
@@ -495,7 +495,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_37_google_apis_x64.textpb"}
         ]
 
   - name: Linux_android android_platform_tests_shard_3 stable
@@ -509,7 +509,7 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_37_google_apis_x64.textpb"}
         ]
 
   - name: Linux_android android_platform_tests_shard_4 stable
@@ -523,7 +523,7 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_37_google_apis_x64.textpb"}
         ]
 
   - name: Linux_android android_platform_tests_shard_5 stable
@@ -537,7 +537,7 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_37_google_apis_x64.textpb"}
         ]
 
   - name: Linux_android android_platform_tests_shard_6 stable
@@ -551,7 +551,7 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_37_google_apis_x64.textpb"}
         ]
 
   - name: Linux_android_legacy android_platform_tests_legacy_api_shard_1 master
