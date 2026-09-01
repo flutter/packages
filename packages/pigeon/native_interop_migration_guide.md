@@ -130,7 +130,7 @@ If your existing Pigeon interface uses `@TaskQueue` to process method calls off 
    }
    ```
 2. **Implement Using Native Concurrency**: In your native implementation, implement the generated asynchronous signature:
-   - In **Swift**: Implement the generated `async throws` method and perform background execution (e.g., using `Task` or `DispatchQueue.global(qos: .userInitiated)`).
+   - In **Swift**: Implement the generated `async` method and perform background execution (e.g., using `Task` or `DispatchQueue.global(qos: .userInitiated)`).
    - In **Kotlin**: Implement the generated `suspend` function and perform background execution (e.g., using `withContext(Dispatchers.IO)`).
 
 #### Option B: Offload via Dart Isolates
@@ -139,6 +139,7 @@ Keep the method synchronous in the Pigeon file and native code, and invoke it fr
 ```dart
 final String result = await Isolate.run(() => api.doSomething(value));
 ```
+*Note: Callers must ensure the isolate stays alive while there are pending asynchronous calls, as attempting to execute a callback after the isolate has terminated will cause a crash.*
 
 ---
 
@@ -146,7 +147,9 @@ final String result = await Isolate.run(() => api.doSomething(value));
 
 From the Dart side, the API surface remains largely identical because both models return standard Dart `Future`s for asynchronous calls. However:
 - **Synchronous execution**: Host API methods that are synchronous now block the calling thread until completion, bypassing any message loop scheduling latency.
-- **Dart Isolates**: Host API calls can be made directly from any background Dart isolate without initializing `BackgroundIsolateBinaryMessenger` or passing a `RootIsolateToken`.
+- **Dart Isolates**: Host API calls can be made directly from any background Dart isolate without initializing `BackgroundIsolateBinaryMessenger` or passing a `RootIsolateToken`. Callers must ensure the isolate stays alive while there are pending asynchronous calls, as attempting to execute a callback after the isolate has terminated will cause a crash.
+- **Platform UI Thread Affinity**: If native code interacts with platform UI elements (such as UIKit views on iOS/macOS or `Activity`/view hierarchies on Android), that work must execute on the platform's main thread. If an interop call is initiated from a background isolate or dispatches work to a background queue, the native implementation must explicitly dispatch to the main thread (`DispatchQueue.main.async` in Swift, `Handler(Looper.getMainLooper()).post` in Kotlin) before interacting with UI APIs.
+- **`FlutterApi` Synchronous Callbacks**: Synchronous callbacks into Dart are isolate-local and must be invoked on the isolate that registered them.
 - **Type changes**: Some complex data types or generic collections may have stricter typing requirements at the FFI/JNI boundary compared to the platform channel message codec. Refer to the [Native Interop Guide](./native_interop_guide.md) for handling specific data types.
 
 ---
@@ -157,3 +160,15 @@ For Swift FFI, the toolchain generates an Objective-C bridging target under `<sw
 
 - **CocoaPods**: Ensure `s.source_files = 'Sources/**/*.{swift,m}'` in your `.podspec`.
 - **SwiftPM**: Add a separate Objective-C target for `my_plugin_objc_gen` in `Package.swift` and depend on it from your main Swift target.
+
+---
+
+## 6. Environment Prerequisites & Tooling Versions
+
+To use Native Interop and its external code generators:
+- **Java 17**: Required specifically by Android build tools and JNIgen.
+- **Kotlin Version (`<= 2.1.0`)**: JNIgen uses `kotlinx-metadata-jvm` to parse Kotlin class metadata. It currently supports Kotlin metadata versions up to **2.1.0**. If the Android Gradle project uses a higher Kotlin plugin version (e.g. Kotlin 2.4.0), JNIgen will throw `IllegalArgumentException: Provided Metadata instance has version ... while maximum supported version is ...`. Ensure `settings.gradle.kts` sets Kotlin to `2.1.0`:
+  ```kotlin
+  id("org.jetbrains.kotlin.android") version "2.1.0" apply false
+  ```
+- **LLVM / Xcode Command Line Tools**: Required by FFIgen to parse C/Objective-C headers (`xcode-select --install`).

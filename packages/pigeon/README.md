@@ -6,7 +6,7 @@ host platform type-safe, easier, and faster.
 
 Pigeon removes the necessity to manage strings across multiple platforms and languages.
 It also improves efficiency over common method channel patterns. Most importantly though,
-it removes the need to write custom platform channel code, since pigeon generates it for you.
+it removes the need to write custom platform channel or native interop code, since Pigeon generates it for you.
 
 For usage examples, see the [Example README](./example/README.md).
 
@@ -44,7 +44,7 @@ methods to make it simpler to always reply exactly once.
 
 If asynchronous methods are needed, two annotations are available:
 * `@async`: Generates modern concurrency signatures (`suspend` functions in Kotlin and
-  `async throws` methods in Swift). This is the default style for asynchronous methods.
+  `async` methods in Swift). This is the default style for asynchronous methods.
 * `@asyncCallback`: Generates completion callback-based asynchronous methods (e.g.
   accepting a `(Result<T>) -> Unit` or completion closure parameter).
 

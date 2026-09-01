@@ -15,15 +15,15 @@ For a detailed comparison between platform-channel-based communication and Nativ
 Native Interop calls are direct in-process function calls across the C ABI (FFI) or JNI boundary rather than asynchronous messages queued through the Flutter engine:
 
 * **Host APIs (Dart → Native)**:
-  * **Execution Thread**: Host methods run directly on the OS thread of the calling Dart isolate. Calls from Flutter's root isolate run on the platform's main UI thread.
-  * **Background Isolates**: Host APIs can be called directly from worker isolates (e.g., via `Isolate.run`) without requiring `BackgroundIsolateBinaryMessenger` or engine tokens.
+  * **Execution Thread**: Host methods run directly on the OS thread of the calling Dart isolate. Calls from Flutter's root isolate run on the platform's main UI thread (unless the application developer has opted out of thread merging, which [is still possible on macOS](https://github.com/flutter/flutter/issues/181874)).
+  * **Background Isolates**: Host APIs can be called directly from worker isolates (e.g., via `Isolate.run`) without requiring `BackgroundIsolateBinaryMessenger` or engine tokens. Callers must ensure the isolate stays alive while there are pending asynchronous calls, as attempting to execute a callback after the isolate has terminated will cause a crash.
   * **Synchronous Calls Block**: Synchronous methods block the calling isolate until native execution returns. Avoid long-running synchronous calls on the main UI isolate.
-  * **Platform UI Affinity**: Native APIs that manipulate UI (such as UIKit views or Android `Activity`/views) must run on the platform's main thread. If invoked from a background isolate, native code must explicitly dispatch to the main thread (`DispatchQueue.main.async` in Swift, `Handler(Looper.getMainLooper()).post` in Kotlin).
+  * **Platform UI Affinity**: Native APIs that manipulate UI (such as UIKit views or Android `Activity`/views) must run on the platform's main thread. If invoked from a background isolate, native code must explicitly dispatch to the main thread (`DispatchQueue.main.async` in Swift, `Handler(Looper.getMainLooper()).post` in Kotlin) before interacting with UI APIs.
 * **Flutter APIs (Native → Dart)**:
   * Synchronous callbacks into Dart are isolate-local and must be invoked from the isolate that registered them.
 * **`@TaskQueue` Not Supported**:
   * Platform channels queue work onto engine background threads; Native Interop executes directly on the caller thread. Specifying `@TaskQueue` results in a code generation error.
-  * To run host operations on background threads, annotate the method with `@async` in the Pigeon file and implement it using Swift `async throws` or Kotlin `suspend` functions (with `DispatchQueue.global` or `Dispatchers.IO`).
+  * To run host operations on background threads, annotate the method with `@async` in the Pigeon file and implement it using Swift `async` or Kotlin `suspend` functions (with `DispatchQueue.global` or `Dispatchers.IO`).
 
 ---
 
@@ -48,11 +48,13 @@ To use Native Interop, your development environment and the corresponding extern
 ### Android (JNI / JNIgen)
 - **Java 17**: Required specifically by the Android build tools and JNIgen.
 - **Android SDK**: Must be installed and configured in your path.
-- **Kotlin Version**: The maximum supported version is **2.1.0**.
+- **Kotlin Version (`<= 2.1.0`)**: JNIgen uses `kotlinx-metadata-jvm` to parse Kotlin class metadata. It currently supports Kotlin metadata versions up to **2.1.0**. If the Android Gradle project uses a higher Kotlin plugin version (e.g. Kotlin 2.4.0), JNIgen will throw `IllegalArgumentException: Provided Metadata instance has version ... while maximum supported version is ...`. Ensure `settings.gradle.kts` sets Kotlin to `2.1.0`:
+  ```kotlin
+  id("org.jetbrains.kotlin.android") version "2.1.0" apply false
+  ```
 
 ### iOS/macOS (FFI / FFIgen)
-- **LLVM (version 9+)**: Required to parse header files. 
-  - On macOS, this is included with Xcode Command Line Tools.
+- **LLVM (version 9+) / Xcode Command Line Tools**: Required by FFIgen to parse C/Objective-C headers (`xcode-select --install`).
 
 ---
 

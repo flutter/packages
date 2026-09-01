@@ -67,11 +67,11 @@ In your Pigeon Dart definition file (`pigeons/<messages_file>.dart`), update `@C
 - **`appDirectory`**: Root path of the compiled Flutter **application** context required by `ffigen` and `jnigen` (use `'example/'` for plugins with an example app, or `'./'` for standalone Flutter apps).
 
 > [!WARNING]
-> **Threading, Isolates & TaskQueue**: Native Interop calls execute directly in-process on the calling isolate's OS thread (the main UI thread when called from the root isolate).
-> - **`@TaskQueue` is unsupported**: Because calls bypass Flutter Engine message queues, `@TaskQueue` annotations must be removed from the Pigeon file.
+> **Threading, Isolates & TaskQueue**: Native Interop calls execute directly on the calling isolate's OS thread (the main UI thread when called from the root isolate, unless the application developer has opted out of thread merging, which [is still possible on macOS](https://github.com/flutter/flutter/issues/181874)).
+> - **`@TaskQueue` is unsupported**: Because calls do not use Flutter Engine message queues, `@TaskQueue` annotations must be removed from the Pigeon file.
 > - **Migrating background work**:
->   - *Option A (Native Concurrency)*: Replace `@TaskQueue` with `@async` in the Pigeon definition file, and implement the generated Swift `async throws` or Kotlin `suspend` function on a background queue or coroutine dispatcher.
->   - *Option B (Dart Isolates)*: Keep the method synchronous and call it from a worker isolate using `await Isolate.run(() => api.doSomething())`. Unlike platform channels, Native Interop Host API calls work out of the box in background isolates without `BackgroundIsolateBinaryMessenger`.
+>   - *Option A (Native Concurrency)*: Replace `@TaskQueue` with `@async` in the Pigeon definition file, and implement the generated Swift `async` or Kotlin `suspend` function on a background queue or coroutine dispatcher.
+>   - *Option B (Dart Isolates)*: Keep the method synchronous and call it from a worker isolate using `await Isolate.run(() => api.doSomething())`. Unlike platform channels, Native Interop Host API calls work out of the box in background isolates without `BackgroundIsolateBinaryMessenger`. Callers must ensure the isolate stays alive while there are pending asynchronous calls, as attempting to execute a callback after the isolate has terminated will cause a crash.
 
 ---
 
@@ -262,6 +262,6 @@ dart run tool/pigeon/<input_name>_ffigen_config.dart
 - **LLVM / Xcode Command Line Tools**: Required by FFIgen to parse C/Objective-C headers (`xcode-select --install`).
 
 ### 6.6 Threading, Isolates & Platform UI Affinity
-- **Dart Isolates**: Native Interop Host API calls can be made from any Dart worker isolate (`Isolate.run`) without needing `BackgroundIsolateBinaryMessenger` or `RootIsolateToken`. The native code executes synchronously on the OS thread backing that isolate.
+- **Dart Isolates**: Native Interop Host API calls can be made from any Dart worker isolate (`Isolate.run`) without needing `BackgroundIsolateBinaryMessenger` or `RootIsolateToken`. The native code executes synchronously on the OS thread backing that isolate. Callers must ensure the isolate stays alive while there are pending asynchronous calls, as attempting to execute a callback after the isolate has terminated will cause a crash.
 - **Platform UI Thread Affinity**: If native code interacts with platform UI elements (such as UIKit views on iOS/macOS or `Activity`/view hierarchies on Android), that work must execute on the platform's main thread. If an interop call is initiated from a background isolate or dispatches work to a background queue, the native implementation must explicitly dispatch to the main thread (`DispatchQueue.main.async` in Swift, `Handler(Looper.getMainLooper()).post` in Kotlin) before interacting with UI APIs.
 - **`FlutterApi` Synchronous Callbacks**: Synchronous callbacks into Dart are isolate-local and must be invoked on the isolate that registered them.
