@@ -66,7 +66,8 @@ class GroundOverlayController: NSObject {
     if let anchor = platformGroundOverlay.anchor {
       groundOverlay.anchor = CGPoint(x: anchor.x, y: anchor.y)
     }
-    groundOverlay.icon = FGMIconFromBitmap(platformGroundOverlay.image, assetProvider, screenScale)
+    groundOverlay.icon = makeIcon(
+      from: platformGroundOverlay.image, assetProvider: assetProvider, screenScale: screenScale)
     groundOverlay.bearing = platformGroundOverlay.bearing
     groundOverlay.opacity = Float(1.0 - platformGroundOverlay.transparency)
     if useBounds {
@@ -220,11 +221,11 @@ class GroundOverlaysController: NSObject {
     guard let controller = groundOverlayControllerByIdentifier[identifier] else {
       return nil
     }
-    return FGMGetPigeonGroundOverlay(
-      controller.groundOverlay,
-      identifier,
-      controller.createdWithBounds,
-      controller.zoomLevel
+    return FGMPlatformGroundOverlay.make(
+      from: controller.groundOverlay,
+      overlayId: identifier,
+      isCreatedWithBounds: controller.createdWithBounds,
+      zoomLevel: controller.zoomLevel
     )
   }
 }

@@ -74,12 +74,13 @@ class ClusterManagersController: NSObject {
     // https://github.com/googlemaps/google-maps-ios-utils/blob/0e7ed81f1bbd9d29e4529c40ae39b0791b0a0eb8/src/Clustering/GMUClusterManager.m#L94.
     let integralZoom = floorf(Float(mapView.camera.zoom) + 0.5)
     let clusters = clusterManager.algorithm.clusters(atZoom: integralZoom)
-    return clusters.map { pigeonCluster(for: $0, clusterManagerIdentifier: identifier) }
+    return clusters.map { FGMPlatformCluster.make(from: $0, clusterManagerIdentifier: identifier) }
   }
 
   func didTap(_ cluster: GMUStaticCluster) {
     guard let clusterManagerId = clusterManagerIdentifier(for: cluster) else { return }
-    let platformCluster = pigeonCluster(for: cluster, clusterManagerIdentifier: clusterManagerId)
+    let platformCluster = FGMPlatformCluster.make(
+      from: cluster, clusterManagerIdentifier: clusterManagerId)
     eventDelegate?.didTap(platformCluster)
   }
 

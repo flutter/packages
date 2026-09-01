@@ -82,25 +82,25 @@ class MarkerController: NSObject {
     screenScale: CGFloat,
     usingOpacityForVisibility useOpacityForVisibility: Bool
   ) {
-    marker.groundAnchor = FGMGetCGPointForPigeonPoint(platformMarker.anchor)
+    marker.groundAnchor = platformMarker.anchor.toCGPoint()
     marker.isDraggable = platformMarker.draggable
-    marker.icon = FGMIconFromBitmap(platformMarker.icon, assetProvider, screenScale)
+    marker.icon = makeIcon(
+      from: platformMarker.icon, assetProvider: assetProvider, screenScale: screenScale)
     marker.isFlat = platformMarker.flat
-    marker.position = FGMGetCoordinateForPigeonLatLng(platformMarker.position)
+    marker.position = platformMarker.position.toCLLocationCoordinate2D()
     marker.rotation = platformMarker.rotation
     marker.zIndex = Int32(platformMarker.zIndex)
     let infoWindow = platformMarker.infoWindow
-    marker.infoWindowAnchor = FGMGetCGPointForPigeonPoint(infoWindow.anchor)
+    marker.infoWindowAnchor = infoWindow.anchor.toCGPoint()
     if let title = infoWindow.title {
       marker.title = title
       marker.snippet = infoWindow.snippet
     }
 
     if let advancedMarker = marker as? GMSAdvancedMarker,
-      let collisionBehavior = platformMarker.collisionBehavior
+      let collisionBehaviorValue = platformMarker.collisionBehavior
     {
-      advancedMarker.collisionBehavior = FGMGetCollisionBehaviorForPigeonCollisionBehavior(
-        collisionBehavior.value)
+      advancedMarker.collisionBehavior = collisionBehaviorValue.value.gmsCollisionBehavior
     }
 
     // This must be done last, to avoid visual flickers of default property values.
@@ -145,7 +145,7 @@ class MarkersController: NSObject {
 
   private func addMarker(_ markerToAdd: FGMPlatformMarker) {
     guard let mapView = mapView else { return }
-    let position = FGMGetCoordinateForPigeonLatLng(markerToAdd.position)
+    let position = markerToAdd.position.toCLLocationCoordinate2D()
     let markerIdentifier = markerToAdd.markerId
     let clusterManagerIdentifier = markerToAdd.clusterManagerId
 
@@ -229,7 +229,7 @@ class MarkersController: NSObject {
     guard markerIdentifierToController[identifier] != nil else { return }
     eventDelegate?.didStartDragForMarker(
       withIdentifier: identifier,
-      atPosition: FGMGetPigeonLatLngForCoordinate(location)
+      atPosition: FGMPlatformLatLng.make(from: location)
     )
   }
 
@@ -237,7 +237,7 @@ class MarkersController: NSObject {
     guard markerIdentifierToController[identifier] != nil else { return }
     eventDelegate?.didDragMarker(
       withIdentifier: identifier,
-      atPosition: FGMGetPigeonLatLngForCoordinate(location)
+      atPosition: FGMPlatformLatLng.make(from: location)
     )
   }
 
@@ -245,7 +245,7 @@ class MarkersController: NSObject {
     guard markerIdentifierToController[identifier] != nil else { return }
     eventDelegate?.didEndDragForMarker(
       withIdentifier: identifier,
-      atPosition: FGMGetPigeonLatLngForCoordinate(location)
+      atPosition: FGMPlatformLatLng.make(from: location)
     )
   }
 
