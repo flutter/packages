@@ -227,7 +227,10 @@ IOSink? _openSink(String? output, {String basePath = ''}) {
   if (output == 'stdout') {
     return stdout;
   }
-  final file = File(path.posix.join(basePath, output));
+  final String filePath = path.isAbsolute(output) || path.posix.isAbsolute(output)
+      ? output
+      : (basePath.isEmpty ? output : path.posix.join(basePath, output));
+  final file = File(filePath);
   file.createSync(recursive: true);
   return file.openWrite();
 }

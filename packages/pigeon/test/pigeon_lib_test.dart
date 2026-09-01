@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:path/path.dart' as path;
 import 'package:pigeon/src/ast.dart';
 import 'package:pigeon/src/dart/dart_generator.dart';
 import 'package:pigeon/src/generator_tools.dart';
@@ -44,11 +45,26 @@ void main() {
   /// after the [callback] is executed.
   void withTempFile(String filename, void Function(File) callback) {
     final Directory dir = Directory.systemTemp.createTempSync();
-    final path = '${dir.path}/$filename';
-    final file = File(path);
+    final filePath = '${dir.path}/$filename';
+    final file = File(filePath);
     file.createSync();
     try {
       callback(file);
+    } finally {
+      dir.deleteSync(recursive: true);
+    }
+  }
+
+  /// Asynchronous version of [withTempFile]. Creates a temporary file named
+  /// [filename] then awaits [callback]. The temporary directory will only be
+  /// deleted after the [callback] Future completes.
+  Future<void> withTempFileAsync(String filename, Future<void> Function(File) callback) async {
+    final Directory dir = Directory.systemTemp.createTempSync();
+    final filePath = '${dir.path}/$filename';
+    final file = File(filePath);
+    file.createSync();
+    try {
+      await callback(file);
     } finally {
       dir.deleteSync(recursive: true);
     }
@@ -1569,8 +1585,7 @@ abstract class Api {
   });
 
   test('generator validation', () async {
-    final completer = Completer<void>();
-    withTempFile('foo.dart', (File input) async {
+    await withTempFileAsync('foo.dart', (File input) async {
       final generator = _ValidatorGeneratorAdapter(stdout);
       final int result = await Pigeon.run(
         <String>['--input', input.path],
@@ -1578,14 +1593,11 @@ abstract class Api {
       );
       expect(generator.didCallValidate, isTrue);
       expect(result, isNot(0));
-      completer.complete();
     });
-    await completer.future;
   });
 
   test('generator validation skipped', () async {
-    final completer = Completer<void>();
-    withTempFile('foo.dart', (File input) async {
+    await withTempFileAsync('foo.dart', (File input) async {
       final generator = _ValidatorGeneratorAdapter(null);
       final int result = await Pigeon.run(
         <String>['--input', input.path, '--dart_out', 'foo.dart'],
@@ -1593,14 +1605,11 @@ abstract class Api {
       );
       expect(generator.didCallValidate, isFalse);
       expect(result, equals(0));
-      completer.complete();
     });
-    await completer.future;
   });
 
   test('run with PigeonOptions', () async {
-    final completer = Completer<void>();
-    withTempFile('foo.dart', (File input) async {
+    await withTempFileAsync('foo.dart', (File input) async {
       final generator = _ValidatorGeneratorAdapter(null);
       final int result = await Pigeon.runWithOptions(
         PigeonOptions(input: input.path, dartOut: 'foo.dart'),
@@ -1608,9 +1617,7 @@ abstract class Api {
       );
       expect(generator.didCallValidate, isFalse);
       expect(result, equals(0));
-      completer.complete();
     });
-    await completer.future;
   });
 
   test('unsupported non-positional parameters on FlutterApi', () {
@@ -1959,7 +1966,6 @@ abstract class events {
     });
 
     test('swift description field error', () async {
-      final completer = Completer<void>();
       const code = '''
 class Foo {
   String? description;
@@ -1970,20 +1976,18 @@ abstract class Api {
   void method(Foo foo);
 }
 ''';
-      withTempFile('foo.dart', (File input) async {
+      await withTempFileAsync('foo.dart', (File input) async {
         input.writeAsStringSync(code);
         final int result = await Pigeon.runWithOptions(
           PigeonOptions(
             input: input.path,
-            swiftOut: '${input.parent.path}/Foo.swift',
-            dartOut: '${input.parent.path}/foo.dart',
+            swiftOut: path.join(input.parent.path, 'Foo.swift'),
+            dartOut: path.join(input.parent.path, 'foo_out.dart'),
             dartPackageName: 'foo_package',
           ),
         );
         expect(result, isNot(0));
-        completer.complete();
       });
-      await completer.future;
     });
   });
 

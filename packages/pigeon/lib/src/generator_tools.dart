@@ -25,12 +25,15 @@ const String defaultPluginPackageName = 'dev.flutter.pigeon';
 const String defaultNativeInteropInstanceName =
     'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
 
+/// Converts any path containing Windows backslashes into a POSIX-style path.
+String posixPath(String inputPath) => inputPath.replaceAll(r'\', '/');
+
 /// Returns the filename for generated FFIgen config files based on [inputPath].
 String getFfigenConfigFileName([String? inputPath]) {
   if (inputPath == null || inputPath.isEmpty) {
     return 'ffigen_config.dart';
   }
-  final String baseName = path.basenameWithoutExtension(inputPath);
+  final String baseName = path.posix.basenameWithoutExtension(posixPath(inputPath));
   return '${baseName}_ffigen_config.dart';
 }
 
@@ -39,35 +42,47 @@ String getJnigenConfigFileName([String? inputPath]) {
   if (inputPath == null || inputPath.isEmpty) {
     return 'jnigen_config.dart';
   }
-  final String baseName = path.basenameWithoutExtension(inputPath);
+  final String baseName = path.posix.basenameWithoutExtension(posixPath(inputPath));
   return '${baseName}_jnigen_config.dart';
 }
 
 /// Default relative path for generated FFIgen config files.
-final String ffigenConfigPath = path.join('tool', 'pigeon', getFfigenConfigFileName());
+final String ffigenConfigPath = path.posix.join('tool', 'pigeon', getFfigenConfigFileName());
 
 /// Default relative path for generated JNIgen config files.
-final String jnigenConfigPath = path.join('tool', 'pigeon', getJnigenConfigFileName());
+final String jnigenConfigPath = path.posix.join('tool', 'pigeon', getJnigenConfigFileName());
 
 /// Returns the path to the FFIgen config file in [appDirectory] and optional [inputPath].
 String getFfigenConfigPath(String appDirectory, [String? inputPath]) {
-  return path.join(appDirectory, 'tool', 'pigeon', getFfigenConfigFileName(inputPath));
+  return path.posix.join(
+    posixPath(appDirectory),
+    'tool',
+    'pigeon',
+    getFfigenConfigFileName(inputPath),
+  );
 }
 
 /// Returns the path to the JNIgen config file in [appDirectory] and optional [inputPath].
 String getJnigenConfigPath(String appDirectory, [String? inputPath]) {
-  return path.join(appDirectory, 'tool', 'pigeon', getJnigenConfigFileName(inputPath));
+  return path.posix.join(
+    posixPath(appDirectory),
+    'tool',
+    'pigeon',
+    getJnigenConfigFileName(inputPath),
+  );
 }
 
 /// Computes a posix relative path from [fromPath] to [targetPath], safely
 /// handling empty strings, unnormalized paths, and cross-directory steps.
 String makeRelative(String targetPath, String fromPath) {
-  final String absTarget = path.posix.isAbsolute(targetPath)
-      ? path.posix.normalize(targetPath)
-      : path.posix.normalize(path.posix.join(Directory.current.path, targetPath));
-  final String absFrom = path.posix.isAbsolute(fromPath)
-      ? path.posix.normalize(fromPath)
-      : path.posix.normalize(path.posix.join(Directory.current.path, fromPath));
+  final String normalizedTarget = posixPath(targetPath);
+  final String normalizedFrom = posixPath(fromPath);
+  final String absTarget = path.posix.isAbsolute(normalizedTarget)
+      ? path.posix.normalize(normalizedTarget)
+      : path.posix.normalize(path.posix.join('/root', normalizedTarget));
+  final String absFrom = path.posix.isAbsolute(normalizedFrom)
+      ? path.posix.normalize(normalizedFrom)
+      : path.posix.normalize(path.posix.join('/root', normalizedFrom));
   return path.posix.relative(absTarget, from: absFrom);
 }
 
