@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' show File, Platform, Process, ProcessResult;
+import 'dart:io' show Directory, File, Platform, Process, ProcessResult;
 
 import 'package:path/path.dart' as p;
 import 'package:pigeon/pigeon.dart';
@@ -59,6 +59,102 @@ String _javaFilenameForName(String inputName) {
   return specialCases[inputName] ?? _snakeToPascalCase(inputName);
 }
 
+bool _hasAndroidSdk() {
+  final String? androidHome =
+      Platform.environment['ANDROID_HOME'] ?? Platform.environment['ANDROID_SDK_ROOT'];
+  return androidHome != null && androidHome.isNotEmpty && Directory(androidHome).existsSync();
+}
+
+Future<String?> _getJavaHome() async {
+  final String? currentJavaHome = Platform.environment['JAVA_HOME'];
+  if (currentJavaHome != null && currentJavaHome.isNotEmpty) {
+    return currentJavaHome;
+  }
+  if (Platform.isMacOS) {
+    try {
+      final ProcessResult result = await Process.run('/usr/libexec/java_home', <String>[
+        '-v',
+        '17',
+      ]);
+      if (result.exitCode == 0) {
+        final String javaHome = result.stdout.toString().trim();
+        if (javaHome.isNotEmpty) {
+          return javaHome;
+        }
+      }
+    } catch (_) {}
+  }
+  return null;
+}
+
+Future<bool> _hasJavaRuntime([String? javaHome]) async {
+  final Map<String, String>? env = javaHome != null && javaHome.isNotEmpty
+      ? <String, String>{'JAVA_HOME': javaHome}
+      : null;
+  final String javaExecutable = javaHome != null && javaHome.isNotEmpty
+      ? p.join(javaHome, 'bin', 'java')
+      : 'java';
+  try {
+    final ProcessResult result = await Process.run(javaExecutable, <String>[
+      '-version',
+    ], environment: env);
+    return result.exitCode == 0;
+  } catch (_) {
+    return false;
+  }
+}
+
+Future<int> _compileNativeInteropExampleApp() async {
+  if (!_hasAndroidSdk()) {
+    return 0;
+  }
+  final String? javaHome = await _getJavaHome();
+  if (!await _hasJavaRuntime(javaHome)) {
+    return 0;
+  }
+
+  final environment = <String, String>{if (javaHome != null) 'JAVA_HOME': javaHome};
+
+  const appDir = './example/native_interop_app';
+  final String androidDir = p.join(appDir, 'android');
+  if (!Directory(androidDir).existsSync()) {
+    return 0;
+  }
+
+  final gradlew = Platform.isWindows ? 'gradlew.bat' : 'gradlew';
+  final gradlewFile = File(p.join(androidDir, gradlew));
+  if (!gradlewFile.existsSync()) {
+    final flutterCommand = Platform.isWindows ? 'flutter.bat' : 'flutter';
+    final int configExitCode = await runProcess(
+      flutterCommand,
+      <String>['build', 'apk', '--config-only'],
+      workingDirectory: appDir,
+      environment: environment,
+      runInShell: Platform.isWindows,
+      logFailure: true,
+    );
+    if (configExitCode != 0) {
+      return configExitCode;
+    }
+  }
+
+  if (!Platform.isWindows && gradlewFile.existsSync()) {
+    try {
+      await Process.run('chmod', <String>['+x', gradlewFile.path]);
+    } catch (_) {}
+  }
+
+  final gradleCommand = Platform.isWindows ? r'.\gradlew.bat' : './gradlew';
+  return runProcess(
+    gradleCommand,
+    <String>[':app:compileReleaseKotlin'],
+    workingDirectory: androidDir,
+    environment: environment,
+    runInShell: Platform.isWindows,
+    logFailure: true,
+  );
+}
+
 Future<int> generateExamplePigeons() async {
   var success = 0;
   success = await runPigeon(
@@ -71,6 +167,12 @@ Future<int> generateExamplePigeons() async {
     basePath: './example/app',
     suppressVersion: true,
   );
+
+  final int compileResult = await _compileNativeInteropExampleApp();
+  if (compileResult != 0) {
+    return compileResult;
+  }
+
   success += await runPigeon(
     input: './example/native_interop_app/pigeons/native_interop_example.dart',
     appDirectory: './example/native_interop_app',
