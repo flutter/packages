@@ -186,6 +186,19 @@ class BillingClientManager {
     }
     _isConnecting = true;
     _readyFuture = Future<void>.sync(() async {
+      // Yield to a macrotask before connecting. onBillingServiceDisconnected
+      // is delivered synchronously inside an inbound platform-message JNI
+      // upcall; issuing startConnection (an outbound platform message) from
+      // that same stack can turn a pending Java exception into an uncatchable
+      // native crash (SIGABRT in FlutterViewHandlePlatformMessage's
+      // FML_CHECK). A zero-duration timer escapes the upcall; a microtask
+      // would not, because microtasks drain before control returns to the
+      // engine. See https://github.com/flutter/flutter/issues/144954.
+      await Future<void>.delayed(Duration.zero);
+      if (_isDisposed) {
+        _isConnecting = false;
+        return;
+      }
       await client.startConnection(
         onBillingServiceDisconnected: _connect,
         billingChoiceMode: _billingChoiceMode,

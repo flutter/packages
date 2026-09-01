@@ -1,3 +1,10 @@
+## 0.5.4
+
+* Fixes a rare uncatchable native crash (`SIGABRT` in
+  `FlutterViewHandlePlatformMessage`) on billing-service disconnect: the
+  reconnect no longer issues `startConnection` synchronously from inside the
+  `onBillingServiceDisconnected` platform-message callback.
+
 ## 0.5.3
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
