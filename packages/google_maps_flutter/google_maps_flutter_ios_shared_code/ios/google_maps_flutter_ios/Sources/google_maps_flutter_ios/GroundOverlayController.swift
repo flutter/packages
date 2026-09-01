@@ -66,8 +66,10 @@ class GroundOverlayController: NSObject {
     if let anchor = platformGroundOverlay.anchor {
       groundOverlay.anchor = CGPoint(x: anchor.x, y: anchor.y)
     }
-    groundOverlay.icon = makeIcon(
-      from: platformGroundOverlay.image, assetProvider: assetProvider, screenScale: screenScale)
+    groundOverlay.icon = platformGroundOverlay.image.createIcon(
+      assetProvider: assetProvider,
+      screenScale: screenScale
+    )
     groundOverlay.bearing = platformGroundOverlay.bearing
     groundOverlay.opacity = Float(1.0 - platformGroundOverlay.transparency)
     if useBounds {

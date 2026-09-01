@@ -25,8 +25,7 @@ import google_maps_flutter_ios_objc
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = makeIcon(
-      from: FGMPlatformBitmap.make(withBitmap: bitmap),
+    let resultImage = FGMPlatformBitmap.make(withBitmap: bitmap).createIcon(
       assetProvider: assetProvider,
       screenScale: screenScale
     )

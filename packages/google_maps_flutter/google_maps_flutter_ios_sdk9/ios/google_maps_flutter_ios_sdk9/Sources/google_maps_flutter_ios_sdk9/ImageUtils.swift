@@ -10,121 +10,118 @@ import UIKit
   import google_maps_flutter_ios_sdk9_objc
 #endif
 
-/// Creates a UIImage from a Pigeon bitmap representation.
-func makeIcon(
-  from platformBitmap: FGMPlatformBitmap?,
-  assetProvider: FGMAssetProvider,
-  screenScale: CGFloat
-) -> UIImage? {
-  assert(screenScale > 0, "Screen scale must be greater than 0")
+extension FGMPlatformBitmap {
+  /// Creates a UIImage from the Pigeon bitmap representation, suitable for use as a marker icon.
+  func createIcon(
+    assetProvider: FGMAssetProvider,
+    screenScale: CGFloat
+  ) -> UIImage? {
+    assert(screenScale > 0, "Screen scale must be greater than 0")
 
-  guard let platformBitmap = platformBitmap else {
-    return nil
-  }
+    var image: UIImage?
 
-  let bitmap = platformBitmap.bitmap
-  var image: UIImage?
-
-  switch bitmap {
-  case let bitmap as FGMPlatformBitmapDefaultMarker:
-    let hue = bitmap.hue?.doubleValue ?? 0
-    image = GMSMarker.markerImage(
-      with: UIColor(
-        hue: CGFloat(hue) / 360.0,
-        saturation: 1.0,
-        brightness: 0.7,
-        alpha: 1.0))
-  case let bitmap as FGMPlatformBitmapAsset:
-    // Deprecated: This message handling for 'fromAsset' has been replaced by 'asset'.
-    // Refer to the flutter google_maps_flutter_platform_interface package for details.
-    if let pkg = bitmap.pkg {
-      if let key = assetProvider.lookupKey(forAsset: bitmap.name, fromPackage: pkg) {
-        image = assetProvider.imageNamed(key)
-      }
-    } else {
-      if let key = assetProvider.lookupKey(forAsset: bitmap.name) {
-        image = assetProvider.imageNamed(key)
-      }
-    }
-  case let bitmap as FGMPlatformBitmapAssetImage:
-    // Deprecated: This message handling for 'fromAssetImage' has been replaced by 'asset'.
-    // Refer to the flutter google_maps_flutter_platform_interface package for details.
-    if let key = assetProvider.lookupKey(forAsset: bitmap.name) {
-      if let assetImage = assetProvider.imageNamed(key) {
-        image = scaledImage(assetImage, scale: bitmap.scale)
-      }
-    }
-  case let bitmap as FGMPlatformBitmapBytes:
-    // Deprecated: This message handling for 'fromBytes' has been replaced by 'bytes'.
-    // Refer to the flutter google_maps_flutter_platform_interface package for details.
-    image = UIImage(data: bitmap.byteData.data, scale: screenScale)
-  case let bitmap as FGMPlatformBitmapAssetMap:
-    if let key = assetProvider.lookupKey(forAsset: bitmap.assetName) {
-      image = assetProvider.imageNamed(key)
-    }
-    if let currentImage = image, bitmap.bitmapScaling == .auto {
-      let width = bitmap.width
-      let height = bitmap.height
-      if width != nil || height != nil {
-        let tempImage = scaledImage(currentImage, scale: screenScale)
-        image = scaledImage(tempImage, width: width, height: height, screenScale: screenScale)
+    switch bitmap {
+    case let bitmap as FGMPlatformBitmapDefaultMarker:
+      let hue = bitmap.hue?.doubleValue ?? 0
+      image = GMSMarker.markerImage(
+        with: UIColor(
+          hue: CGFloat(hue) / 360.0,
+          saturation: 1.0,
+          brightness: 0.7,
+          alpha: 1.0))
+    case let bitmap as FGMPlatformBitmapAsset:
+      // Deprecated: This message handling for 'fromAsset' has been replaced by 'asset'.
+      // Refer to the flutter google_maps_flutter_platform_interface package for details.
+      if let pkg = bitmap.pkg {
+        if let key = assetProvider.lookupKey(forAsset: bitmap.name, fromPackage: pkg) {
+          image = assetProvider.imageNamed(key)
+        }
       } else {
-        image = scaledImage(currentImage, scale: CGFloat(bitmap.imagePixelRatio))
+        if let key = assetProvider.lookupKey(forAsset: bitmap.name) {
+          image = assetProvider.imageNamed(key)
+        }
       }
-    }
-  case let bitmap as FGMPlatformBitmapBytesMap:
-    let bytes = bitmap.byteData
-    image = UIImage(data: bytes.data, scale: screenScale)
-    if let currentImage = image {
-      if bitmap.bitmapScaling == .auto {
+    case let bitmap as FGMPlatformBitmapAssetImage:
+      // Deprecated: This message handling for 'fromAssetImage' has been replaced by 'asset'.
+      // Refer to the flutter google_maps_flutter_platform_interface package for details.
+      if let key = assetProvider.lookupKey(forAsset: bitmap.name) {
+        if let assetImage = assetProvider.imageNamed(key) {
+          image = scaledImage(assetImage, scale: bitmap.scale)
+        }
+      }
+    case let bitmap as FGMPlatformBitmapBytes:
+      // Deprecated: This message handling for 'fromBytes' has been replaced by 'bytes'.
+      // Refer to the flutter google_maps_flutter_platform_interface package for details.
+      image = UIImage(data: bitmap.byteData.data, scale: screenScale)
+    case let bitmap as FGMPlatformBitmapAssetMap:
+      if let key = assetProvider.lookupKey(forAsset: bitmap.assetName) {
+        image = assetProvider.imageNamed(key)
+      }
+      if let currentImage = image, bitmap.bitmapScaling == .auto {
         let width = bitmap.width
         let height = bitmap.height
         if width != nil || height != nil {
-          // Before scaling the image, image must be in screenScale.
           let tempImage = scaledImage(currentImage, scale: screenScale)
           image = scaledImage(tempImage, width: width, height: height, screenScale: screenScale)
         } else {
           image = scaledImage(currentImage, scale: CGFloat(bitmap.imagePixelRatio))
         }
-      } else {
-        // No scaling, load image from bytes without scale parameter.
-        image = UIImage(data: bytes.data)
       }
-    }
-  case let bitmap as FGMPlatformBitmapPinConfig:
-    let options = GMSPinImageOptions()
-    if let backgroundColor = bitmap.backgroundColor {
-      options.backgroundColor = backgroundColor.toUIColor()
-    }
-    if let borderColor = bitmap.borderColor {
-      options.borderColor = borderColor.toUIColor()
+    case let bitmap as FGMPlatformBitmapBytesMap:
+      let bytes = bitmap.byteData
+      image = UIImage(data: bytes.data, scale: screenScale)
+      if let currentImage = image {
+        if bitmap.bitmapScaling == .auto {
+          let width = bitmap.width
+          let height = bitmap.height
+          if width != nil || height != nil {
+            // Before scaling the image, image must be in screenScale.
+            let tempImage = scaledImage(currentImage, scale: screenScale)
+            image = scaledImage(tempImage, width: width, height: height, screenScale: screenScale)
+          } else {
+            image = scaledImage(currentImage, scale: CGFloat(bitmap.imagePixelRatio))
+          }
+        } else {
+          // No scaling, load image from bytes without scale parameter.
+          image = UIImage(data: bytes.data)
+        }
+      }
+    case let bitmap as FGMPlatformBitmapPinConfig:
+      let options = GMSPinImageOptions()
+      if let backgroundColor = bitmap.backgroundColor {
+        options.backgroundColor = backgroundColor.toUIColor()
+      }
+      if let borderColor = bitmap.borderColor {
+        options.borderColor = borderColor.toUIColor()
+      }
+
+      var glyph: GMSPinImageGlyph?
+      if let glyphText = bitmap.glyphText {
+        let glyphTextColor: UIColor
+        if let textColor = bitmap.glyphTextColor {
+          glyphTextColor = textColor.toUIColor()
+        } else {
+          glyphTextColor = .black
+        }
+        glyph = GMSPinImageGlyph(text: glyphText, textColor: glyphTextColor)
+      } else if let glyphColorValue = bitmap.glyphColor {
+        glyph = GMSPinImageGlyph(glyphColor: glyphColorValue.toUIColor())
+      } else if let glyphBitmap = bitmap.glyphBitmap {
+        if let glyphImage = glyphBitmap.createIcon(
+          assetProvider: assetProvider,
+          screenScale: screenScale
+        ) {
+          glyph = GMSPinImageGlyph(image: glyphImage)
+        }
+      }
+      options.glyph = glyph
+      image = GMSPinImage(options: options)
+    default:
+      break
     }
 
-    var glyph: GMSPinImageGlyph?
-    if let glyphText = bitmap.glyphText {
-      let glyphTextColor: UIColor
-      if let textColor = bitmap.glyphTextColor {
-        glyphTextColor = textColor.toUIColor()
-      } else {
-        glyphTextColor = .black
-      }
-      glyph = GMSPinImageGlyph(text: glyphText, textColor: glyphTextColor)
-    } else if let glyphColorValue = bitmap.glyphColor {
-      glyph = GMSPinImageGlyph(glyphColor: glyphColorValue.toUIColor())
-    } else if let glyphBitmap = bitmap.glyphBitmap {
-      if let glyphImage = makeIcon(
-        from: glyphBitmap, assetProvider: assetProvider, screenScale: screenScale)
-      {
-        glyph = GMSPinImageGlyph(image: glyphImage)
-      }
-    }
-    options.glyph = glyph
-    image = GMSPinImage(options: options)
-  default:
-    break
+    return image
   }
-
-  return image
 }
 
 /// Creates a scaled version of the provided UIImage based on a specified scale factor.

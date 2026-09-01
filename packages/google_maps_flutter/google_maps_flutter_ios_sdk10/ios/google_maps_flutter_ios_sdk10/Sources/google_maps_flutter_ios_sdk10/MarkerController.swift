@@ -84,8 +84,10 @@ class MarkerController: NSObject {
   ) {
     marker.groundAnchor = platformMarker.anchor.toCGPoint()
     marker.isDraggable = platformMarker.draggable
-    marker.icon = makeIcon(
-      from: platformMarker.icon, assetProvider: assetProvider, screenScale: screenScale)
+    marker.icon = platformMarker.icon.createIcon(
+      assetProvider: assetProvider,
+      screenScale: screenScale
+    )
     marker.isFlat = platformMarker.flat
     marker.position = platformMarker.position.toCLLocationCoordinate2D()
     marker.rotation = platformMarker.rotation
