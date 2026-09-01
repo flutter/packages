@@ -45,7 +45,7 @@ void main() {
         find.ancestor(
           of: find.text('Last Selection: Documentation'),
           matching: find.byWidgetPredicate(
-            (Widget w) => w is Semantics && w.properties.liveRegion == true,
+            (Widget w) => w is Semantics && (w.properties.liveRegion ?? false),
           ),
         ),
         findsOneWidget,

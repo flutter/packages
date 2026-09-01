@@ -11,7 +11,7 @@ dependencies:
 
   material_color_utilities: any
   material_ui:
-    path: ../
+    path: ../../
 
 dev_dependencies:
   flutter_test:
