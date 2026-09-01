@@ -5,13 +5,16 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.CameraState;
 import androidx.camera.core.ExposureState;
+import androidx.camera.core.FocusMeteringAction;
 import androidx.camera.core.ZoomState;
 import androidx.lifecycle.LiveData;
 import java.util.Arrays;
@@ -98,5 +101,17 @@ public class CameraInfoTest {
     when(instance.getZoomState()).thenReturn(value);
 
     assertEquals(value, api.getZoomState(instance).getLiveData());
+  }
+
+  @Test
+  public void isFocusMeteringSupported_makesCallToCheckIfSupported() {
+    final PigeonApiCameraInfo api = new TestProxyApiRegistrar().getPigeonApiCameraInfo();
+
+    final CameraInfo instance = mock(CameraInfo.class);
+    final FocusMeteringAction action = mock(FocusMeteringAction.class);
+    when(instance.isFocusMeteringSupported(action)).thenReturn(true);
+
+    assertTrue(api.isFocusMeteringSupported(instance, action));
+    verify(instance).isFocusMeteringSupported(action);
   }
 }

@@ -1752,7 +1752,13 @@ class AndroidCameraCameraX extends CameraPlatform {
       newMeteringPointInfos.skip(1).forEach(((MeteringPoint point, MeteringMode) info) {
         actionBuilder.addPointWithMode(info.$1, info.$2);
       });
-      currentFocusMeteringAction = await actionBuilder.build();
+      final FocusMeteringAction actionToStart = await actionBuilder.build();
+      if (cameraInfo != null && !await cameraInfo!.isFocusMeteringSupported(actionToStart)) {
+        await cameraControl.cancelFocusAndMetering();
+        currentFocusMeteringAction = null;
+        return true;
+      }
+      currentFocusMeteringAction = actionToStart;
     } else {
       // Add new metering point with specified meteringMode, which may involve
       // replacing a metering point with the same specified meteringMode from
@@ -1789,7 +1795,11 @@ class AndroidCameraCameraX extends CameraPlatform {
       newMeteringPointInfos.skip(1).forEach(((MeteringPoint point, MeteringMode mode) info) {
         actionBuilder.addPointWithMode(info.$1, info.$2);
       });
-      currentFocusMeteringAction = await actionBuilder.build();
+      final FocusMeteringAction actionToStart = await actionBuilder.build();
+      if (cameraInfo != null && !await cameraInfo!.isFocusMeteringSupported(actionToStart)) {
+        return false;
+      }
+      currentFocusMeteringAction = actionToStart;
     }
 
     try {

@@ -2231,6 +2231,9 @@ abstract class PigeonApiCameraInfo(open val pigeonRegistrar: CameraXLibraryPigeo
   /** A LiveData of ZoomState. */
   abstract fun getZoomState(pigeon_instance: androidx.camera.core.CameraInfo): io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper
 
+  /** Checks whether the [FocusMeteringAction] is supported on the device. */
+  abstract fun isFocusMeteringSupported(pigeon_instance: androidx.camera.core.CameraInfo, action: androidx.camera.core.FocusMeteringAction): Boolean
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiCameraInfo?) {
@@ -2260,6 +2263,24 @@ abstract class PigeonApiCameraInfo(open val pigeonRegistrar: CameraXLibraryPigeo
             val pigeon_instanceArg = args[0] as androidx.camera.core.CameraInfo
             val wrapped: List<Any?> = try {
               listOf(api.getZoomState(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              CameraXLibraryPigeonUtils.wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.CameraInfo.isFocusMeteringSupported", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.camera.core.CameraInfo
+            val actionArg = args[1] as androidx.camera.core.FocusMeteringAction
+            val wrapped: List<Any?> = try {
+              listOf(api.isFocusMeteringSupported(pigeon_instanceArg, actionArg))
             } catch (exception: Throwable) {
               CameraXLibraryPigeonUtils.wrapError(exception)
             }

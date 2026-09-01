@@ -575,7 +575,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  void onViewFinderTap(TapDownDetails details, BoxConstraints constraints) {
+  Future<void> onViewFinderTap(TapDownDetails details, BoxConstraints constraints) async {
     if (controller == null) {
       return;
     }
@@ -586,8 +586,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       details.localPosition.dx / constraints.maxWidth,
       details.localPosition.dy / constraints.maxHeight,
     );
-    cameraController.setExposurePoint(offset);
-    cameraController.setFocusPoint(offset);
+    await cameraController.setExposurePoint(offset);
+    await cameraController.setFocusPoint(offset);
   }
 
   Future<void> onNewCameraSelected(CameraDescription cameraDescription) async {

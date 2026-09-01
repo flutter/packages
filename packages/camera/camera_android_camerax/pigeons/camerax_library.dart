@@ -241,6 +241,9 @@ abstract class CameraInfo {
 
   /// A LiveData of ZoomState.
   LiveData getZoomState();
+
+  /// Checks whether the [FocusMeteringAction] is supported on the device.
+  bool isFocusMeteringSupported(FocusMeteringAction action);
 }
 
 /// Direction of lens of a camera.

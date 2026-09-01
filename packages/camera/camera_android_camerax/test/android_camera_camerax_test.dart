@@ -320,10 +320,16 @@ void main() {
       required double height,
     })?
     newDisplayOrientedMeteringPointFactory,
+    bool isFocusMeteringSupported = true,
   }) {
     PigeonOverrides.displayOrientedMeteringPointFactory_new =
         newDisplayOrientedMeteringPointFactory ??
         ({required dynamic cameraInfo, required double width, required double height}) {
+          if (cameraInfo is MockCameraInfo) {
+            when(
+              cameraInfo.isFocusMeteringSupported(any),
+            ).thenAnswer((_) async => isFocusMeteringSupported);
+          }
           final mockFactory = MockDisplayOrientedMeteringPointFactory();
           when(mockFactory.createPoint(any, any)).thenAnswer(
             (Invocation invocation) async => TestMeteringPoint.detached(
@@ -400,15 +406,31 @@ void main() {
       required double height,
     })?
     newDisplayOrientedMeteringPointFactory,
+    bool isFocusMeteringSupported = true,
   }) {
-    setUpOverridesForExposureAndFocus();
+    setUpOverridesForExposureAndFocus(
+      withModeFocusMeteringActionBuilder: withModeFocusMeteringActionBuilder,
+      newDisplayOrientedMeteringPointFactory: newDisplayOrientedMeteringPointFactory,
+      isFocusMeteringSupported: isFocusMeteringSupported,
+    );
 
     if (withModeFocusMeteringActionBuilder != null) {
       PigeonOverrides.focusMeteringActionBuilder_withMode = withModeFocusMeteringActionBuilder;
     }
     if (newDisplayOrientedMeteringPointFactory != null) {
       PigeonOverrides.displayOrientedMeteringPointFactory_new =
-          newDisplayOrientedMeteringPointFactory;
+          ({required dynamic cameraInfo, required double width, required double height}) {
+            if (cameraInfo is MockCameraInfo) {
+              when(
+                cameraInfo.isFocusMeteringSupported(any),
+              ).thenAnswer((_) async => isFocusMeteringSupported);
+            }
+            return newDisplayOrientedMeteringPointFactory(
+              cameraInfo: cameraInfo,
+              width: width,
+              height: height,
+            );
+          };
     }
 
     PigeonOverrides.camera2CameraControl_from = ({required CameraControl cameraControl}) =>
@@ -5048,6 +5070,63 @@ void main() {
     capturedAction = verificationResult.captured.single as FocusMeteringAction;
     expect(capturedAction.isAutoCancelEnabled, isFalse);
   });
+
+  test('setFocusPoint does not start focus and metering if action is not supported', () async {
+    final camera = AndroidCameraCameraX();
+    const cameraId = 4;
+    final mockCameraControl = MockCameraControl();
+    final mockCameraInfo = MockCameraInfo();
+    const focusPoint = Point<double>(0.1, 0.2);
+
+    camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = mockCameraInfo;
+
+    setUpOverridesForSettingFocusandExposurePoints(
+      mockCameraControl,
+      MockCamera2CameraControl(),
+      isFocusMeteringSupported: false,
+    );
+
+    await camera.setFocusPoint(cameraId, focusPoint);
+
+    verifyNever(mockCameraControl.startFocusAndMetering(any));
+    expect(camera.currentFocusMeteringAction, isNull);
+  });
+
+  test(
+    'setExposurePoint with null cancels focus and metering if remaining action is not supported',
+    () async {
+      final camera = AndroidCameraCameraX();
+      const cameraId = 4;
+      final mockCameraControl = MockCameraControl();
+      final mockCameraInfo = MockCameraInfo();
+      final mockFocusMeteringResult = MockFocusMeteringResult();
+      const focusPoint = Point<double>(0.1, 0.2);
+      const exposurePoint = Point<double>(0.3, 0.4);
+
+      camera.cameraControl = mockCameraControl;
+      camera.cameraInfo = mockCameraInfo;
+
+      setUpOverridesForSettingFocusandExposurePoints(mockCameraControl, MockCamera2CameraControl());
+      when(mockFocusMeteringResult.isFocusSuccessful).thenReturn(true);
+      when(
+        mockCameraControl.startFocusAndMetering(any),
+      ).thenAnswer((_) async => mockFocusMeteringResult);
+      when(mockCameraControl.cancelFocusAndMetering()).thenAnswer((_) async {});
+
+      // First, supported action with both points.
+      when(mockCameraInfo.isFocusMeteringSupported(any)).thenAnswer((_) async => true);
+      await camera.setExposurePoint(cameraId, exposurePoint);
+      await camera.setFocusPoint(cameraId, focusPoint);
+
+      // Now, clearing exposure point leaves only focus point, which is not supported.
+      when(mockCameraInfo.isFocusMeteringSupported(any)).thenAnswer((_) async => false);
+      await camera.setExposurePoint(cameraId, null);
+
+      verify(mockCameraControl.cancelFocusAndMetering()).called(1);
+      expect(camera.currentFocusMeteringAction, isNull);
+    },
+  );
 
   test(
     'setFocusMode does nothing if setting auto-focus mode and is already using auto-focus mode',
