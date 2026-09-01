@@ -139,6 +139,16 @@ abstract class PackageLoopingCommand extends PackageCommand {
       case PackageLoopingType.topLevelOnly:
         yield* getTargetPackages(filterExcluded: false);
       case PackageLoopingType.includeExamples:
+        // TODO(elliottbrooks): Support includeExamples with sharding costs if a
+        // command ever needs it. Currently, weighted sharding distributes all
+        // packages and subpackages across shards individually, so filtering to
+        // only direct examples would require extra logic here.
+        if (shardingCosts != null) {
+          throw UnsupportedError(
+            'PackageLoopingType.includeExamples is not supported with custom sharding costs. '
+            'Use PackageLoopingType.includeAllSubpackages instead.',
+          );
+        }
         await for (final PackageEnumerationEntry packageEntry in getTargetPackages(
           filterExcluded: false,
         )) {

@@ -1,0 +1,6 @@
+# Based on cost analysis in https://github.com/flutter/flutter/issues/189278.
+packages/material_ui: 52
+packages/material_ui/example: 32
+# Based on the relative size of cupertino_ui vs material_ui.
+packages/cupertino_ui: 18
+packages/cupertino_ui/example: 12
