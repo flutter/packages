@@ -55,7 +55,9 @@ final class DefaultCamera: NSObject, Camera {
   /// Allows for alternate implementations in tests.
   private let videoDimensionsConverter: VideoDimensionsConverter
 
-  private let deviceOrientationProvider: DeviceOrientationProvider
+  #if os(iOS)
+    private let deviceOrientationProvider: DeviceOrientationProvider
+  #endif
   private let motionManager = CMMotionManager()
 
   private(set) var captureDevice: CaptureDevice
@@ -81,7 +83,7 @@ final class DefaultCamera: NSObject, Camera {
   private var imageStreamHandler: ImageStreamHandler?
 
   private var previewSize: CGSize?
-  var deviceOrientation: UIDeviceOrientation {
+  var deviceOrientation: PlatformDeviceOrientation {
     didSet {
       guard deviceOrientation != oldValue else { return }
       updateOrientation()
@@ -122,7 +124,7 @@ final class DefaultCamera: NSObject, Camera {
 
   private var fileFormat = PlatformImageFileFormat.jpeg
   private var imageQuality: Int64 = 100
-  private var lockedCaptureOrientation = UIDeviceOrientation.unknown
+  private var lockedCaptureOrientation: PlatformDeviceOrientation? = nil
   private var exposureMode = PlatformExposureMode.auto
   private var focusMode = PlatformFocusMode.auto
   private var flashMode: PlatformFlashMode
@@ -173,7 +175,9 @@ final class DefaultCamera: NSObject, Camera {
     assetWriterFactory = configuration.assetWriterFactory
     inputPixelBufferAdaptorFactory = configuration.inputPixelBufferAdaptorFactory
     videoDimensionsConverter = configuration.videoDimensionsConverter
-    deviceOrientationProvider = configuration.deviceOrientationProvider
+    #if os(iOS)
+      deviceOrientationProvider = configuration.deviceOrientationProvider
+    #endif
 
     captureDevice = videoCaptureDeviceFactory(configuration.initialCameraName)
     flashMode = captureDevice.hasFlash ? .auto : .off
@@ -801,52 +805,53 @@ final class DefaultCamera: NSObject, Camera {
   private func updateOrientation() {
     guard !isRecording else { return }
 
-    let orientation =
-      (lockedCaptureOrientation != .unknown)
-      ? lockedCaptureOrientation
-      : deviceOrientation
+    let orientation = lockedCaptureOrientation ?? deviceOrientation
 
     updateOrientation(orientation, forCaptureOutput: capturePhotoOutput)
     updateOrientation(orientation, forCaptureOutput: captureVideoOutput)
   }
 
   private func updateOrientation(
-    _ orientation: UIDeviceOrientation, forCaptureOutput captureOutput: CaptureOutput
+    _ pigeonOrientation: PlatformDeviceOrientation, forCaptureOutput captureOutput: CaptureOutput
   ) {
-    if let connection = captureOutput.connection(with: .video),
-      connection.isVideoOrientationSupported
-    {
-      connection.videoOrientation = videoOrientation(forDeviceOrientation: orientation)
-    }
+    #if os(iOS)
+      let orientation = getUIDeviceOrientation(for: pigeonOrientation)
+      if let connection = captureOutput.connection(with: .video),
+        connection.isVideoOrientationSupported
+      {
+        connection.videoOrientation = videoOrientation(forDeviceOrientation: orientation)
+      }
+    #endif
   }
 
-  private func videoOrientation(forDeviceOrientation deviceOrientation: UIDeviceOrientation)
-    -> AVCaptureVideoOrientation
-  {
-    switch deviceOrientation {
-    case .portrait:
-      return .portrait
-    case .landscapeLeft:
-      return .landscapeRight
-    case .landscapeRight:
-      return .landscapeLeft
-    case .portraitUpsideDown:
-      return .portraitUpsideDown
-    default:
-      return .portrait
+  #if os(iOS)
+    private func videoOrientation(forDeviceOrientation deviceOrientation: UIDeviceOrientation)
+      -> AVCaptureVideoOrientation
+    {
+      switch deviceOrientation {
+      case .portrait:
+        return .portrait
+      case .landscapeLeft:
+        return .landscapeRight
+      case .landscapeRight:
+        return .landscapeLeft
+      case .portraitUpsideDown:
+        return .portraitUpsideDown
+      default:
+        return .portrait
+      }
     }
-  }
+  #endif
 
   func lockCaptureOrientation(_ pigeonOrientation: PlatformDeviceOrientation) {
-    let orientation = getUIDeviceOrientation(for: pigeonOrientation)
-    if lockedCaptureOrientation != orientation {
-      lockedCaptureOrientation = orientation
+    if lockedCaptureOrientation != pigeonOrientation {
+      lockedCaptureOrientation = pigeonOrientation
       updateOrientation()
     }
   }
 
   func unlockCaptureOrientation() {
-    lockedCaptureOrientation = .unknown
+    lockedCaptureOrientation = nil
     updateOrientation()
   }
 
@@ -900,12 +905,19 @@ final class DefaultCamera: NSObject, Camera {
       return
     }
 
-    let orientation = UIDevice.current.orientation
-    try? captureDevice.lockForConfiguration()
-    // A nil point resets to the center.
-    let exposurePoint = cgPoint(
-      for: point ?? PlatformPoint(x: 0.5, y: 0.5), withOrientation: orientation)
-    captureDevice.exposurePointOfInterest = exposurePoint
+    #if os(iOS)
+      let orientation = UIDevice.current.orientation
+      try? captureDevice.lockForConfiguration()
+      // A nil point resets to the center.
+      let exposurePoint = cgPoint(
+        for: point ?? PlatformPoint(x: 0.5, y: 0.5), withOrientation: orientation)
+      captureDevice.exposurePointOfInterest = exposurePoint
+    #else
+      try? captureDevice.lockForConfiguration()
+      captureDevice.exposurePointOfInterest = CGPoint(
+        x: point?.x ?? 0.5,
+        y: point?.y ?? 0.5)
+    #endif
     captureDevice.unlockForConfiguration()
     // Retrigger auto exposure
     applyExposureMode()
@@ -930,13 +942,20 @@ final class DefaultCamera: NSObject, Camera {
       return
     }
 
-    let orientation = deviceOrientationProvider.orientation
-    try? captureDevice.lockForConfiguration()
-    // A nil point resets to the center.
-    captureDevice.focusPointOfInterest =
-      cgPoint(
-        for: point ?? PlatformPoint(x: 0.5, y: 0.5),
-        withOrientation: orientation)
+    #if os(iOS)
+      let orientation = deviceOrientationProvider.orientation
+      try? captureDevice.lockForConfiguration()
+      // A nil point resets to the center.
+      captureDevice.focusPointOfInterest =
+        cgPoint(
+          for: point ?? PlatformPoint(x: 0.5, y: 0.5),
+          withOrientation: orientation)
+    #else
+      try? captureDevice.lockForConfiguration()
+      captureDevice.focusPointOfInterest = CGPoint(
+        x: point?.x ?? 0.5,
+        y: point?.y ?? 0.5)
+    #endif
 
     captureDevice.unlockForConfiguration()
     // Retrigger auto focus
@@ -970,32 +989,34 @@ final class DefaultCamera: NSObject, Camera {
     captureDevice.unlockForConfiguration()
   }
 
-  private func cgPoint(
-    for point: PlatformPoint, withOrientation orientation: UIDeviceOrientation
-  )
-    -> CGPoint
-  {
-    var x = point.x
-    var y = point.y
-    switch orientation {
-    case .portrait:  // 90 ccw
-      y = 1 - point.x
-      x = point.y
-    case .portraitUpsideDown:  // 90 cw
-      x = 1 - point.y
-      y = point.x
-    case .landscapeRight:  // 180
-      x = 1 - point.x
-      y = 1 - point.y
-    case .landscapeLeft:
-      // No rotation required
-      break
-    default:
-      // No rotation required
-      break
+  #if os(iOS)
+    private func cgPoint(
+      for point: PlatformPoint, withOrientation orientation: UIDeviceOrientation
+    )
+      -> CGPoint
+    {
+      var x = point.x
+      var y = point.y
+      switch orientation {
+      case .portrait:  // 90 ccw
+        y = 1 - point.x
+        x = point.y
+      case .portraitUpsideDown:  // 90 cw
+        x = 1 - point.y
+        y = point.x
+      case .landscapeRight:  // 180
+        x = 1 - point.x
+        y = 1 - point.y
+      case .landscapeLeft:
+        // No rotation required
+        break
+      default:
+        // No rotation required
+        break
+      }
+      return CGPoint(x: x, y: y)
     }
-    return CGPoint(x: x, y: y)
-  }
+  #endif
 
   func setZoomLevel(
     _ zoom: CGFloat, withCompletion completion: @escaping (Result<Void, any Error>) -> Void
