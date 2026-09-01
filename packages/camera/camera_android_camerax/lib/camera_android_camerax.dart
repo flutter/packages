@@ -3,4 +3,3 @@
 // found in the LICENSE file.
 
 export 'src/android_camera_camerax.dart';
-export 'src/camerax_library.dart' show ImplementationMode;
