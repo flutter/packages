@@ -112,6 +112,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   }
 
   // #docregion AppLifecycle
+  bool _isCameraDisposed = false;
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final CameraController? cameraController = controller;
@@ -121,10 +123,16 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       return;
     }
 
-    if (state == AppLifecycleState.inactive) {
+    final bool shouldDispose = (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
+        ? state == AppLifecycleState.hidden || state == AppLifecycleState.paused
+        : state == AppLifecycleState.inactive;
+
+    if (shouldDispose) {
       cameraController.dispose();
-    } else if (state == AppLifecycleState.resumed) {
+      _isCameraDisposed = true;
+    } else if (state == AppLifecycleState.resumed && _isCameraDisposed) {
       _initializeCameraController(cameraController.description);
+      _isCameraDisposed = false;
     }
   }
 
@@ -583,14 +591,19 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   }
 
   Future<void> onNewCameraSelected(CameraDescription cameraDescription) async {
-    if (controller != null) {
+    if (controller != null && controller!.value.isRecordingVideo) {
       return controller!.setDescription(cameraDescription);
-    } else {
-      return _initializeCameraController(cameraDescription);
     }
+    return _initializeCameraController(cameraDescription);
   }
 
   Future<void> _initializeCameraController(CameraDescription cameraDescription) async {
+    final CameraController? oldController = controller;
+    if (oldController != null) {
+      controller = null;
+      await oldController.dispose();
+    }
+
     final cameraController = CameraController(
       cameraDescription,
       kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
