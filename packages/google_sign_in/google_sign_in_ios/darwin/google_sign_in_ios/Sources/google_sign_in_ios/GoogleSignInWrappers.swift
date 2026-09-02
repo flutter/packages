@@ -14,19 +14,19 @@ import GoogleSignIn
 ///
 /// The GID SDK's Swift presenter argument is non-optional. Obj-C forwarded nil
 /// through at runtime (a silent no-op); unwrapping it here would crash.
+private let missingPresenterError = NSError(
+  domain: "google_sign_in",
+  code: 0,
+  userInfo: [
+    NSLocalizedDescriptionKey: "No host view available to present Google Sign-In."
+  ])
+
 private func requirePresenter<Presenter>(
   _ presenter: Presenter?,
   completion: ((GIDSignInResultProtocol?, Error?) -> Void)?
 ) -> Presenter? {
   guard let presenter else {
-    completion?(
-      nil,
-      NSError(
-        domain: "google_sign_in",
-        code: 0,
-        userInfo: [
-          NSLocalizedDescriptionKey: "No host view available to present Google Sign-In."
-        ]))
+    completion?(nil, missingPresenterError)
     return nil
   }
   return presenter
@@ -35,33 +35,33 @@ private func requirePresenter<Presenter>(
 /// Implementation of `GIDSignInProtocol` that passes through to GIDSignIn.
 final class GIDSignInWrapper: GIDSignInProtocol {
   /// The underlying GIDSignIn instance.
-  let signIn: GIDSignIn
+  let gidSignIn: GIDSignIn
 
   init(signIn: GIDSignIn = .sharedInstance) {
-    self.signIn = signIn
+    self.gidSignIn = signIn
   }
 
   var configuration: GIDConfiguration? {
-    get { signIn.configuration }
-    set { signIn.configuration = newValue }
+    get { gidSignIn.configuration }
+    set { gidSignIn.configuration = newValue }
   }
 
   func handle(_ url: URL) -> Bool {
-    return signIn.handle(url)
+    return gidSignIn.handle(url)
   }
 
   func restorePreviousSignIn(completion: ((GIDGoogleUserProtocol?, Error?) -> Void)?) {
-    signIn.restorePreviousSignIn { user, error in
+    gidSignIn.restorePreviousSignIn { user, error in
       completion?(user.flatMap { GIDGoogleUserWrapper(user: $0) }, error)
     }
   }
 
   func signOut() {
-    signIn.signOut()
+    gidSignIn.signOut()
   }
 
   func disconnect(completion: ((Error?) -> Void)?) {
-    signIn.disconnect(completion: completion)
+    gidSignIn.disconnect(completion: completion)
   }
 
   #if os(iOS) || targetEnvironment(macCatalyst)
@@ -78,7 +78,7 @@ final class GIDSignInWrapper: GIDSignInProtocol {
       else {
         return
       }
-      signIn.signIn(
+      gidSignIn.signIn(
         withPresenting: presentingViewController,
         hint: hint,
         additionalScopes: additionalScopes,
@@ -99,7 +99,7 @@ final class GIDSignInWrapper: GIDSignInProtocol {
       else {
         return
       }
-      signIn.signIn(
+      gidSignIn.signIn(
         withPresenting: presentingWindow,
         hint: hint,
         additionalScopes: additionalScopes,
