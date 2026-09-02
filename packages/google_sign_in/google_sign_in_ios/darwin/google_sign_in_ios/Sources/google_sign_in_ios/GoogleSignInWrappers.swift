@@ -21,17 +21,6 @@ private let missingPresenterError = NSError(
     NSLocalizedDescriptionKey: "No host view available to present Google Sign-In."
   ])
 
-private func requirePresenter<Presenter>(
-  _ presenter: Presenter?,
-  completion: ((GIDSignInResultProtocol?, Error?) -> Void)?
-) -> Presenter? {
-  guard let presenter else {
-    completion?(nil, missingPresenterError)
-    return nil
-  }
-  return presenter
-}
-
 /// Implementation of `GIDSignInProtocol` that passes through to GIDSignIn.
 final class GIDSignInWrapper: GIDSignInProtocol {
   /// The underlying GIDSignIn instance.
@@ -72,10 +61,8 @@ final class GIDSignInWrapper: GIDSignInProtocol {
       nonce: String?,
       completion: ((GIDSignInResultProtocol?, Error?) -> Void)?
     ) {
-      guard
-        let presentingViewController = requirePresenter(
-          presentingViewController, completion: completion)
-      else {
+      guard let presentingViewController else {
+        completion?(nil, missingPresenterError)
         return
       }
       gidSignIn.signIn(
@@ -95,8 +82,8 @@ final class GIDSignInWrapper: GIDSignInProtocol {
       nonce: String?,
       completion: ((GIDSignInResultProtocol?, Error?) -> Void)?
     ) {
-      guard let presentingWindow = requirePresenter(presentingWindow, completion: completion)
-      else {
+      guard let presentingWindow else {
+        completion?(nil, missingPresenterError)
         return
       }
       gidSignIn.signIn(
@@ -180,10 +167,8 @@ final class GIDGoogleUserWrapper: GIDGoogleUserProtocol {
       presenting presentingViewController: UIViewController?,
       completion: ((GIDSignInResultProtocol?, Error?) -> Void)?
     ) {
-      guard
-        let presentingViewController = requirePresenter(
-          presentingViewController, completion: completion)
-      else {
+      guard let presentingViewController else {
+        completion?(nil, missingPresenterError)
         return
       }
       user.addScopes(
@@ -199,8 +184,8 @@ final class GIDGoogleUserWrapper: GIDGoogleUserProtocol {
       presenting presentingWindow: NSWindow?,
       completion: ((GIDSignInResultProtocol?, Error?) -> Void)?
     ) {
-      guard let presentingWindow = requirePresenter(presentingWindow, completion: completion)
-      else {
+      guard let presentingWindow else {
+        completion?(nil, missingPresenterError)
         return
       }
       user.addScopes(scopes, presenting: presentingWindow) { result, error in
