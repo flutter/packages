@@ -926,9 +926,7 @@ class DataTable extends StatelessWidget {
     final ThemeData themeData = Theme.of(context);
     final DataTableThemeData dataTableTheme = DataTableTheme.of(context);
     final DataTableSortIconBuilder? effectiveSortIconBuilder =
-        sortIconBuilder ??
-        dataTableTheme.sortIconBuilder ??
-        themeData.dataTableTheme.sortIconBuilder;
+        sortIconBuilder ?? dataTableTheme.sortIconBuilder;
 
     label = Semantics(
       role: SemanticsRole.columnHeader,
