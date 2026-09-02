@@ -1,10 +1,6 @@
 ## 0.7.4+8
 
 * Bumps cameraxVersion from 1.6.1 to 1.6.2.
-* Updates androidx.camera:camera-core from 1.6.1 to 1.6.2.
-* Updates androidx.camera:camera-camera2 from 1.6.1 to 1.6.2.
-* Updates androidx.camera:camera-lifecycle from 1.6.1 to 1.6.2.
-* Updates androidx.camera:camera-video from 1.6.1 to 1.6.2.
 * Removes the explicit `androidx.concurrent:concurrent-futures` dependency
   workaround and its regression test, since camera-core 1.6.2 includes an
   upstream fix that makes it unnecessary.
