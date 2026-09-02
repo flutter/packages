@@ -29,6 +29,8 @@ dev_dependencies:
   swiftgen: ^0.1.3
 
 flutter:
+  config:
+    enable-swift-package-manager: true
   uses-material-design: true
 
 

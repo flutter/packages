@@ -12,3 +12,5 @@ PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.pigeonnativeinteropapp
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2023 dev.flutter. All rights reserved.
+
+PRODUCT_MODULE_NAME = Runner

@@ -178,6 +178,29 @@ targets: [
 ]
 ```
 
+#### Standalone Applications & Example Apps
+
+When implementing Native Interop host APIs directly in an application target rather than a plugin package:
+
+* **Swift Module Name Configuration (`ffiModuleName`)**:
+  Swift namespaces `@objc` classes with the module name (`<module>.<class>`). Set `ffiModuleName` in `SwiftOptions` to match your application's Swift module name (which defaults to `'Runner'`).
+
+  If iOS and macOS share the same generated Dart FFI file, both platforms must compile under that same module name. Because Flutter's macOS template defaults to using the app name instead of `Runner`, you can unify them by setting `PRODUCT_MODULE_NAME` in `macos/Runner/Configs/AppInfo.xcconfig` to match `ffiModuleName`:
+  ```xcconfig
+  PRODUCT_MODULE_NAME = Runner // or your custom ffiModuleName
+  ```
+  *(Note: If iOS and macOS use separate Pigeon generation outputs or you only target one platform, unifying module names between platforms is not required.)*
+
+* **Native Registration in macOS (`MainFlutterWindow.swift`)**:
+  While iOS registers the host implementation in `AppDelegate.swift` within `didInitializeImplicitFlutterEngine`, macOS applications should register it in `MainFlutterWindow.swift` within `awakeFromNib()`:
+  ```swift
+  RegisterGeneratedPlugins(registry: flutterViewController)
+
+  let api = PigeonApiImplementation()
+  MyApiSetup.register(api: api)
+  ```
+  Calling `register(api:)` in native code also prevents the Xcode linker (`-dead_strip`) from stripping the setup class from the compiled binary.
+
 ---
 
 ## 5. Troubleshooting Automated Generation
@@ -218,6 +241,12 @@ Pigeon writes the interop configuration scripts to `tool/pigeon/jnigen_config.da
   # Debug FFIgen (iOS/macOS):
   dart run tool/pigeon/ffigen_config.dart
   ```
+
+### 5.4 Failed to Load Objective-C Class (`<ffiModuleName>.<Api>Setup`)
+
+If your app crashes at startup with `FailedToLoadClassException: Failed to load Objective-C class`:
+- **Module Name Mismatch**: Ensure `ffiModuleName` matches your app's Swift module name. If iOS and macOS share the same generated Dart FFI file, ensure both platforms use the same module name (e.g., align macOS by setting `PRODUCT_MODULE_NAME` in `macos/Runner/Configs/AppInfo.xcconfig`).
+- **Linker Dead-Code Stripping**: Ensure your native host code instantiates and registers the implementation (e.g. `MyApiSetup.register(api: api)` in `MainFlutterWindow.swift` on macOS or `AppDelegate.swift` on iOS) so the linker does not strip the class.
 
 ---
 

@@ -5,6 +5,14 @@
 import Cocoa
 import FlutterMacOS
 
+private class PigeonApiImplementation: NativeInteropExampleApi {
+  func doSomething() throws {
+    // In a real application, native platform logic (e.g., accessing macOS system APIs,
+    // hardware features, or third-party native frameworks) would be implemented here.
+    print("NativeInteropExampleApi.doSomething called from Dart")
+  }
+}
+
 class MainFlutterWindow: NSWindow {
   override func awakeFromNib() {
     let flutterViewController = FlutterViewController()
@@ -13,6 +21,9 @@ class MainFlutterWindow: NSWindow {
     self.setFrame(windowFrame, display: true)
 
     RegisterGeneratedPlugins(registry: flutterViewController)
+
+    let api = PigeonApiImplementation()
+    NativeInteropExampleApiSetup.register(api: api)
 
     super.awakeFromNib()
   }

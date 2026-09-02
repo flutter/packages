@@ -111,6 +111,31 @@ targets: [
 ]
 ```
 
+### 3.3 Application & Example App Targets
+When implementing Native Interop host APIs directly in an application target (such as a plugin's `example/` app or a standalone app) rather than a plugin package:
+
+1. **Swift Module Name Configuration (`ffiModuleName`)**:
+   Swift namespaces `@objc` classes with the module name (`<module>.<class>`). Set `ffiModuleName` in `SwiftOptions` to match the application's Swift module name (defaults to `'Runner'`).
+
+   If iOS and macOS share the same generated Dart FFI output, both platforms must compile under the same Swift module name. Because Flutter's macOS template defaults to using the app name instead of `Runner`, unify them by setting `PRODUCT_MODULE_NAME` in `macos/Runner/Configs/AppInfo.xcconfig` to match `ffiModuleName`:
+   ```xcconfig
+   PRODUCT_MODULE_NAME = Runner // or your custom ffiModuleName
+   ```
+   *(Note: If iOS and macOS have separate generated outputs or you only target one platform, aligning module names between platforms is not required.)*
+2. **Native Host Registration Location**:
+   - **iOS**: Register in `AppDelegate.swift` inside `didInitializeImplicitFlutterEngine`:
+     ```swift
+     let api = PigeonApiImplementation()
+     MyApiSetup.register(api: api)
+     ```
+   - **macOS**: Register in `MainFlutterWindow.swift` inside `awakeFromNib()`:
+     ```swift
+     let api = PigeonApiImplementation()
+     MyApiSetup.register(api: api)
+     ```
+   *Note: Calling `MyApiSetup.register(api: api)` in native code also prevents the Xcode linker (`-dead_strip`) from stripping the setup class from the compiled binary.*
+
+
 ---
 
 ## 4. Update Native Plugin Implementations
@@ -265,3 +290,9 @@ dart run tool/pigeon/<input_name>_ffigen_config.dart
 - **Dart Isolates**: Native Interop Host API calls can be made from any Dart worker isolate (`Isolate.run`) without needing `BackgroundIsolateBinaryMessenger` or `RootIsolateToken`. The native code executes synchronously on the OS thread backing that isolate. Callers must ensure the isolate stays alive while there are pending asynchronous calls, as attempting to execute a callback after the isolate has terminated will cause a crash.
 - **Platform UI Thread Affinity**: If native code interacts with platform UI elements (such as UIKit views on iOS/macOS or `Activity`/view hierarchies on Android), that work must execute on the platform's main thread. If an interop call is initiated from a background isolate or dispatches work to a background queue, the native implementation must explicitly dispatch to the main thread (`DispatchQueue.main.async` in Swift, `Handler(Looper.getMainLooper()).post` in Kotlin) before interacting with UI APIs.
 - **`FlutterApi` Synchronous Callbacks**: Synchronous callbacks into Dart are isolate-local and must be invoked on the isolate that registered them.
+
+### 6.7 Failed to Load Objective-C Class (`<ffiModuleName>.<Api>Setup`)
+If the application crashes at startup with `FailedToLoadClassException: Failed to load Objective-C class`:
+- **Module Name Mismatch**: Ensure `ffiModuleName` matches the app's Swift module name. If iOS and macOS share the same generated Dart FFI file, ensure both platforms use the same module name (e.g., align macOS by setting `PRODUCT_MODULE_NAME` in `macos/Runner/Configs/AppInfo.xcconfig`).
+- **Linker Dead-Code Stripping**: The Xcode linker (`-dead_strip`) strips native classes that are not directly referenced in compiled code. Ensure your host application instantiates and registers the native implementation (e.g. calling `MyApiSetup.register(api: api)` in `MainFlutterWindow.swift` on macOS or `AppDelegate.swift` on iOS).
+
