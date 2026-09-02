@@ -34,66 +34,56 @@ class PlatformCameraPosition {
 }
 
 /// Pigeon representation of a CameraUpdate.
-class PlatformCameraUpdate {
-  PlatformCameraUpdate(this.cameraUpdate);
-
-  /// This Object must be one of the classes below prefixed with
-  /// PlatformCameraUpdate. Each such class represents a different type of
-  /// camera update, and each holds a different set of data, preventing the
-  /// use of a single unified class.
-  // Pigeon does not support inheritance, which prevents a more strict type
-  // bound. See https://github.com/flutter/flutter/issues/117819.
-  final Object cameraUpdate;
-}
+sealed class PlatformCameraUpdate {}
 
 /// Pigeon equivalent of NewCameraPosition
-class PlatformCameraUpdateNewCameraPosition {
+class PlatformCameraUpdateNewCameraPosition extends PlatformCameraUpdate {
   PlatformCameraUpdateNewCameraPosition(this.cameraPosition);
   final PlatformCameraPosition cameraPosition;
 }
 
 /// Pigeon equivalent of NewLatLng
-class PlatformCameraUpdateNewLatLng {
+class PlatformCameraUpdateNewLatLng extends PlatformCameraUpdate {
   PlatformCameraUpdateNewLatLng(this.latLng);
   final PlatformLatLng latLng;
 }
 
 /// Pigeon equivalent of NewLatLngBounds
-class PlatformCameraUpdateNewLatLngBounds {
+class PlatformCameraUpdateNewLatLngBounds extends PlatformCameraUpdate {
   PlatformCameraUpdateNewLatLngBounds(this.bounds, this.padding);
   final PlatformLatLngBounds bounds;
   final double padding;
 }
 
 /// Pigeon equivalent of NewLatLngZoom
-class PlatformCameraUpdateNewLatLngZoom {
+class PlatformCameraUpdateNewLatLngZoom extends PlatformCameraUpdate {
   PlatformCameraUpdateNewLatLngZoom(this.latLng, this.zoom);
   final PlatformLatLng latLng;
   final double zoom;
 }
 
 /// Pigeon equivalent of ScrollBy
-class PlatformCameraUpdateScrollBy {
+class PlatformCameraUpdateScrollBy extends PlatformCameraUpdate {
   PlatformCameraUpdateScrollBy(this.dx, this.dy);
   final double dx;
   final double dy;
 }
 
 /// Pigeon equivalent of ZoomBy
-class PlatformCameraUpdateZoomBy {
+class PlatformCameraUpdateZoomBy extends PlatformCameraUpdate {
   PlatformCameraUpdateZoomBy(this.amount, [this.focus]);
   final double amount;
   final PlatformPoint? focus;
 }
 
 /// Pigeon equivalent of ZoomIn/ZoomOut
-class PlatformCameraUpdateZoom {
+class PlatformCameraUpdateZoom extends PlatformCameraUpdate {
   PlatformCameraUpdateZoom(this.out);
   final bool out;
 }
 
 /// Pigeon equivalent of ZoomTo
-class PlatformCameraUpdateZoomTo {
+class PlatformCameraUpdateZoomTo extends PlatformCameraUpdate {
   PlatformCameraUpdateZoomTo(this.zoom);
   final double zoom;
 }

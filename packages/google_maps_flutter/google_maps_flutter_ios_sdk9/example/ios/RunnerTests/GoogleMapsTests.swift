@@ -129,9 +129,8 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     controller.callHandler.transactionWrapper = mockTransactionWrapper
 
     let zoomTo = PlatformCameraUpdateZoomTo(zoom: 10.0)
-    let cameraUpdate = PlatformCameraUpdate(cameraUpdate: zoomTo)
 
-    try controller.callHandler.animateCamera(cameraUpdate, duration: nil)
+    try controller.callHandler.animateCamera(zoomTo, duration: nil)
     #expect(mapView.didAnimateCamera)
     #expect(!mockTransactionWrapper.beginCalled)
     #expect(!mockTransactionWrapper.commitCalled)
@@ -159,10 +158,9 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     controller.callHandler.transactionWrapper = mockTransactionWrapper
 
     let zoomTo = PlatformCameraUpdateZoomTo(zoom: 10.0)
-    let cameraUpdate = PlatformCameraUpdate(cameraUpdate: zoomTo)
 
     let durationMilliseconds: Int64 = 100
-    try controller.callHandler.animateCamera(cameraUpdate, duration: durationMilliseconds)
+    try controller.callHandler.animateCamera(zoomTo, duration: durationMilliseconds)
     #expect(mapView.didAnimateCamera)
     #expect(mockTransactionWrapper.beginCalled)
     #expect(mockTransactionWrapper.commitCalled)

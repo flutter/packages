@@ -191,8 +191,7 @@ extension PlatformWeightedLatLng {
 extension PlatformCameraUpdate {
   /// Creates a GMSCameraUpdate from its Pigeon equivalent.
   func toGMSCameraUpdate() -> GMSCameraUpdate? {
-    // See note in messages.dart for why this is so loosely typed.
-    switch cameraUpdate {
+    switch self {
     case let newCameraPosition as PlatformCameraUpdateNewCameraPosition:
       return GMSCameraUpdate.setCamera(newCameraPosition.cameraPosition.toGMSCameraPosition())
     case let newLatLng as PlatformCameraUpdateNewLatLng:

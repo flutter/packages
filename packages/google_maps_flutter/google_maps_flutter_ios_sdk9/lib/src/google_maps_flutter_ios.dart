@@ -714,57 +714,43 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     switch (update.updateType) {
       case CameraUpdateType.newCameraPosition:
         update as CameraUpdateNewCameraPosition;
-        return PlatformCameraUpdate(
-          cameraUpdate: PlatformCameraUpdateNewCameraPosition(
-            cameraPosition: _platformCameraPositionFromCameraPosition(update.cameraPosition),
-          ),
+        return PlatformCameraUpdateNewCameraPosition(
+          cameraPosition: _platformCameraPositionFromCameraPosition(update.cameraPosition),
         );
       case CameraUpdateType.newLatLng:
         update as CameraUpdateNewLatLng;
-        return PlatformCameraUpdate(
-          cameraUpdate: PlatformCameraUpdateNewLatLng(
-            latLng: _platformLatLngFromLatLng(update.latLng),
-          ),
-        );
+        return PlatformCameraUpdateNewLatLng(latLng: _platformLatLngFromLatLng(update.latLng));
       case CameraUpdateType.newLatLngZoom:
         update as CameraUpdateNewLatLngZoom;
-        return PlatformCameraUpdate(
-          cameraUpdate: PlatformCameraUpdateNewLatLngZoom(
-            latLng: _platformLatLngFromLatLng(update.latLng),
-            zoom: update.zoom,
-          ),
+        return PlatformCameraUpdateNewLatLngZoom(
+          latLng: _platformLatLngFromLatLng(update.latLng),
+          zoom: update.zoom,
         );
       case CameraUpdateType.newLatLngBounds:
         update as CameraUpdateNewLatLngBounds;
-        return PlatformCameraUpdate(
-          cameraUpdate: PlatformCameraUpdateNewLatLngBounds(
-            bounds: _platformLatLngBoundsFromLatLngBounds(update.bounds)!,
-            padding: update.padding,
-          ),
+        return PlatformCameraUpdateNewLatLngBounds(
+          bounds: _platformLatLngBoundsFromLatLngBounds(update.bounds)!,
+          padding: update.padding,
         );
       case CameraUpdateType.zoomTo:
         update as CameraUpdateZoomTo;
-        return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateZoomTo(zoom: update.zoom));
+        return PlatformCameraUpdateZoomTo(zoom: update.zoom);
       case CameraUpdateType.zoomBy:
         update as CameraUpdateZoomBy;
         final Offset? focus = update.focus;
-        return PlatformCameraUpdate(
-          cameraUpdate: PlatformCameraUpdateZoomBy(
-            amount: update.amount,
-            focus: focus == null ? null : _platformPointFromOffset(focus),
-          ),
+        return PlatformCameraUpdateZoomBy(
+          amount: update.amount,
+          focus: focus == null ? null : _platformPointFromOffset(focus),
         );
       case CameraUpdateType.zoomIn:
         update as CameraUpdateZoomIn;
-        return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateZoom(out: false));
+        return PlatformCameraUpdateZoom(out: false);
       case CameraUpdateType.zoomOut:
         update as CameraUpdateZoomOut;
-        return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateZoom(out: true));
+        return PlatformCameraUpdateZoom(out: true);
       case CameraUpdateType.scrollBy:
         update as CameraUpdateScrollBy;
-        return PlatformCameraUpdate(
-          cameraUpdate: PlatformCameraUpdateScrollBy(dx: update.dx, dy: update.dy),
-        );
+        return PlatformCameraUpdateScrollBy(dx: update.dx, dy: update.dy);
     }
   }
 

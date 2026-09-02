@@ -139,7 +139,7 @@ import Testing
   }
 
   @Test func cameraUpdateFromNewCameraPosition() {
-    let newPositionUpdate = PlatformCameraUpdateNewCameraPosition(
+    let platformUpdate = PlatformCameraUpdateNewCameraPosition(
       cameraPosition: PlatformCameraPosition(
         bearing: 4,
         target: PlatformLatLng(latitude: 1, longitude: 2),
@@ -147,7 +147,7 @@ import Testing
         zoom: 3
       )
     )
-    _ = PlatformCameraUpdate(cameraUpdate: newPositionUpdate).toGMSCameraUpdate()
+    _ = platformUpdate.toGMSCameraUpdate()
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. toGMSCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -161,7 +161,7 @@ import Testing
       latLng: PlatformLatLng(latitude: lat, longitude: lng)
     )
 
-    _ = PlatformCameraUpdate(cameraUpdate: platformUpdate).toGMSCameraUpdate()
+    _ = platformUpdate.toGMSCameraUpdate()
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. toGMSCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -180,7 +180,7 @@ import Testing
       bounds: PlatformLatLngBounds.make(from: bounds),
       padding: padding
     )
-    _ = PlatformCameraUpdate(cameraUpdate: platformUpdate).toGMSCameraUpdate()
+    _ = platformUpdate.toGMSCameraUpdate()
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. toGMSCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -196,7 +196,7 @@ import Testing
       zoom: zoom
     )
 
-    _ = PlatformCameraUpdate(cameraUpdate: platformUpdate).toGMSCameraUpdate()
+    _ = platformUpdate.toGMSCameraUpdate()
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. toGMSCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -208,7 +208,7 @@ import Testing
     let y: Double = 2
     let platformUpdate = PlatformCameraUpdateScrollBy(dx: x, dy: y)
 
-    _ = PlatformCameraUpdate(cameraUpdate: platformUpdate).toGMSCameraUpdate()
+    _ = platformUpdate.toGMSCameraUpdate()
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. toGMSCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -219,7 +219,7 @@ import Testing
     let zoom: Double = 1
     let platformUpdateNoPoint = PlatformCameraUpdateZoomBy(amount: zoom, focus: nil)
 
-    _ = PlatformCameraUpdate(cameraUpdate: platformUpdateNoPoint).toGMSCameraUpdate()
+    _ = platformUpdateNoPoint.toGMSCameraUpdate()
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. toGMSCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -232,7 +232,7 @@ import Testing
     let y: Double = 3
     let platformUpdate = PlatformCameraUpdateZoomBy(amount: zoom, focus: PlatformPoint(x: x, y: y))
 
-    _ = PlatformCameraUpdate(cameraUpdate: platformUpdate).toGMSCameraUpdate()
+    _ = platformUpdate.toGMSCameraUpdate()
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. toGMSCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -242,7 +242,7 @@ import Testing
   @Test func cameraUpdateFromZoomIn() {
     let platformUpdate = PlatformCameraUpdateZoom(out: false)
 
-    _ = PlatformCameraUpdate(cameraUpdate: platformUpdate).toGMSCameraUpdate()
+    _ = platformUpdate.toGMSCameraUpdate()
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. toGMSCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -252,7 +252,7 @@ import Testing
   @Test func cameraUpdateFromZoomOut() {
     let platformUpdate = PlatformCameraUpdateZoom(out: true)
 
-    _ = PlatformCameraUpdate(cameraUpdate: platformUpdate).toGMSCameraUpdate()
+    _ = platformUpdate.toGMSCameraUpdate()
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. toGMSCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -263,7 +263,7 @@ import Testing
     let zoom: Double = 1
     let platformUpdate = PlatformCameraUpdateZoomTo(zoom: zoom)
 
-    _ = PlatformCameraUpdate(cameraUpdate: platformUpdate).toGMSCameraUpdate()
+    _ = platformUpdate.toGMSCameraUpdate()
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. toGMSCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
