@@ -351,6 +351,13 @@ public class FileSelectorApiImpl implements FileSelectorApi {
 
     final byte[] bytes = new byte[size];
     try (InputStream inputStream = contentResolver.openInputStream(uri)) {
+      if (inputStream == null) {
+        // `ContentResolver#openInputStream()` returns null when the provider cannot serve the
+        // file (for example after the provider crashed). Reading it would throw a
+        // NullPointerException on the activity-result callback, i.e. the main thread.
+        Log.w(TAG, "The content provider returned no stream for the selected file.");
+        return null;
+      }
       final DataInputStream dataInputStream = objectFactory.newDataInputStream(inputStream);
       dataInputStream.readFully(bytes);
     } catch (IOException exception) {
