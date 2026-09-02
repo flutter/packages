@@ -1,3 +1,3 @@
 changelog: |
   - Adds the `StyleVariant` enum defining the Material 3 and Material 3 Expressive style variants.
-version: patch
+version: minor
