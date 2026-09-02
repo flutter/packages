@@ -5,7 +5,7 @@
 import GoogleMaps
 
 /// Defines circle controllable by Flutter.
-class CircleController: NSObject {
+class CircleController {
   let circle: GMSCircle
   private weak var mapView: GMSMapView?
 
@@ -13,7 +13,6 @@ class CircleController: NSObject {
     self.circle = GMSCircle()
     self.mapView = mapView
     self.circle.userData = [circle.circleId]
-    super.init()
     CircleController.update(self.circle, from: circle, with: mapView)
   }
 
@@ -49,7 +48,7 @@ class CircleController: NSObject {
   }
 }
 
-class CirclesController: NSObject {
+class CirclesController {
   private weak var eventDelegate: MapEventDelegate?
   private weak var mapView: GMSMapView?
   private var circleIdToController: [String: CircleController] = [:]
@@ -57,7 +56,6 @@ class CirclesController: NSObject {
   init(mapView: GMSMapView, eventDelegate: MapEventDelegate) {
     self.mapView = mapView
     self.eventDelegate = eventDelegate
-    super.init()
   }
 
   func add(_ circles: [PlatformCircle]) {

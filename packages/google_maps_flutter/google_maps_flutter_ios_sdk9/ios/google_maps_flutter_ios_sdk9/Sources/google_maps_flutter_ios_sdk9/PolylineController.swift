@@ -5,7 +5,7 @@
 import GoogleMaps
 
 /// Defines polyline controllable by Flutter.
-class PolylineController: NSObject {
+class PolylineController {
   let polyline: GMSPolyline
   private weak var mapView: GMSMapView?
 
@@ -13,7 +13,6 @@ class PolylineController: NSObject {
     self.polyline = GMSPolyline()
     self.mapView = mapView
     self.polyline.userData = [identifier]
-    super.init()
   }
 
   func removePolyline() {
@@ -57,7 +56,7 @@ class PolylineController: NSObject {
   }
 }
 
-class PolylinesController: NSObject {
+class PolylinesController {
   private var polylineIdentifierToController: [String: PolylineController] = [:]
   private weak var eventDelegate: MapEventDelegate?
   private weak var mapView: GMSMapView?
@@ -65,7 +64,6 @@ class PolylinesController: NSObject {
   init(mapView: GMSMapView, eventDelegate: MapEventDelegate) {
     self.mapView = mapView
     self.eventDelegate = eventDelegate
-    super.init()
   }
 
   func add(_ polylines: [PlatformPolyline]) {

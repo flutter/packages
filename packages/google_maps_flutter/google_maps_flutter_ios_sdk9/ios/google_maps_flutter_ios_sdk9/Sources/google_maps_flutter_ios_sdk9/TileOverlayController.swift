@@ -19,14 +19,13 @@ protocol TileProviderDelegate: AnyObject {
 }
 
 /// Controller of a single tile overlay on the map.
-class TileOverlayController: NSObject {
+class TileOverlayController {
   let layer: GMSTileLayer
   private weak var mapView: GMSMapView?
 
   init(tileOverlay: PlatformTileOverlay, tileLayer: GMSTileLayer, mapView: GMSMapView) {
     self.layer = tileLayer
     self.mapView = mapView
-    super.init()
     TileOverlayController.update(tileLayer, from: tileOverlay, with: mapView)
   }
 
@@ -142,7 +141,7 @@ class TileProviderController: GMSTileLayer {
 }
 
 /// Controller of multiple tile overlays on the map.
-class TileOverlaysController: NSObject {
+class TileOverlaysController {
   private var tileOverlayIdentifierToController: [String: TileOverlayController] = [:]
   private weak var tileProviderDelegate: TileProviderDelegate?
   private weak var mapView: GMSMapView?
@@ -150,7 +149,6 @@ class TileOverlaysController: NSObject {
   init(mapView: GMSMapView, tileProvider: TileProviderDelegate) {
     self.mapView = mapView
     self.tileProviderDelegate = tileProvider
-    super.init()
   }
 
   func add(_ tileOverlaysToAdd: [PlatformTileOverlay]) {

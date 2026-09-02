@@ -7,7 +7,7 @@ import GoogleMaps
 import GoogleMapsUtils
 
 /// A controller that manages all of the cluster managers on a map.
-class ClusterManagersController: NSObject {
+class ClusterManagersController {
   private var clusterManagerIdentifierToManagers: [String: GMUClusterManager] = [:]
   private weak var eventDelegate: MapEventDelegate?
   private weak var mapView: GMSMapView?
@@ -15,7 +15,6 @@ class ClusterManagersController: NSObject {
   init(mapView: GMSMapView, eventDelegate: MapEventDelegate) {
     self.mapView = mapView
     self.eventDelegate = eventDelegate
-    super.init()
   }
 
   func add(_ clusterManagersToAdd: [PlatformClusterManager]) {

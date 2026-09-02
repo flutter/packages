@@ -6,14 +6,13 @@ import GoogleMaps
 import GoogleMapsUtils
 
 /// Controller of a single Heatmap on the map.
-class HeatmapController: NSObject {
+class HeatmapController {
   let heatmapTileLayer: GMUHeatmapTileLayer
   private weak var mapView: GMSMapView?
 
   init(heatmap: PlatformHeatmap, tileLayer: GMUHeatmapTileLayer, mapView: GMSMapView) {
     self.heatmapTileLayer = tileLayer
     self.mapView = mapView
-    super.init()
     HeatmapController.update(tileLayer, from: heatmap, mapView: mapView)
   }
 
@@ -55,13 +54,12 @@ class HeatmapController: NSObject {
 }
 
 /// Controller of multiple Heatmaps on the map.
-class HeatmapsController: NSObject {
+class HeatmapsController {
   private var heatmapIdToController: [String: HeatmapController] = [:]
   private weak var mapView: GMSMapView?
 
   init(mapView: GMSMapView) {
     self.mapView = mapView
-    super.init()
   }
 
   func add(_ heatmapsToAdd: [PlatformHeatmap]) {

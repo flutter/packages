@@ -5,7 +5,7 @@
 import GoogleMaps
 
 /// Defines polygon controllable by Flutter.
-class PolygonController: NSObject {
+class PolygonController {
   let polygon: GMSPolygon
   private weak var mapView: GMSMapView?
 
@@ -13,7 +13,6 @@ class PolygonController: NSObject {
     self.polygon = GMSPolygon()
     self.mapView = mapView
     self.polygon.userData = [identifier]
-    super.init()
   }
 
   func removePolygon() {
@@ -52,7 +51,7 @@ class PolygonController: NSObject {
   }
 }
 
-class PolygonsController: NSObject {
+class PolygonsController {
   private var polygonIdentifierToController: [String: PolygonController] = [:]
   private weak var eventDelegate: MapEventDelegate?
   private weak var mapView: GMSMapView?
@@ -60,7 +59,6 @@ class PolygonsController: NSObject {
   init(mapView: GMSMapView, eventDelegate: MapEventDelegate) {
     self.mapView = mapView
     self.eventDelegate = eventDelegate
-    super.init()
   }
 
   func add(_ polygons: [PlatformPolygon]) {

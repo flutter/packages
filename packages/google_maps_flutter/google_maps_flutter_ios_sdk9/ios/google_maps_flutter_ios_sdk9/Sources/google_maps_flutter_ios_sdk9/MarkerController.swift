@@ -7,7 +7,7 @@ import GoogleMaps
 import UIKit
 
 /// Defines marker controllable by Flutter.
-class MarkerController: NSObject {
+class MarkerController {
   let marker: GMSMarker
   private weak var mapView: GMSMapView?
   private(set) var consumeTapEvents: Bool = false
@@ -18,7 +18,6 @@ class MarkerController: NSObject {
     self.marker = marker
     self.markerIdentifier = markerIdentifier
     self.mapView = mapView
-    super.init()
   }
 
   func showInfoWindow() {
@@ -112,7 +111,7 @@ class MarkerController: NSObject {
 }
 
 /// Controller of multiple markers on the map.
-class MarkersController: NSObject {
+class MarkersController {
   private(set) var markerIdentifierToController: [String: MarkerController] = [:]
   private weak var eventDelegate: MapEventDelegate?
   private weak var clusterManagersController: ClusterManagersController?
@@ -132,7 +131,6 @@ class MarkersController: NSObject {
     self.clusterManagersController = clusterManagersController
     self.assetProvider = assetProvider
     self.markerType = markerType
-    super.init()
   }
 
   func add(_ markersToAdd: [PlatformMarker]) {

@@ -7,7 +7,7 @@ import GoogleMapsUtils
 import UIKit
 
 /// Controller of a single ground overlay on the map.
-class GroundOverlayController: NSObject {
+class GroundOverlayController {
   let groundOverlay: GMSGroundOverlay
   private weak var mapView: GMSMapView?
   let createdWithBounds: Bool
@@ -21,7 +21,6 @@ class GroundOverlayController: NSObject {
     self.mapView = mapView
     self.groundOverlay.userData = [identifier]
     self.createdWithBounds = isCreatedWithBounds
-    super.init()
   }
 
   func removeGroundOverlay() {
@@ -98,7 +97,7 @@ class GroundOverlayController: NSObject {
 }
 
 /// Controller of multiple ground overlays on the map.
-class GroundOverlaysController: NSObject {
+class GroundOverlaysController {
   private var groundOverlayControllerByIdentifier: [String: GroundOverlayController] = [:]
   private weak var eventDelegate: MapEventDelegate?
   private let assetProvider: AssetProvider
@@ -108,7 +107,6 @@ class GroundOverlaysController: NSObject {
     self.mapView = mapView
     self.eventDelegate = eventDelegate
     self.assetProvider = assetProvider
-    super.init()
   }
 
   func add(_ groundOverlaysToAdd: [PlatformGroundOverlay]) {

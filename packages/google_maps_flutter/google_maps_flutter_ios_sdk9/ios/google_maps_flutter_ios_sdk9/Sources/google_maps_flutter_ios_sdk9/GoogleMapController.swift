@@ -546,7 +546,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
 // TODO(stuartmorgan): Remove this in favor of an extension to add TileProviderDelegate to
 // the Pigeon Flutter API object once this plugin has switched to Swift Pigeon generation
 // (adjusting the protocol to match the Swift version of the signature).
-private class ConcreteTileProvider: NSObject, TileProviderDelegate {
+private class ConcreteTileProvider: TileProviderDelegate {
   let handler: MapsCallbackApi
 
   init(dartCallbackHandler: MapsCallbackApi) {
@@ -568,7 +568,7 @@ private class ConcreteTileProvider: NSObject, TileProviderDelegate {
   }
 }
 
-class MapCallHandler: NSObject, MapsApi {
+class MapCallHandler: MapsApi {
   weak var controller: GoogleMapController?
   let messenger: FlutterBinaryMessenger
   let pigeonSuffix: String
@@ -581,7 +581,6 @@ class MapCallHandler: NSObject, MapsApi {
     self.messenger = messenger
     self.pigeonSuffix = suffix
     self.transactionWrapper = DefaultMapAnimationCATransaction()
-    super.init()
   }
 
   func waitForMap() {
@@ -801,7 +800,7 @@ class MapCallHandler: NSObject, MapsApi {
   }
 }
 
-class MapInspector: NSObject, MapsInspectorApi {
+class MapInspector: MapsInspectorApi {
   weak var controller: GoogleMapController?
   let messenger: FlutterBinaryMessenger
   let pigeonSuffix: String
@@ -812,7 +811,6 @@ class MapInspector: NSObject, MapsInspectorApi {
   ) {
     self.messenger = messenger
     self.pigeonSuffix = suffix
-    super.init()
   }
 
   func areBuildingsEnabled() -> Bool {
