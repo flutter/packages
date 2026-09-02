@@ -1,3 +1,9 @@
+## 4.4.2
+
+* Fixes generated routes so `onExit` is only enabled when the route data class overrides it,
+  preventing spurious Navigator assertion crashes during rapid back navigation
+  (flutter/flutter#189503).
+
 ## 4.4.1
 
 * Adds support for analyzer 14.

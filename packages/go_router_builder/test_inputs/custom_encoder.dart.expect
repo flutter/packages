@@ -49,10 +49,9 @@ mixin $CustomParameterComplexRoute on GoRouteData {
                 .cast<Uri>()
                 .toList() ??
             const <Uri>[],
-        enumTest:
-            _$EnumTestEnumMap._$fromName(
-              fromBase64(state.uri.queryParameters['enum-test']!),
-            )!,
+        enumTest: _$EnumTestEnumMap._$fromName(
+          fromBase64(state.uri.queryParameters['enum-test']!),
+        )!,
       );
 
   CustomParameterComplexRoute get _self => this as CustomParameterComplexRoute;

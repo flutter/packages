@@ -18,6 +18,18 @@ import 'package:source_helper/source_helper.dart';
 import 'path_utils.dart';
 import 'type_helpers.dart';
 
+bool _hasOverriddenOnExit(InterfaceElement routeDataClass) {
+  final MethodElement? onExit = routeDataClass.thisType.lookUpMethod(
+    'onExit',
+    routeDataClass.library,
+  );
+  final String? enclosingName = onExit?.enclosingElement?.displayName;
+  return onExit != null &&
+      enclosingName != '_GoRouteDataBase' &&
+      enclosingName != 'GoRouteData' &&
+      enclosingName != 'RelativeGoRouteData';
+}
+
 /// Custom [Iterable] implementation with extra info.
 class InfoIterable extends IterableBase<String> {
   InfoIterable._({required this.members, required this.routeGetterName});
@@ -684,14 +696,11 @@ abstract class RouteBaseConfig {
         }
         final ConstantReader nameValue = reader.read('name');
         final ConstantReader caseSensitiveValue = reader.read('caseSensitive');
-        final bool hasOverriddenOnExit = classElement.methods.any(
-          (method) => method.name == 'onExit',
-        );
         value = GoRouteConfig._(
           path: pathValue.stringValue,
           name: nameValue.isNull ? null : nameValue.stringValue,
           caseSensitive: caseSensitiveValue.boolValue,
-          hasOverriddenOnExit: hasOverriddenOnExit,
+          hasOverriddenOnExit: _hasOverriddenOnExit(classElement),
           routeDataClass: classElement,
           parent: parent,
           parentNavigatorKey: _generateParameterGetterCode(
@@ -715,13 +724,10 @@ abstract class RouteBaseConfig {
           );
         }
         final ConstantReader caseSensitiveValue = reader.read('caseSensitive');
-        final bool hasOverriddenOnExit = classElement.methods.any(
-          (method) => method.name == 'onExit',
-        );
         value = RelativeGoRouteConfig._(
           path: pathValue.stringValue,
           caseSensitive: caseSensitiveValue.boolValue,
-          hasOverriddenOnExit: hasOverriddenOnExit,
+          hasOverriddenOnExit: _hasOverriddenOnExit(classElement),
           routeDataClass: classElement,
           parent: parent,
           parentNavigatorKey: _generateParameterGetterCode(

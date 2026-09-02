@@ -1,9 +1,7 @@
 RouteBase get $statefulShellRouteNoConstConstructor =>
     StatefulShellRouteData.$route(
       factory: $StatefulShellRouteNoConstConstructorExtension._fromState,
-      branches: [
-        StatefulShellBranchData.$branch(),
-      ],
+      branches: [StatefulShellBranchData.$branch()],
     );
 
 extension $StatefulShellRouteNoConstConstructorExtension
@@ -15,14 +13,12 @@ extension $StatefulShellRouteNoConstConstructorExtension
 RouteBase get $statefulShellRouteWithConstConstructor =>
     StatefulShellRouteData.$route(
       factory: $StatefulShellRouteWithConstConstructorExtension._fromState,
-      branches: [
-        StatefulShellBranchData.$branch(),
-      ],
+      branches: [StatefulShellBranchData.$branch()],
     );
 
 extension $StatefulShellRouteWithConstConstructorExtension
     on StatefulShellRouteWithConstConstructor {
   static StatefulShellRouteWithConstConstructor _fromState(
-          GoRouterState state) =>
-      const StatefulShellRouteWithConstConstructor();
+    GoRouterState state,
+  ) => const StatefulShellRouteWithConstConstructor();
 }
