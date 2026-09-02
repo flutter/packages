@@ -16,6 +16,9 @@ protocol MapAnimationCATransactionProtocol {
 /// Add the AnyObject-required protocol to MapsCallbackApi to allow it to be passed to sub-controllers.
 extension MapsCallbackApi: MapEventDelegate {}
 
+/// Add TileProviderDelegate to avoid needing to pass the entire API surface to TileOverlayController.
+extension MapsCallbackApi: TileProviderDelegate {}
+
 /// Non-test implementation of MapAnimationCATransactionProtocol.
 class DefaultMapAnimationCATransaction: MapAnimationCATransactionProtocol {
   func begin() {
@@ -61,8 +64,6 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   let callHandler: MapCallHandler
   /// The inspector API implementation, separate to avoid lifetime extension.
   let inspector: MapInspector
-  /// A shim to pass tile requests to `dartCallbackHandler`. This is a separate object to avoid init ordering issues.
-  private let tileProvider: ConcreteTileProvider
   /// Whether to send notifications about camera position changes to Dart.
   var trackCameraPosition = false
 
@@ -164,10 +165,9 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
       eventDelegate: dartCallbackHandler
     )
     heatmapsController = HeatmapsController(mapView: mapView)
-    tileProvider = ConcreteTileProvider(dartCallbackHandler: dartCallbackHandler)
     tileOverlaysController = TileOverlaysController(
       mapView: mapView,
-      tileProvider: tileProvider
+      tileProvider: dartCallbackHandler
     )
     groundOverlaysController = GroundOverlaysController(
       mapView: mapView,
@@ -468,31 +468,6 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
       return (true, errorString)
     }
     return (false, nil)
-  }
-}
-
-// TODO(stuartmorgan): Remove this in favor of an extension to add TileProviderDelegate to
-// the Pigeon Flutter API object once this plugin has switched to Swift Pigeon generation
-// (adjusting the protocol to match the Swift version of the signature).
-private class ConcreteTileProvider: TileProviderDelegate {
-  let handler: MapsCallbackApi
-
-  init(dartCallbackHandler: MapsCallbackApi) {
-    handler = dartCallbackHandler
-  }
-
-  public func tile(
-    withOverlayIdentifier tileOverlayId: String,
-    location: PlatformPoint,
-    zoom: Int64,
-    completion: @escaping (Result<PlatformTile, PigeonError>) -> Void
-  ) {
-    handler.tile(
-      withOverlayIdentifier: tileOverlayId,
-      location: location,
-      zoom: zoom,
-      completion: completion
-    )
   }
 }
 
