@@ -6,7 +6,11 @@
   when starting a new task or if you suspect environment issues.
 - **Regenerate Code**:
   - Pigeon (`dart run pigeon --input pigeons/camerax_library.dart`): Run after
-    modifying `pigeons/camerax_library.dart`.
+    modifying `pigeons/camerax_library.dart`. **CRITICAL**: When adding new methods
+    or classes to Pigeon, you MUST manually implement them in the corresponding Java 
+    native code (e.g., `android/src/main/java/io/flutter/plugins/camerax/*ProxyApi.java`).
+    Running pigeon only generates the interface; failing to write the Java implementation 
+    will break the build.
   - Mocks (`dart run build_runner build -d`): Run after modifying mocked
     classes or adding new mocks. (see [dart-generate-test-mocks](.agents/skills/dart-generate-test-mocks/SKILL.md))
 - **Verify Tests**: All tests must pass before landing. Add or update tests for

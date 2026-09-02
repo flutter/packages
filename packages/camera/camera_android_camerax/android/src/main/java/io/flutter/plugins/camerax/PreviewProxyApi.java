@@ -10,6 +10,7 @@ import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
+import androidx.annotation.VisibleForTesting;
 import androidx.camera.camera2.interop.Camera2Interop;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import androidx.camera.core.Preview;
@@ -28,7 +29,8 @@ import java.util.concurrent.Executors;
  */
 class PreviewProxyApi extends PigeonApiPreview {
   // Stores the SurfaceProducer when it is used as a SurfaceProvider for a Preview.
-  private final Map<Preview, TextureRegistry.SurfaceProducer> surfaceProducers = new HashMap<>();
+  @VisibleForTesting
+  final Map<Preview, TextureRegistry.SurfaceProducer> surfaceProducers = new HashMap<>();
 
   PreviewProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
@@ -67,17 +69,9 @@ class PreviewProxyApi extends PigeonApiPreview {
   }
 
   @Override
-  public long setSurfaceProvider(
-      @NonNull Preview pigeonInstance, @NonNull SystemServicesManager systemServicesManager) {
-    final TextureRegistry.SurfaceProducer surfaceProducer =
-        getPigeonRegistrar().getTextureRegistry().createSurfaceProducer();
-    final Preview.SurfaceProvider surfaceProvider =
-        createSurfaceProvider(surfaceProducer, systemServicesManager);
-
+  public void setSurfaceProvider(
+      @NonNull Preview pigeonInstance, @NonNull Preview.SurfaceProvider surfaceProvider) {
     pigeonInstance.setSurfaceProvider(surfaceProvider);
-    surfaceProducers.put(pigeonInstance, surfaceProducer);
-
-    return surfaceProducer.id();
   }
 
   @Override
@@ -111,7 +105,18 @@ class PreviewProxyApi extends PigeonApiPreview {
 
   @Override
   public void setTargetRotation(Preview pigeonInstance, long rotation) {
-    pigeonInstance.setTargetRotation((int) rotation);
+    final int targetRotation = (int) rotation;
+    if (targetRotation >= 0 && pigeonInstance.getTargetRotation() == targetRotation) {
+      // If CameraX already recorded targetRotation as the default (e.g. 0 by default from
+      // Camera2UseCaseConfigFactory), setTargetRotationInternal() evaluates currentTargetRotation
+      // == rotation
+      // and skips dispatching the new transformation info to PreviewView. Cycling through an
+      // alternate
+      // rotation ensures CameraX evaluates a change and updates PreviewView with the locked
+      // orientation.
+      pigeonInstance.setTargetRotation((targetRotation + 1) % 4);
+    }
+    pigeonInstance.setTargetRotation(targetRotation);
   }
 
   @NonNull

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,7 +27,7 @@ class CameraPreview extends StatelessWidget {
             valueListenable: controller,
             builder: (BuildContext context, Object? value, Widget? child) {
               return AspectRatio(
-                aspectRatio: _isLandscape()
+                aspectRatio: _isLandscape(context)
                     ? controller.value.aspectRatio
                     : (1 / controller.value.aspectRatio),
                 child: Stack(
@@ -44,14 +45,23 @@ class CameraPreview extends StatelessWidget {
   }
 
   Widget _wrapInRotatedBox({required Widget child}) {
-    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+    if (kIsWeb ||
+        CameraPlatform.instance.handlesPreviewTransformationNatively() ||
+        defaultTargetPlatform != TargetPlatform.android) {
       return child;
     }
 
     return RotatedBox(quarterTurns: _getQuarterTurns(), child: child);
   }
 
-  bool _isLandscape() {
+  bool _isLandscape(BuildContext context) {
+    if (CameraPlatform.instance.handlesPreviewTransformationNatively() &&
+        !controller.value.isRecordingVideo &&
+        controller.value.previewPauseOrientation == null &&
+        controller.value.lockedCaptureOrientation == null) {
+      return MediaQuery.of(context).orientation == Orientation.landscape;
+    }
+
     return <DeviceOrientation>[
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,

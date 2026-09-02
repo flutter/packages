@@ -10,6 +10,7 @@ import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ExperimentalLensFacing;
 import androidx.camera.core.ExposureState;
+import androidx.camera.core.FocusMeteringAction;
 
 /**
  * ProxyApi implementation for {@link CameraInfo}. This class may handle instantiating native object
@@ -60,5 +61,11 @@ class CameraInfoProxyApi extends PigeonApiCameraInfo {
   public LiveDataProxyApi.LiveDataWrapper getZoomState(CameraInfo pigeonInstance) {
     return new LiveDataProxyApi.LiveDataWrapper(
         pigeonInstance.getZoomState(), LiveDataSupportedType.ZOOM_STATE);
+  }
+
+  @Override
+  public boolean isFocusMeteringSupported(
+      @NonNull CameraInfo pigeonInstance, @NonNull FocusMeteringAction action) {
+    return pigeonInstance.isFocusMeteringSupported(action);
   }
 }

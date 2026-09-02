@@ -42,6 +42,7 @@ import 'android_camera_camerax_test.mocks.dart';
   MockSpec<PendingRecording>(),
   MockSpec<PlaneProxy>(),
   MockSpec<Preview>(),
+  MockSpec<PreviewView>(),
   MockSpec<ProcessCameraProvider>(),
   MockSpec<QualitySelector>(),
   MockSpec<Recorder>(),
@@ -49,6 +50,7 @@ import 'android_camera_camerax_test.mocks.dart';
   MockSpec<ResolutionSelector>(),
   MockSpec<ResolutionStrategy>(),
   MockSpec<Recording>(),
+  MockSpec<SurfaceProvider>(),
   MockSpec<SystemServicesManager>(),
   MockSpec<VideoCapture>(),
   MockSpec<ZoomState>(),
@@ -66,6 +68,13 @@ void main() {
   setUp(() {
     PigeonOverrides.pigeon_reset();
     GenericsPigeonOverrides.reset();
+    PigeonOverrides.previewView_new = () {
+      final mockPreviewView = MockPreviewView();
+      when(mockPreviewView.registerPreviewView()).thenAnswer((_) async {});
+      when(mockPreviewView.setImplementationMode(any)).thenAnswer((_) async {});
+      when(mockPreviewView.getSurfaceProvider()).thenAnswer((_) async => MockSurfaceProvider());
+      return mockPreviewView;
+    };
   });
 
   /// Helper method for testing sending/receiving CameraErrorEvents.
@@ -164,6 +173,13 @@ void main() {
           when(mockPreview.getResolutionInfo()).thenAnswer((_) async => testResolutionInfo);
           return mockPreview;
         };
+    PigeonOverrides.previewView_new = () {
+      final mockPreviewView = MockPreviewView();
+      when(mockPreviewView.registerPreviewView()).thenAnswer((_) async {});
+      when(mockPreviewView.setImplementationMode(any)).thenAnswer((_) async {});
+      when(mockPreviewView.getSurfaceProvider()).thenAnswer((_) async => MockSurfaceProvider());
+      return mockPreviewView;
+    };
     PigeonOverrides.imageCapture_new =
         ({
           int? targetRotation,
@@ -304,10 +320,16 @@ void main() {
       required double height,
     })?
     newDisplayOrientedMeteringPointFactory,
+    bool isFocusMeteringSupported = true,
   }) {
     PigeonOverrides.displayOrientedMeteringPointFactory_new =
         newDisplayOrientedMeteringPointFactory ??
         ({required dynamic cameraInfo, required double width, required double height}) {
+          if (cameraInfo is MockCameraInfo) {
+            when(
+              cameraInfo.isFocusMeteringSupported(any),
+            ).thenAnswer((_) async => isFocusMeteringSupported);
+          }
           final mockFactory = MockDisplayOrientedMeteringPointFactory();
           when(mockFactory.createPoint(any, any)).thenAnswer(
             (Invocation invocation) async => TestMeteringPoint.detached(
@@ -384,15 +406,31 @@ void main() {
       required double height,
     })?
     newDisplayOrientedMeteringPointFactory,
+    bool isFocusMeteringSupported = true,
   }) {
-    setUpOverridesForExposureAndFocus();
+    setUpOverridesForExposureAndFocus(
+      withModeFocusMeteringActionBuilder: withModeFocusMeteringActionBuilder,
+      newDisplayOrientedMeteringPointFactory: newDisplayOrientedMeteringPointFactory,
+      isFocusMeteringSupported: isFocusMeteringSupported,
+    );
 
     if (withModeFocusMeteringActionBuilder != null) {
       PigeonOverrides.focusMeteringActionBuilder_withMode = withModeFocusMeteringActionBuilder;
     }
     if (newDisplayOrientedMeteringPointFactory != null) {
       PigeonOverrides.displayOrientedMeteringPointFactory_new =
-          newDisplayOrientedMeteringPointFactory;
+          ({required dynamic cameraInfo, required double width, required double height}) {
+            if (cameraInfo is MockCameraInfo) {
+              when(
+                cameraInfo.isFocusMeteringSupported(any),
+              ).thenAnswer((_) async => isFocusMeteringSupported);
+            }
+            return newDisplayOrientedMeteringPointFactory(
+              cameraInfo: cameraInfo,
+              width: width,
+              height: height,
+            );
+          };
     }
 
     PigeonOverrides.camera2CameraControl_from = ({required CameraControl cameraControl}) =>
@@ -497,6 +535,8 @@ void main() {
       final mockLiveCameraState = MockLiveCameraState();
       final mockSystemServicesManager = MockSystemServicesManager();
       final mockCameraCharacteristicsKey = MockCameraCharacteristicsKey();
+      final mockPreviewView = MockPreviewView();
+      final mockSurfaceProvider = MockSurfaceProvider();
 
       var cameraPermissionsRequested = false;
       var startedListeningForDeviceOrientationChanges = false;
@@ -624,8 +664,12 @@ void main() {
       PigeonOverrides.cameraIntegerRange_new = CameraIntegerRange.pigeon_detached;
 
       when(
-        mockPreview.setSurfaceProvider(mockSystemServicesManager),
+        mockPreview.setSurfaceProvider(mockSurfaceProvider),
       ).thenAnswer((_) async => testSurfaceTextureId);
+      PigeonOverrides.previewView_new = () => mockPreviewView;
+      when(mockPreviewView.registerPreviewView()).thenAnswer((_) async {});
+      when(mockPreviewView.setImplementationMode(any)).thenAnswer((_) async {});
+      when(mockPreviewView.getSurfaceProvider()).thenAnswer((_) async => mockSurfaceProvider);
       when(
         mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector, <UseCase>[
           mockPreview,
@@ -636,19 +680,17 @@ void main() {
       when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
       when(mockCameraInfo.getCameraState()).thenAnswer((_) async => mockLiveCameraState);
 
-      expect(
-        await camera.createCameraWithSettings(
-          testCameraDescription,
-          const MediaSettings(
-            resolutionPreset: ResolutionPreset.low,
-            fps: 15,
-            videoBitrate: 200000,
-            audioBitrate: 32000,
-            enableAudio: true,
-          ),
+      final int cameraId = await camera.createCameraWithSettings(
+        testCameraDescription,
+        const MediaSettings(
+          resolutionPreset: ResolutionPreset.low,
+          fps: 15,
+          videoBitrate: 200000,
+          audioBitrate: 32000,
+          enableAudio: true,
         ),
-        equals(testSurfaceTextureId),
       );
+      expect(cameraId, isA<int>());
 
       // Verify permissions are requested and the camera starts listening for device orientation changes.
       expect(cameraPermissionsRequested, isTrue);
@@ -669,7 +711,7 @@ void main() {
       expect(camera.videoCapture, equals(mockVideoCapture));
 
       // Verify the camera's Preview instance has its surface provider set.
-      verify(camera.preview!.setSurfaceProvider(mockSystemServicesManager));
+      verify(camera.preview!.setSurfaceProvider(mockSurfaceProvider));
     },
   );
 
@@ -1687,17 +1729,17 @@ void main() {
     );
 
     // Create and initialize camera.
-    await camera.createCameraWithSettings(
+    final int cameraId = await camera.createCameraWithSettings(
       testCameraDescription,
       const MediaSettings(enableAudio: enableAudio),
     );
-    await camera.initializeCamera(testSurfaceTextureId);
+    await camera.initializeCamera(cameraId);
 
     // Verify the camera state observer is updated.
     expect(
       await testCameraClosingObserver(
         camera,
-        testSurfaceTextureId,
+        cameraId,
         verify(mockLiveCameraState.observe(captureAny)).captured.single as Observer<CameraState>,
       ),
       isTrue,
@@ -1779,7 +1821,7 @@ void main() {
   test('initializeCamera sends expected CameraInitializedEvent', () async {
     final camera = AndroidCameraCameraX();
 
-    const cameraId = 10;
+    const cameraId = 0;
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
     const testSensorOrientation = 90;
     const testCameraDescription = CameraDescription(
@@ -1965,7 +2007,7 @@ void main() {
 
       await camera.dispose(3);
 
-      verify(camera.preview!.releaseSurfaceProvider());
+      verify(camera.preview!.setSurfaceProvider(null));
       verify(camera.liveCameraState!.removeObservers());
       verify(camera.processCameraProvider!.unbindAll());
       verify(camera.imageAnalysis!.clearAnalyzer());
@@ -4268,11 +4310,18 @@ void main() {
       final mockImageAnalysis = MockImageAnalysis();
       final mockImageCapture = MockImageCapture();
       final mockVideoCapture = MockVideoCapture();
+      final mockPreview = MockPreview();
+      final mockPreviewView = MockPreviewView();
+      final mockSurfaceProvider = MockSurfaceProvider();
+
+      when(mockPreviewView.getSurfaceProvider()).thenAnswer((_) async => mockSurfaceProvider);
 
       // Set directly for test versus calling createCamera.
       camera.imageAnalysis = mockImageAnalysis;
       camera.imageCapture = mockImageCapture;
       camera.videoCapture = mockVideoCapture;
+      camera.preview = mockPreview;
+      camera.previewView = mockPreviewView;
 
       for (final DeviceOrientation orientation in DeviceOrientation.values) {
         int? expectedTargetRotation;
@@ -4292,6 +4341,7 @@ void main() {
         verify(mockImageAnalysis.setTargetRotation(expectedTargetRotation));
         verify(mockImageCapture.setTargetRotation(expectedTargetRotation));
         verify(mockVideoCapture.setTargetRotation(expectedTargetRotation));
+        verify(mockPreview.setTargetRotation(expectedTargetRotation));
         expect(camera.captureOrientationLocked, isTrue);
         expect(camera.shouldSetDefaultRotation, isTrue);
 
@@ -4303,14 +4353,56 @@ void main() {
   );
 
   test(
-    'unlockCaptureOrientation sets capture-related use case target rotations to current photo/video orientation',
+    'unlockCaptureOrientation restores preview target rotation to default display rotation',
     () async {
+      const int defaultRotation = Surface.rotation180;
+      final mockDeviceOrientationManager = MockDeviceOrientationManager();
+      when(
+        mockDeviceOrientationManager.getDefaultDisplayRotation(),
+      ).thenAnswer((_) async => defaultRotation);
+      PigeonOverrides.deviceOrientationManager_new =
+          ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) =>
+              mockDeviceOrientationManager;
+
       final camera = AndroidCameraCameraX();
       const cameraId = 57;
+      final mockPreview = MockPreview();
+
+      camera.preview = mockPreview;
 
       camera.captureOrientationLocked = true;
       await camera.unlockCaptureOrientation(cameraId);
       expect(camera.captureOrientationLocked, isFalse);
+      verify(mockPreview.setTargetRotation(defaultRotation));
+    },
+  );
+
+  test(
+    'onDeviceOrientationChanged updates preview target rotation when orientation unlocked and shouldSetDefaultRotation is true',
+    () async {
+      const int defaultRotation = Surface.rotation90;
+      late final void Function(DeviceOrientationManager, String) onDeviceOrientationChangedCallback;
+      final mockDeviceOrientationManager = MockDeviceOrientationManager();
+      when(
+        mockDeviceOrientationManager.getDefaultDisplayRotation(),
+      ).thenAnswer((_) async => defaultRotation);
+      PigeonOverrides.deviceOrientationManager_new =
+          ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) {
+            onDeviceOrientationChangedCallback = onDeviceOrientationChanged;
+            return mockDeviceOrientationManager;
+          };
+
+      final camera = AndroidCameraCameraX();
+      expect(camera.deviceOrientationManager, isNotNull);
+      final mockPreview = MockPreview();
+      camera.preview = mockPreview;
+      camera.shouldSetDefaultRotation = true;
+      camera.captureOrientationLocked = false;
+
+      onDeviceOrientationChangedCallback(mockDeviceOrientationManager, 'LANDSCAPE_LEFT');
+      await pumpEventQueue();
+
+      verify(mockPreview.setTargetRotation(defaultRotation));
     },
   );
 
@@ -4978,6 +5070,63 @@ void main() {
     capturedAction = verificationResult.captured.single as FocusMeteringAction;
     expect(capturedAction.isAutoCancelEnabled, isFalse);
   });
+
+  test('setFocusPoint does not start focus and metering if action is not supported', () async {
+    final camera = AndroidCameraCameraX();
+    const cameraId = 4;
+    final mockCameraControl = MockCameraControl();
+    final mockCameraInfo = MockCameraInfo();
+    const focusPoint = Point<double>(0.1, 0.2);
+
+    camera.cameraControl = mockCameraControl;
+    camera.cameraInfo = mockCameraInfo;
+
+    setUpOverridesForSettingFocusandExposurePoints(
+      mockCameraControl,
+      MockCamera2CameraControl(),
+      isFocusMeteringSupported: false,
+    );
+
+    await camera.setFocusPoint(cameraId, focusPoint);
+
+    verifyNever(mockCameraControl.startFocusAndMetering(any));
+    expect(camera.currentFocusMeteringAction, isNull);
+  });
+
+  test(
+    'setExposurePoint with null cancels focus and metering if remaining action is not supported',
+    () async {
+      final camera = AndroidCameraCameraX();
+      const cameraId = 4;
+      final mockCameraControl = MockCameraControl();
+      final mockCameraInfo = MockCameraInfo();
+      final mockFocusMeteringResult = MockFocusMeteringResult();
+      const focusPoint = Point<double>(0.1, 0.2);
+      const exposurePoint = Point<double>(0.3, 0.4);
+
+      camera.cameraControl = mockCameraControl;
+      camera.cameraInfo = mockCameraInfo;
+
+      setUpOverridesForSettingFocusandExposurePoints(mockCameraControl, MockCamera2CameraControl());
+      when(mockFocusMeteringResult.isFocusSuccessful).thenReturn(true);
+      when(
+        mockCameraControl.startFocusAndMetering(any),
+      ).thenAnswer((_) async => mockFocusMeteringResult);
+      when(mockCameraControl.cancelFocusAndMetering()).thenAnswer((_) async {});
+
+      // First, supported action with both points.
+      when(mockCameraInfo.isFocusMeteringSupported(any)).thenAnswer((_) async => true);
+      await camera.setExposurePoint(cameraId, exposurePoint);
+      await camera.setFocusPoint(cameraId, focusPoint);
+
+      // Now, clearing exposure point leaves only focus point, which is not supported.
+      when(mockCameraInfo.isFocusMeteringSupported(any)).thenAnswer((_) async => false);
+      await camera.setExposurePoint(cameraId, null);
+
+      verify(mockCameraControl.cancelFocusAndMetering()).called(1);
+      expect(camera.currentFocusMeteringAction, isNull);
+    },
+  );
 
   test(
     'setFocusMode does nothing if setting auto-focus mode and is already using auto-focus mode',

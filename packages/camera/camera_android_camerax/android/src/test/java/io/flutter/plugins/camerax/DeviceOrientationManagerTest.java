@@ -75,7 +75,7 @@ public class DeviceOrientationManagerTest {
     deviceOrientationManagerSpy.orientationEventListener.onOrientationChanged(
         /* some device orientation */ 3);
 
-    verify(deviceOrientationManagerSpy).handleUiOrientationChange();
+    verify(deviceOrientationManagerSpy, times(2)).handleUiOrientationChange();
   }
 
   @Test
@@ -83,12 +83,14 @@ public class DeviceOrientationManagerTest {
     DeviceOrientationManager deviceOrientationManagerSpy = spy(deviceOrientationManager);
     OrientationEventListener mockOrientationEventListener = mock(OrientationEventListener.class);
 
+    doNothing().when(deviceOrientationManagerSpy).handleUiOrientationChange();
     when(deviceOrientationManagerSpy.createOrientationEventListener())
         .thenReturn(mockOrientationEventListener);
 
     deviceOrientationManagerSpy.start();
 
     verify(mockOrientationEventListener).enable();
+    verify(deviceOrientationManagerSpy).handleUiOrientationChange();
   }
 
   @Test

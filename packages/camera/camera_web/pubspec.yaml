@@ -17,7 +17,8 @@ flutter:
         fileName: camera_web.dart
 
 dependencies:
-  camera_platform_interface: ^2.6.0
+  camera_platform_interface:
+    path: ../camera_platform_interface/ # testing change
   flutter:
     sdk: flutter
   flutter_web_plugins:

@@ -241,6 +241,9 @@ abstract class CameraInfo {
 
   /// A LiveData of ZoomState.
   LiveData getZoomState();
+
+  /// Checks whether the [FocusMeteringAction] is supported on the device.
+  bool isFocusMeteringSupported(FocusMeteringAction action);
 }
 
 /// Direction of lens of a camera.
@@ -386,14 +389,7 @@ abstract class Preview extends UseCase {
   late final ResolutionSelector? resolutionSelector;
 
   /// Sets a SurfaceProvider to provide a Surface for Preview.
-  ///
-  /// This is a convenience function that
-  /// 1. Creates a `SurfaceProvider` using the `SurfaceProducer` provided by the
-  /// Flutter engine.
-  /// 2. Sets this method with the created `SurfaceProvider`.
-  /// 3. Returns the texture id of the `TextureEntry` that provided the
-  /// `SurfaceProducer`.
-  int setSurfaceProvider(SystemServicesManager systemServicesManager);
+  void setSurfaceProvider(SurfaceProvider? surfaceProvider);
 
   /// Releases the `SurfaceProducer` created in `setSurfaceProvider` if one was
   /// created.
@@ -1196,3 +1192,25 @@ abstract class DisplayOrientedMeteringPointFactory extends MeteringPointFactory 
   /// CameraInfo.
   DisplayOrientedMeteringPointFactory(CameraInfo cameraInfo, double width, double height);
 }
+
+enum ImplementationMode { performance, compatible }
+
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'androidx.camera.view.PreviewView'))
+abstract class PreviewView {
+  PreviewView();
+
+  SurfaceProvider getSurfaceProvider();
+
+  void registerPreviewView();
+
+  MeteringPointFactory getMeteringPointFactory();
+
+  void setImplementationMode(ImplementationMode mode);
+}
+
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.Preview.SurfaceProvider',
+  ),
+)
+abstract class SurfaceProvider {}
