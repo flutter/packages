@@ -20,6 +20,8 @@ extension FGMPlatformBitmap {
 
     var image: UIImage?
 
+    // See comment in messages.dart for why this is so loosely typed. See also
+    // https://github.com/flutter/flutter/issues/117819.
     switch bitmap {
     case let bitmap as FGMPlatformBitmapDefaultMarker:
       let hue = bitmap.hue?.doubleValue ?? 0

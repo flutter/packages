@@ -123,7 +123,7 @@ extension FGMPlatformGroundOverlay {
     zoomLevel: NSNumber?
   ) -> FGMPlatformGroundOverlay {
     let placeholderImage = FGMPlatformBitmap.make(
-      withBitmap: FGMPlatformBitmapDefaultMarker.make(withHue: 0))
+      withBitmap: FGMPlatformBitmapDefaultMarker.make(withHue: nil))
     if isCreatedWithBounds, let bounds = groundOverlay.bounds {
       return FGMPlatformGroundOverlay.make(
         withGroundOverlayId: overlayId,
