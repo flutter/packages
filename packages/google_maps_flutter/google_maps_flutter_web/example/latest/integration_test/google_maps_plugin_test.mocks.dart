@@ -120,6 +120,7 @@ class MockGoogleMapController extends _i1.Mock implements _i4.GoogleMapControlle
     _i6.ClusterManagersController<Object?>? clusterManagers,
     _i4.TileOverlaysController? tileOverlays,
     _i4.GroundOverlaysController? groundOverlays,
+    _i4.MyLocationController? myLocation,
   }) => super.noSuchMethod(
     Invocation.method(#debugSetOverrides, [], {
       #createMap: createMap,
@@ -132,6 +133,7 @@ class MockGoogleMapController extends _i1.Mock implements _i4.GoogleMapControlle
       #clusterManagers: clusterManagers,
       #tileOverlays: tileOverlays,
       #groundOverlays: groundOverlays,
+      #myLocation: myLocation,
     }),
     returnValueForMissingStub: null,
   );
@@ -292,6 +294,60 @@ class MockGoogleMapController extends _i1.Mock implements _i4.GoogleMapControlle
             returnValueForMissingStub: false,
           )
           as bool);
+
+  @override
+  void dispose() =>
+      super.noSuchMethod(Invocation.method(#dispose, []), returnValueForMissingStub: null);
+}
+
+/// A class which mocks [MyLocationController].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockMyLocationController extends _i1.Mock implements _i4.MyLocationController {
+  @override
+  set myLocationButton(_i4.MyLocationButton? value) => super.noSuchMethod(
+    Invocation.setter(#myLocationButton, value),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  _i3.Future<void> displayAndWatchMyLocation(
+    _i4.MarkersController<Object?, Object>? markersController,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#displayAndWatchMyLocation, [markersController]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> centerMyCurrentLocation(_i4.GoogleMapController? controller) =>
+      (super.noSuchMethod(
+            Invocation.method(#centerMyCurrentLocation, [controller]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  void addMyLocationButton(_i5.Map? map, _i4.GoogleMapController? controller) => super.noSuchMethod(
+    Invocation.method(#addMyLocationButton, [map, controller]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void removeMyLocationButton(_i5.Map? map) => super.noSuchMethod(
+    Invocation.method(#removeMyLocationButton, [map]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void removeBlueDot(_i4.MarkersController<Object?, Object?>? markersController) =>
+      super.noSuchMethod(
+        Invocation.method(#removeBlueDot, [markersController]),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void dispose() =>
