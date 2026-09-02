@@ -1,0 +1,3 @@
+changelog: |
+  - Adds support for standard, medium, and high contrast Material 3 color scheme baselines.
+version: minor
