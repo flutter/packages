@@ -278,8 +278,9 @@ class RepositoryPackage {
         final globExact = Glob(pattern);
         final Glob? globNested = isAnchored ? null : Glob('**/$pattern');
         final Glob? globDirExact = dirPattern == null ? null : Glob(dirPattern);
-        final Glob? globDirNested =
-            (dirPattern == null || isAnchored) ? null : Glob('**/$dirPattern');
+        final Glob? globDirNested = (dirPattern == null || isAnchored)
+            ? null
+            : Glob('**/$dirPattern');
         for (final candidate in candidatePaths) {
           if (globExact.matches(candidate) ||
               (globNested != null && globNested.matches(candidate)) ||
