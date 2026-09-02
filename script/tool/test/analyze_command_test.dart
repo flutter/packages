@@ -570,6 +570,14 @@ void main() {
             .childDirectory('test_data')
             .childFile('eval.dart')
             .createSync(recursive: true);
+        package.directory
+            .childDirectory('.agents')
+            .childDirectory('skills')
+            .childDirectory('a_skill')
+            .childDirectory('evals')
+            .childDirectory('test_data')
+            .childFile('skill_eval.dart')
+            .createSync(recursive: true);
 
         _mockCallsForFlutterAnalyze(
           processRunner,
@@ -588,6 +596,7 @@ void main() {
             ProcessCall('dart', const <String>[
               'run',
               'cognitive_complexity',
+              '.agents/skills/a_skill/evals/test_data/skill_eval.dart',
               '.agents/skills/evals/test_data/eval.dart',
               'evals/test_data/data.dart',
               'lib/lib.dart',
