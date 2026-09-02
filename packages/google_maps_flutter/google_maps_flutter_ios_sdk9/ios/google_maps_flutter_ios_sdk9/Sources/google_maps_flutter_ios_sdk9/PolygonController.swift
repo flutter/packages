@@ -91,7 +91,7 @@ class PolygonsController {
 
   func didTapPolygon(withIdentifier identifier: String) {
     if hasPolygon(withIdentifier: identifier) {
-      eventDelegate?.didTapPolygon(withIdentifier: identifier)
+      eventDelegate?.didTapPolygon(withIdentifier: identifier) { _ in }
     }
   }
 

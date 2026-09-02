@@ -73,7 +73,7 @@ class ClusterManagersController {
     guard let clusterManagerId = clusterManagerIdentifier(for: cluster) else { return }
     let platformCluster = PlatformCluster.make(
       from: cluster, clusterManagerIdentifier: clusterManagerId)
-    eventDelegate?.didTapCluster(platformCluster)
+    eventDelegate?.didTapCluster(platformCluster) { _ in }
   }
 
   /// Returns the cluster manager identifier for given cluster.

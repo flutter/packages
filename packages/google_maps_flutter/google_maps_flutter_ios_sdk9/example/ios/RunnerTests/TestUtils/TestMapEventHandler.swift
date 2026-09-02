@@ -8,35 +8,109 @@ import Foundation
 
 /// Fake implementation of MapEventDelegate for unit tests.
 class TestMapEventHandler: MapEventDelegate {
-  func didStartCameraMove() {}
+  func didStartCameraMove(completion: @escaping (Result<Void, PigeonError>) -> Void) {}
 
-  func didMoveCamera(to cameraPosition: PlatformCameraPosition) {}
-
-  func didIdleCamera() {}
-
-  func didTap(at position: PlatformLatLng) {}
-
-  func didLongPress(at position: PlatformLatLng) {}
-
-  func didTapMarker(withIdentifier markerId: String) {}
-
-  func didStartDragForMarker(
-    withIdentifier markerId: String, at position: PlatformLatLng
+  func didMoveCamera(
+    to cameraPositionArg: PlatformCameraPosition,
+    completion:
+      @escaping (
+        Result<Void, PigeonError>
+      ) -> Void
   ) {}
 
-  func didDragMarker(withIdentifier markerId: String, at position: PlatformLatLng) {}
+  func didIdleCamera(completion: @escaping (Result<Void, PigeonError>) -> Void) {}
 
-  func didEndDragForMarker(withIdentifier markerId: String, at position: PlatformLatLng) {}
+  func didTap(
+    at positionArg: PlatformLatLng,
+    completion:
+      @escaping (
+        Result<Void, PigeonError>
+      ) -> Void
+  ) {}
 
-  func didTapInfoWindowOfMarker(withIdentifier markerId: String) {}
+  func didLongPress(
+    at positionArg: PlatformLatLng,
+    completion:
+      @escaping (
+        Result<Void, PigeonError>
+      ) -> Void
+  ) {}
 
-  func didTapCircle(withIdentifier circleId: String) {}
+  func didTapMarker(
+    withIdentifier markerIdArg: String,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {}
 
-  func didTapCluster(_ cluster: PlatformCluster) {}
+  func didStartDragForMarker(
+    withIdentifier markerIdArg: String,
+    at positionArg: PlatformLatLng,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {}
 
-  func didTapPolygon(withIdentifier polygonId: String) {}
+  func didDragMarker(
+    withIdentifier markerIdArg: String,
+    at positionArg: PlatformLatLng,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {}
 
-  func didTapPolyline(withIdentifier polylineId: String) {}
+  func didEndDragForMarker(
+    withIdentifier markerIdArg: String,
+    at positionArg: PlatformLatLng,
+    completion:
+      @escaping (
+        Result<Void, PigeonError>
+      ) -> Void
+  ) {}
 
-  func didTapGroundOverlay(withIdentifier groundOverlayId: String) {}
+  func didTapInfoWindowOfMarker(
+    withIdentifier markerIdArg: String,
+    completion:
+      @escaping (
+        Result<Void, PigeonError>
+      ) -> Void
+  ) {}
+
+  func didTapCircle(
+    withIdentifier circleIdArg: String,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {}
+
+  func didTapCluster(
+    _ clusterArg: PlatformCluster,
+    completion:
+      @escaping (
+        Result<Void, PigeonError>
+      ) -> Void
+  ) {}
+
+  func didTapPolygon(
+    withIdentifier polygonIdArg: String,
+    completion:
+      @escaping (
+        Result<Void, PigeonError>
+      ) -> Void
+  ) {}
+
+  func didTapPolyline(
+    withIdentifier polylineIdArg: String,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {}
+
+  func didTapGroundOverlay(
+    withIdentifier groundOverlayIdArg: String,
+    completion:
+      @escaping (
+        Result<Void, PigeonError>
+      ) -> Void
+  ) {}
+
+  func tile(
+    withOverlayIdentifier tileOverlayIdArg: String,
+    location locationArg: PlatformPoint,
+    zoom zoomArg: Int64,
+    completion:
+      @escaping (
+        Result<PlatformTile, PigeonError>
+      ) -> Void
+  ) {}
 }

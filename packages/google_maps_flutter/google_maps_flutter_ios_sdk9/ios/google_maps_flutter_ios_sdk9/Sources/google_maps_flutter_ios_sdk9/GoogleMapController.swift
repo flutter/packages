@@ -13,6 +13,9 @@ protocol MapAnimationCATransactionProtocol {
   func setAnimationDuration(_ duration: CFTimeInterval)
 }
 
+/// Add the AnyObject-required protocol to MapsCallbackApi to allow it to be passed to sub-controllers.
+extension MapsCallbackApi: MapEventDelegate {}
+
 /// Non-test implementation of MapAnimationCATransactionProtocol.
 class DefaultMapAnimationCATransaction: MapAnimationCATransactionProtocol {
   func begin() {
@@ -49,84 +52,11 @@ class DefaultAssetProvider: AssetProvider {
   }
 }
 
-/// Non-test implementation of MapEventDelegate, wrapping a MapsCallbackApi instance.
-class DefaultMapEventHandler: MapEventDelegate {
-  let callbackHandler: MapsCallbackApi
-
-  init(callbackHandler: MapsCallbackApi) {
-    self.callbackHandler = callbackHandler
-  }
-
-  func didStartCameraMove() {
-    callbackHandler.didStartCameraMove { _ in }
-  }
-
-  func didMoveCamera(to cameraPosition: PlatformCameraPosition) {
-    callbackHandler.didMoveCamera(to: cameraPosition) { _ in }
-  }
-
-  func didIdleCamera() {
-    callbackHandler.didIdleCamera { _ in }
-  }
-
-  func didTap(at position: PlatformLatLng) {
-    callbackHandler.didTap(at: position) { _ in }
-  }
-
-  func didLongPress(at position: PlatformLatLng) {
-    callbackHandler.didLongPress(at: position) { _ in }
-  }
-
-  func didTapMarker(withIdentifier markerId: String) {
-    callbackHandler.didTapMarker(withIdentifier: markerId) { _ in }
-  }
-
-  func didStartDragForMarker(
-    withIdentifier markerId: String, at position: PlatformLatLng
-  ) {
-    callbackHandler.didStartDragForMarker(withIdentifier: markerId, at: position) { _ in }
-  }
-
-  func didDragMarker(withIdentifier markerId: String, at position: PlatformLatLng) {
-    callbackHandler.didDragMarker(withIdentifier: markerId, at: position) { _ in }
-  }
-
-  func didEndDragForMarker(withIdentifier markerId: String, at position: PlatformLatLng) {
-    callbackHandler.didEndDragForMarker(withIdentifier: markerId, at: position) { _ in }
-  }
-
-  func didTapInfoWindowOfMarker(withIdentifier markerId: String) {
-    callbackHandler.didTapInfoWindowOfMarker(withIdentifier: markerId) { _ in }
-  }
-
-  func didTapCircle(withIdentifier circleId: String) {
-    callbackHandler.didTapCircle(withIdentifier: circleId) { _ in }
-  }
-
-  func didTapCluster(_ cluster: PlatformCluster) {
-    callbackHandler.didTapCluster(cluster) { _ in }
-  }
-
-  func didTapPolygon(withIdentifier polygonId: String) {
-    callbackHandler.didTapPolygon(withIdentifier: polygonId) { _ in }
-  }
-
-  func didTapPolyline(withIdentifier polylineId: String) {
-    callbackHandler.didTapPolyline(withIdentifier: polylineId) { _ in }
-  }
-
-  func didTapGroundOverlay(withIdentifier groundOverlayId: String) {
-    callbackHandler.didTapGroundOverlay(withIdentifier: groundOverlayId) { _ in }
-  }
-}
-
 public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformView {
   /// The Google Maps SDK map view managed by this controller.
   let mapView: GMSMapView
   /// The Pigeon callback API implementation, used to send events to the Dart side.
   let dartCallbackHandler: MapsCallbackApi
-  /// The map SDK event handler, which routes events to the Dart callback handler.
-  let mapEventHandler: DefaultMapEventHandler
   /// The main Pigeon API implementation, separate to avoid lifetime extension.
   let callHandler: MapCallHandler
   /// The inspector API implementation, separate to avoid lifetime extension.
@@ -208,32 +138,30 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
       messageChannelSuffix: pigeonSuffix
     )
 
-    mapEventHandler = DefaultMapEventHandler(callbackHandler: dartCallbackHandler)
-
     let markerType = creationParameters.mapConfiguration.markerType
 
     clusterManagersController = ClusterManagersController(
       mapView: mapView,
-      eventDelegate: mapEventHandler
+      eventDelegate: dartCallbackHandler
     )
     markersController = MarkersController(
       mapView: mapView,
-      eventDelegate: mapEventHandler,
+      eventDelegate: dartCallbackHandler,
       clusterManagersController: clusterManagersController,
       assetProvider: assetProvider,
       markerType: markerType
     )
     polygonsController = PolygonsController(
       mapView: mapView,
-      eventDelegate: mapEventHandler
+      eventDelegate: dartCallbackHandler
     )
     polylinesController = PolylinesController(
       mapView: mapView,
-      eventDelegate: mapEventHandler
+      eventDelegate: dartCallbackHandler
     )
     circlesController = CirclesController(
       mapView: mapView,
-      eventDelegate: mapEventHandler
+      eventDelegate: dartCallbackHandler
     )
     heatmapsController = HeatmapsController(mapView: mapView)
     tileProvider = ConcreteTileProvider(dartCallbackHandler: dartCallbackHandler)
@@ -243,7 +171,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     )
     groundOverlaysController = GroundOverlaysController(
       mapView: mapView,
-      eventDelegate: mapEventHandler,
+      eventDelegate: dartCallbackHandler,
       assetProvider: assetProvider
     )
 
@@ -385,17 +313,17 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   // MARK: - GMSMapViewDelegate methods
 
   public func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
-    mapEventHandler.didStartCameraMove()
+    dartCallbackHandler.didStartCameraMove { _ in }
   }
 
   public func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
     if trackCameraPosition {
-      mapEventHandler.didMoveCamera(to: PlatformCameraPosition.make(from: position))
+      dartCallbackHandler.didMoveCamera(to: PlatformCameraPosition.make(from: position)) { _ in }
     }
   }
 
   public func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
-    mapEventHandler.didIdleCamera()
+    dartCallbackHandler.didIdleCamera { _ in }
   }
 
   public func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
@@ -451,11 +379,11 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   }
 
   public func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
-    mapEventHandler.didTap(at: PlatformLatLng.make(from: coordinate))
+    dartCallbackHandler.didTap(at: PlatformLatLng.make(from: coordinate)) { _ in }
   }
 
   public func mapView(_ mapView: GMSMapView, didLongPressAt coordinate: CLLocationCoordinate2D) {
-    mapEventHandler.didLongPress(at: PlatformLatLng.make(from: coordinate))
+    dartCallbackHandler.didLongPress(at: PlatformLatLng.make(from: coordinate)) { _ in }
   }
 
   func interpretMapConfiguration(_ config: PlatformMapConfiguration) {

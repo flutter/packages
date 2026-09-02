@@ -256,6 +256,7 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
 
     #expect(mapView.frameObserverCount == 1)
 
+    withExtendedLifetime(controller) {}
     // Deallocate the controller
     controller = nil
 

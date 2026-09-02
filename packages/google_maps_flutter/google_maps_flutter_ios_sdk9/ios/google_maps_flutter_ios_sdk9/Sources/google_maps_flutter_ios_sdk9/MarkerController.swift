@@ -217,7 +217,7 @@ class MarkersController {
 
   func didTapMarker(withIdentifier identifier: String) -> Bool {
     guard let controller = markerIdentifierToController[identifier] else { return false }
-    eventDelegate?.didTapMarker(withIdentifier: identifier)
+    eventDelegate?.didTapMarker(withIdentifier: identifier) { _ in }
     return controller.consumeTapEvents
   }
 
@@ -226,7 +226,7 @@ class MarkersController {
     eventDelegate?.didStartDragForMarker(
       withIdentifier: identifier,
       at: PlatformLatLng.make(from: location)
-    )
+    ) { _ in }
   }
 
   func didDragMarker(withIdentifier identifier: String, location: CLLocationCoordinate2D) {
@@ -234,7 +234,7 @@ class MarkersController {
     eventDelegate?.didDragMarker(
       withIdentifier: identifier,
       at: PlatformLatLng.make(from: location)
-    )
+    ) { _ in }
   }
 
   func didEndDraggingMarker(withIdentifier identifier: String, location: CLLocationCoordinate2D) {
@@ -242,12 +242,12 @@ class MarkersController {
     eventDelegate?.didEndDragForMarker(
       withIdentifier: identifier,
       at: PlatformLatLng.make(from: location)
-    )
+    ) { _ in }
   }
 
   func didTapInfoWindowOfMarker(withIdentifier identifier: String) {
     if markerIdentifierToController[identifier] != nil {
-      eventDelegate?.didTapInfoWindowOfMarker(withIdentifier: identifier)
+      eventDelegate?.didTapInfoWindowOfMarker(withIdentifier: identifier) { _ in }
     }
   }
 

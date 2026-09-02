@@ -96,7 +96,7 @@ class PolylinesController {
 
   func didTapPolyline(withIdentifier identifier: String) {
     if hasPolyline(withIdentifier: identifier) {
-      eventDelegate?.didTapPolyline(withIdentifier: identifier)
+      eventDelegate?.didTapPolyline(withIdentifier: identifier) { _ in }
     }
   }
 

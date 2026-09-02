@@ -164,7 +164,6 @@ class GroundOverlaysController {
         mapView: mapView,
         isCreatedWithBounds: isCreatedWithBounds
       )
-      let zoomLevel = groundOverlay.zoomLevel
       controller.zoomLevel = groundOverlay.zoomLevel
       controller.update(
         from: groundOverlay,
@@ -198,7 +197,7 @@ class GroundOverlaysController {
 
   func didTapGroundOverlay(withIdentifier identifier: String) {
     if hasGroundOverlays(withIdentifier: identifier) {
-      eventDelegate?.didTapGroundOverlay(withIdentifier: identifier)
+      eventDelegate?.didTapGroundOverlay(withIdentifier: identifier) { _ in }
     }
   }
 
