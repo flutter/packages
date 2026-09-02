@@ -5,8 +5,8 @@
 import 'dart:math' as math;
 
 import 'package:a11y_assessments/use_cases/toggle_buttons.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'test_utils.dart';
 
