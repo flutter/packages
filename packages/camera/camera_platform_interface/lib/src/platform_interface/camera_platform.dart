@@ -347,5 +347,5 @@ abstract class CameraPlatform extends PlatformInterface {
   }
 
   /// Check whether this platform handles rotation natively.
-  bool handlesRotationNatively() => false;
+  bool handlesPreviewTransformationNatively() => false;
 }

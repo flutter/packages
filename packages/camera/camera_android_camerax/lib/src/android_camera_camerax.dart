@@ -26,7 +26,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   @override
-  bool handlesRotationNatively() => true;
+  bool handlesPreviewTransformationNatively() => true;
 
   /// The [ProcessCameraProvider] instance used to access camera functionality.
   @visibleForTesting

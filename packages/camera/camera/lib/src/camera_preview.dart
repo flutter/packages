@@ -46,7 +46,7 @@ class CameraPreview extends StatelessWidget {
 
   Widget _wrapInRotatedBox({required Widget child}) {
     if (kIsWeb ||
-        CameraPlatform.instance.handlesRotationNatively() ||
+        CameraPlatform.instance.handlesPreviewTransformationNatively() ||
         defaultTargetPlatform != TargetPlatform.android) {
       return child;
     }
@@ -55,7 +55,7 @@ class CameraPreview extends StatelessWidget {
   }
 
   bool _isLandscape(BuildContext context) {
-    if (CameraPlatform.instance.handlesRotationNatively() &&
+    if (CameraPlatform.instance.handlesPreviewTransformationNatively() &&
         !controller.value.isRecordingVideo &&
         controller.value.previewPauseOrientation == null &&
         controller.value.lockedCaptureOrientation == null) {
