@@ -12,7 +12,7 @@ class ActionChipTemplateM3 extends TokenTemplateM3 {
 
   @override
   String get parentFilePath => 'action_chip.dart';
-  
+
   String get _colorSchemePrefix => '_colors';
 
   String get _textThemePrefix => '_textTheme';
