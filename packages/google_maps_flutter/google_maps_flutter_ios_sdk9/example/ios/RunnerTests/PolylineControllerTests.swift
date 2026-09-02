@@ -4,7 +4,6 @@
 
 import GoogleMaps
 import Testing
-import google_maps_flutter_ios_sdk9_objc
 
 @testable import google_maps_flutter_ios_sdk9
 
@@ -13,15 +12,15 @@ import google_maps_flutter_ios_sdk9_objc
   @Test func patternsSetSpans() {
     let mapView = PolylineControllerTests.mapView()
 
-    let polyline = FGMPlatformPolyline.make(
-      withPolylineId: "polyline_id_0",
+    let polyline = PlatformPolyline(
+      polylineId: "polyline_id_0",
       consumesTapEvents: false,
-      color: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
+      color: PlatformColor(red: 0, green: 0, blue: 0, alpha: 0),
       geodesic: false,
       jointType: .round,
       patterns: [
-        FGMPlatformPatternItem.make(with: .dot, length: 10),
-        FGMPlatformPatternItem.make(with: .dash, length: 10),
+        PlatformPatternItem(type: .dot, length: 10),
+        PlatformPatternItem(type: .dash, length: 10),
       ],
       points: PolylineControllerTests.polylinePoints(),
       visible: true,
@@ -46,10 +45,10 @@ import google_maps_flutter_ios_sdk9_objc
     let polyline = PropertyOrderValidatingPolyline()
     PolylineController.update(
       polyline,
-      from: FGMPlatformPolyline.make(
-        withPolylineId: "polyline",
+      from: PlatformPolyline(
+        polylineId: "polyline",
         consumesTapEvents: false,
-        color: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
+        color: PlatformColor(red: 0, green: 0, blue: 0, alpha: 0),
         geodesic: false,
         jointType: .round,
         patterns: [],
@@ -72,12 +71,12 @@ import google_maps_flutter_ios_sdk9_objc
   }
 
   /// Returns a set of points to use for tests that need a valid but arbitrary line.
-  static func polylinePoints() -> [FGMPlatformLatLng] {
+  static func polylinePoints() -> [PlatformLatLng] {
     return [
-      FGMPlatformLatLng.make(withLatitude: 52.4816, longitude: -3.1791),
-      FGMPlatformLatLng.make(withLatitude: 54.043, longitude: -2.9925),
-      FGMPlatformLatLng.make(withLatitude: 54.1396, longitude: -4.2739),
-      FGMPlatformLatLng.make(withLatitude: 53.4153, longitude: -4.0829),
+      PlatformLatLng(latitude: 52.4816, longitude: -3.1791),
+      PlatformLatLng(latitude: 54.043, longitude: -2.9925),
+      PlatformLatLng(latitude: 54.1396, longitude: -4.2739),
+      PlatformLatLng(latitude: 53.4153, longitude: -4.0829),
     ]
   }
 }

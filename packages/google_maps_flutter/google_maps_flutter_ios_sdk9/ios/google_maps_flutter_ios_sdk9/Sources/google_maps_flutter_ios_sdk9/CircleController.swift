@@ -4,16 +4,12 @@
 
 import GoogleMaps
 
-#if canImport(google_maps_flutter_ios_sdk9_objc)
-  import google_maps_flutter_ios_sdk9_objc
-#endif
-
 /// Defines circle controllable by Flutter.
 class CircleController: NSObject {
   let circle: GMSCircle
   private weak var mapView: GMSMapView?
 
-  init(circle: FGMPlatformCircle, mapView: GMSMapView) {
+  init(circle: PlatformCircle, mapView: GMSMapView) {
     self.circle = GMSCircle()
     self.mapView = mapView
     self.circle.userData = [circle.circleId]
@@ -25,20 +21,20 @@ class CircleController: NSObject {
     circle.map = nil
   }
 
-  /// Updates the controller's circle with the properties from a FGMPlatformCircle.
+  /// Updates the controller's circle with the properties from a PlatformCircle.
   ///
   /// Setting the circle to visible will set its map to the given mapView.
-  func update(from platformCircle: FGMPlatformCircle) {
+  func update(from platformCircle: PlatformCircle) {
     if let mapView = mapView {
       CircleController.update(circle, from: platformCircle, with: mapView)
     }
   }
 
-  /// Updates the given GMSCircle with the properties from a FGMPlatformCircle.
+  /// Updates the given GMSCircle with the properties from a PlatformCircle.
   ///
   /// Setting the circle to visible will set its map to the given mapView.
   static func update(
-    _ circle: GMSCircle, from platformCircle: FGMPlatformCircle, with mapView: GMSMapView
+    _ circle: GMSCircle, from platformCircle: PlatformCircle, with mapView: GMSMapView
   ) {
     circle.isTappable = platformCircle.consumeTapEvents
     circle.zIndex = Int32(platformCircle.zIndex)
@@ -64,14 +60,14 @@ class CirclesController: NSObject {
     super.init()
   }
 
-  func add(_ circles: [FGMPlatformCircle]) {
+  func add(_ circles: [PlatformCircle]) {
     guard let mapView = mapView else { return }
     for circle in circles {
       circleIdToController[circle.circleId] = CircleController(circle: circle, mapView: mapView)
     }
   }
 
-  func change(_ circles: [FGMPlatformCircle]) {
+  func change(_ circles: [PlatformCircle]) {
     for circle in circles {
       circleIdToController[circle.circleId]?.update(from: circle)
     }

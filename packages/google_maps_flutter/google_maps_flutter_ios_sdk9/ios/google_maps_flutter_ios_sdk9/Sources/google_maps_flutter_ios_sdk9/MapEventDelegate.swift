@@ -8,7 +8,7 @@
 
 /// Delegate for map event notifications.
 ///
-/// This is abstraction of the map event portions of FGMMapsCallbackApi, to
+/// This is abstraction of the map event portions of MapsCallbackApi, to
 /// avoid coupling all the individual controllers to the Pigeon implementation
 /// of event handling, and to allow for mocks/fakes in unit tests.
 protocol MapEventDelegate: AnyObject {
@@ -16,28 +16,28 @@ protocol MapEventDelegate: AnyObject {
   func didStartCameraMove()
 
   /// Called when the map camera moves.
-  func didMoveCamera(to cameraPosition: FGMPlatformCameraPosition)
+  func didMoveCamera(to cameraPosition: PlatformCameraPosition)
 
   /// Called when the map camera stops moving.
   func didIdleCamera()
 
   /// Called when the map, not a specifc map object, is tapped.
-  func didTap(at position: FGMPlatformLatLng)
+  func didTap(at position: PlatformLatLng)
 
   /// Called when the map, not a specifc map object, is long pressed.
-  func didLongPress(at position: FGMPlatformLatLng)
+  func didLongPress(at position: PlatformLatLng)
 
   /// Called when a marker is tapped.
   func didTapMarker(withIdentifier markerId: String)
 
   /// Called when a marker drag starts.
-  func didStartDragForMarker(withIdentifier markerId: String, at position: FGMPlatformLatLng)
+  func didStartDragForMarker(withIdentifier markerId: String, at position: PlatformLatLng)
 
   /// Called when a marker drag updates.
-  func didDragMarker(withIdentifier markerId: String, at position: FGMPlatformLatLng)
+  func didDragMarker(withIdentifier markerId: String, at position: PlatformLatLng)
 
   /// Called when a marker drag ends.
-  func didEndDragForMarker(withIdentifier markerId: String, at position: FGMPlatformLatLng)
+  func didEndDragForMarker(withIdentifier markerId: String, at position: PlatformLatLng)
 
   /// Called when a marker's info window is tapped.
   func didTapInfoWindowOfMarker(withIdentifier markerId: String)
@@ -46,7 +46,7 @@ protocol MapEventDelegate: AnyObject {
   func didTapCircle(withIdentifier circleId: String)
 
   /// Called when a marker cluster is tapped.
-  func didTapCluster(_ cluster: FGMPlatformCluster)
+  func didTapCluster(_ cluster: PlatformCluster)
 
   /// Called when a polygon is tapped.
   func didTapPolygon(withIdentifier polygonId: String)

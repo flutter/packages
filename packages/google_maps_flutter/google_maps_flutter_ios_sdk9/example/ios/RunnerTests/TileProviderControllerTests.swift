@@ -5,7 +5,6 @@
 import Flutter
 import GoogleMaps
 import Testing
-import google_maps_flutter_ios_sdk9_objc
 
 @testable import google_maps_flutter_ios_sdk9
 
@@ -28,9 +27,9 @@ class TestTileProvider: NSObject, TileProviderDelegate {
 
   func tile(
     withOverlayIdentifier tileOverlayId: String,
-    location: FGMPlatformPoint,
-    zoom: Int,
-    completion: @escaping (FGMPlatformTile?, FlutterError?) -> Void
+    location: PlatformPoint,
+    zoom: Int64,
+    completion: @escaping (Result<PlatformTile, PigeonError>) -> Void
   ) {
     #expect(Thread.isMainThread)
     onTileCalled()

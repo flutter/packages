@@ -5,16 +5,12 @@
 import GoogleMaps
 import GoogleMapsUtils
 
-#if canImport(google_maps_flutter_ios_sdk9_objc)
-  import google_maps_flutter_ios_sdk9_objc
-#endif
-
 /// Controller of a single Heatmap on the map.
 class HeatmapController: NSObject {
   let heatmapTileLayer: GMUHeatmapTileLayer
   private weak var mapView: GMSMapView?
 
-  init(heatmap: FGMPlatformHeatmap, tileLayer: GMUHeatmapTileLayer, mapView: GMSMapView) {
+  init(heatmap: PlatformHeatmap, tileLayer: GMUHeatmapTileLayer, mapView: GMSMapView) {
     self.heatmapTileLayer = tileLayer
     self.mapView = mapView
     super.init()
@@ -29,7 +25,7 @@ class HeatmapController: NSObject {
     heatmapTileLayer.clearTileCache()
   }
 
-  func update(from platformHeatmap: FGMPlatformHeatmap) {
+  func update(from platformHeatmap: PlatformHeatmap) {
     if let mapView = mapView {
       HeatmapController.update(heatmapTileLayer, from: platformHeatmap, mapView: mapView)
     }
@@ -40,7 +36,7 @@ class HeatmapController: NSObject {
   /// Setting the heatmap to visible will set its map to the given mapView.
   static func update(
     _ heatmapTileLayer: GMUHeatmapTileLayer,
-    from platformHeatmap: FGMPlatformHeatmap,
+    from platformHeatmap: PlatformHeatmap,
     mapView: GMSMapView
   ) {
     heatmapTileLayer.weightedData = platformHeatmap.data.map({ $0.toGMUWeightedLatLng() })
@@ -68,7 +64,7 @@ class HeatmapsController: NSObject {
     super.init()
   }
 
-  func add(_ heatmapsToAdd: [FGMPlatformHeatmap]) {
+  func add(_ heatmapsToAdd: [PlatformHeatmap]) {
     guard let mapView = mapView else { return }
     for heatmap in heatmapsToAdd {
       let heatmapTileLayer = GMUHeatmapTileLayer()
@@ -81,7 +77,7 @@ class HeatmapsController: NSObject {
     }
   }
 
-  func change(_ heatmapsToChange: [FGMPlatformHeatmap]) {
+  func change(_ heatmapsToChange: [PlatformHeatmap]) {
     for heatmap in heatmapsToChange {
       if let controller = heatmapIdToController[heatmap.heatmapId] {
         controller.update(from: heatmap)
@@ -103,17 +99,17 @@ class HeatmapsController: NSObject {
     return heatmapIdToController[identifier] != nil
   }
 
-  func heatmap(withIdentifier identifier: String) -> FGMPlatformHeatmap? {
+  func heatmap(withIdentifier identifier: String) -> PlatformHeatmap? {
     guard let controller = heatmapIdToController[identifier] else { return nil }
     let heatmap = controller.heatmapTileLayer
-    return FGMPlatformHeatmap.make(
-      withHeatmapId: identifier,
-      data: heatmap.weightedData.map { FGMPlatformWeightedLatLng.make(from: $0) },
-      gradient: FGMPlatformHeatmapGradient.make(from: heatmap.gradient),
+    return PlatformHeatmap(
+      heatmapId: identifier,
+      data: heatmap.weightedData.map { PlatformWeightedLatLng.make(from: $0) },
+      gradient: PlatformHeatmapGradient.make(from: heatmap.gradient),
       opacity: Double(heatmap.opacity),
-      radius: Int(heatmap.radius),
-      minimumZoomIntensity: Int(heatmap.minimumZoomIntensity),
-      maximumZoomIntensity: Int(heatmap.maximumZoomIntensity)
+      radius: Int64(heatmap.radius),
+      minimumZoomIntensity: Int64(heatmap.minimumZoomIntensity),
+      maximumZoomIntensity: Int64(heatmap.maximumZoomIntensity)
     )
   }
 }

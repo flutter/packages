@@ -7,14 +7,8 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    // This uses a different output name to avoid conflicts with the pigeon
-    // files in other packages, without having to use full relative paths
-    // in #includes (which would make source sharing harder to manage).
-    objcHeaderOut:
-        'ios/google_maps_flutter_ios_sdk9/Sources/google_maps_flutter_ios_sdk9_objc/include/google_maps_flutter_ios_sdk9_objc/google_maps_flutter_pigeon_messages.g.h',
-    objcSourceOut:
-        'ios/google_maps_flutter_ios_sdk9/Sources/google_maps_flutter_ios_sdk9_objc/google_maps_flutter_pigeon_messages.g.m',
-    objcOptions: ObjcOptions(prefix: 'FGM'),
+    swiftOut:
+        'ios/google_maps_flutter_ios_sdk9/Sources/google_maps_flutter_ios_sdk9/Messages.g.swift',
     copyrightHeader: 'pigeons/copyright.txt',
     // Use the base package name so that the generated code can be shared
     // across the implementation copies.
@@ -655,11 +649,11 @@ abstract class MapsApi {
   ///
   /// Only non-null configuration values will result in updates; options with
   /// null values will remain unchanged.
-  @ObjCSelector('updateWithMapConfiguration:')
+  @SwiftFunction('updateWithMapConfiguration(_:)')
   void updateMapConfiguration(PlatformMapConfiguration configuration);
 
   /// Updates the set of circles on the map.
-  @ObjCSelector('updateCirclesByAdding:changing:removing:')
+  @SwiftFunction('updateCircles(adding:changing:removing:)')
   void updateCircles(
     List<PlatformCircle> toAdd,
     List<PlatformCircle> toChange,
@@ -667,7 +661,7 @@ abstract class MapsApi {
   );
 
   /// Updates the set of heatmaps on the map.
-  @ObjCSelector('updateHeatmapsByAdding:changing:removing:')
+  @SwiftFunction('updateHeatmaps(adding:changing:removing:)')
   void updateHeatmaps(
     List<PlatformHeatmap> toAdd,
     List<PlatformHeatmap> toChange,
@@ -675,11 +669,11 @@ abstract class MapsApi {
   );
 
   /// Updates the set of custer managers for clusters on the map.
-  @ObjCSelector('updateClusterManagersByAdding:removing:')
+  @SwiftFunction('updateClusterManagers(adding:removing:)')
   void updateClusterManagers(List<PlatformClusterManager> toAdd, List<String> idsToRemove);
 
   /// Updates the set of markers on the map.
-  @ObjCSelector('updateMarkersByAdding:changing:removing:')
+  @SwiftFunction('updateMarkers(adding:changing:removing:)')
   void updateMarkers(
     List<PlatformMarker> toAdd,
     List<PlatformMarker> toChange,
@@ -687,7 +681,7 @@ abstract class MapsApi {
   );
 
   /// Updates the set of polygonss on the map.
-  @ObjCSelector('updatePolygonsByAdding:changing:removing:')
+  @SwiftFunction('updatePolygons(adding:changing:removing:)')
   void updatePolygons(
     List<PlatformPolygon> toAdd,
     List<PlatformPolygon> toChange,
@@ -695,7 +689,7 @@ abstract class MapsApi {
   );
 
   /// Updates the set of polylines on the map.
-  @ObjCSelector('updatePolylinesByAdding:changing:removing:')
+  @SwiftFunction('updatePolylines(adding:changing:removing:)')
   void updatePolylines(
     List<PlatformPolyline> toAdd,
     List<PlatformPolyline> toChange,
@@ -703,7 +697,7 @@ abstract class MapsApi {
   );
 
   /// Updates the set of tile overlays on the map.
-  @ObjCSelector('updateTileOverlaysByAdding:changing:removing:')
+  @SwiftFunction('updateTileOverlays(adding:changing:removing:)')
   void updateTileOverlays(
     List<PlatformTileOverlay> toAdd,
     List<PlatformTileOverlay> toChange,
@@ -711,7 +705,7 @@ abstract class MapsApi {
   );
 
   /// Updates the set of ground overlays on the map.
-  @ObjCSelector('updateGroundOverlaysByAdding:changing:removing:')
+  @SwiftFunction('updateGroundOverlays(adding:changing:removing:)')
   void updateGroundOverlays(
     List<PlatformGroundOverlay> toAdd,
     List<PlatformGroundOverlay> toChange,
@@ -719,42 +713,42 @@ abstract class MapsApi {
   );
 
   /// Gets the screen coordinate for the given map location.
-  @ObjCSelector('screenCoordinatesForLatLng:')
+  @SwiftFunction('screenCoordinates(for:)')
   PlatformPoint getScreenCoordinate(PlatformLatLng latLng);
 
   /// Gets the map location for the given screen coordinate.
-  @ObjCSelector('latLngForScreenCoordinate:')
+  @SwiftFunction('latLng(for:)')
   PlatformLatLng getLatLng(PlatformPoint screenCoordinate);
 
   /// Gets the map region currently displayed on the map.
-  @ObjCSelector('visibleMapRegion')
+  @SwiftFunction('visibleMapRegion()')
   PlatformLatLngBounds getVisibleRegion();
 
   /// Moves the camera according to [cameraUpdate] immediately, with no
   /// animation.
-  @ObjCSelector('moveCameraWithUpdate:')
+  @SwiftFunction('moveCamera(_:)')
   void moveCamera(PlatformCameraUpdate cameraUpdate);
 
   /// Moves the camera according to [cameraUpdate], animating the update using a
   /// duration in milliseconds if provided.
-  @ObjCSelector('animateCameraWithUpdate:duration:')
+  @SwiftFunction('animateCamera(_:duration:)')
   void animateCamera(PlatformCameraUpdate cameraUpdate, int? durationMilliseconds);
 
   /// Gets the current map zoom level.
-  @ObjCSelector('currentZoomLevel')
+  @SwiftFunction('zoomLevel()')
   double getZoomLevel();
 
   /// Show the info window for the marker with the given ID.
-  @ObjCSelector('showInfoWindowForMarkerWithIdentifier:')
+  @SwiftFunction('showInfoWindowForMarker(withIdentifier:)')
   void showInfoWindow(String markerId);
 
   /// Hide the info window for the marker with the given ID.
-  @ObjCSelector('hideInfoWindowForMarkerWithIdentifier:')
+  @SwiftFunction('hideInfoWindowForMarker(withIdentifier:)')
   void hideInfoWindow(String markerId);
 
   /// Returns true if the marker with the given ID is currently displaying its
   /// info window.
-  @ObjCSelector('isShowingInfoWindowForMarkerWithIdentifier:')
+  @SwiftFunction('isShowingInfoWindowForMarker(withIdentifier:)')
   bool isInfoWindowShown(String markerId);
 
   /// Sets the style to the given map style string, where an empty string
@@ -762,7 +756,7 @@ abstract class MapsApi {
   ///
   /// If there was an error setting the style, such as an invalid style string,
   /// returns the error message.
-  @ObjCSelector('setStyle:')
+  @SwiftFunction('setStyle(_:)')
   String? setStyle(String style);
 
   /// Returns the error string from the last attempt to set the map style, if
@@ -770,18 +764,18 @@ abstract class MapsApi {
   ///
   /// This allows checking asynchronously for initial style failures, as there
   /// is no way to return failures from map initialization.
-  @ObjCSelector('lastStyleError')
+  @SwiftFunction('lastStyleError()')
   String? getLastStyleError();
 
   /// Clears the cache of tiles previously requseted from the tile provider.
-  @ObjCSelector('clearTileCacheForOverlayWithIdentifier:')
+  @SwiftFunction('clearTileCacheForOverlay(withIdentifier:)')
   void clearTileCache(String tileOverlayId);
 
   /// Takes a snapshot of the map and returns its image data.
   Uint8List? takeSnapshot();
 
   /// Returns true if the map supports advanced markers.
-  @ObjCSelector('isAdvancedMarkersAvailable')
+  @SwiftFunction('isAdvancedMarkersAvailable()')
   bool isAdvancedMarkersAvailable();
 }
 
@@ -789,68 +783,68 @@ abstract class MapsApi {
 @FlutterApi()
 abstract class MapsCallbackApi {
   /// Called when the map camera starts moving.
-  @ObjCSelector('didStartCameraMoveWithCompletion')
+  @SwiftFunction('didStartCameraMove()')
   void onCameraMoveStarted();
 
   /// Called when the map camera moves.
-  @ObjCSelector('didMoveCameraToPosition:')
+  @SwiftFunction('didMoveCamera(to:)')
   void onCameraMove(PlatformCameraPosition cameraPosition);
 
   /// Called when the map camera stops moving.
-  @ObjCSelector('didIdleCameraWithCompletion')
+  @SwiftFunction('didIdleCamera()')
   void onCameraIdle();
 
   /// Called when the map, not a specifc map object, is tapped.
-  @ObjCSelector('didTapAtPosition:')
+  @SwiftFunction('didTap(at:)')
   void onTap(PlatformLatLng position);
 
   /// Called when the map, not a specifc map object, is long pressed.
-  @ObjCSelector('didLongPressAtPosition:')
+  @SwiftFunction('didLongPress(at:)')
   void onLongPress(PlatformLatLng position);
 
   /// Called when a marker is tapped.
-  @ObjCSelector('didTapMarkerWithIdentifier:')
+  @SwiftFunction('didTapMarker(withIdentifier:)')
   void onMarkerTap(String markerId);
 
   /// Called when a marker drag starts.
-  @ObjCSelector('didStartDragForMarkerWithIdentifier:atPosition:')
+  @SwiftFunction('didStartDragForMarker(withIdentifier:at:)')
   void onMarkerDragStart(String markerId, PlatformLatLng position);
 
   /// Called when a marker drag updates.
-  @ObjCSelector('didDragMarkerWithIdentifier:atPosition:')
+  @SwiftFunction('didDragMarker(withIdentifier:at:)')
   void onMarkerDrag(String markerId, PlatformLatLng position);
 
   /// Called when a marker drag ends.
-  @ObjCSelector('didEndDragForMarkerWithIdentifier:atPosition:')
+  @SwiftFunction('didEndDragForMarker(withIdentifier:at:)')
   void onMarkerDragEnd(String markerId, PlatformLatLng position);
 
   /// Called when a marker's info window is tapped.
-  @ObjCSelector('didTapInfoWindowOfMarkerWithIdentifier:')
+  @SwiftFunction('didTapInfoWindowOfMarker(withIdentifier:)')
   void onInfoWindowTap(String markerId);
 
   /// Called when a circle is tapped.
-  @ObjCSelector('didTapCircleWithIdentifier:')
+  @SwiftFunction('didTapCircle(withIdentifier:)')
   void onCircleTap(String circleId);
 
   /// Called when a marker cluster is tapped.
-  @ObjCSelector('didTapCluster:')
+  @SwiftFunction('didTapCluster(_:)')
   void onClusterTap(PlatformCluster cluster);
 
   /// Called when a polygon is tapped.
-  @ObjCSelector('didTapPolygonWithIdentifier:')
+  @SwiftFunction('didTapPolygon(withIdentifier:)')
   void onPolygonTap(String polygonId);
 
   /// Called when a polyline is tapped.
-  @ObjCSelector('didTapPolylineWithIdentifier:')
+  @SwiftFunction('didTapPolyline(withIdentifier:)')
   void onPolylineTap(String polylineId);
 
   /// Called when a ground overlay is tapped.
-  @ObjCSelector('didTapGroundOverlayWithIdentifier:')
+  @SwiftFunction('didTapGroundOverlay(withIdentifier:)')
   void onGroundOverlayTap(String groundOverlayId);
 
   /// Called to get data for a map tile.
   @async
-  @ObjCSelector('tileWithOverlayIdentifier:location:zoom:')
+  @SwiftFunction('tile(withOverlayIdentifier:location:zoom:)')
   PlatformTile getTileOverlayTile(String tileOverlayId, PlatformPoint location, int zoom);
 }
 
@@ -874,16 +868,16 @@ abstract class MapsInspectorApi {
   bool isCompassEnabled();
   bool isMyLocationButtonEnabled();
   bool isTrafficEnabled();
-  @ObjCSelector('tileOverlayWithIdentifier:')
+  @SwiftFunction('tileOverlay(withIdentifier:)')
   PlatformTileLayer? getTileOverlayInfo(String tileOverlayId);
-  @ObjCSelector('groundOverlayWithIdentifier:')
+  @SwiftFunction('groundOverlay(withIdentifier:)')
   PlatformGroundOverlay? getGroundOverlayInfo(String groundOverlayId);
-  @ObjCSelector('heatmapWithIdentifier:')
+  @SwiftFunction('heatmap(withIdentifier:)')
   PlatformHeatmap? getHeatmapInfo(String heatmapId);
-  @ObjCSelector('zoomRange')
+  @SwiftFunction('zoomRange()')
   PlatformZoomRange getZoomRange();
-  @ObjCSelector('clustersWithIdentifier:')
+  @SwiftFunction('clusters(withIdentifier:)')
   List<PlatformCluster> getClusters(String clusterManagerId);
-  @ObjCSelector('cameraPosition')
+  @SwiftFunction('cameraPosition()')
   PlatformCameraPosition getCameraPosition();
 }

@@ -4,10 +4,6 @@
 
 import GoogleMaps
 
-#if canImport(google_maps_flutter_ios_sdk9_objc)
-  import google_maps_flutter_ios_sdk9_objc
-#endif
-
 /// Defines polyline controllable by Flutter.
 class PolylineController: NSObject {
   let polyline: GMSPolyline
@@ -24,20 +20,22 @@ class PolylineController: NSObject {
     polyline.map = nil
   }
 
-  /// Updates the controller's polyline with the properties from a FGMPlatformPolyline.
+  /// Updates the controller's polyline with the properties from a PlatformPolyline.
   ///
   /// Setting the polyline to visible will set its map to the controller's mapView.
-  func update(from platformPolyline: FGMPlatformPolyline) {
+  func update(from platformPolyline: PlatformPolyline) {
     if let mapView = mapView {
       PolylineController.update(polyline, from: platformPolyline, with: mapView)
     }
   }
 
-  /// Updates the given GMSPolyline with the properties from a FGMPlatformPolyline.
+  /// Updates the given GMSPolyline with the properties from a PlatformPolyline.
   ///
   /// Setting the polyline to visible will set its map to the given mapView.
   static func update(
-    _ polyline: GMSPolyline, from platformPolyline: FGMPlatformPolyline, with mapView: GMSMapView
+    _ polyline: GMSPolyline,
+    from platformPolyline: PlatformPolyline,
+    with mapView: GMSMapView
   ) {
     polyline.isTappable = platformPolyline.consumesTapEvents
     polyline.zIndex = Int32(platformPolyline.zIndex)
@@ -70,7 +68,7 @@ class PolylinesController: NSObject {
     super.init()
   }
 
-  func add(_ polylines: [FGMPlatformPolyline]) {
+  func add(_ polylines: [PlatformPolyline]) {
     guard let mapView = mapView else { return }
     for polyline in polylines {
       let identifier = polyline.polylineId
@@ -82,7 +80,7 @@ class PolylinesController: NSObject {
     }
   }
 
-  func change(_ polylines: [FGMPlatformPolyline]) {
+  func change(_ polylines: [PlatformPolyline]) {
     for polyline in polylines {
       let identifier = polyline.polylineId
       polylineIdentifierToController[identifier]?.update(from: polyline)

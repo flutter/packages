@@ -24,7 +24,6 @@ let package = Package(
     .target(
       name: "google_maps_flutter_ios_sdk9",
       dependencies: [
-        "google_maps_flutter_ios_sdk9_objc",
         .product(
           name: "GoogleMapsUtils",
           package: "google-maps-ios-utils"
@@ -37,22 +36,6 @@ let package = Package(
       resources: [
         .process("Resources")
       ]
-    ),
-    .target(
-      name: "google_maps_flutter_ios_sdk9_objc",
-      dependencies: [
-        .product(
-          name: "GoogleMapsUtils",
-          package: "google-maps-ios-utils"
-        ),
-        .product(
-          name: "GoogleMaps",
-          package: "ios-maps-sdk"
-        ),
-      ],
-      cSettings: [
-        .headerSearchPath("include/google_maps_flutter_ios_sdk9_objc")
-      ]
-    ),
+    )
   ]
 )

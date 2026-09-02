@@ -4,10 +4,6 @@
 
 import GoogleMaps
 
-#if canImport(google_maps_flutter_ios_sdk9_objc)
-  import google_maps_flutter_ios_sdk9_objc
-#endif
-
 /// Defines polygon controllable by Flutter.
 class PolygonController: NSObject {
   let polygon: GMSPolygon
@@ -24,20 +20,22 @@ class PolygonController: NSObject {
     polygon.map = nil
   }
 
-  /// Updates the controller's polygon with the properties from a FGMPlatformPolygon.
+  /// Updates the controller's polygon with the properties from a PlatformPolygon.
   ///
   /// Setting the polygon to visible will set its map to the controller's mapView.
-  func update(from platformPolygon: FGMPlatformPolygon) {
+  func update(from platformPolygon: PlatformPolygon) {
     if let mapView = mapView {
       PolygonController.update(polygon, from: platformPolygon, with: mapView)
     }
   }
 
-  /// Updates the given GMSPolygon with the properties from a FGMPlatformPolygon.
+  /// Updates the given GMSPolygon with the properties from a PlatformPolygon.
   ///
   /// Setting the polygon to visible will set its map to the given mapView.
   static func update(
-    _ polygon: GMSPolygon, from platformPolygon: FGMPlatformPolygon, with mapView: GMSMapView
+    _ polygon: GMSPolygon,
+    from platformPolygon: PlatformPolygon,
+    with mapView: GMSMapView
   ) {
     polygon.isTappable = platformPolygon.consumesTapEvents
     polygon.zIndex = Int32(platformPolygon.zIndex)
@@ -65,7 +63,7 @@ class PolygonsController: NSObject {
     super.init()
   }
 
-  func add(_ polygons: [FGMPlatformPolygon]) {
+  func add(_ polygons: [PlatformPolygon]) {
     guard let mapView = mapView else { return }
     for polygon in polygons {
       let identifier = polygon.polygonId
@@ -77,7 +75,7 @@ class PolygonsController: NSObject {
     }
   }
 
-  func change(_ polygons: [FGMPlatformPolygon]) {
+  func change(_ polygons: [PlatformPolygon]) {
     for polygon in polygons {
       let identifier = polygon.polygonId
       polygonIdentifierToController[identifier]?.update(from: polygon)
