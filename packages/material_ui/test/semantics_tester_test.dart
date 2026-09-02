@@ -111,4 +111,16 @@ void main() {
     expect(semantics, includesNodeWith(hint: 'hint'));
     semantics.dispose();
   });
+
+  testWidgets('includesNodeWith accepts textDirection alone', (WidgetTester tester) async {
+    final semantics = SemanticsTester(tester);
+
+    await tester.pumpWidget(
+      Semantics(container: true, label: 'label', textDirection: TextDirection.ltr, child: Container()),
+    );
+
+    expect(semantics, includesNodeWith(textDirection: TextDirection.ltr));
+    expect(semantics, isNot(includesNodeWith(textDirection: TextDirection.rtl)));
+    semantics.dispose();
+  });
 }

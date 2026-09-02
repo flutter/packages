@@ -1179,6 +1179,7 @@ class _IncludesNodeWith extends Matcher {
              tags != null ||
              increasedValue != null ||
              decreasedValue != null ||
+             textDirection != null ||
              scrollPosition != null ||
              scrollExtentMax != null ||
              scrollExtentMin != null ||
@@ -1189,8 +1190,8 @@ class _IncludesNodeWith extends Matcher {
              maxValue != null,
          'At least one matcher field must be non-null so the matcher checks for at least one '
          'property of a semantics node. Pass any of `label`, `attributedLabel`, `value`, '
-         '`attributedValue`, `hint`, `attributedHint`, `actions`, `flags`, '
-         '`flagsCollection`, `tags`, `increasedValue`, `decreasedValue`, `scrollPosition`, '
+         '`attributedValue`, `hint`, `attributedHint`, `actions`, `flags`, `flagsCollection`, '
+         '`tags`, `increasedValue`, `decreasedValue`, `textDirection`, `scrollPosition`, '
          '`scrollExtentMax`, `scrollExtentMin`, `maxValueLength`, `currentValueLength`, '
          '`inputType`, `minValue`, or `maxValue`.',
        );
