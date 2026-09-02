@@ -1,0 +1,45 @@
+name: cross_file_example
+description: Demonstrates how to use cross files.
+publish_to: none
+
+environment:
+  sdk: ^3.10.0
+  flutter: ">=3.38.0"
+
+dependencies:
+  cross_file:
+    # When depending on this package from a real application you should use:
+    #   cross_file: ^x.y.z
+    # See https://dart.dev/tools/pub/dependencies#version-constraints
+    # The example app is bundled with the plugin so we use a path dependency on
+    # the parent directory to use the current plugin's version.
+    path: ../
+  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_android` is released.
+  cross_file_android:
+    path: ../../cross_file_android
+  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_darwin` is released.
+  cross_file_darwin:
+    path: ../../cross_file_darwin
+  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_io` is released.
+  cross_file_io:
+    path: ../../cross_file_io
+  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_web` is released.
+  cross_file_web:
+    path: ../../cross_file_web
+  flutter:
+    sdk: flutter
+  mime: ^2.0.0
+
+dev_dependencies:
+  espresso: ^0.4.0
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  path: ^1.9.1
+  path_provider: ^2.1.5
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/hello.txt

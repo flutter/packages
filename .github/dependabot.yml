@@ -29,6 +29,8 @@ updates:
       - /packages/camera/camera_android/example/android/app
       - /packages/camera/camera_android_camerax/example/android/app
       - /packages/camera/camera/example/android/app
+      - /packages/cross_file/cross_file/example/android/app
+      - /packages/cross_file/cross_file_android/example/android/app
       - /packages/espresso/example/android/app
       - /packages/extension_google_sign_in_as_googleapis_auth/example/android/app
       - /packages/file_selector/file_selector/example/android/app
@@ -84,6 +86,7 @@ updates:
     directories:
       - /packages/camera/camera_android/android
       - /packages/camera/camera_android_camerax/android
+      - /packages/cross_file/cross_file_android/android
       - /packages/espresso/android
       - /packages/file_selector/file_selector_android/android
       - /packages/flutter_plugin_android_lifecycle/android
