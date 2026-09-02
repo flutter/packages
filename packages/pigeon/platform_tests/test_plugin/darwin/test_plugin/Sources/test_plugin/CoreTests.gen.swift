@@ -4877,128 +4877,139 @@ class FlutterCallbackCoreApi: FlutterCallbackCoreApiProtocol {
 protocol FlutterIntegrationCoreApiProtocol {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
-  func noop() async throws
+  @MainActor func noop() async throws
   /// Responds with an error from an async function returning a value.
-  func throwError() async throws -> Any?
+  @MainActor func throwError() async throws -> Any?
   /// Responds with an error from an async void function.
-  func throwErrorFromVoid() async throws
+  @MainActor func throwErrorFromVoid() async throws
   /// Returns the passed object, to test serialization and deserialization.
-  func echo(_ everythingArg: AllTypes) async throws -> AllTypes
+  @MainActor func echo(_ everythingArg: AllTypes) async throws -> AllTypes
   /// Returns the passed object, to test serialization and deserialization.
-  func echoNullable(_ everythingArg: AllNullableTypes?) async throws -> AllNullableTypes?
+  @MainActor func echoNullable(_ everythingArg: AllNullableTypes?) async throws -> AllNullableTypes?
   /// Returns passed in arguments of multiple types.
   ///
   /// Tests multiple-arity FlutterApi handling.
-  func sendMultipleNullableTypes(
+  @MainActor func sendMultipleNullableTypes(
     aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?,
     aString aNullableStringArg: String?
   ) async throws -> AllNullableTypes
   /// Returns the passed object, to test serialization and deserialization.
-  func echoNullable(_ everythingArg: AllNullableTypesWithoutRecursion?) async throws
+  @MainActor func echoNullable(_ everythingArg: AllNullableTypesWithoutRecursion?) async throws
     -> AllNullableTypesWithoutRecursion?
   /// Returns passed in arguments of multiple types.
   ///
   /// Tests multiple-arity FlutterApi handling.
-  func sendMultipleNullableTypesWithoutRecursion(
+  @MainActor func sendMultipleNullableTypesWithoutRecursion(
     aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?,
     aString aNullableStringArg: String?
   ) async throws -> AllNullableTypesWithoutRecursion
   /// Returns the passed boolean, to test serialization and deserialization.
-  func echo(_ aBoolArg: Bool) async throws -> Bool
+  @MainActor func echo(_ aBoolArg: Bool) async throws -> Bool
   /// Returns the passed int, to test serialization and deserialization.
-  func echo(_ anIntArg: Int64) async throws -> Int64
+  @MainActor func echo(_ anIntArg: Int64) async throws -> Int64
   /// Returns the passed double, to test serialization and deserialization.
-  func echo(_ aDoubleArg: Double) async throws -> Double
+  @MainActor func echo(_ aDoubleArg: Double) async throws -> Double
   /// Returns the passed string, to test serialization and deserialization.
-  func echo(_ aStringArg: String) async throws -> String
+  @MainActor func echo(_ aStringArg: String) async throws -> String
   /// Returns the passed byte list, to test serialization and deserialization.
-  func echo(_ listArg: FlutterStandardTypedData) async throws -> FlutterStandardTypedData
+  @MainActor func echo(_ listArg: FlutterStandardTypedData) async throws -> FlutterStandardTypedData
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(_ listArg: [Any?]) async throws -> [Any?]
+  @MainActor func echo(_ listArg: [Any?]) async throws -> [Any?]
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(enumList enumListArg: [AnEnum?]) async throws -> [AnEnum?]
+  @MainActor func echo(enumList enumListArg: [AnEnum?]) async throws -> [AnEnum?]
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(classList classListArg: [AllNullableTypes?]) async throws -> [AllNullableTypes?]
+  @MainActor func echo(classList classListArg: [AllNullableTypes?]) async throws
+    -> [AllNullableTypes?]
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNonNull(enumList enumListArg: [AnEnum]) async throws -> [AnEnum]
+  @MainActor func echoNonNull(enumList enumListArg: [AnEnum]) async throws -> [AnEnum]
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNonNull(classList classListArg: [AllNullableTypes]) async throws -> [AllNullableTypes]
+  @MainActor func echoNonNull(classList classListArg: [AllNullableTypes]) async throws
+    -> [AllNullableTypes]
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(_ mapArg: [AnyHashable?: Any?]) async throws -> [AnyHashable?: Any?]
+  @MainActor func echo(_ mapArg: [AnyHashable?: Any?]) async throws -> [AnyHashable?: Any?]
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(stringMap stringMapArg: [String?: String?]) async throws -> [String?: String?]
+  @MainActor func echo(stringMap stringMapArg: [String?: String?]) async throws -> [String?:
+    String?]
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(intMap intMapArg: [Int64?: Int64?]) async throws -> [Int64?: Int64?]
+  @MainActor func echo(intMap intMapArg: [Int64?: Int64?]) async throws -> [Int64?: Int64?]
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(enumMap enumMapArg: [AnEnum?: AnEnum?]) async throws -> [AnEnum?: AnEnum?]
+  @MainActor func echo(enumMap enumMapArg: [AnEnum?: AnEnum?]) async throws -> [AnEnum?: AnEnum?]
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(classMap classMapArg: [Int64?: AllNullableTypes?]) async throws -> [Int64?:
+  @MainActor func echo(classMap classMapArg: [Int64?: AllNullableTypes?]) async throws -> [Int64?:
     AllNullableTypes?]
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(stringMap stringMapArg: [String: String]) async throws -> [String: String]
+  @MainActor func echoNonNull(stringMap stringMapArg: [String: String]) async throws -> [String:
+    String]
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(intMap intMapArg: [Int64: Int64]) async throws -> [Int64: Int64]
+  @MainActor func echoNonNull(intMap intMapArg: [Int64: Int64]) async throws -> [Int64: Int64]
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(enumMap enumMapArg: [AnEnum: AnEnum]) async throws -> [AnEnum: AnEnum]
+  @MainActor func echoNonNull(enumMap enumMapArg: [AnEnum: AnEnum]) async throws -> [AnEnum: AnEnum]
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(classMap classMapArg: [Int64: AllNullableTypes]) async throws -> [Int64:
-    AllNullableTypes]
+  @MainActor func echoNonNull(classMap classMapArg: [Int64: AllNullableTypes]) async throws
+    -> [Int64: AllNullableTypes]
   /// Returns the passed enum to test serialization and deserialization.
-  func echo(_ anEnumArg: AnEnum) async throws -> AnEnum
+  @MainActor func echo(_ anEnumArg: AnEnum) async throws -> AnEnum
   /// Returns the passed enum to test serialization and deserialization.
-  func echo(_ anotherEnumArg: AnotherEnum) async throws -> AnotherEnum
+  @MainActor func echo(_ anotherEnumArg: AnotherEnum) async throws -> AnotherEnum
   /// Returns the passed boolean, to test serialization and deserialization.
-  func echoNullable(_ aBoolArg: Bool?) async throws -> Bool?
+  @MainActor func echoNullable(_ aBoolArg: Bool?) async throws -> Bool?
   /// Returns the passed int, to test serialization and deserialization.
-  func echoNullable(_ anIntArg: Int64?) async throws -> Int64?
+  @MainActor func echoNullable(_ anIntArg: Int64?) async throws -> Int64?
   /// Returns the passed double, to test serialization and deserialization.
-  func echoNullable(_ aDoubleArg: Double?) async throws -> Double?
+  @MainActor func echoNullable(_ aDoubleArg: Double?) async throws -> Double?
   /// Returns the passed string, to test serialization and deserialization.
-  func echoNullable(_ aStringArg: String?) async throws -> String?
+  @MainActor func echoNullable(_ aStringArg: String?) async throws -> String?
   /// Returns the passed byte list, to test serialization and deserialization.
-  func echoNullable(_ listArg: FlutterStandardTypedData?) async throws -> FlutterStandardTypedData?
+  @MainActor func echoNullable(_ listArg: FlutterStandardTypedData?) async throws
+    -> FlutterStandardTypedData?
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullable(_ listArg: [Any?]?) async throws -> [Any?]?
+  @MainActor func echoNullable(_ listArg: [Any?]?) async throws -> [Any?]?
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullable(enumList enumListArg: [AnEnum?]?) async throws -> [AnEnum?]?
+  @MainActor func echoNullable(enumList enumListArg: [AnEnum?]?) async throws -> [AnEnum?]?
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullable(classList classListArg: [AllNullableTypes?]?) async throws
+  @MainActor func echoNullable(classList classListArg: [AllNullableTypes?]?) async throws
     -> [AllNullableTypes?]?
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullableNonNull(enumList enumListArg: [AnEnum]?) async throws -> [AnEnum]?
+  @MainActor func echoNullableNonNull(enumList enumListArg: [AnEnum]?) async throws -> [AnEnum]?
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullableNonNull(classList classListArg: [AllNullableTypes]?) async throws
+  @MainActor func echoNullableNonNull(classList classListArg: [AllNullableTypes]?) async throws
     -> [AllNullableTypes]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(_ mapArg: [AnyHashable?: Any?]?) async throws -> [AnyHashable?: Any?]?
+  @MainActor func echoNullable(_ mapArg: [AnyHashable?: Any?]?) async throws -> [AnyHashable?:
+    Any?]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(stringMap stringMapArg: [String?: String?]?) async throws -> [String?: String?]?
+  @MainActor func echoNullable(stringMap stringMapArg: [String?: String?]?) async throws
+    -> [String?: String?]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(intMap intMapArg: [Int64?: Int64?]?) async throws -> [Int64?: Int64?]?
+  @MainActor func echoNullable(intMap intMapArg: [Int64?: Int64?]?) async throws -> [Int64?:
+    Int64?]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(enumMap enumMapArg: [AnEnum?: AnEnum?]?) async throws -> [AnEnum?: AnEnum?]?
+  @MainActor func echoNullable(enumMap enumMapArg: [AnEnum?: AnEnum?]?) async throws -> [AnEnum?:
+    AnEnum?]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(classMap classMapArg: [Int64?: AllNullableTypes?]?) async throws -> [Int64?:
-    AllNullableTypes?]?
+  @MainActor func echoNullable(classMap classMapArg: [Int64?: AllNullableTypes?]?) async throws
+    -> [Int64?: AllNullableTypes?]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(stringMap stringMapArg: [String: String]?) async throws -> [String:
-    String]?
+  @MainActor func echoNullableNonNull(stringMap stringMapArg: [String: String]?) async throws
+    -> [String: String]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(intMap intMapArg: [Int64: Int64]?) async throws -> [Int64: Int64]?
+  @MainActor func echoNullableNonNull(intMap intMapArg: [Int64: Int64]?) async throws -> [Int64:
+    Int64]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(enumMap enumMapArg: [AnEnum: AnEnum]?) async throws -> [AnEnum: AnEnum]?
+  @MainActor func echoNullableNonNull(enumMap enumMapArg: [AnEnum: AnEnum]?) async throws
+    -> [AnEnum: AnEnum]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(classMap classMapArg: [Int64: AllNullableTypes]?) async throws -> [Int64:
-    AllNullableTypes]?
+  @MainActor func echoNullableNonNull(classMap classMapArg: [Int64: AllNullableTypes]?) async throws
+    -> [Int64: AllNullableTypes]?
   /// Returns the passed enum to test serialization and deserialization.
-  func echoNullable(_ anEnumArg: AnEnum?) async throws -> AnEnum?
+  @MainActor func echoNullable(_ anEnumArg: AnEnum?) async throws -> AnEnum?
   /// Returns the passed enum to test serialization and deserialization.
-  func echoNullable(_ anotherEnumArg: AnotherEnum?) async throws -> AnotherEnum?
+  @MainActor func echoNullable(_ anotherEnumArg: AnotherEnum?) async throws -> AnotherEnum?
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
-  func noopAsync() async throws
+  @MainActor func noopAsync() async throws
   /// Returns the passed in generic Object asynchronously.
-  func echoAsync(_ aStringArg: String) async throws -> String
+  @MainActor func echoAsync(_ aStringArg: String) async throws -> String
 }
 class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -5012,7 +5023,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
-  func noop() async throws {
+  @MainActor func noop() async throws {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop\(messageChannelSuffix)"
@@ -5035,7 +5046,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Responds with an error from an async function returning a value.
-  func throwError() async throws -> Any? {
+  @MainActor func throwError() async throws -> Any? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwError\(messageChannelSuffix)"
@@ -5059,7 +5070,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Responds with an error from an async void function.
-  func throwErrorFromVoid() async throws {
+  @MainActor func throwErrorFromVoid() async throws {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid\(messageChannelSuffix)"
@@ -5082,7 +5093,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed object, to test serialization and deserialization.
-  func echo(_ everythingArg: AllTypes) async throws -> AllTypes {
+  @MainActor func echo(_ everythingArg: AllTypes) async throws -> AllTypes {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes\(messageChannelSuffix)"
@@ -5111,7 +5122,8 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed object, to test serialization and deserialization.
-  func echoNullable(_ everythingArg: AllNullableTypes?) async throws -> AllNullableTypes? {
+  @MainActor func echoNullable(_ everythingArg: AllNullableTypes?) async throws -> AllNullableTypes?
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes\(messageChannelSuffix)"
@@ -5137,7 +5149,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   /// Returns passed in arguments of multiple types.
   ///
   /// Tests multiple-arity FlutterApi handling.
-  func sendMultipleNullableTypes(
+  @MainActor func sendMultipleNullableTypes(
     aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?,
     aString aNullableStringArg: String?
   ) async throws -> AllNullableTypes {
@@ -5170,7 +5182,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed object, to test serialization and deserialization.
-  func echoNullable(_ everythingArg: AllNullableTypesWithoutRecursion?) async throws
+  @MainActor func echoNullable(_ everythingArg: AllNullableTypesWithoutRecursion?) async throws
     -> AllNullableTypesWithoutRecursion?
   {
     return try await withCheckedThrowingContinuation { continuation in
@@ -5198,7 +5210,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   /// Returns passed in arguments of multiple types.
   ///
   /// Tests multiple-arity FlutterApi handling.
-  func sendMultipleNullableTypesWithoutRecursion(
+  @MainActor func sendMultipleNullableTypesWithoutRecursion(
     aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?,
     aString aNullableStringArg: String?
   ) async throws -> AllNullableTypesWithoutRecursion {
@@ -5231,7 +5243,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed boolean, to test serialization and deserialization.
-  func echo(_ aBoolArg: Bool) async throws -> Bool {
+  @MainActor func echo(_ aBoolArg: Bool) async throws -> Bool {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool\(messageChannelSuffix)"
@@ -5260,7 +5272,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed int, to test serialization and deserialization.
-  func echo(_ anIntArg: Int64) async throws -> Int64 {
+  @MainActor func echo(_ anIntArg: Int64) async throws -> Int64 {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt\(messageChannelSuffix)"
@@ -5289,7 +5301,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed double, to test serialization and deserialization.
-  func echo(_ aDoubleArg: Double) async throws -> Double {
+  @MainActor func echo(_ aDoubleArg: Double) async throws -> Double {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble\(messageChannelSuffix)"
@@ -5318,7 +5330,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed string, to test serialization and deserialization.
-  func echo(_ aStringArg: String) async throws -> String {
+  @MainActor func echo(_ aStringArg: String) async throws -> String {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString\(messageChannelSuffix)"
@@ -5347,7 +5359,8 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed byte list, to test serialization and deserialization.
-  func echo(_ listArg: FlutterStandardTypedData) async throws -> FlutterStandardTypedData {
+  @MainActor func echo(_ listArg: FlutterStandardTypedData) async throws -> FlutterStandardTypedData
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List\(messageChannelSuffix)"
@@ -5376,7 +5389,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(_ listArg: [Any?]) async throws -> [Any?] {
+  @MainActor func echo(_ listArg: [Any?]) async throws -> [Any?] {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList\(messageChannelSuffix)"
@@ -5405,7 +5418,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(enumList enumListArg: [AnEnum?]) async throws -> [AnEnum?] {
+  @MainActor func echo(enumList enumListArg: [AnEnum?]) async throws -> [AnEnum?] {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnumList\(messageChannelSuffix)"
@@ -5434,7 +5447,9 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(classList classListArg: [AllNullableTypes?]) async throws -> [AllNullableTypes?] {
+  @MainActor func echo(classList classListArg: [AllNullableTypes?]) async throws
+    -> [AllNullableTypes?]
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoClassList\(messageChannelSuffix)"
@@ -5463,7 +5478,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNonNull(enumList enumListArg: [AnEnum]) async throws -> [AnEnum] {
+  @MainActor func echoNonNull(enumList enumListArg: [AnEnum]) async throws -> [AnEnum] {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullEnumList\(messageChannelSuffix)"
@@ -5492,7 +5507,9 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNonNull(classList classListArg: [AllNullableTypes]) async throws -> [AllNullableTypes] {
+  @MainActor func echoNonNull(classList classListArg: [AllNullableTypes]) async throws
+    -> [AllNullableTypes]
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullClassList\(messageChannelSuffix)"
@@ -5521,7 +5538,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(_ mapArg: [AnyHashable?: Any?]) async throws -> [AnyHashable?: Any?] {
+  @MainActor func echo(_ mapArg: [AnyHashable?: Any?]) async throws -> [AnyHashable?: Any?] {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap\(messageChannelSuffix)"
@@ -5550,7 +5567,9 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(stringMap stringMapArg: [String?: String?]) async throws -> [String?: String?] {
+  @MainActor func echo(stringMap stringMapArg: [String?: String?]) async throws -> [String?:
+    String?]
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoStringMap\(messageChannelSuffix)"
@@ -5579,7 +5598,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(intMap intMapArg: [Int64?: Int64?]) async throws -> [Int64?: Int64?] {
+  @MainActor func echo(intMap intMapArg: [Int64?: Int64?]) async throws -> [Int64?: Int64?] {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoIntMap\(messageChannelSuffix)"
@@ -5608,7 +5627,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(enumMap enumMapArg: [AnEnum?: AnEnum?]) async throws -> [AnEnum?: AnEnum?] {
+  @MainActor func echo(enumMap enumMapArg: [AnEnum?: AnEnum?]) async throws -> [AnEnum?: AnEnum?] {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnumMap\(messageChannelSuffix)"
@@ -5637,7 +5656,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(classMap classMapArg: [Int64?: AllNullableTypes?]) async throws -> [Int64?:
+  @MainActor func echo(classMap classMapArg: [Int64?: AllNullableTypes?]) async throws -> [Int64?:
     AllNullableTypes?]
   {
     return try await withCheckedThrowingContinuation { continuation in
@@ -5668,7 +5687,9 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(stringMap stringMapArg: [String: String]) async throws -> [String: String] {
+  @MainActor func echoNonNull(stringMap stringMapArg: [String: String]) async throws -> [String:
+    String]
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullStringMap\(messageChannelSuffix)"
@@ -5697,7 +5718,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(intMap intMapArg: [Int64: Int64]) async throws -> [Int64: Int64] {
+  @MainActor func echoNonNull(intMap intMapArg: [Int64: Int64]) async throws -> [Int64: Int64] {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullIntMap\(messageChannelSuffix)"
@@ -5726,7 +5747,8 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(enumMap enumMapArg: [AnEnum: AnEnum]) async throws -> [AnEnum: AnEnum] {
+  @MainActor func echoNonNull(enumMap enumMapArg: [AnEnum: AnEnum]) async throws -> [AnEnum: AnEnum]
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullEnumMap\(messageChannelSuffix)"
@@ -5755,8 +5777,8 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(classMap classMapArg: [Int64: AllNullableTypes]) async throws -> [Int64:
-    AllNullableTypes]
+  @MainActor func echoNonNull(classMap classMapArg: [Int64: AllNullableTypes]) async throws
+    -> [Int64: AllNullableTypes]
   {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
@@ -5786,7 +5808,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed enum to test serialization and deserialization.
-  func echo(_ anEnumArg: AnEnum) async throws -> AnEnum {
+  @MainActor func echo(_ anEnumArg: AnEnum) async throws -> AnEnum {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum\(messageChannelSuffix)"
@@ -5815,7 +5837,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed enum to test serialization and deserialization.
-  func echo(_ anotherEnumArg: AnotherEnum) async throws -> AnotherEnum {
+  @MainActor func echo(_ anotherEnumArg: AnotherEnum) async throws -> AnotherEnum {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherEnum\(messageChannelSuffix)"
@@ -5844,7 +5866,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed boolean, to test serialization and deserialization.
-  func echoNullable(_ aBoolArg: Bool?) async throws -> Bool? {
+  @MainActor func echoNullable(_ aBoolArg: Bool?) async throws -> Bool? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool\(messageChannelSuffix)"
@@ -5868,7 +5890,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed int, to test serialization and deserialization.
-  func echoNullable(_ anIntArg: Int64?) async throws -> Int64? {
+  @MainActor func echoNullable(_ anIntArg: Int64?) async throws -> Int64? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt\(messageChannelSuffix)"
@@ -5892,7 +5914,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed double, to test serialization and deserialization.
-  func echoNullable(_ aDoubleArg: Double?) async throws -> Double? {
+  @MainActor func echoNullable(_ aDoubleArg: Double?) async throws -> Double? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble\(messageChannelSuffix)"
@@ -5916,7 +5938,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed string, to test serialization and deserialization.
-  func echoNullable(_ aStringArg: String?) async throws -> String? {
+  @MainActor func echoNullable(_ aStringArg: String?) async throws -> String? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString\(messageChannelSuffix)"
@@ -5940,7 +5962,8 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed byte list, to test serialization and deserialization.
-  func echoNullable(_ listArg: FlutterStandardTypedData?) async throws -> FlutterStandardTypedData?
+  @MainActor func echoNullable(_ listArg: FlutterStandardTypedData?) async throws
+    -> FlutterStandardTypedData?
   {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
@@ -5965,7 +5988,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullable(_ listArg: [Any?]?) async throws -> [Any?]? {
+  @MainActor func echoNullable(_ listArg: [Any?]?) async throws -> [Any?]? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList\(messageChannelSuffix)"
@@ -5989,7 +6012,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullable(enumList enumListArg: [AnEnum?]?) async throws -> [AnEnum?]? {
+  @MainActor func echoNullable(enumList enumListArg: [AnEnum?]?) async throws -> [AnEnum?]? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnumList\(messageChannelSuffix)"
@@ -6013,7 +6036,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullable(classList classListArg: [AllNullableTypes?]?) async throws
+  @MainActor func echoNullable(classList classListArg: [AllNullableTypes?]?) async throws
     -> [AllNullableTypes?]?
   {
     return try await withCheckedThrowingContinuation { continuation in
@@ -6039,7 +6062,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullableNonNull(enumList enumListArg: [AnEnum]?) async throws -> [AnEnum]? {
+  @MainActor func echoNullableNonNull(enumList enumListArg: [AnEnum]?) async throws -> [AnEnum]? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullEnumList\(messageChannelSuffix)"
@@ -6063,7 +6086,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullableNonNull(classList classListArg: [AllNullableTypes]?) async throws
+  @MainActor func echoNullableNonNull(classList classListArg: [AllNullableTypes]?) async throws
     -> [AllNullableTypes]?
   {
     return try await withCheckedThrowingContinuation { continuation in
@@ -6089,7 +6112,9 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(_ mapArg: [AnyHashable?: Any?]?) async throws -> [AnyHashable?: Any?]? {
+  @MainActor func echoNullable(_ mapArg: [AnyHashable?: Any?]?) async throws -> [AnyHashable?:
+    Any?]?
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap\(messageChannelSuffix)"
@@ -6113,7 +6138,8 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(stringMap stringMapArg: [String?: String?]?) async throws -> [String?: String?]?
+  @MainActor func echoNullable(stringMap stringMapArg: [String?: String?]?) async throws
+    -> [String?: String?]?
   {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
@@ -6138,7 +6164,9 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(intMap intMapArg: [Int64?: Int64?]?) async throws -> [Int64?: Int64?]? {
+  @MainActor func echoNullable(intMap intMapArg: [Int64?: Int64?]?) async throws -> [Int64?:
+    Int64?]?
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableIntMap\(messageChannelSuffix)"
@@ -6162,7 +6190,9 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(enumMap enumMapArg: [AnEnum?: AnEnum?]?) async throws -> [AnEnum?: AnEnum?]? {
+  @MainActor func echoNullable(enumMap enumMapArg: [AnEnum?: AnEnum?]?) async throws -> [AnEnum?:
+    AnEnum?]?
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnumMap\(messageChannelSuffix)"
@@ -6186,8 +6216,8 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(classMap classMapArg: [Int64?: AllNullableTypes?]?) async throws -> [Int64?:
-    AllNullableTypes?]?
+  @MainActor func echoNullable(classMap classMapArg: [Int64?: AllNullableTypes?]?) async throws
+    -> [Int64?: AllNullableTypes?]?
   {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
@@ -6212,8 +6242,8 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(stringMap stringMapArg: [String: String]?) async throws -> [String:
-    String]?
+  @MainActor func echoNullableNonNull(stringMap stringMapArg: [String: String]?) async throws
+    -> [String: String]?
   {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
@@ -6238,7 +6268,9 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(intMap intMapArg: [Int64: Int64]?) async throws -> [Int64: Int64]? {
+  @MainActor func echoNullableNonNull(intMap intMapArg: [Int64: Int64]?) async throws -> [Int64:
+    Int64]?
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullIntMap\(messageChannelSuffix)"
@@ -6262,7 +6294,8 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(enumMap enumMapArg: [AnEnum: AnEnum]?) async throws -> [AnEnum: AnEnum]?
+  @MainActor func echoNullableNonNull(enumMap enumMapArg: [AnEnum: AnEnum]?) async throws
+    -> [AnEnum: AnEnum]?
   {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
@@ -6287,8 +6320,8 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(classMap classMapArg: [Int64: AllNullableTypes]?) async throws -> [Int64:
-    AllNullableTypes]?
+  @MainActor func echoNullableNonNull(classMap classMapArg: [Int64: AllNullableTypes]?) async throws
+    -> [Int64: AllNullableTypes]?
   {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
@@ -6313,7 +6346,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed enum to test serialization and deserialization.
-  func echoNullable(_ anEnumArg: AnEnum?) async throws -> AnEnum? {
+  @MainActor func echoNullable(_ anEnumArg: AnEnum?) async throws -> AnEnum? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum\(messageChannelSuffix)"
@@ -6337,7 +6370,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed enum to test serialization and deserialization.
-  func echoNullable(_ anotherEnumArg: AnotherEnum?) async throws -> AnotherEnum? {
+  @MainActor func echoNullable(_ anotherEnumArg: AnotherEnum?) async throws -> AnotherEnum? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherNullableEnum\(messageChannelSuffix)"
@@ -6362,7 +6395,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
-  func noopAsync() async throws {
+  @MainActor func noopAsync() async throws {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync\(messageChannelSuffix)"
@@ -6385,7 +6418,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed in generic Object asynchronously.
-  func echoAsync(_ aStringArg: String) async throws -> String {
+  @MainActor func echoAsync(_ aStringArg: String) async throws -> String {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString\(messageChannelSuffix)"
@@ -6671,8 +6704,8 @@ class HostSmallApiSetup {
 ///
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol FlutterSmallApiProtocol {
-  func echo(_ msgArg: TestMessage) async throws -> TestMessage
-  func echo(string aStringArg: String) async throws -> String
+  @MainActor func echo(_ msgArg: TestMessage) async throws -> TestMessage
+  @MainActor func echo(string aStringArg: String) async throws -> String
 }
 class FlutterSmallApi: FlutterSmallApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -6684,7 +6717,7 @@ class FlutterSmallApi: FlutterSmallApiProtocol {
   var codec: CoreTestsPigeonCodec {
     return CoreTestsPigeonCodec.shared
   }
-  func echo(_ msgArg: TestMessage) async throws -> TestMessage {
+  @MainActor func echo(_ msgArg: TestMessage) async throws -> TestMessage {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList\(messageChannelSuffix)"
@@ -6712,7 +6745,7 @@ class FlutterSmallApi: FlutterSmallApiProtocol {
       }
     }
   }
-  func echo(string aStringArg: String) async throws -> String {
+  @MainActor func echo(string aStringArg: String) async throws -> String {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString\(messageChannelSuffix)"

@@ -803,6 +803,7 @@ if (wrapped == nil) {
             errorTypeName: _getErrorClassName(generatorOptions),
             isAsynchronous: true,
             isAsynchronousCallback: func.isAsynchronousCallback,
+            isMainActor: !func.isAsynchronousCallback,
             swiftFunction: func.swiftFunction,
             getParameterName: _getSafeArgumentName,
           ),
@@ -1685,6 +1686,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
       errorTypeName: _getErrorClassName(generatorOptions),
       isAsynchronous: isAsynchronous,
       isAsynchronousCallback: isAsynchronousCallback,
+      isMainActor: isAsynchronous && !isAsynchronousCallback,
       swiftFunction: swiftFunction,
       getParameterName: _getSafeArgumentName,
     );
@@ -2910,6 +2912,7 @@ String _getMethodSignature({
   required String errorTypeName,
   bool isAsynchronous = false,
   bool isAsynchronousCallback = false,
+  bool isMainActor = false,
   String? swiftFunction,
   String Function(int index, NamedType argument) getParameterName = _getArgumentName,
 }) {
@@ -2942,8 +2945,9 @@ String _getMethodSignature({
   }).join(', ');
 
   if (isAsynchronous && !isAsynchronousCallback) {
+    final mainActorPrefix = isMainActor ? '@MainActor ' : '';
     final returnTypeSuffix = returnType.isVoid ? '' : ' -> $returnTypeString';
-    return 'func ${components.name}($parameterSignature) async throws$returnTypeSuffix';
+    return '${mainActorPrefix}func ${components.name}($parameterSignature) async throws$returnTypeSuffix';
   }
 
   if (isAsynchronous) {

@@ -1,3 +1,7 @@
+## 28.0.1
+
+* [swift] Annotates async `FlutterApi` methods with `@MainActor`.
+
 ## 28.0.0
 
 * **Breaking Change** Updates Kotlin and Swift generators to generate `suspend` functions and `async throws` signatures for `@FlutterApi` methods by default, and for `@HostApi` methods annotated with `@async`.
