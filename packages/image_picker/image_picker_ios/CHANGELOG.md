@@ -1,6 +1,10 @@
-## 0.8.13+7
+## 0.8.13+8
 
 * Fixes scaling 10-bit images on iOS.
+
+## 0.8.13+7
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
 
 ## 0.8.13+6
 
