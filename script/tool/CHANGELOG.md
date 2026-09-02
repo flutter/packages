@@ -2,6 +2,7 @@
 
 * Adds the Dart SDK version that shipped with Flutter 3.47.0.
 * Adds support for batch release of pre-1.0 packages.
+* Exempts `AGENTS.md` from requiring version and changelog changes.
 
 ## 0.14.4
 

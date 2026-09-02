@@ -6,6 +6,10 @@
   https://github.com/flutter/flutter/issues/175099.
 * Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
 
+## 3.26.1
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
 ## 3.26.0
 
 * Adds new method for accessing a native `WKWebView` from a `FlutterPluginRegistrar`.
