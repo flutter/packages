@@ -2113,7 +2113,7 @@ void main() {
   }
 
   // Regression test for https://github.com/flutter/flutter/issues/189298
-  testWidgets('Non-null todayBorder color should be respected over todayBackgroundColor', (
+  testWidgets('Non-null todayBorder color should be respected over todayForegroundColor', (
     WidgetTester tester,
   ) async {
     const Color customBorderColor = Colors.red;
