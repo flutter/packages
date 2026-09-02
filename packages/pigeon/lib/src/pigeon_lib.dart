@@ -294,8 +294,26 @@ class PigeonOptions {
   /// Options that control how Java will be generated.
   final JavaOptions? javaOptions;
 
-  /// Path to the swift file that will be generated.
-  final String? swiftOut;
+  /// Path to the swift file(s) that will be generated.
+  ///
+  /// Can be either a [String] for a single file, or an [Iterable<String>] for
+  /// multiple files.
+  final Object? swiftOut;
+
+  /// Returns all output paths for Swift from [swiftOut].
+  Iterable<String>? get swiftOutPaths {
+    final Object? out = swiftOut;
+    if (out == null) {
+      return null;
+    }
+    if (out is String) {
+      return <String>[out];
+    }
+    if (out is Iterable) {
+      return out.whereType<String>();
+    }
+    return null;
+  }
 
   /// Options that control how Swift will be generated.
   final SwiftOptions? swiftOptions;
@@ -361,7 +379,9 @@ class PigeonOptions {
       javaOptions: map.containsKey('javaOptions')
           ? JavaOptions.fromMap(map['javaOptions']! as Map<String, Object>)
           : null,
-      swiftOut: map['swiftOut'] as String?,
+      swiftOut: map['swiftOut'] is Iterable
+          ? (map['swiftOut']! as Iterable<dynamic>).cast<String>().toList()
+          : map['swiftOut'] as String?,
       swiftOptions: map.containsKey('swiftOptions')
           ? SwiftOptions.fromList(map['swiftOptions']! as Map<String, Object>)
           : null,
@@ -520,9 +540,9 @@ ${_argParser.usage}''';
       'java_use_generated_annotation',
       help: 'Adds the java.annotation.Generated annotation to the output.',
     )
-    ..addOption(
+    ..addMultiOption(
       'swift_out',
-      help: 'Path to generated Swift file (.swift).',
+      help: 'Path to generated Swift file(s) (.swift).',
       aliases: const <String>['experimental_swift_out'],
     )
     ..addOption(
@@ -596,6 +616,7 @@ ${_argParser.usage}''';
     // get set in the `run` function to accommodate users that are using the
     // `configurePigeon` function.
     final ArgResults results = _argParser.parse(args);
+    final swiftOuts = results['swift_out'] as List<String>;
 
     final opts = PigeonOptions(
       input: results['input'] as String?,
@@ -609,7 +630,9 @@ ${_argParser.usage}''';
         package: results['java_package'] as String?,
         useGeneratedAnnotation: results['java_use_generated_annotation'] as bool?,
       ),
-      swiftOut: results['swift_out'] as String?,
+      swiftOut: results.wasParsed('swift_out')
+          ? (swiftOuts.length == 1 ? swiftOuts.first : swiftOuts)
+          : null,
       kotlinOut: results['kotlin_out'] as String?,
       kotlinOptions: KotlinOptions(
         package: results['kotlin_package'] as String?,

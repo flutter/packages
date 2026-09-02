@@ -84,6 +84,7 @@ class InternalSwiftOptions extends InternalOptions {
   const InternalSwiftOptions({
     this.copyrightHeader,
     required this.swiftOut,
+    this.swiftOuts,
     this.fileSpecificClassNameComponent,
     this.errorClassName,
     this.includeErrorClass = true,
@@ -92,21 +93,37 @@ class InternalSwiftOptions extends InternalOptions {
   /// Creates InternalSwiftOptions from SwiftOptions.
   InternalSwiftOptions.fromSwiftOptions(
     SwiftOptions options, {
-    required this.swiftOut,
+    Iterable<String>? swiftOuts,
+    String? swiftOut,
     Iterable<String>? copyrightHeader,
   }) : copyrightHeader = options.copyrightHeader ?? copyrightHeader,
        fileSpecificClassNameComponent =
            options.fileSpecificClassNameComponent ??
-           swiftOut.split('/').lastOrNull?.split('.').firstOrNull ??
+           (swiftOuts?.firstOrNull ?? swiftOut ?? '')
+               .split('/')
+               .lastOrNull
+               ?.split('.')
+               .firstOrNull ??
            '',
        errorClassName = options.errorClassName,
-       includeErrorClass = options.includeErrorClass;
+       includeErrorClass = options.includeErrorClass,
+       swiftOut = swiftOut ?? swiftOuts?.firstOrNull ?? '',
+       swiftOuts = swiftOuts ?? (swiftOut != null ? <String>[swiftOut] : const <String>[]);
 
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
 
   /// Path to the swift file that will be generated.
+  ///
+  /// If multiple output paths were specified, this contains the first path.
   final String swiftOut;
+
+  /// Paths to all swift files that will be generated.
+  final Iterable<String>? swiftOuts;
+
+  /// Returns all output paths for Swift.
+  Iterable<String> get allSwiftOuts =>
+      swiftOuts ?? (swiftOut.isNotEmpty ? <String>[swiftOut] : const <String>[]);
 
   /// A String to augment class names to avoid cross file collisions.
   final String? fileSpecificClassNameComponent;

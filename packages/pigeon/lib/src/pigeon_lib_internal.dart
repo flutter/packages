@@ -67,11 +67,11 @@ class InternalPigeonOptions {
               javaOut: options.javaOut!,
               copyrightHeader: copyrightHeader,
             ),
-      swiftOptions = options.swiftOut == null
+      swiftOptions = (options.swiftOutPaths == null || options.swiftOutPaths!.isEmpty)
           ? null
           : InternalSwiftOptions.fromSwiftOptions(
               options.swiftOptions ?? const SwiftOptions(),
-              swiftOut: options.swiftOut!,
+              swiftOuts: options.swiftOutPaths,
               copyrightHeader: copyrightHeader,
             ),
       kotlinOptions = options.kotlinOut == null
@@ -405,12 +405,39 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
       return;
     }
     const generator = SwiftGenerator();
-    generator.generate(options.swiftOptions!, root, sink, dartPackageName: options.dartPackageName);
+    final List<String> outputs = options.swiftOptions!.allSwiftOuts.toList();
+    if (outputs.isEmpty) {
+      generator.generate(
+        options.swiftOptions!,
+        root,
+        sink,
+        dartPackageName: options.dartPackageName,
+      );
+      return;
+    }
+    final buffer = StringBuffer();
+    generator.generate(
+      options.swiftOptions!,
+      root,
+      buffer,
+      dartPackageName: options.dartPackageName,
+    );
+    final content = buffer.toString();
+    sink.write(content);
+    for (final String outputPath in outputs.skip(1)) {
+      if (outputPath == 'stdout') {
+        stdout.write(content);
+      } else {
+        final file = File(path.posix.join(options.basePath ?? '', outputPath));
+        file.createSync(recursive: true);
+        file.writeAsStringSync(content);
+      }
+    }
   }
 
   @override
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
-      _openSink(options.swiftOptions?.swiftOut, basePath: options.basePath ?? '');
+      _openSink(options.swiftOptions?.allSwiftOuts.firstOrNull, basePath: options.basePath ?? '');
 
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) {
