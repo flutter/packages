@@ -268,6 +268,8 @@ class RepositoryPackage {
       }
       String? dirPattern;
       if (pattern.endsWith('/')) {
+        // Appending '**' to 'dir/' only matches paths inside the directory (e.g. 'dir/file').
+        // Cache the dirPattern 'dir' to match the directory itself.
         dirPattern = pattern.substring(0, pattern.length - 1);
         pattern = '$pattern**';
       }

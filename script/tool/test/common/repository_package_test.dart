@@ -277,6 +277,15 @@ void main() {
       expect(subPackage.isPubIgnored, true);
     });
 
+    test('returns true if the package itself matches a trailing slash pattern', () async {
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+      package.directory.childFile('.pubignore').writeAsStringSync('sub_package/\n');
+
+      final RepositoryPackage subPackage = createFakePackage('sub_package', package.directory);
+
+      expect(subPackage.isPubIgnored, true);
+    });
+
     test('gracefully ignores malformed glob patterns', () async {
       final RepositoryPackage package = createFakePackage('a_package', packagesDir);
       package.directory.childFile('.pubignore').writeAsStringSync('[unclosed bracket\n.agents/');
