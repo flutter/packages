@@ -70,6 +70,8 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 /// Manages a "search view" route that allows the user to select one of the
 /// suggested completions for a search query.
 ///
+/// Learn more about [SearchAnchor] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=vM2dC8OCZoY).
+///
 /// The search view's route can either be shown by creating a [SearchController]
 /// and then calling [SearchController.openView] or by tapping on an anchor.
 /// When the anchor is tapped or [SearchController.openView] is called, the search view either
@@ -972,6 +974,8 @@ class _ViewContentState extends State<_ViewContent> {
   Iterable<Widget> result = <Widget>[];
   String? searchValue;
   Timer? _timer;
+  // Identifies the latest call so that older async results cannot replace newer ones.
+  int _suggestionsCallId = 0;
 
   @override
   void initState() {
@@ -1008,14 +1012,9 @@ class _ViewContentState extends State<_ViewContent> {
       _timer?.cancel();
       _timer = Timer(Duration.zero, () async {
         searchValue = _controller.text;
-        final Iterable<Widget> suggestions = await widget.suggestionsBuilder(context, _controller);
+        await _buildSuggestions();
         _timer?.cancel();
         _timer = null;
-        if (mounted) {
-          setState(() {
-            result = suggestions;
-          });
-        }
       });
     }
   }
@@ -1056,13 +1055,19 @@ class _ViewContentState extends State<_ViewContent> {
   Future<void> updateSuggestions() async {
     if (searchValue != _controller.text) {
       searchValue = _controller.text;
-      final Iterable<Widget> suggestions = await widget.suggestionsBuilder(context, _controller);
-      if (mounted) {
-        setState(() {
-          result = suggestions;
-        });
-      }
+      await _buildSuggestions();
     }
+  }
+
+  Future<void> _buildSuggestions() async {
+    final int callId = ++_suggestionsCallId;
+    final Iterable<Widget> suggestions = await widget.suggestionsBuilder(context, _controller);
+    if (!mounted || callId != _suggestionsCallId) {
+      return;
+    }
+    setState(() {
+      result = suggestions;
+    });
   }
 
   @override
@@ -1411,6 +1416,8 @@ class SearchController extends TextEditingController {
 }
 
 /// A Material Design search bar.
+///
+/// Learn more about [SearchBar] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=vM2dC8OCZoY).
 ///
 /// A [SearchBar] looks like a [TextField]. Tapping a SearchBar typically shows a
 /// "search view" route: a route with the search bar at the top and a list of

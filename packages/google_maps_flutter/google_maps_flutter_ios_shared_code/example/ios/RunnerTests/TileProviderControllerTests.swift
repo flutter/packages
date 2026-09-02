@@ -17,7 +17,7 @@ class StubTileReceiver: NSObject, GMSTileReceiver {
 // A tile provider that expects a single call to
 // tileWithOverlayIdentifier:location:zoom:completion: on the main thread,
 // and then confirms it.
-class TestTileProvider: NSObject, FGMTileProviderDelegate {
+class TestTileProvider: NSObject, TileProviderDelegate {
   var onTileCalled: () -> Void
 
   init(onTileCalled: @escaping () -> Void) {
@@ -44,7 +44,7 @@ class TestTileProvider: NSObject, FGMTileProviderDelegate {
     let tileProvider = TestTileProvider {
       continuationToResume?.resume()
     }
-    let controller = FGMTileProviderController(
+    let controller = TileProviderController(
       tileOverlayIdentifier: "foo",
       tileProvider: tileProvider
     )

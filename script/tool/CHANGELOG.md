@@ -1,6 +1,7 @@
-## NEXT
+## 0.14.5
 
 * Adds support for batch release of pre-1.0 packages.
+* Exempts `AGENTS.md` from requiring version and changelog changes.
 * Runs `cognitive_complexity` on Dart files in `evals/test_data` directories as well as `lib/`.
 
 ## 0.14.4

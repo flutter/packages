@@ -57,7 +57,7 @@ A typical app can use the following localization delegate from `material_ui` to
 cover all of the localization strings in Flutter, Material, and Cupertino:
 
 ```dart
-  localizationDelegates: GlobalMaterialLocalizations.delegates,
+  localizationsDelegates: GlobalMaterialLocalizations.delegates,
 ```
 
 ### Step 3: Bridge legacy dependencies (if needed)
