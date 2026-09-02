@@ -1,3 +1,8 @@
+## 0.8.13+22
+
+* Fixes a crash when the content provider returns no stream for a picked
+  image; the pick now fails with `missing_valid_image_uri` instead.
+
 ## 0.8.13+21
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
