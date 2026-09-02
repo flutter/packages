@@ -1,2 +1,0 @@
-changelog: Clarifies `onEnter` documentation regarding evaluation order relative to `redirect:` chains.
-version: patch
