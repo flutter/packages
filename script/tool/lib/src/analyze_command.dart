@@ -372,14 +372,35 @@ class AnalyzeCommand extends PackageLoopingCommand {
   ///
   /// Assumes `cognitive_complexity` is present in `dev_dependencies`.
   Future<List<String>> _runCognitiveComplexityForPackage(RepositoryPackage package) async {
-    if (!package.libDirectory.existsSync()) {
-      return <String>[];
+    final Directory rootEvalTestDataDir = package.directory
+        .childDirectory('evals')
+        .childDirectory('test_data');
+    final Directory skillsDir = package.directory
+        .childDirectory('.agents')
+        .childDirectory('skills');
+
+    final directoriesToSearch = <Directory>[
+      if (package.libDirectory.existsSync()) package.libDirectory,
+      if (rootEvalTestDataDir.existsSync()) rootEvalTestDataDir,
+    ];
+
+    if (skillsDir.existsSync()) {
+      for (final FileSystemEntity entity in skillsDir.listSync(recursive: true)) {
+        if (entity is Directory &&
+            path.basename(entity.path) == 'test_data' &&
+            path.basename(path.dirname(entity.path)) == 'evals') {
+          directoriesToSearch.add(entity);
+        }
+      }
     }
+
     final filesToAnalyze = <String>[];
-    for (final FileSystemEntity entity in package.libDirectory.listSync(recursive: true)) {
-      if (entity is File && entity.path.endsWith('.dart') && !_isGeneratedDartFile(entity.path)) {
-        final String relativePath = path.relative(entity.path, from: package.directory.path);
-        filesToAnalyze.add(relativePath.replaceAll(r'\', '/'));
+    for (final dir in directoriesToSearch) {
+      for (final FileSystemEntity entity in dir.listSync(recursive: true)) {
+        if (entity is File && entity.path.endsWith('.dart') && !_isGeneratedDartFile(entity.path)) {
+          final String relativePath = path.relative(entity.path, from: package.directory.path);
+          filesToAnalyze.add(relativePath.replaceAll(r'\', '/'));
+        }
       }
     }
     if (filesToAnalyze.isEmpty) {
