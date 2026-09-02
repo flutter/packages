@@ -1,3 +1,7 @@
+## NEXT
+
+- Fixes self-comparison and assert bugs in the `semantics_tester` test helper.
+
 ## 1.1.0
 
 - Add missing Widget of the Week videos to widget API docs.
