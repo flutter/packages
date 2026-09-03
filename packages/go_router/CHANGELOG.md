@@ -1,7 +1,3 @@
-## 18.1.0
-
-- Adds `clipBehavior` to `ShellRoute` and `StatefulShellBranch`, forwarded to the nested `Navigator`. Set it to `Clip.none` to let sub-routes paint outside the bounds of the shell, for example to render a box shadow.
-
 ## 18.0.0
 
 - Migrates to material_ui and cupertino_ui.

@@ -1,0 +1,4 @@
+changelog: |
+  - Adds `clipBehavior` to `ShellRoute` and `StatefulShellBranch`, forwarded to the nested `Navigator`. Set it to `Clip.none` to let sub-routes paint outside the bounds of the shell, for example to render a box shadow.
+  - **BREAKING CHANGE**: `NavigatorBuilder` takes a new optional named `clipBehavior` parameter. Functions passed as `ShellRouteContext.navigatorBuilder` must accept it.
+version: major
