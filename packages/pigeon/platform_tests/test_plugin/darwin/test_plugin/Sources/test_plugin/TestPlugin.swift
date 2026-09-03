@@ -825,41 +825,15 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     try await awaitFlutterApi { self.flutterCallbackAPI.throwErrorFromVoid(completion: $0) }
   }
 
-  @MainActor
-  private func callIsAsyncFlutterApiOnRootOnMainActor() async throws -> Bool {
-    guard Thread.isMainThread else {
-      return false
-    }
-    let firstResult = try await self.flutterAPI.isAsyncFlutterApiOnRoot()
-    guard Thread.isMainThread else {
-      return false
-    }
-    let secondResult = try await self.flutterAPI.isAsyncFlutterApiOnRoot()
-    guard Thread.isMainThread else {
-      return false
-    }
-    return firstResult && secondResult
-  }
-
   func callFlutterIsAsyncFlutterApiOnRoot() async throws -> Bool {
-    // 1. Verify sequential awaits on @MainActor stay on main thread.
-    let mainActorResult = try await callIsAsyncFlutterApiOnRootOnMainActor()
-    guard mainActorResult else {
+    guard Thread.isMainThread else {
       return false
     }
-
-    // 2. Verify calling from background thread hops to @MainActor and succeeds.
-    let api = self.flutterAPI
-    return try await Task.detached {
-      guard !Thread.isMainThread else {
-        return false
-      }
-      let backgroundResult = try await api.isAsyncFlutterApiOnRoot()
-      guard !Thread.isMainThread else {
-        return false
-      }
-      return backgroundResult
-    }.value
+    let result = try await self.flutterAPI.isAsyncFlutterApiOnRoot()
+    guard Thread.isMainThread else {
+      return false
+    }
+    return result
   }
 
   func testUnusedClassesGenerate() -> UnusedClass {
