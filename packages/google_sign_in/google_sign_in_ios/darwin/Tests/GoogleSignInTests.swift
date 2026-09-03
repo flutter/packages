@@ -7,6 +7,10 @@ import Testing
 
 @testable import google_sign_in_ios
 
+#if canImport(google_sign_in_ios_objc)
+  @testable import google_sign_in_ios_objc
+#endif
+
 #if os(OSX)
   import FlutterMacOS
 #else
