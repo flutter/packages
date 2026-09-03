@@ -230,18 +230,8 @@ class MethodChannelCamera extends CameraPlatform {
       _channel.invokeMethod<void>('prepareForVideoRecording');
 
   @override
-  Future<void> startVideoRecording(
-    int cameraId, {
-    Duration? maxVideoDuration,
-    String? videoOutputPath,
-  }) async {
-    return startVideoCapturing(
-      VideoCaptureOptions(
-        cameraId,
-        maxDuration: maxVideoDuration,
-        videoOutputPath: videoOutputPath,
-      ),
-    );
+  Future<void> startVideoRecording(int cameraId, {Duration? maxVideoDuration}) async {
+    return startVideoCapturing(VideoCaptureOptions(cameraId, maxDuration: maxVideoDuration));
   }
 
   @override
