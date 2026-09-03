@@ -377,6 +377,32 @@ void main() {
       expect(icon.style.height, '30px');
     });
 
+    testWidgets('markers with anchor work', (WidgetTester tester) async {
+      const markerId = MarkerId('1');
+      const anchorOffset = Offset(0.14, 0.75);
+      const updatedAnchorOffset = Offset(-0.6, 1.6);
+
+      final markers = <AdvancedMarker>{AdvancedMarker(markerId: markerId, anchor: anchorOffset)};
+
+      await controller.addMarkers(markers);
+
+      gmaps.AdvancedMarkerElement? marker = controller.markers[markerId]?.marker;
+      expect(marker, isNotNull);
+      expect(marker!.anchorLeft, '-14%');
+      expect(marker.anchorTop, '-75%');
+
+      final updatedMarkers = <AdvancedMarker>{
+        AdvancedMarker(markerId: markerId, anchor: updatedAnchorOffset),
+      };
+
+      await controller.changeMarkers(updatedMarkers);
+
+      marker = controller.markers[markerId]?.marker;
+      expect(marker, isNotNull);
+      expect(marker!.anchorLeft, '60%');
+      expect(marker.anchorTop, '-160%');
+    });
+
     testWidgets('markers created with text glyph work', (WidgetTester widgetTester) async {
       final markers = <AdvancedMarker>{
         AdvancedMarker(

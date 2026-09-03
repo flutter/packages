@@ -1,3 +1,7 @@
+## 0.6.3+1
+
+* Fixes AdvancedMarker anchor handling.
+
 ## 0.6.3
 
 * Adds support for mapTypeControlEnabled, fullscreenControlEnabled, and streetViewControlEnabled.
