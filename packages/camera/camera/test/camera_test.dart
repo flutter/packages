@@ -743,9 +743,7 @@ void main() {
       ).thenAnswer((_) async => true);
 
       expect(await cameraController.isZeroShutterLagSupported(), isTrue);
-      verify(
-        CameraPlatform.instance.isZeroShutterLagSupported(mockInitializeCamera),
-      ).called(1);
+      verify(CameraPlatform.instance.isZeroShutterLagSupported(mockInitializeCamera)).called(1);
 
       reset(CameraPlatform.instance);
     });
@@ -778,54 +776,60 @@ void main() {
       );
     });
 
-    test('setZeroShutterLagEnabled() completes and calls method channel with correct value.', () async {
-      final cameraController = CameraController(
-        const CameraDescription(
-          name: 'cam',
-          lensDirection: CameraLensDirection.back,
-          sensorOrientation: 90,
-        ),
-        ResolutionPreset.max,
-      );
+    test(
+      'setZeroShutterLagEnabled() completes and calls method channel with correct value.',
+      () async {
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
 
-      await cameraController.initialize();
-      await cameraController.setZeroShutterLagEnabled(true);
+        await cameraController.initialize();
+        await cameraController.setZeroShutterLagEnabled(true);
 
-      verify(
-        CameraPlatform.instance.setZeroShutterLagEnabled(mockInitializeCamera, true),
-      ).called(1);
-    });
+        verify(
+          CameraPlatform.instance.setZeroShutterLagEnabled(mockInitializeCamera, true),
+        ).called(1);
+      },
+    );
 
-    test('setZeroShutterLagEnabled() throws $CameraException when a platform exception occured.', () async {
-      final cameraController = CameraController(
-        const CameraDescription(
-          name: 'cam',
-          lensDirection: CameraLensDirection.back,
-          sensorOrientation: 90,
-        ),
-        ResolutionPreset.max,
-      );
+    test(
+      'setZeroShutterLagEnabled() throws $CameraException when a platform exception occured.',
+      () async {
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
 
-      await cameraController.initialize();
-      when(
-        CameraPlatform.instance.setZeroShutterLagEnabled(mockInitializeCamera, true),
-      ).thenThrow(CameraException('TEST_ERROR', 'This is a test error messge'));
+        await cameraController.initialize();
+        when(
+          CameraPlatform.instance.setZeroShutterLagEnabled(mockInitializeCamera, true),
+        ).thenThrow(CameraException('TEST_ERROR', 'This is a test error messge'));
 
-      expect(
-        () => cameraController.setZeroShutterLagEnabled(true),
-        throwsA(
-          isA<CameraException>()
-              .having((CameraException error) => error.code, 'code', 'TEST_ERROR')
-              .having(
-                (CameraException error) => error.description,
-                'description',
-                'This is a test error messge',
-              ),
-        ),
-      );
+        expect(
+          () => cameraController.setZeroShutterLagEnabled(true),
+          throwsA(
+            isA<CameraException>()
+                .having((CameraException error) => error.code, 'code', 'TEST_ERROR')
+                .having(
+                  (CameraException error) => error.description,
+                  'description',
+                  'This is a test error messge',
+                ),
+          ),
+        );
 
-      reset(CameraPlatform.instance);
-    });
+        reset(CameraPlatform.instance);
+      },
+    );
 
     test('setFlashMode() calls $CameraPlatform', () async {
       final cameraController = CameraController(
