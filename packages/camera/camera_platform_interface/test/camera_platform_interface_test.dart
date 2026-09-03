@@ -369,12 +369,15 @@ void main() {
       expect(await cameraPlatform.isZeroShutterLagSupported(1), isFalse);
     });
 
-    test('Default implementation of setZeroShutterLagEnabled() is a no-op', () {
+    test('Default implementation of setZeroShutterLagEnabled() should throw unimplemented error', () {
       // Arrange
       final cameraPlatform = ExtendsCameraPlatform();
 
       // Act & Assert
-      expect(cameraPlatform.setZeroShutterLagEnabled(1, true), completes);
+      expect(
+        () => cameraPlatform.setZeroShutterLagEnabled(1, true),
+        throwsUnimplementedError,
+      );
     });
 
     test('Default implementation of supportsImageStreaming() should return false', () {

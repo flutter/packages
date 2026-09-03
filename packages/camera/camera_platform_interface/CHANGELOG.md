@@ -2,6 +2,9 @@
 
 * Adds `isZeroShutterLagSupported` and `setZeroShutterLagEnabled` for
   zero-shutter-lag still image capture on platforms that support it.
+  `isZeroShutterLagSupported` defaults to `false`; `setZeroShutterLagEnabled`
+  throws `UnimplementedError` by default and must only be called after
+  `isZeroShutterLagSupported` reports support.
 
 ## 2.13.1
 

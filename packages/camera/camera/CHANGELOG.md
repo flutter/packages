@@ -1,3 +1,9 @@
+## 0.12.0+3
+
+* Adds `CameraController.isZeroShutterLagSupported` and
+  `CameraController.setZeroShutterLagEnabled` for zero-shutter-lag still image
+  capture on platforms that support it.
+
 ## 0.12.0+2
 
 * Fixes a crash where a `CameraController` could update its value after being disposed, throwing "A CameraController was used after being disposed".

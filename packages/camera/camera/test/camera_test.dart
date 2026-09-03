@@ -727,6 +727,106 @@ void main() {
       verify(CameraPlatform.instance.setZoomLevel(mockInitializeCamera, 42.0)).called(1);
     });
 
+    test('isZeroShutterLagSupported() returns the platform value.', () async {
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+
+      await cameraController.initialize();
+      when(
+        CameraPlatform.instance.isZeroShutterLagSupported(mockInitializeCamera),
+      ).thenAnswer((_) async => true);
+
+      expect(await cameraController.isZeroShutterLagSupported(), isTrue);
+      verify(
+        CameraPlatform.instance.isZeroShutterLagSupported(mockInitializeCamera),
+      ).called(1);
+
+      reset(CameraPlatform.instance);
+    });
+
+    test('isZeroShutterLagSupported() throws $CameraException when uninitialized.', () async {
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+
+      expect(
+        () => cameraController.isZeroShutterLagSupported(),
+        throwsA(
+          isA<CameraException>()
+              .having(
+                (CameraException error) => error.code,
+                'code',
+                'Uninitialized CameraController',
+              )
+              .having(
+                (CameraException error) => error.description,
+                'description',
+                'isZeroShutterLagSupported() was called on an uninitialized CameraController.',
+              ),
+        ),
+      );
+    });
+
+    test('setZeroShutterLagEnabled() completes and calls method channel with correct value.', () async {
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+
+      await cameraController.initialize();
+      await cameraController.setZeroShutterLagEnabled(true);
+
+      verify(
+        CameraPlatform.instance.setZeroShutterLagEnabled(mockInitializeCamera, true),
+      ).called(1);
+    });
+
+    test('setZeroShutterLagEnabled() throws $CameraException when a platform exception occured.', () async {
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+
+      await cameraController.initialize();
+      when(
+        CameraPlatform.instance.setZeroShutterLagEnabled(mockInitializeCamera, true),
+      ).thenThrow(CameraException('TEST_ERROR', 'This is a test error messge'));
+
+      expect(
+        () => cameraController.setZeroShutterLagEnabled(true),
+        throwsA(
+          isA<CameraException>()
+              .having((CameraException error) => error.code, 'code', 'TEST_ERROR')
+              .having(
+                (CameraException error) => error.description,
+                'description',
+                'This is a test error messge',
+              ),
+        ),
+      );
+
+      reset(CameraPlatform.instance);
+    });
+
     test('setFlashMode() calls $CameraPlatform', () async {
       final cameraController = CameraController(
         const CameraDescription(
@@ -3646,6 +3746,19 @@ class MockCameraPlatform extends Mock with MockPlatformInterfaceMixin implements
   @override
   Future<void> setVideoStabilizationMode(int cameraId, VideoStabilizationMode mode) async =>
       super.noSuchMethod(Invocation.method(#setVideoStabilizationMode, <Object?>[cameraId, mode]));
+
+  @override
+  Future<bool> isZeroShutterLagSupported(int cameraId) async =>
+      super.noSuchMethod(
+            Invocation.method(#isZeroShutterLagSupported, <Object?>[cameraId]),
+            returnValue: Future<bool>.value(false),
+          )
+          as Future<bool>;
+
+  @override
+  Future<void> setZeroShutterLagEnabled(int cameraId, bool enabled) async => super.noSuchMethod(
+    Invocation.method(#setZeroShutterLagEnabled, <Object?>[cameraId, enabled]),
+  );
 }
 
 class MockCameraDescription extends CameraDescription {
