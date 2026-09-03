@@ -1,0 +1,3 @@
+changelog: |
+  - Adds `dayBuilder` and `weekdayBuilder` callbacks to `CalendarDatePicker`, `DatePickerDialog`, and `showDatePicker`.
+version: minor
