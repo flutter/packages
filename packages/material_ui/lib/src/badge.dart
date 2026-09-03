@@ -19,6 +19,8 @@ import 'theme.dart';
 
 /// A Material Design "badge".
 ///
+/// Learn more about [Badge] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=_CIHLJHVoN8).
+///
 /// A badge's [label] conveys a small amount of information about its
 /// [child], like a count or status. If the label is null then this is
 /// a "small" badge that's displayed as a [smallSize] diameter filled

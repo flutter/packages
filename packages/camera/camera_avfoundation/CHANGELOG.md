@@ -1,9 +1,13 @@
-## 0.10.2+1
+## 0.10.3+1
 
 * Replaces the deprecated `isHighResolutionCaptureEnabled`/`isHighResolutionPhotoEnabled` with
   `maxPhotoDimensions` on iOS 16 and later, falling back to the deprecated APIs on older versions.
 * Fixes the maximum resolution setting being ignored for HEIF captures when using
   `ResolutionPreset.max`.
+
+## 0.10.3
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
 
 ## 0.10.2
 

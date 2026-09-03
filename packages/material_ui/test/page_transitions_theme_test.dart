@@ -959,7 +959,7 @@ void main() {
 
       switch (defaultTargetPlatform) {
         case TargetPlatform.android:
-          // Shows both pages while doing the "peek" predicitve back transition.
+          // Shows both pages while doing the "peek" predictive back transition.
           expect(find.text('push'), findsOneWidget);
         case TargetPlatform.iOS:
         case TargetPlatform.macOS:

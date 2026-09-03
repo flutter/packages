@@ -36,6 +36,7 @@ class Method extends Node {
     required this.location,
     this.isRequired = true,
     this.isAsynchronous = false,
+    this.isAsynchronousCallback = false,
     this.isStatic = false,
     this.offset,
     this.objcSelector = '',
@@ -55,6 +56,9 @@ class Method extends Node {
 
   /// Whether the receiver of this method is expected to return synchronously or not.
   bool isAsynchronous;
+
+  /// Whether this asynchronous method uses callback-based completions instead of native async/await or suspend functions.
+  bool isAsynchronousCallback;
 
   /// The offset in the source file where the field appears.
   int? offset;

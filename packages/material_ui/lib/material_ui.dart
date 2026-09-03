@@ -14,7 +14,6 @@
 ///    for a catalog of commonly-used Material component widgets.
 ///  * [m3.material.io](https://m3.material.io/) for the Material 3 specification
 ///  * [m2.material.io](https://m2.material.io/) for the Material 2 specification
-/// @docImport 'package:flutter_test/flutter_test.dart';
 /// @docImport 'package:intl/intl.dart';
 library material_ui;
 
