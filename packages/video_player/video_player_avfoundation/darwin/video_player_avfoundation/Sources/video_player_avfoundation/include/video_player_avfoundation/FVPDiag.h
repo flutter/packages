@@ -28,6 +28,26 @@ extern BOOL FVPDiagEnabled(void);
 /// Switches logging on or off at runtime; see the method channel above.
 extern void FVPDiagSetEnabled(BOOL enabled);
 
+/// Whether a texture player withholds readiness until its decoder has a frame.
+///
+/// On by default. The switch exists so a harness can measure both arms from one
+/// binary: the window being closed is a frame or two wide, and comparing it
+/// across two builds would compare two different timing environments as well.
+extern BOOL FVPFirstFrameGatingEnabled(void);
+extern void FVPFirstFrameGatingSetEnabled(BOOL enabled);
+
+/// Milliseconds after a load during which the texture refuses to pick up a new
+/// buffer, so it keeps handing the engine its placeholder. Zero, normally.
+///
+/// The hole this investigation is about is one display frame wide, and the
+/// simulator's screen recorder captures around 17 frames a second -- it cannot
+/// resolve the thing being looked for. Holding the placeholder stretches that
+/// hole to something the recorder catches, which is what makes it possible to
+/// see what a hole actually looks like on screen: the placeholder, whatever is
+/// painted behind the texture, or the previous video's last frame.
+extern double FVPDiagPlaceholderHoldMs(void);
+extern void FVPDiagSetPlaceholderHoldMs(double milliseconds);
+
 /// Logs one `[VideoDiag/ios]` line, prefixed with the wall clock in
 /// milliseconds so the app's own `[VideoDiag]` lines interleave with these.
 extern void FVPDiagLog(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);

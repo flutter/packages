@@ -43,6 +43,15 @@ NS_ASSUME_NONNULL_BEGIN
 /// Updates the playing state of the video player.
 - (void)updatePlayingState;
 
+/// Sends the "initialized" message. Called once, when the first item this
+/// player was given is ready to play. Subclasses override to defer it.
+- (void)reportInitialized;
+
+/// Sends the "reloadingEnd" message, which tells Dart the player is ready to
+/// display again after loadAsset. Called when the new item is ready to play.
+/// Subclasses override to defer it.
+- (void)finishLoadingNewAsset;
+
 /// Called when the player item reaches AVPlayerItemStatusReadyToPlay, on the initial load and after
 /// each asset reload, once track metadata (dimensions, frame rate) is available. Subclasses override
 /// to configure rate-dependent behavior. The base implementation does nothing.

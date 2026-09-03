@@ -103,6 +103,10 @@
   [self sendOrQueue:@{@"event" : @"reloadingStart"}];
 }
 
+- (void)videoPlayerDidRenderFirstFrame {
+  [self sendOrQueue:@{@"event" : @"firstFrameRendered"}];
+}
+
 - (void)videoPlayerDidEndReloadingWithDuration:(int64_t)duration size:(CGSize)size {
   [self sendOrQueue:@{
     @"event" : @"reloadingEnd",

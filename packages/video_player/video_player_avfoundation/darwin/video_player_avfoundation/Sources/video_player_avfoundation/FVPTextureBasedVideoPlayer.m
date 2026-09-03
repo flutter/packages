@@ -10,7 +10,13 @@
 #define MAXIMUM_FRAME_WAIT_IN_SECONDS 0.2
 #define MAXIMUM_ASSET_LOAD_WAIT_IN_SECONDS 1.0
 
-@interface FVPTextureBasedVideoPlayer ()
+/// How long to wait for the decoder before reporting readiness anyway.
+///
+/// Readiness gated on a frame that never arrives would leave the page on its
+/// thumbnail forever, which is worse than the flash this is fixing.
+#define MAXIMUM_FIRST_FRAME_WAIT_IN_SECONDS 1.0
+
+@interface FVPTextureBasedVideoPlayer () <AVPlayerItemOutputPullDelegate>
 // The updater that drives callbacks to the engine to indicate that a new frame is ready.
 @property(nonatomic) FVPFrameUpdater *frameUpdater;
 // The display link that drives frameUpdater.
@@ -36,6 +42,19 @@
 // Generation counter for frame expectations. Incremented each time expectFrameWithTimeout: is called,
 // allowing previous timeouts to be invalidated when a new frame expectation starts.
 @property(nonatomic, assign) NSUInteger frameExpectationGeneration;
+// Whether the decoder has signalled that it has a frame for the current item.
+// Readiness is withheld from Dart until it has: the item reaching
+// AVPlayerItemStatusReadyToPlay says the item can play, not that there is a
+// picture, and the page puts the texture on screen the moment Dart is told.
+@property(nonatomic, assign) BOOL hasDecodableFrame;
+// Whether the engine has been handed a decoded frame of the current asset.
+@property(nonatomic, assign) BOOL hasRenderedFirstFrame;
+// Readiness reports that arrived before the decoder had a frame, to be sent
+// once it does (or once the wait times out).
+@property(nonatomic, assign) BOOL initializedPending;
+@property(nonatomic, assign) BOOL reloadingEndPending;
+// Invalidates the timeout of a previous wait when a new one starts.
+@property(nonatomic, assign) NSUInteger firstFrameWaitGeneration;
 // Diagnostic: wall clock, in milliseconds, of the most recent loadAsset. Zero
 // once the first real frame of that asset has been served.
 @property(nonatomic, assign) double diagLoadTime;
@@ -43,6 +62,8 @@
 // since that loadAsset. Every one of these is a frame of placeholder on screen
 // if the widget has already swapped away from its thumbnail.
 @property(nonatomic, assign) NSUInteger diagPlaceholderServed;
+// Diagnostic: when the artificial hold on the current content expires.
+@property(nonatomic, assign) double diagHoldUntil;
 // Diagnostic: consecutive copyPixelBuffer calls while paused. The selfRefresh
 // loop has no exit when paused with no incoming buffers, so a large count
 // means the display link is stuck on and the raster thread is churning.
@@ -167,8 +188,85 @@
   return YES;
 }
 
+#pragma mark - First frame gating
+
+/// Asks the output to tell us when it can produce a frame, and starts the wait.
+///
+/// This is the only signal available that does not depend on the engine: the
+/// engine calls copyPixelBuffer only for a texture that is already on screen,
+/// and the texture only goes on screen once Dart is told the player is ready,
+/// so gating readiness on a frame actually handed over would deadlock.
+- (void)awaitFirstDecodableFrame {
+  self.hasDecodableFrame = NO;
+  NSUInteger generation = ++self.firstFrameWaitGeneration;
+
+  [self.videoOutput setDelegate:self queue:dispatch_get_main_queue()];
+  [self.videoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:0];
+
+  __weak typeof(self) weakSelf = self;
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW,
+                               (int64_t)(MAXIMUM_FIRST_FRAME_WAIT_IN_SECONDS * NSEC_PER_SEC)),
+                 dispatch_get_main_queue(), ^{
+                   FVPTextureBasedVideoPlayer *strongSelf = weakSelf;
+                   if (!strongSelf || strongSelf.firstFrameWaitGeneration != generation ||
+                       strongSelf.hasDecodableFrame) {
+                     return;
+                   }
+                   FVP_DIAG(@"ev=frame.decodable.timeout tex=%lld",
+                            strongSelf.frameUpdater.textureIdentifier);
+                   [strongSelf releaseDeferredReadiness];
+                 });
+}
+
+- (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender {
+  if (self.hasDecodableFrame) {
+    return;
+  }
+  FVP_DIAG(@"ev=frame.decodable tex=%lld sinceLoadMs=%.1f", self.frameUpdater.textureIdentifier,
+           self.diagLoadTime > 0 ? NSDate.date.timeIntervalSince1970 * 1000.0 - self.diagLoadTime
+                                 : -1.0);
+  [self releaseDeferredReadiness];
+}
+
+/// Sends whatever readiness was held back, and makes sure the display link is
+/// running so the frame reaches the engine as soon as the texture is on screen.
+- (void)releaseDeferredReadiness {
+  self.hasDecodableFrame = YES;
+
+  if (self.initializedPending) {
+    self.initializedPending = NO;
+    [super reportInitialized];
+  }
+  if (self.reloadingEndPending) {
+    self.reloadingEndPending = NO;
+    [super finishLoadingNewAsset];
+  }
+  [self expectFrame];
+}
+
+- (void)reportInitialized {
+  if (self.hasDecodableFrame || !FVPFirstFrameGatingEnabled()) {
+    [super reportInitialized];
+    return;
+  }
+  FVP_DIAG(@"ev=ready.deferred tex=%lld kind=initialized", self.frameUpdater.textureIdentifier);
+  self.initializedPending = YES;
+}
+
+- (void)finishLoadingNewAsset {
+  if (self.hasDecodableFrame || !FVPFirstFrameGatingEnabled()) {
+    [super finishLoadingNewAsset];
+    return;
+  }
+  FVP_DIAG(@"ev=ready.deferred tex=%lld kind=reloading", self.frameUpdater.textureIdentifier);
+  self.reloadingEndPending = YES;
+}
+
+#pragma mark -
+
 - (void)configureForReadyToPlayItem:(AVPlayerItem *)item {
   [super configureForReadyToPlayItem:item];
+  [self awaitFirstDecodableFrame];
 
   // Find the video track, then read its content frame rate asynchronously. Querying
   // nominalFrameRate synchronously blocks the main thread while AVFoundation loads the property,
@@ -247,6 +345,11 @@
     FVP_DIAG(@"ev=load.begin tex=%lld url=%@", self.frameUpdater.textureIdentifier,
              url.lastPathComponent);
 
+    // The frame the previous asset decoded says nothing about this one.
+    self.hasDecodableFrame = NO;
+    self.hasRenderedFirstFrame = NO;
+    self.diagHoldUntil = 0;
+
     // Release the old pixel buffer
     CVBufferRelease(self.latestPixelBuffer);
 
@@ -262,21 +365,23 @@
                                           (__bridge CFDictionaryRef)pixelBufferAttributes,
                                           &transparentBuffer);
     if (status == kCVReturnSuccess && transparentBuffer) {
-        // Set the buffer to opaque black (BGRA = 0,0,0,255), or to magenta when
-        // diagnosing: on screen, black is indistinguishable from a texture that
-        // has never been drawn, and the two have different causes. Magenta says
-        // the engine composited this placeholder.
-        const BOOL diag = FVPDiagEnabled();
+        // Clear to fully transparent, not to opaque black. This buffer exists to
+        // stop the previous video's last frame showing through a load, and it
+        // does that either way -- but the engine composites it for the frame or
+        // two between the page revealing the texture and the first decoded
+        // frame being pulled, and an opaque buffer paints that as black. A
+        // transparent one lets whatever the page draws behind the texture show
+        // instead.
         CVPixelBufferLockBaseAddress(transparentBuffer, 0);
         uint8_t *baseAddress = (uint8_t *)CVPixelBufferGetBaseAddress(transparentBuffer);
-        baseAddress[0] = diag ? 255 : 0;  // B
-        baseAddress[1] = 0;               // G
-        baseAddress[2] = diag ? 255 : 0;  // R
-        baseAddress[3] = 255;             // A (fully opaque)
+        baseAddress[0] = 0;  // B
+        baseAddress[1] = 0;  // G
+        baseAddress[2] = 0;  // R
+        baseAddress[3] = 0;  // A
         CVPixelBufferUnlockBaseAddress(transparentBuffer, 0);
         self.latestPixelBuffer = transparentBuffer;
-        FVP_DIAG(@"ev=placeholder.set tex=%lld color=%@", self.frameUpdater.textureIdentifier,
-                 diag ? @"magenta" : @"black");
+        FVP_DIAG(@"ev=placeholder.set tex=%lld color=transparent",
+                 self.frameUpdater.textureIdentifier);
     } else {
         self.latestPixelBuffer = NULL;
     }
@@ -366,6 +471,25 @@
   }
   self.targetTime += duration;
 
+  // Diagnostic: hold whatever the texture currently has for a while once the
+  // engine starts pulling, so the hole lasts long enough for the simulator's
+  // recorder to catch. Timed from the first pull, not from the load: the engine
+  // does not pull until the page is on screen, which here is a second later,
+  // and a hold measured from the load has expired by then.
+  double holdMs = FVPDiagPlaceholderHoldMs();
+  if (holdMs > 0 && self.diagLoadTime > 0) {
+    double now = NSDate.date.timeIntervalSince1970 * 1000.0;
+    if (self.diagHoldUntil == 0) {
+      self.diagHoldUntil = now + holdMs;
+      FVPDiagLog(@"ev=hold.begin tex=%lld ms=%.0f hasBuffer=%d",
+                 self.frameUpdater.textureIdentifier, holdMs,
+                 self.latestPixelBuffer != NULL);
+    }
+    if (now < self.diagHoldUntil) {
+      return CVPixelBufferRetain(self.latestPixelBuffer);
+    }
+  }
+
   CVPixelBufferRef buffer = NULL;
   CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:self.targetTime];
   if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
@@ -379,6 +503,11 @@
 
   if (buffer && self.waitingForFrame) {
     self.waitingForFrame = NO;
+  }
+
+  if (buffer && !self.hasRenderedFirstFrame) {
+    self.hasRenderedFirstFrame = YES;
+    [self.eventListener videoPlayerDidRenderFirstFrame];
   }
 
   if (FVPDiagEnabled() && self.diagLoadTime > 0) {
