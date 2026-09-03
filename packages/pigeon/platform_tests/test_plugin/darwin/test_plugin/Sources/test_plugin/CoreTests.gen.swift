@@ -1474,6 +1474,7 @@ protocol HostIntegrationCoreApi {
   func callFlutterCallbackEcho(_ aString: String) async throws -> String
   func callFlutterCallbackThrowError() async throws -> Any?
   func callFlutterCallbackThrowErrorFromVoid() async throws
+  func callFlutterIsAsyncFlutterApiOnRoot() async throws -> Bool
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -4757,6 +4758,24 @@ class HostIntegrationCoreApiSetup {
     } else {
       callFlutterCallbackThrowErrorFromVoidChannel.setMessageHandler(nil)
     }
+    let callFlutterIsAsyncFlutterApiOnRootChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterIsAsyncFlutterApiOnRoot\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterIsAsyncFlutterApiOnRootChannel.setMessageHandler { _, reply in
+        Task { @MainActor in
+          do {
+            let result = try await api.callFlutterIsAsyncFlutterApiOnRoot()
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterIsAsyncFlutterApiOnRootChannel.setMessageHandler(nil)
+    }
   }
 }
 
@@ -5010,6 +5029,8 @@ protocol FlutterIntegrationCoreApiProtocol {
   @MainActor func noopAsync() async throws
   /// Returns the passed in generic Object asynchronously.
   @MainActor func echoAsync(_ aStringArg: String) async throws -> String
+  /// Returns true if the async FlutterApi method is run on the root isolate.
+  @MainActor func isAsyncFlutterApiOnRoot() async throws -> Bool
 }
 class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -6441,6 +6462,35 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
               message: "Flutter api returned null value for non-null return value.", details: ""))
         } else {
           let result = listResponse[0] as! String
+          continuation.resume(returning: result)
+        }
+      }
+    }
+  }
+  /// Returns true if the async FlutterApi method is run on the root isolate.
+  @MainActor func isAsyncFlutterApiOnRoot() async throws -> Bool {
+    return try await withCheckedThrowingContinuation { continuation in
+      let channelName: String =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.isAsyncFlutterApiOnRoot\(messageChannelSuffix)"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage(nil) { response in
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! Bool
           continuation.resume(returning: result)
         }
       }

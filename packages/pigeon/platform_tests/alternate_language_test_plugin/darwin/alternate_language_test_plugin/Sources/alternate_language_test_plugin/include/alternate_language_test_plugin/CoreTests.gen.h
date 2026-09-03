@@ -939,6 +939,8 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
                                                               FlutterError *_Nullable))completion;
 - (void)callFlutterCallbackThrowErrorFromVoidWithCompletion:
     (void (^)(FlutterError *_Nullable))completion;
+- (void)callFlutterIsAsyncFlutterApiOnRootWithCompletion:
+    (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 @end
 
 extern void SetUpFLTHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
@@ -1166,6 +1168,9 @@ extern void SetUpFLTHostIntegrationCoreApiWithSuffix(
 /// Returns the passed in generic Object asynchronously.
 - (void)echoAsyncString:(NSString *)aString
              completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+/// Returns true if the async FlutterApi method is run on the root isolate.
+- (void)isAsyncFlutterApiOnRootWithCompletion:(void (^)(NSNumber *_Nullable,
+                                                        FlutterError *_Nullable))completion;
 @end
 
 /// A Host API using callback-based asynchronous methods (@asyncCallback).

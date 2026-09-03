@@ -4353,6 +4353,25 @@ class HostIntegrationCoreApi {
 
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
+
+  Future<bool> callFlutterIsAsyncFlutterApiOnRoot() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterIsAsyncFlutterApiOnRoot$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as bool;
+  }
 }
 
 /// A Flutter API using callback-based asynchronous methods (@asyncCallback).
@@ -4646,6 +4665,9 @@ abstract class FlutterIntegrationCoreApi {
 
   /// Returns the passed in generic Object asynchronously.
   Future<String> echoAsyncString(String aString);
+
+  /// Returns true if the async FlutterApi method is run on the root isolate.
+  Future<bool> isAsyncFlutterApiOnRoot();
 
   static void setUp(
     FlutterIntegrationCoreApi? api, {
@@ -5968,6 +5990,29 @@ abstract class FlutterIntegrationCoreApi {
           final String arg_aString = args[0]! as String;
           try {
             final String output = await api.echoAsyncString(arg_aString);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.isAsyncFlutterApiOnRoot$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          try {
+            final bool output = await api.isAsyncFlutterApiOnRoot();
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
