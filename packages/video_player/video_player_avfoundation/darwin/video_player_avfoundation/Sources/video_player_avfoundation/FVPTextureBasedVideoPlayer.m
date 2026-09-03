@@ -5,6 +5,8 @@
 #import "./include/video_player_avfoundation/FVPTextureBasedVideoPlayer.h"
 #import "./include/video_player_avfoundation/FVPTextureBasedVideoPlayer_Test.h"
 
+#import "./include/video_player_avfoundation/FVPDiag.h"
+
 #define MAXIMUM_FRAME_WAIT_IN_SECONDS 0.2
 #define MAXIMUM_ASSET_LOAD_WAIT_IN_SECONDS 1.0
 
@@ -34,6 +36,13 @@
 // Generation counter for frame expectations. Incremented each time expectFrameWithTimeout: is called,
 // allowing previous timeouts to be invalidated when a new frame expectation starts.
 @property(nonatomic, assign) NSUInteger frameExpectationGeneration;
+// Diagnostic: wall clock, in milliseconds, of the most recent loadAsset. Zero
+// once the first real frame of that asset has been served.
+@property(nonatomic, assign) double diagLoadTime;
+// Diagnostic: how many times the placeholder has been handed to the engine
+// since that loadAsset. Every one of these is a frame of placeholder on screen
+// if the widget has already swapped away from its thumbnail.
+@property(nonatomic, assign) NSUInteger diagPlaceholderServed;
 // Diagnostic: consecutive copyPixelBuffer calls while paused. The selfRefresh
 // loop has no exit when paused with no incoming buffers, so a large count
 // means the display link is stuck on and the raster thread is churning.
@@ -74,6 +83,13 @@
       (id)kCVPixelBufferIOSurfacePropertiesKey : @{},
     };
     self.videoOutput = [avFactory videoOutputWithOutputSettings:outputSettings];
+
+    // A player created for a page the feed has not shown before never goes
+    // through loadAsset, so start the diagnostic episode here too -- otherwise
+    // the first view of a video, which is the case being investigated, is the
+    // one case that goes unmeasured.
+    self.diagLoadTime = NSDate.date.timeIntervalSince1970 * 1000.0;
+    self.diagPlaceholderServed = 0;
 
     _frameUpdater = frameUpdater;
     _displayLink = displayLink;
@@ -226,6 +242,11 @@
 }
 
 - (void)loadAsset:(NSURL *)url httpHeaders:(NSDictionary<NSString *,NSString *> *)httpHeaders {
+    self.diagLoadTime = NSDate.date.timeIntervalSince1970 * 1000.0;
+    self.diagPlaceholderServed = 0;
+    FVP_DIAG(@"ev=load.begin tex=%lld url=%@", self.frameUpdater.textureIdentifier,
+             url.lastPathComponent);
+
     // Release the old pixel buffer
     CVBufferRelease(self.latestPixelBuffer);
 
@@ -241,15 +262,21 @@
                                           (__bridge CFDictionaryRef)pixelBufferAttributes,
                                           &transparentBuffer);
     if (status == kCVReturnSuccess && transparentBuffer) {
-        // Set the buffer to opaque black (BGRA = 0,0,0,255)
+        // Set the buffer to opaque black (BGRA = 0,0,0,255), or to magenta when
+        // diagnosing: on screen, black is indistinguishable from a texture that
+        // has never been drawn, and the two have different causes. Magenta says
+        // the engine composited this placeholder.
+        const BOOL diag = FVPDiagEnabled();
         CVPixelBufferLockBaseAddress(transparentBuffer, 0);
         uint8_t *baseAddress = (uint8_t *)CVPixelBufferGetBaseAddress(transparentBuffer);
-        baseAddress[0] = 0;    // B
-        baseAddress[1] = 0;    // G
-        baseAddress[2] = 0;    // R
-        baseAddress[3] = 255;  // A (fully opaque)
+        baseAddress[0] = diag ? 255 : 0;  // B
+        baseAddress[1] = 0;               // G
+        baseAddress[2] = diag ? 255 : 0;  // R
+        baseAddress[3] = 255;             // A (fully opaque)
         CVPixelBufferUnlockBaseAddress(transparentBuffer, 0);
         self.latestPixelBuffer = transparentBuffer;
+        FVP_DIAG(@"ev=placeholder.set tex=%lld color=%@", self.frameUpdater.textureIdentifier,
+                 diag ? @"magenta" : @"black");
     } else {
         self.latestPixelBuffer = NULL;
     }
@@ -352,6 +379,24 @@
 
   if (buffer && self.waitingForFrame) {
     self.waitingForFrame = NO;
+  }
+
+  if (FVPDiagEnabled() && self.diagLoadTime > 0) {
+    double now = NSDate.date.timeIntervalSince1970 * 1000.0;
+    if (buffer) {
+      FVPDiagLog(@"ev=frame.first tex=%lld sinceLoadMs=%.1f placeholderServed=%lu",
+                 self.frameUpdater.textureIdentifier, now - self.diagLoadTime,
+                 (unsigned long)self.diagPlaceholderServed);
+      self.diagLoadTime = 0;
+    } else {
+      // No new buffer, so the engine gets latestPixelBuffer back -- which is
+      // still the placeholder installed by loadAsset.
+      self.diagPlaceholderServed++;
+      if (self.diagPlaceholderServed == 1) {
+        FVPDiagLog(@"ev=placeholder.served tex=%lld sinceLoadMs=%.1f",
+                   self.frameUpdater.textureIdentifier, now - self.diagLoadTime);
+      }
+    }
   }
   // Stop the display link whenever the player is paused with no pending frame
   // expectation — not only when a buffer arrived. A paused player produces no

@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 #import "./include/video_player_avfoundation/FVPVideoPlayer.h"
+
+#import "./include/video_player_avfoundation/FVPDiag.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayer_Internal.h"
 
 #import <GLKit/GLKit.h>
@@ -556,7 +558,11 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
   _loadingNewAsset = NO;
 
-  // Report new video dimensions and duration
+  // Report new video dimensions and duration. Note what this is reporting on:
+  // the item reaching AVPlayerItemStatusReadyToPlay, which says nothing about a
+  // decoded frame existing. Dart turns this into isReadyToDisplay.
+  FVP_DIAG(@"ev=reloading.end player=%p sizeW=%.0f sizeH=%.0f", self,
+           currentItem.presentationSize.width, currentItem.presentationSize.height);
   [self.eventListener videoPlayerDidEndReloadingWithDuration:self.duration
                                                       size:currentItem.presentationSize];
   [self.eventListener videoPlayerDidEndBuffering];

@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 #import "./include/video_player_avfoundation/FVPVideoPlayerPlugin.h"
+
+#import "./include/video_player_avfoundation/FVPDiag.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayerPlugin_Test.h"
 
 #import <AVFoundation/AVFoundation.h>
@@ -60,6 +62,21 @@
       }];
   [registrar registerViewFactory:factory withId:@"plugins.flutter.dev/video_player_ios"];
   SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, instance);
+
+  // Lets the app switch on the frame-path event log at runtime; see FVPDiag.h.
+  // A channel rather than an environment variable because a physical device has
+  // no way to inject one without editing the Runner scheme by hand.
+  FlutterMethodChannel *diagChannel =
+      [FlutterMethodChannel methodChannelWithName:@"flutter.dev/videoPlayer/diag"
+                                  binaryMessenger:registrar.messenger];
+  [diagChannel setMethodCallHandler:^(FlutterMethodCall *call, FlutterResult result) {
+    if ([call.method isEqualToString:@"setEnabled"]) {
+      FVPDiagSetEnabled([call.arguments boolValue]);
+      result(nil);
+    } else {
+      result(FlutterMethodNotImplemented);
+    }
+  }];
 }
 
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
@@ -196,6 +213,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
 - (nullable FVPTexturePlayerIds *)createTexturePlayerWithOptions:
                                       (nonnull FVPCreationOptions *)options
                                                            error:(FlutterError **)error {
+  FVP_DIAG(@"ev=create.texture.begin uri=%@", options.uri.lastPathComponent);
   @try {
     AVPlayerItem *item = [self playerItemWithCreationOptions:options];
     FVPFrameUpdater *frameUpdater =
@@ -220,6 +238,8 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
                              withExtraDisposeHandler:^() {
                                [weakSelf.registrar.textures unregisterTexture:textureIdentifier];
                              }];
+    FVP_DIAG(@"ev=player.create playerId=%lld tex=%lld player=%p", playerIdentifier,
+             textureIdentifier, player);
     return [FVPTexturePlayerIds makeWithPlayerId:playerIdentifier textureId:textureIdentifier];
   } @catch (NSException *exception) {
     *error = [FlutterError errorWithCode:@"video_player" message:exception.reason details:nil];
