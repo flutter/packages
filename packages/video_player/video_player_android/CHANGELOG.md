@@ -3,6 +3,10 @@
 * Adds `WidevineDrmConfiguration`, allowing playback of Widevine-protected
   network streams via Media3's DRM support.
 
+## 2.12.2
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/132934) where videos with a pixel aspect ratio other than 1.0 (anamorphic content) reported their coded size instead of their display size, causing them to be rendered stretched.
+
 ## 2.12.1
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
