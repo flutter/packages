@@ -292,6 +292,11 @@
 
   [self.playerLayer removeFromSuperlayer];
 
+  // The display link is not necessarily deallocated with the player -- the frame updater holds it,
+  // and CADisplayLink retains its target -- so a player disposed while playing would keep firing
+  // textureFrameAvailable until the frame updater's unconsumed-frame backoff caught it. Stop it
+  // here instead. See https://github.com/flutter/flutter/issues/181387.
+  _displayLink.running = NO;
   _displayLink = nil;
 }
 
