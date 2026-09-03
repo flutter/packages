@@ -26,6 +26,7 @@ Thanks for your contribution.`;
     repo,
     state: 'open',
     labels: labelName,
+    per_page: 100,
   });
 
   for (const pr of prs) {
@@ -38,12 +39,13 @@ Thanks for your contribution.`;
       owner,
       repo,
       issue_number: pr.number,
+      per_page: 100,
     });
 
     const labelEvent = events.reverse().find(
       event =>
         event.event === 'labeled' &&
-        event.label.name === labelName
+        event.label?.name === labelName
     );
 
     if (!labelEvent) {
@@ -59,10 +61,11 @@ Thanks for your contribution.`;
       repo,
       issue_number: pr.number,
       since: labeledAt.toISOString(),
+      per_page: 100,
     });
 
     for (const comment of comments) {
-      if (comment.user?.id === pr.user?.id && new Date(comment.created_at) > labeledAt) {
+      if (pr.user?.id && comment.user?.id === pr.user.id && new Date(comment.created_at) > labeledAt) {
         isResponse = true;
         break;
       }
@@ -74,10 +77,11 @@ Thanks for your contribution.`;
         owner,
         repo,
         pull_number: pr.number,
+        per_page: 100,
       });
 
       for (const commit of commits) {
-        const commitDate = new Date(commit.commit.committer?.date || commit.commit.author?.date);
+        const commitDate = new Date(commit.commit?.committer?.date || commit.commit?.author?.date);
         if (commitDate > labeledAt) {
           isResponse = true;
           break;
