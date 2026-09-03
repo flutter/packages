@@ -1,3 +1,4 @@
 changelog: |
   - Fixes unlabeled tap target semantics in `SearchBar`.
-version: patch
+  - Adds `enableTapHandling` to `SearchAnchor`.
+version: minor
