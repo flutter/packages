@@ -243,12 +243,10 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
     guard let user = usersByIdentifier[userId] else {
       completion(
         .success(
-          SignInResult(
-            success: nil,
-            error: SignInFailure(
-              type: .userMismatch,
-              message: "The user is no longer signed in.",
-              details: nil))))
+          SignInFailure(
+            type: .userMismatch,
+            message: "The user is no longer signed in.",
+            details: nil)))
       return
     }
 
@@ -266,12 +264,10 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
     guard let user = usersByIdentifier[userId] else {
       completion(
         .success(
-          SignInResult(
-            success: nil,
-            error: SignInFailure(
-              type: .userMismatch,
-              message: "The user is no longer signed in.",
-              details: nil))))
+          SignInFailure(
+            type: .userMismatch,
+            message: "The user is no longer signed in.",
+            details: nil)))
       return
     }
 
@@ -396,12 +392,10 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
     if let nsError, nsError.domain == kGIDSignInErrorDomain {
       completion(
         .success(
-          SignInResult(
-            success: nil,
-            error: SignInFailure(
-              type: pigeonErrorCode(for: nsError.code),
-              message: nsError.localizedDescription,
-              details: nsError.sanitizedUserInfo))))
+          SignInFailure(
+            type: pigeonErrorCode(for: nsError.code),
+            message: nsError.localizedDescription,
+            details: nsError.sanitizedUserInfo)))
     } else if let nsError {
       completion(.failure(pigeonError(from: nsError)))
     } else {
@@ -437,14 +431,13 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
       userId: user.userID ?? "",
       photoUrl: photoURL?.absoluteString,
       idToken: user.idToken?.tokenString)
-    let result = SignInResult(
-      success: SignInSuccess(
-        user: userData,
-        accessToken: user.accessToken.tokenString,
-        grantedScopes: user.grantedScopes ?? [],
-        serverAuthCode: serverAuthCode),
-      error: nil)
-    completion(.success(result))
+    completion(
+      .success(
+        SignInSuccess(
+          user: userData,
+          accessToken: user.accessToken.tokenString,
+          grantedScopes: user.grantedScopes ?? [],
+          serverAuthCode: serverAuthCode)))
   }
 
   #if os(iOS)
