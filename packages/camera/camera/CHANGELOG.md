@@ -2,6 +2,11 @@
 
 * Adds `videoOutputPath` support to `startVideoRecording`.
 
+## 0.12.1
+
+* Adds `setJpegImageQuality` for controlling JPEG compression quality.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 0.12.0+2
 
 * Fixes a crash where a `CameraController` could update its value after being disposed, throwing "A CameraController was used after being disposed".
