@@ -324,56 +324,15 @@ struct UserData: Hashable, CustomStringConvertible {
 /// The response from an auth call.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct SignInResult: Hashable, CustomStringConvertible {
-  /// The success result, if any.
-  ///
-  /// Exactly one of success and error will be non-nil.
-  var success: SignInSuccess? = nil
-  /// The error result, if any.
-  ///
-  /// Exactly one of success and error will be non-nil.
-  var error: SignInFailure? = nil
+/// This protocol should not be extended by any user class outside of the generated file.
+protocol SignInResult {
 
-  // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ pigeonVar_list: [Any?]) -> SignInResult? {
-    let success: SignInSuccess? = nilOrValue(pigeonVar_list[0])
-    let error: SignInFailure? = nilOrValue(pigeonVar_list[1])
-
-    return SignInResult(
-      success: success,
-      error: error
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      success,
-      error,
-    ]
-  }
-  static func == (lhs: SignInResult, rhs: SignInResult) -> Bool {
-    if Swift.type(of: lhs) != Swift.type(of: rhs) {
-      return false
-    }
-    return MessagesPigeonInternal.deepEquals(lhs.success, rhs.success)
-      && MessagesPigeonInternal.deepEquals(lhs.error, rhs.error)
-  }
-
-  func hash(into hasher: inout Hasher) {
-    hasher.combine("SignInResult")
-    MessagesPigeonInternal.deepHash(value: success, hasher: &hasher)
-    MessagesPigeonInternal.deepHash(value: error, hasher: &hasher)
-  }
-
-  public var description: String {
-    return
-      "SignInResult(success: \(String(describing: success)), error: \(String(describing: error)))"
-  }
 }
 
-/// An sign in failure.
+/// A sign in failure.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct SignInFailure: Hashable, CustomStringConvertible {
+struct SignInFailure: SignInResult {
   /// The type of failure.
   var type: GoogleSignInErrorCode
   /// The message associated with the failure, if any.
@@ -430,7 +389,7 @@ struct SignInFailure: Hashable, CustomStringConvertible {
 /// supported.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct SignInSuccess: Hashable, CustomStringConvertible {
+struct SignInSuccess: SignInResult {
   var user: UserData
   var accessToken: String
   var grantedScopes: [String]
@@ -496,10 +455,8 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
     case 131:
       return UserData.fromList(self.readValue() as! [Any?])
     case 132:
-      return SignInResult.fromList(self.readValue() as! [Any?])
-    case 133:
       return SignInFailure.fromList(self.readValue() as! [Any?])
-    case 134:
+    case 133:
       return SignInSuccess.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -518,14 +475,11 @@ private class MessagesPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? UserData {
       super.writeByte(131)
       super.writeValue(value.toList())
-    } else if let value = value as? SignInResult {
+    } else if let value = value as? SignInFailure {
       super.writeByte(132)
       super.writeValue(value.toList())
-    } else if let value = value as? SignInFailure {
-      super.writeByte(133)
-      super.writeValue(value.toList())
     } else if let value = value as? SignInSuccess {
-      super.writeByte(134)
+      super.writeByte(133)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)

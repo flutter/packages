@@ -340,14 +340,13 @@ struct GoogleSignInPluginTests {
         plugin.restorePreviousSignIn { result in
           switch result {
           case .success(let signInResult):
-            #expect(signInResult.error == nil)
-            #expect(signInResult.success != nil)
-            #expect(signInResult.success?.user.displayName == name)
-            #expect(signInResult.success?.user.email == email)
-            #expect(signInResult.success?.user.userId == userID)
-            #expect(signInResult.success?.user.photoUrl == imageURLString)
-            #expect(signInResult.success?.accessToken == accessToken)
-            #expect(signInResult.success?.serverAuthCode == nil)
+            #expect(signInResult is SignInSuccess)
+            #expect((signInResult as? SignInSuccess)?.user.displayName == name)
+            #expect((signInResult as? SignInSuccess)?.user.email == email)
+            #expect((signInResult as? SignInSuccess)?.user.userId == userID)
+            #expect((signInResult as? SignInSuccess)?.user.photoUrl == imageURLString)
+            #expect((signInResult as? SignInSuccess)?.accessToken == accessToken)
+            #expect((signInResult as? SignInSuccess)?.serverAuthCode == nil)
           case .failure(let error):
             Issue.record("Unexpected error: \(error)")
           }
@@ -367,8 +366,9 @@ struct GoogleSignInPluginTests {
         plugin.restorePreviousSignIn { result in
           switch result {
           case .success(let signInResult):
-            #expect(signInResult.success == nil)
-            #expect(signInResult.error?.type == GoogleSignInErrorCode.noAuthInKeychain)
+            #expect(signInResult is SignInFailure)
+            #expect(
+              (signInResult as? SignInFailure)?.type == GoogleSignInErrorCode.noAuthInKeychain)
           case .failure(let error):
             Issue.record("Unexpected error: \(error)")
           }
@@ -447,12 +447,13 @@ struct GoogleSignInPluginTests {
         plugin.signIn(scopeHint: [], nonce: nil) { result in
           switch result {
           case .success(let signInResult):
-            #expect(signInResult.success?.user.displayName == "mockDisplay")
-            #expect(signInResult.success?.user.email == "mock@example.com")
-            #expect(signInResult.success?.user.userId == "mockID")
-            #expect(signInResult.success?.user.photoUrl == "https://example.com/profile.png")
-            #expect(signInResult.success?.accessToken == accessToken)
-            #expect(signInResult.success?.serverAuthCode == serverAuthCode)
+            #expect((signInResult as? SignInSuccess)?.user.displayName == "mockDisplay")
+            #expect((signInResult as? SignInSuccess)?.user.email == "mock@example.com")
+            #expect((signInResult as? SignInSuccess)?.user.userId == "mockID")
+            #expect(
+              (signInResult as? SignInSuccess)?.user.photoUrl == "https://example.com/profile.png")
+            #expect((signInResult as? SignInSuccess)?.accessToken == accessToken)
+            #expect((signInResult as? SignInSuccess)?.serverAuthCode == serverAuthCode)
           case .failure(let error):
             Issue.record("Unexpected error: \(error)")
           }
@@ -479,8 +480,8 @@ struct GoogleSignInPluginTests {
         plugin.signIn(scopeHint: requestedScopes, nonce: nil) { result in
           switch result {
           case .success(let signInResult):
-            #expect(signInResult.error == nil)
-            #expect(signInResult.success?.user.userId == "mockID")
+            #expect(signInResult is SignInSuccess)
+            #expect((signInResult as? SignInSuccess)?.user.userId == "mockID")
           case .failure(let error):
             Issue.record("Unexpected error: \(error)")
           }
@@ -509,8 +510,8 @@ struct GoogleSignInPluginTests {
         plugin.signIn(scopeHint: [], nonce: nonce) { result in
           switch result {
           case .success(let signInResult):
-            #expect(signInResult.error == nil)
-            #expect(signInResult.success?.user.userId == "mockID")
+            #expect(signInResult is SignInSuccess)
+            #expect((signInResult as? SignInSuccess)?.user.userId == "mockID")
           case .failure(let error):
             Issue.record("Unexpected error: \(error)")
           }
@@ -537,8 +538,8 @@ struct GoogleSignInPluginTests {
         plugin.signIn(scopeHint: [], nonce: nil) { result in
           switch result {
           case .success(let signInResult):
-            #expect(signInResult.error == nil)
-            #expect(signInResult.success?.user.userId == "mockID")
+            #expect(signInResult is SignInSuccess)
+            #expect((signInResult as? SignInSuccess)?.user.userId == "mockID")
           case .failure(let error):
             Issue.record("Unexpected error: \(error)")
           }
@@ -559,8 +560,8 @@ struct GoogleSignInPluginTests {
           case .success(let signInResult):
             // Known errors from the SDK are returned as structured data, not
             // PigeonError.
-            #expect(signInResult.success == nil)
-            #expect(signInResult.error?.type == .canceled)
+            #expect(signInResult is SignInFailure)
+            #expect((signInResult as? SignInFailure)?.type == .canceled)
           case .failure(let error):
             Issue.record("Unexpected error: \(error)")
           }
@@ -611,9 +612,9 @@ struct GoogleSignInPluginTests {
         plugin.getRefreshedAuthorizationTokens(userId: fakeUser.userID!) { result in
           switch result {
           case .success(let signInResult):
-            #expect(signInResult.error == nil)
-            #expect(signInResult.success?.user.idToken == "mockIdToken")
-            #expect(signInResult.success?.accessToken == "mockAccessToken")
+            #expect(signInResult is SignInSuccess)
+            #expect((signInResult as? SignInSuccess)?.user.idToken == "mockIdToken")
+            #expect((signInResult as? SignInSuccess)?.accessToken == "mockAccessToken")
           case .failure(let error):
             Issue.record("Unexpected error: \(error)")
           }
@@ -628,9 +629,9 @@ struct GoogleSignInPluginTests {
         plugin.getRefreshedAuthorizationTokens(userId: "unknownUser") { result in
           switch result {
           case .success(let signInResult):
-            #expect(signInResult.success == nil)
-            #expect(signInResult.error?.type == .userMismatch)
-            #expect(signInResult.error?.message == "The user is no longer signed in.")
+            #expect(signInResult is SignInFailure)
+            #expect((signInResult as? SignInFailure)?.type == .userMismatch)
+            #expect((signInResult as? SignInFailure)?.message == "The user is no longer signed in.")
           case .failure(let error):
             Issue.record("Unexpected error: \(error)")
           }
@@ -658,8 +659,8 @@ struct GoogleSignInPluginTests {
         plugin.getRefreshedAuthorizationTokens(userId: fakeUser.userID!) { result in
           switch result {
           case .success(let signInResult):
-            #expect(signInResult.success == nil)
-            #expect(signInResult.error?.type == expectedPigeonErrorCode)
+            #expect(signInResult is SignInFailure)
+            #expect((signInResult as? SignInFailure)?.type == expectedPigeonErrorCode)
           case .failure(let error):
             Issue.record("Unexpected error: \(error)")
           }
@@ -715,7 +716,7 @@ struct GoogleSignInPluginTests {
         plugin.addScopes(scopes: scopes, userId: fakeUser.userID!) { result in
           switch result {
           case .success(let signInResult):
-            #expect(signInResult.success != nil)
+            #expect(signInResult is SignInSuccess)
           case .failure(let error):
             Issue.record("Unexpected error: \(error)")
           }
@@ -731,8 +732,8 @@ struct GoogleSignInPluginTests {
         plugin.addScopes(scopes: ["mockScope1"], userId: "unknownUser") { result in
           switch result {
           case .success(let signInResult):
-            #expect(signInResult.success == nil)
-            #expect(signInResult.error?.type == .userMismatch)
+            #expect(signInResult is SignInFailure)
+            #expect((signInResult as? SignInFailure)?.type == .userMismatch)
           case .failure(let error):
             Issue.record("Unexpected error: \(error)")
           }
@@ -760,8 +761,8 @@ struct GoogleSignInPluginTests {
         plugin.addScopes(scopes: ["mockScope1"], userId: fakeUser.userID!) { result in
           switch result {
           case .success(let signInResult):
-            #expect(signInResult.success == nil)
-            #expect(signInResult.error?.type == expectedPigeonErrorCode)
+            #expect(signInResult is SignInFailure)
+            #expect((signInResult as? SignInFailure)?.type == expectedPigeonErrorCode)
           case .failure(let error):
             Issue.record("Unexpected error: \(error)")
           }
@@ -892,8 +893,8 @@ struct GoogleSignInPluginTests {
         plugin.signIn(scopeHint: [], nonce: nil) { result in
           switch result {
           case .success(let signInResult):
-            #expect(signInResult.success == nil)
-            #expect(signInResult.error?.type == expectedPigeonErrorCode)
+            #expect(signInResult is SignInFailure)
+            #expect((signInResult as? SignInFailure)?.type == expectedPigeonErrorCode)
           case .failure(let error):
             Issue.record("Unexpected error: \(error)")
           }
@@ -982,8 +983,8 @@ struct GoogleSignInPluginTests {
         plugin.signIn(scopeHint: [], nonce: nil) { result in
           switch result {
           case .success(let signInResult):
-            #expect(signInResult.success?.user.photoUrl == nil)
-            #expect(signInResult.success?.user.displayName == "Name")
+            #expect((signInResult as? SignInSuccess)?.user.photoUrl == nil)
+            #expect((signInResult as? SignInSuccess)?.user.displayName == "Name")
           case .failure(let error):
             Issue.record("Unexpected error: \(error)")
           }
