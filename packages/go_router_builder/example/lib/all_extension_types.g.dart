@@ -46,11 +46,6 @@ RouteBase get $allTypesBaseRoute => GoRouteData.$route(
       factory: $NumExtensionRoute._fromState,
     ),
     GoRouteData.$route(
-      path: 'double-route/:requiredDoubleField',
-      hasOverriddenOnExit: false,
-      factory: $DoubleExtensionRoute._fromState,
-    ),
-    GoRouteData.$route(
       path: 'enum-route/:requiredEnumField',
       hasOverriddenOnExit: false,
       factory: $EnumExtensionRoute._fromState,
