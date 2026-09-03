@@ -2215,55 +2215,18 @@ struct PlatformZoomRange: Hashable, CustomStringConvertible {
   }
 }
 
-/// Pigeon equivalent of [BitmapDescriptor]. As there are multiple disjoint
-/// types of [BitmapDescriptor], [PlatformBitmap] contains a single field which
-/// may hold the pigeon equivalent type of any of them.
+/// Pigeon equivalent of [BitmapDescriptor].
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct PlatformBitmap: Hashable, CustomStringConvertible {
-  /// One of [PlatformBitmapAssetMap], [PlatformBitmapAsset],
-  /// [PlatformBitmapAssetImage], [PlatformBitmapBytesMap],
-  /// [PlatformBitmapBytes], or [PlatformBitmapDefaultMarker].
-  /// As Pigeon does not currently support data class inheritance, this
-  /// approach allows for the different bitmap implementations to be valid
-  /// argument and return types of the API methods. See
-  /// https://github.com/flutter/flutter/issues/117819.
-  var bitmap: Any
+/// This protocol should not be extended by any user class outside of the generated file.
+protocol PlatformBitmap {
 
-  // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ pigeonVar_list: [Any?]) -> PlatformBitmap? {
-    let bitmap = pigeonVar_list[0]!
-
-    return PlatformBitmap(
-      bitmap: bitmap
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      bitmap
-    ]
-  }
-  static func == (lhs: PlatformBitmap, rhs: PlatformBitmap) -> Bool {
-    if Swift.type(of: lhs) != Swift.type(of: rhs) {
-      return false
-    }
-    return MessagesPigeonInternal.deepEquals(lhs.bitmap, rhs.bitmap)
-  }
-
-  func hash(into hasher: inout Hasher) {
-    hasher.combine("PlatformBitmap")
-    MessagesPigeonInternal.deepHash(value: bitmap, hasher: &hasher)
-  }
-
-  public var description: String {
-    return "PlatformBitmap(bitmap: \(String(describing: bitmap)))"
-  }
 }
 
 /// Pigeon equivalent of [DefaultMarker].
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct PlatformBitmapDefaultMarker: Hashable, CustomStringConvertible {
+struct PlatformBitmapDefaultMarker: PlatformBitmap {
   var hue: Double? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -2299,7 +2262,7 @@ struct PlatformBitmapDefaultMarker: Hashable, CustomStringConvertible {
 /// Pigeon equivalent of [BytesBitmap].
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct PlatformBitmapBytes: Hashable, CustomStringConvertible {
+struct PlatformBitmapBytes: PlatformBitmap {
   var byteData: FlutterStandardTypedData
   var size: PlatformSize? = nil
 
@@ -2342,7 +2305,7 @@ struct PlatformBitmapBytes: Hashable, CustomStringConvertible {
 /// Pigeon equivalent of [AssetBitmap].
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct PlatformBitmapAsset: Hashable, CustomStringConvertible {
+struct PlatformBitmapAsset: PlatformBitmap {
   var name: String
   var pkg: String? = nil
 
@@ -2384,7 +2347,7 @@ struct PlatformBitmapAsset: Hashable, CustomStringConvertible {
 /// Pigeon equivalent of [AssetImageBitmap].
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct PlatformBitmapAssetImage: Hashable, CustomStringConvertible {
+struct PlatformBitmapAssetImage: PlatformBitmap {
   var name: String
   var scale: Double
   var size: PlatformSize? = nil
@@ -2433,7 +2396,7 @@ struct PlatformBitmapAssetImage: Hashable, CustomStringConvertible {
 /// Pigeon equivalent of [AssetMapBitmap].
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct PlatformBitmapAssetMap: Hashable, CustomStringConvertible {
+struct PlatformBitmapAssetMap: PlatformBitmap {
   var assetName: String
   var bitmapScaling: PlatformMapBitmapScaling
   var imagePixelRatio: Double
@@ -2494,7 +2457,7 @@ struct PlatformBitmapAssetMap: Hashable, CustomStringConvertible {
 /// Pigeon equivalent of [BytesMapBitmap].
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct PlatformBitmapBytesMap: Hashable, CustomStringConvertible {
+struct PlatformBitmapBytesMap: PlatformBitmap {
   var byteData: FlutterStandardTypedData
   var bitmapScaling: PlatformMapBitmapScaling
   var imagePixelRatio: Double
@@ -2555,7 +2518,7 @@ struct PlatformBitmapBytesMap: Hashable, CustomStringConvertible {
 /// Pigeon equivalent of [PinConfig].
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct PlatformBitmapPinConfig: Hashable, CustomStringConvertible {
+struct PlatformBitmapPinConfig: PlatformBitmap {
   var backgroundColor: PlatformColor? = nil
   var borderColor: PlatformColor? = nil
   var glyphColor: PlatformColor? = nil
@@ -2727,20 +2690,18 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
     case 168:
       return PlatformZoomRange.fromList(self.readValue() as! [Any?])
     case 169:
-      return PlatformBitmap.fromList(self.readValue() as! [Any?])
-    case 170:
       return PlatformBitmapDefaultMarker.fromList(self.readValue() as! [Any?])
-    case 171:
+    case 170:
       return PlatformBitmapBytes.fromList(self.readValue() as! [Any?])
-    case 172:
+    case 171:
       return PlatformBitmapAsset.fromList(self.readValue() as! [Any?])
-    case 173:
+    case 172:
       return PlatformBitmapAssetImage.fromList(self.readValue() as! [Any?])
-    case 174:
+    case 173:
       return PlatformBitmapAssetMap.fromList(self.readValue() as! [Any?])
-    case 175:
+    case 174:
       return PlatformBitmapBytesMap.fromList(self.readValue() as! [Any?])
-    case 176:
+    case 175:
       return PlatformBitmapPinConfig.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -2870,29 +2831,26 @@ private class MessagesPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? PlatformZoomRange {
       super.writeByte(168)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformBitmap {
+    } else if let value = value as? PlatformBitmapDefaultMarker {
       super.writeByte(169)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformBitmapDefaultMarker {
+    } else if let value = value as? PlatformBitmapBytes {
       super.writeByte(170)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformBitmapBytes {
+    } else if let value = value as? PlatformBitmapAsset {
       super.writeByte(171)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformBitmapAsset {
+    } else if let value = value as? PlatformBitmapAssetImage {
       super.writeByte(172)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformBitmapAssetImage {
+    } else if let value = value as? PlatformBitmapAssetMap {
       super.writeByte(173)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformBitmapAssetMap {
+    } else if let value = value as? PlatformBitmapBytesMap {
       super.writeByte(174)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformBitmapBytesMap {
-      super.writeByte(175)
-      super.writeValue(value.toList())
     } else if let value = value as? PlatformBitmapPinConfig {
-      super.writeByte(176)
+      super.writeByte(175)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)

@@ -77,7 +77,7 @@ import Testing
 
     let position = PlatformLatLng(latitude: 52.4816, longitude: 3.1791)
 
-    let bitmap = PlatformBitmap(bitmap: PlatformBitmapDefaultMarker(hue: 0))
+    let bitmap = PlatformBitmapDefaultMarker(hue: 0)
 
     let platformGroundOverlay = PlatformGroundOverlay(
       groundOverlayId: "id_1",
@@ -143,7 +143,7 @@ import Testing
       southwest: PlatformLatLng(latitude: 52.4816, longitude: 3.1791)
     )
 
-    let bitmap = PlatformBitmap(bitmap: PlatformBitmapDefaultMarker(hue: 0))
+    let bitmap = PlatformBitmapDefaultMarker(hue: 0)
 
     let platformGroundOverlay = PlatformGroundOverlay(
       groundOverlayId: "id_1",
@@ -211,7 +211,7 @@ import Testing
       groundOverlay,
       from: PlatformGroundOverlay(
         groundOverlayId: "groundOverlay",
-        image: PlatformBitmap(bitmap: PlatformBitmapDefaultMarker(hue: 0)),
+        image: PlatformBitmapDefaultMarker(hue: 0),
         position: PlatformLatLng(latitude: 0, longitude: 0),
         bounds: PlatformLatLngBounds(
           northeast: PlatformLatLng(latitude: 54.4816, longitude: 5.1791),

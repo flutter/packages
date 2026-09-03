@@ -34,7 +34,7 @@ import Testing
   }
 
   func placeholderBitmap() -> PlatformBitmap {
-    return PlatformBitmap(bitmap: PlatformBitmapDefaultMarker(hue: 0))
+    return PlatformBitmapDefaultMarker(hue: 0)
   }
 
   @Test func setsMarkerNumericProperties() throws {

@@ -525,31 +525,18 @@ class PlatformZoomRange {
   final double? max;
 }
 
-/// Pigeon equivalent of [BitmapDescriptor]. As there are multiple disjoint
-/// types of [BitmapDescriptor], [PlatformBitmap] contains a single field which
-/// may hold the pigeon equivalent type of any of them.
-class PlatformBitmap {
-  PlatformBitmap({required this.bitmap});
-
-  /// One of [PlatformBitmapAssetMap], [PlatformBitmapAsset],
-  /// [PlatformBitmapAssetImage], [PlatformBitmapBytesMap],
-  /// [PlatformBitmapBytes], or [PlatformBitmapDefaultMarker].
-  /// As Pigeon does not currently support data class inheritance, this
-  /// approach allows for the different bitmap implementations to be valid
-  /// argument and return types of the API methods. See
-  /// https://github.com/flutter/flutter/issues/117819.
-  final Object bitmap;
-}
+/// Pigeon equivalent of [BitmapDescriptor].
+sealed class PlatformBitmap {}
 
 /// Pigeon equivalent of [DefaultMarker].
-class PlatformBitmapDefaultMarker {
+class PlatformBitmapDefaultMarker extends PlatformBitmap {
   PlatformBitmapDefaultMarker({this.hue});
 
   final double? hue;
 }
 
 /// Pigeon equivalent of [BytesBitmap].
-class PlatformBitmapBytes {
+class PlatformBitmapBytes extends PlatformBitmap {
   PlatformBitmapBytes({required this.byteData, this.size});
 
   final Uint8List byteData;
@@ -557,7 +544,7 @@ class PlatformBitmapBytes {
 }
 
 /// Pigeon equivalent of [AssetBitmap].
-class PlatformBitmapAsset {
+class PlatformBitmapAsset extends PlatformBitmap {
   PlatformBitmapAsset({required this.name, this.pkg});
 
   final String name;
@@ -565,7 +552,7 @@ class PlatformBitmapAsset {
 }
 
 /// Pigeon equivalent of [AssetImageBitmap].
-class PlatformBitmapAssetImage {
+class PlatformBitmapAssetImage extends PlatformBitmap {
   PlatformBitmapAssetImage({required this.name, required this.scale, this.size});
   final String name;
   final double scale;
@@ -573,7 +560,7 @@ class PlatformBitmapAssetImage {
 }
 
 /// Pigeon equivalent of [AssetMapBitmap].
-class PlatformBitmapAssetMap {
+class PlatformBitmapAssetMap extends PlatformBitmap {
   PlatformBitmapAssetMap({
     required this.assetName,
     required this.bitmapScaling,
@@ -589,7 +576,7 @@ class PlatformBitmapAssetMap {
 }
 
 /// Pigeon equivalent of [BytesMapBitmap].
-class PlatformBitmapBytesMap {
+class PlatformBitmapBytesMap extends PlatformBitmap {
   PlatformBitmapBytesMap({
     required this.byteData,
     required this.bitmapScaling,
@@ -608,7 +595,7 @@ class PlatformBitmapBytesMap {
 enum PlatformMapBitmapScaling { auto, none }
 
 /// Pigeon equivalent of [PinConfig].
-class PlatformBitmapPinConfig {
+class PlatformBitmapPinConfig extends PlatformBitmap {
   PlatformBitmapPinConfig({
     required this.backgroundColor,
     required this.borderColor,

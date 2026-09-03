@@ -117,7 +117,7 @@ extension PlatformGroundOverlay {
     isCreatedWithBounds: Bool,
     zoomLevel: Double?
   ) -> PlatformGroundOverlay {
-    let placeholderImage = PlatformBitmap(bitmap: PlatformBitmapDefaultMarker(hue: nil))
+    let placeholderImage = PlatformBitmapDefaultMarker(hue: nil)
     if isCreatedWithBounds, let bounds = groundOverlay.bounds {
       return PlatformGroundOverlay(
         groundOverlayId: overlayId,

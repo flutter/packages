@@ -802,51 +802,41 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   static PlatformBitmap platformBitmapFromBitmapDescriptor(BitmapDescriptor bitmap) {
     switch (bitmap) {
       case final DefaultMarker marker:
-        return PlatformBitmap(bitmap: PlatformBitmapDefaultMarker(hue: marker.hue?.toDouble()));
+        return PlatformBitmapDefaultMarker(hue: marker.hue?.toDouble());
       // Clients may still use this deprecated format, so it must be supported.
       // ignore: deprecated_member_use
       case final BytesBitmap bytes:
         final Size? size = bytes.size;
-        return PlatformBitmap(
-          bitmap: PlatformBitmapBytes(
-            byteData: bytes.byteData,
-            size: (size == null) ? null : _platformSizeFromSize(size),
-          ),
+        return PlatformBitmapBytes(
+          byteData: bytes.byteData,
+          size: (size == null) ? null : _platformSizeFromSize(size),
         );
       case final AssetBitmap asset:
-        return PlatformBitmap(
-          bitmap: PlatformBitmapAsset(name: asset.name, pkg: asset.package),
-        );
+        return PlatformBitmapAsset(name: asset.name, pkg: asset.package);
       // Clients may still use this deprecated format, so it must be supported.
       // ignore: deprecated_member_use
       case final AssetImageBitmap asset:
         final Size? size = asset.size;
-        return PlatformBitmap(
-          bitmap: PlatformBitmapAssetImage(
-            name: asset.name,
-            scale: asset.scale,
-            size: (size == null) ? null : _platformSizeFromSize(size),
-          ),
+        return PlatformBitmapAssetImage(
+          name: asset.name,
+          scale: asset.scale,
+          size: (size == null) ? null : _platformSizeFromSize(size),
         );
       case final AssetMapBitmap asset:
-        return PlatformBitmap(
-          bitmap: PlatformBitmapAssetMap(
-            assetName: asset.assetName,
-            bitmapScaling: platformMapBitmapScalingFromScaling(asset.bitmapScaling),
-            imagePixelRatio: asset.imagePixelRatio,
-            width: asset.width,
-            height: asset.height,
-          ),
+        return PlatformBitmapAssetMap(
+          assetName: asset.assetName,
+          bitmapScaling: platformMapBitmapScalingFromScaling(asset.bitmapScaling),
+          imagePixelRatio: asset.imagePixelRatio,
+          width: asset.width,
+          height: asset.height,
         );
       case final BytesMapBitmap bytes:
-        return PlatformBitmap(
-          bitmap: PlatformBitmapBytesMap(
-            byteData: bytes.byteData,
-            bitmapScaling: platformMapBitmapScalingFromScaling(bytes.bitmapScaling),
-            imagePixelRatio: bytes.imagePixelRatio,
-            width: bytes.width,
-            height: bytes.height,
-          ),
+        return PlatformBitmapBytesMap(
+          byteData: bytes.byteData,
+          bitmapScaling: platformMapBitmapScalingFromScaling(bytes.bitmapScaling),
+          imagePixelRatio: bytes.imagePixelRatio,
+          width: bytes.width,
+          height: bytes.height,
         );
       case final PinConfig pinConfig:
         final PlatformColor? backgroundColor = pinConfig.backgroundColor != null
@@ -857,38 +847,30 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
             : null;
         switch (pinConfig.glyph) {
           case final CircleGlyph circleGlyph:
-            return PlatformBitmap(
-              bitmap: PlatformBitmapPinConfig(
-                backgroundColor: backgroundColor,
-                borderColor: borderColor,
-                glyphColor: _platformColorFromColor(circleGlyph.color),
-              ),
+            return PlatformBitmapPinConfig(
+              backgroundColor: backgroundColor,
+              borderColor: borderColor,
+              glyphColor: _platformColorFromColor(circleGlyph.color),
             );
           case final TextGlyph textGlyph:
-            return PlatformBitmap(
-              bitmap: PlatformBitmapPinConfig(
-                backgroundColor: backgroundColor,
-                borderColor: borderColor,
-                glyphText: textGlyph.text,
-                glyphTextColor: textGlyph.textColor != null
-                    ? _platformColorFromColor(textGlyph.textColor!)
-                    : null,
-              ),
+            return PlatformBitmapPinConfig(
+              backgroundColor: backgroundColor,
+              borderColor: borderColor,
+              glyphText: textGlyph.text,
+              glyphTextColor: textGlyph.textColor != null
+                  ? _platformColorFromColor(textGlyph.textColor!)
+                  : null,
             );
           case final BitmapGlyph bitmapGlyph:
-            return PlatformBitmap(
-              bitmap: PlatformBitmapPinConfig(
-                backgroundColor: backgroundColor,
-                borderColor: borderColor,
-                glyphBitmap: platformBitmapFromBitmapDescriptor(bitmapGlyph.bitmap),
-              ),
+            return PlatformBitmapPinConfig(
+              backgroundColor: backgroundColor,
+              borderColor: borderColor,
+              glyphBitmap: platformBitmapFromBitmapDescriptor(bitmapGlyph.bitmap),
             );
           case null:
-            return PlatformBitmap(
-              bitmap: PlatformBitmapPinConfig(
-                backgroundColor: backgroundColor,
-                borderColor: borderColor,
-              ),
+            return PlatformBitmapPinConfig(
+              backgroundColor: backgroundColor,
+              borderColor: borderColor,
             );
         }
 

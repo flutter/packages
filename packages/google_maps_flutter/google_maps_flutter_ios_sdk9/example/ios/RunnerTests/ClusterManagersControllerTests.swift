@@ -48,7 +48,7 @@ import Testing
 
     let zeroPoint = PlatformPoint(x: 0, y: 0)
     let zeroLatLng = PlatformLatLng(latitude: 0, longitude: 0)
-    let bitmap = PlatformBitmap(bitmap: PlatformBitmapDefaultMarker(hue: 0))
+    let bitmap = PlatformBitmapDefaultMarker(hue: 0)
     let infoWindow = PlatformInfoWindow(
       title: "Info",
       snippet: nil,

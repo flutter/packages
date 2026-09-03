@@ -24,10 +24,7 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = PlatformBitmap(bitmap: bitmap).createIcon(
-      assetProvider: assetProvider,
-      screenScale: screenScale
-    )
+    let resultImage = bitmap.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     #expect(resultImage != nil)
     #expect(resultImage?.scale == 1.0)
@@ -51,10 +48,7 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = PlatformBitmap(bitmap: bitmap).createIcon(
-      assetProvider: assetProvider,
-      screenScale: screenScale
-    )
+    let resultImage = bitmap.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     #expect(resultImage != nil)
     #expect(resultImage?.scale == 10)
@@ -80,10 +74,7 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = PlatformBitmap(bitmap: bitmap).createIcon(
-      assetProvider: assetProvider,
-      screenScale: screenScale
-    )
+    let resultImage = bitmap.createIcon(assetProvider: assetProvider, screenScale: screenScale)
     #expect(resultImage != nil)
     #expect(testImage.scale == 1.0)
 
@@ -114,10 +105,7 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = PlatformBitmap(bitmap: bitmap).createIcon(
-      assetProvider: assetProvider,
-      screenScale: screenScale
-    )
+    let resultImage = bitmap.createIcon(assetProvider: assetProvider, screenScale: screenScale)
     #expect(resultImage != nil)
     #expect(resultImage?.scale == screenScale)
     #expect(resultImage?.size.width == width)
@@ -140,10 +128,7 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = PlatformBitmap(bitmap: bitmap).createIcon(
-      assetProvider: assetProvider,
-      screenScale: screenScale
-    )
+    let resultImage = bitmap.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     #expect(resultImage != nil)
     #expect(resultImage?.scale == 1.0)
@@ -166,7 +151,7 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = PlatformBitmap(bitmap: bitmap).createIcon(
+    let resultImage = bitmap.createIcon(
       assetProvider: TestAssetProvider(),
       screenScale: screenScale
     )
@@ -192,7 +177,7 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = PlatformBitmap(bitmap: bitmap).createIcon(
+    let resultImage = bitmap.createIcon(
       assetProvider: TestAssetProvider(),
       screenScale: screenScale
     )
@@ -219,7 +204,7 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = PlatformBitmap(bitmap: bitmap).createIcon(
+    let resultImage = bitmap.createIcon(
       assetProvider: TestAssetProvider(),
       screenScale: screenScale
     )
@@ -253,7 +238,7 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = PlatformBitmap(bitmap: bitmap).createIcon(
+    let resultImage = bitmap.createIcon(
       assetProvider: TestAssetProvider(),
       screenScale: screenScale
     )
@@ -278,7 +263,7 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = PlatformBitmap(bitmap: bitmap).createIcon(
+    let resultImage = bitmap.createIcon(
       assetProvider: TestAssetProvider(),
       screenScale: screenScale
     )
@@ -308,10 +293,7 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = PlatformBitmap(bitmap: pinConfig).createIcon(
-      assetProvider: assetProvider,
-      screenScale: screenScale
-    )
+    let resultImage = pinConfig.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     // PinConfig may return nil on old Google Maps SDK versions (<=8.4.0).
     // Also, due to a Google Maps SDK issue (https://issuetracker.google.com/issues/370536110),
@@ -336,10 +318,7 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = PlatformBitmap(bitmap: pinConfig).createIcon(
-      assetProvider: assetProvider,
-      screenScale: screenScale
-    )
+    let resultImage = pinConfig.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     // PinConfig returns nil on iOS versions without GMSPinImageOptions support (< iOS 16.0).
     // On simulators, GMSPinImage may also return a zero-dimension image. Both cases are acceptable
@@ -361,7 +340,6 @@ import Testing
       width: nil,
       height: nil
     )
-    let glyphBitmap = PlatformBitmap(bitmap: assetBitmap)
 
     let backgroundColor = PlatformColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
     let borderColor = PlatformColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
@@ -372,15 +350,12 @@ import Testing
       glyphColor: nil,
       glyphTextColor: nil,
       glyphText: nil,
-      glyphBitmap: glyphBitmap
+      glyphBitmap: assetBitmap
     )
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = PlatformBitmap(bitmap: pinConfig).createIcon(
-      assetProvider: assetProvider,
-      screenScale: screenScale
-    )
+    let resultImage = pinConfig.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     // PinConfig returns nil on iOS versions without GMSPinImageOptions support (< iOS 16.0).
     // On simulators, GMSPinImage may also return a zero-dimension image. Both cases are acceptable

@@ -2264,58 +2264,11 @@ class PlatformZoomRange {
   }
 }
 
-/// Pigeon equivalent of [BitmapDescriptor]. As there are multiple disjoint
-/// types of [BitmapDescriptor], [PlatformBitmap] contains a single field which
-/// may hold the pigeon equivalent type of any of them.
-class PlatformBitmap {
-  PlatformBitmap({required this.bitmap});
-
-  /// One of [PlatformBitmapAssetMap], [PlatformBitmapAsset],
-  /// [PlatformBitmapAssetImage], [PlatformBitmapBytesMap],
-  /// [PlatformBitmapBytes], or [PlatformBitmapDefaultMarker].
-  /// As Pigeon does not currently support data class inheritance, this
-  /// approach allows for the different bitmap implementations to be valid
-  /// argument and return types of the API methods. See
-  /// https://github.com/flutter/flutter/issues/117819.
-  Object bitmap;
-
-  List<Object?> _toList() {
-    return <Object?>[bitmap];
-  }
-
-  Object encode() {
-    return _toList();
-  }
-
-  static PlatformBitmap decode(Object result) {
-    result as List<Object?>;
-    return PlatformBitmap(bitmap: result[0]!);
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! PlatformBitmap || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(bitmap, other.bitmap);
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
-
-  @override
-  String toString() {
-    return 'PlatformBitmap(bitmap: $bitmap)';
-  }
-}
+/// Pigeon equivalent of [BitmapDescriptor].
+sealed class PlatformBitmap {}
 
 /// Pigeon equivalent of [DefaultMarker].
-class PlatformBitmapDefaultMarker {
+class PlatformBitmapDefaultMarker extends PlatformBitmap {
   PlatformBitmapDefaultMarker({this.hue});
 
   double? hue;
@@ -2356,7 +2309,7 @@ class PlatformBitmapDefaultMarker {
 }
 
 /// Pigeon equivalent of [BytesBitmap].
-class PlatformBitmapBytes {
+class PlatformBitmapBytes extends PlatformBitmap {
   PlatformBitmapBytes({required this.byteData, this.size});
 
   Uint8List byteData;
@@ -2399,7 +2352,7 @@ class PlatformBitmapBytes {
 }
 
 /// Pigeon equivalent of [AssetBitmap].
-class PlatformBitmapAsset {
+class PlatformBitmapAsset extends PlatformBitmap {
   PlatformBitmapAsset({required this.name, this.pkg});
 
   String name;
@@ -2442,7 +2395,7 @@ class PlatformBitmapAsset {
 }
 
 /// Pigeon equivalent of [AssetImageBitmap].
-class PlatformBitmapAssetImage {
+class PlatformBitmapAssetImage extends PlatformBitmap {
   PlatformBitmapAssetImage({required this.name, required this.scale, this.size});
 
   String name;
@@ -2493,7 +2446,7 @@ class PlatformBitmapAssetImage {
 }
 
 /// Pigeon equivalent of [AssetMapBitmap].
-class PlatformBitmapAssetMap {
+class PlatformBitmapAssetMap extends PlatformBitmap {
   PlatformBitmapAssetMap({
     required this.assetName,
     required this.bitmapScaling,
@@ -2558,7 +2511,7 @@ class PlatformBitmapAssetMap {
 }
 
 /// Pigeon equivalent of [BytesMapBitmap].
-class PlatformBitmapBytesMap {
+class PlatformBitmapBytesMap extends PlatformBitmap {
   PlatformBitmapBytesMap({
     required this.byteData,
     required this.bitmapScaling,
@@ -2623,7 +2576,7 @@ class PlatformBitmapBytesMap {
 }
 
 /// Pigeon equivalent of [PinConfig].
-class PlatformBitmapPinConfig {
+class PlatformBitmapPinConfig extends PlatformBitmap {
   PlatformBitmapPinConfig({
     this.backgroundColor,
     this.borderColor,
@@ -2826,29 +2779,26 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformZoomRange) {
       buffer.putUint8(168);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmap) {
+    } else if (value is PlatformBitmapDefaultMarker) {
       buffer.putUint8(169);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapDefaultMarker) {
+    } else if (value is PlatformBitmapBytes) {
       buffer.putUint8(170);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapBytes) {
+    } else if (value is PlatformBitmapAsset) {
       buffer.putUint8(171);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapAsset) {
+    } else if (value is PlatformBitmapAssetImage) {
       buffer.putUint8(172);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapAssetImage) {
+    } else if (value is PlatformBitmapAssetMap) {
       buffer.putUint8(173);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapAssetMap) {
+    } else if (value is PlatformBitmapBytesMap) {
       buffer.putUint8(174);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapBytesMap) {
-      buffer.putUint8(175);
-      writeValue(buffer, value.encode());
     } else if (value is PlatformBitmapPinConfig) {
-      buffer.putUint8(176);
+      buffer.putUint8(175);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -2945,20 +2895,18 @@ class _PigeonCodec extends StandardMessageCodec {
       case 168:
         return PlatformZoomRange.decode(readValue(buffer)!);
       case 169:
-        return PlatformBitmap.decode(readValue(buffer)!);
-      case 170:
         return PlatformBitmapDefaultMarker.decode(readValue(buffer)!);
-      case 171:
+      case 170:
         return PlatformBitmapBytes.decode(readValue(buffer)!);
-      case 172:
+      case 171:
         return PlatformBitmapAsset.decode(readValue(buffer)!);
-      case 173:
+      case 172:
         return PlatformBitmapAssetImage.decode(readValue(buffer)!);
-      case 174:
+      case 173:
         return PlatformBitmapAssetMap.decode(readValue(buffer)!);
-      case 175:
+      case 174:
         return PlatformBitmapBytesMap.decode(readValue(buffer)!);
-      case 176:
+      case 175:
         return PlatformBitmapPinConfig.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
