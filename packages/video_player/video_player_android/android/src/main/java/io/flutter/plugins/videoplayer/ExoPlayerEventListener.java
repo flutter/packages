@@ -105,6 +105,13 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
   }
 
   @Override
+  public void onRenderedFirstFrame() {
+    // Fired again for every new surface and every new stream, so a recycled
+    // player re-announces after loadAsset rather than only on first creation.
+    events.onRenderedFirstFrame();
+  }
+
+  @Override
   public void onIsPlayingChanged(boolean isPlaying) {
     events.onIsPlayingStateUpdate(isPlaying);
   }

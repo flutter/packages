@@ -67,6 +67,18 @@ class ReloadingStartEvent extends PlatformVideoEvent {
   late final bool placeholder;
 }
 
+/// Sent when the player has rendered a frame to its surface for the first
+/// time since the surface was set.
+///
+/// Corresponds to ExoPlayer's onRenderedFirstFrame. `loadAsset` gives the
+/// player a new surface, so this is sent again for every asset a recycled
+/// player plays, not once per player.
+class FirstFrameRenderedEvent extends PlatformVideoEvent {
+  /// Placeholder field required for Pigeon serialization.
+  /// https://github.com/flutter/flutter/issues/162466
+  late final bool placeholder;
+}
+
 /// Sent when the video finishes reloading and is ready to play again.
 class ReloadingEndEvent extends PlatformVideoEvent {
   /// The video duration in milliseconds.

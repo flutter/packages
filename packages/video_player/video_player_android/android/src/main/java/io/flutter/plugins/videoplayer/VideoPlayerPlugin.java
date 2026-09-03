@@ -42,6 +42,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
             injector.flutterLoader()::getLookupKeyForAsset,
             binding.getTextureRegistry());
     flutterState.startListening(this, binding.getBinaryMessenger());
+    VideoPlayerDiag.startListening(binding.getBinaryMessenger());
 
     binding
         .getPlatformViewRegistry()
@@ -56,6 +57,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
       Log.wtf(TAG, "Detached from the engine before registering to it.");
     }
     flutterState.stopListening(binding.getBinaryMessenger());
+    VideoPlayerDiag.stopListening();
     flutterState = null;
     onDestroy();
   }
@@ -117,6 +119,9 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
             sharedOptions);
 
     registerPlayerInstance(videoPlayer, id);
+    VideoPlayerDiag.log(
+        "ev=player.create playerId=%d pid=%d texId=%d url=%s",
+        id, id, handle.id(), VideoPlayerDiag.shortUrl(options.getUri()));
     return new TexturePlayerIds(id, handle.id());
   }
 
@@ -185,6 +190,9 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
         message.getUserAgent()
       )
     );
+    VideoPlayerDiag.log(
+        "ev=load.begin pid=%d url=%s",
+        message.getPlayerId(), VideoPlayerDiag.shortUrl(message.getUri()));
     player.loadAsset(videoAsset);
   }
 

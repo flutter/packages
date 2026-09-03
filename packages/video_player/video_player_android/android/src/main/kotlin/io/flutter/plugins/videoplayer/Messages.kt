@@ -303,6 +303,47 @@ data class ReloadingStartEvent (
 }
 
 /**
+ * Sent when the player has rendered a frame to its surface for the first
+ * time since the surface was set.
+ *
+ * Corresponds to ExoPlayer's onRenderedFirstFrame. `loadAsset` gives the
+ * player a new surface, so this is sent again for every asset a recycled
+ * player plays, not once per player.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class FirstFrameRenderedEvent (
+  /**
+   * Placeholder field required for Pigeon serialization.
+   * https://github.com/flutter/flutter/issues/162466
+   */
+  val placeholder: Boolean
+) : PlatformVideoEvent()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): FirstFrameRenderedEvent {
+      val placeholder = pigeonVar_list[0] as Boolean
+      return FirstFrameRenderedEvent(placeholder)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      placeholder,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is FirstFrameRenderedEvent) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
  * Sent when the video finishes reloading and is ready to play again.
  *
  * Generated class from Pigeon that represents data sent in messages.
@@ -701,45 +742,50 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
       }
       136.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          ReloadingEndEvent.fromList(it)
+          FirstFrameRenderedEvent.fromList(it)
         }
       }
       137.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformVideoViewCreationParams.fromList(it)
+          ReloadingEndEvent.fromList(it)
         }
       }
       138.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          CreationOptions.fromList(it)
+          PlatformVideoViewCreationParams.fromList(it)
         }
       }
       139.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          TexturePlayerIds.fromList(it)
+          CreationOptions.fromList(it)
         }
       }
       140.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          LoadMessage.fromList(it)
+          TexturePlayerIds.fromList(it)
         }
       }
       141.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PlaybackState.fromList(it)
+          LoadMessage.fromList(it)
         }
       }
       142.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          AudioTrackMessage.fromList(it)
+          PlaybackState.fromList(it)
         }
       }
       143.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          ExoPlayerAudioTrackData.fromList(it)
+          AudioTrackMessage.fromList(it)
         }
       }
       144.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          ExoPlayerAudioTrackData.fromList(it)
+        }
+      }
+      145.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           NativeAudioTrackData.fromList(it)
         }
@@ -777,40 +823,44 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         stream.write(135)
         writeValue(stream, value.toList())
       }
-      is ReloadingEndEvent -> {
+      is FirstFrameRenderedEvent -> {
         stream.write(136)
         writeValue(stream, value.toList())
       }
-      is PlatformVideoViewCreationParams -> {
+      is ReloadingEndEvent -> {
         stream.write(137)
         writeValue(stream, value.toList())
       }
-      is CreationOptions -> {
+      is PlatformVideoViewCreationParams -> {
         stream.write(138)
         writeValue(stream, value.toList())
       }
-      is TexturePlayerIds -> {
+      is CreationOptions -> {
         stream.write(139)
         writeValue(stream, value.toList())
       }
-      is LoadMessage -> {
+      is TexturePlayerIds -> {
         stream.write(140)
         writeValue(stream, value.toList())
       }
-      is PlaybackState -> {
+      is LoadMessage -> {
         stream.write(141)
         writeValue(stream, value.toList())
       }
-      is AudioTrackMessage -> {
+      is PlaybackState -> {
         stream.write(142)
         writeValue(stream, value.toList())
       }
-      is ExoPlayerAudioTrackData -> {
+      is AudioTrackMessage -> {
         stream.write(143)
         writeValue(stream, value.toList())
       }
-      is NativeAudioTrackData -> {
+      is ExoPlayerAudioTrackData -> {
         stream.write(144)
+        writeValue(stream, value.toList())
+      }
+      is NativeAudioTrackData -> {
+        stream.write(145)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)

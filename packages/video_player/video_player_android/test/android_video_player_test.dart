@@ -769,6 +769,19 @@ void main() {
         );
       });
 
+      test('first frame rendered', () async {
+        final Stream<VideoEvent> eventStream = mockPlayerEmitingEvents(
+          <PlatformVideoEvent>[FirstFrameRenderedEvent(placeholder: true)],
+        );
+
+        expect(
+          eventStream,
+          emitsInOrder(<dynamic>[
+            VideoEvent(eventType: VideoEventType.firstFrameRendered),
+          ]),
+        );
+      });
+
       test('playback start', () async {
         final Stream<VideoEvent> eventStream = mockPlayerEmitingEvents(
           <PlatformVideoEvent>[IsPlayingStateEvent(isPlaying: true)],

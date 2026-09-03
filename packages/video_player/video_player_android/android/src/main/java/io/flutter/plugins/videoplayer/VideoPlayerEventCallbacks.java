@@ -11,6 +11,10 @@ import io.flutter.plugin.common.BinaryMessenger;
 
 final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
   private final QueuingEventSink eventSink;
+  // The plugin's identifier for this player, which is also the stream instance
+  // name. Only used to name the player in VideoPlayerDiag lines; Android's
+  // texture id cannot serve there because loadAsset replaces it.
+  @NonNull private final String identifier;
 
   static VideoPlayerEventCallbacks bindTo(
       @NonNull BinaryMessenger binaryMessenger, @NonNull String identifier) {
@@ -30,21 +34,23 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
           }
         },
         identifier);
-    return VideoPlayerEventCallbacks.withSink(eventSink);
+    return new VideoPlayerEventCallbacks(eventSink, identifier);
   }
 
   @VisibleForTesting
   static VideoPlayerEventCallbacks withSink(QueuingEventSink eventSink) {
-    return new VideoPlayerEventCallbacks(eventSink);
+    return new VideoPlayerEventCallbacks(eventSink, "?");
   }
 
-  private VideoPlayerEventCallbacks(QueuingEventSink eventSink) {
+  private VideoPlayerEventCallbacks(QueuingEventSink eventSink, @NonNull String identifier) {
     this.eventSink = eventSink;
+    this.identifier = identifier;
   }
 
   @Override
   public void onInitialized(
       int width, int height, long durationInMs, int rotationCorrectionInDegrees) {
+    VideoPlayerDiag.log("ev=initialized pid=%s", identifier);
     eventSink.success(
         new InitializationEvent(durationInMs, width, height, rotationCorrectionInDegrees));
   }
@@ -56,7 +62,14 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
 
   @Override
   public void onReloadingEnd(int width, int height, long durationInMs, @Nullable Long textureId) {
+    VideoPlayerDiag.log("ev=reloading.end pid=%s texId=%s", identifier, textureId);
     eventSink.success(new ReloadingEndEvent(durationInMs, (long) width, (long) height, textureId));
+  }
+
+  @Override
+  public void onRenderedFirstFrame() {
+    VideoPlayerDiag.log("ev=frame.first pid=%s", identifier);
+    eventSink.success(new FirstFrameRenderedEvent(true));
   }
 
   @Override

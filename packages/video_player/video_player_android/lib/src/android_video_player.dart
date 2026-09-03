@@ -536,6 +536,10 @@ class _PlayerInstance {
             !_audioTrackSelectionCompleter!.isCompleted) {
           _audioTrackSelectionCompleter!.complete();
         }
+      case FirstFrameRenderedEvent _:
+        _eventStreamController.add(
+          VideoEvent(eventType: VideoEventType.firstFrameRendered),
+        );
       case ReloadingStartEvent _:
         _eventStreamController.add(
           VideoEvent(eventType: VideoEventType.reloadingStart),

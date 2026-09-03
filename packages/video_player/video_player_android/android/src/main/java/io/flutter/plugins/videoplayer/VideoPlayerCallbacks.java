@@ -23,6 +23,13 @@ public interface VideoPlayerCallbacks {
 
   void onReloadingEnd(int width, int height, long durationInMs, @Nullable Long textureId);
 
+  /**
+   * The player has rendered a frame to its surface for the first time since that surface was set.
+   *
+   * <p>Sent again after every {@code loadAsset}, because loading gives the player a new surface.
+   */
+  void onRenderedFirstFrame();
+
   void onPlaybackStateChanged(@NonNull PlatformPlaybackState state);
 
   void onError(@NonNull String code, @Nullable String message, @Nullable Object details);
