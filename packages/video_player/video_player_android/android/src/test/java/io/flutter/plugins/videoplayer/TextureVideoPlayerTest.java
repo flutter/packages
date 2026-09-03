@@ -43,6 +43,7 @@ public final class TextureVideoPlayerTest {
   private FakeVideoAsset fakeVideoAsset;
 
   @Mock private VideoPlayerCallbacks mockEvents;
+  @Mock private TextureRegistry mockTextureRegistry;
   @Mock private TextureRegistry.SurfaceProducer mockProducer;
   @Mock private ExoPlayer mockExoPlayer;
   @Captor private ArgumentCaptor<AudioAttributes> attributesCaptor;
@@ -64,7 +65,12 @@ public final class TextureVideoPlayerTest {
 
   private TextureVideoPlayer createVideoPlayer(VideoPlayerOptions options) {
     return new TextureVideoPlayer(
-        mockEvents, mockProducer, fakeVideoAsset.getMediaItem(), options, () -> mockExoPlayer);
+        mockEvents,
+        mockTextureRegistry,
+        mockProducer,
+        fakeVideoAsset.getMediaItem(),
+        options,
+        () -> mockExoPlayer);
   }
 
   @Test

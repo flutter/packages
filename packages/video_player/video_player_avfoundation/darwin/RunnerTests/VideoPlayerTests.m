@@ -60,9 +60,17 @@
 @property(readonly, nonatomic) NSNumber *beforeTolerance;
 @property(readonly, nonatomic) NSNumber *afterTolerance;
 @property(readonly, assign) CMTime lastSeekTime;
+/// Stands in for the item the player would be created with. The stub is handed to the video player
+/// by the stub factory, which ignores the item it is passed, so without this the player's
+/// currentItem -- and therefore its asset -- is nil.
+@property(nonatomic) AVPlayerItem *stubCurrentItem;
 @end
 
 @implementation StubAVPlayer
+
+- (AVPlayerItem *)currentItem {
+  return _stubCurrentItem ?: [super currentItem];
+}
 
 - (void)seekToTime:(CMTime)time
       toleranceBefore:(CMTime)toleranceBefore
@@ -71,10 +79,12 @@
   _beforeTolerance = [NSNumber numberWithLong:toleranceBefore.value];
   _afterTolerance = [NSNumber numberWithLong:toleranceAfter.value];
   _lastSeekTime = time;
-  [super seekToTime:time
-        toleranceBefore:toleranceBefore
-         toleranceAfter:toleranceAfter
-      completionHandler:completionHandler];
+  // Deliberately does not forward to AVPlayer: tests that need seekTo to see a duration hand this
+  // stub a stub current item, and a real seek against an item the player was never given never
+  // completes.
+  if (completionHandler) {
+    completionHandler(YES);
+  }
 }
 
 @end
@@ -131,9 +141,9 @@
   return _stubAVPlayer ?: [AVPlayer playerWithPlayerItem:playerItem];
 }
 
-- (AVPlayerItemVideoOutput *)videoOutputWithPixelBufferAttributes:
-    (NSDictionary<NSString *, id> *)attributes {
-  return _output ?: [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes];
+- (AVPlayerItemVideoOutput *)videoOutputWithOutputSettings:
+    (NSDictionary<NSString *, id> *)outputSettings {
+  return _output ?: [[AVPlayerItemVideoOutput alloc] initWithOutputSettings:outputSettings];
 }
 
 @end
@@ -611,10 +621,11 @@
 
 - (void)testSeekToleranceWhenNotSeekingToEnd {
   StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
+  stubAVPlayer.stubCurrentItem = [self playerItemWithLoadedDurationInMillis:4000];
   StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
                                                                       output:nil];
   FVPVideoPlayer *player =
-      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
+      [[FVPVideoPlayer alloc] initWithPlayerItem:stubAVPlayer.stubCurrentItem
                                        avFactory:stubAVFactory
                                     viewProvider:[[StubViewProvider alloc] init]];
   NSObject<FVPVideoEventListener> *listener = OCMProtocolMock(@protocol(FVPVideoEventListener));
@@ -634,6 +645,32 @@
 
 - (void)testSeekToleranceWhenSeekingToEnd {
   StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
+  stubAVPlayer.stubCurrentItem = [self playerItemWithLoadedDurationInMillis:4000];
+  StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
+                                                                      output:nil];
+  FVPVideoPlayer *player =
+      [[FVPVideoPlayer alloc] initWithPlayerItem:stubAVPlayer.stubCurrentItem
+                                       avFactory:stubAVFactory
+                                    viewProvider:[[StubViewProvider alloc] init]];
+  NSObject<FVPVideoEventListener> *listener = OCMProtocolMock(@protocol(FVPVideoEventListener));
+  player.eventListener = listener;
+
+  XCTestExpectation *seekExpectation =
+      [self expectationWithDescription:@"seekTo has non-zero tolerance when seeking to end"];
+  [player seekTo:4000
+      completion:^(FlutterError *_Nullable error) {
+        [seekExpectation fulfill];
+      }];
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+  XCTAssertGreaterThan([stubAVPlayer.beforeTolerance intValue], 0);
+  XCTAssertGreaterThan([stubAVPlayer.afterTolerance intValue], 0);
+}
+
+- (void)testSeekToleranceWhenDurationIsNotLoaded {
+  // Reading an unloaded duration blocks the calling thread, which on iOS is the thread that runs
+  // Dart and produces frames, so seekTo skips the read and assumes the end-of-video tolerance
+  // instead. One millisecond of imprecision cannot hang the seek; a zero tolerance can.
+  StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
   StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
                                                                       output:nil];
   FVPVideoPlayer *player =
@@ -644,12 +681,12 @@
   player.eventListener = listener;
 
   XCTestExpectation *seekExpectation =
-      [self expectationWithDescription:@"seekTo has non-zero tolerance when seeking to end"];
-  // The duration of this video is "0" due to the non standard initiliatazion process.
-  [player seekTo:0
+      [self expectationWithDescription:@"seekTo has non-zero tolerance when duration is unknown"];
+  [player seekTo:1234
       completion:^(FlutterError *_Nullable error) {
         [seekExpectation fulfill];
       }];
+
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
   XCTAssertGreaterThan([stubAVPlayer.beforeTolerance intValue], 0);
   XCTAssertGreaterThan([stubAVPlayer.afterTolerance intValue], 0);
@@ -1060,6 +1097,19 @@
 
 - (nonnull AVPlayerItem *)playerItemWithURL:(NSURL *)url {
   return [AVPlayerItem playerItemWithAsset:[AVURLAsset URLAssetWithURL:url options:nil]];
+}
+
+/// Returns a player item whose asset reports the given duration as already loaded. seekTo only
+/// consults the duration in that case; an unloaded duration is assumed to be the end of the video.
+- (nonnull AVPlayerItem *)playerItemWithLoadedDurationInMillis:(int64_t)durationInMillis {
+  AVAsset *mockAsset = OCMClassMock([AVAsset class]);
+  OCMStub([mockAsset statusOfValueForKey:@"duration" error:[OCMArg anyObjectRef]])
+      .andReturn(AVKeyValueStatusLoaded);
+  CMTime duration = CMTimeMake(durationInMillis, 1000);
+  OCMStub([mockAsset duration]).andReturn(duration);
+  AVPlayerItem *mockItem = OCMClassMock([AVPlayerItem class]);
+  OCMStub([mockItem asset]).andReturn(mockAsset);
+  return mockItem;
 }
 
 - (void)testLoadTracksWithMediaTypeIsCalledOnNewerOS {

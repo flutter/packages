@@ -95,7 +95,7 @@ public class VideoPlayerPluginTest {
     try (MockedStatic<TextureVideoPlayer> mockedTextureVideoPlayerStatic =
         mockStatic(TextureVideoPlayer.class)) {
       mockedTextureVideoPlayerStatic
-          .when(() -> TextureVideoPlayer.create(any(), any(), any(), any(), any()))
+          .when(() -> TextureVideoPlayer.create(any(), any(), any(), any(), any(), any()))
           .thenReturn(mock(TextureVideoPlayer.class));
 
       final CreationOptions options =

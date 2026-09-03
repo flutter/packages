@@ -11,8 +11,8 @@
   return [AVPlayer playerWithPlayerItem:playerItem];
 }
 
-- (AVPlayerItemVideoOutput *)videoOutputWithPixelBufferAttributes:
-    (NSDictionary<NSString *, id> *)attributes {
-  return [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes];
+- (AVPlayerItemVideoOutput *)videoOutputWithOutputSettings:
+    (NSDictionary<NSString *, id> *)outputSettings {
+  return [[AVPlayerItemVideoOutput alloc] initWithOutputSettings:outputSettings];
 }
 @end

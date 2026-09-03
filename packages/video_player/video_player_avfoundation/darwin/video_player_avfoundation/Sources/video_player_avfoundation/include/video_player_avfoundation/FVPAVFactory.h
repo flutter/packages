@@ -13,10 +13,13 @@ NS_ASSUME_NONNULL_BEGIN
 @required
 - (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem;
 
-/// Creates and returns an AVPlayerItemVideoOutput instance with the specified pixel buffer
-/// attributes.
-- (AVPlayerItemVideoOutput *)videoOutputWithPixelBufferAttributes:
-    (NSDictionary<NSString *, id> *)attributes;
+/// Creates and returns an AVPlayerItemVideoOutput instance with the specified output settings.
+///
+/// The dictionary is passed as output settings rather than pixel buffer attributes, so it may
+/// carry AVFoundation output setting keys (such as AVVideoColorPropertiesKey) in addition to
+/// pixel buffer attribute keys.
+- (AVPlayerItemVideoOutput *)videoOutputWithOutputSettings:
+    (NSDictionary<NSString *, id> *)outputSettings;
 @end
 
 /// A default implementation of the FVPAVFactory protocol.
