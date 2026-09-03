@@ -364,6 +364,13 @@ enum VideoEventType {
   /// Done replacing new item on player.
   reloadingEnd,
 
+  /// The engine has been handed the first decoded frame of the current asset.
+  ///
+  /// Distinct from readiness, which is reported before the engine has asked the
+  /// texture for anything: a view that reveals the texture on readiness alone
+  /// reveals it while it still has nothing to draw.
+  firstFrameRendered,
+
   /// The playback state of the video has changed.
   ///
   /// This event is fired when the video starts or pauses due to user actions or

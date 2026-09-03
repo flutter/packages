@@ -330,6 +330,9 @@ class _PlayerInstance {
       'reloadingStart' => VideoEvent(
         eventType: VideoEventType.reloadingStart,
       ),
+      'firstFrameRendered' => VideoEvent(
+        eventType: VideoEventType.firstFrameRendered,
+      ),
       'reloadingEnd' => VideoEvent(
         eventType: VideoEventType.reloadingEnd,
         duration: Duration(milliseconds: map['duration'] as int),
