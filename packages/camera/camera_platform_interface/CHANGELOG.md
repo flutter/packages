@@ -1,6 +1,6 @@
 ## 2.14.0
 
-* Adds `videoOutputPath` support to `MethodChannelCamera.startVideoRecording`.
+* Adds `videoOutputPath` support to `VideoCaptureOptions`.
 
 ## 2.13.1
 
