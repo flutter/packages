@@ -12,6 +12,7 @@ import '../data/typescale_emphasized.dart';
 import '../templates/action_chip_template.dart';
 import '../templates/app_bar_template.dart';
 import '../templates/bottom_sheet_template.dart';
+import '../templates/color_scheme_template.dart';
 import '../templates/template.dart';
 import 'test_fixtures/test_templates.dart';
 
@@ -258,8 +259,24 @@ void main() {
     });
 
     test('ColorSchemeTemplateM3 emits M3 ColorScheme defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = const ColorSchemeTemplateM3().generateContents('');
+
+      expect(contents, contains('const ColorScheme _colorSchemeLightM3 = ColorScheme('));
+      expect(contents, contains('const ColorScheme _colorSchemeDarkM3 = ColorScheme('));
+      expect(
+        contents,
+        contains('const ColorScheme _colorSchemeLightMediumContrastM3 = ColorScheme('),
+      );
+      expect(
+        contents,
+        contains('const ColorScheme _colorSchemeLightHighContrastM3 = ColorScheme('),
+      );
+      expect(
+        contents,
+        contains('const ColorScheme _colorSchemeDarkMediumContrastM3 = ColorScheme('),
+      );
+      expect(contents, contains('const ColorScheme _colorSchemeDarkHighContrastM3 = ColorScheme('));
+      expect(contents, isNot(contains('_colorSchemeLightM3E')));
     });
 
     test('DatePickerTemplateM3 emits M3 DatePicker defaults from tokens', () {
@@ -433,7 +450,7 @@ void main() {
           isA<AssertionError>().having(
             (AssertionError e) => e.message,
             'message',
-            contains('Make sure you are utilizing the passed `className` parameter.'),
+            contains('Make sure you are utilizing the passed `className` parameter,'),
           ),
         ),
       );

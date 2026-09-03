@@ -24,7 +24,8 @@ import '../templates/bottom_sheet_template.dart';
 // import '../templates/card_template.dart';
 // import '../templates/checkbox_template.dart';
 // import '../templates/chip_template.dart';
-// import '../templates/color_scheme_template.dart';
+import '../templates/color_scheme_template.dart';
+
 // import '../templates/date_picker_template.dart';
 // import '../templates/dialog_template.dart';
 // import '../templates/divider_template.dart';
@@ -75,7 +76,7 @@ Future<void> main(List<String> args) async {
   // const CardTemplateM3().generateFile(verbose: verbose);
   // const CheckboxTemplateM3().generateFile(verbose: verbose);
   // const ChipTemplateM3().generateFile(verbose: verbose);
-  // const ColorSchemeTemplateM3().generateFile(verbose: verbose);
+  const ColorSchemeTemplateM3().generateFile(verbose: verbose);
   // const DatePickerTemplateM3().generateFile(verbose: verbose);
   // const DialogTemplateM3().generateFile(verbose: verbose);
   // const DividerTemplateM3().generateFile(verbose: verbose);
