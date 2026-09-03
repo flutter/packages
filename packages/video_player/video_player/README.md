@@ -185,6 +185,7 @@ ID is derived from the `skd://` key URL in the HLS manifest):
 <?code-excerpt "readme_excerpts.dart (fairplay)"?>
 ```dart
 import 'package:video_player_avfoundation/video_player_avfoundation.dart';
+
 // ···
   final controller = VideoPlayerController.networkUrl(
     Uri.parse('https://example.com/protected.m3u8'),

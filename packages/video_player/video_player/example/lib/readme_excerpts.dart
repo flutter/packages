@@ -13,6 +13,7 @@ import 'package:video_player_android/video_player_android.dart';
 // #enddocregion widevine
 // #docregion fairplay
 import 'package:video_player_avfoundation/video_player_avfoundation.dart';
+
 // #enddocregion fairplay
 
 Future<VideoPlayerController> widevineExample() async {
