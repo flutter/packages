@@ -4445,6 +4445,103 @@ Future<void> _testSnackBarDismiss({
       expect(find.text('bar2'), findsNothing);
     }
   }
+
+  testWidgets('SnackBar action overflow calculation respects MediaQuery textScaler', (
+    WidgetTester tester,
+  ) async {
+    Widget buildSnackBar({required TextScaler textScaler}) {
+      return MaterialApp(
+        home: MediaQuery(
+          data: MediaQueryData(size: const Size(400, 800), textScaler: textScaler),
+          child: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return GestureDetector(
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('Message'),
+                        action: SnackBarAction(label: 'Action Label', onPressed: () {}),
+                      ),
+                    );
+                  },
+                  child: const Text('Show'),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+    }
+
+    // With no scaling, the action label fits on the same row as content.
+    await tester.pumpWidget(buildSnackBar(textScaler: TextScaler.noScaling));
+    await tester.tap(find.text('Show'));
+    await tester.pumpAndSettle();
+
+    final Offset actionTopLeft1 = tester.getTopLeft(find.text('Action Label'));
+    // Action and content are on the same line (action is not below content).
+    expect(actionTopLeft1.dy, lessThanOrEqualTo(tester.getBottomLeft(find.text('Message')).dy));
+
+    ScaffoldMessenger.of(tester.element(find.text('Show'))).clearSnackBars();
+    await tester.pumpAndSettle();
+
+    // With a large text scaler, the action button width is scaled up and overflows
+    // to a separate row below the content.
+    await tester.pumpWidget(buildSnackBar(textScaler: const TextScaler.linear(3.0)));
+    await tester.tap(find.text('Show'));
+    await tester.pumpAndSettle();
+
+    final Offset contentBottomLeft2 = tester.getBottomLeft(find.text('Message'));
+    final Offset actionTopLeft2 = tester.getTopLeft(find.text('Action Label'));
+    // Action overflows and is positioned below the content text.
+    expect(actionTopLeft2.dy, greaterThanOrEqualTo(contentBottomLeft2.dy));
+  });
+
+  testWidgets('SnackBar does not allocate 40% empty space on right when action overflows', (
+    WidgetTester tester,
+  ) async {
+    const double screenWidth = 500.0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MediaQuery(
+          data: const MediaQueryData(size: Size(screenWidth, 800)),
+          child: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return GestureDetector(
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('Multi-line content that wraps'),
+                        action: SnackBarAction(label: 'Overflow Action', onPressed: () {}),
+                        actionOverflowThreshold: 0.1,
+                      ),
+                    );
+                  },
+                  child: const Text('Show'),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Show'));
+    await tester.pumpAndSettle();
+
+    // Verify there is no SizedBox with width equal to 40% of snackBarWidth.
+    expect(
+      find.byWidgetPredicate(
+        (Widget widget) =>
+            widget is SizedBox &&
+            widget.width != null &&
+            (widget.width! - screenWidth * 0.4).abs() < 1.0,
+      ),
+      findsNothing,
+    );
+  });
 }
 
 /// Create drag gestures for DismissDirections.
