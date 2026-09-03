@@ -1,3 +1,9 @@
+## 0.5.4
+
+* Fixes a crash (`IllegalStateException: Reply already submitted`) when the
+  Play Billing library invokes a response listener more than once for a single
+  call.
+
 ## 0.5.3
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
