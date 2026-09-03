@@ -2,8 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-class _FilledTonalButtonDefaultsM3 extends ButtonStyle {
-  _FilledTonalButtonDefaultsM3(this.context)
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../text_button.dart';
+
+class _TextButtonDefaultsM3 extends ButtonStyle {
+  _TextButtonDefaultsM3(this.context)
     : super(
         animationDuration: kThemeChangeDuration,
         enableFeedback: true,
@@ -19,12 +24,7 @@ class _FilledTonalButtonDefaultsM3 extends ButtonStyle {
 
   @override
   WidgetStateProperty<Color?>? get backgroundColor =>
-      WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-        if (states.contains(WidgetState.disabled)) {
-          return _colors.onSurface.withOpacity(0.12);
-        }
-        return _colors.secondaryContainer;
-      });
+      const MaterialStatePropertyAll<Color>(Colors.transparent);
 
   @override
   WidgetStateProperty<Color?>? get foregroundColor =>
@@ -32,48 +32,34 @@ class _FilledTonalButtonDefaultsM3 extends ButtonStyle {
         if (states.contains(WidgetState.disabled)) {
           return _colors.onSurface.withOpacity(0.38);
         }
-        return _colors.onSecondaryContainer;
+        return _colors.primary;
       });
 
   @override
   WidgetStateProperty<Color?>? get overlayColor =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.pressed)) {
-          return _colors.onSecondaryContainer.withOpacity(0.1);
+          return _colors.primary.withOpacity(0.1);
         }
         if (states.contains(WidgetState.hovered)) {
-          return _colors.onSecondaryContainer.withOpacity(0.08);
+          return _colors.primary.withOpacity(0.08);
         }
         if (states.contains(WidgetState.focused)) {
-          return _colors.onSecondaryContainer.withOpacity(0.1);
+          return _colors.primary.withOpacity(0.1);
         }
         return null;
       });
 
   @override
-  WidgetStateProperty<Color>? get shadowColor => MaterialStatePropertyAll<Color>(_colors.shadow);
+  WidgetStateProperty<Color>? get shadowColor =>
+      const MaterialStatePropertyAll<Color>(Colors.transparent);
 
   @override
   WidgetStateProperty<Color>? get surfaceTintColor =>
       const MaterialStatePropertyAll<Color>(Colors.transparent);
 
   @override
-  WidgetStateProperty<double>? get elevation =>
-      WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-        if (states.contains(WidgetState.disabled)) {
-          return 0.0;
-        }
-        if (states.contains(WidgetState.pressed)) {
-          return 0.0;
-        }
-        if (states.contains(WidgetState.hovered)) {
-          return 1.0;
-        }
-        if (states.contains(WidgetState.focused)) {
-          return 0.0;
-        }
-        return 0.0;
-      });
+  WidgetStateProperty<double>? get elevation => const MaterialStatePropertyAll<double>(0.0);
 
   @override
   WidgetStateProperty<EdgeInsetsGeometry>? get padding =>
@@ -95,15 +81,15 @@ class _FilledTonalButtonDefaultsM3 extends ButtonStyle {
         return _colors.onSurface.withOpacity(0.38);
       }
       if (states.contains(WidgetState.pressed)) {
-        return _colors.onSecondaryContainer;
+        return _colors.primary;
       }
       if (states.contains(WidgetState.hovered)) {
-        return _colors.onSecondaryContainer;
+        return _colors.primary;
       }
       if (states.contains(WidgetState.focused)) {
-        return _colors.onSecondaryContainer;
+        return _colors.primary;
       }
-      return _colors.onSecondaryContainer;
+      return _colors.primary;
     });
   }
 

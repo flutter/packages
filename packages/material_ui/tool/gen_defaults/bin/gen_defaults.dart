@@ -19,8 +19,8 @@ import '../templates/app_bar_template.dart';
 // import '../templates/banner_template.dart';
 // import '../templates/bottom_app_bar_template.dart';
 import '../templates/bottom_sheet_template.dart';
+import '../templates/button_template.dart';
 
-// import '../templates/button_template.dart';
 // import '../templates/card_template.dart';
 // import '../templates/checkbox_template.dart';
 // import '../templates/chip_template.dart';
@@ -71,7 +71,11 @@ Future<void> main(List<String> args) async {
   // const BannerTemplateM3().generateFile(verbose: verbose);
   // const BottomAppBarTemplateM3().generateFile(verbose: verbose);
   const BottomSheetTemplateM3().generateFile(verbose: verbose);
-  // const ButtonTemplateM3().generateFile(verbose: verbose);
+  const ButtonTemplateM3('Elevated Button').generateFile(verbose: verbose);
+  const ButtonTemplateM3('Filled Button').generateFile(verbose: verbose);
+  const ButtonTemplateM3('Filled Tonal Button').generateFile(verbose: verbose);
+  const ButtonTemplateM3('Outlined Button').generateFile(verbose: verbose);
+  const ButtonTemplateM3('Text Button').generateFile(verbose: verbose);
   // const CardTemplateM3().generateFile(verbose: verbose);
   // const CheckboxTemplateM3().generateFile(verbose: verbose);
   // const ChipTemplateM3().generateFile(verbose: verbose);
