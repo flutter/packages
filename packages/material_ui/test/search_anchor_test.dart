@@ -3450,6 +3450,84 @@ void main() {
     semantics.dispose();
   });
 
+  testWidgets('SearchAnchor with enableTapHandling: false meets labeledTapTargetGuideline', (
+    WidgetTester tester,
+  ) async {
+    final semantics = SemanticsTester(tester);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SearchAnchor(
+            enableTapHandling: false,
+            builder: (BuildContext context, SearchController controller) {
+              return SearchBar(
+                controller: controller,
+                hintText: 'Search...',
+                trailing: <Widget>[
+                  IconButton(tooltip: 'Clear', icon: const Icon(Icons.clear), onPressed: () {}),
+                ],
+              );
+            },
+            suggestionsBuilder: (BuildContext context, SearchController controller) {
+              return <Widget>[];
+            },
+          ),
+        ),
+      ),
+    );
+
+    await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+    semantics.dispose();
+  });
+
+  testWidgets('SearchAnchor with enableTapHandling provides tap semantics for passive child', (
+    WidgetTester tester,
+  ) async {
+    final semantics = SemanticsTester(tester);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SearchAnchor(
+            builder: (BuildContext context, SearchController controller) {
+              return const Icon(Icons.search);
+            },
+            suggestionsBuilder: (BuildContext context, SearchController controller) {
+              return <Widget>[];
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(semantics, includesNodeWith(actions: <SemanticsAction>[SemanticsAction.tap]));
+    semantics.dispose();
+  });
+
+  testWidgets('SearchAnchor with enableTapHandling: false does not build GestureDetector', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SearchAnchor(
+            enableTapHandling: false,
+            builder: (BuildContext context, SearchController controller) {
+              return const Icon(Icons.search);
+            },
+            suggestionsBuilder: (BuildContext context, SearchController controller) {
+              return <Widget>[];
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      find.descendant(of: find.byType(SearchAnchor), matching: find.byType(GestureDetector)),
+      findsNothing,
+    );
+  });
+
   testWidgets('Check SearchBar opacity when disabled', (WidgetTester tester) async {
     await tester.pumpWidget(
       const MaterialApp(
