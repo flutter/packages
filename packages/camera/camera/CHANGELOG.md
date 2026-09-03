@@ -1,4 +1,4 @@
-## 0.12.0+3
+## 0.12.1
 
 * Adds `CameraController.isZeroShutterLagSupported` and
   `CameraController.setZeroShutterLagEnabled` for zero-shutter-lag still image
