@@ -1,6 +1,7 @@
 ## 6.3.4
 
 * Migrates the plugin class from Objective-C to Swift.
+* Adds a CocoaPods placeholder header so the generated Swift header can import `google_sign_in_ios.h`.
 
 ## 6.3.3
 
