@@ -28,6 +28,8 @@ final class MockCamera: NSObject, Camera {
   var unlockCaptureOrientationStub: (() -> Void)?
   var setImageFileFormatStub: ((PlatformImageFileFormat) -> Void)?
   var setJpegImageQualityStub: ((Int64) -> Void)?
+  var isZeroShutterLagSupportedStub: (() -> Bool)?
+  var setZeroShutterLagEnabledStub: ((Bool) -> Void)?
   var setExposureModeStub: ((PlatformExposureMode) -> Void)?
   var setExposureOffsetStub: ((Double) -> Void)?
   var setExposurePointStub: ((PlatformPoint?, @escaping (Result<Void, any Error>) -> Void) -> Void)?
@@ -147,6 +149,14 @@ final class MockCamera: NSObject, Camera {
 
   func setJpegImageQuality(_ quality: Int64) {
     setJpegImageQualityStub?(quality)
+  }
+
+  func isZeroShutterLagSupported() -> Bool {
+    return isZeroShutterLagSupportedStub?() ?? false
+  }
+
+  func setZeroShutterLagEnabled(_ enabled: Bool) {
+    setZeroShutterLagEnabledStub?(enabled)
   }
 
   func setExposureMode(_ mode: PlatformExposureMode) {

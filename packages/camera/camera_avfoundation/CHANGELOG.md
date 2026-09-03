@@ -1,3 +1,8 @@
+## 0.10.4
+
+* Adds support for zero-shutter-lag still image capture via
+  `isZeroShutterLagSupported` and `setZeroShutterLagEnabled` (iOS 17+).
+
 ## 0.10.3
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.

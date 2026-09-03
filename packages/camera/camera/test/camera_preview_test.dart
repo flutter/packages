@@ -106,6 +106,12 @@ class FakeController extends ValueNotifier<CameraValue> implements CameraControl
   Future<void> setZoomLevel(double zoom) async {}
 
   @override
+  Future<bool> isZeroShutterLagSupported() async => false;
+
+  @override
+  Future<void> setZeroShutterLagEnabled(bool enabled) async {}
+
+  @override
   Future<void> startImageStream(onLatestImageAvailable onAvailable) async {}
 
   @override
