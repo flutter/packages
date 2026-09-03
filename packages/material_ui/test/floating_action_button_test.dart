@@ -17,6 +17,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'feedback_tester.dart';
+import 'finders.dart';
 import 'semantics_tester.dart';
 
 void main() {
@@ -58,7 +59,7 @@ void main() {
     );
 
     await tester.tap(find.byType(Icon));
-    expect(find.byTooltip('Add'), findsOneWidget);
+    expect(findByTooltip('Add'), findsOneWidget);
   });
 
   // Regression test for: https://github.com/flutter/flutter/pull/21084

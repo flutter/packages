@@ -597,6 +597,28 @@ test_on: vm
       expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
     });
 
+    test('skips browser testing regardless of the exact yaml formatting', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+      package.directory.childFile('dart_test.yaml').writeAsStringSync('''
+test_on: "vm"
+''');
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'dart-test',
+        '--platform=chrome',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Package has opted out of non-vm testing.')]),
+      );
+      expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+    });
+
     test('does not skip running vm in vm mode', () async {
       final RepositoryPackage package = createFakePackage(
         'a_package',
