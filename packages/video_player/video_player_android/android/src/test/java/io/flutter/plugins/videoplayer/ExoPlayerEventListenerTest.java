@@ -5,6 +5,7 @@
 package io.flutter.plugins.videoplayer;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -105,6 +106,17 @@ public final class ExoPlayerEventListenerTest {
     verify(mockExoPlayer).seekToDefaultPosition();
     verify(mockExoPlayer).prepare();
     verifyNoInteractions(mockCallbacks);
+  }
+
+  @Test
+  public void onRenderedFirstFrameIsForwarded() {
+    eventListener.onRenderedFirstFrame();
+    verify(mockCallbacks).onRenderedFirstFrame();
+
+    // ExoPlayer fires this again for a new surface or a new stream, which is
+    // what makes a recycled player re-announce after loadAsset.
+    eventListener.onRenderedFirstFrame();
+    verify(mockCallbacks, times(2)).onRenderedFirstFrame();
   }
 
   @Test
