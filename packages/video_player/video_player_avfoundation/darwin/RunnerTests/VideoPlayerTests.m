@@ -141,9 +141,9 @@
   return _stubAVPlayer ?: [AVPlayer playerWithPlayerItem:playerItem];
 }
 
-- (AVPlayerItemVideoOutput *)videoOutputWithPixelBufferAttributes:
-    (NSDictionary<NSString *, id> *)attributes {
-  return _output ?: [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes];
+- (AVPlayerItemVideoOutput *)videoOutputWithOutputSettings:
+    (NSDictionary<NSString *, id> *)outputSettings {
+  return _output ?: [[AVPlayerItemVideoOutput alloc] initWithOutputSettings:outputSettings];
 }
 
 @end

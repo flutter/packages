@@ -57,11 +57,23 @@
   if (self) {
     // Configure video output for texture-based rendering.
     // Platform view players (base class) don't need this since AVPlayerLayer renders directly.
-    NSDictionary *pixBuffAttributes = @{
+    //
+    // AVVideoColorPropertiesKey must be declared on the output settings (on pixel buffer
+    // attributes AVFoundation silently ignores it) so that HDR sources are tone-mapped to BT.709
+    // SDR on the way into the texture. Without it, BT.2020 samples reach the texture unconverted,
+    // are sampled as sRGB, and play back washed out. BT.709 sources are unaffected.
+    // See https://github.com/flutter/flutter/issues/91241. Note that the platform view path keeps
+    // its HDR: AVPlayerLayer renders it directly into an EDR-enabled layer.
+    NSDictionary *outputSettings = @{
+      AVVideoColorPropertiesKey : @{
+        AVVideoColorPrimariesKey : AVVideoColorPrimaries_ITU_R_709_2,
+        AVVideoTransferFunctionKey : AVVideoTransferFunction_ITU_R_709_2,
+        AVVideoYCbCrMatrixKey : AVVideoYCbCrMatrix_ITU_R_709_2,
+      },
       (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
-      (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
+      (id)kCVPixelBufferIOSurfacePropertiesKey : @{},
     };
-    self.videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
+    self.videoOutput = [avFactory videoOutputWithOutputSettings:outputSettings];
 
     _frameUpdater = frameUpdater;
     _displayLink = displayLink;
