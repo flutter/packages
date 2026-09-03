@@ -9,19 +9,25 @@ import static org.mockito.Mockito.*;
 
 import android.content.Context;
 import androidx.media3.exoplayer.ExoPlayer;
+import androidx.test.core.app.ApplicationProvider;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoView;
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
+// Runs under Robolectric because instrumenting the ExoPlayer interface -- to mock it, or to build
+// one -- initializes supertypes that need an Android runtime.
+@RunWith(RobolectricTestRunner.class)
 public class PlatformVideoViewFactoryTest {
   @Test
   public void createsPlatformVideoViewBasedOnSuppliedArguments() {
     final PlatformVideoViewFactory.VideoPlayerProvider videoPlayerProvider =
         mock(PlatformVideoViewFactory.VideoPlayerProvider.class);
     final VideoPlayer videoPlayer = mock(VideoPlayer.class);
+    final Context context = ApplicationProvider.getApplicationContext();
     final ExoPlayer exoPlayer = mock(ExoPlayer.class);
-    final Context context = mock(Context.class);
     final long playerId = 1L;
 
     when(videoPlayerProvider.getVideoPlayer(playerId)).thenReturn(videoPlayer);
