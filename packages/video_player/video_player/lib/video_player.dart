@@ -57,6 +57,7 @@ class VideoPlayerValue {
     this.isLooping = false,
     this.isBuffering = false,
     this.isReadyToDisplay = false,
+    this.hasRenderedFirstFrame = false,
     this.volume = 1.0,
     this.playbackSpeed = 1.0,
     this.rotationCorrection = 0,
@@ -116,6 +117,16 @@ class VideoPlayerValue {
 
   /// True if the video is ready to display a frame.
   final bool isReadyToDisplay;
+
+  /// Whether the engine has been handed a decoded frame of the current asset.
+  ///
+  /// [isReadyToDisplay] says the item can play; this says there is a picture.
+  /// The gap between them is a frame or two, during which a view that shows the
+  /// texture has nothing behind it -- so a view that wants to keep a placeholder
+  /// up until the video can actually be seen should wait for this.
+  ///
+  /// Only reported by platforms that implement it; false forever elsewhere.
+  final bool hasRenderedFirstFrame;
 
   /// The current volume of the playback.
   final double volume;
@@ -179,6 +190,7 @@ class VideoPlayerValue {
     bool? isLooping,
     bool? isBuffering,
     bool? isReadyToDisplay,
+    bool? hasRenderedFirstFrame,
     double? volume,
     double? playbackSpeed,
     int? rotationCorrection,
@@ -194,6 +206,8 @@ class VideoPlayerValue {
       buffered: buffered ?? this.buffered,
       isInitialized: isInitialized ?? this.isInitialized,
       isReadyToDisplay: isReadyToDisplay ?? this.isReadyToDisplay,
+      hasRenderedFirstFrame:
+          hasRenderedFirstFrame ?? this.hasRenderedFirstFrame,
       isPlaying: isPlaying ?? this.isPlaying,
       isStopped: isStopped ?? this.isStopped,
       isLooping: isLooping ?? this.isLooping,
@@ -219,6 +233,7 @@ class VideoPlayerValue {
         'buffered: [${buffered.join(', ')}], '
         'isInitialized: $isInitialized, '
         'isReadyToDisplay: $isReadyToDisplay, '
+        'hasRenderedFirstFrame: $hasRenderedFirstFrame, '
         'isPlaying: $isPlaying, '
         'isStopped: $isStopped, '
         'isLooping: $isLooping, '
@@ -250,6 +265,7 @@ class VideoPlayerValue {
           rotationCorrection == other.rotationCorrection &&
           isInitialized == other.isInitialized &&
           isReadyToDisplay == other.isReadyToDisplay &&
+          hasRenderedFirstFrame == other.hasRenderedFirstFrame &&
           isCompleted == other.isCompleted;
 
   @override
@@ -270,6 +286,7 @@ class VideoPlayerValue {
     rotationCorrection,
     isInitialized,
     isReadyToDisplay,
+    hasRenderedFirstFrame,
     isCompleted,
   );
 }
@@ -553,6 +570,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           value = value.copyWith(isBuffering: false);
         case VideoEventType.reloadingStart:
           break;
+        case VideoEventType.firstFrameRendered:
+          value = value.copyWith(hasRenderedFirstFrame: true);
         case VideoEventType.reloadingEnd:
           if (_newAssetCompleter?.isCompleted == false) {
             value = value.copyWith(
@@ -669,6 +688,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       buffered: [],
       isBuffering: false,
       isReadyToDisplay: false,
+      hasRenderedFirstFrame: false,
       isCompleted: false,
     );
   }
@@ -709,6 +729,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     value = value.copyWith(
       isReadyToDisplay: false,
+      // The new asset has not drawn anything yet, whatever the last one did.
+      hasRenderedFirstFrame: false,
       isPlaying: false,
       isStopped: false,
       position: Duration.zero,

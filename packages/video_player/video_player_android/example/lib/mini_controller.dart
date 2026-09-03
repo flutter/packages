@@ -289,6 +289,11 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
           value = value.copyWith(isBuffering: true);
         case VideoEventType.bufferingEnd:
           value = value.copyWith(isBuffering: false);
+        case VideoEventType.firstFrameRendered:
+          // The example draws the texture as soon as it is initialized, so it
+          // has nothing to do with this. A view that keeps a placeholder up
+          // until the video can actually be seen waits for it.
+          break;
         case VideoEventType.reloadingStart:
           value = value.copyWith(isInitialized: false);
         case VideoEventType.reloadingEnd:

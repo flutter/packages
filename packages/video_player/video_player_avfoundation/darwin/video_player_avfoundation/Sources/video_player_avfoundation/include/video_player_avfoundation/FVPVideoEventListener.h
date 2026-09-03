@@ -29,6 +29,15 @@
 - (void)videoPlayerDidStartReloading;
 // Called when the video player has finished loading a new item.
 - (void)videoPlayerDidEndReloadingWithDuration:(int64_t)duration size:(CGSize)size;
+
+/// Called the first time the engine is handed a decoded frame of the current
+/// asset -- that is, the first moment the texture has something to show.
+///
+/// Readiness cannot say this: it is reported before the engine has asked the
+/// texture for anything, and the engine does not ask until the texture is on
+/// screen. A page that reveals the texture on readiness alone therefore reveals
+/// it a frame or so early, with nothing behind it.
+- (void)videoPlayerDidRenderFirstFrame;
 /// Called when the player starts or stops playing.
 - (void)videoPlayerDidSetPlaying:(BOOL)playing;
 /// Called when the video player has been disposed on the Dart side.

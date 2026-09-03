@@ -73,6 +73,12 @@
     if ([call.method isEqualToString:@"setEnabled"]) {
       FVPDiagSetEnabled([call.arguments boolValue]);
       result(nil);
+    } else if ([call.method isEqualToString:@"setPlaceholderHoldMs"]) {
+      FVPDiagSetPlaceholderHoldMs([call.arguments doubleValue]);
+      result(nil);
+    } else if ([call.method isEqualToString:@"setFirstFrameGating"]) {
+      FVPFirstFrameGatingSetEnabled([call.arguments boolValue]);
+      result(nil);
     } else {
       result(FlutterMethodNotImplemented);
     }
