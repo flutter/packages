@@ -50,7 +50,7 @@ const EdgeInsets _defaultInsetPadding = EdgeInsets.symmetric(horizontal: 40.0, v
 ///
 /// </callout-box>
 ///
-/// ## Contraints
+/// ## Constraints
 /// The Material 3 guideline recommends that a dialog should have a maximal width of 560dp.
 /// For historical reasons, Flutter's [Dialog] widget does not come with this constraint by default.
 /// For applications targeting large screens such as desktop or Web, it is recommended to

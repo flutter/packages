@@ -24,6 +24,8 @@ import 'theme.dart';
 
 /// A Material Design carousel widget.
 ///
+/// Learn more about [CarouselView] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=GQ8ajYVF0bo).
+///
 /// The [CarouselView] presents a scrollable list of items, each of which can dynamically
 /// change size based on the chosen layout.
 ///
