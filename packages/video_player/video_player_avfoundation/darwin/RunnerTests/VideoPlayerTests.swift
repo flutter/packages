@@ -65,6 +65,62 @@ private let hlsAudioTestURI =
     #expect(!textureRegistry.registeredTexture)
   }
 
+  @Test func creationWithoutDrmDoesNotInstallAResourceLoaderDelegate() throws {
+    let avFactory = StubFVPAVFactory()
+    let videoPlayerPlugin = try createInitializedPlugin(avFactory: avFactory)
+
+    _ = try videoPlayerPlugin.createTexturePlayer(
+      options: CreationOptions(uri: hlsTestURI, httpHeaders: [:]))
+
+    #expect(avFactory.lastResourceLoaderDelegate == nil)
+  }
+
+  @Test func fairPlayConfigurationInstallsAResourceLoaderDelegate() throws {
+    let avFactory = StubFVPAVFactory()
+    let videoPlayerPlugin = try createInitializedPlugin(avFactory: avFactory)
+
+    _ = try videoPlayerPlugin.createTexturePlayer(
+      options: CreationOptions(
+        uri: hlsTestURI,
+        httpHeaders: [:],
+        fairPlayDrm: PlatformFairPlayDrmConfiguration(
+          certificateUri: "https://example.com/certificate",
+          licenseUri: "https://example.com/license",
+          licenseHeaders: ["Authorization": "Bearer token"],
+          contentId: "content-id")))
+
+    #expect(avFactory.lastResourceLoaderDelegate is FVPFairPlayResourceLoaderDelegate)
+  }
+
+  @Test func fairPlayDelegateHandlesCancellation() {
+    // AVFoundation cancels key requests on seek, item replacement and teardown; without this the
+    // exchange would keep running and finish a request that is no longer valid.
+    let delegate = FVPFairPlayResourceLoaderDelegate(
+      certificateURL: URL(string: "https://example.com/certificate")!,
+      licenseURL: URL(string: "https://example.com/license")!,
+      licenseHeaders: [:],
+      contentId: nil)
+
+    // Spelled as a raw selector because AVAssetResourceLoaderDelegate overloads didCancel: for
+    // both loading requests and authentication challenges.
+    #expect(delegate.responds(to: Selector("resourceLoader:didCancelLoadingRequest:")))
+  }
+
+  @Test func fairPlayConfigurationWithAnInvalidUriThrows() throws {
+    let videoPlayerPlugin = try createInitializedPlugin()
+
+    #expect(throws: PigeonError.self) {
+      _ = try videoPlayerPlugin.createTexturePlayer(
+        options: CreationOptions(
+          uri: hlsTestURI,
+          httpHeaders: [:],
+          fairPlayDrm: PlatformFairPlayDrmConfiguration(
+            certificateUri: "",
+            licenseUri: "https://example.com/license",
+            licenseHeaders: [:])))
+    }
+  }
+
   @Test func seekToWhilePausedStartsDisplayLinkTemporarily() async throws {
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
@@ -1023,7 +1079,7 @@ private let hlsAudioTestURI =
   }
 
   private func playerItem(with url: URL, factory: FVPAVFactory) -> FVPAVPlayerItem {
-    let asset = factory.urlAsset(with: url, options: nil)
+    let asset = factory.urlAsset(with: url, options: nil, resourceLoaderDelegate: nil)
     return factory.playerItem(with: asset)
   }
 

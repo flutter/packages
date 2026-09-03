@@ -74,6 +74,9 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
 }
 
 @implementation FVPVideoPlayer {
+  // The wrapped player item. This is retained because the wrapper owns objects that have to outlive
+  // player creation, such as the resource loader delegate used for DRM.
+  NSObject<FVPAVPlayerItem> *_playerItem;
   // Whether or not player and player item listeners have ever been registered.
   BOOL _listenersRegistered;
 }
@@ -84,6 +87,7 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
 
+  _playerItem = item;
   _viewProvider = viewProvider;
 
   NSObject<FVPAVAsset> *asset = item.asset;
@@ -187,6 +191,10 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   }
 
   [self.player replaceCurrentItemWithPlayerItem:nil];
+  // Release the wrapper as well as the player's reference to the item. The wrapper owns the
+  // resource loader delegate for DRM playback, which in turn owns any key exchange still in
+  // flight, so holding it until this player is deallocated would keep that work alive.
+  _playerItem = nil;
 
   if (_onDisposed) {
     _onDisposed();
