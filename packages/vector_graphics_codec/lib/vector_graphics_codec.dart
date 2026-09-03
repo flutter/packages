@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -39,7 +39,10 @@ const int kLineThroughMask = 0x4;
 /// decoding.
 ///
 /// See [VectorGraphicsCodecListener.onImage].
-typedef VectorGraphicsErrorListener = void Function(Object error, StackTrace? stackTrace);
+typedef VectorGraphicsErrorListener = void Function(
+  Object error,
+  StackTrace? stackTrace,
+);
 
 /// Enumeration of the types of image data accepted by [VectorGraphicsCodec.writeImage].
 ///
@@ -125,6 +128,7 @@ class VectorGraphicsCodec {
   static const int _patternTag = 49;
   static const int _textPositionTag = 50;
   static const int _updateTextPositionTag = 51;
+  static const int _alphaMaskTag = 53;
   static const int _pathTagHalfPrecision = 52;
 
   static const int _version = 1;
@@ -137,30 +141,30 @@ class VectorGraphicsCodec {
   /// a dart:ui Picture object should implement [VectorGraphicsCodecListener].
   ///
   /// Throws a [StateError] If the message is invalid.
-  DecodeResponse decode(
-    ByteData data,
-    VectorGraphicsCodecListener? listener, {
-    DecodeResponse? response,
-  }) {
+  DecodeResponse decode(ByteData data, VectorGraphicsCodecListener? listener,
+      {DecodeResponse? response}) {
     final _ReadBuffer buffer;
     if (response == null) {
       buffer = _ReadBuffer(data);
       if (data.lengthInBytes < 5) {
-        throw StateError('The provided data was not a vector_graphics binary asset.');
+        throw StateError(
+            'The provided data was not a vector_graphics binary asset.');
       }
       final int magicNumber = buffer.getUint32();
       if (magicNumber != _magicNumber) {
-        throw StateError('The provided data was not a vector_graphics binary asset.');
+        throw StateError(
+            'The provided data was not a vector_graphics binary asset.');
       }
       final int version = buffer.getUint8();
       if (version != _version) {
-        throw StateError('The provided data does not match the currently supported version.');
+        throw StateError(
+            'The provided data does not match the currently supported version.');
       }
     } else {
       buffer = response._buffer!;
     }
 
-    var readImage = false;
+    bool readImage = false;
     while (buffer.hasRemaining) {
       final int type = buffer.getUint8();
       switch (type) {
@@ -208,6 +212,9 @@ class VectorGraphicsCodec {
         case _maskTag:
           listener?.onMask();
           continue;
+        case _alphaMaskTag:
+          listener?.onAlphaMask();
+          continue;
         case _textConfigTag:
           _readTextConfig(buffer, listener);
           continue;
@@ -240,7 +247,11 @@ class VectorGraphicsCodec {
   /// Encode the dimensions of the vector graphic.
   ///
   /// This should be the first attribute encoded.
-  void writeSize(VectorGraphicsBuffer buffer, double width, double height) {
+  void writeSize(
+    VectorGraphicsBuffer buffer,
+    double width,
+    double height,
+  ) {
     if (buffer._decodePhase.index != _CurrentSection.size.index) {
       throw StateError('Size already written');
     }
@@ -253,7 +264,12 @@ class VectorGraphicsCodec {
   /// Encode a draw path command in the current buffer.
   ///
   /// Requires that [pathId] and [paintId] to already be encoded.
-  void writeDrawPath(VectorGraphicsBuffer buffer, int pathId, int paintId, int? patternId) {
+  void writeDrawPath(
+    VectorGraphicsBuffer buffer,
+    int pathId,
+    int paintId,
+    int? patternId,
+  ) {
     buffer._checkPhase(_CurrentSection.commands);
     buffer._addCommandsTag();
 
@@ -303,7 +319,12 @@ class VectorGraphicsCodec {
   ///
   /// This method is only used to write the paint used for fill commands.
   /// To write a paint used for a stroke command, see [writeStroke].
-  int writeFill(VectorGraphicsBuffer buffer, int color, int blendMode, [int? shaderId]) {
+  int writeFill(
+    VectorGraphicsBuffer buffer,
+    int color,
+    int blendMode, [
+    int? shaderId,
+  ]) {
     buffer._checkPhase(_CurrentSection.paints);
 
     final int paintId = buffer._nextPaintId++;
@@ -364,7 +385,8 @@ class VectorGraphicsCodec {
     required Float64List? transform,
     required int tileMode,
   }) {
-    assert((focalX == null && focalY == null) || (focalX != null && focalY != null));
+    assert((focalX == null && focalY == null) ||
+        (focalX != null && focalY != null));
     assert(transform == null || transform.length == 16);
     buffer._checkPhase(_CurrentSection.shaders);
 
@@ -430,7 +452,10 @@ class VectorGraphicsCodec {
     return paintId;
   }
 
-  void _readLinearGradient(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readLinearGradient(
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener,
+  ) {
     final int id = buffer.getUint16();
     final double fromX = buffer.getFloat32();
     final double fromY = buffer.getFloat32();
@@ -441,10 +466,22 @@ class VectorGraphicsCodec {
     final int offsetLength = buffer.getUint16();
     final Float32List offsets = buffer.getFloat32List(offsetLength);
     final int tileMode = buffer.getUint8();
-    listener?.onLinearGradient(fromX, fromY, toX, toY, colors, offsets, tileMode, id);
+    listener?.onLinearGradient(
+      fromX,
+      fromY,
+      toX,
+      toY,
+      colors,
+      offsets,
+      tileMode,
+      id,
+    );
   }
 
-  void _readRadialGradient(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readRadialGradient(
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener,
+  ) {
     final int id = buffer.getUint16();
     final double centerX = buffer.getFloat32();
     final double centerY = buffer.getFloat32();
@@ -476,7 +513,8 @@ class VectorGraphicsCodec {
     );
   }
 
-  void _readFillPaint(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readFillPaint(
+      _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
     final int color = buffer.getUint32();
     final int blendMode = buffer.getUint8();
     final int id = buffer.getUint16();
@@ -495,7 +533,8 @@ class VectorGraphicsCodec {
     );
   }
 
-  void _readStrokePaint(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readStrokePaint(
+      _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
     final int color = buffer.getUint32();
     final int strokeCap = buffer.getUint8();
     final int strokeJoin = buffer.getUint8();
@@ -574,7 +613,7 @@ class VectorGraphicsCodec {
     if (fontFamily != null) {
       // Newer versions of Dart will make this a Uint8List and not require the cast.
       // ignore: unnecessary_cast
-      final encoded = utf8.encode(fontFamily) as Uint8List;
+      final Uint8List encoded = utf8.encode(fontFamily) as Uint8List;
       buffer._putUint16(encoded.length);
       buffer._putUint8List(encoded);
     } else {
@@ -584,7 +623,7 @@ class VectorGraphicsCodec {
     // text-value
     // Newer versions of Dart will make this a Uint8List and not require the cast.
     // ignore: unnecessary_cast
-    final encoded = utf8.encode(text) as Uint8List;
+    final Uint8List encoded = utf8.encode(text) as Uint8List;
     buffer._putUint16(encoded.length);
     buffer._putUint8List(encoded);
 
@@ -632,7 +671,8 @@ class VectorGraphicsCodec {
     buffer._writeTransform(transform);
   }
 
-  void writeUpdateTextPosition(VectorGraphicsBuffer buffer, int textPositionId) {
+  void writeUpdateTextPosition(
+      VectorGraphicsBuffer buffer, int textPositionId) {
     buffer._checkPhase(_CurrentSection.commands);
     buffer._addCommandsTag();
     buffer._putUint8(_updateTextPositionTag);
@@ -650,6 +690,14 @@ class VectorGraphicsCodec {
     buffer._checkPhase(_CurrentSection.commands);
     buffer._addCommandsTag();
     buffer._putUint8(_maskTag);
+  }
+
+  /// Writes a mask command using alpha semantics
+  /// (CSS `mask-type/mask-mode: alpha`).
+  void writeAlphaMask(VectorGraphicsBuffer buffer) {
+    buffer._checkPhase(_CurrentSection.commands);
+    buffer._addCommandsTag();
+    buffer._putUint8(_alphaMaskTag);
   }
 
   int writePattern(
@@ -713,9 +761,9 @@ class VectorGraphicsCodec {
   }
 
   Uint16List _encodeToHalfPrecision(Float32List list) {
-    final output = Uint16List(list.length);
-    final buffer = ByteData(8);
-    for (var i = 0; i < list.length; i++) {
+    final Uint16List output = Uint16List(list.length);
+    final ByteData buffer = ByteData(8);
+    for (int i = 0; i < list.length; i++) {
       buffer.setFloat32(0, list[i]);
       fp16.toHalf(buffer);
       output[i] = buffer.getInt16(0);
@@ -724,9 +772,9 @@ class VectorGraphicsCodec {
   }
 
   Float32List _decodeFromHalfPrecision(Uint16List list) {
-    final output = Float32List(list.length);
-    final buffer = ByteData(8);
-    for (var i = 0; i < list.length; i++) {
+    final Float32List output = Float32List(list.length);
+    final ByteData buffer = ByteData(8);
+    for (int i = 0; i < list.length; i++) {
       buffer.setUint16(0, list[i]);
       output[i] = fp16.toDouble(buffer);
     }
@@ -738,7 +786,11 @@ class VectorGraphicsCodec {
   ///
   /// The [data] argument should be the image data encoded according
   /// to the [format] argument. Currently only PNG is supported.
-  int writeImage(VectorGraphicsBuffer buffer, int format, Uint8List data) {
+  int writeImage(
+    VectorGraphicsBuffer buffer,
+    int format,
+    Uint8List data,
+  ) {
     buffer._checkPhase(_CurrentSection.images);
     assert(buffer._nextImageId < kMaxId);
     assert(ImageFormatTypes.values.contains(format));
@@ -776,7 +828,11 @@ class VectorGraphicsCodec {
     buffer._writeTransform(transform);
   }
 
-  void _readPath(_ReadBuffer buffer, VectorGraphicsCodecListener? listener, {required bool half}) {
+  void _readPath(
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener, {
+    required bool half,
+  }) {
     final int fillType = buffer.getUint8();
     final int id = buffer.getUint16();
     final int tagLength = buffer.getUint32();
@@ -789,7 +845,7 @@ class VectorGraphicsCodec {
       points = buffer.getFloat32List(pointLength);
     }
     listener?.onPathStart(id, fillType);
-    for (var i = 0, j = 0; i < tagLength; i += 1) {
+    for (int i = 0, j = 0; i < tagLength; i += 1) {
       switch (tags[i]) {
         case ControlPointTypes.moveTo:
           listener?.onPathMoveTo(points[j], points[j + 1]);
@@ -820,7 +876,10 @@ class VectorGraphicsCodec {
     listener?.onPathFinished();
   }
 
-  void _readDrawPath(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readDrawPath(
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener,
+  ) {
     final int pathId = buffer.getUint16();
     final int paintId = buffer.getUint16();
     int? patternId = buffer.getUint16();
@@ -830,7 +889,10 @@ class VectorGraphicsCodec {
     listener?.onDrawPath(pathId, paintId, patternId);
   }
 
-  void _readDrawVertices(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readDrawVertices(
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener,
+  ) {
     final int paintId = buffer.getUint16();
     final int verticesLength = buffer.getUint16();
     final Float32List vertices = buffer.getFloat32List(verticesLength);
@@ -839,15 +901,22 @@ class VectorGraphicsCodec {
     if (indexLength != 0) {
       indices = buffer.getUint16List(indexLength);
     }
-    listener?.onDrawVertices(vertices, indices, paintId != kMaxId ? paintId : null);
+    listener?.onDrawVertices(
+        vertices, indices, paintId != kMaxId ? paintId : null);
   }
 
-  void _readSaveLayer(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readSaveLayer(
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener,
+  ) {
     final int paintId = buffer.getUint16();
     listener?.onSaveLayer(paintId);
   }
 
-  void _readClipPath(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readClipPath(
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener,
+  ) {
     final int pathId = buffer.getUint16();
     listener?.onClipPath(pathId);
   }
@@ -858,14 +927,15 @@ class VectorGraphicsCodec {
     listener?.onSize(width, height);
   }
 
-  void _readTextPosition(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readTextPosition(
+      _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
     final int id = buffer.getUint16();
     final double x = buffer.getFloat32();
     final double y = buffer.getFloat32();
     final double dx = buffer.getFloat32();
     final double dy = buffer.getFloat32();
 
-    final reset = buffer.getUint8() != 0;
+    final bool reset = buffer.getUint8() != 0;
     final Float64List? transform = buffer.getTransform();
 
     listener?.onTextPosition(
@@ -879,12 +949,18 @@ class VectorGraphicsCodec {
     );
   }
 
-  void _readUpdateTextPosition(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readUpdateTextPosition(
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener,
+  ) {
     final int textPositionId = buffer.getUint16();
     listener?.onUpdateTextPosition(textPositionId);
   }
 
-  void _readTextConfig(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readTextConfig(
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener,
+  ) {
     final int id = buffer.getUint16();
     final double xAnchorMultiplier = buffer.getFloat32();
     final double fontSize = buffer.getFloat32();
@@ -913,7 +989,10 @@ class VectorGraphicsCodec {
     );
   }
 
-  void _readDrawText(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readDrawText(
+    _ReadBuffer buffer,
+    VectorGraphicsCodecListener? listener,
+  ) {
     final int textId = buffer.getUint16();
     int? fillId = buffer.getUint16();
     if (fillId == kMaxId) {
@@ -931,7 +1010,8 @@ class VectorGraphicsCodec {
     listener?.onDrawText(textId, fillId, strokeId, patternId);
   }
 
-  void _readImageConfig(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readImageConfig(
+      _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
     final int id = buffer.getUint16();
     final int format = buffer.getUint8();
     final int dataLength = buffer.getUint32();
@@ -939,7 +1019,8 @@ class VectorGraphicsCodec {
     listener?.onImage(id, format, data);
   }
 
-  void _readDrawImage(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  void _readDrawImage(
+      _ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
     final int id = buffer.getUint16();
     final double x = buffer.getFloat32();
     final double y = buffer.getFloat32();
@@ -965,7 +1046,10 @@ class VectorGraphicsCodec {
 /// assets.
 abstract class VectorGraphicsCodecListener {
   /// The size of the vector graphic has been decoded.
-  void onSize(double width, double height);
+  void onSize(
+    double width,
+    double height,
+  );
 
   /// A paint object has been decoded.
   ///
@@ -997,7 +1081,8 @@ abstract class VectorGraphicsCodecListener {
 
   /// A path object will draw a cubic to (x1, y1), with control point 1 as
   /// (x2, y2) and control point 2 as (x3, y3).
-  void onPathCubicTo(double x1, double y1, double x2, double y2, double x3, double y3);
+  void onPathCubicTo(
+      double x1, double y1, double x2, double y2, double x3, double y3);
 
   /// The current path has been closed.
   void onPathClose();
@@ -1008,7 +1093,11 @@ abstract class VectorGraphicsCodecListener {
   /// Draw the given [pathId] with the given [paintId].
   ///
   /// If the [paintId] is `null`, a default empty paint should be used instead.
-  void onDrawPath(int pathId, int? paintId, int? patternId);
+  void onDrawPath(
+    int pathId,
+    int? paintId,
+    int? patternId,
+  );
 
   /// Draw the vertices with the given [vertices] and optionally index buffer
   /// [indices].
@@ -1027,6 +1116,13 @@ abstract class VectorGraphicsCodecListener {
 
   /// Prepare to draw a new mask, until the next [onRestoreLayer] command.
   void onMask();
+
+  /// Invoked when a mask using alpha semantics (CSS `mask-type/mask-mode:
+  /// alpha`) is encountered. Defaults to luminance behavior for backward
+  /// compatibility with implementations predating alpha mask support.
+  void onAlphaMask() {
+    onMask();
+  }
 
   /// A radial gradient shader has been parsed.
   ///
@@ -1070,7 +1166,12 @@ abstract class VectorGraphicsCodecListener {
   );
 
   /// A text block has been decoded.
-  void onDrawText(int textId, int? fillId, int? strokeId, int? patternId);
+  void onDrawText(
+    int textId,
+    int? fillId,
+    int? strokeId,
+    int? patternId,
+  );
 
   /// An encoded image has been decoded.
   ///
@@ -1078,7 +1179,12 @@ abstract class VectorGraphicsCodecListener {
   ///
   /// If the [onError] callback is not null, it must be called if an error
   /// occurs while attempting to decode the image [data].
-  void onImage(int imageId, int format, Uint8List data, {VectorGraphicsErrorListener? onError});
+  void onImage(
+    int imageId,
+    int format,
+    Uint8List data, {
+    VectorGraphicsErrorListener? onError,
+  });
 
   /// An image should be drawn at the provided location.
   void onDrawImage(
@@ -1094,14 +1200,8 @@ abstract class VectorGraphicsCodecListener {
   ///
   /// All subsequent pattern commands will refer to this pattern, until
   /// [onPatternFinished] is invoked.
-  void onPatternStart(
-    int patternId,
-    double x,
-    double y,
-    double width,
-    double height,
-    Float64List transform,
-  );
+  void onPatternStart(int patternId, double x, double y, double width,
+      double height, Float64List transform);
 
   /// Record a new text position.
   void onTextPosition(
@@ -1118,7 +1218,16 @@ abstract class VectorGraphicsCodecListener {
   void onUpdateTextPosition(int textPositionId);
 }
 
-enum _CurrentSection { size, images, shaders, paints, paths, textPositions, text, commands }
+enum _CurrentSection {
+  size,
+  images,
+  shaders,
+  paints,
+  paths,
+  textPositions,
+  text,
+  commands,
+}
 
 /// Write-only buffer for incrementally building a [ByteData] instance.
 ///
@@ -1128,7 +1237,10 @@ enum _CurrentSection { size, images, shaders, paints, paths, textPositions, text
 /// The byte order used is [Endian.little] throughout.
 class VectorGraphicsBuffer {
   /// Creates an interface for incrementally building a [ByteData] instance.
-  VectorGraphicsBuffer() : _buffer = <int>[], _isDone = false, _eightBytes = ByteData(8) {
+  VectorGraphicsBuffer()
+      : _buffer = <int>[],
+        _isDone = false,
+        _eightBytes = ByteData(8) {
     _eightBytesAsList = _eightBytes.buffer.asUint8List();
     // Begin message with the magic number and current version.
     _putUint32(VectorGraphicsCodec._magicNumber);
@@ -1182,10 +1294,8 @@ class VectorGraphicsBuffer {
   void _checkPhase(_CurrentSection expected) {
     if (_decodePhase.index > expected.index) {
       final String name = expected.name;
-      throw StateError(
-        '${name[0].toUpperCase()}${name.substring(1)} '
-        'must be encoded together (current phase is ${_decodePhase.name}).',
-      );
+      throw StateError('${name[0].toUpperCase()}${name.substring(1)} '
+          'must be encoded together (current phase is ${_decodePhase.name}).');
     }
     _decodePhase = expected;
   }
@@ -1222,7 +1332,8 @@ class VectorGraphicsBuffer {
   void _putInt32List(Int32List list) {
     assert(!_isDone);
     _alignTo(4);
-    _buffer.addAll(list.buffer.asUint8List(list.offsetInBytes, 4 * list.length));
+    _buffer
+        .addAll(list.buffer.asUint8List(list.offsetInBytes, 4 * list.length));
   }
 
   /// Write an Float32 into the buffer.
@@ -1240,20 +1351,23 @@ class VectorGraphicsBuffer {
   void _putUint16List(Uint16List list) {
     assert(!_isDone);
     _alignTo(2);
-    _buffer.addAll(list.buffer.asUint8List(list.offsetInBytes, 2 * list.length));
+    _buffer
+        .addAll(list.buffer.asUint8List(list.offsetInBytes, 2 * list.length));
   }
 
   /// Write all the values from a [Float32List] into the buffer.
   void _putFloat32List(Float32List list) {
     assert(!_isDone);
     _alignTo(4);
-    _buffer.addAll(list.buffer.asUint8List(list.offsetInBytes, 4 * list.length));
+    _buffer
+        .addAll(list.buffer.asUint8List(list.offsetInBytes, 4 * list.length));
   }
 
   void _putFloat64List(Float64List list) {
     assert(!_isDone);
     _alignTo(8);
-    _buffer.addAll(list.buffer.asUint8List(list.offsetInBytes, 8 * list.length));
+    _buffer
+        .addAll(list.buffer.asUint8List(list.offsetInBytes, 8 * list.length));
   }
 
   void _alignTo(int alignment) {
@@ -1268,8 +1382,7 @@ class VectorGraphicsBuffer {
   ByteData done() {
     if (_isDone) {
       throw StateError(
-        'done() must not be called more than once on the same VectorGraphicsBuffer.',
-      );
+          'done() must not be called more than once on the same VectorGraphicsBuffer.');
     }
     final ByteData result = Uint8List.fromList(_buffer).buffer.asByteData();
     _buffer = <int>[];
@@ -1344,14 +1457,16 @@ class _ReadBuffer {
 
   /// Reads the given number of Uint8s from the buffer.
   Uint8List getUint8List(int length) {
-    final Uint8List list = data.buffer.asUint8List(data.offsetInBytes + _position, length);
+    final Uint8List list =
+        data.buffer.asUint8List(data.offsetInBytes + _position, length);
     _position += length;
     return list;
   }
 
   Uint16List getUint16List(int length) {
     _alignTo(2);
-    final Uint16List list = data.buffer.asUint16List(data.offsetInBytes + _position, length);
+    final Uint16List list =
+        data.buffer.asUint16List(data.offsetInBytes + _position, length);
     _position += 2 * length;
     return list;
   }
@@ -1359,7 +1474,8 @@ class _ReadBuffer {
   /// Reads the given number of Int32s from the buffer.
   Int32List getInt32List(int length) {
     _alignTo(4);
-    final Int32List list = data.buffer.asInt32List(data.offsetInBytes + _position, length);
+    final Int32List list =
+        data.buffer.asInt32List(data.offsetInBytes + _position, length);
     _position += 4 * length;
     return list;
   }
@@ -1367,7 +1483,8 @@ class _ReadBuffer {
   /// Reads the given number of Int64s from the buffer.
   Int64List getInt64List(int length) {
     _alignTo(8);
-    final Int64List list = data.buffer.asInt64List(data.offsetInBytes + _position, length);
+    final Int64List list =
+        data.buffer.asInt64List(data.offsetInBytes + _position, length);
     _position += 8 * length;
     return list;
   }
@@ -1375,7 +1492,8 @@ class _ReadBuffer {
   /// Reads the given number of Float32s from the buffer
   Float32List getFloat32List(int length) {
     _alignTo(4);
-    final Float32List list = data.buffer.asFloat32List(data.offsetInBytes + _position, length);
+    final Float32List list =
+        data.buffer.asFloat32List(data.offsetInBytes + _position, length);
     _position += 4 * length;
     return list;
   }
@@ -1383,7 +1501,8 @@ class _ReadBuffer {
   /// Reads the given number of Float64s from the buffer.
   Float64List getFloat64List(int length) {
     _alignTo(8);
-    final Float64List list = data.buffer.asFloat64List(data.offsetInBytes + _position, length);
+    final Float64List list =
+        data.buffer.asFloat64List(data.offsetInBytes + _position, length);
     _position += 8 * length;
     return list;
   }

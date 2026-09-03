@@ -9,7 +9,6 @@ import '../geometry/path.dart';
 import '../geometry/vertices.dart';
 import '../image/image_info.dart';
 import '../paint.dart';
-import 'constants.dart';
 import 'node.dart';
 import 'parser.dart';
 import 'visitor.dart';
@@ -20,46 +19,51 @@ import 'visitor.dart';
 class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   late Rect _bounds;
 
-  final Set<String> _activeMasks = <String>{};
-  final Set<String> _activeDeferred = <String>{};
-  final Set<String> _activePatterns = <String>{};
-  int _deferredExpansionCount = 0;
-
   @override
   Node visitClipNode(ClipNode clipNode, AffineMatrix data) {
     final AffineMatrix childTransform = clipNode.concatTransform(data);
     final transformedClips = <Path>[
-      for (final Path clip in clipNode.resolver(clipNode.clipId)) clip.transformed(childTransform),
+      for (final Path clip in clipNode.resolver(clipNode.clipId))
+        clip.transformed(childTransform),
     ];
     if (transformedClips.isEmpty) {
       return clipNode.child.accept(this, data);
     }
-    return ResolvedClipNode(clips: transformedClips, child: clipNode.child.accept(this, data));
+    return ResolvedClipNode(
+      clips: transformedClips,
+      child: clipNode.child.accept(this, data),
+    );
   }
 
   @override
   Node visitMaskNode(MaskNode maskNode, AffineMatrix data) {
-    _deferredExpansionCount++;
-    if (_deferredExpansionCount > kMaxReferenceExpansions) {
-      throw StateError(kMaxReferenceExpansionsErrorMessage);
-    }
-    if (!_activeMasks.add(maskNode.maskId)) {
-      // Recursive loop detected.
+    final AttributedNode? resolvedMask = maskNode.resolver(maskNode.maskId);
+    if (resolvedMask == null) {
       return maskNode.child.accept(this, data);
     }
-    try {
-      final AttributedNode? resolvedMask = maskNode.resolver(maskNode.maskId);
-      if (resolvedMask == null) {
-        return maskNode.child.accept(this, data);
-      }
-      final Node child = maskNode.child.accept(this, data);
-      final AffineMatrix childTransform = maskNode.concatTransform(data);
-      final Node mask = resolvedMask.accept(this, childTransform);
+    final Node child = maskNode.child.accept(this, data);
+    final AffineMatrix childTransform = maskNode.concatTransform(data);
+    final Node mask = resolvedMask.accept(this, childTransform);
 
-      return ResolvedMaskNode(child: child, mask: mask, blendMode: maskNode.blendMode);
-    } finally {
-      _activeMasks.remove(maskNode.maskId);
-    }
+    // mask-type:alpha（CSS Masking / SVG2；Figma 导出标准写法）：
+    // mask 内容按 alpha 而非 luminance 合成。从 mask 定义根节点的原始
+    // style 属性检测（<mask style="mask-type:alpha">），兼容 mask-mode。
+    // CSS Masking 的 mask-type/mask-mode:alpha 有两种写法：独立 XML 属性
+    // （<mask mask-type="alpha">，SVG2/Figma 部分导出器）或 style 属性内
+    // （<mask style="mask-type:alpha">，Figma 另一路导出）——都识别。
+    final String maskType = resolvedMask.attributes.raw['mask-type'] ??
+        resolvedMask.attributes.raw['mask-mode'] ??
+        '';
+    final String maskStyle = resolvedMask.attributes.raw['style'] ?? '';
+    final bool isAlphaMask = maskType == 'alpha' ||
+        maskStyle.contains('mask-type:alpha') ||
+        maskStyle.contains('mask-mode:alpha');
+    return ResolvedMaskNode(
+      child: child,
+      mask: mask,
+      blendMode: maskNode.blendMode,
+      isAlphaMask: isAlphaMask,
+    );
   }
 
   @override
@@ -75,7 +79,9 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
         precalculatedTransform: AffineMatrix.identity,
         children: <Node>[
           for (final Node child in parentNode.children)
-            child.applyAttributes(parentNode.attributes).accept(this, nextTransform),
+            child
+                .applyAttributes(parentNode.attributes)
+                .accept(this, nextTransform),
         ],
       );
     } else {
@@ -84,7 +90,9 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
         paint: saveLayerPaint,
         children: <Node>[
           for (final Node child in parentNode.children)
-            child.applyAttributes(parentNode.attributes.forSaveLayer()).accept(this, nextTransform),
+            child
+                .applyAttributes(parentNode.attributes.forSaveLayer())
+                .accept(this, nextTransform),
         ],
       );
     }
@@ -93,7 +101,9 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
 
   @override
   Node visitPathNode(PathNode pathNode, AffineMatrix data) {
-    final AffineMatrix transform = data.multiplied(pathNode.attributes.transform);
+    final AffineMatrix transform = data.multiplied(
+      pathNode.attributes.transform,
+    );
     final Path transformedPath = pathNode.path
         .transformed(transform)
         .withFillType(pathNode.attributes.fillRule ?? pathNode.path.fillType);
@@ -118,25 +128,39 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
             ResolvedPathNode(
               paint: Paint(blendMode: paint.blendMode, stroke: paint.stroke),
               bounds: newBounds,
-              path: transformedPath.dashed(pathNode.attributes.stroke!.dashArray!),
+              path: transformedPath.dashed(
+                pathNode.attributes.stroke!.dashArray!,
+              ),
             ),
           );
         }
         return parent;
       }
-      return ResolvedPathNode(paint: paint, bounds: newBounds, path: transformedPath);
+      return ResolvedPathNode(
+        paint: paint,
+        bounds: newBounds,
+        path: transformedPath,
+      );
     }
     return Node.empty;
   }
 
   @override
-  Node visitTextPositionNode(TextPositionNode textPositionNode, AffineMatrix data) {
+  Node visitTextPositionNode(
+    TextPositionNode textPositionNode,
+    AffineMatrix data,
+  ) {
     final AffineMatrix nextTransform = textPositionNode.concatTransform(data);
 
-    return ResolvedTextPositionNode(textPositionNode.computeTextPosition(_bounds, data), <Node>[
-      for (final Node child in textPositionNode.children)
-        child.applyAttributes(textPositionNode.attributes).accept(this, nextTransform),
-    ]);
+    return ResolvedTextPositionNode(
+      textPositionNode.computeTextPosition(_bounds, data),
+      <Node>[
+        for (final Node child in textPositionNode.children)
+          child
+              .applyAttributes(textPositionNode.attributes)
+              .accept(this, nextTransform),
+      ],
+    );
   }
 
   @override
@@ -161,31 +185,26 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
       transform: AffineMatrix.identity,
       children: <Node>[
         for (final Node child in viewportNode.children)
-          child.applyAttributes(viewportNode.attributes).accept(this, transform),
+          child
+              .applyAttributes(viewportNode.attributes)
+              .accept(this, transform),
       ],
     );
   }
 
   @override
   Node visitDeferredNode(DeferredNode deferredNode, AffineMatrix data) {
-    _deferredExpansionCount++;
-    if (_deferredExpansionCount > kMaxReferenceExpansions) {
-      throw StateError(kMaxReferenceExpansionsErrorMessage);
-    }
-    if (!_activeDeferred.add(deferredNode.refId)) {
-      // Recursive loop detected.
+    final AttributedNode? resolvedNode = deferredNode.resolver(
+      deferredNode.refId,
+    );
+    if (resolvedNode == null) {
       return Node.empty;
     }
-    try {
-      final AttributedNode? resolvedNode = deferredNode.resolver(deferredNode.refId);
-      if (resolvedNode == null) {
-        return Node.empty;
-      }
-      final Node concreteRef = resolvedNode.applyAttributes(deferredNode.attributes, replace: true);
-      return concreteRef.accept(this, data);
-    } finally {
-      _activeDeferred.remove(deferredNode.refId);
-    }
+    final Node concreteRef = resolvedNode.applyAttributes(
+      deferredNode.attributes,
+      replace: true,
+    );
+    return concreteRef.accept(this, data);
   }
 
   @override
@@ -198,7 +217,10 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   }
 
   @override
-  Node visitResolvedTextPositionNode(ResolvedTextPositionNode textPositionNode, AffineMatrix data) {
+  Node visitResolvedTextPositionNode(
+    ResolvedTextPositionNode textPositionNode,
+    AffineMatrix data,
+  ) {
     assert(false);
     return textPositionNode;
   }
@@ -228,7 +250,10 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   }
 
   @override
-  Node visitResolvedVerticesNode(ResolvedVerticesNode verticesNode, AffineMatrix data) {
+  Node visitResolvedVerticesNode(
+    ResolvedVerticesNode verticesNode,
+    AffineMatrix data,
+  ) {
     assert(false);
     return verticesNode;
   }
@@ -272,47 +297,43 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   }
 
   @override
-  Node visitResolvedImageNode(ResolvedImageNode resolvedImageNode, AffineMatrix data) {
+  Node visitResolvedImageNode(
+    ResolvedImageNode resolvedImageNode,
+    AffineMatrix data,
+  ) {
     assert(false);
     return resolvedImageNode;
   }
 
   @override
   Node visitPatternNode(PatternNode patternNode, AffineMatrix data) {
-    _deferredExpansionCount++;
-    if (_deferredExpansionCount > kMaxReferenceExpansions) {
-      throw StateError(kMaxReferenceExpansionsErrorMessage);
-    }
-    if (!_activePatterns.add(patternNode.patternId)) {
-      // Recursive loop detected.
+    final AttributedNode? resolvedPattern = patternNode.resolver(
+      patternNode.patternId,
+    );
+    if (resolvedPattern == null) {
       return patternNode.child.accept(this, data);
     }
-    try {
-      final AttributedNode? resolvedPattern = patternNode.resolver(patternNode.patternId);
-      if (resolvedPattern == null) {
-        return patternNode.child.accept(this, data);
-      }
-      final Node child = patternNode.child.accept(this, data);
-      final AffineMatrix childTransform = patternNode.concatTransform(data);
-      final Node pattern = resolvedPattern.accept(this, childTransform);
+    final Node child = patternNode.child.accept(this, data);
+    final AffineMatrix childTransform = patternNode.concatTransform(data);
+    final Node pattern = resolvedPattern.accept(this, childTransform);
 
-      return ResolvedPatternNode(
-        child: child,
-        pattern: pattern,
-        x: resolvedPattern.attributes.x?.calculate(0) ?? 0,
-        y: resolvedPattern.attributes.y?.calculate(0) ?? 0,
-        width: resolvedPattern.attributes.width!,
-        height: resolvedPattern.attributes.height!,
-        transform: data,
-        id: patternNode.patternId,
-      );
-    } finally {
-      _activePatterns.remove(patternNode.patternId);
-    }
+    return ResolvedPatternNode(
+      child: child,
+      pattern: pattern,
+      x: resolvedPattern.attributes.x?.calculate(0) ?? 0,
+      y: resolvedPattern.attributes.y?.calculate(0) ?? 0,
+      width: resolvedPattern.attributes.width!,
+      height: resolvedPattern.attributes.height!,
+      transform: data,
+      id: patternNode.patternId,
+    );
   }
 
   @override
-  Node visitResolvedPatternNode(ResolvedPatternNode patternNode, AffineMatrix data) {
+  Node visitResolvedPatternNode(
+    ResolvedPatternNode patternNode,
+    AffineMatrix data,
+  ) {
     assert(false);
     return patternNode;
   }
@@ -369,7 +390,11 @@ class ResolvedTextNode extends Node {
 /// This should only be constructed from a [PathNode] in a [ResolvingVisitor].
 class ResolvedPathNode extends Node {
   /// Create a new [ResolvedPathNode].
-  ResolvedPathNode({required this.paint, required this.bounds, required this.path});
+  ResolvedPathNode({
+    required this.paint,
+    required this.bounds,
+    required this.path,
+  });
 
   /// The paint for the current path node.
   final Paint paint;
@@ -392,8 +417,11 @@ class ResolvedPathNode extends Node {
 /// A node that draws resolved vertices.
 class ResolvedVerticesNode extends Node {
   /// Create a new [ResolvedVerticesNode]
-  ResolvedVerticesNode({required this.paint, required this.vertices, required this.bounds})
-    : assert(paint.stroke == null);
+  ResolvedVerticesNode({
+    required this.paint,
+    required this.vertices,
+    required this.bounds,
+  }) : assert(paint.stroke == null);
 
   /// The paint (fill only) to draw on the given node.
   final Paint paint;
@@ -443,7 +471,16 @@ class ResolvedClipNode extends Node {
 /// This should only be constructed from a [MaskNode] in a [ResolvingVisitor].
 class ResolvedMaskNode extends Node {
   /// Create a new [ResolvedMaskNode].
-  ResolvedMaskNode({required this.child, required this.mask, required this.blendMode});
+  ResolvedMaskNode({
+    required this.child,
+    required this.mask,
+    required this.blendMode,
+    this.isAlphaMask = false,
+  });
+
+  /// Whether the mask uses alpha semantics (CSS `mask-type/mask-mode: alpha`)
+  /// instead of the SVG 1.1 default luminance.
+  final bool isAlphaMask;
 
   /// The child to apply as a mask.
   final Node mask;

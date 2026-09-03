@@ -138,6 +138,8 @@ enum DrawCommandType {
   ///
   /// Implementations should save a layer using a grey scale color matrix.
   mask,
+  /// A mask using alpha semantics (CSS mask-type:alpha).
+  alphaMask,
 
   /// Specifies that this command draws text.
   text,
