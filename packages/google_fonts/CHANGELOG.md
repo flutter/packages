@@ -1,3 +1,8 @@
+## NEXT
+
+- Migrates to the `material_ui` package, not backwards compatible with `package:flutter/material.dart`.
+- Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 8.2.1
 
 - Fixes `pendingFonts()` retaining failed font loads.
