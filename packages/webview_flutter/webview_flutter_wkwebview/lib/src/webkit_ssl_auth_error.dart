@@ -5,6 +5,7 @@
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
+
 import 'common/web_kit.g.dart';
 
 /// An implementation of [PlatformSslAuthError] with the WebKit api.

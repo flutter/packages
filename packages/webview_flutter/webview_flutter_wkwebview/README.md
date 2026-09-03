@@ -11,6 +11,27 @@ so you do not need to add it to your `pubspec.yaml`.
 However, if you `import` this package to use any of its APIs directly, you
 should add it to your `pubspec.yaml` as usual.
 
+### Gesture blocking policy on iOS
+
+If a web view stops responding to touches after the first interaction on iOS, letting the web view
+handle those touches itself, rather than disambiguating them through Flutter's gesture arena, can
+work around it:
+
+<?code-excerpt "example/lib/readme_excerpts.dart (gesture_blocking_policy_example)"?>
+```dart
+final params = WebKitWebViewWidgetCreationParams(
+  controller: controller,
+  gestureBlockingPolicy: .doNotBlockGesture,
+);
+```
+
+Pass those parameters to `WebViewWidget.fromPlatformCreationParams`, using the `platform` of your
+`WebViewController` as the `controller`.
+
+This is a workaround for bugs in the underlying `WKWebView`, and it may cause the web view to
+recognize a gesture that should have been blocked, so only opt in when a web view is affected. The
+policy has no effect on macOS.
+
 ### External Native API
 
 The plugin also provides a native API accessible by the native code of iOS applications or packages.
