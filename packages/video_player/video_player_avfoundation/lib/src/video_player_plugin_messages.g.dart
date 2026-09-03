@@ -192,6 +192,11 @@ class PlatformFairPlayDrmConfiguration {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'PlatformFairPlayDrmConfiguration(certificateUri: $certificateUri, licenseUri: $licenseUri, licenseHeaders: $licenseHeaders, contentId: $contentId)';
+  }
 }
 
 class CreationOptions {
@@ -240,7 +245,7 @@ class CreationOptions {
 
   @override
   String toString() {
-    return 'CreationOptions(uri: $uri, httpHeaders: $httpHeaders)';
+    return 'CreationOptions(uri: $uri, httpHeaders: $httpHeaders, fairPlayDrm: $fairPlayDrm)';
   }
 }
 

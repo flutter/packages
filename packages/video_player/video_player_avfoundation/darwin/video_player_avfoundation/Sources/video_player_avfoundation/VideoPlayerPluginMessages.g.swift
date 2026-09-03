@@ -227,7 +227,7 @@ struct PlatformVideoViewCreationParams: Hashable, CustomStringConvertible {
 /// Pigeon equivalent of video_player_avfoundation's FairPlayDrmConfiguration.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct PlatformFairPlayDrmConfiguration: Hashable {
+struct PlatformFairPlayDrmConfiguration: Hashable, CustomStringConvertible {
   var certificateUri: String
   var licenseUri: String
   var licenseHeaders: [String: String]
@@ -261,18 +261,24 @@ struct PlatformFairPlayDrmConfiguration: Hashable {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return deepEqualsVideoPlayerPluginMessages(lhs.certificateUri, rhs.certificateUri)
-      && deepEqualsVideoPlayerPluginMessages(lhs.licenseUri, rhs.licenseUri)
-      && deepEqualsVideoPlayerPluginMessages(lhs.licenseHeaders, rhs.licenseHeaders)
-      && deepEqualsVideoPlayerPluginMessages(lhs.contentId, rhs.contentId)
+    return VideoPlayerPluginMessagesPigeonInternal.deepEquals(
+      lhs.certificateUri, rhs.certificateUri)
+      && VideoPlayerPluginMessagesPigeonInternal.deepEquals(lhs.licenseUri, rhs.licenseUri)
+      && VideoPlayerPluginMessagesPigeonInternal.deepEquals(lhs.licenseHeaders, rhs.licenseHeaders)
+      && VideoPlayerPluginMessagesPigeonInternal.deepEquals(lhs.contentId, rhs.contentId)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("PlatformFairPlayDrmConfiguration")
-    deepHashVideoPlayerPluginMessages(value: certificateUri, hasher: &hasher)
-    deepHashVideoPlayerPluginMessages(value: licenseUri, hasher: &hasher)
-    deepHashVideoPlayerPluginMessages(value: licenseHeaders, hasher: &hasher)
-    deepHashVideoPlayerPluginMessages(value: contentId, hasher: &hasher)
+    VideoPlayerPluginMessagesPigeonInternal.deepHash(value: certificateUri, hasher: &hasher)
+    VideoPlayerPluginMessagesPigeonInternal.deepHash(value: licenseUri, hasher: &hasher)
+    VideoPlayerPluginMessagesPigeonInternal.deepHash(value: licenseHeaders, hasher: &hasher)
+    VideoPlayerPluginMessagesPigeonInternal.deepHash(value: contentId, hasher: &hasher)
+  }
+
+  public var description: String {
+    return
+      "PlatformFairPlayDrmConfiguration(certificateUri: \(String(describing: certificateUri)), licenseUri: \(String(describing: licenseUri)), licenseHeaders: \(String(describing: licenseHeaders)), contentId: \(String(describing: contentId)))"
   }
 }
 
