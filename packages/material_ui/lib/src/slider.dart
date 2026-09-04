@@ -1994,6 +1994,9 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
       config.label = label!;
     }
     config.isSlider = true;
+    config.role = SemanticsRole.slider;
+    config.minValue = _state.widget.min.toString();
+    config.maxValue = _state.widget.max.toString();
     config.isFocusable = isInteractive;
     config.isFocused = hasFocus;
 
