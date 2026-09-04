@@ -459,7 +459,12 @@ class _PredictiveBackSharedElementPageTransitionState
         begin: switch (widget.currentBackEvent?.swipeEdge) {
           SwipeEdge.left => Offset(xShift, _getYShiftPosition(screenSize.height)),
           SwipeEdge.right => Offset(-xShift, _getYShiftPosition(screenSize.height)),
-          null => Offset(xShift, _getYShiftPosition(screenSize.height)),
+          // Button-triggered back (Android BackEvent.EDGE_NONE) has no swipe
+          // direction. Button events are filtered out in handleStartBackGesture,
+          // so this is a safe fallback matching the null (no event) case.
+          // `_` keeps the switch exhaustive if additional SwipeEdge values
+          // are added in the Flutter SDK.
+          _ => Offset(xShift, _getYShiftPosition(screenSize.height)),
         },
         end: Offset.zero,
       ),
