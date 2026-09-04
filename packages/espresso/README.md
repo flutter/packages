@@ -1,4 +1,5 @@
 # espresso
+<?code-excerpt path-base="example"?>
 
 Provides bindings for Espresso tests of Flutter Android apps.
 
@@ -86,25 +87,22 @@ public class MainActivityTest {
     }
  ```
 
-You'll need to create a test app that enables the Flutter driver extension.
-You can put this in your test_driver/ folder, e.g. test_driver/example.dart.
-Replace `<app_package_name>` with the package name of your app. If you're
-developing a plugin, this will be the package name of the example app.
+You'll need to create a driver script that hands off to the
+[`integration_test`](https://pub.dev/packages/integration_test) package so
+`flutter drive`/Espresso can run your Dart integration tests. Put this in your
+`test_driver/` folder, e.g. `test_driver/integration_test.dart`:
 
+<?code-excerpt "test_driver/integration_test.dart (Driver)"?>
 ```dart
-import 'package:flutter_driver/driver_extension.dart';
-import 'package:<app_package_name>/main.dart' as app;
+import 'package:integration_test/integration_test_driver.dart';
 
-void main() {
-  enableFlutterDriverExtension();
-  app.main();
-}
+Future<void> main() => integrationDriver();
 ```
 
 The following command line command runs the test locally:
 
 ```sh
-./gradlew app:connectedAndroidTest -Ptarget=`pwd`/../test_driver/example.dart
+./gradlew app:connectedAndroidTest -Ptarget=`pwd`/../test_driver/integration_test.dart
 ```
 
 Espresso tests can also be run on [Firebase Test Lab](https://firebase.google.com/docs/test-lab):
