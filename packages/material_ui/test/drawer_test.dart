@@ -1197,7 +1197,7 @@ void main() {
     await tester.pump();
     await tester.pumpAndSettle();
 
-    // Verify it went back
+    // Verify it went back.
     expect(find.text('Home'), findsOneWidget);
     expect(find.text('Second Body'), findsNothing);
   });
