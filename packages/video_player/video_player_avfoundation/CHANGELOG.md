@@ -1,3 +1,10 @@
+## 2.12.0
+
+* Routes video over AirPlay when an external screen is active, by setting
+  `usesExternalPlaybackWhileExternalScreenIsActive` on the `AVPlayer`. Selecting
+  an AirPlay route previously moved only the audio, leaving the video on the
+  device while the receiver showed a mirrored screen.
+
 ## 2.11.1
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
