@@ -103,7 +103,7 @@ class CheckboxThemeData with Diagnosticable {
   /// If specified, overrides the default value of [Checkbox.side].
   final BorderSide? side;
 
-  /// {@macro flutter.material.checkbox.markInsets}
+  /// {@macro material_ui.checkbox.markInsets}
   final EdgeInsets? markInsets;
 
   /// Creates a copy of this object but with the given fields replaced with the

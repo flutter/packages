@@ -421,7 +421,7 @@ class Checkbox extends StatefulWidget {
   /// {@endtemplate}
   final String? semanticLabel;
 
-  /// {@template flutter.material.checkbox.markInsets}
+  /// {@template material_ui.checkbox.markInsets}
   /// The insets applied around the check mark when the checkbox is checked or
   /// in its indeterminate (tristate) state.
   ///
