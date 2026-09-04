@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' as io;
 import 'dart:ui' as ui;
 
 import 'package:example/main.dart' as example;
@@ -20,5 +19,5 @@ void main() {
 
     // Validate that color is Colors.red from child widget.
     await expectLater(find.byIcon(Icons.add), matchesGoldenFile('goldens/shaders.inkwell.png'));
-  }, skip: !io.Platform.isWindows);
+  });
 }
