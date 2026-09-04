@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes CarouselView builder arguments being ignored
+version: patch
