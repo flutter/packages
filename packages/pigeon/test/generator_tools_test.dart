@@ -65,7 +65,7 @@ void main() {
       '2': <String, Object>{'1': '1', '2': '2', '3': '3'},
       '3': '3',
     };
-    expect(_equalMaps(expected, mergeMaps(source, modification)), isTrue);
+    expect(_equalMaps(expected, mergePigeonMaps(source, modification)), isTrue);
   });
 
   test('get codec types from all classes and enums', () {
@@ -465,5 +465,224 @@ void myMethod() {
   print('hello');
 }
 ''');
+  });
+
+  group('compareTypeDeclarationGenericness', () {
+    const object = TypeDeclaration(baseName: 'Object', isNullable: false);
+    const nullableObject = TypeDeclaration(baseName: 'Object', isNullable: true);
+    const listObject = TypeDeclaration(
+      baseName: 'List',
+      isNullable: false,
+      typeArguments: <TypeDeclaration>[object],
+    );
+    const untypedList = TypeDeclaration(baseName: 'List', isNullable: false);
+
+    const string = TypeDeclaration(baseName: 'String', isNullable: false);
+    const listString = TypeDeclaration(
+      baseName: 'List',
+      isNullable: false,
+      typeArguments: <TypeDeclaration>[string],
+    );
+    const mapObjectObject = TypeDeclaration(
+      baseName: 'Map',
+      isNullable: false,
+      typeArguments: <TypeDeclaration>[object, object],
+    );
+    const untypedMap = TypeDeclaration(baseName: 'Map', isNullable: false);
+
+    const listListObject = TypeDeclaration(
+      baseName: 'List',
+      isNullable: false,
+      typeArguments: <TypeDeclaration>[listObject],
+    );
+
+    const listListNullableObject = TypeDeclaration(
+      baseName: 'List',
+      isNullable: false,
+      typeArguments: <TypeDeclaration>[
+        TypeDeclaration(
+          baseName: 'List',
+          isNullable: false,
+          typeArguments: <TypeDeclaration>[nullableObject],
+        ),
+      ],
+    );
+
+    test('Object? is more generic than List<Object>', () {
+      expect(compareTypeDeclarationGenericness(nullableObject, listObject), 1);
+    });
+
+    test('Object is less generic than Object?', () {
+      expect(compareTypeDeclarationGenericness(object, nullableObject), -1);
+    });
+
+    test('Untyped List defaults to List<Object?> which is more generic than List<Object>', () {
+      expect(compareTypeDeclarationGenericness(untypedList, listObject), 1);
+    });
+
+    test('List<Object> is more generic than List<String>', () {
+      expect(compareTypeDeclarationGenericness(listObject, listString), 1);
+    });
+
+    test('Map<Object, Object> is more generic than List<Object>', () {
+      expect(compareTypeDeclarationGenericness(mapObjectObject, listObject), 1);
+    });
+
+    test(
+      'Untyped Map defaults to Map<Object?, Object?> which is more generic than Map<Object, Object>',
+      () {
+        expect(compareTypeDeclarationGenericness(untypedMap, mapObjectObject), 1);
+      },
+    );
+
+    test('List<List<Object?>> is more generic than List<List<Object>>', () {
+      expect(compareTypeDeclarationGenericness(listListNullableObject, listListObject), 1);
+    });
+  });
+
+  group('isPrimitiveType', () {
+    test('returns true for int, double, bool', () {
+      expect(isPrimitiveType(const TypeDeclaration(baseName: 'int', isNullable: false)), isTrue);
+      expect(isPrimitiveType(const TypeDeclaration(baseName: 'double', isNullable: false)), isTrue);
+      expect(isPrimitiveType(const TypeDeclaration(baseName: 'bool', isNullable: false)), isTrue);
+    });
+
+    test('returns false for other types', () {
+      expect(
+        isPrimitiveType(const TypeDeclaration(baseName: 'String', isNullable: false)),
+        isFalse,
+      );
+      expect(isPrimitiveType(const TypeDeclaration(baseName: 'List', isNullable: false)), isFalse);
+      expect(
+        isPrimitiveType(const TypeDeclaration(baseName: 'Object', isNullable: false)),
+        isFalse,
+      );
+    });
+  });
+
+  group('symbols', () {
+    test('getNullabilitySymbol', () {
+      expect(getNullabilitySymbol(true), '?');
+      expect(getNullabilitySymbol(false), '');
+    });
+
+    test('getForceNonNullSymbol', () {
+      expect(getForceNonNullSymbol(true), '!');
+      expect(getForceNonNullSymbol(false), '');
+    });
+  });
+
+  group('compareTypeDeclarationGenericness', () {
+    test('non-nullable is more specific than nullable', () {
+      const nonNullInt = TypeDeclaration(baseName: 'int', isNullable: false);
+      const nullInt = TypeDeclaration(baseName: 'int', isNullable: true);
+      expect(compareTypeDeclarationGenericness(nonNullInt, nullInt), lessThan(0));
+      expect(compareTypeDeclarationGenericness(nullInt, nonNullInt), greaterThan(0));
+      expect(compareTypeDeclarationGenericness(nonNullInt, nonNullInt), equals(0));
+    });
+
+    test('specific type is more specific than Object', () {
+      const intType = TypeDeclaration(baseName: 'int', isNullable: false);
+      const objectType = TypeDeclaration(baseName: 'Object', isNullable: true);
+      expect(compareTypeDeclarationGenericness(intType, objectType), lessThan(0));
+    });
+
+    test('typed list is more specific than untyped list', () {
+      const typedList = TypeDeclaration(
+        baseName: 'List',
+        isNullable: false,
+        typeArguments: <TypeDeclaration>[TypeDeclaration(baseName: 'int', isNullable: false)],
+      );
+      const untypedList = TypeDeclaration(baseName: 'List', isNullable: false);
+      expect(compareTypeDeclarationGenericness(typedList, untypedList), lessThan(0));
+    });
+
+    test('typed map is more specific than untyped map', () {
+      const typedMap = TypeDeclaration(
+        baseName: 'Map',
+        isNullable: false,
+        typeArguments: <TypeDeclaration>[
+          TypeDeclaration(baseName: 'String', isNullable: false),
+          TypeDeclaration(baseName: 'int', isNullable: false),
+        ],
+      );
+      const untypedMap = TypeDeclaration(baseName: 'Map', isNullable: false);
+      expect(compareTypeDeclarationGenericness(typedMap, untypedMap), lessThan(0));
+    });
+
+    test('nested generics are ordered correctly', () {
+      const nestedTypedList = TypeDeclaration(
+        baseName: 'List',
+        isNullable: false,
+        typeArguments: <TypeDeclaration>[
+          TypeDeclaration(
+            baseName: 'List',
+            isNullable: false,
+            typeArguments: <TypeDeclaration>[TypeDeclaration(baseName: 'int', isNullable: false)],
+          ),
+        ],
+      );
+      const nestedObjectList = TypeDeclaration(
+        baseName: 'List',
+        isNullable: false,
+        typeArguments: <TypeDeclaration>[
+          TypeDeclaration(
+            baseName: 'List',
+            isNullable: false,
+            typeArguments: <TypeDeclaration>[TypeDeclaration(baseName: 'Object', isNullable: true)],
+          ),
+        ],
+      );
+      const nestedUntypedList = TypeDeclaration(
+        baseName: 'List',
+        isNullable: false,
+        typeArguments: <TypeDeclaration>[TypeDeclaration(baseName: 'List', isNullable: false)],
+      );
+      expect(compareTypeDeclarationGenericness(nestedTypedList, nestedObjectList), lessThan(0));
+      expect(compareTypeDeclarationGenericness(nestedTypedList, nestedUntypedList), lessThan(0));
+
+      const nestedTypedMap = TypeDeclaration(
+        baseName: 'Map',
+        isNullable: false,
+        typeArguments: <TypeDeclaration>[
+          TypeDeclaration(baseName: 'String', isNullable: false),
+          TypeDeclaration(
+            baseName: 'List',
+            isNullable: false,
+            typeArguments: <TypeDeclaration>[TypeDeclaration(baseName: 'int', isNullable: false)],
+          ),
+        ],
+      );
+      const nestedObjectMap = TypeDeclaration(
+        baseName: 'Map',
+        isNullable: false,
+        typeArguments: <TypeDeclaration>[
+          TypeDeclaration(baseName: 'String', isNullable: false),
+          TypeDeclaration(
+            baseName: 'List',
+            isNullable: false,
+            typeArguments: <TypeDeclaration>[TypeDeclaration(baseName: 'Object', isNullable: true)],
+          ),
+        ],
+      );
+      expect(compareTypeDeclarationGenericness(nestedTypedMap, nestedObjectMap), lessThan(0));
+    });
+  });
+
+  group('makeRelative', () {
+    test('computes relative path correctly from root', () {
+      expect(makeRelative('lib/src/messages.g.dart', '.'), equals('lib/src/messages.g.dart'));
+    });
+
+    test('computes relative path correctly with empty fromPath', () {
+      expect(makeRelative('lib/src/messages.g.dart', ''), equals('lib/src/messages.g.dart'));
+    });
+
+    test('computes relative path across directories', () {
+      expect(
+        makeRelative('lib/src/messages.g.dart', 'tool/pigeon'),
+        equals('../../lib/src/messages.g.dart'),
+      );
+    });
   });
 }

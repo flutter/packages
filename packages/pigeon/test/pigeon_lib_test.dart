@@ -5,10 +5,15 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:path/path.dart' as path;
 import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/dart/dart_generator.dart';
 import 'package:pigeon/src/generator_tools.dart';
+import 'package:pigeon/src/kotlin/jnigen_config_generator.dart';
+import 'package:pigeon/src/kotlin/kotlin_generator.dart';
 import 'package:pigeon/src/pigeon_lib.dart';
 import 'package:pigeon/src/pigeon_lib_internal.dart';
+import 'package:pigeon/src/swift/swift_generator.dart';
 import 'package:test/test.dart';
 
 class _ValidatorGeneratorAdapter implements GeneratorAdapter {
@@ -40,11 +45,26 @@ void main() {
   /// after the [callback] is executed.
   void withTempFile(String filename, void Function(File) callback) {
     final Directory dir = Directory.systemTemp.createTempSync();
-    final path = '${dir.path}/$filename';
-    final file = File(path);
+    final filePath = '${dir.path}/$filename';
+    final file = File(filePath);
     file.createSync();
     try {
       callback(file);
+    } finally {
+      dir.deleteSync(recursive: true);
+    }
+  }
+
+  /// Asynchronous version of [withTempFile]. Creates a temporary file named
+  /// [filename] then awaits [callback]. The temporary directory will only be
+  /// deleted after the [callback] Future completes.
+  Future<void> withTempFileAsync(String filename, Future<void> Function(File) callback) async {
+    final Directory dir = Directory.systemTemp.createTempSync();
+    final filePath = '${dir.path}/$filename';
+    final file = File(filePath);
+    file.createSync();
+    try {
+      await callback(file);
     } finally {
       dir.deleteSync(recursive: true);
     }
@@ -110,6 +130,16 @@ void main() {
     expect(opts.kotlinOptions!.useGeneratedAnnotation, isTrue);
   });
 
+  test('parse args - kotlin_jni_classpaths', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--kotlin_jni_classpaths',
+      'foo/bar',
+      '--kotlin_jni_classpaths',
+      'baz.jar',
+    ]);
+    expect(opts.kotlinOptions?.jniClassPaths, equals(<String>['foo/bar', 'baz.jar']));
+  });
+
   test('parse args - cpp_header_out', () {
     final PigeonOptions opts = Pigeon.parseArgs(<String>['--cpp_header_out', 'foo.h']);
     expect(opts.cppHeaderOut, equals('foo.h'));
@@ -133,6 +163,85 @@ void main() {
   test('parse args - base_path', () {
     final PigeonOptions opts = Pigeon.parseArgs(<String>['--base_path', './foo/']);
     expect(opts.basePath, equals('./foo/'));
+  });
+
+  test('parse args - app_directory', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--app_directory', './foo/']);
+    expect(opts.appDirectory, equals('./foo/'));
+  });
+
+  test('parse args - swift options', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--swift_error_class_name',
+      'MyError',
+      '--no-swift_include_error_class',
+      '--swift_use_ffi',
+      '--swift_ffi_module_name',
+      'MyModule',
+      '--swift_app_directory',
+      './app/',
+      '--swift_apple_sdk_path',
+      '/path/to/sdk',
+      '--swift_apple_sdk_triple',
+      'arm64-apple-ios',
+    ]);
+    expect(opts.swiftOptions?.errorClassName, equals('MyError'));
+    expect(opts.swiftOptions?.includeErrorClass, isFalse);
+    expect(opts.swiftOptions?.useFfi, isTrue);
+    expect(opts.swiftOptions?.ffiModuleName, equals('MyModule'));
+    expect(opts.swiftOptions?.appDirectory, equals('./app/'));
+    expect(opts.swiftOptions?.appleSdkPath, equals('/path/to/sdk'));
+    expect(opts.swiftOptions?.appleSdkTriple, equals('arm64-apple-ios'));
+  });
+
+  test('parse args - java options', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--java_class_name', 'MyClass']);
+    expect(opts.javaOptions?.className, equals('MyClass'));
+  });
+
+  test('parse args - kotlin options', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--kotlin_use_jni',
+      '--kotlin_app_directory',
+      './app/',
+      '--kotlin_error_class_name',
+      'MyError',
+      '--no-kotlin_include_error_class',
+      '--kotlin_file_specific_class_name_component',
+      'MyComponent',
+    ]);
+    expect(opts.kotlinOptions?.useJni, isTrue);
+    expect(opts.kotlinOptions?.appDirectory, equals('./app/'));
+    expect(opts.kotlinOptions?.errorClassName, equals('MyError'));
+    expect(opts.kotlinOptions?.includeErrorClass, isFalse);
+    expect(opts.kotlinOptions?.fileSpecificClassNameComponent, equals('MyComponent'));
+  });
+
+  test('parse args - cpp options', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--cpp_header_include_path',
+      'foo.h',
+      '--cpp_header_out_path',
+      'out.h',
+    ]);
+    expect(opts.cppOptions?.headerIncludePath, equals('foo.h'));
+    expect(opts.cppOptions?.headerOutPath, equals('out.h'));
+  });
+
+  test('parse args - gobject options', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--gobject_header_include_path',
+      'foo.h',
+      '--gobject_header_out_path',
+      'out.h',
+    ]);
+    expect(opts.gobjectOptions?.headerIncludePath, equals('foo.h'));
+    expect(opts.gobjectOptions?.headerOutPath, equals('out.h'));
+  });
+
+  test('parse args - objc options', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--objc_header_include_path', 'foo.h']);
+    expect(opts.objcOptions?.headerIncludePath, equals('foo.h'));
   });
 
   test('simple parse api', () {
@@ -1476,8 +1585,7 @@ abstract class Api {
   });
 
   test('generator validation', () async {
-    final completer = Completer<void>();
-    withTempFile('foo.dart', (File input) async {
+    await withTempFileAsync('foo.dart', (File input) async {
       final generator = _ValidatorGeneratorAdapter(stdout);
       final int result = await Pigeon.run(
         <String>['--input', input.path],
@@ -1485,14 +1593,11 @@ abstract class Api {
       );
       expect(generator.didCallValidate, isTrue);
       expect(result, isNot(0));
-      completer.complete();
     });
-    await completer.future;
   });
 
   test('generator validation skipped', () async {
-    final completer = Completer<void>();
-    withTempFile('foo.dart', (File input) async {
+    await withTempFileAsync('foo.dart', (File input) async {
       final generator = _ValidatorGeneratorAdapter(null);
       final int result = await Pigeon.run(
         <String>['--input', input.path, '--dart_out', 'foo.dart'],
@@ -1500,14 +1605,11 @@ abstract class Api {
       );
       expect(generator.didCallValidate, isFalse);
       expect(result, equals(0));
-      completer.complete();
     });
-    await completer.future;
   });
 
   test('run with PigeonOptions', () async {
-    final completer = Completer<void>();
-    withTempFile('foo.dart', (File input) async {
+    await withTempFileAsync('foo.dart', (File input) async {
       final generator = _ValidatorGeneratorAdapter(null);
       final int result = await Pigeon.runWithOptions(
         PigeonOptions(input: input.path, dartOut: 'foo.dart'),
@@ -1515,9 +1617,7 @@ abstract class Api {
       );
       expect(generator.didCallValidate, isFalse);
       expect(result, equals(0));
-      completer.complete();
     });
-    await completer.future;
   });
 
   test('unsupported non-positional parameters on FlutterApi', () {
@@ -1866,7 +1966,6 @@ abstract class events {
     });
 
     test('swift description field error', () async {
-      final completer = Completer<void>();
       const code = '''
 class Foo {
   String? description;
@@ -1877,15 +1976,493 @@ abstract class Api {
   void method(Foo foo);
 }
 ''';
-      withTempFile('foo.dart', (File input) async {
+      await withTempFileAsync('foo.dart', (File input) async {
         input.writeAsStringSync(code);
         final int result = await Pigeon.runWithOptions(
-          PigeonOptions(input: input.path, swiftOut: 'Foo.swift', dartOut: 'foo.dart'),
+          PigeonOptions(
+            input: input.path,
+            swiftOut: path.join(input.parent.path, 'Foo.swift'),
+            dartOut: path.join(input.parent.path, 'foo_out.dart'),
+            dartPackageName: 'foo_package',
+          ),
         );
         expect(result, isNot(0));
-        completer.complete();
       });
-      await completer.future;
+    });
+  });
+
+  group('Dependency Validation', () {
+    test(
+      'FfigenConfigGeneratorAdapter validation passes if ffi, objective_c, ffigen exist',
+      () async {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_dependency_test_');
+        try {
+          final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+          pubspecFile.writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+  objective_c: ^1.0.0
+dev_dependencies:
+  ffigen: ^20.0.0
+''');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              dartOut: '${tempDir.path}/lib/messages.dart',
+              swiftOut: '${tempDir.path}/lib/messages.swift',
+              swiftOptions: const SwiftOptions(useFfi: true),
+              dartPackageName: 'my_package',
+            ),
+          );
+          const adapter = FfigenConfigGeneratorAdapter();
+          final List<Error> errors = adapter.validate(
+            options,
+            Root(apis: [], classes: [], enums: []),
+          );
+          expect(errors, isEmpty);
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
+    test('FfigenConfigGeneratorAdapter validation fails if objective_c is missing', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_dependency_test_');
+      try {
+        final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+        pubspecFile.writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+dev_dependencies:
+  ffigen: ^20.0.0
+''');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            dartOut: '${tempDir.path}/lib/messages.dart',
+            swiftOut: '${tempDir.path}/lib/messages.swift',
+            swiftOptions: const SwiftOptions(useFfi: true),
+            dartPackageName: 'my_package',
+          ),
+        );
+        const adapter = FfigenConfigGeneratorAdapter();
+        final List<Error> errors = adapter.validate(
+          options,
+          Root(apis: [], classes: [], enums: []),
+        );
+        expect(errors, isNotEmpty);
+        expect(errors[0].message, contains('Missing required dependency "objective_c"'));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test(
+      'FfigenConfigGeneratorAdapter validation fails if runtime dependency is in dev_dependencies',
+      () async {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_dependency_test_');
+        try {
+          final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+          pubspecFile.writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+dev_dependencies:
+  objective_c: ^1.0.0
+  ffigen: ^20.0.0
+''');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              dartOut: '${tempDir.path}/lib/messages.dart',
+              swiftOut: '${tempDir.path}/lib/messages.swift',
+              swiftOptions: const SwiftOptions(useFfi: true),
+              dartPackageName: 'my_package',
+            ),
+          );
+          const adapter = FfigenConfigGeneratorAdapter();
+          final List<Error> errors = adapter.validate(
+            options,
+            Root(apis: [], classes: [], enums: []),
+          );
+          expect(errors, isNotEmpty);
+          expect(
+            errors[0].message,
+            contains('must be in "dependencies", but was found in "dev_dependencies"'),
+          );
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
+    test('FfigenConfigGeneratorAdapter validation fails if ffigen is missing', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_dependency_test_');
+      try {
+        final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+        pubspecFile.writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+  objective_c: ^1.0.0
+''');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            dartOut: '${tempDir.path}/lib/messages.dart',
+            swiftOut: '${tempDir.path}/lib/messages.swift',
+            swiftOptions: const SwiftOptions(useFfi: true),
+            dartPackageName: 'my_package',
+          ),
+        );
+        const adapter = FfigenConfigGeneratorAdapter();
+        final List<Error> errors = adapter.validate(
+          options,
+          Root(apis: [], classes: [], enums: []),
+        );
+        expect(errors, isNotEmpty);
+        expect(errors[0].message, contains('Missing required dev dependency "ffigen"'));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test('JnigenConfigGeneratorAdapter validation passes if jni and jnigen exist', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_dependency_test_');
+      try {
+        final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+        pubspecFile.writeAsStringSync('''
+name: my_package
+dependencies:
+  jni: ^2.0.0
+dev_dependencies:
+  jnigen: ^20.0.0
+''');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            dartOut: '${tempDir.path}/lib/messages.dart',
+            kotlinOut: '${tempDir.path}/lib/messages.kt',
+            kotlinOptions: const KotlinOptions(useJni: true),
+            dartPackageName: 'my_package',
+          ),
+        );
+        const adapter = JnigenConfigGeneratorAdapter();
+        final List<Error> errors = adapter.validate(
+          options,
+          Root(apis: [], classes: [], enums: []),
+        );
+        expect(errors, isEmpty);
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test('JnigenConfigGeneratorAdapter validation fails if jni is missing', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_dependency_test_');
+      try {
+        final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+        pubspecFile.writeAsStringSync('''
+name: my_package
+dev_dependencies:
+  jnigen: ^20.0.0
+''');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            dartOut: '${tempDir.path}/lib/messages.dart',
+            kotlinOut: '${tempDir.path}/lib/messages.kt',
+            kotlinOptions: const KotlinOptions(useJni: true),
+            dartPackageName: 'my_package',
+          ),
+        );
+        const adapter = JnigenConfigGeneratorAdapter();
+        final List<Error> errors = adapter.validate(
+          options,
+          Root(apis: [], classes: [], enums: []),
+        );
+        expect(errors, isNotEmpty);
+        expect(errors[0].message, contains('Missing required dependency "jni"'));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test('validation fails if pubspec.yaml is not found', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_no_pubspec_test_');
+      try {
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            swiftOut: '${tempDir.path}/lib/messages.swift',
+            appDirectory: tempDir.path,
+            swiftOptions: const SwiftOptions(useFfi: true),
+          ),
+        );
+        const adapter = FfigenConfigGeneratorAdapter();
+        final List<Error> errors = adapter.validate(
+          options,
+          Root(apis: [], classes: [], enums: []),
+        );
+        expect(errors, isNotEmpty);
+        expect(errors[0].message, contains('Could not find pubspec.yaml'));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test('validation fails if pubspec.yaml is malformed', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync(
+        'pigeon_malformed_pubspec_test_',
+      );
+      try {
+        final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+        pubspecFile.writeAsStringSync('invalid_yaml: [unclosed list');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            swiftOut: '${tempDir.path}/lib/messages.swift',
+            appDirectory: tempDir.path,
+            swiftOptions: const SwiftOptions(useFfi: true),
+          ),
+        );
+        const adapter = FfigenConfigGeneratorAdapter();
+        final List<Error> errors = adapter.validate(
+          options,
+          Root(apis: [], classes: [], enums: []),
+        );
+        expect(errors, isNotEmpty);
+        expect(errors[0].message, contains('Failed to read or parse'));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test('KotlinOptions serialization/deserialization with jniClassPaths', () {
+      const options = KotlinOptions(jniClassPaths: <String>['foo/bar', 'baz.jar']);
+      final Map<String, Object> map = options.toMap();
+      expect(map['jniClassPaths'], equals(<String>['foo/bar', 'baz.jar']));
+
+      final KotlinOptions roundTrip = KotlinOptions.fromMap(map);
+      expect(roundTrip.jniClassPaths, equals(<String>['foo/bar', 'baz.jar']));
+    });
+
+    test('JnigenConfigGenerator generates custom classPaths', () {
+      final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+      final sink = StringBuffer();
+      final generator = JnigenConfigGenerator();
+      final options = InternalJnigenConfigOptions(
+        const InternalDartOptions(dartOut: 'lib/messages.dart', ignoreLints: false),
+        const InternalKotlinOptions(
+          kotlinOut: 'android/Messages.kt',
+          jniClassPaths: <String>['foo/bar', 'baz.jar'],
+        ),
+        null,
+        null,
+      );
+      generator.generate(options, root, sink, dartPackageName: 'foo_package');
+      final output = sink.toString();
+      expect(output, contains("classPath: [Uri.directory('foo/bar'), Uri.file('baz.jar')]"));
+    });
+
+    test(
+      'JnigenConfigGeneratorAdapter resolves relative output path using kotlinOptions.appDirectory',
+      () {
+        final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+        final sink = StringBuffer();
+        const adapter = JnigenConfigGeneratorAdapter();
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            input: 'pigeons/messages.dart',
+            dartOut: 'lib/src/messages.g.dart',
+            kotlinOut: 'android/src/main/kotlin/com/example/Messages.g.kt',
+            kotlinOptions: KotlinOptions(useJni: true, appDirectory: 'example/'),
+          ),
+        );
+
+        adapter.generate(sink, options, root, FileType.na);
+        final code = sink.toString();
+
+        expect(code, contains("path: Uri.file('lib/src/messages.g.jni.dart')"));
+      },
+    );
+
+    test(
+      'FfigenConfigGeneratorAdapter resolves relative output path using swiftOptions.appDirectory',
+      () {
+        final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+        final sink = StringBuffer();
+        const adapter = FfigenConfigGeneratorAdapter();
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          const PigeonOptions(
+            input: 'pigeons/messages.dart',
+            dartOut: 'lib/src/messages.g.dart',
+            swiftOut: 'darwin/Messages.g.swift',
+            swiftOptions: SwiftOptions(useFfi: true, appDirectory: 'example/'),
+          ),
+        );
+
+        adapter.generate(sink, options, root, FileType.na);
+        final code = sink.toString();
+
+        expect(code, contains("dartFile: Uri.file('../lib/src/messages.g.ffi.dart')"));
+      },
+    );
+
+    test('SwiftGeneratorAdapter errors on TaskQueue when useFfi is true', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'Api',
+            methods: <Method>[
+              Method(
+                name: 'foo',
+                returnType: const TypeDeclaration.voidDeclaration(),
+                parameters: <Parameter>[],
+                taskQueueType: TaskQueueType.serialBackgroundThread,
+                location: ApiLocation.host,
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      const adapter = SwiftGeneratorAdapter();
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          swiftOut: 'darwin/Messages.g.swift',
+          swiftOptions: SwiftOptions(useFfi: true),
+        ),
+      );
+      final List<Error> errors = adapter.validate(options, root);
+      expect(errors, hasLength(1));
+      expect(errors[0].message, contains('Swift FFI does not support TaskQueue'));
+    });
+
+    test('KotlinGeneratorAdapter errors on TaskQueue when useJni is true', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'Api',
+            methods: <Method>[
+              Method(
+                name: 'foo',
+                returnType: const TypeDeclaration.voidDeclaration(),
+                parameters: <Parameter>[],
+                taskQueueType: TaskQueueType.serialBackgroundThread,
+                location: ApiLocation.host,
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      const adapter = KotlinGeneratorAdapter();
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          kotlinOut: 'android/Messages.g.kt',
+          kotlinOptions: KotlinOptions(useJni: true),
+        ),
+      );
+      final List<Error> errors = adapter.validate(options, root);
+      expect(errors, hasLength(1));
+      expect(errors[0].message, contains('Kotlin JNI does not support TaskQueue'));
+    });
+
+    test('KotlinGeneratorAdapter errors on JNI property name collisions', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'Api',
+            methods: <Method>[
+              Method(
+                name: 'getFish',
+                returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
+                parameters: <Parameter>[],
+                location: ApiLocation.host,
+              ),
+              Method(
+                name: 'fish',
+                returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+                parameters: <Parameter>[],
+                location: ApiLocation.host,
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      const adapter = KotlinGeneratorAdapter();
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          kotlinOut: 'android/Messages.g.kt',
+          kotlinOptions: KotlinOptions(useJni: true),
+        ),
+      );
+      final List<Error> errors = adapter.validate(options, root);
+      expect(errors, hasLength(1));
+      expect(errors[0].message, contains('collides with method "fish" under JNI generation'));
+    });
+
+    test('JnigenConfigGeneratorAdapter errors on JNI property name collisions', () {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_collision_test_');
+      try {
+        final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+        pubspecFile.writeAsStringSync('''
+name: my_package
+dependencies:
+  jni: ^1.0.0
+dev_dependencies:
+  jnigen: ^1.0.0
+''');
+        final root = Root(
+          apis: <Api>[
+            AstHostApi(
+              name: 'Api',
+              methods: <Method>[
+                Method(
+                  name: 'setFish',
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[
+                    Parameter(
+                      name: 'value',
+                      type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                    ),
+                  ],
+                  location: ApiLocation.host,
+                ),
+                Method(
+                  name: 'fish',
+                  returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+                  parameters: <Parameter>[],
+                  location: ApiLocation.host,
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        const adapter = JnigenConfigGeneratorAdapter();
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            dartOut: '${tempDir.path}/lib/messages.g.dart',
+            kotlinOut: '${tempDir.path}/android/Messages.g.kt',
+            kotlinOptions: const KotlinOptions(useJni: true),
+            dartPackageName: 'my_package',
+          ),
+        );
+        final List<Error> errors = adapter.validate(options, root);
+        expect(errors, hasLength(1));
+        expect(errors[0].message, contains('collides with method "fish" under JNI generation'));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
     });
   });
 
@@ -1939,7 +2516,6 @@ const String myAdjacentString = 'hello ' 'world';
       expect(myAdjacentString.type.baseName, 'String');
       expect(myAdjacentString.value, 'hello world');
     });
-
     test('missing type annotation error', () {
       const code = '''
 const myConst = 42;
@@ -2000,6 +2576,84 @@ const String myConst = 'hello ${1 + 2}';
         parseResult.errors[0].message,
         contains('String interpolation is not supported in Pigeon constants.'),
       );
+    });
+  });
+
+  group('Jnigen and Ffigen configDirectory placement', () {
+    test('JnigenConfigGeneratorAdapter defaults target to plugin pubspec root level', () {
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          input: 'pigeons/messages.dart',
+          kotlinOut: 'android/src/main/kotlin/com/example/Messages.kt',
+          kotlinOptions: KotlinOptions(useJni: true),
+          basePath: '.',
+        ),
+      );
+
+      final String targetDir =
+          options.kotlinOptions?.configDirectory ??
+          options.configDirectory ??
+          options.basePath ??
+          '';
+      final String configPath = getJnigenConfigPath(targetDir, options.input);
+      expect(configPath, equals('./tool/pigeon/messages_jnigen_config.dart'));
+    });
+
+    test('JnigenConfigGeneratorAdapter uses explicit configDirectory', () {
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          input: 'pigeons/messages.dart',
+          kotlinOut: 'android/src/main/kotlin/com/example/Messages.kt',
+          kotlinOptions: KotlinOptions(useJni: true, configDirectory: 'custom/config/dir'),
+          basePath: '.',
+        ),
+      );
+
+      final String targetDir =
+          options.kotlinOptions?.configDirectory ??
+          options.configDirectory ??
+          options.basePath ??
+          '';
+      final String configPath = getJnigenConfigPath(targetDir, options.input);
+      expect(configPath, equals('custom/config/dir/tool/pigeon/messages_jnigen_config.dart'));
+    });
+
+    test('FfigenConfigGeneratorAdapter defaults target to plugin pubspec root level', () {
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          input: 'pigeons/messages.dart',
+          swiftOut: 'ios/Classes/Messages.swift',
+          swiftOptions: SwiftOptions(useFfi: true),
+          basePath: '.',
+        ),
+      );
+
+      final String targetDir =
+          options.swiftOptions?.configDirectory ??
+          options.configDirectory ??
+          options.basePath ??
+          '';
+      final String configPath = getFfigenConfigPath(targetDir, options.input);
+      expect(configPath, equals('./tool/pigeon/messages_ffigen_config.dart'));
+    });
+
+    test('FfigenConfigGeneratorAdapter uses explicit configDirectory', () {
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          input: 'pigeons/messages.dart',
+          swiftOut: 'ios/Classes/Messages.swift',
+          swiftOptions: SwiftOptions(useFfi: true, configDirectory: 'example/'),
+          basePath: '.',
+        ),
+      );
+
+      final String targetDir =
+          options.swiftOptions?.configDirectory ??
+          options.configDirectory ??
+          options.basePath ??
+          '';
+      final String configPath = getFfigenConfigPath(targetDir, options.input);
+      expect(configPath, equals('example/tool/pigeon/messages_ffigen_config.dart'));
     });
   });
 }

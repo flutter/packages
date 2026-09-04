@@ -82,7 +82,7 @@ class JavaOptions {
   /// Overrides any non-null parameters from [options] into this to make a new
   /// [JavaOptions].
   JavaOptions merge(JavaOptions options) {
-    return JavaOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+    return JavaOptions.fromMap(mergePigeonMaps(toMap(), options.toMap()));
   }
 }
 

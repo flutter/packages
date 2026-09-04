@@ -91,7 +91,7 @@ class CppOptions {
   /// Overrides any non-null parameters from [options] into this to make a new
   /// [CppOptions].
   CppOptions merge(CppOptions options) {
-    return CppOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+    return CppOptions.fromMap(mergePigeonMaps(toMap(), options.toMap()));
   }
 }
 
