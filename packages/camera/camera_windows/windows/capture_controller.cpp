@@ -504,7 +504,8 @@ void CaptureControllerImpl::ResolveSourceStreamIndices(
       video_stream_index = i;
       break;
     }
-    if (category == MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_CAPTURE) {
+    if (category == MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_CAPTURE &&
+        video_stream_index == MAXDWORD) {
       video_stream_index = i;
     }
   }
