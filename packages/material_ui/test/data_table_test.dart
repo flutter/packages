@@ -2105,7 +2105,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.copy,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   // This is a regression test for https://github.com/flutter/flutter/issues/114470.
   testWidgets('DataTable text styles are merged with default text style', (
