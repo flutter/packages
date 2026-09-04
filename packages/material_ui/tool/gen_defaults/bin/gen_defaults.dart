@@ -12,13 +12,14 @@
 
 import 'package:args/args.dart';
 
-// import '../templates/action_chip_template.dart';
+import '../templates/action_chip_template.dart';
 import '../templates/app_bar_template.dart';
 
 // import '../templates/badge_template.dart';
 // import '../templates/banner_template.dart';
 // import '../templates/bottom_app_bar_template.dart';
-// import '../templates/bottom_sheet_template.dart';
+import '../templates/bottom_sheet_template.dart';
+
 // import '../templates/button_template.dart';
 // import '../templates/card_template.dart';
 // import '../templates/checkbox_template.dart';
@@ -64,12 +65,12 @@ Future<void> main(List<String> args) async {
   // TODO(elliette): Add token logger when verbose flag is used.
   final verbose = argResults['verbose'] as bool;
 
-  // const ActionChipTemplateM3().generateFile(verbose: verbose);
+  const ActionChipTemplateM3().generateFile(verbose: verbose);
   const AppBarTemplateM3().generateFile(verbose: verbose);
   // const BadgeTemplateM3().generateFile(verbose: verbose);
   // const BannerTemplateM3().generateFile(verbose: verbose);
   // const BottomAppBarTemplateM3().generateFile(verbose: verbose);
-  // const BottomSheetTemplateM3().generateFile(verbose: verbose);
+  const BottomSheetTemplateM3().generateFile(verbose: verbose);
   // const ButtonTemplateM3().generateFile(verbose: verbose);
   // const CardTemplateM3().generateFile(verbose: verbose);
   // const CheckboxTemplateM3().generateFile(verbose: verbose);

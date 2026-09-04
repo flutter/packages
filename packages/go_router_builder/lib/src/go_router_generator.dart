@@ -9,6 +9,7 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
+import 'duplicate_path_severity.dart';
 import 'route_config.dart';
 import 'type_helpers.dart';
 
@@ -25,7 +26,10 @@ const Map<String, String> _annotations = <String, String>{
 /// A [Generator] for classes annotated with a typed go route annotation.
 class GoRouterGenerator extends Generator {
   /// Creates a new instance of [GoRouterGenerator].
-  const GoRouterGenerator();
+  const GoRouterGenerator({this.duplicatePathSeverity = DuplicatePathSeverity.warning});
+
+  /// How sibling routes that resolve to the same URL pattern are reported.
+  final DuplicatePathSeverity duplicatePathSeverity;
 
   TypeChecker get _typeChecker => TypeChecker.any(
     _annotations.keys.map((String annotation) => TypeChecker.fromUrl('$_routeDataUrl#$annotation')),
@@ -57,17 +61,26 @@ ${getters.map((String e) => "$e,").join('\n')}
   /// This public method is for testing purposes and should not be called
   /// directly.
   void generateForAnnotation(LibraryReader library, Set<String> values, Set<String> getters) {
+    // Every annotation in the library contributes a top-level route to the
+    // generated `$appRoutes`, so they all have to be built before their paths
+    // can be compared against each other.
+    final configs = <RouteBaseConfig>[];
     for (final AnnotatedElement annotatedElement in library.annotatedWith(_typeChecker)) {
-      final InfoIterable generatedValue = _generateForAnnotatedElement(
-        annotatedElement.element,
-        annotatedElement.annotation,
+      configs.add(
+        _configForAnnotatedElement(annotatedElement.element, annotatedElement.annotation),
       );
+    }
+
+    reportDuplicateRoutePaths(configs, duplicatePathSeverity);
+
+    for (final config in configs) {
+      final InfoIterable generatedValue = config.generateMembers();
       getters.add(generatedValue.routeGetterName);
       values.addAll(generatedValue.members);
     }
   }
 
-  InfoIterable _generateForAnnotatedElement(Element element, ConstantReader annotation) {
+  RouteBaseConfig _configForAnnotatedElement(Element element, ConstantReader annotation) {
     final String typedAnnotation = withoutNullability(
       annotation.objectValue.type!.getDisplayString(),
     );
@@ -89,6 +102,6 @@ ${getters.map((String e) => "$e,").join('\n')}
       );
     }
 
-    return RouteBaseConfig.fromAnnotation(annotation, element).generateMembers();
+    return RouteBaseConfig.fromAnnotation(annotation, element);
   }
 }
