@@ -18,24 +18,8 @@ void main() async {
   }
 
   Directory.current = Platform.script.resolve('../..').toFilePath();
-  await generateJniBindings(
-    Config(
-      preamble: '''
-      // Copyright 2013 The Flutter Authors\n// Use of this source code is governed by a BSD-style license that can be\n// found in the LICENSE file.\n// 
-      ''',
-      androidSdkConfig: AndroidSdkConfig(addGradleDeps: true, androidExample: '.'),
-      summarizerOptions: SummarizerOptions(backend: SummarizerBackend.asm),
-      outputConfig: OutputConfig(
-        dartConfig: DartCodeOutputConfig(
-          path: Uri.file(
-            '../../shared_test_plugin_code/lib/src/generated/native_interop_tests.gen.jni.dart',
-          ),
-          structure: OutputStructure.singleFile,
-        ),
-      ),
-      logLevel: Level.ALL,
-      classPath: [Uri.directory('build/app/tmp/kotlin-classes/release')],
-
+  final generator = JniGenerator(
+    input: Input(
       classes: [
         'com.example.test_plugin.NativeInteropTestsError',
         'com.example.test_plugin.NativeInteropHostIntegrationCoreApi',
@@ -50,8 +34,23 @@ void main() async {
         'com.example.test_plugin.NativeInteropAnEnum',
         'com.example.test_plugin.NativeInteropAnotherEnum',
       ],
+      androidSdk: AndroidSdk(addGradleDeps: true, androidExample: Uri.directory('.')),
+      backend: SummarizerBackend.asm,
+      classPath: [Uri.directory('build/app/tmp/kotlin-classes/release')],
+    ),
+    output: Output(
+      preamble: '''
+      // Copyright 2013 The Flutter Authors\n// Use of this source code is governed by a BSD-style license that can be\n// found in the LICENSE file.\n// 
+      ''',
+      dart: DartOutput(
+        path: Uri.file(
+          '../../shared_test_plugin_code/lib/src/generated/native_interop_tests.gen.jni.dart',
+        ),
+        structure: OutputStructure.singleFile,
+      ),
     ),
   );
+  await generator.generate(logger: Logger.root..level = Level.ALL);
 }
 
 Future<bool> _hasJava() async {

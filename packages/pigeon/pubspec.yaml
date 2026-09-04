@@ -23,7 +23,7 @@ dev_dependencies:
   ffi: ^2.2.0
   ffigen: ^21.0.0
   jni: ^1.0.3
-  jnigen: ^0.17.0
+  jnigen: ^1.0.0
   objective_c: ^9.5.0
   swift2objc: ^0.2.0
   swiftgen: ^0.1.3

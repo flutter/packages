@@ -23,7 +23,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  jnigen: ^0.17.0
+  jnigen: ^1.0.0
   logging: ^1.3.0
   pigeon:
     path: ../../..

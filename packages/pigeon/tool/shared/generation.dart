@@ -200,12 +200,14 @@ Future<int> generateTestPigeons({required String baseDir, bool includeOverflow =
     'flutter_unittests', // Only for Dart unit tests in shared_test_plugin_code
     'message',
     'multiple_arity',
-    'native_interop_tests',
     'non_null_fields',
     'null_fields',
     'nullable_returns',
     'primitive',
     'proxy_api_tests',
+    // native_interop_tests runs JNIgen which compiles test_plugin; all other
+    // Kotlin files must be generated first.
+    'native_interop_tests',
   };
 
   const testPluginName = 'test_plugin';

@@ -77,7 +77,7 @@ flutter pub add dev:ffigen@21.0.0
 # For Android Kotlin JNI:
 flutter pub add jni
 # Pigeon requires this specific version for compatibility with its generated JNIgen configuration:
-flutter pub add dev:jnigen@0.17.0
+flutter pub add dev:jnigen@1.0.0
 ```
 
 ### Step 2: Configure Pigeon Options

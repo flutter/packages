@@ -17,29 +17,28 @@ void main() async {
   }
 
   Directory.current = Platform.script.resolve('../..').toFilePath();
-  await generateJniBindings(
-    Config(
-      preamble: '''
-      // Copyright 2013 The Flutter Authors\n// Use of this source code is governed by a BSD-style license that can be\n// found in the LICENSE file.
-      ''',
-      androidSdkConfig: AndroidSdkConfig(addGradleDeps: true, androidExample: '.'),
-      summarizerOptions: SummarizerOptions(backend: SummarizerBackend.asm),
-      outputConfig: OutputConfig(
-        dartConfig: DartCodeOutputConfig(
-          path: Uri.file('lib/src/native_interop_example.g.jni.dart'),
-          structure: OutputStructure.singleFile,
-        ),
-      ),
-      logLevel: Level.ALL,
-      classPath: [Uri.directory('build/app/tmp/kotlin-classes/release')],
-
+  final generator = JniGenerator(
+    input: Input(
       classes: [
         'dev.flutter.pigeonnativeinteropapp.FlutterError',
         'dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi',
         'dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApiRegistrar',
       ],
+      androidSdk: AndroidSdk(addGradleDeps: true, androidExample: Uri.directory('.')),
+      backend: SummarizerBackend.asm,
+      classPath: [Uri.directory('build/app/tmp/kotlin-classes/release')],
+    ),
+    output: Output(
+      preamble: '''
+      // Copyright 2013 The Flutter Authors\n// Use of this source code is governed by a BSD-style license that can be\n// found in the LICENSE file.
+      ''',
+      dart: DartOutput(
+        path: Uri.file('lib/src/native_interop_example.g.jni.dart'),
+        structure: OutputStructure.singleFile,
+      ),
     ),
   );
+  await generator.generate(logger: Logger.root..level = Level.ALL);
 }
 
 Future<bool> _hasJava() async {

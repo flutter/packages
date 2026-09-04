@@ -115,30 +115,8 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
   }
 ''');
       indent.writeln("  Directory.current = Platform.script.resolve('../..').toFilePath();");
-      indent.writeScoped('await generateJniBindings(', ');', () {
-        indent.writeScoped('Config(', '),', () {
-          final hasCopyright = generatorOptions.kotlinOptions.copyrightHeader != null;
-          final copyrightPreamble = hasCopyright
-              ? '// ${generatorOptions.kotlinOptions.copyrightHeader!.join(r'\n// ')}\n'
-              : '';
-          indent.format('''
-${hasCopyright ? '''
-            preamble: \'\'\'
-$copyrightPreamble\'\'\',
-''' : ''}            androidSdkConfig: AndroidSdkConfig(
-              addGradleDeps: true,
-              androidExample: '$androidExample',
-            ),
-            summarizerOptions: SummarizerOptions(backend: SummarizerBackend.asm),
-            outputConfig: OutputConfig(
-              dartConfig: DartCodeOutputConfig(
-                path: Uri.file('${path.withoutExtension(fullDartOut)}.jni.dart'),
-              structure: OutputStructure.singleFile,
-            ),
-          ),
-          logLevel: Level.ALL,
-          classPath: [$classPathContent],
-''');
+      indent.writeScoped('final generator = JniGenerator(', ');', () {
+        indent.writeScoped('input: Input(', '),', () {
           indent.writeScoped('classes: [', '],', () {
             final packagePrefix = generatorOptions.kotlinOptions.package != null
                 ? '${generatorOptions.kotlinOptions.package}.'
@@ -159,8 +137,32 @@ $copyrightPreamble\'\'\',
               indent.writeln("'$packagePrefix${enumType.name}',");
             }
           });
+          indent.format('''
+            androidSdk: AndroidSdk(
+              addGradleDeps: true,
+              androidExample: Uri.directory('$androidExample'),
+            ),
+            backend: SummarizerBackend.asm,
+            classPath: [$classPathContent],
+''');
+        });
+        final hasCopyright = generatorOptions.kotlinOptions.copyrightHeader != null;
+        final copyrightPreamble = hasCopyright
+            ? '// ${generatorOptions.kotlinOptions.copyrightHeader!.join(r'\n// ')}\n'
+            : '';
+        indent.writeScoped('output: Output(', '),', () {
+          indent.format('''
+${hasCopyright ? '''
+            preamble: \'\'\'
+$copyrightPreamble\'\'\',
+''' : ''}            dart: DartOutput(
+              path: Uri.file('${path.withoutExtension(fullDartOut)}.jni.dart'),
+              structure: OutputStructure.singleFile,
+            ),
+''');
         });
       });
+      indent.writeln('  await generator.generate(logger: Logger.root..level = Level.ALL);');
       indent.newln();
     });
     indent.format('''

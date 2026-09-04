@@ -26,5 +26,5 @@ dependencies:
 
 dev_dependencies:
   ffigen: ^21.0.0
-  jnigen: ^0.17.0
+  jnigen: ^1.0.0
   leak_tracker: any
