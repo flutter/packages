@@ -49,6 +49,7 @@ class BottomNavigationBarThemeData with Diagnosticable {
     this.enableFeedback,
     this.landscapeLayout,
     this.mouseCursor,
+    this.splashRadius,
   });
 
   /// The color of the [BottomNavigationBar] itself.
@@ -131,6 +132,11 @@ class BottomNavigationBarThemeData with Diagnosticable {
   /// If specified, overrides the default value of [BottomNavigationBar.mouseCursor].
   final WidgetStateProperty<MouseCursor?>? mouseCursor;
 
+  /// If specified, defines the splash radius for [BottomNavigationBar] item tap effects.
+  ///
+  /// If [BottomNavigationBar.splashRadius] is provided, [splashRadius] is ignored.
+  final double? splashRadius;
+
   /// Creates a copy of this object but with the given fields replaced with the
   /// new values.
   BottomNavigationBarThemeData copyWith({
@@ -148,6 +154,7 @@ class BottomNavigationBarThemeData with Diagnosticable {
     bool? enableFeedback,
     BottomNavigationBarLandscapeLayout? landscapeLayout,
     WidgetStateProperty<MouseCursor?>? mouseCursor,
+    double? splashRadius,
   }) {
     return BottomNavigationBarThemeData(
       backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -164,6 +171,7 @@ class BottomNavigationBarThemeData with Diagnosticable {
       enableFeedback: enableFeedback ?? this.enableFeedback,
       landscapeLayout: landscapeLayout ?? this.landscapeLayout,
       mouseCursor: mouseCursor ?? this.mouseCursor,
+      splashRadius: splashRadius ?? this.splashRadius,
     );
   }
 
@@ -193,6 +201,7 @@ class BottomNavigationBarThemeData with Diagnosticable {
       enableFeedback: t < 0.5 ? a?.enableFeedback : b?.enableFeedback,
       landscapeLayout: t < 0.5 ? a?.landscapeLayout : b?.landscapeLayout,
       mouseCursor: t < 0.5 ? a?.mouseCursor : b?.mouseCursor,
+      splashRadius: lerpDouble(a?.splashRadius, b?.splashRadius, t),
     );
   }
 
@@ -212,6 +221,7 @@ class BottomNavigationBarThemeData with Diagnosticable {
     enableFeedback,
     landscapeLayout,
     mouseCursor,
+    splashRadius,
   );
 
   @override
@@ -236,7 +246,8 @@ class BottomNavigationBarThemeData with Diagnosticable {
         other.type == type &&
         other.enableFeedback == enableFeedback &&
         other.landscapeLayout == landscapeLayout &&
-        other.mouseCursor == mouseCursor;
+        other.mouseCursor == mouseCursor &&
+        other.splashRadius == splashRadius;
   }
 
   @override
@@ -292,6 +303,7 @@ class BottomNavigationBarThemeData with Diagnosticable {
         defaultValue: null,
       ),
     );
+    properties.add(DoubleProperty('splashRadius', splashRadius, defaultValue: null));
   }
 }
 
