@@ -21,6 +21,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'color_scheme.dart';
@@ -484,6 +485,8 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
   final FocusNode startFocusNode = FocusNode();
   final FocusNode endFocusNode = FocusNode();
 
+  final GlobalKey _renderObjectKey = GlobalKey();
+
   // Animation controller that is run when the overlay (a.k.a radial reaction)
   // changes visibility in response to user interaction.
   late AnimationController overlayController;
@@ -541,6 +544,27 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
     debugLabel: 'RangeSlider ValueIndicator',
   )..show();
 
+  // Keyboard mapping for a focused range slider.
+  static const Map<ShortcutActivator, Intent> _traditionalNavShortcutMap =
+      <ShortcutActivator, Intent>{
+        SingleActivator(LogicalKeyboardKey.arrowUp): _AdjustSliderIntent.up(),
+        SingleActivator(LogicalKeyboardKey.arrowDown): _AdjustSliderIntent.down(),
+        SingleActivator(LogicalKeyboardKey.arrowLeft): _AdjustSliderIntent.left(),
+        SingleActivator(LogicalKeyboardKey.arrowRight): _AdjustSliderIntent.right(),
+      };
+
+  // Keyboard mapping for a focused range slider when using directional navigation.
+  static const Map<ShortcutActivator, Intent> _directionalNavShortcutMap =
+      <ShortcutActivator, Intent>{
+        SingleActivator(LogicalKeyboardKey.arrowLeft): _AdjustSliderIntent.left(),
+        SingleActivator(LogicalKeyboardKey.arrowRight): _AdjustSliderIntent.right(),
+      };
+
+  // Action mapping for the start thumb.
+  late Map<Type, Action<Intent>> _startActionMap;
+  // Action mapping for the end thumb.
+  late Map<Type, Action<Intent>> _endActionMap;
+
   @override
   void initState() {
     super.initState();
@@ -564,6 +588,35 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
       vsync: this,
       value: _unlerp(widget.values.end),
     );
+    _startActionMap = <Type, Action<Intent>>{
+      _AdjustSliderIntent: CallbackAction<_AdjustSliderIntent>(
+        onInvoke: (_AdjustSliderIntent intent) => _actionHandler(intent, Thumb.start),
+      ),
+    };
+    _endActionMap = <Type, Action<Intent>>{
+      _AdjustSliderIntent: CallbackAction<_AdjustSliderIntent>(
+        onInvoke: (_AdjustSliderIntent intent) => _actionHandler(intent, Thumb.end),
+      ),
+    };
+  }
+
+  void _actionHandler(_AdjustSliderIntent intent, Thumb thumb) {
+    final slider = _renderObjectKey.currentContext!.findRenderObject()! as _RenderRangeSlider;
+    final TextDirection directionality = Directionality.of(_renderObjectKey.currentContext!);
+
+    final bool increase = switch (intent.type) {
+      _SliderAdjustmentType.up => true,
+      _SliderAdjustmentType.down => false,
+      _SliderAdjustmentType.left => directionality == TextDirection.rtl,
+      _SliderAdjustmentType.right => directionality == TextDirection.ltr,
+    };
+
+    switch (thumb) {
+      case Thumb.start:
+        increase ? slider.increaseStartAction() : slider.decreaseStartAction();
+      case Thumb.end:
+        increase ? slider.increaseEndAction() : slider.decreaseEndAction();
+    }
   }
 
   @override
@@ -643,12 +696,16 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
   Widget _buildThumbFocusDetector({
     required FocusNode focusNode,
     required ValueChanged<bool> onShowFocusHighlight,
+    required Map<ShortcutActivator, Intent> shortcuts,
+    required Map<Type, Action<Intent>> actions,
   }) {
     return FocusableActionDetector(
       focusNode: focusNode,
       enabled: _enabled,
       includeFocusSemantics: false,
       onShowFocusHighlight: onShowFocusHighlight,
+      shortcuts: shortcuts,
+      actions: actions,
       child: const SizedBox.shrink(),
     );
   }
@@ -812,6 +869,7 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
           return _buildValueIndicator(sliderTheme.showValueIndicator!);
         },
         child: _RangeSliderRenderObjectWidget(
+          key: _renderObjectKey,
           values: _unlerpRangeValues(widget.values),
           divisions: widget.divisions,
           labels: widget.labels,
@@ -835,6 +893,16 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
       result = Padding(padding: padding, child: result);
     }
 
+    // Support directional navigation mode. In this mode,
+    // arrow keys should not change the value until the user enters an
+    // "editing" state, to allow moving focus.
+    final Map<ShortcutActivator, Intent> shortcutMap = switch (MediaQuery.navigationModeOf(
+      context,
+    )) {
+      NavigationMode.directional => _directionalNavShortcutMap,
+      NavigationMode.traditional => _traditionalNavShortcutMap,
+    };
+
     return Stack(
       children: <Widget>[
         // Adds two invisible focus nodes to the range slider for its two thumbs.
@@ -843,10 +911,14 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
             _buildThumbFocusDetector(
               focusNode: startFocusNode,
               onShowFocusHighlight: _handleStartFocusHighlightChanged,
+              shortcuts: shortcutMap,
+              actions: _startActionMap,
             ),
             _buildThumbFocusDetector(
               focusNode: endFocusNode,
               onShowFocusHighlight: _handleEndFocusHighlightChanged,
+              shortcuts: shortcutMap,
+              actions: _endActionMap,
             ),
           ],
         ),
@@ -879,8 +951,25 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
   }
 }
 
+class _AdjustSliderIntent extends Intent {
+  const _AdjustSliderIntent({required this.type});
+
+  const _AdjustSliderIntent.right() : type = _SliderAdjustmentType.right;
+
+  const _AdjustSliderIntent.left() : type = _SliderAdjustmentType.left;
+
+  const _AdjustSliderIntent.up() : type = _SliderAdjustmentType.up;
+
+  const _AdjustSliderIntent.down() : type = _SliderAdjustmentType.down;
+
+  final _SliderAdjustmentType type;
+}
+
+enum _SliderAdjustmentType { right, left, up, down }
+
 class _RangeSliderRenderObjectWidget extends LeafRenderObjectWidget {
   const _RangeSliderRenderObjectWidget({
+    super.key,
     required this.values,
     required this.divisions,
     required this.labels,
@@ -2014,16 +2103,16 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
       values.start,
       _increasedStartValue,
       _decreasedStartValue,
-      _increaseStartAction,
-      _decreaseStartAction,
+      increaseStartAction,
+      decreaseStartAction,
       focused: _state.startFocusNode.hasFocus,
     );
     final SemanticsConfiguration endSemanticsConfiguration = _createSemanticsConfiguration(
       values.end,
       _increasedEndValue,
       _decreasedEndValue,
-      _increaseEndAction,
-      _decreaseEndAction,
+      increaseEndAction,
+      decreaseEndAction,
       focused: _state.endFocusNode.hasFocus,
     );
 
@@ -2074,55 +2163,82 @@ class _RenderRangeSlider extends RenderBox with RelayoutWhenSystemFontsChangeMix
 
   double get _semanticActionUnit => divisions != null ? 1.0 / divisions! : _adjustmentUnit;
 
-  void _increaseStartAction() {
+  void increaseStartAction() {
     if (isEnabled) {
-      onChanged!(RangeValues(_increasedStartValue, values.end));
+      onChangeStart?.call(values);
+      final newValues = RangeValues(_increasedStartValue, values.end);
+      onChanged!(newValues);
+      onChangeEnd?.call(newValues);
     }
   }
 
-  void _decreaseStartAction() {
+  void decreaseStartAction() {
     if (isEnabled) {
-      onChanged!(RangeValues(_decreasedStartValue, values.end));
+      onChangeStart?.call(values);
+      final newValues = RangeValues(_decreasedStartValue, values.end);
+      onChanged!(newValues);
+      onChangeEnd?.call(newValues);
     }
   }
 
-  void _increaseEndAction() {
+  void increaseEndAction() {
     if (isEnabled) {
-      onChanged!(RangeValues(values.start, _increasedEndValue));
+      onChangeStart?.call(values);
+      final newValues = RangeValues(values.start, _increasedEndValue);
+      onChanged!(newValues);
+      onChangeEnd?.call(newValues);
     }
   }
 
-  void _decreaseEndAction() {
+  void decreaseEndAction() {
     if (isEnabled) {
-      onChanged!(RangeValues(values.start, _decreasedEndValue));
+      onChangeStart?.call(values);
+      final newValues = RangeValues(values.start, _decreasedEndValue);
+      onChanged!(newValues);
+      onChangeEnd?.call(newValues);
     }
   }
 
-  double get _increasedStartValue {
-    // Due to floating-point operations, this value can actually be greater than
-    // expected (e.g. 0.4 + 0.2 = 0.600000000001), so we limit to 2 decimal points.
-    final double increasedStartValue = double.parse(
-      (values.start + _semanticActionUnit).toStringAsFixed(2),
+    double _roundToSemanticPrecision(double value) {
+    return double.parse(value.toStringAsFixed(2));
+  }
+
+ double get _increasedStartValue {
+    final double tentativeStart = values.start + _semanticActionUnit;
+    final double roundedTentativeStart = _roundToSemanticPrecision(tentativeStart);
+
+    final double maxAllowedStart = _roundToSemanticPrecision(values.end - _minThumbSeparationValue);
+
+    if (roundedTentativeStart > maxAllowedStart) {
+      return values.start; 
+    }
+    return roundedTentativeStart;
+  }
+
+ double get _decreasedStartValue {
+    final double decreasedStartValue = _roundToSemanticPrecision(
+      values.start - _semanticActionUnit,
     );
-    return increasedStartValue <= values.end - _minThumbSeparationValue
-        ? increasedStartValue
-        : values.start;
-  }
-
-  double get _decreasedStartValue {
-    return clampDouble(values.start - _semanticActionUnit, 0.0, 1.0);
+    return clampDouble(decreasedStartValue, 0.0, 1.0);
   }
 
   double get _increasedEndValue {
-    return clampDouble(values.end + _semanticActionUnit, 0.0, 1.0);
+    final double increasedEndValue = _roundToSemanticPrecision(values.end + _semanticActionUnit);
+    return clampDouble(increasedEndValue, 0.0, 1.0);
   }
 
   double get _decreasedEndValue {
-    final double decreasedEndValue = values.end - _semanticActionUnit;
-    return decreasedEndValue >= values.start + _minThumbSeparationValue
-        ? decreasedEndValue
-        : values.end;
+    final double tentativeEnd = values.end - _semanticActionUnit;
+    final double roundedTentativeEnd = _roundToSemanticPrecision(tentativeEnd);
+
+    final double minAllowedEnd = _roundToSemanticPrecision(values.start + _minThumbSeparationValue);
+
+    if (roundedTentativeEnd < minAllowedEnd) {
+      return values.end; 
+    }
+    return roundedTentativeEnd;
   }
+
 }
 
 class _ValueIndicatorRenderObjectWidget extends LeafRenderObjectWidget {
