@@ -4,7 +4,7 @@
 
 // ignore_for_file: public_member_api_docs, unreachable_from_main
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import 'stateful_shell_route_initial_location_example.dart';

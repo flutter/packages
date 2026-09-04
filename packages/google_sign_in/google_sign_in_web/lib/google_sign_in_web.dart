@@ -6,7 +6,6 @@ import 'dart:async';
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/foundation.dart' show kDebugMode, visibleForTesting;
-import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:google_identity_services_web/loader.dart' as loader;
