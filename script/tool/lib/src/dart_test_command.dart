@@ -14,6 +14,7 @@ import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 
 const int _exitUnknownTestPlatform = 3;
+const int _exitNoTestsRan = 79;
 
 enum _TestPlatform {
   // Must run in the command-line VM.
@@ -41,9 +42,18 @@ class DartTestCommand extends PackageLoopingCommand {
           '("vm" in most cases, "chrome" for web plugin implementations).',
     );
     argParser.addFlag(kWebWasmFlag, help: 'Compile to WebAssembly rather than JavaScript');
+    argParser.addOption(
+      _packageTagsFlag,
+      help:
+          'Path to a YAML file that maps package names to tags to run for that '
+          'package.',
+    );
   }
 
   static const String _platformFlag = 'platform';
+  static const String _packageTagsFlag = 'package-tags';
+
+  Map<String, String>? _packageTags;
 
   @override
   final String name = 'dart-test';
@@ -115,24 +125,29 @@ class DartTestCommand extends PackageLoopingCommand {
     // Whether to run web tests compiled to wasm.
     final bool wasm = platform != 'vm' && getBoolArg(kWebWasmFlag);
 
-    bool passed;
+    final String? tag = _getTagForPackage(package);
+    final int exitCode;
     if (package.requiresFlutter()) {
-      passed = await _runFlutterTests(package, platform: platform, wasm: wasm);
+      exitCode = await _runFlutterTests(package, platform: platform, wasm: wasm, tag: tag);
     } else {
-      passed = await _runDartTests(package, platform: platform, wasm: wasm);
+      exitCode = await _runDartTests(package, platform: platform, wasm: wasm, tag: tag);
     }
-    return passed ? PackageResult.success() : PackageResult.fail();
+    if (tag != null && exitCode == _exitNoTestsRan) {
+      return PackageResult.skip('No tests match the requested tag selector.');
+    }
+    return exitCode == 0 ? PackageResult.success() : PackageResult.fail();
   }
 
-  /// Runs the Dart tests for a Flutter package, returning true on success.
-  Future<bool> _runFlutterTests(
+  /// Runs the Dart tests for a Flutter package, returning the process exit code.
+  Future<int> _runFlutterTests(
     RepositoryPackage package, {
     String? platform,
     bool wasm = false,
+    String? tag,
   }) async {
     final String experiment = getStringArg(kEnableExperiment);
 
-    final int exitCode = await processRunner.runAndStream(flutterCommand, <String>[
+    return processRunner.runAndStream(flutterCommand, <String>[
       'test',
       '--color',
       if (experiment.isNotEmpty) '--enable-experiment=$experiment',
@@ -140,34 +155,92 @@ class DartTestCommand extends PackageLoopingCommand {
       // setting it is deprecated, so pass nothing in that case.
       if (platform != null && platform != 'vm') '--platform=$platform',
       if (wasm) '--wasm',
+      if (tag != null) '--tags=$tag',
     ], workingDir: package.directory);
-    return exitCode == 0;
   }
 
-  /// Runs the Dart tests for a non-Flutter package, returning true on success.
-  Future<bool> _runDartTests(
+  /// Runs the Dart tests for a non-Flutter package, returning the process exit code.
+  Future<int> _runDartTests(
     RepositoryPackage package, {
     String? platform,
     bool wasm = false,
+    String? tag,
   }) async {
     // Unlike `flutter test`, `dart run test` does not automatically get
     // packages
     if (!await runPubGet(package, processRunner, super.platform)) {
       printError('Unable to fetch dependencies.');
-      return false;
+      return 1;
     }
 
     final String experiment = getStringArg(kEnableExperiment);
 
-    final int exitCode = await processRunner.runAndStream('dart', <String>[
+    return processRunner.runAndStream('dart', <String>[
       'run',
       if (experiment.isNotEmpty) '--enable-experiment=$experiment',
       'test',
       if (platform != null) '--platform=$platform',
       if (wasm) '--compiler=dart2wasm',
+      if (tag != null) '--tags=$tag',
     ], workingDir: package.directory);
+  }
 
-    return exitCode == 0;
+  /// Returns a map of package names to tags based on the `--package-tags`
+  /// argument.
+  Map<String, String> _getPackageTags() {
+    if (_packageTags != null) {
+      return _packageTags!;
+    }
+    final packageTags = <String, String>{};
+    final String? arg = getNullableStringArg(_packageTagsFlag);
+    if (arg == null || arg.isEmpty) {
+      _packageTags = packageTags;
+      return packageTags;
+    }
+
+    final File file = packagesDir.fileSystem.file(arg);
+    if (!file.existsSync()) {
+      printError('The package tags file "$arg" does not exist.');
+      throw ToolExit(exitInvalidArguments);
+    }
+    final Object? yaml = loadYaml(file.readAsStringSync());
+    if (yaml is YamlMap) {
+      for (final MapEntry<dynamic, dynamic> entry in yaml.entries) {
+        final pkg = entry.key.toString();
+        final dynamic val = entry.value;
+        if (val != null) {
+          packageTags[pkg] = val.toString();
+        }
+      }
+    } else {
+      printError('The package tags file "$arg" is not a valid YAML map.');
+      throw ToolExit(exitInvalidArguments);
+    }
+    _packageTags = packageTags;
+    return packageTags;
+  }
+
+  /// Returns the tag to apply for [package] based on `--package-tags`, or null
+  /// if none.
+  String? _getTagForPackage(RepositoryPackage package) {
+    final Map<String, String> packageTags = _getPackageTags();
+    if (packageTags.isNotEmpty) {
+      final candidates = <String>{package.directory.basename, package.displayName};
+      RepositoryPackage? enclosing = package.getEnclosingPackage();
+      while (enclosing != null) {
+        candidates.add(enclosing.directory.basename);
+        candidates.add(enclosing.displayName);
+        enclosing = enclosing.getEnclosingPackage();
+      }
+
+      for (final candidate in candidates) {
+        if (packageTags.containsKey(candidate)) {
+          return packageTags[candidate];
+        }
+      }
+    }
+
+    return null;
   }
 
   /// Returns the required test environment, or null if none is specified.

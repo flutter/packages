@@ -4007,7 +4007,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('DropdownButton changes mouse cursor when hovered as expected', (
     WidgetTester tester,
@@ -4080,7 +4080,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('DropdownButton has expected mouse cursor when explicitly configured', (
     WidgetTester tester,

@@ -3018,7 +3018,7 @@ void main() {
     await tester.tap(findMenuItemText('Item 0'));
     await tester.pumpAndSettle();
     expect(controller.text, 'Item 0 $longText');
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('DropdownMenuEntry.labelWidget is Text that specifies maxLines 1 or 2', (
     WidgetTester tester,
@@ -3080,7 +3080,7 @@ void main() {
     await tester.tap(find.byType(TextField));
     await tester.pumpAndSettle();
     expect(controller.text, ''); // nothing selected
-  });
+  }, tags: 'reduced-web-test-set');
 
   // Regression test for https://github.com/flutter/flutter/issues/131350.
   testWidgets('DropdownMenuEntry.leadingIcon default layout', (WidgetTester tester) async {
@@ -3750,7 +3750,7 @@ void main() {
               textDirection: TextDirection.ltr,
             ),
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   // This is a regression test for https://github.com/flutter/flutter/issues/151854.
   testWidgets('scrollToHighlight does not scroll parent', (WidgetTester tester) async {
@@ -4450,7 +4450,7 @@ void main() {
     );
 
     semantics.dispose();
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('restorationId is passed to inner TextField', (WidgetTester tester) async {
     const restorationId = 'dropdown_menu';
