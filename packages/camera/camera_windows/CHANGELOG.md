@@ -1,3 +1,8 @@
+## 0.2.6+6
+
+* Falls back to the system temp directory for captured pictures and videos when
+  the Pictures / Videos known folder cannot be resolved.
+
 ## 0.2.6+5
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
