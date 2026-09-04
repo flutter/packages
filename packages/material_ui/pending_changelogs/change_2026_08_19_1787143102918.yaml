@@ -1,0 +1,3 @@
+changelog: |
+  - Add barrierBuilder support to Material dialogs.
+version: minor
