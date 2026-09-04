@@ -160,12 +160,12 @@ class _FamiliesDelta {
 
     var diff = '';
     if (addedPrintable.isNotEmpty) {
-      diff += '- Added fonts:\n';
+      diff += '- Adds fonts:\n';
       diff += addedPrintable.join('\n');
       diff += '\n';
     }
     if (removedPrintable.isNotEmpty) {
-      diff += '- Removed fonts:\n';
+      diff += '- Removes fonts:\n';
       diff += removedPrintable.join('\n');
       diff += '\n';
     }

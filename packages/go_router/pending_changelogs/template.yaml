@@ -1,6 +1,10 @@
-# Use this file as template to draft a unreleased changelog file.
-# Make a copy of this file in the same directory, rename it, and fill in the details.
+# Use this file as a template to draft an unreleased changelog file.
+# Make a copy of this file in the same directory, give it an appropriate name, and fill in the details.
+# Entries should follow https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changelog-style.
+# Multiple entries, and markdown are supported. For example:
 changelog: |
-  - Can include a list of changes.
-  - with markdown supported.
+  - Implements... .
+  - Fixes... .
+  - **BREAKING CHANGES**:
+    - Removes the deprecated... .
 version: <major|minor|patch|skip>
