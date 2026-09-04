@@ -103,5 +103,27 @@ void main() {
       await comparePathsVisually(poly1Path, morph120Path, radius * 2);
       await comparePathsVisually(poly2Path, morph121Path, radius * 2);
     });
+
+    test('exposes the shapes it morphs between', () {
+      expect(morph12.start, poly1);
+      expect(morph12.end, poly2);
+    });
+
+    test('equality', () {
+      expect(Morph(poly1, poly2), morph12);
+      expect(Morph(poly1, poly2).hashCode, morph12.hashCode);
+
+      expect(Morph(RoundedPolygon(3, center: const Point(0.5, 0.5)), poly2), morph12);
+
+      expect(morph11, isNot(morph12));
+      expect(Morph(poly2, poly1), isNot(morph12));
+      expect(morph11.hashCode, isNot(morph12.hashCode));
+      expect(Morph(poly2, poly1).hashCode, isNot(morph12.hashCode));
+    });
+
+    test('toString', () {
+      expect(morph12.toString(), startsWith('Morph(start: '));
+      expect(morph12.toString(), contains(', end: '));
+    });
   });
 }

@@ -5,6 +5,8 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
+
 import 'cubic.dart';
 import 'feature_mapping.dart';
 import 'float_mapping.dart';
@@ -28,25 +30,26 @@ import 'utils.dart';
 /// information, such as distance to polygon vertices and concavity), and
 /// splitting curves when the shapes do not have the same number of curves or
 /// when the curve placement within the shapes is very different.
+@immutable
 class Morph {
   /// Creates a [Morph] between the [start] and [end] polygons.
   ///
   /// The mapping between the two shapes is computed once, here, so a [Morph]
   /// should be created ahead of time and reused across frames rather than
   /// rebuilt for each value of progress.
-  Morph(RoundedPolygon start, RoundedPolygon end) : _start = start, _end = end {
-    _morphMatch = _match(start, end);
-  }
+  Morph(this.start, this.end) : _morphMatch = _match(start, end);
 
-  final RoundedPolygon _start;
+  /// The shape this morph produces at a progress of 0.
+  final RoundedPolygon start;
 
-  final RoundedPolygon _end;
+  /// The shape this morph produces at a progress of 1.
+  final RoundedPolygon end;
 
   /// The structure which holds the actual shape being morphed. It contains all
   /// cubics necessary to represent the start and end shapes (the original
   /// cubics in the shapes may be cut to align the start/end shapes), matched
   /// one to one in each pair.
-  late final List<(CubicBezier, CubicBezier)> _morphMatch;
+  final List<(CubicBezier, CubicBezier)> _morphMatch;
 
   /// [_match], called at [Morph] construction time, creates the structure used
   /// to animate between the start and end shapes. The technique is to match
@@ -144,13 +147,13 @@ class Morph {
   /// This solves for the actual extrema of every curve. See
   /// [approximateBounds] for a cheaper result that is never smaller than this
   /// one.
-  Rect get bounds => _start.bounds.expandToInclude(_end.bounds);
+  Rect get bounds => start.bounds.expandToInclude(end.bounds);
 
   /// A cheaper alternative to [bounds], based on the min/max values of all
   /// anchor and control points that make up the two shapes.
   ///
   /// The result is never smaller than [bounds], but can be larger.
-  Rect get approximateBounds => _start.approximateBounds.expandToInclude(_end.approximateBounds);
+  Rect get approximateBounds => start.approximateBounds.expandToInclude(end.approximateBounds);
 
   /// Like [bounds], the axis-aligned bounds of this morph, but determining the
   /// max dimension of the shapes (by calculating the distance from their
@@ -159,7 +162,7 @@ class Morph {
   ///
   /// This can be used, for example, to calculate the max size of a UI element
   /// meant to hold this morph in any rotation.
-  Rect get maxBounds => _start.maxBounds.expandToInclude(_end.maxBounds);
+  Rect get maxBounds => start.maxBounds.expandToInclude(end.maxBounds);
 
   /// Returns a representation of the morph object at a given [progress] value
   /// as a list of [CubicBezier]s. Note that this function causes a new list to be
@@ -255,5 +258,23 @@ class Morph {
       closePath: closePath,
       rotationPivot: rotationPivot,
     );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+
+    return other is Morph && other.start == start && other.end == end;
+  }
+
+  @override
+  int get hashCode => Object.hash(start, end);
+
+  @override
+  String toString() {
+    return '${objectRuntimeType(this, 'Morph')}'
+        '(start: $start, end: $end)';
   }
 }
