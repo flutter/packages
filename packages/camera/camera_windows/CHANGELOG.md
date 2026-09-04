@@ -1,7 +1,8 @@
 ## 0.2.6+6
 
 * Falls back to the system temp directory for captured pictures and videos when
-  the Pictures / Videos known folder cannot be resolved.
+  the Pictures / Videos known folder cannot be used, e.g. when blocked by
+  Controlled Folder Access.
 
 ## 0.2.6+5
 
