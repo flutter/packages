@@ -10,8 +10,8 @@ import 'package:material_ui/material_ui.dart';
 /// ## Sample code
 ///
 /// ```dart
-/// expect(find.byTooltip('Back'), findsOneWidget);
-/// expect(find.byTooltip(RegExp('Back.*')), findsNWidgets(2));
+/// expect(findByTooltip('Back'), findsOneWidget);
+/// expect(findByTooltip(RegExp('Back.*')), findsNWidgets(2));
 /// ```
 ///
 /// If the `skipOffstage` argument is true (the default), then this skips

@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'finders.dart';
 import 'semantics_tester.dart';
 
 void main() {
@@ -765,8 +766,8 @@ void main() {
     );
 
     expect(find.byType(Tooltip), findsNWidgets(2));
-    expect(find.byTooltip('t2'), findsOneWidget);
-    expect(find.byTooltip('t3'), findsOneWidget);
+    expect(findByTooltip('t2'), findsOneWidget);
+    expect(findByTooltip('t3'), findsOneWidget);
   });
 
   testWidgets('SegmentedButton.styleFrom is applied to the SegmentedButton', (

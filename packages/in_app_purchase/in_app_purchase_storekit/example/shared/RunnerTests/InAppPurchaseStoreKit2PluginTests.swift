@@ -389,6 +389,26 @@ final class InAppPurchase2PluginTests: XCTestCase {
     await fulfillment(of: [expectation], timeout: 5)
   }
 
+  func testPurchaseWithIntroductoryOfferEligibilityJWS() async throws {
+    let expectation = self.expectation(
+      description: "Purchase with an introductory offer eligibility JWS should complete")
+
+    // The plugin forwards this compact JWS to StoreKit verbatim, without
+    // parsing or validating it. The purchase is driven end to end to exercise
+    // that path; the callback is not asserted on a specific outcome because a
+    // locally generated JWS is not signed by App Store Connect.
+    let compactJWS = "eyJhbGciOiJFUzI1NiJ9.eyJhdWQiOiJ0ZXN0In0.c2ln"
+    let options = SK2ProductPurchaseOptionsMessage(
+      appAccountToken: nil, promotionalOffer: nil, winBackOfferId: nil,
+      introductoryOfferEligibilityCompactJWS: compactJWS)
+
+    plugin.purchase(id: "subscription_silver", options: options) { _ in
+      expectation.fulfill()
+    }
+
+    await fulfillment(of: [expectation], timeout: 5)
+  }
+
   func testRestoreProductSuccess() async throws {
     let purchaseExpectation = self.expectation(description: "Purchase request should succeed")
     let restoreExpectation = self.expectation(description: "Restore request should succeed")
