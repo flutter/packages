@@ -42,6 +42,49 @@ dart run build_runner build
 Read more about using
 [`build_runner` on pub.dev](https://pub.dev/packages/build_runner).
 
+### Builder options
+
+#### `duplicate_route_paths`
+
+When two routes resolve to the same URL, `go_router` matches the first and the
+second becomes unreachable. Navigating to the second one's `location` shows the
+first one's page. The builder warns about this at build time.
+
+Routes are compared by the URL they resolve to, not by the path they declare, so
+depth in the route tree does not matter. A route at `section/detail` collides with
+a route at `section` holding a child at `detail`. Parameter names are ignored, so
+`product/:id` and `product/:productId` are the same URL, though a parameter's
+regex constraint still counts, so `product/:id(\d+)` and `product/:id(\w+)` are
+not. Casing is ignored when the earlier route sets `caseSensitive: false`, since
+it then matches any casing.
+
+The whole library is compared, `part` files included. Shell routes and
+`StatefulShellRoute` branches contribute nothing to the URLs beneath them.
+
+Use `build.yaml` to change what a duplicate does:
+
+```yaml
+targets:
+  $default:
+    builders:
+      go_router_builder:
+        options:
+          duplicate_route_paths: error
+```
+
+Accepted values are `warning` (the default), `error`, and `ignore`.
+
+Warning is the default because some duplicates work. Matching backtracks, so
+naming one route class twice at the same path, each declaration carrying
+different children, is fine. Both resolve to the same class and every child stays
+reachable, which makes it a way to group children by feature. The builder still
+warns, because it cannot tell that from a mistake, so use `ignore` if you write
+it deliberately. Their children are a different story: a child path repeated
+across the two declarations is a genuine collision and is reported on its own.
+
+`error` applies to the whole package with no per-route exception, so it fails on
+the deliberate grouping too.
+
 ## Migration Guides
 - [Migrating to 4.0.0](https://flutter.dev/go/go-router-builder-v4-breaking-changes).
 
@@ -504,5 +547,14 @@ Relative routing methods are not idempotent and will cause an error when the rel
 ## Run tests
 
 To run unit tests, run command `dart tool/run_tests.dart` from `packages/go_router_builder/`.
+
+Each `.dart` file in `test_inputs/` is a test case, paired with a `.expect` file
+holding either the generated output or the error message the builder must
+produce. Two optional companion files tune a case:
+
+* `<name>.dart.options` holds a JSON map of builder options, matching what
+  `build.yaml` would pass to the builder.
+* `<name>.dart.warnings` holds the warnings the builder must log, one per line.
+  An empty file asserts that the builder logs nothing.
 
 To run tests in examples, run `flutter test` from `packages/go_router_builder/example`.
