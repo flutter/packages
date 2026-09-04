@@ -11,7 +11,7 @@ import Testing
 
   @Test func updateCircleSetsVisibilityLast() {
     let circle = PropertyOrderValidatingCircle()
-    FGMCircleController.update(
+    CircleController.update(
       circle,
       from: FGMPlatformCircle.make(
         withConsumeTapEvents: false,

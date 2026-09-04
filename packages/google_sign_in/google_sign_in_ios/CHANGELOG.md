@@ -1,3 +1,11 @@
+## 6.3.3
+
+* Creates Swift Package Manager target for Swift implementation.
+
+## 6.3.2
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
 ## 6.3.1
 
 * Improves testability of iOS scene URL handling.

@@ -6,67 +6,200 @@ import 'dart:io';
 
 import 'package:meta/meta.dart';
 
+import '../data/color_role.dart';
+import '../data/shape_struct.dart';
+import '../data/typescale_struct.dart';
+
 enum _MaterialVersion { material3, material3Expressive }
 
-abstract class M3TokenTemplate extends _TokenTemplate {
-  const M3TokenTemplate();
+/// A template for generating Material 3 component defaults.
+abstract class TokenTemplateM3 extends TokenTemplate {
+  const TokenTemplateM3();
 
   @override
   _MaterialVersion get _version => _MaterialVersion.material3;
 }
 
-abstract class M3ETokenTemplate extends _TokenTemplate {
-  const M3ETokenTemplate();
+/// A template for generating Material 3 Expressive component defaults.
+abstract class TokenTemplateM3E extends TokenTemplate {
+  const TokenTemplateM3E();
 
   @override
   _MaterialVersion get _version => _MaterialVersion.material3Expressive;
 }
 
-abstract class _TokenTemplate {
-  const _TokenTemplate();
+@visibleForTesting
+abstract class TokenTemplate {
+  const TokenTemplate();
 
-  static const String copyrightHeader = '''
+  /// The copyright header prepended to all generated defaults files.
+  static const String _copyrightHeader = '''
 // Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 ''';
 
-  static const String headerComment = '''
+  /// The warning comment prepended to all generated defaults files informing
+  /// readers not to edit them by hand.
+  static const String _headerComment = '''
 
 // Do not edit by hand. The code is generated from data in the Material
 // Design token database by the script:
 //   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
 ''';
 
-  /// The Material version this template is for.
-  _MaterialVersion get _version;
+  /// The regular expression used to verify that a template name is written with
+  /// spaces and capitalized words (e.g., "Icon Button").
+  static final RegExp _nameRegExp = RegExp(r'^[A-Z][a-zA-Z0-9]*( [A-Z][a-zA-Z0-9]*)*$');
 
   /// The name of the template, which corresponds to the target file name.
-  /// E.g., 'typography' for generating 'typography_defaults.g.dart'.
+  /// E.g., 'Icon Button' for generating 'icon_button_defaults_m3.g.dart'.
   String get name;
 
+  /// The path of the parent file relative to `lib/src`.
+  /// E.g., 'icon_button.dart' or 'buttons/icon_button.dart'.
+  String get parentFilePath;
+
+  /// The path to the library's directory where generated files are placed.
   @visibleForTesting
   String get materialLib {
     const packagePath = 'packages/material_ui';
     const generatedDirectory = 'lib/src/generated';
-    final String relativeOutputPath = switch (_version) {
-      _MaterialVersion.material3 => generatedDirectory,
-      _MaterialVersion.material3Expressive => '$generatedDirectory/material_3_expressive',
-    };
     if (Directory(packagePath).existsSync()) {
-      return '$packagePath/$relativeOutputPath';
+      return '$packagePath/$generatedDirectory';
     }
-    return relativeOutputPath;
+    return generatedDirectory;
   }
 
-  String generateContents();
+  /// The Material version this template is for.
+  _MaterialVersion get _version;
 
+  /// The name of the class that will be generated (e.g. `_IconButtonDefaultsM3`
+  /// or `_IconButtonDefaultsM3E`).
+  @visibleForTesting
+  String get className {
+    assert(
+      _nameRegExp.hasMatch(name),
+      'The template name "$name" must use spaces and capitalized words (e.g., "Typography" or "Icon Button").',
+    );
+    final String camelName = _joinAsCamelCase(name.split(' '), lowerCamelCase: false);
+    return switch (_version) {
+      _MaterialVersion.material3 => '_${camelName}DefaultsM3',
+      _MaterialVersion.material3Expressive => '_${camelName}DefaultsM3E',
+    };
+  }
+
+  /// The regular expression used to verify that the generated contents declare
+  /// the class.
+  RegExp get _classRegExp => RegExp('class\\s+$className\\b');
+
+  /// Returns the body of the generated file as a string.
+  ///
+  /// The [className] parameter must be used to declare the class.
+  String generateContents(String className);
+
+  /// Generates a Dart number literal for token values.
+  String number(num value) => value.toString();
+
+  /// Generates a [ColorScheme] color expression for the given token.
+  String color(TokenColorRole role, String prefix) => '$prefix.${role.name}';
+
+  /// Generates a color expression with opacity applied.
+  String colorWithOpacity(TokenColorRole role, double opacity, String prefix) {
+    if (opacity == 1.0) {
+      return color(role, prefix);
+    }
+    return '${color(role, prefix)}.withOpacity(${number(opacity)})';
+  }
+
+  /// Generate a [BorderSide] for the given component.
+  String border(String color, {double? width}) {
+    final widthString = (width != null && width != 1.0) ? ', width: $width' : '';
+    return 'BorderSide(color: $color$widthString)';
+  }
+
+  /// Generates an [OutlinedBorder] expression for a shape token.
+  ///
+  /// Currently supports:
+  ///   - `SHAPE_FAMILY_ROUNDED_CORNERS`, which maps to
+  ///     [RoundedRectangleBorder].
+  ///   - `SHAPE_FAMILY_CIRCULAR`, which maps to [StadiumBorder].
+  String shape(ShapeStruct shape, [String prefix = 'const ']) {
+    switch (shape.family) {
+      case 'SHAPE_FAMILY_ROUNDED_CORNERS':
+        final ShapeStruct(
+          :double topLeft,
+          :double topRight,
+          :double bottomLeft,
+          :double bottomRight,
+        ) = shape;
+        if (topLeft == topRight && topLeft == bottomLeft && topLeft == bottomRight) {
+          if (topLeft == 0) {
+            return '${prefix}RoundedRectangleBorder()';
+          }
+          return '${prefix}RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(${number(topLeft)})))';
+        }
+        if (topLeft == topRight && bottomLeft == bottomRight) {
+          return '${prefix}RoundedRectangleBorder(borderRadius: BorderRadius.vertical('
+              '${topLeft > 0 ? 'top: Radius.circular(${number(topLeft)})' : ''}'
+              '${topLeft > 0 && bottomLeft > 0 ? ', ' : ''}'
+              '${bottomLeft > 0 ? 'bottom: Radius.circular(${number(bottomLeft)})' : ''}'
+              '))';
+        }
+        return '${prefix}RoundedRectangleBorder(borderRadius: '
+            'BorderRadius.only('
+            'topLeft: Radius.circular(${number(topLeft)}), '
+            'topRight: Radius.circular(${number(topRight)}), '
+            'bottomLeft: Radius.circular(${number(bottomLeft)}), '
+            'bottomRight: Radius.circular(${number(bottomRight)})))';
+      case 'SHAPE_FAMILY_CIRCULAR':
+        return '${prefix}StadiumBorder()';
+    }
+    throw UnsupportedError('Unsupported shape family type: ${shape.family}');
+  }
+
+  /// Generate a [TextTheme] text style name for the given component token.
+  String textStyle(TypescaleStruct token, String prefix) {
+    final List<String> nameAttributes = token.name.split('.');
+    final String baseName = _joinAsCamelCase(nameAttributes.last.split('-'));
+    final bool isEmphasized = nameAttributes.contains('emphasized');
+    return '$prefix.$baseName${isEmphasized ? 'Emphasized' : ''}';
+  }
+
+  /// Converts a list of sub-strings into a single camelcased string.
+  String _joinAsCamelCase(List<String> subStrings, {bool lowerCamelCase = true}) {
+    if (subStrings.isEmpty) {
+      return '';
+    }
+    var camelCased = '';
+    for (var i = 0; i < subStrings.length; i++) {
+      final String subString = subStrings[i];
+      if (subString.isEmpty) {
+        continue;
+      }
+      camelCased += (lowerCamelCase && i == 0)
+          ? subString.toLowerCase()
+          : subString[0].toUpperCase() + subString.substring(1).toLowerCase();
+    }
+    return camelCased;
+  }
+
+  /// Generates the file under the target path [materialLib] and formats it.
   void generateFile({bool verbose = false}) {
-    final fileName = '$materialLib/${name}_defaults.g.dart';
+    final String snakeName = name.toLowerCase().replaceAll(' ', '_');
+    final String outputFileName = switch (_version) {
+      _MaterialVersion.material3 => '${snakeName}_defaults_m3.g.dart',
+      _MaterialVersion.material3Expressive => '${snakeName}_defaults_m3e.g.dart',
+    };
+    final fileName = '$materialLib/$outputFileName';
     if (verbose) {
       stdout.writeln('Generating file: $fileName');
-      stdout.writeln('Target parent file name: $name.dart');
+      stdout.writeln('Target parent file path: lib/src/$parentFilePath');
     }
+    assert(
+      !parentFilePath.startsWith('/') && !parentFilePath.startsWith('lib/'),
+      'parentFilePath must be relative to lib/src/ (e.g. "icon_button.dart").',
+    );
     final file = File(fileName);
     if (!file.existsSync()) {
       if (verbose) {
@@ -75,20 +208,21 @@ abstract class _TokenTemplate {
       file.createSync(recursive: true);
     }
 
-    final parentName = '$name.dart';
-
     if (verbose) {
       stdout.writeln('Generating contents...');
     }
+    final String contents = generateContents(className);
+    assert(
+      contents.contains(_classRegExp),
+      'The generated contents for "$name" must define the class "$className". '
+      'Make sure you are utilizing the passed `className` parameter.',
+    );
+
     final buffer = StringBuffer();
-    buffer.write(copyrightHeader);
-    buffer.write(headerComment);
-    final String partOfPath = switch (_version) {
-      _MaterialVersion.material3 => '../$parentName',
-      _MaterialVersion.material3Expressive => '../../material_3_expressive/$parentName',
-    };
-    buffer.write("part of '$partOfPath';\n\n");
-    buffer.write(generateContents());
+    buffer.write(_copyrightHeader);
+    buffer.write(_headerComment);
+    buffer.write("part of '../$parentFilePath';\n\n");
+    buffer.write(contents);
 
     if (verbose) {
       stdout.writeln('Writing generated contents to $fileName...');
@@ -97,7 +231,7 @@ abstract class _TokenTemplate {
     if (verbose) {
       stdout.writeln('Formatting $fileName...');
     }
-    final ProcessResult result = Process.runSync(Platform.resolvedExecutable, <String>[
+    final ProcessResult result = Process.runSync(Platform.isWindows ? 'dart.bat' : 'dart', <String>[
       'format',
       fileName,
     ]);
