@@ -81,7 +81,7 @@ public class RecorderTest {
     assertEquals(mockPendingRecording, api.prepareRecording(mockRecorder, "myFile.mp4"));
   }
 
-  @Test(expected = GeneratedCameraXLibrary.FlutterError.class)
+  @Test(expected = IllegalArgumentException.class)
   public void prepareRecording_errorsOnDirectoryPath() {
     final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
     final Recorder mockRecorder = mock(Recorder.class);
@@ -90,7 +90,7 @@ public class RecorderTest {
     api.prepareRecording(mockRecorder, "/");
   }
 
-  @Test(expected = GeneratedCameraXLibrary.FlutterError.class)
+  @Test(expected = IllegalArgumentException.class)
   public void prepareRecording_errorsOnNonExistentParent() {
     final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
     final Recorder mockRecorder = mock(Recorder.class);
@@ -98,7 +98,7 @@ public class RecorderTest {
     api.prepareRecording(mockRecorder, "/non/existent/parent/file.mp4");
   }
 
-  @Test(expected = GeneratedCameraXLibrary.FlutterError.class)
+  @Test(expected = IllegalArgumentException.class)
   public void prepareRecording_errorsOnInvalidExtension() {
     final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
     final Recorder mockRecorder = mock(Recorder.class);
