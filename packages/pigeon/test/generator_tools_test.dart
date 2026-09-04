@@ -466,4 +466,11 @@ void myMethod() {
 }
 ''');
   });
+
+  test('deduceClassNameComponent extracts class name component', () {
+    expect(deduceClassNameComponent('ios/Classes/messages.g.swift'), 'messages');
+    expect(deduceClassNameComponent('Foo.swift'), 'Foo');
+    expect(deduceClassNameComponent(''), '');
+    expect(deduceClassNameComponent(null), '');
+  });
 }

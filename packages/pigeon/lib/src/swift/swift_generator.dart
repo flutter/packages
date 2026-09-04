@@ -99,12 +99,7 @@ class InternalSwiftOptions extends InternalOptions {
   }) : copyrightHeader = options.copyrightHeader ?? copyrightHeader,
        fileSpecificClassNameComponent =
            options.fileSpecificClassNameComponent ??
-           (swiftOuts?.firstOrNull ?? swiftOut ?? '')
-               .split('/')
-               .lastOrNull
-               ?.split('.')
-               .firstOrNull ??
-           '',
+           deduceClassNameComponent(swiftOuts?.firstOrNull ?? swiftOut),
        errorClassName = options.errorClassName,
        includeErrorClass = options.includeErrorClass,
        swiftOut = swiftOut ?? swiftOuts?.firstOrNull ?? '',

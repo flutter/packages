@@ -56,8 +56,7 @@ class InternalPigeonOptions {
               options.objcOptions ?? const ObjcOptions(),
               objcHeaderOut: options.objcHeaderOut!,
               objcSourceOut: options.objcSourceOut!,
-              fileSpecificClassNameComponent:
-                  options.objcSourceOut?.split('/').lastOrNull?.split('.').firstOrNull ?? '',
+              fileSpecificClassNameComponent: deduceClassNameComponent(options.objcSourceOut),
               copyrightHeader: copyrightHeader,
             ),
       javaOptions = options.javaOut == null
@@ -171,6 +170,12 @@ Iterable<String> _lineReader(String path) sync* {
   }
 }
 
+File _getFile(String output, {String basePath = ''}) {
+  final file = File(path.posix.join(basePath, output));
+  file.createSync(recursive: true);
+  return file;
+}
+
 IOSink? _openSink(String? output, {String basePath = ''}) {
   if (output == null) {
     return null;
@@ -178,9 +183,15 @@ IOSink? _openSink(String? output, {String basePath = ''}) {
   if (output == 'stdout') {
     return stdout;
   }
-  final file = File(path.posix.join(basePath, output));
-  file.createSync(recursive: true);
-  return file.openWrite();
+  return _getFile(output, basePath: basePath).openWrite();
+}
+
+void _writeToOutput(String output, String content, {String basePath = ''}) {
+  if (output == 'stdout') {
+    stdout.write(content);
+  } else {
+    _getFile(output, basePath: basePath).writeAsStringSync(content);
+  }
 }
 
 /// An adapter that will call a generator to write code to a sink
@@ -425,13 +436,7 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
     final content = buffer.toString();
     sink.write(content);
     for (final String outputPath in outputs.skip(1)) {
-      if (outputPath == 'stdout') {
-        stdout.write(content);
-      } else {
-        final file = File(path.posix.join(options.basePath ?? '', outputPath));
-        file.createSync(recursive: true);
-        file.writeAsStringSync(content);
-      }
+      _writeToOutput(outputPath, content, basePath: options.basePath ?? '');
     }
   }
 
