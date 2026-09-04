@@ -734,9 +734,21 @@ struct GoogleSignInPluginTests {
         let firstURL = URL(string: "com.googleusercontent.apps.test:/oauthredirect")!
         let secondURL = URL(string: "com.googleusercontent.apps.test:/another")!
 
-        plugin.handleURLs([firstURL, secondURL])
+        let handled = plugin.handleURLs([firstURL, secondURL])
 
+        #expect(handled == true)
         #expect(fakeSignIn.handledURLs == [firstURL, secondURL])
+      }
+
+      @Test func handleURLsReturnsHandleResult() {
+        let (plugin, fakeSignIn) = createTestPlugin()
+        let url = URL(string: "com.googleusercontent.apps.test:/oauthredirect")!
+        fakeSignIn.handleURLResult = false
+
+        let handled = plugin.handleURLs([url])
+
+        #expect(handled == false)
+        #expect(fakeSignIn.handledURLs == [url])
       }
     #endif
   }

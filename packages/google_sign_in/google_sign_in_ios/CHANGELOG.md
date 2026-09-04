@@ -2,6 +2,7 @@
 
 * Migrates the plugin class from Objective-C to Swift.
 * Adds a CocoaPods placeholder header so the generated Swift header can import `google_sign_in_ios.h`.
+* Fixes scene URL handling to report whether Google Sign-In handled the URL.
 
 ## 6.3.3
 
