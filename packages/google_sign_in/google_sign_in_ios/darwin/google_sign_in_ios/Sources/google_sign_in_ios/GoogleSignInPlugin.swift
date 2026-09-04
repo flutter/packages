@@ -85,7 +85,7 @@ private func pigeonErrorCode(for gidSignInErrorCode: Int) -> FSIGoogleSignInErro
     return .canceled
   case GIDSignInError.hasNoAuthInKeychain.rawValue:
     return .noAuthInKeychain
-  case -6:  // kGIDSignInErrorCodeEMM; not imported as a Swift enum case.
+  case GIDSignInError.EMM.rawValue:
     return .eemError
   case GIDSignInError.scopesAlreadyGranted.rawValue:
     return .scopesAlreadyGranted
@@ -165,10 +165,14 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
 
     /// Forwards each URL to GIDSignIn. Extracted so tests can cover scene URL
     /// handling without constructing `UIOpenURLContext`.
-    func handleURLs(_ urls: [URL]) {
+    ///
+    /// Returns `true` if GIDSignIn handled any of the URLs.
+    func handleURLs(_ urls: [URL]) -> Bool {
+      var handled = false
       for url in urls {
-        _ = signIn.handle(url)
+        handled = signIn.handle(url) || handled
       }
+      return handled
     }
   #else
     public func handleOpen(_ urls: [URL]) -> Bool {
@@ -212,15 +216,13 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
     nonce: String?,
     completion: @escaping (FSISignInResult?, FlutterError?) -> Void
   ) {
-    let exception = GoogleSignInCatchException {
-      self.performSignIn(hint: nil, additionalScopes: scopeHint, nonce: nonce) {
-        [weak self] signInResult, error in
-        self?.handleAuthResult(
-          user: signInResult?.user,
-          serverAuthCode: signInResult?.serverAuthCode,
-          error: error,
-          completion: completion)
-      }
+    let exception = performSignIn(hint: nil, additionalScopes: scopeHint, nonce: nonce) {
+      [weak self] signInResult, error in
+      self?.handleAuthResult(
+        user: signInResult?.user,
+        serverAuthCode: signInResult?.serverAuthCode,
+        error: error,
+        completion: completion)
     }
     if let exception {
       completion(
@@ -269,14 +271,12 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
       return
     }
 
-    let exception = GoogleSignInCatchException {
-      self.performAddScopes(scopes, for: user) { [weak self] signInResult, error in
-        self?.handleAuthResult(
-          user: signInResult?.user,
-          serverAuthCode: signInResult?.serverAuthCode,
-          error: error,
-          completion: completion)
-      }
+    let exception = performAddScopes(scopes, for: user) { [weak self] signInResult, error in
+      self?.handleAuthResult(
+        user: signInResult?.user,
+        serverAuthCode: signInResult?.serverAuthCode,
+        error: error,
+        completion: completion)
     }
     if let exception {
       completion(
@@ -306,40 +306,49 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
   // MARK: - Private
 
   /// Wraps the iOS and macOS sign in display methods.
+  ///
+  /// Returns any `NSException` raised by the SDK, or nil. The exception catcher
+  /// wraps only the SDK call itself, since Obj-C exception unwinding through
+  /// Swift frames is undefined behavior.
   private func performSignIn(
     hint: String?,
     additionalScopes: [String]?,
     nonce: String?,
     completion: @escaping (FSIGIDSignInResult?, Error?) -> Void
-  ) {
+  ) -> NSException? {
     #if os(macOS)
-      signIn.signIn(
-        withPresenting: viewProvider.view?.window,
-        hint: hint,
-        additionalScopes: additionalScopes,
-        nonce: nonce,
-        completion: completion)
+      let presenting = viewProvider.view?.window
     #else
-      signIn.signIn(
-        withPresenting: topViewController,
+      let presenting = topViewController
+    #endif
+    return GoogleSignInCatchException {
+      self.signIn.signIn(
+        withPresenting: presenting,
         hint: hint,
         additionalScopes: additionalScopes,
         nonce: nonce,
         completion: completion)
-    #endif
+    }
   }
 
   /// Wraps the iOS and macOS scope addition methods.
+  ///
+  /// Returns any `NSException` raised by the SDK, or nil. The exception catcher
+  /// wraps only the SDK call itself, since Obj-C exception unwinding through
+  /// Swift frames is undefined behavior.
   private func performAddScopes(
     _ scopes: [String],
     for user: any FSIGIDGoogleUser,
     completion: @escaping (FSIGIDSignInResult?, Error?) -> Void
-  ) {
+  ) -> NSException? {
     #if os(macOS)
-      user.addScopes(scopes, presenting: viewProvider.view?.window, completion: completion)
+      let presenting = viewProvider.view?.window
     #else
-      user.addScopes(scopes, presenting: topViewController, completion: completion)
+      let presenting = topViewController
     #endif
+    return GoogleSignInCatchException {
+      user.addScopes(scopes, presenting: presenting, completion: completion)
+    }
   }
 
   /// Returns nil if GoogleService-Info.plist not found and runtimeClientIdentifier is not provided.
@@ -380,7 +389,7 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
     // Convert expected errors into structured failure return, and everything else
     // into a generic error.
     let nsError = error as NSError?
-    if nsError?.domain == kGIDSignInErrorDomain, let nsError {
+    if let nsError, nsError.domain == kGIDSignInErrorDomain {
       completion(
         FSISignInResult.make(
           with: nil,
@@ -458,11 +467,7 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
   extension GoogleSignInPlugin: FlutterSceneLifeCycleDelegate {
     public func scene(_ scene: UIScene, openURLContexts urlContexts: Set<UIOpenURLContext>) -> Bool
     {
-      var handled = false
-      for context in urlContexts {
-        handled = signIn.handle(context.url) || handled
-      }
-      return handled
+      return handleURLs(urlContexts.map { $0.url })
     }
   }
 #endif
