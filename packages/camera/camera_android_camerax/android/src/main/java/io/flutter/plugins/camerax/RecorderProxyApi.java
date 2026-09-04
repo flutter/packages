@@ -11,6 +11,7 @@ import androidx.camera.video.PendingRecording;
 import androidx.camera.video.QualitySelector;
 import androidx.camera.video.Recorder;
 import java.io.File;
+import java.util.Locale;
 
 /**
  * ProxyApi implementation for {@link Recorder}. This class may handle instantiating native object

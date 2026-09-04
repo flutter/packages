@@ -533,6 +533,7 @@ final class DefaultCamera: NSObject, Camera {
   private func setUpVideoRecording(
     videoOutputPath: String?, completion: @escaping (Result<Void, any Error>) -> Void
   ) {
+    let path: String
     if let videoOutputPath = videoOutputPath {
       do {
         try validateOutputPath(videoOutputPath)
@@ -540,10 +541,10 @@ final class DefaultCamera: NSObject, Camera {
         completion(.failure(error))
         return
       }
-      videoRecordingPath = videoOutputPath
+      path = videoOutputPath
     } else {
       do {
-        videoRecordingPath = try getTemporaryFilePath(
+        path = try getTemporaryFilePath(
           withExtension: "mp4",
           subfolder: "videos",
           prefix: "REC_")
@@ -552,8 +553,9 @@ final class DefaultCamera: NSObject, Camera {
         return
       }
     }
+    videoRecordingPath = path
 
-    guard setupWriter(forPath: videoRecordingPath) else {
+    guard setupWriter(forPath: path) else {
       completion(
         .failure(
           PigeonError(
