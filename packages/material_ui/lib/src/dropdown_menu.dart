@@ -1269,7 +1269,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
         final DropdownMenuDecorationBuilder decorationBuilder =
             widget.decorationBuilder ?? _buildDefaultDecoration;
         InputDecoration decoration = decorationBuilder(context, controller);
-        if (decoration.prefixIcon == null) {
+        if (widget.leadingIcon != null && decoration.prefixIcon == null) {
           decoration = decoration.copyWith(prefixIcon: widget.leadingIcon);
         }
         // If no suffixIcon is provided, the default IconButton is used for convenience.
