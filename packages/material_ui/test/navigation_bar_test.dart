@@ -557,7 +557,7 @@ void main() {
         hasFocusAction: true,
       ),
     );
-  });
+  }, tags: 'reduced-web-test-set');
   testWidgets('Navigation bar disabled semantics', (WidgetTester tester) async {
     Widget widget({int selectedIndex = 0}) {
       return _buildWidget(
@@ -584,7 +584,7 @@ void main() {
         isButton: true,
       ),
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('Navigation bar semantics with some labels hidden', (WidgetTester tester) async {
     Widget widget({int selectedIndex = 0}) {
@@ -663,7 +663,7 @@ void main() {
         hasFocusAction: true,
       ),
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('Navigation bar does not grow with text scale factor', (WidgetTester tester) async {
     const animationMilliseconds = 800;
@@ -1214,7 +1214,7 @@ void main() {
               ..circle()
               ..circle(color: focusColor)),
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('NavigationBar.labelPadding overrides NavigationDestination.label padding', (
     WidgetTester tester,

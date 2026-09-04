@@ -2775,7 +2775,7 @@ void main() {
         'See also:\n'
         'https://api.flutter.dev/flutter/material/ListTile-class.html#material.ListTile.4\n',
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('trailing', (WidgetTester tester) async {
       // Test a trailing widget that exceeds the list tile width.
@@ -2802,7 +2802,7 @@ void main() {
         'See also:\n'
         'https://api.flutter.dev/flutter/material/ListTile-class.html#material.ListTile.4\n',
       );
-    });
+    }, tags: 'reduced-web-test-set');
   });
 
   group('Material 2', () {

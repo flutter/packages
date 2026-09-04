@@ -833,7 +833,7 @@ void main() {
 
     expect(focusNode1.hasPrimaryFocus, !kIsWeb);
     expect(focusNode2.hasPrimaryFocus, isFalse);
-  });
+  }, tags: 'reduced-web-test-set');
 
   group('feedback', () {
     late FeedbackTester feedback;
@@ -994,7 +994,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('disabled IconButton has basic mouse cursor', (WidgetTester tester) async {
     await tester.pumpWidget(
@@ -3375,61 +3375,64 @@ void main() {
     expect(onLongPressed, false);
   });
 
-  testWidgets('does not draw focus color when focused by semantics on the web', (
-    WidgetTester tester,
-  ) async {
-    // Regression test for https://github.com/flutter/flutter/issues/158527.
+  testWidgets(
+    'does not draw focus color when focused by semantics on the web',
+    (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/158527.
 
-    final focusNode = FocusNode();
-    addTearDown(focusNode.dispose);
+      final focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
 
-    const Color focusColor = Colors.orange;
+      const Color focusColor = Colors.orange;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Center(
-          child: IconButton(
-            focusColor: focusColor,
-            focusNode: focusNode,
-            icon: const Icon(Icons.headphones),
-            onPressed: () {},
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: IconButton(
+              focusColor: focusColor,
+              focusNode: focusNode,
+              icon: const Icon(Icons.headphones),
+              onPressed: () {},
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    // Make sure we are in "traditional mode" where the button could potentially draw focus highlights.
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await tester.pumpAndSettle();
-    expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.traditional));
+      // Make sure we are in "traditional mode" where the button could potentially draw focus highlights.
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.traditional));
 
-    expect(focusNode.hasFocus, isFalse);
+      expect(focusNode.hasFocus, isFalse);
 
-    // Focus on it with semantics.
-    tester.platformDispatcher.onSemanticsActionEvent!(
-      SemanticsActionEvent(
-        type: SemanticsAction.focus,
-        viewId: tester.view.viewId,
-        nodeId: tester.semantics.find(find.byIcon(Icons.headphones)).id,
-      ),
-    );
-    await tester.pumpAndSettle();
+      // Focus on it with semantics.
+      tester.platformDispatcher.onSemanticsActionEvent!(
+        SemanticsActionEvent(
+          type: SemanticsAction.focus,
+          viewId: tester.view.viewId,
+          nodeId: tester.semantics.find(find.byIcon(Icons.headphones)).id,
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    // Make sure no focus highlight was drawn.
-    final RenderObject inkFeatures = tester.allRenderObjects.firstWhere((RenderObject object) {
-      return object.runtimeType.toString() == '_RenderInkFeatures';
-    });
-    expect(focusNode.hasFocus, isTrue);
-    expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.touch));
-    expect(inkFeatures, isNot(paints..rect(color: focusColor)));
+      // Make sure no focus highlight was drawn.
+      final RenderObject inkFeatures = tester.allRenderObjects.firstWhere((RenderObject object) {
+        return object.runtimeType.toString() == '_RenderInkFeatures';
+      });
+      expect(focusNode.hasFocus, isTrue);
+      expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.touch));
+      expect(inkFeatures, isNot(paints..rect(color: focusColor)));
 
-    // Check that focus highlight is drawn in traditional mode.
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await tester.pumpAndSettle();
-    expect(focusNode.hasFocus, isTrue);
-    expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.traditional));
-    expect(inkFeatures, paints..rect(color: focusColor));
-  }, skip: !isBrowser); // [intended] tests web-specific behavior.
+      // Check that focus highlight is drawn in traditional mode.
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(focusNode.hasFocus, isTrue);
+      expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.traditional));
+      expect(inkFeatures, paints..rect(color: focusColor));
+    },
+    skip: !isBrowser,
+    tags: 'reduced-web-test-set',
+  ); // [intended] tests web-specific behavior.
 
   testWidgets("IconButton's outline should be behind its child", (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/issues/167431
