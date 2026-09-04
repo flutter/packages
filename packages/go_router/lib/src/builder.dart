@@ -41,6 +41,28 @@ typedef _ErrorBuilderForAppType = Widget Function(BuildContext context, GoRouter
 typedef PopPageWithRouteMatchCallback =
     bool Function(Route<dynamic> route, dynamic result, RouteMatchBase match);
 
+/// The clip behavior of the [Navigator] identified by [navigatorKey].
+///
+/// A [ShellRoute] builds a single Navigator and carries the clip behavior
+/// itself, while a [StatefulShellRoute] builds one per branch, so the branch
+/// owning [navigatorKey] carries it. [ShellRouteBase] cannot be subclassed
+/// outside of this library, so those are the only two cases.
+Clip _clipBehaviorFor(ShellRouteBase route, GlobalKey<NavigatorState> navigatorKey) {
+  switch (route) {
+    case ShellRoute():
+      return route.clipBehavior;
+    case StatefulShellRoute():
+      for (final StatefulShellBranch branch in route.branches) {
+        if (branch.navigatorKey == navigatorKey) {
+          return branch.clipBehavior;
+        }
+      }
+      return Clip.hardEdge;
+    default:
+      return Clip.hardEdge;
+  }
+}
+
 /// Builds the top-level Navigator for GoRouter.
 class RouteBuilder {
   /// [RouteBuilder] constructor.
@@ -297,9 +319,8 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
             ShellRouteMatch match,
             RouteMatchList matchList,
             List<NavigatorObserver>? observers,
-            String? restorationScopeId, {
-            Clip clipBehavior = Clip.hardEdge,
-          }) {
+            String? restorationScopeId,
+          ) {
             return PopScope(
               // Prevent ShellRoute from being popped, for example
               // by an iOS back gesture, when the route has active sub-routes.
@@ -321,7 +342,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
                 errorBuilder: widget.errorBuilder,
                 errorPageBuilder: widget.errorPageBuilder,
                 requestFocus: widget.requestFocus,
-                clipBehavior: clipBehavior,
+                clipBehavior: _clipBehaviorFor(match.route, navigatorKey),
               ),
             );
           },

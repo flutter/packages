@@ -56,9 +56,8 @@ typedef NavigatorBuilder =
       ShellRouteMatch match,
       RouteMatchList matchList,
       List<NavigatorObserver>? observers,
-      String? restorationScopeId, {
-      Clip clipBehavior,
-    });
+      String? restorationScopeId,
+    );
 
 /// Signature for function used in [RouteBase.onExit].
 ///
@@ -601,7 +600,6 @@ class ShellRouteContext {
     List<NavigatorObserver>? observers,
     bool notifyRootObserver,
     String? restorationScopeId,
-    Clip clipBehavior,
   ) {
     final effectiveObservers = <NavigatorObserver>[...?observers];
 
@@ -618,7 +616,6 @@ class ShellRouteContext {
       routeMatchList,
       effectiveObservers,
       restorationScopeId,
-      clipBehavior: clipBehavior,
     );
   }
 }
@@ -769,7 +766,6 @@ class ShellRoute extends ShellRouteBase {
         observers,
         notifyRootObserver,
         restorationScopeId,
-        clipBehavior,
       );
       return builder!(context, state, navigator);
     }
@@ -788,7 +784,6 @@ class ShellRoute extends ShellRouteBase {
         observers,
         notifyRootObserver,
         restorationScopeId,
-        clipBehavior,
       );
       return pageBuilder!(context, state, navigator);
     }
@@ -1438,7 +1433,6 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
         branch.observers,
         route.notifyRootObserver,
         branch.restorationScopeId,
-        branch.clipBehavior,
       );
     }
 
@@ -1468,7 +1462,6 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
           matchList,
           branch.observers,
           branch.restorationScopeId,
-          clipBehavior: branch.clipBehavior,
         );
 
         final _StatefulShellBranchState branchState = _branchStateFor(branch, false);
