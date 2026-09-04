@@ -7,13 +7,8 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    objcHeaderOut:
-        'darwin/google_sign_in_ios/Sources/google_sign_in_ios_objc/include/google_sign_in_ios/messages.g.h',
-    objcSourceOut: 'darwin/google_sign_in_ios/Sources/google_sign_in_ios_objc/messages.g.m',
-    objcOptions: ObjcOptions(
-      prefix: 'FSI',
-      headerIncludePath: './include/google_sign_in_ios/messages.g.h',
-    ),
+    swiftOut: 'darwin/google_sign_in_ios/Sources/google_sign_in_ios/messages.g.swift',
+    swiftOptions: SwiftOptions(fileSpecificClassNameComponent: 'Messages'),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
@@ -76,22 +71,10 @@ enum GoogleSignInErrorCode {
 }
 
 /// The response from an auth call.
-// TODO(stuartmorgan): Switch to a sealed base class with two subclasses instead
-// of using composition when the plugin is migrated to Swift.
-class SignInResult {
-  /// The success result, if any.
-  ///
-  /// Exactly one of success and error will be non-nil.
-  SignInSuccess? success;
+sealed class SignInResult {}
 
-  /// The error result, if any.
-  ///
-  /// Exactly one of success and error will be non-nil.
-  SignInFailure? error;
-}
-
-/// An sign in failure.
-class SignInFailure {
+/// A sign in failure.
+class SignInFailure extends SignInResult {
   /// The type of failure.
   late GoogleSignInErrorCode type;
 
@@ -108,7 +91,7 @@ class SignInFailure {
 /// structure of the Google Sign In SDK, this has information corresponding to
 /// both authn and authz steps, even though incremental authorization is
 /// supported.
-class SignInSuccess {
+class SignInSuccess extends SignInResult {
   late UserData user;
 
   late String accessToken;

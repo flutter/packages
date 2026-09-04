@@ -1,3 +1,8 @@
+## 6.3.6
+
+* Converts the Pigeon host API from Objective-C to Swift.
+* Converts `SignInResult` to a sealed Pigeon type.
+
 ## 6.3.5
 
 * Migrates ViewProvider and GID SDK wrappers from Objective-C to Swift.

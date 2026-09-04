@@ -247,56 +247,10 @@ class UserData {
 }
 
 /// The response from an auth call.
-class SignInResult {
-  SignInResult({this.success, this.error});
+sealed class SignInResult {}
 
-  /// The success result, if any.
-  ///
-  /// Exactly one of success and error will be non-nil.
-  SignInSuccess? success;
-
-  /// The error result, if any.
-  ///
-  /// Exactly one of success and error will be non-nil.
-  SignInFailure? error;
-
-  List<Object?> _toList() {
-    return <Object?>[success, error];
-  }
-
-  Object encode() {
-    return _toList();
-  }
-
-  static SignInResult decode(Object result) {
-    result as List<Object?>;
-    return SignInResult(success: result[0] as SignInSuccess?, error: result[1] as SignInFailure?);
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! SignInResult || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(success, other.success) && _deepEquals(error, other.error);
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
-
-  @override
-  String toString() {
-    return 'SignInResult(success: $success, error: $error)';
-  }
-}
-
-/// An sign in failure.
-class SignInFailure {
+/// A sign in failure.
+class SignInFailure extends SignInResult {
   SignInFailure({required this.type, this.message, this.details});
 
   /// The type of failure.
@@ -355,7 +309,7 @@ class SignInFailure {
 /// structure of the Google Sign In SDK, this has information corresponding to
 /// both authn and authz steps, even though incremental authorization is
 /// supported.
-class SignInSuccess {
+class SignInSuccess extends SignInResult {
   SignInSuccess({
     required this.user,
     required this.accessToken,
@@ -430,14 +384,11 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is UserData) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is SignInResult) {
+    } else if (value is SignInFailure) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is SignInFailure) {
-      buffer.putUint8(133);
-      writeValue(buffer, value.encode());
     } else if (value is SignInSuccess) {
-      buffer.putUint8(134);
+      buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -455,10 +406,8 @@ class _PigeonCodec extends StandardMessageCodec {
       case 131:
         return UserData.decode(readValue(buffer)!);
       case 132:
-        return SignInResult.decode(readValue(buffer)!);
-      case 133:
         return SignInFailure.decode(readValue(buffer)!);
-      case 134:
+      case 133:
         return SignInSuccess.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
