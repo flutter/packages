@@ -87,9 +87,11 @@ std::string GetCurrentTimeString() {
 
 // Returns the directory to write captures into.
 // Falls back to the temp directory if the known folder can't be used, e.g.
-// it's redirected or blocked by controlled folder access.
+// it's blocked by Controlled Folder Access.
 std::optional<std::string> GetCaptureDirectory(REFKNOWNFOLDERID folder_id) {
   ComHeapPtr<wchar_t> known_folder_path;
+  // KF_FLAG_CREATE opens the folder with write intent even if it already
+  // exists, so this acts also as write permission check.
   HRESULT hr = SHGetKnownFolderPath(folder_id, KF_FLAG_CREATE, nullptr,
                                     &known_folder_path);
   if (SUCCEEDED(hr)) {
