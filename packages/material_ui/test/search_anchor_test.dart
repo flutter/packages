@@ -3854,7 +3854,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(Placeholder), findsOneWidget);
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets(
       'iOS uses the system context menu by default if supported',
