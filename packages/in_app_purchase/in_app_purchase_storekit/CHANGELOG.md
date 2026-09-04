@@ -1,3 +1,10 @@
+## 0.4.12
+
+* Adds support for setting introductory offer eligibility from a server-signed
+  compact JWS via `Sk2PurchaseParam.introductoryOfferEligibilityCompactJWS`,
+  which is forwarded to StoreKit 2 as
+  `Product.PurchaseOption.introductoryOfferEligibility(compactJWS:)`.
+
 ## 0.4.11+2
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.

@@ -26,9 +26,6 @@ part 'all_extension_types.g.dart';
     ),
     TypedGoRoute<IntExtensionRoute>(path: 'int-route/:requiredIntField'),
     TypedGoRoute<NumExtensionRoute>(path: 'num-route/:requiredNumField'),
-    TypedGoRoute<DoubleExtensionRoute>(
-      path: 'double-route/:requiredDoubleField',
-    ),
     TypedGoRoute<EnumExtensionRoute>(path: 'enum-route/:requiredEnumField'),
     TypedGoRoute<EnhancedEnumExtensionRoute>(
       path: 'enhanced-enum-route/:requiredEnumField',

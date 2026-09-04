@@ -5,6 +5,7 @@
 import Flutter
 import GoogleMaps
 import Testing
+import google_maps_flutter_ios_sdk10_objc
 
 @testable import google_maps_flutter_ios_sdk10
 

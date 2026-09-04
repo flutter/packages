@@ -183,7 +183,7 @@ targets:
 
   - name: Linux_web web_dart_unit_test_shard_1 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       add_recipes_cq: "true"
       target_file: web_dart_unit_tests.yaml
@@ -193,7 +193,7 @@ targets:
 
   - name: Linux_web web_dart_unit_test_shard_2 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: web_dart_unit_tests.yaml
       channel: master
@@ -202,7 +202,7 @@ targets:
 
   - name: Linux_web web_dart_unit_test_shard_3 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: web_dart_unit_tests.yaml
       channel: master
@@ -211,7 +211,7 @@ targets:
 
   - name: Linux_web web_dart_unit_test_shard_1 stable
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: web_dart_unit_tests.yaml
       channel: stable
@@ -223,12 +223,12 @@ targets:
       # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+          {"dependency": "chrome_and_driver", "version": "version:137.0.7151.119"}
         ]
 
   - name: Linux_web web_dart_unit_test_shard_2 stable
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: web_dart_unit_tests.yaml
       channel: stable
@@ -240,12 +240,12 @@ targets:
       # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+          {"dependency": "chrome_and_driver", "version": "version:137.0.7151.119"}
         ]
 
   - name: Linux_web web_dart_unit_test_shard_3 stable
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: web_dart_unit_tests.yaml
       channel: stable
@@ -257,7 +257,7 @@ targets:
       # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+          {"dependency": "chrome_and_driver", "version": "version:137.0.7151.119"}
         ]
 
   # Wasm unit tests in master
@@ -368,7 +368,7 @@ targets:
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+          {"dependency": "chrome_and_driver", "version": "version:137.0.7151.119"}
         ]
       channel: stable
 
@@ -756,7 +756,7 @@ targets:
       # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+          {"dependency": "chrome_and_driver", "version": "version:137.0.7151.119"}
         ]
 
   - name: Linux_web web_platform_tests_shard_2 stable
@@ -773,7 +773,7 @@ targets:
       # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+          {"dependency": "chrome_and_driver", "version": "version:137.0.7151.119"}
         ]
 
   - name: Linux_web web_platform_tests_shard_3 stable
@@ -790,7 +790,7 @@ targets:
       # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+          {"dependency": "chrome_and_driver", "version": "version:137.0.7151.119"}
         ]
 
   ### Linux desktop tasks
@@ -839,7 +839,7 @@ targets:
       # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+          {"dependency": "chrome_and_driver", "version": "version:137.0.7151.119"}
         ]
 
   ### iOS+macOS tasks ###

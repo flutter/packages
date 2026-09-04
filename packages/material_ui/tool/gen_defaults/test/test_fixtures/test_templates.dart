@@ -5,8 +5,8 @@
 import '../../templates/template.dart';
 import 'icon_button_token_data.dart';
 
-class M3EIconButtonTemplate extends M3ETokenTemplate {
-  M3EIconButtonTemplate(this.customMaterialLib);
+class IconButtonTemplateM3E extends TokenTemplateM3E {
+  IconButtonTemplateM3E(this.customMaterialLib);
 
   final String customMaterialLib;
 
@@ -30,8 +30,8 @@ class $className {
   }
 }
 
-class M3IconButtonTemplate extends M3TokenTemplate {
-  M3IconButtonTemplate(this.customMaterialLib);
+class IconButtonTemplateM3 extends TokenTemplateM3 {
+  IconButtonTemplateM3(this.customMaterialLib);
 
   final String customMaterialLib;
 
@@ -66,7 +66,7 @@ class $className {
   }
 }
 
-class UnformattedTemplate extends M3TokenTemplate {
+class UnformattedTemplate extends TokenTemplateM3 {
   UnformattedTemplate(this.customMaterialLib);
 
   final String customMaterialLib;
@@ -91,7 +91,7 @@ final    int    x = 1  ;
   }
 }
 
-class InvalidTemplate extends M3TokenTemplate {
+class InvalidTemplate extends TokenTemplateM3 {
   InvalidTemplate(this.customMaterialLib);
 
   final String customMaterialLib;
@@ -115,7 +115,7 @@ class _SomeOtherClassNameDefaults {
   }
 }
 
-class SnakeCaseNameTemplate extends M3TokenTemplate {
+class SnakeCaseNameTemplate extends TokenTemplateM3 {
   SnakeCaseNameTemplate(this.customMaterialLib);
 
   final String customMaterialLib;

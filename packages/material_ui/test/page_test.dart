@@ -14,6 +14,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'finders.dart';
 
 void main() {
   testWidgets(
@@ -1063,7 +1064,7 @@ void main() {
       expect(pageTapCount, 1);
 
       // Tapping the "page" route's back button doesn't do anything either.
-      await tester.tap(find.byTooltip('Back'), warnIfMissed: false);
+      await tester.tap(findByTooltip('Back'), warnIfMissed: false);
       await tester.pumpAndSettle();
       expect(tester.getTopLeft(find.byKey(pageScaffoldKey)), const Offset(400, 0));
       expect(tester.getTopLeft(find.byKey(homeScaffoldKey)).dx, lessThan(0));

@@ -145,6 +145,22 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   _player = [avFactory playerWithPlayerItem:item];
   _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
 
+#if TARGET_OS_IOS
+  // Allow the video to follow an AirPlay route to an external device.
+  //
+  // allowsExternalPlayback already defaults to YES, but
+  // usesExternalPlaybackWhileExternalScreenIsActive defaults to NO, so the
+  // player deliberately keeps the picture on the device whenever an external
+  // screen is active. The result is that selecting an AirPlay route changes the
+  // audio route while the video stays on the phone and the TV only receives a
+  // mirrored copy of the screen.
+  //
+  // Verified on an Apple TV: with both set, the receiver plays the stream
+  // itself and the local surface is released.
+  _player.allowsExternalPlayback = YES;
+  _player.usesExternalPlaybackWhileExternalScreenIsActive = YES;
+#endif
+
   // Configure output. AVVideoColorPropertiesKey must be declared on the output settings (not on
   // pixel buffer attributes, where AVFoundation silently ignores it) so that HDR sources are
   // tone-mapped to BT.709 SDR for the Flutter texture.
