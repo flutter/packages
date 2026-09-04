@@ -3211,6 +3211,112 @@ void main() {
       expect(matches.pathParameters['pid'], pid);
     });
 
+    testWidgets('StatefulShellRoute keeps parent navigator pages when switching '
+        'to an unloaded branch', (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/188295
+      StatefulNavigationShell? routeState;
+      final routes = <RouteBase>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) => const Text('Home'),
+        ),
+        StatefulShellRoute.indexedStack(
+          builder:
+              (BuildContext context, GoRouterState state, StatefulNavigationShell navigationShell) {
+                routeState = navigationShell;
+                return navigationShell;
+              },
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/a',
+                  builder: (BuildContext context, GoRouterState state) => const Text('Screen A'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/b',
+                  builder: (BuildContext context, GoRouterState state) => const Text('Screen B'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      expect(find.text('Home'), findsOneWidget);
+
+      router.push('/a');
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsOneWidget);
+      expect(router.canPop(), isTrue);
+
+      routeState!.goBranch(1);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen B'), findsOneWidget);
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/b');
+      expect(router.canPop(), isTrue);
+
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.text('Home'), findsOneWidget);
+    });
+
+    testWidgets('StatefulShellRoute does not carry extra into an unloaded branch', (
+      WidgetTester tester,
+    ) async {
+      StatefulNavigationShell? routeState;
+      Object? extraOnB;
+      final routes = <RouteBase>[
+        StatefulShellRoute.indexedStack(
+          builder:
+              (BuildContext context, GoRouterState state, StatefulNavigationShell navigationShell) {
+                routeState = navigationShell;
+                return navigationShell;
+              },
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/a',
+                  builder: (BuildContext context, GoRouterState state) => const Text('Screen A'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/b',
+                  builder: (BuildContext context, GoRouterState state) {
+                    extraOnB = state.extra;
+                    return const Text('Screen B');
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/a',
+        initialExtra: Object(),
+      );
+      expect(find.text('Screen A'), findsOneWidget);
+
+      routeState!.goBranch(1);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen B'), findsOneWidget);
+      expect(extraOnB, isNull);
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/b');
+    });
+
     testWidgets('StatefulShellRoute preserve extra when switching branch', (
       WidgetTester tester,
     ) async {
