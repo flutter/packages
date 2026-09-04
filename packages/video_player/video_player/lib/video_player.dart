@@ -667,16 +667,27 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (_isDisposed || value.isStopped) {
       return;
     }
-    if (_creatingCompleter != null) {
-      await _creatingCompleter!.future;
+    // Wait out any setup still running, so the teardown below doesn't race it,
+    // but stay indifferent to how it ends. These completers carry the load's
+    // error when one fails, and rethrowing it here would turn "stop the video
+    // the user scrolled away from" into a failure the caller has to handle —
+    // one that, in a pool, aborted the load of the video they had scrolled
+    // *to*. Already-settled completers are skipped rather than re-awaited.
+    for (final completer in <Completer<void>?>[
+      _creatingCompleter,
+      _initializingCompleter,
+      _newAssetCompleter,
+    ]) {
+      if (completer == null || completer.isCompleted) {
+        continue;
+      }
+      try {
+        await completer.future;
+      } catch (_) {
+        // The load failed; there is still a player here to stop.
+      }
     }
-    if (_initializingCompleter != null) {
-      await _initializingCompleter!.future;
-    }
-    if (_newAssetCompleter != null) {
-      await _newAssetCompleter!.future;
-    }
-    if (!value.isInitialized) {
+    if (_isDisposed || !value.isInitialized) {
       return;
     }
     _timer?.cancel();
@@ -725,7 +736,26 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     this.dataSource = dataSource.toString();
 
-    _newAssetCompleter = Completer<void>();
+    // Wake anyone still holding the load this one replaces. Only the completer
+    // that is current when the platform reports `reloadingEnd` is ever
+    // completed, so a waiter left on the outgoing one — `awaitReadyToDisplay`
+    // and `stop` both take that reference and hold it across an await — would
+    // wait for an event that has already been spent on its successor.
+    final Completer<void>? supersededCompleter = _newAssetCompleter;
+    if (supersededCompleter != null && !supersededCompleter.isCompleted) {
+      // Registered before completing so a superseded load with no waiter left
+      // doesn't surface as an unhandled asynchronous error.
+      supersededCompleter.future.ignore();
+      supersededCompleter.completeError(
+        PlatformException(
+          code: 'VideoError',
+          message: 'Asset load superseded by a newer loadAsset call.',
+        ),
+      );
+    }
+
+    final completer = Completer<void>();
+    _newAssetCompleter = completer;
 
     value = value.copyWith(
       isReadyToDisplay: false,
@@ -737,7 +767,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
 
     await _videoPlayerPlatform.load(_playerId, dataSourceDescription);
-    return _newAssetCompleter!.future;
+    // The completer captured above, not whatever `_newAssetCompleter` holds by
+    // now: a load started while the platform call was in flight has already
+    // replaced the field, and this caller is waiting on its own load, not that
+    // one.
+    return completer.future;
   }
 
   Future<void> _applyLooping() async {
@@ -959,7 +993,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   bool get _isDisposedOrNotInitialized => _isDisposed || !value.isInitialized;
 
   bool get _isDisposedOrNotInitializedOrStopped =>
-      _isDisposed|| !value.isInitialized || value.isStopped;
+      _isDisposed || !value.isInitialized || value.isStopped;
 }
 
 class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {

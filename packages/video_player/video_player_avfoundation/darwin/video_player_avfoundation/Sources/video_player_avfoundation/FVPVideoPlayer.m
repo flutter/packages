@@ -323,6 +323,14 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
            @"reportStatusForPlayerItem was called when the event listener was not set.");
   switch (item.status) {
     case AVPlayerItemStatusFailed:
+      // A failed item ends the load as surely as a ready one does, and the flag
+      // has to end with it. It was only ever cleared in -finishLoadingNewAsset,
+      // which a failure never reaches, so a single failed load left it set for
+      // the life of the player: -loadAsset: then dropped every later request
+      // through its re-entrancy guard, and the player could never be used
+      // again. Dart, meanwhile, had already published the new dataSource and
+      // was waiting on a completer nothing would ever complete.
+      _loadingNewAsset = NO;
       [self sendFailedToLoadVideoEvent];
       break;
     case AVPlayerItemStatusUnknown:
@@ -437,6 +445,11 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)stopWithError:(FlutterError *_Nullable *_Nonnull)error {
   _isPlaying = NO;
+  // Discarding the item abandons whatever load was running on it, so the flag
+  // goes with it. Left set, it would make the re-entrancy guard in -loadAsset:
+  // refuse every attempt to give this player a new video — which is precisely
+  // what a pooled player is stopped for.
+  _loadingNewAsset = NO;
   if (_listenersRegistered) {
     AVPlayerItem *previousItem = self.player.currentItem;
     FVPRemoveKeyValueObservers(self, FVPGetPlayerItemObservations(), previousItem);
@@ -551,10 +564,17 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)finishLoadingNewAsset {
+  // Readiness can be held back behind the first decodable frame, so it may be
+  // released after a failure or a stop has already ended the load. There is no
+  // load left to finish then, and reporting one would announce dimensions for
+  // an item that is no longer current.
+  if (!_loadingNewAsset) {
+    return;
+  }
+
   AVPlayerItem *currentItem = self.player.currentItem;
   NSAssert(currentItem.status == AVPlayerItemStatusReadyToPlay,
           @"finishLoadingNewAsset was called when the item wasn't ready to play.");
-  NSAssert(_loadingNewAsset, @"finishLoadingNewAsset was called when not loading a new asset.");
 
   _loadingNewAsset = NO;
 
