@@ -1166,20 +1166,28 @@ class _DayPickerState extends State<_DayPicker> {
       i = (i + 1) % DateTime.daysPerWeek
     ) {
       final String weekday = localizations.narrowWeekdays[i];
-      final int dateTimeWeekday = (i == 0 ? DateTime.sunday : i);
-      final child = Text(weekday);
-
-      final Widget weekdayWidget =
-          widget.weekdayBuilder?.call(context, dateTimeWeekday, child) ?? child;
-
-      result.add(
-        ExcludeSemantics(
-          child: DefaultTextStyle.merge(
-            style: headerStyle,
-            child: Center(child: weekdayWidget),
+      if (widget.weekdayBuilder != null) {
+        final int dateTimeWeekday = (i == 0 ? DateTime.sunday : i);
+        final Widget weekdayWidget = widget.weekdayBuilder!(
+          context,
+          dateTimeWeekday,
+          Text(weekday),
+        );
+        result.add(
+          ExcludeSemantics(
+            child: DefaultTextStyle.merge(
+              style: headerStyle,
+              child: Center(child: weekdayWidget),
+            ),
           ),
-        ),
-      );
+        );
+      } else {
+        result.add(
+          ExcludeSemantics(
+            child: Center(child: Text(weekday, style: headerStyle)),
+          ),
+        );
+      }
     }
     return result;
   }
@@ -1345,12 +1353,12 @@ class _DayState extends State<_Day> {
           )
         : ShapeDecoration(color: dayBackgroundColor, shape: dayShape);
 
-    Widget dayWidget = Ink(
-      decoration: decoration,
-      child: Center(child: Text(localizations.formatDecimal(widget.day.day))),
-    );
-
+    Widget dayWidget;
     if (widget.dayBuilder != null) {
+      dayWidget = Ink(
+        decoration: decoration,
+        child: Center(child: Text(localizations.formatDecimal(widget.day.day))),
+      );
       dayWidget = ListenableBuilder(
         listenable: _statesController,
         builder: (BuildContext context, Widget? child) {
@@ -1363,12 +1371,21 @@ class _DayState extends State<_Day> {
         },
         child: dayWidget,
       );
+      dayWidget = DefaultTextStyle.merge(
+        style: dayStyle?.apply(color: dayForegroundColor),
+        child: dayWidget,
+      );
+    } else {
+      dayWidget = Ink(
+        decoration: decoration,
+        child: Center(
+          child: Text(
+            localizations.formatDecimal(widget.day.day),
+            style: dayStyle?.apply(color: dayForegroundColor),
+          ),
+        ),
+      );
     }
-
-    dayWidget = DefaultTextStyle.merge(
-      style: dayStyle?.apply(color: dayForegroundColor),
-      child: dayWidget,
-    );
 
     // Adds padding as per M3 guidelines for portrait mode. Not applied in landscape
     // mode currently due to unclear specifications.
