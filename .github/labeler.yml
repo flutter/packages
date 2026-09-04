@@ -48,6 +48,11 @@
     - any-glob-to-any-file:
       - packages/flutter_plugin_android_lifecycle/**/*
 
+'p: flutter_shaders':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/flutter_shaders/**/*
+
 'p: flutter_svg':
   - changed-files:
     - any-glob-to-any-file:
