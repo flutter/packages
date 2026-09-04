@@ -122,7 +122,7 @@ void main() {
       expect(macOSIcon.icon == androidIcon.icon, kIsWeb ? isTrue : isFalse);
       expect(macOSIcon.icon == iOSIcon.icon, isTrue);
       expect(windowsIcon.icon == androidIcon.icon, isTrue);
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('BackButton color', (WidgetTester tester) async {
       await tester.pumpWidget(
@@ -399,7 +399,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('CloseButton has expected default mouse cursor on hover', (
     WidgetTester tester,
@@ -421,7 +421,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('BackButton has expected mouse cursor when explicitly configured', (
     WidgetTester tester,

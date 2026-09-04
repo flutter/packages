@@ -3795,7 +3795,7 @@ void main() {
     expect(find.byType(EditableText), findsOneWidget);
     final EditableText editableText = tester.widget(find.byType(EditableText));
     expect(editableText.scrollPadding, scrollPadding);
-  });
+  }, tags: 'reduced-web-test-set');
 
   group('contextMenuBuilder', () {
     setUp(() async {

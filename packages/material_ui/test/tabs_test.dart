@@ -4332,7 +4332,7 @@ void main() {
     expect(semantics, hasSemantics(expectedSemantics));
 
     semantics.dispose();
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('correct scrolling semantics', (WidgetTester tester) async {
     final semantics = SemanticsTester(tester);
@@ -4411,7 +4411,7 @@ void main() {
     expect(semantics, includesNodeWith(label: tab10title, flags: hiddenFlags));
 
     semantics.dispose();
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('TabBar etc with zero tabs', (WidgetTester tester) async {
     final TabController controller = createTabController(vsync: const TestVSync(), length: 0);
@@ -4617,7 +4617,7 @@ void main() {
     expect(semantics, hasSemantics(expectedSemantics));
 
     semantics.dispose();
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('can be notified of TabBar onTap behavior', (WidgetTester tester) async {
     var tabIndex = -1;
@@ -6469,7 +6469,7 @@ void main() {
     );
 
     semantics.dispose();
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets(
     'Change the TabController should make both TabBar and TabBarView return to the initial index.',
