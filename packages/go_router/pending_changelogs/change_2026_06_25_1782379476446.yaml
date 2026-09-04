@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes popRoute() crashing with Bad state: No element when currentConfiguration is empty.
+version: patch
