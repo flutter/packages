@@ -79,6 +79,27 @@ void main() {
     expect(extractPathParameters(pathParameter, match!)['x'], '(');
   });
 
+  test('patternToRegExp with a nested group containing an alternation', () async {
+    final pathParameter = <String>[];
+    final RegExp regex = patternToRegExp(
+      r'/details/:id((FOO|BAR)[0-9a-zA-Z]{10})',
+      pathParameter,
+      caseSensitive: true,
+    );
+    expect(pathParameter, <String>['id']);
+
+    final RegExpMatch? matchFoo = regex.firstMatch('/details/FOO0123456789');
+    expect(matchFoo, isNotNull);
+    expect(extractPathParameters(pathParameter, matchFoo!)['id'], 'FOO0123456789');
+
+    final RegExpMatch? matchBar = regex.firstMatch('/details/BAR0123456789');
+    expect(matchBar, isNotNull);
+    expect(extractPathParameters(pathParameter, matchBar!)['id'], 'BAR0123456789');
+
+    final RegExpMatch? matchBaz = regex.firstMatch('/details/BAZ0123456789');
+    expect(matchBaz, isNull);
+  });
+
   test('patternToPath with a nested group in the parameter pattern', () async {
     expect(
       patternToPath(r'/tags/:slug((?!(?:admin|new)(?:/|$))[^/]+)', const <String, String>{
