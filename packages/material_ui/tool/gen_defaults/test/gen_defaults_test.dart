@@ -7,7 +7,50 @@ import 'dart:io';
 import 'package:test/test.dart';
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
+import '../data/typescale.dart';
+import '../data/typescale_emphasized.dart';
+import '../templates/action_chip_template.dart';
 import '../templates/app_bar_template.dart';
+import '../templates/badge_template.dart';
+// import '../templates/banner_template.dart';
+// import '../templates/bottom_app_bar_template.dart';
+import '../templates/bottom_sheet_template.dart';
+// import '../templates/button_template.dart';
+// import '../templates/card_template.dart';
+// import '../templates/checkbox_template.dart';
+// import '../templates/chip_template.dart';
+// import '../templates/color_scheme_template.dart';
+// import '../templates/date_picker_template.dart';
+// import '../templates/dialog_template.dart';
+// import '../templates/divider_template.dart';
+// import '../templates/drawer_template.dart';
+// import '../templates/expansion_tile_template.dart';
+// import '../templates/fab_template.dart';
+// import '../templates/filter_chip_template.dart';
+// import '../templates/icon_button_template.dart';
+// import '../templates/input_chip_template.dart';
+// import '../templates/input_decorator_template.dart';
+// import '../templates/list_tile_template.dart';
+// import '../templates/menu_template.dart';
+// import '../templates/motion_template.dart';
+// import '../templates/navigation_bar_template.dart';
+// import '../templates/navigation_drawer_template.dart';
+// import '../templates/navigation_rail_template.dart';
+// import '../templates/popup_menu_template.dart';
+// import '../templates/progress_indicator_template.dart';
+// import '../templates/radio_template.dart';
+// import '../templates/range_slider_template.dart';
+// import '../templates/search_bar_template.dart';
+// import '../templates/search_view_template.dart';
+// import '../templates/segmented_button_template.dart';
+// import '../templates/slider_template.dart';
+// import '../templates/snackbar_template.dart';
+// import '../templates/surface_tint_template.dart';
+// import '../templates/switch_template.dart';
+// import '../templates/tabs_template.dart';
+// import '../templates/text_field_template.dart';
+// import '../templates/time_picker_template.dart';
+// import '../templates/typography_template.dart';
 import '../templates/template.dart';
 import 'test_fixtures/test_templates.dart';
 
@@ -74,6 +117,18 @@ void main() {
       expect(template.color(TokenColorRole.onSurface, '_colors'), '_colors.onSurface');
     });
 
+    test('textStyle generates text name', () {
+      final template = IconButtonTemplateM3(testPath());
+      expect(
+        template.textStyle(TokenTypescale.titleMedium, '_textTheme'),
+        '_textTheme.titleMedium',
+      );
+      expect(
+        template.textStyle(TokenTypescaleEmphasized.titleMedium, '_textTheme'),
+        '_textTheme.titleMediumEmphasized',
+      );
+    });
+
     test('colorWithOpacity generates color expression with opacity', () {
       final template = IconButtonTemplateM3(testPath());
       expect(
@@ -84,6 +139,16 @@ void main() {
         template.colorWithOpacity(TokenColorRole.onSurface, 1.0, '_colors'),
         '_colors.onSurface',
       );
+    });
+
+    test('border generates border expression', () {
+      final template = IconButtonTemplateM3(testPath());
+      expect(template.border('_colors.outline'), 'BorderSide(color: _colors.outline)');
+      expect(
+        template.border('_colors.outline', width: 2.0),
+        'BorderSide(color: _colors.outline, width: 2.0)',
+      );
+      expect(template.border('_colors.outline', width: 1.0), 'BorderSide(color: _colors.outline)');
     });
 
     test('shape generates shape expressions', () {
@@ -149,12 +214,25 @@ void main() {
     });
 
     test('ActionChipTemplateM3 emits M3 ActionChip defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const ActionChipTemplateM3());
+      expect(contents, contains('class _ActionChipDefaultsM3 extends ChipThemeData'));
+      expect(
+        contents,
+        contains(
+          'shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)))',
+        ),
+      );
+      expect(contents, contains('showCheckmark: true'));
+      expect(contents, contains('double? get elevation => _chipVariant == _ChipVariant.flat'));
+      expect(contents, contains('? 0.0'));
+      expect(contents, contains(': isEnabled ? 1.0 : 0.0;'));
+      expect(contents, contains('double? get pressElevation => 1.0;'));
+      expect(contents, contains('_colors.onSurface.withOpacity(0.12)'));
+      expect(contents, contains('size: 18.0'));
     });
 
     test('AppBarTemplateM3 emits M3 AppBar defaults from tokens', () {
-      final String contents = const AppBarTemplateM3().generateContents('_AppBarDefaultsM3');
+      final String contents = _generateContents(const AppBarTemplateM3());
       expect(contents, contains('class _AppBarDefaultsM3 extends AppBarThemeData'));
       expect(contents, contains('scrolledUnderElevation: 3.0'));
       expect(contents, contains('toolbarHeight: 64.0'));
@@ -165,9 +243,19 @@ void main() {
       expect(contents, contains('static const double expandedHeight = 152.0'));
     });
 
-    test('BadgeTemplateM3 emits M3 Badge defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+    test('BadgeTemplateM3 emits M3 Badge defaults from badge tokens', () {
+      final String contents = _generateContents(const BadgeTemplateM3());
+      expect(contents, contains('class _BadgeDefaultsM3 extends BadgeThemeData'));
+      expect(contents, contains('smallSize: 6.0'));
+      expect(contents, contains('largeSize: 16.0'));
+      expect(contents, contains('padding: const EdgeInsets.symmetric(horizontal: 4)'));
+      expect(contents, contains('alignment: AlignmentDirectional.topEnd'));
+      expect(contents, contains('Color? get backgroundColor => _colors.error'));
+      expect(contents, contains('Color? get textColor => _colors.onError'));
+      expect(
+        contents,
+        contains('TextStyle? get textStyle => Theme.of(context).textTheme.labelSmall'),
+      );
     });
 
     test('BannerTemplateM3 emits M3 Banner defaults from tokens', () {
@@ -181,8 +269,21 @@ void main() {
     });
 
     test('BottomSheetTemplateM3 emits M3 BottomSheet defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = const BottomSheetTemplateM3().generateContents(
+        '_BottomSheetDefaultsM3',
+      );
+      expect(contents, contains('class _BottomSheetDefaultsM3 extends BottomSheetThemeData'));
+      expect(contents, contains('elevation: 1.0'));
+      expect(contents, contains('modalElevation: 1.0'));
+      expect(
+        contents,
+        contains(
+          'shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28.0)))',
+        ),
+      );
+      expect(contents, contains('Color? get backgroundColor => _colors.surfaceContainerLow'));
+      expect(contents, contains('Color? get dragHandleColor => _colors.onSurfaceVariant'));
+      expect(contents, contains('Size? get dragHandleSize => const Size(32.0, 4.0)'));
     });
 
     test('ButtonTemplateM3 emits M3 Button defaults from tokens', () {
@@ -402,6 +503,8 @@ void main() {
     });
   });
 }
+
+String _generateContents(TokenTemplate template) => template.generateContents(template.className);
 
 const _fileHeader = '''
 // Copyright 2013 The Flutter Authors
