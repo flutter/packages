@@ -2,8 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-class _FilledButtonDefaultsM3 extends ButtonStyle {
-  _FilledButtonDefaultsM3(this.context)
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../filled_button.dart';
+
+class _FilledTonalButtonDefaultsM3 extends ButtonStyle {
+  _FilledTonalButtonDefaultsM3(this.context)
     : super(
         animationDuration: kThemeChangeDuration,
         enableFeedback: true,
@@ -23,7 +28,7 @@ class _FilledButtonDefaultsM3 extends ButtonStyle {
         if (states.contains(WidgetState.disabled)) {
           return _colors.onSurface.withOpacity(0.12);
         }
-        return _colors.primary;
+        return _colors.secondaryContainer;
       });
 
   @override
@@ -32,20 +37,20 @@ class _FilledButtonDefaultsM3 extends ButtonStyle {
         if (states.contains(WidgetState.disabled)) {
           return _colors.onSurface.withOpacity(0.38);
         }
-        return _colors.onPrimary;
+        return _colors.onSecondaryContainer;
       });
 
   @override
   WidgetStateProperty<Color?>? get overlayColor =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.pressed)) {
-          return _colors.onPrimary.withOpacity(0.1);
+          return _colors.onSecondaryContainer.withOpacity(0.1);
         }
         if (states.contains(WidgetState.hovered)) {
-          return _colors.onPrimary.withOpacity(0.08);
+          return _colors.onSecondaryContainer.withOpacity(0.08);
         }
         if (states.contains(WidgetState.focused)) {
-          return _colors.onPrimary.withOpacity(0.1);
+          return _colors.onSecondaryContainer.withOpacity(0.1);
         }
         return null;
       });
@@ -95,15 +100,15 @@ class _FilledButtonDefaultsM3 extends ButtonStyle {
         return _colors.onSurface.withOpacity(0.38);
       }
       if (states.contains(WidgetState.pressed)) {
-        return _colors.onPrimary;
+        return _colors.onSecondaryContainer;
       }
       if (states.contains(WidgetState.hovered)) {
-        return _colors.onPrimary;
+        return _colors.onSecondaryContainer;
       }
       if (states.contains(WidgetState.focused)) {
-        return _colors.onPrimary;
+        return _colors.onSecondaryContainer;
       }
-      return _colors.onPrimary;
+      return _colors.onSecondaryContainer;
     });
   }
 
