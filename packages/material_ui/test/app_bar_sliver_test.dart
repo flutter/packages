@@ -2026,33 +2026,17 @@ void main() {
     addTearDown(scrollController.dispose);
 
     await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: Localizations(
-          locale: const Locale('en', 'us'),
-          delegates: const <LocalizationsDelegate<dynamic>>[
-            DefaultWidgetsLocalizations.delegate,
-            DefaultMaterialLocalizations.delegate,
-          ],
-          child: MediaQuery(
-            data: const MediaQueryData(),
-            child: Scrollable(
-              controller: scrollController,
-              viewportBuilder: (BuildContext context, ViewportOffset offset) {
-                return Viewport(
-                  offset: offset,
-                  slivers: <Widget>[
-                    const SliverAppBar(
-                      pinned: true,
-                      expandedHeight: expandedAppBarHeight,
-                      flexibleSpace: FlexibleSpaceBar(title: Text('App Bar')),
-                    ),
-                    SliverList.list(children: containers),
-                  ],
-                );
-              },
+      MaterialApp(
+        home: CustomScrollView(
+          controller: scrollController,
+          slivers: <Widget>[
+            const SliverAppBar(
+              pinned: true,
+              expandedHeight: expandedAppBarHeight,
+              flexibleSpace: FlexibleSpaceBar(title: Text('App Bar')),
             ),
-          ),
+            SliverList.list(children: containers),
+          ],
         ),
       ),
     );
@@ -2095,33 +2079,17 @@ void main() {
     addTearDown(scrollController.dispose);
 
     await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: MediaQuery(
-          data: const MediaQueryData(),
-          child: Localizations(
-            locale: const Locale('en', 'us'),
-            delegates: const <LocalizationsDelegate<dynamic>>[
-              DefaultWidgetsLocalizations.delegate,
-              DefaultMaterialLocalizations.delegate,
-            ],
-            child: Scrollable(
-              controller: scrollController,
-              viewportBuilder: (BuildContext context, ViewportOffset offset) {
-                return Viewport(
-                  offset: offset,
-                  slivers: <Widget>[
-                    const SliverAppBar(
-                      pinned: true,
-                      expandedHeight: expandedAppBarHeight,
-                      flexibleSpace: FlexibleSpaceBar(title: Text('App Bar')),
-                    ),
-                    ...slivers,
-                  ],
-                );
-              },
+      MaterialApp(
+        home: CustomScrollView(
+          controller: scrollController,
+          slivers: <Widget>[
+            const SliverAppBar(
+              pinned: true,
+              expandedHeight: expandedAppBarHeight,
+              flexibleSpace: FlexibleSpaceBar(title: Text('App Bar')),
             ),
-          ),
+            ...slivers,
+          ],
         ),
       ),
     );
