@@ -5,6 +5,8 @@
 /// @docImport 'rounded_polygon.dart';
 library;
 
+import 'package:flutter/foundation.dart';
+
 /// Defines the amount and quality around a given vertex of a shape.
 /// [radius] defines the radius of the circle which forms the basis of
 /// the rounding for the vertex. [smoothing] defines the amount by which the
@@ -22,6 +24,7 @@ library;
 ///      meaning that it is purely a circular curve and a value of 1 meaning
 ///      that the flanking curves are maximized between the inner curve and
 ///      the edges.
+@immutable
 class CornerRounding {
   /// Creates a [CornerRounding].
   const CornerRounding({this.radius = 0, this.smoothing = 0})
@@ -59,4 +62,22 @@ class CornerRounding {
   ///
   /// Must be in the range 0.0 to 1.0, inclusive.
   final double smoothing;
+
+  @override
+  bool operator ==(Object other) {
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+
+    return other is CornerRounding && other.radius == radius && other.smoothing == smoothing;
+  }
+
+  @override
+  int get hashCode => Object.hash(radius, smoothing);
+
+  @override
+  String toString() {
+    return '${objectRuntimeType(this, 'CornerRounding')}'
+        '(radius: $radius, smoothing: $smoothing)';
+  }
 }

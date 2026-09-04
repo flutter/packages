@@ -28,4 +28,38 @@ void main() {
     expect(roundedAndSmoothed.radius, 5);
     expect(roundedAndSmoothed.smoothing, 0.5);
   });
+
+  test('$CornerRounding equality', () {
+    expect(
+      const CornerRounding(radius: 5, smoothing: 0.5),
+      const CornerRounding(radius: 5, smoothing: 0.5),
+    );
+    expect(
+      const CornerRounding(radius: 5, smoothing: 0.5).hashCode,
+      const CornerRounding(radius: 5, smoothing: 0.5).hashCode,
+    );
+
+    // ignore: use_named_constants
+    expect(const CornerRounding(), CornerRounding.unrounded);
+
+    expect(const CornerRounding(radius: 5), isNot(const CornerRounding(radius: 6)));
+    expect(const CornerRounding(smoothing: 0.5), isNot(const CornerRounding(smoothing: 0.6)));
+    expect(const CornerRounding(radius: 1), isNot(const CornerRounding(smoothing: 1)));
+
+    expect(
+      const CornerRounding(radius: 1, smoothing: 0.5).hashCode,
+      isNot(const CornerRounding(radius: 1, smoothing: 0.6).hashCode),
+    );
+    expect(
+      const CornerRounding(radius: 1, smoothing: 0.5).hashCode,
+      isNot(const CornerRounding(radius: 2, smoothing: 0.5).hashCode),
+    );
+  });
+
+  test('$CornerRounding toString', () {
+    expect(
+      const CornerRounding(radius: 5, smoothing: 0.5).toString(),
+      'CornerRounding(radius: 5.0, smoothing: 0.5)',
+    );
+  });
 }
