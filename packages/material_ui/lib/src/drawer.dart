@@ -513,9 +513,12 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
       ..addStatusListener(_animationStatusChanged);
   }
 
+  bool _disposed = false;
+
   @protected
   @override
   void dispose() {
+    _disposed = true;
     _removeHistoryEntry();
     _controller.dispose();
     _focusScopeNode.dispose();
@@ -577,7 +580,7 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
 
   void _handleHistoryEntryRemoved() {
     _historyEntry = null;
-    if (!mounted) {
+    if (_disposed || !mounted) {
       return;
     }
     if (!_controller.isDismissed && _controller.status != AnimationStatus.reverse) {
