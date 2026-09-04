@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes lint issues.
+
 ## 0.4.11+2
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
