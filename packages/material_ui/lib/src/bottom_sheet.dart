@@ -325,7 +325,8 @@ class _BottomSheetState extends State<BottomSheet> {
   }
 
   bool extentChanged(DraggableScrollableNotification notification) {
-    if (notification.extent == notification.minExtent && notification.shouldCloseOnMinExtent) {
+    if ((notification.extent - notification.minExtent).abs() < precisionErrorTolerance &&
+        notification.shouldCloseOnMinExtent) {
       widget.onClosing();
     }
     return false;
