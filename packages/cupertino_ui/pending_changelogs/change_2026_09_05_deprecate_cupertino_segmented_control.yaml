@@ -1,0 +1,3 @@
+changelog: |
+  - Deprecates CupertinoSegmentedControl in favor of CupertinoSlidingSegmentedControl.
+version: patch
