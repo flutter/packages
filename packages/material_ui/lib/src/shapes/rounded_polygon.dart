@@ -159,7 +159,7 @@ class RoundedPolygon {
     // goes from corner i to corner i+1), the elements of the pair are: first
     // is how much we can use of expectedRoundCut, second how much of
     // expectedCut.
-    final List<(num, num)> cutAdjusts = List.generate(n, (ix) {
+    final List<(double, double)> cutAdjusts = List.generate(n, (ix) {
       final double expectedRoundCut =
           roundedCorners[ix].expectedRoundCut + roundedCorners[(ix + 1) % n].expectedRoundCut;
       final double expectedCut =
@@ -172,13 +172,13 @@ class RoundedPolygon {
       // first for both corners before using space for smoothing.
       if (expectedRoundCut > sideSize) {
         // Not enough room for fully rounding, see how much we can actually do.
-        return (sideSize / expectedRoundCut, 0);
+        return (sideSize / expectedRoundCut, 0.0);
       } else if (expectedCut > sideSize) {
         // We can do full rounding, but not full smoothing.
-        return (1, (sideSize - expectedRoundCut) / (expectedCut - expectedRoundCut));
+        return (1.0, (sideSize - expectedRoundCut) / (expectedCut - expectedRoundCut));
       } else {
         // There is enough room for rounding & smoothing.
-        return (1, 1);
+        return (1.0, 1.0);
       }
     });
 
@@ -189,7 +189,7 @@ class RoundedPolygon {
       final allowedCuts = List<double>.filled(2, 0);
 
       for (var delta = 0; delta <= 1; delta++) {
-        final (num roundCutRatio, num cutRatio) = cutAdjusts[(i + n - 1 + delta) % n];
+        final (double roundCutRatio, double cutRatio) = cutAdjusts[(i + n - 1 + delta) % n];
         allowedCuts[delta] =
             roundedCorners[i].expectedRoundCut * roundCutRatio +
             (roundedCorners[i].expectedCut - roundedCorners[i].expectedRoundCut) * cutRatio;
