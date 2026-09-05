@@ -1,0 +1,4 @@
+changelog: |
+  - Documents that `TextField.decoration` is merged with the ambient
+    `InputDecorationTheme` rather than replacing it.
+version: patch
