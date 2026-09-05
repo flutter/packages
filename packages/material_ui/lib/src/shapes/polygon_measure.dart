@@ -341,12 +341,12 @@ abstract interface class Measurer {
   /// Returns size of given cubic, according to however the implementation
   /// wants to measure the size (angle, length, etc). It has to be greater or
   /// equal to 0.
-  double measureCubic(CubicBezier c);
+  double measureCubic(CubicBezier cubic);
 
   /// Given a cubic and a measure that should be between 0 and the value
   /// returned by [measureCubic] (if not, it will be capped), finds the
   /// parameter t of the cubic at which that measure is reached.
-  double findCubicCutPoint(CubicBezier c, double m);
+  double findCubicCutPoint(CubicBezier cubic, double measure);
 }
 
 /// Approximates the arc lengths of cubics by splitting the arc into segments
@@ -364,13 +364,13 @@ class LengthMeasurer implements Measurer {
   static const _segments = 3;
 
   @override
-  double measureCubic(CubicBezier c) {
-    return _closestProgressTo(c, double.infinity).$2;
+  double measureCubic(CubicBezier cubic) {
+    return _closestProgressTo(cubic, double.infinity).$2;
   }
 
   @override
-  double findCubicCutPoint(CubicBezier c, double m) {
-    return _closestProgressTo(c, m).$1;
+  double findCubicCutPoint(CubicBezier cubic, double measure) {
+    return _closestProgressTo(cubic, measure).$1;
   }
 
   (double, double) _closestProgressTo(CubicBezier cubic, double threshold) {
