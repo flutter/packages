@@ -94,6 +94,7 @@ const Duration _kFadeDuration = Duration(milliseconds: 165);
 ///  * [CupertinoSegmentedControl], a segmented control widget in the style used
 ///    up until iOS 13.
 ///  * <https://developer.apple.com/design/human-interface-guidelines/ios/controls/segmented-controls/>
+@Deprecated('Use CupertinoSlidingSegmentedControl instead.')
 class CupertinoSegmentedControl<T extends Object> extends StatefulWidget {
   /// Creates an iOS-style segmented control bar.
   ///
@@ -110,6 +111,7 @@ class CupertinoSegmentedControl<T extends Object> extends StatefulWidget {
   /// If no [groupValue] is provided, or the [groupValue] is null, no widget will
   /// appear as selected. The [groupValue] must be either null or one of the keys
   /// in the [children] map.
+@Deprecated('Use CupertinoSlidingSegmentedControl instead.')
   CupertinoSegmentedControl({
     super.key,
     required this.children,
