@@ -7,8 +7,6 @@ import GoogleMaps
 import UIKit
 
 /// Protocol for requesting tiles from the Dart side.
-// TODO(stuartmorgan): Adjust this to match the Swift API once the Pigeon
-// generation is switched to Swift.
 protocol TileProviderDelegate: AnyObject {
   func tile(
     withOverlayIdentifier tileOverlayId: String,
