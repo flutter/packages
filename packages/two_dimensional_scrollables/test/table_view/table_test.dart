@@ -4085,6 +4085,92 @@ void main() {
     expect(mergedRect.top, 200);
     expect(mergedRect.bottom, 400);
   });
+
+  testWidgets('Trailing pinned columns are not laid out twice when the table fits the viewport', (
+    WidgetTester tester,
+  ) async {
+    // Regression test for https://github.com/flutter/flutter/issues/192152
+    final verticalController = ScrollController();
+    addTearDown(verticalController.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 300,
+            width: 400,
+            // All of the columns fit within the viewport, so the search for the
+            // last visible non-pinned column comes up empty and falls back to
+            // the last column of the metrics - which is a trailing pinned one.
+            child: TableView.builder(
+              verticalDetails: ScrollableDetails.vertical(controller: verticalController),
+              columnCount: 3,
+              rowCount: 100,
+              pinnedRowCount: 1,
+              trailingPinnedColumnCount: 1,
+              columnBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(100)),
+              rowBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(36)),
+              cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                return TableViewCell(child: Text('R${vicinity.row} C${vicinity.column}'));
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(find.text('R0 C2'), findsOneWidget);
+
+    // Lay out again without rebuilding the delegate, which exercises the child
+    // reuse path. The trailing pinned column must not be requested twice.
+    verticalController.jumpTo(1);
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('R0 C2'), findsOneWidget);
+  });
+
+  testWidgets('Trailing pinned rows are not laid out twice when the table fits the viewport', (
+    WidgetTester tester,
+  ) async {
+    // Regression test for https://github.com/flutter/flutter/issues/192152
+    final horizontalController = ScrollController();
+    addTearDown(horizontalController.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 300,
+            // All of the rows fit within the viewport, so the search for the
+            // last visible non-pinned row comes up empty and falls back to the
+            // last row of the metrics - which is a trailing pinned one.
+            child: TableView.builder(
+              horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
+              columnCount: 100,
+              rowCount: 3,
+              pinnedColumnCount: 1,
+              trailingPinnedRowCount: 1,
+              columnBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(36)),
+              rowBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(100)),
+              cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                return TableViewCell(child: Text('R${vicinity.row} C${vicinity.column}'));
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(find.text('R2 C0'), findsOneWidget);
+
+    // Lay out again without rebuilding the delegate, which exercises the child
+    // reuse path. The trailing pinned row must not be requested twice.
+    horizontalController.jumpTo(1);
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('R2 C0'), findsOneWidget);
+  });
 }
 
 class _NullBuildContext implements BuildContext, TwoDimensionalChildManager {
