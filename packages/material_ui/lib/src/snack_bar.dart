@@ -721,9 +721,9 @@ class _SnackBarState extends State<SnackBar> {
             icon: const Icon(Icons.close),
             iconSize: 24.0,
             color: widget.closeIconColor ?? snackBarTheme.closeIconColor ?? defaults.closeIconColor,
-            onPressed: () => ScaffoldMessenger.of(
-              context,
-            ).hideCurrentSnackBar(reason: SnackBarClosedReason.dismiss),
+            onPressed: () =>
+                ScaffoldMessenger.of(context)
+                    .hideCurrentSnackBar(reason: SnackBarClosedReason.dismiss),
             tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
           )
         : null;
@@ -736,6 +736,7 @@ class _SnackBarState extends State<SnackBar> {
       ),
       maxLines: 1,
       textDirection: TextDirection.ltr,
+      textScaler: MediaQuery.textScalerOf(context),
     )..layout();
     final double actionAndIconWidth =
         actionTextPainter.size.width +
@@ -793,7 +794,6 @@ class _SnackBarState extends State<SnackBar> {
                 ),
               ),
               if (!willOverflowAction) ...maybeActionAndIcon,
-              if (willOverflowAction) SizedBox(width: snackBarWidth * 0.4),
             ],
           ),
           if (willOverflowAction)
