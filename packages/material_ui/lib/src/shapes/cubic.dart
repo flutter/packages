@@ -402,21 +402,7 @@ class CubicBezier {
       return true;
     }
 
-    if (other is! CubicBezier) {
-      return false;
-    }
-
-    if (_points.length != other._points.length) {
-      return false;
-    }
-
-    for (var index = 0; index < _points.length; index += 1) {
-      if (_points[index] != other._points[index]) {
-        return false;
-      }
-    }
-
-    return true;
+    return other is CubicBezier && listEquals(other._points, _points);
   }
 
   @override

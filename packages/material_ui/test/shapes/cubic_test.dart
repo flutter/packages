@@ -152,6 +152,16 @@ void main() {
       expect(CubicBezier.point(const Point(10, 10)).isZeroLength, isTrue);
     });
 
+    test('== compares points by value', () {
+      final equalCubic = CubicBezier(p0, p1, p2, p3);
+      final otherCubic = CubicBezier(p0, p1, p2, zero);
+
+      expect(identical(cubic, equalCubic), isFalse);
+      expect(cubic, equalCubic);
+      expect(cubic.hashCode, equalCubic.hashCode);
+      expect(cubic, isNot(otherCubic));
+    });
+
     test('toString', () {
       expect(
         CubicBezier(Point.zero, const Point(1, 0), const Point(2, 0), const Point(3, 0)).toString(),

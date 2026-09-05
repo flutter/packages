@@ -795,21 +795,7 @@ class RoundedPolygon {
       return true;
     }
 
-    if (other is! RoundedPolygon) {
-      return false;
-    }
-
-    if (features.length != other.features.length) {
-      return false;
-    }
-
-    for (var index = 0; index < features.length; index += 1) {
-      if (features[index] != other.features[index]) {
-        return false;
-      }
-    }
-
-    return true;
+    return other is RoundedPolygon && listEquals(other.features, features);
   }
 
   @override
