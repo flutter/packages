@@ -42,6 +42,20 @@ void main() {
       expect(callbackUrl, 'https://www.google.com');
     });
 
+    test('onCreateWindow', () {
+      final androidNavigationDelegate = AndroidNavigationDelegate(_buildCreationParams());
+
+      late final String callbackUrl;
+      androidNavigationDelegate.setOnCreateWindow((String url) => callbackUrl = url);
+
+      CapturingWebViewClient.lastCreatedDelegate.onCreateWindow!(
+        CapturingWebViewClient(),
+        'https://www.google.com',
+      );
+
+      expect(callbackUrl, 'https://www.google.com');
+    });
+
     test('onPageStarted', () {
       final androidNavigationDelegate = AndroidNavigationDelegate(_buildCreationParams());
 
@@ -660,6 +674,7 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
     super.onReceivedRequestError,
     super.requestLoading,
     super.urlLoading,
+    super.onCreateWindow,
     super.onFormResubmission,
     super.onLoadResource,
     super.onPageCommitVisible,

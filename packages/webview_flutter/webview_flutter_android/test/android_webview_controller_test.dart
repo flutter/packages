@@ -199,6 +199,7 @@ void main() {
           )?
           requestLoading,
           void Function(android_webview.WebViewClient, android_webview.WebView, String)? urlLoading,
+          void Function(android_webview.WebViewClient, String)? onCreateWindow,
           void Function(android_webview.WebViewClient, android_webview.WebView, String, bool)?
           doUpdateVisitedHistory,
           void Function(
@@ -2481,6 +2482,7 @@ class TestWebViewClient extends android_webview.WebViewClient {
     super.onReceivedRequestErrorCompat,
     super.requestLoading,
     super.urlLoading,
+    super.onCreateWindow,
     super.doUpdateVisitedHistory,
     super.onReceivedHttpAuthRequest,
     super.onFormResubmission,
