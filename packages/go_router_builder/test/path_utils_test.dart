@@ -14,6 +14,27 @@ void main() {
       expect(pathParametersFromPattern('/user/:id/book'), const <String>{'id'});
       expect(pathParametersFromPattern('/user/:id/book/:bookId'), const <String>{'id', 'bookId'});
     });
+
+    test('It should support a nested group in the parameter pattern', () {
+      expect(
+        pathParametersFromPattern(r'/user/:id((?!(?:0|1)(?:/|$))[^/]+)/book/:bookId'),
+        const <String>{'id', 'bookId'},
+      );
+    });
+
+    test('It should support group constructs in the parameter pattern', () {
+      expect(pathParametersFromPattern(r'/user/:id((?:0x)?\d+)'), const <String>{'id'});
+    });
+
+    test('It should support parentheses in a character class', () {
+      expect(pathParametersFromPattern(r'/a/:x([()])/:y'), const <String>{'x', 'y'});
+    });
+
+    test('It should support a nested group containing an alternation', () {
+      expect(pathParametersFromPattern(r'/details/:id((FOO|BAR)[0-9a-zA-Z]{10})'), const <String>{
+        'id',
+      });
+    });
   });
 
   group('patternToPath', () {
@@ -31,6 +52,35 @@ void main() {
           'bookId': 'book-id',
         }),
         '/user/user-id/book/book-id',
+      );
+    });
+
+    test('It should support a nested group in the parameter pattern', () {
+      expect(
+        patternToPath(r'/tags/:slug((?!(?:admin|new)(?:/|$))[^/]+)', const <String, String>{
+          'slug': 'flutter',
+        }),
+        '/tags/flutter',
+      );
+    });
+
+    test('It should support group constructs in the parameter pattern', () {
+      expect(
+        patternToPath(r'/user/:id((?:0x)?\d+)/book', const <String, String>{'id': '0x42'}),
+        '/user/0x42/book',
+      );
+    });
+
+    test('It should support parentheses in a character class', () {
+      expect(patternToPath(r'/a/:x([()])', const <String, String>{'x': '('}), '/a/(');
+    });
+
+    test('It should support a nested group containing an alternation', () {
+      expect(
+        patternToPath(r'/details/:id((FOO|BAR)[0-9a-zA-Z]{10})', const <String, String>{
+          'id': 'FOO0123456789',
+        }),
+        '/details/FOO0123456789',
       );
     });
   });
