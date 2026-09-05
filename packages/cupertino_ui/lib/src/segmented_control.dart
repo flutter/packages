@@ -111,7 +111,7 @@ class CupertinoSegmentedControl<T extends Object> extends StatefulWidget {
   /// If no [groupValue] is provided, or the [groupValue] is null, no widget will
   /// appear as selected. The [groupValue] must be either null or one of the keys
   /// in the [children] map.
-@Deprecated('Use CupertinoSlidingSegmentedControl instead.')
+  @Deprecated('Use CupertinoSlidingSegmentedControl instead.')
   CupertinoSegmentedControl({
     super.key,
     required this.children,
