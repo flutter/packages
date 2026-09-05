@@ -1,0 +1,3 @@
+changelog: |
+  - Uses `ColorScheme.scrim` as the default fallback for dialog, modal bottom sheet, and drawer barrier/scrim colors.
+version: patch
