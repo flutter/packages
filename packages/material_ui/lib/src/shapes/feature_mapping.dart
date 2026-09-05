@@ -10,11 +10,6 @@ import 'features.dart';
 import 'point.dart';
 import 'utils.dart';
 
-/// MeasuredFeatures contains a list of all features in a polygon along with
-/// the [0..1] progress at that feature.
-@internal
-typedef MeasuredFeatures = List<ProgressableFeature>;
-
 /// A [Feature] paired with the [0..1] progress at which it sits along the
 /// outline of its polygon.
 @internal
@@ -47,7 +42,10 @@ class DistanceVertex {
 
 /// Creates a mapping between the "features" (rounded corners) of two shapes.
 @internal
-DoubleMapper featureMapper(MeasuredFeatures features1, MeasuredFeatures features2) {
+DoubleMapper featureMapper(
+  List<ProgressableFeature> features1,
+  List<ProgressableFeature> features2,
+) {
   // We only use corners for this mapping.
   final filteredFeatures1 = <ProgressableFeature>[];
   for (var i = 0; i < features1.length; i++) {
