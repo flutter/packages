@@ -48,9 +48,6 @@ extension PointGeometry on Offset {
   /// The dot product of this point and [other], both taken as vectors.
   double dotProduct(Point other) => x * other.x + y * other.y;
 
-  /// The dot product of this point and the vector ([otherX], [otherY]).
-  double dotProductXY(double otherX, double otherY) => x * otherX + y * otherY;
-
   /// Compute the Z coordinate of the cross product of two vectors, to check
   /// if the second vector is going clockwise ( > 0 ) or counterclockwise
   /// (< 0) compared with the first one. It could also be 0, if the vectors

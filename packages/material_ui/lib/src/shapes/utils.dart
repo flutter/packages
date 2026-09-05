@@ -26,23 +26,6 @@ const angleEpsilon = 1e-6;
 const relaxedDistanceEpsilon = 5e-3;
 
 @internal
-const double twoPi = math.pi * 2;
-
-@internal
-double distance(double x, double y) => math.sqrt(x * x + y * y);
-
-@internal
-double distanceSquared(double x, double y) => x * x + y * y;
-
-/// Returns the unit vector pointing from (0, 0) towards ([x], [y]).
-@internal
-Point unitVector(double x, double y) {
-  final double d = distance(x, y);
-  assert(d > 0, "Can't compute the unit vector of a zero-length vector");
-  return Point(x / d, y / d);
-}
-
-@internal
 Point directionVectorFromAngle(double angleRadians) =>
     Point(math.cos(angleRadians), math.sin(angleRadians));
 

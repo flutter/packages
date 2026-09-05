@@ -68,11 +68,13 @@ class CubicBezier {
   /// one arc together. Note that [p0] and [p1] should be equidistant from
   /// [center].
   factory CubicBezier.circularArc(Offset center, Offset p0, Offset p1) {
-    final Point p0d = unitVector(p0.x - center.x, p0.y - center.y);
-    final Point p1d = unitVector(p1.x - center.x, p1.y - center.y);
+    final Point p0FromCenter = p0 - center;
+    final Point p1FromCenter = p1 - center;
+    final Point p0d = p0FromCenter.unitVector;
+    final Point p1d = p1FromCenter.unitVector;
     final Point rotatedP0 = p0d.rotate90();
     final Point rotatedP1 = p1d.rotate90();
-    final bool clockwise = rotatedP0.dotProductXY(p1.x - center.x, p1.y - center.y) >= 0;
+    final bool clockwise = rotatedP0.dotProduct(p1FromCenter) >= 0;
     final double cosa = p0d.dotProduct(p1d);
 
     // p0 ~= p1
@@ -81,7 +83,7 @@ class CubicBezier {
     }
 
     final double k =
-        distance(p0.x - center.x, p0.y - center.y) *
+        p0FromCenter.distance *
         4 /
         3 *
         (math.sqrt(2 * (1 - cosa)) - math.sqrt(1 - cosa * cosa)) /

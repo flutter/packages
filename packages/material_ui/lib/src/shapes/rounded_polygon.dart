@@ -166,7 +166,7 @@ class RoundedPolygon {
           roundedCorners[ix].expectedCut + roundedCorners[(ix + 1) % n].expectedCut;
       final Point vtx = vertices[ix];
       final Point nextVtx = vertices[(ix + 1) % n];
-      final double sideSize = distance(vtx.x - nextVtx.x, vtx.y - nextVtx.y);
+      final double sideSize = (vtx - nextVtx).distance;
 
       // Check expectedRoundCut first, and ensure we fulfill rounding needs
       // first for both corners before using space for smoothing.
@@ -717,15 +717,9 @@ class RoundedPolygon {
     var maxDistSquared = 0.0;
     for (var i = 0; i < cubics.length; i++) {
       final CubicBezier cubic = cubics[i];
-      final double anchorDistance = distanceSquared(
-        cubic.anchor0X - _center.x,
-        cubic.anchor0Y - _center.y,
-      );
+      final double anchorDistance = (cubic.anchor0 - _center).distanceSquared;
       final Point middlePoint = cubic.pointAt(0.5);
-      final double middleDistance = distanceSquared(
-        middlePoint.x - _center.x,
-        middlePoint.y - _center.y,
-      );
+      final double middleDistance = (middlePoint - _center).distanceSquared;
       maxDistSquared = math.max(maxDistSquared, math.max(anchorDistance, middleDistance));
     }
 
@@ -1063,8 +1057,7 @@ class _RoundedCorner {
     );
 
     // The flanking curve ends on the circle
-    final Point curveEnd =
-        circleCenter + unitVector(p.x - circleCenter.x, p.y - circleCenter.y) * actualR;
+    final Point curveEnd = circleCenter + (p - circleCenter).unitVector * actualR;
 
     // The anchor on the circle segment side is in the intersection between the
     // tangent to the circle in the circle/flanking curve boundary and the
@@ -1140,7 +1133,7 @@ List<Point> _pillStarVerticesFromNumVerts(
   // or closer (1). The default is .5, which averages things. The magnitude of
   // the inner and rounding parameters may cause the caller to want a different
   // value.
-  final double circlePerimeter = twoPi * endcapRadius * lerp(innerRadius, 1, vertexSpacing);
+  final double circlePerimeter = math.pi * 2 * endcapRadius * lerp(innerRadius, 1, vertexSpacing);
   // perimeter is circle perimeter plus horizontal and vertical sections of
   // inner rectangle, whether either (or even both) might be of length zero.
   final double perimeter = 2 * hSegLen + 2 * vSegLen + circlePerimeter;
