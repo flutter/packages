@@ -121,17 +121,17 @@ void validateProgress(List<double> p) {
     final double curr = p[i];
 
     if (curr < 0 || curr >= 1) {
-      throw ArgumentError('FloatMapping - Progress outside of range: ${p.join(', ')}');
+      throw ArgumentError('Progress outside of range: ${p.join(', ')}');
     }
 
     if (progressDistance(curr, prev).abs() <= distanceEpsilon) {
-      throw ArgumentError('FloatMapping - Progress repeats a value: ${p.join(', ')}');
+      throw ArgumentError('Progress repeats a value: ${p.join(', ')}');
     }
 
     if (curr < prev) {
       wraps++;
       if (wraps > 1) {
-        throw ArgumentError('FloatMapping - Progress wraps more than once: ${p.join(', ')}');
+        throw ArgumentError('Progress wraps more than once: ${p.join(', ')}');
       }
     }
 

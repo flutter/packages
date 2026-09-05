@@ -5,8 +5,8 @@
 import 'package:flutter/foundation.dart';
 
 import 'cubic.dart';
+import 'double_mapping.dart';
 import 'features.dart';
-import 'float_mapping.dart';
 import 'point.dart';
 import 'utils.dart';
 

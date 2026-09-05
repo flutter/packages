@@ -3,12 +3,12 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/src/shapes/float_mapping.dart';
+import 'package:material_ui/src/shapes/double_mapping.dart';
 
 import 'test_utils.dart';
 
 void main() {
-  group('FloatMapping', () {
+  group('$DoubleMapper', () {
     void validateMapping(DoubleMapper mapper, double Function(double) expectedFunction) {
       for (var i = 0; i < 10000; i++) {
         final double source = i / 10000;

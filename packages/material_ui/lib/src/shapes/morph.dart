@@ -8,8 +8,8 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 
 import 'cubic.dart';
+import 'double_mapping.dart';
 import 'feature_mapping.dart';
-import 'float_mapping.dart';
 import 'polygon_measure.dart';
 import 'rounded_polygon.dart';
 import 'utils.dart';
