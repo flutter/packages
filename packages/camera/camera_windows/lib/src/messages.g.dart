@@ -371,7 +371,7 @@ class CameraApi {
   }
 
   /// Starts recording video with the given camera.
-  Future<void> startVideoRecording(int cameraId) async {
+  Future<void> startVideoRecording(int cameraId, String? videoOutputPath) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.camera_windows.CameraApi.startVideoRecording$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -379,7 +379,10 @@ class CameraApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[cameraId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      cameraId,
+      videoOutputPath,
+    ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);

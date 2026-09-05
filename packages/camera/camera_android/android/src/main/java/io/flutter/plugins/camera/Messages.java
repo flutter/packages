@@ -1229,7 +1229,7 @@ public class Messages {
     void takePicture(@NonNull Result<String> result);
 
     /** Starts recording a video on the camera with the given ID. */
-    void startVideoRecording(@NonNull Boolean enableStream);
+    void startVideoRecording(@NonNull Boolean enableStream, @Nullable String videoOutputPath);
 
     /**
      * Ends video recording on the camera with the given ID and returns the path to the resulting
@@ -1524,8 +1524,9 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean enableStreamArg = (Boolean) args.get(0);
+                String videoOutputPathArg = (String) args.get(1);
                 try {
-                  api.startVideoRecording(enableStreamArg);
+                  api.startVideoRecording(enableStreamArg, videoOutputPathArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
