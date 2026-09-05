@@ -81,25 +81,19 @@ class RoundedPolygon {
     : features = List<Feature>.unmodifiable(features),
       _center = center,
       cubics = List<CubicBezier>.unmodifiable(_buildCubics(features, center)) {
-    assert(() {
-      CubicBezier prevCubic = cubics[cubics.length - 1];
+    CubicBezier prevCubic = cubics.last;
 
-      for (var index = 0; index < cubics.length; index++) {
-        final CubicBezier cubic = cubics[index];
-
-        if ((cubic.anchor0X - prevCubic.anchor1X).abs() > distanceEpsilon ||
-            (cubic.anchor0Y - prevCubic.anchor1Y).abs() > distanceEpsilon) {
-          throw ArgumentError(
-            'RoundedPolygon must be contiguous, with the anchor points of all '
-            'curves matching the anchor points of the preceding and succeeding '
-            'cubics.',
-          );
-        }
-        prevCubic = cubic;
+    for (final CubicBezier cubic in cubics) {
+      if ((cubic.anchor0X - prevCubic.anchor1X).abs() > distanceEpsilon ||
+          (cubic.anchor0Y - prevCubic.anchor1Y).abs() > distanceEpsilon) {
+        throw ArgumentError(
+          'RoundedPolygon must be contiguous, with the anchor points of all '
+          'curves matching the anchor points of the preceding and succeeding '
+          'cubics.',
+        );
       }
-
-      return true;
-    }());
+      prevCubic = cubic;
+    }
   }
 
   /// This function takes the vertices (either supplied or calculated,
