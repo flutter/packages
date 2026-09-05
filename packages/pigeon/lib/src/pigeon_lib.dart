@@ -303,9 +303,6 @@ class PigeonOptions {
   /// Returns all output paths for Swift from [swiftOut].
   Iterable<String>? get swiftOutPaths {
     final Object? out = swiftOut;
-    if (out == null) {
-      return null;
-    }
     if (out is String) {
       return <String>[out];
     }

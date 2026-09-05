@@ -434,6 +434,8 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
       dartPackageName: options.dartPackageName,
     );
     final content = buffer.toString();
+    // [sink] was opened for the first entry in [outputs] by [shouldGenerate],
+    // so only the remaining output files need to be written here.
     sink.write(content);
     for (final String outputPath in outputs.skip(1)) {
       _writeToOutput(outputPath, content, basePath: options.basePath ?? '');
