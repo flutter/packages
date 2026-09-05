@@ -1,0 +1,15 @@
+changelog: |
+  - Deprecates `ThemeData` properties (#91772):
+    - `canvasColor`
+    - `cardColor`
+    - `dividerColor`
+    - `hintColor`
+    - `primaryColor`
+    - `primaryColorDark`
+    - `primaryColorLight`
+    - `primaryIconTheme`
+    - `primaryTextTheme`
+    - `scaffoldBackgroundColor`
+    - `secondaryHeaderColor`
+    - `shadowColor`
+version: major

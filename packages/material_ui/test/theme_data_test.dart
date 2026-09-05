@@ -1292,27 +1292,15 @@ void main() {
       useMaterial3: false,
       visualDensity: VisualDensity.standard,
       // COLOR
-      canvasColor: Colors.black,
-      cardColor: Colors.black,
       colorScheme: const ColorScheme.light(),
       disabledColor: Colors.black,
-      dividerColor: Colors.black,
       focusColor: Colors.black,
       highlightColor: Colors.black,
-      hintColor: Colors.black,
       hoverColor: Colors.black,
-      primaryColor: Colors.black,
-      primaryColorDark: Colors.black,
-      primaryColorLight: Colors.black,
-      scaffoldBackgroundColor: Colors.black,
-      secondaryHeaderColor: Colors.black,
-      shadowColor: Colors.black,
       splashColor: Colors.black,
       unselectedWidgetColor: Colors.black,
       // TYPOGRAPHY & ICONOGRAPHY
       iconTheme: ThemeData.dark().iconTheme,
-      primaryIconTheme: ThemeData.dark().iconTheme,
-      primaryTextTheme: ThemeData.dark().textTheme,
       textTheme: ThemeData.dark().textTheme,
       typography: Typography.material2018(),
       // COMPONENT THEMES
@@ -1384,6 +1372,18 @@ void main() {
       buttonBarTheme: const ButtonBarThemeData(alignment: MainAxisAlignment.start),
       dialogBackgroundColor: Colors.black,
       indicatorColor: Colors.black,
+      canvasColor: Colors.black,
+      cardColor: Colors.black,
+      dividerColor: Colors.black,
+      hintColor: Colors.black,
+      primaryColor: Colors.black,
+      primaryColorDark: Colors.black,
+      primaryColorLight: Colors.black,
+      primaryIconTheme: ThemeData.dark().iconTheme,
+      primaryTextTheme: ThemeData.dark().textTheme,
+      scaffoldBackgroundColor: Colors.black,
+      secondaryHeaderColor: Colors.black,
+      shadowColor: Colors.black,
     );
 
     final otherSliderTheme = SliderThemeData.fromPrimaryColors(
@@ -1421,27 +1421,15 @@ void main() {
       useMaterial3: true,
       visualDensity: VisualDensity.standard,
       // COLOR
-      canvasColor: Colors.white,
-      cardColor: Colors.white,
       colorScheme: const ColorScheme.light(),
       disabledColor: Colors.white,
-      dividerColor: Colors.white,
       focusColor: Colors.white,
       highlightColor: Colors.white,
-      hintColor: Colors.white,
       hoverColor: Colors.white,
-      primaryColor: Colors.white,
-      primaryColorDark: Colors.white,
-      primaryColorLight: Colors.white,
-      scaffoldBackgroundColor: Colors.white,
-      secondaryHeaderColor: Colors.white,
-      shadowColor: Colors.white,
       splashColor: Colors.white,
       unselectedWidgetColor: Colors.white,
       // TYPOGRAPHY & ICONOGRAPHY
       iconTheme: ThemeData().iconTheme,
-      primaryIconTheme: ThemeData().iconTheme,
-      primaryTextTheme: ThemeData().textTheme,
       textTheme: ThemeData().textTheme,
       typography: Typography.material2018(platform: TargetPlatform.iOS),
       // COMPONENT THEMES
@@ -1503,6 +1491,18 @@ void main() {
       buttonBarTheme: const ButtonBarThemeData(alignment: MainAxisAlignment.end),
       dialogBackgroundColor: Colors.white,
       indicatorColor: Colors.white,
+      canvasColor: Colors.white,
+      cardColor: Colors.white,
+      dividerColor: Colors.white,
+      hintColor: Colors.white,
+      primaryColor: Colors.white,
+      primaryColorDark: Colors.white,
+      primaryColorLight: Colors.white,
+      primaryIconTheme: ThemeData().iconTheme,
+      primaryTextTheme: ThemeData().textTheme,
+      scaffoldBackgroundColor: Colors.white,
+      secondaryHeaderColor: Colors.white,
+      shadowColor: Colors.white,
     );
 
     final ThemeData themeDataCopy = theme.copyWith(
@@ -1525,27 +1525,15 @@ void main() {
       useMaterial3: otherTheme.useMaterial3,
       visualDensity: otherTheme.visualDensity,
       // COLOR
-      canvasColor: otherTheme.canvasColor,
-      cardColor: otherTheme.cardColor,
       colorScheme: otherTheme.colorScheme,
       disabledColor: otherTheme.disabledColor,
-      dividerColor: otherTheme.dividerColor,
       focusColor: otherTheme.focusColor,
       highlightColor: otherTheme.highlightColor,
-      hintColor: otherTheme.hintColor,
       hoverColor: otherTheme.hoverColor,
-      primaryColor: otherTheme.primaryColor,
-      primaryColorDark: otherTheme.primaryColorDark,
-      primaryColorLight: otherTheme.primaryColorLight,
-      scaffoldBackgroundColor: otherTheme.scaffoldBackgroundColor,
-      secondaryHeaderColor: otherTheme.secondaryHeaderColor,
-      shadowColor: otherTheme.shadowColor,
       splashColor: otherTheme.splashColor,
       unselectedWidgetColor: otherTheme.unselectedWidgetColor,
       // TYPOGRAPHY & ICONOGRAPHY
       iconTheme: otherTheme.iconTheme,
-      primaryIconTheme: otherTheme.primaryIconTheme,
-      primaryTextTheme: otherTheme.primaryTextTheme,
       textTheme: otherTheme.textTheme,
       typography: otherTheme.typography,
       // COMPONENT THEMES
@@ -1596,6 +1584,18 @@ void main() {
       buttonBarTheme: otherTheme.buttonBarTheme,
       dialogBackgroundColor: otherTheme.dialogBackgroundColor,
       indicatorColor: otherTheme.indicatorColor,
+      canvasColor: otherTheme.canvasColor,
+      cardColor: otherTheme.cardColor,
+      dividerColor: otherTheme.dividerColor,
+      hintColor: otherTheme.hintColor,
+      primaryColor: otherTheme.primaryColor,
+      primaryColorDark: otherTheme.primaryColorDark,
+      primaryColorLight: otherTheme.primaryColorLight,
+      primaryIconTheme: otherTheme.primaryIconTheme,
+      primaryTextTheme: otherTheme.primaryTextTheme,
+      scaffoldBackgroundColor: otherTheme.scaffoldBackgroundColor,
+      secondaryHeaderColor: otherTheme.secondaryHeaderColor,
+      shadowColor: otherTheme.shadowColor,
     );
 
     // For the sanity of the reader, make sure these properties are in the same
@@ -1617,27 +1617,15 @@ void main() {
     expect(themeDataCopy.useMaterial3, equals(otherTheme.useMaterial3));
     expect(themeDataCopy.visualDensity, equals(otherTheme.visualDensity));
     // COLOR
-    expect(themeDataCopy.canvasColor, equals(otherTheme.canvasColor));
-    expect(themeDataCopy.cardColor, equals(otherTheme.cardColor));
     expect(themeDataCopy.colorScheme, equals(otherTheme.colorScheme));
     expect(themeDataCopy.disabledColor, equals(otherTheme.disabledColor));
-    expect(themeDataCopy.dividerColor, equals(otherTheme.dividerColor));
     expect(themeDataCopy.focusColor, equals(otherTheme.focusColor));
     expect(themeDataCopy.highlightColor, equals(otherTheme.highlightColor));
-    expect(themeDataCopy.hintColor, equals(otherTheme.hintColor));
     expect(themeDataCopy.hoverColor, equals(otherTheme.hoverColor));
-    expect(themeDataCopy.primaryColor, equals(otherTheme.primaryColor));
-    expect(themeDataCopy.primaryColorDark, equals(otherTheme.primaryColorDark));
-    expect(themeDataCopy.primaryColorLight, equals(otherTheme.primaryColorLight));
-    expect(themeDataCopy.scaffoldBackgroundColor, equals(otherTheme.scaffoldBackgroundColor));
-    expect(themeDataCopy.secondaryHeaderColor, equals(otherTheme.secondaryHeaderColor));
-    expect(themeDataCopy.shadowColor, equals(otherTheme.shadowColor));
     expect(themeDataCopy.splashColor, equals(otherTheme.splashColor));
     expect(themeDataCopy.unselectedWidgetColor, equals(otherTheme.unselectedWidgetColor));
     // TYPOGRAPHY & ICONOGRAPHY
     expect(themeDataCopy.iconTheme, equals(otherTheme.iconTheme));
-    expect(themeDataCopy.primaryIconTheme, equals(otherTheme.primaryIconTheme));
-    expect(themeDataCopy.primaryTextTheme, equals(otherTheme.primaryTextTheme));
     expect(themeDataCopy.textTheme, equals(otherTheme.textTheme));
     expect(themeDataCopy.typography, equals(otherTheme.typography));
     // COMPONENT THEMES
@@ -1699,6 +1687,18 @@ void main() {
     expect(themeDataCopy.buttonBarTheme, equals(otherTheme.buttonBarTheme));
     expect(themeDataCopy.dialogBackgroundColor, equals(otherTheme.dialogBackgroundColor));
     expect(themeDataCopy.indicatorColor, equals(otherTheme.indicatorColor));
+    expect(themeDataCopy.canvasColor, equals(otherTheme.canvasColor));
+    expect(themeDataCopy.cardColor, equals(otherTheme.cardColor));
+    expect(themeDataCopy.dividerColor, equals(otherTheme.dividerColor));
+    expect(themeDataCopy.hintColor, equals(otherTheme.hintColor));
+    expect(themeDataCopy.primaryColor, equals(otherTheme.primaryColor));
+    expect(themeDataCopy.primaryColorDark, equals(otherTheme.primaryColorDark));
+    expect(themeDataCopy.primaryColorLight, equals(otherTheme.primaryColorLight));
+    expect(themeDataCopy.primaryIconTheme, equals(otherTheme.primaryIconTheme));
+    expect(themeDataCopy.primaryTextTheme, equals(otherTheme.primaryTextTheme));
+    expect(themeDataCopy.scaffoldBackgroundColor, equals(otherTheme.scaffoldBackgroundColor));
+    expect(themeDataCopy.secondaryHeaderColor, equals(otherTheme.secondaryHeaderColor));
+    expect(themeDataCopy.shadowColor, equals(otherTheme.shadowColor));
   });
 
   testWidgets('ThemeData.toString has less than 200 characters output', (
@@ -1765,28 +1765,16 @@ void main() {
       'useMaterial3',
       // COLOR
       'colorScheme',
-      'primaryColor',
-      'primaryColorLight',
-      'primaryColorDark',
       'focusColor',
       'hoverColor',
-      'shadowColor',
-      'canvasColor',
-      'scaffoldBackgroundColor',
-      'cardColor',
-      'dividerColor',
       'highlightColor',
       'splashColor',
       'unselectedWidgetColor',
       'disabledColor',
-      'secondaryHeaderColor',
-      'hintColor',
       // TYPOGRAPHY & ICONOGRAPHY
       'typography',
       'textTheme',
-      'primaryTextTheme',
       'iconTheme',
-      'primaryIconTheme',
       // COMPONENT THEMES
       'actionIconTheme',
       'appBarTheme',
@@ -1838,6 +1826,18 @@ void main() {
       'buttonBarTheme',
       'dialogBackgroundColor',
       'indicatorColor',
+      'canvasColor',
+      'cardColor',
+      'dividerColor',
+      'hintColor',
+      'primaryColor',
+      'primaryColorLight',
+      'primaryColorDark',
+      'primaryIconTheme',
+      'primaryTextTheme',
+      'scaffoldBackgroundColor',
+      'secondaryHeaderColor',
+      'shadowColor',
     };
 
     final properties = DiagnosticPropertiesBuilder();
