@@ -199,6 +199,48 @@ void main() {
       expect(match1 == match2, isFalse);
       expect(match1.hashCode == match2.hashCode, isFalse);
     });
+
+    test('reconcileImperativeCompleters adopts live completers by pageKey', () async {
+      // A decoded configuration carries fresh completers; reconciling against the
+      // live configuration must make the two lists equal again (completer
+      // included in identity), so the delegate's no-op fast path holds.
+      final live = RouteMatchList(
+        matches: <RouteMatchBase>[
+          matchList1.matches.first,
+          ImperativeRouteMatch(pageKey: key1, matches: matchList1, completer: completer1),
+        ],
+        uri: Uri.parse('/'),
+        pathParameters: const <String, String>{},
+      );
+      final decoded = RouteMatchList(
+        matches: <RouteMatchBase>[
+          matchList1.matches.first,
+          ImperativeRouteMatch(pageKey: key1, matches: matchList1, completer: completer2),
+        ],
+        uri: Uri.parse('/'),
+        pathParameters: const <String, String>{},
+      );
+
+      expect(decoded == live, isFalse);
+      final RouteMatchList reconciled = decoded.reconcileImperativeCompleters(live);
+      expect(reconciled == live, isTrue);
+      expect((reconciled.matches.last as ImperativeRouteMatch).completer, completer1);
+    });
+
+    test('reconcileImperativeCompleters keeps fresh completer when no live match', () async {
+      // Genuine state restoration (no live imperative match with that pageKey):
+      // the fresh completer is kept as-is.
+      final decoded = RouteMatchList(
+        matches: <RouteMatchBase>[
+          matchList1.matches.first,
+          ImperativeRouteMatch(pageKey: key1, matches: matchList1, completer: completer2),
+        ],
+        uri: Uri.parse('/'),
+        pathParameters: const <String, String>{},
+      );
+      final RouteMatchList reconciled = decoded.reconcileImperativeCompleters(RouteMatchList.empty);
+      expect((reconciled.matches.last as ImperativeRouteMatch).completer, completer2);
+    });
   });
 }
 
