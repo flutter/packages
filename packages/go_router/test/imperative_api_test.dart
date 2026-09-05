@@ -4,6 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:go_router/src/match.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'test_helpers.dart';
@@ -172,6 +173,139 @@ void main() {
     expect(find.byKey(b), findsOneWidget);
   });
 
+  testWidgets('push to a sibling shell route under the same parent shell route', (
+    WidgetTester tester,
+  ) async {
+    const firstNavigatorKey = _CollidingNavigatorKey('first');
+    const secondNavigatorKey = _CollidingNavigatorKey('second');
+    expect(firstNavigatorKey, isNot(equals(secondNavigatorKey)));
+    expect(firstNavigatorKey.hashCode, secondNavigatorKey.hashCode);
+    final secondPageKey = UniqueKey();
+    final firstRoute = _CollidingShellRoute(
+      navigatorKey: firstNavigatorKey,
+      builder: (_, _, Widget child) => child,
+      routes: <RouteBase>[GoRoute(path: '/first', builder: (_, _) => const DummyStatefulWidget())],
+    );
+    final secondRoute = _CollidingShellRoute(
+      navigatorKey: secondNavigatorKey,
+      builder: (_, _, Widget child) => child,
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/second',
+          builder: (_, _) => DummyScreen(key: secondPageKey),
+        ),
+      ],
+    );
+    expect(firstRoute, isNot(equals(secondRoute)));
+    expect(firstRoute.hashCode, secondRoute.hashCode);
+    final routes = <RouteBase>[
+      ShellRoute(
+        builder: (_, _, Widget child) => child,
+        routes: <RouteBase>[firstRoute, secondRoute],
+      ),
+    ];
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/first');
+
+    final NavigatorState firstNavigator = firstNavigatorKey.currentState!;
+    final DummyStatefulWidgetState firstPage = tester.state<DummyStatefulWidgetState>(
+      find.byType(DummyStatefulWidget),
+    );
+    expect(secondNavigatorKey.currentState, isNull);
+
+    firstPage.increment();
+    await tester.pump();
+    expect(firstPage.counter, 1);
+
+    router.push('/second');
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    final NavigatorState secondNavigator = secondNavigatorKey.currentState!;
+    expect(firstNavigatorKey.currentState, same(firstNavigator));
+    expect(secondNavigator, isNot(same(firstNavigator)));
+    expect(firstNavigator.mounted, isTrue);
+    expect(secondNavigator.mounted, isTrue);
+    expect(firstPage.mounted, isTrue);
+    expect(firstPage.counter, 1);
+    expect(find.byKey(secondPageKey), findsOneWidget);
+
+    router.push('/first');
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(firstNavigatorKey.currentState, same(firstNavigator));
+    expect(secondNavigatorKey.currentState, same(secondNavigator));
+    expect(firstNavigator.mounted, isTrue);
+    expect(secondNavigator.mounted, isTrue);
+    expect(firstPage.mounted, isTrue);
+    expect(firstPage.counter, 1);
+    expect(find.byType(DummyStatefulWidget), findsOneWidget);
+
+    final DummyStatefulWidgetState pushedFirstPage = tester.state<DummyStatefulWidgetState>(
+      find.byType(DummyStatefulWidget),
+    );
+    final NavigatorState pushedFirstNavigator = Navigator.of(pushedFirstPage.context);
+    expect(pushedFirstPage, isNot(same(firstPage)));
+    expect(pushedFirstNavigator, isNot(same(firstNavigator)));
+    expect(pushedFirstNavigator, isNot(same(secondNavigator)));
+    pushedFirstPage.increment();
+    await tester.pump();
+    expect(pushedFirstPage.counter, 1);
+
+    // Recreate the full match list so the scoped shell keys are reconstructed
+    // from the stable imperative page key.
+    final codec = RouteMatchListCodec(router.configuration);
+    final RouteMatchList restoredConfiguration = codec.decode(
+      codec.encode(router.routerDelegate.currentConfiguration),
+    );
+    expect(restoredConfiguration, isNot(same(router.routerDelegate.currentConfiguration)));
+    router.restore(restoredConfiguration);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.state<DummyStatefulWidgetState>(find.byType(DummyStatefulWidget)),
+      same(pushedFirstPage),
+    );
+    expect(Navigator.of(pushedFirstPage.context), same(pushedFirstNavigator));
+
+    router.refresh();
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(firstNavigatorKey.currentState, same(firstNavigator));
+    expect(secondNavigatorKey.currentState, same(secondNavigator));
+    expect(pushedFirstPage.mounted, isTrue);
+    expect(pushedFirstPage.counter, 1);
+
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(secondNavigatorKey.currentState, same(secondNavigator));
+    expect(secondNavigator.mounted, isTrue);
+    expect(find.byKey(secondPageKey), findsOneWidget);
+
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(firstNavigatorKey.currentState, same(firstNavigator));
+    expect(firstNavigator.mounted, isTrue);
+    expect(secondNavigatorKey.currentState, isNull);
+    expect(secondNavigator.mounted, isFalse);
+    expect(firstPage.mounted, isTrue);
+    expect(firstPage.counter, 1);
+    expect(find.byKey(secondPageKey), findsNothing);
+
+    router.refresh();
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(firstNavigatorKey.currentState, same(firstNavigator));
+    expect(firstPage.mounted, isTrue);
+    expect(firstPage.counter, 1);
+
+    router.go('/second');
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(secondNavigatorKey.currentState, isNotNull);
+    expect(find.byKey(secondPageKey), findsOneWidget);
+  });
+
   testWidgets('push inside or outside shell route', (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/issues/120665.
     final inside = UniqueKey();
@@ -286,4 +420,30 @@ void main() {
     expect(find.text('shell'), findsNothing);
     expect(find.byKey(e), findsOneWidget);
   });
+}
+
+class _CollidingShellRoute extends ShellRoute {
+  _CollidingShellRoute({
+    required super.navigatorKey,
+    required super.builder,
+    required super.routes,
+  });
+
+  @override
+  bool operator ==(Object other) => identical(this, other);
+
+  @override
+  int get hashCode => 0;
+}
+
+class _CollidingNavigatorKey extends GlobalKey<NavigatorState> {
+  const _CollidingNavigatorKey(this._label) : super.constructor();
+
+  final String _label;
+
+  @override
+  int get hashCode => 0;
+
+  @override
+  bool operator ==(Object other) => other is _CollidingNavigatorKey && other._label == _label;
 }
