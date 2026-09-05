@@ -52,7 +52,7 @@ class MeasuredPolygon {
     _cubics = measuredCubics;
   }
 
-  factory MeasuredPolygon.measurePolygon(Measurer measurer, RoundedPolygon polygon) {
+  factory MeasuredPolygon.measure(Measurer measurer, RoundedPolygon polygon) {
     final cubics = <CubicBezier>[];
     final featureToCubic = <(Feature, int)>[];
 
@@ -117,7 +117,7 @@ class MeasuredPolygon {
 
   MeasuredCubic operator [](int index) => _cubics[index];
 
-  MeasuredCubic? getOrNull(int index) {
+  MeasuredCubic? cubicAtOrNull(int index) {
     final int length = _cubics.length;
 
     if (index < 0 || index >= length) {

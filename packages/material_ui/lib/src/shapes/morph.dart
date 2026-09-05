@@ -68,8 +68,8 @@ class Morph {
   static List<(CubicBezier, CubicBezier)> _match(RoundedPolygon p1, RoundedPolygon p2) {
     // Measure polygons, returns lists of measured cubics for each polygon,
     // which we then use to match start/end curves.
-    final measuredPolygon1 = MeasuredPolygon.measurePolygon(const LengthMeasurer(), p1);
-    final measuredPolygon2 = MeasuredPolygon.measurePolygon(const LengthMeasurer(), p2);
+    final measuredPolygon1 = MeasuredPolygon.measure(const LengthMeasurer(), p1);
+    final measuredPolygon2 = MeasuredPolygon.measure(const LengthMeasurer(), p2);
 
     // features1 and 2 will contain the list of corners (just the inner
     // circular curve) along with the progress at the middle of those corners.
@@ -108,8 +108,8 @@ class Morph {
     var i1 = 0;
     var i2 = 0;
     // b1, b2 are the current measured cubic for each polygon.
-    MeasuredCubic? b1 = bs1.getOrNull(i1++);
-    MeasuredCubic? b2 = bs2.getOrNull(i2++);
+    MeasuredCubic? b1 = bs1.cubicAtOrNull(i1++);
+    MeasuredCubic? b2 = bs2.cubicAtOrNull(i2++);
     // Iterate until all curves are accounted for and matched.
     while (b1 != null && b2 != null) {
       // Progresses are in shape1's perspective
@@ -126,11 +126,11 @@ class Morph {
       // If one curve extends beyond, we need to cut it.
       final (MeasuredCubic seg1, MeasuredCubic? newb1) = (b1a > minb + angleEpsilon)
           ? b1.cutAtProgress(minb)
-          : (b1, bs1.getOrNull(i1++));
+          : (b1, bs1.cubicAtOrNull(i1++));
 
       final (MeasuredCubic seg2, MeasuredCubic? newb2) = (b2a > minb + angleEpsilon)
           ? b2.cutAtProgress(positiveModulo(doubleMapper.map(minb) - polygon2CutPoint, 1))
-          : (b2, bs2.getOrNull(i2++));
+          : (b2, bs2.cubicAtOrNull(i2++));
 
       ret.add((seg1.cubic, seg2.cubic));
       b1 = newb1;

@@ -23,11 +23,11 @@ void main() {
       RoundedPolygon p2,
       void Function(List<double>) validator,
     ) {
-      final List<ProgressableFeature> f1 = MeasuredPolygon.measurePolygon(
+      final List<ProgressableFeature> f1 = MeasuredPolygon.measure(
         const LengthMeasurer(),
         p1,
       ).features;
-      final List<ProgressableFeature> f2 = MeasuredPolygon.measurePolygon(
+      final List<ProgressableFeature> f2 = MeasuredPolygon.measure(
         const LengthMeasurer(),
         p2,
       ).features;

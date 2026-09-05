@@ -23,7 +23,7 @@ void main() {
       RoundedPolygon polygon, [
       void Function(MeasuredPolygon)? extraChecks,
     ]) {
-      final measuredPolygon = MeasuredPolygon.measurePolygon(measurer, polygon);
+      final measuredPolygon = MeasuredPolygon.measure(measurer, polygon);
 
       expect(0, measuredPolygon.first.startOutlineProgress);
       expect(1, measuredPolygon.last.endOutlineProgress);
