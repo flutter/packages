@@ -73,6 +73,7 @@ class _AsyncSearchAnchorState extends State<_AsyncSearchAnchor> {
   @override
   Widget build(BuildContext context) {
     return SearchAnchor(
+      enableTapHandling: false,
       builder: (BuildContext context, SearchController controller) {
         return IconButton(
           icon: const Icon(Icons.search),
