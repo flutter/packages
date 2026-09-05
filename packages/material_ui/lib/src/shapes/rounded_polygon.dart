@@ -77,9 +77,10 @@ class RoundedPolygon {
     );
   }
 
-  RoundedPolygon._raw(this.features, this._center) : cubics = <CubicBezier>[] {
-    _initCubics();
-
+  RoundedPolygon._raw(List<Feature> features, Point center)
+    : features = List<Feature>.unmodifiable(features),
+      _center = center,
+      cubics = List<CubicBezier>.unmodifiable(_buildCubics(features, center)) {
     assert(() {
       CubicBezier prevCubic = cubics[cubics.length - 1];
 
@@ -587,17 +588,23 @@ class RoundedPolygon {
   }
 
   /// The [Feature]s this polygon is composed of.
+  ///
+  /// This list is unmodifiable.
   final List<Feature> features;
 
   final Point _center;
 
   /// A flattened version of the [Feature]s, as a `List<CubicBezier>`.
+  ///
+  /// This list is unmodifiable.
   final List<CubicBezier> cubics;
 
   /// The center of this polygon, around which all vertices are placed.
   Offset get center => _center;
 
-  void _initCubics() {
+  static List<CubicBezier> _buildCubics(List<Feature> features, Point center) {
+    final cubics = <CubicBezier>[];
+
     // The first/last mechanism here ensures that the final anchor point in the
     // shape exactly matches the first anchor point. There can be rendering
     // artifacts introduced by those points being slightly off, even by much
@@ -672,8 +679,10 @@ class RoundedPolygon {
       );
     } else {
       // Empty / 0-sized polygon.
-      cubics.add(CubicBezier.point(_center));
+      cubics.add(CubicBezier.point(center));
     }
+
+    return cubics;
   }
 
   /// Transforms (scales/translates/etc.) this [RoundedPolygon] with the given
