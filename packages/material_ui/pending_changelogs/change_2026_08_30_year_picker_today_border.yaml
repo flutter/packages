@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `DatePickerThemeData.todayBorder` color being overridden by `todayForegroundColor` in the year selector.
+version: patch
