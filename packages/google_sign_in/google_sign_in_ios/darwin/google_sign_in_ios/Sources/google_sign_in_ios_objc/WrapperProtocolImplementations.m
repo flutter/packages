@@ -74,7 +74,7 @@
 
 #if TARGET_OS_IOS || TARGET_OS_MACCATALYST
 
-- (void)signInWithPresentingViewController:(UIViewController *)presentingViewController
+- (void)signInWithPresentingViewController:(nullable UIViewController *)presentingViewController
                                       hint:(nullable NSString *)hint
                           additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
                                      nonce:(nullable NSString *)nonce
@@ -96,7 +96,7 @@
 
 #elif TARGET_OS_OSX
 
-- (void)signInWithPresentingWindow:(NSWindow *)presentingWindow
+- (void)signInWithPresentingWindow:(nullable NSWindow *)presentingWindow
                               hint:(nullable NSString *)hint
                   additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
                              nonce:(nullable NSString *)nonce
@@ -196,7 +196,7 @@
 #if TARGET_OS_IOS || TARGET_OS_MACCATALYST
 
 - (void)addScopes:(NSArray<NSString *> *)scopes
-    presentingViewController:(UIViewController *)presentingViewController
+    presentingViewController:(nullable UIViewController *)presentingViewController
                   completion:
                       (nullable void (^)(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
                                          NSError *_Nullable error))completion {
@@ -213,7 +213,7 @@
 #elif TARGET_OS_OSX
 
 - (void)addScopes:(NSArray<NSString *> *)scopes
-    presentingWindow:(NSWindow *)presentingWindow
+    presentingWindow:(nullable NSWindow *)presentingWindow
           completion:(nullable void (^)(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
                                         NSError *_Nullable error))completion {
   [self.user addScopes:scopes
