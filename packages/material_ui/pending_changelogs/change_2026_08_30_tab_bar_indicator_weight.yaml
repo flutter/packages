@@ -1,0 +1,3 @@
+changelog: |
+  - Allows `TabBar.indicatorWeight` of 0 when the indicator is supplied by `TabBarThemeData`.
+version: patch
