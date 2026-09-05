@@ -92,7 +92,7 @@ bool collinearIsh(
 /// the relationship of the prev->curr/curr->next vectors.
 @internal
 bool convex(Point previous, Point current, Point next) {
-  return (current - previous).clockwise(next - current);
+  return (current - previous).turnsClockwiseTo(next - current);
 }
 
 /// Does a ternary search in [v0..v1] to find the parameter that minimizes the

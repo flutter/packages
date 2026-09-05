@@ -48,11 +48,13 @@ extension PointGeometry on Offset {
   /// The dot product of this point and [other], both taken as vectors.
   double dotProduct(Point other) => x * other.x + y * other.y;
 
-  /// Compute the Z coordinate of the cross product of two vectors, to check
-  /// if the second vector is going clockwise ( > 0 ) or counterclockwise
-  /// (< 0) compared with the first one. It could also be 0, if the vectors
-  /// are co-linear.
-  bool clockwise(Point other) => (x * other.y - y * other.x) > 0;
+  /// Whether turning from this point to [other], both taken as vectors, is a
+  /// clockwise turn.
+  ///
+  /// This tests the sign of the Z coordinate of the cross product of the two,
+  /// which is zero when they are collinear, so collinear vectors are not
+  /// considered a clockwise turn.
+  bool turnsClockwiseTo(Point other) => (x * other.y - y * other.x) > 0;
 
   /// The unit vector pointing from (0, 0) towards this point.
   Point get unitVector {
