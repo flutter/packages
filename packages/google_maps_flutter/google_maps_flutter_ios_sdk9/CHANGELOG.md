@@ -1,6 +1,6 @@
 ## 2.18.13
 
-* Converts ramaining Objective-C code to Swift.
+* Converts remaining Objective-C code to Swift.
 
 ## 2.18.12
 
