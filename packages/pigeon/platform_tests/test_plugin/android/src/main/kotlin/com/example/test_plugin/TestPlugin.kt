@@ -858,6 +858,17 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     return suspendFlutterApi { flutterCallbackApi!!.throwErrorFromVoid(it) }
   }
 
+  override suspend fun callFlutterIsAsyncFlutterApiOnRoot(): Boolean {
+    if (Looper.myLooper() != Looper.getMainLooper()) {
+      return false
+    }
+    val result = flutterApi!!.isAsyncFlutterApiOnRoot()
+    if (Looper.myLooper() != Looper.getMainLooper()) {
+      return false
+    }
+    return result
+  }
+
   fun testUnusedClassesGenerate(): UnusedClass {
     return UnusedClass()
   }

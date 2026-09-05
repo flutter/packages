@@ -373,7 +373,7 @@ class ExampleHostApiSetup {
 
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol MessageFlutterApiProtocol {
-  func flutterMethod(aString aStringArg: String?) async throws -> String
+  @MainActor func flutterMethod(aString aStringArg: String?) async throws -> String
 }
 class MessageFlutterApi: MessageFlutterApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -385,7 +385,7 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
   var codec: MessagesPigeonCodec {
     return MessagesPigeonCodec.shared
   }
-  func flutterMethod(aString aStringArg: String?) async throws -> String {
+  @MainActor func flutterMethod(aString aStringArg: String?) async throws -> String {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod\(messageChannelSuffix)"

@@ -7,6 +7,7 @@ import Testing
 
 @testable import test_plugin
 
+@MainActor
 struct DataClassMethodsTests {
 
   private let everythingFull = AllNullableTypes(

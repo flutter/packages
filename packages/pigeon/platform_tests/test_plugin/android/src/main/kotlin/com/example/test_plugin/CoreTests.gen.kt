@@ -1559,6 +1559,8 @@ interface HostIntegrationCoreApi {
 
   suspend fun callFlutterCallbackThrowErrorFromVoid()
 
+  suspend fun callFlutterIsAsyncFlutterApiOnRoot(): Boolean
+
   companion object {
     /** The codec used by HostIntegrationCoreApi. */
     val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec() }
@@ -5388,6 +5390,28 @@ interface HostIntegrationCoreApi {
           channel.setMessageHandler(null)
         }
       }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterIsAsyncFlutterApiOnRoot$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            CoroutineScope(Dispatchers.Main).launch {
+              val wrapped: List<Any?> =
+                  try {
+                    listOf(api.callFlutterIsAsyncFlutterApiOnRoot())
+                  } catch (exception: Throwable) {
+                    CoreTestsPigeonUtils.wrapError(exception)
+                  }
+              reply.reply(wrapped)
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
     }
   }
 }
@@ -6824,6 +6848,33 @@ class FlutterIntegrationCoreApi(
                     "null-error", "Flutter api returned null value for non-null return value.", ""))
           } else {
             val output = it[0] as String
+            continuation.resume(output)
+          }
+        } else {
+          continuation.resumeWithException(CoreTestsPigeonUtils.createConnectionError(channelName))
+        }
+      }
+    }
+  }
+  /** Returns true if the async FlutterApi method is run on the root isolate. */
+  suspend fun isAsyncFlutterApiOnRoot(): Boolean {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    return suspendCancellableCoroutine { continuation ->
+      val channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.isAsyncFlutterApiOnRoot$separatedMessageChannelSuffix"
+      val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+      channel.send(null) {
+        if (it is List<*>) {
+          if (it.size > 1) {
+            continuation.resumeWithException(
+                FlutterError(it[0] as String, it[1] as String, it[2] as String?))
+          } else if (it[0] == null) {
+            continuation.resumeWithException(
+                FlutterError(
+                    "null-error", "Flutter api returned null value for non-null return value.", ""))
+          } else {
+            val output = it[0] as Boolean
             continuation.resume(output)
           }
         } else {
