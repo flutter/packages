@@ -28,7 +28,7 @@ import 'package:flutter/foundation.dart';
 class CornerRounding {
   /// Creates a [CornerRounding].
   const CornerRounding({this.radius = 0, this.smoothing = 0})
-    : assert(radius >= 0, 'radius has to be greater that zero'),
+    : assert(radius >= 0, 'radius has to be greater than or equal to zero'),
       assert(smoothing >= 0 && smoothing <= 1, 'smoothing has to be in range [0, 1]');
 
   /// A [CornerRounding] with a radius of zero, producing a sharp corner at a

@@ -29,6 +29,12 @@ void main() {
     expect(roundedAndSmoothed.smoothing, 0.5);
   });
 
+  test('$CornerRounding rejects out of range values', () {
+    expect(() => CornerRounding(radius: -1), throwsAssertionError);
+    expect(() => CornerRounding(smoothing: -1), throwsAssertionError);
+    expect(() => CornerRounding(smoothing: 1.1), throwsAssertionError);
+  });
+
   test('$CornerRounding equality', () {
     expect(
       const CornerRounding(radius: 5, smoothing: 0.5),
