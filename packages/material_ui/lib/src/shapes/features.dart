@@ -31,11 +31,7 @@ import 'point.dart';
 @immutable
 abstract class Feature {
   /// Creates a [Feature] spanning the given [cubics].
-  ///
-  /// Prefer the [Feature.edge], [Feature.convexCorner],
-  /// [Feature.concaveCorner] and [Feature.ignorable] factories, which validate
-  /// that the cubics form a continuous run.
-  const Feature(List<CubicBezier> cubics) : _cubics = cubics;
+  const Feature._(List<CubicBezier> cubics) : _cubics = cubics;
 
   /// Group a list of [CubicBezier] objects to a feature that should be ignored in
   /// the default [Morph] mapping. The feature can have any indentation.
@@ -158,7 +154,7 @@ abstract class Feature {
 @internal
 class EdgeFeature extends Feature {
   /// Creates an [EdgeFeature] from the given cubics.
-  const EdgeFeature(super._cubics);
+  const EdgeFeature(super._cubics) : super._();
 
   @override
   Feature transformed(PointTransformer transformer) =>
@@ -194,7 +190,7 @@ class EdgeFeature extends Feature {
 @internal
 class CornerFeature extends Feature {
   /// Creates a [CornerFeature] from the given cubics.
-  const CornerFeature(super._cubics, {this.convex = true});
+  const CornerFeature(super._cubics, {this.convex = true}) : super._();
 
   /// Whether this corner is convex.
   final bool convex;
