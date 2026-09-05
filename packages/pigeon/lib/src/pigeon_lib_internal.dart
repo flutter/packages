@@ -56,8 +56,7 @@ class InternalPigeonOptions {
               options.objcOptions ?? const ObjcOptions(),
               objcHeaderOut: options.objcHeaderOut!,
               objcSourceOut: options.objcSourceOut!,
-              fileSpecificClassNameComponent:
-                  options.objcSourceOut?.split('/').lastOrNull?.split('.').firstOrNull ?? '',
+              fileSpecificClassNameComponent: deduceClassNameComponent(options.objcSourceOut),
               copyrightHeader: copyrightHeader,
             ),
       javaOptions = options.javaOut == null
@@ -67,11 +66,11 @@ class InternalPigeonOptions {
               javaOut: options.javaOut!,
               copyrightHeader: copyrightHeader,
             ),
-      swiftOptions = options.swiftOut == null
+      swiftOptions = (options.swiftOutPaths == null || options.swiftOutPaths!.isEmpty)
           ? null
           : InternalSwiftOptions.fromSwiftOptions(
               options.swiftOptions ?? const SwiftOptions(),
-              swiftOut: options.swiftOut!,
+              swiftOuts: options.swiftOutPaths,
               copyrightHeader: copyrightHeader,
             ),
       kotlinOptions = options.kotlinOut == null
@@ -171,6 +170,12 @@ Iterable<String> _lineReader(String path) sync* {
   }
 }
 
+File _getFile(String output, {String basePath = ''}) {
+  final file = File(path.posix.join(basePath, output));
+  file.createSync(recursive: true);
+  return file;
+}
+
 IOSink? _openSink(String? output, {String basePath = ''}) {
   if (output == null) {
     return null;
@@ -178,9 +183,15 @@ IOSink? _openSink(String? output, {String basePath = ''}) {
   if (output == 'stdout') {
     return stdout;
   }
-  final file = File(path.posix.join(basePath, output));
-  file.createSync(recursive: true);
-  return file.openWrite();
+  return _getFile(output, basePath: basePath).openWrite();
+}
+
+void _writeToOutput(String output, String content, {String basePath = ''}) {
+  if (output == 'stdout') {
+    stdout.write(content);
+  } else {
+    _getFile(output, basePath: basePath).writeAsStringSync(content);
+  }
 }
 
 /// An adapter that will call a generator to write code to a sink
@@ -405,12 +416,35 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
       return;
     }
     const generator = SwiftGenerator();
-    generator.generate(options.swiftOptions!, root, sink, dartPackageName: options.dartPackageName);
+    final List<String> outputs = options.swiftOptions!.allSwiftOuts.toList();
+    if (outputs.isEmpty) {
+      generator.generate(
+        options.swiftOptions!,
+        root,
+        sink,
+        dartPackageName: options.dartPackageName,
+      );
+      return;
+    }
+    final buffer = StringBuffer();
+    generator.generate(
+      options.swiftOptions!,
+      root,
+      buffer,
+      dartPackageName: options.dartPackageName,
+    );
+    final content = buffer.toString();
+    // [sink] was opened for the first entry in [outputs] by [shouldGenerate],
+    // so only the remaining output files need to be written here.
+    sink.write(content);
+    for (final String outputPath in outputs.skip(1)) {
+      _writeToOutput(outputPath, content, basePath: options.basePath ?? '');
+    }
   }
 
   @override
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
-      _openSink(options.swiftOptions?.swiftOut, basePath: options.basePath ?? '');
+      _openSink(options.swiftOptions?.allSwiftOuts.firstOrNull, basePath: options.basePath ?? '');
 
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) {

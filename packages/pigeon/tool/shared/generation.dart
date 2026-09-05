@@ -212,7 +212,7 @@ Future<int> runPigeon({
   bool kotlinIncludeErrorClass = true,
   bool kotlinUseGeneratedAnnotation = false,
   bool swiftIncludeErrorClass = true,
-  String? swiftOut,
+  Object? swiftOut,
   String? swiftErrorClassName,
   String? cppHeaderOut,
   String? cppSourceOut,
