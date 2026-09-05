@@ -825,6 +825,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     try await awaitFlutterApi { self.flutterCallbackAPI.throwErrorFromVoid(completion: $0) }
   }
 
+  @MainActor
   func callFlutterIsAsyncFlutterApiOnRoot() async throws -> Bool {
     guard Thread.isMainThread else {
       return false
