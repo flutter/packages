@@ -245,4 +245,157 @@ final class PhotoCaptureTests: XCTestCase {
 
     waitForExpectations(timeout: 30, handler: nil)
   }
+
+  func testCaptureToFile_setsMaxPhotoDimensionsWhenResolutionPresetIsMax() throws {
+    guard #available(iOS 16.0, *) else {
+      throw XCTSkip("maxPhotoDimensions requires iOS 16.")
+    }
+
+    let settingsExpectation = expectation(
+      description: "Must set maxPhotoDimensions to the output's configured value.")
+    let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
+
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    configuration.captureSessionQueue = captureSessionQueue
+    configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
+      resolutionPreset: PlatformResolutionPreset.max)
+    let cam = CameraTestUtils.createTestCamera(configuration)
+
+    let expectedDimensions = CMVideoDimensions(width: 4032, height: 3024)
+    let mockOutput = MockCapturePhotoOutput()
+    mockOutput.maxPhotoDimensions = expectedDimensions
+    mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
+      XCTAssertEqual(settings.maxPhotoDimensions.width, expectedDimensions.width)
+      XCTAssertEqual(settings.maxPhotoDimensions.height, expectedDimensions.height)
+      let delegate = cam.inProgressSavePhotoDelegates[settings.uniqueID]
+      let ioQueue = DispatchQueue(label: "io_queue")
+      ioQueue.async {
+        delegate?.completionHandler(delegate?.filePath, nil)
+      }
+      settingsExpectation.fulfill()
+    }
+    cam.capturePhotoOutput = mockOutput
+
+    captureSessionQueue.async {
+      cam.captureToFile { _ in }
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+  }
+
+  func testCaptureToFile_doesNotSetMaxPhotoDimensionsWhenResolutionPresetIsNotMax() throws {
+    guard #available(iOS 16.0, *) else {
+      throw XCTSkip("maxPhotoDimensions requires iOS 16.")
+    }
+
+    let settingsExpectation = expectation(
+      description: "Must leave maxPhotoDimensions unset for non-max presets.")
+    let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
+    let cam = createCam(with: captureSessionQueue)
+
+    let mockOutput = MockCapturePhotoOutput()
+    mockOutput.maxPhotoDimensions = CMVideoDimensions(width: 4032, height: 3024)
+    mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
+      XCTAssertEqual(settings.maxPhotoDimensions.width, 0)
+      XCTAssertEqual(settings.maxPhotoDimensions.height, 0)
+      let delegate = cam.inProgressSavePhotoDelegates[settings.uniqueID]
+      let ioQueue = DispatchQueue(label: "io_queue")
+      ioQueue.async {
+        delegate?.completionHandler(delegate?.filePath, nil)
+      }
+      settingsExpectation.fulfill()
+    }
+    cam.capturePhotoOutput = mockOutput
+
+    captureSessionQueue.async {
+      cam.captureToFile { _ in }
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+  }
+
+  func testCaptureToFile_setsMaxPhotoDimensionsWhenFileFormatIsHeif() throws {
+    guard #available(iOS 16.0, *) else {
+      throw XCTSkip("maxPhotoDimensions requires iOS 16.")
+    }
+
+    let settingsExpectation = expectation(
+      description: "Must set maxPhotoDimensions on the HEIF settings instance.")
+    let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
+
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    configuration.captureSessionQueue = captureSessionQueue
+    configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
+      resolutionPreset: PlatformResolutionPreset.max)
+    let cam = CameraTestUtils.createTestCamera(configuration)
+    cam.setImageFileFormat(PlatformImageFileFormat.heif)
+
+    let expectedDimensions = CMVideoDimensions(width: 4032, height: 3024)
+    let mockOutput = MockCapturePhotoOutput()
+    mockOutput.availablePhotoCodecTypes = [AVVideoCodecType.hevc]
+    mockOutput.maxPhotoDimensions = expectedDimensions
+    mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
+      XCTAssertEqual(settings.maxPhotoDimensions.width, expectedDimensions.width)
+      XCTAssertEqual(settings.maxPhotoDimensions.height, expectedDimensions.height)
+      let delegate = cam.inProgressSavePhotoDelegates[settings.uniqueID]
+      let ioQueue = DispatchQueue(label: "io_queue")
+      ioQueue.async {
+        delegate?.completionHandler(delegate?.filePath, nil)
+      }
+      settingsExpectation.fulfill()
+    }
+    cam.capturePhotoOutput = mockOutput
+
+    captureSessionQueue.async {
+      cam.captureToFile { _ in }
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+  }
+
+  func testCaptureToFile_setsMaxPhotoDimensionsWhenJpegQualityIsBelow100() throws {
+    guard #available(iOS 16.0, *) else {
+      throw XCTSkip("maxPhotoDimensions requires iOS 16.")
+    }
+
+    let settingsExpectation = expectation(
+      description: "Must set maxPhotoDimensions on the reduced-quality JPEG settings instance.")
+    let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
+
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    configuration.captureSessionQueue = captureSessionQueue
+    configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
+      resolutionPreset: PlatformResolutionPreset.max)
+    let cam = CameraTestUtils.createTestCamera(configuration)
+    cam.setJpegImageQuality(80)
+
+    let expectedDimensions = CMVideoDimensions(width: 4032, height: 3024)
+    let mockOutput = MockCapturePhotoOutput()
+    mockOutput.maxPhotoDimensions = expectedDimensions
+    mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
+      XCTAssertEqual(settings.maxPhotoDimensions.width, expectedDimensions.width)
+      XCTAssertEqual(settings.maxPhotoDimensions.height, expectedDimensions.height)
+      let delegate = cam.inProgressSavePhotoDelegates[settings.uniqueID]
+      let ioQueue = DispatchQueue(label: "io_queue")
+      ioQueue.async {
+        delegate?.completionHandler(delegate?.filePath, nil)
+      }
+      settingsExpectation.fulfill()
+    }
+    cam.capturePhotoOutput = mockOutput
+
+    captureSessionQueue.async {
+      cam.captureToFile { _ in }
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+  }
 }
