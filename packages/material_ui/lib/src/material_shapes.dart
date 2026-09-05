@@ -427,7 +427,7 @@ abstract final class MaterialShapes {
       final List<({double angle, double distance})> measures = List.generate(points.length, (i) {
         final _PointNRound point = points[i];
         final Point off = point.p - center;
-        return (angle: off.angleRadians, distance: off.getDistance());
+        return (angle: off.direction, distance: off.distance);
       });
       final int actualReps = reps * 2;
       final double sectionAngle = math.pi * 2 / actualReps;

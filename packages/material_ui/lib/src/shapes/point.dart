@@ -33,10 +33,6 @@ extension PointGeometry on Offset {
   /// The vertical coordinate of this point.
   double get y => dy;
 
-  /// The angle of this point in radians, measured clockwise from the positive
-  /// X axis.
-  double get angleRadians => direction;
-
   /// Returns this point rotated a quarter turn counterclockwise around (0, 0).
   Point rotate90() => Point(-y, x);
 
@@ -48,20 +44,6 @@ extension PointGeometry on Offset {
     final double sin = math.sin(radians);
     return Point(off.x * cos - off.y * sin, off.x * sin + off.y * cos) + center;
   }
-
-  /// The magnitude of the [Point], which is the distance of this point from
-  /// (0, 0).
-  ///
-  /// If you need this value to compare it to another [Point]'s distance,
-  /// consider using [getDistanceSquared] instead, since it is cheaper to
-  /// compute.
-  double getDistance() => distance;
-
-  /// The square of the magnitude (which is the distance of this point from
-  /// (0, 0)) of the [Point].
-  ///
-  /// This is cheaper than computing the [getDistance] itself.
-  double getDistanceSquared() => distanceSquared;
 
   /// The dot product of this point and [other], both taken as vectors.
   double dotProduct(Point other) => x * other.x + y * other.y;
@@ -75,11 +57,10 @@ extension PointGeometry on Offset {
   /// are co-linear.
   bool clockwise(Point other) => (x * other.y - y * other.x) > 0;
 
-  /// Returns the unit vector representing the direction to this point from
-  /// (0, 0).
-  Point getDirection() {
-    final double d = getDistance();
-    assert(d > 0, "Can't get the direction of a 0-length vector");
+  /// The unit vector pointing from (0, 0) towards this point.
+  Point get unitVector {
+    final double d = distance;
+    assert(d > 0, "Can't compute the unit vector of a zero-length vector");
     return this / d;
   }
 

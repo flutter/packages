@@ -198,7 +198,7 @@ double featureDistSquared(Feature f1, Feature f2) {
     return double.maxFinite;
   }
 
-  return (featureRepresentativePoint(f1) - featureRepresentativePoint(f2)).getDistanceSquared();
+  return (featureRepresentativePoint(f1) - featureRepresentativePoint(f2)).distanceSquared;
 }
 
 /// Returns the point that best represents [feature] when matching features

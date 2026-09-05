@@ -34,11 +34,11 @@ double distance(double x, double y) => math.sqrt(x * x + y * y);
 @internal
 double distanceSquared(double x, double y) => x * x + y * y;
 
-/// Returns unit vector representing the direction to this point from (0, 0).
+/// Returns the unit vector pointing from (0, 0) towards ([x], [y]).
 @internal
-Point directionVector(double x, double y) {
+Point unitVector(double x, double y) {
   final double d = distance(x, y);
-  assert(d > 0, 'Required distance greater than zero.');
+  assert(d > 0, "Can't compute the unit vector of a zero-length vector");
   return Point(x / d, y / d);
 }
 
@@ -100,7 +100,7 @@ bool collinearIsh(
   final Point ab = Point(bX - aX, bY - aY).rotate90();
   final ac = Point(cX - aX, cY - aY);
   final double dotProduct = ab.dotProduct(ac).abs();
-  final double relativeTolerance = tolerance * ab.getDistance() * ac.getDistance();
+  final double relativeTolerance = tolerance * ab.distance * ac.distance;
 
   return dotProduct < tolerance || dotProduct < relativeTolerance;
 }

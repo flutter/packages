@@ -876,8 +876,8 @@ class _RoundedCorner {
   _RoundedCorner(this.p0, this.p1, this.p2, this.rounding) {
     final Point v01 = p0 - p1;
     final Point v21 = p2 - p1;
-    final double d01 = v01.getDistance();
-    final double d21 = v21.getDistance();
+    final double d01 = v01.distance;
+    final double d21 = v21.distance;
 
     if (d01 > 0 && d21 > 0) {
       d1 = v01 / d01;
@@ -967,7 +967,7 @@ class _RoundedCorner {
     // Distance from the corner (p1) to the center
     final double centerDistance = math.sqrt(square(actualR) + square(actualRoundCut));
     // Center of the arc we will use for rounding
-    center = p1 + ((d1 + d2) / 2).getDirection() * centerDistance;
+    center = p1 + ((d1 + d2) / 2).unitVector * centerDistance;
     final Point circleIntersection0 = p1 + d1 * actualRoundCut;
     final Point circleIntersection2 = p1 + d2 * actualRoundCut;
     final CubicBezier flanking0 = _computeFlankingCurve(
@@ -1050,7 +1050,7 @@ class _RoundedCorner {
     double actualR,
   ) {
     // sideStart is the anchor, 'anchor' is actual control point
-    final Point sideDirection = (sideStart - corner).getDirection();
+    final Point sideDirection = (sideStart - corner).unitVector;
     final Point curveStart = corner + sideDirection * actualRoundCut * (1 + actualSmoothingValues);
 
     // We use an approximation to cut a part of the circle section proportional
@@ -1064,7 +1064,7 @@ class _RoundedCorner {
 
     // The flanking curve ends on the circle
     final Point curveEnd =
-        circleCenter + directionVector(p.x - circleCenter.x, p.y - circleCenter.y) * actualR;
+        circleCenter + unitVector(p.x - circleCenter.x, p.y - circleCenter.y) * actualR;
 
     // The anchor on the circle segment side is in the intersection between the
     // tangent to the circle in the circle/flanking curve boundary and the
