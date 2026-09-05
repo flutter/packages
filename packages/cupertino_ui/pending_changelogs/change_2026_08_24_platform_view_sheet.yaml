@@ -1,0 +1,3 @@
+changelog: |
+  - Add `hasPlatformViews` to Cupertino sheet transitions to keep platform views synchronized with the underlying route.
+version: minor
