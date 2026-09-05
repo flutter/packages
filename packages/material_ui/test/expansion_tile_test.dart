@@ -2230,6 +2230,34 @@ void main() {
     );
   });
   group('Semantics tests for android platform', () {
+    // Regression test for https://github.com/flutter/flutter/issues/188298.
+    testWidgets('ExpansionTile supports being embedded in a WidgetSpan', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle handle = tester.ensureSemantics();
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: Text.rich(
+              TextSpan(
+                children: <InlineSpan>[
+                  WidgetSpan(
+                    child: ExpansionTile(
+                      title: Text('Header'),
+                      children: <Widget>[Text('Details')],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Header'), findsOneWidget);
+      handle.dispose();
+    }, variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.android}));
+
     testWidgets('Semantics liveregion updates when expansion state changes', (
       WidgetTester tester,
     ) async {
