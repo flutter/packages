@@ -5,11 +5,10 @@
 import Flutter
 import GoogleMaps
 import Testing
-import google_maps_flutter_ios_sdk10_objc
 
 @testable import google_maps_flutter_ios_sdk10
 
-class MockCATransaction: NSObject, MapAnimationCATransactionProtocol {
+class MockCATransaction: MapAnimationCATransactionProtocol {
   var beginCalled = false
   var commitCalled = false
   var animationDuration: CFTimeInterval = 0.0
@@ -129,12 +128,9 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     let mockTransactionWrapper = MockCATransaction()
     controller.callHandler.transactionWrapper = mockTransactionWrapper
 
-    let zoomTo = FGMPlatformCameraUpdateZoomTo.make(withZoom: 10.0)
-    let cameraUpdate = FGMPlatformCameraUpdate.make(withCameraUpdate: zoomTo)
-    var error: FlutterError? = nil
+    let zoomTo = PlatformCameraUpdateZoomTo(zoom: 10.0)
 
-    controller.callHandler.animateCamera(with: cameraUpdate, duration: nil, error: &error)
-    #expect(error == nil)
+    try controller.callHandler.animateCamera(zoomTo, duration: nil)
     #expect(mapView.didAnimateCamera)
     #expect(!mockTransactionWrapper.beginCalled)
     #expect(!mockTransactionWrapper.commitCalled)
@@ -161,21 +157,14 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     let mockTransactionWrapper = MockCATransaction()
     controller.callHandler.transactionWrapper = mockTransactionWrapper
 
-    let zoomTo = FGMPlatformCameraUpdateZoomTo.make(withZoom: 10.0)
-    let cameraUpdate = FGMPlatformCameraUpdate.make(withCameraUpdate: zoomTo)
-    var error: FlutterError? = nil
+    let zoomTo = PlatformCameraUpdateZoomTo(zoom: 10.0)
 
-    let durationMilliseconds: NSNumber = 100
-    controller.callHandler.animateCamera(
-      with: cameraUpdate,
-      duration: durationMilliseconds,
-      error: &error
-    )
-    #expect(error == nil)
+    let durationMilliseconds: Int64 = 100
+    try controller.callHandler.animateCamera(zoomTo, duration: durationMilliseconds)
     #expect(mapView.didAnimateCamera)
     #expect(mockTransactionWrapper.beginCalled)
     #expect(mockTransactionWrapper.commitCalled)
-    #expect(mockTransactionWrapper.animationDuration == durationMilliseconds.doubleValue / 1000)
+    #expect(mockTransactionWrapper.animationDuration == Double(durationMilliseconds) / 1000)
   }
 
   @Test func inspectorAPICameraPosition() throws {
@@ -201,9 +190,7 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     let inspector = MapInspector(messenger: binaryMessenger, pigeonSuffix: "0")
     inspector.controller = controller
 
-    var error: FlutterError? = nil
-    let cameraPosition = try #require(inspector.cameraPosition(&error))
-    #expect(error == nil)
+    let cameraPosition = try inspector.cameraPosition()
 
     #expect(cameraPosition.target.latitude == initialCameraPosition.target.latitude)
     #expect(cameraPosition.target.longitude == initialCameraPosition.target.longitude)
@@ -212,16 +199,16 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
 
   /// Creates an empty creation parameters object for tests where the values don't matter, just that
   /// there's a valid object to pass in.
-  private func emptyCreationParameters() -> FGMPlatformMapViewCreationParams {
-    return FGMPlatformMapViewCreationParams.make(
-      withInitialCameraPosition: FGMPlatformCameraPosition.make(
-        withBearing: 0.0,
-        target: FGMPlatformLatLng.make(withLatitude: 0.0, longitude: 0.0),
+  private func emptyCreationParameters() -> PlatformMapViewCreationParams {
+    return PlatformMapViewCreationParams(
+      initialCameraPosition: PlatformCameraPosition(
+        bearing: 0.0,
+        target: PlatformLatLng(latitude: 0.0, longitude: 0.0),
         tilt: 0.0,
         zoom: 0.0
       ),
-      mapConfiguration: FGMPlatformMapConfiguration.make(
-        withCompassEnabled: nil,
+      mapConfiguration: PlatformMapConfiguration(
+        compassEnabled: nil,
         cameraTargetBounds: nil,
         mapType: nil,
         minMaxZoomPreference: nil,
@@ -267,6 +254,7 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
 
     #expect(mapView.frameObserverCount == 1)
 
+    withExtendedLifetime(controller) {}
     // Deallocate the controller
     controller = nil
 
@@ -288,8 +276,8 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     #expect(controller.styleError != nil)
 
     // Update config without style
-    let config = FGMPlatformMapConfiguration.make(
-      withCompassEnabled: true,
+    let config = PlatformMapConfiguration(
+      compassEnabled: true,
       cameraTargetBounds: nil,
       mapType: nil,
       minMaxZoomPreference: nil,

@@ -6,11 +6,7 @@ import Flutter
 import GoogleMaps
 import UIKit
 
-#if canImport(google_maps_flutter_ios_sdk10_objc)
-  import google_maps_flutter_ios_sdk10_objc
-#endif
-
-extension FGMPlatformBitmap {
+extension PlatformBitmap {
   /// Creates a UIImage from the Pigeon bitmap representation, suitable for use as a marker icon.
   func createIcon(
     assetProvider: AssetProvider,
@@ -20,18 +16,15 @@ extension FGMPlatformBitmap {
 
     var image: UIImage?
 
-    // See comment in messages.dart for why this is so loosely typed. See also
-    // https://github.com/flutter/flutter/issues/117819.
-    switch bitmap {
-    case let bitmap as FGMPlatformBitmapDefaultMarker:
-      let hue = bitmap.hue?.doubleValue ?? 0
+    switch self {
+    case let bitmap as PlatformBitmapDefaultMarker:
       image = GMSMarker.markerImage(
         with: UIColor(
-          hue: CGFloat(hue) / 360.0,
+          hue: CGFloat(bitmap.hue ?? 0) / 360.0,
           saturation: 1.0,
           brightness: 0.7,
           alpha: 1.0))
-    case let bitmap as FGMPlatformBitmapAsset:
+    case let bitmap as PlatformBitmapAsset:
       // Deprecated: This message handling for 'fromAsset' has been replaced by 'asset'.
       // Refer to the flutter google_maps_flutter_platform_interface package for details.
       if let pkg = bitmap.pkg {
@@ -43,7 +36,7 @@ extension FGMPlatformBitmap {
           image = assetProvider.imageNamed(key)
         }
       }
-    case let bitmap as FGMPlatformBitmapAssetImage:
+    case let bitmap as PlatformBitmapAssetImage:
       // Deprecated: This message handling for 'fromAssetImage' has been replaced by 'asset'.
       // Refer to the flutter google_maps_flutter_platform_interface package for details.
       if let key = assetProvider.lookupKey(forAsset: bitmap.name) {
@@ -51,11 +44,11 @@ extension FGMPlatformBitmap {
           image = scaledImage(assetImage, scale: bitmap.scale)
         }
       }
-    case let bitmap as FGMPlatformBitmapBytes:
+    case let bitmap as PlatformBitmapBytes:
       // Deprecated: This message handling for 'fromBytes' has been replaced by 'bytes'.
       // Refer to the flutter google_maps_flutter_platform_interface package for details.
       image = UIImage(data: bitmap.byteData.data, scale: screenScale)
-    case let bitmap as FGMPlatformBitmapAssetMap:
+    case let bitmap as PlatformBitmapAssetMap:
       if let key = assetProvider.lookupKey(forAsset: bitmap.assetName) {
         image = assetProvider.imageNamed(key)
       }
@@ -69,7 +62,7 @@ extension FGMPlatformBitmap {
           image = scaledImage(currentImage, scale: CGFloat(bitmap.imagePixelRatio))
         }
       }
-    case let bitmap as FGMPlatformBitmapBytesMap:
+    case let bitmap as PlatformBitmapBytesMap:
       let bytes = bitmap.byteData
       image = UIImage(data: bytes.data, scale: screenScale)
       if let currentImage = image {
@@ -88,7 +81,7 @@ extension FGMPlatformBitmap {
           image = UIImage(data: bytes.data)
         }
       }
-    case let bitmap as FGMPlatformBitmapPinConfig:
+    case let bitmap as PlatformBitmapPinConfig:
       let options = GMSPinImageOptions()
       if let backgroundColor = bitmap.backgroundColor {
         options.backgroundColor = backgroundColor.toUIColor()
@@ -209,16 +202,16 @@ private func scaledImage(_ image: UIImage, to size: CGSize) -> UIImage {
 /// widht and height are not given.
 private func scaledImage(
   _ image: UIImage,
-  width: NSNumber?,
-  height: NSNumber?,
+  width: Double?,
+  height: Double?,
   screenScale: CGFloat
 ) -> UIImage {
   if width == nil && height == nil {
     return image
   }
 
-  let targetWidth = width == nil ? image.size.width : CGFloat(width!.doubleValue)
-  let targetHeight = height == nil ? image.size.height : CGFloat(height!.doubleValue)
+  let targetWidth = width ?? image.size.width
+  let targetHeight = height ?? image.size.height
 
   var calculatedWidth = targetWidth
   var calculatedHeight = targetHeight

@@ -714,57 +714,43 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     switch (update.updateType) {
       case CameraUpdateType.newCameraPosition:
         update as CameraUpdateNewCameraPosition;
-        return PlatformCameraUpdate(
-          cameraUpdate: PlatformCameraUpdateNewCameraPosition(
-            cameraPosition: _platformCameraPositionFromCameraPosition(update.cameraPosition),
-          ),
+        return PlatformCameraUpdateNewCameraPosition(
+          cameraPosition: _platformCameraPositionFromCameraPosition(update.cameraPosition),
         );
       case CameraUpdateType.newLatLng:
         update as CameraUpdateNewLatLng;
-        return PlatformCameraUpdate(
-          cameraUpdate: PlatformCameraUpdateNewLatLng(
-            latLng: _platformLatLngFromLatLng(update.latLng),
-          ),
-        );
+        return PlatformCameraUpdateNewLatLng(latLng: _platformLatLngFromLatLng(update.latLng));
       case CameraUpdateType.newLatLngZoom:
         update as CameraUpdateNewLatLngZoom;
-        return PlatformCameraUpdate(
-          cameraUpdate: PlatformCameraUpdateNewLatLngZoom(
-            latLng: _platformLatLngFromLatLng(update.latLng),
-            zoom: update.zoom,
-          ),
+        return PlatformCameraUpdateNewLatLngZoom(
+          latLng: _platformLatLngFromLatLng(update.latLng),
+          zoom: update.zoom,
         );
       case CameraUpdateType.newLatLngBounds:
         update as CameraUpdateNewLatLngBounds;
-        return PlatformCameraUpdate(
-          cameraUpdate: PlatformCameraUpdateNewLatLngBounds(
-            bounds: _platformLatLngBoundsFromLatLngBounds(update.bounds)!,
-            padding: update.padding,
-          ),
+        return PlatformCameraUpdateNewLatLngBounds(
+          bounds: _platformLatLngBoundsFromLatLngBounds(update.bounds)!,
+          padding: update.padding,
         );
       case CameraUpdateType.zoomTo:
         update as CameraUpdateZoomTo;
-        return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateZoomTo(zoom: update.zoom));
+        return PlatformCameraUpdateZoomTo(zoom: update.zoom);
       case CameraUpdateType.zoomBy:
         update as CameraUpdateZoomBy;
         final Offset? focus = update.focus;
-        return PlatformCameraUpdate(
-          cameraUpdate: PlatformCameraUpdateZoomBy(
-            amount: update.amount,
-            focus: focus == null ? null : _platformPointFromOffset(focus),
-          ),
+        return PlatformCameraUpdateZoomBy(
+          amount: update.amount,
+          focus: focus == null ? null : _platformPointFromOffset(focus),
         );
       case CameraUpdateType.zoomIn:
         update as CameraUpdateZoomIn;
-        return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateZoom(out: false));
+        return PlatformCameraUpdateZoom(out: false);
       case CameraUpdateType.zoomOut:
         update as CameraUpdateZoomOut;
-        return PlatformCameraUpdate(cameraUpdate: PlatformCameraUpdateZoom(out: true));
+        return PlatformCameraUpdateZoom(out: true);
       case CameraUpdateType.scrollBy:
         update as CameraUpdateScrollBy;
-        return PlatformCameraUpdate(
-          cameraUpdate: PlatformCameraUpdateScrollBy(dx: update.dx, dy: update.dy),
-        );
+        return PlatformCameraUpdateScrollBy(dx: update.dx, dy: update.dy);
     }
   }
 
@@ -816,51 +802,41 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   static PlatformBitmap platformBitmapFromBitmapDescriptor(BitmapDescriptor bitmap) {
     switch (bitmap) {
       case final DefaultMarker marker:
-        return PlatformBitmap(bitmap: PlatformBitmapDefaultMarker(hue: marker.hue?.toDouble()));
+        return PlatformBitmapDefaultMarker(hue: marker.hue?.toDouble());
       // Clients may still use this deprecated format, so it must be supported.
       // ignore: deprecated_member_use
       case final BytesBitmap bytes:
         final Size? size = bytes.size;
-        return PlatformBitmap(
-          bitmap: PlatformBitmapBytes(
-            byteData: bytes.byteData,
-            size: (size == null) ? null : _platformSizeFromSize(size),
-          ),
+        return PlatformBitmapBytes(
+          byteData: bytes.byteData,
+          size: (size == null) ? null : _platformSizeFromSize(size),
         );
       case final AssetBitmap asset:
-        return PlatformBitmap(
-          bitmap: PlatformBitmapAsset(name: asset.name, pkg: asset.package),
-        );
+        return PlatformBitmapAsset(name: asset.name, pkg: asset.package);
       // Clients may still use this deprecated format, so it must be supported.
       // ignore: deprecated_member_use
       case final AssetImageBitmap asset:
         final Size? size = asset.size;
-        return PlatformBitmap(
-          bitmap: PlatformBitmapAssetImage(
-            name: asset.name,
-            scale: asset.scale,
-            size: (size == null) ? null : _platformSizeFromSize(size),
-          ),
+        return PlatformBitmapAssetImage(
+          name: asset.name,
+          scale: asset.scale,
+          size: (size == null) ? null : _platformSizeFromSize(size),
         );
       case final AssetMapBitmap asset:
-        return PlatformBitmap(
-          bitmap: PlatformBitmapAssetMap(
-            assetName: asset.assetName,
-            bitmapScaling: platformMapBitmapScalingFromScaling(asset.bitmapScaling),
-            imagePixelRatio: asset.imagePixelRatio,
-            width: asset.width,
-            height: asset.height,
-          ),
+        return PlatformBitmapAssetMap(
+          assetName: asset.assetName,
+          bitmapScaling: platformMapBitmapScalingFromScaling(asset.bitmapScaling),
+          imagePixelRatio: asset.imagePixelRatio,
+          width: asset.width,
+          height: asset.height,
         );
       case final BytesMapBitmap bytes:
-        return PlatformBitmap(
-          bitmap: PlatformBitmapBytesMap(
-            byteData: bytes.byteData,
-            bitmapScaling: platformMapBitmapScalingFromScaling(bytes.bitmapScaling),
-            imagePixelRatio: bytes.imagePixelRatio,
-            width: bytes.width,
-            height: bytes.height,
-          ),
+        return PlatformBitmapBytesMap(
+          byteData: bytes.byteData,
+          bitmapScaling: platformMapBitmapScalingFromScaling(bytes.bitmapScaling),
+          imagePixelRatio: bytes.imagePixelRatio,
+          width: bytes.width,
+          height: bytes.height,
         );
       case final PinConfig pinConfig:
         final PlatformColor? backgroundColor = pinConfig.backgroundColor != null
@@ -871,38 +847,30 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
             : null;
         switch (pinConfig.glyph) {
           case final CircleGlyph circleGlyph:
-            return PlatformBitmap(
-              bitmap: PlatformBitmapPinConfig(
-                backgroundColor: backgroundColor,
-                borderColor: borderColor,
-                glyphColor: _platformColorFromColor(circleGlyph.color),
-              ),
+            return PlatformBitmapPinConfig(
+              backgroundColor: backgroundColor,
+              borderColor: borderColor,
+              glyphColor: _platformColorFromColor(circleGlyph.color),
             );
           case final TextGlyph textGlyph:
-            return PlatformBitmap(
-              bitmap: PlatformBitmapPinConfig(
-                backgroundColor: backgroundColor,
-                borderColor: borderColor,
-                glyphText: textGlyph.text,
-                glyphTextColor: textGlyph.textColor != null
-                    ? _platformColorFromColor(textGlyph.textColor!)
-                    : null,
-              ),
+            return PlatformBitmapPinConfig(
+              backgroundColor: backgroundColor,
+              borderColor: borderColor,
+              glyphText: textGlyph.text,
+              glyphTextColor: textGlyph.textColor != null
+                  ? _platformColorFromColor(textGlyph.textColor!)
+                  : null,
             );
           case final BitmapGlyph bitmapGlyph:
-            return PlatformBitmap(
-              bitmap: PlatformBitmapPinConfig(
-                backgroundColor: backgroundColor,
-                borderColor: borderColor,
-                glyphBitmap: platformBitmapFromBitmapDescriptor(bitmapGlyph.bitmap),
-              ),
+            return PlatformBitmapPinConfig(
+              backgroundColor: backgroundColor,
+              borderColor: borderColor,
+              glyphBitmap: platformBitmapFromBitmapDescriptor(bitmapGlyph.bitmap),
             );
           case null:
-            return PlatformBitmap(
-              bitmap: PlatformBitmapPinConfig(
-                backgroundColor: backgroundColor,
-                borderColor: borderColor,
-              ),
+            return PlatformBitmapPinConfig(
+              backgroundColor: backgroundColor,
+              borderColor: borderColor,
             );
         }
 

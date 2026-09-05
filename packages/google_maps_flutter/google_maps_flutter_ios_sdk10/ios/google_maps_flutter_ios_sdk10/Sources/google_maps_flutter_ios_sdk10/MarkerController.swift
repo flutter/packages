@@ -6,12 +6,8 @@ import Flutter
 import GoogleMaps
 import UIKit
 
-#if canImport(google_maps_flutter_ios_sdk10_objc)
-  import google_maps_flutter_ios_sdk10_objc
-#endif
-
 /// Defines marker controllable by Flutter.
-class MarkerController: NSObject {
+class MarkerController {
   let marker: GMSMarker
   private weak var mapView: GMSMapView?
   private(set) var consumeTapEvents: Bool = false
@@ -22,7 +18,6 @@ class MarkerController: NSObject {
     self.marker = marker
     self.markerIdentifier = markerIdentifier
     self.mapView = mapView
-    super.init()
   }
 
   func showInfoWindow() {
@@ -43,11 +38,11 @@ class MarkerController: NSObject {
     marker.map = nil
   }
 
-  /// Updates the controller's marker with the properties from a FGMPlatformMarker.
+  /// Updates the controller's marker with the properties from a PlatformMarker.
   ///
   /// Setting the marker to visible will set its map to the controller's mapView.
   func update(
-    from platformMarker: FGMPlatformMarker,
+    from platformMarker: PlatformMarker,
     assetProvider: AssetProvider,
     screenScale: CGFloat
   ) {
@@ -71,12 +66,12 @@ class MarkerController: NSObject {
     )
   }
 
-  /// Updates the given GMSMarker with the properties from a FGMPlatformMarker.
+  /// Updates the given GMSMarker with the properties from a PlatformMarker.
   ///
   /// Setting the marker to visible will set its map to the given mapView.
   static func update(
     _ marker: GMSMarker,
-    from platformMarker: FGMPlatformMarker,
+    from platformMarker: PlatformMarker,
     mapView: GMSMapView?,
     assetProvider: AssetProvider,
     screenScale: CGFloat,
@@ -102,7 +97,7 @@ class MarkerController: NSObject {
     if let advancedMarker = marker as? GMSAdvancedMarker,
       let collisionBehaviorValue = platformMarker.collisionBehavior
     {
-      advancedMarker.collisionBehavior = collisionBehaviorValue.value.gmsCollisionBehavior
+      advancedMarker.collisionBehavior = collisionBehaviorValue.gmsCollisionBehavior
     }
 
     // This must be done last, to avoid visual flickers of default property values.
@@ -116,36 +111,35 @@ class MarkerController: NSObject {
 }
 
 /// Controller of multiple markers on the map.
-class MarkersController: NSObject {
+class MarkersController {
   private(set) var markerIdentifierToController: [String: MarkerController] = [:]
   private weak var eventDelegate: MapEventDelegate?
   private weak var clusterManagersController: ClusterManagersController?
   private let assetProvider: AssetProvider
   private weak var mapView: GMSMapView?
-  private let markerType: FGMPlatformMarkerType
+  private let markerType: PlatformMarkerType
 
   init(
     mapView: GMSMapView,
     eventDelegate: MapEventDelegate,
     clusterManagersController: ClusterManagersController?,
     assetProvider: AssetProvider,
-    markerType: FGMPlatformMarkerType
+    markerType: PlatformMarkerType
   ) {
     self.mapView = mapView
     self.eventDelegate = eventDelegate
     self.clusterManagersController = clusterManagersController
     self.assetProvider = assetProvider
     self.markerType = markerType
-    super.init()
   }
 
-  func add(_ markersToAdd: [FGMPlatformMarker]) {
+  func add(_ markersToAdd: [PlatformMarker]) {
     for marker in markersToAdd {
       addMarker(marker)
     }
   }
 
-  private func addMarker(_ markerToAdd: FGMPlatformMarker) {
+  private func addMarker(_ markerToAdd: PlatformMarker) {
     guard let mapView = mapView else { return }
     let position = markerToAdd.position.toCLLocationCoordinate2D()
     let markerIdentifier = markerToAdd.markerId
@@ -175,13 +169,13 @@ class MarkersController: NSObject {
     markerIdentifierToController[markerIdentifier] = controller
   }
 
-  func change(_ markersToChange: [FGMPlatformMarker]) {
+  func change(_ markersToChange: [PlatformMarker]) {
     for marker in markersToChange {
       changeMarker(marker)
     }
   }
 
-  private func changeMarker(_ markerToChange: FGMPlatformMarker) {
+  private func changeMarker(_ markerToChange: PlatformMarker) {
     let markerIdentifier = markerToChange.markerId
     guard let controller = markerIdentifierToController[markerIdentifier] else { return }
 
@@ -223,7 +217,7 @@ class MarkersController: NSObject {
 
   func didTapMarker(withIdentifier identifier: String) -> Bool {
     guard let controller = markerIdentifierToController[identifier] else { return false }
-    eventDelegate?.didTapMarker(withIdentifier: identifier)
+    eventDelegate?.didTapMarker(withIdentifier: identifier) { _ in }
     return controller.consumeTapEvents
   }
 
@@ -231,76 +225,63 @@ class MarkersController: NSObject {
     guard markerIdentifierToController[identifier] != nil else { return }
     eventDelegate?.didStartDragForMarker(
       withIdentifier: identifier,
-      at: FGMPlatformLatLng.make(from: location)
-    )
+      at: PlatformLatLng.make(from: location)
+    ) { _ in }
   }
 
   func didDragMarker(withIdentifier identifier: String, location: CLLocationCoordinate2D) {
     guard markerIdentifierToController[identifier] != nil else { return }
     eventDelegate?.didDragMarker(
       withIdentifier: identifier,
-      at: FGMPlatformLatLng.make(from: location)
-    )
+      at: PlatformLatLng.make(from: location)
+    ) { _ in }
   }
 
   func didEndDraggingMarker(withIdentifier identifier: String, location: CLLocationCoordinate2D) {
     guard markerIdentifierToController[identifier] != nil else { return }
     eventDelegate?.didEndDragForMarker(
       withIdentifier: identifier,
-      at: FGMPlatformLatLng.make(from: location)
-    )
+      at: PlatformLatLng.make(from: location)
+    ) { _ in }
   }
 
   func didTapInfoWindowOfMarker(withIdentifier identifier: String) {
     if markerIdentifierToController[identifier] != nil {
-      eventDelegate?.didTapInfoWindowOfMarker(withIdentifier: identifier)
+      eventDelegate?.didTapInfoWindowOfMarker(withIdentifier: identifier) { _ in }
     }
   }
 
-  func showMarkerInfoWindow(
-    withIdentifier identifier: String,
-    error: AutoreleasingUnsafeMutablePointer<FlutterError?>
-  ) {
-    if let controller = markerIdentifierToController[identifier] {
-      controller.showInfoWindow()
-    } else {
-      error.pointee = FlutterError(
+  func showMarkerInfoWindow(withIdentifier identifier: String) throws {
+    guard let controller = markerIdentifierToController[identifier] else {
+      throw PigeonError(
         code: "Invalid markerId",
         message: "showInfoWindow called with invalid markerId",
         details: nil
       )
     }
+    controller.showInfoWindow()
   }
 
-  func hideMarkerInfoWindow(
-    withIdentifier identifier: String,
-    error: AutoreleasingUnsafeMutablePointer<FlutterError?>
-  ) {
-    if let controller = markerIdentifierToController[identifier] {
-      controller.hideInfoWindow()
-    } else {
-      error.pointee = FlutterError(
+  func hideMarkerInfoWindow(withIdentifier identifier: String) throws {
+    guard let controller = markerIdentifierToController[identifier] else {
+      throw PigeonError(
         code: "Invalid markerId",
         message: "hideInfoWindow called with invalid markerId",
         details: nil
       )
     }
+    controller.hideInfoWindow()
   }
 
-  func isInfoWindowShownForMarker(
-    withIdentifier identifier: String,
-    error: AutoreleasingUnsafeMutablePointer<FlutterError?>
-  ) -> NSNumber? {
-    if let controller = markerIdentifierToController[identifier] {
-      return NSNumber(value: controller.isInfoWindowShown())
-    } else {
-      error.pointee = FlutterError(
+  func isInfoWindowShownForMarker(withIdentifier identifier: String) throws -> Bool {
+    guard let controller = markerIdentifierToController[identifier] else {
+      throw PigeonError(
         code: "Invalid markerId",
         message: "isInfoWindowShown called with invalid markerId",
         details: nil
       )
-      return nil
     }
+    return controller.isInfoWindowShown()
   }
 
   func getScreenScale() -> CGFloat {
