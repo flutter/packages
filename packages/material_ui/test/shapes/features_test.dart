@@ -136,5 +136,23 @@ void main() {
         CornerFeature([translatedCubic]),
       );
     });
+
+    test('toString names the feature type', () {
+      final cubic = CubicBezier(
+        Offset.zero,
+        const Offset(1, 0),
+        const Offset(2, 0),
+        const Offset(3, 0),
+      );
+      const cubicString =
+          'CubicBezier(anchor0: (0.0, 0.0), control0: (1.0, 0.0), '
+          'control1: (2.0, 0.0), anchor1: (3.0, 0.0))';
+
+      expect(EdgeFeature([cubic]).toString(), 'EdgeFeature(cubics: [$cubicString])');
+      expect(
+        CornerFeature([cubic], convex: false).toString(),
+        'CornerFeature(cubics: [$cubicString], convex: false)',
+      );
+    });
   });
 }

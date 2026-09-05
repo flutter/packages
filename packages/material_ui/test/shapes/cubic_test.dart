@@ -151,6 +151,14 @@ void main() {
     test('point CubicBezier has zero length', () {
       expect(CubicBezier.point(const Point(10, 10)).isZeroLength, isTrue);
     });
+
+    test('toString', () {
+      expect(
+        CubicBezier(Point.zero, const Point(1, 0), const Point(2, 0), const Point(3, 0)).toString(),
+        'CubicBezier(anchor0: (0.0, 0.0), control0: (1.0, 0.0), '
+        'control1: (2.0, 0.0), anchor1: (3.0, 0.0))',
+      );
+    });
   });
 
   group('pathFromCubics', () {

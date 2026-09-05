@@ -158,6 +158,16 @@ void main() {
       expect(polygon.cubics.length, cubicCount);
     });
 
+    test('toString names the type and its parts', () {
+      final description = square.toString();
+
+      expect(description, startsWith('RoundedPolygon(center: Offset(0.0, 0.0), features: ['));
+      expect(description, contains('EdgeFeature(cubics: ['));
+      expect(description, contains('CornerFeature(cubics: ['));
+      expect(description, contains(', cubics: [CubicBezier(anchor0: '));
+      expect(description, endsWith(')])'));
+    });
+
     test('transform keeps contiguous anchors equal', () {
       final RoundedPolygon poly = RoundedPolygon(4, rounding: const CornerRounding(radius: 7 / 15))
           .transformed((x, y) {

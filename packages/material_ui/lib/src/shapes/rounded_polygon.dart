@@ -797,10 +797,8 @@ class RoundedPolygon {
 
   @override
   String toString() {
-    return '[RoundedPolygon. '
-        'Cubics = ${cubics.join(", ")}'
-        ' || Features = ${features.join(", ")}'
-        ' || Center = (${_center.x}, ${_center.y})]';
+    return '${objectRuntimeType(this, 'RoundedPolygon')}'
+        '(center: $center, features: $features, cubics: $cubics)';
   }
 
   @override

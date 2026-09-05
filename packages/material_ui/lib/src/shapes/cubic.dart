@@ -387,10 +387,11 @@ class CubicBezier {
 
   @override
   String toString() {
-    return 'anchor0: ($anchor0X, $anchor0Y) '
+    return '${objectRuntimeType(this, 'CubicBezier')}'
+        '(anchor0: ($anchor0X, $anchor0Y), '
         'control0: ($control0X, $control0Y), '
         'control1: ($control1X, $control1Y), '
-        'anchor1: ($anchor1X, $anchor1Y)';
+        'anchor1: ($anchor1X, $anchor1Y))';
   }
 
   @override

@@ -180,7 +180,7 @@ class EdgeFeature extends Feature {
   bool get isConcaveCorner => false;
 
   @override
-  String toString() => 'Edge';
+  String toString() => '${objectRuntimeType(this, 'EdgeFeature')}(cubics: $_cubics)';
 }
 
 /// Corners contain the list of cubic curves which describe how the corner is
@@ -224,8 +224,8 @@ class CornerFeature extends Feature {
 
   @override
   String toString() {
-    return 'Corner: cubics=${_cubics.map((c) => '[$c]').join(', ')} '
-        'convex=$convex';
+    return '${objectRuntimeType(this, 'CornerFeature')}'
+        '(cubics: $_cubics, convex: $convex)';
   }
 
   @override
