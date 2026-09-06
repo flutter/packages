@@ -577,6 +577,46 @@ void main() {
     expect(getItem(5), findsNothing);
   });
 
+  testWidgets(
+    'CarouselView.weighted pointerScroll scales delta by flexWeights ratio (regression test for #160350)',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: CarouselView.weighted(
+              itemSnapping: true,
+              consumeMaxWeight: false,
+              flexWeights: const <int>[1, 7],
+              children: List<Widget>.generate(10, (int index) {
+                return Center(child: Text('Item $index'));
+              }),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      Finder getItem(int index) => find.text('Item $index');
+
+      // Show initial items: item 0 and 1.
+      expect(getItem(0), findsOneWidget);
+      expect(getItem(1), findsOneWidget);
+      expect(getItem(2), findsNothing);
+
+      // Scroll with a mouse wheel / trackpad gesture of 100px.
+      // With scaling (1/7 ratio), a 100px gesture produces an effective delta of ~14.3px,
+      // which remains within item 0 bounds and snaps back cleanly without skipping items.
+      final testPointer = TestPointer(1, PointerDeviceKind.mouse);
+      testPointer.hover(tester.getCenter(find.byType(CarouselView)));
+      await tester.sendEventToBinding(testPointer.scroll(const Offset(100.0, 0.0)));
+      await tester.pumpAndSettle();
+
+      expect(getItem(0), findsOneWidget);
+      expect(getItem(1), findsOneWidget);
+      expect(getItem(2), findsNothing);
+    },
+  );
+
   testWidgets('CarouselView respects scrollingDirection: Axis.vertical', (
     WidgetTester tester,
   ) async {
