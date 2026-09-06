@@ -183,11 +183,17 @@ class Morph {
     CubicBezier? lastCubic;
 
     for (var i = 0; i < _morphMatch.length; i++) {
-      final cubic = CubicBezier.raw(
-        List<double>.generate(8, (j) {
-          return lerp(_morphMatch[i].$1.points[j], _morphMatch[i].$2.points[j], progress);
-        }),
-      );
+      final (CubicBezier from, CubicBezier to) = _morphMatch[i];
+      final cubic = CubicBezier.raw([
+        lerp(from.anchor0X, to.anchor0X, progress),
+        lerp(from.anchor0Y, to.anchor0Y, progress),
+        lerp(from.control0X, to.control0X, progress),
+        lerp(from.control0Y, to.control0Y, progress),
+        lerp(from.control1X, to.control1X, progress),
+        lerp(from.control1Y, to.control1Y, progress),
+        lerp(from.anchor1X, to.anchor1X, progress),
+        lerp(from.anchor1Y, to.anchor1Y, progress),
+      ]);
 
       firstCubic ??= cubic;
       if (lastCubic != null) {
