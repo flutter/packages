@@ -1149,7 +1149,7 @@ void main() {
       ),
     );
 
-    tester
+    await tester
         .state<NavigatorState>(find.byType(Navigator))
         .push(
           MaterialPageRoute<void>(
