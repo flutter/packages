@@ -361,11 +361,28 @@ class CubicBezier {
 
   /// Returns a curve whose coordinates are the sums of this curve's and [o]'s
   /// corresponding coordinates.
-  CubicBezier operator +(CubicBezier o) =>
-      CubicBezier.raw(List.generate(8, (i) => _points[i] + o._points[i]));
+  CubicBezier operator +(CubicBezier o) => CubicBezier.raw([
+    _points[0] + o._points[0],
+    _points[1] + o._points[1],
+    _points[2] + o._points[2],
+    _points[3] + o._points[3],
+    _points[4] + o._points[4],
+    _points[5] + o._points[5],
+    _points[6] + o._points[6],
+    _points[7] + o._points[7],
+  ]);
 
   /// Returns a curve whose coordinates are this curve's multiplied by [x].
-  CubicBezier operator *(double x) => CubicBezier.raw(List.generate(8, (i) => _points[i] * x));
+  CubicBezier operator *(double x) => CubicBezier.raw([
+    _points[0] * x,
+    _points[1] * x,
+    _points[2] * x,
+    _points[3] * x,
+    _points[4] * x,
+    _points[5] * x,
+    _points[6] * x,
+    _points[7] * x,
+  ]);
 
   /// Returns a curve whose coordinates are this curve's divided by [x].
   CubicBezier operator /(double x) => this * (1.0 / x);
