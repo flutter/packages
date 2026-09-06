@@ -194,5 +194,13 @@ void main() {
 
       irregularPolygonMeasure(triangle);
     });
+
+    test('findCubicCutPoint at measure zero returns the curve start', () {
+      final zeroLength = CubicBezier.point(Offset.zero);
+      expect(measurer.findCubicCutPoint(zeroLength, 0), 0);
+
+      final line = CubicBezier.straightLine(Offset.zero, const Offset(1, 0));
+      expect(measurer.findCubicCutPoint(line, 0), 0);
+    });
   });
 }

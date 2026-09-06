@@ -378,6 +378,10 @@ class LengthMeasurer implements Measurer {
   }
 
   (double, double) _closestProgressTo(CubicBezier cubic, double threshold) {
+    if (threshold <= 0.0) {
+      return (0.0, 0.0);
+    }
+
     var total = 0.0;
     var remainder = threshold;
     var prev = Point(cubic.anchor0X, cubic.anchor0Y);
