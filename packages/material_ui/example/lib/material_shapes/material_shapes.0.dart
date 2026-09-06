@@ -22,7 +22,7 @@ class MaterialShapesExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(colorSchemeSeed: const Color(0xFF6750A4)),
-      home: MaterialShapesExample(),
+      home: const MaterialShapesExample(),
     );
   }
 }
