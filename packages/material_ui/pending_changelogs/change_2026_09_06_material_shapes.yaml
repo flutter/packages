@@ -1,0 +1,7 @@
+changelog: |
+  - Adds the shapes library for creating and morphing rounded polygonal shapes:
+    `RoundedPolygon`, `CornerRounding`, `CubicBezier`, `Feature`, and `Morph`.
+  - Adds `MaterialShapes`, the catalog of predefined Material Design shapes.
+  - Adds `MaterialShapeBorder` for drawing a `RoundedPolygon` as an `OutlinedBorder`.
+  - Adds an example that morphs through the shapes in `MaterialShapes.all`.
+version: minor

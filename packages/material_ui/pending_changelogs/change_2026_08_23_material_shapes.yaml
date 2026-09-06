@@ -1,6 +1,0 @@
-changelog: |
-  - Adds `MaterialShapes`, the catalog of Material Design shapes, built on the new
-    `RoundedPolygon`, `Morph` and `CornerRounding` geometry APIs.
-  - Adds `MaterialShapeBorder` for drawing a `RoundedPolygon` as an `OutlinedBorder`.
-  - Adds a `MaterialShapes` example that morphs through the shapes in `MaterialShapes.all`.
-version: minor
