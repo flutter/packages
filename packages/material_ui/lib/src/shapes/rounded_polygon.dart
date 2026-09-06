@@ -400,7 +400,7 @@ class RoundedPolygon {
       throw ArgumentError('Pill shapes must have positive width and height.');
     }
     if (innerRadiusRatio <= 0 || innerRadiusRatio > 1) {
-      throw ArgumentError('innerRadius must in (0, 1] range.');
+      throw ArgumentError('innerRadiusRatio must be in (0, 1] range.');
     }
     if (vertexSpacing < 0 || vertexSpacing > 1) {
       throw ArgumentError('vertexSpacing must be in [0, 1] range.');
