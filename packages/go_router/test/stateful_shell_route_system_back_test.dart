@@ -89,92 +89,104 @@ void main() {
       expect(find.text('Home'), findsOneWidget);
     });
 
-    testWidgets('does not pop inactive StatefulShellRoute branches', (WidgetTester tester) async {
-      final pops = <String>[];
-      StatefulNavigationShell? navigationShell;
-      addTearDown(() async {
-        await tester.pumpWidget(const SizedBox.shrink());
+    for (final usePageBuilder in <bool>[false, true]) {
+      testWidgets('does not pop inactive StatefulShellRoute branches with '
+          '${usePageBuilder ? 'pageBuilder' : 'builder'}', (WidgetTester tester) async {
+        final pops = <String>[];
+        StatefulNavigationShell? navigationShell;
+        addTearDown(() async {
+          await tester.pumpWidget(const SizedBox.shrink());
+          await tester.pump();
+        });
+
+        final GoRouter router = await createRouter(
+          <RouteBase>[
+            StatefulShellRoute.indexedStack(
+              builder: (BuildContext context, GoRouterState state, StatefulNavigationShell shell) {
+                navigationShell = shell;
+                return shell;
+              },
+              branches: <StatefulShellBranch>[
+                StatefulShellBranch(
+                  observers: <NavigatorObserver>[_RecordingNavigatorObserver('/A', pops)],
+                  routes: <RouteBase>[
+                    _buildBranchRoute(
+                      path: '/A1',
+                      title: 'Stack A - 1',
+                      canPop: false,
+                      usePageBuilder: usePageBuilder,
+                      routes: <RouteBase>[
+                        _buildBranchRoute(
+                          path: '/A2',
+                          title: 'Stack A - 2',
+                          usePageBuilder: usePageBuilder,
+                          routes: <RouteBase>[
+                            _buildBranchRoute(
+                              path: '/A3',
+                              title: 'Stack A - 3',
+                              usePageBuilder: usePageBuilder,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                StatefulShellBranch(
+                  observers: <NavigatorObserver>[_RecordingNavigatorObserver('/B', pops)],
+                  routes: <RouteBase>[
+                    _buildBranchRoute(
+                      path: '/B1',
+                      title: 'Stack B - 1',
+                      canPop: false,
+                      usePageBuilder: usePageBuilder,
+                    ),
+                  ],
+                ),
+                StatefulShellBranch(
+                  observers: <NavigatorObserver>[_RecordingNavigatorObserver('/C', pops)],
+                  routes: <RouteBase>[
+                    _buildBranchRoute(
+                      path: '/C1',
+                      title: 'Stack C - 1',
+                      canPop: false,
+                      usePageBuilder: usePageBuilder,
+                      routes: <RouteBase>[
+                        _buildBranchRoute(
+                          path: '/C2',
+                          title: 'Stack C - 2',
+                          usePageBuilder: usePageBuilder,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+          tester,
+          initialLocation: '/A1',
+        );
+
+        router.go('/A1/A2/A3');
+        await tester.pumpAndSettle();
+        expect(find.text('Stack A - 3'), findsOneWidget);
+
+        router.go('/C1/C2');
+        await tester.pumpAndSettle();
+        expect(find.text('Stack C - 2'), findsOneWidget);
+
+        navigationShell!.goBranch(1);
+        await tester.pumpAndSettle();
+        expect(find.text('Stack B - 1'), findsOneWidget);
+
+        await simulateAndroidPredictiveBackGesture(tester);
         await tester.pump();
+
+        expect(find.text('Stack B - 1'), findsOneWidget);
+        expect(pops, isEmpty);
       });
-
-      final GoRouter router = await createRouter(
-        <RouteBase>[
-          StatefulShellRoute.indexedStack(
-            builder: (BuildContext context, GoRouterState state, StatefulNavigationShell shell) {
-              navigationShell = shell;
-              return shell;
-            },
-            branches: <StatefulShellBranch>[
-              StatefulShellBranch(
-                observers: <NavigatorObserver>[_RecordingNavigatorObserver('/A', pops)],
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: '/A1',
-                    builder: (_, _) => const _BranchScreen(title: 'Stack A - 1', canPop: false),
-                    routes: <RouteBase>[
-                      GoRoute(
-                        path: '/A2',
-                        builder: (_, _) => const _BranchScreen(title: 'Stack A - 2'),
-                        routes: <RouteBase>[
-                          GoRoute(
-                            path: '/A3',
-                            builder: (_, _) => const _BranchScreen(title: 'Stack A - 3'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              StatefulShellBranch(
-                observers: <NavigatorObserver>[_RecordingNavigatorObserver('/B', pops)],
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: '/B1',
-                    builder: (_, _) => const _BranchScreen(title: 'Stack B - 1', canPop: false),
-                  ),
-                ],
-              ),
-              StatefulShellBranch(
-                observers: <NavigatorObserver>[_RecordingNavigatorObserver('/C', pops)],
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: '/C1',
-                    builder: (_, _) => const _BranchScreen(title: 'Stack C - 1', canPop: false),
-                    routes: <RouteBase>[
-                      GoRoute(
-                        path: '/C2',
-                        builder: (_, _) => const _BranchScreen(title: 'Stack C - 2'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-        tester,
-        initialLocation: '/A1',
-      );
-
-      router.go('/A1/A2/A3');
-      await tester.pumpAndSettle();
-      expect(find.text('Stack A - 3'), findsOneWidget);
-
-      router.go('/C1/C2');
-      await tester.pumpAndSettle();
-      expect(find.text('Stack C - 2'), findsOneWidget);
-
-      navigationShell!.goBranch(1);
-      await tester.pumpAndSettle();
-      expect(find.text('Stack B - 1'), findsOneWidget);
-
-      await simulateAndroidPredictiveBackGesture(tester);
-      await tester.pump();
-
-      expect(find.text('Stack B - 1'), findsOneWidget);
-      expect(pops, isEmpty);
-    });
+    }
   });
 }
 
@@ -274,6 +286,25 @@ class _BranchScreen extends StatelessWidget {
       child: Scaffold(body: Center(child: Text(title))),
     );
   }
+}
+
+GoRoute _buildBranchRoute({
+  required String path,
+  required String title,
+  required bool usePageBuilder,
+  bool canPop = true,
+  List<RouteBase> routes = const <RouteBase>[],
+}) {
+  final Widget child = _BranchScreen(title: title, canPop: canPop);
+  return GoRoute(
+    path: path,
+    builder: usePageBuilder ? null : (_, _) => child,
+    pageBuilder: usePageBuilder
+        ? (_, GoRouterState state) =>
+              MaterialPage<void>(key: state.pageKey, name: path, child: child)
+        : null,
+    routes: routes,
+  );
 }
 
 class _RecordingNavigatorObserver extends NavigatorObserver {

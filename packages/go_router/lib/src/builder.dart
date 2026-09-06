@@ -166,6 +166,15 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   late Map<Page<Object?>, RouteMatchBase> _pageToRouteMatchBase;
   final GoRouterStateRegistry _registry = GoRouterStateRegistry();
   List<Page<Object?>>? _pages;
+  late final _BranchNavigatorPopScopeObserver? _branchNavigatorPopScopeObserver;
+
+  @override
+  void initState() {
+    super.initState();
+    _branchNavigatorPopScopeObserver = widget.navigatorActive == null
+        ? null
+        : _BranchNavigatorPopScopeObserver(widget.navigatorActive!);
+  }
 
   @override
   void didUpdateWidget(_CustomNavigator oldWidget) {
@@ -195,6 +204,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
 
   @override
   void dispose() {
+    _branchNavigatorPopScopeObserver?.dispose();
     _controller?.dispose();
     _registry.dispose();
     super.dispose();
@@ -373,15 +383,12 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   Page<Object?> _buildPlatformAdapterPage(BuildContext context, GoRouterState state, Widget child) {
     // build the page based on app type
     _cacheAppType(context);
-    final Widget pageChild = widget.navigatorActive == null
-        ? child
-        : _BranchNavigatorPopScope(navigatorActive: widget.navigatorActive!, child: child);
     return _pageBuilderForAppType!(
       key: state.pageKey,
       name: state.name ?? state.path,
       arguments: <String, String>{...state.pathParameters, ...state.uri.queryParameters},
       restorationId: state.pageKey.value,
-      child: pageChild,
+      child: child,
     );
   }
 
@@ -442,7 +449,9 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
           requestFocus: widget.requestFocus,
           restorationScopeId: widget.navigatorRestorationId,
           pages: _pages!,
-          observers: widget.observers,
+          observers: _branchNavigatorPopScopeObserver == null
+              ? widget.observers
+              : <NavigatorObserver>[...widget.observers, _branchNavigatorPopScopeObserver],
           onPopPage: _handlePopPage,
         ),
       ),
@@ -450,20 +459,30 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   }
 }
 
-class _BranchNavigatorPopScope extends StatelessWidget {
-  const _BranchNavigatorPopScope({required this.navigatorActive, required this.child});
+class _BranchNavigatorPopScopeObserver extends NavigatorObserver implements PopEntry<Object?> {
+  _BranchNavigatorPopScopeObserver(this.navigatorActive);
 
   final ValueListenable<bool> navigatorActive;
-  final Widget child;
+  ModalRoute<Object?>? _route;
 
   @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: navigatorActive,
-      child: child,
-      builder: (BuildContext context, bool isActive, Widget? child) {
-        return PopScope<Object?>(canPop: isActive, child: child!);
-      },
-    );
+  ValueListenable<bool> get canPopNotifier => navigatorActive;
+
+  @override
+  void onPopInvoked(bool didPop) {}
+
+  @override
+  void onPopInvokedWithResult(bool didPop, Object? result) {}
+
+  @override
+  void didChangeTop(Route<dynamic> topRoute, Route<dynamic>? previousTopRoute) {
+    _route?.unregisterPopEntry(this);
+    _route = topRoute is ModalRoute<Object?> ? topRoute : null;
+    _route?.registerPopEntry(this);
+  }
+
+  void dispose() {
+    _route?.unregisterPopEntry(this);
+    _route = null;
   }
 }
