@@ -7,11 +7,13 @@ library;
 
 import 'package:flutter/foundation.dart';
 
-/// Defines the amount and quality around a given vertex of a shape.
-/// [radius] defines the radius of the circle which forms the basis of
-/// the rounding for the vertex. [smoothing] defines the amount by which the
-/// curve is extended from the circular arc around the corner to the
-/// edge between vertices.
+/// Defines the amount and quality of rounding around a given vertex of a
+/// shape.
+///
+/// [radius] defines the radius of the circle which forms the basis of the
+/// rounding for the vertex. [smoothing] defines the amount by which the curve
+/// is extended from the circular arc around the corner to the edge between
+/// vertices.
 ///
 /// Each corner of a shape can be thought of as either:
 ///   1) unrounded (with a corner radius of 0 and no smoothing).

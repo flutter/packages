@@ -22,8 +22,10 @@ bool progressInRange(double progress, double progressFrom, double progressTo) {
   }
 }
 
-/// Maps from one set of progress values to another. This is used to retrieve
-/// the value on one shape that maps to the appropriate value on the other.
+/// Maps from one set of progress values to another.
+///
+/// This is used to retrieve the value on one shape that maps to the
+/// appropriate value on the other.
 @internal
 double linearMap(List<double> xValues, List<double> yValues, double x) {
   assert(x >= 0 && x <= 1, 'Invalid progress $x');
@@ -58,9 +60,11 @@ double linearMap(List<double> xValues, List<double> yValues, double x) {
 }
 
 /// [DoubleMapper] creates mappings from values in the [0..1) source space to
-/// values in the [0..1) target space, and back. This mapping is created given
-/// a finite list of representative mappings, and this is extended to the whole
-/// interval by linear interpolation, and wrapping around.
+/// values in the [0..1) target space, and back.
+///
+/// This mapping is created given a finite list of representative mappings, and
+/// this is extended to the whole interval by linear interpolation, and
+/// wrapping around.
 ///
 /// For example, if we have mappings 0.2 to 0.5 and 0.4 to 0.6, then 0.3
 /// (which is in the middle of the source interval) will be mapped to 0.55
@@ -91,6 +95,9 @@ class DoubleMapper {
     validateProgress(_targetValues);
   }
 
+  // Any 2 points in the (x, x) diagonal, with x in the [0, 1) range, define
+  // the identity mapping. They are spread out as much as possible to minimize
+  // floating point errors.
   static final identity = DoubleMapper([(0.0, 0.0), (0.5, 0.5)]);
 
   late final List<double> _sourceValues;
@@ -140,6 +147,7 @@ void validateProgress(List<double> p) {
 }
 
 /// Distance between two progress values, considering wrap-around.
+///
 /// For example, the distance between 0.99 and 0.0 is 0.01.
 @internal
 double progressDistance(double p1, double p2) {

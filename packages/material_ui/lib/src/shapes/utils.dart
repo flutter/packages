@@ -95,13 +95,10 @@ bool convex(Point previous, Point current, Point next) {
   return (current - previous).turnsClockwiseTo(next - current);
 }
 
-/// Does a ternary search in [v0..v1] to find the parameter that minimizes the
-/// given function.
-/// Stops when the search space size is reduced below the given tolerance.
+/// Does a ternary search in [v0]..[v1] to find the parameter that minimizes
+/// the given function.
 ///
-// NTS: Does it make sense to split the function f in 2, one to generate a
-// candidate, of a custom type T (i.e. (Float) -> T), and one to evaluate it
-// ( (T) -> Float )?
+/// Stops when the search space size is reduced below the given tolerance.
 @internal
 double findMinimum(double v0, double v1, double Function(double) f, {double tolerance = 1e-3}) {
   var a = v0;

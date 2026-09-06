@@ -14,7 +14,7 @@ import 'polygon_measure.dart';
 import 'rounded_polygon.dart';
 import 'utils.dart';
 
-/// This class is used to animate between start and end polygons objects.
+/// An animation between two [RoundedPolygon] shapes.
 ///
 /// Morphing between arbitrary objects can be problematic because it can be
 /// difficult to determine how the points of a given shape map to the points of
@@ -164,20 +164,14 @@ class Morph {
   /// meant to hold this morph in any rotation.
   Rect get maxBounds => start.maxBounds.expandToInclude(end.maxBounds);
 
-  /// Returns a representation of the morph object at a given [progress] value
-  /// as a list of [CubicBezier]s. Note that this function causes a new list to be
-  /// created and populated, so there is some
-  /// overhead.
+  /// Returns this morph's shape at [progress] as a list of [CubicBezier]s.
   ///
-  /// [progress] is a value from 0 to 1 that determines the morph's current
-  /// shape, between the start and end shapes provided at construction time. A
-  /// value of 0 results in the start shape, a value of 1 results in the end
-  /// shape, and any value in between results in a shape which is a linear
-  /// interpolation between those two shapes.
+  /// [progress] runs from 0 at [start] to 1 at [end], and a value in between
+  /// gives a linear interpolation of the two. Values a little outside that
+  /// range give an exaggerated effect, useful for a bounce or an overshoot,
+  /// but values far outside it produce undefined shapes.
   ///
-  /// The range is generally [0..1] and values outside could result in
-  /// undefined shapes, but values close to (but outside) the range can be used
-  /// to get an exaggerated effect (e.g., for a bounce or overshoot animation).
+  /// This creates and populates a new list on every call.
   List<CubicBezier> toCubics(double progress) {
     final result = <CubicBezier>[];
 
@@ -220,9 +214,11 @@ class Morph {
     return result;
   }
 
-  /// Returns a [Path] for a [Morph].
+  /// Returns a [Path] for this morph's shape at [progress].
   ///
-  /// [progress] is the [Morph]'s progress.
+  /// [progress] runs from 0 at [start] to 1 at [end], and a value in between
+  /// gives a linear interpolation of the two. See [toCubics] for what values
+  /// outside that range do.
   ///
   /// [startAngle] places the start point of the first curve at that angle, in
   /// radians, around [rotationPivot], rotating the whole path to get it there.
@@ -231,13 +227,13 @@ class Morph {
   /// The default of zero is special: it skips the rotation entirely and leaves
   /// the curves as [toCubics] produced them.
   ///
-  /// [repeatPath] is whether or not to repeat the [Path] twice before closing
-  /// it. This flag is useful when the caller would like to draw parts of the
-  /// path while offsetting the start and stop positions (for example, when
-  /// phasing and rotating a path to simulate a motion as a Star circular
-  /// progress indicator advances).
+  /// If [repeatPath] is true, the curves are added twice before the [Path] is
+  /// closed. This is useful when the caller would like to draw parts of the
+  /// path while offsetting the start and stop positions, for example when
+  /// phasing and rotating a path to simulate motion as a star-shaped circular
+  /// progress indicator advances.
   ///
-  /// [closePath] is whether or not to close the created [Path].
+  /// If [closePath] is false, the returned [Path] is left open.
   ///
   /// [rotationPivot] is the point [startAngle] rotates the path around, and the
   /// point its angle is measured from. It defaults to the origin, which suits a

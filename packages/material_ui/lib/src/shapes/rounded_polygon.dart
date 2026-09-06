@@ -16,48 +16,25 @@ import 'features.dart';
 import 'point.dart';
 import 'utils.dart';
 
-/// The RoundedPolygon class allows simple construction of polygonal shapes
-/// with optional rounding at the vertices. Polygons can be constructed with
-/// either the number of vertices desired or an ordered list of vertices.
+/// A closed polygonal shape, with optional rounding at its vertices.
+///
+/// A polygon can be built from a number of vertices, from an ordered list of
+/// vertices, or from a list of [Feature]s.
 @immutable
 class RoundedPolygon {
-  /// This constructor takes the number of vertices in the resulting polygon.
-  /// These vertices are positioned on a virtual circle around a given center
-  /// with each vertex positioned [radius] distance from that center, equally
-  /// spaced (with equal angles between them). If no radius is supplied, the
-  /// shape will be created with a default radius of 1, resulting in a shape
-  /// whose vertices lie on a unit circle, with width/height of 2. That default
-  /// polygon will probably need to be rescaled using [transformed] into the
-  /// appropriate size for the UI in which it will be drawn.
+  /// Creates a regular polygon with [numVertices] vertices, equally spaced
+  /// around a circle of the given [radius] about [center].
   ///
-  /// The [rounding] and [perVertexRounding] parameters are optional. If not
-  /// supplied, the result will be a regular polygon with straight edges and
-  /// unrounded corners.
+  /// The default radius of 1 puts the vertices on the unit circle, giving a
+  /// shape 2 wide and 2 high, which will usually need rescaling with
+  /// [transformed] to suit the UI it is drawn in.
   ///
-  /// [numVertices] is the number of vertices in this polygon.
+  /// [rounding] rounds every vertex the same way. [perVertexRounding]
+  /// overrides it, and must have [numVertices] elements when it is not null.
+  /// The default leaves the corners sharp and the edges straight.
   ///
-  /// [radius] is the radius of the polygon, in pixels. This radius determines
-  /// the initial size of the object, but it can be transformed later by using
-  /// the [transformed] function.
-  ///
-  /// [center] is the center of the polygon, around which all vertices will be
-  /// placed. The default center is at (0,0).
-  ///
-  /// [rounding] is the [CornerRounding] properties of all vertices. If some
-  /// vertices should have different rounding properties, then use
-  /// [perVertexRounding] instead. The default rounding value is
-  /// [CornerRounding.unrounded], meaning that the polygon will use the
-  /// vertices themselves in the final shape and not curves rounded around the
-  /// vertices.
-  ///
-  /// [perVertexRounding] is the [CornerRounding] properties of every vertex.
-  /// If this parameter is not null, then it must have [numVertices] elements.
-  /// If this parameter is null, then the polygon will use the [rounding]
-  /// parameter for every vertex instead. The default value is null.
-  ///
-  /// Throws [ArgumentError] if [perVertexRounding] is not null and its size
-  /// is not equal to [numVertices].
-  /// Throws [ArgumentError] when [numVertices] is less than 3.
+  /// Throws [ArgumentError] if [numVertices] is less than 3, or if
+  /// [perVertexRounding] has the wrong number of elements.
   factory RoundedPolygon(
     int numVertices, {
     double radius = 1,
@@ -96,35 +73,20 @@ class RoundedPolygon {
     }
   }
 
-  /// This function takes the vertices (either supplied or calculated,
-  /// depending on the constructor called), plus [CornerRounding] parameters,
-  /// and creates the actual [RoundedPolygon] shape, rounding around the
-  /// vertices (or not) as specified. The result is a list of [CubicBezier] curves
-  /// which represent the geometry of the final shape.
+  /// Creates a polygon with the given [vertices].
   ///
-  /// [vertices] is the list of vertices in this polygon. This should be an
-  /// ordered list (with the outline of the shape going from each vertex to the
-  /// next in order of this list), otherwise the results will be undefined.
+  /// The list must be ordered: the outline runs from each vertex to the next
+  /// and closes from the last back to the first. Any other order gives
+  /// undefined results.
   ///
-  /// [rounding] is the [CornerRounding] properties of all vertices. If some
-  /// vertices should have different rounding properties, then use
-  /// [perVertexRounding] instead. The default rounding value is
-  /// [CornerRounding.unrounded], meaning that the polygon will use the
-  /// vertices themselves in the final shape and not curves rounded around the
-  /// vertices.
+  /// [rounding] rounds every vertex the same way. [perVertexRounding]
+  /// overrides it, and must have the same length as [vertices] when it is not
+  /// null. The default leaves the corners sharp and the edges straight.
   ///
-  /// [perVertexRounding] is the [CornerRounding] properties of all vertices.
-  /// If this parameter is not null, then it must have the same size as
-  /// [vertices]. If this parameter is null, then the polygon will use the
-  /// [rounding] parameter for every vertex instead. The default value is null.
+  /// [center] defaults to the average of [vertices].
   ///
-  /// [center] is the center of the polygon, around which all vertices will be
-  /// placed. If `null` (the default value), the center is estimated by
-  /// averaging the [vertices].
-  ///
-  /// Throws [ArgumentError] if the number of vertices is less than 3, or if
-  /// the [perVertexRounding] parameter is not null and its size doesn't match
-  /// the number of vertices.
+  /// Throws [ArgumentError] if [vertices] has fewer than 3 elements, or if
+  /// [perVertexRounding] has the wrong number of elements.
   factory RoundedPolygon.fromVertices(
     List<Offset> vertices, {
     CornerRounding rounding = CornerRounding.unrounded,
@@ -219,25 +181,18 @@ class RoundedPolygon {
     return RoundedPolygon.fromFeatures(tempFeatures, center: center ?? calculateCenter(vertices));
   }
 
-  /// Takes a list of [Feature] objects that define the polygon's shape and
-  /// curves. By specifying the features directly, the summarization of [CubicBezier]
-  /// objects to curves can be precisely controlled. This affects [Morph]'s
-  /// default mapping, as curves with the same type (convex or concave) are
-  /// mapped with each other. For example, if you have a convex curve in your
-  /// start polygon, [Morph] will map it to another convex curve in the end
-  /// polygon.
+  /// Creates a polygon from [features], which describe each segment of its
+  /// outline.
   ///
-  /// The [center] parameter is optional. If not supplied, it will be estimated
-  /// by calculating the average of all cubic anchor points.
+  /// Specifying the features directly controls precisely how the polygon's
+  /// [CubicBezier]s are grouped into curves, and it is those groups that
+  /// [Morph] maps: it pairs each curve with one of the same type in the other
+  /// shape, convex with convex and concave with concave.
   ///
-  /// [features] are the [Feature]s that describe the characteristics of each
-  /// outline segment of the polygon.
+  /// [center] defaults to the average of every cubic's starting anchor point.
   ///
-  /// [center] is the center of the polygon, around which all vertices will be
-  /// placed. If null (the default value), the center will be averaged.
-  ///
-  /// Throws [ArgumentError] if [features] length is less than 2 or if they
-  /// don't describe a closed shape.
+  /// Throws [ArgumentError] if [features] has fewer than 2 elements, or if the
+  /// features don't describe a closed shape.
   factory RoundedPolygon.fromFeatures(List<Feature> features, {Offset? center}) {
     if (features.length < 2) {
       throw ArgumentError('Polygons must have at least 2 features.');
@@ -258,19 +213,10 @@ class RoundedPolygon {
     return RoundedPolygon._raw(features, calculateCenter(vertices));
   }
 
-  /// Creates a circular shape, approximating the rounding of the shape around
-  /// the underlying polygon
-  /// vertices.
+  /// Creates a circle of the given [radius] about [center], approximated by
+  /// rounding a polygon of [numVertices] vertices.
   ///
-  /// [numVertices] is the number of vertices in the underlying polygon with
-  /// which to approximate the circle, default value is 8.
-  ///
-  /// [radius] is the optional radius for the circle, default value is 1.0.
-  ///
-  /// [center] is the optional center for the circle, default value is
-  /// [Offset.zero].
-  ///
-  /// Throws [ArgumentError] when [numVertices] is less than 3.
+  /// Throws [ArgumentError] if [numVertices] is less than 3.
   factory RoundedPolygon.circle({
     int numVertices = 8,
     double radius = 1,
@@ -293,34 +239,16 @@ class RoundedPolygon {
     );
   }
 
-  /// Creates a rectangular shape with the given width/height around the given
-  /// center. Optional rounding parameters can be used to create a rounded
-  /// rectangle instead.
+  /// Creates a rectangle [width] wide and [height] high about [center], with
+  /// optional rounding at its four corners.
   ///
-  /// As with all [RoundedPolygon] objects, if this shape is created with
-  /// default dimensions and center, it is sized to fit within the 2x2
-  /// bounding box around a center of (0, 0) and will need to be scaled and
-  /// moved using [RoundedPolygon.transformed] to fit the intended area in a UI.
+  /// The default dimensions and center fit the shape into the 2x2 box around
+  /// the origin, which will usually need rescaling with [transformed] to suit
+  /// the UI it is drawn in.
   ///
-  /// [width] is the width of the rectangle, default value is 2.
-  ///
-  /// [height] is the height of the rectangle, default value is 2.
-  ///
-  /// [rounding] is the [CornerRounding] properties of every vertex. If some
-  /// vertices should have different rounding properties, then use
-  /// [perVertexRounding] instead. The default rounding value is
-  /// [CornerRounding.unrounded], meaning that the polygon will use the
-  /// vertices themselves in the final shape and not curves rounded around the
-  /// vertices.
-  ///
-  /// [perVertexRounding] is the [CornerRounding] properties of every vertex.
-  /// If this parameter is not null, then it must be of size 4 for the four
-  /// corners of the shape. If this parameter is null, then the polygon will
-  /// use the [rounding] parameter for every vertex instead. The default value
-  /// is null.
-  ///
-  /// [center] is the center of the rectangle, around which all vertices will
-  /// be placed equidistantly. The default center is at (0,0).
+  /// [rounding] rounds all four corners the same way. [perVertexRounding]
+  /// overrides it, and must have 4 elements when it is not null. The default
+  /// leaves the corners sharp.
   factory RoundedPolygon.rectangle({
     double width = 2,
     double height = 2,
@@ -341,45 +269,21 @@ class RoundedPolygon {
     );
   }
 
-  /// Creates a star polygon, which is like a regular polygon except every
-  /// other vertex is on either an inner or outer radius. The two radii
-  /// specified in the constructor must both both nonzero. If the radii are
-  /// equal, the result will be a regular (not star) polygon with twice the
-  /// number of vertices specified in [numVerticesPerRadius].
+  /// Creates a star about [center], with [numVerticesPerRadius] vertices on
+  /// the outer [radius] alternating with as many on the [innerRadius].
   ///
-  /// [numVerticesPerRadius] is the number of vertices along each of the two
-  /// radii.
+  /// Both radii must be greater than 0, and [innerRadius] must be less than
+  /// [radius].
   ///
-  /// [radius] is the outer radius for this star shape, must be greater than 0.
-  /// Default value is 1.
+  /// [rounding] rounds every vertex the same way. [innerRounding] overrides it
+  /// for the vertices on [innerRadius]. [perVertexRounding] overrides both,
+  /// and must have 2 * [numVerticesPerRadius] elements when it is not null,
+  /// alternating outer and inner starting with an outer vertex. The default
+  /// leaves the corners sharp and the edges straight.
   ///
-  /// [innerRadius] is the inner radius for this star shape, must be greater
-  /// than 0 and less than or equal to [radius]. Note that equal radii would
-  /// be the same as creating a [RoundedPolygon] directly, but with
-  /// 2 * [numVerticesPerRadius] vertices. Default value is 0.5.
-  ///
-  /// [rounding] is the [CornerRounding] properties of every vertex. If some
-  /// vertices should have different rounding properties, then use
-  /// [perVertexRounding] instead. The default rounding value is
-  /// [CornerRounding.unrounded], meaning that the polygon will use the
-  /// vertices themselves in the final shape and not curves rounded around the
-  /// vertices.
-  ///
-  /// [innerRounding] is the optional rounding parameters for the vertices on
-  /// the [innerRadius]. If null (the default value), inner vertices will use
-  /// the [rounding] or [perVertexRounding] parameters instead.
-  ///
-  /// [perVertexRounding] is the the [CornerRounding] properties of every
-  /// vertex. If this parameter is not null, then it must have the same size as
-  /// 2 * [numVerticesPerRadius]. If this parameter is null, then the polygon
-  /// will use the [rounding] parameter for every vertex instead. The default
-  /// value is null.
-  ///
-  /// [center] is the center of the polygon, around which all vertices will be
-  /// placed. The default center is at (0,0).
-  ///
-  /// Throws [ArgumentError] if either [radius] or [innerRadius] are <= 0 or
-  /// [innerRadius] > [radius].
+  /// Throws [ArgumentError] if either radius is not greater than 0, if
+  /// [innerRadius] is not less than [radius], or if [perVertexRounding] has
+  /// the wrong number of elements.
   factory RoundedPolygon.star({
     required int numVerticesPerRadius,
     double radius = 1,
@@ -416,22 +320,15 @@ class RoundedPolygon {
     );
   }
 
-  /// A pill shape consists of a rectangle shape bounded by two semicircles at
-  /// either of the long ends of the rectangle.
+  /// Creates a pill about [center], [width] wide and [height] high: a
+  /// rectangle capped by a semicircle at either end of its longer dimension.
   ///
-  /// [width] is the width of the resulting shape.
+  /// [smoothing] extends the curve from the circular arc of each cap towards
+  /// the edge between the two caps. The default of 0 leaves the caps as
+  /// circular arcs.
   ///
-  /// [height is the height of the resulting shape.
-  ///
-  /// [smoothing] the amount by which the arc is "smoothed" by extending the
-  /// curve from the circular arc on each endcap to the edge between the
-  /// endcaps. A value of 0 (no smoothing) indicates that the corner is rounded
-  /// by only a circular arc.
-  ///
-  /// [center] is the center of the polygon, around which all vertices will be
-  /// placed. The default center is at (0,0).
-  ///
-  /// Throws [ArgumentError] if either [width] or [height] are <= 0.
+  /// Throws [ArgumentError] if either [width] or [height] is not greater
+  /// than 0.
   factory RoundedPolygon.pill({
     double width = 2,
     double height = 1,
@@ -457,79 +354,36 @@ class RoundedPolygon {
     );
   }
 
-  /// A pillStar shape is like a [RoundedPolygon.pill] except it has inner and
-  /// outer radii along its pill-shaped outline, just like a
-  /// [RoundedPolygon.star] has inner and outer radii along its circular
-  /// outline. The parameters for a [RoundedPolygon.pillStar] are similar to
-  /// those of a [RoundedPolygon.star] except, like [RoundedPolygon.pill], it
-  /// has a [width] and [height] to determine the general shape of the
-  /// underlying pill. Also, there is a subtle complication with the way that
-  /// inner and outer vertices proceed along the circular ends of the
-  /// shape, depending on the magnitudes of the [rounding], [innerRounding],
-  /// and [innerRadiusRatio] parameters. For example, a shape with outer
-  /// vertices that lie along the curved end outline will necessarily have
-  /// inner vertices that are closer to each other, because of the curvature of
-  /// that part of the shape. Conversely, if the inner vertices are lined up
-  /// along the pill outline at the ends, then the outer vertices will be much
-  /// further apart from each other.
+  /// Creates a pill star about [center], [width] wide and [height] high: a
+  /// [RoundedPolygon.pill] with inner and outer radii along its outline, the
+  /// way a [RoundedPolygon.star] has them along a circle, with
+  /// [numVerticesPerRadius] vertices on each.
   ///
-  /// The default approach, reflected by the default value of [vertexSpacing],
-  /// is to use the average of the outer and inner radii, such that each set of
-  /// vertices falls equally to the other side of the pill outline on the
-  /// curved ends. Depending on the values used for the various rounding
-  /// and radius parameters, you may want to change that value to suit the
-  /// look you want. A value of 0 for [vertexSpacing] is equivalent to aligning
-  /// the inner vertices along the circular curve, and a value of 1 is
-  /// equivalent to aligning the outer vertices along that curve.
+  /// [innerRadiusRatio] gives the inner radius as a fraction of the outer one.
+  /// It must be greater than 0 and no greater than 1, and a value of 1 gives a
+  /// pill with more vertices than [RoundedPolygon.pill] would produce.
   ///
-  /// [width] is the width of the resulting shape.
+  /// [rounding] rounds every vertex the same way. [innerRounding] overrides it
+  /// for the inner vertices. [perVertexRounding] overrides both, and must have
+  /// 2 * [numVerticesPerRadius] elements when it is not null.
   ///
-  /// [height] is the height of the resulting shape.
+  /// How the two sets of vertices proceed along the curved ends is subtler
+  /// than on a star, because of the curvature there: outer vertices lying
+  /// along the curved outline force the inner ones closer together, while
+  /// inner vertices lying along it force the outer ones further apart.
+  /// [vertexSpacing] chooses between those extremes. A value of 0 spaces the
+  /// inner vertices as they are spaced along the straight edges, 1 does the
+  /// same for the outer vertices, and the default of 0.5 averages the two, so
+  /// that each set falls equally to either side of the pill outline. Which
+  /// value suits a shape depends on its rounding and radius parameters.
   ///
-  /// [numVerticesPerRadius] is the number of vertices along each of the two
-  /// radii.
+  /// [startLocation] is how far along the perimeter the outline's curves
+  /// begin, from 0 to 1. This is rarely needed or noticed, but it decides
+  /// where the path starts and ends for a caller stroking it gradually.
   ///
-  /// [innerRadiusRatio] is the Inner radius ratio for this star shape, must be
-  /// greater than 0 and less than or equal to 1. Note that a value of 1 would
-  /// be similar to creating a [RoundedPolygon.pill], but with more vertices.
-  /// The default value is 0.5.
-  ///
-  /// [rounding] is the [CornerRounding] properties of every vertex. If some
-  /// vertices should have different rounding properties, then use
-  /// [perVertexRounding] instead. The default rounding value is
-  /// [CornerRounding.unrounded], meaning that the polygon will use the
-  /// vertices themselves in the final shape and not curves rounded around the
-  /// vertices.
-  ///
-  /// [innerRounding] is the optional rounding parameters for the vertices on
-  /// the [innerRadiusRatio]. If null (the default value), inner vertices will
-  /// use the [rounding] or [perVertexRounding] parameters instead.
-  /// [perVertexRounding] is the [CornerRounding] properties of every vertex.
-  /// If this parameter is not null, then it must have the same size as
-  /// 2 * [numVerticesPerRadius]. If this parameter is null, then the polygon
-  /// will use the [rounding] parameter for every vertex instead. The default
-  /// value is null.
-  ///
-  /// [vertexSpacing] is the factor, which determines how the vertices on the
-  /// circular ends are laid out along the outline. A value of 0 aligns spaces
-  /// the inner vertices the same as those along the straight edges, with the
-  /// outer vertices then being spaced further apart. A value of 1 does the
-  /// opposite, with the outer vertices spaced the same as the vertices on the
-  /// straight edges. The default value is .5, which takes the average of these
-  /// two extremes.
-  ///
-  /// [startLocation] is a value from 0 to 1 which determines how far along
-  /// the perimeter of this shape to start the underlying curves of which it is
-  /// comprised. This is not usually needed or noticed by the user. But if the
-  /// caller wants to manually and gradually stroke the path when drawing it,
-  /// it might matter where that path outline begins and ends. The default
-  /// value is 0.
-  ///
-  /// [center] is the center of the polygon, around which all vertices will be
-  /// placed. The default center is at (0,0).
-  ///
-  /// Throws [ArgumentError] if either [width] or [height] are <= 0 or
-  ///  if [innerRadiusRatio] is outside the range of (0, 1].
+  /// Throws [ArgumentError] if either [width] or [height] is not greater
+  /// than 0, if [innerRadiusRatio] is outside the range 0 (exclusive) to 1,
+  /// or if [vertexSpacing] or [startLocation] is outside the range 0 to 1.
   factory RoundedPolygon.pillStar({
     double width = 2,
     double height = 1,
@@ -679,13 +533,8 @@ class RoundedPolygon {
     return cubics;
   }
 
-  /// Transforms (scales/translates/etc.) this [RoundedPolygon] with the given
-  /// [PointTransformer] and returns a new [RoundedPolygon]. This is a low
-  /// level API and there should be more platform idiomatic ways to transform
-  /// a [RoundedPolygon] provided by the platform specific wrapper.
-  ///
-  /// [transformer] is the [PointTransformer] used to transform this
-  /// [RoundedPolygon].
+  /// Returns a new [RoundedPolygon] with every point of this one, including
+  /// its [center], mapped through [transformer].
   RoundedPolygon transformed(PointTransformer transformer) {
     return RoundedPolygon._raw([
       for (var i = 0; i < features.length; i++) features[i].transformed(transformer),
@@ -693,8 +542,8 @@ class RoundedPolygon {
   }
 
   /// A new [RoundedPolygon], moving and resizing this one, so it's completely
-  /// inside the (0, 0) -> (1, 1) square, centered if there extra space in one
-  /// direction.
+  /// inside the (0, 0) -> (1, 1) square, centered if there is extra space in
+  /// one direction.
   RoundedPolygon get normalized {
     final Rect bounds = approximateBounds;
     final double side = math.max(bounds.width, bounds.height);
@@ -757,7 +606,7 @@ class RoundedPolygon {
     return bounds;
   }
 
-  /// Returns a [Path] representation for a [RoundedPolygon] shape.
+  /// Returns a [Path] for this polygon.
   ///
   /// [startAngle] places the start point of the polygon's first curve at that
   /// angle, in radians, around the polygon's [center], rotating the polygon
@@ -766,13 +615,13 @@ class RoundedPolygon {
   /// The default of zero is special: it skips the rotation entirely and leaves
   /// the polygon as it was built.
   ///
-  /// [repeatPath] is whether or not to repeat the [Path] twice before closing
-  /// it. This flag is useful when the caller would like to draw parts of the
-  /// path while offsetting the start and stop positions (for example, when
-  /// phasing and rotating a path to simulate a motion as a Star circular
-  /// progress indicator advances).
+  /// If [repeatPath] is true, the curves are added twice before the [Path] is
+  /// closed. This is useful when the caller would like to draw parts of the
+  /// path while offsetting the start and stop positions, for example when
+  /// phasing and rotating a path to simulate motion as a star-shaped circular
+  /// progress indicator advances.
   ///
-  /// [closePath] is whether or not to close the created [Path].
+  /// If [closePath] is false, the returned [Path] is left open.
   Path toPath({double startAngle = 0, bool repeatPath = false, bool closePath = true}) {
     return pathFromCubics(
       cubics,
@@ -822,36 +671,26 @@ Point calculateCenter(List<Point> vertices) {
   return Point(cumulativeX / vertices.length, cumulativeY / vertices.length);
 }
 
-/// Private utility class that holds the information about each corner in a
-/// polygon. The shape of the corner can be returned by calling the [getCubics]
-/// function, which will return a list of curves representing the corner
-/// geometry. The shape of the corner depends on the [rounding] constructor
-/// parameter.
+/// The geometry of a single corner of a polygon, rounded according to
+/// [rounding].
 ///
-/// If rounding is null, there is no rounding; the corner will simply be a
-/// single point at [p1]. This point will be represented by a [CubicBezier] of length
-/// 0 at that point.
+/// [p0], [p1] and [p2] are three consecutive vertices of the polygon, [p1]
+/// being the one this corner rounds. [getCubics] returns the curves that
+/// describe the rounded corner.
 ///
-/// If rounding is not null, the corner will be rounded either with a curve
-/// approximating a circular arc of the radius specified in [rounding], or with
-/// three curves if [rounding] has a nonzero smoothing parameter. These three
-/// curves are a circular arc in the middle and two symmetrical flanking curves
-/// on either side. The smoothing parameter determines the curvature of the
-/// flanking curves.
+/// If [rounding] is null there is no rounding, and the corner is a single
+/// point at [p1], represented by a [CubicBezier] of length 0 there.
 ///
-/// This is a class because we usually need to do the work in 2 steps, and
-/// prefer to keep state between: first we determine how much we want to cut to
-/// comply with the parameters, then we are given how much we can actually cut
-/// (because of space restrictions outside this corner)
+/// If [rounding] is not null the corner is rounded with a curve approximating
+/// a circular arc of the radius it specifies, or with three curves if it also
+/// has a nonzero smoothing parameter: a circular arc in the middle and two
+/// symmetrical flanking curves on either side, whose curvature the smoothing
+/// parameter determines.
 ///
-/// [p0] is the vertex before the one being rounded.
-///
-/// [p1] is the vertex of this rounded corner.
-///
-/// [p2] the vertex after the one being rounded.
-///
-/// [rounding] the optional parameters specifying how this corner should be
-/// rounded.
+/// This is a class because the work usually happens in two steps, with state
+/// to keep between them: first we determine how much we want to cut to comply
+/// with the parameters, then we are given how much we can actually cut,
+/// because of space restrictions outside this corner.
 class _RoundedCorner {
   _RoundedCorner(this.p0, this.p1, this.p2, this.rounding) {
     final Point v01 = p0 - p1;
@@ -916,9 +755,10 @@ class _RoundedCorner {
   // doubles it.
   double get expectedCut => (1 + smoothing) * expectedRoundCut;
 
-  /// The center of the circle approximated by the rounding curve (or the
-  /// middle of the three curves if smoothing is requested).
-  /// The center is the same as [p0] if there is no rounding.
+  /// The center of the circle approximated by the rounding curve, or by the
+  /// middle of the three curves if smoothing is requested.
+  ///
+  /// This is [p1] itself if there is no rounding.
   Point center = Point.zero;
 
   List<CubicBezier> getCubics(double allowedCut0, double allowedCut1) {
@@ -991,34 +831,19 @@ class _RoundedCorner {
     }
   }
 
-  /// Compute a Bezier to connect the linear segment defined by [corner] and
-  /// [sideStart] with the circular segment defined by [circleCenter],
-  /// [circleSegmentIntersection], [otherCircleSegmentIntersection] and
-  /// [actualR]. The bezier will start at the linear segment and end on the
+  /// Returns a [CubicBezier] smoothly connecting the linear side running from
+  /// [sideStart] to [corner] with the circular segment of radius [actualR]
+  /// about [circleCenter], starting on the linear side and ending on the
   /// circular segment.
   ///
-  /// [actualRoundCut] is how much we are cutting of the corner to add the
-  /// circular segment (this is before smoothing, that will cut some more).
+  /// [actualRoundCut] is how much of the corner we are cutting to add the
+  /// circular segment, before smoothing cuts any more, and
+  /// [actualSmoothingValues] is how much we want to smooth: the smoothing
+  /// parameter, adjusted down if there is not enough room.
   ///
-  /// [actualSmoothingValues] is how much we want to smooth (this is the smooth
-  /// parameter, adjusted down if there is not enough room).
-  ///
-  /// [corner] is the point at which the linear side ends.
-  ///
-  /// [sideStart] is the point at which the linear side starts.
-  ///
-  /// [circleSegmentIntersection] is the point at which the linear side and the
-  /// circle intersect.
-  ///
-  /// [otherCircleSegmentIntersection] is the point at which the opposing
-  /// linear side and the circle intersect.
-  ///
-  /// [circleCenter] is the center of the circle.
-  ///
-  /// [actualR] is the radius of the circle.
-  ///
-  /// Returns a Bezier cubic curve that connects from the (cut) linear side
-  /// and the (cut) circular segment in a smooth way.
+  /// [circleSegmentIntersection] is where the linear side and the circle
+  /// intersect, and [otherCircleSegmentIntersection] is where the opposing
+  /// side and the circle do.
   CubicBezier _computeFlankingCurve(
     double actualRoundCut,
     double actualSmoothingValues,
@@ -1060,8 +885,8 @@ class _RoundedCorner {
     return CubicBezier(curveStart, anchorStart, anchorEnd, curveEnd);
   }
 
-  /// Returns the intersection point of the two lines d0->d1 and p0->p1, or
-  /// null if the lines do not intersect.
+  /// Returns the point where the line through [p0] in direction [d0] meets the
+  /// line through [p1] in direction [d1], or null if the two do not intersect.
   Point? _lineIntersection(Point p0, Point d0, Point p1, Point d1) {
     final Point rotatedD1 = d1.rotate90();
     final double den = d0.dotProduct(rotatedD1);

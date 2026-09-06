@@ -33,7 +33,8 @@ extension PointGeometry on Offset {
   /// The vertical coordinate of this point.
   double get y => dy;
 
-  /// Returns this point rotated a quarter turn counterclockwise around (0, 0).
+  /// Returns this point rotated a quarter turn around (0, 0), taking (x, y)
+  /// to (-y, x).
   Point rotate90() => Point(-y, x);
 
   /// Returns this point rotated by [degrees] around [center].

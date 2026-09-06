@@ -127,11 +127,13 @@ class MeasuredPolygon {
     return _cubics[index];
   }
 
-  /// Finds the point in the input list of measured cubics that pass the given
-  /// outline progress, and generates a new [MeasuredPolygon] (equivalent to
-  /// this), that starts at that point. This usually means cutting the cubic
-  /// that crosses the outline progress (unless the cut is at one of its ends).
-  /// For example, given outline progress 0.4f and measured cubics on these
+  /// Finds the point in the input list of measured cubics that passes the
+  /// given outline progress, and generates a new [MeasuredPolygon] (equivalent
+  /// to this), that starts at that point.
+  ///
+  /// This usually means cutting the cubic that crosses the outline progress
+  /// (unless the cut is at one of its ends).
+  /// For example, given outline progress 0.4 and measured cubics on these
   /// outline progress ranges:
   ///
   /// c1 [0 -> 0.2] c2 [0.2 -> 0.5] c3 [0.5 -> 1.0]
@@ -145,7 +147,7 @@ class MeasuredPolygon {
   ///
   /// c2b [0 -> 0.1] c3 [0.1 -> 0.6] c1 [0.6 -> 0.8] c2a [0.8 -> 1.0]
   MeasuredPolygon cutAndShift(double cuttingPoint) {
-    if (cuttingPoint < 0 && cuttingPoint > 1) {
+    if (cuttingPoint < 0 || cuttingPoint > 1) {
       throw ArgumentError('Cutting point is expected to be between 0 and 1');
     }
 
@@ -219,11 +221,13 @@ class MeasuredPolygon {
   }
 }
 
-/// A MeasuredCubic holds information about the cubic itself, the feature
+/// A [MeasuredCubic] holds information about the cubic itself, the feature
 /// (if any) associated with it, and the outline progress values (start and
-/// end) for the cubic. This information is used to match cubics between shapes
-/// that lie at similar outline progress positions along their respective
-/// shapes (after matching features and shifting).
+/// end) for the cubic.
+///
+/// This information is used to match cubics between shapes that lie at similar
+/// outline progress positions along their respective shapes (after matching
+/// features and shifting).
 ///
 /// Outline progress is a value in [0..1) that represents the distance traveled
 /// along the overall outline path of the shape.
@@ -281,7 +285,7 @@ class MeasuredCubic {
     _endOutlineProgress = endOutlineProgress;
   }
 
-  /// Cut this [MeasuredCubic] into two at the given outline progress value.
+  /// Cuts this [MeasuredCubic] into two at the given outline progress value.
   (MeasuredCubic, MeasuredCubic) cutAtProgress(double cutOutlineProgress) {
     // Floating point errors further up can cause cutOutlineProgress to land
     // just slightly outside of the start/end progress for this cubic, so we
@@ -378,7 +382,7 @@ class LengthMeasurer implements Measurer {
     var remainder = threshold;
     var prev = Point(cubic.anchor0X, cubic.anchor0Y);
 
-    for (var i = 0; i <= _segments; i++) {
+    for (var i = 1; i <= _segments; i++) {
       final double progress = i / _segments;
       final Point point = cubic.pointAt(progress);
       final double segment = (point - prev).distance;

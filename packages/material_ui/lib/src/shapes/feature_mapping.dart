@@ -69,21 +69,23 @@ DoubleMapper featureMapper(
   return DoubleMapper(featureProgressMapping);
 }
 
-/// Returns a mapping of the features between features1 and features2. The
-/// return is a list of pairs in which the first element is the progress of a
-/// feature in features1 and the second element is the progress of the feature
-/// in features2 that we mapped it to. The list is sorted by the first
-/// element. To do this:
-///   1) Compute the distance for all pairs of features in (features1 x
-///    features2)
-/// 2) Sort ascending by by such distance
+/// Returns a mapping of the features between [features1] and [features2].
+///
+/// The return is a list of pairs in which the first element is the progress of
+/// a feature in [features1] and the second element is the progress of the
+/// feature in [features2] that we mapped it to. The list is sorted by the
+/// first element. To do this:
+///
+/// 1) Compute the distance for all pairs of features in
+///    ([features1] x [features2]).
+/// 2) Sort ascending by such distance.
 /// 3) Try to add them, from smallest distance to biggest, ensuring that:
 ///    a) The features we are mapping haven't been mapped yet.
-///    b) We are not adding a crossing in the mapping. Since the
-///       mapping is sorted by the first element of each pair, this means that
-///       the second elements of each pair are monotonically increasing, except
-///       maybe one time (Counting all pair of consecutive elements, and the
-///       last element to first element).
+///    b) We are not adding a crossing in the mapping. Since the mapping is
+///       sorted by the first element of each pair, this means that the second
+///       elements of each pair are monotonically increasing, except maybe one
+///       time (counting all pairs of consecutive elements, and the last
+///       element to first element).
 @internal
 List<(double, double)> doMapping(
   List<ProgressableFeature> features1,
@@ -184,12 +186,13 @@ class _MappingHelper {
   }
 }
 
-/// Returns distance along overall shape between two Features on the two
-/// different shapes. This information is used to determine how to map features
-/// (and the curves that make up those features).
+/// Returns the squared distance between the representative points of two
+/// features on the two different shapes.
+///
+/// This information is used to determine how to map features (and the curves
+/// that make up those features).
 @internal
 double featureDistSquared(Feature f1, Feature f2) {
-  // If so, the approach below will not work
   if (f1 is CornerFeature && f2 is CornerFeature && f1.convex != f2.convex) {
     // Simple hack to force all features to map only to features of the same
     // concavity, by returning an infinitely large distance in that case.

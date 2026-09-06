@@ -16,16 +16,14 @@ import 'package:vector_math/vector_math_64.dart' show Matrix4;
 import 'point.dart';
 import 'utils.dart';
 
-/// This class holds the anchor and control point data for a single cubic
-/// Bézier curve, with anchor points [anchor0] and [anchor1] at either end and
-/// control points [control0] and [control1] determining the slope of the curve
-/// between the anchor points.
+/// A single cubic Bézier curve.
+///
+/// The curve runs from [anchor0] to [anchor1], and the control points
+/// [control0] and [control1] determine its slope at either end.
 @immutable
 class CubicBezier {
-  /// Creates a [CubicBezier] that holds the anchor and control point data for a
-  /// single Bézier curve, with anchor points [anchor0] and [anchor1] at either
-  /// end and control points [control0] and [control1] determining the slope of
-  /// the curve between the anchor points.
+  /// Creates a cubic Bézier curve running from [anchor0] to [anchor1], with
+  /// [control0] and [control1] determining its slope at either end.
   CubicBezier(Offset anchor0, Offset control0, Offset control1, Offset anchor1)
     : this.raw([
         anchor0.x,
@@ -155,12 +153,8 @@ class CubicBezier {
   /// The Y coordinate of the anchor point at the end of the curve.
   double get anchor1Y => _points[7];
 
-  /// Returns a point on the curve for parameter [t], representing the
-  /// proportional distance along the curve between its starting point at
-  /// [anchor0] and ending point at [anchor1].
-  ///
-  /// [t] is the distance along the curve between the anchor points, where 0
-  /// is at [anchor0] and 1 is at [anchor1].
+  /// Returns the point on this curve at [t], the proportional distance along
+  /// the curve from [anchor0] at 0 to [anchor1] at 1.
   Offset pointAt(double t) {
     final double u = 1 - t;
     return Offset(
@@ -205,7 +199,7 @@ class CubicBezier {
   Rect get approximateBounds => _calculateBounds(approximate: true);
 
   Rect _calculateBounds({required bool approximate}) {
-    // A curve might be of zero-length, with both anchors co-lated.
+    // A curve might be of zero-length, with both anchors co-located.
     // Just return the point itself.
     if (isZeroLength) {
       return Rect.fromLTRB(anchor0X, anchor0Y, anchor0X, anchor0Y);
@@ -409,11 +403,9 @@ class CubicBezier {
   int get hashCode => Object.hashAll(_points);
 }
 
-/// Mutable version of [CubicBezier], used mostly for performance critical paths
-/// so we can avoid creating new [CubicBezier]s
-///
-/// This is used in Morph.forEachCubic, reusing a [_MutableCubicBezier] instance
-/// to avoid creating new [CubicBezier]s.
+/// A mutable version of [CubicBezier], used by [CubicBezier.transformed] to
+/// transform the points of a curve in place without creating new
+/// [CubicBezier]s.
 class _MutableCubicBezier extends CubicBezier {
   _MutableCubicBezier() : super.raw(List.filled(8, 0));
 
@@ -428,12 +420,6 @@ class _MutableCubicBezier extends CubicBezier {
     _transformOnePoint(f, 2);
     _transformOnePoint(f, 4);
     _transformOnePoint(f, 6);
-  }
-
-  void interpolate(CubicBezier c1, CubicBezier c2, double progress) {
-    for (var i = 0; i < 8; i++) {
-      _points[i] = lerp(c1._points[i], c2._points[i], progress);
-    }
   }
 }
 
@@ -450,13 +436,13 @@ class _MutableCubicBezier extends CubicBezier {
 /// The default of zero is special: it skips the rotation entirely and leaves
 /// the curves as given.
 ///
-/// [repeatPath] is whether or not to repeat the [Path] twice before closing
-/// it. This flag is useful when the caller would like to draw parts of the
-/// path while offsetting the start and stop positions (for example, when
-/// phasing and rotating a path to simulate a motion as a Star circular
-/// progress indicator advances).
+/// If [repeatPath] is true, the curves are added twice before the [Path] is
+/// closed. This is useful when the caller would like to draw parts of the path
+/// while offsetting the start and stop positions, for example when phasing and
+/// rotating a path to simulate motion as a star-shaped circular progress
+/// indicator advances.
 ///
-/// [closePath] is whether or not to close the created [Path].
+/// If [closePath] is false, the returned [Path] is left open.
 ///
 /// [rotationPivot] is the point [startAngle] rotates the path around, and the
 /// point its angle is measured from. It defaults to the origin, which suits
