@@ -1,3 +1,12 @@
+## 1.1.0
+
+- Add missing Widget of the Week videos to widget API docs.
+- Exposes ink_sparkle shader asset in pubspec.yaml and removes stretch_effect shader.
+- Fix Typo in Readme
+- Fixes typos in library code and tests.
+- SearchAnchor overlay expands to full-screen on viewport size change (e.g., on device rotation).
+- Fixes https://github.com/flutter/flutter/issues/186154.
+
 ## 1.0.1
 
 - Updates cupertino_ui dependency constraint to ^1.0.0.

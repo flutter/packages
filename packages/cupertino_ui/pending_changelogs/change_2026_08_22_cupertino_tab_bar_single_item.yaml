@@ -1,0 +1,3 @@
+changelog: |
+  - Allows `CupertinoTabBar` to contain a single item.
+version: patch
