@@ -548,6 +548,10 @@ class RoundedPolygon {
     final Rect bounds = approximateBounds;
     final double side = math.max(bounds.width, bounds.height);
 
+    if (side < distanceEpsilon) {
+      return this;
+    }
+
     // Center the shape if bounds are not a square.
     final double offsetX = (side - bounds.width) / 2 - bounds.left;
     final double offsetY = (side - bounds.height) / 2 - bounds.top;

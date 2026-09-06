@@ -164,6 +164,17 @@ void main() {
       expect(const Point(0.5, 0.5), polygon.center);
     });
 
+    test('normalized handles a degenerate point polygon', () {
+      final RoundedPolygon degenerate = RoundedPolygon(4).transformed((x, y) => (0.5, 0.5));
+      final RoundedPolygon normalized = degenerate.normalized;
+
+      for (final CubicBezier cubic in normalized.cubics) {
+        for (final double coordinate in cubic.points) {
+          expect(coordinate.isNaN, isFalse);
+        }
+      }
+    });
+
     test('hashCode agrees with ==', () {
       final List<Feature> features = RoundedPolygon.circle().features;
       final first = RoundedPolygon.fromFeatures(features);
