@@ -401,10 +401,10 @@ class CubicBezier {
   @override
   String toString() {
     return '${objectRuntimeType(this, 'CubicBezier')}'
-        '(anchor0: ($anchor0X, $anchor0Y), '
-        'control0: ($control0X, $control0Y), '
-        'control1: ($control1X, $control1Y), '
-        'anchor1: ($anchor1X, $anchor1Y))';
+        '(anchor0: (${anchor0X.toStringAsFixed(1)}, ${anchor0Y.toStringAsFixed(1)}), '
+        'control0: (${control0X.toStringAsFixed(1)}, ${control0Y.toStringAsFixed(1)}), '
+        'control1: (${control1X.toStringAsFixed(1)}, ${control1Y.toStringAsFixed(1)}), '
+        'anchor1: (${anchor1X.toStringAsFixed(1)}, ${anchor1Y.toStringAsFixed(1)}))';
   }
 
   @override

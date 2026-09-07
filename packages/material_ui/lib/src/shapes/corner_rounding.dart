@@ -80,6 +80,6 @@ class CornerRounding {
   @override
   String toString() {
     return '${objectRuntimeType(this, 'CornerRounding')}'
-        '(radius: $radius, smoothing: $smoothing)';
+        '(radius: ${radius.toStringAsFixed(1)}, smoothing: ${smoothing.toStringAsFixed(1)})';
   }
 }
