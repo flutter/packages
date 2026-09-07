@@ -162,18 +162,18 @@ void upgradeSubscription(
 
 // #docregion price-consent-setup
 Future<void> initStoreInfo() async {
-  if (Platform.isIOS) {
-    final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition = InAppPurchase.instance
+  if (Platform.isIOS || Platform.isMacOS) {
+    final InAppPurchaseStoreKitPlatformAddition platformAddition = InAppPurchase.instance
         .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-    await iosPlatformAddition.setDelegate(ExamplePaymentQueueDelegate());
+    await platformAddition.setDelegate(ExamplePaymentQueueDelegate());
   }
 }
 
 Future<void> disposeStore() async {
-  if (Platform.isIOS) {
-    final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition = InAppPurchase.instance
+  if (Platform.isIOS || Platform.isMacOS) {
+    final InAppPurchaseStoreKitPlatformAddition platformAddition = InAppPurchase.instance
         .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-    await iosPlatformAddition.setDelegate(null);
+    await platformAddition.setDelegate(null);
   }
 }
 // #enddocregion price-consent-setup
@@ -197,9 +197,11 @@ class ExamplePaymentQueueDelegate implements SKPaymentQueueDelegateWrapper {
 
 // #docregion price-consent-show
 Future<void> showPriceConsent() async {
-  final InAppPurchaseStoreKitPlatformAddition iapStoreKitPlatformAddition = InAppPurchase.instance
-      .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-  await iapStoreKitPlatformAddition.showPriceConsentIfNeeded();
+  if (Platform.isIOS || Platform.isMacOS) {
+    final InAppPurchaseStoreKitPlatformAddition platformAddition = InAppPurchase.instance
+        .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
+    await platformAddition.showPriceConsentIfNeeded();
+  }
 }
 // #enddocregion price-consent-show
 
@@ -207,7 +209,11 @@ Future<void> showPriceConsent() async {
 void handleAndroidProductDetails(ProductDetails productDetails) {
   if (productDetails is GooglePlayProductDetails) {
     final ProductDetailsWrapper product = productDetails.productDetails;
-    print(product.subscriptionOfferDetails![productDetails.subscriptionIndex!].pricingPhases.first);
+    final int? index = productDetails.subscriptionIndex;
+    final List<SubscriptionOfferDetailsWrapper>? offers = product.subscriptionOfferDetails;
+    if (index != null && offers != null && index < offers.length) {
+      print(offers[index].pricingPhases.first);
+    }
   }
 }
 // #enddocregion android-product-details
@@ -251,15 +257,19 @@ void handleIosPurchaseDetails(PurchaseDetails purchaseDetails) {
 // #docregion sk2-transaction
 Future<void> readSk2Transactions() async {
   final List<SK2Transaction> transactions = await SK2Transaction.transactions();
-  print(transactions[0].jsonRepresentation);
+  if (transactions.isNotEmpty) {
+    print(transactions.first.jsonRepresentation);
+  }
 }
 // #enddocregion sk2-transaction
 
 // #docregion code-redemption
 Future<void> presentCodeRedemptionSheet() async {
-  final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition = InAppPurchase.instance
-      .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-  await iosPlatformAddition.presentCodeRedemptionSheet();
+  if (Platform.isIOS) {
+    final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition = InAppPurchase.instance
+        .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
+    await iosPlatformAddition.presentCodeRedemptionSheet();
+  }
 }
 
 // #enddocregion code-redemption

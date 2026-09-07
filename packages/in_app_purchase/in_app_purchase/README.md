@@ -304,18 +304,18 @@ can be used to set a delegate or remove one by setting it to `null`.
 <?code-excerpt "readme_examples.dart (price-consent-setup)"?>
 ```dart
 Future<void> initStoreInfo() async {
-  if (Platform.isIOS) {
-    final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition = InAppPurchase.instance
+  if (Platform.isIOS || Platform.isMacOS) {
+    final InAppPurchaseStoreKitPlatformAddition platformAddition = InAppPurchase.instance
         .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-    await iosPlatformAddition.setDelegate(ExamplePaymentQueueDelegate());
+    await platformAddition.setDelegate(ExamplePaymentQueueDelegate());
   }
 }
 
 Future<void> disposeStore() async {
-  if (Platform.isIOS) {
-    final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition = InAppPurchase.instance
+  if (Platform.isIOS || Platform.isMacOS) {
+    final InAppPurchaseStoreKitPlatformAddition platformAddition = InAppPurchase.instance
         .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-    await iosPlatformAddition.setDelegate(null);
+    await platformAddition.setDelegate(null);
   }
 }
 ```
@@ -346,9 +346,11 @@ will complete immediately when the dialog is shown. A confirmed transaction will
 <?code-excerpt "readme_examples.dart (price-consent-show)"?>
 ```dart
 Future<void> showPriceConsent() async {
-  final InAppPurchaseStoreKitPlatformAddition iapStoreKitPlatformAddition = InAppPurchase.instance
-      .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-  await iapStoreKitPlatformAddition.showPriceConsentIfNeeded();
+  if (Platform.isIOS || Platform.isMacOS) {
+    final InAppPurchaseStoreKitPlatformAddition platformAddition = InAppPurchase.instance
+        .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
+    await platformAddition.showPriceConsentIfNeeded();
+  }
 }
 ```
 
@@ -365,7 +367,11 @@ This is an example on how to get the `introductoryPricePeriod` on Android:
 void handleAndroidProductDetails(ProductDetails productDetails) {
   if (productDetails is GooglePlayProductDetails) {
     final ProductDetailsWrapper product = productDetails.productDetails;
-    print(product.subscriptionOfferDetails![productDetails.subscriptionIndex!].pricingPhases.first);
+    final int? index = productDetails.subscriptionIndex;
+    final List<SubscriptionOfferDetailsWrapper>? offers = product.subscriptionOfferDetails;
+    if (index != null && offers != null && index < offers.length) {
+      print(offers[index].pricingPhases.first);
+    }
   }
 }
 ```
@@ -425,7 +431,9 @@ How to get the `jsonRepresentation` of a transaction in iOS, using StoreKit 2:
 ```dart
 Future<void> readSk2Transactions() async {
   final List<SK2Transaction> transactions = await SK2Transaction.transactions();
-  print(transactions[0].jsonRepresentation);
+  if (transactions.isNotEmpty) {
+    print(transactions.first.jsonRepresentation);
+  }
 }
 ```
 
@@ -440,11 +448,12 @@ redeeming offer codes, see [Implementing Offer Codes in Your App](https://develo
 <?code-excerpt "readme_examples.dart (code-redemption)"?>
 ```dart
 Future<void> presentCodeRedemptionSheet() async {
-  final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition = InAppPurchase.instance
-      .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-  await iosPlatformAddition.presentCodeRedemptionSheet();
+  if (Platform.isIOS) {
+    final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition = InAppPurchase.instance
+        .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
+    await iosPlatformAddition.presentCodeRedemptionSheet();
+  }
 }
-
 ```
 
 > **note:** The `InAppPurchaseStoreKitPlatformAddition` is defined in the `in_app_purchase_storekit.dart`
