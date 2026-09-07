@@ -5,6 +5,7 @@
 import Flutter
 import GoogleMaps
 import Testing
+import google_maps_flutter_ios_sdk9_objc
 
 @testable import google_maps_flutter_ios_sdk9
 
@@ -87,7 +88,10 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
   }
 
   @Test func handleResultTileDownsamplesWideGamutImages() throws {
-    let controller = FGMTileProviderController()
+    let controller = TileProviderController(
+      tileOverlayIdentifier: "test",
+      tileProvider: TestTileProvider(onTileCalled: {})
+    )
 
     let bundle = Bundle(for: MockCATransaction.self)
     let imagePath = try #require(
