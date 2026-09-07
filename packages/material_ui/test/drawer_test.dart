@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -1149,19 +1151,21 @@ void main() {
       ),
     );
 
-    await tester
-        .state<NavigatorState>(find.byType(Navigator))
-        .push(
-          MaterialPageRoute<void>(
-            builder: (BuildContext context) {
-              return Scaffold(
-                appBar: AppBar(title: const Text('Second')),
-                endDrawer: const Drawer(child: Text('Drawer Item')),
-                body: const Center(child: Text('Second Body')),
-              );
-            },
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) {
+                return Scaffold(
+                  appBar: AppBar(title: const Text('Second')),
+                  endDrawer: const Drawer(child: Text('Drawer Item')),
+                  body: const Center(child: Text('Second Body')),
+                );
+              },
+            ),
           ),
-        );
+    );
     await tester.pumpAndSettle();
 
     // Open the end drawer.
