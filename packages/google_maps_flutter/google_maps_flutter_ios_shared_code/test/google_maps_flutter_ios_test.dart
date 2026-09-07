@@ -790,9 +790,7 @@ void main() {
       expect(firstChanged.transparency, object2new.transparency);
       expect(
         firstChanged.image.runtimeType,
-        GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(
-          object2new.image,
-        ).runtimeType,
+        GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(object2new.image).runtimeType,
       );
     }
     // Object three should be added.
