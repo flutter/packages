@@ -1797,16 +1797,15 @@ class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
       );
       final MaterialTapTargetSize tapTargetSize =
           widget.style?.tapTargetSize ?? MaterialTapTargetSize.shrinkWrap;
-      var result = child;
-      if (tapTargetSize == MaterialTapTargetSize.padded) {
-        result = ConstrainedBox(
-          constraints: const BoxConstraints(
-            minWidth: kMinInteractiveDimension,
-            minHeight: kMinInteractiveDimension,
-          ),
-          child: result,
-        );
-      }
+      final Widget result = tapTargetSize == MaterialTapTargetSize.padded
+          ? ConstrainedBox(
+              constraints: const BoxConstraints(
+                minWidth: kMinInteractiveDimension,
+                minHeight: kMinInteractiveDimension,
+              ),
+              child: child,
+            )
+          : child;
       // The button semantics are added here rather than by the [InkWell] so
       // that assistive technologies describe the popup menu button the same way
       // regardless of whether it is built from [child] or from [icon], in which
