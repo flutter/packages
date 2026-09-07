@@ -156,18 +156,20 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 
 #if TARGET_OS_IOS
 
-- (void)handleURLs:(NSArray<NSURL *> *)urls {
+- (BOOL)handleURLs:(NSArray<NSURL *> *)urls {
+  BOOL handled = NO;
   for (NSURL *url in urls) {
-    [self.signIn handleURL:url];
+    handled = [self.signIn handleURL:url] || handled;
   }
+  return handled;
 }
 
-- (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts {
+- (BOOL)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts {
   NSMutableArray<NSURL *> *urls = [NSMutableArray arrayWithCapacity:URLContexts.count];
   for (UIOpenURLContext *context in URLContexts) {
     [urls addObject:context.URL];
   }
-  [self handleURLs:urls];
+  return [self handleURLs:urls];
 }
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary *)options {
