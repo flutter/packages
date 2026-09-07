@@ -159,7 +159,9 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 - (BOOL)handleURLs:(NSArray<NSURL *> *)urls {
   BOOL handled = NO;
   for (NSURL *url in urls) {
-    handled = [self.signIn handleURL:url] || handled;
+    if ([self.signIn handleURL:url]) {
+      handled = YES;
+    }
   }
   return handled;
 }
