@@ -1467,7 +1467,9 @@ void main() {
         home: Material(
           child: PopupMenuButton<int>(
             itemBuilder: (BuildContext context) {
-              return <PopupMenuItem<int>>[const PopupMenuItem<int>(value: 1, child: Text('Item 1'))];
+              return <PopupMenuItem<int>>[
+                const PopupMenuItem<int>(value: 1, child: Text('Item 1')),
+              ];
             },
             child: const Text('XXX'),
           ),
@@ -1501,7 +1503,9 @@ void main() {
           child: PopupMenuButton<int>(
             enabled: false,
             itemBuilder: (BuildContext context) {
-              return <PopupMenuItem<int>>[const PopupMenuItem<int>(value: 1, child: Text('Item 1'))];
+              return <PopupMenuItem<int>>[
+                const PopupMenuItem<int>(value: 1, child: Text('Item 1')),
+              ];
             },
             child: const Text('XXX'),
           ),
@@ -1531,7 +1535,9 @@ void main() {
           child: PopupMenuButton<int>(
             style: const ButtonStyle(tapTargetSize: MaterialTapTargetSize.padded),
             itemBuilder: (BuildContext context) {
-              return <PopupMenuItem<int>>[const PopupMenuItem<int>(value: 1, child: Text('Item 1'))];
+              return <PopupMenuItem<int>>[
+                const PopupMenuItem<int>(value: 1, child: Text('Item 1')),
+              ];
             },
             child: const Text('XXX'),
           ),
