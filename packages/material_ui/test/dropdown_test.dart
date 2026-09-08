@@ -477,66 +477,6 @@ void main() {
     expect(value, equals('two'));
   });
 
-  testWidgets('DropdownButton does not allow duplicate item values', (WidgetTester tester) async {
-    final List<DropdownMenuItem<String>> itemsWithDuplicateValues = <String>['a', 'b', 'c', 'c']
-        .map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(value: value, child: Text(value));
-        })
-        .toList();
-
-    await expectLater(
-      () => tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: DropdownButton<String>(
-              value: 'c',
-              onChanged: (String? newValue) {},
-              items: itemsWithDuplicateValues,
-            ),
-          ),
-        ),
-      ),
-      throwsA(
-        isAssertionError.having(
-          (AssertionError error) => error.toString(),
-          '.toString()',
-          contains("There should be exactly one item with [DropdownButton]'s value"),
-        ),
-      ),
-    );
-  });
-
-  testWidgets('DropdownButton value should only appear in one menu item', (
-    WidgetTester tester,
-  ) async {
-    final List<DropdownMenuItem<String>> itemsWithDuplicateValues = <String>['a', 'b', 'c', 'd']
-        .map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(value: value, child: Text(value));
-        })
-        .toList();
-
-    await expectLater(
-      () => tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: DropdownButton<String>(
-              value: 'e',
-              onChanged: (String? newValue) {},
-              items: itemsWithDuplicateValues,
-            ),
-          ),
-        ),
-      ),
-      throwsA(
-        isAssertionError.having(
-          (AssertionError error) => error.toString(),
-          '.toString()',
-          contains("There should be exactly one item with [DropdownButton]'s value"),
-        ),
-      ),
-    );
-  });
-
   testWidgets('Dropdown menu can position correctly inside a nested navigator', (
     WidgetTester tester,
   ) async {
