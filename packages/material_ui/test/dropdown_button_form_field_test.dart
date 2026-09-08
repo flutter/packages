@@ -1593,4 +1593,191 @@ void main() {
       'Currently, selectedItemBuilder returns a list of length 1, but items has length 2.',
     );
   });
+
+  testWidgets('DropdownButtonFormField uses form field state', (WidgetTester tester) async {
+    final Key buttonKey = UniqueKey();
+    final formKey = GlobalKey<FormState>();
+    String? value;
+    await tester.pumpWidget(
+      StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return MaterialApp(
+            home: Material(
+              child: Form(
+                key: formKey,
+                child: DropdownButtonFormField<String>(
+                  key: buttonKey,
+                  initialValue: value,
+                  hint: const Text('Select Value'),
+                  decoration: const InputDecoration(prefixIcon: Icon(Icons.fastfood)),
+                  items: menuItems.map((String val) {
+                    return DropdownMenuItem<String>(value: val, child: Text(val));
+                  }).toList(),
+                  validator: (String? v) => v == null ? 'Must select value' : null,
+                  onChanged: (String? newValue) {},
+                  onSaved: (String? v) {
+                    setState(() {
+                      value = v;
+                    });
+                  },
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+    int getIndex() {
+      final stack = tester.element(find.byType(IndexedStack)).widget as IndexedStack;
+      return stack.index!;
+    }
+
+    // Initial value of null displays hint
+    expect(value, equals(null));
+    expect(getIndex(), 4);
+    await tester.tap(find.text('Select Value', skipOffstage: false), warnIfMissed: false);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('three').last);
+    await tester.pumpAndSettle();
+    expect(getIndex(), 2);
+    // Changes only made to FormField state until form saved
+    expect(value, equals(null));
+    final FormState form = formKey.currentState!;
+    form.save();
+    expect(value, equals('three'));
+  });
+
+  testWidgets('DropdownButtonFormField does not crash at zero area', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: SizedBox.shrink(
+              child: DropdownButtonFormField<String>(
+                onChanged: (_) {},
+                items: const <DropdownMenuItem<String>>[
+                  DropdownMenuItem<String>(value: 'a', child: Text('a')),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(tester.getSize(find.byType(DropdownButtonFormField<String>)), Size.zero);
+  });
+
+  testWidgets('BorderRadius property works properly for DropdownButtonFormField', (
+    WidgetTester tester,
+  ) async {
+    const radius = 20.0;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: DropdownButtonFormField<String>(
+              borderRadius: const BorderRadius.all(Radius.circular(radius)),
+              initialValue: 'One',
+              items: <String>['One', 'Two', 'Three', 'Four'].map<DropdownMenuItem<String>>((
+                String value,
+              ) {
+                return DropdownMenuItem<String>(value: value, child: Text(value));
+              }).toList(),
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('One'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.ancestor(of: find.text('One').last, matching: find.byType(CustomPaint)).at(2),
+      paints
+        ..save()
+        ..rrect()
+        ..rrect()
+        ..rrect()
+        ..rrect(rrect: const RRect.fromLTRBXY(0.0, 0.0, 800.0, 208.0, radius, radius)),
+    );
+  });
+
+  testWidgets(
+    'DropdownButtonFormField deprecated "value" parameter can still be used to set the initial value',
+    (WidgetTester tester) async {
+      final fieldKey = GlobalKey<FormFieldState<String>>();
+      await tester.pumpWidget(
+        StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return MaterialApp(
+              home: Material(
+                child: DropdownButtonFormField<String>(
+                  key: fieldKey,
+                  value: 'one',
+                  hint: const Text('Select Value'),
+                  items: menuItems.map((String val) {
+                    return DropdownMenuItem<String>(value: val, child: Text(val));
+                  }).toList(),
+                  onChanged: (_) {},
+                ),
+              ),
+            );
+          },
+        ),
+      );
+      expect(fieldKey.currentState!.value, 'one');
+    },
+  );
+
+  testWidgets(
+    'DropdownButtonFormField only uses initialValue parameter when first built and when reset',
+    (WidgetTester tester) async {
+      final fieldKey = GlobalKey<FormFieldState<String>>();
+      await tester.pumpWidget(
+        StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return MaterialApp(
+              home: Material(
+                child: DropdownButtonFormField<String>(
+                  key: fieldKey,
+                  initialValue: 'one',
+                  hint: const Text('Select Value'),
+                  items: menuItems.map((String val) {
+                    return DropdownMenuItem<String>(value: val, child: Text(val));
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      // Do nothing, just to trigger a rebuild.
+                    });
+                  },
+                ),
+              ),
+            );
+          },
+        ),
+      );
+      expect(fieldKey.currentState!.value, 'one');
+
+      // Open the dropdown menu.
+      await tester.tap(find.text('one'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('three').last);
+      await tester.pumpAndSettle();
+
+      // The value should update to selected, not the initial value.
+      expect(find.text('three'), findsOneWidget);
+      expect(fieldKey.currentState!.value, 'three');
+
+      fieldKey.currentState!.reset();
+      await tester.pump();
+
+      // Reset to the initial value.
+      expect(find.text('one'), findsOneWidget);
+      expect(fieldKey.currentState!.value, 'one');
+    },
+  );
 }
