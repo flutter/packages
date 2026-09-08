@@ -2705,50 +2705,75 @@ void main() {
   });
 
   group('RangeSlider keyboard with NavigationMode.directional', () {
-    // Pumps a RangeSlider in the given navigation mode, with a focusable
-    // neighbor on each side so tests can tell when arrow keys move the focus
-    // instead of changing the values. Read the live values back through
+    // Pumps a RangeSlider in the given navigation mode between two focusable
+    // neighbors, so tests can tell when arrow keys move the focus instead of
+    // changing the values. Arrow keys are explicitly bound to directional
+    // focus traversal because the app-level defaults differ per platform (on
+    // the web they scroll instead). Read the live values back through
     // [sliderKey] with [valuesOf]; [initialValues] is where the slider starts.
     Future<void> pumpRangeSlider(
       WidgetTester tester, {
       required NavigationMode navigationMode,
       required GlobalKey sliderKey,
       required RangeValues initialValues,
+      FocusNode? leftNeighborNode,
+      FocusNode? rightNeighborNode,
     }) async {
+      const directionalTraversalShortcuts = <ShortcutActivator, Intent>{
+        SingleActivator(LogicalKeyboardKey.arrowLeft): DirectionalFocusIntent(
+          TraversalDirection.left,
+        ),
+        SingleActivator(LogicalKeyboardKey.arrowRight): DirectionalFocusIntent(
+          TraversalDirection.right,
+        ),
+        SingleActivator(LogicalKeyboardKey.arrowUp): DirectionalFocusIntent(TraversalDirection.up),
+        SingleActivator(LogicalKeyboardKey.arrowDown): DirectionalFocusIntent(
+          TraversalDirection.down,
+        ),
+      };
       var values = initialValues;
       await tester.pumpWidget(
         MaterialApp(
-          home: Material(
-            child: Directionality(
-              textDirection: TextDirection.ltr,
-              child: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-                  return MediaQuery(
-                    data: MediaQueryData(navigationMode: navigationMode),
-                    child: Center(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          const Focus(child: SizedBox(width: 50, height: 50)),
-                          SizedBox(
-                            width: 300,
-                            child: RangeSlider(
-                              key: sliderKey,
-                              values: values,
-                              max: 100,
-                              onChanged: (RangeValues newValues) {
-                                setState(() {
-                                  values = newValues;
-                                });
-                              },
+          home: Shortcuts(
+            shortcuts: directionalTraversalShortcuts,
+            child: Material(
+              child: Directionality(
+                textDirection: TextDirection.ltr,
+                child: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                    return MediaQuery(
+                      data: MediaQueryData(navigationMode: navigationMode),
+                      child: Center(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Focus(
+                              focusNode: leftNeighborNode,
+                              child: const SizedBox(width: 50, height: 200),
                             ),
-                          ),
-                          const Focus(child: SizedBox(width: 50, height: 50)),
-                        ],
+                            SizedBox(
+                              width: 300,
+                              child: RangeSlider(
+                                key: sliderKey,
+                                values: values,
+                                max: 100,
+                                onChanged: (RangeValues newValues) {
+                                  setState(() {
+                                    values = newValues;
+                                  });
+                                },
+                              ),
+                            ),
+                            Focus(
+                              focusNode: rightNeighborNode,
+                              child: const SizedBox(width: 50, height: 200),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -2765,11 +2790,17 @@ void main() {
       WidgetTester tester,
     ) async {
       final GlobalKey sliderKey = GlobalKey();
+      final leftNeighbor = FocusNode(debugLabel: 'left neighbor');
+      addTearDown(leftNeighbor.dispose);
+      final rightNeighbor = FocusNode(debugLabel: 'right neighbor');
+      addTearDown(rightNeighbor.dispose);
       await pumpRangeSlider(
         tester,
         navigationMode: NavigationMode.directional,
         sliderKey: sliderKey,
         initialValues: const RangeValues(40, 80),
+        leftNeighborNode: leftNeighbor,
+        rightNeighborNode: rightNeighbor,
       );
       startFocusNodeOf(tester).requestFocus();
       await tester.pumpAndSettle();
@@ -2782,9 +2813,9 @@ void main() {
         reason: 'arrowRight should move focus, not change the value, outside editing mode',
       );
       expect(
-        startFocusNodeOf(tester).hasFocus,
-        isFalse,
-        reason: 'arrowRight should have moved the focus to the right neighbor',
+        FocusManager.instance.primaryFocus,
+        rightNeighbor,
+        reason: 'arrowRight should move the focus to the right neighbor',
       );
 
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
@@ -2795,9 +2826,9 @@ void main() {
         reason: 'arrowLeft should move focus, not change the value, outside editing mode',
       );
       expect(
-        startFocusNodeOf(tester).hasFocus,
-        isTrue,
-        reason: 'arrowLeft should have moved the focus back to the start thumb',
+        FocusManager.instance.primaryFocus,
+        startFocusNodeOf(tester),
+        reason: 'arrowLeft should move the focus back to the start thumb',
       );
 
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
@@ -2808,9 +2839,9 @@ void main() {
         reason: 'arrowLeft should move focus, not change the value, outside editing mode',
       );
       expect(
-        startFocusNodeOf(tester).hasFocus,
-        isFalse,
-        reason: 'a second arrowLeft should have moved the focus to the left neighbor',
+        FocusManager.instance.primaryFocus,
+        leftNeighbor,
+        reason: 'a second arrowLeft should move the focus to the left neighbor',
       );
     });
 
