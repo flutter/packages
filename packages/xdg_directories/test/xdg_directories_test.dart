@@ -127,6 +127,15 @@ XDG_VIDEOS_DIR="$HOME/Videos"
     );
   });
 
+  test('Default process runner parses user-dirs.dirs and falls back to HOME', () {
+    xdg.xdgProcessRunner = null;
+    expect(xdg.getUserDirectory('DOWNLOAD')!.path, equals(testPath('Downloads')));
+    expect(xdg.getUserDirectory('DESKTOP')!.path, equals(testPath('Desktop')));
+
+    // When a key is omitted from user-dirs.dirs, falls back to HOME.
+    expect(xdg.getUserDirectory('UNKNOWN_DIR')!.path, equals(testRootPath()));
+  });
+
   test('Throws StateError when HOME not set', () {
     fakeEnv.clear();
     expect(() {

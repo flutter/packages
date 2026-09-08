@@ -58,22 +58,54 @@ class _DefaultProcessRunner implements XdgProcessRunner {
     Encoding? stdoutEncoding = systemEncoding,
     Encoding? stderrEncoding = systemEncoding,
   }) {
-    return Process.runSync(
+    if (executable == 'xdg-user-dir' && arguments.isNotEmpty) {
+      final String dirName = arguments.first;
+      final File configFile = File(
+        path.join(configHome.path, 'user-dirs.dirs'),
+      );
+      try {
+        final List<String> contents = configFile.readAsLinesSync();
+        final RegExp dirRegExp = RegExp(
+          r'^\s*XDG_' + RegExp.escape(dirName) + r'_DIR\s*=\s*(?<dir>.*)\s*$',
+        );
+        for (final String line in contents) {
+          final RegExpMatch? match = dirRegExp.firstMatch(line);
+          if (match != null) {
+            String dir = match.namedGroup('dir')!.trim();
+            if (dir.startsWith('"') && dir.endsWith('"') && dir.length >= 2) {
+              dir = dir.substring(1, dir.length - 1);
+            }
+            final String homeDir = _getenv('HOME') ?? '';
+            dir = dir.replaceAll(r'$HOME', homeDir);
+            return ProcessResult(0, 0, '$dir\n', '');
+          }
+        }
+      } on FileSystemException {
+        // Fall through to standard xdg-user-dir fallback below.
+      }
+      final String homeDir = _getenv('HOME') ?? '';
+      final String fallback = dirName == 'DESKTOP'
+          ? '$homeDir/Desktop'
+          : homeDir;
+      return ProcessResult(0, 0, '$fallback\n', '');
+    }
+    throw ProcessException(
       executable,
       arguments,
-      stdoutEncoding: stdoutEncoding,
-      stderrEncoding: stderrEncoding,
+      'No such file or directory',
+      _noSuchFileError,
     );
   }
 }
 
 /// A testing function that replaces the process runner used to run
-/// xdg-user-path with the one supplied.
+/// xdg-user-path with the one supplied, or resets to the default runner if
+/// null is passed.
 ///
 /// Only available to tests.
 @visibleForTesting
-set xdgProcessRunner(XdgProcessRunner processRunner) {
-  _processRunner = processRunner;
+set xdgProcessRunner(XdgProcessRunner? processRunner) {
+  _processRunner = processRunner ?? const _DefaultProcessRunner();
 }
 
 XdgProcessRunner _processRunner = const _DefaultProcessRunner();

@@ -1,5 +1,6 @@
-## NEXT
+## 1.1.1
 
+* Parses `user-dirs.dirs` in pure Dart instead of spawning the external `xdg-user-dir` binary via `Process.runSync`.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 1.1.0
