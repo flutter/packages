@@ -380,6 +380,208 @@ void main() {
       final Navigator navigator = tester.widget<Navigator>(find.byType(Navigator));
       expect(navigator.requestFocus, isFalse);
     });
+
+    group('Shell navigator semantics boundary', () {
+      testWidgets('Chrome painted before a ShellRoute Navigator stays in the '
+          'semantics tree alongside routed content', (WidgetTester tester) async {
+        final SemanticsHandle semantics = tester.ensureSemantics();
+
+        final router = GoRouter(
+          initialLocation: '/a',
+          routes: <RouteBase>[
+            ShellRoute(
+              builder: (BuildContext context, GoRouterState state, Widget child) {
+                return Row(
+                  children: <Widget>[
+                    Semantics(
+                      container: true,
+                      label: 'chrome',
+                      child: const SizedBox(width: 40, height: 40),
+                    ),
+                    Expanded(child: child),
+                  ],
+                );
+              },
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/a',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const Text('content-a');
+                  },
+                ),
+                GoRoute(
+                  path: '/b',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const Text('content-b');
+                  },
+                ),
+              ],
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        // Without the Semantics(container: true) wrap around the shell's
+        // Navigator, the route's ModalBarrier (BlockSemantics) drops the
+        // chrome painted before it, because a Navigator does not
+        // establish a semantics boundary. See
+        // https://github.com/flutter/flutter/issues/135656.
+        expect(find.bySemanticsLabel('chrome'), findsOneWidget);
+        expect(find.bySemanticsLabel('content-a'), findsOneWidget);
+
+        // Navigation between two routes within the same shell keeps
+        // working, and the chrome remains exposed after the rebuild.
+        router.go('/b');
+        await tester.pumpAndSettle();
+
+        expect(find.bySemanticsLabel('chrome'), findsOneWidget);
+        expect(find.bySemanticsLabel('content-b'), findsOneWidget);
+        expect(find.bySemanticsLabel('content-a'), findsNothing);
+
+        semantics.dispose();
+      });
+
+      testWidgets('ShellRoute Navigator is wrapped in a Semantics(container: true) '
+          'boundary', (WidgetTester tester) async {
+        final shellNavigatorKey = GlobalKey<NavigatorState>();
+        final router = GoRouter(
+          initialLocation: '/',
+          routes: <RouteBase>[
+            ShellRoute(
+              navigatorKey: shellNavigatorKey,
+              builder: (BuildContext context, GoRouterState state, Widget child) {
+                return child;
+              },
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const Text('content');
+                  },
+                ),
+              ],
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        final Iterable<Semantics> ancestorSemantics = tester.widgetList<Semantics>(
+          find.ancestor(of: find.byKey(shellNavigatorKey), matching: find.byType(Semantics)),
+        );
+        expect(
+          ancestorSemantics.first.container,
+          isTrue,
+          reason:
+              'The nearest Semantics ancestor of the shell Navigator '
+              'should be the container boundary added by go_router.',
+        );
+      });
+
+      testWidgets('Root GoRouter Navigator is not wrapped in an extra Semantics '
+          'container boundary', (WidgetTester tester) async {
+        final rootNavigatorKey = GlobalKey<NavigatorState>();
+        final router = GoRouter(
+          navigatorKey: rootNavigatorKey,
+          initialLocation: '/',
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/',
+              builder: (BuildContext context, GoRouterState state) {
+                return const Text('content');
+              },
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        // The root navigator has no earlier-painted siblings by
+        // construction, so go_router must not add the shell-only
+        // Semantics(container: true) wrap around it.
+        final Finder wrapper = find.ancestor(
+          of: find.byKey(rootNavigatorKey),
+          matching: find.byWidgetPredicate(
+            (Widget widget) => widget is Semantics && widget.container,
+          ),
+        );
+        expect(wrapper, findsNothing);
+      });
+
+      testWidgets('Chrome painted before a StatefulShellRoute Navigator stays in the '
+          'semantics tree alongside routed content', (WidgetTester tester) async {
+        final SemanticsHandle semantics = tester.ensureSemantics();
+        StatefulNavigationShell? navigationShell;
+
+        final router = GoRouter(
+          initialLocation: '/a',
+          routes: <RouteBase>[
+            StatefulShellRoute.indexedStack(
+              builder: (BuildContext context, GoRouterState state, StatefulNavigationShell shell) {
+                navigationShell = shell;
+                return Column(
+                  children: <Widget>[
+                    Semantics(container: true, label: 'chrome', child: const SizedBox(height: 10)),
+                    Expanded(child: shell),
+                  ],
+                );
+              },
+              branches: <StatefulShellBranch>[
+                StatefulShellBranch(
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: '/a',
+                      builder: (BuildContext context, GoRouterState state) {
+                        return const Text('content-a');
+                      },
+                    ),
+                  ],
+                ),
+                StatefulShellBranch(
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: '/b',
+                      builder: (BuildContext context, GoRouterState state) {
+                        return const Text('content-b');
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        // Without the Semantics(container: true) wrap around the shell
+        // branch's Navigator, the route's ModalBarrier (BlockSemantics)
+        // drops the chrome painted before it, because a Navigator does not
+        // establish a semantics boundary. See
+        // https://github.com/flutter/flutter/issues/135656.
+        expect(find.bySemanticsLabel('chrome'), findsOneWidget);
+        expect(find.bySemanticsLabel('content-a'), findsOneWidget);
+
+        // Switching branches keeps the chrome exposed after the rebuild.
+        navigationShell!.goBranch(1);
+        await tester.pumpAndSettle();
+
+        expect(find.bySemanticsLabel('chrome'), findsOneWidget);
+        expect(find.bySemanticsLabel('content-b'), findsOneWidget);
+        expect(find.bySemanticsLabel('content-a'), findsNothing);
+
+        semantics.dispose();
+      });
+    });
   });
 }
 
