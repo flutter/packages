@@ -67,18 +67,22 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
     captureSessionQueue.setSpecific(
       key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
 
-    UIDevice.current.beginGeneratingDeviceOrientationNotifications()
-    NotificationCenter.default.addObserver(
-      forName: UIDevice.orientationDidChangeNotification,
-      object: UIDevice.current,
-      queue: .main
-    ) { [weak self] notification in
-      self?.orientationChanged(notification)
-    }
+    #if os(iOS)
+      UIDevice.current.beginGeneratingDeviceOrientationNotifications()
+      NotificationCenter.default.addObserver(
+        forName: UIDevice.orientationDidChangeNotification,
+        object: UIDevice.current,
+        queue: .main
+      ) { [weak self] notification in
+        self?.orientationChanged(notification)
+      }
+    #endif
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
-    UIDevice.current.endGeneratingDeviceOrientationNotifications()
+    #if os(iOS)
+      UIDevice.current.endGeneratingDeviceOrientationNotifications()
+    #endif
   }
 
   private static func pigeonErrorFromNSError(_ error: NSError) -> PigeonError {
@@ -88,35 +92,37 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
       details: error.domain)
   }
 
-  func orientationChanged(_ notification: Notification) {
-    guard let device = notification.object as? UIDevice else { return }
-    let orientation = device.orientation
+  #if os(iOS)
+    func orientationChanged(_ notification: Notification) {
+      guard let device = notification.object as? UIDevice else { return }
+      let orientation = device.orientation
 
-    if orientation == .faceUp || orientation == .faceDown {
-      // Do not change when oriented flat.
-      return
-    }
+      if orientation == .faceUp || orientation == .faceDown {
+        // Do not change when oriented flat.
+        return
+      }
 
-    self.captureSessionQueue.async { [weak self] in
-      guard let strongSelf = self else { return }
-      // `Camera.deviceOrientation` must be set on capture session queue.
-      strongSelf.camera?.deviceOrientation = orientation
-      // `CameraPlugin.sendDeviceOrientation` can be called on any queue.
-      strongSelf.sendDeviceOrientation(orientation)
-    }
-  }
-
-  func sendDeviceOrientation(_ orientation: UIDeviceOrientation) {
-    DispatchQueue.main.async { [weak self] in
-      self?.globalEventAPI.deviceOrientationChanged(
-        orientation: getPigeonDeviceOrientation(for: orientation)
-      ) { _ in
-        // Ignore errors; this is essentially a broadcast stream, and
-        // it's fine if the other end doesn't receive the message
-        // (e.g., if it doesn't currently have a listener set up).
+      self.captureSessionQueue.async { [weak self] in
+        guard let strongSelf = self else { return }
+        // `Camera.deviceOrientation` must be set on capture session queue.
+        strongSelf.camera?.deviceOrientation = getPigeonDeviceOrientation(for: orientation)
+        // `CameraPlugin.sendDeviceOrientation` can be called on any queue.
+        strongSelf.sendDeviceOrientation(orientation)
       }
     }
-  }
+
+    func sendDeviceOrientation(_ orientation: UIDeviceOrientation) {
+      DispatchQueue.main.async { [weak self] in
+        self?.globalEventAPI.deviceOrientationChanged(
+          orientation: getPigeonDeviceOrientation(for: orientation)
+        ) { _ in
+          // Ignore errors; this is essentially a broadcast stream, and
+          // it's fine if the other end doesn't receive the message
+          // (e.g., if it doesn't currently have a listener set up).
+        }
+      }
+    }
+  #endif
 }
 
 extension CameraPlugin: CameraApi {
@@ -309,7 +315,9 @@ extension CameraPlugin: CameraApi {
     )
 
     camera.reportInitializationState()
-    sendDeviceOrientation(UIDevice.current.orientation)
+    #if os(iOS)
+      sendDeviceOrientation(UIDevice.current.orientation)
+    #endif
     camera.start()
     completion(.success(()))
   }
