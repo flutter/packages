@@ -829,7 +829,6 @@ void main() {
   testWidgets('DropdownButtonFormField - default elevation', (WidgetTester tester) async {
     final Key buttonKey = UniqueKey();
     debugDisableShadows = false;
-    addTearDown(() => debugDisableShadows = true);
     await tester.pumpWidget(buildFormFrame(buttonKey: buttonKey, onChanged: onChanged));
     await tester.tap(find.byKey(buttonKey));
     await tester.pumpAndSettle();
@@ -840,11 +839,11 @@ void main() {
 
     // Verifying whether or not default elevation(i.e. 8) paints desired shadow
     verifyPaintedShadow(customPaint, 8);
+    debugDisableShadows = true;
   });
 
   testWidgets('DropdownButtonFormField - custom elevation', (WidgetTester tester) async {
     debugDisableShadows = false;
-    addTearDown(() => debugDisableShadows = true);
     final Key buttonKeyOne = UniqueKey();
     final Key buttonKeyTwo = UniqueKey();
 
@@ -871,6 +870,7 @@ void main() {
         .last;
 
     verifyPaintedShadow(customPaintTwo, 24);
+    debugDisableShadows = true;
   });
 
   testWidgets('DropdownButtonFormField does not allow duplicate item values', (
