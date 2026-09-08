@@ -2705,9 +2705,10 @@ void main() {
   });
 
   group('RangeSlider keyboard with NavigationMode.directional', () {
-    // Pumps a RangeSlider in the given navigation mode. Read the live values
-    // back through [sliderKey] with [valuesOf]; [initialValues] is where the
-    // slider starts.
+    // Pumps a RangeSlider in the given navigation mode, with a focusable
+    // neighbor on each side so tests can tell when arrow keys move the focus
+    // instead of changing the values. Read the live values back through
+    // [sliderKey] with [valuesOf]; [initialValues] is where the slider starts.
     Future<void> pumpRangeSlider(
       WidgetTester tester, {
       required NavigationMode navigationMode,
@@ -2725,15 +2726,25 @@ void main() {
                   return MediaQuery(
                     data: MediaQueryData(navigationMode: navigationMode),
                     child: Center(
-                      child: RangeSlider(
-                        key: sliderKey,
-                        values: values,
-                        max: 100,
-                        onChanged: (RangeValues newValues) {
-                          setState(() {
-                            values = newValues;
-                          });
-                        },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          const Focus(child: SizedBox(width: 50, height: 50)),
+                          SizedBox(
+                            width: 300,
+                            child: RangeSlider(
+                              key: sliderKey,
+                              values: values,
+                              max: 100,
+                              onChanged: (RangeValues newValues) {
+                                setState(() {
+                                  values = newValues;
+                                });
+                              },
+                            ),
+                          ),
+                          const Focus(child: SizedBox(width: 50, height: 50)),
+                        ],
                       ),
                     ),
                   );
@@ -2770,6 +2781,11 @@ void main() {
         const RangeValues(40, 80),
         reason: 'arrowRight should move focus, not change the value, outside editing mode',
       );
+      expect(
+        startFocusNodeOf(tester).hasFocus,
+        isFalse,
+        reason: 'arrowRight should have moved the focus to the right neighbor',
+      );
 
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
       await tester.pumpAndSettle();
@@ -2777,6 +2793,24 @@ void main() {
         valuesOf(sliderKey),
         const RangeValues(40, 80),
         reason: 'arrowLeft should move focus, not change the value, outside editing mode',
+      );
+      expect(
+        startFocusNodeOf(tester).hasFocus,
+        isTrue,
+        reason: 'arrowLeft should have moved the focus back to the start thumb',
+      );
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pumpAndSettle();
+      expect(
+        valuesOf(sliderKey),
+        const RangeValues(40, 80),
+        reason: 'arrowLeft should move focus, not change the value, outside editing mode',
+      );
+      expect(
+        startFocusNodeOf(tester).hasFocus,
+        isFalse,
+        reason: 'a second arrowLeft should have moved the focus to the left neighbor',
       );
     });
 
@@ -2888,6 +2922,11 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
       await tester.pumpAndSettle();
       expect(valuesOf(sliderKey).start, greaterThan(40));
+      expect(valuesOf(sliderKey).end, 80);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pumpAndSettle();
+      expect(valuesOf(sliderKey).start, moreOrLessEquals(40));
       expect(valuesOf(sliderKey).end, 80);
     });
   });

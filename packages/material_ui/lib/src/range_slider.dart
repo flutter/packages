@@ -494,9 +494,8 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
   // effect when using traditional navigation.
   bool _isEditingInDirectionalMode = false;
 
-  // Cached here so build() doesn't have to read it (and re-pick a shortcut map)
-  // every pass. didChangeDependencies is the right place to depend on the
-  // MediaQuery.
+  // The ambient navigation mode, cached so build() doesn't have to re-read the
+  // MediaQuery (and re-pick a shortcut map) on every pass.
   NavigationMode _navigationMode = NavigationMode.traditional;
 
   // Keyboard mapping for a focused range slider.
@@ -2389,8 +2388,6 @@ class _RangeSliderDefaultsM2 extends SliderThemeData {
 }
 
 class _AdjustSliderIntent extends Intent {
-  const _AdjustSliderIntent({required this.type});
-
   const _AdjustSliderIntent.right() : type = _SliderAdjustmentType.right;
 
   const _AdjustSliderIntent.left() : type = _SliderAdjustmentType.left;
