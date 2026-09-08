@@ -2,6 +2,8 @@
 
 * Adds support for batch release of pre-1.0 packages.
 * Exempts `AGENTS.md` from requiring version and changelog changes.
+* Pins `platform` below `3.2.0`, which made `Platform` a `final class`,
+  breaking `test/mocks.dart`'s `MockPlatform implements Platform`.
 
 ## 0.14.4
 
