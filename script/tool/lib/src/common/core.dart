@@ -160,7 +160,7 @@ Directory toolCacheDirectory(Directory repoRoot) {
 }
 
 /// The directory to which to write logs and other artifacts, if set in CI.
-Directory? ciLogsDirectory(Platform platform, FileSystem fileSystem) {
+Directory? ciLogsDirectory(NativePlatform platform, FileSystem fileSystem) {
   final String? logsDirectoryPath = platform.environment['FLUTTER_LOGS_DIR'];
   Directory? logsDirectory;
   if (logsDirectoryPath != null) {
