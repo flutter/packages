@@ -12,7 +12,7 @@ import '../data/typescale_emphasized.dart';
 import '../templates/action_chip_template.dart';
 import '../templates/app_bar_template.dart';
 import '../templates/badge_template.dart';
-// import '../templates/banner_template.dart';
+import '../templates/banner_template.dart';
 // import '../templates/bottom_app_bar_template.dart';
 import '../templates/bottom_sheet_template.dart';
 // import '../templates/button_template.dart';
@@ -258,9 +258,14 @@ void main() {
       );
     });
 
-    test('BannerTemplateM3 emits M3 Banner defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+    test('BannerTemplateM3 emits M3 Banner defaults from banner tokens', () {
+      final String contents = const BannerTemplateM3().generateContents('_BannerDefaultsM3');
+      expect(contents, contains('class _BannerDefaultsM3 extends MaterialBannerThemeData'));
+      expect(contents, contains('elevation: 1.0'));
+      expect(contents, contains('Color? get backgroundColor => _colors.surfaceContainerLow'));
+      expect(contents, contains('Color? get surfaceTintColor => Colors.transparent'));
+      expect(contents, contains('Color? get dividerColor => _colors.outlineVariant'));
+      expect(contents, contains('TextStyle? get contentTextStyle => _textTheme.bodyMedium'));
     });
 
     test('BottomAppBarTemplateM3 emits M3 BottomAppBar defaults from tokens', () {
