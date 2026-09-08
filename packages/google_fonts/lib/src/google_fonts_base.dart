@@ -8,11 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
-import '../google_fonts.dart';
 import 'file_io.dart' // Stubbed implementation by default.
     // Concrete implementation if File IO is available.
     if (dart.library.io) 'file_io_desktop_and_mobile.dart'
     as file_io;
+import 'google_fonts_config.dart';
 import 'google_fonts_descriptor.dart';
 import 'google_fonts_family_with_variant.dart';
 import 'google_fonts_variant.dart';
@@ -164,7 +164,7 @@ Future<void> loadFontIfNecessary(GoogleFontsDescriptor descriptor) async {
     }
 
     // Attempt to load this font via http, unless disallowed.
-    if (GoogleFonts.config.allowRuntimeFetching) {
+    if (sharedGoogleFontsConfig.allowRuntimeFetching) {
       byteData = _httpFetchFontAndSaveToDevice(familyWithVariantString, descriptor.file);
       if (await byteData != null) {
         return await loadFontByteData(familyWithVariantString, byteData);
@@ -250,7 +250,7 @@ Future<ByteData> _httpFetchFontAndSaveToDevice(String fontName, GoogleFontsFile 
   }
 
   http.Response response;
-  final http.Client client = GoogleFonts.config.httpClient ?? _httpClient;
+  final http.Client client = sharedGoogleFontsConfig.httpClient ?? _httpClient;
   try {
     response = await client.get(uri);
   } catch (e) {

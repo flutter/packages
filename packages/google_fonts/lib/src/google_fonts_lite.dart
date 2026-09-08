@@ -9,6 +9,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 import 'google_fonts_base.dart';
+import 'google_fonts_config.dart';
 import 'google_fonts_descriptor.dart';
 import 'google_fonts_variant.dart';
 
@@ -18,6 +19,63 @@ import 'google_fonts_variant.dart';
 /// each font, [GoogleFontsLite] provides dynamic font lookup via [getFont]
 /// and [fontsMap], allowing unused font methods to be tree-shaken by the compiler.
 abstract final class GoogleFontsLite {
+  /// Configuration for the [GoogleFontsLite] library.
+  ///
+  /// ```dart
+  /// GoogleFontsLite.config.allowRuntimeFetching = false;
+  /// ```
+  static final GoogleFontsConfig config = sharedGoogleFontsConfig;
+
+  /// Returns a [Future] which resolves when requested fonts have finished
+  /// loading and are ready to be rendered on screen.
+  ///
+  /// Usage:
+  /// ```dart
+  /// GoogleFontsLite.getFont('Lato');
+  /// GoogleFontsLite.getTextTheme('Pacifico');
+  /// await GoogleFontsLite.pendingFonts(); // <-- waits until Lato and Pacifico files have loaded.
+  /// ```
+  ///
+  /// To keep things tidy, one can also pass in requested fonts as a list
+  /// to [pendingFonts].
+  ///
+  /// ```dart
+  /// await GoogleFontsLite.pendingFonts(<dynamic>[
+  ///   GoogleFontsLite.getFont('Lato'),
+  ///   GoogleFontsLite.getTextTheme('Pacifico'),
+  /// ]);
+  /// ```
+  ///
+  /// To avoid visual font swaps that occur when a font is loading,
+  /// consider using [FutureBuilder]. Note: This future cannot be created in
+  /// [build], as described in [FutureBuilder]'s documentation.
+  ///
+  /// ```dart
+  /// late Future<List<void>> googleFontsPending;
+  ///
+  /// @override
+  /// void initState() {
+  ///   super.initState();
+  ///   googleFontsPending = GoogleFontsLite.pendingFonts(<dynamic>[
+  ///     GoogleFontsLite.getFont('Lato'),
+  ///   ]);
+  /// }
+  ///
+  /// @override
+  /// Widget build(BuildContext context) {
+  ///   return FutureBuilder(
+  ///     future: googleFontsPending,
+  ///     builder: (context, snapshot) {
+  ///       if (snapshot.connectionState != ConnectionState.done) {
+  ///         return const SizedBox();
+  ///       }
+  ///       return Text('Lato text', style: GoogleFontsLite.getFont('Lato'));
+  ///     },
+  ///   );
+  /// }
+  /// ```
+  static Future<List<void>> pendingFonts([List<dynamic>? _]) => Future.wait(pendingFontFutures);
+
   /// Map of all available Google Fonts families to their variant file descriptors.
   static final Map<String, Map<GoogleFontsVariant, GoogleFontsFile>> fontsMap = {
     'ABeeZee': {
@@ -57088,6 +57146,39 @@ abstract final class GoogleFontsLite {
       decorationColor: decorationColor,
       decorationStyle: decorationStyle,
       decorationThickness: decorationThickness,
+    );
+  }
+
+  /// Retrieve a text theme by its font family name.
+  ///
+  /// Applies the given font family from Google Fonts to the given [textTheme]
+  /// and returns the resulting [textTheme].
+  ///
+  /// Note: [fontFamily] is case-sensitive.
+  ///
+  /// Parameter [fontFamily] must not be `null`. Throws if no font by name
+  /// [fontFamily] exists.
+  static TextTheme getTextTheme(String fontFamily, [TextTheme? textTheme]) {
+    if (!fontsMap.containsKey(fontFamily)) {
+      throw Exception("No font family by name '$fontFamily' was found.");
+    }
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: getFont(fontFamily, textStyle: textTheme.displayLarge),
+      displayMedium: getFont(fontFamily, textStyle: textTheme.displayMedium),
+      displaySmall: getFont(fontFamily, textStyle: textTheme.displaySmall),
+      headlineLarge: getFont(fontFamily, textStyle: textTheme.headlineLarge),
+      headlineMedium: getFont(fontFamily, textStyle: textTheme.headlineMedium),
+      headlineSmall: getFont(fontFamily, textStyle: textTheme.headlineSmall),
+      titleLarge: getFont(fontFamily, textStyle: textTheme.titleLarge),
+      titleMedium: getFont(fontFamily, textStyle: textTheme.titleMedium),
+      titleSmall: getFont(fontFamily, textStyle: textTheme.titleSmall),
+      bodyLarge: getFont(fontFamily, textStyle: textTheme.bodyLarge),
+      bodyMedium: getFont(fontFamily, textStyle: textTheme.bodyMedium),
+      bodySmall: getFont(fontFamily, textStyle: textTheme.bodySmall),
+      labelLarge: getFont(fontFamily, textStyle: textTheme.labelLarge),
+      labelMedium: getFont(fontFamily, textStyle: textTheme.labelMedium),
+      labelSmall: getFont(fontFamily, textStyle: textTheme.labelSmall),
     );
   }
 }

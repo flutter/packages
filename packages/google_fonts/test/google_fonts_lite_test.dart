@@ -2,9 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_fonts/google_fonts_lite.dart' as lite;
+import 'package:google_fonts/src/google_fonts_base.dart';
 
 void main() {
   testWidgets('GoogleFontsLite getFont returns the correct font with the given parameters', (
@@ -98,5 +102,83 @@ void main() {
 
   test('GoogleFontsLite.fontsMap keys match GoogleFonts.asMap keys exactly', () {
     expect(GoogleFontsLite.fontsMap.keys, equals(GoogleFonts.asMap().keys));
+  });
+
+  test('GoogleFontsLite.config and GoogleFonts.config share the same instance', () {
+    expect(identical(GoogleFontsLite.config, GoogleFonts.config), isTrue);
+    addTearDown(() {
+      GoogleFontsLite.config.allowRuntimeFetching = true;
+    });
+    GoogleFontsLite.config.allowRuntimeFetching = false;
+    expect(GoogleFonts.config.allowRuntimeFetching, isFalse);
+  });
+
+  test('GoogleFontsLite.pendingFonts awaits loaded fonts and accepts optional argument', () async {
+    pendingFontFutures.clear();
+    expect(await GoogleFontsLite.pendingFonts(), isEmpty);
+    expect(
+      await GoogleFontsLite.pendingFonts(<TextStyle>[const TextStyle(fontFamily: 'Lato')]),
+      isEmpty,
+    );
+  });
+
+  testWidgets('GoogleFontsLite.getTextTheme creates matching TextTheme', (
+    WidgetTester tester,
+  ) async {
+    final TextTheme liteTheme = GoogleFontsLite.getTextTheme('Lato');
+    final TextTheme heavyTheme = GoogleFonts.latoTextTheme();
+    expect(liteTheme, equals(heavyTheme));
+  });
+
+  testWidgets('GoogleFontsLite.getTextTheme preserves existing TextTheme properties', (
+    WidgetTester tester,
+  ) async {
+    const customStyle = TextStyle(fontSize: 42.0, color: Colors.purple);
+    final lightTheme = ThemeData.light();
+    final TextTheme customBaseTheme = lightTheme.textTheme.copyWith(displayLarge: customStyle);
+    final TextTheme resultTheme = GoogleFontsLite.getTextTheme('Lato', customBaseTheme);
+    expect(resultTheme.displayLarge?.fontSize, equals(42.0));
+    expect(resultTheme.displayLarge?.color, equals(Colors.purple));
+    expect(resultTheme.displayLarge?.fontFamily, contains('Lato'));
+  });
+
+  test('GoogleFontsLite.getTextTheme throws on unknown font family', () {
+    expect(
+      () => GoogleFontsLite.getTextTheme('NonExistentFamily'),
+      throwsA(
+        isA<Exception>().having(
+          (Exception e) => e.toString(),
+          'message',
+          contains("No font family by name 'NonExistentFamily' was found."),
+        ),
+      ),
+    );
+  });
+
+  test('google_fonts_lite.dart entrypoint exports expected public symbols', () {
+    expect(lite.GoogleFontsLite.fontsMap, isNotEmpty);
+    expect(lite.GoogleFontsLite.config, isA<lite.GoogleFontsConfig>());
+    expect(lite.GoogleFontsLite.config, isA<lite.Config>());
+  });
+
+  test('lib/google_fonts_lite.dart does not transitively import part files', () {
+    final String liteEntryContent = File('lib/google_fonts_lite.dart').readAsStringSync();
+    expect(liteEntryContent.contains('google_fonts.dart'), isFalse);
+    expect(liteEntryContent.contains('google_fonts_all_parts.dart'), isFalse);
+
+    final String liteSrcContent = File('lib/src/google_fonts_lite.dart').readAsStringSync();
+    expect(liteSrcContent.contains('google_fonts.dart'), isFalse);
+    expect(liteSrcContent.contains('google_fonts_all_parts.dart'), isFalse);
+    expect(liteSrcContent.contains('google_fonts_parts/'), isFalse);
+
+    final String baseFileContent = File('lib/src/google_fonts_base.dart').readAsStringSync();
+    expect(
+      baseFileContent.contains("import '../google_fonts.dart'"),
+      isFalse,
+      reason: 'google_fonts_base.dart must not import google_fonts.dart to maintain tree-shaking',
+    );
+    expect(baseFileContent.contains("import 'google_fonts_config.dart'"), isTrue);
+    expect(baseFileContent.contains('google_fonts_all_parts.dart'), isFalse);
+    expect(baseFileContent.contains('google_fonts_parts/'), isFalse);
   });
 }

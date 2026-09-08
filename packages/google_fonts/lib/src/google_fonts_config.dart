@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:http/http.dart' as http;
+import 'package:meta/meta.dart';
 
 /// A collection of properties used to specify custom behavior of the
 /// GoogleFonts library.
@@ -22,3 +23,7 @@ class GoogleFontsConfig {
 /// Deprecated. Use [GoogleFontsConfig] instead.
 @Deprecated('Use GoogleFontsConfig instead')
 typedef Config = GoogleFontsConfig;
+
+/// Shared configuration instance for the Google Fonts library.
+@internal
+final GoogleFontsConfig sharedGoogleFontsConfig = GoogleFontsConfig();
