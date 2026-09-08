@@ -39,6 +39,9 @@ class NavigationDelegate {
   ///
   /// {@template webview_fluttter.NavigationDelegate.constructor}
   /// **`onNavigationRequest`:** invoked when a navigation request is pending.
+  /// **`onCreateWindow`:** invoked when the page opens a new window
+  ///   (`target=_blank` / `window.open`). The host should handle the URL; the
+  ///   WebView will not load it when this callback is set.
   /// **`onPageStarted`:** invoked when a page starts loading.
   /// **`onPageFinished`:** invoked when a page finishes loading.
   /// **`onProgress`:** invoked when page loading progress changes.
@@ -52,6 +55,7 @@ class NavigationDelegate {
   /// {@endtemplate}
   NavigationDelegate({
     FutureOr<NavigationDecision> Function(NavigationRequest request)? onNavigationRequest,
+    void Function(String url)? onCreateWindow,
     void Function(String url)? onPageStarted,
     void Function(String url)? onPageFinished,
     void Function(int progress)? onProgress,
@@ -63,6 +67,7 @@ class NavigationDelegate {
   }) : this.fromPlatformCreationParams(
          const PlatformNavigationDelegateCreationParams(),
          onNavigationRequest: onNavigationRequest,
+         onCreateWindow: onCreateWindow,
          onPageStarted: onPageStarted,
          onPageFinished: onPageFinished,
          onProgress: onProgress,
@@ -107,6 +112,7 @@ class NavigationDelegate {
   NavigationDelegate.fromPlatformCreationParams(
     PlatformNavigationDelegateCreationParams params, {
     FutureOr<NavigationDecision> Function(NavigationRequest request)? onNavigationRequest,
+    void Function(String url)? onCreateWindow,
     void Function(String url)? onPageStarted,
     void Function(String url)? onPageFinished,
     void Function(int progress)? onProgress,
@@ -118,6 +124,7 @@ class NavigationDelegate {
   }) : this.fromPlatform(
          PlatformNavigationDelegate(params),
          onNavigationRequest: onNavigationRequest,
+         onCreateWindow: onCreateWindow,
          onPageStarted: onPageStarted,
          onPageFinished: onPageFinished,
          onProgress: onProgress,
@@ -134,6 +141,7 @@ class NavigationDelegate {
   NavigationDelegate.fromPlatform(
     this.platform, {
     this.onNavigationRequest,
+    this.onCreateWindow,
     this.onPageStarted,
     this.onPageFinished,
     this.onProgress,
@@ -145,6 +153,9 @@ class NavigationDelegate {
   }) {
     if (onNavigationRequest != null) {
       platform.setOnNavigationRequest(onNavigationRequest!);
+    }
+    if (onCreateWindow != null) {
+      platform.setOnCreateWindow(onCreateWindow!);
     }
     if (onPageStarted != null) {
       platform.setOnPageStarted(onPageStarted!);
@@ -188,6 +199,12 @@ class NavigationDelegate {
   ///
   /// See [NavigationDecision].
   final NavigationRequestCallback? onNavigationRequest;
+
+  /// Invoked when the page requests a new window (`target=_blank` / `window.open`).
+  ///
+  /// When set, the URL is not loaded in the WebView; the host should handle it
+  /// (e.g. open the system browser).
+  final CreateWindowCallback? onCreateWindow;
 
   /// Invoked when a page has started loading.
   final PageEventCallback? onPageStarted;

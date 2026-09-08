@@ -63,6 +63,14 @@ void main() {
     );
   });
 
+  test('Default implementation of setOnCreateWindow should throw unimplemented error', () {
+    final PlatformNavigationDelegate callbackDelegate = ExtendsPlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
+
+    expect(() => callbackDelegate.setOnCreateWindow((String url) {}), throwsUnimplementedError);
+  });
+
   test('Default implementation of setOnPageStarted should throw unimplemented error', () {
     final PlatformNavigationDelegate callbackDelegate = ExtendsPlatformNavigationDelegate(
       const PlatformNavigationDelegateCreationParams(),
