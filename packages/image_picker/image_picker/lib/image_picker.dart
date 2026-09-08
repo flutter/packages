@@ -353,6 +353,10 @@ class ImagePicker {
   /// Returns a [LostDataResponse] object if successfully retrieved the lost data. The [LostDataResponse] object can \
   /// represent either a successful image/video selection, or a failure.
   ///
+  /// Retrieving the lost data is a one-time operation: once it is returned, the
+  /// data is cleared, so subsequent calls return an empty [LostDataResponse]
+  /// rather than the same data again.
+  ///
   /// Calling this on a non-Android platform will throw [UnimplementedError] exception.
   ///
   /// See also:
