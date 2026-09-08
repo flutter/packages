@@ -294,6 +294,8 @@ class _CupertinoSliderState extends State<CupertinoSlider> with TickerProviderSt
   Widget build(BuildContext context) {
     return _CupertinoSliderRenderObjectWidget(
       value: (widget.value - widget.min) / (widget.max - widget.min),
+      min: widget.min,
+      max: widget.max,
       divisions: widget.divisions,
       activeColor: CupertinoDynamicColor.resolve(
         widget.activeColor ?? CupertinoTheme.of(context).primaryColor,
@@ -311,6 +313,8 @@ class _CupertinoSliderState extends State<CupertinoSlider> with TickerProviderSt
 class _CupertinoSliderRenderObjectWidget extends LeafRenderObjectWidget {
   const _CupertinoSliderRenderObjectWidget({
     required this.value,
+    required this.min,
+    required this.max,
     this.divisions,
     required this.activeColor,
     required this.thumbColor,
@@ -321,6 +325,8 @@ class _CupertinoSliderRenderObjectWidget extends LeafRenderObjectWidget {
   });
 
   final double value;
+  final double min;
+  final double max;
   final int? divisions;
   final Color activeColor;
   final Color thumbColor;
@@ -334,6 +340,8 @@ class _CupertinoSliderRenderObjectWidget extends LeafRenderObjectWidget {
     assert(debugCheckHasDirectionality(context));
     return _RenderCupertinoSlider(
       value: value,
+      min: min,
+      max: max,
       divisions: divisions,
       activeColor: activeColor,
       thumbColor: CupertinoDynamicColor.resolve(thumbColor, context),
@@ -352,6 +360,8 @@ class _CupertinoSliderRenderObjectWidget extends LeafRenderObjectWidget {
     assert(debugCheckHasDirectionality(context));
     renderObject
       ..value = value
+      ..min = min
+      ..max = max
       ..divisions = divisions
       ..activeColor = activeColor
       ..thumbColor = CupertinoDynamicColor.resolve(thumbColor, context)
@@ -374,18 +384,30 @@ const double _kAdjustmentUnit = 0.1; // Matches iOS implementation of material s
 
 class _RenderCupertinoSlider extends RenderConstrainedBox implements MouseTrackerAnnotation {
   _RenderCupertinoSlider({
-    required this._value,
-    this._divisions,
-    required this._activeColor,
-    required this._thumbColor,
-    required this._trackColor,
-    this._onChanged,
+    required double value,
+    required double min,
+    required double max,
+    int? divisions,
+    required Color activeColor,
+    required Color thumbColor,
+    required Color trackColor,
+    _SliderValueChanged? onChanged,
     this.onChangeStart,
     this.onChangeEnd,
     required TickerProvider vsync,
-    required this._textDirection,
-    this._cursor = MouseCursor.defer,
-  }) : assert(_value >= 0.0 && _value <= 1.0),
+    required TextDirection textDirection,
+    MouseCursor cursor = MouseCursor.defer,
+  }) : assert(value >= 0.0 && value <= 1.0),
+       _value = value,
+       _min = min,
+       _max = max,
+       _divisions = divisions,
+       _activeColor = activeColor,
+       _thumbColor = thumbColor,
+       _trackColor = trackColor,
+       _onChanged = onChanged,
+       _textDirection = textDirection,
+       _cursor = cursor,
        super(
          additionalConstraints: const BoxConstraints.tightFor(
            width: _kSliderWidth,
@@ -416,6 +438,26 @@ class _RenderCupertinoSlider extends RenderConstrainedBox implements MouseTracke
     } else {
       _position.value = newValue;
     }
+    markNeedsSemanticsUpdate();
+  }
+
+  double get min => _min;
+  double _min;
+  set min(double newMin) {
+    if (newMin == _min) {
+      return;
+    }
+    _min = newMin;
+    markNeedsSemanticsUpdate();
+  }
+
+  double get max => _max;
+  double _max;
+  set max(double newMax) {
+    if (newMax == _max) {
+      return;
+    }
+    _max = newMax;
     markNeedsSemanticsUpdate();
   }
 
@@ -623,11 +665,14 @@ class _RenderCupertinoSlider extends RenderConstrainedBox implements MouseTracke
 
     config.isSemanticBoundary = isInteractive;
     config.isSlider = true;
+    config.role = SemanticsRole.slider;
+    config.minValue = min.toString();
+    config.maxValue = max.toString();
+    config.value = '${(value * 100).round()}%';
     if (isInteractive) {
       config.textDirection = textDirection;
       config.onIncrease = _increaseAction;
       config.onDecrease = _decreaseAction;
-      config.value = '${(value * 100).round()}%';
       config.increasedValue =
           '${(clampDouble(value + _semanticActionUnit, 0.0, 1.0) * 100).round()}%';
       config.decreasedValue =
