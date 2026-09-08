@@ -366,6 +366,30 @@ void _setIconAnchor({required gmaps.Size size, required Offset anchor, required 
   icon.anchor = gmapsAnchor;
 }
 
+String _advancedMarkerAnchorToCssOffset(double anchor) {
+  final double percentage = -anchor * 100;
+  final int rounded = percentage.round();
+  if ((percentage - rounded).abs() < 1e-9) {
+    return '$rounded%';
+  }
+  return '$percentage%';
+}
+
+void _setAdvancedMarkerOptionsAnchor(gmaps.AdvancedMarkerElementOptions options, Offset anchor) {
+  options
+    ..anchorLeft = _advancedMarkerAnchorToCssOffset(anchor.dx)
+    ..anchorTop = _advancedMarkerAnchorToCssOffset(anchor.dy);
+}
+
+void _copyAdvancedMarkerOptionsAnchor(
+  gmaps.AdvancedMarkerElement marker,
+  gmaps.AdvancedMarkerElementOptions options,
+) {
+  marker
+    ..anchorLeft = options.anchorLeft
+    ..anchorTop = options.anchorTop;
+}
+
 // Sets the size of the Google Maps icon.
 void _setIconSize({required gmaps.Size size, required gmaps.Icon icon}) {
   final gmapsSize = gmaps.Size(size.width, size.height);
@@ -704,6 +728,7 @@ Future<O> _markerOptionsFromMarker<T, O>(Marker marker, T? currentMarker) async 
       ..title = sanitizeHtml(marker.infoWindow.title ?? '')
       ..zIndex = marker.zIndex
       ..gmpDraggable = marker.draggable;
+    _setAdvancedMarkerOptionsAnchor(options, marker.anchor);
     return options as O;
   } else {
     final options = gmaps.MarkerOptions()
