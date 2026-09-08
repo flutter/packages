@@ -12,6 +12,12 @@ import io.flutter.plugin.common.MessageCodec
 import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 const val aStringConstant: String = "stringConstantValue"
 const val anIntConstant: Long = 42L
@@ -297,7 +303,7 @@ interface ExampleHostApi {
 
   fun add(a: Long, b: Long): Long
 
-  fun sendMessage(message: MessageData, callback: (Result<Boolean>) -> Unit)
+  suspend fun sendMessage(message: MessageData): Boolean
 
   companion object {
     /** The codec used by ExampleHostApi. */
@@ -364,14 +370,14 @@ interface ExampleHostApi {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val messageArg = args[0] as MessageData
-            api.sendMessage(messageArg) { result: Result<Boolean> ->
-              val error = result.exceptionOrNull()
-              if (error != null) {
-                reply.reply(MessagesPigeonUtils.wrapError(error))
-              } else {
-                val data = result.getOrNull()
-                reply.reply(MessagesPigeonUtils.wrapResult(data))
-              }
+            CoroutineScope(Dispatchers.Main).launch {
+              val wrapped: List<Any?> =
+                  try {
+                    listOf(api.sendMessage(messageArg))
+                  } catch (exception: Throwable) {
+                    MessagesPigeonUtils.wrapError(exception)
+                  }
+              reply.reply(wrapped)
             }
           }
         } else {
@@ -391,29 +397,29 @@ class MessageFlutterApi(
     val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
   }
 
-  fun flutterMethod(aStringArg: String?, callback: (Result<String>) -> Unit) {
+  suspend fun flutterMethod(aStringArg: String?): String {
     val separatedMessageChannelSuffix =
         if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName =
-        "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod$separatedMessageChannelSuffix"
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(aStringArg)) {
-      if (it is List<*>) {
-        if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
-        } else if (it[0] == null) {
-          callback(
-              Result.failure(
-                  FlutterError(
-                      "null-error",
-                      "Flutter api returned null value for non-null return value.",
-                      "")))
+    return suspendCancellableCoroutine { continuation ->
+      val channelName =
+          "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod$separatedMessageChannelSuffix"
+      val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+      channel.send(listOf(aStringArg)) {
+        if (it is List<*>) {
+          if (it.size > 1) {
+            continuation.resumeWithException(
+                FlutterError(it[0] as String, it[1] as String, it[2] as String?))
+          } else if (it[0] == null) {
+            continuation.resumeWithException(
+                FlutterError(
+                    "null-error", "Flutter api returned null value for non-null return value.", ""))
+          } else {
+            val output = it[0] as String
+            continuation.resume(output)
+          }
         } else {
-          val output = it[0] as String
-          callback(Result.success(output))
+          continuation.resumeWithException(MessagesPigeonUtils.createConnectionError(channelName))
         }
-      } else {
-        callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
       }
     }
   }

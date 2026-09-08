@@ -4,6 +4,7 @@
 
 import UIKit
 import google_maps_flutter_ios_sdk9
+import google_maps_flutter_ios_sdk9_objc
 
 /// Fake implementation of FGMAssetProvider for unit tests.
 class TestAssetProvider: NSObject, FGMAssetProvider {

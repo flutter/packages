@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router_examples/state_restoration/shell_route_state_restoration.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   testWidgets('ShellRoute navigation location and route state '
