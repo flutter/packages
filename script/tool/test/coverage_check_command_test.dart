@@ -15,14 +15,14 @@ import 'util.dart';
 
 void main() {
   group('CoverageCheckCommand', () {
-    late Platform mockPlatform;
+    late NativePlatform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
     late CoverageCheckCommand command;
 
     setUp(() {
-      mockPlatform = MockPlatform();
+      mockPlatform = createMockPlatform();
       late GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
         platform: mockPlatform,
