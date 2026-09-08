@@ -400,13 +400,21 @@ class FilledButton extends ButtonStyleButton {
   /// * `textStyle` - Theme.textTheme.labelLarge
   /// * `backgroundColor`
   ///   * disabled - Theme.colorScheme.onSurface(0.12)
-  ///   * others - Theme.colorScheme.secondaryContainer
+  ///   * others
+  ///     - Theme.colorScheme.primary in `FilledButton`
+  ///     - Theme.colorScheme.secondaryContainer in `FilledButton.tonal`
   /// * `foregroundColor`
   ///   * disabled - Theme.colorScheme.onSurface(0.38)
-  ///   * others - Theme.colorScheme.onSecondaryContainer
+  ///   * others
+  ///     - Theme.colorScheme.onPrimary in `FilledButton`
+  ///     - Theme.colorScheme.onSecondaryContainer in `FilledButton.tonal`
   /// * `overlayColor`
-  ///   * hovered - Theme.colorScheme.onSecondaryContainer(0.08)
-  ///   * focused or pressed - Theme.colorScheme.onSecondaryContainer(0.1)
+  ///   * hovered
+  ///     - Theme.colorScheme.onPrimary(0.08) in `FilledButton`
+  ///     - Theme.colorScheme.onSecondaryContainer(0.08) in `FilledButton.tonal`
+  ///   * focused or pressed
+  ///     - Theme.colorScheme.onPrimary(0.1) in `FilledButton`
+  ///     - Theme.colorScheme.onSecondaryContainer(0.1) in `FilledButton.tonal`
   /// * `shadowColor` - Theme.colorScheme.shadow
   /// * `surfaceTintColor` - Colors.transparent
   /// * `elevation`
