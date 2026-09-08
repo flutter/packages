@@ -13,6 +13,12 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List;
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
+const String aStringConstant = 'stringConstantValue';
+const String aStringConstantWithEscapes = 'string\\\'\\"\\\$ConstantValue';
+const int anIntConstant = 42;
+const double aDoubleConstant = 3.14;
+const bool aBoolConstant = true;
+
 Object? _extractReplyValueOrThrow(
   List<Object?>? replyList,
   String channelName, {
@@ -800,6 +806,42 @@ class AllNullableTypesWithoutRecursion {
   }
 }
 
+/// A data class without fields for testing empty classes.
+class AnEmptyClass {
+  AnEmptyClass();
+
+  List<Object?> _toList() {
+    return <Object?>[];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static AnEmptyClass decode(Object result) {
+    result as List<Object?>;
+    return AnEmptyClass();
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! AnEmptyClass || other.runtimeType != runtimeType) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'AnEmptyClass()';
+  }
+}
+
 /// A class for testing nested class handling.
 ///
 /// This is needed to test nested nullable and non-nullable classes,
@@ -814,6 +856,7 @@ class AllClassesWrapper {
     this.nullableClassList,
     required this.classMap,
     this.nullableClassMap,
+    this.anEmptyClass,
   });
 
   AllNullableTypes allNullableTypes;
@@ -830,6 +873,8 @@ class AllClassesWrapper {
 
   Map<int?, AllNullableTypesWithoutRecursion?>? nullableClassMap;
 
+  AnEmptyClass? anEmptyClass;
+
   List<Object?> _toList() {
     return <Object?>[
       allNullableTypes,
@@ -839,6 +884,7 @@ class AllClassesWrapper {
       nullableClassList,
       classMap,
       nullableClassMap,
+      anEmptyClass,
     ];
   }
 
@@ -857,6 +903,7 @@ class AllClassesWrapper {
       classMap: (result[5]! as Map<Object?, Object?>).cast<int?, AllTypes?>(),
       nullableClassMap: (result[6] as Map<Object?, Object?>?)
           ?.cast<int?, AllNullableTypesWithoutRecursion?>(),
+      anEmptyClass: result[7] as AnEmptyClass?,
     );
   }
 
@@ -875,7 +922,8 @@ class AllClassesWrapper {
         _deepEquals(classList, other.classList) &&
         _deepEquals(nullableClassList, other.nullableClassList) &&
         _deepEquals(classMap, other.classMap) &&
-        _deepEquals(nullableClassMap, other.nullableClassMap);
+        _deepEquals(nullableClassMap, other.nullableClassMap) &&
+        _deepEquals(anEmptyClass, other.anEmptyClass);
   }
 
   @override
@@ -884,7 +932,7 @@ class AllClassesWrapper {
 
   @override
   String toString() {
-    return 'AllClassesWrapper(allNullableTypes: $allNullableTypes, allNullableTypesWithoutRecursion: $allNullableTypesWithoutRecursion, allTypes: $allTypes, classList: $classList, nullableClassList: $nullableClassList, classMap: $classMap, nullableClassMap: $nullableClassMap)';
+    return 'AllClassesWrapper(allNullableTypes: $allNullableTypes, allNullableTypesWithoutRecursion: $allNullableTypesWithoutRecursion, allTypes: $allTypes, classList: $classList, nullableClassList: $nullableClassList, classMap: $classMap, nullableClassMap: $nullableClassMap, anEmptyClass: $anEmptyClass)';
   }
 }
 
@@ -954,11 +1002,14 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is AllNullableTypesWithoutRecursion) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is AllClassesWrapper) {
+    } else if (value is AnEmptyClass) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is TestMessage) {
+    } else if (value is AllClassesWrapper) {
       buffer.putUint8(136);
+      writeValue(buffer, value.encode());
+    } else if (value is TestMessage) {
+      buffer.putUint8(137);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -983,8 +1034,10 @@ class _PigeonCodec extends StandardMessageCodec {
       case 134:
         return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
       case 135:
-        return AllClassesWrapper.decode(readValue(buffer)!);
+        return AnEmptyClass.decode(readValue(buffer)!);
       case 136:
+        return AllClassesWrapper.decode(readValue(buffer)!);
+      case 137:
         return TestMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -3213,6 +3266,27 @@ class HostIntegrationCoreApi {
     return pigeonVar_replyValue! as bool;
   }
 
+  /// Returns true if the handler is run on a non-main thread, which should be
+  /// true for any platform with TaskQueue support.
+  Future<bool> asyncTaskQueueIsBackgroundThread() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.asyncTaskQueueIsBackgroundThread$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as bool;
+  }
+
   Future<void> callFlutterNoop() async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop$pigeonVar_messageChannelSuffix';
@@ -4212,6 +4286,187 @@ class HostIntegrationCoreApi {
       isNullValid: false,
     );
     return pigeonVar_replyValue! as String;
+  }
+
+  Future<void> callFlutterCallbackNoop() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterCallbackNoop$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
+
+  Future<String> callFlutterCallbackEchoString(String aString) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterCallbackEchoString$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as String;
+  }
+
+  Future<Object?> callFlutterCallbackThrowError() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterCallbackThrowError$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue;
+  }
+
+  Future<void> callFlutterCallbackThrowErrorFromVoid() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterCallbackThrowErrorFromVoid$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
+}
+
+/// A Flutter API using callback-based asynchronous methods (@asyncCallback).
+abstract class FlutterCallbackCoreApi {
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  Future<void> noop();
+
+  Future<String> echoString(String aString);
+
+  Future<Object?> throwError();
+
+  Future<void> throwErrorFromVoid();
+
+  static void setUp(
+    FlutterCallbackCoreApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.FlutterCallbackCoreApi.noop$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          try {
+            await api.noop();
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.FlutterCallbackCoreApi.echoString$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final String arg_aString = args[0]! as String;
+          try {
+            final String output = await api.echoString(arg_aString);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.FlutterCallbackCoreApi.throwError$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          try {
+            final Object? output = await api.throwError();
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.FlutterCallbackCoreApi.throwErrorFromVoid$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          try {
+            await api.throwErrorFromVoid();
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
   }
 }
 
@@ -5724,6 +5979,146 @@ abstract class FlutterIntegrationCoreApi {
         });
       }
     }
+  }
+}
+
+/// A Host API using callback-based asynchronous methods (@asyncCallback).
+class HostCallbackCoreApi {
+  /// Constructor for [HostCallbackCoreApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  HostCallbackCoreApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
+  final BinaryMessenger? pigeonVar_binaryMessenger;
+
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String pigeonVar_messageChannelSuffix;
+
+  Future<void> noop() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.noop$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
+
+  Future<String> echoString(String aString) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.echoString$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as String;
+  }
+
+  Future<AllTypes> echoAllTypes(AllTypes everything) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.echoAllTypes$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[everything]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as AllTypes;
+  }
+
+  Future<String?> echoNullableString(String? aString) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.echoNullableString$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as String?;
+  }
+
+  Future<Object?> throwError() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.throwError$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue;
+  }
+
+  Future<void> throwErrorFromVoid() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.throwErrorFromVoid$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
+
+  Future<bool> taskQueueIsBackgroundThread() async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.taskQueueIsBackgroundThread$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as bool;
   }
 }
 

@@ -146,11 +146,17 @@ typedef ButtonLayerBuilder =
 /// | Outlined     | [OutlinedButton]        |
 /// | Text         | [TextButton]            |
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This sample shows how to create each of the Material 3 button types with Flutter.
 ///
-/// ** See code in examples/api/lib/material/button_style/button_style.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/button_style/button_style.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -329,7 +335,7 @@ class ButtonStyle with Diagnosticable {
 
   /// Defines how compact the button's layout will be.
   ///
-  /// {@macro flutter.material.themedata.visualDensity}
+  /// {@macro material_ui.themedata.visualDensity}
   ///
   /// See also:
   ///

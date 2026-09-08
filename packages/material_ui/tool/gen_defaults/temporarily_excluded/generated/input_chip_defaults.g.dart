@@ -18,12 +18,11 @@ class _InputChipDefaultsM3 extends ChipThemeData {
 
   @override
   TextStyle? get labelStyle => _textTheme.labelLarge?.copyWith(
-    color:
-        isEnabled
-            ? isSelected
-                ? _colors.onSecondaryContainer
-                : _colors.onSurfaceVariant
-            : _colors.onSurface,
+    color: isEnabled
+        ? isSelected
+              ? _colors.onSecondaryContainer
+              : _colors.onSurfaceVariant
+        : _colors.onSurface,
   );
 
   @override
@@ -48,37 +47,33 @@ class _InputChipDefaultsM3 extends ChipThemeData {
   Color? get surfaceTintColor => Colors.transparent;
 
   @override
-  Color? get checkmarkColor =>
-      isEnabled
-          ? isSelected
-              ? _colors.primary
-              : _colors.onSurfaceVariant
-          : _colors.onSurface;
+  Color? get checkmarkColor => isEnabled
+      ? isSelected
+            ? _colors.primary
+            : _colors.onSurfaceVariant
+      : _colors.onSurface;
 
   @override
-  Color? get deleteIconColor =>
-      isEnabled
-          ? isSelected
-              ? _colors.onSecondaryContainer
-              : _colors.onSurfaceVariant
-          : _colors.onSurface;
+  Color? get deleteIconColor => isEnabled
+      ? isSelected
+            ? _colors.onSecondaryContainer
+            : _colors.onSurfaceVariant
+      : _colors.onSurface;
 
   @override
-  BorderSide? get side =>
-      !isSelected
-          ? isEnabled
-              ? BorderSide(color: _colors.outlineVariant)
-              : BorderSide(color: _colors.onSurface.withOpacity(0.12))
-          : const BorderSide(color: Colors.transparent);
+  BorderSide? get side => !isSelected
+      ? isEnabled
+            ? BorderSide(color: _colors.outlineVariant)
+            : BorderSide(color: _colors.onSurface.withOpacity(0.12))
+      : const BorderSide(color: Colors.transparent);
 
   @override
   IconThemeData? get iconTheme => IconThemeData(
-    color:
-        isEnabled
-            ? isSelected
-                ? _colors.primary
-                : _colors.onSurfaceVariant
-            : _colors.onSurface,
+    color: isEnabled
+        ? isSelected
+              ? _colors.primary
+              : _colors.onSurfaceVariant
+        : _colors.onSurface,
     size: 18.0,
   );
 

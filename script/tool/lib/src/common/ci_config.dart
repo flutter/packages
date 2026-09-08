@@ -4,6 +4,12 @@
 
 import 'package:yaml/yaml.dart';
 
+const String _releaseModeKey = 'release';
+const String _isBatchModeKey = 'batch';
+const String _exemptFromExcerptsKey = 'exempt_from_excerpts';
+const String _analyzeSkillsKey = 'analyze_skills';
+const String _allowCustomAnalysisOptionsKey = 'allow_custom_analysis_options';
+
 /// A class representing the parsed content of a `ci_config.yaml` file.
 class CIConfig {
   /// Creates a [CIConfig] from a parsed YAML map.
@@ -11,6 +17,7 @@ class CIConfig {
     required this.isBatchRelease,
     required this.requiresExcerpts,
     required this.analyzeSkills,
+    required this.allowCustomAnalysisOptions,
   });
 
   /// Parses a [CIConfig] from a YAML string.
@@ -25,30 +32,34 @@ class CIConfig {
     _checkCIConfigEntries(loaded, syntax: _validCIConfigSyntax);
 
     var isBatchRelease = false;
-    final Object? release = loaded['release'];
+    final Object? release = loaded[_releaseModeKey];
     if (release is Map) {
-      isBatchRelease = release['batch'] == true;
+      isBatchRelease = release[_isBatchModeKey] == true;
     }
 
     // Any package that hasn't been explicitly exempted is assumed to require
     // excerpts.
-    final requiresExcerpts = loaded['exempt_from_excerpts'] != true;
+    final requiresExcerpts = loaded[_exemptFromExcerptsKey] != true;
 
-    final analyzeSkills = loaded['analyze_skills'] == true;
+    final analyzeSkills = loaded[_analyzeSkillsKey] == true;
+
+    final allowCustomAnalysisOptions = loaded[_allowCustomAnalysisOptionsKey] == true;
 
     return CIConfig._(
       isBatchRelease: isBatchRelease,
       requiresExcerpts: requiresExcerpts,
       analyzeSkills: analyzeSkills,
+      allowCustomAnalysisOptions: allowCustomAnalysisOptions,
     );
   }
 
   static const Map<String, Object?> _validCIConfigSyntax = <String, Object?>{
-    'release': <String, Object?>{
-      'batch': <bool>{true, false},
+    _releaseModeKey: <String, Object?>{
+      _isBatchModeKey: <bool>{true, false},
     },
-    'exempt_from_excerpts': <bool>{true, false},
-    'analyze_skills': <bool>{true, false},
+    _exemptFromExcerptsKey: <bool>{true, false},
+    _analyzeSkillsKey: <bool>{true, false},
+    _allowCustomAnalysisOptionsKey: <bool>{true, false},
   };
 
   /// Returns true if the package is configured for batch release.
@@ -59,6 +70,9 @@ class CIConfig {
 
   /// Returns true if the package has its agent skills analyzed.
   final bool analyzeSkills;
+
+  /// Returns true if the package is allowed to have its own analysis options.
+  final bool allowCustomAnalysisOptions;
 
   static void _checkCIConfigEntries(
     YamlMap config, {

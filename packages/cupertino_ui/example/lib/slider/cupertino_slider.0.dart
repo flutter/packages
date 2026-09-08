@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// #region body
 import 'package:cupertino_ui/cupertino_ui.dart';
 
 /// Flutter code sample for [CupertinoSlider].
@@ -84,3 +85,4 @@ class _CupertinoSliderExampleState extends State<CupertinoSliderExample> {
     );
   }
 }
+// #endregion body

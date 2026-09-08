@@ -818,6 +818,30 @@ $friendLines
   }
 
   @override
+  void writeConstants(
+    InternalCppOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    if (root.constants.isEmpty) {
+      return;
+    }
+    indent.newln();
+    for (final Constant constant in root.constants) {
+      addDocumentationComments(indent, constant.documentationComments, _docCommentSpec);
+      final String type = constant.type.baseName;
+      if (type == 'String') {
+        final String escaped = escapeStringDoubleQuotes(constant.value.toString());
+        indent.writeln('inline constexpr const char* ${constant.name} = "$escaped";');
+      } else {
+        final String cppType = _baseCppTypeForBuiltinDartType(constant.type) ?? 'auto';
+        indent.writeln('inline constexpr $cppType ${constant.name} = ${constant.value};');
+      }
+    }
+  }
+
+  @override
   void writeCloseNamespace(
     InternalCppOptions generatorOptions,
     Root root,

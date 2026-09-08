@@ -1,0 +1,2 @@
+# Disables docs requirements, as it is test code.
+allow_custom_analysis_options: true

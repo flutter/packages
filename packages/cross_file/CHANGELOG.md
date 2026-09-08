@@ -1,3 +1,9 @@
+## 0.3.5+5
+
+* Fixes native `readAsString` returning mojibake for `XFile.fromData`, which
+  decoded the bytes as UTF-16 code units instead of using the `encoding`
+  argument.
+
 ## 0.3.5+4
 
 * Adds a runnable `main` entry point and an additional `XFile.fromData`

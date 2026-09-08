@@ -49,7 +49,7 @@ class SpellCheckSuggestionsToolbar extends StatelessWidget {
   }) : buttonItems = buildButtonItems(editableTextState) ?? <ContextMenuButtonItem>[],
        anchor = getToolbarAnchor(editableTextState.contextMenuAnchors);
 
-  /// {@template flutter.material.SpellCheckSuggestionsToolbar.anchor}
+  /// {@template material_ui.SpellCheckSuggestionsToolbar.anchor}
   /// The focal point below which the toolbar attempts to position itself.
   /// {@endtemplate}
   final Offset anchor;

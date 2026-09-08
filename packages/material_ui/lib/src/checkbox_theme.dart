@@ -50,17 +50,17 @@ class CheckboxThemeData with Diagnosticable {
     this.side,
   });
 
-  /// {@macro flutter.material.checkbox.mouseCursor}
+  /// {@macro material_ui.checkbox.mouseCursor}
   ///
   /// If specified, overrides the default value of [Checkbox.mouseCursor].
   final WidgetStateProperty<MouseCursor?>? mouseCursor;
 
-  /// {@macro flutter.material.checkbox.fillColor}
+  /// {@macro material_ui.checkbox.fillColor}
   ///
   /// If specified, overrides the default value of [Checkbox.fillColor].
   final WidgetStateProperty<Color?>? fillColor;
 
-  /// {@macro flutter.material.checkbox.checkColor}
+  /// {@macro material_ui.checkbox.checkColor}
   ///
   /// Resolves in the following states:
   ///  * [WidgetState.selected].
@@ -71,33 +71,33 @@ class CheckboxThemeData with Diagnosticable {
   /// If specified, overrides the default value of [Checkbox.checkColor].
   final WidgetStateProperty<Color?>? checkColor;
 
-  /// {@macro flutter.material.checkbox.overlayColor}
+  /// {@macro material_ui.checkbox.overlayColor}
   ///
   /// If specified, overrides the default value of [Checkbox.overlayColor].
   final WidgetStateProperty<Color?>? overlayColor;
 
-  /// {@macro flutter.material.checkbox.splashRadius}
+  /// {@macro material_ui.checkbox.splashRadius}
   ///
   /// If specified, overrides the default value of [Checkbox.splashRadius].
   final double? splashRadius;
 
-  /// {@macro flutter.material.checkbox.materialTapTargetSize}
+  /// {@macro material_ui.checkbox.materialTapTargetSize}
   ///
   /// If specified, overrides the default value of
   /// [Checkbox.materialTapTargetSize].
   final MaterialTapTargetSize? materialTapTargetSize;
 
-  /// {@macro flutter.material.checkbox.visualDensity}
+  /// {@macro material_ui.checkbox.visualDensity}
   ///
   /// If specified, overrides the default value of [Checkbox.visualDensity].
   final VisualDensity? visualDensity;
 
-  /// {@macro flutter.material.checkbox.shape}
+  /// {@macro material_ui.checkbox.shape}
   ///
   /// If specified, overrides the default value of [Checkbox.shape].
   final OutlinedBorder? shape;
 
-  /// {@macro flutter.material.checkbox.side}
+  /// {@macro material_ui.checkbox.side}
   ///
   /// If specified, overrides the default value of [Checkbox.side].
   final BorderSide? side;

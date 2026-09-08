@@ -230,15 +230,21 @@ enum _PickerColumnType {
 /// full screen width. Content texts are shown with
 /// [CupertinoTextThemeData.dateTimePickerTextStyle].
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This sample shows how to implement CupertinoDatePicker with different picker modes.
 /// We can provide initial dateTime value for the picker to display. When user changes
 /// the drag the date or time wheels, the picker will call onDateTimeChanged callback.
 ///
 /// CupertinoDatePicker can be displayed directly on a screen or in a popup.
 ///
-/// ** See code in examples/api/lib/cupertino/date_picker/cupertino_date_picker.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/date_picker/cupertino_date_picker.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -467,7 +473,7 @@ class CupertinoDatePicker extends StatefulWidget {
   /// Function to provide full control over which [DateTime] can be selected.
   final SelectableDayPredicate? selectableDayPredicate;
 
-  /// {@macro flutter.cupertino.picker.itemExtent}
+  /// {@macro cupertino_ui.picker.itemExtent}
   ///
   /// Defaults to a value that matches the default iOS date picker wheel.
   final double itemExtent;
@@ -480,7 +486,11 @@ class CupertinoDatePicker extends StatefulWidget {
   ///
   /// If the selection overlay builder returns null, no overlay will be drawn.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   ///
   /// This example shows how to recreate the default selection overlay
   /// with selectionOverlayBuilder.
@@ -511,7 +521,8 @@ class CupertinoDatePicker extends StatefulWidget {
   ///   },
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   final SelectionOverlayBuilder? selectionOverlayBuilder;
 
   /// The behavior of reporting the selected date.
@@ -2165,11 +2176,17 @@ enum CupertinoTimerPickerMode {
 /// provides more space than it needs, the picker will position itself according
 /// to its [alignment] property.
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows a [CupertinoTimerPicker] that returns a countdown duration.
 ///
-/// ** See code in examples/api/lib/cupertino/date_picker/cupertino_timer_picker.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/date_picker/cupertino_timer_picker.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -2243,7 +2260,7 @@ class CupertinoTimerPicker extends StatefulWidget {
   /// Defaults to null, which disables background painting entirely.
   final Color? backgroundColor;
 
-  /// {@macro flutter.cupertino.picker.itemExtent}
+  /// {@macro cupertino_ui.picker.itemExtent}
   ///
   /// Defaults to a value that matches the default iOS timer picker wheel.
   final double itemExtent;
@@ -2256,7 +2273,11 @@ class CupertinoTimerPicker extends StatefulWidget {
   ///
   /// If the selection overlay builder returns null, no overlay will be drawn.
   ///
-  /// {@tool snippet}
+  /// <callout-box>
+  ///
+  // TODO(framework): Add unit tests to this code snippet.
+  // https://github.com/flutter/flutter/issues/188530
+  ///
   ///
   /// This example shows how to recreate the default selection overlay
   /// with selectionOverlayBuilder.
@@ -2285,7 +2306,8 @@ class CupertinoTimerPicker extends StatefulWidget {
   ///   },
   /// )
   /// ```
-  /// {@end-tool}
+  ///
+  /// </callout-box>
   final SelectionOverlayBuilder? selectionOverlayBuilder;
 
   /// The behavior of reporting the selected duration.

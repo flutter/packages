@@ -4,14 +4,15 @@ publish_to: none
 version: 1.0.0
 
 environment:
-  sdk: ^3.10.0-0
-
-resolution: workspace
+  sdk: ^3.12.0
+  flutter: ">=3.44.0"
 
 dependencies:
-  args: any
-  meta: any
+  args: ^2.7.0
+  flutter:
+    sdk: flutter
+  meta: ^1.18.0
+  path: ^1.9.1
 
 dev_dependencies:
-  path: any
-  test: any
+  test: ^1.31.1

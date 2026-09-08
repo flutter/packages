@@ -6,10 +6,10 @@ package dev.flutter.packages.file_selector_android;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
@@ -71,7 +71,9 @@ public class FileSelectorAndroidPluginTest {
     when(mockCursor.getInt(1)).thenReturn(size);
 
     when(mockResolver.query(uri, null, null, null, null, null)).thenReturn(mockCursor);
-    when(mockResolver.getType(uri)).thenReturn(mimeType);
+    // `getType` is only reached when a `FileResponse` is built, so it is unused by
+    // the error-path tests; keep it lenient to avoid strict-stubbing warnings.
+    lenient().when(mockResolver.getType(uri)).thenReturn(mimeType);
     when(mockResolver.openInputStream(uri)).thenReturn(mock(InputStream.class));
   }
 
@@ -214,35 +216,24 @@ public class FileSelectorAndroidPluginTest {
     }
   }
 
-  // This test was created when error handling was moved from FileUtils.java to
-  // FileSelectorApiImpl.java
-  // in https://github.com/flutter/packages/pull/8184, so as to maintain the existing test.
-  // The behavior is actually an error case and should be fixed,
-  // see: https://github.com/flutter/flutter/issues/159568.
-  // Remove when fixed!
+  // Regression test for https://github.com/flutter/flutter/issues/159568: a
+  // `SecurityException` while copying a selected file must be surfaced to Dart
+  // as a failed result, rather than crashing by building a `FileResponse` with a
+  // null `path` (which the non-null `path` field rejects at runtime).
   @SuppressWarnings({"rawtypes", "unchecked"})
   @Test
-  public void
-      openFileThrowsNullPointerException_whenSecurityExceptionInGetPathFromCopyOfFileFromUri()
-          throws FileNotFoundException {
+  public void openFilesCompletesWithError_whenSecurityExceptionInGetPathFromCopyOfFileFromUri()
+      throws FileNotFoundException {
 
     try (MockedStatic<FileUtils> mockedFileUtils = mockStatic(FileUtils.class)) {
 
       final ContentResolver mockContentResolver = mock(ContentResolver.class);
 
       final Uri mockUri = mock(Uri.class);
-      final String mockUriPath = "some/path/";
       mockedFileUtils
           .when(() -> FileUtils.getPathFromCopyOfFileFromUri(any(Context.class), eq(mockUri)))
           .thenThrow(SecurityException.class);
       mockContentResolver(mockContentResolver, mockUri, "filename", 30, "text/plain");
-
-      final Uri mockUri2 = mock(Uri.class);
-      final String mockUri2Path = "some/other/path/";
-      mockedFileUtils
-          .when(() -> FileUtils.getPathFromCopyOfFileFromUri(any(Context.class), eq(mockUri2)))
-          .thenAnswer((Answer<String>) invocation -> mockUri2Path);
-      mockContentResolver(mockContentResolver, mockUri2, "filename2", 40, "image/jpg");
 
       when(mockObjectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT)).thenReturn(mockIntent);
       when(mockObjectFactory.newDataInputStream(any())).thenReturn(mock(DataInputStream.class));
@@ -254,11 +245,15 @@ public class FileSelectorAndroidPluginTest {
               mockObjectFactory,
               (version) -> Build.VERSION.SDK_INT >= version);
 
+      final boolean[] callbackCalled = new boolean[1];
+      final Throwable[] failure = new Throwable[1];
       fileSelectorApi.openFiles(
           null,
           new FileTypes(Collections.emptyList(), Collections.emptyList()),
           ResultCompat.asCompatCallback(
               (reply) -> {
+                callbackCalled[0] = true;
+                failure[0] = reply.exceptionOrNull();
                 return null;
               }));
       verify(mockIntent).addCategory(Intent.CATEGORY_OPENABLE);
@@ -272,24 +267,77 @@ public class FileSelectorAndroidPluginTest {
 
       final Intent resultMockIntent = mock(Intent.class);
       final ClipData mockClipData = mock(ClipData.class);
-      when(mockClipData.getItemCount()).thenReturn(2);
+      when(mockClipData.getItemCount()).thenReturn(1);
 
       final ClipData.Item mockClipDataItem = mock(ClipData.Item.class);
       when(mockClipDataItem.getUri()).thenReturn(mockUri);
       when(mockClipData.getItemAt(0)).thenReturn(mockClipDataItem);
 
-      final ClipData.Item mockClipDataItem2 = mock(ClipData.Item.class);
-      when(mockClipDataItem2.getUri()).thenReturn(mockUri2);
-      when(mockClipData.getItemAt(1)).thenReturn(mockClipDataItem2);
-
       when(resultMockIntent.getClipData()).thenReturn(mockClipData);
 
-      assertThrows(
-          NullPointerException.class,
-          () ->
-              listenerArgumentCaptor
-                  .getValue()
-                  .onActivityResult(222, Activity.RESULT_OK, resultMockIntent));
+      // Previously this threw a NullPointerException (see #159568); it must now
+      // complete the callback with a failure instead of crashing.
+      listenerArgumentCaptor.getValue().onActivityResult(222, Activity.RESULT_OK, resultMockIntent);
+
+      assertTrue(callbackCalled[0]);
+      assertNotNull(failure[0]);
+      assertTrue(failure[0].getMessage().contains("Failed to read file"));
+    }
+  }
+
+  // Regression test for https://github.com/flutter/flutter/issues/159568: the
+  // single-file `openFile` path must likewise surface a copy failure to Dart
+  // instead of crashing.
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  @Test
+  public void openFileCompletesWithError_whenSecurityExceptionInGetPathFromCopyOfFileFromUri()
+      throws FileNotFoundException {
+
+    try (MockedStatic<FileUtils> mockedFileUtils = mockStatic(FileUtils.class)) {
+
+      final ContentResolver mockContentResolver = mock(ContentResolver.class);
+
+      final Uri mockUri = mock(Uri.class);
+      mockedFileUtils
+          .when(() -> FileUtils.getPathFromCopyOfFileFromUri(any(Context.class), eq(mockUri)))
+          .thenThrow(SecurityException.class);
+      mockContentResolver(mockContentResolver, mockUri, "filename", 30, "text/plain");
+
+      when(mockObjectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT)).thenReturn(mockIntent);
+      when(mockObjectFactory.newDataInputStream(any())).thenReturn(mock(DataInputStream.class));
+      when(mockActivity.getContentResolver()).thenReturn(mockContentResolver);
+      when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
+      final FileSelectorApiImpl fileSelectorApi =
+          new FileSelectorApiImpl(
+              mockActivityBinding,
+              mockObjectFactory,
+              (version) -> Build.VERSION.SDK_INT >= version);
+
+      final boolean[] callbackCalled = new boolean[1];
+      final Throwable[] failure = new Throwable[1];
+      fileSelectorApi.openFile(
+          null,
+          new FileTypes(Collections.emptyList(), Collections.emptyList()),
+          ResultCompat.asCompatCallback(
+              (reply) -> {
+                callbackCalled[0] = true;
+                failure[0] = reply.exceptionOrNull();
+                return null;
+              }));
+
+      verify(mockActivity).startActivityForResult(mockIntent, 221);
+
+      final ArgumentCaptor<PluginRegistry.ActivityResultListener> listenerArgumentCaptor =
+          ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
+      verify(mockActivityBinding).addActivityResultListener(listenerArgumentCaptor.capture());
+
+      final Intent resultMockIntent = mock(Intent.class);
+      when(resultMockIntent.getData()).thenReturn(mockUri);
+      listenerArgumentCaptor.getValue().onActivityResult(221, Activity.RESULT_OK, resultMockIntent);
+
+      assertTrue(callbackCalled[0]);
+      assertNotNull(failure[0]);
+      assertTrue(failure[0].getMessage().contains("Failed to read file"));
     }
   }
 

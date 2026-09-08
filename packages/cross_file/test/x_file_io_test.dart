@@ -82,6 +82,24 @@ void main() {
     test('Can be read as a string', () async {
       expect(await file.readAsString(), equals(expectedStringContents));
     });
+
+    test('Can be read as a string with multi-byte characters', () async {
+      const contents = 'Hello, world! I ❤ ñ! 空手 😀';
+      final multiByteFile = XFile.fromData(utf8.encode(contents));
+      expect(await multiByteFile.readAsString(), equals(contents));
+    });
+
+    test('Can be read as a string with a non-default encoding', () async {
+      const contents = 'Une soirée à Genève';
+      final latin1File = XFile.fromData(latin1.encode(contents));
+      expect(await latin1File.readAsString(encoding: latin1), equals(contents));
+    });
+
+    test('Reading undecodable data fails the future', () async {
+      final malformedFile = XFile.fromData(Uint8List.fromList(<int>[0xc3, 0x28]));
+      await expectLater(malformedFile.readAsString(), throwsA(isA<FormatException>()));
+    });
+
     test('Can be read as bytes', () async {
       expect(await file.readAsBytes(), equals(bytes));
     });

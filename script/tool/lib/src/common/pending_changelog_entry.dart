@@ -39,6 +39,11 @@ import 'package:yaml/yaml.dart';
 /// take priority when multiple version changes are specified. The top most value
 /// (the samller the index) has the highest priority.
 enum VersionChange {
+  /// A major version change from 0.x.y to 1.0.0.
+  ///
+  /// This can only be used for a package with a 0.x version.
+  promote,
+
   /// A major version change (e.g., 1.2.3 -> 2.0.0).
   major,
 

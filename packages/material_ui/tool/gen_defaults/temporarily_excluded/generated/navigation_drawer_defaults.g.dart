@@ -32,12 +32,11 @@ class _NavigationDrawerDefaultsM3 extends NavigationDrawerThemeData {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       return IconThemeData(
         size: 24.0,
-        color:
-            states.contains(WidgetState.disabled)
-                ? _colors.onSurfaceVariant.withOpacity(0.38)
-                : states.contains(WidgetState.selected)
-                ? _colors.onSecondaryContainer
-                : _colors.onSurfaceVariant,
+        color: states.contains(WidgetState.disabled)
+            ? _colors.onSurfaceVariant.withOpacity(0.38)
+            : states.contains(WidgetState.selected)
+            ? _colors.onSecondaryContainer
+            : _colors.onSurfaceVariant,
       );
     });
   }
@@ -47,12 +46,11 @@ class _NavigationDrawerDefaultsM3 extends NavigationDrawerThemeData {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       final TextStyle style = _textTheme.labelLarge!;
       return style.apply(
-        color:
-            states.contains(WidgetState.disabled)
-                ? _colors.onSurfaceVariant.withOpacity(0.38)
-                : states.contains(WidgetState.selected)
-                ? _colors.onSecondaryContainer
-                : _colors.onSurfaceVariant,
+        color: states.contains(WidgetState.disabled)
+            ? _colors.onSurfaceVariant.withOpacity(0.38)
+            : states.contains(WidgetState.selected)
+            ? _colors.onSecondaryContainer
+            : _colors.onSurfaceVariant,
       );
     });
   }

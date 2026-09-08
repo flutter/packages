@@ -1,3 +1,11 @@
+## 2.4.28
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
+## 2.4.27
+
+* Converts legacy backend to Kotlin.
+
 ## 2.4.26
 
 * Updates internal implementation to use Kotlin Pigeon.

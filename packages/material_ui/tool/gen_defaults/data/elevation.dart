@@ -1,9 +1,10 @@
-// Copyright 2013 The Flutter Authors.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.2.6
+// Version: 38.2.31
 
+// dart format off
 class TokenElevation {
   /// md.sys.elevation.level0
   static const double level0 = 0.00;

@@ -46,11 +46,17 @@ const Color _kDefaultTabBarInactiveColor = CupertinoColors.inactiveGray;
 /// this behavior, wrap each of the `navigationBar`'s components inside a
 /// [MediaQuery] with the desired [TextScaler].
 ///
-/// {@tool dartpad}
+/// <callout-box>
+///
 /// This example shows a [CupertinoTabBar] placed in a [CupertinoTabScaffold].
 ///
-/// ** See code in examples/api/lib/cupertino/bottom_tab_bar/cupertino_tab_bar.0.dart **
-/// {@end-tool}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/bottom_tab_bar/cupertino_tab_bar.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -75,7 +81,7 @@ class CupertinoTabBar extends StatelessWidget implements PreferredSizeWidget {
         width: 0.0, // 0.0 means one physical pixel
       ),
     ),
-  }) : assert(items.length >= 2, "Tabs need at least 2 items to conform to Apple's HIG"),
+  }) : assert(items.length > 0, 'CupertinoTabBar requires at least one tab.'),
        assert(0 <= currentIndex && currentIndex < items.length),
        assert(height >= 0.0);
 

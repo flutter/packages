@@ -16,11 +16,16 @@ analyzer:
     # something (https://github.com/flutter/flutter/issues/143312)
     deprecated_member_use: ignore
     deprecated_member_use_from_same_package: ignore
+    # `dart analyze` hasn't recognized the @example directive yet.
+    # Remove it once https://github.com/dart-lang/sdk/pull/63646 is landed.
+    doc_directive_unknown: ignore
   exclude: # DIFFERENT FROM FLUTTER/FLUTTER
     # Ignore generated files
     - '**/*.pb.dart'
     - '**/*.g.dart'
     - '**/*.mocks.dart' # Mockito @GenerateMocks
+    # Ignore shared code for iOS platform implementation of Google Maps plugin.
+    - 'packages/google_maps_flutter/google_maps_flutter_ios_shared_code/**'
 
 formatter:
   page_width: 100

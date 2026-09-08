@@ -10,7 +10,7 @@ import 'theme.dart';
 /// A modal route that replaces the entire screen with a platform-adaptive
 /// transition.
 ///
-/// {@macro flutter.material.materialRouteTransitionMixin}
+/// {@macro material_ui.materialRouteTransitionMixin}
 ///
 /// By default, when a modal route is replaced by another, the previous route
 /// remains in memory. To free all the resources when this is not necessary, set
@@ -63,7 +63,7 @@ class MaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTransitionMixi
 
 /// A mixin that provides platform-adaptive transitions for a [PageRoute].
 ///
-/// {@template flutter.material.materialRouteTransitionMixin}
+/// {@template material_ui.materialRouteTransitionMixin}
 /// For Android, the entrance transition for the page zooms in and fades in
 /// while the exiting page zooms out and fades out. The exit transition is similar,
 /// but in reverse.
@@ -208,7 +208,7 @@ mixin MaterialRouteTransitionMixin<T> on PageRoute<T> {
 
 /// A page that creates a material style [PageRoute].
 ///
-/// {@macro flutter.material.materialRouteTransitionMixin}
+/// {@macro material_ui.materialRouteTransitionMixin}
 ///
 /// By default, when the created route is replaced by another, the previous
 /// route remains in memory. To free all the resources when this is not

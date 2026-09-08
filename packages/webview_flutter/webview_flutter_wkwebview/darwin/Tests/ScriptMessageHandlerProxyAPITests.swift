@@ -2,21 +2,22 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Foundation
+import Testing
 import WebKit
-import XCTest
 
 @testable import webview_flutter_wkwebview
 
-class ScriptMessageHandlerProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@Suite struct ScriptMessageHandlerProxyAPITests {
+  @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKScriptMessageHandler(registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
-    XCTAssertNotNil(instance)
+    #expect(instance != nil)
   }
 
-  @MainActor func testDidReceiveScriptMessage() {
+  @MainActor @Test func didReceiveScriptMessage() throws {
     let api = TestScriptMessageHandlerApi()
     let registrar = TestProxyApiRegistrar()
     let instance = ScriptMessageHandlerImpl(api: api, registrar: registrar)
@@ -25,7 +26,7 @@ class ScriptMessageHandlerProxyAPITests: XCTestCase {
 
     instance.userContentController(controller, didReceive: message)
 
-    XCTAssertEqual(api.didReceiveScriptMessageArgs, [controller, message])
+    #expect(api.didReceiveScriptMessageArgs == [controller, message])
   }
 }
 

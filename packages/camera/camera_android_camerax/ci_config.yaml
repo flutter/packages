@@ -1,1 +1,3 @@
 analyze_skills: true
+# Uses custom analysis to enable the cyclomatic complexity linter plugin.
+allow_custom_analysis_options: true

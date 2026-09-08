@@ -24,10 +24,9 @@ class _SearchViewDefaultsM3 extends SearchViewThemeData {
   // No default side
 
   @override
-  OutlinedBorder? get shape =>
-      isFullScreen
-          ? const RoundedRectangleBorder()
-          : const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28.0)));
+  OutlinedBorder? get shape => isFullScreen
+      ? const RoundedRectangleBorder()
+      : const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28.0)));
 
   @override
   TextStyle? get headerTextStyle => _textTheme.bodyLarge?.copyWith(color: _colors.onSurface);

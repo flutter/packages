@@ -219,6 +219,7 @@ class RouteConfiguration {
       pageKey: const ValueKey<String>('topLevel'),
       topRoute: matchList.lastOrNull?.route,
       error: matchList.error,
+      metadata: matchList.topRouteMetadata,
     );
   }
 
@@ -538,7 +539,10 @@ class RouteConfiguration {
     final RouteBase route = match.route;
     try {
       final FutureOr<String?> routeRedirectResult = _runInRouterZone(() {
-        return route.redirect!.call(context, match.buildState(this, matchList));
+        return route.redirect!.call(
+          context,
+          match.buildState(this, matchList, metadata: matchList.metadataFor(match)),
+        );
       });
       if (routeRedirectResult is String?) {
         return processRouteRedirect(routeRedirectResult);

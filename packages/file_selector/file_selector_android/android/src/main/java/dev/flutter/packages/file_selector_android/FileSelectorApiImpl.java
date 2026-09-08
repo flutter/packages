@@ -383,6 +383,16 @@ public class FileSelectorApiImpl implements FileSelectorApi {
               e.getMessage() == null ? "" : e.getMessage());
     }
 
+    if (uriPath == null) {
+      // `getPathFromCopyOfFileFromUri` can fail to produce a path: either by
+      // throwing (handled above by returning a null `uriPath`) or by returning
+      // null directly. Return null so the caller surfaces the failure to Dart,
+      // instead of building a `FileResponse` with a null `path`, which the
+      // non-null field rejects at runtime.
+      // See https://github.com/flutter/flutter/issues/159568.
+      return null;
+    }
+
     return new FileResponse(uriPath, contentResolver.getType(uri), name, size, bytes, nativeError);
   }
 }
