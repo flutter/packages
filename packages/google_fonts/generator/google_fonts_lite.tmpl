@@ -21,9 +21,16 @@ import 'google_fonts_variant.dart';
 abstract final class GoogleFontsLite {
   /// Configuration for the [GoogleFontsLite] library.
   ///
+  /// Use this to define custom behavior of the GoogleFonts library in your app.
+  /// For example, if you do not want the GoogleFonts library to make any HTTP
+  /// requests for fonts, add the following snippet to your app's `main` method.
+  ///
   /// ```dart
   /// GoogleFontsLite.config.allowRuntimeFetching = false;
   /// ```
+  ///
+  /// The underlying [sharedGoogleFontsConfig] is not exported or meant for
+  /// public consumption.
   static final GoogleFontsConfig config = sharedGoogleFontsConfig;
 
   /// Returns a [Future] which resolves when requested fonts have finished

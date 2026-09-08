@@ -25,5 +25,9 @@ class GoogleFontsConfig {
 typedef Config = GoogleFontsConfig;
 
 /// Shared configuration instance for the Google Fonts library.
+///
+/// This instance is not exported and is not meant for public consumption.
+/// Applications should configure Google Fonts using `GoogleFonts.config` or
+/// `GoogleFontsLite.config`.
 @internal
 final GoogleFontsConfig sharedGoogleFontsConfig = GoogleFontsConfig();
