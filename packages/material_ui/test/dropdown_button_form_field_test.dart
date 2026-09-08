@@ -16,6 +16,30 @@ Finder _iconRichText(Key iconKey) {
   return find.descendant(of: find.byKey(iconKey), matching: find.byType(RichText));
 }
 
+void verifyPaintedShadow(Finder customPaint, int elevation) {
+  const originalRectangle = Rect.fromLTRB(0.0, 0.0, 800, 208.0);
+
+  final boxShadows = List<BoxShadow>.generate(
+    3,
+    (int index) => kElevationToShadow[elevation]![index],
+  );
+  final rrects = List<RRect>.generate(3, (int index) {
+    return RRect.fromRectAndRadius(
+      originalRectangle.shift(boxShadows[index].offset).inflate(boxShadows[index].spreadRadius),
+      const Radius.circular(2.0),
+    );
+  });
+
+  expect(
+    customPaint,
+    paints
+      ..save()
+      ..rrect(rrect: rrects[0], color: boxShadows[0].color, hasMaskFilter: true)
+      ..rrect(rrect: rrects[1], color: boxShadows[1].color, hasMaskFilter: true)
+      ..rrect(rrect: rrects[2], color: boxShadows[2].color, hasMaskFilter: true),
+  );
+}
+
 Widget buildFormFrame({
   Key? buttonKey,
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled,
@@ -73,6 +97,17 @@ Widget buildFormFrame({
   );
 }
 
+class TestApp extends StatefulWidget {
+  const TestApp({super.key, required this.textDirection, required this.child, this.mediaSize});
+
+  final TextDirection textDirection;
+  final Widget child;
+  final Size? mediaSize;
+
+  @override
+  State<TestApp> createState() => _TestAppState();
+}
+
 class _TestAppState extends State<TestApp> {
   @override
   Widget build(BuildContext context) {
@@ -99,41 +134,6 @@ class _TestAppState extends State<TestApp> {
       ),
     );
   }
-}
-
-class TestApp extends StatefulWidget {
-  const TestApp({super.key, required this.textDirection, required this.child, this.mediaSize});
-
-  final TextDirection textDirection;
-  final Widget child;
-  final Size? mediaSize;
-
-  @override
-  State<TestApp> createState() => _TestAppState();
-}
-
-void verifyPaintedShadow(Finder customPaint, int elevation) {
-  const originalRectangle = Rect.fromLTRB(0.0, 0.0, 800, 208.0);
-
-  final boxShadows = List<BoxShadow>.generate(
-    3,
-    (int index) => kElevationToShadow[elevation]![index],
-  );
-  final rrects = List<RRect>.generate(3, (int index) {
-    return RRect.fromRectAndRadius(
-      originalRectangle.shift(boxShadows[index].offset).inflate(boxShadows[index].spreadRadius),
-      const Radius.circular(2.0),
-    );
-  });
-
-  expect(
-    customPaint,
-    paints
-      ..save()
-      ..rrect(rrect: rrects[0], color: boxShadows[0].color, hasMaskFilter: true)
-      ..rrect(rrect: rrects[1], color: boxShadows[1].color, hasMaskFilter: true)
-      ..rrect(rrect: rrects[2], color: boxShadows[2].color, hasMaskFilter: true),
-  );
 }
 
 void main() {
@@ -499,15 +499,14 @@ void main() {
     const value = 'two';
     const scaleFactor = 3.0;
 
-    final List<DropdownMenuItem<String>> dropdownItems = menuItems.map<DropdownMenuItem<String>>((
-      String item,
-    ) {
-      return DropdownMenuItem<String>(
-        key: ValueKey<String>(item),
-        value: item,
-        child: Text(item, key: ValueKey<String>('${item}Text')),
-      );
-    }).toList();
+    final List<DropdownMenuItem<String>> dropdownItems = [
+      for (final item in menuItems)
+        DropdownMenuItem<String>(
+          key: ValueKey<String>(item),
+          value: item,
+          child: Text(item, key: ValueKey<String>('${item}Text')),
+        ),
+    ];
 
     await tester.pumpWidget(
       TestApp(
@@ -830,6 +829,7 @@ void main() {
   testWidgets('DropdownButtonFormField - default elevation', (WidgetTester tester) async {
     final Key buttonKey = UniqueKey();
     debugDisableShadows = false;
+    addTearDown(() => debugDisableShadows = true);
     await tester.pumpWidget(buildFormFrame(buttonKey: buttonKey, onChanged: onChanged));
     await tester.tap(find.byKey(buttonKey));
     await tester.pumpAndSettle();
@@ -840,11 +840,11 @@ void main() {
 
     // Verifying whether or not default elevation(i.e. 8) paints desired shadow
     verifyPaintedShadow(customPaint, 8);
-    debugDisableShadows = true;
   });
 
   testWidgets('DropdownButtonFormField - custom elevation', (WidgetTester tester) async {
     debugDisableShadows = false;
+    addTearDown(() => debugDisableShadows = true);
     final Key buttonKeyOne = UniqueKey();
     final Key buttonKeyTwo = UniqueKey();
 
@@ -871,7 +871,6 @@ void main() {
         .last;
 
     verifyPaintedShadow(customPaintTwo, 24);
-    debugDisableShadows = true;
   });
 
   testWidgets('DropdownButtonFormField does not allow duplicate item values', (
@@ -918,7 +917,7 @@ void main() {
       () => tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: DropdownButton<String>(
+            body: DropdownButtonFormField<String>(
               value: 'e',
               onChanged: (String? newValue) {},
               items: itemsWithDuplicateValues,
@@ -975,7 +974,9 @@ void main() {
     expect(find.text('Two as an Arabic numeral: 2'), findsOneWidget);
   });
 
-  testWidgets('DropdownButton onTap callback is called when defined', (WidgetTester tester) async {
+  testWidgets('DropdownButtonFormField onTap callback is called when defined', (
+    WidgetTester tester,
+  ) async {
     var dropdownButtonTapCounter = 0;
     String? value = 'one';
     void onChanged(String? newValue) {
@@ -1068,7 +1069,9 @@ void main() {
     expect(find.text(currentValue), findsOneWidget);
   });
 
-  testWidgets('autovalidateMode is passed to super', (WidgetTester tester) async {
+  testWidgets('DropdownButtonFormField autovalidateMode is passed to super', (
+    WidgetTester tester,
+  ) async {
     var validateCalled = 0;
 
     await tester.pumpWidget(
@@ -1197,7 +1200,9 @@ void main() {
   });
 
   // Regression test for https://github.com/flutter/flutter/issues/106659.
-  testWidgets('Error visual logic is delegated to InputDecorator', (WidgetTester tester) async {
+  testWidgets('DropdownButtonFormField - Error visual logic is delegated to InputDecorator', (
+    WidgetTester tester,
+  ) async {
     final formKey = GlobalKey<FormState>();
 
     await tester.pumpWidget(
@@ -1231,7 +1236,9 @@ void main() {
   });
 
   // Regression test for https://github.com/flutter/flutter/issues/135292.
-  testWidgets('Widget returned by errorBuilder is shown', (WidgetTester tester) async {
+  testWidgets('DropdownButtonFormField - Widget returned by errorBuilder is shown', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Material(
@@ -1253,132 +1260,137 @@ void main() {
     expect(find.text('**Required**'), findsOneWidget);
   });
 
-  testWidgets('ButtonTheme.alignedDropdown does not affect the field content position', (
-    WidgetTester tester,
-  ) async {
-    Widget buildFrame({required bool alignedDropdown, required TextDirection textDirection}) {
-      return MaterialApp(
-        home: Directionality(
-          textDirection: textDirection,
-          child: ButtonTheme(
-            alignedDropdown: alignedDropdown,
-            child: Material(
-              child: DropdownButtonFormField<String>(
-                initialValue: menuItems.first,
-                items: menuItems.map((String value) {
-                  return DropdownMenuItem<String>(value: value, child: Text(value));
-                }).toList(),
-                onChanged: onChanged,
+  testWidgets(
+    'DropdownButtonFormField - ButtonTheme.alignedDropdown does not affect the field content position',
+    (WidgetTester tester) async {
+      Widget buildFrame({required bool alignedDropdown, required TextDirection textDirection}) {
+        return MaterialApp(
+          home: Directionality(
+            textDirection: textDirection,
+            child: ButtonTheme(
+              alignedDropdown: alignedDropdown,
+              child: Material(
+                child: DropdownButtonFormField<String>(
+                  initialValue: menuItems.first,
+                  items: menuItems.map((String value) {
+                    return DropdownMenuItem<String>(value: value, child: Text(value));
+                  }).toList(),
+                  onChanged: onChanged,
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+
+      final Finder findSelectedValue = find.text(menuItems.first).first;
+
+      await tester.pumpWidget(buildFrame(alignedDropdown: false, textDirection: TextDirection.ltr));
+      Rect contentRectForUnalignedDropdown = tester.getRect(findSelectedValue);
+
+      // When alignedDropdown is true, the content should be at the same position.
+      await tester.pumpWidget(buildFrame(alignedDropdown: true, textDirection: TextDirection.ltr));
+      expect(tester.getRect(findSelectedValue), contentRectForUnalignedDropdown);
+
+      await tester.pumpWidget(buildFrame(alignedDropdown: false, textDirection: TextDirection.rtl));
+      contentRectForUnalignedDropdown = tester.getRect(findSelectedValue);
+
+      // When alignedDropdown is true, the content should be at the same position.
+      await tester.pumpWidget(buildFrame(alignedDropdown: true, textDirection: TextDirection.rtl));
+      expect(tester.getRect(findSelectedValue), contentRectForUnalignedDropdown);
+    },
+  );
+
+  testWidgets(
+    'DropdownButtonFormField - isValid returns false when forceErrorText is set and changes error display',
+    (WidgetTester tester) async {
+      final fieldKey1 = GlobalKey<FormFieldState<String>>();
+      final fieldKey2 = GlobalKey<FormFieldState<String>>();
+      const forceErrorText = 'Forcing error.';
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(),
+            child: Directionality(
+              textDirection: TextDirection.ltr,
+              child: Center(
+                child: Material(
+                  child: Form(
+                    child: ListView(
+                      children: <Widget>[
+                        DropdownButtonFormField<String>(
+                          key: fieldKey1,
+                          items: menuItems.map((String value) {
+                            return DropdownMenuItem<String>(value: value, child: Text(value));
+                          }).toList(),
+                          onChanged: null,
+                          autovalidateMode: AutovalidateMode.disabled,
+                        ),
+                        DropdownButtonFormField<String>(
+                          key: fieldKey2,
+                          items: menuItems.map((String value) {
+                            return DropdownMenuItem<String>(value: value, child: Text(value));
+                          }).toList(),
+                          forceErrorText: forceErrorText,
+                          onChanged: onChanged,
+                          autovalidateMode: AutovalidateMode.disabled,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
         ),
       );
-    }
 
-    final Finder findSelectedValue = find.text(menuItems.first).first;
+      expect(fieldKey1.currentState!.isValid, isTrue);
+      expect(fieldKey1.currentState!.hasError, isFalse);
+      expect(fieldKey2.currentState!.isValid, isFalse);
+      expect(fieldKey2.currentState!.hasError, isTrue);
+    },
+  );
 
-    await tester.pumpWidget(buildFrame(alignedDropdown: false, textDirection: TextDirection.ltr));
-    Rect contentRectForUnalignedDropdown = tester.getRect(findSelectedValue);
+  testWidgets(
+    'DropdownButtonFormField - forceErrorText overrides InputDecoration.error when both are provided',
+    (WidgetTester tester) async {
+      const forceErrorText = 'Forcing error';
+      const decorationErrorText = 'Decoration';
 
-    // When alignedDropdown is true, the content should be at the same position.
-    await tester.pumpWidget(buildFrame(alignedDropdown: true, textDirection: TextDirection.ltr));
-    expect(tester.getRect(findSelectedValue), contentRectForUnalignedDropdown);
-
-    await tester.pumpWidget(buildFrame(alignedDropdown: false, textDirection: TextDirection.rtl));
-    contentRectForUnalignedDropdown = tester.getRect(findSelectedValue);
-
-    // When alignedDropdown is true, the content should be at the same position.
-    await tester.pumpWidget(buildFrame(alignedDropdown: true, textDirection: TextDirection.rtl));
-    expect(tester.getRect(findSelectedValue), contentRectForUnalignedDropdown);
-  });
-
-  testWidgets('isValid returns false when forceErrorText is set and changes error display', (
-    WidgetTester tester,
-  ) async {
-    final fieldKey1 = GlobalKey<FormFieldState<String>>();
-    final fieldKey2 = GlobalKey<FormFieldState<String>>();
-    const forceErrorText = 'Forcing error.';
-    await tester.pumpWidget(
-      MaterialApp(
-        home: MediaQuery(
-          data: const MediaQueryData(),
-          child: Directionality(
-            textDirection: TextDirection.ltr,
-            child: Center(
-              child: Material(
-                child: Form(
-                  child: ListView(
-                    children: <Widget>[
-                      DropdownButtonFormField<String>(
-                        key: fieldKey1,
-                        items: menuItems.map((String value) {
-                          return DropdownMenuItem<String>(value: value, child: Text(value));
-                        }).toList(),
-                        onChanged: null,
-                        autovalidateMode: AutovalidateMode.disabled,
-                      ),
-                      DropdownButtonFormField<String>(
-                        key: fieldKey2,
-                        items: menuItems.map((String value) {
-                          return DropdownMenuItem<String>(value: value, child: Text(value));
-                        }).toList(),
-                        forceErrorText: forceErrorText,
-                        onChanged: onChanged,
-                        autovalidateMode: AutovalidateMode.disabled,
-                      ),
-                    ],
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(),
+            child: Directionality(
+              textDirection: TextDirection.ltr,
+              child: Center(
+                child: Material(
+                  child: Form(
+                    child: DropdownButtonFormField<String>(
+                      items: menuItems.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(value: value, child: Text(value));
+                      }).toList(),
+                      decoration: const InputDecoration(errorText: decorationErrorText),
+                      forceErrorText: forceErrorText,
+                      onChanged: null,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(fieldKey1.currentState!.isValid, isTrue);
-    expect(fieldKey1.currentState!.hasError, isFalse);
-    expect(fieldKey2.currentState!.isValid, isFalse);
-    expect(fieldKey2.currentState!.hasError, isTrue);
-  });
+      expect(find.text(forceErrorText), findsOne);
+      expect(find.text(decorationErrorText), findsNothing);
+    },
+  );
 
-  testWidgets('forceErrorText overrides InputDecoration.error when both are provided', (
+  testWidgets('DropdownButtonFormField closes when barrier is tapped by default', (
     WidgetTester tester,
   ) async {
-    const forceErrorText = 'Forcing error';
-    const decorationErrorText = 'Decoration';
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: MediaQuery(
-          data: const MediaQueryData(),
-          child: Directionality(
-            textDirection: TextDirection.ltr,
-            child: Center(
-              child: Material(
-                child: Form(
-                  child: DropdownButtonFormField<String>(
-                    items: menuItems.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(value: value, child: Text(value));
-                    }).toList(),
-                    decoration: const InputDecoration(errorText: decorationErrorText),
-                    forceErrorText: forceErrorText,
-                    onChanged: null,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-
-    expect(find.text(forceErrorText), findsOne);
-    expect(find.text(decorationErrorText), findsNothing);
-  });
-
-  testWidgets('dropdown closes when barrier is tapped by default', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -1407,7 +1419,7 @@ void main() {
     expect(find.text('second'), findsNothing);
   });
 
-  testWidgets('dropdown does not close when barrier dismissible set to false', (
+  testWidgets('DropdownButtonFormField does not close when barrier dismissible set to false', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
@@ -1463,7 +1475,7 @@ void main() {
     expect(tester.getCenter(find.text(labelText)).dy, tester.getCenter(find.byType(Icon).last).dy);
   });
 
-  testWidgets('DropdownFormField has expected default mouse cursor on hover', (
+  testWidgets('DropdownButtonFormField has expected default mouse cursor on hover', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
@@ -1527,6 +1539,58 @@ void main() {
     expect(
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.cell,
+    );
+  });
+
+  testWidgets(
+    'DropdownButtonFormField asserts when both errorBuilder and decoration.errorText are provided',
+    (WidgetTester tester) async {
+      expect(
+        () => DropdownButtonFormField<String>(
+          items: const <DropdownMenuItem<String>>[],
+          onChanged: (String? value) {},
+          decoration: const InputDecoration(errorText: 'Decoration error'),
+          errorBuilder: (BuildContext context, String errorText) {
+            return Text(errorText);
+          },
+        ),
+        throwsAssertionError,
+      );
+    },
+  );
+
+  testWidgets('DropdownButtonFormField selectedItemBuilder length must match items length', (
+    WidgetTester tester,
+  ) async {
+    // Regression test for https://github.com/flutter/flutter/issues/92773
+    final List<DropdownMenuItem<String>> items = <String>['a', 'b']
+        .map<DropdownMenuItem<String>>(
+          (String value) => DropdownMenuItem<String>(value: value, child: Text(value)),
+        )
+        .toList();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: SizedBox.shrink(
+              child: DropdownButtonFormField<String>(
+                onChanged: (_) {},
+                items: items,
+                selectedItemBuilder: (BuildContext context) {
+                  return <Widget>[const Text('a')];
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      (tester.takeException() as AssertionError).message,
+      'The selectedItemBuilder must return a list of widgets with the same length as the items list.\n'
+      'Currently, selectedItemBuilder returns a list of length 1, but items has length 2.',
     );
   });
 }
