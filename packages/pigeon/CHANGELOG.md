@@ -1,3 +1,8 @@
+## 28.0.1
+
+* [swift] Fixes a crash when a Flutter API returns null for a non-null return
+  value and the null arrives as `NSNull`.
+
 ## 28.0.0
 
 * **Breaking Change** Updates Kotlin and Swift generators to generate `suspend` functions and `async throws` signatures for `@FlutterApi` methods by default, and for `@HostApi` methods annotated with `@async`.
