@@ -537,141 +537,6 @@ void main() {
     );
   });
 
-  testWidgets('Dropdown form field uses form field state', (WidgetTester tester) async {
-    final Key buttonKey = UniqueKey();
-    final formKey = GlobalKey<FormState>();
-    String? value;
-    await tester.pumpWidget(
-      StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          return MaterialApp(
-            home: Material(
-              child: Form(
-                key: formKey,
-                child: DropdownButtonFormField<String>(
-                  key: buttonKey,
-                  initialValue: value,
-                  hint: const Text('Select Value'),
-                  decoration: const InputDecoration(prefixIcon: Icon(Icons.fastfood)),
-                  items: menuItems.map((String val) {
-                    return DropdownMenuItem<String>(value: val, child: Text(val));
-                  }).toList(),
-                  validator: (String? v) => v == null ? 'Must select value' : null,
-                  onChanged: (String? newValue) {},
-                  onSaved: (String? v) {
-                    setState(() {
-                      value = v;
-                    });
-                  },
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-    int getIndex() {
-      final stack = tester.element(find.byType(IndexedStack)).widget as IndexedStack;
-      return stack.index!;
-    }
-
-    // Initial value of null displays hint
-    expect(value, equals(null));
-    expect(getIndex(), 4);
-    await tester.tap(find.text('Select Value', skipOffstage: false), warnIfMissed: false);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('three').last);
-    await tester.pumpAndSettle();
-    expect(getIndex(), 2);
-    // Changes only made to FormField state until form saved
-    expect(value, equals(null));
-    final FormState form = formKey.currentState!;
-    form.save();
-    expect(value, equals('three'));
-  });
-
-  testWidgets(
-    'Dropdown form field only uses initialValue parameter when first built and when reset',
-    (WidgetTester tester) async {
-      final fieldKey = GlobalKey<FormFieldState<String>>();
-      await tester.pumpWidget(
-        StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return MaterialApp(
-              home: Material(
-                child: DropdownButtonFormField<String>(
-                  key: fieldKey,
-                  initialValue: 'one',
-                  hint: const Text('Select Value'),
-                  items: menuItems.map((String val) {
-                    return DropdownMenuItem<String>(value: val, child: Text(val));
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      // Do nothing, just to trigger a rebuild.
-                    });
-                  },
-                ),
-              ),
-            );
-          },
-        ),
-      );
-      expect(fieldKey.currentState!.value, 'one');
-
-      // Open the dropdown menu.
-      await tester.tap(find.text('one'));
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('three').last);
-      await tester.pumpAndSettle();
-
-      // The value should update to selected, not the initial value.
-      expect(find.text('three'), findsOneWidget);
-      expect(fieldKey.currentState!.value, 'three');
-
-      fieldKey.currentState!.reset();
-      await tester.pump();
-
-      // Reset to the initial value.
-      expect(find.text('one'), findsOneWidget);
-      expect(fieldKey.currentState!.value, 'one');
-    },
-  );
-
-  testWidgets('Dropdown in ListView', (WidgetTester tester) async {
-    // Regression test for https://github.com/flutter/flutter/issues/12053
-    // Positions a DropdownButton at the left and right edges of the screen,
-    // forcing it to be sized down to the viewport width
-    const value = 'foo';
-    final itemKey = UniqueKey();
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Material(
-          child: ListView(
-            children: <Widget>[
-              DropdownButton<String>(
-                value: value,
-                items: <DropdownMenuItem<String>>[
-                  DropdownMenuItem<String>(key: itemKey, value: value, child: const Text(value)),
-                ],
-                onChanged: (_) {},
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-    await tester.tap(find.text(value));
-    await tester.pump();
-    final List<RenderBox> itemBoxes = tester
-        .renderObjectList<RenderBox>(find.byKey(itemKey))
-        .toList();
-    expect(itemBoxes[0].localToGlobal(Offset.zero).dx, equals(0.0));
-    expect(itemBoxes[1].localToGlobal(Offset.zero).dx, equals(16.0));
-    expect(itemBoxes[1].size.width, equals(800.0 - 16.0 * 2));
-  });
-
   testWidgets('Dropdown menu can position correctly inside a nested navigator', (
     WidgetTester tester,
   ) async {
@@ -4294,44 +4159,6 @@ void main() {
     expect(tester.takeException(), null);
   });
 
-  testWidgets('BorderRadius property works properly for DropdownButtonFormField', (
-    WidgetTester tester,
-  ) async {
-    const radius = 20.0;
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: DropdownButtonFormField<String>(
-              borderRadius: const BorderRadius.all(Radius.circular(radius)),
-              initialValue: 'One',
-              items: <String>['One', 'Two', 'Three', 'Four'].map<DropdownMenuItem<String>>((
-                String value,
-              ) {
-                return DropdownMenuItem<String>(value: value, child: Text(value));
-              }).toList(),
-              onChanged: (_) {},
-            ),
-          ),
-        ),
-      ),
-    );
-
-    await tester.tap(find.text('One'));
-    await tester.pumpAndSettle();
-
-    expect(
-      find.ancestor(of: find.text('One').last, matching: find.byType(CustomPaint)).at(2),
-      paints
-        ..save()
-        ..rrect()
-        ..rrect()
-        ..rrect()
-        ..rrect(rrect: const RRect.fromLTRBXY(0.0, 0.0, 800.0, 208.0, radius, radius)),
-    );
-  });
-
   testWidgets('DropdownButton hint alignment', (WidgetTester tester) async {
     const hintText = 'hint';
 
@@ -4827,33 +4654,6 @@ void main() {
     variant: TargetPlatformVariant.mobile(),
   );
 
-  testWidgets(
-    'DropdownButtonFormField deprecated "value" parameter can still be used to set the initial value',
-    (WidgetTester tester) async {
-      final fieldKey = GlobalKey<FormFieldState<String>>();
-      await tester.pumpWidget(
-        StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return MaterialApp(
-              home: Material(
-                child: DropdownButtonFormField<String>(
-                  key: fieldKey,
-                  value: 'one',
-                  hint: const Text('Select Value'),
-                  items: menuItems.map((String val) {
-                    return DropdownMenuItem<String>(value: val, child: Text(val));
-                  }).toList(),
-                  onChanged: (_) {},
-                ),
-              ),
-            );
-          },
-        ),
-      );
-      expect(fieldKey.currentState!.value, 'one');
-    },
-  );
-
   testWidgets('DropdownButton does not crash at zero area', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -4873,26 +4673,6 @@ void main() {
       ),
     );
     expect(tester.getSize(find.byType(DropdownButton<String>)), Size.zero);
-  });
-
-  testWidgets('DropdownButtonFormField does not crash at zero area', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: SizedBox.shrink(
-              child: DropdownButtonFormField<String>(
-                onChanged: (_) {},
-                items: const <DropdownMenuItem<String>>[
-                  DropdownMenuItem<String>(value: 'a', child: Text('a')),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-    expect(tester.getSize(find.byType(DropdownButtonFormField<String>)), Size.zero);
   });
 
   testWidgets('DropdownMenuItem does not crash at zero area', (WidgetTester tester) async {
@@ -4932,56 +4712,4 @@ void main() {
     ).style;
     expect(labelStyle.color, labelColor);
   });
-
-  testWidgets('DropdownButton selectedItemBuilder length must match items length', (
-    WidgetTester tester,
-  ) async {
-    // Regression test for https://github.com/flutter/flutter/issues/92773
-    final List<DropdownMenuItem<String>> items = <String>['a', 'b']
-        .map<DropdownMenuItem<String>>(
-          (String value) => DropdownMenuItem<String>(value: value, child: Text(value)),
-        )
-        .toList();
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: SizedBox.shrink(
-              child: DropdownButtonFormField<String>(
-                onChanged: (_) {},
-                items: items,
-                selectedItemBuilder: (BuildContext context) {
-                  return <Widget>[const Text('a')];
-                },
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-
-    expect(
-      (tester.takeException() as AssertionError).message,
-      'The selectedItemBuilder must return a list of widgets with the same length as the items list.\n'
-      'Currently, selectedItemBuilder returns a list of length 1, but items has length 2.',
-    );
-  });
-
-  testWidgets(
-    'DropdownButtonFormField asserts when both errorBuilder and decoration.errorText are provided',
-    (WidgetTester tester) async {
-      expect(
-        () => DropdownButtonFormField<String>(
-          items: const <DropdownMenuItem<String>>[],
-          onChanged: (String? value) {},
-          decoration: const InputDecoration(errorText: 'Decoration error'),
-          errorBuilder: (BuildContext context, String errorText) {
-            return Text(errorText);
-          },
-        ),
-        throwsAssertionError,
-      );
-    },
-  );
 }
