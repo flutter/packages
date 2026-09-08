@@ -30,6 +30,7 @@ import 'podspec_check_command.dart';
 import 'publish_check_command.dart';
 import 'publish_command.dart';
 import 'remove_dev_dependencies_command.dart';
+import 'test_dart_fixes_command.dart';
 import 'update_dependency_command.dart';
 import 'update_excerpts_command.dart';
 import 'update_min_sdk_command.dart';
@@ -75,6 +76,7 @@ void main(List<String> args) {
         ..addCommand(PublishCheckCommand(packagesDir))
         ..addCommand(PublishCommand(packagesDir))
         ..addCommand(RemoveDevDependenciesCommand(packagesDir))
+        ..addCommand(TestDartFixesCommand(packagesDir))
         ..addCommand(UpdateDependencyCommand(packagesDir))
         ..addCommand(UpdateExcerptsCommand(packagesDir))
         ..addCommand(UpdateMinSdkCommand(packagesDir))
