@@ -1,3 +1,7 @@
+## 7.2.17
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
 ## 7.2.16
 
 * Keeps default_web_client_id resource from being stripped by resource shrinkers.

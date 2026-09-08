@@ -6,19 +6,23 @@ import 'dart:io';
 
 import 'package:meta/meta.dart';
 
+import '../data/color_role.dart';
+import '../data/shape_struct.dart';
+import '../data/typescale_struct.dart';
+
 enum _MaterialVersion { material3, material3Expressive }
 
 /// A template for generating Material 3 component defaults.
-abstract class M3TokenTemplate extends TokenTemplate {
-  const M3TokenTemplate();
+abstract class TokenTemplateM3 extends TokenTemplate {
+  const TokenTemplateM3();
 
   @override
   _MaterialVersion get _version => _MaterialVersion.material3;
 }
 
 /// A template for generating Material 3 Expressive component defaults.
-abstract class M3ETokenTemplate extends TokenTemplate {
-  const M3ETokenTemplate();
+abstract class TokenTemplateM3E extends TokenTemplate {
+  const TokenTemplateM3E();
 
   @override
   _MaterialVersion get _version => _MaterialVersion.material3Expressive;
@@ -49,7 +53,7 @@ abstract class TokenTemplate {
   static final RegExp _nameRegExp = RegExp(r'^[A-Z][a-zA-Z0-9]*( [A-Z][a-zA-Z0-9]*)*$');
 
   /// The name of the template, which corresponds to the target file name.
-  /// E.g., 'Icon Button' for generating 'icon_button_m3_defaults.g.dart'.
+  /// E.g., 'Icon Button' for generating 'icon_button_defaults_m3.g.dart'.
   String get name;
 
   /// The path of the parent file relative to `lib/src`.
@@ -70,35 +74,122 @@ abstract class TokenTemplate {
   /// The Material version this template is for.
   _MaterialVersion get _version;
 
-  /// The name of the class that will be generated (e.g. `_M3IconButtonDefaults`
-  /// or `_M3EIconButtonDefaults`).
-  String get _className {
+  /// The name of the class that will be generated (e.g. `_IconButtonDefaultsM3`
+  /// or `_IconButtonDefaultsM3E`).
+  @visibleForTesting
+  String get className {
     assert(
       _nameRegExp.hasMatch(name),
       'The template name "$name" must use spaces and capitalized words (e.g., "Typography" or "Icon Button").',
     );
-    final String camelName = name.replaceAll(' ', '');
+    final String camelName = _joinAsCamelCase(name.split(' '), lowerCamelCase: false);
     return switch (_version) {
-      _MaterialVersion.material3 => '_M3${camelName}Defaults',
-      _MaterialVersion.material3Expressive => '_M3E${camelName}Defaults',
+      _MaterialVersion.material3 => '_${camelName}DefaultsM3',
+      _MaterialVersion.material3Expressive => '_${camelName}DefaultsM3E',
     };
   }
 
   /// The regular expression used to verify that the generated contents declare
   /// the class.
-  RegExp get _classRegExp => RegExp('class\\s+$_className\\b');
+  RegExp get _classRegExp => RegExp('class\\s+$className\\b');
 
   /// Returns the body of the generated file as a string.
   ///
   /// The [className] parameter must be used to declare the class.
   String generateContents(String className);
 
+  /// Generates a Dart number literal for token values.
+  String number(num value) => value.toString();
+
+  /// Generates a [ColorScheme] color expression for the given token.
+  String color(TokenColorRole role, String prefix) => '$prefix.${role.name}';
+
+  /// Generates a color expression with opacity applied.
+  String colorWithOpacity(TokenColorRole role, double opacity, String prefix) {
+    if (opacity == 1.0) {
+      return color(role, prefix);
+    }
+    return '${color(role, prefix)}.withOpacity(${number(opacity)})';
+  }
+
+  /// Generate a [BorderSide] for the given component.
+  String border(String color, {double? width}) {
+    final widthString = (width != null && width != 1.0) ? ', width: $width' : '';
+    return 'BorderSide(color: $color$widthString)';
+  }
+
+  /// Generates an [OutlinedBorder] expression for a shape token.
+  ///
+  /// Currently supports:
+  ///   - `SHAPE_FAMILY_ROUNDED_CORNERS`, which maps to
+  ///     [RoundedRectangleBorder].
+  ///   - `SHAPE_FAMILY_CIRCULAR`, which maps to [StadiumBorder].
+  String shape(ShapeStruct shape, [String prefix = 'const ']) {
+    switch (shape.family) {
+      case 'SHAPE_FAMILY_ROUNDED_CORNERS':
+        final ShapeStruct(
+          :double topLeft,
+          :double topRight,
+          :double bottomLeft,
+          :double bottomRight,
+        ) = shape;
+        if (topLeft == topRight && topLeft == bottomLeft && topLeft == bottomRight) {
+          if (topLeft == 0) {
+            return '${prefix}RoundedRectangleBorder()';
+          }
+          return '${prefix}RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(${number(topLeft)})))';
+        }
+        if (topLeft == topRight && bottomLeft == bottomRight) {
+          return '${prefix}RoundedRectangleBorder(borderRadius: BorderRadius.vertical('
+              '${topLeft > 0 ? 'top: Radius.circular(${number(topLeft)})' : ''}'
+              '${topLeft > 0 && bottomLeft > 0 ? ', ' : ''}'
+              '${bottomLeft > 0 ? 'bottom: Radius.circular(${number(bottomLeft)})' : ''}'
+              '))';
+        }
+        return '${prefix}RoundedRectangleBorder(borderRadius: '
+            'BorderRadius.only('
+            'topLeft: Radius.circular(${number(topLeft)}), '
+            'topRight: Radius.circular(${number(topRight)}), '
+            'bottomLeft: Radius.circular(${number(bottomLeft)}), '
+            'bottomRight: Radius.circular(${number(bottomRight)})))';
+      case 'SHAPE_FAMILY_CIRCULAR':
+        return '${prefix}StadiumBorder()';
+    }
+    throw UnsupportedError('Unsupported shape family type: ${shape.family}');
+  }
+
+  /// Generate a [TextTheme] text style name for the given component token.
+  String textStyle(TypescaleStruct token, String prefix) {
+    final List<String> nameAttributes = token.name.split('.');
+    final String baseName = _joinAsCamelCase(nameAttributes.last.split('-'));
+    final bool isEmphasized = nameAttributes.contains('emphasized');
+    return '$prefix.$baseName${isEmphasized ? 'Emphasized' : ''}';
+  }
+
+  /// Converts a list of sub-strings into a single camelcased string.
+  String _joinAsCamelCase(List<String> subStrings, {bool lowerCamelCase = true}) {
+    if (subStrings.isEmpty) {
+      return '';
+    }
+    var camelCased = '';
+    for (var i = 0; i < subStrings.length; i++) {
+      final String subString = subStrings[i];
+      if (subString.isEmpty) {
+        continue;
+      }
+      camelCased += (lowerCamelCase && i == 0)
+          ? subString.toLowerCase()
+          : subString[0].toUpperCase() + subString.substring(1).toLowerCase();
+    }
+    return camelCased;
+  }
+
   /// Generates the file under the target path [materialLib] and formats it.
   void generateFile({bool verbose = false}) {
     final String snakeName = name.toLowerCase().replaceAll(' ', '_');
     final String outputFileName = switch (_version) {
-      _MaterialVersion.material3 => '${snakeName}_m3_defaults.g.dart',
-      _MaterialVersion.material3Expressive => '${snakeName}_m3e_defaults.g.dart',
+      _MaterialVersion.material3 => '${snakeName}_defaults_m3.g.dart',
+      _MaterialVersion.material3Expressive => '${snakeName}_defaults_m3e.g.dart',
     };
     final fileName = '$materialLib/$outputFileName';
     if (verbose) {
@@ -120,10 +211,10 @@ abstract class TokenTemplate {
     if (verbose) {
       stdout.writeln('Generating contents...');
     }
-    final String contents = generateContents(_className);
+    final String contents = generateContents(className);
     assert(
       contents.contains(_classRegExp),
-      'The generated contents for "$name" must define the class "$_className". '
+      'The generated contents for "$name" must define the class "$className". '
       'Make sure you are utilizing the passed `className` parameter.',
     );
 
