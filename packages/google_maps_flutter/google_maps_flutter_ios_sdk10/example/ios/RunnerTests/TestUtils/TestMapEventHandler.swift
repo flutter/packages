@@ -4,6 +4,7 @@
 
 import Foundation
 import google_maps_flutter_ios_sdk10
+import google_maps_flutter_ios_sdk10_objc
 
 /// Fake implementation of FGMMapEventDelegate for unit tests.
 class TestMapEventHandler: NSObject, FGMMapEventDelegate {

@@ -1,3 +1,0 @@
-changelog: |
-  - Fix RangeSlider thumb overlay remaining visible after touch interaction
-version: patch
