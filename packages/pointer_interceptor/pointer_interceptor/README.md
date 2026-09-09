@@ -50,20 +50,24 @@ There's two ways that the `PointerInterceptor` widget can be used to solve the p
 
 <?code-excerpt "readme_excerpts.dart (WrapButton)"?>
 ```dart
-return PointerInterceptor(
-  child: ElevatedButton(onPressed: () {}, child: const Text('Button')),
-);
+PointerInterceptor(
+  child: ElevatedButton(
+    // ···
+  ),
+)
 ```
 
 2. As a root container for a "layout" element, wrapping a bunch of other elements (like a Drawer):
 
 <?code-excerpt "readme_excerpts.dart (WrapSubtree)"?>
 ```dart
-return Scaffold(
+Scaffold(
   drawer: PointerInterceptor(
-    child: Drawer(child: ListView(children: const <Widget>[Text('Drawer contents')])),
+    child: Drawer(
+      // ···
+    ),
   ),
-);
+)
 ```
 
 ### `intercepting`
@@ -79,10 +83,14 @@ write an `if/else` on the Flutter App widget tree, so code like this:
 ```dart
 if (someCondition) {
   return PointerInterceptor(
-    child: ElevatedButton(onPressed: () {}, child: const Text('Button')),
+    child: ElevatedButton(
+      // ···
+    ),
   );
 } else {
-  return ElevatedButton(onPressed: () {}, child: const Text('Button'));
+  return ElevatedButton(
+    // ···
+  );
 }
 ```
 
@@ -90,10 +98,12 @@ can be rewritten as:
 
 <?code-excerpt "readme_excerpts.dart (InterceptingAfter)"?>
 ```dart
-return PointerInterceptor(
+PointerInterceptor(
   intercepting: someCondition,
-  child: ElevatedButton(onPressed: () {}, child: const Text('Button')),
-);
+  child: ElevatedButton(
+    // ···
+  ),
+)
 ```
 
 Note: when `intercepting` is false, the `PointerInterceptor` will not render

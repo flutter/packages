@@ -8,23 +8,36 @@ import 'package:pointer_interceptor/pointer_interceptor.dart';
 /// Wraps a single button so that it can be clicked, even when it's on top of
 /// a platform view.
 Widget wrapButtonSnippet() {
+  return
   // #docregion WrapButton
-  return PointerInterceptor(
-    child: ElevatedButton(onPressed: () {}, child: const Text('Button')),
-  );
+  PointerInterceptor(
+    child: ElevatedButton(
+      // #enddocregion WrapButton
+      onPressed: () {},
+      child: const Text('Button'),
+      // #docregion WrapButton
+    ),
+  )
   // #enddocregion WrapButton
+  ;
 }
 
 /// Wraps a whole subtree (a [Drawer], in this case) so that it can be
 /// clicked, even when it's on top of a platform view.
 Widget wrapSubtreeSnippet() {
+  return
   // #docregion WrapSubtree
-  return Scaffold(
+  Scaffold(
     drawer: PointerInterceptor(
-      child: Drawer(child: ListView(children: const <Widget>[Text('Drawer contents')])),
+      child: Drawer(
+        // #enddocregion WrapSubtree
+        child: ListView(children: const <Widget>[Text('Drawer contents')]),
+        // #docregion WrapSubtree
+      ),
     ),
-  );
+  )
   // #enddocregion WrapSubtree
+  ;
 }
 
 /// The naive way of conditionally intercepting pointer events, which
@@ -33,20 +46,37 @@ Widget interceptingBeforeSnippet(bool someCondition) {
   // #docregion InterceptingBefore
   if (someCondition) {
     return PointerInterceptor(
-      child: ElevatedButton(onPressed: () {}, child: const Text('Button')),
+      child: ElevatedButton(
+        // #enddocregion InterceptingBefore
+        onPressed: () {},
+        child: const Text('Button'),
+        // #docregion InterceptingBefore
+      ),
     );
   } else {
-    return ElevatedButton(onPressed: () {}, child: const Text('Button'));
+    return ElevatedButton(
+      // #enddocregion InterceptingBefore
+      onPressed: () {},
+      child: const Text('Button'),
+      // #docregion InterceptingBefore
+    );
   }
   // #enddocregion InterceptingBefore
 }
 
 /// The equivalent of [interceptingBeforeSnippet], using `intercepting`.
 Widget interceptingAfterSnippet(bool someCondition) {
+  return
   // #docregion InterceptingAfter
-  return PointerInterceptor(
+  PointerInterceptor(
     intercepting: someCondition,
-    child: ElevatedButton(onPressed: () {}, child: const Text('Button')),
-  );
+    child: ElevatedButton(
+      // #enddocregion InterceptingAfter
+      onPressed: () {},
+      child: const Text('Button'),
+      // #docregion InterceptingAfter
+    ),
+  )
   // #enddocregion InterceptingAfter
+  ;
 }
