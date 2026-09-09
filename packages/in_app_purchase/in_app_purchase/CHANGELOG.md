@@ -1,7 +1,10 @@
+## 3.3.1
+
+* Updates README examples and doc excerpts to match the current package API and extraction workflow.
+
 ## 3.3.0
 
 * Updates `in_app_purchase_android` dependency to `^0.5.0`.
-* Updates README examples and doc excerpts to match the current package API and extraction workflow.
 
 ## 3.2.4
 
