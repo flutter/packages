@@ -173,51 +173,36 @@ class Morph {
   ///
   /// This creates and populates a new list on every call.
   List<CubicBezier> toCubics(double progress) {
-    final result = <CubicBezier>[];
+    final int matchCount = _morphMatch.length;
 
-    // The first/last mechanism here ensures that the final anchor point in the
-    // shape exactly matches the first anchor point. There can be rendering
-    // artifacts introduced by those points being slightly off, even by much
-    // less than a pixel.
-    CubicBezier? firstCubic;
-    CubicBezier? lastCubic;
+    if (matchCount == 0) {
+      return <CubicBezier>[];
+    }
 
-    for (var i = 0; i < _morphMatch.length; i++) {
+    // The result has exactly one cubic per matched pair. The last cubic's end
+    // anchor is replaced with the first cubic's start anchor, ensuring that
+    // the final anchor point in the shape exactly matches the first anchor
+    // point. There can be rendering artifacts introduced by those points being
+    // slightly off, even by much less than a pixel.
+    final (CubicBezier firstFrom, CubicBezier firstTo) = _morphMatch[0];
+    final double firstAnchor0X = lerp(firstFrom.anchor0X, firstTo.anchor0X, progress);
+    final double firstAnchor0Y = lerp(firstFrom.anchor0Y, firstTo.anchor0Y, progress);
+
+    return List<CubicBezier>.generate(matchCount, (i) {
       final (CubicBezier from, CubicBezier to) = _morphMatch[i];
-      final cubic = CubicBezier.raw(
+      final isLast = i == matchCount - 1;
+
+      return CubicBezier.raw(
         lerp(from.anchor0X, to.anchor0X, progress),
         lerp(from.anchor0Y, to.anchor0Y, progress),
         lerp(from.control0X, to.control0X, progress),
         lerp(from.control0Y, to.control0Y, progress),
         lerp(from.control1X, to.control1X, progress),
         lerp(from.control1Y, to.control1Y, progress),
-        lerp(from.anchor1X, to.anchor1X, progress),
-        lerp(from.anchor1Y, to.anchor1Y, progress),
+        isLast ? firstAnchor0X : lerp(from.anchor1X, to.anchor1X, progress),
+        isLast ? firstAnchor0Y : lerp(from.anchor1Y, to.anchor1Y, progress),
       );
-
-      firstCubic ??= cubic;
-      if (lastCubic != null) {
-        result.add(lastCubic);
-      }
-      lastCubic = cubic;
-    }
-
-    if (lastCubic != null && firstCubic != null) {
-      result.add(
-        CubicBezier.raw(
-          lastCubic.anchor0X,
-          lastCubic.anchor0Y,
-          lastCubic.control0X,
-          lastCubic.control0Y,
-          lastCubic.control1X,
-          lastCubic.control1Y,
-          firstCubic.anchor0X,
-          firstCubic.anchor0Y,
-        ),
-      );
-    }
-
-    return result;
+    }, growable: false);
   }
 
   /// Returns a [Path] for this morph's shape at [progress].
