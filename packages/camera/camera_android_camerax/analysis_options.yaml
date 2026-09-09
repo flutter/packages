@@ -10,7 +10,6 @@ analyzer:
     - macos/**
     - linux/**
 
-dart_code_linter:
-  metrics:
-    cyclomatic-complexity: 15
+cognitive_complexity:
+  fail-threshold: 15
 

@@ -1,0 +1,54 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'package:material_ui/material_ui.dart';
+import '../utils.dart';
+import 'use_cases.dart';
+
+class ActionChipUseCase extends UseCase {
+  ActionChipUseCase();
+
+  @override
+  String get name => 'ActionChip';
+
+  @override
+  String get route => '/action-chip';
+
+  @override
+  List<Tag> get tags => <Tag>[Tag.batch1, Tag.core];
+
+  @override
+  Widget build(BuildContext context) => const MainWidget();
+}
+
+class MainWidget extends StatefulWidget {
+  const MainWidget({super.key});
+
+  @override
+  State<MainWidget> createState() => MainWidgetState();
+}
+
+class MainWidgetState extends State<MainWidget> {
+  String pageTitle = getUseCaseName(ActionChipUseCase());
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo'))),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ActionChip(
+              avatar: const Icon(Icons.favorite),
+              label: const Text('Action'),
+              onPressed: () {},
+            ),
+            const ActionChip(avatar: Icon(Icons.favorite), label: Text('Action')),
+          ],
+        ),
+      ),
+    );
+  }
+}

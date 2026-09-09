@@ -1,3 +1,7 @@
+## 6.3.33
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
 ## 6.3.32
 
 * Bumps the androidx group across 10 directories with 1 update.

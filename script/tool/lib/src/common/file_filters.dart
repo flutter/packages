@@ -55,5 +55,6 @@ bool isPackageSupportFile(String path) {
   return path.endsWith('/AUTHORS') ||
       path.endsWith('/CHANGELOG.md') ||
       path.endsWith('/CONTRIBUTING.md') ||
-      path.endsWith('/README.md');
+      path.endsWith('/README.md') ||
+      path.endsWith('/AGENTS.md');
 }
