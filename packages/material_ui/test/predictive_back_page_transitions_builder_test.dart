@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoPageScaffold, showCupertinoSheet;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -673,6 +674,70 @@ void main() {
         findsOneWidget,
       );
     });
+
+    testWidgets(
+      'route covered by a CupertinoSheet does not switch to the predictive back '
+      'transition while the sheet is dragged (${pageTransitionsBuilder.runtimeType})',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(
+              pageTransitionsTheme: PageTransitionsTheme(
+                builders: <TargetPlatform, PageTransitionsBuilder>{
+                  for (final TargetPlatform platform in TargetPlatform.values)
+                    platform: pageTransitionsBuilder,
+                },
+              ),
+            ),
+            home: Builder(
+              builder: (BuildContext context) {
+                return Scaffold(
+                  body: Center(
+                    child: TextButton(
+                      onPressed: () {
+                        showCupertinoSheet<void>(
+                          context: context,
+                          scrollableBuilder: (BuildContext context, ScrollController controller) {
+                            return CupertinoPageScaffold(
+                              child: ListView.builder(
+                                controller: controller,
+                                itemCount: 30,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return SizedBox(height: 56.0, child: Text('item $index'));
+                                },
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: const Text('open sheet'),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('open sheet'));
+        await tester.pumpAndSettle();
+
+        expect(_findPredictiveBackPageTransition(pageTransitionsBuilder), findsNothing);
+        expect(_findFallbackPageTransition(pageTransitionsBuilder), findsOneWidget);
+
+        final TestGesture gesture = await tester.startGesture(const Offset(100, 300));
+        // A small drag first wins the gesture arena before the larger drag.
+        await gesture.moveBy(const Offset(0, 30));
+        await gesture.moveBy(const Offset(0, 100));
+        await tester.pump();
+
+        expect(_findPredictiveBackPageTransition(pageTransitionsBuilder), findsNothing);
+        expect(_findFallbackPageTransition(pageTransitionsBuilder), findsOneWidget);
+
+        await gesture.up();
+        await tester.pumpAndSettle();
+      },
+    );
   }
 
   testWidgets('PredictiveBackPageTransitionsBuilder uses fallbackColor', (
