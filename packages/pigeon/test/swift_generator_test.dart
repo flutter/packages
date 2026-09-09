@@ -1686,4 +1686,78 @@ void main() {
     expect(code, contains('let doubleConst: Double = 3.14'));
     expect(code, contains('let boolConst: Bool = true'));
   });
+
+  group('SwiftOptions swiftStrictConcurrency', () {
+    test('defaults to false', () {
+      const options = SwiftOptions();
+      expect(options.swiftStrictConcurrency, isFalse);
+
+      const internalOptions = InternalSwiftOptions(swiftOut: 'path.swift');
+      expect(internalOptions.swiftStrictConcurrency, isFalse);
+    });
+
+    test('round trips through toMap and fromList', () {
+      const options = SwiftOptions(swiftStrictConcurrency: true);
+      final map = options.toMap();
+      expect(map['swiftStrictConcurrency'], isTrue);
+
+      final fromMap = SwiftOptions.fromList(map);
+      expect(fromMap.swiftStrictConcurrency, isTrue);
+    });
+
+    test('merges correctly', () {
+      const options1 = SwiftOptions(swiftStrictConcurrency: false);
+      const options2 = SwiftOptions(swiftStrictConcurrency: true);
+      final merged = options1.merge(options2);
+      expect(merged.swiftStrictConcurrency, isTrue);
+    });
+
+    test('InternalSwiftOptions.fromSwiftOptions propagates swiftStrictConcurrency', () {
+      const options = SwiftOptions(swiftStrictConcurrency: true);
+      final internalOptions = InternalSwiftOptions.fromSwiftOptions(
+        options,
+        swiftOut: 'path.swift',
+      );
+      expect(internalOptions.swiftStrictConcurrency, isTrue);
+    });
+
+    test('currently behaves as a no-op during code generation', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'Api',
+            methods: <Method>[
+              Method(
+                name: 'doWork',
+                location: ApiLocation.host,
+                returnType: const TypeDeclaration.voidDeclaration(),
+                parameters: <Parameter>[],
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+
+      final sinkDisabled = StringBuffer();
+      const generator = SwiftGenerator();
+      generator.generate(
+        const InternalSwiftOptions(swiftOut: '', strictConcurrency: false),
+        root,
+        sinkDisabled,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+
+      final sinkEnabled = StringBuffer();
+      generator.generate(
+        const InternalSwiftOptions(swiftOut: '', strictConcurrency: true),
+        root,
+        sinkEnabled,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+
+      expect(sinkEnabled.toString(), equals(sinkDisabled.toString()));
+    });
+  });
 }

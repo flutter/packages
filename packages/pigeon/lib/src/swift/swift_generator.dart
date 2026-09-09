@@ -30,6 +30,7 @@ class SwiftOptions {
     this.fileSpecificClassNameComponent,
     this.errorClassName,
     this.includeErrorClass = true,
+    this.swiftStrictConcurrency = false,
   });
 
   /// A copyright header that will get prepended to generated code.
@@ -47,6 +48,17 @@ class SwiftOptions {
   /// Swift file in the same directory.
   final bool includeErrorClass;
 
+  /// Whether the generated Swift code should include strict concurrency annotations.
+  ///
+  /// Defaults to `false`. When enabled, generated Swift code includes strict
+  /// concurrency annotations (such as `@Sendable` or `@MainActor`) that allows
+  /// the Swift compiler to catch data races in the client plugin's Swift code.
+  ///
+  /// To get the full benefit, consider enabling Swift strict concurrency checking
+  /// in your plugin's Swift targets. For more details, see the
+  /// [Swift Concurrency Migration Guide](https://www.swift.org/migration/documentation/swift-6-concurrency-migration-guide/).
+  final bool swiftStrictConcurrency;
+
   /// Creates a [SwiftOptions] from a Map representation where:
   /// `x = SwiftOptions.fromList(x.toMap())`.
   static SwiftOptions fromList(Map<String, Object> map) {
@@ -55,6 +67,7 @@ class SwiftOptions {
       fileSpecificClassNameComponent: map['fileSpecificClassNameComponent'] as String?,
       errorClassName: map['errorClassName'] as String?,
       includeErrorClass: map['includeErrorClass'] as bool? ?? true,
+      swiftStrictConcurrency: map['swiftStrictConcurrency'] as bool? ?? false,
     );
   }
 
@@ -67,6 +80,7 @@ class SwiftOptions {
         'fileSpecificClassNameComponent': fileSpecificClassNameComponent!,
       if (errorClassName != null) 'errorClassName': errorClassName!,
       'includeErrorClass': includeErrorClass,
+      'swiftStrictConcurrency': swiftStrictConcurrency,
     };
     return result;
   }
@@ -87,6 +101,7 @@ class InternalSwiftOptions extends InternalOptions {
     this.fileSpecificClassNameComponent,
     this.errorClassName,
     this.includeErrorClass = true,
+    this.swiftStrictConcurrency = false,
   });
 
   /// Creates InternalSwiftOptions from SwiftOptions.
@@ -100,7 +115,8 @@ class InternalSwiftOptions extends InternalOptions {
            swiftOut.split('/').lastOrNull?.split('.').firstOrNull ??
            '',
        errorClassName = options.errorClassName,
-       includeErrorClass = options.includeErrorClass;
+       includeErrorClass = options.includeErrorClass,
+       swiftStrictConcurrency = options.swiftStrictConcurrency;
 
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
@@ -119,6 +135,9 @@ class InternalSwiftOptions extends InternalOptions {
   /// This should only ever be set to false if you have another generated
   /// Swift file in the same directory.
   final bool includeErrorClass;
+
+  /// Whether to emit Swift code with strict concurrency annotations.
+  final bool swiftStrictConcurrency;
 }
 
 /// Options that control how Swift code will be generated for a specific
