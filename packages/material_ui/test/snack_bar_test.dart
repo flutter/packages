@@ -4397,54 +4397,6 @@ void main() {
     );
     expect(tester.getSize(find.byType(SnackBarAction)), Size.zero);
   });
-}
-
-/// Start test for "SnackBar dismiss test".
-Future<void> _testSnackBarDismiss({
-  required WidgetTester tester,
-  required Key tapTarget,
-  required double scaffoldWidth,
-  required ValueChanged<DismissDirection> onDismissDirectionChange,
-  required VoidCallback onDragGestureChange,
-}) async {
-  final Map<DismissDirection, List<Offset>> dragGestures = _getDragGesturesOfDismissDirections(
-    scaffoldWidth,
-  );
-
-  for (final DismissDirection key in dragGestures.keys) {
-    onDismissDirectionChange(key);
-
-    for (final Offset dragGesture in dragGestures[key]!) {
-      onDragGestureChange();
-
-      expect(find.text('bar1'), findsNothing);
-      expect(find.text('bar2'), findsNothing);
-      await tester.tap(find.byKey(tapTarget)); // queue bar1
-      await tester.tap(find.byKey(tapTarget)); // queue bar2
-      expect(find.text('bar1'), findsNothing);
-      expect(find.text('bar2'), findsNothing);
-      await tester.pump(); // schedule animation for bar1
-      expect(find.text('bar1'), findsOneWidget);
-      expect(find.text('bar2'), findsNothing);
-      await tester.pump(); // begin animation
-      expect(find.text('bar1'), findsOneWidget);
-      expect(find.text('bar2'), findsNothing);
-      await tester.pump(
-        const Duration(milliseconds: 750),
-      ); // 0.75s // animation last frame; two second timer starts here
-      await tester.drag(find.text('bar1'), dragGesture);
-      await tester.pump(); // bar1 dismissed, bar2 begins animating
-      expect(find.text('bar1'), findsNothing);
-      expect(find.text('bar2'), findsOneWidget);
-      await tester.pump(
-        const Duration(milliseconds: 750),
-      ); // 0.75s // animation last frame; two second timer starts here
-      await tester.drag(find.text('bar2'), dragGesture);
-      await tester.pump(); // bar2 dismissed
-      expect(find.text('bar1'), findsNothing);
-      expect(find.text('bar2'), findsNothing);
-    }
-  }
 
   testWidgets('SnackBar action overflow calculation respects MediaQuery textScaler', (
     WidgetTester tester,
@@ -4452,7 +4404,7 @@ Future<void> _testSnackBarDismiss({
     Widget buildSnackBar({required TextScaler textScaler}) {
       return MaterialApp(
         home: MediaQuery(
-          data: MediaQueryData(size: const Size(400, 800), textScaler: textScaler),
+          data: MediaQueryData(size: const Size(800, 600), textScaler: textScaler),
           child: Scaffold(
             body: Builder(
               builder: (BuildContext context) {
@@ -4502,27 +4454,28 @@ Future<void> _testSnackBarDismiss({
     WidgetTester tester,
   ) async {
     const double screenWidth = 500.0;
+    tester.view.physicalSize = const Size(screenWidth, 800.0);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
     await tester.pumpWidget(
       MaterialApp(
-        home: MediaQuery(
-          data: const MediaQueryData(size: Size(screenWidth, 800)),
-          child: Scaffold(
-            body: Builder(
-              builder: (BuildContext context) {
-                return GestureDetector(
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text('Multi-line content that wraps'),
-                        action: SnackBarAction(label: 'Overflow Action', onPressed: () {}),
-                        actionOverflowThreshold: 0.1,
-                      ),
-                    );
-                  },
-                  child: const Text('Show'),
-                );
-              },
-            ),
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) {
+              return GestureDetector(
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const SizedBox(key: Key('content'), height: 20),
+                      action: SnackBarAction(label: 'Overflow Action', onPressed: () {}),
+                      actionOverflowThreshold: 0.1,
+                    ),
+                  );
+                },
+                child: const Text('Show'),
+              );
+            },
           ),
         ),
       ),
@@ -4531,17 +4484,70 @@ Future<void> _testSnackBarDismiss({
     await tester.tap(find.text('Show'));
     await tester.pumpAndSettle();
 
-    // Verify there is no SizedBox with width equal to 40% of snackBarWidth.
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) =>
-            widget is SizedBox &&
-            widget.width != null &&
-            (widget.width! - screenWidth * 0.4).abs() < 1.0,
-      ),
-      findsNothing,
+    // In unfixed code, when the action overflowed to a second row, a SizedBox(width: snackBarWidth * 0.4)
+    // was placed next to the content Expanded widget in the first row, reserving 40% empty space on the right (188px).
+    // The content is now given standard horizontalPadding on the right (24px) instead of 40% empty space.
+    // For screenWidth = 500, horizontalPadding = 24 on start and end, the content width is 452px (500 - 24 - 24).
+    expect(tester.getSize(find.byKey(const Key('content'))).width, 452.0);
+    expect(tester.getTopRight(find.byKey(const Key('content'))).dx, screenWidth - 24.0);
+
+    // Verify the spacer SizedBox has width equal to horizontalPadding (24.0), not 40% of snackBarWidth (188.0).
+    final Row contentRow = tester.widget<Row>(
+      find.descendant(of: find.byType(SnackBar), matching: find.byType(Row)).first,
     );
+    expect(contentRow.children.length, 2);
+    expect(contentRow.children.first, isA<Expanded>());
+    expect(contentRow.children.last, isA<SizedBox>());
+    expect((contentRow.children.last as SizedBox).width, 24.0);
   });
+}
+
+/// Start test for "SnackBar dismiss test".
+Future<void> _testSnackBarDismiss({
+  required WidgetTester tester,
+  required Key tapTarget,
+  required double scaffoldWidth,
+  required ValueChanged<DismissDirection> onDismissDirectionChange,
+  required VoidCallback onDragGestureChange,
+}) async {
+  final Map<DismissDirection, List<Offset>> dragGestures = _getDragGesturesOfDismissDirections(
+    scaffoldWidth,
+  );
+
+  for (final DismissDirection key in dragGestures.keys) {
+    onDismissDirectionChange(key);
+
+    for (final Offset dragGesture in dragGestures[key]!) {
+      onDragGestureChange();
+
+      expect(find.text('bar1'), findsNothing);
+      expect(find.text('bar2'), findsNothing);
+      await tester.tap(find.byKey(tapTarget)); // queue bar1
+      await tester.tap(find.byKey(tapTarget)); // queue bar2
+      expect(find.text('bar1'), findsNothing);
+      expect(find.text('bar2'), findsNothing);
+      await tester.pump(); // schedule animation for bar1
+      expect(find.text('bar1'), findsOneWidget);
+      expect(find.text('bar2'), findsNothing);
+      await tester.pump(); // begin animation
+      expect(find.text('bar1'), findsOneWidget);
+      expect(find.text('bar2'), findsNothing);
+      await tester.pump(
+        const Duration(milliseconds: 750),
+      ); // 0.75s // animation last frame; two second timer starts here
+      await tester.drag(find.text('bar1'), dragGesture);
+      await tester.pump(); // bar1 dismissed, bar2 begins animating
+      expect(find.text('bar1'), findsNothing);
+      expect(find.text('bar2'), findsOneWidget);
+      await tester.pump(
+        const Duration(milliseconds: 750),
+      ); // 0.75s // animation last frame; two second timer starts here
+      await tester.drag(find.text('bar2'), dragGesture);
+      await tester.pump(); // bar2 dismissed
+      expect(find.text('bar1'), findsNothing);
+      expect(find.text('bar2'), findsNothing);
+    }
+  }
 }
 
 /// Create drag gestures for DismissDirections.
