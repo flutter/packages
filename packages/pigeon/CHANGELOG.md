@@ -1,6 +1,10 @@
-## 28.0.1
+## 28.1.1
 
 * [swift] Annotates async `FlutterApi` methods with `@MainActor`.
+
+## 28.1.0
+
+* [swift] Adds support for multiple output locations in `swiftOut` and `--swift_out`.
 
 ## 28.0.0
 
