@@ -15,6 +15,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'finders.dart';
 
 void main() {
   testWidgets('SnackBar control test', (WidgetTester tester) async {
@@ -3363,7 +3364,7 @@ void main() {
     await tester.pumpAndSettle(); // Have the SnackBar fully animate in.
 
     expect(
-      find.byTooltip(MaterialLocalizations.of(scaffoldMessengerState.context).closeButtonLabel),
+      findByTooltip(MaterialLocalizations.of(scaffoldMessengerState.context).closeButtonLabel),
       findsOneWidget,
     );
   });
