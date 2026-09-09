@@ -80,6 +80,11 @@ class DartTestCommand extends PackageLoopingCommand {
   }
 
   @override
+  Future<void> initializeRun() async {
+    _initializePackageTags();
+  }
+
+  @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     if (!package.testDirectory.existsSync()) {
       return PackageResult.skip('No test/ directory.');
@@ -185,17 +190,15 @@ class DartTestCommand extends PackageLoopingCommand {
     ], workingDir: package.directory);
   }
 
-  /// Returns a map of package names to tags based on the `--package-tags`
-  /// argument.
-  Map<String, String> _getPackageTags() {
-    if (_packageTags != null) {
-      return _packageTags!;
-    }
+  /// Parses the `--package-tags` argument and populates the `_packageTags`
+  /// map with the resulting package names to tags.
+  void _initializePackageTags() {
     final packageTags = <String, String>{};
     final String? arg = getNullableStringArg(_packageTagsFlag);
+
     if (arg == null || arg.isEmpty) {
       _packageTags = packageTags;
-      return packageTags;
+      return;
     }
 
     final File file = packagesDir.fileSystem.file(arg);
@@ -203,7 +206,13 @@ class DartTestCommand extends PackageLoopingCommand {
       printError('The package tags file "$arg" does not exist.');
       throw ToolExit(exitInvalidArguments);
     }
+
     final Object? yaml = loadYaml(file.readAsStringSync());
+    // Treat an empty or comment-only file as an empty map (no package tags).
+    if (yaml == null) {
+      _packageTags = packageTags;
+      return;
+    }
     if (yaml is YamlMap) {
       for (final MapEntry<dynamic, dynamic> entry in yaml.entries) {
         final pkg = entry.key.toString();
@@ -217,18 +226,22 @@ class DartTestCommand extends PackageLoopingCommand {
       throw ToolExit(exitInvalidArguments);
     }
     _packageTags = packageTags;
-    return packageTags;
+    return;
   }
 
   /// Returns the tag to apply for [package] based on `--package-tags`, or null
   /// if none.
+  ///
+  /// This checks the package's [RepositoryPackage.displayName], and falls back
+  /// to checking the [RepositoryPackage.displayName] of any enclosing packages
+  /// up the directory tree. This allows tagging an entire plugin (including its
+  /// nested examples) by simply tagging the enclosing package.
   String? _getTagForPackage(RepositoryPackage package) {
-    final Map<String, String> packageTags = _getPackageTags();
-    if (packageTags.isNotEmpty) {
-      final candidates = <String>{package.directory.basename, package.displayName};
+    final Map<String, String>? packageTags = _packageTags;
+    if (packageTags != null && packageTags.isNotEmpty) {
+      final candidates = <String>{package.displayName};
       RepositoryPackage? enclosing = package.getEnclosingPackage();
       while (enclosing != null) {
-        candidates.add(enclosing.directory.basename);
         candidates.add(enclosing.displayName);
         enclosing = enclosing.getEnclosingPackage();
       }
