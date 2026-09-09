@@ -3535,49 +3535,51 @@ void main() {
     expect(box.size.height, 32);
   });
 
-  testWidgets('Tapping outside searchbar should unfocus the searchbar on mobile', (
-    WidgetTester tester,
-  ) async {
-    final focusNode = FocusNode(debugLabel: 'Test Node');
-    addTearDown(focusNode.dispose);
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: SearchAnchor(
-            builder: (BuildContext context, SearchController controller) {
-              return SearchBar(
-                controller: controller,
-                onTap: () {
-                  controller.openView();
-                },
-                onTapOutside: (PointerDownEvent event) {
-                  focusNode.unfocus();
-                },
-                onChanged: (_) {
-                  controller.openView();
-                },
-                autoFocus: true,
-                focusNode: focusNode,
-              );
-            },
-            suggestionsBuilder: (BuildContext context, SearchController controller) {
-              return List<ListTile>.generate(5, (int index) {
-                final item = 'item $index';
-                return ListTile(title: Text(item));
-              });
-            },
+  testWidgets(
+    'Tapping outside searchbar should unfocus the searchbar on mobile',
+    (WidgetTester tester) async {
+      final focusNode = FocusNode(debugLabel: 'Test Node');
+      addTearDown(focusNode.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SearchAnchor(
+              builder: (BuildContext context, SearchController controller) {
+                return SearchBar(
+                  controller: controller,
+                  onTap: () {
+                    controller.openView();
+                  },
+                  onTapOutside: (PointerDownEvent event) {
+                    focusNode.unfocus();
+                  },
+                  onChanged: (_) {
+                    controller.openView();
+                  },
+                  autoFocus: true,
+                  focusNode: focusNode,
+                );
+              },
+              suggestionsBuilder: (BuildContext context, SearchController controller) {
+                return List<ListTile>.generate(5, (int index) {
+                  final item = 'item $index';
+                  return ListTile(title: Text(item));
+                });
+              },
+            ),
           ),
         ),
-      ),
-    );
-    await tester.pump();
-    expect(focusNode.hasPrimaryFocus, isTrue);
+      );
+      await tester.pump();
+      expect(focusNode.hasPrimaryFocus, isTrue);
 
-    await tester.tapAt(const Offset(50, 50));
-    await tester.pump();
+      await tester.tapAt(const Offset(50, 50));
+      await tester.pump();
 
-    expect(focusNode.hasPrimaryFocus, isFalse);
-  }, variant: TargetPlatformVariant.mobile());
+      expect(focusNode.hasPrimaryFocus, isFalse);
+    },
+    variant: TargetPlatformVariant.mobile(),
+  );
 
   testWidgets('The default clear button only shows when text input is not empty '
       'on the search view', (WidgetTester tester) async {
@@ -3822,6 +3824,137 @@ void main() {
         SystemChannels.contextMenu,
         null,
       );
+    });
+
+    testWidgets('SearchBar uses ThemeData.textSelectionTheme contextMenuBuilder', (
+      WidgetTester tester,
+    ) async {
+      Widget themeDataContextMenuBuilder(
+        BuildContext context,
+        EditableTextState editableTextState,
+      ) {
+        return const Icon(Icons.search);
+      }
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            textSelectionTheme: TextSelectionThemeData(
+              contextMenuBuilder: themeDataContextMenuBuilder,
+            ),
+          ),
+          home: const Material(child: SearchBar()),
+        ),
+      );
+
+      final EditableTextState editableTextState = tester.firstState(find.byType(EditableText));
+      final BuildContext searchBarContext = tester.element(find.byType(SearchBar));
+      final Widget contextMenu = editableTextState.widget.contextMenuBuilder!(
+        searchBarContext,
+        editableTextState,
+      );
+
+      expect(contextMenu, isA<Icon>());
+    });
+
+    testWidgets('SearchBar prefers local TextSelectionTheme contextMenuBuilder', (
+      WidgetTester tester,
+    ) async {
+      Widget themeDataContextMenuBuilder(
+        BuildContext context,
+        EditableTextState editableTextState,
+      ) {
+        return const Icon(Icons.search);
+      }
+
+      Widget localTextSelectionThemeContextMenuBuilder(
+        BuildContext context,
+        EditableTextState editableTextState,
+      ) {
+        return const Placeholder();
+      }
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            textSelectionTheme: TextSelectionThemeData(
+              contextMenuBuilder: themeDataContextMenuBuilder,
+            ),
+          ),
+          home: Material(
+            child: TextSelectionTheme(
+              data: TextSelectionThemeData(
+                contextMenuBuilder: localTextSelectionThemeContextMenuBuilder,
+              ),
+              child: const SearchBar(),
+            ),
+          ),
+        ),
+      );
+
+      final EditableTextState editableTextState = tester.firstState(find.byType(EditableText));
+      final BuildContext searchBarContext = tester.element(find.byType(SearchBar));
+      final Widget contextMenu = editableTextState.widget.contextMenuBuilder!(
+        searchBarContext,
+        editableTextState,
+      );
+
+      expect(contextMenu, isA<Placeholder>());
+      expect(contextMenu, isNot(isA<Icon>()));
+    });
+
+    testWidgets('SearchBar.contextMenuBuilder overrides TextSelectionTheme and ThemeData', (
+      WidgetTester tester,
+    ) async {
+      Widget themeDataContextMenuBuilder(
+        BuildContext context,
+        EditableTextState editableTextState,
+      ) {
+        return const Icon(Icons.search);
+      }
+
+      Widget localTextSelectionThemeContextMenuBuilder(
+        BuildContext context,
+        EditableTextState editableTextState,
+      ) {
+        return const Placeholder();
+      }
+
+      Widget searchBarContextMenuBuilder(
+        BuildContext context,
+        EditableTextState editableTextState,
+      ) {
+        return const SizedBox();
+      }
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            textSelectionTheme: TextSelectionThemeData(
+              contextMenuBuilder: themeDataContextMenuBuilder,
+            ),
+          ),
+          home: Material(
+            child: TextSelectionTheme(
+              data: TextSelectionThemeData(
+                contextMenuBuilder: localTextSelectionThemeContextMenuBuilder,
+              ),
+              child: SearchBar(contextMenuBuilder: searchBarContextMenuBuilder),
+            ),
+          ),
+        ),
+      );
+
+      final EditableTextState editableTextState = tester.firstState(find.byType(EditableText));
+      final BuildContext searchBarContext = tester.element(find.byType(SearchBar));
+      final Widget contextMenu = editableTextState.widget.contextMenuBuilder!(
+        searchBarContext,
+        editableTextState,
+      );
+
+      expect(contextMenu, isA<SizedBox>());
+      expect(contextMenu, isNot(isA<Placeholder>()));
+      expect(contextMenu, isNot(isA<Icon>()));
     });
 
     testWidgets('SearchAnchor.bar.contextMenuBuilder is passed through to EditableText', (

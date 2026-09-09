@@ -15,6 +15,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/src/material/text_selection_theme.dart';
 
 import 'adaptive_text_selection_toolbar.dart';
 import 'desktop_text_selection.dart';
@@ -204,7 +205,7 @@ class SelectableText extends StatefulWidget {
     this.textHeightBehavior,
     this.textWidthBasis,
     this.onSelectionChanged,
-    this.contextMenuBuilder = _defaultContextMenuBuilder,
+    this.contextMenuBuilder,
     this.magnifierConfiguration,
   }) : assert(maxLines == null || maxLines > 0),
        assert(minLines == null || minLines > 0),
@@ -263,7 +264,7 @@ class SelectableText extends StatefulWidget {
     this.textHeightBehavior,
     this.textWidthBasis,
     this.onSelectionChanged,
-    this.contextMenuBuilder = _defaultContextMenuBuilder,
+    this.contextMenuBuilder,
     this.magnifierConfiguration,
   }) : assert(maxLines == null || maxLines > 0),
        assert(minLines == null || minLines > 0),
@@ -450,13 +451,6 @@ class SelectableText extends StatefulWidget {
 
   /// {@macro flutter.widgets.EditableText.contextMenuBuilder}
   final EditableTextContextMenuBuilder? contextMenuBuilder;
-
-  static Widget _defaultContextMenuBuilder(
-    BuildContext context,
-    EditableTextState editableTextState,
-  ) {
-    return AdaptiveTextSelectionToolbar.editableText(editableTextState: editableTextState);
-  }
 
   /// The configuration for the magnifier used when the text is selected.
   ///
@@ -674,6 +668,13 @@ class _SelectableTextState extends State<SelectableText>
     return false;
   }
 
+  static Widget _defaultContextMenuBuilder(
+    BuildContext context,
+    EditableTextState editableTextState,
+  ) {
+    return AdaptiveTextSelectionToolbar.editableText(editableTextState: editableTextState);
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO(garyq): Assert to block WidgetSpans from being used here are removed,
@@ -805,7 +806,10 @@ class _SelectableTextState extends State<SelectableText>
         scrollPhysics: widget.scrollPhysics,
         scrollBehavior: widget.scrollBehavior,
         autofillHints: null,
-        contextMenuBuilder: widget.contextMenuBuilder,
+        contextMenuBuilder:
+            widget.contextMenuBuilder ??
+            TextSelectionTheme.of(context).contextMenuBuilder ??
+            _defaultContextMenuBuilder,
       ),
     );
 
