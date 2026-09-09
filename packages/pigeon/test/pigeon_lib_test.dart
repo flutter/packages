@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:path/path.dart' as path;
 import 'package:pigeon/src/ast.dart';
 import 'package:pigeon/src/generator_tools.dart';
 import 'package:pigeon/src/pigeon_lib.dart';
@@ -93,6 +94,21 @@ void main() {
   test('parse args - swift_out', () {
     final PigeonOptions opts = Pigeon.parseArgs(<String>['--swift_out', 'Foo.swift']);
     expect(opts.swiftOut, equals('Foo.swift'));
+  });
+
+  test('parse args - multiple swift_out', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--swift_out',
+      'Foo.swift',
+      '--swift_out',
+      'Bar.swift',
+    ]);
+    expect(opts.swiftOut, equals(<String>['Foo.swift', 'Bar.swift']));
+  });
+
+  test('parse args - comma-separated swift_out', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--swift_out', 'Foo.swift,Bar.swift']);
+    expect(opts.swiftOut, equals(<String>['Foo.swift', 'Bar.swift']));
   });
 
   test('parse args - kotlin_out', () {
@@ -1404,6 +1420,115 @@ class Message {
     final ParseResults results = parseSource(code);
     final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
     expect(options.cppOptions?.headerIncludePath, 'Header.path');
+  });
+
+  test('@ConfigurePigeon swiftOut single', () {
+    const code = '''
+@ConfigurePigeon(PigeonOptions(
+  swiftOut: 'Foo.swift',
+))
+class Message {
+  int? id;
+}
+''';
+
+    final ParseResults results = parseSource(code);
+    final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
+    expect(options.swiftOut, 'Foo.swift');
+    expect(options.swiftOutPaths, <String>['Foo.swift']);
+  });
+
+  test('@ConfigurePigeon swiftOut multiple', () {
+    const code = '''
+@ConfigurePigeon(PigeonOptions(
+  swiftOut: <String>['Foo.swift', 'Bar.swift'],
+))
+class Message {
+  int? id;
+}
+''';
+
+    final ParseResults results = parseSource(code);
+    final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
+    expect(options.swiftOut, <String>['Foo.swift', 'Bar.swift']);
+    expect(options.swiftOutPaths, <String>['Foo.swift', 'Bar.swift']);
+  });
+
+  test('multiple swiftOut generation', () async {
+    final completer = Completer<void>();
+    const code = '''
+@HostApi()
+abstract class Api {
+  void doSomething();
+}
+''';
+    final Directory dir = Directory.systemTemp.createTempSync();
+    try {
+      final input = File(path.join(dir.path, 'input.dart'));
+      input.writeAsStringSync(code);
+      final String swift1 = path.join(dir.path, 'one.swift');
+      final String swift2 = path.join(dir.path, 'two.swift');
+      final int result = await Pigeon.runWithOptions(
+        PigeonOptions(
+          input: input.path,
+          swiftOut: <String>[swift1, swift2],
+          dartOut: path.join(dir.path, 'out.dart'),
+          dartPackageName: 'test_package',
+        ),
+      );
+      expect(result, equals(0));
+      expect(File(swift1).existsSync(), isTrue);
+      expect(File(swift2).existsSync(), isTrue);
+      final String content1 = File(swift1).readAsStringSync();
+      final String content2 = File(swift2).readAsStringSync();
+      expect(content1, isNotEmpty);
+      expect(content1, equals(content2));
+      expect(content1, contains('protocol Api'));
+      completer.complete();
+    } finally {
+      dir.deleteSync(recursive: true);
+    }
+    await completer.future;
+  });
+
+  test('multiple swift_out args generation', () async {
+    final completer = Completer<void>();
+    const code = '''
+@HostApi()
+abstract class Api {
+  void doSomething();
+}
+''';
+    final Directory dir = Directory.systemTemp.createTempSync();
+    try {
+      final input = File(path.join(dir.path, 'input.dart'));
+      input.writeAsStringSync(code);
+      final String swift1 = path.join(dir.path, 'one.swift');
+      final String swift2 = path.join(dir.path, 'two.swift');
+      final int result = await Pigeon.run(<String>[
+        '--input',
+        input.path,
+        '--dart_out',
+        path.join(dir.path, 'out.dart'),
+        '--package_name',
+        'test_package',
+        '--swift_out',
+        swift1,
+        '--swift_out',
+        swift2,
+      ]);
+      expect(result, equals(0));
+      expect(File(swift1).existsSync(), isTrue);
+      expect(File(swift2).existsSync(), isTrue);
+      final String content1 = File(swift1).readAsStringSync();
+      final String content2 = File(swift2).readAsStringSync();
+      expect(content1, isNotEmpty);
+      expect(content1, equals(content2));
+      completer.complete();
+    } finally {
+      dir.deleteSync(recursive: true);
+    }
+    await completer.future;
   });
 
   test('return nullable', () {

@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:mirrors';
 
+import 'package:path/path.dart' as path;
 import 'package:yaml/yaml.dart' as yaml;
 
 import 'ast.dart';
@@ -15,7 +16,7 @@ import 'generator.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '28.0.0';
+const String pigeonVersion = '28.1.0';
 
 /// Default plugin package name.
 const String defaultPluginPackageName = 'dev.flutter.pigeon';
@@ -773,6 +774,16 @@ String? deducePackageName(String mainDartFile) {
   } catch (_) {
     return null;
   }
+}
+
+/// Extracts the base class name component from an output file path.
+///
+/// For example, extracts 'messages' from 'ios/Classes/messages.g.swift'.
+String deduceClassNameComponent(String? filePath) {
+  if (filePath == null || filePath.isEmpty) {
+    return '';
+  }
+  return path.basename(filePath).split('.').first;
 }
 
 /// Enum to specify api type when generating code.

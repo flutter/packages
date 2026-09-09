@@ -154,12 +154,20 @@ class SK2ProductPurchaseOptionsMessage {
     this.quantity = 1,
     this.promotionalOffer,
     this.winBackOfferId,
+    this.introductoryOfferEligibilityCompactJWS,
   });
 
   final String? appAccountToken;
   final int? quantity;
   final SK2SubscriptionOfferPurchaseMessage? promotionalOffer;
   final String? winBackOfferId;
+
+  /// A compact JWS, signed by the developer's server, that sets the customer's
+  /// eligibility for an introductory offer on this purchase.
+  ///
+  /// This is passed to StoreKit verbatim; it is never parsed or validated
+  /// client-side.
+  final String? introductoryOfferEligibilityCompactJWS;
 }
 
 class SK2TransactionMessage {
