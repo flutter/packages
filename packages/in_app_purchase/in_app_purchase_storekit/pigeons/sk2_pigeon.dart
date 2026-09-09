@@ -80,14 +80,14 @@ class SK2SubscriptionInfoMessage {
 /// https://developer.apple.com/documentation/storekit/product
 class SK2ProductMessage {
   const SK2ProductMessage({
+    required this.id,
     required this.displayName,
     required this.displayPrice,
-    required this.id,
-    required this.localizedDescription,
+    required this.description,
     required this.price,
-    required this.priceLocale,
     required this.type,
     this.subscription,
+    required this.priceLocale,
   });
 
   /// The unique product identifier.
@@ -97,7 +97,7 @@ class SK2ProductMessage {
   final String displayName;
 
   /// The localized description of the product.
-  final String localizedDescription;
+  final String description;
 
   /// The localized string representation of the product price, suitable for display.
   final double price;
@@ -154,20 +154,12 @@ class SK2ProductPurchaseOptionsMessage {
     this.quantity = 1,
     this.promotionalOffer,
     this.winBackOfferId,
-    this.introductoryOfferEligibilityCompactJWS,
   });
 
   final String? appAccountToken;
   final int? quantity;
   final SK2SubscriptionOfferPurchaseMessage? promotionalOffer;
   final String? winBackOfferId;
-
-  /// A compact JWS, signed by the developer's server, that sets the customer's
-  /// eligibility for an introductory offer on this purchase.
-  ///
-  /// This is passed to StoreKit verbatim; it is never parsed or validated
-  /// client-side.
-  final String? introductoryOfferEligibilityCompactJWS;
 }
 
 class SK2TransactionMessage {

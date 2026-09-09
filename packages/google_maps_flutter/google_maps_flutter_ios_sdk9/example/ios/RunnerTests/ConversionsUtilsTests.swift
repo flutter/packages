@@ -4,7 +4,6 @@
 
 import GoogleMaps
 import Testing
-import google_maps_flutter_ios_sdk9_objc
 
 @testable import google_maps_flutter_ios_sdk9
 
@@ -15,12 +14,14 @@ import google_maps_flutter_ios_sdk9_objc
     let platformGreen: CGFloat = 2 / 255.0
     let platformBlue: CGFloat = 3 / 255.0
     let platformAlpha: CGFloat = 4 / 255.0
-    let color = FGMPlatformColor.make(
-      withRed: platformRed,
-      green: platformGreen,
-      blue: platformBlue,
-      alpha: platformAlpha
-    ).toUIColor()
+    let color = FGMGetColorForPigeonColor(
+      FGMPlatformColor.make(
+        withRed: platformRed,
+        green: platformGreen,
+        blue: platformBlue,
+        alpha: platformAlpha
+      )
+    )
     var red: CGFloat = 0
     var green: CGFloat = 0
     var blue: CGFloat = 0
@@ -39,18 +40,47 @@ import google_maps_flutter_ios_sdk9_objc
     let blue: CGFloat = 3 / 255.0
     let alpha: CGFloat = 4 / 255.0
     let color = UIColor(red: red, green: green, blue: blue, alpha: alpha)
-    let platformColor = FGMPlatformColor.make(from: color)
+    let platformColor = FGMGetPigeonColorForColor(color)
     #expect(abs(red - platformColor.red) <= CGFloat.ulpOfOne)
     #expect(abs(green - platformColor.green) <= CGFloat.ulpOfOne)
     #expect(abs(blue - platformColor.blue) <= CGFloat.ulpOfOne)
     #expect(abs(alpha - platformColor.alpha) <= CGFloat.ulpOfOne)
   }
 
-  @Test func pointFromLatLong() {
-    let latlong = FGMPlatformLatLng.make(withLatitude: 1, longitude: 2)
-    let location = latlong.toCLLocationCoordinate2D()
-    #expect(location.latitude == 1)
-    #expect(location.longitude == 2)
+  @Test func pointsFromLatLongs() {
+    let latlongs = [
+      FGMPlatformLatLng.make(withLatitude: 1, longitude: 2),
+      FGMPlatformLatLng.make(withLatitude: 3, longitude: 4),
+    ]
+    let locations = FGMGetPointsForPigeonLatLngs(latlongs)
+    #expect(locations.count == 2)
+    #expect(locations[0].coordinate.latitude == 1)
+    #expect(locations[0].coordinate.longitude == 2)
+    #expect(locations[1].coordinate.latitude == 3)
+    #expect(locations[1].coordinate.longitude == 4)
+  }
+
+  @Test func holesFromPointsArray() {
+    let pointsArray = [
+      [
+        FGMPlatformLatLng.make(withLatitude: 1, longitude: 2),
+        FGMPlatformLatLng.make(withLatitude: 3, longitude: 4),
+      ],
+      [
+        FGMPlatformLatLng.make(withLatitude: 5, longitude: 6),
+        FGMPlatformLatLng.make(withLatitude: 7, longitude: 8),
+      ],
+    ]
+    let holes = FGMGetHolesForPigeonLatLngArrays(pointsArray)
+    #expect(holes.count == 2)
+    #expect(holes[0][0].coordinate.latitude == 1)
+    #expect(holes[0][0].coordinate.longitude == 2)
+    #expect(holes[0][1].coordinate.latitude == 3)
+    #expect(holes[0][1].coordinate.longitude == 4)
+    #expect(holes[1][0].coordinate.latitude == 5)
+    #expect(holes[1][0].coordinate.longitude == 6)
+    #expect(holes[1][1].coordinate.latitude == 7)
+    #expect(holes[1][1].coordinate.longitude == 8)
   }
 
   @Test func getPigeonCameraPositionForPosition() {
@@ -60,7 +90,7 @@ import google_maps_flutter_ios_sdk9_objc
       bearing: 3.0,
       viewingAngle: 75.0
     )
-    let pigeonPosition = FGMPlatformCameraPosition.make(from: position)
+    let pigeonPosition = FGMGetPigeonCameraPositionForPosition(position)
     #expect(abs(pigeonPosition.target.latitude - position.target.latitude) <= Double.ulpOfOne)
     #expect(abs(pigeonPosition.target.longitude - position.target.longitude) <= Double.ulpOfOne)
     #expect(abs(Float(pigeonPosition.zoom) - position.zoom) <= Float.ulpOfOne)
@@ -70,7 +100,7 @@ import google_maps_flutter_ios_sdk9_objc
 
   @Test func pigeonPointForGCPoint() {
     let point = CGPoint(x: 10, y: 20)
-    let pigeonPoint = FGMPlatformPoint.make(from: point)
+    let pigeonPoint = FGMGetPigeonPointForCGPoint(point)
     #expect(abs(pigeonPoint.x - Double(point.x)) <= Double.ulpOfOne)
     #expect(abs(pigeonPoint.y - Double(point.y)) <= Double.ulpOfOne)
   }
@@ -80,7 +110,7 @@ import google_maps_flutter_ios_sdk9_objc
       coordinate: CLLocationCoordinate2D(latitude: 10, longitude: 20),
       coordinate: CLLocationCoordinate2D(latitude: 30, longitude: 40)
     )
-    let pigeonBounds = FGMPlatformLatLngBounds.make(from: bounds)
+    let pigeonBounds = FGMGetPigeonLatLngBoundsForCoordinateBounds(bounds)
     #expect(abs(pigeonBounds.southwest.latitude - bounds.southWest.latitude) <= Double.ulpOfOne)
     #expect(abs(pigeonBounds.southwest.longitude - bounds.southWest.longitude) <= Double.ulpOfOne)
     #expect(abs(pigeonBounds.northeast.latitude - bounds.northEast.latitude) <= Double.ulpOfOne)
@@ -95,7 +125,7 @@ import google_maps_flutter_ios_sdk9_objc
       zoom: 5.0
     )
 
-    let cameraPosition = pigeonCameraPosition.toGMSCameraPosition()
+    let cameraPosition = FGMGetCameraPositionForPigeonCameraPosition(pigeonCameraPosition)
 
     #expect(
       abs(cameraPosition.target.latitude - pigeonCameraPosition.target.latitude) <= Double.ulpOfOne)
@@ -110,7 +140,7 @@ import google_maps_flutter_ios_sdk9_objc
   @Test func cgPointForPigeonPoint() {
     let pigeonPoint = FGMPlatformPoint.makeWith(x: 1.0, y: 2.0)
 
-    let point = pigeonPoint.toCGPoint()
+    let point = FGMGetCGPointForPigeonPoint(pigeonPoint)
 
     #expect(abs(pigeonPoint.x - Double(point.x)) <= Double.ulpOfOne)
     #expect(abs(pigeonPoint.y - Double(point.y)) <= Double.ulpOfOne)
@@ -122,7 +152,7 @@ import google_maps_flutter_ios_sdk9_objc
       southwest: FGMPlatformLatLng.make(withLatitude: 1, longitude: 2)
     )
 
-    let bounds = pigeonBounds.toGMSCoordinateBounds()
+    let bounds = FGMGetCoordinateBoundsForPigeonLatLngBounds(pigeonBounds)
 
     let accuracy: Double = 0.001
     #expect(abs(bounds.southWest.latitude - 1) <= accuracy)
@@ -132,11 +162,11 @@ import google_maps_flutter_ios_sdk9_objc
   }
 
   @Test func mapViewTypeFromPigeonType() {
-    #expect(GMSMapViewType.normal == FGMPlatformMapType.normal.gmsMapViewType)
-    #expect(GMSMapViewType.satellite == FGMPlatformMapType.satellite.gmsMapViewType)
-    #expect(GMSMapViewType.terrain == FGMPlatformMapType.terrain.gmsMapViewType)
-    #expect(GMSMapViewType.hybrid == FGMPlatformMapType.hybrid.gmsMapViewType)
-    #expect(GMSMapViewType.none == FGMPlatformMapType.none.gmsMapViewType)
+    #expect(GMSMapViewType.normal == FGMGetMapViewTypeForPigeonMapType(.normal))
+    #expect(GMSMapViewType.satellite == FGMGetMapViewTypeForPigeonMapType(.satellite))
+    #expect(GMSMapViewType.terrain == FGMGetMapViewTypeForPigeonMapType(.terrain))
+    #expect(GMSMapViewType.hybrid == FGMGetMapViewTypeForPigeonMapType(.hybrid))
+    #expect(GMSMapViewType.none == FGMGetMapViewTypeForPigeonMapType(.none))
   }
 
   @Test func cameraUpdateFromNewCameraPosition() {
@@ -148,7 +178,9 @@ import google_maps_flutter_ios_sdk9_objc
         zoom: 3
       )
     )
-    _ = FGMPlatformCameraUpdate.make(withCameraUpdate: newPositionUpdate).toGMSCameraUpdate()
+    _ = FGMGetCameraUpdateForPigeonCameraUpdate(
+      FGMPlatformCameraUpdate.make(withCameraUpdate: newPositionUpdate)
+    )
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -162,7 +194,9 @@ import google_maps_flutter_ios_sdk9_objc
       with: FGMPlatformLatLng.make(withLatitude: lat, longitude: lng)
     )
 
-    _ = FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate).toGMSCameraUpdate()
+    _ = FGMGetCameraUpdateForPigeonCameraUpdate(
+      FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate)
+    )
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -174,14 +208,16 @@ import google_maps_flutter_ios_sdk9_objc
       withNortheast: FGMPlatformLatLng.make(withLatitude: 1, longitude: 2),
       southwest: FGMPlatformLatLng.make(withLatitude: 3, longitude: 4)
     )
-    let bounds = pigeonBounds.toGMSCoordinateBounds()
+    let bounds = FGMGetCoordinateBoundsForPigeonLatLngBounds(pigeonBounds)
 
     let padding: Double = 20
     let platformUpdate = FGMPlatformCameraUpdateNewLatLngBounds.make(
-      with: FGMPlatformLatLngBounds.make(from: bounds),
+      with: FGMGetPigeonLatLngBoundsForCoordinateBounds(bounds),
       padding: padding
     )
-    _ = FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate).toGMSCameraUpdate()
+    _ = FGMGetCameraUpdateForPigeonCameraUpdate(
+      FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate)
+    )
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -197,7 +233,9 @@ import google_maps_flutter_ios_sdk9_objc
       zoom: zoom
     )
 
-    _ = FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate).toGMSCameraUpdate()
+    _ = FGMGetCameraUpdateForPigeonCameraUpdate(
+      FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate)
+    )
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -209,7 +247,9 @@ import google_maps_flutter_ios_sdk9_objc
     let y: Double = 2
     let platformUpdate = FGMPlatformCameraUpdateScrollBy.make(withDx: x, dy: y)
 
-    _ = FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate).toGMSCameraUpdate()
+    _ = FGMGetCameraUpdateForPigeonCameraUpdate(
+      FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate)
+    )
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -220,7 +260,9 @@ import google_maps_flutter_ios_sdk9_objc
     let zoom: Double = 1
     let platformUpdateNoPoint = FGMPlatformCameraUpdateZoomBy.make(withAmount: zoom, focus: nil)
 
-    _ = FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdateNoPoint).toGMSCameraUpdate()
+    _ = FGMGetCameraUpdateForPigeonCameraUpdate(
+      FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdateNoPoint)
+    )
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -236,7 +278,9 @@ import google_maps_flutter_ios_sdk9_objc
       focus: FGMPlatformPoint.makeWith(x: x, y: y)
     )
 
-    _ = FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate).toGMSCameraUpdate()
+    _ = FGMGetCameraUpdateForPigeonCameraUpdate(
+      FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate)
+    )
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -246,7 +290,9 @@ import google_maps_flutter_ios_sdk9_objc
   @Test func cameraUpdateFromZoomIn() {
     let platformUpdate = FGMPlatformCameraUpdateZoom.make(withOut: false)
 
-    _ = FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate).toGMSCameraUpdate()
+    _ = FGMGetCameraUpdateForPigeonCameraUpdate(
+      FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate)
+    )
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -256,7 +302,9 @@ import google_maps_flutter_ios_sdk9_objc
   @Test func cameraUpdateFromZoomOut() {
     let platformUpdate = FGMPlatformCameraUpdateZoom.make(withOut: true)
 
-    _ = FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate).toGMSCameraUpdate()
+    _ = FGMGetCameraUpdateForPigeonCameraUpdate(
+      FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate)
+    )
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
@@ -267,48 +315,65 @@ import google_maps_flutter_ios_sdk9_objc
     let zoom: Double = 1
     let platformUpdate = FGMPlatformCameraUpdateZoomTo.make(withZoom: zoom)
 
-    _ = FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate).toGMSCameraUpdate()
+    _ = FGMGetCameraUpdateForPigeonCameraUpdate(
+      FGMPlatformCameraUpdate.make(withCameraUpdate: platformUpdate)
+    )
     // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
     // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
     // injecting a wrapper would not meaningfully improve test coverage, since the non-test
     // implementation would be about as complex as the conversion function itself.
   }
 
-  @Test func strokeStyleFromPattern() {
-    let pattern = FGMPlatformPatternItem.make(with: .dash, length: 1)
+  @Test func strokeStylesFromPatterns() {
+    let patterns = [
+      FGMPlatformPatternItem.make(with: .gap, length: 1),
+      FGMPlatformPatternItem.make(with: .dash, length: 1),
+    ]
     let strokeColor = UIColor.red
 
-    _ = pattern.gmsStrokeStyle(strokeColor: strokeColor)
-    // GMSStrokeStyle is not inspectable, so this test just ensures that the codepath
-    // doesn't throw.
+    let patternStrokeStyle = FGMGetStrokeStylesFromPatterns(patterns, strokeColor)
+
+    #expect(patternStrokeStyle.count == 2)
+    // None of the parameters of `patternStrokeStyle` is observable, so we limit to testing
+    // the length of this output array.
   }
 
-  @Test func nonNullLengthFromPatternItem() {
-    let length: Double = 6.4
-    let pattern = FGMPlatformPatternItem.make(with: .gap, length: length as NSNumber)
+  @Test func lengthsFromPatterns() {
+    let gapLength: Double = 10
+    let dashLength: Double = 6.4
+    let patterns = [
+      FGMPlatformPatternItem.make(with: .gap, length: gapLength as NSNumber),
+      FGMPlatformPatternItem.make(with: .dash, length: dashLength as NSNumber),
+    ]
 
-    let spanLength = pattern.gmsStyleSpanLength()
+    let spanLengths = FGMGetSpanLengthsFromPatterns(patterns)
 
-    #expect(spanLength.doubleValue == length)
+    #expect(spanLengths.count == 2)
+
+    let firstSpanLength = spanLengths[0]
+    let secondSpanLength = spanLengths[1]
+
+    #expect(firstSpanLength.doubleValue == gapLength)
+    #expect(secondSpanLength.doubleValue == dashLength)
   }
 
-  @Test func nullLengthFromPatternItem() {
-    let pattern = FGMPlatformPatternItem.make(with: .dot, length: nil)
+  @Test func weightedDataFromPlatformWeightedData() {
+    let intensity1: Double = 3.0
+    let intensity2: Double = 6.0
+    let data = [
+      FGMPlatformWeightedLatLng.make(
+        withPoint: FGMPlatformLatLng.make(withLatitude: 10, longitude: 20),
+        weight: intensity1
+      ),
+      FGMPlatformWeightedLatLng.make(
+        withPoint: FGMPlatformLatLng.make(withLatitude: 30, longitude: 40),
+        weight: intensity2
+      ),
+    ]
 
-    let spanLength = pattern.gmsStyleSpanLength()
-
-    #expect(spanLength.doubleValue == 0)
-  }
-
-  @Test func weightedLatLngFromPlatformWeightedLatLng() {
-    let intensity: Double = 3.0
-    let data = FGMPlatformWeightedLatLng.make(
-      withPoint: FGMPlatformLatLng.make(withLatitude: 10, longitude: 20),
-      weight: intensity
-    )
-
-    let weightedData = data.toGMUWeightedLatLng()
-    #expect(Double(weightedData.intensity) == intensity)
+    let weightedData = FGMGetWeightedDataForPigeonWeightedData(data)
+    #expect(Double(weightedData[0].intensity) == intensity1)
+    #expect(Double(weightedData[1].intensity) == intensity2)
   }
 
   @Test func gradientFromPlatformGradient() {
@@ -331,7 +396,7 @@ import google_maps_flutter_ios_sdk9_objc
       colorMapSize: colorMapSize
     )
 
-    let gradient = platformGradient.toGMUGradient()
+    let gradient = FGMGetGradientForPigeonHeatmapGradient(platformGradient)
     var red: CGFloat = 0
     var green: CGFloat = 0
     var blue: CGFloat = 0

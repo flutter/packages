@@ -9,7 +9,6 @@ import 'package:flutter_plugin_tools/src/common/file_utils.dart';
 import 'package:flutter_plugin_tools/src/firebase_test_lab_command.dart';
 import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
-import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -17,14 +16,14 @@ import 'util.dart';
 
 void main() {
   group('FirebaseTestLabCommand', () {
-    late NativePlatform mockPlatform;
+    late MockPlatform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
     late RecordingProcessRunner gitProcessRunner;
 
     setUp(() {
-      mockPlatform = createMockPlatform();
+      mockPlatform = MockPlatform();
       final GitDir gitDir;
       (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
         platform: mockPlatform,

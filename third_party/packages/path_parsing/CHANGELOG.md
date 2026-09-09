@@ -1,7 +1,6 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
-* Fixes deprecation lints and updates minimum vector_math dependency.
 
 ## 1.1.0
 

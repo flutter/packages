@@ -4,7 +4,6 @@
 
 import GoogleMaps
 import Testing
-import google_maps_flutter_ios_objc
 
 @testable import google_maps_flutter_ios
 
@@ -12,7 +11,7 @@ import google_maps_flutter_ios_objc
 
   @Test func updatePolygonSetsVisibilityLast() {
     let polygon = PropertyOrderValidatingPolygon()
-    PolygonController.update(
+    FGMPolygonController.update(
       polygon,
       from: FGMPlatformPolygon.make(
         withPolygonId: "polygon",

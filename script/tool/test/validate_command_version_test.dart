@@ -8,7 +8,6 @@ import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/validate_command.dart';
 import 'package:flutter_plugin_tools/src/validators/version_and_changelog_validator.dart';
 import 'package:git/git.dart';
-import 'package:platform/platform.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
 
@@ -39,13 +38,13 @@ void testAllowedVersion(
 
 void main() {
   group('VersionCheckCommand', () {
-    late NativePlatform mockPlatform;
+    late MockPlatform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner gitProcessRunner;
 
     setUp(() {
-      mockPlatform = createMockPlatform();
+      mockPlatform = MockPlatform();
       final RecordingProcessRunner processRunner;
       final GitDir gitDir;
       (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
@@ -983,7 +982,6 @@ packages/plugin/example/ios/RunnerTests/Foo.m
 packages/plugin/example/ios/RunnerUITests/info.plist
 packages/plugin/darwin/Tests/Foo.swift
 packages/plugin/analysis_options.yaml
-packages/plugin/AGENTS.md
 packages/plugin/CHANGELOG.md
 ''',
             ),

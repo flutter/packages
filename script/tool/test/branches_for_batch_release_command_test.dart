@@ -7,7 +7,6 @@ import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/branches_for_batch_release_command.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:git/git.dart';
-import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -15,7 +14,7 @@ import 'mocks.dart';
 import 'util.dart';
 
 void main() {
-  late NativePlatform mockPlatform;
+  late MockPlatform mockPlatform;
   late Directory packagesDir;
   late RecordingProcessRunner processRunner;
   late RecordingProcessRunner gitProcessRunner;
@@ -79,7 +78,7 @@ void main() {
   }
 
   setUp(() {
-    mockPlatform = createMockPlatform();
+    mockPlatform = MockPlatform();
     final GitDir gitDir;
     (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
       platform: mockPlatform,

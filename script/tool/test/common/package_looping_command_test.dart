@@ -11,7 +11,6 @@ import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/output_utils.dart';
 import 'package:flutter_plugin_tools/src/common/package_looping_command.dart';
 import 'package:git/git.dart';
-import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import '../mocks.dart';
@@ -75,14 +74,14 @@ String _filenameForType(_ResultFileType type) {
 }
 
 void main() {
-  late NativePlatform mockPlatform;
+  late MockPlatform mockPlatform;
   late Directory packagesDir;
   late Directory thirdPartyPackagesDir;
   late GitDir gitDir;
   late RecordingProcessRunner gitProcessRunner;
 
   setUp(() {
-    mockPlatform = createMockPlatform();
+    mockPlatform = MockPlatform();
     (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
       platform: mockPlatform,
     );

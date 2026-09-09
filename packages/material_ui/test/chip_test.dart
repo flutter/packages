@@ -16,7 +16,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'feedback_tester.dart';
-import 'finders.dart';
 import 'semantics_tester.dart';
 
 Finder findRenderChipElement() {
@@ -328,19 +327,19 @@ void main() {
       ),
     );
 
-    expect(tester.widget(findByTooltip('Delete chip A')), isNotNull);
-    expect(tester.widget(findByTooltip('Delete chip B')), isNotNull);
+    expect(tester.widget(find.byTooltip('Delete chip A')), isNotNull);
+    expect(tester.widget(find.byTooltip('Delete chip B')), isNotNull);
 
     expect(feedback.clickSoundCount, 0);
 
     expect(deletedChipLabels, isEmpty);
-    await tester.tap(findByTooltip('Delete chip A'));
+    await tester.tap(find.byTooltip('Delete chip A'));
     expect(deletedChipLabels, equals(<String>['A']));
 
     await tester.pumpAndSettle(const Duration(seconds: 1));
     expect(feedback.clickSoundCount, 1);
 
-    await tester.tap(findByTooltip('Delete chip B'));
+    await tester.tap(find.byTooltip('Delete chip B'));
     expect(deletedChipLabels, equals(<String>['A', 'B']));
 
     await tester.pumpAndSettle(const Duration(seconds: 1));

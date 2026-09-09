@@ -68,17 +68,17 @@ const String _fakeResponseDifferentHash =
 const String expectedDifferentCachedFile =
     'Foo_regular_2a989d235f2408511069bc7d8460c62aec1a75ac399bd7f2a2ae740c4326dadf.ttf';
 
-const GoogleFontsFile _fakeResponseFile = GoogleFontsFile(
+final GoogleFontsFile _fakeResponseFile = GoogleFontsFile(
   _fakeResponseHash,
   _fakeResponseLengthInBytes,
 );
-const GoogleFontsFile _fakeResponseDifferentFile = GoogleFontsFile(
+final GoogleFontsFile _fakeResponseDifferentFile = GoogleFontsFile(
   _fakeResponseDifferentHash,
   _fakeResponseDifferentLengthInBytes,
 );
 
-const GoogleFontsDescriptor fakeDescriptor = GoogleFontsDescriptor(
-  familyWithVariant: GoogleFontsFamilyWithVariant(
+final GoogleFontsDescriptor fakeDescriptor = GoogleFontsDescriptor(
+  familyWithVariant: const GoogleFontsFamilyWithVariant(
     family: 'Foo',
     googleFontsVariant: GoogleFontsVariant(
       fontWeight: FontWeight.w400,
@@ -144,8 +144,8 @@ void main() {
       return http.Response('fake response body - failure', 300);
     });
 
-    const descriptorInAssets = GoogleFontsDescriptor(
-      familyWithVariant: GoogleFontsFamilyWithVariant(
+    final descriptorInAssets = GoogleFontsDescriptor(
+      familyWithVariant: const GoogleFontsFamilyWithVariant(
         family: 'Foo',
         googleFontsVariant: GoogleFontsVariant(
           fontWeight: FontWeight.w900,
@@ -164,8 +164,8 @@ void main() {
   });
 
   test('does not call http if config is false', () async {
-    const fakeDescriptor = GoogleFontsDescriptor(
-      familyWithVariant: GoogleFontsFamilyWithVariant(
+    final fakeDescriptor = GoogleFontsDescriptor(
+      familyWithVariant: const GoogleFontsFamilyWithVariant(
         family: 'Foo',
         googleFontsVariant: GoogleFontsVariant(
           fontWeight: FontWeight.w400,
@@ -195,8 +195,8 @@ void main() {
 
   test('loadFontIfNecessary method does not make http get request on '
       'subsequent calls', () async {
-    const fakeDescriptor = GoogleFontsDescriptor(
-      familyWithVariant: GoogleFontsFamilyWithVariant(
+    final fakeDescriptor = GoogleFontsDescriptor(
+      familyWithVariant: const GoogleFontsFamilyWithVariant(
         family: 'Foo',
         googleFontsVariant: GoogleFontsVariant(
           fontWeight: FontWeight.w400,
@@ -221,8 +221,8 @@ void main() {
 
   test('loadFontIfNecessary does not make more than 1 http get request on '
       'parallel calls', () async {
-    const fakeDescriptor = GoogleFontsDescriptor(
-      familyWithVariant: GoogleFontsFamilyWithVariant(
+    final fakeDescriptor = GoogleFontsDescriptor(
+      familyWithVariant: const GoogleFontsFamilyWithVariant(
         family: 'Foo',
         googleFontsVariant: GoogleFontsVariant(
           fontWeight: FontWeight.w400,
@@ -241,8 +241,8 @@ void main() {
   });
 
   test('loadFontIfNecessary makes second attempt if the first attempt failed ', () async {
-    const fakeDescriptor = GoogleFontsDescriptor(
-      familyWithVariant: GoogleFontsFamilyWithVariant(
+    final fakeDescriptor = GoogleFontsDescriptor(
+      familyWithVariant: const GoogleFontsFamilyWithVariant(
         family: 'Foo',
         googleFontsVariant: GoogleFontsVariant(
           fontWeight: FontWeight.w400,
@@ -326,8 +326,8 @@ void main() {
     when(mockHttpClient.gets(any)).thenAnswer((_) async {
       return http.Response('malicious intercepted response', 200);
     });
-    const fakeDescriptor = GoogleFontsDescriptor(
-      familyWithVariant: GoogleFontsFamilyWithVariant(
+    final fakeDescriptor = GoogleFontsDescriptor(
+      familyWithVariant: const GoogleFontsFamilyWithVariant(
         family: 'Foo',
         googleFontsVariant: GoogleFontsVariant(
           fontWeight: FontWeight.w400,

@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/src/types/google_play_user_choice_details.dart';
 import 'package:in_app_purchase_android/src/types/translator.dart';
+import 'package:test/test.dart';
 
 void main() {
   group('Translator ', () {

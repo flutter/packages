@@ -1,6 +1,5 @@
-## 3.2.6
+## NEXT
 
-* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 3.2.5

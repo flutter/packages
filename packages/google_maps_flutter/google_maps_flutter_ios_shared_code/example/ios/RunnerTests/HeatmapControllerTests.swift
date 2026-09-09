@@ -5,7 +5,6 @@
 import GoogleMaps
 import GoogleMapsUtils
 import Testing
-import google_maps_flutter_ios_objc
 
 @testable import google_maps_flutter_ios
 
@@ -21,7 +20,7 @@ import google_maps_flutter_ios_objc
       startPoints: [0 as NSNumber, 1 as NSNumber],
       colorMapSize: 256
     )
-    HeatmapController.update(
+    FGMHeatmapController.updateHeatmap(
       heatmap,
       from: FGMPlatformHeatmap.make(
         withHeatmapId: "heatmap",
@@ -41,7 +40,7 @@ import google_maps_flutter_ios_objc
         minimumZoomIntensity: 1,
         maximumZoomIntensity: 2
       ),
-      mapView: HeatmapControllerTests.mapView()
+      with: HeatmapControllerTests.mapView()
     )
     #expect(heatmap.hasSetMap)
   }

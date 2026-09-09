@@ -7,13 +7,12 @@ import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/update_excerpts_command.dart';
 import 'package:git/git.dart';
-import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
 import 'util.dart';
 
-void runAllTests(NativePlatform platform) {
+void runAllTests(MockPlatform platform) {
   late Directory packagesDir;
   late CommandRunner<void> runner;
 
@@ -539,6 +538,6 @@ A B C
 }
 
 void main() {
-  runAllTests(createMockPlatform());
-  runAllTests(createMockPlatform(isWindows: true));
+  runAllTests(MockPlatform());
+  runAllTests(MockPlatform(isWindows: true));
 }

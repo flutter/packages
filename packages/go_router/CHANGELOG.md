@@ -1,7 +1,3 @@
-## 18.0.1
-
-Clarifies `onEnter` documentation regarding evaluation order relative to `redirect:` chains.
-
 ## 18.0.0
 
 - Migrates to material_ui and cupertino_ui.

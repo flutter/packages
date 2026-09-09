@@ -4,7 +4,6 @@
 
 import GoogleMaps
 import Testing
-import google_maps_flutter_ios_objc
 
 @testable import google_maps_flutter_ios
 
@@ -24,8 +23,8 @@ import google_maps_flutter_ios_objc
   func markersController(
     withMapView mapView: GMSMapView,
     eventDelegate: NSObject & FGMMapEventDelegate
-  ) -> MarkersController {
-    return MarkersController(
+  ) -> FGMMarkersController {
+    return FGMMarkersController(
       mapView: mapView,
       eventDelegate: eventDelegate,
       clusterManagersController: nil,
@@ -74,8 +73,10 @@ import google_maps_flutter_ios_objc
       )
     ])
 
-    let markerController = try #require(controller.markerIdentifierToController[markerIdentifier])
-    let marker = markerController.marker
+    let markerController = try #require(
+      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
+    )
+    let marker = try #require(markerController.marker)
 
     let delta = 0.0001
     #expect(abs(Double(marker.opacity) - alpha) <= delta)
@@ -116,8 +117,10 @@ import google_maps_flutter_ios_objc
       )
     ])
 
-    let markerController = try #require(controller.markerIdentifierToController[markerIdentifier])
-    let marker = markerController.marker
+    let markerController = try #require(
+      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
+    )
+    let marker = try #require(markerController.marker)
 
     #expect(marker.isDraggable)
   }
@@ -153,8 +156,10 @@ import google_maps_flutter_ios_objc
       )
     ])
 
-    let markerController = try #require(controller.markerIdentifierToController[markerIdentifier])
-    let marker = markerController.marker
+    let markerController = try #require(
+      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
+    )
+    let marker = try #require(markerController.marker)
 
     #expect(marker.isFlat)
   }
@@ -190,8 +195,10 @@ import google_maps_flutter_ios_objc
       )
     ])
 
-    let markerController = try #require(controller.markerIdentifierToController[markerIdentifier])
-    let marker = markerController.marker
+    let markerController = try #require(
+      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
+    )
+    let marker = try #require(markerController.marker)
 
     // Visibility is controlled by being set to a map.
     #expect(marker.map != nil)
@@ -230,8 +237,10 @@ import google_maps_flutter_ios_objc
       )
     ])
 
-    let markerController = try #require(controller.markerIdentifierToController[markerIdentifier])
-    let marker = markerController.marker
+    let markerController = try #require(
+      controller.markerIdentifierToController[markerIdentifier] as? FGMMarkerController
+    )
+    let marker = try #require(markerController.marker)
 
     let delta = 0.0001
     #expect(abs(Double(marker.infoWindowAnchor.x) - anchorX) <= delta)
@@ -245,7 +254,7 @@ import google_maps_flutter_ios_objc
     let collisionBehavior = FGMPlatformMarkerCollisionBehaviorBox(
       value: .requiredAndHidesOptional
     )
-    MarkerController.update(
+    FGMMarkerController.update(
       marker,
       from: FGMPlatformMarker.make(
         withAlpha: 1.0,
@@ -267,7 +276,7 @@ import google_maps_flutter_ios_objc
         clusterManagerId: nil,
         collisionBehavior: collisionBehavior
       ),
-      mapView: MarkerControllerTests.mapView(),
+      with: MarkerControllerTests.mapView(),
       assetProvider: TestAssetProvider(),
       screenScale: 1,
       usingOpacityForVisibility: false
@@ -276,13 +285,13 @@ import google_maps_flutter_ios_objc
   }
 
   @Test func assetProviderIsRetained() {
-    var markerController: MarkersController?
+    var markerController: FGMMarkersController?
     weak var weakAssetProvider: TestAssetProvider?
     autoreleasepool {
       let assetProvider = TestAssetProvider()
       weakAssetProvider = assetProvider
 
-      markerController = MarkersController(
+      markerController = FGMMarkersController(
         mapView: MarkerControllerTests.mapView(),
         eventDelegate: TestMapEventHandler(),
         clusterManagersController: nil,

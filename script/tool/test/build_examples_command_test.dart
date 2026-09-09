@@ -8,7 +8,6 @@ import 'package:flutter_plugin_tools/src/build_examples_command.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:git/git.dart';
-import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -16,14 +15,14 @@ import 'util.dart';
 
 void main() {
   group('build-example', () {
-    late NativePlatform mockPlatform;
+    late MockPlatform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
     late RecordingProcessRunner gitProcessRunner;
 
     setUp(() {
-      mockPlatform = createMockPlatform();
+      mockPlatform = MockPlatform();
       final GitDir gitDir;
       (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
         platform: mockPlatform,
@@ -128,6 +127,7 @@ void main() {
     });
 
     test('building for iOS when plugin is not set up for iOS results in no-op', () async {
+      mockPlatform.isMacOS = true;
       createFakePlugin('plugin', packagesDir);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -149,6 +149,7 @@ void main() {
     });
 
     test('building for iOS', () async {
+      mockPlatform.isMacOS = true;
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -181,6 +182,8 @@ void main() {
     });
 
     test('building for iOS with CocoaPods', () async {
+      mockPlatform.isMacOS = true;
+
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -227,6 +230,8 @@ void main() {
     });
 
     test('building for iOS with Swift Package Manager', () async {
+      mockPlatform.isMacOS = true;
+
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -273,6 +278,8 @@ void main() {
     });
 
     test('building non-plugin package for iOS with Swift Package Manager', () async {
+      mockPlatform.isMacOS = true;
+
       final RepositoryPackage package = createFakePackage(
         'a_package',
         packagesDir,
@@ -303,6 +310,7 @@ void main() {
     });
 
     test('building for Linux when plugin is not set up for Linux results in no-op', () async {
+      mockPlatform.isLinux = true;
       createFakePlugin('plugin', packagesDir);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -324,6 +332,7 @@ void main() {
     });
 
     test('building for Linux', () async {
+      mockPlatform.isLinux = true;
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -353,6 +362,7 @@ void main() {
     });
 
     test('building for macOS with no implementation results in no-op', () async {
+      mockPlatform.isMacOS = true;
       createFakePlugin('plugin', packagesDir);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -374,6 +384,7 @@ void main() {
     });
 
     test('building for macOS', () async {
+      mockPlatform.isMacOS = true;
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -403,6 +414,8 @@ void main() {
     });
 
     test('building for macOS with CocoaPods', () async {
+      mockPlatform.isMacOS = true;
+
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -446,6 +459,8 @@ void main() {
     });
 
     test('building for macOS with Swift Package Manager', () async {
+      mockPlatform.isMacOS = true;
+
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -539,6 +554,7 @@ void main() {
     });
 
     test('building for Windows when plugin is not set up for Windows results in no-op', () async {
+      mockPlatform.isWindows = true;
       createFakePlugin('plugin', packagesDir);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -560,6 +576,7 @@ void main() {
     });
 
     test('building for Windows', () async {
+      mockPlatform.isWindows = true;
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -880,6 +897,7 @@ void main() {
     });
 
     test('The .pluginToolsConfig.yaml file', () async {
+      mockPlatform.isLinux = true;
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,

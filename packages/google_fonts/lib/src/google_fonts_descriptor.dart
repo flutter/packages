@@ -35,7 +35,7 @@ class GoogleFontsFile {
   ///
   /// The [expectedFileHash] is used to verify the integrity of the downloaded
   /// file, and [expectedLength] is checked to ensure the file size is correct.
-  const GoogleFontsFile(this.expectedFileHash, this.expectedLength);
+  GoogleFontsFile(this.expectedFileHash, this.expectedLength);
 
   /// The expected hash of the font file for validation.
   final String expectedFileHash;

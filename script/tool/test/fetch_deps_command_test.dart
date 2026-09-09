@@ -8,7 +8,6 @@ import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/fetch_deps_command.dart';
 import 'package:git/git.dart';
-import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -18,11 +17,11 @@ void main() {
   group('FetchDepsCommand', () {
     late Directory packagesDir;
     late CommandRunner<void> runner;
-    late NativePlatform mockPlatform;
+    late MockPlatform mockPlatform;
     late RecordingProcessRunner processRunner;
 
     setUp(() {
-      mockPlatform = createMockPlatform();
+      mockPlatform = MockPlatform();
       final GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
         platform: mockPlatform,
@@ -658,6 +657,7 @@ void main() {
       for (final platformName in <String>[platformIOS, platformMacOS]) {
         group(platformName, () {
           test('is not set by default', () async {
+            mockPlatform.isMacOS = true;
             final RepositoryPackage plugin = createFakePlugin(
               'plugin1',
               packagesDir,
@@ -686,6 +686,7 @@ void main() {
           });
 
           test('can be enabled', () async {
+            mockPlatform.isMacOS = true;
             final RepositoryPackage plugin = createFakePlugin(
               'plugin1',
               packagesDir,
@@ -719,6 +720,7 @@ void main() {
           });
 
           test('can be disabled', () async {
+            mockPlatform.isMacOS = true;
             final RepositoryPackage plugin = createFakePlugin(
               'plugin1',
               packagesDir,
@@ -753,6 +755,7 @@ void main() {
           });
 
           test('is set before running pub get, and includes the plugin package', () async {
+            mockPlatform.isMacOS = true;
             final RepositoryPackage plugin = createFakePlugin(
               'plugin1',
               packagesDir,
