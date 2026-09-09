@@ -56,7 +56,7 @@ void main() {
   late MockInAppPurchaseApi mockApi;
   late InAppPurchaseAndroidPlatform iapAndroidPlatform;
 
-  setUp(() {
+  setUp(() async {
     widgets.WidgetsFlutterBinding.ensureInitialized();
 
     mockApi = MockInAppPurchaseApi();
@@ -74,6 +74,9 @@ void main() {
       ),
     );
     InAppPurchasePlatform.instance = iapAndroidPlatform;
+    // _connect defers the connection by one macrotask, so pump the event
+    // queue so the tests below start from an already-connected manager.
+    await pumpEventQueue();
   });
 
   group('connection management', () {
@@ -82,9 +85,12 @@ void main() {
       verify(mockApi.startConnection(any, any, any)).called(1);
     });
 
-    test('re-connects when client sends onBillingServiceDisconnected', () {
+    test('re-connects when client sends onBillingServiceDisconnected', () async {
       iapAndroidPlatform.billingClientManager.client.hostCallbackHandler
           .onBillingServiceDisconnected(0);
+      // The reconnect is deferred one macrotask; pump so it fires before
+      // verifying.
+      await pumpEventQueue();
       verify(mockApi.startConnection(any, any, any)).called(2);
     });
 

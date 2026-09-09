@@ -24,7 +24,7 @@ void main() {
   late InAppPurchaseAndroidPlatformAddition iapAndroidPlatformAddition;
   late BillingClientManager manager;
 
-  setUp(() {
+  setUp(() async {
     widgets.WidgetsFlutterBinding.ensureInitialized();
     mockApi = MockInAppPurchaseApi();
     when(mockApi.startConnection(any, any, any)).thenAnswer(
@@ -39,6 +39,10 @@ void main() {
           ) => BillingClient(listener, alternativeBillingListener, api: mockApi),
     );
     iapAndroidPlatformAddition = InAppPurchaseAndroidPlatformAddition(manager);
+    // _connect defers the connection by one macrotask, so pump the event
+    // queue so the setBillingChoice tests below count startConnection calls
+    // from an already-completed initial connection.
+    await pumpEventQueue();
   });
 
   group('consume purchases', () {
@@ -84,6 +88,9 @@ void main() {
 
       // Fake the disconnect that we would expect from a endConnectionCall.
       manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
+      // The reconnect is deferred one macrotask; pump so it fires before
+      // verifying.
+      await pumpEventQueue();
       // Verify that after connection ended reconnect was called.
       final VerificationResult result = verify(mockApi.startConnection(any, captureAny, any));
       expect(result.callCount, equals(2));
@@ -96,6 +103,9 @@ void main() {
 
       // Fake the disconnect that we would expect from a endConnectionCall.
       manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
+      // The reconnect is deferred one macrotask; pump so it fires before
+      // verifying.
+      await pumpEventQueue();
       // Verify that after connection ended reconnect was called.
       final VerificationResult result = verify(mockApi.startConnection(any, captureAny, any));
       expect(result.callCount, equals(2));

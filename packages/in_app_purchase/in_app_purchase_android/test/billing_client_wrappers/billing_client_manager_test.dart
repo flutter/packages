@@ -19,7 +19,7 @@ void main() {
   late MockInAppPurchaseApi mockApi;
   late BillingClientManager manager;
 
-  setUp(() {
+  setUp(() async {
     WidgetsFlutterBinding.ensureInitialized();
     mockApi = MockInAppPurchaseApi();
     when(mockApi.startConnection(any, any, any)).thenAnswer(
@@ -33,6 +33,9 @@ void main() {
             UserSelectedAlternativeBillingListener? alternativeBillingListener,
           ) => BillingClient(listener, alternativeBillingListener, api: mockApi),
     );
+    // _connect defers the connection by one macrotask, so pump the event
+    // queue so the tests below start from an already-connected manager.
+    await pumpEventQueue();
   });
 
   group('BillingClientWrapper', () {
@@ -70,7 +73,28 @@ void main() {
       await manager.runWithClientNonRetryable((_) async {});
 
       manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
+      // The reconnect is deferred one macrotask; pump so it fires before
+      // verifying.
+      await pumpEventQueue();
       verify(mockApi.startConnection(any, any, any)).called(2);
+    });
+
+    test('reconnect is deferred off the disconnect callback (does not call '
+        'startConnection synchronously)', () async {
+      // Ensures all asynchronous connected code finishes.
+      await manager.runWithClientNonRetryable((_) async {});
+      clearInteractions(mockApi);
+
+      manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
+      // Regression test for https://github.com/flutter/flutter/issues/144954:
+      // the outbound startConnection platform message must NOT be sent
+      // synchronously on the inbound onBillingServiceDisconnected upcall —
+      // a pending Java exception at that moment aborts the process
+      // (uncatchable SIGABRT in FlutterViewHandlePlatformMessage).
+      verifyNever(mockApi.startConnection(any, any, any));
+
+      await pumpEventQueue();
+      verify(mockApi.startConnection(any, any, any)).called(1);
     });
 
     test('re-connects when host calls reconnectWithBillingChoiceMode', () async {
@@ -85,6 +109,9 @@ void main() {
 
       /// Fake the disconnect that we would expect from a endConnectionCall.
       manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
+      // The reconnect is deferred one macrotask; pump so it fires before
+      // verifying.
+      await pumpEventQueue();
       // Verify that after connection ended reconnect was called.
       final VerificationResult result = verify(mockApi.startConnection(any, captureAny, any));
       expect(result.captured.single, PlatformBillingChoiceMode.alternativeBillingOnly);
@@ -104,6 +131,9 @@ void main() {
 
       /// Fake the disconnect that we would expect from a endConnectionCall.
       manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
+      // The reconnect is deferred one macrotask; pump so it fires before
+      // verifying.
+      await pumpEventQueue();
       // Verify that after connection ended reconnect was called.
       final VerificationResult result = verify(mockApi.startConnection(any, any, captureAny));
       expect(
