@@ -12,7 +12,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
-import 'package:vector_math/vector_math_64.dart' show Matrix4, Vector3;
+import 'package:vector_math/vector_math_64.dart' show Matrix4;
 
 /// Transforms the point (x, y) and returns the transformed coordinates.
 ///
@@ -90,9 +90,7 @@ extension Matrix4PointTransformer on Matrix4 {
   /// Only the X and Y components of the result are used, so the Z translation
   /// and perspective rows of the matrix have no effect.
   PointTransformer asPointTransformer() {
-    return (x, y) {
-      final Vector3 vector = transform3(Vector3(x, y, 0));
-      return (vector.x, vector.y);
-    };
+    final Float64List m = storage;
+    return (x, y) => (m[0] * x + m[4] * y + m[12], m[1] * x + m[5] * y + m[13]);
   }
 }
