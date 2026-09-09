@@ -1,3 +1,0 @@
-changelog: |
-  - replace identical checks with equality when dealing with enums
-version: patch
