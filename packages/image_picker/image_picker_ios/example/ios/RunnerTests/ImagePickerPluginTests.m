@@ -9,7 +9,6 @@
 @import image_picker_ios.Test;
 #endif
 @import UniformTypeIdentifiers;
-@import MobileCoreServices;
 @import XCTest;
 
 #import <OCMock/OCMock.h>
@@ -1387,7 +1386,7 @@
   [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
-- (void)testLaunchUIImagePickerSetsImageAndVideoMediaTypes {
+- (void)testLaunchUIImagePickerSetsImageAndVideoMediaTypes API_AVAILABLE(ios(14)) {
   id mockAVCaptureDevice = OCMClassMock([AVCaptureDevice class]);
   OCMStub([mockAVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo])
       .andReturn(AVAuthorizationStatusDenied);
@@ -1408,8 +1407,8 @@
                                 context:context];
   XCTAssertEqual(controller.videoMaximumDuration, 42);
   XCTAssertEqual(controller.videoQuality, UIImagePickerControllerQualityTypeHigh);
-  XCTAssertTrue([controller.mediaTypes containsObject:(NSString *)kUTTypeImage]);
-  XCTAssertTrue([controller.mediaTypes containsObject:(NSString *)kUTTypeMovie]);
+  XCTAssertTrue([controller.mediaTypes containsObject:UTTypeImage.identifier]);
+  XCTAssertTrue([controller.mediaTypes containsObject:UTTypeMovie.identifier]);
 }
 
 - (void)testImagePickerDidFinishPickingOriginalImage {
