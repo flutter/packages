@@ -1638,7 +1638,7 @@ void main() {
   });
 
   // Regression test for https://github.com/flutter/flutter/issues/167621.
-  testWidgets('CarouselView.weigted weigths are applied when viewport dimension is updated', (
+  testWidgets('CarouselView.weighted weights are applied when viewport dimension is updated', (
     WidgetTester tester,
   ) async {
     addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -2964,6 +2964,39 @@ void main() {
     final ScrollPosition position = tester.state<ScrollableState>(find.byType(Scrollable)).position;
 
     expect(position.pixels, 0.0);
+  });
+
+  testWidgets('CarouselView.weighted does not crash at finite trailing scroll offset', (
+    WidgetTester tester,
+  ) async {
+    final controller = CarouselController();
+    addTearDown(controller.dispose);
+
+    // Set the exact viewport size that caused the crash: 750 main axis extent.
+    await tester.binding.setSurfaceSize(const Size(750, 1000));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CarouselView.weighted(
+            controller: controller,
+            flexWeights: const <int>[1, 7],
+            children: List<Widget>.generate(5, (index) => const FlutterLogo()),
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
+
+    // Jump exactly to the scroll offset from the crash log (461.5)
+    // to trigger the boundary geometry layout logic calculation.
+    controller.jumpTo(461.5);
+    await tester.pump();
+
+    // Verify no SliverGeometry exception was thrown.
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('CarouselView.builder items customization', (WidgetTester tester) async {

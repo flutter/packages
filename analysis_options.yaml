@@ -24,6 +24,8 @@ analyzer:
     - '**/*.pb.dart'
     - '**/*.g.dart'
     - '**/*.mocks.dart' # Mockito @GenerateMocks
+    # Ignore shared code for iOS platform implementation of Google Maps plugin.
+    - 'packages/google_maps_flutter/google_maps_flutter_ios_shared_code/**'
 
 formatter:
   page_width: 100
