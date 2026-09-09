@@ -1,6 +1,8 @@
-## NEXT
+## 1.1.1
 
-- Fixes self-comparison and assert bugs in the `semantics_tester` test helper.
+- Constrains Slider and RangeSlider value indicator labels to the screen width, truncating with an ellipsis instead of clipping.
+- Prevents stale asynchronous suggestions from replacing newer `SearchAnchor` results.
+- Fix RangeSlider thumb overlay remaining visible after touch interaction
 
 ## 1.1.0
 

@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes self-comparison and assert bugs in the `semantics_tester` test helper.
+version: skip
