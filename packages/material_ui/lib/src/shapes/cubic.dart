@@ -6,7 +6,6 @@
 /// @docImport 'rounded_polygon.dart';
 library;
 
-import 'dart:collection';
 import 'dart:math' as math;
 import 'dart:ui';
 
@@ -25,7 +24,7 @@ class CubicBezier {
   /// Creates a cubic Bézier curve running from [anchor0] to [anchor1], with
   /// [control0] and [control1] determining its slope at either end.
   CubicBezier(Offset anchor0, Offset control0, Offset control1, Offset anchor1)
-    : this.raw([
+    : this.raw(
         anchor0.x,
         anchor0.y,
         control0.x,
@@ -34,20 +33,27 @@ class CubicBezier {
         control1.y,
         anchor1.x,
         anchor1.y,
-      ]);
+      );
 
-  /// Creates a [CubicBezier] directly from the flat list of its eight anchor
-  /// and control point coordinates, in the order used by [points].
+  /// Creates a [CubicBezier] directly from its eight anchor and control point
+  /// coordinates.
   @internal
-  const CubicBezier.raw(List<double> points)
-    : assert(points.length == 8, 'Points array size should be 8.'),
-      _points = points;
+  const CubicBezier.raw(
+    this.anchor0X,
+    this.anchor0Y,
+    this.control0X,
+    this.control0Y,
+    this.control1X,
+    this.control1Y,
+    this.anchor1X,
+    this.anchor1Y,
+  );
 
   /// Generates a bezier curve that is a straight line between the given anchor
   /// points [p0] and [p1]. The control points lie 1/3 of the distance from
   /// their respective anchor points.
   factory CubicBezier.straightLine(Offset p0, Offset p1) {
-    return CubicBezier.raw([
+    return CubicBezier.raw(
       p0.x,
       p0.y,
       lerp(p0.x, p1.x, 1 / 3),
@@ -56,7 +62,7 @@ class CubicBezier {
       lerp(p0.y, p1.y, 2 / 3),
       p1.x,
       p1.y,
-    ]);
+    );
   }
 
   /// Generates a bezier curve that approximates a circular arc around [center],
@@ -88,7 +94,7 @@ class CubicBezier {
         (1 - cosa) *
         (clockwise ? 1 : -1);
 
-    return CubicBezier.raw([
+    return CubicBezier.raw(
       p0.x,
       p0.y,
       p0.x + rotatedP0.x * k,
@@ -97,7 +103,7 @@ class CubicBezier {
       p1.y - rotatedP1.y * k,
       p1.x,
       p1.y,
-    ]);
+    );
   }
 
   /// Generates a zero-length [CubicBezier] at [point].
@@ -105,9 +111,7 @@ class CubicBezier {
   /// Both anchor points and both control points coincide, so the curve has
   /// zero length. See [isZeroLength].
   CubicBezier.point(Offset point)
-    : this.raw([point.x, point.y, point.x, point.y, point.x, point.y, point.x, point.y]);
-
-  final List<double> _points;
+    : this.raw(point.x, point.y, point.x, point.y, point.x, point.y, point.x, point.y);
 
   /// The eight coordinates of this curve as a flat, unmodifiable list, ordered
   /// as anchor0, control0, control1, anchor1.
@@ -115,43 +119,55 @@ class CubicBezier {
   /// Equivalent to reading [anchor0X] through [anchor1Y] in order, and more
   /// convenient when serializing a curve or handing its coordinates to code
   /// that expects a coordinate buffer.
-  List<double> get points => UnmodifiableListView(_points);
+  ///
+  /// A new list is created on every access. Prefer the individual coordinate
+  /// fields when reading single values.
+  List<double> get points => List<double>.unmodifiable(<double>[
+    anchor0X,
+    anchor0Y,
+    control0X,
+    control0Y,
+    control1X,
+    control1Y,
+    anchor1X,
+    anchor1Y,
+  ]);
 
   /// The anchor point at the start of the curve.
-  Offset get anchor0 => Offset(_points[0], _points[1]);
+  Offset get anchor0 => Offset(anchor0X, anchor0Y);
 
   /// The control point closest to [anchor0].
-  Offset get control0 => Offset(_points[2], _points[3]);
+  Offset get control0 => Offset(control0X, control0Y);
 
   /// The control point closest to [anchor1].
-  Offset get control1 => Offset(_points[4], _points[5]);
+  Offset get control1 => Offset(control1X, control1Y);
 
   /// The anchor point at the end of the curve.
-  Offset get anchor1 => Offset(_points[6], _points[7]);
+  Offset get anchor1 => Offset(anchor1X, anchor1Y);
 
   /// The X coordinate of the anchor point at the start of the curve.
-  double get anchor0X => _points[0];
+  final double anchor0X;
 
   /// The Y coordinate of the anchor point at the start of the curve.
-  double get anchor0Y => _points[1];
+  final double anchor0Y;
 
   /// The X coordinate of the control point closest to [anchor0].
-  double get control0X => _points[2];
+  final double control0X;
 
   /// The Y coordinate of the control point closest to [anchor0].
-  double get control0Y => _points[3];
+  final double control0Y;
 
   /// The X coordinate of the control point closest to [anchor1].
-  double get control1X => _points[4];
+  final double control1X;
 
   /// The Y coordinate of the control point closest to [anchor1].
-  double get control1Y => _points[5];
+  final double control1Y;
 
   /// The X coordinate of the anchor point at the end of the curve.
-  double get anchor1X => _points[6];
+  final double anchor1X;
 
   /// The Y coordinate of the anchor point at the end of the curve.
-  double get anchor1Y => _points[7];
+  final double anchor1Y;
 
   /// Returns the point on this curve at [t], the proportional distance along
   /// the curve from [anchor0] at 0 to [anchor1] at 1.
@@ -323,7 +339,7 @@ class CubicBezier {
     final Point point = pointAt(t);
 
     return (
-      CubicBezier.raw([
+      CubicBezier.raw(
         anchor0X,
         anchor0Y,
         anchor0X * u + control0X * t,
@@ -332,8 +348,8 @@ class CubicBezier {
         anchor0Y * (u * u) + control0Y * (2 * u * t) + control1Y * (t * t),
         point.x,
         point.y,
-      ]),
-      CubicBezier.raw([
+      ),
+      CubicBezier.raw(
         point.x,
         point.y,
         control0X * (u * u) + control1X * (2 * u * t) + anchor1X * (t * t),
@@ -342,13 +358,13 @@ class CubicBezier {
         control1Y * u + anchor1Y * t,
         anchor1X,
         anchor1Y,
-      ]),
+      ),
     );
   }
 
   /// This curve with its control and anchor points in reverse order, so it
   /// runs from [anchor1] to [anchor0].
-  CubicBezier get reversed => CubicBezier.raw([
+  CubicBezier get reversed => CubicBezier.raw(
     anchor1X,
     anchor1Y,
     control1X,
@@ -357,32 +373,32 @@ class CubicBezier {
     control0Y,
     anchor0X,
     anchor0Y,
-  ]);
+  );
 
   /// Returns a curve whose coordinates are the sums of this curve's and [o]'s
   /// corresponding coordinates.
-  CubicBezier operator +(CubicBezier o) => CubicBezier.raw([
-    _points[0] + o._points[0],
-    _points[1] + o._points[1],
-    _points[2] + o._points[2],
-    _points[3] + o._points[3],
-    _points[4] + o._points[4],
-    _points[5] + o._points[5],
-    _points[6] + o._points[6],
-    _points[7] + o._points[7],
-  ]);
+  CubicBezier operator +(CubicBezier o) => CubicBezier.raw(
+    anchor0X + o.anchor0X,
+    anchor0Y + o.anchor0Y,
+    control0X + o.control0X,
+    control0Y + o.control0Y,
+    control1X + o.control1X,
+    control1Y + o.control1Y,
+    anchor1X + o.anchor1X,
+    anchor1Y + o.anchor1Y,
+  );
 
   /// Returns a curve whose coordinates are this curve's multiplied by [x].
-  CubicBezier operator *(double x) => CubicBezier.raw([
-    _points[0] * x,
-    _points[1] * x,
-    _points[2] * x,
-    _points[3] * x,
-    _points[4] * x,
-    _points[5] * x,
-    _points[6] * x,
-    _points[7] * x,
-  ]);
+  CubicBezier operator *(double x) => CubicBezier.raw(
+    anchor0X * x,
+    anchor0Y * x,
+    control0X * x,
+    control0Y * x,
+    control1X * x,
+    control1Y * x,
+    anchor1X * x,
+    anchor1Y * x,
+  );
 
   /// Returns a curve whose coordinates are this curve's divided by [x].
   CubicBezier operator /(double x) => this * (1.0 / x);
@@ -390,12 +406,11 @@ class CubicBezier {
   /// Returns a copy of this curve with [transformer] applied to each of its
   /// anchor and control points.
   CubicBezier transformed(PointTransformer transformer) {
-    final newCubic = _MutableCubicBezier();
-    for (var i = 0; i < 8; i++) {
-      newCubic._points[i] = _points[i];
-    }
-    newCubic.transform(transformer);
-    return newCubic;
+    final (double a0X, double a0Y) = transformer(anchor0X, anchor0Y);
+    final (double c0X, double c0Y) = transformer(control0X, control0Y);
+    final (double c1X, double c1Y) = transformer(control1X, control1Y);
+    final (double a1X, double a1Y) = transformer(anchor1X, anchor1Y);
+    return CubicBezier.raw(a0X, a0Y, c0X, c0Y, c1X, c1Y, a1X, a1Y);
   }
 
   @override
@@ -413,31 +428,28 @@ class CubicBezier {
       return true;
     }
 
-    return other is CubicBezier && listEquals(other._points, _points);
+    return other is CubicBezier &&
+        other.anchor0X == anchor0X &&
+        other.anchor0Y == anchor0Y &&
+        other.control0X == control0X &&
+        other.control0Y == control0Y &&
+        other.control1X == control1X &&
+        other.control1Y == control1Y &&
+        other.anchor1X == anchor1X &&
+        other.anchor1Y == anchor1Y;
   }
 
   @override
-  int get hashCode => Object.hashAll(_points);
-}
-
-/// A mutable version of [CubicBezier], used by [CubicBezier.transformed] to
-/// transform the points of a curve in place without creating new
-/// [CubicBezier]s.
-class _MutableCubicBezier extends CubicBezier {
-  _MutableCubicBezier() : super.raw(List.filled(8, 0));
-
-  void _transformOnePoint(PointTransformer f, int ix) {
-    final (double, double) result = f(_points[ix], _points[ix + 1]);
-    _points[ix] = result.$1;
-    _points[ix + 1] = result.$2;
-  }
-
-  void transform(PointTransformer f) {
-    _transformOnePoint(f, 0);
-    _transformOnePoint(f, 2);
-    _transformOnePoint(f, 4);
-    _transformOnePoint(f, 6);
-  }
+  int get hashCode => Object.hash(
+    anchor0X,
+    anchor0Y,
+    control0X,
+    control0Y,
+    control1X,
+    control1Y,
+    anchor1X,
+    anchor1Y,
+  );
 }
 
 /// Returns a [Path] built from the given [cubics].

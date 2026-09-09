@@ -503,10 +503,16 @@ class RoundedPolygon {
             // enough discontinuity to throw an exception later, even though the
             // distances are quite small. Account for that by making the last
             // cubic use the latest anchor point, always.
-            final List<double> points = lastCubic.points.toList();
-            points[6] = cubic.anchor1X;
-            points[7] = cubic.anchor1Y;
-            lastCubic = CubicBezier.raw(points);
+            lastCubic = CubicBezier.raw(
+              lastCubic.anchor0X,
+              lastCubic.anchor0Y,
+              lastCubic.control0X,
+              lastCubic.control0Y,
+              lastCubic.control1X,
+              lastCubic.control1Y,
+              cubic.anchor1X,
+              cubic.anchor1Y,
+            );
           }
         }
       }
@@ -514,7 +520,7 @@ class RoundedPolygon {
 
     if (lastCubic != null && firstCubic != null) {
       cubics.add(
-        CubicBezier.raw([
+        CubicBezier.raw(
           lastCubic.anchor0X,
           lastCubic.anchor0Y,
           lastCubic.control0X,
@@ -523,7 +529,7 @@ class RoundedPolygon {
           lastCubic.control1Y,
           firstCubic.anchor0X,
           firstCubic.anchor0Y,
-        ]),
+        ),
       );
     } else {
       // Empty / 0-sized polygon.
