@@ -16,7 +16,7 @@ import '../templates/banner_template.dart';
 // import '../templates/bottom_app_bar_template.dart';
 import '../templates/bottom_sheet_template.dart';
 import '../templates/button_template.dart';
-// import '../templates/card_template.dart';
+import '../templates/card_template.dart';
 // import '../templates/checkbox_template.dart';
 // import '../templates/chip_template.dart';
 // import '../templates/color_scheme_template.dart';
@@ -387,8 +387,60 @@ void main() {
     });
 
     test('CardTemplateM3 emits M3 Card defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = CardTemplateM3('Card');
+      expect(template.parentFilePath, 'card.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _CardDefaultsM3 extends CardThemeData'));
+      expect(contents, contains('clipBehavior: Clip.none'));
+      expect(contents, contains('elevation: 1.0'));
+      expect(contents, contains('margin: const EdgeInsets.all(4.0)'));
+      expect(contents, contains('Color? get color => _colors.surfaceContainerLow'));
+      expect(contents, contains('Color? get shadowColor => _colors.shadow'));
+      expect(contents, contains('Color? get surfaceTintColor => Colors.transparent'));
+      expect(
+        contents,
+        contains(
+          'const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0)))',
+        ),
+      );
+    });
+
+    test('CardTemplateM3 emits M3 Card.filled() defaults from tokens', () {
+      const template = CardTemplateM3('Filled Card');
+      expect(template.parentFilePath, 'card.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _FilledCardDefaultsM3 extends CardThemeData'));
+      expect(contents, contains('elevation: 0.0'));
+      expect(contents, contains('Color? get color => _colors.surfaceContainerHighest'));
+      expect(contents, contains('Color? get shadowColor => _colors.shadow'));
+      expect(contents, contains('Color? get surfaceTintColor => Colors.transparent'));
+      expect(
+        contents,
+        contains(
+          'const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0)))',
+        ),
+      );
+    });
+
+    test('CardTemplateM3 emits M3 Card.outlined() defaults from tokens', () {
+      const template = CardTemplateM3('Outlined Card');
+      expect(template.parentFilePath, 'card.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _OutlinedCardDefaultsM3 extends CardThemeData'));
+      expect(contents, contains('elevation: 0.0'));
+      expect(contents, contains('Color? get color => _colors.surface'));
+      expect(contents, contains('Color? get shadowColor => _colors.shadow'));
+      expect(contents, contains('Color? get surfaceTintColor => Colors.transparent'));
+      expect(
+        contents,
+        contains(
+          'const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0))).copyWith',
+        ),
+      );
+      expect(contents, contains('side: BorderSide(color: _colors.outlineVariant)'));
     });
 
     test('CheckboxTemplateM3 emits M3 Checkbox defaults from tokens', () {
