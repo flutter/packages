@@ -738,7 +738,12 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
 
     // Only inject the semantics node if a label is provided
     if (widget.semanticLabel != null) {
-      submenu = Semantics(container: true, label: widget.semanticLabel, child: submenu);
+      submenu = Semantics(
+        container: true,
+        explicitChildNodes: true,
+        label: widget.semanticLabel,
+        child: submenu,
+      );
     }
 
     // ExcludeSemantics, ExcludeFocus, and IgnorePointer are used to effectively
