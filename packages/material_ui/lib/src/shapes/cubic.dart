@@ -171,18 +171,24 @@ class CubicBezier {
 
   /// Returns the point on this curve at [t], the proportional distance along
   /// the curve from [anchor0] at 0 to [anchor1] at 1.
-  Offset pointAt(double t) {
+  Offset pointAt(double t) => Offset(pointAtX(t), pointAtY(t));
+
+  /// The X coordinate of the point on this curve at [t]. See [pointAt].
+  double pointAtX(double t) {
     final double u = 1 - t;
-    return Offset(
-      anchor0X * (u * u * u) +
-          control0X * (3 * t * u * u) +
-          control1X * (3 * t * t * u) +
-          anchor1X * (t * t * t),
-      anchor0Y * (u * u * u) +
-          control0Y * (3 * t * u * u) +
-          control1Y * (3 * t * t * u) +
-          anchor1Y * (t * t * t),
-    );
+    return anchor0X * (u * u * u) +
+        control0X * (3 * t * u * u) +
+        control1X * (3 * t * t * u) +
+        anchor1X * (t * t * t);
+  }
+
+  /// The Y coordinate of the point on this curve at [t]. See [pointAt].
+  double pointAtY(double t) {
+    final double u = 1 - t;
+    return anchor0Y * (u * u * u) +
+        control0Y * (3 * t * u * u) +
+        control1Y * (3 * t * t * u) +
+        anchor1Y * (t * t * t);
   }
 
   /// Whether this curve's two anchor points coincide, and so the curve
@@ -248,7 +254,7 @@ class CubicBezier {
       if (xb != 0) {
         final double t = 2 * xc / (-2 * xb);
         if (t >= 0 && t <= 1) {
-          final double x = pointAt(t).x;
+          final double x = pointAtX(t);
           if (x < minX) {
             minX = x;
           }
@@ -260,9 +266,11 @@ class CubicBezier {
     } else {
       final double xs = xb * xb - 4 * xa * xc;
       if (xs >= 0) {
-        final double t1 = (-xb + math.sqrt(xs)) / (2 * xa);
+        final double sqrtXs = math.sqrt(xs);
+
+        final double t1 = (-xb + sqrtXs) / (2 * xa);
         if (t1 >= 0 && t1 <= 1) {
-          final double x = pointAt(t1).x;
+          final double x = pointAtX(t1);
           if (x < minX) {
             minX = x;
           }
@@ -271,9 +279,9 @@ class CubicBezier {
           }
         }
 
-        final double t2 = (-xb - math.sqrt(xs)) / (2 * xa);
+        final double t2 = (-xb - sqrtXs) / (2 * xa);
         if (t2 >= 0 && t2 <= 1) {
-          final double x = pointAt(t2).x;
+          final double x = pointAtX(t2);
           if (x < minX) {
             minX = x;
           }
@@ -293,7 +301,7 @@ class CubicBezier {
       if (yb != 0) {
         final double t = 2 * yc / (-2 * yb);
         if (t >= 0 && t <= 1) {
-          final double y = pointAt(t).y;
+          final double y = pointAtY(t);
           if (y < minY) {
             minY = y;
           }
@@ -305,9 +313,11 @@ class CubicBezier {
     } else {
       final double ys = yb * yb - 4 * ya * yc;
       if (ys >= 0) {
-        final double t1 = (-yb + math.sqrt(ys)) / (2 * ya);
+        final double sqrtYs = math.sqrt(ys);
+
+        final double t1 = (-yb + sqrtYs) / (2 * ya);
         if (t1 >= 0 && t1 <= 1) {
-          final double y = pointAt(t1).y;
+          final double y = pointAtY(t1);
           if (y < minY) {
             minY = y;
           }
@@ -316,9 +326,9 @@ class CubicBezier {
           }
         }
 
-        final double t2 = (-yb - math.sqrt(ys)) / (2 * ya);
+        final double t2 = (-yb - sqrtYs) / (2 * ya);
         if (t2 >= 0 && t2 <= 1) {
-          final double y = pointAt(t2).y;
+          final double y = pointAtY(t2);
           if (y < minY) {
             minY = y;
           }

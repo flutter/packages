@@ -2,12 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 
 import 'cubic.dart';
 import 'feature_mapping.dart';
 import 'features.dart';
-import 'point.dart';
 import 'rounded_polygon.dart';
 import 'utils.dart';
 
@@ -381,12 +382,16 @@ class LengthMeasurer implements Measurer {
 
     var total = 0.0;
     var remainder = threshold;
-    var prev = Point(cubic.anchor0X, cubic.anchor0Y);
+    double prevX = cubic.anchor0X;
+    double prevY = cubic.anchor0Y;
 
     for (var i = 1; i <= _segments; i++) {
       final double progress = i / _segments;
-      final Point point = cubic.pointAt(progress);
-      final double segment = (point - prev).distance;
+      final double x = cubic.pointAtX(progress);
+      final double y = cubic.pointAtY(progress);
+      final double dx = x - prevX;
+      final double dy = y - prevY;
+      final double segment = math.sqrt(dx * dx + dy * dy);
 
       if (segment >= remainder) {
         return (progress - (1.0 - remainder / segment) / _segments, threshold);
@@ -394,7 +399,8 @@ class LengthMeasurer implements Measurer {
 
       remainder -= segment;
       total += segment;
-      prev = point;
+      prevX = x;
+      prevY = y;
     }
 
     return (1.0, total);
