@@ -2234,8 +2234,6 @@ void main() {
     testWidgets('ExpansionTile supports being embedded in a WidgetSpan', (
       WidgetTester tester,
     ) async {
-      final SemanticsHandle handle = tester.ensureSemantics();
-
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -2255,7 +2253,6 @@ void main() {
         ),
       );
       expect(find.text('Header'), findsOneWidget);
-      handle.dispose();
     }, variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.android}));
 
     testWidgets('Semantics liveregion updates when expansion state changes', (
