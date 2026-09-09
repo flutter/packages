@@ -788,7 +788,6 @@ class _ContextMenuRoute<T> extends PopupRoute<T> {
     super.filter,
     required this._previousChildRect,
     required this._scaleFactor,
-    super.settings,
   }) : assert(actions.isNotEmpty),
        _actions = actions;
 

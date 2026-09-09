@@ -28,8 +28,8 @@ void clearCache() => _loadedFonts.clear();
 
 /// Set of [Future]s corresponding to fonts that are loading.
 ///
-/// When a font is loading, a future is added to this set. When it is loaded in
-/// the [FontLoader], that future is removed from this set.
+/// When a font is loading, a future is added to this set. When the load
+/// completes, whether successfully or with an error, that future is removed.
 final Set<Future<void>> pendingFontFutures = <Future<void>>{};
 
 /// Default client used to fetch fonts when one is not supplied.
@@ -106,7 +106,7 @@ TextStyle googleFontsTextStyle({
 
   final Future<void> loadingFuture = loadFontIfNecessary(descriptor);
   pendingFontFutures.add(loadingFuture);
-  loadingFuture.then((_) => pendingFontFutures.remove(loadingFuture));
+  loadingFuture.whenComplete(() => pendingFontFutures.remove(loadingFuture)).ignore();
 
   return textStyle.copyWith(
     fontFamily: familyWithVariant.toString(),

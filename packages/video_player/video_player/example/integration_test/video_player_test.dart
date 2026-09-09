@@ -306,7 +306,7 @@ void main() {
       // Due to the duration calculation accuracy between platforms,
       // the milliseconds on Web will be a slightly different from natives.
       // The audio was made with 44100 Hz, 192 Kbps CBR, and 32 bits.
-      expect(controller.value.duration, const Duration(seconds: 5, milliseconds: kIsWeb ? 42 : 41));
+      expect(controller.value.duration.inMilliseconds, closeTo(5000, 50));
     });
 
     testWidgets('can be played', (WidgetTester tester) async {

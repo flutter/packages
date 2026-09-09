@@ -194,6 +194,23 @@ enum MaterialTapTargetSize {
   shrinkWrap,
 }
 
+/// Defines the Material Design style variant used by Material components.
+enum StyleVariant {
+  /// The Material Design 3 style variant.
+  material3,
+
+  /// The Material Design 3 Expressive style variant.
+  ///
+  /// Material 3 Expressive support is under development. Apps or components
+  /// that opt into this variant may see visual changes as more Expressive
+  /// features get added.
+  ///
+  /// See also:
+  ///
+  ///  * [Material Design 3 Expressive updates](https://m3.material.io/#9f2db05b-ebbb-47c2-892d-1cca35afa386) for design guidelines.
+  material3Expressive,
+}
+
 /// Defines the configuration of the overall visual [Theme] for a [MaterialApp]
 /// or a widget subtree within the app.
 ///
@@ -272,7 +289,7 @@ class ThemeData with Diagnosticable {
   /// When [useSystemColors] is true and the platform supports system colors, then the system colors
   /// will be used to override certain theme colors. The [colorScheme], [textTheme],
   /// [elevatedButtonTheme], [outlinedButtonTheme], [textButtonTheme], [filledButtonTheme], and
-  /// [floatingActionButtonTheme] are overriden by the system colors.
+  /// [floatingActionButtonTheme] are overridden by the system colors.
   ///
   /// See also:
   ///
