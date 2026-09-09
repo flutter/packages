@@ -3430,9 +3430,9 @@ void main() {
       expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.traditional));
       expect(inkFeatures, paints..rect(color: focusColor));
     },
-    skip: !isBrowser,
     tags: 'reduced-web-test-set',
-  ); // [intended] tests web-specific behavior.
+    skip: !isBrowser, // [intended] tests web-specific behavior.
+  );
 
   testWidgets("IconButton's outline should be behind its child", (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/issues/167431

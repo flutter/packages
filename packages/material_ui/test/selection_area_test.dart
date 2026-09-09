@@ -554,9 +554,8 @@ void main() {
       expect(paragraph.selections[0], const TextSelection(baseOffset: 8, extentOffset: 22));
     },
     variant: TargetPlatformVariant.only(TargetPlatform.android),
-    skip: !kIsWeb,
-    tags:
-        'reduced-web-test-set', // [intended] on native both selection handles can be dragged at a time.
+    tags: 'reduced-web-test-set',
+    skip: !kIsWeb, // [intended] on native both selection handles can be dragged at a time.
   );
 
   testWidgets(
