@@ -688,72 +688,22 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
   return icon;
 }
 
-class _AdvancedMarkerContentConfiguration {
-  _AdvancedMarkerContentConfiguration({
-    required this.alpha,
-    required this.visible,
-    required this.rotation,
-    required this.icon,
-    required this.iconConfiguration,
-  });
-
-  factory _AdvancedMarkerContentConfiguration.fromMarker(AdvancedMarker marker) {
-    return _AdvancedMarkerContentConfiguration(
-      alpha: marker.alpha,
-      visible: marker.visible,
-      rotation: marker.rotation,
-      icon: marker.icon,
-      iconConfiguration: marker.icon.toJson(),
-    );
-  }
-
-  final double alpha;
-  final bool visible;
-  final double rotation;
-  final BitmapDescriptor icon;
-  final Object iconConfiguration;
-
-  bool isMatchFor(AdvancedMarker marker) {
-    return alpha == marker.alpha &&
-        visible == marker.visible &&
-        rotation == marker.rotation &&
-        (identical(icon, marker.icon) ||
-            const DeepCollectionEquality().equals(iconConfiguration, marker.icon.toJson()));
-  }
-}
-
-bool _isAdvancedMarkerContentUpdateRequired(
-  Marker marker,
-  _AdvancedMarkerContentConfiguration? previousConfiguration,
-) {
-  if (marker is! AdvancedMarker || previousConfiguration == null) {
-    return true;
-  }
-  return !previousConfiguration.isMatchFor(marker);
-}
-
 // Computes the options for a new [gmaps.Marker] from an incoming set of options
 // [marker], and the existing marker registered with the map: [currentMarker].
-Future<O> _markerOptionsFromMarker<T, O>(
-  Marker marker,
-  T? currentMarker, {
-  bool isAdvancedMarkerContentUpdateRequired = true,
-}) async {
+Future<O> _markerOptionsFromMarker<T, O>(Marker marker, T? currentMarker) async {
   if (marker is AdvancedMarker) {
     final options = gmaps.AdvancedMarkerElementOptions()
       ..collisionBehavior = _markerCollisionBehaviorToGmCollisionBehavior(marker.collisionBehavior)
-      ..position = gmaps.LatLng(marker.position.latitude, marker.position.longitude)
-      ..title = sanitizeHtml(marker.infoWindow.title ?? '')
-      ..zIndex = marker.zIndex
-      ..gmpDraggable = marker.draggable;
-    if (isAdvancedMarkerContentUpdateRequired) {
-      options.content = await _advancedMarkerIconFromBitmapDescriptor(
+      ..content = await _advancedMarkerIconFromBitmapDescriptor(
         marker.icon,
         opacity: marker.alpha,
         isVisible: marker.visible,
         rotation: marker.rotation,
-      );
-    }
+      )
+      ..position = gmaps.LatLng(marker.position.latitude, marker.position.longitude)
+      ..title = sanitizeHtml(marker.infoWindow.title ?? '')
+      ..zIndex = marker.zIndex
+      ..gmpDraggable = marker.draggable;
     return options as O;
   } else {
     final options = gmaps.MarkerOptions()

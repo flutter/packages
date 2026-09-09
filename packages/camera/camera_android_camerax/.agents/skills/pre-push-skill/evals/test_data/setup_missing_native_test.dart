@@ -4,10 +4,13 @@
 
 import 'dart:io';
 
-import '../../../../../evals/tool/test_utils.dart';
-
 void main() {
-  ensureNotMainBranch();
+  final ProcessResult branchResult = Process.runSync('git', ['branch', '--show-current']);
+  final String branch = branchResult.stdout.toString().trim();
+  if (branch == 'main') {
+    stdout.writeln('Error: Cannot run setup scripts on main branch.');
+    exit(1);
+  }
 
   final javaFile = File('android/src/main/java/io/flutter/plugins/camerax/DummyEvalFeature.java');
   javaFile.createSync(recursive: true);
@@ -23,5 +26,14 @@ public class DummyEvalFeature {
 }
 ''');
 
-  commitFiles(<String>[javaFile.path], 'Add DummyEvalFeature.java without tests');
+  Process.runSync('git', ['add', javaFile.path]);
+  Process.runSync('git', [
+    '-c',
+    'user.name=Author',
+    '-c',
+    'user.email=author@example.com',
+    'commit',
+    '-m',
+    'Add DummyEvalFeature.java without tests',
+  ]);
 }

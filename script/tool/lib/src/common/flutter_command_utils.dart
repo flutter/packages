@@ -16,7 +16,7 @@ import 'repository_package.dart';
 Future<bool> runConfigOnlyBuild(
   RepositoryPackage package,
   ProcessRunner processRunner,
-  NativePlatform platform,
+  Platform platform,
   FlutterPlatform targetPlatform, {
   bool buildDebug = false,
   List<String> extraArgs = const <String>[],

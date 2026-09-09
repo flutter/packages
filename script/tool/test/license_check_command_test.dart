@@ -18,13 +18,13 @@ import 'util.dart';
 void main() {
   group('LicenseCheckCommand', () {
     late CommandRunner<void> runner;
-    late NativePlatform platform;
+    late Platform platform;
     late RecordingProcessRunner gitProcessRunner;
     late Directory packagesDir;
     late Directory root;
 
     setUp(() {
-      platform = createMockPlatform();
+      platform = MockPlatformWithSeparator();
       final GitDir gitDir;
       (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
         platform: platform,
@@ -673,6 +673,11 @@ furnished to do so, subject to the following conditions:''',
       );
     });
   });
+}
+
+class MockPlatformWithSeparator extends MockPlatform {
+  @override
+  String get pathSeparator => isWindows ? r'\' : '/';
 }
 
 const String _correctLicenseFileText = '''

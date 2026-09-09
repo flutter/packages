@@ -5,7 +5,6 @@
 import Flutter
 import GoogleMaps
 import Testing
-import google_maps_flutter_ios_sdk10_objc
 
 @testable import google_maps_flutter_ios_sdk10
 
@@ -21,12 +20,12 @@ import google_maps_flutter_ios_sdk10_objc
     let mapView = PartiallyMockedMapView(options: mapViewOptions)
     let eventHandler = TestMapEventHandler()
 
-    let clusterManagersController = ClusterManagersController(
+    let clusterManagersController = FGMClusterManagersController(
       mapView: mapView,
       eventDelegate: eventHandler
     )
 
-    let markersController = MarkersController(
+    let markersController = FGMMarkersController(
       mapView: mapView,
       eventDelegate: eventHandler,
       clusterManagersController: clusterManagersController,

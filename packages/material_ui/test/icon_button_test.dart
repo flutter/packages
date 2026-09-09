@@ -16,7 +16,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'feedback_tester.dart';
-import 'finders.dart';
 import 'semantics_tester.dart';
 
 class MockOnPressedFunction {
@@ -438,9 +437,9 @@ void main() {
     await tester.pumpWidget(buildIconButton(tooltip: tooltipText));
 
     expect(find.byType(Tooltip), findsOneWidget);
-    expect(findByTooltip(tooltipText), findsOneWidget);
+    expect(find.byTooltip(tooltipText), findsOneWidget);
 
-    await tester.tap(findByTooltip(tooltipText));
+    await tester.tap(find.byTooltip(tooltipText));
     expect(mockOnPressedFunction.called, 1);
 
     // Hovering over the button should show the tooltip.

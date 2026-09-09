@@ -38,7 +38,7 @@ class Xcode {
     required String scheme,
     String? configuration,
     List<String> extraFlags = const <String>[],
-    required NativePlatform hostPlatform,
+    required Platform hostPlatform,
   }) async {
     final FileSystem fileSystem = exampleDirectory.fileSystem;
     String? resultBundlePath;

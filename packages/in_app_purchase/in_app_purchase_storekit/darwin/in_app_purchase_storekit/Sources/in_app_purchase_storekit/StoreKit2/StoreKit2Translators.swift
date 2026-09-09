@@ -12,7 +12,7 @@ extension Product {
     return SK2ProductMessage(
       id: id,
       displayName: displayName,
-      localizedDescription: description,
+      description: description,
       price: NSDecimalNumber(decimal: price).doubleValue,
       displayPrice: displayPrice,
       type: type.convertToPigeon,

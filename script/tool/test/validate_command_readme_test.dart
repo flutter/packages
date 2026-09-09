@@ -8,7 +8,6 @@ import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/validate_command.dart';
 import 'package:git/git.dart';
-import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -16,11 +15,11 @@ import 'util.dart';
 
 void main() {
   late CommandRunner<void> runner;
-  late NativePlatform mockPlatform;
+  late MockPlatform mockPlatform;
   late Directory packagesDir;
 
   setUp(() {
-    mockPlatform = createMockPlatform();
+    mockPlatform = MockPlatform();
     final RecordingProcessRunner processRunner;
     final GitDir gitDir;
     (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(

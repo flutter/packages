@@ -653,7 +653,7 @@ class SvgPathNormalizer {
     }
     pointTransform.setIdentity();
 
-    pointTransform.scaleByDouble(1.0 / rx, 1.0 / ry, 1.0 / rx, 1);
+    pointTransform.scale(1.0 / rx, 1.0 / ry);
     pointTransform.rotateZ(-angle);
 
     _PathOffset point1 = _mapPoint(pointTransform, currentPoint);
@@ -687,7 +687,7 @@ class SvgPathNormalizer {
 
     pointTransform.setIdentity();
     pointTransform.rotateZ(angle);
-    pointTransform.scaleByDouble(rx, ry, rx, 1);
+    pointTransform.scale(rx, ry);
 
     // Some results of atan2 on some platform implementations are not exact
     // enough. So that we get more cubic curves than expected here. Adding 0.001f

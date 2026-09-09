@@ -1,3 +1,0 @@
-changelog: |
-  - Adds awaitNotRequired annotation to showCupertinoModalPopup and showCupertinoDialog.
-version: patch

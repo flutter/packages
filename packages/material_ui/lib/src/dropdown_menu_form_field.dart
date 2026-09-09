@@ -74,12 +74,13 @@ class DropdownMenuFormField<T> extends FormField<T> {
     MenuController? menuController,
     super.restorationId,
     super.onSaved,
-    super.autovalidateMode = AutovalidateMode.disabled,
+    AutovalidateMode autovalidateMode = AutovalidateMode.disabled,
     super.validator,
     super.forceErrorText,
     super.errorBuilder,
   }) : super(
          initialValue: initialSelection,
+         autovalidateMode: autovalidateMode,
          builder: (FormFieldState<T> field) {
            final state = field as _DropdownMenuFormFieldState<T>;
 

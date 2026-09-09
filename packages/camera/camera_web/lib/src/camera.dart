@@ -333,7 +333,8 @@ class Camera {
 
     if (videoTracks.isNotEmpty) {
       final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
-      final bool canEnableTorchMode = defaultVideoTrack.getCapabilities().canEnableTorch;
+      final bool canEnableTorchMode =
+          defaultVideoTrack.getCapabilities().torchNullable?.toDart.first.toDart ?? false;
 
       if (canEnableTorchMode) {
         defaultVideoTrack.applyWebTweakConstraints(

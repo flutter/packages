@@ -1,5 +1,4 @@
 # quick_actions
-<?code-excerpt path-base="example/lib"?>
 
 This Flutter plugin allows you to manage and interact with the application's
 home screen quick actions.
@@ -20,12 +19,11 @@ Initialize the library early in your application's lifecycle by providing a
 callback, which will then be called whenever the user launches the app via a
 quick action.
 
-<?code-excerpt "readme_excerpts.dart (Initialize)"?>
 ```dart
-const quickActions = QuickActions();
-quickActions.initialize((String shortcutType) {
+final QuickActions quickActions = const QuickActions();
+quickActions.initialize((shortcutType) {
   if (shortcutType == 'action_main') {
-    debugPrint('The user tapped on the "Main view" action.');
+    print('The user tapped on the "Main view" action.');
   }
   // More handling code...
 });
@@ -33,16 +31,10 @@ quickActions.initialize((String shortcutType) {
 
 Finally, manage the app's quick actions, for instance:
 
-<?code-excerpt "readme_excerpts.dart (SetShortcutItems)"?>
 ```dart
-await quickActions.setShortcutItems(<ShortcutItem>[
+quickActions.setShortcutItems(<ShortcutItem>[
   const ShortcutItem(type: 'action_main', localizedTitle: 'Main view', icon: 'icon_main'),
-  const ShortcutItem(
-    type: 'action_help',
-    localizedTitle: 'Help',
-    localizedSubtitle: 'Tap to get help',
-    icon: 'icon_help',
-  ),
+  const ShortcutItem(type: 'action_help', localizedTitle: 'Help', localizedSubtitle: 'Tap to get help', icon: 'icon_help')
 ]);
 ```
 

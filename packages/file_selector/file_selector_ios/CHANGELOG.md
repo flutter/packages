@@ -1,7 +1,3 @@
-## 0.5.3+6
-
-* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
-
 ## 0.5.3+5
 
 * Improves compatibility with `UIScene`.

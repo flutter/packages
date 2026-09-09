@@ -4,39 +4,70 @@
 
 import GoogleMaps
 import Testing
-import google_maps_flutter_ios_objc
 
 @testable import google_maps_flutter_ios
 
 @MainActor struct PolylineControllerTests {
 
-  @Test func patternsSetSpans() {
-    let mapView = PolylineControllerTests.mapView()
-
+  /// Returns GoogleMapPolylineController object instantiated with a mocked map instance
+  ///
+  ///  @return An object of FGMPolylineController
+  func polylineControllerWithMockedMap() -> FGMPolylineController {
     let polyline = FGMPlatformPolyline.make(
       withPolylineId: "polyline_id_0",
       consumesTapEvents: false,
       color: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
       geodesic: false,
       jointType: .round,
-      patterns: [
-        FGMPlatformPatternItem.make(with: .dot, length: 10),
-        FGMPlatformPatternItem.make(with: .dash, length: 10),
-      ],
+      patterns: [],
       points: PolylineControllerTests.polylinePoints(),
-      visible: true,
+      visible: false,
       width: 1,
       zIndex: 0
     )
 
-    let polylineController = PolylineController(
+    let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+    let camera = GMSCameraPosition(latitude: 0, longitude: 0, zoom: 0)
+
+    let mapViewOptions = GMSMapViewOptions()
+    mapViewOptions.frame = frame
+    mapViewOptions.camera = camera
+
+    let mapView = PartiallyMockedMapView(options: mapViewOptions)
+
+    let path = FGMGetPathFromPoints(FGMGetPointsForPigeonLatLngs(polyline.points))
+
+    let polylineControllerWithMockedMap = FGMPolylineController(
+      path: path,
       identifier: polyline.polylineId,
       mapView: mapView
     )
 
+    return polylineControllerWithMockedMap
+  }
+
+  @Test func patternsSetSpans() {
+    let polylineController = polylineControllerWithMockedMap()
+
     #expect(polylineController.polyline.spans == nil)
 
-    polylineController.update(from: polyline)
+    polylineController.update(
+      from: FGMPlatformPolyline.make(
+        withPolylineId: "polyline_id_0",
+        consumesTapEvents: false,
+        color: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
+        geodesic: false,
+        jointType: .round,
+        patterns: [
+          FGMPlatformPatternItem.make(with: .dot, length: 10),
+          FGMPlatformPatternItem.make(with: .dash, length: 10),
+        ],
+        points: PolylineControllerTests.polylinePoints(),
+        visible: true,
+        width: 1,
+        zIndex: 0
+      )
+    )
 
     // `GMSStyleSpan` doesn't implement `isEqual` so cannot be compared by value at present.
     #expect(polylineController.polyline.spans != nil)
@@ -44,7 +75,7 @@ import google_maps_flutter_ios_objc
 
   @Test func updatePolylineSetsVisibilityLast() {
     let polyline = PropertyOrderValidatingPolyline()
-    PolylineController.update(
+    FGMPolylineController.update(
       polyline,
       from: FGMPlatformPolyline.make(
         withPolylineId: "polyline",

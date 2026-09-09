@@ -14,7 +14,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'finders.dart';
 
 void main() {
   testWidgets(
@@ -1064,7 +1063,7 @@ void main() {
       expect(pageTapCount, 1);
 
       // Tapping the "page" route's back button doesn't do anything either.
-      await tester.tap(findByTooltip('Back'), warnIfMissed: false);
+      await tester.tap(find.byTooltip('Back'), warnIfMissed: false);
       await tester.pumpAndSettle();
       expect(tester.getTopLeft(find.byKey(pageScaffoldKey)), const Offset(400, 0));
       expect(tester.getTopLeft(find.byKey(homeScaffoldKey)).dx, lessThan(0));
@@ -1196,44 +1195,6 @@ void main() {
       TargetPlatform.macOS,
     }),
   );
-
-  testWidgets('MaterialPageRoute can opt out of route semantics', (WidgetTester tester) async {
-    final SemanticsHandle handle = tester.ensureSemantics();
-
-    await tester.pumpWidget(
-      MaterialApp(
-        onGenerateRoute: (RouteSettings settings) {
-          return MaterialPageRoute<void>(
-            includeRouteSemantics: false,
-            builder: (BuildContext context) => const Text('Page'),
-          );
-        },
-      ),
-    );
-
-    expect(find.semantics.byFlag(SemanticsFlag.scopesRoute), findsNothing);
-    handle.dispose();
-  });
-
-  testWidgets('MaterialPage can opt out of route semantics', (WidgetTester tester) async {
-    final SemanticsHandle handle = tester.ensureSemantics();
-
-    await tester.pumpWidget(
-      buildNavigator(
-        view: tester.view,
-        pages: const <Page<void>>[
-          MaterialPage<void>(includeRouteSemantics: false, child: Text('Page')),
-        ],
-        onPopPage: (Route<dynamic> route, dynamic result) {
-          assert(false); // The test shouldn't call this.
-          return true;
-        },
-      ),
-    );
-
-    expect(find.semantics.byFlag(SemanticsFlag.scopesRoute), findsNothing);
-    handle.dispose();
-  });
 
   testWidgets('MaterialPage works', (WidgetTester tester) async {
     final LocalKey pageKey = UniqueKey();

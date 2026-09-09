@@ -4,7 +4,6 @@
 
 import GoogleMaps
 import Testing
-import google_maps_flutter_ios_sdk10_objc
 
 @testable import google_maps_flutter_ios_sdk10
 
@@ -12,7 +11,7 @@ import google_maps_flutter_ios_sdk10_objc
 
   @Test func updateCircleSetsVisibilityLast() {
     let circle = PropertyOrderValidatingCircle()
-    CircleController.update(
+    FGMCircleController.update(
       circle,
       from: FGMPlatformCircle.make(
         withConsumeTapEvents: false,

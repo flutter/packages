@@ -1,7 +1,5 @@
-## 1.1.1
+## NEXT
 
-* Adopts `code-excerpt` for the README's Dart snippets so they are validated
-  against compilable, analyzed source.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.

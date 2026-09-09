@@ -40,10 +40,9 @@ abstract class PackageCommand extends Command<void> {
   PackageCommand(
     this.packagesDir, {
     this.processRunner = const ProcessRunner(),
-    NativePlatform? platform,
+    this.platform = const LocalPlatform(),
     GitDir? gitDir,
   }) : _gitDir = gitDir {
-    this.platform = platform ?? NativePlatform.current!;
     thirdPartyPackagesDir = rootDir.childDirectory('third_party').childDirectory('packages');
 
     argParser.addMultiOption(
@@ -207,7 +206,7 @@ abstract class PackageCommand extends Command<void> {
   /// The current platform.
   ///
   /// This can be overridden for testing.
-  late final NativePlatform platform;
+  final Platform platform;
 
   /// The git directory to use. If unset, [gitDir] populates it from the
   /// packages directory's enclosing repository.

@@ -234,6 +234,14 @@ class RepoInfoValidator {
         packageName: packageName,
       ),
     );
+    errors.addAll(
+      _validateGlobalWorkflowTrigger(
+        'sync_release_pr.yml',
+        workflowDir: workflowDir,
+        isBatchRelease: isBatchRelease,
+        packageName: packageName,
+      ),
+    );
 
     errors.addAll(
       _validateCiYamlEnabledBranches(

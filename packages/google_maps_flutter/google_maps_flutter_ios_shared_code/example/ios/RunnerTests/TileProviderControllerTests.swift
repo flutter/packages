@@ -5,7 +5,6 @@
 import Flutter
 import GoogleMaps
 import Testing
-import google_maps_flutter_ios_objc
 
 @testable import google_maps_flutter_ios
 
@@ -18,7 +17,7 @@ class StubTileReceiver: NSObject, GMSTileReceiver {
 // A tile provider that expects a single call to
 // tileWithOverlayIdentifier:location:zoom:completion: on the main thread,
 // and then confirms it.
-class TestTileProvider: NSObject, TileProviderDelegate {
+class TestTileProvider: NSObject, FGMTileProviderDelegate {
   var onTileCalled: () -> Void
 
   init(onTileCalled: @escaping () -> Void) {
@@ -45,7 +44,7 @@ class TestTileProvider: NSObject, TileProviderDelegate {
     let tileProvider = TestTileProvider {
       continuationToResume?.resume()
     }
-    let controller = TileProviderController(
+    let controller = FGMTileProviderController(
       tileOverlayIdentifier: "foo",
       tileProvider: tileProvider
     )
