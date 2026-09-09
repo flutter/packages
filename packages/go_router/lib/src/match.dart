@@ -684,9 +684,13 @@ class RouteMatchList with Diagnosticable {
       return newMatches;
     }
     final RouteMatchBase branch = otherMatches.last;
-    final List<ShellRouteMatch> existingShellRouteMatches = _shellRouteMatches(
-      newMatches,
-    ).toList(growable: false);
+    final existingShellRouteMatches = <ShellRouteMatch>[];
+    _visitRouteMatches(newMatches, (RouteMatchBase match) {
+      if (match is ShellRouteMatch) {
+        existingShellRouteMatches.add(match);
+      }
+      return true;
+    });
     newMatches.add(
       _cloneBranchAndInsertImperativeMatch(
         branch,
@@ -695,15 +699,6 @@ class RouteMatchList with Diagnosticable {
       ),
     );
     return newMatches;
-  }
-
-  static Iterable<ShellRouteMatch> _shellRouteMatches(Iterable<RouteMatchBase> matches) sync* {
-    for (final match in matches) {
-      if (match is ShellRouteMatch) {
-        yield match;
-        yield* _shellRouteMatches(match.matches);
-      }
-    }
   }
 
   static RouteMatchBase _cloneBranchAndInsertImperativeMatch(
