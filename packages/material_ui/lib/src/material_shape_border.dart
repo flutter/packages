@@ -261,8 +261,8 @@ class MaterialShapeBorder extends OutlinedBorder {
         Size(scale.dx, scale.dy);
 
     final matrix = Matrix4.identity()
-      ..translate(actualRect.left, actualRect.top)
-      ..scale(scale.dx, scale.dy);
+      ..translateByDouble(actualRect.left, actualRect.top, 0, 1)
+      ..scaleByDouble(scale.dx, scale.dy, 1, 1);
 
     return pathFromCubics(_cubics).transform(matrix.storage);
   }
