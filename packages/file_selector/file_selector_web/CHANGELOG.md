@@ -1,3 +1,7 @@
+## NEXT
+
+* Removes unnecessary Material and Cupertino imports.
+
 ## 0.9.5
 
 * Adds support for mimeType on XFile.
