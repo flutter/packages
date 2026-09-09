@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:collection';
-
 import 'package:flutter/foundation.dart';
 
 import 'cubic.dart';
@@ -19,7 +17,7 @@ import 'utils.dart';
 class MeasuredPolygon {
   MeasuredPolygon._({
     required Measurer measurer,
-    required this._features,
+    required this.features,
     required List<CubicBezier> cubics,
     required List<double> outlineProgress,
   }) : assert(
@@ -60,11 +58,12 @@ class MeasuredPolygon {
     // and keep a reference to the representative cubic we will use.
     for (var featureIndex = 0; featureIndex < polygon.features.length; featureIndex++) {
       final Feature feature = polygon.features[featureIndex];
-      for (var cubicIndex = 0; cubicIndex < feature.cubics.length; cubicIndex++) {
-        if (feature is CornerFeature && cubicIndex == feature.cubics.length ~/ 2) {
+      final List<CubicBezier> featureCubics = feature.cubics;
+      for (var cubicIndex = 0; cubicIndex < featureCubics.length; cubicIndex++) {
+        if (feature is CornerFeature && cubicIndex == featureCubics.length ~/ 2) {
           featureToCubic.add((feature, cubics.length));
         }
-        cubics.add(feature.cubics[cubicIndex]);
+        cubics.add(featureCubics[cubicIndex]);
       }
     }
 
@@ -105,9 +104,7 @@ class MeasuredPolygon {
 
   late final List<MeasuredCubic> _cubics;
 
-  final List<ProgressableFeature> _features;
-
-  List<ProgressableFeature> get features => UnmodifiableListView(_features);
+  final List<ProgressableFeature> features;
 
   MeasuredCubic get first => _cubics.first;
 
@@ -203,10 +200,10 @@ class MeasuredPolygon {
 
     // Shift the feature's outline progress too.
     final List<ProgressableFeature> newFeatures = [
-      for (var i = 0; i < _features.length; i++)
+      for (var i = 0; i < features.length; i++)
         ProgressableFeature(
-          positiveModulo(_features[i].progress - cuttingPoint, 1),
-          _features[i].feature,
+          positiveModulo(features[i].progress - cuttingPoint, 1),
+          features[i].feature,
         ),
     ];
 

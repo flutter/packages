@@ -5,8 +5,6 @@
 /// @docImport 'morph.dart';
 library;
 
-import 'dart:collection';
-
 import 'package:flutter/foundation.dart';
 
 import 'cubic.dart';
@@ -31,7 +29,11 @@ import 'point.dart';
 @immutable
 abstract class Feature {
   /// Creates a [Feature] spanning the given [cubics].
-  const Feature._(List<CubicBezier> cubics) : _cubics = cubics;
+  ///
+  /// The list is defensively copied into an unmodifiable one, so later changes
+  /// to [cubics] do not affect this feature, and [Feature.cubics] can return
+  /// the stored list directly instead of allocating a wrapper per call.
+  Feature._(List<CubicBezier> cubics) : _cubics = List<CubicBezier>.unmodifiable(cubics);
 
   /// Groups a list of [CubicBezier] objects into a feature that should be
   /// ignored in the default [Morph] mapping. The feature can have any
@@ -106,7 +108,7 @@ abstract class Feature {
   final List<CubicBezier> _cubics;
 
   /// The cubic curves defining this feature, as an unmodifiable list.
-  List<CubicBezier> get cubics => UnmodifiableListView(_cubics);
+  List<CubicBezier> get cubics => _cubics;
 
   /// Whether this Feature gets ignored in the [Morph] mapping.
   ///
@@ -154,7 +156,7 @@ abstract class Feature {
 @internal
 class EdgeFeature extends Feature {
   /// Creates an [EdgeFeature] from the given cubics.
-  const EdgeFeature(super._cubics) : super._();
+  EdgeFeature(super._cubics) : super._();
 
   @override
   Feature transformed(PointTransformer transformer) =>
@@ -190,7 +192,7 @@ class EdgeFeature extends Feature {
 @internal
 class CornerFeature extends Feature {
   /// Creates a [CornerFeature] from the given cubics.
-  const CornerFeature(super._cubics, {this.convex = true}) : super._();
+  CornerFeature(super._cubics, {this.convex = true}) : super._();
 
   /// Whether this corner is convex.
   final bool convex;
