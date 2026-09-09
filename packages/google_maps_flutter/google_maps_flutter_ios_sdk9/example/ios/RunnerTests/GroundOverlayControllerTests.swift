@@ -4,15 +4,18 @@
 
 import GoogleMaps
 import Testing
+import google_maps_flutter_ios_sdk9_objc
 
 @testable import google_maps_flutter_ios_sdk9
 
 @MainActor struct GroundOverlayControllerTests {
 
-  /// Returns a GroundOverlayController object instantiated with position and a mocked map
+  /// Returns a GroundOverlayController object instantiated with position, and its mocked map
   /// instance.
+  ///
+  /// The map must be retained for the life of the test.
   static func groundOverlayControllerWithPositionWithMockedMap() throws
-    -> FGMGroundOverlayController
+    -> (GroundOverlayController, GMSMapView)
   {
     let bundle = Bundle(for: PropertyOrderValidatingGroundOverlay.self)
     let imagePath = try #require(
@@ -26,17 +29,23 @@ import Testing
 
     let mapView = GroundOverlayControllerTests.mapView()
 
-    return FGMGroundOverlayController(
-      groundOverlay: groundOverlay,
-      identifier: "id_1",
-      mapView: mapView,
-      isCreatedWithBounds: false
+    return (
+      GroundOverlayController(
+        groundOverlay: groundOverlay,
+        identifier: "id_1",
+        mapView: mapView,
+        isCreatedWithBounds: false
+      ),
+      mapView
     )
   }
 
-  /// Returns a GroundOverlayController object instantiated with bounds and a mocked map
+  /// Returns a GroundOverlayController object instantiated with bounds, and its mocked map
   /// instance.
-  static func groundOverlayControllerWithBoundsWithMockedMap() throws -> FGMGroundOverlayController
+  ///
+  /// The map must be retained for the life of the test.
+  static func groundOverlayControllerWithBoundsWithMockedMap() throws
+    -> (GroundOverlayController, GMSMapView)
   {
     let bundle = Bundle(for: PropertyOrderValidatingGroundOverlay.self)
     let imagePath = try #require(
@@ -52,16 +61,19 @@ import Testing
 
     let mapView = GroundOverlayControllerTests.mapView()
 
-    return FGMGroundOverlayController(
-      groundOverlay: groundOverlay,
-      identifier: "id_1",
-      mapView: mapView,
-      isCreatedWithBounds: true
+    return (
+      GroundOverlayController(
+        groundOverlay: groundOverlay,
+        identifier: "id_1",
+        mapView: mapView,
+        isCreatedWithBounds: true
+      ),
+      mapView
     )
   }
 
   @Test func updatingGroundOverlayWithPosition() throws {
-    let groundOverlayController =
+    let (groundOverlayController, mapView) =
       try GroundOverlayControllerTests.groundOverlayControllerWithPositionWithMockedMap()
 
     let position = FGMPlatformLatLng.make(withLatitude: 52.4816, longitude: 3.1791)
@@ -104,11 +116,11 @@ import Testing
     #expect(abs(groundOverlayController.groundOverlay.anchor.y - 0.5) <= Double.ulpOfOne)
     #expect(groundOverlayController.groundOverlay.zIndex == Int32(platformGroundOverlay.zIndex))
 
-    let convertedPlatformGroundOverlay = FGMGetPigeonGroundOverlay(
-      groundOverlayController.groundOverlay,
-      "id_1",
-      false,
-      14.0
+    let convertedPlatformGroundOverlay = FGMPlatformGroundOverlay.make(
+      from: groundOverlayController.groundOverlay,
+      overlayId: "id_1",
+      isCreatedWithBounds: false,
+      zoomLevel: 14.0
     )
     #expect(convertedPlatformGroundOverlay.groundOverlayId == "id_1")
     #expect(
@@ -122,10 +134,11 @@ import Testing
     #expect(abs(convertedPlatformGroundOverlay.anchor!.x - 0.5) <= Double.ulpOfOne)
     #expect(abs(convertedPlatformGroundOverlay.anchor!.y - 0.5) <= Double.ulpOfOne)
     #expect(convertedPlatformGroundOverlay.zIndex == platformGroundOverlay.zIndex)
+    withExtendedLifetime(mapView) {}
   }
 
   @Test func updatingGroundOverlayWithBounds() throws {
-    let groundOverlayController =
+    let (groundOverlayController, mapView) =
       try GroundOverlayControllerTests.groundOverlayControllerWithBoundsWithMockedMap()
 
     let bounds = FGMPlatformLatLngBounds.make(
@@ -170,11 +183,11 @@ import Testing
     #expect(abs(groundOverlayController.groundOverlay.anchor.y - 0.5) <= Double.ulpOfOne)
     #expect(groundOverlayController.groundOverlay.zIndex == Int32(platformGroundOverlay.zIndex))
 
-    let convertedPlatformGroundOverlay = FGMGetPigeonGroundOverlay(
-      groundOverlayController.groundOverlay,
-      "id_1",
-      true,
-      nil
+    let convertedPlatformGroundOverlay = FGMPlatformGroundOverlay.make(
+      from: groundOverlayController.groundOverlay,
+      overlayId: "id_1",
+      isCreatedWithBounds: true,
+      zoomLevel: nil
     )
     #expect(convertedPlatformGroundOverlay.groundOverlayId == "id_1")
     #expect(
@@ -194,11 +207,12 @@ import Testing
     #expect(abs(convertedPlatformGroundOverlay.anchor!.x - 0.5) <= Double.ulpOfOne)
     #expect(abs(convertedPlatformGroundOverlay.anchor!.y - 0.5) <= Double.ulpOfOne)
     #expect(convertedPlatformGroundOverlay.zIndex == platformGroundOverlay.zIndex)
+    withExtendedLifetime(mapView) {}
   }
 
   @Test func updateGroundOverlaySetsVisibilityLast() {
     let groundOverlay = PropertyOrderValidatingGroundOverlay()
-    FGMGroundOverlayController.update(
+    GroundOverlayController.update(
       groundOverlay,
       from: FGMPlatformGroundOverlay.make(
         withGroundOverlayId: "groundOverlay",
@@ -218,7 +232,7 @@ import Testing
         clickable: true,
         zoomLevel: nil
       ),
-      with: GroundOverlayControllerTests.mapView(),
+      mapView: GroundOverlayControllerTests.mapView(),
       assetProvider: TestAssetProvider(),
       screenScale: 1.0,
       usingBounds: true
@@ -227,12 +241,12 @@ import Testing
   }
 
   @Test func assetProviderIsRetained() {
-    var groundOverlayController: FGMGroundOverlaysController?
+    var groundOverlayController: GroundOverlaysController?
     weak var weakAssetProvider: TestAssetProvider?
     autoreleasepool {
       let assetProvider = TestAssetProvider()
       weakAssetProvider = assetProvider
-      groundOverlayController = FGMGroundOverlaysController(
+      groundOverlayController = GroundOverlaysController(
         mapView: GroundOverlayControllerTests.mapView(),
         eventDelegate: TestMapEventHandler(),
         assetProvider: assetProvider

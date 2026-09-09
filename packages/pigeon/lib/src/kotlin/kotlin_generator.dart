@@ -131,8 +131,7 @@ class InternalKotlinOptions extends InternalOptions {
        includeErrorClass = options.includeErrorClass,
        useGeneratedAnnotation = options.useGeneratedAnnotation,
        fileSpecificClassNameComponent =
-           options.fileSpecificClassNameComponent ??
-           kotlinOut.split('/').lastOrNull?.split('.').first;
+           options.fileSpecificClassNameComponent ?? deduceClassNameComponent(kotlinOut);
 
   /// The package where the generated class will live.
   final String? package;
