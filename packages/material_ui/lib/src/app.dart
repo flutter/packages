@@ -1048,7 +1048,8 @@ class _MaterialAppState extends State<MaterialApp> {
   Widget _materialBuilder(BuildContext context, Widget? child) {
     final ThemeData theme = _themeBuilder(context);
     final Color effectiveSelectionColor =
-        theme.textSelectionTheme.selectionColor ?? theme.colorScheme.primary.withOpacity(0.40);
+        theme.textSelectionTheme.selectionColor ??
+        theme.colorScheme.primary.withValues(alpha: 0.40);
     final Color effectiveCursorColor =
         theme.textSelectionTheme.cursorColor ?? theme.colorScheme.primary;
 

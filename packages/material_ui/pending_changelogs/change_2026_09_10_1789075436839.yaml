@@ -1,0 +1,3 @@
+changelog: |
+  - Replace deprecated withOpacity
+version: patch

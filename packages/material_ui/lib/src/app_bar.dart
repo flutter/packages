@@ -1032,12 +1032,12 @@ class _AppBarState extends State<AppBar> {
       ).transform(widget.toolbarOpacity);
       if (titleTextStyle?.color != null) {
         titleTextStyle = titleTextStyle!.copyWith(
-          color: titleTextStyle.color!.withOpacity(opacity),
+          color: titleTextStyle.color!.withValues(alpha: opacity),
         );
       }
       if (toolbarTextStyle?.color != null) {
         toolbarTextStyle = toolbarTextStyle!.copyWith(
-          color: toolbarTextStyle.color!.withOpacity(opacity),
+          color: toolbarTextStyle.color!.withValues(alpha: opacity),
         );
       }
       overallIconTheme = overallIconTheme.copyWith(
