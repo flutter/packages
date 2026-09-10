@@ -459,6 +459,45 @@ class DurationRange {
   int get hashCode => Object.hash(start, end);
 }
 
+/// [VideoPlayerAndroidOptions] can be optionally used to set Android-only
+/// player settings.
+@immutable
+class VideoPlayerAndroidOptions {
+  /// Set additional Android-only player settings.
+  const VideoPlayerAndroidOptions({
+    this.enableDecoderFallback = false,
+    this.disableMediaCodecAsyncQueueing = false,
+  });
+
+  /// Enables decoder fallback on Android.
+  ///
+  /// Ignored on non-Android platforms.
+  final bool enableDecoderFallback;
+
+  /// Disables MediaCodec asynchronous queueing on Android.
+  ///
+  /// Ignored on non-Android platforms.
+  final bool disableMediaCodecAsyncQueueing;
+
+  @override
+  String toString() {
+    return '${objectRuntimeType(this, 'VideoPlayerAndroidOptions')}('
+        'enableDecoderFallback: $enableDecoderFallback, '
+        'disableMediaCodecAsyncQueueing: $disableMediaCodecAsyncQueueing)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is VideoPlayerAndroidOptions &&
+          runtimeType == other.runtimeType &&
+          enableDecoderFallback == other.enableDecoderFallback &&
+          disableMediaCodecAsyncQueueing == other.disableMediaCodecAsyncQueueing;
+
+  @override
+  int get hashCode => Object.hash(enableDecoderFallback, disableMediaCodecAsyncQueueing);
+}
+
 /// [VideoPlayerOptions] can be optionally used to set additional player settings
 @immutable
 class VideoPlayerOptions {
@@ -472,6 +511,7 @@ class VideoPlayerOptions {
     this.allowBackgroundPlayback = false,
     this.preventsDisplaySleepDuringVideoPlayback = true,
     this.webOptions,
+    this.androidOptions,
     this.backBufferDurationMs,
   }) : assert(
          backBufferDurationMs == null || backBufferDurationMs >= 0,
@@ -498,6 +538,11 @@ class VideoPlayerOptions {
 
   /// Additional web controls
   final VideoPlayerWebOptions? webOptions;
+
+  /// Additional Android-only settings.
+  ///
+  /// These settings are silently ignored on non-Android platforms.
+  final VideoPlayerAndroidOptions? androidOptions;
 
   /// The duration, in milliseconds, of media to retain in the buffer prior to
   /// the current playback position.
