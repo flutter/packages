@@ -1,7 +1,11 @@
-## 28.1.0
+## 29.0.0
 
 * [swift] [kotlin] Adds experimental support for FFI and JNI.
 * Exposes missing PigeonOptions and language-specific configurations as command-line arguments.
+
+## 28.1.0
+
+* [swift] Adds support for multiple output locations in `swiftOut` and `--swift_out`.
 
 ## 28.0.0
 

@@ -346,7 +346,7 @@ Future<int> runPigeon({
   String kotlinAppDirectory = '',
   bool kotlinUseGeneratedAnnotation = false,
   bool swiftIncludeErrorClass = true,
-  String? swiftOut,
+  Object? swiftOut,
   String? swiftErrorClassName,
   bool swiftUseFfi = false,
   String swiftAppDirectory = '',

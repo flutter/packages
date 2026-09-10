@@ -170,8 +170,7 @@ class InternalKotlinOptions extends InternalOptions {
          (options.useJni
                  ? fileSpecificClassNameComponent ?? options.fileSpecificClassNameComponent
                  : options.fileSpecificClassNameComponent ?? fileSpecificClassNameComponent) ??
-             kotlinOut.split('/').lastOrNull?.split('.').firstOrNull ??
-             '',
+             deduceClassNameComponent(kotlinOut),
        );
 
   /// The package where the generated class will live.

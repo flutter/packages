@@ -74,9 +74,7 @@ class InternalPigeonOptions {
               fileSpecificClassNameComponent:
                   options.objcOptions?.fileSpecificClassNameComponent ??
                   options.fileSpecificClassNameComponent ??
-                  (options.objcSourceOut == null
-                      ? ''
-                      : path.basename(options.objcSourceOut!).split('.').first),
+                  deduceClassNameComponent(options.objcSourceOut),
               copyrightHeader: copyrightHeader,
             ),
       javaOptions = options.javaOut == null
@@ -86,11 +84,11 @@ class InternalPigeonOptions {
               javaOut: options.javaOut!,
               copyrightHeader: copyrightHeader,
             ),
-      swiftOptions = options.swiftOut == null
+      swiftOptions = (options.swiftOutPaths == null || options.swiftOutPaths!.isEmpty)
           ? null
           : InternalSwiftOptions.fromSwiftOptions(
               options.swiftOptions ?? const SwiftOptions(),
-              swiftOut: options.swiftOut!,
+              swiftOuts: options.swiftOutPaths,
               copyrightHeader: copyrightHeader,
               fileSpecificClassNameComponent:
                   options.swiftOptions?.fileSpecificClassNameComponent ??
@@ -137,15 +135,15 @@ class InternalPigeonOptions {
                   options.fileSpecificClassNameComponent ??
                   (options.swiftOptions?.useFfi ?? false
                       ? options.swiftOptions?.fileSpecificClassNameComponent ??
-                            (options.swiftOut == null
+                            (options.swiftOutPaths?.firstOrNull == null
                                 ? null
-                                : path.basename(options.swiftOut!).split('.').first)
+                                : deduceClassNameComponent(options.swiftOutPaths!.first))
                       : null) ??
                   (options.kotlinOptions?.useJni ?? false
                       ? options.kotlinOptions?.fileSpecificClassNameComponent ??
                             (options.kotlinOut == null
                                 ? null
-                                : path.basename(options.kotlinOut!).split('.').first)
+                                : deduceClassNameComponent(options.kotlinOut))
                       : null),
             ),
       copyrightHeader = options.copyrightHeader != null
@@ -220,6 +218,12 @@ Iterable<String> _lineReader(String path) sync* {
   }
 }
 
+File _getFile(String output, {String basePath = ''}) {
+  final file = File(path.posix.join(basePath, output));
+  file.createSync(recursive: true);
+  return file;
+}
+
 IOSink? _openSink(String? output, {String basePath = ''}) {
   if (output == null) {
     return null;
@@ -227,12 +231,15 @@ IOSink? _openSink(String? output, {String basePath = ''}) {
   if (output == 'stdout') {
     return stdout;
   }
-  final String filePath = path.isAbsolute(output) || path.posix.isAbsolute(output)
-      ? output
-      : (basePath.isEmpty ? output : path.posix.join(basePath, output));
-  final file = File(filePath);
-  file.createSync(recursive: true);
-  return file.openWrite();
+  return _getFile(output, basePath: basePath).openWrite();
+}
+
+void _writeToOutput(String output, String content, {String basePath = ''}) {
+  if (output == 'stdout') {
+    stdout.write(content);
+  } else {
+    _getFile(output, basePath: basePath).writeAsStringSync(content);
+  }
 }
 
 /// An adapter that will call a generator to write code to a sink
@@ -501,12 +508,35 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
       return;
     }
     const generator = SwiftGenerator();
-    generator.generate(options.swiftOptions!, root, sink, dartPackageName: options.dartPackageName);
+    final List<String> outputs = options.swiftOptions!.allSwiftOuts.toList();
+    if (outputs.isEmpty) {
+      generator.generate(
+        options.swiftOptions!,
+        root,
+        sink,
+        dartPackageName: options.dartPackageName,
+      );
+      return;
+    }
+    final buffer = StringBuffer();
+    generator.generate(
+      options.swiftOptions!,
+      root,
+      buffer,
+      dartPackageName: options.dartPackageName,
+    );
+    final content = buffer.toString();
+    // [sink] was opened for the first entry in [outputs] by [shouldGenerate],
+    // so only the remaining output files need to be written here.
+    sink.write(content);
+    for (final String outputPath in outputs.skip(1)) {
+      _writeToOutput(outputPath, content, basePath: options.basePath ?? '');
+    }
   }
 
   @override
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
-      _openSink(options.swiftOptions?.swiftOut, basePath: options.basePath ?? '');
+      _openSink(options.swiftOptions?.allSwiftOuts.firstOrNull, basePath: options.basePath ?? '');
 
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) {

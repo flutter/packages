@@ -303,8 +303,23 @@ class PigeonOptions {
   /// Options that control how Java will be generated.
   final JavaOptions? javaOptions;
 
-  /// Path to the swift file that will be generated.
-  final String? swiftOut;
+  /// Path to the swift file(s) that will be generated.
+  ///
+  /// Can be either a [String] for a single file, or an [Iterable<String>] for
+  /// multiple files.
+  final Object? swiftOut;
+
+  /// Returns all output paths for Swift from [swiftOut].
+  Iterable<String>? get swiftOutPaths {
+    final Object? out = swiftOut;
+    if (out is String) {
+      return <String>[out];
+    }
+    if (out is Iterable) {
+      return out.whereType<String>();
+    }
+    return null;
+  }
 
   /// Options that control how Swift will be generated.
   final SwiftOptions? swiftOptions;
@@ -375,7 +390,9 @@ class PigeonOptions {
       javaOptions: map.containsKey('javaOptions')
           ? JavaOptions.fromMap(map['javaOptions']! as Map<String, Object>)
           : null,
-      swiftOut: map['swiftOut'] as String?,
+      swiftOut: map['swiftOut'] is Iterable
+          ? (map['swiftOut']! as Iterable<dynamic>).cast<String>().toList()
+          : map['swiftOut'] as String?,
       swiftOptions: map.containsKey('swiftOptions')
           ? SwiftOptions.fromList(map['swiftOptions']! as Map<String, Object>)
           : null,
@@ -551,9 +568,9 @@ ${_argParser.usage}''';
       'java_class_name',
       help: 'The name of the class that will house all the generated classes in Java.',
     )
-    ..addOption(
+    ..addMultiOption(
       'swift_out',
-      help: 'Path to generated Swift file (.swift).',
+      help: 'Path to generated Swift file(s) (.swift).',
       aliases: const <String>['experimental_swift_out'],
     )
     ..addOption(
@@ -688,6 +705,7 @@ ${_argParser.usage}''';
     // get set in the `run` function to accommodate users that are using the
     // `configurePigeon` function.
     final ArgResults results = _argParser.parse(args);
+    final swiftOuts = results['swift_out'] as List<String>;
 
     final opts = PigeonOptions(
       input: results['input'] as String?,
@@ -707,7 +725,6 @@ ${_argParser.usage}''';
         useGeneratedAnnotation: results['java_use_generated_annotation'] as bool?,
         className: results['java_class_name'] as String?,
       ),
-      swiftOut: results['swift_out'] as String?,
       swiftOptions: SwiftOptions(
         errorClassName: results['swift_error_class_name'] as String?,
         includeErrorClass: results['swift_include_error_class'] as bool? ?? true,
@@ -718,6 +735,9 @@ ${_argParser.usage}''';
         appleSdkPath: results['swift_apple_sdk_path'] as String?,
         appleSdkTriple: results['swift_apple_sdk_triple'] as String?,
       ),
+      swiftOut: results.wasParsed('swift_out')
+          ? (swiftOuts.length == 1 ? swiftOuts.first : swiftOuts)
+          : null,
       kotlinOut: results['kotlin_out'] as String?,
       kotlinOptions: KotlinOptions(
         package: results['kotlin_package'] as String?,
