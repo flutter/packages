@@ -1,3 +1,7 @@
+## 0.6.3+1
+
+* Fixes flickering of byte-backed advanced markers when updating their position on web.
+
 ## 0.6.3
 
 * Adds support for mapTypeControlEnabled, fullscreenControlEnabled, and streetViewControlEnabled.
