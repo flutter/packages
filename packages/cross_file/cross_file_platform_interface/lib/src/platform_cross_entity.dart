@@ -21,7 +21,7 @@ mixin PlatformXEntityExtension {}
 
 /// The common superclass for [PlatformXFile] and [PlatformXDirectory].
 abstract base class PlatformXEntity {
-  /// Constructs a [PlatformCrossFileEntity].
+  /// Constructs a [PlatformXEntity].
   @protected
   PlatformXEntity(this.params);
 
