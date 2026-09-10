@@ -188,7 +188,7 @@ void main() {
     );
     expect(
       m3.dayForegroundColor?.resolve(<WidgetState>{WidgetState.disabled}),
-      colorScheme.onSurface.withOpacity(0.38),
+      colorScheme.onSurface.withValues(alpha: 0.38),
     );
     expect(m3.dayBackgroundColor?.resolve(<WidgetState>{}), null);
     expect(
@@ -198,23 +198,23 @@ void main() {
     expect(m3.dayOverlayColor?.resolve(<WidgetState>{}), null);
     expect(
       m3.dayOverlayColor?.resolve(<WidgetState>{WidgetState.selected, WidgetState.hovered}),
-      colorScheme.onPrimary.withOpacity(0.08),
+      colorScheme.onPrimary.withValues(alpha: 0.08),
     );
     expect(
       m3.dayOverlayColor?.resolve(<WidgetState>{WidgetState.selected, WidgetState.focused}),
-      colorScheme.onPrimary.withOpacity(0.1),
+      colorScheme.onPrimary.withValues(alpha: 0.1),
     );
     expect(
       m3.dayOverlayColor?.resolve(<WidgetState>{WidgetState.hovered}),
-      colorScheme.onSurfaceVariant.withOpacity(0.08),
+      colorScheme.onSurfaceVariant.withValues(alpha: 0.08),
     );
     expect(
       m3.dayOverlayColor?.resolve(<WidgetState>{WidgetState.focused}),
-      colorScheme.onSurfaceVariant.withOpacity(0.1),
+      colorScheme.onSurfaceVariant.withValues(alpha: 0.1),
     );
     expect(
       m3.dayOverlayColor?.resolve(<WidgetState>{WidgetState.pressed}),
-      colorScheme.onSurfaceVariant.withOpacity(0.1),
+      colorScheme.onSurfaceVariant.withValues(alpha: 0.1),
     );
     expect(
       m3.dayOverlayColor?.resolve(<WidgetState>{
@@ -222,7 +222,7 @@ void main() {
         WidgetState.hovered,
         WidgetState.focused,
       }),
-      colorScheme.onPrimary.withOpacity(0.08),
+      colorScheme.onPrimary.withValues(alpha: 0.08),
     );
     expect(
       m3.dayOverlayColor?.resolve(<WidgetState>{
@@ -230,21 +230,21 @@ void main() {
         WidgetState.hovered,
         WidgetState.pressed,
       }),
-      colorScheme.onPrimary.withOpacity(0.1),
+      colorScheme.onPrimary.withValues(alpha: 0.1),
     );
     expect(
       m3.dayOverlayColor?.resolve(<WidgetState>{WidgetState.hovered, WidgetState.focused}),
-      colorScheme.onSurfaceVariant.withOpacity(0.08),
+      colorScheme.onSurfaceVariant.withValues(alpha: 0.08),
     );
     expect(
       m3.dayOverlayColor?.resolve(<WidgetState>{WidgetState.hovered, WidgetState.pressed}),
-      colorScheme.onSurfaceVariant.withOpacity(0.1),
+      colorScheme.onSurfaceVariant.withValues(alpha: 0.1),
     );
     expect(m3.dayShape?.resolve(<WidgetState>{}), const CircleBorder());
     expect(m3.todayForegroundColor?.resolve(<WidgetState>{}), colorScheme.primary);
     expect(
       m3.todayForegroundColor?.resolve(<WidgetState>{WidgetState.disabled}),
-      colorScheme.primary.withOpacity(0.38),
+      colorScheme.primary.withValues(alpha: 0.38),
     );
     expect(m3.todayBorder, BorderSide(color: colorScheme.primary));
     expect(m3.yearStyle, textTheme.bodyLarge);
@@ -255,7 +255,7 @@ void main() {
     );
     expect(
       m3.yearForegroundColor?.resolve(<WidgetState>{WidgetState.disabled}),
-      colorScheme.onSurfaceVariant.withOpacity(0.38),
+      colorScheme.onSurfaceVariant.withValues(alpha: 0.38),
     );
     expect(m3.yearBackgroundColor?.resolve(<WidgetState>{}), null);
     expect(
@@ -265,23 +265,23 @@ void main() {
     expect(m3.yearOverlayColor?.resolve(<WidgetState>{}), null);
     expect(
       m3.yearOverlayColor?.resolve(<WidgetState>{WidgetState.selected, WidgetState.hovered}),
-      colorScheme.onPrimary.withOpacity(0.08),
+      colorScheme.onPrimary.withValues(alpha: 0.08),
     );
     expect(
       m3.yearOverlayColor?.resolve(<WidgetState>{WidgetState.selected, WidgetState.focused}),
-      colorScheme.onPrimary.withOpacity(0.1),
+      colorScheme.onPrimary.withValues(alpha: 0.1),
     );
     expect(
       m3.yearOverlayColor?.resolve(<WidgetState>{WidgetState.hovered}),
-      colorScheme.onSurfaceVariant.withOpacity(0.08),
+      colorScheme.onSurfaceVariant.withValues(alpha: 0.08),
     );
     expect(
       m3.yearOverlayColor?.resolve(<WidgetState>{WidgetState.focused}),
-      colorScheme.onSurfaceVariant.withOpacity(0.1),
+      colorScheme.onSurfaceVariant.withValues(alpha: 0.1),
     );
     expect(
       m3.yearOverlayColor?.resolve(<WidgetState>{WidgetState.pressed}),
-      colorScheme.onSurfaceVariant.withOpacity(0.1),
+      colorScheme.onSurfaceVariant.withValues(alpha: 0.1),
     );
     expect(m3.rangePickerElevation, 0);
     expect(m3.rangePickerShape, const RoundedRectangleBorder());
@@ -303,7 +303,7 @@ void main() {
       equalsIgnoringHashCodes(TextButton.styleFrom().toString()),
     );
     expect(m3.locale, null);
-    expect(m3.subHeaderForegroundColor, colorScheme.onSurface.withOpacity(0.60));
+    expect(m3.subHeaderForegroundColor, colorScheme.onSurface.withValues(alpha: 0.60));
     expect(
       m3.toggleButtonTextStyle,
       textTheme.titleSmall?.apply(color: m3.subHeaderForegroundColor),
@@ -342,7 +342,7 @@ void main() {
     expect(m2.headerHelpStyle, textTheme.labelSmall);
     expect(
       m2.weekdayStyle,
-      textTheme.bodySmall?.apply(color: colorScheme.onSurface.withOpacity(0.60)),
+      textTheme.bodySmall?.apply(color: colorScheme.onSurface.withValues(alpha: 0.60)),
     );
     expect(m2.dayStyle, textTheme.bodySmall);
     expect(m2.dayForegroundColor?.resolve(<WidgetState>{}), colorScheme.onSurface);
@@ -352,7 +352,7 @@ void main() {
     );
     expect(
       m2.dayForegroundColor?.resolve(<WidgetState>{WidgetState.disabled}),
-      colorScheme.onSurface.withOpacity(0.38),
+      colorScheme.onSurface.withValues(alpha: 0.38),
     );
     expect(m2.dayBackgroundColor?.resolve(<WidgetState>{}), null);
     expect(
@@ -362,15 +362,15 @@ void main() {
     expect(m2.dayOverlayColor?.resolve(<WidgetState>{}), null);
     expect(
       m2.dayOverlayColor?.resolve(<WidgetState>{WidgetState.selected, WidgetState.hovered}),
-      colorScheme.onPrimary.withOpacity(0.08),
+      colorScheme.onPrimary.withValues(alpha: 0.08),
     );
     expect(
       m2.dayOverlayColor?.resolve(<WidgetState>{WidgetState.selected, WidgetState.focused}),
-      colorScheme.onPrimary.withOpacity(0.12),
+      colorScheme.onPrimary.withValues(alpha: 0.12),
     );
     expect(
       m2.dayOverlayColor?.resolve(<WidgetState>{WidgetState.selected, WidgetState.pressed}),
-      colorScheme.onPrimary.withOpacity(0.38),
+      colorScheme.onPrimary.withValues(alpha: 0.38),
     );
     expect(
       m2.dayOverlayColor?.resolve(<WidgetState>{
@@ -378,7 +378,7 @@ void main() {
         WidgetState.hovered,
         WidgetState.focused,
       }),
-      colorScheme.onPrimary.withOpacity(0.08),
+      colorScheme.onPrimary.withValues(alpha: 0.08),
     );
     expect(
       m2.dayOverlayColor?.resolve(<WidgetState>{
@@ -386,25 +386,25 @@ void main() {
         WidgetState.hovered,
         WidgetState.pressed,
       }),
-      colorScheme.onPrimary.withOpacity(0.38),
+      colorScheme.onPrimary.withValues(alpha: 0.38),
     );
     expect(
       m2.dayOverlayColor?.resolve(<WidgetState>{WidgetState.hovered}),
-      colorScheme.onSurfaceVariant.withOpacity(0.08),
+      colorScheme.onSurfaceVariant.withValues(alpha: 0.08),
     );
     expect(
       m2.dayOverlayColor?.resolve(<WidgetState>{WidgetState.focused}),
-      colorScheme.onSurfaceVariant.withOpacity(0.12),
+      colorScheme.onSurfaceVariant.withValues(alpha: 0.12),
     );
     expect(
       m2.dayOverlayColor?.resolve(<WidgetState>{WidgetState.pressed}),
-      colorScheme.onSurfaceVariant.withOpacity(0.12),
+      colorScheme.onSurfaceVariant.withValues(alpha: 0.12),
     );
     expect(m2.dayShape?.resolve(<WidgetState>{}), const CircleBorder());
     expect(m2.todayForegroundColor?.resolve(<WidgetState>{}), colorScheme.primary);
     expect(
       m2.todayForegroundColor?.resolve(<WidgetState>{WidgetState.disabled}),
-      colorScheme.onSurface.withOpacity(0.38),
+      colorScheme.onSurface.withValues(alpha: 0.38),
     );
     expect(m2.todayBorder, BorderSide(color: colorScheme.primary));
     expect(m2.yearStyle, textTheme.bodyLarge);
@@ -419,33 +419,33 @@ void main() {
         WidgetState.selected,
         WidgetState.hovered,
       }),
-      colorScheme.onPrimary.withOpacity(0.08),
+      colorScheme.onPrimary.withValues(alpha: 0.08),
     );
     expect(
       m2.rangeSelectionOverlayColor?.resolve(<WidgetState>{
         WidgetState.selected,
         WidgetState.focused,
       }),
-      colorScheme.onPrimary.withOpacity(0.12),
+      colorScheme.onPrimary.withValues(alpha: 0.12),
     );
     expect(
       m2.rangeSelectionOverlayColor?.resolve(<WidgetState>{
         WidgetState.selected,
         WidgetState.pressed,
       }),
-      colorScheme.onPrimary.withOpacity(0.38),
+      colorScheme.onPrimary.withValues(alpha: 0.38),
     );
     expect(
       m2.rangeSelectionOverlayColor?.resolve(<WidgetState>{WidgetState.hovered}),
-      colorScheme.onSurfaceVariant.withOpacity(0.08),
+      colorScheme.onSurfaceVariant.withValues(alpha: 0.08),
     );
     expect(
       m2.rangeSelectionOverlayColor?.resolve(<WidgetState>{WidgetState.focused}),
-      colorScheme.onSurfaceVariant.withOpacity(0.12),
+      colorScheme.onSurfaceVariant.withValues(alpha: 0.12),
     );
     expect(
       m2.rangeSelectionOverlayColor?.resolve(<WidgetState>{WidgetState.pressed}),
-      colorScheme.onSurfaceVariant.withOpacity(0.12),
+      colorScheme.onSurfaceVariant.withValues(alpha: 0.12),
     );
     expect(m2.rangePickerHeaderBackgroundColor, colorScheme.primary);
     expect(m2.rangePickerHeaderForegroundColor, colorScheme.onPrimary);
@@ -463,7 +463,7 @@ void main() {
     );
     expect(m2.locale, null);
     expect(m2.yearShape?.resolve(<WidgetState>{}), const StadiumBorder());
-    expect(m2.subHeaderForegroundColor, colorScheme.onSurface.withOpacity(0.60));
+    expect(m2.subHeaderForegroundColor, colorScheme.onSurface.withValues(alpha: 0.60));
     expect(
       m2.toggleButtonTextStyle,
       textTheme.titleSmall?.apply(color: m2.subHeaderForegroundColor),

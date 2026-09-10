@@ -1111,7 +1111,7 @@ class _DatePickerDefaultsM2 extends DatePickerThemeData {
   Color? get headerBackgroundColor => _isDark ? _colors.surface : _colors.primary;
 
   @override
-  Color? get subHeaderForegroundColor => _colors.onSurface.withOpacity(0.60);
+  Color? get subHeaderForegroundColor => _colors.onSurface.withValues(alpha: 0.60);
 
   @override
   TextStyle? get toggleButtonTextStyle =>
@@ -1138,7 +1138,7 @@ class _DatePickerDefaultsM2 extends DatePickerThemeData {
 
   @override
   TextStyle? get weekdayStyle =>
-      _textTheme.bodySmall?.apply(color: _colors.onSurface.withOpacity(0.60));
+      _textTheme.bodySmall?.apply(color: _colors.onSurface.withValues(alpha: 0.60));
 
   @override
   TextStyle? get dayStyle => _textTheme.bodySmall;
@@ -1149,7 +1149,7 @@ class _DatePickerDefaultsM2 extends DatePickerThemeData {
         if (states.contains(WidgetState.selected)) {
           return _colors.onPrimary;
         } else if (states.contains(WidgetState.disabled)) {
-          return _colors.onSurface.withOpacity(0.38);
+          return _colors.onSurface.withValues(alpha: 0.38);
         }
         return _colors.onSurface;
       });
@@ -1168,23 +1168,23 @@ class _DatePickerDefaultsM2 extends DatePickerThemeData {
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.selected)) {
           if (states.contains(WidgetState.pressed)) {
-            return _colors.onPrimary.withOpacity(0.38);
+            return _colors.onPrimary.withValues(alpha: 0.38);
           }
           if (states.contains(WidgetState.hovered)) {
-            return _colors.onPrimary.withOpacity(0.08);
+            return _colors.onPrimary.withValues(alpha: 0.08);
           }
           if (states.contains(WidgetState.focused)) {
-            return _colors.onPrimary.withOpacity(0.12);
+            return _colors.onPrimary.withValues(alpha: 0.12);
           }
         } else {
           if (states.contains(WidgetState.pressed)) {
-            return _colors.onSurfaceVariant.withOpacity(0.12);
+            return _colors.onSurfaceVariant.withValues(alpha: 0.12);
           }
           if (states.contains(WidgetState.hovered)) {
-            return _colors.onSurfaceVariant.withOpacity(0.08);
+            return _colors.onSurfaceVariant.withValues(alpha: 0.08);
           }
           if (states.contains(WidgetState.focused)) {
-            return _colors.onSurfaceVariant.withOpacity(0.12);
+            return _colors.onSurfaceVariant.withValues(alpha: 0.12);
           }
         }
         return null;
@@ -1196,7 +1196,7 @@ class _DatePickerDefaultsM2 extends DatePickerThemeData {
         if (states.contains(WidgetState.selected)) {
           return _colors.onPrimary;
         } else if (states.contains(WidgetState.disabled)) {
-          return _colors.onSurface.withOpacity(0.38);
+          return _colors.onSurface.withValues(alpha: 0.38);
         }
         return _colors.primary;
       });
@@ -1232,30 +1232,30 @@ class _DatePickerDefaultsM2 extends DatePickerThemeData {
   TextStyle? get rangePickerHeaderHelpStyle => _textTheme.labelSmall;
 
   @override
-  Color? get rangeSelectionBackgroundColor => _colors.primary.withOpacity(0.12);
+  Color? get rangeSelectionBackgroundColor => _colors.primary.withValues(alpha: 0.12);
 
   @override
   WidgetStateProperty<Color?>? get rangeSelectionOverlayColor =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.selected)) {
           if (states.contains(WidgetState.pressed)) {
-            return _colors.onPrimary.withOpacity(0.38);
+            return _colors.onPrimary.withValues(alpha: 0.38);
           }
           if (states.contains(WidgetState.hovered)) {
-            return _colors.onPrimary.withOpacity(0.08);
+            return _colors.onPrimary.withValues(alpha: 0.08);
           }
           if (states.contains(WidgetState.focused)) {
-            return _colors.onPrimary.withOpacity(0.12);
+            return _colors.onPrimary.withValues(alpha: 0.12);
           }
         } else {
           if (states.contains(WidgetState.pressed)) {
-            return _colors.onSurfaceVariant.withOpacity(0.12);
+            return _colors.onSurfaceVariant.withValues(alpha: 0.12);
           }
           if (states.contains(WidgetState.hovered)) {
-            return _colors.onSurfaceVariant.withOpacity(0.08);
+            return _colors.onSurfaceVariant.withValues(alpha: 0.08);
           }
           if (states.contains(WidgetState.focused)) {
-            return _colors.onSurfaceVariant.withOpacity(0.12);
+            return _colors.onSurfaceVariant.withValues(alpha: 0.12);
           }
         }
         return null;
@@ -1292,7 +1292,7 @@ class _DatePickerDefaultsM3 extends DatePickerThemeData {
   Color? get backgroundColor => _colors.surfaceContainerHigh;
 
   @override
-  Color? get subHeaderForegroundColor => _colors.onSurface.withOpacity(0.60);
+  Color? get subHeaderForegroundColor => _colors.onSurface.withValues(alpha:0.60);
 
   @override
   TextStyle? get toggleButtonTextStyle => _textTheme.titleSmall?.apply(
@@ -1341,7 +1341,7 @@ class _DatePickerDefaultsM3 extends DatePickerThemeData {
       if (states.contains(WidgetState.selected)) {
         return _colors.onPrimary;
       } else if (states.contains(WidgetState.disabled)) {
-        return _colors.onSurface.withOpacity(0.38);
+        return _colors.onSurface.withValues(alpha:0.38);
       }
       return _colors.onSurface;
     });
@@ -1360,23 +1360,23 @@ class _DatePickerDefaultsM3 extends DatePickerThemeData {
     WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.pressed)) {
-          return _colors.onPrimary.withOpacity(0.1);
+          return _colors.onPrimary.withValues(alpha:0.1);
         }
         if (states.contains(WidgetState.hovered)) {
-          return _colors.onPrimary.withOpacity(0.08);
+          return _colors.onPrimary.withValues(alpha:0.08);
         }
         if (states.contains(WidgetState.focused)) {
-          return _colors.onPrimary.withOpacity(0.1);
+          return _colors.onPrimary.withValues(alpha:0.1);
         }
       } else {
         if (states.contains(WidgetState.pressed)) {
-          return _colors.onSurfaceVariant.withOpacity(0.1);
+          return _colors.onSurfaceVariant.withValues(alpha:0.1);
         }
         if (states.contains(WidgetState.hovered)) {
-          return _colors.onSurfaceVariant.withOpacity(0.08);
+          return _colors.onSurfaceVariant.withValues(alpha:0.08);
         }
         if (states.contains(WidgetState.focused)) {
-          return _colors.onSurfaceVariant.withOpacity(0.1);
+          return _colors.onSurfaceVariant.withValues(alpha:0.1);
         }
       }
       return null;
@@ -1388,7 +1388,7 @@ class _DatePickerDefaultsM3 extends DatePickerThemeData {
       if (states.contains(WidgetState.selected)) {
         return _colors.onPrimary;
       } else if (states.contains(WidgetState.disabled)) {
-        return _colors.primary.withOpacity(0.38);
+        return _colors.primary.withValues(alpha:0.38);
       }
       return _colors.primary;
     });
@@ -1408,7 +1408,7 @@ class _DatePickerDefaultsM3 extends DatePickerThemeData {
       if (states.contains(WidgetState.selected)) {
         return _colors.onPrimary;
       } else if (states.contains(WidgetState.disabled)) {
-        return _colors.onSurfaceVariant.withOpacity(0.38);
+        return _colors.onSurfaceVariant.withValues(alpha:0.38);
       }
       return _colors.onSurfaceVariant;
     });
@@ -1427,23 +1427,23 @@ class _DatePickerDefaultsM3 extends DatePickerThemeData {
     WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.pressed)) {
-          return _colors.onPrimary.withOpacity(0.1);
+          return _colors.onPrimary.withValues(alpha:0.1);
         }
         if (states.contains(WidgetState.hovered)) {
-          return _colors.onPrimary.withOpacity(0.08);
+          return _colors.onPrimary.withValues(alpha:0.08);
         }
         if (states.contains(WidgetState.focused)) {
-          return _colors.onPrimary.withOpacity(0.1);
+          return _colors.onPrimary.withValues(alpha:0.1);
         }
       } else {
         if (states.contains(WidgetState.pressed)) {
-          return _colors.onSurfaceVariant.withOpacity(0.1);
+          return _colors.onSurfaceVariant.withValues(alpha:0.1);
         }
         if (states.contains(WidgetState.hovered)) {
-          return _colors.onSurfaceVariant.withOpacity(0.08);
+          return _colors.onSurfaceVariant.withValues(alpha:0.08);
         }
         if (states.contains(WidgetState.focused)) {
-          return _colors.onSurfaceVariant.withOpacity(0.1);
+          return _colors.onSurfaceVariant.withValues(alpha:0.1);
         }
       }
       return null;
@@ -1462,13 +1462,13 @@ class _DatePickerDefaultsM3 extends DatePickerThemeData {
   WidgetStateProperty<Color?>? get rangeSelectionOverlayColor =>
     WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.pressed)) {
-        return _colors.onPrimaryContainer.withOpacity(0.1);
+        return _colors.onPrimaryContainer.withValues(alpha:0.1);
       }
       if (states.contains(WidgetState.hovered)) {
-        return _colors.onPrimaryContainer.withOpacity(0.08);
+        return _colors.onPrimaryContainer.withValues(alpha:0.08);
       }
       if (states.contains(WidgetState.focused)) {
-        return _colors.onPrimaryContainer.withOpacity(0.1);
+        return _colors.onPrimaryContainer.withValues(alpha:0.1);
       }
       return null;
     });
