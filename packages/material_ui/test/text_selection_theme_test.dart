@@ -60,9 +60,9 @@ void main() {
     final withBBuilder = TextSelectionThemeData(contextMenuBuilder: bBuilder);
 
     test('returns null when both are null', () {
-      expect(TextSelectionThemeData.lerp(null, null, 0.5)!.contextMenuBuilder, null);
+      expect(TextSelectionThemeData.lerp(null, null, 0.5)?.contextMenuBuilder, null);
       expect(
-        TextSelectionThemeData.lerp(withoutBuilder, withoutBuilder, 0.5)!.contextMenuBuilder,
+        TextSelectionThemeData.lerp(withoutBuilder, withoutBuilder, 0.5)?.contextMenuBuilder,
         null,
       );
     });
