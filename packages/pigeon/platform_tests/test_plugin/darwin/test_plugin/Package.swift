@@ -10,18 +10,24 @@ import PackageDescription
 let package = Package(
   name: "test_plugin",
   platforms: [
-    .iOS("12.0"),
-    .macOS("10.14"),
+    .iOS("13.0"),
+    .macOS("10.15"),
   ],
   products: [
     .library(name: "test-plugin", targets: ["test_plugin"])
   ],
   dependencies: [],
+  // #docregion swiftpm-targets
   targets: [
     .target(
-      name: "test_plugin",
+      name: "test_plugin_objc_gen",
       dependencies: [],
-      resources: []
-    )
+      publicHeadersPath: "."
+    ),
+    .target(
+      name: "test_plugin",
+      dependencies: ["test_plugin_objc_gen"]
+    ),
   ]
+  // #enddocregion swiftpm-targets
 )

@@ -29,7 +29,7 @@ final class ProxyApiTestsError: Error {
 
   var localizedDescription: String {
     return
-      "ProxyApiTestsError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
+      "ProxyApiTestsError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>"))"
   }
 }
 

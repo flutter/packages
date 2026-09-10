@@ -1,3 +1,13 @@
+## 0.8.13+22
+
+* Fixes gallery image/video selection on Android API 36+ returning no paths when
+  `useAndroidPhotoPicker` was false. The plugin now uses the Android Photo Picker on API 36 and
+  above regardless of that flag.
+
+## 0.8.13+21
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
 ## 0.8.13+20
 
 * Bumps androidx.activity:activity from 1.12.4 to 1.13.0.

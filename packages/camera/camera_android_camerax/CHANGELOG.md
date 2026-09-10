@@ -1,3 +1,21 @@
+## 0.7.4+8
+
+* Bumps cameraxVersion from 1.6.1 to 1.6.2.
+* Removes the explicit `androidx.concurrent:concurrent-futures` dependency
+  workaround, as camera-core 1.6.2 includes an
+  upstream fix that makes it unnecessary.
+
+## 0.7.4+7
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
+## 0.7.4+6
+
+* Adds explicit `androidx.concurrent:concurrent-futures:1.2.0` dependency to fix
+  `compileDebugJavaWithJavac` failing with "class file for
+  androidx.concurrent.futures.CallbackToFutureAdapter not found" when
+  `camera-core`'s Jspecify type annotations are resolved during compilation.
+  
 ## 0.7.4+5
 
 * Fixes a leaked thread per capture by dispatching the `takePicture` result callback on the main

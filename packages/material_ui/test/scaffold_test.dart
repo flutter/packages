@@ -3877,12 +3877,7 @@ class _GeometryCachePainter extends CustomPainter {
 }
 
 class _CustomPageRoute<T> extends PageRoute<T> {
-  _CustomPageRoute({
-    required this.builder,
-    RouteSettings super.settings = const RouteSettings(),
-    this.maintainState = true,
-    super.fullscreenDialog,
-  });
+  _CustomPageRoute({required this.builder, super.fullscreenDialog});
 
   final WidgetBuilder builder;
 
@@ -3896,7 +3891,7 @@ class _CustomPageRoute<T> extends PageRoute<T> {
   String? get barrierLabel => null;
 
   @override
-  final bool maintainState;
+  final bool maintainState = true;
 
   @override
   Widget buildPage(
