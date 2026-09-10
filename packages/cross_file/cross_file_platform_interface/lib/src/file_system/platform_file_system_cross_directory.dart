@@ -103,4 +103,8 @@ abstract base class PlatformFileSystemXDirectory extends PlatformXDirectory {
   @override
   PlatformFileSystemXDirectoryCreationParams get params =>
       super.params as PlatformFileSystemXDirectoryCreationParams;
+
+  /// Extension for providing platform-specific features.
+  @override
+  PlatformFileSystemXDirectoryExtension? get extension => null;
 }

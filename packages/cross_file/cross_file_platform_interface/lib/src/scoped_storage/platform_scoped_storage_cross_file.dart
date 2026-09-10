@@ -90,6 +90,10 @@ abstract base class PlatformScopedStorageXFile extends PlatformXFile {
   @protected
   PlatformScopedStorageXFile.implementation(PlatformScopedStorageXFileCreationParams super.params);
 
+  /// Extension for providing platform-specific features.
+  @override
+  PlatformScopedStorageXFileExtension? get extension => null;
+
   @override
   PlatformScopedStorageXFileCreationParams get params =>
       super.params as PlatformScopedStorageXFileCreationParams;
