@@ -7,6 +7,7 @@
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
 
 ## 0.10.2
+
 * Adds `setJpegImageQuality` for controlling JPEG compression quality.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
