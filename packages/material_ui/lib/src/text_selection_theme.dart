@@ -120,12 +120,7 @@ class TextSelectionThemeData with Diagnosticable {
     TextSelectionThemeData? b,
     double t,
   ) {
-    final first = a?.contextMenuBuilder;
-    final second = b?.contextMenuBuilder;
-
-    if (first == null) return second;
-    if (second == null) return first;
-    return t < 0.5 ? first : second;
+    return t < 0.5 ? a?.contextMenuBuilder : b?.contextMenuBuilder;
   }
 
   @override
