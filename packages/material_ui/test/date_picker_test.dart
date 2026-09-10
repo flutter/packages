@@ -202,11 +202,13 @@ void main() {
           ),
         );
         await tester.tap(find.text('Go'));
-        showDatePicker(
-          context: buttonContext,
-          initialDate: initialDate,
-          firstDate: firstDate,
-          lastDate: lastDate,
+        unawaited(
+          showDatePicker(
+            context: buttonContext,
+            initialDate: initialDate,
+            firstDate: firstDate,
+            lastDate: lastDate,
+          ),
         );
         await tester.pumpAndSettle();
       }
