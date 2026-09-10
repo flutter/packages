@@ -285,9 +285,9 @@ class FilledButton extends ButtonStyleButton {
       (_, Color(a: 0.0)) => WidgetStatePropertyAll<Color?>(overlayColor),
       (_, final Color color) ||
       (final Color color, _) => WidgetStateProperty<Color?>.fromMap(<WidgetState, Color?>{
-        WidgetState.pressed: color.withOpacity(0.1),
-        WidgetState.hovered: color.withOpacity(0.08),
-        WidgetState.focused: color.withOpacity(0.1),
+        WidgetState.pressed: color.withValues(alpha: 0.1),
+        WidgetState.hovered: color.withValues(alpha: 0.08),
+        WidgetState.focused: color.withValues(alpha: 0.1),
       }),
     };
 
@@ -337,7 +337,7 @@ class FilledButton extends ButtonStyleButton {
   /// All of the ButtonStyle's defaults appear below. In this list
   /// "Theme.foo" is shorthand for `Theme.of(context).foo`. Color
   /// scheme values like "onSurface(0.38)" are shorthand for
-  /// `onSurface.withOpacity(0.38)`. [WidgetStateProperty] valued
+  /// `onSurface.withValues(alpha:0.38)`. [WidgetStateProperty] valued
   /// properties that are not followed by a sublist have the same
   /// value for all states, otherwise the values are as specified for
   /// each state, and "others" means all other states.
