@@ -635,6 +635,48 @@ public class MethodCallHandlerTest {
     assertTrue(Objects.requireNonNull(flutterError.getMessage()).contains("BillingClient"));
   }
 
+  // Regression test for https://github.com/flutter/flutter/issues/103432: the
+  // Play Billing library can invoke a response listener twice for one call
+  // (its internal watchdog/timeout path); the second pigeon reply must be
+  // dropped instead of throwing "Reply already submitted".
+  @Test
+  public void queryProductDetailsAsync_duplicateListenerResponseIsIgnored() {
+    establishConnectedBillingClient();
+    final List<PlatformQueryProduct> productList =
+        buildProductList(asList("id1", "id2"), PlatformProductType.INAPP);
+
+    methodChannelHandler.queryProductDetailsAsync(
+        productList, platformProductDetailsResult.asCallback());
+
+    ArgumentCaptor<ProductDetailsResponseListener> listenerCaptor =
+        ArgumentCaptor.forClass(ProductDetailsResponseListener.class);
+    verify(mockBillingClient).queryProductDetailsAsync(any(), listenerCaptor.capture());
+
+    List<ProductDetails> firstProducts = singletonList(buildProductDetails("foo"));
+    BillingResult firstResult = buildBillingResult();
+    QueryProductDetailsResult firstDetailsResult = mock(QueryProductDetailsResult.class);
+    when(firstDetailsResult.getProductDetailsList()).thenReturn(firstProducts);
+    when(firstDetailsResult.getUnfetchedProductList())
+        .thenReturn(java.util.Collections.emptyList());
+
+    BillingResult secondResult = buildBillingResult(200);
+    QueryProductDetailsResult secondDetailsResult = mock(QueryProductDetailsResult.class);
+    when(secondDetailsResult.getProductDetailsList())
+        .thenReturn(singletonList(buildProductDetails("bar")));
+    when(secondDetailsResult.getUnfetchedProductList())
+        .thenReturn(java.util.Collections.emptyList());
+
+    listenerCaptor.getValue().onProductDetailsResponse(firstResult, firstDetailsResult);
+    // The second (watchdog) invocation of the SAME listener must not reach the
+    // pigeon callback. (updateCachedProducts still runs, by design.)
+    listenerCaptor.getValue().onProductDetailsResponse(secondResult, secondDetailsResult);
+
+    assertEquals(1, platformProductDetailsResult.callCount);
+    PlatformProductDetailsResponse resultData = platformProductDetailsResult.result.getOrNull();
+    assertResultsMatch(resultData.getBillingResult(), firstResult);
+    assertDetailListsMatch(firstProducts, resultData.getProductDetails());
+  }
+
   // Test launchBillingFlow not crash if `accountId` is `null`
   // Ideally, we should check if the `accountId` is null in the parameter; however,
   // since PBL 3.0, the `accountId` variable is not public.
@@ -1021,6 +1063,32 @@ public class MethodCallHandlerTest {
     assertResultsMatch(platformBillingResult.result.getOrNull(), billingResult);
   }
 
+  // Same duplicate-listener-response scenario as
+  // queryProductDetailsAsync_duplicateListenerResponseIsIgnored, for a
+  // listener that carries only a BillingResult.
+  @Test
+  public void acknowledgePurchase_duplicateListenerResponseIsIgnored() {
+    establishConnectedBillingClient();
+    final String purchaseToken = "mockToken";
+    ArgumentCaptor<AcknowledgePurchaseResponseListener> listenerCaptor =
+        ArgumentCaptor.forClass(AcknowledgePurchaseResponseListener.class);
+
+    methodChannelHandler.acknowledgePurchase(purchaseToken, platformBillingResult.asCallback());
+
+    AcknowledgePurchaseParams params =
+        AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchaseToken).build();
+
+    verify(mockBillingClient).acknowledgePurchase(refEq(params), listenerCaptor.capture());
+
+    BillingResult firstResult = buildBillingResult();
+    BillingResult secondResult = buildBillingResult(200);
+    listenerCaptor.getValue().onAcknowledgePurchaseResponse(firstResult);
+    listenerCaptor.getValue().onAcknowledgePurchaseResponse(secondResult);
+
+    assertEquals(1, platformBillingResult.callCount);
+    assertResultsMatch(platformBillingResult.result.getOrNull(), firstResult);
+  }
+
   @Test
   public void endConnection_if_activity_detached() {
     InAppPurchasePlugin plugin = new InAppPurchasePlugin();
@@ -1226,11 +1294,16 @@ public class MethodCallHandlerTest {
   private static class TestResult<T> implements Function1<ResultCompat<T>, Unit> {
     ResultCompat<T> result;
     boolean called = false;
+    // Lets the duplicate-listener-response regression tests assert that the
+    // pigeon callback completed exactly once (result alone only stores the
+    // last value).
+    int callCount = 0;
 
     @Override
     public Unit invoke(ResultCompat<T> reply) {
       this.result = reply;
       this.called = true;
+      this.callCount++;
       return Unit.INSTANCE;
     }
 
