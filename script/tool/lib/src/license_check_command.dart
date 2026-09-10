@@ -313,6 +313,10 @@ class LicenseCheckCommand extends PackageCommand {
       return true;
     }
 
+    if (p.split(file.path).any((String part) => part.endsWith('_objc_gen'))) {
+      return true;
+    }
+
     return false;
   }
 
