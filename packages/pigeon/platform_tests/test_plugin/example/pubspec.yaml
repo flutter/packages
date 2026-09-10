@@ -18,7 +18,7 @@ dependencies:
     path: ../
 
 dev_dependencies:
-  ffigen: ^21.0.0
+  ffigen: ^22.0.0
   flutter_test:
     sdk: flutter
   integration_test:
@@ -27,8 +27,8 @@ dev_dependencies:
   logging: ^1.3.0
   pigeon:
     path: ../../..
-  swift2objc: ^0.2.0
-  swiftgen: ^0.1.3
+  swift2objc: ^0.3.0
+  swiftgen: ^0.2.0
 
 flutter:
   uses-material-design: true

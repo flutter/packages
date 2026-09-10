@@ -14,7 +14,7 @@ import 'dart:ffi' as ffi;
 import 'package:objective_c/objective_c.dart' as objc;
 import 'package:ffi/ffi.dart' as pkg_ffi;
 
-const _$objcVersionCheck = objc.ObjCVersionCheck(9, 5);
+const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
 @ffi.Native<
   ffi.Void Function(
     ffi.Pointer<objc.ObjCObjectImpl>,
@@ -433,65 +433,6 @@ extension NSURLCredential$Methods on NSURLCredential {
         : NSURLCredential.fromPointer($ret, retain: false, release: true);
   }
 
-  /// initWithIdentity:certificates:persistence:
-  NSURLCredential initWithIdentity(
-    ffi.Pointer<__SecIdentity> identity, {
-    objc.NSArray? certificates,
-    required NSURLCredentialPersistence persistence,
-  }) {
-    final _$$ref = object$.ref;
-    final _$$ref$1 = certificates?.ref;
-    objc.checkOsVersionInternal(
-      'NSURLCredential.initWithIdentity:certificates:persistence:',
-      iOS: (false, (3, 0, 0)),
-      macOS: (false, (10, 6, 0)),
-    );
-    final $ret = _objc_msgSend_jfo4g1(
-      _$$ref.retainAndReturnPointer(),
-      _sel_initWithIdentity_certificates_persistence_,
-      identity,
-      _$$ref$1?.pointer ?? ffi.nullptr,
-      persistence.value,
-    );
-    return NSURLCredential.fromPointer($ret, retain: false, release: true);
-  }
-
-  /// initWithTrust:
-  NSURLCredential initWithTrust(ffi.Pointer<__SecTrust> trust) {
-    final _$$ref = object$.ref;
-    objc.checkOsVersionInternal(
-      'NSURLCredential.initWithTrust:',
-      iOS: (false, (3, 0, 0)),
-      macOS: (false, (10, 6, 0)),
-    );
-    final $ret = _objc_msgSend_1s3ecd1(_$$ref.retainAndReturnPointer(), _sel_initWithTrust_, trust);
-    return NSURLCredential.fromPointer($ret, retain: false, release: true);
-  }
-
-  /// initWithUser:password:persistence:
-  NSURLCredential initWithUser(
-    objc.NSString user, {
-    required objc.NSString password,
-    required NSURLCredentialPersistence persistence,
-  }) {
-    final _$$ref = object$.ref;
-    final _$$ref$1 = user.ref;
-    final _$$ref$2 = password.ref;
-    objc.checkOsVersionInternal(
-      'NSURLCredential.initWithUser:password:persistence:',
-      iOS: (false, (2, 0, 0)),
-      macOS: (false, (10, 2, 0)),
-    );
-    final $ret = _objc_msgSend_17ns785(
-      _$$ref.retainAndReturnPointer(),
-      _sel_initWithUser_password_persistence_,
-      _$$ref$1.pointer,
-      _$$ref$2.pointer,
-      persistence.value,
-    );
-    return NSURLCredential.fromPointer($ret, retain: false, release: true);
-  }
-
   /// persistence
   NSURLCredentialPersistence get persistence {
     final _$$ref = object$.ref;
@@ -520,6 +461,24 @@ enum NSURLCredentialPersistence {
     2 => NSURLCredentialPersistencePermanent,
     3 => NSURLCredentialPersistenceSynchronizable,
     _ => throw ArgumentError('Unknown value for NSURLCredentialPersistence: $value'),
+  };
+}
+
+enum NSURLSessionAuthChallengeDisposition {
+  NSURLSessionAuthChallengeUseCredential(0),
+  NSURLSessionAuthChallengePerformDefaultHandling(1),
+  NSURLSessionAuthChallengeCancelAuthenticationChallenge(2),
+  NSURLSessionAuthChallengeRejectProtectionSpace(3);
+
+  final int value;
+  const NSURLSessionAuthChallengeDisposition(this.value);
+
+  static NSURLSessionAuthChallengeDisposition fromValue(int value) => switch (value) {
+    0 => NSURLSessionAuthChallengeUseCredential,
+    1 => NSURLSessionAuthChallengePerformDefaultHandling,
+    2 => NSURLSessionAuthChallengeCancelAuthenticationChallenge,
+    3 => NSURLSessionAuthChallengeRejectProtectionSpace,
+    _ => throw ArgumentError('Unknown value for NSURLSessionAuthChallengeDisposition: $value'),
   };
 }
 
@@ -14837,13 +14796,13 @@ extension NativeInteropFlutterIntegrationCoreApiRegistrar$Methods
     on NativeInteropFlutterIntegrationCoreApiRegistrar {
   /// init
   NativeInteropFlutterIntegrationCoreApiRegistrar init() {
-    final _$$ref$1 = object$.ref;
+    final _$$ref = object$.ref;
     objc.checkOsVersionInternal(
       'NativeInteropFlutterIntegrationCoreApiRegistrar.init',
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(_$$ref$1.retainAndReturnPointer(), _sel_init);
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
     return NativeInteropFlutterIntegrationCoreApiRegistrar.fromPointer(
       $ret,
       retain: false,
@@ -18814,13 +18773,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// init
   NativeInteropHostIntegrationCoreApiSetup init() {
-    final _$$ref$2 = object$.ref;
+    final _$$ref = object$.ref;
     objc.checkOsVersionInternal(
       'NativeInteropHostIntegrationCoreApiSetup.init',
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(_$$ref$2.retainAndReturnPointer(), _sel_init);
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
     return NativeInteropHostIntegrationCoreApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
@@ -19144,13 +19103,13 @@ extension NativeInteropTestsError$Methods on NativeInteropTestsError {
 
   /// init
   NativeInteropTestsError init() {
-    final _$$ref$3 = object$.ref;
+    final _$$ref = object$.ref;
     objc.checkOsVersionInternal(
       'NativeInteropTestsError.init',
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(_$$ref$3.retainAndReturnPointer(), _sel_init);
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
     return NativeInteropTestsError.fromPointer($ret, retain: false, release: true);
   }
 
@@ -19362,13 +19321,13 @@ extension type NativeInteropTestsPigeonInternalNull._(objc.ObjCObject object$)
 extension NativeInteropTestsPigeonInternalNull$Methods on NativeInteropTestsPigeonInternalNull {
   /// init
   NativeInteropTestsPigeonInternalNull init() {
-    final _$$ref$4 = object$.ref;
+    final _$$ref = object$.ref;
     objc.checkOsVersionInternal(
       'NativeInteropTestsPigeonInternalNull.init',
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(_$$ref$4.retainAndReturnPointer(), _sel_init);
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
     return NativeInteropTestsPigeonInternalNull.fromPointer($ret, retain: false, release: true);
   }
 }
@@ -29927,14 +29886,7 @@ late final _sel_initWithAllNullableTypes_allNullableTypesWithoutRecursion_allTyp
 late final _sel_initWithCode_message_details_ = objc.registerName("initWithCode:message:details:");
 late final _sel_initWithCoder_ = objc.registerName("initWithCoder:");
 late final _sel_initWithData_type_ = objc.registerName("initWithData:type:");
-late final _sel_initWithIdentity_certificates_persistence_ = objc.registerName(
-  "initWithIdentity:certificates:persistence:",
-);
 late final _sel_initWithNumber_type_ = objc.registerName("initWithNumber:type:");
-late final _sel_initWithTrust_ = objc.registerName("initWithTrust:");
-late final _sel_initWithUser_password_persistence_ = objc.registerName(
-  "initWithUser:password:persistence:",
-);
 late final _sel_intList = objc.registerName("intList");
 late final _sel_intMap = objc.registerName("intMap");
 late final _sel_isEqual_ = objc.registerName("isEqual:");

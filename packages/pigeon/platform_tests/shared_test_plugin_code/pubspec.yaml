@@ -25,6 +25,6 @@ dependencies:
   objective_c: ^9.5.0
 
 dev_dependencies:
-  ffigen: ^21.0.0
+  ffigen: ^22.0.0
   jnigen: ^1.0.0
   leak_tracker: any

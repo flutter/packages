@@ -13,7 +13,7 @@ import 'dart:ffi' as ffi;
 import 'package:objective_c/objective_c.dart' as objc;
 import 'package:ffi/ffi.dart' as pkg_ffi;
 
-const _$objcVersionCheck = objc.ObjCVersionCheck(9, 5);
+const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
 
 /// Generated setup class from Pigeon to register implemented NativeInteropExampleApi classes.
 extension type NativeInteropExampleApiSetup._(objc.ObjCObject object$)
@@ -260,13 +260,13 @@ extension type NativeInteropExamplePigeonInternalNull._(objc.ObjCObject object$)
 extension NativeInteropExamplePigeonInternalNull$Methods on NativeInteropExamplePigeonInternalNull {
   /// init
   NativeInteropExamplePigeonInternalNull init() {
-    final _$$ref$1 = object$.ref;
+    final _$$ref = object$.ref;
     objc.checkOsVersionInternal(
       'NativeInteropExamplePigeonInternalNull.init',
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(_$$ref$1.retainAndReturnPointer(), _sel_init);
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
     return NativeInteropExamplePigeonInternalNull.fromPointer($ret, retain: false, release: true);
   }
 }
@@ -402,13 +402,13 @@ extension PigeonError$Methods on PigeonError {
 
   /// init
   PigeonError init() {
-    final _$$ref$2 = object$.ref;
+    final _$$ref = object$.ref;
     objc.checkOsVersionInternal(
       'PigeonError.init',
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(_$$ref$2.retainAndReturnPointer(), _sel_init);
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
     return PigeonError.fromPointer($ret, retain: false, release: true);
   }
 

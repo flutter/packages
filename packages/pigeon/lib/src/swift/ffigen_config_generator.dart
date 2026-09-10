@@ -219,11 +219,14 @@ $copyrightPreamble
           ios: fg.Versions(min: Version(13, 0, 0)),
           macos: fg.Versions(min: Version(10, 14, 0)),
         ),
-        interfaces: fg.Interfaces(
-          include: (fg.Declaration decl) =>
-              classes.contains(decl.originalName) ||
-              enums.contains(decl.originalName),
-          module: (fg.Declaration decl) {
+      ),
+      visitors: [
+        fg.Visitor(
+          objCInterface: (decl) {
+            if (classes.contains(decl.originalName) ||
+                enums.contains(decl.originalName)) {
+              decl.isIncluded = true;
+            }
             // Assign declarations to their destination module. Foundation classes starting with 'NS'
             // return null so ffigen treats them as external system framework types (provided by
             // package:objective_c) rather than generating local module wrappers for them.
@@ -232,14 +235,15 @@ $copyrightPreamble
 ${hasAsyncFlutterApi ? '''
             if (decl.originalName == 'NSURLCredential' ||
                 decl.originalName == 'NSURLSessionAuthChallengeDisposition') {
-              return '$moduleName';
+              decl.module = '$moduleName';
+              return;
             }
-''' : ''}            return decl.originalName.startsWith('NS') ? null : '$moduleName';
-          }
-        ),
-        protocols: fg.Protocols(
-          include: (fg.Declaration decl) => classes.contains(decl.originalName),
-          module: (fg.Declaration decl) {
+''' : ''}            decl.module = decl.originalName.startsWith('NS') ? null : '$moduleName';
+          },
+          objCProtocol: (decl) {
+            if (classes.contains(decl.originalName)) {
+              decl.isIncluded = true;
+            }
             // Assign declarations to their destination module. Foundation classes starting with 'NS'
             // return null so ffigen treats them as external system framework types (provided by
             // package:objective_c) rather than generating local module wrappers for them.
@@ -248,12 +252,19 @@ ${hasAsyncFlutterApi ? '''
 ${hasAsyncFlutterApi ? '''
             if (decl.originalName == 'NSURLCredential' ||
                 decl.originalName == 'NSURLSessionAuthChallengeDisposition') {
-              return '$moduleName';
+              decl.module = '$moduleName';
+              return;
             }
-''' : ''}            return decl.originalName.startsWith('NS') ? null : '$moduleName';
+''' : ''}            decl.module = decl.originalName.startsWith('NS') ? null : '$moduleName';
+          },
+          enumClass: (decl) {
+            if (enums.contains(decl.originalName) ||
+                classes.contains(decl.originalName)) {
+              decl.isIncluded = true;
+            }
           },
         ),
-      ),
+      ],
     ),
   ).generate(
     logger: null,

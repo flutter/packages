@@ -81,30 +81,38 @@ Future<void> main(List<String> args) async {
           ios: fg.Versions(min: Version(13, 0, 0)),
           macos: fg.Versions(min: Version(10, 14, 0)),
         ),
-        interfaces: fg.Interfaces(
-          include: (fg.Declaration decl) =>
-              classes.contains(decl.originalName) || enums.contains(decl.originalName),
-          module: (fg.Declaration decl) {
-            // Assign declarations to their destination module. Foundation classes starting with 'NS'
-            // return null so ffigen treats them as external system framework types (provided by
-            // package:objective_c) rather than generating local module wrappers for them.
-            // Specific types (like NSURLCredential) return 'Runner' so ffigen generates the
-            // explicit Dart FFI bindings required by this plugin.
-            return decl.originalName.startsWith('NS') ? null : 'Runner';
-          },
-        ),
-        protocols: fg.Protocols(
-          include: (fg.Declaration decl) => classes.contains(decl.originalName),
-          module: (fg.Declaration decl) {
-            // Assign declarations to their destination module. Foundation classes starting with 'NS'
-            // return null so ffigen treats them as external system framework types (provided by
-            // package:objective_c) rather than generating local module wrappers for them.
-            // Specific types (like NSURLCredential) return 'Runner' so ffigen generates the
-            // explicit Dart FFI bindings required by this plugin.
-            return decl.originalName.startsWith('NS') ? null : 'Runner';
-          },
-        ),
       ),
+      visitors: [
+        fg.Visitor(
+          objCInterface: (decl) {
+            if (classes.contains(decl.originalName) || enums.contains(decl.originalName)) {
+              decl.isIncluded = true;
+            }
+            // Assign declarations to their destination module. Foundation classes starting with 'NS'
+            // return null so ffigen treats them as external system framework types (provided by
+            // package:objective_c) rather than generating local module wrappers for them.
+            // Specific types (like NSURLCredential) return 'Runner' so ffigen generates the
+            // explicit Dart FFI bindings required by this plugin.
+            decl.module = decl.originalName.startsWith('NS') ? null : 'Runner';
+          },
+          objCProtocol: (decl) {
+            if (classes.contains(decl.originalName)) {
+              decl.isIncluded = true;
+            }
+            // Assign declarations to their destination module. Foundation classes starting with 'NS'
+            // return null so ffigen treats them as external system framework types (provided by
+            // package:objective_c) rather than generating local module wrappers for them.
+            // Specific types (like NSURLCredential) return 'Runner' so ffigen generates the
+            // explicit Dart FFI bindings required by this plugin.
+            decl.module = decl.originalName.startsWith('NS') ? null : 'Runner';
+          },
+          enumClass: (decl) {
+            if (enums.contains(decl.originalName) || classes.contains(decl.originalName)) {
+              decl.isIncluded = true;
+            }
+          },
+        ),
+      ],
     ),
   ).generate(logger: null, tempDirectory: Uri.directory('ios/Runner_objc_gen'));
 }
