@@ -103,7 +103,8 @@
       ],
       "expected_repo_state": [
         "No changes are pushed to the remote repository.",
-        "The agent does not create any new commits or modify the working tree."
+        "The agent does not create any new commits or modify the working tree."    
+      ],
       "agent_config": "reidbaker-agent"
     }
   ]
