@@ -13,8 +13,8 @@ import 'package:material_ui_examples/button_style/button_style.0.dart'
     as button_style_0;
 import 'package:material_ui_examples/floating_action_button/floating_action_button.1.dart'
     as floating_action_button_1;
-import 'package:material_ui_examples/icon_button/icon_button.3.dart'
-    as icon_button_3;
+import 'package:material_ui_examples/icon_button/icon_button.4.dart'
+    as icon_button_4;
 import 'package:material_ui_examples/segmented_button/segmented_button.0.dart'
     as segmented_button_0;
 import 'package:material_ui_examples/card/card.2.dart' as card_2;
@@ -69,7 +69,7 @@ const Map<String, Type> _examples = <String, Type>{
   'Common buttons': button_style_0.ButtonApp,
   'Floating action buttons':
       floating_action_button_1.FloatingActionButtonExampleApp,
-  'Icon buttons': icon_button_3.IconButtonToggleApp,
+  'Icon buttons': icon_button_4.IconButtonM3EExampleApp,
   'Segmented buttons': segmented_button_0.SegmentedButtonApp,
   'Cards': card_2.CardExamplesApp,
   'Carousel': carousel_0.CarouselExampleApp,

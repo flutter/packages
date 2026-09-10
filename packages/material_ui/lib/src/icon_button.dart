@@ -192,6 +192,19 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 ///
 /// </callout-box>
 ///
+/// <callout-box>
+///
+/// This sample shows Material 3 Expressive [IconButton] size, width, and shape
+/// variants.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/icon_button/icon_button.4.dart#body}
+///
+/// </callout-box>
+///
 /// See also:
 ///
 ///  * [Icons], the library of Material Icons.
