@@ -153,7 +153,7 @@ class TimePickerThemeData with Diagnosticable {
   /// text is selected or not.
   ///
   /// By default the overall theme's [ColorScheme.primary] color is used when
-  /// the text is selected and `ColorScheme.onSurface.withOpacity(0.60)` when
+  /// the text is selected and `ColorScheme.onSurface.withValues(alpha:0.60)` when
   /// it's not selected.
   final Color? dayPeriodTextColor;
 
