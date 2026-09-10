@@ -11,7 +11,6 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/src/material/text_selection_theme.dart';
 import 'package:flutter/widgets.dart';
 
 import 'adaptive_text_selection_toolbar.dart';
@@ -33,6 +32,7 @@ import 'material_state.dart';
 import 'search_bar_theme.dart';
 import 'search_view_theme.dart';
 import 'text_field.dart';
+import 'text_selection_theme.dart';
 import 'text_theme.dart';
 import 'theme.dart';
 

@@ -16,7 +16,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/material/text_selection_theme.dart';
 
 import 'adaptive_text_selection_toolbar.dart';
 import 'color_scheme.dart';
@@ -30,6 +29,7 @@ import 'material_state.dart';
 import 'selectable_text.dart' show iOSHorizontalOffset;
 import 'spell_check_suggestions_toolbar.dart';
 import 'text_selection.dart';
+import 'text_selection_theme.dart';
 import 'theme.dart';
 
 export 'package:flutter/services.dart'
