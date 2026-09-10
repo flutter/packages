@@ -310,10 +310,7 @@ class TextFormField extends FormField<String> {
                scrollController: scrollController,
                enableIMEPersonalizedLearning: enableIMEPersonalizedLearning,
                mouseCursor: mouseCursor,
-               contextMenuBuilder:
-                   contextMenuBuilder ??
-                   TextSelectionTheme.of(state.context).contextMenuBuilder ??
-                   _defaultContextMenuBuilder,
+               contextMenuBuilder: contextMenuBuilder,
                spellCheckConfiguration: spellCheckConfiguration,
                magnifierConfiguration: magnifierConfiguration,
                undoController: undoController,
@@ -345,16 +342,6 @@ class TextFormField extends FormField<String> {
 
   /// {@macro cupertino_ui.TextFormField.onChanged}
   final ValueChanged<String>? onChanged;
-
-  static Widget _defaultContextMenuBuilder(
-    BuildContext context,
-    EditableTextState editableTextState,
-  ) {
-    if (SystemContextMenu.isSupportedByField(editableTextState)) {
-      return SystemContextMenu.editableText(editableTextState: editableTextState);
-    }
-    return AdaptiveTextSelectionToolbar.editableText(editableTextState: editableTextState);
-  }
 
   @override
   FormFieldState<String> createState() => _TextFormFieldState();

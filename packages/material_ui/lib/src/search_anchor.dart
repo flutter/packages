@@ -1310,7 +1310,7 @@ class _SearchAnchorWithSearchBar extends SearchAnchor {
     super.textInputAction,
     super.keyboardType,
     EdgeInsets scrollPadding = const EdgeInsets.all(20.0),
-    EditableTextContextMenuBuilder contextMenuBuilder = _SearchBarState._defaultContextMenuBuilder,
+    EditableTextContextMenuBuilder? contextMenuBuilder,
     super.enabled,
     super.smartDashesType,
     super.smartQuotesType,
@@ -1876,10 +1876,7 @@ class _SearchBarState extends State<SearchBar> {
                             textInputAction: widget.textInputAction,
                             keyboardType: widget.keyboardType,
                             scrollPadding: widget.scrollPadding,
-                            contextMenuBuilder:
-                                widget.contextMenuBuilder ??
-                                TextSelectionTheme.of(context).contextMenuBuilder ??
-                                _defaultContextMenuBuilder,
+                            contextMenuBuilder: widget.contextMenuBuilder,
                             smartDashesType: widget.smartDashesType,
                             smartQuotesType: widget.smartQuotesType,
                           ),

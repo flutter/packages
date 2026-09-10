@@ -3989,6 +3989,43 @@ void main() {
       expect(find.byType(Placeholder), findsOneWidget);
     });
 
+    testWidgets('SearchAnchor.bar uses ThemeData.textSelectionTheme contextMenuBuilder', (
+      WidgetTester tester,
+    ) async {
+      Widget themeDataContextMenuBuilder(
+        BuildContext context,
+        EditableTextState editableTextState,
+      ) {
+        return const Icon(Icons.search);
+      }
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            textSelectionTheme: TextSelectionThemeData(
+              contextMenuBuilder: themeDataContextMenuBuilder,
+            ),
+          ),
+          home: Material(
+            child: SearchAnchor.bar(
+              suggestionsBuilder: (BuildContext context, SearchController controller) {
+                return <Widget>[];
+              },
+            ),
+          ),
+        ),
+      );
+
+      final EditableTextState editableTextState = tester.firstState(find.byType(EditableText));
+      final BuildContext searchAnchorContext = tester.element(find.byType(SearchBar));
+      final Widget contextMenu = editableTextState.widget.contextMenuBuilder!(
+        searchAnchorContext,
+        editableTextState,
+      );
+
+      expect(contextMenu, isA<Icon>());
+    });
+
     testWidgets(
       'iOS uses the system context menu by default if supported',
       (WidgetTester tester) async {
