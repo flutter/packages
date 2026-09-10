@@ -62,6 +62,7 @@ disposing of the camera is the only way to reset the situation.
 
 Ensure you use the [path_provider](https://pub.dev/packages/path_provider) package to resolve a valid system path (such as `getApplicationDocumentsDirectory()` or `getApplicationSupportDirectory()`). This helps avoid OS permission issues (`Access Denied`) when writing files directly to protected directories like the root drive.
 
+<?code-excerpt?>
 ```dart
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';

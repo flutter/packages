@@ -23,6 +23,7 @@ Although it is possible to use an absolute path like `/storage/emulated/0/Downlo
 - **Best Practice:** Always use the [path_provider](https://pub.dev/packages/path_provider) package to fetch a safe, writable directory.
 - **Recommended Directory:** Use `getTemporaryDirectory()` or `getApplicationDocumentsDirectory()`.
 
+<?code-excerpt?>
 ```dart
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';

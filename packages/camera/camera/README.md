@@ -96,6 +96,7 @@ Here is a list of all permission error codes that can be thrown:
 
 You can optionally specify a `videoOutputPath` when calling `startVideoRecording()` to save the recorded video directly to a custom absolute file path on the device.
 
+<?code-excerpt?>
 ```dart
 // Always ensure the path ends with the .mp4 extension
 await controller.startVideoRecording(

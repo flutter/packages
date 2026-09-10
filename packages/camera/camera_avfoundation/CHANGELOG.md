@@ -1,11 +1,10 @@
-## 0.10.3
-
-* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
-
-## 0.10.2
 ## 0.11.0
 
 * Adds support for custom video output path in video recording.
+
+## 0.10.3
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
 
 ## 0.10.2
 * Adds `setJpegImageQuality` for controlling JPEG compression quality.

@@ -15,6 +15,7 @@ should add it to your `pubspec.yaml` as usual.
 
 You can optionally specify a `videoOutputPath` when calling `startVideoRecording()` to save the recorded video directly to a custom absolute file path on the device.
 
+<?code-excerpt?>
 ```dart
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
