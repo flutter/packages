@@ -259,6 +259,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   return degrees;
 };
 
+BOOL FVPIsValidFrameDuration(CMTime frameDuration) {
+  return CMTIME_IS_VALID(frameDuration) && CMTimeCompare(frameDuration, kCMTimeZero) > 0;
+}
+
 - (AVMutableVideoComposition *)videoCompositionWithTransform:(CGAffineTransform)transform
                                                        asset:(NSObject<FVPAVAsset> *)asset
                                                   videoTrack:(AVAssetTrack *)videoTrack {
@@ -286,7 +290,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   videoComposition.renderSize = CGSizeMake(width, height);
 
   videoComposition.sourceTrackIDForFrameTiming = videoTrack.trackID;
-  if (CMTIME_IS_VALID(videoTrack.minFrameDuration)) {
+  if (FVPIsValidFrameDuration(videoTrack.minFrameDuration)) {
     videoComposition.frameDuration = videoTrack.minFrameDuration;
   } else {
     NSLog(@"Warning: videoTrack.minFrameDuration for input video is invalid, please report this to "
