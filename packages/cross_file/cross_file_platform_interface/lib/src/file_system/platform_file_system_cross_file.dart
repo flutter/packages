@@ -99,6 +99,10 @@ abstract base class PlatformFileSystemXFile extends PlatformXFile {
   PlatformFileSystemXFileCreationParams get params =>
       super.params as PlatformFileSystemXFileCreationParams;
 
+  /// Extension for providing platform-specific features.
+  @override
+  PlatformFileSystemXFileExtension? get extension => null;
+
   /// Writes a list of bytes to a file.
   ///
   /// Platforms may throw an exception if there is an error opening or writing

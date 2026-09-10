@@ -77,6 +77,10 @@ abstract base class PlatformXDirectory extends PlatformXEntity {
   @override
   PlatformXDirectoryCreationParams get params => super.params as PlatformXDirectoryCreationParams;
 
+  /// Extension for providing platform-specific features.
+  @override
+  PlatformXDirectoryExtension? get extension => null;
+
   /// Lists the sub-directories and files of this Directory.
   ///
   /// Platforms may throw an exception if there is an error listing entities in

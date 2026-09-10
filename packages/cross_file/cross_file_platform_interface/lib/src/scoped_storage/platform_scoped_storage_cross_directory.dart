@@ -96,6 +96,10 @@ abstract base class PlatformScopedStorageXDirectory extends PlatformXDirectory {
   PlatformScopedStorageXDirectoryCreationParams get params =>
       super.params as PlatformScopedStorageXDirectoryCreationParams;
 
+  /// Extension for providing platform-specific features.
+  @override
+  PlatformScopedStorageXDirectoryExtension? get extension => null;
+
   /// Whether the files in this directory represented by this reference can be
   /// viewed.
   Future<bool> canRead();
