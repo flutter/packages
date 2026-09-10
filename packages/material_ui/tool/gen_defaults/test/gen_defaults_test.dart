@@ -11,7 +11,46 @@ import '../data/typescale.dart';
 import '../data/typescale_emphasized.dart';
 import '../templates/action_chip_template.dart';
 import '../templates/app_bar_template.dart';
+import '../templates/badge_template.dart';
+import '../templates/banner_template.dart';
+// import '../templates/bottom_app_bar_template.dart';
 import '../templates/bottom_sheet_template.dart';
+import '../templates/button_template.dart';
+// import '../templates/card_template.dart';
+// import '../templates/checkbox_template.dart';
+// import '../templates/chip_template.dart';
+// import '../templates/color_scheme_template.dart';
+// import '../templates/date_picker_template.dart';
+// import '../templates/dialog_template.dart';
+// import '../templates/divider_template.dart';
+// import '../templates/drawer_template.dart';
+// import '../templates/expansion_tile_template.dart';
+// import '../templates/fab_template.dart';
+// import '../templates/filter_chip_template.dart';
+// import '../templates/icon_button_template.dart';
+// import '../templates/input_chip_template.dart';
+// import '../templates/input_decorator_template.dart';
+// import '../templates/list_tile_template.dart';
+// import '../templates/menu_template.dart';
+// import '../templates/motion_template.dart';
+// import '../templates/navigation_bar_template.dart';
+// import '../templates/navigation_drawer_template.dart';
+// import '../templates/navigation_rail_template.dart';
+// import '../templates/popup_menu_template.dart';
+// import '../templates/progress_indicator_template.dart';
+// import '../templates/radio_template.dart';
+// import '../templates/range_slider_template.dart';
+// import '../templates/search_bar_template.dart';
+// import '../templates/search_view_template.dart';
+// import '../templates/segmented_button_template.dart';
+// import '../templates/slider_template.dart';
+// import '../templates/snackbar_template.dart';
+// import '../templates/surface_tint_template.dart';
+// import '../templates/switch_template.dart';
+// import '../templates/tabs_template.dart';
+// import '../templates/text_field_template.dart';
+// import '../templates/time_picker_template.dart';
+// import '../templates/typography_template.dart';
 import '../templates/template.dart';
 import 'test_fixtures/test_templates.dart';
 
@@ -204,14 +243,29 @@ void main() {
       expect(contents, contains('static const double expandedHeight = 152.0'));
     });
 
-    test('BadgeTemplateM3 emits M3 Badge defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+    test('BadgeTemplateM3 emits M3 Badge defaults from badge tokens', () {
+      final String contents = _generateContents(const BadgeTemplateM3());
+      expect(contents, contains('class _BadgeDefaultsM3 extends BadgeThemeData'));
+      expect(contents, contains('smallSize: 6.0'));
+      expect(contents, contains('largeSize: 16.0'));
+      expect(contents, contains('padding: const EdgeInsets.symmetric(horizontal: 4)'));
+      expect(contents, contains('alignment: AlignmentDirectional.topEnd'));
+      expect(contents, contains('Color? get backgroundColor => _colors.error'));
+      expect(contents, contains('Color? get textColor => _colors.onError'));
+      expect(
+        contents,
+        contains('TextStyle? get textStyle => Theme.of(context).textTheme.labelSmall'),
+      );
     });
 
-    test('BannerTemplateM3 emits M3 Banner defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+    test('BannerTemplateM3 emits M3 Banner defaults from banner tokens', () {
+      final String contents = const BannerTemplateM3().generateContents('_BannerDefaultsM3');
+      expect(contents, contains('class _BannerDefaultsM3 extends MaterialBannerThemeData'));
+      expect(contents, contains('elevation: 1.0'));
+      expect(contents, contains('Color? get backgroundColor => _colors.surfaceContainerLow'));
+      expect(contents, contains('Color? get surfaceTintColor => Colors.transparent'));
+      expect(contents, contains('Color? get dividerColor => _colors.outlineVariant'));
+      expect(contents, contains('TextStyle? get contentTextStyle => _textTheme.bodyMedium'));
     });
 
     test('BottomAppBarTemplateM3 emits M3 BottomAppBar defaults from tokens', () {
@@ -237,9 +291,99 @@ void main() {
       expect(contents, contains('Size? get dragHandleSize => const Size(32.0, 4.0)'));
     });
 
-    test('ButtonTemplateM3 emits M3 Button defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+    test('ButtonTemplateM3 maps supported button names to parent files', () {
+      expect(const ButtonTemplateM3('Elevated Button').parentFilePath, 'elevated_button.dart');
+      expect(const ButtonTemplateM3('Filled Button').parentFilePath, 'filled_button.dart');
+      expect(const ButtonTemplateM3('Filled Tonal Button').parentFilePath, 'filled_button.dart');
+      expect(const ButtonTemplateM3('Outlined Button').parentFilePath, 'outlined_button.dart');
+      expect(const ButtonTemplateM3('Text Button').parentFilePath, 'text_button.dart');
+    });
+
+    test('ButtonTemplateM3 emits classes for supported button names', () {
+      const expectedClasses = <String, String>{
+        'Elevated Button': '_ElevatedButtonDefaultsM3',
+        'Filled Button': '_FilledButtonDefaultsM3',
+        'Filled Tonal Button': '_FilledTonalButtonDefaultsM3',
+        'Outlined Button': '_OutlinedButtonDefaultsM3',
+        'Text Button': '_TextButtonDefaultsM3',
+      };
+
+      for (final MapEntry<String, String> entry in expectedClasses.entries) {
+        final String contents = _generateContents(ButtonTemplateM3(entry.key));
+        expect(contents, contains('class ${entry.value} extends ButtonStyle'));
+      }
+    });
+
+    test('ButtonTemplateM3 emits M3 ElevatedButton defaults from tokens', () {
+      const template = ButtonTemplateM3('Elevated Button');
+      expect(template.name, 'Elevated Button');
+      expect(template.parentFilePath, 'elevated_button.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _ElevatedButtonDefaultsM3 extends ButtonStyle'));
+      expect(
+        contents,
+        contains('MaterialStatePropertyAll<TextStyle?>(Theme.of(context).textTheme.labelLarge)'),
+      );
+      expect(contents, contains('return _colors.surfaceContainerLow;'));
+      expect(contents, contains('return _colors.primary;'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.38);'));
+      expect(contents, contains('return 3.0;'));
+      expect(contents, contains('const MaterialStatePropertyAll<Size>(Size(64.0, 40.0))'));
+      expect(contents, contains('const MaterialStatePropertyAll<double>(18.0)'));
+      expect(contents, contains('const MaterialStatePropertyAll<OutlinedBorder>(StadiumBorder())'));
+    });
+
+    test('ButtonTemplateM3 emits M3 FilledButton defaults from tokens', () {
+      const template = ButtonTemplateM3('Filled Button');
+      expect(template.parentFilePath, 'filled_button.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _FilledButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('return _colors.primary;'));
+      expect(contents, contains('return _colors.onPrimary;'));
+      expect(contents, contains('return _colors.onPrimary.withOpacity(0.1);'));
+      expect(contents, contains('return 1.0;'));
+      expect(contents, contains('// No default side'));
+    });
+
+    test('ButtonTemplateM3 emits M3 FilledButton.tonal() defaults from tokens', () {
+      const template = ButtonTemplateM3('Filled Tonal Button');
+      expect(template.parentFilePath, 'filled_button.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _FilledTonalButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('return _colors.secondaryContainer;'));
+      expect(contents, contains('return _colors.onSecondaryContainer;'));
+      expect(contents, contains('return _colors.onSecondaryContainer.withOpacity(0.1);'));
+      expect(contents, contains('return 1.0;'));
+      expect(contents, contains('// No default side'));
+    });
+
+    test('ButtonTemplateM3 emits M3 OutlinedButton defaults from tokens', () {
+      const template = ButtonTemplateM3('Outlined Button');
+      expect(template.parentFilePath, 'outlined_button.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _OutlinedButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('const MaterialStatePropertyAll<Color>(Colors.transparent)'));
+      expect(contents, contains('return _colors.primary;'));
+      expect(contents, contains('return _colors.primary.withOpacity(0.1);'));
+      expect(contents, contains('const MaterialStatePropertyAll<double>(0.0)'));
+      expect(contents, contains('return BorderSide(color: _colors.outline);'));
+    });
+
+    test('ButtonTemplateM3 emits M3 TextButton defaults from tokens', () {
+      const template = ButtonTemplateM3('Text Button');
+      expect(template.parentFilePath, 'text_button.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _TextButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('const MaterialStatePropertyAll<Color>(Colors.transparent)'));
+      expect(contents, contains('return _colors.primary;'));
+      expect(contents, contains('return _colors.primary.withOpacity(0.1);'));
+      expect(contents, contains('const MaterialStatePropertyAll<double>(0.0)'));
+      expect(contents, contains('// No default side'));
     });
 
     test('CardTemplateM3 emits M3 Card defaults from tokens', () {

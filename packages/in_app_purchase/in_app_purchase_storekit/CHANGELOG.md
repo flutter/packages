@@ -1,9 +1,16 @@
-## 0.4.11+3
+## 0.4.12+1
 
 * Migrates the StoreKit 1 core (`FIAPaymentQueueHandler`, `FIAObjectTranslator`,
   `FIAPReceiptManager`, `FIAPRequestHandler`, `FIAPPaymentQueueDelegate`,
   `FIATransactionCache`, and their protocol shims) from Objective-C to Swift.
   No functional changes.
+
+## 0.4.12
+
+* Adds support for setting introductory offer eligibility from a server-signed
+  compact JWS via `Sk2PurchaseParam.introductoryOfferEligibilityCompactJWS`,
+  which is forwarded to StoreKit 2 as
+  `Product.PurchaseOption.introductoryOfferEligibility(compactJWS:)`.
 
 ## 0.4.11+2
 
