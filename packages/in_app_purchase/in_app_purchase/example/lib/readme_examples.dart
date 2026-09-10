@@ -7,11 +7,37 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+// #docregion android-product-details
+// #docregion android-purchase-details
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
+
+// #enddocregion android-product-details
+// #enddocregion android-purchase-details
+// #docregion sk2-purchase
+// #docregion price-consent-setup
+// #docregion ios-product-details
+// #docregion ios-purchase-details
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
+
+// #enddocregion sk2-purchase
+// #enddocregion price-consent-setup
+// #enddocregion ios-product-details
+// #enddocregion ios-purchase-details
+// #docregion ios-product-details-storekit2
+// #docregion sk2-transaction
 import 'package:in_app_purchase_storekit/store_kit_2_wrappers.dart';
+
+// #enddocregion ios-product-details-storekit2
+// #enddocregion sk2-transaction
+// #docregion price-consent-delegate
+// #docregion ios-product-details
+// #docregion ios-purchase-details
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
+
+// #enddocregion price-consent-delegate
+// #enddocregion ios-product-details
+// #enddocregion ios-purchase-details
 
 /// Example app used for README excerpts.
 class ExampleApp extends StatefulWidget {
@@ -21,6 +47,7 @@ class ExampleApp extends StatefulWidget {
   State<ExampleApp> createState() => _ExampleAppState();
 }
 
+// #docregion purchase-updates
 class _ExampleAppState extends State<ExampleApp> {
   late final StreamSubscription<List<PurchaseDetails>> _subscription;
 
@@ -28,8 +55,6 @@ class _ExampleAppState extends State<ExampleApp> {
   void initState() {
     super.initState();
     final Stream<List<PurchaseDetails>> purchaseUpdated = InAppPurchase.instance.purchaseStream;
-
-    // #docregion purchase-updates
     _subscription = purchaseUpdated.listen(
       (purchaseDetailsList) {
         _listenToPurchaseUpdated(purchaseDetailsList);
@@ -41,17 +66,17 @@ class _ExampleAppState extends State<ExampleApp> {
         // handle error here.
       },
     );
-    // #enddocregion purchase-updates
   }
-
-  @override
-  Widget build(BuildContext context) => const SizedBox();
 
   @override
   void dispose() {
     _subscription.cancel();
     super.dispose();
   }
+  // #enddocregion purchase-updates
+
+  @override
+  Widget build(BuildContext context) => const SizedBox();
 }
 
 // #docregion purchase-updates-handler
@@ -93,17 +118,17 @@ Future<void> _deliverProduct(PurchaseDetails purchaseDetails) async {}
 
 void _handleInvalidPurchase(PurchaseDetails purchaseDetails) {}
 
-// #docregion store-availability
 Future<void> checkStoreAvailability() async {
+  // #docregion store-availability
   final bool available = await InAppPurchase.instance.isAvailable();
   if (!available) {
     // The store cannot be reached or accessed. Update the UI accordingly.
   }
+  // #enddocregion store-availability
 }
-// #enddocregion store-availability
 
-// #docregion product-query
 Future<void> loadProducts() async {
+  // #docregion product-query
   const Set<String> productIds = <String>{'product1', 'product2'};
   final ProductDetailsResponse response = await InAppPurchase.instance.queryProductDetails(
     productIds,
@@ -112,17 +137,18 @@ Future<void> loadProducts() async {
     // Handle the error.
   }
   final List<ProductDetails> products = response.productDetails;
+  // #enddocregion product-query
 }
-// #enddocregion product-query
 
-// #docregion restore-purchases
 Future<void> restorePurchases() async {
+  // #docregion restore-purchases
   await InAppPurchase.instance.restorePurchases();
+  // #enddocregion restore-purchases
 }
-// #enddocregion restore-purchases
 
-// #docregion purchase-flow
 void makePurchase(ProductDetails productDetails) {
+  // #docregion purchase-flow
+  // `productDetails` was obtained earlier from `queryProductDetails()`.
   final PurchaseParam purchaseParam = PurchaseParam(productDetails: productDetails);
   if (_isConsumable(productDetails)) {
     InAppPurchase.instance.buyConsumable(purchaseParam: purchaseParam);
@@ -131,15 +157,14 @@ void makePurchase(ProductDetails productDetails) {
   }
   // From here the purchase flow will be handled by the underlying store.
   // Updates will be delivered to the `InAppPurchase.instance.purchaseStream`.
+  // #enddocregion purchase-flow
 }
 
 bool _isConsumable(ProductDetails productDetails) => productDetails.id == 'consumable';
-// #enddocregion purchase-flow
 
 // #docregion sk2-purchase
 Future<void> makeStoreKit2Purchase(ProductDetails productDetails) async {
   if (Platform.isIOS || Platform.isMacOS) {
-    // import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
     final Sk2PurchaseParam purchaseParamSk2 = Sk2PurchaseParam(
       productDetails: productDetails,
       winBackOfferId: 'your_win_back_offer_id',
