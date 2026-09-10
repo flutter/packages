@@ -2007,7 +2007,7 @@ void main() {
     expect(focusNode.hasPrimaryFocus, isTrue);
     expect(
       Material.of(tester.element(find.byType(Slider))),
-      paints..circle(color: theme.colorScheme.primary.withValues(alpha:0.1)),
+      paints..circle(color: theme.colorScheme.primary.withValues(alpha: 0.1)),
     );
 
     // Check that the overlay does not show when unfocused and disabled.
@@ -2016,7 +2016,7 @@ void main() {
     expect(focusNode.hasPrimaryFocus, isFalse);
     expect(
       Material.of(tester.element(find.byType(Slider))),
-      isNot(paints..circle(color: theme.colorScheme.primary.withValues(alpha:0.1))),
+      isNot(paints..circle(color: theme.colorScheme.primary.withValues(alpha: 0.1))),
     );
   });
 
@@ -2126,7 +2126,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       Material.of(tester.element(find.byType(Slider))),
-      paints..circle(color: theme.colorScheme.primary.withValues(alpha:0.08)),
+      paints..circle(color: theme.colorScheme.primary.withValues(alpha: 0.08)),
     );
 
     // Slider still shows correct hovered color after pressing/dragging
@@ -2140,7 +2140,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       Material.of(tester.element(find.byType(Slider))),
-      paints..circle(color: theme.colorScheme.primary.withValues(alpha:0.08)),
+      paints..circle(color: theme.colorScheme.primary.withValues(alpha: 0.08)),
     );
 
     // Slider does not have an overlay when disabled and hovered.
@@ -2260,7 +2260,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       Material.of(tester.element(find.byType(Slider))),
-      isNot(paints..circle(color: theme.colorScheme.primary.withValues(alpha:0.1))),
+      isNot(paints..circle(color: theme.colorScheme.primary.withValues(alpha: 0.1))),
     );
 
     // Start dragging.
@@ -2274,7 +2274,7 @@ void main() {
     // Slider has overlay when enabled and dragged.
     expect(
       Material.of(tester.element(find.byType(Slider))),
-      paints..circle(color: theme.colorScheme.primary.withValues(alpha:0.1)),
+      paints..circle(color: theme.colorScheme.primary.withValues(alpha: 0.1)),
     );
 
     await drag.up();
@@ -2284,7 +2284,7 @@ void main() {
     expect(focusNode.hasFocus, false);
     expect(
       Material.of(tester.element(find.byType(Slider))),
-      isNot(paints..circle(color: theme.colorScheme.primary.withValues(alpha:0.1))),
+      isNot(paints..circle(color: theme.colorScheme.primary.withValues(alpha: 0.1))),
     );
 
     // Slider has overlay when enabled, dragged and focused.
@@ -2294,7 +2294,7 @@ void main() {
     expect(focusNode.hasFocus, true);
     expect(
       Material.of(tester.element(find.byType(Slider))),
-      paints..circle(color: theme.colorScheme.primary.withValues(alpha:0.1)),
+      paints..circle(color: theme.colorScheme.primary.withValues(alpha: 0.1)),
     );
   });
 
@@ -4509,7 +4509,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         Material.of(tester.element(find.byType(Slider))),
-        isNot(paints..circle(color: theme.colorScheme.primary.withValues(alpha:0.12))),
+        isNot(paints..circle(color: theme.colorScheme.primary.withValues(alpha: 0.12))),
       );
 
       // Start hovering.
@@ -4522,7 +4522,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         Material.of(tester.element(find.byType(Slider))),
-        paints..circle(color: theme.colorScheme.primary.withValues(alpha:0.12)),
+        paints..circle(color: theme.colorScheme.primary.withValues(alpha: 0.12)),
       );
 
       // Slider does not have an overlay when disabled and hovered.
@@ -4530,7 +4530,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         Material.of(tester.element(find.byType(Slider))),
-        isNot(paints..circle(color: theme.colorScheme.primary.withValues(alpha:0.12))),
+        isNot(paints..circle(color: theme.colorScheme.primary.withValues(alpha: 0.12))),
       );
     });
 
@@ -4575,7 +4575,7 @@ void main() {
       expect(focusNode.hasPrimaryFocus, isTrue);
       expect(
         Material.of(tester.element(find.byType(Slider))),
-        paints..circle(color: theme.colorScheme.primary.withValues(alpha:0.12)),
+        paints..circle(color: theme.colorScheme.primary.withValues(alpha: 0.12)),
       );
 
       // Check that the overlay does not show when unfocused and disabled.
@@ -4584,7 +4584,7 @@ void main() {
       expect(focusNode.hasPrimaryFocus, isFalse);
       expect(
         Material.of(tester.element(find.byType(Slider))),
-        isNot(paints..circle(color: theme.colorScheme.primary.withValues(alpha:0.12))),
+        isNot(paints..circle(color: theme.colorScheme.primary.withValues(alpha: 0.12))),
       );
     });
 
@@ -4630,7 +4630,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         Material.of(tester.element(find.byType(Slider))),
-        isNot(paints..circle(color: theme.colorScheme.primary.withValues(alpha:0.12))),
+        isNot(paints..circle(color: theme.colorScheme.primary.withValues(alpha: 0.12))),
       );
 
       // Start dragging.
@@ -4644,7 +4644,7 @@ void main() {
       // Slider has overlay when enabled and dragged.
       expect(
         Material.of(tester.element(find.byType(Slider))),
-        paints..circle(color: theme.colorScheme.primary.withValues(alpha:0.12)),
+        paints..circle(color: theme.colorScheme.primary.withValues(alpha: 0.12)),
       );
 
       await drag.up();
@@ -4654,7 +4654,7 @@ void main() {
       expect(focusNode.hasFocus, false);
       expect(
         Material.of(tester.element(find.byType(Slider))),
-        isNot(paints..circle(color: theme.colorScheme.primary.withValues(alpha:0.12))),
+        isNot(paints..circle(color: theme.colorScheme.primary.withValues(alpha: 0.12))),
       );
     });
   });
@@ -5355,16 +5355,16 @@ void main() {
       final ColorScheme colorScheme = theme.colorScheme;
       final Color activeTrackColor = colorScheme.primary;
       final Color inactiveTrackColor = colorScheme.secondaryContainer;
-      final Color secondaryActiveTrackColor = colorScheme.primary.withValues(alpha:0.54);
-      final Color disabledActiveTrackColor = colorScheme.onSurface.withValues(alpha:0.38);
-      final Color disabledInactiveTrackColor = colorScheme.onSurface.withValues(alpha:0.12);
-      final Color disabledSecondaryActiveTrackColor = colorScheme.onSurface.withValues(alpha:0.38);
+      final Color secondaryActiveTrackColor = colorScheme.primary.withValues(alpha: 0.54);
+      final Color disabledActiveTrackColor = colorScheme.onSurface.withValues(alpha: 0.38);
+      final Color disabledInactiveTrackColor = colorScheme.onSurface.withValues(alpha: 0.12);
+      final Color disabledSecondaryActiveTrackColor = colorScheme.onSurface.withValues(alpha: 0.38);
       final Color activeTickMarkColor = colorScheme.onPrimary;
       final Color inactiveTickMarkColor = colorScheme.onSecondaryContainer;
       final Color disabledActiveTickMarkColor = colorScheme.onInverseSurface;
       final Color disabledInactiveTickMarkColor = colorScheme.onSurface;
       final Color thumbColor = colorScheme.primary;
-      final Color disabledThumbColor = colorScheme.onSurface.withValues(alpha:0.38);
+      final Color disabledThumbColor = colorScheme.onSurface.withValues(alpha: 0.38);
       final Color valueIndicatorColor = colorScheme.inverseSurface;
       var value = 0.45;
       Widget buildApp({int? divisions, bool enabled = true}) {
