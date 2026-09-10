@@ -28,9 +28,6 @@ abstract final class GoogleFontsLite {
   /// ```dart
   /// GoogleFontsLite.config.allowRuntimeFetching = false;
   /// ```
-  ///
-  /// The underlying [sharedGoogleFontsConfig] is not exported or meant for
-  /// public consumption.
   static final GoogleFontsConfig config = sharedGoogleFontsConfig;
 
   /// Returns a [Future] which resolves when requested fonts have finished
