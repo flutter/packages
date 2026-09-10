@@ -222,7 +222,7 @@ void main() {
       chipMaterial.shape,
       RoundedRectangleBorder(
         borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-        side: BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.12)),
+        side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.12)),
       ),
     );
 
@@ -281,7 +281,7 @@ void main() {
     );
 
     decoration = tester.widget<Ink>(find.byType(Ink)).decoration! as ShapeDecoration;
-    expect(decoration.color, theme.colorScheme.onSurface.withOpacity(0.12));
+    expect(decoration.color, theme.colorScheme.onSurface.withValues(alpha: 0.12));
   });
 
   testWidgets('Material3 - ChoiceChip.elevated defaults', (WidgetTester tester) async {
@@ -352,7 +352,7 @@ void main() {
     );
 
     decoration = tester.widget<Ink>(find.byType(Ink)).decoration! as ShapeDecoration;
-    expect(decoration.color, theme.colorScheme.onSurface.withOpacity(0.12));
+    expect(decoration.color, theme.colorScheme.onSurface.withValues(alpha: 0.12));
 
     // Test selected enabled ChoiceChip.elevated defaults.
     await tester.pumpWidget(
@@ -406,7 +406,7 @@ void main() {
     );
 
     decoration = tester.widget<Ink>(find.byType(Ink)).decoration! as ShapeDecoration;
-    expect(decoration.color, theme.colorScheme.onSurface.withOpacity(0.12));
+    expect(decoration.color, theme.colorScheme.onSurface.withValues(alpha: 0.12));
   });
 
   testWidgets('ChoiceChip.color resolves material states', (WidgetTester tester) async {
