@@ -4,7 +4,7 @@
 
 // ignore_for_file: diagnostic_describe_all_properties
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import '../misc/extensions.dart';
 
 /// Checks for CupertinoApp in the widget tree.

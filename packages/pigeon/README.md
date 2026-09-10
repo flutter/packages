@@ -38,26 +38,42 @@ as a Swift class instead.
 
 ### Synchronous and Asynchronous methods
 
-While all calls across platform channel APIs (such as pigeon methods) are asynchronous,
-pigeon methods can be written on the native side as synchronous methods,
-to make it simpler to always reply exactly once.
+While all calls across platform channel APIs (such as pigeon methods) are asynchronous
+from Flutter's perspective, pigeon methods can be written on the native side as synchronous
+methods to make it simpler to always reply exactly once.
 
-If asynchronous methods are needed, the `@async` annotation can be used. This will require
-results or errors to be returned via a provided callback. [Example](./example/README.md#HostApi_Example).
+If asynchronous methods are needed, two annotations are available:
+* `@async`: Generates modern concurrency signatures (`suspend` functions in Kotlin and
+  `async throws` methods in Swift). This is the default style for asynchronous methods.
+* `@asyncCallback`: Generates completion callback-based asynchronous methods (e.g.
+  accepting a `(Result<T>) -> Unit` or completion closure parameter).
+
+> [!NOTE]
+> Currently, only the Kotlin and Swift generators distinguish between `@async` and
+> `@asyncCallback`. In other generators (Java, Objective-C, C++, and GObject), both annotations
+> generate identical callback-based asynchronous method signatures.
+
+[Example](./example/README.md#HostApi_Example).
 
 ### Error Handling
 
-#### Kotlin, Java and Swift
+#### Kotlin and Swift
 
 All Host API exceptions are translated into Flutter `PlatformException`.
-* For synchronous methods, thrown exceptions will be caught and translated.
-* For asynchronous methods, there is no default exception handling; errors
-should be returned via the provided callback.
+* For synchronous methods and modern `@async` methods, thrown exceptions (`FlutterError` in
+  Kotlin, `PigeonError` in Swift) will be caught and translated automatically.
+* For callback-style `@asyncCallback` methods, errors should be returned via the provided
+  result callback (e.g., `Result.failure(...)`).
 
-To pass custom details into `PlatformException` for error handling,
-use `FlutterError` in your Host API. [Example](./example/README.md#HostApi_Example).
+To pass custom details into `PlatformException` for error handling, use `FlutterError` in
+Kotlin and `PigeonError` in Swift. [Example](./example/README.md#HostApi_Example).
 
-For swift, use `PigeonError` instead of `FlutterError` when throwing an error. See [Example#Swift](./example/README.md#Swift) for more details.
+#### Java
+
+All Host API exceptions are translated into Flutter `PlatformException`.
+* For synchronous methods, thrown exceptions (`FlutterError`) will be caught and translated.
+* For asynchronous methods (`@async` and `@asyncCallback`), errors should be returned via
+  the provided callback.
 
 #### Objective-C and C++
 
@@ -67,7 +83,7 @@ For synchronous methods:
 * Objective-C - Set the `error` argument to a `FlutterError` reference.
 * C++ - Return a `FlutterError`.
 
-For async methods:
+For async methods (`@async` and `@asyncCallback`):
 * Return a `FlutterError` through the provided callback.
 
 

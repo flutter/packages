@@ -1065,10 +1065,10 @@ void main() {
   });
 
   testWidgets(
-    'Material3 - Checkbox visual density cannot be overriden by ThemeData.visualDensity',
+    'Material3 - Checkbox visual density cannot be overridden by ThemeData.visualDensity',
     (WidgetTester tester) async {
       const key = Key('test');
-      Widget buldCheckbox() {
+      Widget buildCheckbox() {
         return MaterialApp(
           theme: theme.copyWith(visualDensity: VisualDensity.compact),
           home: Material(
@@ -1079,7 +1079,7 @@ void main() {
         );
       }
 
-      await tester.pumpWidget(buldCheckbox());
+      await tester.pumpWidget(buildCheckbox());
       await tester.pumpAndSettle();
       final RenderBox box = tester.renderObject(find.byKey(key));
       expect(box.size, equals(const Size(48, 48)));

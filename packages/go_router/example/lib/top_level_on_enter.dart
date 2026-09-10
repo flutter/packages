@@ -4,8 +4,8 @@
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Simulated service for handling referrals and deep links
 class ReferralService {

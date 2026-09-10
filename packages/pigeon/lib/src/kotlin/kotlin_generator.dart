@@ -131,8 +131,7 @@ class InternalKotlinOptions extends InternalOptions {
        includeErrorClass = options.includeErrorClass,
        useGeneratedAnnotation = options.useGeneratedAnnotation,
        fileSpecificClassNameComponent =
-           options.fileSpecificClassNameComponent ??
-           kotlinOut.split('/').lastOrNull?.split('.').first;
+           options.fileSpecificClassNameComponent ?? deduceClassNameComponent(kotlinOut);
 
   /// The package where the generated class will live.
   final String? package;
@@ -236,6 +235,22 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     indent.writeln('import java.nio.ByteBuffer');
     if (generatorOptions.useGeneratedAnnotation) {
       indent.writeln('import javax.annotation.Generated');
+    }
+    final bool hasSuspendHostApiMethods = root.apis.whereType<AstHostApi>().any(
+      (AstHostApi api) => api.methods.any(
+        (Method method) => method.isAsynchronous && !method.isAsynchronousCallback,
+      ),
+    );
+    final bool hasSuspendFlutterApiMethods = root.apis.whereType<AstFlutterApi>().any(
+      (AstFlutterApi api) => api.methods.any((Method method) => !method.isAsynchronousCallback),
+    );
+    if (hasSuspendHostApiMethods || hasSuspendFlutterApiMethods) {
+      indent.writeln('import kotlinx.coroutines.CoroutineScope');
+      indent.writeln('import kotlinx.coroutines.Dispatchers');
+      indent.writeln('import kotlinx.coroutines.launch');
+      indent.writeln('import kotlinx.coroutines.suspendCancellableCoroutine');
+      indent.writeln('import kotlin.coroutines.resume');
+      indent.writeln('import kotlin.coroutines.resumeWithException');
     }
   }
 
@@ -750,6 +765,7 @@ if (wrapped == null) {
           channelName: makeChannelName(api, method, dartPackageName),
           documentationComments: method.documentationComments,
           dartPackageName: dartPackageName,
+          isAsynchronousCallback: method.isAsynchronousCallback,
           onWriteBody:
               (
                 Indent indent, {
@@ -758,6 +774,7 @@ if (wrapped == null) {
                 required TypeDeclaration returnType,
                 required String channelName,
                 required String errorClassName,
+                required bool isAsynchronousCallback,
               }) {
                 indent.writeln(
                   r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""',
@@ -769,6 +786,7 @@ if (wrapped == null) {
                   returnType: returnType,
                   channelName: '$channelName\$separatedMessageChannelSuffix',
                   errorClassName: errorClassName,
+                  isAsynchronousCallback: isAsynchronousCallback,
                 );
               },
         );
@@ -815,6 +833,7 @@ if (wrapped == null) {
           returnType: method.returnType,
           parameters: method.parameters,
           isAsynchronous: method.isAsynchronous,
+          isAsynchronousCallback: method.isAsynchronousCallback,
         );
       }
 
@@ -857,6 +876,7 @@ if (wrapped == null) {
               parameters: method.parameters,
               returnType: method.returnType,
               isAsynchronous: method.isAsynchronous,
+              isAsynchronousCallback: method.isAsynchronousCallback,
               serialBackgroundQueue: method.taskQueueType == TaskQueueType.serialBackgroundThread
                   ? serialBackgroundQueue
                   : null,
@@ -961,6 +981,7 @@ if (wrapped == null) {
           returnType: const TypeDeclaration.voidDeclaration(),
           channelName: makeRemoveStrongReferenceChannelName(dartPackageName),
           dartPackageName: dartPackageName,
+          isAsynchronousCallback: true,
         );
       },
     );
@@ -1510,10 +1531,12 @@ fun floatHash(f: Float): Int {
     List<String> documentationComments = const <String>[],
     int? minApiRequirement,
     bool isAsynchronous = false,
+    bool isAsynchronousCallback = false,
     bool isOpen = false,
     bool isAbstract = false,
     String Function(int index, NamedType type) getArgumentName = _getArgumentName,
   }) {
+    final bool useSuspend = isAsynchronous && !isAsynchronousCallback;
     final argSignature = <String>[];
     if (parameters.isNotEmpty) {
       final Iterable<String> argTypes = parameters.map(
@@ -1541,15 +1564,20 @@ fun floatHash(f: Float): Int {
     final openKeyword = isOpen ? 'open ' : '';
     final abstractKeyword = isAbstract ? 'abstract ' : '';
 
-    if (isAsynchronous) {
+    if (isAsynchronous && !useSuspend) {
       argSignature.add('callback: (Result<$resultType>) -> Unit');
       indent.writeln('$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')})');
-    } else if (returnType.isVoid) {
-      indent.writeln('$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')})');
     } else {
-      indent.writeln(
-        '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')}): $returnTypeString',
-      );
+      final suspendKeyword = isAsynchronous && useSuspend ? 'suspend ' : '';
+      if (returnType.isVoid) {
+        indent.writeln(
+          '$openKeyword$abstractKeyword${suspendKeyword}fun $name(${argSignature.join(', ')})',
+        );
+      } else {
+        indent.writeln(
+          '$openKeyword$abstractKeyword${suspendKeyword}fun $name(${argSignature.join(', ')}): $returnTypeString',
+        );
+      }
     }
   }
 
@@ -1563,6 +1591,7 @@ fun floatHash(f: Float): Int {
     required TypeDeclaration returnType,
     String setHandlerCondition = 'api != null',
     bool isAsynchronous = false,
+    bool isAsynchronousCallback = false,
     String? serialBackgroundQueue,
     String Function(List<String> safeArgNames, {required String apiVarName})? onCreateCall,
   }) {
@@ -1598,7 +1627,26 @@ fun floatHash(f: Float): Int {
               ? onCreateCall(methodArguments, apiVarName: 'api')
               : 'api.$name(${methodArguments.join(', ')})';
 
-          if (isAsynchronous) {
+          if (isAsynchronous && !isAsynchronousCallback) {
+            final scope = serialBackgroundQueue != null
+                ? 'CoroutineScope(Dispatchers.Unconfined)'
+                : 'CoroutineScope(Dispatchers.Main)';
+            indent.writeScoped('$scope.launch {', '}', () {
+              indent.writeScoped('val wrapped: List<Any?> = try {', '}', () {
+                if (returnType.isVoid) {
+                  indent.writeln(call);
+                  indent.writeln('listOf(null)');
+                } else {
+                  indent.writeln('listOf($call)');
+                }
+              }, addTrailingNewline: false);
+              indent.add(' catch (exception: Throwable) ');
+              indent.addScoped('{', '}', () {
+                indent.writeln('${_getUtilsClassName(generatorOptions)}.wrapError(exception)');
+              });
+              indent.writeln('reply.reply(wrapped)');
+            });
+          } else if (isAsynchronous) {
             final String resultType = returnType.isVoid
                 ? 'Unit'
                 : _nullSafeKotlinTypeForDartType(returnType);
@@ -1654,6 +1702,8 @@ fun floatHash(f: Float): Int {
     required TypeDeclaration returnType,
     required String channelName,
     required String dartPackageName,
+    bool isAsynchronous = true,
+    bool isAsynchronousCallback = false,
     List<String> documentationComments = const <String>[],
     int? minApiRequirement,
     void Function(
@@ -1663,6 +1713,7 @@ fun floatHash(f: Float): Int {
           required TypeDeclaration returnType,
           required String channelName,
           required String errorClassName,
+          required bool isAsynchronousCallback,
         })
         onWriteBody =
         _writeFlutterMethodMessageCall,
@@ -1673,7 +1724,8 @@ fun floatHash(f: Float): Int {
       returnType: returnType,
       parameters: parameters,
       documentationComments: documentationComments,
-      isAsynchronous: true,
+      isAsynchronous: isAsynchronous,
+      isAsynchronousCallback: isAsynchronousCallback,
       minApiRequirement: minApiRequirement,
       getArgumentName: _getSafeArgumentName,
     );
@@ -1687,6 +1739,7 @@ fun floatHash(f: Float): Int {
         returnType: returnType,
         channelName: channelName,
         errorClassName: errorClassName,
+        isAsynchronousCallback: isAsynchronousCallback,
       );
     });
   }
@@ -1698,6 +1751,7 @@ fun floatHash(f: Float): Int {
     required TypeDeclaration returnType,
     required String channelName,
     required String errorClassName,
+    bool isAsynchronousCallback = false,
   }) {
     String sendArgument;
 
@@ -1711,39 +1765,62 @@ fun floatHash(f: Float): Int {
       sendArgument = 'listOf(${enumSafeArgNames.join(', ')})';
     }
 
-    const channel = 'channel';
-    indent.writeln('val channelName = "$channelName"');
-    indent.writeln('val $channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)');
-    indent.writeScoped('$channel.send($sendArgument) {', '}', () {
-      indent.writeScoped('if (it is List<*>) {', '} ', () {
-        indent.writeScoped('if (it.size > 1) {', '} ', () {
-          indent.writeln(
-            'callback(Result.failure($errorClassName(it[0] as String, it[1] as String, it[2] as String?)))',
-          );
-        }, addTrailingNewline: false);
-        if (!returnType.isNullable && !returnType.isVoid) {
-          indent.addScoped('else if (it[0] == null) {', '} ', () {
+    String resumeSuccess(String valStr) => isAsynchronousCallback
+        ? 'callback(Result.success($valStr))'
+        : 'continuation.resume($valStr)';
+    String resumeError(String errorExpr) => isAsynchronousCallback
+        ? 'callback(Result.failure($errorExpr))'
+        : 'continuation.resumeWithException($errorExpr)';
+
+    void sendBlock() {
+      const channel = 'channel';
+      indent.writeln('val channelName = "$channelName"');
+      indent.writeln(
+        'val $channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)',
+      );
+      indent.writeScoped('$channel.send($sendArgument) {', '}', () {
+        indent.writeScoped('if (it is List<*>) {', '} ', () {
+          indent.writeScoped('if (it.size > 1) {', '} ', () {
             indent.writeln(
-              'callback(Result.failure($errorClassName("null-error", "Flutter api returned null value for non-null return value.", "")))',
+              resumeError('$errorClassName(it[0] as String, it[1] as String, it[2] as String?)'),
             );
           }, addTrailingNewline: false);
-        }
-        indent.addScoped('else {', '}', () {
-          if (returnType.isVoid) {
-            indent.writeln('callback(Result.success(Unit))');
-          } else {
-            indent.writeln('val output = ${_cast(indent, 'it[0]', type: returnType)}');
-
-            indent.writeln('callback(Result.success(output))');
+          if (!returnType.isNullable && !returnType.isVoid) {
+            indent.addScoped('else if (it[0] == null) {', '} ', () {
+              indent.writeln(
+                resumeError(
+                  '$errorClassName("null-error", "Flutter api returned null value for non-null return value.", "")',
+                ),
+              );
+            }, addTrailingNewline: false);
           }
+          indent.addScoped('else {', '}', () {
+            if (returnType.isVoid) {
+              indent.writeln(resumeSuccess('Unit'));
+            } else {
+              indent.writeln('val output = ${_cast(indent, 'it[0]', type: returnType)}');
+
+              indent.writeln(resumeSuccess('output'));
+            }
+          });
+        }, addTrailingNewline: false);
+        indent.addScoped('else {', '} ', () {
+          indent.writeln(
+            resumeError(
+              '${_getUtilsClassName(generatorOptions)}.createConnectionError(channelName)',
+            ),
+          );
         });
-      }, addTrailingNewline: false);
-      indent.addScoped('else {', '} ', () {
-        indent.writeln(
-          'callback(Result.failure(${_getUtilsClassName(generatorOptions)}.createConnectionError(channelName)))',
-        );
       });
-    });
+    }
+
+    if (isAsynchronousCallback) {
+      sendBlock();
+    } else {
+      indent.writeScoped('return suspendCancellableCoroutine { continuation ->', '}', () {
+        sendBlock();
+      });
+    }
   }
 
   void _writeProxyApiRegistrar(
@@ -1949,6 +2026,7 @@ fun floatHash(f: Float): Int {
         returnType: method.returnType,
         documentationComments: method.documentationComments,
         isAsynchronous: method.isAsynchronous,
+        isAsynchronousCallback: true,
         isAbstract: true,
         minApiRequirement: _findAndroidHighestApiRequirement(<TypeDeclaration>[
           if (!method.isStatic) apiAsTypeDeclaration,
@@ -2120,6 +2198,7 @@ fun floatHash(f: Float): Int {
                 taskQueueType: method.taskQueueType,
                 returnType: method.returnType,
                 isAsynchronous: method.isAsynchronous,
+                isAsynchronousCallback: true,
                 parameters: <Parameter>[
                   if (!method.isStatic)
                     Parameter(
@@ -2155,6 +2234,7 @@ fun floatHash(f: Float): Int {
       generatorOptions: generatorOptions,
       name: newInstanceMethodName,
       returnType: const TypeDeclaration.voidDeclaration(),
+      isAsynchronousCallback: true,
       documentationComments: <String>[
         ' Creates a Dart instance of ${api.name} and attaches it to [${classMemberNamePrefix}instanceArg].',
       ],
@@ -2182,6 +2262,7 @@ fun floatHash(f: Float): Int {
             required TypeDeclaration returnType,
             required String channelName,
             required String errorClassName,
+            required bool isAsynchronousCallback,
           }) {
             indent.writeScoped('if (pigeonRegistrar.ignoreCallsToDart) {', '}', () {
               indent.format(
@@ -2219,6 +2300,7 @@ fun floatHash(f: Float): Int {
                   returnType: returnType,
                   channelName: channelName,
                   errorClassName: errorClassName,
+                  isAsynchronousCallback: true,
                   parameters: <Parameter>[
                     Parameter(
                       name: '${classMemberNamePrefix}identifier',
@@ -2259,6 +2341,7 @@ fun floatHash(f: Float): Int {
         returnType: method.returnType,
         channelName: makeChannelName(api, method, dartPackageName),
         dartPackageName: dartPackageName,
+        isAsynchronousCallback: true,
         documentationComments: method.documentationComments,
         minApiRequirement: _findAndroidHighestApiRequirement(<TypeDeclaration>[
           apiAsTypeDeclaration,
@@ -2280,6 +2363,7 @@ fun floatHash(f: Float): Int {
               required TypeDeclaration returnType,
               required String channelName,
               required String errorClassName,
+              required bool isAsynchronousCallback,
             }) {
               indent.writeScoped('if (pigeonRegistrar.ignoreCallsToDart) {', '}', () {
                 indent.format('''
@@ -2307,6 +2391,7 @@ fun floatHash(f: Float): Int {
                 returnType: returnType,
                 channelName: channelName,
                 errorClassName: errorClassName,
+                isAsynchronousCallback: true,
                 parameters: parameters,
               );
             },

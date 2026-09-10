@@ -17,12 +17,11 @@ private class PigeonApiImplementation: ExampleHostApi {
     return a + b
   }
 
-  func sendMessage(message: MessageData, completion: @escaping (Result<Bool, Error>) -> Void) {
+  func sendMessage(message: MessageData) async throws -> Bool {
     if message.code == Code.one {
-      completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
-      return
+      throw PigeonError(code: "code", message: "message", details: "details")
     }
-    completion(.success(true))
+    return true
   }
 }
 
