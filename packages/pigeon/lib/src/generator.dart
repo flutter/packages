@@ -19,6 +19,8 @@ abstract class Generator<T extends InternalOptions> {
   const Generator();
 
   /// Generates files for specified language with specified [generatorOptions]
+  ///
+  /// This method must create an [Indent] and call `sink.write(indent.toString())`.
   void generate(T generatorOptions, Root root, StringSink sink, {required String dartPackageName});
 }
 
