@@ -46,6 +46,58 @@ void main() {
     expect(identical(TextSelectionThemeData.lerp(data, data, 0.5), data), true);
   });
 
+  group('TextSelectionThemeData lerp contextMenuBuilder', () {
+    Widget aBuilder(BuildContext context, EditableTextState editableTextState) {
+      return const Placeholder();
+    }
+
+    Widget bBuilder(BuildContext context, EditableTextState editableTextState) {
+      return const Icon(Icons.search);
+    }
+
+    const withoutBuilder = TextSelectionThemeData();
+    final withABuilder = TextSelectionThemeData(contextMenuBuilder: aBuilder);
+    final withBBuilder = TextSelectionThemeData(contextMenuBuilder: bBuilder);
+
+    test('returns null when both are null', () {
+      expect(TextSelectionThemeData.lerp(null, null, 0.5)!.contextMenuBuilder, null);
+      expect(
+        TextSelectionThemeData.lerp(withoutBuilder, withoutBuilder, 0.5)!.contextMenuBuilder,
+        null,
+      );
+    });
+
+    test('returns a below 0.5 and b at or above 0.5', () {
+      expect(
+        TextSelectionThemeData.lerp(withABuilder, withBBuilder, 0)!.contextMenuBuilder,
+        aBuilder,
+      );
+      expect(
+        TextSelectionThemeData.lerp(withABuilder, withBBuilder, 0.49)!.contextMenuBuilder,
+        aBuilder,
+      );
+      expect(
+        TextSelectionThemeData.lerp(withABuilder, withBBuilder, 0.5)!.contextMenuBuilder,
+        bBuilder,
+      );
+      expect(
+        TextSelectionThemeData.lerp(withABuilder, withBBuilder, 1)!.contextMenuBuilder,
+        bBuilder,
+      );
+    });
+
+    test('can produce a null result when the chosen side is null', () {
+      expect(
+        TextSelectionThemeData.lerp(withABuilder, withoutBuilder, 0.5)!.contextMenuBuilder,
+        null,
+      );
+      expect(
+        TextSelectionThemeData.lerp(withoutBuilder, withBBuilder, 0)!.contextMenuBuilder,
+        null,
+      );
+    });
+  });
+
   test('TextSelectionThemeData null fields by default', () {
     const theme = TextSelectionThemeData();
     expect(theme.cursorColor, null);

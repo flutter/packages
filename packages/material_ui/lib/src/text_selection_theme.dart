@@ -113,8 +113,7 @@ class TextSelectionThemeData with Diagnosticable {
   }
 
   /// Linear interpolation doesn't make much sense between two context menu builders,
-  /// so instead of interpolating, choose one based on the value of 't' if both are non-null.
-  /// If one is null but not the other return the non-null one. If both are null, return null.
+  /// so instead of interpolating, choose one based on the value of 't'.
   static EditableTextContextMenuBuilder? _lerpContextMenuBuilder(
     TextSelectionThemeData? a,
     TextSelectionThemeData? b,
