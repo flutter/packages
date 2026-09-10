@@ -2,9 +2,113 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import AVFoundation
+import Photos
+import PhotosUI
+import UIKit
 import UniformTypeIdentifiers
 
 @testable import image_picker_ios
+
+final class StubViewProvider: NSObject, FIPViewProvider {
+  var viewController: UIViewController?
+
+  init(viewController: UIViewController? = nil) {
+    self.viewController = viewController
+  }
+}
+
+/// Records `sourceType` / `cameraDevice` without UIKit's availability checks.
+///
+/// `UIImagePickerController` throws if `sourceType` is set to `.camera` when
+/// the class method `isSourceTypeAvailable(.camera)` is false (Simulator).
+/// Original tests used an OCMock class mock of that method; this subclass is
+/// the Swift Testing equivalent.
+final class RecordingImagePickerController: UIImagePickerController {
+  private var recordedSourceType: UIImagePickerController.SourceType = .photoLibrary
+  private var recordedCameraDevice: UIImagePickerController.CameraDevice = .rear
+  var isBeingPresentedOverride: Bool?
+
+  override var sourceType: UIImagePickerController.SourceType {
+    get { recordedSourceType }
+    set { recordedSourceType = newValue }
+  }
+
+  override var cameraDevice: UIImagePickerController.CameraDevice {
+    get { recordedCameraDevice }
+    set { recordedCameraDevice = newValue }
+  }
+
+  override var isBeingPresented: Bool {
+    isBeingPresentedOverride ?? super.isBeingPresented
+  }
+}
+
+final class RecordingViewController: UIViewController {
+  private(set) var presented: UIViewController?
+
+  override func present(
+    _ viewControllerToPresent: UIViewController, animated flag: Bool,
+    completion: (() -> Void)? = nil
+  ) {
+    presented = viewControllerToPresent
+    completion?()
+  }
+}
+
+final class FakeCameraAvailability: NSObject, CameraAvailabilityChecking {
+  var sourceTypeAvailable = false
+  var cameraDeviceAvailable = false
+
+  func isSourceTypeAvailable(_ sourceType: UIImagePickerController.SourceType) -> Bool {
+    sourceTypeAvailable
+  }
+
+  func isCameraDeviceAvailable(_ cameraDevice: UIImagePickerController.CameraDevice) -> Bool {
+    cameraDeviceAvailable
+  }
+}
+
+final class FakeCameraPermissionChecker: NSObject, CameraPermissionChecking {
+  var status: AVAuthorizationStatus = .notDetermined
+  var requestAccessCallCount = 0
+  /// When false, `requestAccess` stores the handler without invoking it.
+  var completesRequestAccess = true
+  /// Value passed to the `requestAccess` handler. Independent of `status` so
+  /// not-determined → granted/denied can be tested separately.
+  var requestAccessGranted = false
+
+  func authorizationStatus(forMediaType mediaType: AVMediaType) -> AVAuthorizationStatus {
+    status
+  }
+
+  func requestAccess(
+    forMediaType mediaType: AVMediaType,
+    completionHandler handler: @escaping @Sendable (Bool) -> Void
+  ) {
+    requestAccessCallCount += 1
+    guard completesRequestAccess else { return }
+    handler(requestAccessGranted)
+  }
+}
+
+final class FakePhotoLibraryPermissionChecker: NSObject, PhotoLibraryPermissionChecking {
+  var status: PHAuthorizationStatus = .notDetermined
+  var authorizationStatusCallCount = 0
+  var requestAuthorizationCallCount = 0
+  /// When set, `requestAuthorization` reports this status instead of `status`.
+  var requestAuthorizationResult: PHAuthorizationStatus?
+
+  func authorizationStatus() -> PHAuthorizationStatus {
+    authorizationStatusCallCount += 1
+    return status
+  }
+
+  func requestAuthorization(_ handler: @escaping (PHAuthorizationStatus) -> Void) {
+    requestAuthorizationCallCount += 1
+    handler(requestAuthorizationResult ?? status)
+  }
+}
 
 /// A `PickerItem` stand-in that does not require constructing a `PHPickerResult`.
 final class FakePickerItem: NSObject, PickerItem {
@@ -14,6 +118,16 @@ final class FakePickerItem: NSObject, PickerItem {
   init(itemProvider: NSItemProvider, assetIdentifier: String?) {
     self.itemProvider = itemProvider
     self.assetIdentifier = assetIdentifier
+  }
+}
+
+final class RecordingPHPickerCreator: NSObject, PHPickerCreating {
+  private(set) var lastConfiguration: __PHPickerConfiguration?
+  var picker = PHPickerViewController(configuration: PHPickerConfiguration())
+
+  func makePicker(configuration: __PHPickerConfiguration) -> PHPickerViewController {
+    lastConfiguration = configuration
+    return picker
   }
 }
 

@@ -40,14 +40,6 @@
 
 /// The view provider to use for displaying native view controllers.
 @property(nonatomic, nonnull) NSObject<FIPViewProvider> *viewProvider;
-/// A temporary UIWindow placed above Flutter's window to swallow all user
-/// interactions while UIImagePickerController is dismissing. This prevents
-/// stray taps from leaking to the Flutter view during the dismissal animation.
-@property(strong, nonatomic) UIWindow *interactionBlockerWindow;
-
-/// The previously active key window before the interactionBlockerWindow is
-/// shown. Stored so we can restore the original key window after dismissal.
-@property(weak, nonatomic) UIWindow *previousKeyWindow;
 
 @end
 
