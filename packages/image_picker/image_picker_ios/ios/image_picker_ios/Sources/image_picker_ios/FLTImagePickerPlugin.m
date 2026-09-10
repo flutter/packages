@@ -65,6 +65,12 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   self = [super init];
   if (self) {
     _viewProvider = viewProvider;
+    _cameraAvailability = [[FIPDefaultCameraAvailability alloc] init];
+    _cameraPermissionChecker = [[FIPDefaultCameraPermissionChecker alloc] init];
+    _photoLibraryPermissionChecker = [[FIPDefaultPhotoLibraryPermissionChecker alloc] init];
+    if (@available(iOS 14.0, *)) {
+      _phPickerCreator = [[FIPDefaultPHPickerCreator alloc] init];
+    }
   }
   return self;
 }
@@ -112,7 +118,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   config.filter = [PHPickerFilter anyFilterMatchingSubfilters:filters];
 
   PHPickerViewController *pickerViewController =
-      [[PHPickerViewController alloc] initWithConfiguration:config];
+      [self.phPickerCreator makePickerWithConfiguration:config];
   pickerViewController.delegate = self;
   pickerViewController.presentationController.delegate = self;
   self.callContext = context;
@@ -321,8 +327,8 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
     }
   }
   // Camera is not available on simulators
-  if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] &&
-      [UIImagePickerController isCameraDeviceAvailable:device]) {
+  if ([self.cameraAvailability isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] &&
+      [self.cameraAvailability isCameraDeviceAvailable:device]) {
     imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
     imagePickerController.cameraDevice = device;
     UIViewController *presentingController =
@@ -349,23 +355,25 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 
 - (void)checkCameraAuthorizationWithImagePicker:(UIImagePickerController *)imagePickerController
                                          camera:(UIImagePickerControllerCameraDevice)device {
-  AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+  AVAuthorizationStatus status =
+      [self.cameraPermissionChecker authorizationStatusForMediaType:AVMediaTypeVideo];
 
   switch (status) {
     case AVAuthorizationStatusAuthorized:
       [self showCamera:device withImagePicker:imagePickerController];
       break;
     case AVAuthorizationStatusNotDetermined: {
-      [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo
-                               completionHandler:^(BOOL granted) {
-                                 dispatch_async(dispatch_get_main_queue(), ^{
-                                   if (granted) {
-                                     [self showCamera:device withImagePicker:imagePickerController];
-                                   } else {
-                                     [self errorNoCameraAccess:AVAuthorizationStatusDenied];
-                                   }
-                                 });
-                               }];
+      [self.cameraPermissionChecker
+          requestAccessForMediaType:AVMediaTypeVideo
+                  completionHandler:^(BOOL granted) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                      if (granted) {
+                        [self showCamera:device withImagePicker:imagePickerController];
+                      } else {
+                        [self errorNoCameraAccess:AVAuthorizationStatusDenied];
+                      }
+                    });
+                  }];
       break;
     }
     case AVAuthorizationStatusDenied:
@@ -377,10 +385,10 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 }
 
 - (void)checkPhotoAuthorizationWithImagePicker:(UIImagePickerController *)imagePickerController {
-  PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
+  PHAuthorizationStatus status = [self.photoLibraryPermissionChecker authorizationStatus];
   switch (status) {
     case PHAuthorizationStatusNotDetermined: {
-      [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+      [self.photoLibraryPermissionChecker requestAuthorization:^(PHAuthorizationStatus status) {
         dispatch_async(dispatch_get_main_queue(), ^{
           if (status == PHAuthorizationStatusAuthorized) {
             [self showPhotoLibraryWithImagePicker:imagePickerController];
@@ -473,6 +481,11 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 
 - (void)picker:(PHPickerViewController *)picker
     didFinishPicking:(NSArray<PHPickerResult *> *)results API_AVAILABLE(ios(14)) {
+  [self processPickerItems:results fromPicker:picker];
+}
+
+- (void)processPickerItems:(NSArray<id<FIPPickerItem>> *)results
+                fromPicker:(PHPickerViewController *)picker API_AVAILABLE(ios(14)) {
   [picker dismissViewControllerAnimated:YES completion:nil];
   if (results.count == 0) {
     [self sendCallResultWithSavedPathList:nil];
@@ -503,7 +516,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
     saveQueue = nil;
   }];
 
-  [results enumerateObjectsUsingBlock:^(PHPickerResult *result, NSUInteger index, BOOL *stop) {
+  [results enumerateObjectsUsingBlock:^(id<FIPPickerItem> result, NSUInteger index, BOOL *stop) {
     // NSNull means it hasn't saved yet.
     [pathList addObject:[NSNull null]];
     FLTPHPickerSaveImageToPathOperation *saveOperation =
