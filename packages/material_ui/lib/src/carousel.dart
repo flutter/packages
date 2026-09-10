@@ -1440,6 +1440,7 @@ class _RenderSliverWeightedCarousel extends RenderSliverFixedExtentBoxAdaptor {
         _buildItemExtent(lastIndex, layoutDimensions),
       );
       trailingScrollOffset += extraLayoutOffset;
+      estimatedMaxScrollOffset = trailingScrollOffset;
     } else {
       trailingScrollOffset = indexToLayoutOffset(deprecatedExtraItemExtent, lastIndex + 1);
     }
@@ -1978,6 +1979,7 @@ class CarouselController extends ScrollController {
   /// direction.
   ///
   /// Does nothing if the carousel is not attached to this controller.
+  @awaitNotRequired
   Future<void> animateToItem(
     int index, {
     Duration duration = const Duration(milliseconds: 300),

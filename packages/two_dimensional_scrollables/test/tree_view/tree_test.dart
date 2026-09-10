@@ -857,6 +857,54 @@ void main() {
       expect(find.text('k'), findsNothing);
       expect(find.text('l'), findsNothing);
     });
+
+    testWidgets('Rebuild with a new tree with the same number of nodes', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: TreeView<String>(
+            tree: <TreeViewNode<String>>[
+              TreeViewNode<String>('Root 0'),
+              TreeViewNode<String>(
+                'Root 1',
+                expanded: true,
+                children: <TreeViewNode<String>>[
+                  TreeViewNode<String>('Child 1:0'),
+                  TreeViewNode<String>('Child 1:1'),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+
+      expect(find.text('Root 0'), findsOne);
+      expect(find.text('Root 1'), findsOne);
+      expect(find.text('Child 1:0'), findsOne);
+      expect(find.text('Child 1:1'), findsOne);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: TreeView<String>(
+            tree: <TreeViewNode<String>>[
+              TreeViewNode<String>('Root 0'),
+              TreeViewNode<String>(
+                'Root 1.1',
+                expanded: true,
+                children: <TreeViewNode<String>>[
+                  TreeViewNode<String>('Child 1.1:0'),
+                  TreeViewNode<String>('Child 1.1:1'),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+
+      expect(find.text('Root 0'), findsOne);
+      expect(find.text('Root 1.1'), findsOne);
+      expect(find.text('Child 1.1:0'), findsOne);
+      expect(find.text('Child 1.1:1'), findsOne);
+    });
   });
 
   group('TreeViewport', () {

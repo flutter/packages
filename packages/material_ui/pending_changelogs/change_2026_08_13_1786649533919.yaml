@@ -1,4 +1,0 @@
-changelog: |
-  - SearchAnchor overlay expands to full-screen on viewport size change (e.g., on device rotation).
-  - Fixes https://github.com/flutter/flutter/issues/186154.
-version: patch
