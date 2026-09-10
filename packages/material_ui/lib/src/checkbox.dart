@@ -952,7 +952,7 @@ class _CheckboxDefaultsM3 extends CheckboxThemeData {
         if (states.contains(WidgetState.selected)) {
           return const BorderSide(width: 2.0, color: Colors.transparent);
         }
-        return BorderSide(width: 2.0, color: _colors.onSurface.withOpacity(0.38));
+        return BorderSide(width: 2.0, color: _colors.onSurface.withValues(alpha:0.38));
       }
       if (states.contains(WidgetState.selected)) {
         return const BorderSide(width: 0.0, color: Colors.transparent);
@@ -978,7 +978,7 @@ class _CheckboxDefaultsM3 extends CheckboxThemeData {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
         if (states.contains(WidgetState.selected)) {
-          return _colors.onSurface.withOpacity(0.38);
+          return _colors.onSurface.withValues(alpha:0.38);
         }
         return Colors.transparent;
       }
@@ -1016,35 +1016,35 @@ class _CheckboxDefaultsM3 extends CheckboxThemeData {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.error)) {
         if (states.contains(WidgetState.pressed)) {
-          return _colors.error.withOpacity(0.1);
+          return _colors.error.withValues(alpha:0.1);
         }
         if (states.contains(WidgetState.hovered)) {
-          return _colors.error.withOpacity(0.08);
+          return _colors.error.withValues(alpha:0.08);
         }
         if (states.contains(WidgetState.focused)) {
-          return _colors.error.withOpacity(0.1);
+          return _colors.error.withValues(alpha:0.1);
         }
       }
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.pressed)) {
-          return _colors.onSurface.withOpacity(0.1);
+          return _colors.onSurface.withValues(alpha:0.1);
         }
         if (states.contains(WidgetState.hovered)) {
-          return _colors.primary.withOpacity(0.08);
+          return _colors.primary.withValues(alpha:0.08);
         }
         if (states.contains(WidgetState.focused)) {
-          return _colors.primary.withOpacity(0.1);
+          return _colors.primary.withValues(alpha:0.1);
         }
         return Colors.transparent;
       }
       if (states.contains(WidgetState.pressed)) {
-        return _colors.primary.withOpacity(0.1);
+        return _colors.primary.withValues(alpha:0.1);
       }
       if (states.contains(WidgetState.hovered)) {
-        return _colors.onSurface.withOpacity(0.08);
+        return _colors.onSurface.withValues(alpha:0.08);
       }
       if (states.contains(WidgetState.focused)) {
-        return _colors.onSurface.withOpacity(0.1);
+        return _colors.onSurface.withValues(alpha:0.1);
       }
       return Colors.transparent;
     });
