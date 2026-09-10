@@ -1704,16 +1704,6 @@ class _SearchBarState extends State<SearchBar> {
     super.dispose();
   }
 
-  static Widget _defaultContextMenuBuilder(
-    BuildContext context,
-    EditableTextState editableTextState,
-  ) {
-    if (SystemContextMenu.isSupportedByField(editableTextState)) {
-      return SystemContextMenu.editableText(editableTextState: editableTextState);
-    }
-    return AdaptiveTextSelectionToolbar.editableText(editableTextState: editableTextState);
-  }
-
   @override
   Widget build(BuildContext context) {
     final TextDirection textDirection = Directionality.of(context);
