@@ -78,9 +78,18 @@ typedef void (^FlutterResultAdapter)(NSArray<NSString *> *_Nullable, FlutterErro
 /// PHPicker factory. Overridable for tests.
 @property(nonatomic, strong) NSObject<FIPPHPickerCreating> *phPickerCreator API_AVAILABLE(ios(14));
 
+/// Temporary window that swallows taps while UIImagePickerController dismisses.
+@property(nonatomic, strong, nullable) UIWindow *interactionBlockerWindow;
+
+/// Key window stored before showing the interaction blocker.
+@property(nonatomic, weak, nullable) UIWindow *previousKeyWindow;
+
 /// Processes picker results. Exposed for tests that cannot construct PHPickerResult.
 - (void)processPickerItems:(NSArray<id<FIPPickerItem>> *)results
                 fromPicker:(PHPickerViewController *)picker API_AVAILABLE(ios(14));
+
+/// Removes the interaction-blocker window. Exposed for tests.
+- (void)removeInteractionBlocker;
 
 /// Validates the provided paths list, then sends it via `callContext.result` as the result of the
 /// original platform channel method call, clearing the in-progress call state.
@@ -107,6 +116,16 @@ typedef void (^FlutterResultAdapter)(NSArray<NSString *> *_Nullable, FlutterErro
 /// Should be used for testing purposes only.
 - (void)setImagePickerControllerOverrides:
     (NSArray<UIImagePickerController *> *)imagePickerControllers;
+
+- (void)launchUIImagePickerWithSource:(FLTSourceSpecification *)source
+                              context:(FLTImagePickerMethodCallContext *)context;
+
+- (void)showCamera:(UIImagePickerControllerCameraDevice)device
+    withImagePicker:(UIImagePickerController *)imagePickerController;
+
+- (UIViewController *)presentingViewControllerForImagePickerInNewWindow;
+
+- (NSNumber *)getDesiredImageQuality:(NSNumber *)imageQuality;
 
 @end
 
