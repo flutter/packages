@@ -542,9 +542,13 @@ class AlertDialog extends StatelessWidget {
     Duration insetAnimationDuration = const Duration(milliseconds: 100),
     Curve insetAnimationCurve = Curves.decelerate,
   }) : _isAdaptive = true,
+       // ignore: prefer_initializing_formals, the public parameter cannot use a private name.
        _scrollController = scrollController,
+       // ignore: prefer_initializing_formals, the public parameter cannot use a private name.
        _actionScrollController = actionScrollController,
+       // ignore: prefer_initializing_formals, the public parameter cannot use a private name.
        _insetAnimationDuration = insetAnimationDuration,
+       // ignore: prefer_initializing_formals, the public parameter cannot use a private name.
        _insetAnimationCurve = insetAnimationCurve;
 
   // Whether this dialog was created with [AlertDialog.adaptive]. When true, a
