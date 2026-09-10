@@ -2,15 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-class _FilledCardDefaultsM3 extends CardThemeData {
-  _FilledCardDefaultsM3(this.context)
-    : super(clipBehavior: Clip.none, elevation: 0.0, margin: const EdgeInsets.all(4.0));
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../card.dart';
+
+class _CardDefaultsM3 extends CardThemeData {
+  _CardDefaultsM3(this.context)
+    : super(clipBehavior: Clip.none, elevation: 1.0, margin: const EdgeInsets.all(4.0));
 
   final BuildContext context;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
-  Color? get color => _colors.surfaceContainerHighest;
+  Color? get color => _colors.surfaceContainerLow;
 
   @override
   Color? get shadowColor => _colors.shadow;

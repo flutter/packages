@@ -2,8 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-class _TextButtonDefaultsM3 extends ButtonStyle {
-  _TextButtonDefaultsM3(this.context)
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../outlined_button.dart';
+
+class _OutlinedButtonDefaultsM3 extends ButtonStyle {
+  _OutlinedButtonDefaultsM3(this.context)
     : super(
         animationDuration: kThemeChangeDuration,
         enableFeedback: true,
@@ -91,7 +96,17 @@ class _TextButtonDefaultsM3 extends ButtonStyle {
   @override
   WidgetStateProperty<Size>? get maximumSize => const MaterialStatePropertyAll<Size>(Size.infinite);
 
-  // No default side
+  @override
+  WidgetStateProperty<BorderSide>? get side =>
+      WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
+          return BorderSide(color: _colors.onSurface.withOpacity(0.12));
+        }
+        if (states.contains(WidgetState.focused)) {
+          return BorderSide(color: _colors.primary);
+        }
+        return BorderSide(color: _colors.outline);
+      });
 
   @override
   WidgetStateProperty<OutlinedBorder>? get shape =>
