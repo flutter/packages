@@ -1235,8 +1235,8 @@ class _DayState extends State<_Day> {
       if (widget.isSelectedDay) WidgetState.selected,
     };
 
-    for (final state in states) {
-      _statesController.update(state, true);
+    for (final WidgetState state in WidgetState.values) {
+      _statesController.update(state, states.contains(state));
     }
 
     final Color? dayForegroundColor = resolve<Color?>(
@@ -1570,8 +1570,8 @@ class _YearPickerState extends State<YearPicker> {
         assert(date.year == widget.lastDate.year);
         date = widget.calendarDelegate.getMonth(year, widget.lastDate.month);
       }
-      for (final state in states) {
-        _statesController.update(state, true);
+      for (final WidgetState state in WidgetState.values) {
+        _statesController.update(state, states.contains(state));
       }
       yearItem = InkWell(
         key: ValueKey<int>(year),
