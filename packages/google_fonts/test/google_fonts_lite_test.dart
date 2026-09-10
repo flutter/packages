@@ -146,8 +146,8 @@ void main() {
     expect(
       () => GoogleFontsLite.getTextTheme('NonExistentFamily'),
       throwsA(
-        isA<Exception>().having(
-          (Exception e) => e.toString(),
+        isA<ArgumentError>().having(
+          (ArgumentError e) => e.message,
           'message',
           contains("No font family by name 'NonExistentFamily' was found."),
         ),

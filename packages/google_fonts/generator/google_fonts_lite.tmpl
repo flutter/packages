@@ -159,11 +159,11 @@ abstract final class GoogleFontsLite {
   ///
   /// Note: [fontFamily] is case-sensitive.
   ///
-  /// Parameter [fontFamily] must not be `null`. Throws if no font by name
-  /// [fontFamily] exists.
+  /// Parameter [fontFamily] must not be `null`. Throws an [ArgumentError] if no
+  /// font by name [fontFamily] exists.
   static TextTheme getTextTheme(String fontFamily, [TextTheme? textTheme]) {
     if (!fontsMap.containsKey(fontFamily)) {
-      throw Exception("No font family by name '$fontFamily' was found.");
+      throw ArgumentError("No font family by name '$fontFamily' was found.");
     }
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
