@@ -89,6 +89,7 @@ abstract base class PlatformFileSystemXDirectory extends PlatformXDirectory {
   ///
   /// Should only be used by platform implementations because they can't extend
   /// a class that only contains a factory constructor.
+  @protected
   PlatformFileSystemXDirectory.implementation(
     PlatformFileSystemXDirectoryCreationParams super.params,
   );
