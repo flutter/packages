@@ -1284,7 +1284,7 @@ void main() {
         paints
           ..circle() // Today decoration.
           ..circle() // Selected day decoration.
-          ..circle(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.08)),
+          ..circle(color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.08)),
       );
     });
 
@@ -1310,7 +1310,7 @@ void main() {
         paints
           ..circle() // Today decoration.
           ..circle() // Selected day decoration.
-          ..circle(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.10)),
+          ..circle(color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.10)),
       );
     });
 
@@ -1331,7 +1331,7 @@ void main() {
           ..circle() // Today decoration.
           ..circle() // Selected day decoration.
           ..circle() // Hovered decoration.
-          ..circle(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.10)),
+          ..circle(color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.10)),
       );
       await gesture.up();
     });
@@ -1361,7 +1361,7 @@ void main() {
         paints
           ..circle() // Today decoration.
           ..circle() // Selected day decoration.
-          ..circle(color: theme.colorScheme.onPrimary.withOpacity(0.08)),
+          ..circle(color: theme.colorScheme.onPrimary.withValues(alpha: 0.08)),
       );
     });
 
@@ -1391,7 +1391,7 @@ void main() {
         paints
           ..circle() // Today decoration.
           ..circle() // Selected day decoration.
-          ..circle(color: theme.colorScheme.onPrimary.withOpacity(0.10)),
+          ..circle(color: theme.colorScheme.onPrimary.withValues(alpha: 0.10)),
       );
     });
 
@@ -1420,7 +1420,7 @@ void main() {
           ..circle() // Today decoration.
           ..circle() // Selected day decoration.
           ..circle() // Hovered decoration.
-          ..circle(color: theme.colorScheme.onPrimary.withOpacity(0.10)),
+          ..circle(color: theme.colorScheme.onPrimary.withValues(alpha: 0.10)),
       );
       await gesture.up();
     });
@@ -2542,7 +2542,7 @@ void main() {
         paints
           ..circle() // Today decoration.
           ..circle() // Selected day decoration.
-          ..circle(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.08)),
+          ..circle(color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.08)),
       );
     });
 
@@ -2568,7 +2568,7 @@ void main() {
         paints
           ..circle() // Today decoration.
           ..circle() // Selected day decoration.
-          ..circle(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.12)),
+          ..circle(color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.12)),
       );
     });
 
@@ -2589,7 +2589,7 @@ void main() {
           ..circle() // Today decoration.
           ..circle() // Selected day decoration.
           ..circle() // Hovered decoration.
-          ..circle(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.12)),
+          ..circle(color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.12)),
       );
       await gesture.up();
     });
@@ -2619,7 +2619,7 @@ void main() {
         paints
           ..circle() // Today decoration.
           ..circle() // Selected day decoration.
-          ..circle(color: theme.colorScheme.onPrimary.withOpacity(0.08)),
+          ..circle(color: theme.colorScheme.onPrimary.withValues(alpha: 0.08)),
       );
     });
 
@@ -2649,7 +2649,7 @@ void main() {
         paints
           ..circle() // Today decoration.
           ..circle() // Selected day decoration.
-          ..circle(color: theme.colorScheme.onPrimary.withOpacity(0.12)),
+          ..circle(color: theme.colorScheme.onPrimary.withValues(alpha: 0.12)),
       );
     });
 
@@ -2678,7 +2678,7 @@ void main() {
           ..circle() // Today decoration.
           ..circle() // Selected day decoration.
           ..circle() // Hovered decoration.
-          ..circle(color: theme.colorScheme.onPrimary.withOpacity(0.38)),
+          ..circle(color: theme.colorScheme.onPrimary.withValues(alpha: 0.38)),
       );
       await gesture.up();
     });

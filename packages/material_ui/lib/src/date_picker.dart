@@ -1845,7 +1845,7 @@ class _CalendarRangePickerDialog extends StatelessWidget {
         themeData.rangePickerHeaderBackgroundColor ?? defaults.rangePickerHeaderBackgroundColor;
     final Color? headerForeground =
         themeData.rangePickerHeaderForegroundColor ?? defaults.rangePickerHeaderForegroundColor;
-    final Color? headerDisabledForeground = headerForeground?.withOpacity(0.38);
+    final Color? headerDisabledForeground = headerForeground?.withValues(alpha: 0.38);
     final TextStyle? headlineStyle =
         themeData.rangePickerHeaderHeadlineStyle ?? defaults.rangePickerHeaderHeadlineStyle;
     final TextStyle? headlineHelpStyle =
@@ -2945,10 +2945,10 @@ class _DayItemState extends State<_DayItem> {
         textDirection: textDirection,
       );
       if (widget.isDisabled) {
-        itemStyle = itemStyle?.apply(color: colorScheme.onSurface.withOpacity(0.38));
+        itemStyle = itemStyle?.apply(color: colorScheme.onSurface.withValues(alpha: 0.38));
       }
     } else if (widget.isDisabled) {
-      itemStyle = itemStyle?.apply(color: colorScheme.onSurface.withOpacity(0.38));
+      itemStyle = itemStyle?.apply(color: colorScheme.onSurface.withValues(alpha: 0.38));
     } else if (widget.isToday) {
       // The current day gets a different text color and a custom shape border.
       itemStyle = itemStyle?.apply(color: colorScheme.primary);
