@@ -8,6 +8,48 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('CrossFilePlatform', () {
     group('FileSystem', () {
+      test('PlatformFileSystemXFile returns correct uri', () {
+        final platform = TestCrossFilePlatform();
+
+        expect(
+          platform
+              .createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams('my/path.txt'))
+              .params
+              .uri,
+          'my/path.txt',
+        );
+
+        expect(
+          platform
+              .createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams('/my/path.txt'))
+              .params
+              .uri,
+          'file:///my/path.txt',
+        );
+      });
+
+      test('PlatformFileSystemXDirectory returns correct URI', () {
+        final platform = TestCrossFilePlatform();
+
+        expect(
+          platform
+              .createPlatformFileSystemXDirectory(
+                PlatformFileSystemXDirectoryCreationParams('my/path'),
+              )
+              .params
+              .uri,
+          'my/path/',
+        );
+
+        expect(
+          platform
+              .createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams('/my/path/'))
+              .params
+              .uri,
+          'file:///my/path/',
+        );
+      });
+
       test('_DefaultFileSystemXFile.exists() returns false', () async {
         final platform = TestCrossFilePlatform();
 
