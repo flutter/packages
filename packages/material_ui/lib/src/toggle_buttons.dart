@@ -341,7 +341,7 @@ class ToggleButtons extends StatelessWidget {
   /// If this property is null, then
   /// ToggleButtonTheme.of(context).disabledColor is used. If
   /// [ToggleButtonsThemeData.disabledColor] is also null, then
-  /// Theme.of(context).colorScheme.onSurface.withOpacity(0.38) is used.
+  /// Theme.of(context).colorScheme.onSurface.withValues(alpha:0.38) is used.
   final Color? disabledColor;
 
   /// The fill color for selected toggle buttons.
@@ -610,7 +610,7 @@ class ToggleButtons extends StatelessWidget {
         color:
             selectedBorderColor ??
             toggleButtonsTheme.selectedBorderColor ??
-            theme.colorScheme.onSurface.withOpacity(0.12),
+            theme.colorScheme.onSurface.withValues(alpha: 0.12),
         width: resultingBorderWidth,
       );
     } else if (onPressed != null && !isSelected[index]) {
@@ -618,7 +618,7 @@ class ToggleButtons extends StatelessWidget {
         color:
             borderColor ??
             toggleButtonsTheme.borderColor ??
-            theme.colorScheme.onSurface.withOpacity(0.12),
+            theme.colorScheme.onSurface.withValues(alpha: 0.12),
         width: resultingBorderWidth,
       );
     } else {
@@ -626,7 +626,7 @@ class ToggleButtons extends StatelessWidget {
         color:
             disabledBorderColor ??
             toggleButtonsTheme.disabledBorderColor ??
-            theme.colorScheme.onSurface.withOpacity(0.12),
+            theme.colorScheme.onSurface.withValues(alpha: 0.12),
         width: resultingBorderWidth,
       );
     }
@@ -644,7 +644,7 @@ class ToggleButtons extends StatelessWidget {
         color:
             selectedBorderColor ??
             toggleButtonsTheme.selectedBorderColor ??
-            theme.colorScheme.onSurface.withOpacity(0.12),
+            theme.colorScheme.onSurface.withValues(alpha: 0.12),
         width: resultingBorderWidth,
       );
     } else if (onPressed != null && !isSelected[index]) {
@@ -652,7 +652,7 @@ class ToggleButtons extends StatelessWidget {
         color:
             borderColor ??
             toggleButtonsTheme.borderColor ??
-            theme.colorScheme.onSurface.withOpacity(0.12),
+            theme.colorScheme.onSurface.withValues(alpha: 0.12),
         width: resultingBorderWidth,
       );
     } else {
@@ -660,7 +660,7 @@ class ToggleButtons extends StatelessWidget {
         color:
             disabledBorderColor ??
             toggleButtonsTheme.disabledBorderColor ??
-            theme.colorScheme.onSurface.withOpacity(0.12),
+            theme.colorScheme.onSurface.withValues(alpha: 0.12),
         width: resultingBorderWidth,
       );
     }
@@ -686,7 +686,7 @@ class ToggleButtons extends StatelessWidget {
         color:
             selectedBorderColor ??
             toggleButtonsTheme.selectedBorderColor ??
-            theme.colorScheme.onSurface.withOpacity(0.12),
+            theme.colorScheme.onSurface.withValues(alpha: 0.12),
         width: resultingBorderWidth,
       );
     } else if (onPressed != null && !isSelected[index]) {
@@ -694,7 +694,7 @@ class ToggleButtons extends StatelessWidget {
         color:
             borderColor ??
             toggleButtonsTheme.borderColor ??
-            theme.colorScheme.onSurface.withOpacity(0.12),
+            theme.colorScheme.onSurface.withValues(alpha: 0.12),
         width: resultingBorderWidth,
       );
     } else {
@@ -702,7 +702,7 @@ class ToggleButtons extends StatelessWidget {
         color:
             disabledBorderColor ??
             toggleButtonsTheme.disabledBorderColor ??
-            theme.colorScheme.onSurface.withOpacity(0.12),
+            theme.colorScheme.onSurface.withValues(alpha: 0.12),
         width: resultingBorderWidth,
       );
     }
@@ -760,12 +760,14 @@ class ToggleButtons extends StatelessWidget {
             selectedColor ?? toggleButtonsTheme.selectedColor ?? theme.colorScheme.primary;
       } else if (onPressed != null && !isSelected[index]) {
         currentColor =
-            color ?? toggleButtonsTheme.color ?? theme.colorScheme.onSurface.withOpacity(0.87);
+            color ??
+            toggleButtonsTheme.color ??
+            theme.colorScheme.onSurface.withValues(alpha: 0.87);
       } else {
         currentColor =
             disabledColor ??
             toggleButtonsTheme.disabledColor ??
-            theme.colorScheme.onSurface.withOpacity(0.38);
+            theme.colorScheme.onSurface.withValues(alpha: 0.38);
       }
       final TextStyle currentTextStyle =
           textStyle ?? toggleButtonsTheme.textStyle ?? theme.textTheme.bodyMedium!;
@@ -938,9 +940,9 @@ class _DefaultFillColor extends WidgetStateProperty<Color> with Diagnosticable {
   @override
   Color resolve(Set<WidgetState> states) {
     if (states.contains(WidgetState.selected)) {
-      return colorScheme.primary.withOpacity(0.12);
+      return colorScheme.primary.withValues(alpha: 0.12);
     }
-    return colorScheme.surface.withOpacity(0.0);
+    return colorScheme.surface.withValues(alpha: 0.0);
   }
 }
 
@@ -970,23 +972,23 @@ class _ToggleButtonDefaultOverlay extends WidgetStateProperty<Color?> {
   Color? resolve(Set<WidgetState> states) {
     if (selected) {
       if (states.contains(WidgetState.pressed)) {
-        return splashColor ?? colorScheme?.primary.withOpacity(0.16);
+        return splashColor ?? colorScheme?.primary.withValues(alpha: 0.16);
       }
       if (states.contains(WidgetState.hovered)) {
-        return hoverColor ?? colorScheme?.primary.withOpacity(0.04);
+        return hoverColor ?? colorScheme?.primary.withValues(alpha: 0.04);
       }
       if (states.contains(WidgetState.focused)) {
-        return focusColor ?? colorScheme?.primary.withOpacity(0.12);
+        return focusColor ?? colorScheme?.primary.withValues(alpha: 0.12);
       }
     } else if (unselected) {
       if (states.contains(WidgetState.pressed)) {
-        return splashColor ?? highlightColor ?? colorScheme?.onSurface.withOpacity(0.16);
+        return splashColor ?? highlightColor ?? colorScheme?.onSurface.withValues(alpha: 0.16);
       }
       if (states.contains(WidgetState.hovered)) {
-        return hoverColor ?? colorScheme?.onSurface.withOpacity(0.04);
+        return hoverColor ?? colorScheme?.onSurface.withValues(alpha: 0.04);
       }
       if (states.contains(WidgetState.focused)) {
-        return focusColor ?? colorScheme?.onSurface.withOpacity(0.12);
+        return focusColor ?? colorScheme?.onSurface.withValues(alpha: 0.12);
       }
     }
     return null;
@@ -997,13 +999,13 @@ class _ToggleButtonDefaultOverlay extends WidgetStateProperty<Color?> {
     return '''
     {
       selected:
-        hovered: $hoverColor, otherwise: ${colorScheme?.primary.withOpacity(0.04)},
-        focused: $focusColor, otherwise: ${colorScheme?.primary.withOpacity(0.12)},
-        pressed: $splashColor, otherwise: ${colorScheme?.primary.withOpacity(0.16)},
+        hovered: $hoverColor, otherwise: ${colorScheme?.primary.withValues(alpha: 0.04)},
+        focused: $focusColor, otherwise: ${colorScheme?.primary.withValues(alpha: 0.12)},
+        pressed: $splashColor, otherwise: ${colorScheme?.primary.withValues(alpha: 0.16)},
       unselected:
-        hovered: $hoverColor, otherwise: ${colorScheme?.onSurface.withOpacity(0.04)},
-        focused: $focusColor, otherwise: ${colorScheme?.onSurface.withOpacity(0.12)},
-        pressed: $splashColor, otherwise: ${colorScheme?.onSurface.withOpacity(0.16)},
+        hovered: $hoverColor, otherwise: ${colorScheme?.onSurface.withValues(alpha: 0.04)},
+        focused: $focusColor, otherwise: ${colorScheme?.onSurface.withValues(alpha: 0.12)},
+        pressed: $splashColor, otherwise: ${colorScheme?.onSurface.withValues(alpha: 0.16)},
       otherwise: null,
     }
     ''';
