@@ -1005,7 +1005,7 @@ void main() {
     expect(groupValue, equals(2));
 
     focusNode2.dispose();
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('Radio responds to density changes.', (WidgetTester tester) async {
     const key = Key('test');
@@ -1130,7 +1130,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('Radio button fill color resolves in enabled/disabled states', (
     WidgetTester tester,

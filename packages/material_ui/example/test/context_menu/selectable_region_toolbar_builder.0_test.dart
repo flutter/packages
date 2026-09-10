@@ -68,5 +68,5 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(AdaptiveTextSelectionToolbar), findsNothing);
-  });
+  }, tags: 'reduced-web-test-set');
 }

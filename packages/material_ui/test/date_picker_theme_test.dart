@@ -1062,7 +1062,7 @@ void main() {
         ..circle() // Selected day decoration.
         ..circle(color: dayOverlayColor.resolve(<WidgetState>{WidgetState.focused})),
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('DatePickerDialog resolves DatePickerTheme.yearOverlayColor states', (
     WidgetTester tester,
@@ -1216,7 +1216,7 @@ void main() {
           ..circle(color: rangeSelectionOverlayColor.resolve(<WidgetState>{WidgetState.pressed})),
       );
     }
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('YearPicker maintains default year shape at textScaleFactor 1, 1.5, 2', (
     WidgetTester tester,

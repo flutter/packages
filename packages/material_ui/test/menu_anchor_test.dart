@@ -2477,7 +2477,7 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
       await tester.pump();
       expect(focusedMenu, equals('MenuItemButton(Text("Submenu item 1"))'));
-    });
+    }, tags: 'reduced-web-test-set');
   });
 
   group('Accelerators', () {
@@ -4508,7 +4508,7 @@ void main() {
         );
 
         semantics.dispose();
-      });
+      }, tags: 'reduced-web-test-set');
 
       testWidgets('MenuItemButton semantics respects label', (WidgetTester tester) async {
         final semantics = SemanticsTester(tester);
@@ -4578,7 +4578,7 @@ void main() {
         );
 
         semantics.dispose();
-      });
+      }, tags: 'reduced-web-test-set');
 
       testWidgets('SubmenuButton expanded/collapsed state', (WidgetTester tester) async {
         final semantics = SemanticsTester(tester);
@@ -4742,7 +4742,7 @@ void main() {
         );
 
         semantics.dispose();
-      });
+      }, tags: 'reduced-web-test-set');
 
       testWidgets('Animated SubmenuButton expanded/collapsed state', (WidgetTester tester) async {
         final semantics = SemanticsTester(tester);
@@ -5486,7 +5486,7 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('MenuItemButton has expected default mouse cursor on hover', (
       WidgetTester tester,
@@ -5530,7 +5530,7 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('CheckboxMenuButton has expected default mouse cursor on hover', (
       WidgetTester tester,
@@ -5566,7 +5566,7 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('RadioMenuButton has expected default mouse cursor on hover', (
       WidgetTester tester,
@@ -5603,7 +5603,7 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('MenuItemButton has expected mouse cursor when explicitly configured', (
       WidgetTester tester,

@@ -1254,7 +1254,7 @@ void main() {
       await gesture.removePointer(location: tester.getCenter(find.byType(Switch)));
       await tester.pump();
     }
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('Switch.adaptive default thumb/track color and size(Cupertino)', (
     WidgetTester tester,
@@ -2058,7 +2058,7 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.space);
     await tester.pumpAndSettle();
     expect(value, isTrue);
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('Switch changes mouse cursor when hovered', (WidgetTester tester) async {
     // Test Switch.adaptive() constructor
