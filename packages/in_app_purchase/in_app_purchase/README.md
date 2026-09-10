@@ -106,23 +106,27 @@ Here is an example of how to handle purchase updates:
 ```dart
 Future<void> _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) async {
   for (final purchaseDetails in purchaseDetailsList) {
-    if (purchaseDetails.status == PurchaseStatus.pending) {
-      _showPendingUI();
-    } else {
-      if (purchaseDetails.status == PurchaseStatus.error) {
-        _handleError(purchaseDetails.error!);
-      } else if (purchaseDetails.status == PurchaseStatus.purchased ||
-          purchaseDetails.status == PurchaseStatus.restored) {
-        final bool valid = await _verifyPurchase(purchaseDetails);
-        if (valid) {
-          await _deliverProduct(purchaseDetails);
-        } else {
-          _handleInvalidPurchase(purchaseDetails);
+    try {
+      if (purchaseDetails.status == PurchaseStatus.pending) {
+        _showPendingUI();
+      } else {
+        if (purchaseDetails.status == PurchaseStatus.error) {
+          _handleError(purchaseDetails.error!);
+        } else if (purchaseDetails.status == PurchaseStatus.purchased ||
+            purchaseDetails.status == PurchaseStatus.restored) {
+          final bool valid = await _verifyPurchase(purchaseDetails);
+          if (valid) {
+            await _deliverProduct(purchaseDetails);
+          } else {
+            _handleInvalidPurchase(purchaseDetails);
+          }
+        }
+        if (purchaseDetails.pendingCompletePurchase) {
+          await InAppPurchase.instance.completePurchase(purchaseDetails);
         }
       }
-      if (purchaseDetails.pendingCompletePurchase) {
-        await InAppPurchase.instance.completePurchase(purchaseDetails);
-      }
+    } catch (error) {
+      // Handle or log the error here so other purchases can still be processed.
     }
   }
 }
@@ -207,13 +211,15 @@ When StoreKit 2 is enabled, you can use Sk2PurchaseParam to include StoreKit 2 s
 <?code-excerpt "readme_examples.dart (sk2-purchase)"?>
 ```dart
 Future<void> makeStoreKit2Purchase(ProductDetails productDetails) async {
-  // import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
-  final Sk2PurchaseParam purchaseParamSk2 = Sk2PurchaseParam(
-    productDetails: productDetails,
-    winBackOfferId: 'your_win_back_offer_id',
-  );
+  if (Platform.isIOS || Platform.isMacOS) {
+    // import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
+    final Sk2PurchaseParam purchaseParamSk2 = Sk2PurchaseParam(
+      productDetails: productDetails,
+      winBackOfferId: 'your_win_back_offer_id',
+    );
 
-  await InAppPurchase.instance.buyNonConsumable(purchaseParam: purchaseParamSk2);
+    await InAppPurchase.instance.buyNonConsumable(purchaseParam: purchaseParamSk2);
+  }
 }
 ```
 
@@ -255,14 +261,16 @@ void upgradeSubscription(
   ProductDetails productDetails,
   GooglePlayPurchaseDetails oldPurchaseDetails,
 ) {
-  final PurchaseParam purchaseParam = GooglePlayPurchaseParam(
-    productDetails: productDetails,
-    changeSubscriptionParam: ChangeSubscriptionParam(
-      oldPurchaseDetails: oldPurchaseDetails,
-      replacementMode: ReplacementMode.withTimeProration,
-    ),
-  );
-  InAppPurchase.instance.buyNonConsumable(purchaseParam: purchaseParam);
+  if (Platform.isAndroid) {
+    final PurchaseParam purchaseParam = GooglePlayPurchaseParam(
+      productDetails: productDetails,
+      changeSubscriptionParam: ChangeSubscriptionParam(
+        oldPurchaseDetails: oldPurchaseDetails,
+        replacementMode: ReplacementMode.withTimeProration,
+      ),
+    );
+    InAppPurchase.instance.buyNonConsumable(purchaseParam: purchaseParam);
+  }
 }
 ```
 
@@ -370,7 +378,10 @@ void handleAndroidProductDetails(ProductDetails productDetails) {
     final int? index = productDetails.subscriptionIndex;
     final List<SubscriptionOfferDetailsWrapper>? offers = product.subscriptionOfferDetails;
     if (index != null && offers != null && index < offers.length) {
-      print(offers[index].pricingPhases.first);
+      final PricingPhaseWrapper? firstPhase = offers[index].pricingPhases.firstOrNull;
+      if (firstPhase != null) {
+        print(firstPhase);
+      }
     }
   }
 }
@@ -430,9 +441,11 @@ How to get the `jsonRepresentation` of a transaction in iOS, using StoreKit 2:
 <?code-excerpt "readme_examples.dart (sk2-transaction)"?>
 ```dart
 Future<void> readSk2Transactions() async {
-  final List<SK2Transaction> transactions = await SK2Transaction.transactions();
-  if (transactions.isNotEmpty) {
-    print(transactions.first.jsonRepresentation);
+  if (Platform.isIOS || Platform.isMacOS) {
+    final List<SK2Transaction> transactions = await SK2Transaction.transactions();
+    if (transactions.isNotEmpty) {
+      print(transactions.first.jsonRepresentation);
+    }
   }
 }
 ```
