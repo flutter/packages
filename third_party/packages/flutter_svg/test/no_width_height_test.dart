@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -64,7 +64,7 @@ class ImageWithText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Widget image = SvgPicture.string(circleSvg);
-    final Widget imageContainer = ColoredBox(color: Colors.amber, child: image);
+    final Widget imageContainer = ColoredBox(color: const Color(0xFFFFC107), child: image);
     const Widget text = Text('Hello');
     final Widget column = Column(children: <Widget>[imageContainer, text]);
     return Expanded(child: column);
