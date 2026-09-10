@@ -19,8 +19,8 @@ Add ```android:networkSecurityConfig="@xml/network_security_config"``` in the ``
 
 Then you will need to create a `network_security_config.xml` in the `res/xml/` directory.  
 
+<?code-excerpt "android/app/src/debug/res/xml/network_security_config.xml (network_security_config)"?>
 ```xml
-<?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <!-- Cleartext is needed for Espresso testing. -->
     <base-config cleartextTrafficPermitted="true">
@@ -33,15 +33,21 @@ For example, the Espresso example app has this file in the location `example/and
 It is best to put this in a debug or androidTest
 AndroidManifest.xml so that you don't ship it to end users. (See the example app of this package.)
 
-Add the following dependencies in android/app/build.gradle:
+Add the following dependencies in android/app/build.gradle.kts:
 
-```groovy
+<?code-excerpt "android/app/build.gradle.kts (test_dependencies)"?>
+```kotlin
 dependencies {
     testImplementation("junit:junit:4.13.2")
-    testImplementation("com.google.truth:truth:1.1.3")
+    // ···
+    api("androidx.test:core:1.6.1")
+    // ···
     androidTestImplementation("androidx.test:runner:1.6.1")
+    // ···
+    androidTestImplementation("com.google.truth:truth:1.1.3")
+    // ···
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    api("androidx.test:core:1.2.0")
+    // ···
 }
 ```
 

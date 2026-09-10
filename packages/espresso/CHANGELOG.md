@@ -4,6 +4,8 @@
   validated against compilable, analyzed source, and updates it to use
   `integration_test`'s driver instead of the deprecated `flutter_driver`
   extension.
+* Adopts `code-excerpt` for the README's `network_security_config.xml` and
+  `build.gradle.kts` dependencies snippets.
 
 ## 0.4.0+25
 
