@@ -577,7 +577,7 @@ void main() {
     await gesture.addPointer();
     await gesture.moveTo(tester.getCenter(find.text(selectedValue)));
     await tester.pumpAndSettle();
-    expect(overlayColor(), paints..rect(color: theme.colorScheme.primary.withOpacity(0.08)));
+    expect(overlayColor(), paints..rect(color: theme.colorScheme.primary.withValues(alpha: 0.08)));
 
     await gesture.down(tester.getCenter(find.text(selectedValue)));
     await tester.pumpAndSettle();
@@ -585,18 +585,21 @@ void main() {
       overlayColor(),
       paints
         ..rect()
-        ..rect(color: theme.colorScheme.primary.withOpacity(0.1)),
+        ..rect(color: theme.colorScheme.primary.withValues(alpha: 0.1)),
     );
     await gesture.up();
     await tester.pumpAndSettle();
 
     await gesture.moveTo(tester.getCenter(find.text(unselectedValue)));
     await tester.pumpAndSettle();
-    expect(overlayColor(), paints..rect(color: theme.colorScheme.onSurface.withOpacity(0.08)));
+    expect(
+      overlayColor(),
+      paints..rect(color: theme.colorScheme.onSurface.withValues(alpha: 0.08)),
+    );
 
     await gesture.moveTo(tester.getCenter(find.text(selectedValue)));
     await tester.pumpAndSettle();
-    expect(overlayColor(), paints..rect(color: theme.colorScheme.primary.withOpacity(0.08)));
+    expect(overlayColor(), paints..rect(color: theme.colorScheme.primary.withValues(alpha: 0.08)));
 
     await gesture.down(tester.getCenter(find.text(selectedValue)));
     await tester.pumpAndSettle();
@@ -604,7 +607,7 @@ void main() {
       overlayColor(),
       paints
         ..rect()
-        ..rect(color: theme.colorScheme.primary.withOpacity(0.1)),
+        ..rect(color: theme.colorScheme.primary.withValues(alpha: 0.1)),
     );
     await gesture.up();
     await tester.pumpAndSettle();
@@ -635,7 +638,10 @@ void main() {
     await gesture.addPointer();
     await gesture.moveTo(tester.getCenter(find.text(selectedValue)));
     await tester.pumpAndSettle();
-    expect(overlayColor(), paints..rect(color: theme.colorScheme.onSurface.withOpacity(0.08)));
+    expect(
+      overlayColor(),
+      paints..rect(color: theme.colorScheme.onSurface.withValues(alpha: 0.08)),
+    );
 
     await gesture.down(tester.getCenter(find.text(selectedValue)));
     await tester.pumpAndSettle();
@@ -643,14 +649,17 @@ void main() {
       overlayColor(),
       paints
         ..rect()
-        ..rect(color: theme.colorScheme.onSurface.withOpacity(0.1)),
+        ..rect(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
     );
     await gesture.up();
     await tester.pumpAndSettle();
 
     await gesture.moveTo(tester.getCenter(find.text(unselectedValue)));
     await tester.pumpAndSettle();
-    expect(overlayColor(), paints..rect(color: theme.colorScheme.onSurface.withOpacity(0.08)));
+    expect(
+      overlayColor(),
+      paints..rect(color: theme.colorScheme.onSurface.withValues(alpha: 0.08)),
+    );
 
     await gesture.down(tester.getCenter(find.text(selectedValue)));
     await tester.pumpAndSettle();
@@ -658,7 +667,7 @@ void main() {
       overlayColor(),
       paints
         ..rect()
-        ..rect(color: theme.colorScheme.onSurface.withOpacity(0.1)),
+        ..rect(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
     );
   });
 
@@ -6882,20 +6891,26 @@ void main() {
     final RenderObject inkFeatures = tester.allRenderObjects.firstWhere(
       (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
     );
-    expect(inkFeatures, isNot(paints..rect(color: theme.colorScheme.onSurface.withOpacity(0.08))));
-    expect(inkFeatures, isNot(paints..rect(color: theme.colorScheme.primary.withOpacity(0.08))));
+    expect(
+      inkFeatures,
+      isNot(paints..rect(color: theme.colorScheme.onSurface.withValues(alpha: 0.08))),
+    );
+    expect(
+      inkFeatures,
+      isNot(paints..rect(color: theme.colorScheme.primary.withValues(alpha: 0.08))),
+    );
 
     // Start hovering unselected tab.
     final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
     await gesture.addPointer();
     await gesture.moveTo(tester.getCenter(find.byType(Tab).first));
     await tester.pumpAndSettle();
-    expect(inkFeatures, paints..rect(color: theme.colorScheme.onSurface.withOpacity(0.08)));
+    expect(inkFeatures, paints..rect(color: theme.colorScheme.onSurface.withValues(alpha: 0.08)));
 
     // Start hovering selected tab.
     await gesture.moveTo(tester.getCenter(find.byType(Tab).last));
     await tester.pumpAndSettle();
-    expect(inkFeatures, paints..rect(color: theme.colorScheme.primary.withOpacity(0.08)));
+    expect(inkFeatures, paints..rect(color: theme.colorScheme.primary.withValues(alpha: 0.08)));
   });
 
   testWidgets('Tab has correct selected/unselected focus color', (WidgetTester tester) async {
@@ -6913,18 +6928,24 @@ void main() {
     final RenderObject inkFeatures = tester.allRenderObjects.firstWhere(
       (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
     );
-    expect(inkFeatures, isNot(paints..rect(color: theme.colorScheme.onSurface.withOpacity(0.1))));
-    expect(inkFeatures, isNot(paints..rect(color: theme.colorScheme.primary.withOpacity(0.1))));
+    expect(
+      inkFeatures,
+      isNot(paints..rect(color: theme.colorScheme.onSurface.withValues(alpha: 0.1))),
+    );
+    expect(
+      inkFeatures,
+      isNot(paints..rect(color: theme.colorScheme.primary.withValues(alpha: 0.1))),
+    );
 
     await tester.sendKeyEvent(LogicalKeyboardKey.tab);
     await tester.pumpAndSettle();
     expect(tester.binding.focusManager.primaryFocus?.hasPrimaryFocus, isTrue);
-    expect(inkFeatures, paints..rect(color: theme.colorScheme.onSurface.withOpacity(0.1)));
+    expect(inkFeatures, paints..rect(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)));
 
     await tester.sendKeyEvent(LogicalKeyboardKey.tab);
     await tester.pumpAndSettle();
     expect(tester.binding.focusManager.primaryFocus?.hasPrimaryFocus, isTrue);
-    expect(inkFeatures, paints..rect(color: theme.colorScheme.primary.withOpacity(0.1)));
+    expect(inkFeatures, paints..rect(color: theme.colorScheme.primary.withValues(alpha: 0.1)));
   });
 
   testWidgets('Tab has correct selected/unselected pressed color', (WidgetTester tester) async {
@@ -6941,12 +6962,15 @@ void main() {
     final RenderObject inkFeatures = tester.allRenderObjects.firstWhere(
       (RenderObject object) => object.runtimeType.toString() == '_RenderInkFeatures',
     );
-    expect(inkFeatures, isNot(paints..rect(color: theme.colorScheme.primary.withOpacity(0.1))));
+    expect(
+      inkFeatures,
+      isNot(paints..rect(color: theme.colorScheme.primary.withValues(alpha: 0.1))),
+    );
 
     // Press unselected tab.
     TestGesture gesture = await tester.startGesture(tester.getCenter(find.text('A')));
     await tester.pumpAndSettle(); // Let the press highlight animation finish.
-    expect(inkFeatures, paints..rect(color: theme.colorScheme.primary.withOpacity(0.1)));
+    expect(inkFeatures, paints..rect(color: theme.colorScheme.primary.withValues(alpha: 0.1)));
 
     // Release pressed gesture.
     await gesture.up();
@@ -6955,7 +6979,7 @@ void main() {
     // Press selected tab.
     gesture = await tester.startGesture(tester.getCenter(find.text('B')));
     await tester.pumpAndSettle(); // Let the press highlight animation finish.
-    expect(inkFeatures, paints..rect(color: theme.colorScheme.primary.withOpacity(0.1)));
+    expect(inkFeatures, paints..rect(color: theme.colorScheme.primary.withValues(alpha: 0.1)));
   });
 
   testWidgets('Material3 - Default TabAlignment', (WidgetTester tester) async {
