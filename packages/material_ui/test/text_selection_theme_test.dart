@@ -127,8 +127,15 @@ void main() {
       contextMenuBuilder: defaultContextMenuBuilder,
     ).debugFillProperties(builder);
 
-    final List<String> description = builder.properties
+    // The contextMenuBuilder property is checked separately below: its
+    // Function.toString() representation is compiler-dependent (VM vs
+    // dart2js/DDC), so it can't be compared as an exact string.
+    final List<DiagnosticsNode> properties = builder.properties
         .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+        .toList();
+
+    final List<String> description = properties
+        .where((DiagnosticsNode node) => node.name != 'contextMenuBuilder')
         .map((DiagnosticsNode node) => node.toString())
         .toList();
 
@@ -136,8 +143,12 @@ void main() {
       'cursorColor: ${const Color(0xffeeffaa)}',
       'selectionColor: ${const Color(0x88888888)}',
       'selectionHandleColor: ${const Color(0xaabbccdd)}',
-      'contextMenuBuilder: Closure: (BuildContext, EditableTextState) => CustomContextMenu',
     ]);
+
+    final DiagnosticsNode contextMenuBuilderNode = properties.singleWhere(
+      (DiagnosticsNode node) => node.name == 'contextMenuBuilder',
+    );
+    expect(contextMenuBuilderNode.value, defaultContextMenuBuilder);
   });
 
   testWidgets('Material2 - Empty textSelectionTheme will use defaults', (
