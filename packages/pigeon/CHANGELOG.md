@@ -1,3 +1,7 @@
+## 29.0.1
+
+* [swift] Annotates async `FlutterApi` methods with `@MainActor`.
+
 ## 29.0.0
 
 * [swift] [kotlin] Adds experimental support for FFI and JNI.
