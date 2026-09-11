@@ -15,17 +15,6 @@ should add it to your `pubspec.yaml` as usual.
 
 You can optionally specify a `videoOutputPath` when calling `startVideoRecording()` to save the recorded video directly to a custom absolute file path on the device.
 
-<?code-excerpt?>
-```dart
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
-
-final directory = await getApplicationDocumentsDirectory();
-final videoPath = p.join(directory.path, 'my_video.mp4');
-
-await controller.startVideoRecording(videoOutputPath: videoPath);
-```
-
 By default, files saved within the application sandbox are private. If you want the recorded videos to be visible and manageable by the user inside the native iOS **Files app**:
 
 1. Open your `ios/Runner/Info.plist` file.

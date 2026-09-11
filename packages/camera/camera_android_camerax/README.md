@@ -62,17 +62,6 @@ If you wish to record a video to a custom file path, you may specify `videoOutpu
 - **Best Practice:** Always use the [path_provider](https://pub.dev/packages/path_provider) package to fetch a safe, writable directory.
 - **Recommended Directory:** Use `getTemporaryDirectory()` or `getApplicationDocumentsDirectory()`.
 
-<?code-excerpt?>
-```dart
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
-
-final directory = await getTemporaryDirectory();
-final videoPath = p.join(directory.path, 'my_video.mp4');
-
-await controller.startVideoRecording(videoOutputPath: videoPath);
-```
-
 #### Setting description while recording
 To avoid cancelling any active recording when calling `setDescriptionWhileRecording`,
 you must start the recording with `startVideoCapturing` with `enablePersistentRecording` set to `true`.
