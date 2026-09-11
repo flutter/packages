@@ -951,6 +951,8 @@ if (wrapped == nil) {
       }
     });
 
+    final mainActorAsPrefix = generatorOptions.swiftStrictConcurrency ? '@MainActor ' : '';
+
     indent.newln();
     indent.writeln(
       '$_docCommentPrefix Generated setup class from Pigeon to handle messages through the `binaryMessenger`.',
@@ -964,7 +966,7 @@ if (wrapped == nil) {
         '$_docCommentPrefix Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`.',
       );
       indent.write(
-        'static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?, messageChannelSuffix: String = "") ',
+        '${mainActorAsPrefix}static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?, messageChannelSuffix: String = "") ',
       );
       indent.addScoped('{', '}', () {
         indent.writeln(
@@ -998,6 +1000,7 @@ if (wrapped == nil) {
           );
           _writeHostMethodMessageHandler(
             indent,
+            generatorOptions: generatorOptions,
             channelName: '${makeChannelName(api, method, dartPackageName)}\\(channelSuffix)',
             components: _SwiftFunctionComponents(
               name: method.name,
@@ -1058,17 +1061,19 @@ if (wrapped == nil) {
       });
       indent.newln();
 
+      final mainActorAsPrefix = generatorOptions.swiftStrictConcurrency ? '@MainActor ' : '';
       addDocumentationComments(indent, <String>[
         ' Sets up an instance of `$instanceManagerApiName` to handle messages through the `binaryMessenger`.',
       ], _docCommentSpec);
       indent.writeScoped(
-        'static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, instanceManager: ${swiftInstanceManagerClassName(generatorOptions)}?) {',
+        '${mainActorAsPrefix}static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, instanceManager: ${swiftInstanceManagerClassName(generatorOptions)}?) {',
         '}',
         () {
           indent.writeln('let codec = ${_getMessageCodecName(generatorOptions)}.shared');
           const setHandlerCondition = 'let instanceManager = instanceManager';
           _writeHostMethodMessageHandler(
             indent,
+            generatorOptions: generatorOptions,
             channelName: removeStrongReferenceName,
             components: _SwiftFunctionComponents(
               name: 'removeStrongReference',
@@ -1088,6 +1093,7 @@ if (wrapped == nil) {
           );
           _writeHostMethodMessageHandler(
             indent,
+            generatorOptions: generatorOptions,
             channelName: makeClearChannelName(dartPackageName),
             components: _SwiftFunctionComponents(
               name: 'clear',
@@ -1678,8 +1684,11 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
     AstEventChannelApi api, {
     required String dartPackageName,
   }) {
+    // @EventChannelApi currently does not support background queue.
+    final mainActor = generatorOptions.swiftStrictConcurrency ? '@MainActor' : '';
     indent.newln();
     indent.format('''
+      $mainActor
       private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
         private let wrapper: PigeonEventChannelWrapper<ReturnType>
         private var pigeonSink: PigeonEventSink<ReturnType>? = nil
@@ -1704,12 +1713,14 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
       }''');
     if (api.swiftOptions?.includeSharedClasses ?? true) {
       indent.format('''
-
+ 
+      $mainActor
       class PigeonEventChannelWrapper<ReturnType> {
         func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}
         func onCancel(withArguments arguments: Any?) {}
       }
 
+      $mainActor
       class PigeonEventSink<ReturnType> {
         private let sink: FlutterEventSink
 
@@ -1735,6 +1746,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
       indent.format('''
+        $mainActor
         class ${toUpperCamelCase(func.name)}StreamHandler: PigeonEventChannelWrapper<${_swiftTypeForDartType(func.returnType)}> {
           static func register(with messenger: FlutterBinaryMessenger,
                               instanceName: String = "",
@@ -1811,8 +1823,14 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
       );
       indent.write('$channel.sendMessage($sendArgument) ');
 
-      final closureIsolation = generatorOptions.swiftStrictConcurrency ? ' @MainActor' : '';
-      indent.addScoped('{$closureIsolation response in', '}', () {
+      // Without annotations from the library, Swift infers completion blocks @Sendable.
+      // Use MainActor.assumeIsolated to workaround this until the Flutter runner API is
+      // properly annotated.
+      final beginScope = generatorOptions.swiftStrictConcurrency
+          ? '{ (response: any Sendable) in MainActor.assumeIsolated {'
+          : '{ response in';
+      final endScope = generatorOptions.swiftStrictConcurrency ? '} }' : '}';
+      indent.addScoped(beginScope, endScope, () {
         indent.writeScoped('guard let listResponse = response as? [Any?] else {', '}', () {
           indent.writeln(
             returnStyle.resumeError('createConnectionError(withChannelName: channelName)'),
@@ -1878,6 +1896,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
 
   void _writeHostMethodMessageHandler(
     Indent indent, {
+    required InternalSwiftOptions generatorOptions,
     required String channelName,
     required _SwiftFunctionComponents components,
     String? serialBackgroundQueue,
@@ -1914,11 +1933,18 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
       });
     }
 
+    // The `@MainActor` annotation in the closure isn't strictly needed. This can be removed
+    // after the setMessageHandler API is correctly annotated.
+    final mainActorIfSerialQueue =
+        generatorOptions.swiftStrictConcurrency && serialBackgroundQueue == null
+        ? '@MainActor '
+        : '';
+
     indent.write('if $setHandlerCondition ');
     indent.addScoped('{', '}', () {
       indent.write('$varChannelName.setMessageHandler ');
       final messageVarName = components.arguments.isNotEmpty ? 'message' : '_';
-      indent.addScoped('{ $messageVarName, reply in', '}', () {
+      indent.addScoped('{ $mainActorIfSerialQueue$messageVarName, reply in', '}', () {
         final methodArgument = <String>[];
         if (components.arguments.isNotEmpty) {
           indent.writeln('let args = message as! [Any?]');
@@ -2322,21 +2348,25 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
               errorType: 'Error',
             )
           : .sync(method.returnType);
-      final _SwiftFunctionComponents<_SwiftFunctionReturnStyle> swiftFunction = _SwiftFunctionComponents(
-        name: method.name,
-        parameters: <Parameter>[
-          Parameter(
-            name: 'pigeonApi',
-            type: TypeDeclaration(baseName: '$hostProxyApiPrefix${api.name}', isNullable: false),
-          ),
-          if (!method.isStatic) Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration),
-          ...method.parameters,
-        ],
-        returnStyle: returnStyle,
-        annotations: <_SwiftMethodAnnotation>[
-          if (generatorOptions.swiftStrictConcurrency) _ActorIsolation.mainActor,
-        ],
-      );
+      final _SwiftFunctionComponents<_SwiftFunctionReturnStyle> swiftFunction =
+          _SwiftFunctionComponents(
+            name: method.name,
+            parameters: <Parameter>[
+              Parameter(
+                name: 'pigeonApi',
+                type: TypeDeclaration(
+                  baseName: '$hostProxyApiPrefix${api.name}',
+                  isNullable: false,
+                ),
+              ),
+              if (!method.isStatic) Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration),
+              ...method.parameters,
+            ],
+            returnStyle: returnStyle,
+            annotations: <_SwiftMethodAnnotation>[
+              if (generatorOptions.swiftStrictConcurrency) _ActorIsolation.mainActor,
+            ],
+          );
       indent.writeln(swiftFunction.signature);
 
       if (unsupportedPlatforms != null) {
@@ -2451,6 +2481,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
             onWrite: () {
               _writeHostMethodMessageHandler(
                 indent,
+                generatorOptions: generatorOptions,
                 channelName: channelName,
                 components: _SwiftFunctionComponents(
                   name: name,
@@ -2494,6 +2525,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
             onWrite: () {
               _writeHostMethodMessageHandler(
                 indent,
+                generatorOptions: generatorOptions,
                 channelName: channelName,
                 components: _SwiftFunctionComponents(
                   name: field.name,
@@ -2541,6 +2573,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
                   : .sync(method.returnType);
               _writeHostMethodMessageHandler(
                 indent,
+                generatorOptions: generatorOptions,
                 channelName: makeChannelName(api, method, dartPackageName),
                 components: _SwiftFunctionComponents(
                   name: method.name,
