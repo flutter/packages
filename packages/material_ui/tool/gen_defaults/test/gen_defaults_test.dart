@@ -133,7 +133,9 @@ void main() {
       );
     });
 
-    test('colorWithOpacity generates color expression with opacity', () {
+    // M3 templates intentionally keep the deprecated withOpacity output until
+    // all existing M3 templates have migrated to the new generator.
+    test('M3 colorWithOpacity generates color expression with opacity', () {
       final template = IconButtonTemplateM3(testPath());
       expect(
         template.colorWithOpacity(TokenColorRole.onSurface, 0.12, '_colors'),
