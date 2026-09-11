@@ -184,6 +184,82 @@ void main() {
     },
   );
 
+  testWidgets('routing config rematches an inactive stateful shell branch', (
+    WidgetTester tester,
+  ) async {
+    final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
+    final shellKey = GlobalKey<StatefulNavigationShellState>(debugLabel: 'statefulShell');
+    final firstBranchKey = GlobalKey<NavigatorState>(debugLabel: 'first');
+    final secondBranchKey = GlobalKey<NavigatorState>(debugLabel: 'second');
+
+    final branches = <StatefulShellBranch>[
+      StatefulShellBranch(
+        navigatorKey: firstBranchKey,
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/first',
+            builder: (_, _) => const Text('first'),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'details',
+                parentNavigatorKey: shellNavigatorKey,
+                builder: (_, _) => const Text('details'),
+              ),
+            ],
+          ),
+        ],
+      ),
+      StatefulShellBranch(
+        navigatorKey: secondBranchKey,
+        routes: <RouteBase>[GoRoute(path: '/second', builder: (_, _) => const Text('second'))],
+      ),
+    ];
+
+    RoutingConfig buildConfig() => RoutingConfig(
+      routes: <RouteBase>[
+        ShellRoute(
+          navigatorKey: shellNavigatorKey,
+          pageBuilder: (_, _, Widget child) => NoTransitionPage<void>(child: child),
+          routes: <RouteBase>[
+            StatefulShellRoute.indexedStack(
+              key: shellKey,
+              branches: branches,
+              pageBuilder: (_, _, StatefulNavigationShell navigationShell) =>
+                  NoTransitionPage<void>(child: navigationShell),
+            ),
+          ],
+        ),
+      ],
+    );
+
+    final config = ValueNotifier<RoutingConfig>(buildConfig());
+    addTearDown(config.dispose);
+    final GoRouter router = await createRouterWithRoutingConfig(
+      config,
+      tester,
+      initialLocation: '/first',
+    );
+
+    shellKey.currentState!.goBranch(1);
+    await tester.pumpAndSettle();
+    expect(find.text('second'), findsOneWidget);
+
+    config.value = buildConfig();
+    await tester.pumpAndSettle();
+
+    shellKey.currentState!.goBranch(0);
+    await tester.pumpAndSettle();
+    expect(find.text('first'), findsOneWidget);
+
+    router.push<void>('/first/details');
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('details'), findsOneWidget);
+    expect(router.routerDelegate.currentConfiguration.matches, hasLength(1));
+    expect(shellNavigatorKey.currentState!.canPop(), isTrue);
+  });
+
   testWidgets('routing config works with named route', (WidgetTester tester) async {
     final config = ValueNotifier<RoutingConfig>(
       RoutingConfig(
