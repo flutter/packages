@@ -184,6 +184,10 @@ void main() {
         expect(result.first.verificationData.serverVerificationData, 'receiptData');
         expect(result.first.verificationData.localVerificationData, 'jsonRepresentation');
         expect((result.first as SK2PurchaseDetails).appAccountToken, 'appAccountToken');
+        expect(
+          (result.first as SK2PurchaseDetails).expirationDate,
+          (321321.32 * 1000).round().toString(),
+        );
       },
     );
 
@@ -247,6 +251,79 @@ void main() {
       expect(lastPurchaseOptions.quantity, 1);
       expect(lastPurchaseOptions.winBackOfferId, isNull);
       expect(lastPurchaseOptions.promotionalOffer, isNull);
+    });
+
+    test('should not set introductory offer eligibility JWS when it is null', () async {
+      final purchaseParam = Sk2PurchaseParam(
+        productDetails: AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+        applicationUserName: 'testUser',
+      );
+
+      await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+
+      expect(
+        fakeStoreKit2Platform.lastPurchaseOptions!.introductoryOfferEligibilityCompactJWS,
+        isNull,
+      );
+    });
+
+    test('should forward introductory offer eligibility JWS unchanged', () async {
+      const compactJWS = 'eyJhbGciOiJFUzI1NiJ9.eyJhdWQiOiJ0ZXN0In0.c2ln';
+
+      final purchaseParam = Sk2PurchaseParam(
+        productDetails: AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+        introductoryOfferEligibilityCompactJWS: compactJWS,
+      );
+
+      await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+
+      expect(
+        fakeStoreKit2Platform.lastPurchaseOptions!.introductoryOfferEligibilityCompactJWS,
+        compactJWS,
+      );
+    });
+
+    test('should send introductory offer eligibility JWS alongside other options', () async {
+      final fakeSignature = SK2SubscriptionOfferSignature(
+        keyID: 'key123',
+        signature: 'signature123',
+        nonce: 'nonce123',
+        timestamp: 1234567890,
+      );
+
+      final purchaseParam = Sk2PurchaseParam(
+        productDetails: AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+        applicationUserName: 'testUser',
+        quantity: 2,
+        winBackOfferId: 'winBack123',
+        promotionalOffer: SK2PromotionalOffer(signature: fakeSignature, offerId: 'promo123'),
+        introductoryOfferEligibilityCompactJWS: 'jws-value',
+      );
+
+      await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+
+      final SK2ProductPurchaseOptionsMessage lastPurchaseOptions =
+          fakeStoreKit2Platform.lastPurchaseOptions!;
+
+      expect(lastPurchaseOptions.appAccountToken, 'testUser');
+      expect(lastPurchaseOptions.quantity, 2);
+      expect(lastPurchaseOptions.winBackOfferId, 'winBack123');
+      expect(lastPurchaseOptions.promotionalOffer!.promotionalOfferId, 'promo123');
+      expect(lastPurchaseOptions.introductoryOfferEligibilityCompactJWS, 'jws-value');
+    });
+
+    test('should not set introductory offer eligibility JWS for a generic PurchaseParam', () async {
+      final purchaseParam = PurchaseParam(
+        productDetails: AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+        applicationUserName: 'testUser',
+      );
+
+      await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+
+      expect(
+        fakeStoreKit2Platform.lastPurchaseOptions!.introductoryOfferEligibilityCompactJWS,
+        isNull,
+      );
     });
 
     test('should pass quantity for consumable product with Sk2PurchaseParam', () async {
