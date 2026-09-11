@@ -131,7 +131,8 @@ inline HRESULT SetAudioBitrate(IMFMediaType* pType, UINT32 bitrate) {
 }
 
 HRESULT RecordHandler::InitRecordSink(IMFCaptureEngine* capture_engine,
-                                      IMFMediaType* base_media_type) {
+                                      IMFMediaType* base_media_type,
+                                      DWORD source_stream_index) {
   assert(!file_path_.empty());
   assert(capture_engine);
   assert(base_media_type);
@@ -189,9 +190,8 @@ HRESULT RecordHandler::InitRecordSink(IMFCaptureEngine* capture_engine,
   }
 
   DWORD video_record_sink_stream_index;
-  hr = record_sink_->AddStream(
-      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD,
-      video_record_media_type.Get(), nullptr, &video_record_sink_stream_index);
+  hr = record_sink_->AddStream(source_stream_index, video_record_media_type.Get(),
+                               nullptr, &video_record_sink_stream_index);
   if (FAILED(hr)) {
     return hr;
   }
@@ -228,7 +228,8 @@ HRESULT RecordHandler::InitRecordSink(IMFCaptureEngine* capture_engine,
 
 HRESULT RecordHandler::StartRecord(const std::string& file_path,
                                    IMFCaptureEngine* capture_engine,
-                                   IMFMediaType* base_media_type) {
+                                   IMFMediaType* base_media_type,
+                                   DWORD source_stream_index) {
   assert(!file_path.empty());
   assert(capture_engine);
   assert(base_media_type);
@@ -237,7 +238,8 @@ HRESULT RecordHandler::StartRecord(const std::string& file_path,
   recording_start_timestamp_us_ = -1;
   recording_duration_us_ = 0;
 
-  HRESULT hr = InitRecordSink(capture_engine, base_media_type);
+  HRESULT hr =
+      InitRecordSink(capture_engine, base_media_type, source_stream_index);
   if (FAILED(hr)) {
     return hr;
   }
