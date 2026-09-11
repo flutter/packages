@@ -6,7 +6,7 @@ import 'dart:math' as math;
 import 'dart:ui' show PointerDeviceKind;
 
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter/rendering.dart' show RendererBinding;
+import 'package:flutter/rendering.dart' show RenderParagraph, RendererBinding;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -14,6 +14,46 @@ const List<String> menuItems = <String>['one', 'two', 'three', 'four'];
 void onChanged<T>(T _) {}
 Finder _iconRichText(Key iconKey) {
   return find.descendant(of: find.byKey(iconKey), matching: find.byType(RichText));
+}
+
+Future<void> checkDropdownFormFieldColor(WidgetTester tester, {Color? color}) async {
+  const text = 'foo';
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: ThemeData(useMaterial3: false),
+      home: Material(
+        child: Form(
+          child: DropdownButtonFormField<String>(
+            dropdownColor: color,
+            initialValue: text,
+            items: const <DropdownMenuItem<String>>[
+              DropdownMenuItem<String>(value: text, child: Text(text)),
+            ],
+            onChanged: (_) {},
+          ),
+        ),
+      ),
+    ),
+  );
+  await tester.tap(find.text(text));
+  await tester.pump();
+
+  expect(
+    find.ancestor(of: find.text(text).last, matching: find.byType(CustomPaint)).at(2),
+    paints
+      ..save()
+      ..rrect()
+      ..rrect()
+      ..rrect()
+      ..rrect(color: color ?? Colors.grey[50], hasMaskFilter: false),
+  );
+}
+
+Finder findInputDecoratorBorderPainter() {
+  return find.descendant(
+    of: find.byWidgetPredicate((Widget w) => '${w.runtimeType}' == '_BorderContainer'),
+    matching: find.byWidgetPredicate((Widget w) => w is CustomPaint),
+  );
 }
 
 void verifyPaintedShadow(Finder customPaint, int elevation) {
@@ -60,6 +100,15 @@ Widget buildFormFrame({
   Alignment alignment = Alignment.center,
   TextDirection textDirection = TextDirection.ltr,
   AlignmentGeometry buttonAlignment = AlignmentDirectional.centerStart,
+  FocusNode? focusNode,
+  bool autofocus = false,
+  Color? focusColor,
+  Color? dropdownColor,
+  double? menuMaxHeight,
+  EdgeInsetsGeometry? padding,
+  InputDecoration? decoration,
+  List<Widget> Function(BuildContext)? selectedItemBuilder,
+  double? itemHeight = kMinInteractiveDimension,
 }) {
   return TestApp(
     textDirection: textDirection,
@@ -82,6 +131,17 @@ Widget buildFormFrame({
             iconEnabledColor: iconEnabledColor,
             isDense: isDense,
             isExpanded: isExpanded,
+            // No underline attribute
+            focusNode: focusNode,
+            autofocus: autofocus,
+            focusColor: focusColor,
+            dropdownColor: dropdownColor,
+            selectedItemBuilder: selectedItemBuilder,
+            itemHeight: itemHeight,
+            menuMaxHeight: menuMaxHeight,
+            padding: padding,
+            decoration: decoration,
+            alignment: buttonAlignment,
             items: items?.map<DropdownMenuItem<String>>((String item) {
               return DropdownMenuItem<String>(
                 key: ValueKey<String>(item),
@@ -89,7 +149,6 @@ Widget buildFormFrame({
                 child: Text(item, key: ValueKey<String>('${item}Text')),
               );
             }).toList(),
-            alignment: buttonAlignment,
           ),
         ),
       ),
@@ -1780,4 +1839,121 @@ void main() {
       expect(fieldKey.currentState!.value, 'one');
     },
   );
+
+  testWidgets('DropdownButtonFormField selected item color test', (WidgetTester tester) async {
+    Widget build({
+      ValueChanged<String?>? onChanged,
+      String? value,
+      Widget? hint,
+      Widget? disabledHint,
+    }) {
+      return MaterialApp(
+        theme: ThemeData(disabledColor: Colors.pink),
+        home: Scaffold(
+          body: Center(
+            child: Column(
+              children: <Widget>[
+                DropdownButtonFormField<String>(
+                  style: const TextStyle(color: Colors.yellow),
+                  disabledHint: disabledHint,
+                  hint: hint,
+                  items: const <DropdownMenuItem<String>>[
+                    DropdownMenuItem<String>(value: 'one', child: Text('one')),
+                    DropdownMenuItem<String>(value: 'two', child: Text('two')),
+                  ],
+                  initialValue: value,
+                  onChanged: onChanged,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    Color textColor(String text) {
+      return tester.renderObject<RenderParagraph>(find.text(text)).text.style!.color!;
+    }
+
+    // The selected value should be displayed when the button is enabled.
+    await tester.pumpWidget(build(onChanged: onChanged, value: 'two'));
+    // The dropdown icon and the selected menu item are vertically aligned.
+    expect(tester.getCenter(find.text('two')).dy, tester.getCenter(find.byType(Icon)).dy);
+    // Selected item has a normal color from [DropdownButtonFormField.style]
+    // when the button is enabled.
+    expect(textColor('two'), Colors.yellow);
+
+    // The selected value should be displayed when the button is disabled.
+    await tester.pumpWidget(build(value: 'two'));
+    expect(tester.getCenter(find.text('two')).dy, tester.getCenter(find.byType(Icon)).dy);
+    // Selected item has a disabled color from [theme.disabledColor]
+    // when the button is disable.
+    expect(textColor('two'), Colors.pink);
+  });
+
+  testWidgets('DropdownButtonFormField uses dropdownColor when expanded', (
+    WidgetTester tester,
+  ) async {
+    await checkDropdownFormFieldColor(tester, color: const Color.fromRGBO(120, 220, 70, 0.8));
+  });
+
+  testWidgets('DropdownButtonFormField can be focused, and has focusColor', (
+    WidgetTester tester,
+  ) async {
+    tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
+    final buttonKey = UniqueKey();
+    final focusNode = FocusNode(debugLabel: 'DropdownButtonFormField');
+    addTearDown(focusNode.dispose);
+
+    await tester.pumpWidget(
+      buildFormFrame(
+        buttonKey: buttonKey,
+        onChanged: onChanged,
+        focusNode: focusNode,
+        autofocus: true,
+        decoration: const InputDecoration(filled: true),
+      ),
+    );
+
+    await tester.pump(); // Pump a frame for autofocus to take effect.
+    expect(focusNode.hasPrimaryFocus, isTrue);
+
+    // Default focus Color from InputDecorator defaults.
+    final ThemeData theme = Theme.of(tester.element(find.byType(InputDecorator)));
+    expect(
+      findInputDecoratorBorderPainter(),
+      paints..rrect(style: PaintingStyle.fill, color: theme.colorScheme.surfaceContainerHighest),
+    );
+
+    // Focus color from Decoration.
+    await tester.pumpWidget(
+      buildFormFrame(
+        buttonKey: buttonKey,
+        onChanged: onChanged,
+        focusNode: focusNode,
+        decoration: const InputDecoration(filled: true, focusColor: Color(0xff00ffff)),
+      ),
+    );
+
+    expect(
+      findInputDecoratorBorderPainter(),
+      paints..rrect(style: PaintingStyle.fill, color: const Color(0xff00ffff)),
+    );
+
+    // Focus color from focusColor property.
+    await tester.pumpWidget(
+      buildFormFrame(
+        buttonKey: buttonKey,
+        onChanged: onChanged,
+        focusNode: focusNode,
+        decoration: const InputDecoration(filled: true, focusColor: Color(0xff00ffff)),
+        focusColor: const Color(0xff00ff00),
+      ),
+    );
+
+    expect(
+      findInputDecoratorBorderPainter(),
+      paints..rrect(style: PaintingStyle.fill, color: const Color(0xff00ff00)),
+    );
+  });
 }
