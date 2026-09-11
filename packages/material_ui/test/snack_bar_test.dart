@@ -4397,6 +4397,109 @@ void main() {
     );
     expect(tester.getSize(find.byType(SnackBarAction)), Size.zero);
   });
+
+  testWidgets('SnackBar action overflow calculation respects MediaQuery textScaler', (
+    WidgetTester tester,
+  ) async {
+    Widget buildSnackBar({required TextScaler textScaler}) {
+      return MaterialApp(
+        home: MediaQuery(
+          data: MediaQueryData(size: const Size(800, 600), textScaler: textScaler),
+          child: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return GestureDetector(
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('Message'),
+                        action: SnackBarAction(label: 'Action Label', onPressed: () {}),
+                      ),
+                    );
+                  },
+                  child: const Text('Show'),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+    }
+
+    // With no scaling, the action label fits on the same row as content.
+    await tester.pumpWidget(buildSnackBar(textScaler: TextScaler.noScaling));
+    await tester.tap(find.text('Show'));
+    await tester.pumpAndSettle();
+
+    final Offset actionTopLeft1 = tester.getTopLeft(find.text('Action Label'));
+    // Action and content are on the same line (action is not below content).
+    expect(actionTopLeft1.dy, lessThanOrEqualTo(tester.getBottomLeft(find.text('Message')).dy));
+
+    ScaffoldMessenger.of(tester.element(find.text('Show'))).clearSnackBars();
+    await tester.pumpAndSettle();
+
+    // With a large text scaler, the action button width is scaled up and overflows
+    // to a separate row below the content.
+    await tester.pumpWidget(buildSnackBar(textScaler: const TextScaler.linear(3.0)));
+    await tester.tap(find.text('Show'));
+    await tester.pumpAndSettle();
+
+    final Offset contentBottomLeft2 = tester.getBottomLeft(find.text('Message'));
+    final Offset actionTopLeft2 = tester.getTopLeft(find.text('Action Label'));
+    // Action overflows and is positioned below the content text.
+    expect(actionTopLeft2.dy, greaterThanOrEqualTo(contentBottomLeft2.dy));
+  });
+
+  testWidgets('SnackBar does not allocate 40% empty space on right when action overflows', (
+    WidgetTester tester,
+  ) async {
+    const double screenWidth = 500.0;
+    tester.view.physicalSize = const Size(screenWidth, 800.0);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) {
+              return GestureDetector(
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const SizedBox(key: Key('content'), height: 20),
+                      action: SnackBarAction(label: 'Overflow Action', onPressed: () {}),
+                      actionOverflowThreshold: 0.1,
+                    ),
+                  );
+                },
+                child: const Text('Show'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Show'));
+    await tester.pumpAndSettle();
+
+    // In unfixed code, when the action overflowed to a second row, a SizedBox(width: snackBarWidth * 0.4)
+    // was placed next to the content Expanded widget in the first row, reserving 40% empty space on the right (188px).
+    // The content is now given standard horizontalPadding on the right (24px) instead of 40% empty space.
+    // For screenWidth = 500, horizontalPadding = 24 on start and end, the content width is 452px (500 - 24 - 24).
+    expect(tester.getSize(find.byKey(const Key('content'))).width, 452.0);
+    expect(tester.getTopRight(find.byKey(const Key('content'))).dx, screenWidth - 24.0);
+
+    // Verify the spacer SizedBox has width equal to horizontalPadding (24.0), not 40% of snackBarWidth (188.0).
+    final Row contentRow = tester.widget<Row>(
+      find.descendant(of: find.byType(SnackBar), matching: find.byType(Row)).first,
+    );
+    expect(contentRow.children.length, 2);
+    expect(contentRow.children.first, isA<Expanded>());
+    expect(contentRow.children.last, isA<SizedBox>());
+    expect((contentRow.children.last as SizedBox).width, 24.0);
+  });
 }
 
 /// Start test for "SnackBar dismiss test".
