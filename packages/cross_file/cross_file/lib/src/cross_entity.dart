@@ -31,5 +31,11 @@ base class XEntity {
   Future<bool> exists() => platform.exists();
 
   @override
+  bool operator ==(Object other) => other is XEntity && other.platform == platform;
+
+  @override
+  int get hashCode => platform.hashCode;
+
+  @override
   String toString() => platform.params.uri;
 }
