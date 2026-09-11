@@ -32,7 +32,6 @@ import 'material_state.dart';
 import 'search_bar_theme.dart';
 import 'search_view_theme.dart';
 import 'text_field.dart';
-import 'text_selection_theme.dart';
 import 'text_theme.dart';
 import 'theme.dart';
 

@@ -17199,7 +17199,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: Material(
-              child: TextField(key: key, controller: controller, contextMenuBuilder: null),
+              child: TextField(key: key, controller: controller),
             ),
           ),
         );
@@ -17210,7 +17210,7 @@ void main() {
             home: Material(
               child: Padding(
                 padding: EdgeInsets.zero,
-                child: TextField(key: key, controller: controller, contextMenuBuilder: null),
+                child: TextField(key: key, controller: controller),
               ),
             ),
           ),
