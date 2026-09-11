@@ -449,6 +449,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
+@interface FGMPlatformMarkerUpdateAnimationConfiguration ()
++ (FGMPlatformMarkerUpdateAnimationConfiguration *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformMarkerUpdateAnimationConfiguration *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @implementation FGMPlatformCameraPosition
 + (instancetype)makeWithBearing:(double)bearing
                          target:(FGMPlatformLatLng *)target
@@ -3085,6 +3091,59 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FGMPlatformMarkerUpdateAnimationConfiguration
++ (instancetype)makeWithPositionAnimationsEnabled:(BOOL)positionAnimationsEnabled
+                        rotationAnimationsEnabled:(BOOL)rotationAnimationsEnabled {
+  FGMPlatformMarkerUpdateAnimationConfiguration *pigeonResult =
+      [[FGMPlatformMarkerUpdateAnimationConfiguration alloc] init];
+  pigeonResult.positionAnimationsEnabled = positionAnimationsEnabled;
+  pigeonResult.rotationAnimationsEnabled = rotationAnimationsEnabled;
+  return pigeonResult;
+}
++ (FGMPlatformMarkerUpdateAnimationConfiguration *)fromList:(NSArray<id> *)list {
+  FGMPlatformMarkerUpdateAnimationConfiguration *pigeonResult =
+      [[FGMPlatformMarkerUpdateAnimationConfiguration alloc] init];
+  pigeonResult.positionAnimationsEnabled = [GetNullableObjectAtIndex(list, 0) boolValue];
+  pigeonResult.rotationAnimationsEnabled = [GetNullableObjectAtIndex(list, 1) boolValue];
+  return pigeonResult;
+}
++ (nullable FGMPlatformMarkerUpdateAnimationConfiguration *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformMarkerUpdateAnimationConfiguration fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.positionAnimationsEnabled),
+    @(self.rotationAnimationsEnabled),
+  ];
+}
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  FGMPlatformMarkerUpdateAnimationConfiguration *other =
+      (FGMPlatformMarkerUpdateAnimationConfiguration *)object;
+  return self.positionAnimationsEnabled == other.positionAnimationsEnabled &&
+         self.rotationAnimationsEnabled == other.rotationAnimationsEnabled;
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  result = result * 31 + @(self.positionAnimationsEnabled).hash;
+  result = result * 31 + @(self.rotationAnimationsEnabled).hash;
+  return result;
+}
+- (NSString *)description {
+  return
+      [NSString stringWithFormat:@"FGMPlatformMarkerUpdateAnimationConfiguration("
+                                 @"positionAnimationsEnabled: %@, rotationAnimationsEnabled: %@)",
+                                 self.positionAnimationsEnabled ? @"true" : @"false",
+                                 self.rotationAnimationsEnabled ? @"true" : @"false"];
+}
+@end
+
 @interface FGMGoogleMapsFlutterPigeonMessagesPigeonCodecReader : FlutterStandardReader
 @end
 @implementation FGMGoogleMapsFlutterPigeonMessagesPigeonCodecReader
@@ -3212,6 +3271,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
       return [FGMPlatformBitmapBytesMap fromList:[self readValue]];
     case 177:
       return [FGMPlatformBitmapPinConfig fromList:[self readValue]];
+    case 178:
+      return [FGMPlatformMarkerUpdateAnimationConfiguration fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -3375,6 +3436,9 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FGMPlatformBitmapPinConfig class]]) {
     [self writeByte:177];
     [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformMarkerUpdateAnimationConfiguration class]]) {
+    [self writeByte:178];
+    [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
   }
@@ -3455,6 +3519,32 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
         FGMPlatformMapConfiguration *arg_configuration = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         [api updateWithMapConfiguration:arg_configuration error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Sets the marker update animation configuration.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.google_maps_flutter_ios."
+                                                   @"MapsApi.setMarkerUpdateAnimationConfiguration",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FGMGetGoogleMapsFlutterPigeonMessagesCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(setMarkerUpdateAnimationConfiguration:error:)],
+                @"FGMMapsApi api (%@) doesn't respond to "
+                @"@selector(setMarkerUpdateAnimationConfiguration:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FGMPlatformMarkerUpdateAnimationConfiguration *arg_configuration =
+            GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        [api setMarkerUpdateAnimationConfiguration:arg_configuration error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {

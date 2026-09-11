@@ -128,6 +128,15 @@ class GoogleMapController {
     return GoogleMapsFlutterPlatform.instance.updateMapConfiguration(update, mapId: mapId);
   }
 
+  /// Sets platform-specific configuration for this map.
+  ///
+  /// Platform-specific configuration classes are provided by the platform
+  /// implementation packages.
+  Future<void> setPlatformConfiguration(PlatformMapConfiguration configuration) {
+    _checkWidgetMountedOrThrow();
+    return GoogleMapsFlutterPlatform.instance.setPlatformConfiguration(configuration, mapId: mapId);
+  }
+
   /// Updates marker configuration.
   ///
   /// Change listeners are notified once the update has been made on the

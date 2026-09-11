@@ -1,3 +1,8 @@
+## 2.19.0
+
+* Adds an iOS-specific map configuration option to disable implicit marker
+  position and rotation update animations.
+
 ## 2.18.12
 
 * Converts heatmap controller and data conversion to Swift.

@@ -1,3 +1,7 @@
+## 2.19.14
+
+* Updates for the platform-specific map configuration API.
+
 ## 2.19.13
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.

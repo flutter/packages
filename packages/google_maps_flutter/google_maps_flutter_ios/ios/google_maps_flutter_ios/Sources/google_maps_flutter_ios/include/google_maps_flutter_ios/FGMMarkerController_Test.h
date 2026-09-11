@@ -14,11 +14,13 @@
 ///
 /// Setting the marker to visible will set its map to the given mapView.
 + (void)updateMarker:(GMSMarker *)marker
-           fromPlatformMarker:(FGMPlatformMarker *)platformMarker
-                  withMapView:(GMSMapView *)mapView
-                assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
-                  screenScale:(CGFloat)screenScale
-    usingOpacityForVisibility:(BOOL)useOpacityForVisibility;
+                    fromPlatformMarker:(FGMPlatformMarker *)platformMarker
+                           withMapView:(GMSMapView *)mapView
+                         assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
+                           screenScale:(CGFloat)screenScale
+    markerUpdateAnimationConfiguration:
+        (FGMPlatformMarkerUpdateAnimationConfiguration *)markerUpdateAnimationConfiguration
+             usingOpacityForVisibility:(BOOL)useOpacityForVisibility;
 
 @end
 

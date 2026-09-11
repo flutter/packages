@@ -7,7 +7,11 @@ import 'package:async/async.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart'
+    hide PlatformMapConfiguration;
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart'
+    as platform_interface
+    show PlatformMapConfiguration;
 import 'package:google_maps_flutter_platform_interface/src/types/advanced_marker.dart'
     as advanced_marker;
 import 'package:mockito/annotations.dart';
@@ -258,6 +262,48 @@ void main() {
     expect(passedConfig.myLocationEnabled, isNull);
     expect(passedConfig.minMaxZoomPreference, isNull);
     expect(passedConfig.padding, isNull);
+  });
+
+  test('GoogleMapsFlutterIOSMapConfiguration defaults to enabled animations', () {
+    const configuration = GoogleMapsFlutterIOSMapConfiguration();
+
+    expect(configuration.markerPositionAnimationsEnabled, true);
+    expect(configuration.markerRotationAnimationsEnabled, true);
+  });
+
+  test('setPlatformConfiguration passes expected arguments', () async {
+    const mapId = 1;
+    final (GoogleMapsFlutterIOS maps, MockMapsApi api) = setUpMockMap(mapId: mapId);
+
+    await maps.setPlatformConfiguration(
+      const GoogleMapsFlutterIOSMapConfiguration(
+        markerPositionAnimationsEnabled: false,
+        markerRotationAnimationsEnabled: false,
+      ),
+      mapId: mapId,
+    );
+
+    final VerificationResult verification = verify(
+      api.setMarkerUpdateAnimationConfiguration(captureAny),
+    );
+    final passedConfiguration =
+        verification.captured[0] as PlatformMarkerUpdateAnimationConfiguration;
+    expect(passedConfiguration.positionAnimationsEnabled, false);
+    expect(passedConfiguration.rotationAnimationsEnabled, false);
+  });
+
+  test('setPlatformConfiguration ignores other configuration types', () async {
+    const mapId = 1;
+    final (GoogleMapsFlutterIOS maps, MockMapsApi api) = setUpMockMap(mapId: mapId);
+
+    await expectLater(
+      maps.setPlatformConfiguration(
+        const platform_interface.PlatformMapConfiguration(),
+        mapId: mapId,
+      ),
+      completes,
+    );
+    verifyNever(api.setMarkerUpdateAnimationConfiguration(any));
   });
 
   test('updateMapOptions passes expected arguments', () async {

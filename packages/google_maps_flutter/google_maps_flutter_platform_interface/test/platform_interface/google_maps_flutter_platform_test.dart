@@ -105,6 +105,14 @@ void main() {
       expect(await platform.isAdvancedMarkersAvailable(mapId: 0), isFalse);
     });
 
+    test('default implementation of setPlatformConfiguration is a no-op', () async {
+      final GoogleMapsFlutterPlatform platform = BuildViewGoogleMapsFlutterPlatform();
+      await expectLater(
+        platform.setPlatformConfiguration(const PlatformMapConfiguration(), mapId: 0),
+        completes,
+      );
+    });
+
     test(
       'default implementation of `animateCameraWithConfiguration` delegates to `animateCamera`',
       () {

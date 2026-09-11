@@ -583,6 +583,13 @@ class MapCallHandler: NSObject, FGMMapsApi {
     controller?.interpretMapConfiguration(configuration)
   }
 
+  func setMarkerUpdateAnimationConfiguration(
+    _ configuration: FGMPlatformMarkerUpdateAnimationConfiguration,
+    error: AutoreleasingUnsafeMutablePointer<FlutterError?>
+  ) {
+    controller?.markersController.setMarkerUpdateAnimationConfiguration(configuration)
+  }
+
   func updateMarkers(
     byAdding toAdd: [FGMPlatformMarker], changing toChange: [FGMPlatformMarker],
     removing idsToRemove: [String], error: AutoreleasingUnsafeMutablePointer<FlutterError?>
