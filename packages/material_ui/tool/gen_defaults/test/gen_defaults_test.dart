@@ -18,7 +18,7 @@ import '../templates/bottom_sheet_template.dart';
 import '../templates/button_template.dart';
 import '../templates/card_template.dart';
 // import '../templates/checkbox_template.dart';
-// import '../templates/chip_template.dart';
+import '../templates/chip_template.dart';
 // import '../templates/color_scheme_template.dart';
 // import '../templates/date_picker_template.dart';
 // import '../templates/dialog_template.dart';
@@ -449,8 +449,19 @@ void main() {
     });
 
     test('ChipTemplateM3 emits M3 Chip defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = const ChipTemplateM3().generateContents('_ChipDefaultsM3');
+      expect(contents, contains('class _ChipDefaultsM3 extends ChipThemeData'));
+      expect(contents, contains('elevation: 0.0'));
+      expect(
+        contents,
+        contains(
+          'shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)))',
+        ),
+      );
+      expect(contents, contains('Color? get shadowColor => Colors.transparent'));
+      expect(contents, contains('Color? get surfaceTintColor => Colors.transparent'));
+      expect(contents, contains('BorderSide(color: _colors.onSurface.withOpacity(0.12))'));
+      expect(contents, contains('size: 18.0'));
     });
 
     test('ColorSchemeTemplateM3 emits M3 ColorScheme defaults from tokens', () {
