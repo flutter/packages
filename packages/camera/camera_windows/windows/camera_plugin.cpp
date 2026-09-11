@@ -295,7 +295,7 @@ void CameraPlugin::ResumePreview(
 }
 
 void CameraPlugin::StartVideoRecording(
-    int64_t camera_id,
+    int64_t camera_id, const std::string* video_output_path,
     std::function<void(std::optional<FlutterError> reply)> result) {
   auto camera = GetCameraByCameraId(camera_id);
   if (!camera) {
@@ -307,7 +307,13 @@ void CameraPlugin::StartVideoRecording(
         FlutterError("camera_error", "Pending start recording request exists"));
   }
 
-  std::optional<std::string> path = GetFilePathForVideo();
+  std::optional<std::string> path;
+  if (video_output_path && !video_output_path->empty()) {
+    path = *video_output_path;
+  } else {
+    path = GetFilePathForVideo();
+  }
+
   if (path) {
     if (camera->AddPendingVoidResult(PendingResultType::kStartRecord,
                                      std::move(result))) {

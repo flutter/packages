@@ -1,3 +1,7 @@
+## 0.7.5
+
+* Adds support for custom video output path in video recording.
+
 ## 0.7.4+8
 
 * Bumps cameraxVersion from 1.6.1 to 1.6.2.
