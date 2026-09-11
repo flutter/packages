@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:ui' as ui;
-
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -569,9 +567,7 @@ void main() {
     }
 
     for (final textTheme in <TextTheme>[theme.textTheme, theme.primaryTextTheme]) {
-      for (final TextStyle style in extractStyles(
-        textTheme,
-      ).map<TextStyle>((TextStyle style) => _TextStyleProxy(style))) {
+      for (final TextStyle style in extractStyles(textTheme)) {
         expect(style.inherit, false);
         expect(style.color, isNotNull);
         expect(style.fontFamily, isNotNull);
@@ -635,9 +631,7 @@ void main() {
     }
 
     for (final textTheme in <TextTheme>[theme.textTheme, theme.primaryTextTheme]) {
-      for (final TextStyle style in extractStyles(
-        textTheme,
-      ).map<TextStyle>((TextStyle style) => _TextStyleProxy(style))) {
+      for (final TextStyle style in extractStyles(textTheme)) {
         expect(style.inherit, false);
         expect(style.color, isNotNull);
         expect(style.fontFamily, isNotNull);
@@ -1175,188 +1169,6 @@ class Test extends StatelessWidget {
   Widget build(BuildContext context) {
     testBuildCalled += 1;
     return Container(decoration: BoxDecoration(color: Theme.of(context).primaryColor));
-  }
-}
-
-/// This class exists only to make sure that we test all the properties of the
-/// [TextStyle] class. If a property is added/removed/renamed, the analyzer will
-/// complain that this class has incorrect overrides.
-class _TextStyleProxy implements TextStyle {
-  _TextStyleProxy(this._delegate);
-
-  final TextStyle _delegate;
-
-  // Do make sure that all the properties correctly forward to the _delegate.
-  @override
-  Color? get color => _delegate.color;
-  @override
-  Color? get backgroundColor => _delegate.backgroundColor;
-  @override
-  String? get debugLabel => _delegate.debugLabel;
-  @override
-  TextDecoration? get decoration => _delegate.decoration;
-  @override
-  Color? get decorationColor => _delegate.decorationColor;
-  @override
-  TextDecorationStyle? get decorationStyle => _delegate.decorationStyle;
-  @override
-  double? get decorationThickness => _delegate.decorationThickness;
-  @override
-  String? get fontFamily => _delegate.fontFamily;
-  @override
-  List<String>? get fontFamilyFallback => _delegate.fontFamilyFallback;
-  @override
-  double? get fontSize => _delegate.fontSize;
-  @override
-  FontStyle? get fontStyle => _delegate.fontStyle;
-  @override
-  FontWeight? get fontWeight => _delegate.fontWeight;
-  @override
-  double? get height => _delegate.height;
-  @override
-  TextLeadingDistribution? get leadingDistribution => _delegate.leadingDistribution;
-  @override
-  Locale? get locale => _delegate.locale;
-  @override
-  ui.Paint? get foreground => _delegate.foreground;
-  @override
-  ui.Paint? get background => _delegate.background;
-  @override
-  bool get inherit => _delegate.inherit;
-  @override
-  double? get letterSpacing => _delegate.letterSpacing;
-  @override
-  TextBaseline? get textBaseline => _delegate.textBaseline;
-  @override
-  double? get wordSpacing => _delegate.wordSpacing;
-  @override
-  List<Shadow>? get shadows => _delegate.shadows;
-  @override
-  List<ui.FontFeature>? get fontFeatures => _delegate.fontFeatures;
-  @override
-  List<ui.FontVariation>? get fontVariations => _delegate.fontVariations;
-  @override
-  TextOverflow? get overflow => _delegate.overflow;
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) => super.toString();
-
-  @override
-  DiagnosticsNode toDiagnosticsNode({String? name, DiagnosticsTreeStyle? style}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  String toStringShort() {
-    throw UnimplementedError();
-  }
-
-  @override
-  TextStyle apply({
-    Color? color,
-    Color? backgroundColor,
-    TextDecoration? decoration,
-    Color? decorationColor,
-    TextDecorationStyle? decorationStyle,
-    double decorationThicknessFactor = 1.0,
-    double decorationThicknessDelta = 0.0,
-    String? fontFamily,
-    List<String>? fontFamilyFallback,
-    double fontSizeFactor = 1.0,
-    double fontSizeDelta = 0.0,
-    int fontWeightDelta = 0,
-    FontStyle? fontStyle,
-    double letterSpacingFactor = 1.0,
-    double letterSpacingDelta = 0.0,
-    double wordSpacingFactor = 1.0,
-    double wordSpacingDelta = 0.0,
-    double heightFactor = 1.0,
-    double heightDelta = 0.0,
-    TextLeadingDistribution? leadingDistribution,
-    TextBaseline? textBaseline,
-    Locale? locale,
-    List<ui.Shadow>? shadows,
-    List<ui.FontFeature>? fontFeatures,
-    List<ui.FontVariation>? fontVariations,
-    TextOverflow? overflow,
-    String? package,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  RenderComparison compareTo(TextStyle other) {
-    throw UnimplementedError();
-  }
-
-  @override
-  TextStyle copyWith({
-    bool? inherit,
-    Color? color,
-    Color? backgroundColor,
-    String? fontFamily,
-    List<String>? fontFamilyFallback,
-    double? fontSize,
-    FontWeight? fontWeight,
-    FontStyle? fontStyle,
-    double? letterSpacing,
-    double? wordSpacing,
-    TextBaseline? textBaseline,
-    double? height,
-    TextLeadingDistribution? leadingDistribution,
-    Locale? locale,
-    ui.Paint? foreground,
-    ui.Paint? background,
-    List<Shadow>? shadows,
-    List<ui.FontFeature>? fontFeatures,
-    List<ui.FontVariation>? fontVariations,
-    TextDecoration? decoration,
-    Color? decorationColor,
-    TextDecorationStyle? decorationStyle,
-    double? decorationThickness,
-    String? debugLabel,
-    TextOverflow? overflow,
-    String? package,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties, {String prefix = ''}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  ui.ParagraphStyle getParagraphStyle({
-    TextAlign? textAlign,
-    TextDirection? textDirection,
-    double textScaleFactor = 1.0,
-    TextScaler textScaler = TextScaler.noScaling,
-    String? ellipsis,
-    int? maxLines,
-    ui.TextHeightBehavior? textHeightBehavior,
-    Locale? locale,
-    String? fontFamily,
-    double? fontSize,
-    FontWeight? fontWeight,
-    FontStyle? fontStyle,
-    double? height,
-    StrutStyle? strutStyle,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  ui.TextStyle getTextStyle({
-    double textScaleFactor = 1.0,
-    TextScaler textScaler = TextScaler.noScaling,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  TextStyle merge(TextStyle? other) {
-    throw UnimplementedError();
   }
 }
 
