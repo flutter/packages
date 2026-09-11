@@ -5,11 +5,12 @@
 import 'dart:io';
 
 import 'package:githooks/src/pre_commit_command.dart';
+import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
 void main() {
-  const repoRoot = '/mock/repo/root';
-  const toolScript = '$repoRoot/script/tool/bin/flutter_plugin_tools.dart';
+  final String repoRoot = p.joinAll(<String>['mock', 'repo', 'root']);
+  final String toolScript = p.join(repoRoot, 'script', 'tool', 'bin', 'flutter_plugin_tools.dart');
 
   group('pre-commit hook', () {
     test('passes when both format and analyze succeed', () async {
