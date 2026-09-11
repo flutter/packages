@@ -597,7 +597,10 @@ class _RenderInkFeatures extends RenderProxyBox implements MaterialInkController
   @override
   void addInkFeature(InkFeature feature) {
     assert(!feature._debugDisposed);
-    assert(identical(feature.controller, this));
+    // Custom controllers that are not RenderObjects may delegate here so ink
+    // can still paint on the host Material. Only require identity when the
+    // feature's controller is itself a RenderObject.
+    assert(feature.controller is! RenderObject || identical(feature.controller, this));
     _inkFeatures ??= <InkFeature>[];
     assert(!_inkFeatures!.contains(feature));
     _inkFeatures!.add(feature);
@@ -691,8 +694,9 @@ abstract class InkFeature {
   /// [MaterialInkController.markNeedsPaint] when they need to repaint.
   ///
   /// Controllers returned by [Material.of] are [RenderObject]s and can paint
-  /// ink. Custom [MaterialInkController] implementations are supported; ink
-  /// painting is skipped when the controller is not a [RenderObject].
+  /// ink. Custom [MaterialInkController] implementations may delegate
+  /// [MaterialInkController.addInkFeature] to the host controller; painting
+  /// then uses the enclosing Material render object.
   final MaterialInkController controller;
 
   /// The render box whose visual position defines the frame of reference for this ink feature.
@@ -773,13 +777,22 @@ abstract class InkFeature {
   void _paint(Canvas canvas) {
     assert(referenceBox.attached);
     assert(!_debugDisposed);
-    // Painting requires a render-object controller so the ink can be
-    // transformed into the material's coordinate space. Custom controllers that
-    // are not RenderObjects cannot provide that transform.
-    if (controller is! RenderObject) {
+    // Prefer the controller when it is a RenderObject (Material.of). Custom
+    // delegating controllers are not RenderObjects, so fall back to the
+    // enclosing _RenderInkFeatures ancestor of the reference box.
+    RenderObject? paintContext;
+    if (controller is RenderObject) {
+      paintContext = controller as RenderObject;
+    } else {
+      RenderObject? ancestor = referenceBox.parent;
+      while (ancestor != null && ancestor is! _RenderInkFeatures) {
+        ancestor = ancestor.parent;
+      }
+      paintContext = ancestor;
+    }
+    if (paintContext == null) {
       return;
     }
-    final paintContext = controller as RenderObject;
     // determine the transform that gets our coordinate system to be like theirs
     final Matrix4? transform = _getPaintTransform(paintContext, referenceBox);
     if (transform != null) {
