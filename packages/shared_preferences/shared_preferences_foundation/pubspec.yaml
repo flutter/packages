@@ -32,11 +32,7 @@ dev_dependencies:
   ffigen: ^21.0.0
   flutter_test:
     sdk: flutter
-  pigeon:
-    git:
-      url: https://github.com/tarrinneal/packages.git
-      path: packages/pigeon
-      ref: eb95dee1db31d540983a61b6d37ff6f01eb5dbf7
+  pigeon: ^29.0.0
 
 topics:
   - persistence
