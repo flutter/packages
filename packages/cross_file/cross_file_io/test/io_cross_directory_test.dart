@@ -12,7 +12,7 @@ import 'package:path/path.dart' as path;
 final Directory testDirectory = Directory(path.join(Directory.current.path, 'test'));
 
 void main() {
-  group('IOXFile', () {
+  group('IOXDirectory', () {
     setUp(() {
       CrossFilePlatform.instance = CrossFileIO();
     });
