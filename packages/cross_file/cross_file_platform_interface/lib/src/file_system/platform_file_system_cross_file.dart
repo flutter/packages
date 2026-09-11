@@ -40,10 +40,7 @@ import '../platform_cross_file.dart';
 @immutable
 base class PlatformFileSystemXFileCreationParams extends PlatformXFileCreationParams {
   /// Constructs a [PlatformFileSystemXFileCreationParams].
-  PlatformFileSystemXFileCreationParams(this.path)
-    : super(
-        uri: Uri.file(path, windows: defaultTargetPlatform == TargetPlatform.windows).toString(),
-      );
+  PlatformFileSystemXFileCreationParams(this.path) : super(uri: Uri.file(path).toString());
 
   /// The path of the file.
   final String path;

@@ -41,12 +41,7 @@ import '../platform_cross_directory.dart';
 base class PlatformFileSystemXDirectoryCreationParams extends PlatformXDirectoryCreationParams {
   /// Constructs a [PlatformFileSystemXDirectoryCreationParams].
   PlatformFileSystemXDirectoryCreationParams(this.path)
-    : super(
-        uri: Uri.directory(
-          path,
-          windows: defaultTargetPlatform == TargetPlatform.windows,
-        ).toString(),
-      );
+    : super(uri: Uri.directory(path).toString());
 
   /// The path of the directory.
   final String path;
