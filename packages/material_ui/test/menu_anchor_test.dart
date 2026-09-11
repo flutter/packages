@@ -449,7 +449,7 @@ void main() {
     expect(material.color, Colors.transparent);
     expect(material.elevation, 0.0);
     expect(material.shape, const RoundedRectangleBorder());
-    expect(material.textStyle?.color, themeData.colorScheme.onSurface.withOpacity(0.38));
+    expect(material.textStyle?.color, themeData.colorScheme.onSurface.withValues(alpha: 0.38));
 
     // Vertical menu.
     await tester.tap(find.text(TestMenu.mainMenu2.label));
@@ -482,13 +482,13 @@ void main() {
     expect(material.color, Colors.transparent);
     expect(material.elevation, 0.0);
     expect(material.shape, const RoundedRectangleBorder());
-    expect(material.textStyle?.color, themeData.colorScheme.onSurface.withOpacity(0.38));
+    expect(material.textStyle?.color, themeData.colorScheme.onSurface.withValues(alpha: 0.38));
 
     expect(find.byIcon(Icons.ac_unit), findsOneWidget);
     final RichText iconRichText = tester.widget<RichText>(
       find.descendant(of: find.byIcon(Icons.ac_unit), matching: find.byType(RichText)),
     );
-    expect(iconRichText.text.style?.color, themeData.colorScheme.onSurface.withOpacity(0.38));
+    expect(iconRichText.text.style?.color, themeData.colorScheme.onSurface.withValues(alpha: 0.38));
   });
 
   testWidgets('Menu scrollbar inherits ScrollbarTheme', (WidgetTester tester) async {
@@ -3359,7 +3359,7 @@ void main() {
       await gesture.addPointer();
       await gesture.moveTo(center);
       await tester.pumpAndSettle();
-      expect(getOverlayColor(tester), paints..rect(color: overlayColor.withOpacity(0.08)));
+      expect(getOverlayColor(tester), paints..rect(color: overlayColor.withValues(alpha: 0.08)));
 
       // Highlighted (pressed).
       await gesture.down(center);
@@ -3367,9 +3367,9 @@ void main() {
       expect(
         getOverlayColor(tester),
         paints
-          ..rect(color: overlayColor.withOpacity(0.08))
-          ..rect(color: overlayColor.withOpacity(0.08))
-          ..rect(color: overlayColor.withOpacity(0.1)),
+          ..rect(color: overlayColor.withValues(alpha: 0.08))
+          ..rect(color: overlayColor.withValues(alpha: 0.08))
+          ..rect(color: overlayColor.withValues(alpha: 0.1)),
       );
     });
 
@@ -5041,7 +5041,7 @@ void main() {
       await gesture.addPointer();
       await gesture.moveTo(center);
       await tester.pumpAndSettle();
-      expect(getOverlayColor(tester), paints..rect(color: overlayColor.withOpacity(0.08)));
+      expect(getOverlayColor(tester), paints..rect(color: overlayColor.withValues(alpha: 0.08)));
 
       // Highlighted (pressed).
       await gesture.down(center);
@@ -5049,9 +5049,9 @@ void main() {
       expect(
         getOverlayColor(tester),
         paints
-          ..rect(color: overlayColor.withOpacity(0.08))
-          ..rect(color: overlayColor.withOpacity(0.08))
-          ..rect(color: overlayColor.withOpacity(0.1)),
+          ..rect(color: overlayColor.withValues(alpha: 0.08))
+          ..rect(color: overlayColor.withValues(alpha: 0.08))
+          ..rect(color: overlayColor.withValues(alpha: 0.1)),
       );
     });
 

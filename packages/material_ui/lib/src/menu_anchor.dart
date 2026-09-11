@@ -4138,7 +4138,7 @@ class _MenuButtonDefaultsM3 extends ButtonStyle {
   WidgetStateProperty<Color?>? get foregroundColor {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
-        return _colors.onSurface.withOpacity(0.38);
+        return _colors.onSurface.withValues(alpha:0.38);
       }
       if (states.contains(WidgetState.pressed)) {
         return _colors.onSurface;
@@ -4157,7 +4157,7 @@ class _MenuButtonDefaultsM3 extends ButtonStyle {
   WidgetStateProperty<Color?>? get iconColor {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
-        return _colors.onSurface.withOpacity(0.38);
+        return _colors.onSurface.withValues(alpha:0.38);
       }
       if (states.contains(WidgetState.pressed)) {
         return _colors.onSurfaceVariant;
@@ -4197,13 +4197,13 @@ class _MenuButtonDefaultsM3 extends ButtonStyle {
     return WidgetStateProperty.resolveWith(
       (Set<WidgetState> states) {
         if (states.contains(WidgetState.pressed)) {
-          return _colors.onSurface.withOpacity(0.1);
+          return _colors.onSurface.withValues(alpha:0.1);
         }
         if (states.contains(WidgetState.hovered)) {
-          return _colors.onSurface.withOpacity(0.08);
+          return _colors.onSurface.withValues(alpha:0.08);
         }
         if (states.contains(WidgetState.focused)) {
-          return _colors.onSurface.withOpacity(0.1);
+          return _colors.onSurface.withValues(alpha:0.1);
         }
         return Colors.transparent;
       },
