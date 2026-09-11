@@ -97,6 +97,7 @@ dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart update-dependency 
 
 ### Specialized Workflows
 
+- **Allowed Dependencies in `.repo_tool_config.yaml`**: The repository strictly enforces a whitelist of non-local dependencies. If you add or modify a dependency in any package's `pubspec.yaml` (including `dev_dependencies`), ensure the package is registered under `allowed_dependencies` (either `pinned` or `unpinned`) in `.repo_tool_config.yaml` at the repository root. Otherwise, `validate` will fail with `The following unexpected non-local dependencies were found`.
 - **Federated Plugin Development**: If you change multiple packages in a federated plugin that depend on each other, use `make-deps-path-based` to make their pubspec.yaml files use `path:` dependencies. This allows you to test them together locally.
   ```bash
   dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart make-deps-path-based --target-dependencies=<changed_plugin_packages>
@@ -150,8 +151,10 @@ dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart update-release-inf
   --changelog="A description of the changes."
 ```
 
-- `--version=minimal`: Bumps patch for bug fixes, and skips unchanged packages. This is usually the best option unless a new feature is being added.
+- `--version=minimal`: Bumps patch for bug fixes and non-breaking changes, and skips unchanged packages. This is usually the best option unless a new feature or breaking API change is being added.
   - When making public API changes, use `--version=minor` instead.
 - `--base-branch=origin/main`: Diffs against the `main` branch to find changed packages.
+
+If a change is strictly internal/exempt (e.g., repo-wide CI tooling) and should not bump package versions, explain the exemption in the PR description and request the `override: no versioning needed` and `override: no changelog needed` labels.
 
 If you update manually, follow semantic versioning and the [repository's CHANGELOG style](https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changelog-style).
