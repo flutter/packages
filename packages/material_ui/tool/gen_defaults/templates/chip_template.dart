@@ -2,28 +2,26 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/filter_chip.dart';
 import 'template.dart';
 
-class ChipTemplate extends TokenTemplate {
-  const ChipTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-    super.textThemePrefix = '_textTheme.',
-  });
-
-  static const String tokenGroup = 'md.comp.filter-chip';
-  static const String variant = '.flat';
+class ChipTemplateM3 extends TokenTemplateM3 {
+  const ChipTemplateM3();
 
   @override
-  String generate() =>
+  String get name => 'Chip';
+
+  @override
+  String get parentFilePath => 'chip.dart';
+
+  @override
+  String generateContents(String className) =>
       '''
-class _${blockName}DefaultsM3 extends ChipThemeData {
-  _${blockName}DefaultsM3(this.context, this.isEnabled)
+class $className extends ChipThemeData {
+  $className(this.context, this.isEnabled)
     : super(
-        elevation: ${elevation("$tokenGroup$variant.container")},
-        shape: ${shape("$tokenGroup.container")},
+        elevation: ${number(TokenFilterChip.flatContainerElevation)},
+        shape: ${shape(TokenFilterChip.containerShape)},
         showCheckmark: true,
       );
 
@@ -33,40 +31,40 @@ class _${blockName}DefaultsM3 extends ChipThemeData {
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   @override
-  TextStyle? get labelStyle => ${textStyle("$tokenGroup.label-text")}?.copyWith(
+  TextStyle? get labelStyle => ${textStyle(TokenFilterChip.labelTextType, '_textTheme')}?.copyWith(
     color: isEnabled
-      ? ${color("$tokenGroup.unselected.label-text.color")}
-      : ${color("$tokenGroup.disabled.label-text.color")},
+      ? ${color(TokenFilterChip.unselectedLabelTextColor, '_colors')}
+      : ${color(TokenFilterChip.disabledLabelTextColor, '_colors')},
   );
 
   @override
   WidgetStateProperty<Color?>? get color => null; // Subclasses override this getter
 
   @override
-  Color? get shadowColor => ${colorOrTransparent("$tokenGroup.container.shadow-color")};
+  Color? get shadowColor => Colors.transparent;
 
   @override
-  Color? get surfaceTintColor => ${colorOrTransparent("$tokenGroup.container.surface-tint-layer.color")};
+  Color? get surfaceTintColor => Colors.transparent;
 
   @override
   Color? get checkmarkColor => null;
 
   @override
   Color? get deleteIconColor => isEnabled
-    ? ${color("$tokenGroup.with-trailing-icon.unselected.trailing-icon.color")}
-    : ${color("$tokenGroup.with-trailing-icon.disabled.trailing-icon.color")};
+    ? ${color(TokenFilterChip.withTrailingIconUnselectedTrailingIconColor, '_colors')}
+    : ${color(TokenFilterChip.withTrailingIconDisabledTrailingIconColor, '_colors')};
 
   @override
   BorderSide? get side => isEnabled
-    ? ${border('$tokenGroup$variant.unselected.outline')}
-    : ${border('$tokenGroup$variant.disabled.unselected.outline')};
+    ? ${border(color(TokenFilterChip.flatUnselectedOutlineColor, '_colors'), width: TokenFilterChip.flatUnselectedOutlineWidth)}
+    : ${border(colorWithOpacity(TokenFilterChip.flatDisabledUnselectedOutlineColor, TokenFilterChip.flatDisabledUnselectedOutlineOpacity, '_colors'))};
 
   @override
   IconThemeData? get iconTheme => IconThemeData(
     color: isEnabled
-      ? ${color("$tokenGroup.with-leading-icon.unselected.leading-icon.color")}
-      : ${color("$tokenGroup.with-leading-icon.disabled.leading-icon.color")},
-    size: ${getToken("$tokenGroup.with-icon.icon.size")},
+      ? ${color(TokenFilterChip.withLeadingIconUnselectedLeadingIconColor, '_colors')}
+      : ${color(TokenFilterChip.withLeadingIconDisabledLeadingIconColor, '_colors')},
+    size: ${number(TokenFilterChip.withIconIconSize)},
   );
 
   @override
