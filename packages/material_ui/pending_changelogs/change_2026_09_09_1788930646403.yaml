@@ -1,0 +1,3 @@
+changelog: |
+  - Adds sortIconBuilder parameter to DataTable, PaginatedDataTable, and DataTableThemeData for custom sorting indicators.
+version: minor
