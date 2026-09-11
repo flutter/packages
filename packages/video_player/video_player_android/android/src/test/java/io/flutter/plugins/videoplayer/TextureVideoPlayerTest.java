@@ -6,6 +6,7 @@ package io.flutter.plugins.videoplayer;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.*;
 
 import android.view.Surface;
@@ -14,6 +15,7 @@ import androidx.media3.common.C;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.common.Player;
 import androidx.media3.common.VideoSize;
+import androidx.media3.exoplayer.DefaultRenderersFactory;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer;
 import io.flutter.view.TextureRegistry;
@@ -224,6 +226,36 @@ public final class TextureVideoPlayerTest {
       assertEquals(1, mockedBuilder.constructed().size());
       ExoPlayer.Builder builderMock = mockedBuilder.constructed().get(0);
       verify(builderMock).setLoadControl(any());
+      player.dispose();
+    }
+  }
+
+  @Test
+  public void create_enablesDecoderFallback() {
+    android.content.Context mockContext = mock(android.content.Context.class);
+    VideoPlayerOptions options = new VideoPlayerOptions();
+
+    try (MockedConstruction<DefaultRenderersFactory> mockedFactory =
+            mockConstruction(
+                DefaultRenderersFactory.class,
+                (mock, context) ->
+                    when(mock.setEnableDecoderFallback(anyBoolean())).thenReturn(mock));
+        MockedConstruction<ExoPlayer.Builder> mockedBuilder =
+            mockConstruction(
+                ExoPlayer.Builder.class,
+                (mock, context) -> {
+                  when(mock.setLoadControl(any())).thenReturn(mock);
+                  when(mock.setTrackSelector(any())).thenReturn(mock);
+                  when(mock.setMediaSourceFactory(any())).thenReturn(mock);
+                  when(mock.build()).thenReturn(mockExoPlayer);
+                })) {
+
+      TextureVideoPlayer player =
+          TextureVideoPlayer.create(mockContext, mockEvents, mockProducer, fakeVideoAsset, options);
+
+      assertEquals(1, mockedBuilder.constructed().size());
+      assertEquals(1, mockedFactory.constructed().size());
+      verify(mockedFactory.constructed().get(0)).setEnableDecoderFallback(true);
       player.dispose();
     }
   }
