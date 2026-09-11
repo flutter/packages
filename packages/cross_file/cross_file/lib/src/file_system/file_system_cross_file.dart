@@ -5,8 +5,7 @@
 import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform, immutable, internal;
+import 'package:flutter/foundation.dart' show immutable, internal;
 
 import '../cross_file.dart';
 
@@ -44,8 +43,7 @@ base class FileSystemXFile extends XFile {
   ///
   /// See [FileSystemXFile.fromCreationParams] for setting parameters for a
   /// specific platform.
-  FileSystemXFile.fromUri(Uri uri)
-    : this(uri.toFilePath(windows: defaultTargetPlatform == TargetPlatform.windows));
+  FileSystemXFile.fromUri(Uri uri) : this(uri.toFilePath());
 
   /// Constructs a [FileSystemXFile] from creation params for a specific
   /// platform.

@@ -3,8 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform, immutable, internal;
+import 'package:flutter/foundation.dart' show immutable, internal;
 
 import '../cross_directory.dart';
 
@@ -42,8 +41,7 @@ base class FileSystemXDirectory extends XDirectory {
   ///
   /// See [FileSystemXDirectory.fromCreationParams] for setting parameters
   /// for a specific platform.
-  FileSystemXDirectory.fromUri(Uri uri)
-    : this(uri.toFilePath(windows: defaultTargetPlatform == TargetPlatform.windows));
+  FileSystemXDirectory.fromUri(Uri uri) : this(uri.toFilePath());
 
   /// Constructs a [FileSystemXDirectory] from creation params for a specific
   /// platform.
