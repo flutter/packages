@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes ExpansionTile TalkBack requiring two swipes on Android by combining the live-region announcement into a single semantics node.
+version: skip
