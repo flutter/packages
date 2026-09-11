@@ -1147,6 +1147,21 @@ void main() {
     expect(identical(customController.added.single, customController.removed.single), isTrue);
   });
 
+  testWidgets('InkFeature with delegating controller still paints', (WidgetTester tester) async {
+    await tester.pumpWidget(const Material(child: SizedBox(width: 40, height: 40)));
+
+    final Element element = tester.element(find.byType(SizedBox));
+    final MaterialInkController host = Material.of(element);
+    final referenceBox = element.findRenderObject()! as RenderBox;
+    final customController = _DelegatingMaterialInkController(host);
+    final tracker = TrackPaintInkFeature(controller: customController, referenceBox: referenceBox);
+    customController.addInkFeature(tracker);
+
+    await tester.pump();
+    expect(tracker.paintCount, greaterThan(0));
+    tracker.dispose();
+  });
+
   group('LookupBoundary', () {
     testWidgets('hides Material from Material.maybeOf', (WidgetTester tester) async {
       MaterialInkController? material;
@@ -1325,11 +1340,13 @@ class _DelegatingMaterialInkController implements MaterialInkController {
   @override
   void addInkFeature(InkFeature feature) {
     added.add(feature);
+    _host.addInkFeature(feature);
   }
 
   @override
   void removeInkFeature(InkFeature feature) {
     removed.add(feature);
+    _host.removeInkFeature(feature);
   }
 
   @override
