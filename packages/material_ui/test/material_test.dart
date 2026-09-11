@@ -1128,6 +1128,25 @@ void main() {
     );
   });
 
+  testWidgets('InkFeature accepts a custom MaterialInkController', (WidgetTester tester) async {
+    await tester.pumpWidget(const Material(child: SizedBox(width: 40, height: 40)));
+
+    final Element element = tester.element(find.byType(SizedBox));
+    final MaterialInkController host = Material.of(element);
+    final referenceBox = element.findRenderObject()! as RenderBox;
+    final customController = _DelegatingMaterialInkController(host);
+
+    expect(
+      () => _InkFeature(controller: customController, referenceBox: referenceBox),
+      returnsNormally,
+    );
+    expect(customController.added, hasLength(1));
+
+    customController.added.single.dispose();
+    expect(customController.removed, hasLength(1));
+    expect(identical(customController.added.single, customController.removed.single), isTrue);
+  });
+
   group('LookupBoundary', () {
     testWidgets('hides Material from Material.maybeOf', (WidgetTester tester) async {
       MaterialInkController? material;
@@ -1288,4 +1307,33 @@ class _InkFeature extends InkFeature {
 
   @override
   void paintFeature(Canvas canvas, Matrix4 transform) {}
+}
+
+class _DelegatingMaterialInkController implements MaterialInkController {
+  _DelegatingMaterialInkController(this._host);
+
+  final MaterialInkController _host;
+  final List<InkFeature> added = <InkFeature>[];
+  final List<InkFeature> removed = <InkFeature>[];
+
+  @override
+  Color? get color => _host.color;
+
+  @override
+  TickerProvider get vsync => _host.vsync;
+
+  @override
+  void addInkFeature(InkFeature feature) {
+    added.add(feature);
+  }
+
+  @override
+  void removeInkFeature(InkFeature feature) {
+    removed.add(feature);
+  }
+
+  @override
+  void markNeedsPaint() {
+    _host.markNeedsPaint();
+  }
 }

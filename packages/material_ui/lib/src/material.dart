@@ -95,6 +95,13 @@ abstract class MaterialInkController {
   /// The ink feature will paint as part of this controller.
   void addInkFeature(InkFeature feature);
 
+  /// Stop painting the given ink feature and release any references to it.
+  ///
+  /// Called from [InkFeature.dispose]. Controllers that implement this
+  /// interface (including custom ones) must remove the feature from any
+  /// internal list used for painting.
+  void removeInkFeature(InkFeature feature);
+
   /// Notifies the controller that one of its ink features needs to repaint.
   void markNeedsPaint();
 }
@@ -590,14 +597,15 @@ class _RenderInkFeatures extends RenderProxyBox implements MaterialInkController
   @override
   void addInkFeature(InkFeature feature) {
     assert(!feature._debugDisposed);
-    assert(feature._controller == this);
+    assert(identical(feature.controller, this));
     _inkFeatures ??= <InkFeature>[];
     assert(!_inkFeatures!.contains(feature));
     _inkFeatures!.add(feature);
     markNeedsPaint();
   }
 
-  void _removeFeature(InkFeature feature) {
+  @override
+  void removeInkFeature(InkFeature feature) {
     assert(_inkFeatures != null);
     _inkFeatures!.remove(feature);
     markNeedsPaint();
@@ -670,10 +678,10 @@ class _InkFeatures extends SingleChildRenderObjectWidget {
 abstract class InkFeature {
   /// Initializes fields for subclasses.
   InkFeature({
-    required MaterialInkController controller,
+    required this.controller,
     required this.referenceBox,
     this.onRemoved,
-  }) : _controller = controller as _RenderInkFeatures {
+  }) {
     assert(debugMaybeDispatchCreated('material', 'InkFeature', this));
   }
 
@@ -681,8 +689,11 @@ abstract class InkFeature {
   ///
   /// Typically used by subclasses to call
   /// [MaterialInkController.markNeedsPaint] when they need to repaint.
-  MaterialInkController get controller => _controller;
-  final _RenderInkFeatures _controller;
+  ///
+  /// Controllers returned by [Material.of] are [RenderObject]s and can paint
+  /// ink. Custom [MaterialInkController] implementations are supported; ink
+  /// painting is skipped when the controller is not a [RenderObject].
+  final MaterialInkController controller;
 
   /// The render box whose visual position defines the frame of reference for this ink feature.
   final RenderBox referenceBox;
@@ -701,7 +712,7 @@ abstract class InkFeature {
       return true;
     }());
     assert(debugMaybeDispatchDisposed(this));
-    _controller._removeFeature(this);
+    controller.removeInkFeature(this);
     onRemoved?.call();
   }
 
@@ -762,8 +773,15 @@ abstract class InkFeature {
   void _paint(Canvas canvas) {
     assert(referenceBox.attached);
     assert(!_debugDisposed);
+    // Painting requires a render-object controller so the ink can be
+    // transformed into the material's coordinate space. Custom controllers that
+    // are not RenderObjects cannot provide that transform.
+    if (controller is! RenderObject) {
+      return;
+    }
+    final paintContext = controller as RenderObject;
     // determine the transform that gets our coordinate system to be like theirs
-    final Matrix4? transform = _getPaintTransform(_controller, referenceBox);
+    final Matrix4? transform = _getPaintTransform(paintContext, referenceBox);
     if (transform != null) {
       paintFeature(canvas, transform);
     }
