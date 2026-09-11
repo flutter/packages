@@ -33,7 +33,7 @@ final class PigeonError: Error {
 
   var localizedDescription: String {
     return
-      "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
+      "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>"))"
   }
 }
 
@@ -110,19 +110,19 @@ enum MessagesPigeonInternal {
     case is (Void, Void):
       return true
 
-    case (let lhsArray, let rhsArray) as ([Any?], [Any?]):
+    case (let lhsArray, let rhsArray) as ([Double], [Double]):
       guard lhsArray.count == rhsArray.count else { return false }
       for (index, element) in lhsArray.enumerated() {
-        if !deepEquals(element, rhsArray[index]) {
+        if !doubleEquals(element, rhsArray[index]) {
           return false
         }
       }
       return true
 
-    case (let lhsArray, let rhsArray) as ([Double], [Double]):
+    case (let lhsArray, let rhsArray) as ([Any?], [Any?]):
       guard lhsArray.count == rhsArray.count else { return false }
       for (index, element) in lhsArray.enumerated() {
-        if !doubleEquals(element, rhsArray[index]) {
+        if !deepEquals(element, rhsArray[index]) {
           return false
         }
       }
