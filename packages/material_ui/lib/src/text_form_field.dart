@@ -8,7 +8,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import 'adaptive_text_selection_toolbar.dart';
 import 'input_decorator.dart';
 import 'material_state.dart';
 import 'text_field.dart';
@@ -187,7 +186,7 @@ class TextFormField extends FormField<String> {
     super.restorationId,
     bool enableIMEPersonalizedLearning = true,
     MouseCursor? mouseCursor,
-    EditableTextContextMenuBuilder? contextMenuBuilder = _defaultContextMenuBuilder,
+    EditableTextContextMenuBuilder? contextMenuBuilder,
     SpellCheckConfiguration? spellCheckConfiguration,
     TextMagnifierConfiguration? magnifierConfiguration,
     UndoHistoryController? undoController,
@@ -341,16 +340,6 @@ class TextFormField extends FormField<String> {
 
   /// {@macro cupertino_ui.TextFormField.onChanged}
   final ValueChanged<String>? onChanged;
-
-  static Widget _defaultContextMenuBuilder(
-    BuildContext context,
-    EditableTextState editableTextState,
-  ) {
-    if (SystemContextMenu.isSupportedByField(editableTextState)) {
-      return SystemContextMenu.editableText(editableTextState: editableTextState);
-    }
-    return AdaptiveTextSelectionToolbar.editableText(editableTextState: editableTextState);
-  }
 
   @override
   FormFieldState<String> createState() => _TextFormFieldState();
