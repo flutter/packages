@@ -1263,6 +1263,7 @@ if (wrapped == nil) {
             errorTypeName: _getErrorClassName(generatorOptions),
             isAsynchronous: true,
             isAsynchronousCallback: func.isAsynchronousCallback,
+            isMainActor: !func.isAsynchronousCallback,
             swiftFunction: func.swiftFunction,
             getParameterName: _getSafeArgumentName,
           ),
@@ -2614,6 +2615,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
       errorTypeName: _getErrorClassName(generatorOptions),
       isAsynchronous: isAsynchronous,
       isAsynchronousCallback: isAsynchronousCallback,
+      isMainActor: isAsynchronous && !isAsynchronousCallback,
       swiftFunction: swiftFunction,
       getParameterName: _getSafeArgumentName,
     );
@@ -3963,6 +3965,7 @@ String _getMethodSignature({
   bool isAsynchronous = false,
   bool ffiUserApi = false,
   bool isAsynchronousCallback = false,
+  bool isMainActor = false,
   String? swiftFunction,
   bool ffiBridgeApi = false,
   _SwiftFunctionComponents? components,
@@ -4026,8 +4029,9 @@ String _getMethodSignature({
   }
 
   if (isAsynchronous && !isAsynchronousCallback) {
+    final mainActorPrefix = isMainActor ? '@MainActor ' : '';
     final returnTypeSuffix = returnType.isVoid ? '' : ' -> $returnTypeString';
-    return 'func $methodName($parameterSignature) async throws$returnTypeSuffix';
+    return '${mainActorPrefix}func ${components.name}($parameterSignature) async throws$returnTypeSuffix';
   }
 
   if (isAsynchronous) {

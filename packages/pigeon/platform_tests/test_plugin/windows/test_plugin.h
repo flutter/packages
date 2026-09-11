@@ -740,6 +740,9 @@ class TestPlugin : public flutter::Plugin,
       std::function<
           void(std::optional<core_tests_pigeontest::FlutterError> reply)>
           result) override;
+  void CallFlutterIsAsyncFlutterApiOnRoot(
+      std::function<void(core_tests_pigeontest::ErrorOr<bool> reply)> result)
+      override;
   core_tests_pigeontest::UnusedClass TestUnusedClassGenerates();
 
  private:
