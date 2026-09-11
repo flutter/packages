@@ -324,7 +324,7 @@ class _FlexibleSpaceBarState extends State<FlexibleSpaceBar> {
             TextStyle titleStyle = theme.useMaterial3
                 ? theme.textTheme.titleLarge!
                 : theme.primaryTextTheme.titleLarge!;
-            titleStyle = titleStyle.copyWith(color: titleStyle.color!.withOpacity(opacity));
+            titleStyle = titleStyle.copyWith(color: titleStyle.color!.withValues(alpha: opacity));
             final bool effectiveCenterTitle = _getEffectiveCenterTitle(theme);
             final leadingPadding = (settings.hasLeading ?? true) ? 72.0 : 0.0;
             final EdgeInsetsGeometry padding =
