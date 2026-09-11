@@ -6,17 +6,18 @@
 * Adds implementation for scoped storage APIs that use ephemeral URLS. See `ScopedStorageXFile`
   and `ScopedStorageXDirectory`.
 * **BREAKING CHANGES**:
-  * Replaces `XFile(String path)` with `XFile.fileSystem({required String path})`
-    or `FileSystem(String path)`.
-  * Removes `XFile.fromData`. `XFile`s can no longer be instantiated with a
-    `Uint8List`. For web, see README for an example to create one from a `Blob`/`File`.
-  * Removes `XFile.saveTo()`. `FileSystemXFile.writeAsBytes` has been added
-    and the web implementation can use `WebScopedStorageXFileExtension.download`. See README to see
-    how to access platform-specific features.
+  * Replaces `XFile(String path)` with `XFile.fileSystem({required String path})` or
+    `FileSystemXFile(String path)`.
+  * Removes `XFile.fromData`. `XFile`s can no longer be instantiated with a `Uint8List`. The web
+    implementation can use `WebScopedStorageXFileCreationParams.fromBlob` to instantiate one with a
+    `Blob`/`File`. See README to see how to access platform-specific features.
+  * Removes `XFile.saveTo()`. `FileSystemXFile.writeAsBytes` has been added and the web
+    implementation can use `WebScopedStorageXFileExtension.download`. See README to see how to
+    access platform-specific features.
   * Removes `XFile.mimeType`.
   * Removes `XFile.path`. This has been replaced by `FileSystemXFile.path`.
-  * Changes `XFile.name` to a method that returns `Future<String>` rather than a
-    field that returns `String`.
+  * Changes `XFile.name` to a method that returns `Future<String>` rather than a field that returns
+    `String`.
 
 ## 0.3.5+5
 
