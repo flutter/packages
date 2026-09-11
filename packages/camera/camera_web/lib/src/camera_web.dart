@@ -439,11 +439,7 @@ class CameraPlugin extends CameraPlatform {
   }
 
   @override
-  Future<void> startVideoRecording(
-    int cameraId, {
-    Duration? maxVideoDuration,
-    String? videoOutputPath,
-  }) {
+  Future<void> startVideoRecording(int cameraId, {Duration? maxVideoDuration}) {
     // Ignore maxVideoDuration, as it is deprecated.
     return startVideoCapturing(VideoCaptureOptions(cameraId));
   }
