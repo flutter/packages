@@ -9,7 +9,6 @@ import 'file_system/platform_file_system_cross_directory.dart';
 import 'file_system/platform_file_system_cross_file.dart';
 import 'platform_cross_directory.dart';
 import 'platform_cross_entity.dart';
-import 'platform_cross_file.dart';
 import 'scoped_storage/platform_scoped_storage_cross_directory.dart';
 import 'scoped_storage/platform_scoped_storage_cross_file.dart';
 
