@@ -1039,13 +1039,11 @@ void main() {
         }
 
         expect(isSorted, false, reason: 'Expected captions to be unsorted');
-        expect(captions.map((Caption c) => c.text).toList(), <String>[
-          'one',
-          'two',
-          'three',
-          'five',
-          'four',
-        ], reason: 'Captions should be in original unsorted order');
+        expect(
+          captions.map((Caption c) => c.text).toList(),
+          <String>['one', 'two', 'three', 'five', 'four'],
+          reason: 'Captions should be in original unsorted order',
+        );
       });
 
       test('works when seeking, includes all captions', () async {
@@ -1806,6 +1804,25 @@ void main() {
         await controller.play();
         verifyPlayStateRespondsToLifecycle(controller, shouldPlayInBackground: false);
       });
+
+      test('androidOptions are forwarded during player creation', () async {
+        const androidOptions = VideoPlayerAndroidOptions(
+          enableDecoderFallback: true,
+          disableMediaCodecAsyncQueueing: true,
+        );
+        final controller = VideoPlayerController.networkUrl(
+          _localhostUri,
+          videoPlayerOptions: VideoPlayerOptions(androidOptions: androidOptions),
+        );
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+
+        expect(
+          fakeVideoPlayerPlatform.creationOptions.single.videoPlayerOptions?.androidOptions,
+          androidOptions,
+        );
+      });
     });
 
     test('VideoProgressColors', () {
@@ -2022,6 +2039,7 @@ void main() {
 class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   Completer<bool> initialized = Completer<bool>();
   List<String> calls = <String>[];
+  List<VideoCreationOptions> creationOptions = <VideoCreationOptions>[];
   List<DataSource> dataSources = <DataSource>[];
   List<VideoViewType> viewTypes = <VideoViewType>[];
   final Map<int, StreamController<VideoEvent>> streams = <int, StreamController<VideoEvent>>{};
@@ -2054,6 +2072,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   @override
   Future<int?> createWithOptions(VideoCreationOptions options) async {
     calls.add('createWithOptions');
+    creationOptions.add(options);
     final stream = StreamController<VideoEvent>();
     streams[nextPlayerId] = stream;
     if (forceInitError) {

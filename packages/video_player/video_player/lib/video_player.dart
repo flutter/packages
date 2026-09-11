@@ -20,6 +20,7 @@ export 'package:video_player_platform_interface/video_player_platform_interface.
         DataSourceType,
         DurationRange,
         VideoFormat,
+        VideoPlayerAndroidOptions,
         VideoPlayerOptions,
         VideoPlayerWebOptions,
         VideoPlayerWebOptionsControls,
