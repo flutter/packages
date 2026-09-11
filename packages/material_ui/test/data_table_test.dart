@@ -1301,7 +1301,10 @@ void main() {
     expect(lastTableRowBoxDecoration().color, null);
 
     await tester.pumpWidget(buildTable(selected: true));
-    expect(lastTableRowBoxDecoration().color, themeData.colorScheme.primary.withOpacity(0.08));
+    expect(
+      lastTableRowBoxDecoration().color,
+      themeData.colorScheme.primary.withValues(alpha: 0.08),
+    );
   });
 
   testWidgets('DataRow renders checkbox with colors from CheckboxTheme', (
@@ -1498,7 +1501,7 @@ void main() {
         ..rect()
         ..rect(
           rect: const Rect.fromLTRB(0.0, 56.0, 800.0, 104.0),
-          color: pressedColor.withOpacity(0.0),
+          color: pressedColor.withValues(alpha: 0.0),
         ),
     );
     await gesture.up();
