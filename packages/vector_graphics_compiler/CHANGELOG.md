@@ -1,3 +1,8 @@
+## 1.3.1
+
+* Adds example demonstrating build-time SVG asset transformation.
+* Adds Usage section to README.
+
 ## 1.3.0
 
 * An unrecognized `font-weight` value is now ignored with a warning (and still
