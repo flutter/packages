@@ -618,7 +618,6 @@ void main() {
         ]);
       });
 
-
       test('Should set description while recording', () async {
         // Arrange
         final channel = MethodChannelMock(
