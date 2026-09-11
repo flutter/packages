@@ -1,3 +1,3 @@
 changelog: |
-  - Adds global context menu builder override to TextSelectionThemeData.
+  - Adds a global context menu builder override to TextSelectionThemeData.
 version: patch
