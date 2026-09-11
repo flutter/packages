@@ -303,52 +303,6 @@ Rect getMenuRect(WidgetTester tester) {
   return menuRect;
 }
 
-Future<void> checkDropdownColor(
-  WidgetTester tester, {
-  Color? color,
-  bool isFormField = false,
-}) async {
-  const text = 'foo';
-  await tester.pumpWidget(
-    MaterialApp(
-      theme: ThemeData(useMaterial3: false),
-      home: Material(
-        child: isFormField
-            ? Form(
-                child: DropdownButtonFormField<String>(
-                  dropdownColor: color,
-                  initialValue: text,
-                  items: const <DropdownMenuItem<String>>[
-                    DropdownMenuItem<String>(value: text, child: Text(text)),
-                  ],
-                  onChanged: (_) {},
-                ),
-              )
-            : DropdownButton<String>(
-                dropdownColor: color,
-                value: text,
-                items: const <DropdownMenuItem<String>>[
-                  DropdownMenuItem<String>(value: text, child: Text(text)),
-                ],
-                onChanged: (_) {},
-              ),
-      ),
-    ),
-  );
-  await tester.tap(find.text(text));
-  await tester.pump();
-
-  expect(
-    find.ancestor(of: find.text(text).last, matching: find.byType(CustomPaint)).at(2),
-    paints
-      ..save()
-      ..rrect()
-      ..rrect()
-      ..rrect()
-      ..rrect(color: color ?? Colors.grey[50], hasMaskFilter: false),
-  );
-}
-
 void main() {
   testWidgets('Default dropdown golden', (WidgetTester tester) async {
     final Key buttonKey = UniqueKey();
@@ -1511,57 +1465,6 @@ void main() {
     expect(getIndex(), null);
   });
 
-  testWidgets('DropdownButton selected item color test', (WidgetTester tester) async {
-    Widget build({
-      ValueChanged<String?>? onChanged,
-      String? value,
-      Widget? hint,
-      Widget? disabledHint,
-    }) {
-      return MaterialApp(
-        theme: ThemeData(disabledColor: Colors.pink),
-        home: Scaffold(
-          body: Center(
-            child: Column(
-              children: <Widget>[
-                DropdownButtonFormField<String>(
-                  style: const TextStyle(color: Colors.yellow),
-                  disabledHint: disabledHint,
-                  hint: hint,
-                  items: const <DropdownMenuItem<String>>[
-                    DropdownMenuItem<String>(value: 'one', child: Text('one')),
-                    DropdownMenuItem<String>(value: 'two', child: Text('two')),
-                  ],
-                  initialValue: value,
-                  onChanged: onChanged,
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-    Color textColor(String text) {
-      return tester.renderObject<RenderParagraph>(find.text(text)).text.style!.color!;
-    }
-
-    // The selected value should be displayed when the button is enabled.
-    await tester.pumpWidget(build(onChanged: onChanged, value: 'two'));
-    // The dropdown icon and the selected menu item are vertically aligned.
-    expect(tester.getCenter(find.text('two')).dy, tester.getCenter(find.byType(Icon)).dy);
-    // Selected item has a normal color from [DropdownButtonFormField.style]
-    // when the button is enabled.
-    expect(textColor('two'), Colors.yellow);
-
-    // The selected value should be displayed when the button is disabled.
-    await tester.pumpWidget(build(value: 'two'));
-    expect(tester.getCenter(find.text('two')).dy, tester.getCenter(find.byType(Icon)).dy);
-    // Selected item has a disabled color from [theme.disabledColor]
-    // when the button is disable.
-    expect(textColor('two'), Colors.pink);
-  });
-
   testWidgets('DropdownButton hint displays when the items list is empty, '
       'items is null, and disabledHint is null', (WidgetTester tester) async {
     final Key buttonKey = UniqueKey();
@@ -2099,24 +2002,6 @@ void main() {
     expect(find.text('Two as an Arabic numeral: 2'), findsOneWidget);
   });
 
-  testWidgets('DropdownButton uses default color when expanded', (WidgetTester tester) async {
-    await checkDropdownColor(tester);
-  });
-
-  testWidgets('DropdownButton uses dropdownColor when expanded', (WidgetTester tester) async {
-    await checkDropdownColor(tester, color: const Color.fromRGBO(120, 220, 70, 0.8));
-  });
-
-  testWidgets('DropdownButtonFormField uses dropdownColor when expanded', (
-    WidgetTester tester,
-  ) async {
-    await checkDropdownColor(
-      tester,
-      color: const Color.fromRGBO(120, 220, 70, 0.8),
-      isFormField: true,
-    );
-  });
-
   testWidgets('DropdownButton hint displays properly when selectedItemBuilder is defined', (
     WidgetTester tester,
   ) async {
@@ -2425,69 +2310,6 @@ void main() {
         rect: const Rect.fromLTRB(348.0, 276.0, 452.0, 324.0),
         color: const Color(0x1f00ff00),
       ),
-    );
-  });
-
-  testWidgets('DropdownButtonFormField can be focused, and has focusColor', (
-    WidgetTester tester,
-  ) async {
-    tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
-    final buttonKey = UniqueKey();
-    final focusNode = FocusNode(debugLabel: 'DropdownButtonFormField');
-    addTearDown(focusNode.dispose);
-
-    await tester.pumpWidget(
-      buildFrame(
-        isFormField: true,
-        buttonKey: buttonKey,
-        onChanged: onChanged,
-        focusNode: focusNode,
-        autofocus: true,
-        decoration: const InputDecoration(filled: true),
-      ),
-    );
-
-    await tester.pump(); // Pump a frame for autofocus to take effect.
-    expect(focusNode.hasPrimaryFocus, isTrue);
-
-    // Default focus Color from InputDecorator defaults.
-    final ThemeData theme = Theme.of(tester.element(find.byType(InputDecorator)));
-    expect(
-      findInputDecoratorBorderPainter(),
-      paints..rrect(style: PaintingStyle.fill, color: theme.colorScheme.surfaceContainerHighest),
-    );
-
-    // Focus color from Decoration.
-    await tester.pumpWidget(
-      buildFrame(
-        isFormField: true,
-        buttonKey: buttonKey,
-        onChanged: onChanged,
-        focusNode: focusNode,
-        decoration: const InputDecoration(filled: true, focusColor: Color(0xff00ffff)),
-      ),
-    );
-
-    expect(
-      findInputDecoratorBorderPainter(),
-      paints..rrect(style: PaintingStyle.fill, color: const Color(0xff00ffff)),
-    );
-
-    // Focus color from focusColor property.
-    await tester.pumpWidget(
-      buildFrame(
-        isFormField: true,
-        buttonKey: buttonKey,
-        onChanged: onChanged,
-        focusNode: focusNode,
-        decoration: const InputDecoration(filled: true, focusColor: Color(0xff00ffff)),
-        focusColor: const Color(0xff00ff00),
-      ),
-    );
-
-    expect(
-      findInputDecoratorBorderPainter(),
-      paints..rrect(style: PaintingStyle.fill, color: const Color(0xff00ff00)),
     );
   });
 

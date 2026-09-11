@@ -2,12 +2,110 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 // TODO(navaronbracke): port tests from dropdown_button_form_field_test.dart to plain DropdownButton tests as well
 
 void main() {
+  const menuItems = <String>['one', 'two', 'three', 'four'];
+
+  Widget buildDropdownButton({
+    Key? buttonKey,
+    String? initialValue = 'two',
+    ValueChanged<String?>? onChanged,
+    VoidCallback? onTap,
+    Widget? icon,
+    Color? iconDisabledColor,
+    Color? iconEnabledColor,
+    double iconSize = 24.0,
+    bool isDense = false,
+    bool isExpanded = false,
+    Widget? hint,
+    Widget? disabledHint,
+    Widget? underline,
+    List<String>? items = menuItems,
+    List<Widget> Function(BuildContext)? selectedItemBuilder,
+    double? itemHeight = kMinInteractiveDimension,
+    double? menuWidth,
+    AlignmentDirectional alignment = AlignmentDirectional.centerStart,
+    FocusNode? focusNode,
+    bool autofocus = false,
+    Color? focusColor,
+    Color? dropdownColor,
+    double? menuMaxHeight,
+    EdgeInsetsGeometry? padding,
+  }) {
+    final List<DropdownMenuItem<String>>? listItems = items?.map<DropdownMenuItem<String>>((
+      String item,
+    ) {
+      return DropdownMenuItem<String>(
+        key: ValueKey<String>(item),
+        value: item,
+        child: Text(item, key: ValueKey<String>('${item}Text')),
+      );
+    }).toList();
+
+    return DropdownButton<String>(
+      key: buttonKey,
+      value: initialValue,
+      hint: hint,
+      disabledHint: disabledHint,
+      onChanged: onChanged,
+      onTap: onTap,
+      icon: icon,
+      iconSize: iconSize,
+      iconDisabledColor: iconDisabledColor,
+      iconEnabledColor: iconEnabledColor,
+      isDense: isDense,
+      isExpanded: isExpanded,
+      underline: underline,
+      focusNode: focusNode,
+      autofocus: autofocus,
+      focusColor: focusColor,
+      dropdownColor: dropdownColor,
+      items: listItems,
+      selectedItemBuilder: selectedItemBuilder,
+      itemHeight: itemHeight,
+      menuWidth: menuWidth,
+      alignment: alignment,
+      menuMaxHeight: menuMaxHeight,
+      padding: padding,
+    );
+  }
+
+  Future<void> checkDropdownButtonColor(WidgetTester tester, {Color? color}) async {
+    const text = 'foo';
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(useMaterial3: false),
+        home: Material(
+          child: DropdownButton<String>(
+            dropdownColor: color,
+            value: text,
+            items: const <DropdownMenuItem<String>>[
+              DropdownMenuItem<String>(value: text, child: Text(text)),
+            ],
+            onChanged: (_) {},
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text(text));
+    await tester.pump();
+
+    expect(
+      find.ancestor(of: find.text(text).last, matching: find.byType(CustomPaint)).at(2),
+      paints
+        ..save()
+        ..rrect()
+        ..rrect()
+        ..rrect()
+        ..rrect(color: color ?? Colors.grey[50], hasMaskFilter: false),
+    );
+  }
+
   testWidgets('DropdownButton value should only appear in one menu item', (
     WidgetTester tester,
   ) async {
@@ -212,5 +310,64 @@ void main() {
         ),
       ),
     );
+  });
+
+  testWidgets('DropdownButton selected item color test', (WidgetTester tester) async {
+    Widget build({
+      ValueChanged<String?>? onChanged,
+      String? value,
+      Widget? hint,
+      Widget? disabledHint,
+    }) {
+      return MaterialApp(
+        theme: ThemeData(disabledColor: Colors.pink),
+        home: Scaffold(
+          body: Center(
+            child: Column(
+              children: <Widget>[
+                DropdownButton<String>(
+                  style: const TextStyle(color: Colors.yellow),
+                  disabledHint: disabledHint,
+                  hint: hint,
+                  items: const <DropdownMenuItem<String>>[
+                    DropdownMenuItem<String>(value: 'one', child: Text('one')),
+                    DropdownMenuItem<String>(value: 'two', child: Text('two')),
+                  ],
+                  value: value,
+                  onChanged: onChanged,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    Color textColor(String text) {
+      return tester.renderObject<RenderParagraph>(find.text(text)).text.style!.color!;
+    }
+
+    // The selected value should be displayed when the button is enabled.
+    await tester.pumpWidget(build(onChanged: (_) {}, value: 'two'));
+    // The dropdown icon and the selected menu item are vertically aligned.
+    expect(tester.getCenter(find.text('two')).dy, tester.getCenter(find.byType(Icon)).dy);
+    // Selected item has a normal color from [DropdownButtonFormField.style]
+    // when the button is enabled.
+    expect(textColor('two'), Colors.yellow);
+
+    // The selected value should be displayed when the button is disabled.
+    await tester.pumpWidget(build(value: 'two'));
+    expect(tester.getCenter(find.text('two')).dy, tester.getCenter(find.byType(Icon)).dy);
+    // Selected item has a disabled color from [theme.disabledColor]
+    // when the button is disable.
+    expect(textColor('two'), Colors.pink);
+  });
+
+  testWidgets('DropdownButton uses default color when expanded', (WidgetTester tester) async {
+    await checkDropdownButtonColor(tester);
+  });
+
+  testWidgets('DropdownButton uses dropdownColor when expanded', (WidgetTester tester) async {
+    await checkDropdownButtonColor(tester, color: const Color.fromRGBO(120, 220, 70, 0.8));
   });
 }
