@@ -645,6 +645,10 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
 
       _controller.fling(velocity: visualVelocity);
       if (visualVelocity < 0.0) {
+        // We explicitly remove the history entry here because the drawer may already be
+        // animating closed (status == AnimationStatus.reverse) when the drag begins.
+        // In that case, flinging it closed again does not change the animation status,
+        // so the status listener will not fire.
         _removeHistoryEntry();
       }
       widget.drawerCallback?.call(visualVelocity > 0.0);
@@ -666,6 +670,7 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
   /// Starts an animation to close the drawer.
   void close() {
     _controller.fling(velocity: -1.0);
+    // Explicitly removed here for the same reason as in _settle.
     _removeHistoryEntry();
     widget.drawerCallback?.call(false);
   }
