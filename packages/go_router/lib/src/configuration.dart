@@ -622,30 +622,9 @@ class RouteConfiguration {
       return callback();
     }
 
-    T? result;
-    var errorOccurred = false;
-
-    runZonedGuarded<void>(
-      () {
-        result = callback();
-      },
-      (Object error, StackTrace stack) {
-        errorOccurred = true;
-        // Convert any exception during redirect to a GoException and rethrow
-        final GoException goException = error is GoException
-            ? error
-            : GoException('Exception during redirect: $error');
-        throw goException;
-      },
-      zoneValues: <Object?, Object?>{currentRouterKey: router},
-    );
-
-    if (errorOccurred) {
-      // This should not be reached since we rethrow in the error handler
-      throw GoException('Unexpected error in router zone');
-    }
-
-    return result as T;
+    return Zone.current
+        .fork(zoneValues: <Object?, Object?>{currentRouterKey: router})
+        .run<T>(callback);
   }
 
   /// Get the location for the provided route.
