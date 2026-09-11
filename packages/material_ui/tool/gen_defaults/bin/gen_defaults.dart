@@ -20,8 +20,8 @@ import '../templates/banner_template.dart';
 import '../templates/bottom_sheet_template.dart';
 import '../templates/button_template.dart';
 import '../templates/card_template.dart';
+import '../templates/checkbox_template.dart';
 
-// import '../templates/checkbox_template.dart';
 // import '../templates/chip_template.dart';
 // import '../templates/color_scheme_template.dart';
 // import '../templates/date_picker_template.dart';
@@ -78,7 +78,7 @@ Future<void> main(List<String> args) async {
   const CardTemplateM3('Card').generateFile(verbose: verbose);
   const CardTemplateM3('Filled Card').generateFile(verbose: verbose);
   const CardTemplateM3('Outlined Card').generateFile(verbose: verbose);
-  // const CheckboxTemplateM3().generateFile(verbose: verbose);
+  const CheckboxTemplateM3().generateFile(verbose: verbose);
   // const ChipTemplateM3().generateFile(verbose: verbose);
   // const ColorSchemeTemplateM3().generateFile(verbose: verbose);
   // const DatePickerTemplateM3().generateFile(verbose: verbose);

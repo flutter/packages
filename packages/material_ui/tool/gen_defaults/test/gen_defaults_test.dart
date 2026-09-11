@@ -17,7 +17,7 @@ import '../templates/banner_template.dart';
 import '../templates/bottom_sheet_template.dart';
 import '../templates/button_template.dart';
 import '../templates/card_template.dart';
-// import '../templates/checkbox_template.dart';
+import '../templates/checkbox_template.dart';
 // import '../templates/chip_template.dart';
 // import '../templates/color_scheme_template.dart';
 // import '../templates/date_picker_template.dart';
@@ -444,8 +444,35 @@ void main() {
     });
 
     test('CheckboxTemplateM3 emits M3 Checkbox defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const CheckboxTemplateM3());
+      expect(contents, contains('class _CheckboxDefaultsM3 extends CheckboxThemeData'));
+      expect(contents, contains('WidgetStateBorderSide? get side'));
+      expect(contents, contains('return const BorderSide(width: 2.0, color: Colors.transparent);'));
+      expect(
+        contents,
+        contains('return BorderSide(width: 2.0, color: _colors.onSurface.withOpacity(0.38));'),
+      );
+      expect(contents, contains('return const BorderSide(width: 0.0, color: Colors.transparent);'));
+      expect(contents, contains('return BorderSide(width: 2.0, color: _colors.error);'));
+      expect(contents, contains('WidgetStateProperty<Color> get fillColor'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.38);'));
+      expect(contents, contains('return _colors.primary;'));
+      expect(contents, contains('WidgetStateProperty<Color> get checkColor'));
+      expect(contents, contains('return _colors.surface;'));
+      expect(contents, contains('return _colors.onError;'));
+      expect(contents, contains('return _colors.onPrimary;'));
+      expect(contents, contains('WidgetStateProperty<Color> get overlayColor'));
+      expect(contents, contains('return _colors.error.withOpacity(0.1);'));
+      expect(contents, contains('return _colors.primary.withOpacity(0.08);'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.1);'));
+      expect(contents, contains('double get splashRadius => 40.0 / 2'));
+      expect(contents, contains('VisualDensity get visualDensity => VisualDensity.standard'));
+      expect(
+        contents,
+        contains(
+          'const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(2.0)))',
+        ),
+      );
     });
 
     test('ChipTemplateM3 emits M3 Chip defaults from tokens', () {
