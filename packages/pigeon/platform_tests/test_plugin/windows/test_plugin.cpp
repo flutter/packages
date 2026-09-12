@@ -1359,6 +1359,13 @@ void TestPlugin::CallFlutterCallbackThrowErrorFromVoid(
       [result](const FlutterError& error) { result(error); });
 }
 
+void TestPlugin::CallFlutterIsAsyncFlutterApiOnRoot(
+    std::function<void(core_tests_pigeontest::ErrorOr<bool> reply)> result) {
+  flutter_api_->IsAsyncFlutterApiOnRoot(
+      [result](bool is_on_root) { result(is_on_root); },
+      [result](const FlutterError& error) { result(error); });
+}
+
 core_tests_pigeontest::UnusedClass TestPlugin::TestUnusedClassGenerates() {
   return core_tests_pigeontest::UnusedClass();
 }
