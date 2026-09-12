@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter/services.dart';
@@ -810,7 +812,8 @@ class CupertinoSheetRoute<T> extends PageRoute<T> with _CupertinoSheetRouteTrans
           data: CupertinoUserInterfaceLevelData.elevated,
           child: _CupertinoSheetScope(
             child: _CupertinoDraggableScrollableSheet<T>(
-              enabledCallback: () => !(controller?.isAnimating ?? false),
+              animationController: controller,
+              enabledCallback: _isInteractionEnabled,
               enableDrag: enableDrag,
               onStartPopGesture: () => _CupertinoSheetRouteTransitionMixin._startPopGesture<T>(
                 this,
@@ -877,7 +880,35 @@ class _CupertinoSheetScope extends InheritedWidget {
 ///
 ///  * [CupertinoSheetRoute], which is a [PageRoute] that leverages this mixin.
 mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
-  /// Builds the primary contents of the route.
+  bool _hasCompletedInitialAnimation = false;
+  ScrollController? _registeredScrollController;
+
+  @override
+  AnimationController createAnimationController() {
+    final AnimationController ctrl = super.createAnimationController();
+    ctrl.addStatusListener(_handleAnimationStatus);
+    return ctrl;
+  }
+
+  @override
+  void dispose() {
+    controller?.removeStatusListener(_handleAnimationStatus);
+    super.dispose();
+  }
+
+  void _handleAnimationStatus(AnimationStatus status) {
+    if (status == AnimationStatus.completed) {
+      _hasCompletedInitialAnimation = true;
+    }
+  }
+
+  bool _isInteractionEnabled() {
+    if (!isActive || !_hasCompletedInitialAnimation) {
+      return false;
+    }
+    return true;
+  }
+
   @protected
   Widget buildContent(BuildContext context);
 
@@ -927,6 +958,12 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
       getIsActive: () => route.isActive,
       popDragController: route.controller!, // protected access
       enableDrag: enableDrag,
+      getScrollController: () {
+        if (route is _CupertinoSheetRouteTransitionMixin<T>) {
+          return route._registeredScrollController;
+        }
+        return null;
+      },
     );
   }
 
@@ -939,6 +976,7 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
     Widget child,
     bool enableDrag,
     double topGap,
+    ValueGetter<bool> enabledCallback,
   ) {
     final bool linearTransition = route.popGestureInProgress;
     return CupertinoSheetTransition(
@@ -947,7 +985,8 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
       linearTransition: linearTransition,
       topGap: topGap,
       child: _CupertinoDragGestureDetector<T>(
-        enabledCallback: () => !(route.controller?.isAnimating ?? false),
+        animationController: route.controller,
+        enabledCallback: enabledCallback,
         onStartPopGesture: () => _startPopGesture<T>(route, topGap, enableDrag: enableDrag),
         child: child,
       ),
@@ -982,6 +1021,7 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
       child,
       enableDrag,
       topGap,
+      _isInteractionEnabled,
     );
   }
 }
@@ -989,10 +1029,13 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
 class _CupertinoDragGestureDetector<T> extends StatefulWidget {
   const _CupertinoDragGestureDetector({
     super.key,
+    required this.animationController,
     required this.enabledCallback,
     required this.onStartPopGesture,
     required this.child,
   });
+
+  final AnimationController? animationController;
 
   final Widget child;
 
@@ -1010,6 +1053,8 @@ class _CupertinoDragGestureDetectorState<T> extends State<_CupertinoDragGestureD
   late VerticalDragGestureRecognizer _recognizer;
   _StretchDragControllerProvider? _stretchDragController;
 
+  bool _hasCompletedInitialAnimation = false;
+
   static VelocityTracker _cupertinoVelocityBuilder(PointerEvent event) =>
       IOSScrollViewFlingVelocityTracker(event.kind);
 
@@ -1026,6 +1071,8 @@ class _CupertinoDragGestureDetectorState<T> extends State<_CupertinoDragGestureD
       ..onUpdate = _handleDragUpdate
       ..onEnd = _handleDragEnd
       ..onCancel = _handleDragCancel;
+
+    widget.animationController?.addStatusListener(_onAnimationStatusChanged);
   }
 
   @override
@@ -1036,6 +1083,7 @@ class _CupertinoDragGestureDetectorState<T> extends State<_CupertinoDragGestureD
 
   @override
   void dispose() {
+    widget.animationController?.removeStatusListener(_onAnimationStatusChanged);
     _recognizer.dispose();
 
     // If this is disposed during a drag, call navigator.didStopUserGesture.
@@ -1048,6 +1096,16 @@ class _CupertinoDragGestureDetectorState<T> extends State<_CupertinoDragGestureD
       });
     }
     super.dispose();
+  }
+
+  void _onAnimationStatusChanged(AnimationStatus status) {
+    if (!_hasCompletedInitialAnimation) {
+      if (mounted) {
+        setState(() {
+          _hasCompletedInitialAnimation = true;
+        });
+      }
+    }
   }
 
   void _handleDragStart(DragStartDetails details) {
@@ -1067,6 +1125,7 @@ class _CupertinoDragGestureDetectorState<T> extends State<_CupertinoDragGestureD
       delta,
       _stretchDragController!.controller,
       sheetHeight: sheetHeight,
+      pixelsDelta: details.primaryDelta,
     );
   }
 
@@ -1080,7 +1139,11 @@ class _CupertinoDragGestureDetectorState<T> extends State<_CupertinoDragGestureD
     final double velocity = sheetHeight > 0
         ? details.velocity.pixelsPerSecond.dy / sheetHeight
         : 0.0;
-    _dragGestureController!.dragEnd(velocity, _stretchDragController!.controller);
+    _dragGestureController!.dragEnd(
+      velocity,
+      _stretchDragController!.controller,
+      pixelsVelocity: details.velocity.pixelsPerSecond.dy,
+    );
     _dragGestureController = null;
   }
 
@@ -1092,7 +1155,7 @@ class _CupertinoDragGestureDetectorState<T> extends State<_CupertinoDragGestureD
       _dragGestureController = null;
       return;
     }
-    _dragGestureController?.dragEnd(0.0, _stretchDragController!.controller);
+    _dragGestureController?.dragEnd(0.0, _stretchDragController!.controller, pixelsVelocity: 0.0);
     _dragGestureController = null;
   }
 
@@ -1104,10 +1167,22 @@ class _CupertinoDragGestureDetectorState<T> extends State<_CupertinoDragGestureD
 
   @override
   Widget build(BuildContext context) {
-    return Listener(
-      onPointerDown: _handlePointerDown,
-      behavior: HitTestBehavior.translucent,
-      child: widget.child,
+    final ModalRoute<Object?>? route = ModalRoute.of(context);
+    var isIgnoring = false;
+
+    if (!_hasCompletedInitialAnimation) {
+      isIgnoring = true;
+    } else if (route != null && !route.isActive) {
+      isIgnoring = true;
+    }
+
+    return IgnorePointer(
+      ignoring: isIgnoring,
+      child: Listener(
+        onPointerDown: _handlePointerDown,
+        behavior: HitTestBehavior.translucent,
+        child: widget.child,
+      ),
     );
   }
 }
@@ -1121,6 +1196,7 @@ class _CupertinoDragGestureController<T> {
     required this.getIsCurrent,
     required this.topGap,
     required this.enableDrag,
+    this.getScrollController,
   }) {
     navigator.didStartUserGesture();
   }
@@ -1131,29 +1207,85 @@ class _CupertinoDragGestureController<T> {
   final ValueGetter<bool> getIsCurrent;
   final double topGap;
   final bool enableDrag;
+  final ValueGetter<ScrollController?>? getScrollController;
+
+  Drag? _innerDrag;
 
   /// The drag gesture has changed by [delta]. The total range of the drag
   /// should be 0.0 to 1.0.
-  void dragUpdate(double delta, AnimationController? upController, {required double sheetHeight}) {
+  void dragUpdate(
+    double delta,
+    AnimationController? upController, {
+    required double sheetHeight,
+    double? pixelsDelta,
+    bool fromInnerScroll = false,
+  }) {
+    if (fromInnerScroll) {
+      _applySheetDrag(delta, sheetHeight);
+      return;
+    }
+
+    final ScrollController? scrollController = getScrollController?.call();
+    final ScrollPosition? position = scrollController?.hasClients ?? false
+        ? scrollController!.position
+        : null;
+
+    if (_innerDrag != null && pixelsDelta != null) {
+      _innerDrag!.update(
+        DragUpdateDetails(
+          globalPosition: Offset.zero,
+          delta: Offset(0.0, pixelsDelta),
+          primaryDelta: pixelsDelta,
+        ),
+      );
+      return;
+    }
+
+    final bool listHasScrolled = position != null && position.pixels > position.minScrollExtent;
+
+    if (listHasScrolled && pixelsDelta != null) {
+      _startInnerDrag(position, pixelsDelta);
+      return;
+    }
+
     if (upController != null &&
         popDragController.value == 1.0 &&
         (upController.value > 0 || delta < 0)) {
+      if (upController.value == 0.0 && delta < 0 && position != null && pixelsDelta != null) {
+        _startInnerDrag(position, pixelsDelta);
+        return;
+      }
       // Divide by stretchable range (when dragging upward at max extent).
       // Maintain the same stretch distance regardless of custom topGap.
       const double stretchDistance = _kTopGapRatio - _kStretchedTopGapRatio;
       upController.value -= delta / stretchDistance;
     } else {
-      if (!enableDrag) {
-        // Applies the exact derivative of Apple's Rubber-Banding equation.
-        final double currentDisplacement =
-            (1.0 - popDragController.value).clamp(0.0, 1.0) * sheetHeight;
-        final double friction = _computeRubberBandFriction(
-          currentDisplacement: currentDisplacement,
-        );
-        popDragController.value -= delta * friction;
-      } else {
-        popDragController.value -= delta;
-      }
+      _applySheetDrag(delta, sheetHeight);
+    }
+  }
+
+  void _startInnerDrag(ScrollPosition position, double pixelsDelta) {
+    _innerDrag = position.drag(DragStartDetails(), () {
+      _innerDrag = null;
+    });
+    _innerDrag!.update(
+      DragUpdateDetails(
+        globalPosition: Offset.zero,
+        delta: Offset(0.0, pixelsDelta),
+        primaryDelta: pixelsDelta,
+      ),
+    );
+  }
+
+  void _applySheetDrag(double delta, double sheetHeight) {
+    if (!enableDrag) {
+      // Applies the exact derivative of Apple's Rubber-Banding equation.
+      final double currentDisplacement =
+          (1.0 - popDragController.value).clamp(0.0, 1.0) * sheetHeight;
+      final double friction = _computeRubberBandFriction(currentDisplacement: currentDisplacement);
+      popDragController.value -= delta * friction;
+    } else {
+      popDragController.value -= delta;
     }
   }
 
@@ -1163,7 +1295,29 @@ class _CupertinoDragGestureController<T> {
 
   /// The drag gesture has ended with a vertical motion of [velocity] as a
   /// fraction of screen height per second.
-  void dragEnd(double velocity, AnimationController? upController) {
+  void dragEnd(
+    double velocity,
+    AnimationController? upController, {
+    double? pixelsVelocity,
+    bool fromInnerScroll = false,
+  }) {
+    if (fromInnerScroll) {
+      _applySheetDragEnd(velocity);
+      return;
+    }
+
+    if (_innerDrag != null) {
+      _innerDrag!.end(
+        DragEndDetails(
+          velocity: Velocity(pixelsPerSecond: Offset(0, pixelsVelocity ?? 0)),
+          primaryVelocity: pixelsVelocity,
+        ),
+      );
+      _innerDrag = null;
+      navigator.didStopUserGesture();
+      return;
+    }
+
     // If the sheet is in a stretched state (dragged upward beyond max size),
     // reverse the stretch to return to the normal max height.
     if (upController != null && upController.value > 0) {
@@ -1176,6 +1330,10 @@ class _CupertinoDragGestureController<T> {
       return;
     }
 
+    _applySheetDragEnd(velocity);
+  }
+
+  void _applySheetDragEnd(double velocity) {
     if (!enableDrag) {
       // When dragging is disabled, spring back to the open position using a physical spring simulation.
       final Simulation simulation = SpringSimulation(
@@ -1420,12 +1578,15 @@ class _CupertinoSheetScrollPosition extends ScrollPositionWithSingleContext {
 class _CupertinoDraggableScrollableSheet<T> extends StatefulWidget {
   const _CupertinoDraggableScrollableSheet({
     super.key,
+    required this.animationController,
     required this.enabledCallback,
     required this.enableDrag,
     required this.onStartPopGesture,
     required this.builder,
     this.topGap = _kTopGapRatio,
   });
+
+  final AnimationController? animationController;
 
   final ScrollableWidgetBuilder builder;
 
@@ -1446,6 +1607,7 @@ class _CupertinoDraggableScrollableSheetState<T>
     extends State<_CupertinoDraggableScrollableSheet<T>> {
   late _CupertinoSheetScrollController _scrollController;
   _CupertinoDragGestureController<T>? _dragGestureController;
+  _CupertinoSheetRouteTransitionMixin<dynamic>? _route;
 
   @override
   void initState() {
@@ -1460,7 +1622,20 @@ class _CupertinoDraggableScrollableSheetState<T>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final ModalRoute<Object?>? route = ModalRoute.of(context);
+    if (route is _CupertinoSheetRouteTransitionMixin<dynamic>) {
+      _route = route;
+      _route!._registeredScrollController = _scrollController;
+    }
+  }
+
+  @override
   void dispose() {
+    if (_route?._registeredScrollController == _scrollController) {
+      _route!._registeredScrollController = null;
+    }
     // If this is disposed during a drag, call navigator.didStopUserGesture.
     if (_dragGestureController != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -1490,6 +1665,7 @@ class _CupertinoDraggableScrollableSheetState<T>
         sheetHeight > 0 ? delta / sheetHeight : 0.0,
         null,
         sheetHeight: sheetHeight,
+        fromInnerScroll: true,
       );
     }
   }
@@ -1498,7 +1674,11 @@ class _CupertinoDraggableScrollableSheetState<T>
     assert(mounted);
     if (_dragGestureController != null) {
       final double sheetHeight = context.size?.height ?? 0.0;
-      _dragGestureController!.dragEnd(sheetHeight > 0 ? -velocity / sheetHeight : 0.0, null);
+      _dragGestureController!.dragEnd(
+        sheetHeight > 0 ? -velocity / sheetHeight : 0.0,
+        null,
+        fromInnerScroll: true,
+      );
       _dragGestureController = null;
     }
   }

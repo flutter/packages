@@ -1462,6 +1462,55 @@ void main() {
       },
     );
 
+    testWidgets('Sheet during snap-back animation (drag down lightly and release)', (
+      WidgetTester tester,
+    ) async {
+      final GlobalKey homeKey = GlobalKey();
+      final GlobalKey sheetKey = GlobalKey();
+
+      await tester.pumpWidget(dragGestureApp(homeKey, sheetKey));
+
+      // Open sheet
+      await tester.tap(find.text('Push Page 2'));
+      await tester.pumpAndSettle();
+
+      final Finder sheetFinder = find.byKey(sheetKey);
+      final Size sheetSize = tester.getSize(sheetFinder);
+
+      final Offset sheetTopLeft = tester.getTopLeft(sheetFinder);
+      final startPoint = Offset(sheetTopLeft.dx + (sheetSize.width / 2), sheetTopLeft.dy + 20.0);
+
+      // Lightly drag sheet down by 50px (snap-back threshold is > 0.52 height)
+      final TestGesture gesture1 = await tester.startGesture(startPoint);
+      await gesture1.moveBy(const Offset(0, 50));
+      await tester.pump();
+      await gesture1.up();
+      await tester.pump();
+
+      // Pump 50ms into the 300ms snap-back animation
+      await tester.pump(const Duration(milliseconds: 50));
+
+      final box1 = tester.renderObject(sheetFinder) as RenderBox;
+      final double yDuringSnapback = box1.localToGlobal(Offset.zero).dy;
+
+      // Try to catch the sheet mid-snapback and drag down by 100px throughout 250ms
+      final TestGesture gesture2 = await tester.startGesture(
+        Offset(startPoint.dx, yDuringSnapback + 20),
+      );
+      for (var i = 0; i < 5; i += 1) {
+        await tester.pump(const Duration(milliseconds: 50));
+        await gesture2.moveBy(const Offset(0, 20));
+      }
+
+      final box2 = tester.renderObject(sheetFinder) as RenderBox;
+      final double yAfterDrag = box2.localToGlobal(Offset.zero).dy;
+
+      expect(yAfterDrag - yDuringSnapback, greaterThan(20));
+
+      await gesture2.up();
+      await tester.pumpAndSettle();
+    });
+
     testWidgets('partial upward drag stretches and returns without popping', (
       WidgetTester tester,
     ) async {
