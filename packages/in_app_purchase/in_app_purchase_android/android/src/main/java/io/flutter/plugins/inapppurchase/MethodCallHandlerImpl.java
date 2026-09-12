@@ -269,6 +269,13 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
     }
   }
 
+  // SubscriptionUpdateParams.Builder.setSubscriptionReplacementMode is deprecated as of Google
+  // Play Billing Library 8.1.0 in favour of SubscriptionProductReplacementParams, but remains
+  // functional in 9.x. Migrating is not a drop-in change: the replacement mode constants were
+  // renumbered, so it would alter the values carried by the Dart ReplacementMode enum.
+  // TODO(flutter/flutter#189974): migrate to setSubscriptionProductReplacementParams as a
+  // separate breaking change.
+  @SuppressWarnings("deprecation")
   @Override
   public @NonNull PlatformBillingResult launchBillingFlow(
       @NonNull PlatformBillingFlowParams params) {
