@@ -28,7 +28,7 @@ import '../templates/card_template.dart';
 // import '../templates/fab_template.dart';
 // import '../templates/filter_chip_template.dart';
 // import '../templates/icon_button_template.dart';
-// import '../templates/input_chip_template.dart';
+import '../templates/input_chip_template.dart';
 // import '../templates/input_decorator_template.dart';
 // import '../templates/list_tile_template.dart';
 // import '../templates/menu_template.dart';
@@ -525,8 +525,11 @@ void main() {
     });
 
     test('InputChipTemplateM3 emits M3 InputChip defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const InputChipTemplateM3());
+      expect(contents, contains('class _InputChipDefaultsM3 extends ChipThemeData'));
+      expect(contents, contains('_colors.onSurface.withOpacity(0.12)'));
+      expect(contents, contains('return _colors.secondaryContainer'));
+      expect(contents, contains('BorderSide(color: _colors.outlineVariant)'));
     });
 
     test('InputDecoratorTemplateM3 emits M3 InputDecorator defaults from tokens', () {
