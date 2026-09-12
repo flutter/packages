@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes deprecation lints.
+
 ## 1.2.3
 
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
