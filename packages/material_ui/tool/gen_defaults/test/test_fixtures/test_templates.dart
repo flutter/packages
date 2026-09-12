@@ -55,11 +55,11 @@ class $className {
 
   static const double height = ${TokenIconButton.height};
   static const double borderRadius = ${TokenIconButton.borderRadius};
-  Color get iconColor => ${color(TokenIconButton.iconColor, '_colors')};
+  Color get iconColor => ${color(TokenIconButton.iconColor)};
   Color get disabledIconColor =>
-      ${colorWithOpacity(TokenIconButton.disabledIconColor, TokenIconButton.disabledIconOpacity, '_colors')};
+      ${colorWithOpacity(TokenIconButton.disabledIconColor, TokenIconButton.disabledIconOpacity)};
   Color get hoveredStateLayerColor =>
-      ${colorWithOpacity(TokenIconButton.hoveredStateLayerColor, TokenIconButton.hoveredStateLayerOpacity, '_colors')};
+      ${colorWithOpacity(TokenIconButton.hoveredStateLayerColor, TokenIconButton.hoveredStateLayerOpacity)};
   OutlinedBorder get shape => ${shape(TokenIconButton.pressedContainerShape)};
 }
 ''';

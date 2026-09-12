@@ -102,7 +102,7 @@ abstract class TokenTemplate {
   String number(num value) => value.toString();
 
   /// Generates a [ColorScheme] color expression for the given token.
-  String color(TokenColorRole role, String prefix) {
+  String color(TokenColorRole role, [String prefix = '_colors']) {
     final String colorName = switch (role) {
       TokenColorRole.inverseOnSurface => 'onInverseSurface',
       _ => role.name,
@@ -111,7 +111,7 @@ abstract class TokenTemplate {
   }
 
   /// Generates a color expression with opacity applied.
-  String colorWithOpacity(TokenColorRole role, double opacity, String prefix) {
+  String colorWithOpacity(TokenColorRole role, double opacity, [String prefix = '_colors']) {
     final String colorExpression = color(role, prefix);
     if (opacity == 1.0) {
       return colorExpression;
