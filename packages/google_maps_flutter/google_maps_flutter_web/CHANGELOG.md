@@ -1,3 +1,7 @@
+## 0.6.4
+
+* Adds support for configuring the color displayed behind unloaded map tiles.
+
 ## 0.6.3+1
 
 * Fixes flickering of byte-backed advanced markers when updating their position on web.

@@ -1,3 +1,7 @@
+## 2.19.0
+
+* Adds a `GoogleMap.backgroundColor` option for the color displayed behind unloaded map tiles.
+
 ## 2.18.0
 
 * Adds support for mapTypeControlEnabled, fullscreenControlEnabled, and streetViewControlEnabled on web.

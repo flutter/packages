@@ -1,3 +1,7 @@
+## 2.19.0
+
+* Adds support for configuring the color displayed behind unloaded map tiles.
+
 ## 2.18.12
 
 * Converts heatmap controller and data conversion to Swift.

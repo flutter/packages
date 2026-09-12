@@ -2256,7 +2256,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                       buildingsEnabled:(nullable NSNumber *)buildingsEnabled
                             markerType:(FGMPlatformMarkerType)markerType
                                  mapId:(nullable NSString *)mapId
-                                 style:(nullable NSString *)style {
+                                 style:(nullable NSString *)style
+                       backgroundColor:(nullable FGMPlatformColor *)backgroundColor {
   FGMPlatformMapConfiguration *pigeonResult = [[FGMPlatformMapConfiguration alloc] init];
   pigeonResult.compassEnabled = compassEnabled;
   pigeonResult.cameraTargetBounds = cameraTargetBounds;
@@ -2276,6 +2277,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.markerType = markerType;
   pigeonResult.mapId = mapId;
   pigeonResult.style = style;
+  pigeonResult.backgroundColor = backgroundColor;
   return pigeonResult;
 }
 + (FGMPlatformMapConfiguration *)fromList:(NSArray<id> *)list {
@@ -2299,6 +2301,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.markerType = boxedFGMPlatformMarkerType.value;
   pigeonResult.mapId = GetNullableObjectAtIndex(list, 16);
   pigeonResult.style = GetNullableObjectAtIndex(list, 17);
+  pigeonResult.backgroundColor = GetNullableObjectAtIndex(list, 18);
   return pigeonResult;
 }
 + (nullable FGMPlatformMapConfiguration *)nullableFromList:(NSArray<id> *)list {
@@ -2324,6 +2327,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     [[FGMPlatformMarkerTypeBox alloc] initWithValue:self.markerType],
     self.mapId ?: [NSNull null],
     self.style ?: [NSNull null],
+    self.backgroundColor ?: [NSNull null],
   ];
 }
 - (BOOL)isEqual:(id)object {
@@ -2350,7 +2354,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
          FLTPigeonDeepEquals(self.trafficEnabled, other.trafficEnabled) &&
          FLTPigeonDeepEquals(self.buildingsEnabled, other.buildingsEnabled) &&
          self.markerType == other.markerType && FLTPigeonDeepEquals(self.mapId, other.mapId) &&
-         FLTPigeonDeepEquals(self.style, other.style);
+         FLTPigeonDeepEquals(self.style, other.style) &&
+         FLTPigeonDeepEquals(self.backgroundColor, other.backgroundColor);
 }
 
 - (NSUInteger)hash {
@@ -2373,6 +2378,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   result = result * 31 + @(self.markerType).hash;
   result = result * 31 + FLTPigeonDeepHash(self.mapId);
   result = result * 31 + FLTPigeonDeepHash(self.style);
+  result = result * 31 + FLTPigeonDeepHash(self.backgroundColor);
   return result;
 }
 - (NSString *)description {
@@ -2382,12 +2388,14 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
           @"minMaxZoomPreference: %@, rotateGesturesEnabled: %@, scrollGesturesEnabled: %@, "
           @"tiltGesturesEnabled: %@, trackCameraPosition: %@, zoomGesturesEnabled: %@, "
           @"myLocationEnabled: %@, myLocationButtonEnabled: %@, padding: %@, indoorViewEnabled: "
-          @"%@, trafficEnabled: %@, buildingsEnabled: %@, markerType: %ld, mapId: %@, style: %@)",
+          @"%@, trafficEnabled: %@, buildingsEnabled: %@, markerType: %ld, mapId: %@, style: %@, "
+          @"backgroundColor: %@)",
           self.compassEnabled, self.cameraTargetBounds, self.mapType, self.minMaxZoomPreference,
           self.rotateGesturesEnabled, self.scrollGesturesEnabled, self.tiltGesturesEnabled,
           self.trackCameraPosition, self.zoomGesturesEnabled, self.myLocationEnabled,
           self.myLocationButtonEnabled, self.padding, self.indoorViewEnabled, self.trafficEnabled,
-          self.buildingsEnabled, (long)self.markerType, self.mapId, self.style];
+          self.buildingsEnabled, (long)self.markerType, self.mapId, self.style,
+          self.backgroundColor];
 }
 @end
 

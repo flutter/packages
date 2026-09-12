@@ -146,14 +146,10 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     creationParameters: FGMPlatformMapViewCreationParams,
     registrar: FlutterPluginRegistrar
   ) {
-    let camera = creationParameters.initialCameraPosition.toGMSCameraPosition()
-
-    let options = GMSMapViewOptions()
-    options.frame = frame
-    options.camera = camera
-    if let mapId = creationParameters.mapConfiguration.mapId, !mapId.isEmpty {
-      options.mapID = GMSMapID(identifier: mapId)
-    }
+    let options = GoogleMapController.mapViewOptions(
+      frame: frame,
+      creationParameters: creationParameters
+    )
 
     self.init(
       mapView: GMSMapView(options: options),
@@ -162,6 +158,25 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
       assetProvider: DefaultAssetProvider(registrar: registrar),
       binaryMessenger: registrar.messenger()
     )
+  }
+
+  /// Creates the immutable options used to initialize a Google map view.
+  static func mapViewOptions(
+    frame: CGRect,
+    creationParameters: FGMPlatformMapViewCreationParams
+  ) -> GMSMapViewOptions {
+    let camera = creationParameters.initialCameraPosition.toGMSCameraPosition()
+
+    let options = GMSMapViewOptions()
+    options.frame = frame
+    options.camera = camera
+    if let mapId = creationParameters.mapConfiguration.mapId, !mapId.isEmpty {
+      options.mapID = GMSMapID(identifier: mapId)
+    }
+    if let backgroundColor = creationParameters.mapConfiguration.backgroundColor {
+      options.backgroundColor = backgroundColor.toUIColor()
+    }
+    return options
   }
 
   init(
