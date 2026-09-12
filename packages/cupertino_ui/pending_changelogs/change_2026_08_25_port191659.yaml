@@ -1,0 +1,3 @@
+changelog: |
+  - Fix `CupertinoDatePicker` incorrectly throwing an assertion when `initialDateTime` matches the day of `minimumDate`/`maximumDate` but not the exact time, in `date` and `monthYear` mode.
+version: patch
