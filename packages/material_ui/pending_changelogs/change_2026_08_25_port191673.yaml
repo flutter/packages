@@ -1,0 +1,3 @@
+changelog: |
+  - Fix `showMenu`/`PopupMenuButton` not honoring `MediaQueryData.disableAnimations`/`reduceMotion` overrides from an ambient `MediaQuery`.
+version: patch
