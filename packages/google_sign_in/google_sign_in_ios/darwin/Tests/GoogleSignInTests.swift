@@ -373,6 +373,35 @@ struct GoogleSignInPluginTests {
         }
       }
     }
+
+    @Test func restorePreviousSignInErrorsWhenUserIDIsNil() async {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      let fakeUser = TestGoogleUser("mockID")
+      fakeUser.userID = nil
+      fakeSignIn.user = fakeUser
+
+      await confirmation("completion called") { confirmed in
+        plugin.restorePreviousSignIn { result, error in
+          #expect(result == nil)
+          #expect(error?.code == "google_sign_in")
+          #expect(error?.message == "Google Sign-In succeeded without a user ID.")
+          confirmed()
+        }
+      }
+    }
+
+    @Test func restorePreviousSignInNeitherUserNorError() async {
+      let (plugin, _) = createTestPlugin()
+
+      await confirmation("completion called") { confirmed in
+        plugin.restorePreviousSignIn { result, error in
+          #expect(result == nil)
+          #expect(error?.code == "(null): 0")
+          #expect(error?.details as? String == "[Unsupported type: (null)]")
+          confirmed()
+        }
+      }
+    }
   }
 
   @Suite("signIn") struct SignInTests {
@@ -728,29 +757,29 @@ struct GoogleSignInPluginTests {
         #expect(handled == false)
         #expect(fakeSignIn.handledURLs == [url])
       }
-
-      @Test func handleURLs() {
-        let (plugin, fakeSignIn) = createTestPlugin()
-        let firstURL = URL(string: "com.googleusercontent.apps.test:/oauthredirect")!
-        let secondURL = URL(string: "com.googleusercontent.apps.test:/another")!
-
-        let handled = plugin.handleURLs([firstURL, secondURL])
-
-        #expect(handled == true)
-        #expect(fakeSignIn.handledURLs == [firstURL, secondURL])
-      }
-
-      @Test func handleURLsReturnsHandleResult() {
-        let (plugin, fakeSignIn) = createTestPlugin()
-        let url = URL(string: "com.googleusercontent.apps.test:/oauthredirect")!
-        fakeSignIn.handleURLResult = false
-
-        let handled = plugin.handleURLs([url])
-
-        #expect(handled == false)
-        #expect(fakeSignIn.handledURLs == [url])
-      }
     #endif
+
+    @Test func handleOpen() {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      let firstURL = URL(string: "com.googleusercontent.apps.test:/oauthredirect")!
+      let secondURL = URL(string: "com.googleusercontent.apps.test:/another")!
+
+      let handled = plugin.handleOpen([firstURL, secondURL])
+
+      #expect(handled == true)
+      #expect(fakeSignIn.handledURLs == [firstURL, secondURL])
+    }
+
+    @Test func handleOpenReturnsHandleResult() {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      let url = URL(string: "com.googleusercontent.apps.test:/oauthredirect")!
+      fakeSignIn.handleURLResult = false
+
+      let handled = plugin.handleOpen([url])
+
+      #expect(handled == false)
+      #expect(fakeSignIn.handledURLs == [url])
+    }
   }
 
   @Suite("errorMapping") struct ErrorMappingTests {

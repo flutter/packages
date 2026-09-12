@@ -58,10 +58,10 @@ private func sanitizedUserInfo(_ value: Any?) -> Any {
     }
     return safeValues
   default:
-    if let value {
-      return "[Unsupported type: \(String(describing: type(of: value)))]"
+    guard let value else {
+      return "[Unsupported type: (null)]"
     }
-    return "[Unsupported type: nil]"
+    return "[Unsupported type: \(String(describing: type(of: value)))]"
   }
 }
 
@@ -162,27 +162,20 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
     ) -> Bool {
       return signIn.handle(url)
     }
-
-    /// Forwards each URL to GIDSignIn. Extracted so tests can cover scene URL
-    /// handling without constructing `UIOpenURLContext`.
-    ///
-    /// Returns `true` if GIDSignIn handled any of the URLs.
-    func handleURLs(_ urls: [URL]) -> Bool {
-      var handled = false
-      for url in urls {
-        handled = signIn.handle(url) || handled
-      }
-      return handled
-    }
-  #else
-    public func handleOpen(_ urls: [URL]) -> Bool {
-      var handled = false
-      for url in urls {
-        handled = signIn.handle(url) || handled
-      }
-      return handled
-    }
   #endif
+
+  /// Forwards each URL to GIDSignIn.
+  ///
+  /// Returns `true` if GIDSignIn handled any of the URLs. On iOS this is also
+  /// used from scene URL handling so tests can cover that path without
+  /// constructing `UIOpenURLContext`.
+  public func handleOpen(_ urls: [URL]) -> Bool {
+    var handled = false
+    for url in urls {
+      handled = signIn.handle(url) || handled
+    }
+    return handled
+  }
 
   // MARK: - FSIGoogleSignInApi
 
@@ -408,9 +401,16 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
     serverAuthCode: String?,
     completion: @escaping (FSISignInResult?, FlutterError?) -> Void
   ) {
-    if let userID = user.userID {
-      usersByIdentifier[userID] = user
+    guard let userID = user.userID else {
+      completion(
+        nil,
+        FlutterError(
+          code: "google_sign_in",
+          message: "Google Sign-In succeeded without a user ID.",
+          details: nil))
+      return
     }
+    usersByIdentifier[userID] = user
 
     var photoURL: URL?
     if user.profile?.hasImage == true {
@@ -421,7 +421,7 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
     let userData = FSIUserData.make(
       withDisplayName: user.profile?.name,
       email: user.profile?.email ?? "",
-      userId: user.userID ?? "",
+      userId: userID,
       photoUrl: photoURL?.absoluteString,
       idToken: user.idToken?.tokenString)
     let result = FSISignInResult.make(
@@ -467,7 +467,7 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, FSIGoogleSignInA
   extension GoogleSignInPlugin: FlutterSceneLifeCycleDelegate {
     public func scene(_ scene: UIScene, openURLContexts urlContexts: Set<UIOpenURLContext>) -> Bool
     {
-      return handleURLs(urlContexts.map { $0.url })
+      return handleOpen(urlContexts.map { $0.url })
     }
   }
 #endif
