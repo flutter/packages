@@ -3466,7 +3466,32 @@ class _MenuLayout extends SingleChildLayoutDelegate {
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
     // The menu can be at most the size of the overlay minus the view padding
     // in each direction.
-    return BoxConstraints.loose(constraints.biggest).deflate(reservedPadding);
+    final BoxConstraints result = BoxConstraints.loose(
+      constraints.biggest,
+    ).deflate(reservedPadding);
+    if (menuPosition != null || orientation == Axis.horizontal) {
+      return result;
+    }
+    // A vertical menu is placed either above or below the anchor, so it can
+    // only ever occupy the space on one of those two sides. Capping its height
+    // to the larger of the two keeps a tall menu from growing past the anchor
+    // and covering it; the menu scrolls instead.
+    //
+    // This uses the same bounds as the positioning logic below, so that the cap
+    // matches the space the menu is actually allowed to be placed in.
+    final Rect overlayRect = mediaQueryData.padding.deflateRect(
+      mediaQueryData.viewInsets.deflateRect(Offset.zero & constraints.biggest),
+    );
+    final double availableHeight = math.max(
+      anchorRect.top - overlayRect.top,
+      overlayRect.bottom - anchorRect.bottom,
+    );
+    if (availableHeight <= 0.0) {
+      // The anchor leaves no room on either side, so there is nothing to cap
+      // the menu to. Leave it to the positioning logic to fit what it can.
+      return result;
+    }
+    return result.copyWith(maxHeight: math.min(availableHeight, result.maxHeight));
   }
 
   @override

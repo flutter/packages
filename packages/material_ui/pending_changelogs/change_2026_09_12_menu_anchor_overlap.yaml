@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `MenuAnchor` covering its anchor when the menu is too tall to fit above it.
+version: patch
