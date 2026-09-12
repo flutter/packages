@@ -1,0 +1,3 @@
+changelog: |
+  - Fix `InputDecoration.errorText` not being visible when the field is disabled under Material 2.
+version: patch
