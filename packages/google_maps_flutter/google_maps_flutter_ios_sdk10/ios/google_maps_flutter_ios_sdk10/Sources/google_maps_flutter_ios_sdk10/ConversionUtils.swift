@@ -6,14 +6,10 @@ import Flutter
 import GoogleMaps
 import GoogleMapsUtils
 
-#if canImport(google_maps_flutter_ios_sdk10_objc)
-  import google_maps_flutter_ios_sdk10_objc
-#endif
-
-extension FGMPlatformPoint {
+extension PlatformPoint {
   /// Converts a CGPoint to its Pigeon equivalent.
-  static func make(from point: CGPoint) -> FGMPlatformPoint {
-    return FGMPlatformPoint.makeWith(x: point.x, y: point.y)
+  static func make(from point: CGPoint) -> PlatformPoint {
+    return PlatformPoint(x: point.x, y: point.y)
   }
 
   /// Returns the equivalent CGPoint.
@@ -22,11 +18,10 @@ extension FGMPlatformPoint {
   }
 }
 
-extension FGMPlatformLatLng {
+extension PlatformLatLng {
   /// Converts a CLLocationCoordinate2D to its Pigeon representation.
-  static func make(from coordinate: CLLocationCoordinate2D) -> FGMPlatformLatLng {
-    return FGMPlatformLatLng.make(
-      withLatitude: coordinate.latitude, longitude: coordinate.longitude)
+  static func make(from coordinate: CLLocationCoordinate2D) -> PlatformLatLng {
+    return PlatformLatLng(latitude: coordinate.latitude, longitude: coordinate.longitude)
   }
 
   /// Returns the equivalent CLLocationCoordinate2D.
@@ -35,12 +30,12 @@ extension FGMPlatformLatLng {
   }
 }
 
-extension FGMPlatformLatLngBounds {
+extension PlatformLatLngBounds {
   /// Converts a GMSCoordinateBounds to its Pigeon representation.
-  static func make(from bounds: GMSCoordinateBounds) -> FGMPlatformLatLngBounds {
-    return FGMPlatformLatLngBounds.make(
-      withNortheast: FGMPlatformLatLng.make(from: bounds.northEast),
-      southwest: FGMPlatformLatLng.make(from: bounds.southWest)
+  static func make(from bounds: GMSCoordinateBounds) -> PlatformLatLngBounds {
+    return PlatformLatLngBounds(
+      northeast: PlatformLatLng.make(from: bounds.northEast),
+      southwest: PlatformLatLng.make(from: bounds.southWest)
     )
   }
 
@@ -53,12 +48,12 @@ extension FGMPlatformLatLngBounds {
   }
 }
 
-extension FGMPlatformCameraPosition {
+extension PlatformCameraPosition {
   /// Converts a GMSCameraPosition to its Pigeon representation.
-  static func make(from position: GMSCameraPosition) -> FGMPlatformCameraPosition {
-    return FGMPlatformCameraPosition.make(
-      withBearing: position.bearing,
-      target: FGMPlatformLatLng.make(from: position.target),
+  static func make(from position: GMSCameraPosition) -> PlatformCameraPosition {
+    return PlatformCameraPosition(
+      bearing: position.bearing,
+      target: PlatformLatLng.make(from: position.target),
       tilt: position.viewingAngle,
       zoom: Double(position.zoom)
     )
@@ -84,7 +79,7 @@ func makePath(from points: [CLLocationCoordinate2D]) -> GMSMutablePath {
   return path
 }
 
-extension FGMPlatformMapType {
+extension PlatformMapType {
   /// The corresponding GMSMapViewType.
   var gmsMapViewType: GMSMapViewType {
     switch self {
@@ -98,7 +93,7 @@ extension FGMPlatformMapType {
   }
 }
 
-extension FGMPlatformMarkerCollisionBehavior {
+extension PlatformMarkerCollisionBehavior {
   /// The corresponding GMSCollisionBehavior.
   var gmsCollisionBehavior: GMSCollisionBehavior {
     switch self {
@@ -114,40 +109,39 @@ extension FGMPlatformMarkerCollisionBehavior {
   }
 }
 
-extension FGMPlatformGroundOverlay {
+extension PlatformGroundOverlay {
   /// Converts a GMSGroundOverlay to its Pigeon representation.
   static func make(
     from groundOverlay: GMSGroundOverlay,
     overlayId: String,
     isCreatedWithBounds: Bool,
-    zoomLevel: NSNumber?
-  ) -> FGMPlatformGroundOverlay {
-    let placeholderImage = FGMPlatformBitmap.make(
-      withBitmap: FGMPlatformBitmapDefaultMarker.make(withHue: nil))
+    zoomLevel: Double?
+  ) -> PlatformGroundOverlay {
+    let placeholderImage = PlatformBitmapDefaultMarker(hue: nil)
     if isCreatedWithBounds, let bounds = groundOverlay.bounds {
-      return FGMPlatformGroundOverlay.make(
-        withGroundOverlayId: overlayId,
+      return PlatformGroundOverlay(
+        groundOverlayId: overlayId,
         image: placeholderImage,
         position: nil,
-        bounds: FGMPlatformLatLngBounds.make(from: bounds),
-        anchor: FGMPlatformPoint.make(from: groundOverlay.anchor),
+        bounds: PlatformLatLngBounds.make(from: bounds),
+        anchor: PlatformPoint.make(from: groundOverlay.anchor),
         transparency: 1.0 - Double(groundOverlay.opacity),
         bearing: groundOverlay.bearing,
-        zIndex: Int(groundOverlay.zIndex),
+        zIndex: Int64(groundOverlay.zIndex),
         visible: groundOverlay.map != nil,
         clickable: groundOverlay.isTappable,
         zoomLevel: zoomLevel
       )
     } else {
-      return FGMPlatformGroundOverlay.make(
-        withGroundOverlayId: overlayId,
+      return PlatformGroundOverlay(
+        groundOverlayId: overlayId,
         image: placeholderImage,
-        position: FGMPlatformLatLng.make(from: groundOverlay.position),
+        position: PlatformLatLng.make(from: groundOverlay.position),
         bounds: nil,
-        anchor: FGMPlatformPoint.make(from: groundOverlay.anchor),
+        anchor: PlatformPoint.make(from: groundOverlay.anchor),
         transparency: 1.0 - Double(groundOverlay.opacity),
         bearing: groundOverlay.bearing,
-        zIndex: Int(groundOverlay.zIndex),
+        zIndex: Int64(groundOverlay.zIndex),
         visible: groundOverlay.map != nil,
         clickable: groundOverlay.isTappable,
         zoomLevel: zoomLevel
@@ -156,14 +150,14 @@ extension FGMPlatformGroundOverlay {
   }
 }
 
-extension FGMPlatformHeatmapGradient {
+extension PlatformHeatmapGradient {
   /// Converts a GMUGradient to its Pigeon representation.
-  static func make(from gradient: GMUGradient) -> FGMPlatformHeatmapGradient {
-    let colors = gradient.colors.map { FGMPlatformColor.make(from: $0) }
-    return FGMPlatformHeatmapGradient.make(
-      with: colors,
-      startPoints: gradient.startPoints,
-      colorMapSize: Int(gradient.mapSize)
+  static func make(from gradient: GMUGradient) -> PlatformHeatmapGradient {
+    let colors = gradient.colors.map { PlatformColor.make(from: $0) }
+    return PlatformHeatmapGradient(
+      colors: colors,
+      startPoints: gradient.startPoints.map({ $0.doubleValue }),
+      colorMapSize: Int64(gradient.mapSize)
     )
   }
 
@@ -172,18 +166,18 @@ extension FGMPlatformHeatmapGradient {
     let colors = colors.map { $0.toUIColor() }
     return GMUGradient(
       colors: colors,
-      startPoints: startPoints,
+      startPoints: startPoints.map({ $0 as NSNumber }),
       colorMapSize: UInt(colorMapSize)
     )
   }
 }
 
-extension FGMPlatformWeightedLatLng {
+extension PlatformWeightedLatLng {
   /// Converts a GMUWeightedLatLng to its Pigeon representation.
-  static func make(from weightedLatLng: GMUWeightedLatLng) -> FGMPlatformWeightedLatLng {
+  static func make(from weightedLatLng: GMUWeightedLatLng) -> PlatformWeightedLatLng {
     let point = GMSMapPoint(x: weightedLatLng.point().x, y: weightedLatLng.point().y)
-    return FGMPlatformWeightedLatLng.make(
-      withPoint: FGMPlatformLatLng.make(from: GMSUnproject(point)),
+    return PlatformWeightedLatLng(
+      point: PlatformLatLng.make(from: GMSUnproject(point)),
       weight: Double(weightedLatLng.intensity)
     )
   }
@@ -194,36 +188,35 @@ extension FGMPlatformWeightedLatLng {
   }
 }
 
-extension FGMPlatformCameraUpdate {
+extension PlatformCameraUpdate {
   /// Creates a GMSCameraUpdate from its Pigeon equivalent.
   func toGMSCameraUpdate() -> GMSCameraUpdate? {
-    // See note in messages.dart for why this is so loosely typed.
-    switch cameraUpdate {
-    case let newCameraPosition as FGMPlatformCameraUpdateNewCameraPosition:
+    switch self {
+    case let newCameraPosition as PlatformCameraUpdateNewCameraPosition:
       return GMSCameraUpdate.setCamera(newCameraPosition.cameraPosition.toGMSCameraPosition())
-    case let newLatLng as FGMPlatformCameraUpdateNewLatLng:
+    case let newLatLng as PlatformCameraUpdateNewLatLng:
       return GMSCameraUpdate.setTarget(newLatLng.latLng.toCLLocationCoordinate2D())
-    case let newLatLngBounds as FGMPlatformCameraUpdateNewLatLngBounds:
+    case let newLatLngBounds as PlatformCameraUpdateNewLatLngBounds:
       return GMSCameraUpdate.fit(
         newLatLngBounds.bounds.toGMSCoordinateBounds(),
         withPadding: CGFloat(newLatLngBounds.padding)
       )
-    case let newLatLngZoom as FGMPlatformCameraUpdateNewLatLngZoom:
+    case let newLatLngZoom as PlatformCameraUpdateNewLatLngZoom:
       return GMSCameraUpdate.setTarget(
         newLatLngZoom.latLng.toCLLocationCoordinate2D(),
         zoom: Float(newLatLngZoom.zoom)
       )
-    case let scrollBy as FGMPlatformCameraUpdateScrollBy:
+    case let scrollBy as PlatformCameraUpdateScrollBy:
       return GMSCameraUpdate.scrollBy(x: scrollBy.dx, y: scrollBy.dy)
-    case let zoomBy as FGMPlatformCameraUpdateZoomBy:
+    case let zoomBy as PlatformCameraUpdateZoomBy:
       if let focus = zoomBy.focus {
         return GMSCameraUpdate.zoom(by: Float(zoomBy.amount), at: focus.toCGPoint())
       } else {
         return GMSCameraUpdate.zoom(by: Float(zoomBy.amount))
       }
-    case let zoom as FGMPlatformCameraUpdateZoom:
+    case let zoom as PlatformCameraUpdateZoom:
       return zoom.out ? GMSCameraUpdate.zoomOut() : GMSCameraUpdate.zoomIn()
-    case let zoomTo as FGMPlatformCameraUpdateZoomTo:
+    case let zoomTo as PlatformCameraUpdateZoomTo:
       return GMSCameraUpdate.zoom(to: Float(zoomTo.zoom))
     default:
       return nil
@@ -231,16 +224,16 @@ extension FGMPlatformCameraUpdate {
   }
 }
 
-extension FGMPlatformColor {
+extension PlatformColor {
   /// Converts a UIColor to its Pigeon representation.
-  static func make(from color: UIColor) -> FGMPlatformColor {
+  static func make(from color: UIColor) -> PlatformColor {
     var red: CGFloat = 0
     var green: CGFloat = 0
     var blue: CGFloat = 0
     var alpha: CGFloat = 0
     color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-    return FGMPlatformColor.make(
-      withRed: Double(red), green: Double(green), blue: Double(blue), alpha: Double(alpha))
+    return PlatformColor(
+      red: Double(red), green: Double(green), blue: Double(blue), alpha: Double(alpha))
   }
 
   /// Returns the equivalent UIColor.
@@ -249,7 +242,7 @@ extension FGMPlatformColor {
   }
 }
 
-extension FGMPlatformPatternItem {
+extension PlatformPatternItem {
   /// The GMSStrokeStyle expression of this pattern, using the given stroke color.
   func gmsStrokeStyle(strokeColor: UIColor) -> GMSStrokeStyle {
     let color = type == .gap ? UIColor.clear : strokeColor
@@ -258,16 +251,16 @@ extension FGMPlatformPatternItem {
 
   /// The span length for this pattern, in the form expected by GMSStyleSpans.
   func gmsStyleSpanLength() -> NSNumber {
-    return length ?? 0
+    return (length ?? 0) as NSNumber
   }
 }
 
-extension FGMPlatformCluster {
+extension PlatformCluster {
   /// Converts a GMUCluster to its Pigeon representation.
   static func make(
     from cluster: GMUCluster,
     clusterManagerIdentifier: String
-  ) -> FGMPlatformCluster {
+  ) -> PlatformCluster {
     var bounds = GMSCoordinateBounds()
     for item in cluster.items {
       bounds = bounds.includingCoordinate(item.position)
@@ -277,10 +270,10 @@ extension FGMPlatformCluster {
       markerIdentifierFromMarker($0)
     }
 
-    return FGMPlatformCluster.make(
-      withClusterManagerId: clusterManagerIdentifier,
-      position: FGMPlatformLatLng.make(from: cluster.position),
-      bounds: FGMPlatformLatLngBounds.make(from: bounds),
+    return PlatformCluster(
+      clusterManagerId: clusterManagerIdentifier,
+      position: PlatformLatLng.make(from: cluster.position),
+      bounds: PlatformLatLngBounds.make(from: bounds),
       markerIds: markerIds
     )
   }

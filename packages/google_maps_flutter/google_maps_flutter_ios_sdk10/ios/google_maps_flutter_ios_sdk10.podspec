@@ -14,8 +14,7 @@ Downloaded by pub (not CocoaPods).
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/google_maps_flutter/google_maps_flutter_ios_sdk10' }
   s.documentation_url = 'https://pub.dev/packages/google_maps_flutter_ios_sdk10'
-  s.source_files = 'google_maps_flutter_ios_sdk10/Sources/**/*.{h,m,swift}'
-  s.public_header_files = 'google_maps_flutter_ios_sdk10/Sources/google_maps_flutter_ios_sdk10_objc/include/**/*.h'
+  s.source_files = 'google_maps_flutter_ios_sdk10/Sources/**/*.swift'
   s.dependency 'Flutter'
   s.dependency 'GoogleMaps', '~> 10.0'
   # 6.1.3 was the first version to support GoogleMaps 10.x.

@@ -190,52 +190,10 @@ class PlatformCameraPosition {
 }
 
 /// Pigeon representation of a CameraUpdate.
-class PlatformCameraUpdate {
-  PlatformCameraUpdate({required this.cameraUpdate});
-
-  /// This Object must be one of the classes below prefixed with
-  /// PlatformCameraUpdate. Each such class represents a different type of
-  /// camera update, and each holds a different set of data, preventing the
-  /// use of a single unified class.
-  Object cameraUpdate;
-
-  List<Object?> _toList() {
-    return <Object?>[cameraUpdate];
-  }
-
-  Object encode() {
-    return _toList();
-  }
-
-  static PlatformCameraUpdate decode(Object result) {
-    result as List<Object?>;
-    return PlatformCameraUpdate(cameraUpdate: result[0]!);
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! PlatformCameraUpdate || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(cameraUpdate, other.cameraUpdate);
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
-
-  @override
-  String toString() {
-    return 'PlatformCameraUpdate(cameraUpdate: $cameraUpdate)';
-  }
-}
+sealed class PlatformCameraUpdate {}
 
 /// Pigeon equivalent of NewCameraPosition
-class PlatformCameraUpdateNewCameraPosition {
+class PlatformCameraUpdateNewCameraPosition extends PlatformCameraUpdate {
   PlatformCameraUpdateNewCameraPosition({required this.cameraPosition});
 
   PlatformCameraPosition cameraPosition;
@@ -278,7 +236,7 @@ class PlatformCameraUpdateNewCameraPosition {
 }
 
 /// Pigeon equivalent of NewLatLng
-class PlatformCameraUpdateNewLatLng {
+class PlatformCameraUpdateNewLatLng extends PlatformCameraUpdate {
   PlatformCameraUpdateNewLatLng({required this.latLng});
 
   PlatformLatLng latLng;
@@ -319,7 +277,7 @@ class PlatformCameraUpdateNewLatLng {
 }
 
 /// Pigeon equivalent of NewLatLngBounds
-class PlatformCameraUpdateNewLatLngBounds {
+class PlatformCameraUpdateNewLatLngBounds extends PlatformCameraUpdate {
   PlatformCameraUpdateNewLatLngBounds({required this.bounds, required this.padding});
 
   PlatformLatLngBounds bounds;
@@ -365,7 +323,7 @@ class PlatformCameraUpdateNewLatLngBounds {
 }
 
 /// Pigeon equivalent of NewLatLngZoom
-class PlatformCameraUpdateNewLatLngZoom {
+class PlatformCameraUpdateNewLatLngZoom extends PlatformCameraUpdate {
   PlatformCameraUpdateNewLatLngZoom({required this.latLng, required this.zoom});
 
   PlatformLatLng latLng;
@@ -411,7 +369,7 @@ class PlatformCameraUpdateNewLatLngZoom {
 }
 
 /// Pigeon equivalent of ScrollBy
-class PlatformCameraUpdateScrollBy {
+class PlatformCameraUpdateScrollBy extends PlatformCameraUpdate {
   PlatformCameraUpdateScrollBy({required this.dx, required this.dy});
 
   double dx;
@@ -454,7 +412,7 @@ class PlatformCameraUpdateScrollBy {
 }
 
 /// Pigeon equivalent of ZoomBy
-class PlatformCameraUpdateZoomBy {
+class PlatformCameraUpdateZoomBy extends PlatformCameraUpdate {
   PlatformCameraUpdateZoomBy({required this.amount, this.focus});
 
   double amount;
@@ -500,7 +458,7 @@ class PlatformCameraUpdateZoomBy {
 }
 
 /// Pigeon equivalent of ZoomIn/ZoomOut
-class PlatformCameraUpdateZoom {
+class PlatformCameraUpdateZoom extends PlatformCameraUpdate {
   PlatformCameraUpdateZoom({required this.out});
 
   bool out;
@@ -541,7 +499,7 @@ class PlatformCameraUpdateZoom {
 }
 
 /// Pigeon equivalent of ZoomTo
-class PlatformCameraUpdateZoomTo {
+class PlatformCameraUpdateZoomTo extends PlatformCameraUpdate {
   PlatformCameraUpdateZoomTo({required this.zoom});
 
   double zoom;
@@ -2306,58 +2264,11 @@ class PlatformZoomRange {
   }
 }
 
-/// Pigeon equivalent of [BitmapDescriptor]. As there are multiple disjoint
-/// types of [BitmapDescriptor], [PlatformBitmap] contains a single field which
-/// may hold the pigeon equivalent type of any of them.
-class PlatformBitmap {
-  PlatformBitmap({required this.bitmap});
-
-  /// One of [PlatformBitmapAssetMap], [PlatformBitmapAsset],
-  /// [PlatformBitmapAssetImage], [PlatformBitmapBytesMap],
-  /// [PlatformBitmapBytes], or [PlatformBitmapDefaultMarker].
-  /// As Pigeon does not currently support data class inheritance, this
-  /// approach allows for the different bitmap implementations to be valid
-  /// argument and return types of the API methods. See
-  /// https://github.com/flutter/flutter/issues/117819.
-  Object bitmap;
-
-  List<Object?> _toList() {
-    return <Object?>[bitmap];
-  }
-
-  Object encode() {
-    return _toList();
-  }
-
-  static PlatformBitmap decode(Object result) {
-    result as List<Object?>;
-    return PlatformBitmap(bitmap: result[0]!);
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! PlatformBitmap || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(bitmap, other.bitmap);
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
-
-  @override
-  String toString() {
-    return 'PlatformBitmap(bitmap: $bitmap)';
-  }
-}
+/// Pigeon equivalent of [BitmapDescriptor].
+sealed class PlatformBitmap {}
 
 /// Pigeon equivalent of [DefaultMarker].
-class PlatformBitmapDefaultMarker {
+class PlatformBitmapDefaultMarker extends PlatformBitmap {
   PlatformBitmapDefaultMarker({this.hue});
 
   double? hue;
@@ -2398,7 +2309,7 @@ class PlatformBitmapDefaultMarker {
 }
 
 /// Pigeon equivalent of [BytesBitmap].
-class PlatformBitmapBytes {
+class PlatformBitmapBytes extends PlatformBitmap {
   PlatformBitmapBytes({required this.byteData, this.size});
 
   Uint8List byteData;
@@ -2441,7 +2352,7 @@ class PlatformBitmapBytes {
 }
 
 /// Pigeon equivalent of [AssetBitmap].
-class PlatformBitmapAsset {
+class PlatformBitmapAsset extends PlatformBitmap {
   PlatformBitmapAsset({required this.name, this.pkg});
 
   String name;
@@ -2484,7 +2395,7 @@ class PlatformBitmapAsset {
 }
 
 /// Pigeon equivalent of [AssetImageBitmap].
-class PlatformBitmapAssetImage {
+class PlatformBitmapAssetImage extends PlatformBitmap {
   PlatformBitmapAssetImage({required this.name, required this.scale, this.size});
 
   String name;
@@ -2535,7 +2446,7 @@ class PlatformBitmapAssetImage {
 }
 
 /// Pigeon equivalent of [AssetMapBitmap].
-class PlatformBitmapAssetMap {
+class PlatformBitmapAssetMap extends PlatformBitmap {
   PlatformBitmapAssetMap({
     required this.assetName,
     required this.bitmapScaling,
@@ -2600,7 +2511,7 @@ class PlatformBitmapAssetMap {
 }
 
 /// Pigeon equivalent of [BytesMapBitmap].
-class PlatformBitmapBytesMap {
+class PlatformBitmapBytesMap extends PlatformBitmap {
   PlatformBitmapBytesMap({
     required this.byteData,
     required this.bitmapScaling,
@@ -2665,7 +2576,7 @@ class PlatformBitmapBytesMap {
 }
 
 /// Pigeon equivalent of [PinConfig].
-class PlatformBitmapPinConfig {
+class PlatformBitmapPinConfig extends PlatformBitmap {
   PlatformBitmapPinConfig({
     this.backgroundColor,
     this.borderColor,
@@ -2769,131 +2680,125 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformCameraPosition) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdate) {
+    } else if (value is PlatformCameraUpdateNewCameraPosition) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdateNewCameraPosition) {
+    } else if (value is PlatformCameraUpdateNewLatLng) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdateNewLatLng) {
+    } else if (value is PlatformCameraUpdateNewLatLngBounds) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdateNewLatLngBounds) {
+    } else if (value is PlatformCameraUpdateNewLatLngZoom) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdateNewLatLngZoom) {
+    } else if (value is PlatformCameraUpdateScrollBy) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdateScrollBy) {
+    } else if (value is PlatformCameraUpdateZoomBy) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdateZoomBy) {
+    } else if (value is PlatformCameraUpdateZoom) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdateZoom) {
+    } else if (value is PlatformCameraUpdateZoomTo) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraUpdateZoomTo) {
+    } else if (value is PlatformCircle) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCircle) {
+    } else if (value is PlatformHeatmap) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformHeatmap) {
+    } else if (value is PlatformHeatmapGradient) {
       buffer.putUint8(146);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformHeatmapGradient) {
+    } else if (value is PlatformWeightedLatLng) {
       buffer.putUint8(147);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformWeightedLatLng) {
+    } else if (value is PlatformInfoWindow) {
       buffer.putUint8(148);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformInfoWindow) {
+    } else if (value is PlatformCluster) {
       buffer.putUint8(149);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCluster) {
+    } else if (value is PlatformClusterManager) {
       buffer.putUint8(150);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformClusterManager) {
+    } else if (value is PlatformMarker) {
       buffer.putUint8(151);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMarker) {
+    } else if (value is PlatformPolygon) {
       buffer.putUint8(152);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPolygon) {
+    } else if (value is PlatformPolyline) {
       buffer.putUint8(153);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPolyline) {
+    } else if (value is PlatformPatternItem) {
       buffer.putUint8(154);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPatternItem) {
+    } else if (value is PlatformTile) {
       buffer.putUint8(155);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTile) {
+    } else if (value is PlatformTileOverlay) {
       buffer.putUint8(156);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileOverlay) {
+    } else if (value is PlatformEdgeInsets) {
       buffer.putUint8(157);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformEdgeInsets) {
+    } else if (value is PlatformLatLng) {
       buffer.putUint8(158);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLng) {
+    } else if (value is PlatformLatLngBounds) {
       buffer.putUint8(159);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLngBounds) {
+    } else if (value is PlatformCameraTargetBounds) {
       buffer.putUint8(160);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraTargetBounds) {
+    } else if (value is PlatformGroundOverlay) {
       buffer.putUint8(161);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformGroundOverlay) {
+    } else if (value is PlatformMapViewCreationParams) {
       buffer.putUint8(162);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMapViewCreationParams) {
+    } else if (value is PlatformMapConfiguration) {
       buffer.putUint8(163);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMapConfiguration) {
+    } else if (value is PlatformPoint) {
       buffer.putUint8(164);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPoint) {
+    } else if (value is PlatformSize) {
       buffer.putUint8(165);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformSize) {
+    } else if (value is PlatformColor) {
       buffer.putUint8(166);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformColor) {
+    } else if (value is PlatformTileLayer) {
       buffer.putUint8(167);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileLayer) {
+    } else if (value is PlatformZoomRange) {
       buffer.putUint8(168);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformZoomRange) {
+    } else if (value is PlatformBitmapDefaultMarker) {
       buffer.putUint8(169);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmap) {
+    } else if (value is PlatformBitmapBytes) {
       buffer.putUint8(170);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapDefaultMarker) {
+    } else if (value is PlatformBitmapAsset) {
       buffer.putUint8(171);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapBytes) {
+    } else if (value is PlatformBitmapAssetImage) {
       buffer.putUint8(172);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapAsset) {
+    } else if (value is PlatformBitmapAssetMap) {
       buffer.putUint8(173);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapAssetImage) {
+    } else if (value is PlatformBitmapBytesMap) {
       buffer.putUint8(174);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapAssetMap) {
-      buffer.putUint8(175);
-      writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapBytesMap) {
-      buffer.putUint8(176);
-      writeValue(buffer, value.encode());
     } else if (value is PlatformBitmapPinConfig) {
-      buffer.putUint8(177);
+      buffer.putUint8(175);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -2924,88 +2829,84 @@ class _PigeonCodec extends StandardMessageCodec {
       case 135:
         return PlatformCameraPosition.decode(readValue(buffer)!);
       case 136:
-        return PlatformCameraUpdate.decode(readValue(buffer)!);
-      case 137:
         return PlatformCameraUpdateNewCameraPosition.decode(readValue(buffer)!);
-      case 138:
+      case 137:
         return PlatformCameraUpdateNewLatLng.decode(readValue(buffer)!);
-      case 139:
+      case 138:
         return PlatformCameraUpdateNewLatLngBounds.decode(readValue(buffer)!);
-      case 140:
+      case 139:
         return PlatformCameraUpdateNewLatLngZoom.decode(readValue(buffer)!);
-      case 141:
+      case 140:
         return PlatformCameraUpdateScrollBy.decode(readValue(buffer)!);
-      case 142:
+      case 141:
         return PlatformCameraUpdateZoomBy.decode(readValue(buffer)!);
-      case 143:
+      case 142:
         return PlatformCameraUpdateZoom.decode(readValue(buffer)!);
-      case 144:
+      case 143:
         return PlatformCameraUpdateZoomTo.decode(readValue(buffer)!);
-      case 145:
+      case 144:
         return PlatformCircle.decode(readValue(buffer)!);
-      case 146:
+      case 145:
         return PlatformHeatmap.decode(readValue(buffer)!);
-      case 147:
+      case 146:
         return PlatformHeatmapGradient.decode(readValue(buffer)!);
-      case 148:
+      case 147:
         return PlatformWeightedLatLng.decode(readValue(buffer)!);
-      case 149:
+      case 148:
         return PlatformInfoWindow.decode(readValue(buffer)!);
-      case 150:
+      case 149:
         return PlatformCluster.decode(readValue(buffer)!);
-      case 151:
+      case 150:
         return PlatformClusterManager.decode(readValue(buffer)!);
-      case 152:
+      case 151:
         return PlatformMarker.decode(readValue(buffer)!);
-      case 153:
+      case 152:
         return PlatformPolygon.decode(readValue(buffer)!);
-      case 154:
+      case 153:
         return PlatformPolyline.decode(readValue(buffer)!);
-      case 155:
+      case 154:
         return PlatformPatternItem.decode(readValue(buffer)!);
-      case 156:
+      case 155:
         return PlatformTile.decode(readValue(buffer)!);
-      case 157:
+      case 156:
         return PlatformTileOverlay.decode(readValue(buffer)!);
-      case 158:
+      case 157:
         return PlatformEdgeInsets.decode(readValue(buffer)!);
-      case 159:
+      case 158:
         return PlatformLatLng.decode(readValue(buffer)!);
-      case 160:
+      case 159:
         return PlatformLatLngBounds.decode(readValue(buffer)!);
-      case 161:
+      case 160:
         return PlatformCameraTargetBounds.decode(readValue(buffer)!);
-      case 162:
+      case 161:
         return PlatformGroundOverlay.decode(readValue(buffer)!);
-      case 163:
+      case 162:
         return PlatformMapViewCreationParams.decode(readValue(buffer)!);
-      case 164:
+      case 163:
         return PlatformMapConfiguration.decode(readValue(buffer)!);
-      case 165:
+      case 164:
         return PlatformPoint.decode(readValue(buffer)!);
-      case 166:
+      case 165:
         return PlatformSize.decode(readValue(buffer)!);
-      case 167:
+      case 166:
         return PlatformColor.decode(readValue(buffer)!);
-      case 168:
+      case 167:
         return PlatformTileLayer.decode(readValue(buffer)!);
-      case 169:
+      case 168:
         return PlatformZoomRange.decode(readValue(buffer)!);
-      case 170:
-        return PlatformBitmap.decode(readValue(buffer)!);
-      case 171:
+      case 169:
         return PlatformBitmapDefaultMarker.decode(readValue(buffer)!);
-      case 172:
+      case 170:
         return PlatformBitmapBytes.decode(readValue(buffer)!);
-      case 173:
+      case 171:
         return PlatformBitmapAsset.decode(readValue(buffer)!);
-      case 174:
+      case 172:
         return PlatformBitmapAssetImage.decode(readValue(buffer)!);
-      case 175:
+      case 173:
         return PlatformBitmapAssetMap.decode(readValue(buffer)!);
-      case 176:
+      case 174:
         return PlatformBitmapBytesMap.decode(readValue(buffer)!);
-      case 177:
+      case 175:
         return PlatformBitmapPinConfig.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

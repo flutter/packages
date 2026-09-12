@@ -115,7 +115,7 @@ void main() {
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
     final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
-    final scroll = passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
+    final scroll = passedUpdate as PlatformCameraUpdateScrollBy;
     update as CameraUpdateScrollBy;
     expect(scroll.dx, update.dx);
     expect(scroll.dy, update.dy);
@@ -130,7 +130,7 @@ void main() {
 
     final VerificationResult verification = verify(api.animateCamera(captureAny, captureAny));
     final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
-    final scroll = passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
+    final scroll = passedUpdate as PlatformCameraUpdateScrollBy;
     update as CameraUpdateScrollBy;
     expect(scroll.dx, update.dx);
     expect(scroll.dy, update.dy);
@@ -148,7 +148,7 @@ void main() {
 
     final VerificationResult verification = verify(api.animateCamera(captureAny, captureAny));
     final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
-    final scroll = passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
+    final scroll = passedUpdate as PlatformCameraUpdateScrollBy;
     update as CameraUpdateScrollBy;
     expect(scroll.dx, update.dx);
     expect(scroll.dy, update.dy);
@@ -415,8 +415,8 @@ void main() {
       expect(firstChanged.draggable, object2new.draggable);
       expect(firstChanged.flat, object2new.flat);
       expect(
-        firstChanged.icon.bitmap.runtimeType,
-        GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(object2new.icon).bitmap.runtimeType,
+        firstChanged.icon.runtimeType,
+        GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(object2new.icon).runtimeType,
       );
       expect(firstChanged.infoWindow.title, object2new.infoWindow.title);
       expect(firstChanged.infoWindow.snippet, object2new.infoWindow.snippet);
@@ -441,8 +441,8 @@ void main() {
       expect(firstAdded.draggable, object3.draggable);
       expect(firstAdded.flat, object3.flat);
       expect(
-        firstAdded.icon.bitmap.runtimeType,
-        GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(object3.icon).bitmap.runtimeType,
+        firstAdded.icon.runtimeType,
+        GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(object3.icon).runtimeType,
       );
       expect(firstAdded.infoWindow.title, object3.infoWindow.title);
       expect(firstAdded.infoWindow.snippet, object3.infoWindow.snippet);
@@ -500,8 +500,8 @@ void main() {
       expect(firstChanged.draggable, object2new.draggable);
       expect(firstChanged.flat, object2new.flat);
       expect(
-        firstChanged.icon.bitmap.runtimeType,
-        GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(object2new.icon).bitmap.runtimeType,
+        firstChanged.icon.runtimeType,
+        GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(object2new.icon).runtimeType,
       );
       expect(firstChanged.infoWindow.title, object2new.infoWindow.title);
       expect(firstChanged.infoWindow.snippet, object2new.infoWindow.snippet);
@@ -532,8 +532,8 @@ void main() {
       expect(firstAdded.draggable, object3.draggable);
       expect(firstAdded.flat, object3.flat);
       expect(
-        firstAdded.icon.bitmap.runtimeType,
-        GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(object3.icon).bitmap.runtimeType,
+        firstAdded.icon.runtimeType,
+        GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(object3.icon).runtimeType,
       );
       expect(firstAdded.infoWindow.title, object3.infoWindow.title);
       expect(firstAdded.infoWindow.snippet, object3.infoWindow.snippet);
@@ -789,10 +789,8 @@ void main() {
       expect(firstChanged.zoomLevel, object2new.zoomLevel);
       expect(firstChanged.transparency, object2new.transparency);
       expect(
-        firstChanged.image.bitmap.runtimeType,
-        GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(
-          object2new.image,
-        ).bitmap.runtimeType,
+        firstChanged.image.runtimeType,
+        GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(object2new.image).runtimeType,
       );
     }
     // Object three should be added.
@@ -814,8 +812,8 @@ void main() {
       expect(firstAdded.zoomLevel, object3.zoomLevel);
       expect(firstAdded.transparency, object3.transparency);
       expect(
-        firstAdded.image.bitmap.runtimeType,
-        GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(object3.image).bitmap.runtimeType,
+        firstAdded.image.runtimeType,
+        GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(object3.image).runtimeType,
       );
     }
   });
@@ -997,7 +995,7 @@ void main() {
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
     final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
-    final typedUpdate = passedUpdate.cameraUpdate as PlatformCameraUpdateNewCameraPosition;
+    final typedUpdate = passedUpdate as PlatformCameraUpdateNewCameraPosition;
     update as CameraUpdateNewCameraPosition;
     expect(typedUpdate.cameraPosition.target.latitude, update.cameraPosition.target.latitude);
     expect(typedUpdate.cameraPosition.target.longitude, update.cameraPosition.target.longitude);
@@ -1013,7 +1011,7 @@ void main() {
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
     final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
-    final typedUpdate = passedUpdate.cameraUpdate as PlatformCameraUpdateNewLatLng;
+    final typedUpdate = passedUpdate as PlatformCameraUpdateNewLatLng;
     update as CameraUpdateNewLatLng;
     expect(typedUpdate.latLng.latitude, update.latLng.latitude);
     expect(typedUpdate.latLng.longitude, update.latLng.longitude);
@@ -1032,7 +1030,7 @@ void main() {
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
     final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
-    final typedUpdate = passedUpdate.cameraUpdate as PlatformCameraUpdateNewLatLngBounds;
+    final typedUpdate = passedUpdate as PlatformCameraUpdateNewLatLngBounds;
     update as CameraUpdateNewLatLngBounds;
     expect(typedUpdate.bounds.northeast.latitude, update.bounds.northeast.latitude);
     expect(typedUpdate.bounds.northeast.longitude, update.bounds.northeast.longitude);
@@ -1051,7 +1049,7 @@ void main() {
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
     final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
-    final typedUpdate = passedUpdate.cameraUpdate as PlatformCameraUpdateNewLatLngZoom;
+    final typedUpdate = passedUpdate as PlatformCameraUpdateNewLatLngZoom;
     update as CameraUpdateNewLatLngZoom;
     expect(typedUpdate.latLng.latitude, update.latLng.latitude);
     expect(typedUpdate.latLng.longitude, update.latLng.longitude);
@@ -1068,7 +1066,7 @@ void main() {
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
     final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
-    final typedUpdate = passedUpdate.cameraUpdate as PlatformCameraUpdateZoomBy;
+    final typedUpdate = passedUpdate as PlatformCameraUpdateZoomBy;
     update as CameraUpdateZoomBy;
     expect(typedUpdate.focus?.x, update.focus?.dx);
     expect(typedUpdate.focus?.y, update.focus?.dy);
@@ -1084,7 +1082,7 @@ void main() {
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
     final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
-    final typedUpdate = passedUpdate.cameraUpdate as PlatformCameraUpdateZoomTo;
+    final typedUpdate = passedUpdate as PlatformCameraUpdateZoomTo;
     update as CameraUpdateZoomTo;
     expect(typedUpdate.zoom, update.zoom);
   });
@@ -1098,7 +1096,7 @@ void main() {
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
     final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
-    final typedUpdate = passedUpdate.cameraUpdate as PlatformCameraUpdateZoom;
+    final typedUpdate = passedUpdate as PlatformCameraUpdateZoom;
     expect(typedUpdate.out, false);
   });
 
@@ -1111,7 +1109,7 @@ void main() {
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
     final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
-    final typedUpdate = passedUpdate.cameraUpdate as PlatformCameraUpdateZoom;
+    final typedUpdate = passedUpdate as PlatformCameraUpdateZoom;
     expect(typedUpdate.out, true);
   });
 
@@ -1131,8 +1129,8 @@ void main() {
     final PlatformBitmap platformBitmap = GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(
       bitmap,
     );
-    expect(platformBitmap.bitmap, isA<PlatformBitmapDefaultMarker>());
-    final typedBitmap = platformBitmap.bitmap as PlatformBitmapDefaultMarker;
+    expect(platformBitmap, isA<PlatformBitmapDefaultMarker>());
+    final typedBitmap = platformBitmap as PlatformBitmapDefaultMarker;
     expect(typedBitmap.hue, 10.0);
   });
 
@@ -1147,8 +1145,8 @@ void main() {
     final PlatformBitmap platformBitmap = GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(
       bitmap,
     );
-    expect(platformBitmap.bitmap, isA<PlatformBitmapBytesMap>());
-    final typedBitmap = platformBitmap.bitmap as PlatformBitmapBytesMap;
+    expect(platformBitmap, isA<PlatformBitmapBytesMap>());
+    final typedBitmap = platformBitmap as PlatformBitmapBytesMap;
     expect(typedBitmap.byteData, data);
     expect(typedBitmap.bitmapScaling, PlatformMapBitmapScaling.auto);
     expect(typedBitmap.imagePixelRatio, 2.0);
@@ -1162,8 +1160,8 @@ void main() {
     final PlatformBitmap platformBitmap = GoogleMapsFlutterIOS.platformBitmapFromBitmapDescriptor(
       bitmap,
     );
-    expect(platformBitmap.bitmap, isA<PlatformBitmapAssetMap>());
-    final typedBitmap = platformBitmap.bitmap as PlatformBitmapAssetMap;
+    expect(platformBitmap, isA<PlatformBitmapAssetMap>());
+    final typedBitmap = platformBitmap as PlatformBitmapAssetMap;
     expect(typedBitmap.assetName, assetName);
     expect(typedBitmap.bitmapScaling, PlatformMapBitmapScaling.auto);
     expect(typedBitmap.imagePixelRatio, 2.0);
