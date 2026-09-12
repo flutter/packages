@@ -72,7 +72,7 @@ NS_ASSUME_NONNULL_BEGIN
 #if TARGET_OS_IOS || TARGET_OS_MACCATALYST
 
 - (void)addScopes:(NSArray<NSString *> *)scopes
-    presentingViewController:(UIViewController *)presentingViewController
+    presentingViewController:(nullable UIViewController *)presentingViewController
                   completion:(nullable void (^)(NSObject<FSIGIDSignInResult> *_Nullable result,
                                                 NSError *_Nullable error))completion
     NS_EXTENSION_UNAVAILABLE("The add scopes flow is not supported in App Extensions.");
@@ -80,7 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
 #elif TARGET_OS_OSX
 
 - (void)addScopes:(NSArray<NSString *> *)scopes
-    presentingWindow:(NSWindow *)presentingWindow
+    presentingWindow:(nullable NSWindow *)presentingWindow
           completion:(nullable void (^)(NSObject<FSIGIDSignInResult> *_Nullable result,
                                         NSError *_Nullable error))completion;
 
@@ -111,7 +111,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if TARGET_OS_IOS || TARGET_OS_MACCATALYST
 
-- (void)signInWithPresentingViewController:(UIViewController *)presentingViewController
+- (void)signInWithPresentingViewController:(nullable UIViewController *)presentingViewController
                                       hint:(nullable NSString *)hint
                           additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
                                      nonce:(nullable NSString *)nonce
@@ -122,7 +122,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #elif TARGET_OS_OSX
 
-- (void)signInWithPresentingWindow:(NSWindow *)presentingWindow
+- (void)signInWithPresentingWindow:(nullable NSWindow *)presentingWindow
                               hint:(nullable NSString *)hint
                   additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
                              nonce:(nullable NSString *)nonce

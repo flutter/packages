@@ -86,7 +86,7 @@ class TestSignIn: NSObject, FSIGIDSignIn {
 
   #if os(iOS) || targetEnvironment(macCatalyst)
     func signIn(
-      withPresenting presentingViewController: UIViewController,
+      withPresenting presentingViewController: UIViewController?,
       hint: String?,
       additionalScopes: [String]?,
       nonce: String?,
@@ -107,7 +107,7 @@ class TestSignIn: NSObject, FSIGIDSignIn {
     }
   #else
     func signIn(
-      withPresenting presentingWindow: NSWindow,
+      withPresenting presentingWindow: NSWindow?,
       hint: String?,
       additionalScopes: [String]?,
       nonce: String?,
@@ -213,7 +213,7 @@ class TestGoogleUser: NSObject, FSIGIDGoogleUser {
   #if os(iOS) || targetEnvironment(macCatalyst)
     func addScopes(
       _ scopes: [String],
-      presenting presentingViewController: UIViewController,
+      presenting presentingViewController: UIViewController?,
       completion: (((any FSIGIDSignInResult)?, Error?) -> Void)?
     ) {
       self.requestedScopes = scopes
@@ -226,7 +226,7 @@ class TestGoogleUser: NSObject, FSIGIDGoogleUser {
   #elseif os(OSX)
     func addScopes(
       _ scopes: [String],
-      presenting presentingWindow: NSWindow,
+      presenting presentingWindow: NSWindow?,
       completion: (((any FSIGIDSignInResult)?, Error?) -> Void)?
     ) {
       self.requestedScopes = scopes
@@ -369,6 +369,35 @@ struct GoogleSignInPluginTests {
           #expect(error == nil)
           #expect(result?.success == nil)
           #expect(result?.error?.type == FSIGoogleSignInErrorCode.noAuthInKeychain)
+          confirmed()
+        }
+      }
+    }
+
+    @Test func restorePreviousSignInErrorsWhenUserIDIsNil() async {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      let fakeUser = TestGoogleUser("mockID")
+      fakeUser.userID = nil
+      fakeSignIn.user = fakeUser
+
+      await confirmation("completion called") { confirmed in
+        plugin.restorePreviousSignIn { result, error in
+          #expect(result == nil)
+          #expect(error?.code == "google_sign_in")
+          #expect(error?.message == "Google Sign-In succeeded without a user ID.")
+          confirmed()
+        }
+      }
+    }
+
+    @Test func restorePreviousSignInNeitherUserNorError() async {
+      let (plugin, _) = createTestPlugin()
+
+      await confirmation("completion called") { confirmed in
+        plugin.restorePreviousSignIn { result, error in
+          #expect(result == nil)
+          #expect(error?.code == "(null): 0")
+          #expect(error?.details as? String == "[Unsupported type: (null)]")
           confirmed()
         }
       }
@@ -728,17 +757,29 @@ struct GoogleSignInPluginTests {
         #expect(handled == false)
         #expect(fakeSignIn.handledURLs == [url])
       }
-
-      @Test func handleURLs() {
-        let (plugin, fakeSignIn) = createTestPlugin()
-        let firstURL = URL(string: "com.googleusercontent.apps.test:/oauthredirect")!
-        let secondURL = URL(string: "com.googleusercontent.apps.test:/another")!
-
-        plugin.handleURLs([firstURL, secondURL])
-
-        #expect(fakeSignIn.handledURLs == [firstURL, secondURL])
-      }
     #endif
+
+    @Test func handleOpen() {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      let firstURL = URL(string: "com.googleusercontent.apps.test:/oauthredirect")!
+      let secondURL = URL(string: "com.googleusercontent.apps.test:/another")!
+
+      let handled = plugin.handleOpen([firstURL, secondURL])
+
+      #expect(handled == true)
+      #expect(fakeSignIn.handledURLs == [firstURL, secondURL])
+    }
+
+    @Test func handleOpenReturnsHandleResult() {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      let url = URL(string: "com.googleusercontent.apps.test:/oauthredirect")!
+      fakeSignIn.handleURLResult = false
+
+      let handled = plugin.handleOpen([url])
+
+      #expect(handled == false)
+      #expect(fakeSignIn.handledURLs == [url])
+    }
   }
 
   @Suite("errorMapping") struct ErrorMappingTests {
@@ -936,16 +977,16 @@ func loadGoogleServiceInfo() -> [String: Any]? {
 func createTestPlugin(
   viewProvider: TestViewProvider = TestViewProvider(),
   googleServiceProperties: [String: Any]? = nil
-) -> (FLTGoogleSignInPlugin, TestSignIn) {
+) -> (GoogleSignInPlugin, TestSignIn) {
   let fakeSignIn = TestSignIn()
   return (
-    FLTGoogleSignInPlugin(
+    GoogleSignInPlugin(
       signIn: fakeSignIn, viewProvider: viewProvider,
       googleServiceProperties: googleServiceProperties), fakeSignIn
   )
 }
 
-func addSignedInUser(to plugin: FLTGoogleSignInPlugin) -> TestGoogleUser {
+func addSignedInUser(to plugin: GoogleSignInPlugin) -> TestGoogleUser {
   let identifier = "fakeID"
   let user = TestGoogleUser(identifier)
   plugin.usersByIdentifier[identifier] = user
