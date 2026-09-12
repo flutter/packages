@@ -1,0 +1,3 @@
+changelog: |
+  - Adds splashRadius property to BottomNavigationBar and BottomNavigationBarThemeData.
+version: minor

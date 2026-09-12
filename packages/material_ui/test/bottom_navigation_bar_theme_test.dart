@@ -37,6 +37,7 @@ void main() {
     expect(themeData.type, null);
     expect(themeData.landscapeLayout, null);
     expect(themeData.mouseCursor, null);
+    expect(themeData.splashRadius, null);
 
     const theme = BottomNavigationBarTheme(data: BottomNavigationBarThemeData(), child: SizedBox());
     expect(theme.data.backgroundColor, null);
@@ -50,8 +51,9 @@ void main() {
     expect(theme.data.showSelectedLabels, null);
     expect(theme.data.showUnselectedLabels, null);
     expect(theme.data.type, null);
-    expect(themeData.landscapeLayout, null);
-    expect(themeData.mouseCursor, null);
+    expect(theme.data.landscapeLayout, null);
+    expect(theme.data.mouseCursor, null);
+    expect(theme.data.splashRadius, null);
   });
 
   testWidgets('Default BottomNavigationBarThemeData debugFillProperties', (
@@ -85,6 +87,7 @@ void main() {
       showUnselectedLabels: true,
       type: BottomNavigationBarType.fixed,
       mouseCursor: WidgetStateMouseCursor.clickable,
+      splashRadius: 18.0,
     ).debugFillProperties(builder);
 
     final List<String> description = builder.properties
@@ -109,6 +112,7 @@ void main() {
     expect(description[9], 'showUnselectedLabels: true');
     expect(description[10], 'type: BottomNavigationBarType.fixed');
     expect(description[11], 'mouseCursor: WidgetStateMouseCursor(clickable)');
+    expect(description[12], 'splashRadius: 18.0');
   });
 
   testWidgets('BottomNavigationBar is themeable', (WidgetTester tester) async {
@@ -142,6 +146,7 @@ void main() {
               }
               return SystemMouseCursors.move;
             }),
+            splashRadius: 28.0,
           ),
         ),
         home: Scaffold(
@@ -195,6 +200,10 @@ void main() {
     expect(findFadeTransition, findsNothing);
     expect(_material(tester).elevation, equals(elevation));
     expect(_material(tester).color, equals(backgroundColor));
+
+    for (final InkResponse inkResponse in tester.widgetList<InkResponse>(find.byType(InkResponse))) {
+      expect(inkResponse.radius, 28.0);
+    }
 
     final Offset selectedBarItem = tester.getCenter(findACTransform);
     final Offset unselectedBarItem = tester.getCenter(findAlarmTransform);
@@ -258,6 +267,7 @@ void main() {
             unselectedLabelStyle: themeUnselectedTextStyle,
             landscapeLayout: themeLandscapeLayout,
             mouseCursor: themeCursor,
+            splashRadius: 28.0,
           ),
         ),
         home: Scaffold(
@@ -275,6 +285,7 @@ void main() {
             unselectedLabelStyle: unselectedTextStyle,
             landscapeLayout: landscapeLayout,
             mouseCursor: cursor,
+            splashRadius: 32.0,
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(icon: Icon(Icons.ac_unit), label: 'AC'),
               BottomNavigationBarItem(icon: Icon(Icons.access_alarm), label: 'Alarm'),
@@ -322,6 +333,12 @@ void main() {
     expect(findFadeTransition, findsNothing);
     expect(_material(tester).elevation, equals(elevation));
     expect(_material(tester).color, equals(backgroundColor));
+
+    for (final InkResponse inkResponse in tester.widgetList<InkResponse>(
+      findDescendantOfBottomNavigationBar(find.byType(InkResponse)),
+    )) {
+      expect(inkResponse.radius, 32.0);
+    }
 
     final Offset barItem = tester.getCenter(
       findDescendantOfBottomNavigationBar(

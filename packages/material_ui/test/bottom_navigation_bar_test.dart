@@ -3127,6 +3127,77 @@ void main() {
 
     expect(tester.getSemantics(find.text('B')), isSemantics(label: 'B\nTab 2 of 2'));
   });
+
+  testWidgets('BottomNavigationBar splashRadius defaults to null', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      boilerplate(
+        textDirection: TextDirection.ltr,
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(Icons.ac_unit), label: 'A'),
+            BottomNavigationBarItem(icon: Icon(Icons.access_alarm), label: 'B'),
+          ],
+        ),
+      ),
+    );
+
+    final Iterable<InkResponse> inkResponses = tester.widgetList<InkResponse>(
+      find.descendant(of: find.byType(BottomNavigationBar), matching: find.byType(InkResponse)),
+    );
+    expect(inkResponses.length, 2);
+    for (final inkResponse in inkResponses) {
+      expect(inkResponse.radius, isNull);
+    }
+  });
+
+  testWidgets('BottomNavigationBar splashRadius test', (WidgetTester tester) async {
+    const splashRadius = 20.0;
+    await tester.pumpWidget(
+      boilerplate(
+        textDirection: TextDirection.ltr,
+        bottomNavigationBar: BottomNavigationBar(
+          splashRadius: splashRadius,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(Icons.ac_unit), label: 'A'),
+            BottomNavigationBarItem(icon: Icon(Icons.access_alarm), label: 'B'),
+          ],
+        ),
+      ),
+    );
+
+    final Iterable<InkResponse> inkResponses = tester.widgetList<InkResponse>(
+      find.descendant(of: find.byType(BottomNavigationBar), matching: find.byType(InkResponse)),
+    );
+    expect(inkResponses.length, 2);
+    for (final inkResponse in inkResponses) {
+      expect(inkResponse.radius, splashRadius);
+    }
+  });
+
+  testWidgets('BottomNavigationBar assert when splashRadius is non-positive', (
+    WidgetTester tester,
+  ) async {
+    expect(
+      () => BottomNavigationBar(
+        splashRadius: 0.0,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.ac_unit), label: 'A'),
+          BottomNavigationBarItem(icon: Icon(Icons.access_alarm), label: 'B'),
+        ],
+      ),
+      throwsAssertionError,
+    );
+    expect(
+      () => BottomNavigationBar(
+        splashRadius: -1.0,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.ac_unit), label: 'A'),
+          BottomNavigationBarItem(icon: Icon(Icons.access_alarm), label: 'B'),
+        ],
+      ),
+      throwsAssertionError,
+    );
+  });
 }
 
 Widget boilerplate({
