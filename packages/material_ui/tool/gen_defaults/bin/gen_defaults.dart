@@ -30,7 +30,8 @@ import '../templates/card_template.dart';
 // import '../templates/drawer_template.dart';
 // import '../templates/expansion_tile_template.dart';
 // import '../templates/fab_template.dart';
-// import '../templates/filter_chip_template.dart';
+import '../templates/filter_chip_template.dart';
+
 // import '../templates/icon_button_template.dart';
 // import '../templates/input_chip_template.dart';
 // import '../templates/input_decorator_template.dart';
@@ -87,7 +88,7 @@ Future<void> main(List<String> args) async {
   // const DrawerTemplateM3().generateFile(verbose: verbose);
   // const ExpansionTileTemplateM3().generateFile(verbose: verbose);
   // const FabTemplateM3().generateFile(verbose: verbose);
-  // const FilterChipTemplateM3().generateFile(verbose: verbose);
+  const FilterChipTemplateM3().generateFile(verbose: verbose);
   // const IconButtonTemplateM3().generateFile(verbose: verbose);
   // const InputChipTemplateM3().generateFile(verbose: verbose);
   // const InputDecoratorTemplateM3().generateFile(verbose: verbose);
