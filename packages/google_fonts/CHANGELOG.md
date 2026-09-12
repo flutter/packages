@@ -1,5 +1,7 @@
 ## NEXT
 
+* Migrates to material_ui.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 - Adds the `GoogleFontsLite` class to allow tree-shaking unused font code.
 - Added fonts:
   - `Akt`
