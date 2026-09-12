@@ -1247,6 +1247,21 @@
   [self.flutterCallbackAPI throwErrorFromVoidWithCompletion:completion];
 }
 
+- (void)callFlutterIsAsyncFlutterApiOnRootWithCompletion:
+    (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  if (![NSThread isMainThread]) {
+    completion(@NO, nil);
+    return;
+  }
+  [self.flutterAPI isAsyncFlutterApiOnRootWithCompletion:^(NSNumber *result, FlutterError *error) {
+    if (![NSThread isMainThread]) {
+      completion(@NO, nil);
+      return;
+    }
+    completion(result, error);
+  }];
+}
+
 @end
 
 @interface AlternateLanguageTestAPIWithSuffix ()
