@@ -208,9 +208,8 @@ Page resource error:
             JavaScriptChannelParams(
               name: 'Toaster',
               onMessageReceived: (JavaScriptMessage message) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(message.message)));
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(message.message)));
               },
             ),
           )
@@ -245,9 +244,8 @@ Page resource error:
           SampleMenu(webViewController: _controller, cookieManager: widget.cookieManager),
         ],
       ),
-      body: PlatformWebViewWidget(
-        PlatformWebViewWidgetCreationParams(controller: _controller),
-      ).build(context),
+      body: PlatformWebViewWidget(PlatformWebViewWidgetCreationParams(controller: _controller))
+          .build(context),
       floatingActionButton: favoriteButton(),
     );
   }
@@ -495,9 +493,8 @@ class SampleMenu extends StatelessWidget {
       'caches.open("test_caches_entry"); localStorage["test_localStorage"] = "dummy_entry";',
     );
     if (context.mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Added a test entry to cache.')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Added a test entry to cache.')));
     }
   }
 
@@ -739,9 +736,8 @@ class NavigationControls extends StatelessWidget {
               await webViewController.goBack();
             } else {
               if (context.mounted) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('No back history item')));
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(const SnackBar(content: Text('No back history item')));
               }
             }
           },
@@ -753,9 +749,8 @@ class NavigationControls extends StatelessWidget {
               await webViewController.goForward();
             } else {
               if (context.mounted) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('No forward history item')));
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(const SnackBar(content: Text('No forward history item')));
               }
             }
           },
