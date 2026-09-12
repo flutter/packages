@@ -5,10 +5,12 @@
 package io.flutter.plugins.videoplayer;
 
 import android.content.Context;
+import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.annotation.VisibleForTesting;
+import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MimeTypes;
 import androidx.media3.common.util.UnstableApi;
@@ -23,16 +25,19 @@ final class HttpVideoAsset extends VideoAsset {
   @NonNull private final StreamingFormat streamingFormat;
   @NonNull private final Map<String, String> httpHeaders;
   @Nullable private final String userAgent;
+  @Nullable private final WidevineDrmConfiguration widevineDrm;
 
   HttpVideoAsset(
       @Nullable String assetUrl,
       @NonNull StreamingFormat streamingFormat,
       @NonNull Map<String, String> httpHeaders,
-      @Nullable String userAgent) {
+      @Nullable String userAgent,
+      @Nullable WidevineDrmConfiguration widevineDrm) {
     super(assetUrl);
     this.streamingFormat = streamingFormat;
     this.httpHeaders = httpHeaders;
     this.userAgent = userAgent;
+    this.widevineDrm = widevineDrm;
   }
 
   @NonNull
@@ -53,6 +58,13 @@ final class HttpVideoAsset extends VideoAsset {
     }
     if (mimeType != null) {
       builder.setMimeType(mimeType);
+    }
+    if (widevineDrm != null) {
+      builder.setDrmConfiguration(
+          new MediaItem.DrmConfiguration.Builder(C.WIDEVINE_UUID)
+              .setLicenseUri(Uri.parse(widevineDrm.licenseUri))
+              .setLicenseRequestHeaders(widevineDrm.licenseHeaders)
+              .build());
     }
     return builder.build();
   }
