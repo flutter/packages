@@ -1,5 +1,8 @@
 ## NEXT
 
+- Adds `config`, `pendingFonts`, and `getTextTheme` to `GoogleFontsLite`.
+- Decouples internal base library from the main entry point to ensure complete tree-shakability.
+- Adds code samples and documentation for `GoogleFontsLite`.
 - Adds the `GoogleFontsLite` class to allow tree-shaking unused font code.
 - Added fonts:
   - `Akt`
