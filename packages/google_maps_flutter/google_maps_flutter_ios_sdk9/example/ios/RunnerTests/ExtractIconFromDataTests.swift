@@ -4,7 +4,6 @@
 
 import Flutter
 import Testing
-import google_maps_flutter_ios_sdk9_objc
 
 @testable import google_maps_flutter_ios_sdk9
 
@@ -15,8 +14,8 @@ import google_maps_flutter_ios_sdk9_objc
     let assetName = "fakeImageName"
     let assetProvider = TestAssetProvider(image: testImage, forAssetName: assetName, package: nil)
 
-    let bitmap = FGMPlatformBitmapAssetMap.make(
-      withAssetName: assetName,
+    let bitmap = PlatformBitmapAssetMap(
+      assetName: assetName,
       bitmapScaling: .auto,
       imagePixelRatio: 1,
       width: nil,
@@ -25,10 +24,7 @@ import google_maps_flutter_ios_sdk9_objc
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMPlatformBitmap.make(withBitmap: bitmap).createIcon(
-      assetProvider: assetProvider,
-      screenScale: screenScale
-    )
+    let resultImage = bitmap.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     #expect(resultImage != nil)
     #expect(resultImage?.scale == 1.0)
@@ -42,8 +38,8 @@ import google_maps_flutter_ios_sdk9_objc
     let assetName = "fakeImageName"
     let assetProvider = TestAssetProvider(image: testImage, forAssetName: assetName, package: nil)
 
-    let bitmap = FGMPlatformBitmapAssetMap.make(
-      withAssetName: assetName,
+    let bitmap = PlatformBitmapAssetMap(
+      assetName: assetName,
       bitmapScaling: .auto,
       imagePixelRatio: 10,
       width: nil,
@@ -52,10 +48,7 @@ import google_maps_flutter_ios_sdk9_objc
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMPlatformBitmap.make(withBitmap: bitmap).createIcon(
-      assetProvider: assetProvider,
-      screenScale: screenScale
-    )
+    let resultImage = bitmap.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     #expect(resultImage != nil)
     #expect(resultImage?.scale == 10)
@@ -71,20 +64,17 @@ import google_maps_flutter_ios_sdk9_objc
     let assetProvider = TestAssetProvider(image: testImage, forAssetName: assetName, package: nil)
 
     let width: CGFloat = 15.0
-    let bitmap = FGMPlatformBitmapAssetMap.make(
-      withAssetName: assetName,
+    let bitmap = PlatformBitmapAssetMap(
+      assetName: assetName,
       bitmapScaling: .auto,
       imagePixelRatio: 1,
-      width: width as NSNumber,
+      width: width,
       height: nil
     )
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMPlatformBitmap.make(withBitmap: bitmap).createIcon(
-      assetProvider: assetProvider,
-      screenScale: screenScale
-    )
+    let resultImage = bitmap.createIcon(assetProvider: assetProvider, screenScale: screenScale)
     #expect(resultImage != nil)
     #expect(testImage.scale == 1.0)
 
@@ -105,20 +95,17 @@ import google_maps_flutter_ios_sdk9_objc
 
     let width: CGFloat = 15.0
     let height: CGFloat = 45.0
-    let bitmap = FGMPlatformBitmapAssetMap.make(
-      withAssetName: assetName,
+    let bitmap = PlatformBitmapAssetMap(
+      assetName: assetName,
       bitmapScaling: .auto,
       imagePixelRatio: 1,
-      width: width as NSNumber,
-      height: height as NSNumber
+      width: width,
+      height: height
     )
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMPlatformBitmap.make(withBitmap: bitmap).createIcon(
-      assetProvider: assetProvider,
-      screenScale: screenScale
-    )
+    let resultImage = bitmap.createIcon(assetProvider: assetProvider, screenScale: screenScale)
     #expect(resultImage != nil)
     #expect(resultImage?.scale == screenScale)
     #expect(resultImage?.size.width == width)
@@ -131,8 +118,8 @@ import google_maps_flutter_ios_sdk9_objc
     let assetName = "fakeImageName"
     let assetProvider = TestAssetProvider(image: testImage, forAssetName: assetName, package: nil)
 
-    let bitmap = FGMPlatformBitmapAssetMap.make(
-      withAssetName: assetName,
+    let bitmap = PlatformBitmapAssetMap(
+      assetName: assetName,
       bitmapScaling: .none,
       imagePixelRatio: 1,
       width: nil,
@@ -141,10 +128,7 @@ import google_maps_flutter_ios_sdk9_objc
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMPlatformBitmap.make(withBitmap: bitmap).createIcon(
-      assetProvider: assetProvider,
-      screenScale: screenScale
-    )
+    let resultImage = bitmap.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     #expect(resultImage != nil)
     #expect(resultImage?.scale == 1.0)
@@ -157,8 +141,8 @@ import google_maps_flutter_ios_sdk9_objc
     let pngData = try #require(testImage.pngData())
 
     let typedData = FlutterStandardTypedData(bytes: pngData)
-    let bitmap = FGMPlatformBitmapBytesMap.make(
-      withByteData: typedData,
+    let bitmap = PlatformBitmapBytesMap(
+      byteData: typedData,
       bitmapScaling: .auto,
       imagePixelRatio: 1,
       width: nil,
@@ -167,7 +151,7 @@ import google_maps_flutter_ios_sdk9_objc
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMPlatformBitmap.make(withBitmap: bitmap).createIcon(
+    let resultImage = bitmap.createIcon(
       assetProvider: TestAssetProvider(),
       screenScale: screenScale
     )
@@ -183,8 +167,8 @@ import google_maps_flutter_ios_sdk9_objc
     let pngData = try #require(testImage.pngData())
 
     let typedData = FlutterStandardTypedData(bytes: pngData)
-    let bitmap = FGMPlatformBitmapBytesMap.make(
-      withByteData: typedData,
+    let bitmap = PlatformBitmapBytesMap(
+      byteData: typedData,
       bitmapScaling: .auto,
       imagePixelRatio: 10,
       width: nil,
@@ -193,7 +177,7 @@ import google_maps_flutter_ios_sdk9_objc
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMPlatformBitmap.make(withBitmap: bitmap).createIcon(
+    let resultImage = bitmap.createIcon(
       assetProvider: TestAssetProvider(),
       screenScale: screenScale
     )
@@ -210,17 +194,17 @@ import google_maps_flutter_ios_sdk9_objc
     let width: CGFloat = 15.0
     let height: CGFloat = 15.0
     let typedData = FlutterStandardTypedData(bytes: pngData)
-    let bitmap = FGMPlatformBitmapBytesMap.make(
-      withByteData: typedData,
+    let bitmap = PlatformBitmapBytesMap(
+      byteData: typedData,
       bitmapScaling: .auto,
       imagePixelRatio: 1,
-      width: width as NSNumber,
-      height: height as NSNumber
+      width: width,
+      height: height
     )
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMPlatformBitmap.make(withBitmap: bitmap).createIcon(
+    let resultImage = bitmap.createIcon(
       assetProvider: TestAssetProvider(),
       screenScale: screenScale
     )
@@ -244,17 +228,17 @@ import google_maps_flutter_ios_sdk9_objc
     let width: CGFloat = 15.0
     let height: CGFloat = 45.0
     let typedData = FlutterStandardTypedData(bytes: pngData)
-    let bitmap = FGMPlatformBitmapBytesMap.make(
-      withByteData: typedData,
+    let bitmap = PlatformBitmapBytesMap(
+      byteData: typedData,
       bitmapScaling: .auto,
       imagePixelRatio: 1,
-      width: width as NSNumber,
-      height: height as NSNumber
+      width: width,
+      height: height
     )
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMPlatformBitmap.make(withBitmap: bitmap).createIcon(
+    let resultImage = bitmap.createIcon(
       assetProvider: TestAssetProvider(),
       screenScale: screenScale
     )
@@ -269,8 +253,8 @@ import google_maps_flutter_ios_sdk9_objc
     let pngData = try #require(testImage.pngData())
 
     let typedData = FlutterStandardTypedData(bytes: pngData)
-    let bitmap = FGMPlatformBitmapBytesMap.make(
-      withByteData: typedData,
+    let bitmap = PlatformBitmapBytesMap(
+      byteData: typedData,
       bitmapScaling: .none,
       imagePixelRatio: 1,
       width: nil,
@@ -279,7 +263,7 @@ import google_maps_flutter_ios_sdk9_objc
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMPlatformBitmap.make(withBitmap: bitmap).createIcon(
+    let resultImage = bitmap.createIcon(
       assetProvider: TestAssetProvider(),
       screenScale: screenScale
     )
@@ -294,12 +278,12 @@ import google_maps_flutter_ios_sdk9_objc
   @Test func extractIconFromPinConfigWithGlyphColor() {
     let assetProvider = TestAssetProvider()
 
-    let backgroundColor = FGMPlatformColor.make(withRed: 0.0, green: 1.0, blue: 1.0, alpha: 1.0)
-    let borderColor = FGMPlatformColor.make(withRed: 1.0, green: 0.0, blue: 1.0, alpha: 1.0)
-    let glyphColor = FGMPlatformColor.make(withRed: 0.1, green: 0.2, blue: 0.3, alpha: 1.0)
+    let backgroundColor = PlatformColor(red: 0.0, green: 1.0, blue: 1.0, alpha: 1.0)
+    let borderColor = PlatformColor(red: 1.0, green: 0.0, blue: 1.0, alpha: 1.0)
+    let glyphColor = PlatformColor(red: 0.1, green: 0.2, blue: 0.3, alpha: 1.0)
 
-    let pinConfig = FGMPlatformBitmapPinConfig.make(
-      withBackgroundColor: backgroundColor,
+    let pinConfig = PlatformBitmapPinConfig(
+      backgroundColor: backgroundColor,
       borderColor: borderColor,
       glyphColor: glyphColor,
       glyphTextColor: nil,
@@ -309,10 +293,7 @@ import google_maps_flutter_ios_sdk9_objc
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMPlatformBitmap.make(withBitmap: pinConfig).createIcon(
-      assetProvider: assetProvider,
-      screenScale: screenScale
-    )
+    let resultImage = pinConfig.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     // PinConfig may return nil on old Google Maps SDK versions (<=8.4.0).
     // Also, due to a Google Maps SDK issue (https://issuetracker.google.com/issues/370536110),
@@ -324,10 +305,10 @@ import google_maps_flutter_ios_sdk9_objc
   @Test func extractIconFromPinConfigWithGlyphText() {
     let assetProvider = TestAssetProvider()
 
-    let glyphTextColor = FGMPlatformColor.make(withRed: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+    let glyphTextColor = PlatformColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
 
-    let pinConfig = FGMPlatformBitmapPinConfig.make(
-      withBackgroundColor: nil,
+    let pinConfig = PlatformBitmapPinConfig(
+      backgroundColor: nil,
       borderColor: nil,
       glyphColor: nil,
       glyphTextColor: glyphTextColor,
@@ -337,10 +318,7 @@ import google_maps_flutter_ios_sdk9_objc
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMPlatformBitmap.make(withBitmap: pinConfig).createIcon(
-      assetProvider: assetProvider,
-      screenScale: screenScale
-    )
+    let resultImage = pinConfig.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     // PinConfig returns nil on iOS versions without GMSPinImageOptions support (< iOS 16.0).
     // On simulators, GMSPinImage may also return a zero-dimension image. Both cases are acceptable
@@ -355,33 +333,29 @@ import google_maps_flutter_ios_sdk9_objc
     let assetName = "fakeImageNameKey"
     let assetProvider = TestAssetProvider(image: testImage, forAssetName: assetName, package: nil)
 
-    let assetBitmap = FGMPlatformBitmapAssetMap.make(
-      withAssetName: assetName,
+    let assetBitmap = PlatformBitmapAssetMap(
+      assetName: assetName,
       bitmapScaling: .auto,
       imagePixelRatio: 1,
       width: nil,
       height: nil
     )
-    let glyphBitmap = FGMPlatformBitmap.make(withBitmap: assetBitmap)
 
-    let backgroundColor = FGMPlatformColor.make(withRed: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
-    let borderColor = FGMPlatformColor.make(withRed: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+    let backgroundColor = PlatformColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+    let borderColor = PlatformColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
 
-    let pinConfig = FGMPlatformBitmapPinConfig.make(
-      withBackgroundColor: backgroundColor,
+    let pinConfig = PlatformBitmapPinConfig(
+      backgroundColor: backgroundColor,
       borderColor: borderColor,
       glyphColor: nil,
       glyphTextColor: nil,
       glyphText: nil,
-      glyphBitmap: glyphBitmap
+      glyphBitmap: assetBitmap
     )
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMPlatformBitmap.make(withBitmap: pinConfig).createIcon(
-      assetProvider: assetProvider,
-      screenScale: screenScale
-    )
+    let resultImage = pinConfig.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     // PinConfig returns nil on iOS versions without GMSPinImageOptions support (< iOS 16.0).
     // On simulators, GMSPinImage may also return a zero-dimension image. Both cases are acceptable
