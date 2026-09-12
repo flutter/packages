@@ -33,9 +33,16 @@ static UIImage *FLTImagePickerDrawScaledImage(UIImage *imageToScale, double widt
   if (imageToScale == nil || width == 0 || height == 0) {
     return nil;
   }
+  // The source format can request an unsupported 10-bit integer bitmap context,
+  // producing an empty scaled image. Use a fresh standard-range format while
+  // preserving the source scale and opacity.
+  UIGraphicsImageRendererFormat *imageRendererFormat = [[UIGraphicsImageRendererFormat alloc] init];
+  imageRendererFormat.scale = imageToScale.imageRendererFormat.scale;
+  imageRendererFormat.opaque = imageToScale.imageRendererFormat.opaque;
+  imageRendererFormat.preferredRange = UIGraphicsImageRendererFormatRangeStandard;
   UIGraphicsImageRenderer *imageRenderer =
       [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(width, height)
-                                             format:imageToScale.imageRendererFormat];
+                                             format:imageRendererFormat];
   return [imageRenderer imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
     CGContextRef cgContext = rendererContext.CGContext;
 
