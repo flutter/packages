@@ -1,0 +1,3 @@
+changelog: |
+  - Fix `PredictiveBackPageTransitionsBuilder` reusing a stale swipe-edge direction after popping onto a route that cannot transition (`canTransitionTo` returns false), and fix a canceled gesture rebounding toward the wrong edge.
+version: patch
