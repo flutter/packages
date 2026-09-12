@@ -154,6 +154,35 @@ struct URLLauncherTests {
     #expect(viewPresenter.presentedController != nil)
   }
 
+  @Test func launchSafariViewControllerFailureWithInvalidURL() async {
+    let plugin = createPlugin()
+    await confirmation("completion called") { confirmed in
+      plugin.openUrlInSafariViewController(url: "urls can't have spaces") { result in
+        switch result {
+        case .success(let details):
+          if urlParsingIsStrict() {
+            #expect(details == .invalidUrl)
+          } else {
+            #expect(details == .dismissed)
+          }
+        case .failure(let error):
+          Issue.record("Unexpected error: \(error)")
+        }
+        confirmed()
+      }
+      if !urlParsingIsStrict() {
+        // On a lenient parser the "invalid" string still parses as a URL, so the
+        // Safari view controller is presented; close it to force completion.
+        plugin.closeSafariViewController()
+      }
+    }
+  }
+
+  @Test func closeSafariViewControllerWithoutActiveSessionDoesNothing() {
+    // No session has been opened, so this should be a no-op rather than crashing.
+    createPlugin().closeSafariViewController()
+  }
+
   @Test func launchSafariViewControllerFailureWithNoViewPresenter() async {
     await confirmation("completion called") { confirmed in
       createPlugin(viewPresenter: nil).openUrlInSafariViewController(url: "https://flutter.dev") {

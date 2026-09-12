@@ -1,3 +1,10 @@
+## 0.4.13+1
+
+* Migrates the StoreKit 1 core (`FIAPaymentQueueHandler`, `FIAObjectTranslator`,
+  `FIAPReceiptManager`, `FIAPRequestHandler`, `FIAPPaymentQueueDelegate`,
+  `FIATransactionCache`, and their protocol shims) from Objective-C to Swift.
+  No functional changes.
+
 ## 0.4.13
 
 * Exposes expirationDate on SK2PurchaseDetails.

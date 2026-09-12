@@ -47,6 +47,92 @@ struct QuickActionsPluginTests {
     #expect(mockShortcutItemProvider.shortcutItems == [item])
   }
 
+  @Test func handleMethodCallSetShortcutItemsWithLocalizedSubtitle() {
+    let rawItem = ShortcutItemMessage(
+      type: "SearchTheThing",
+      localizedTitle: "Search the thing",
+      localizedSubtitle: "Subtitle for the thing",
+      icon: "search_the_thing.png"
+    )
+
+    let item = UIApplicationShortcutItem(
+      type: "SearchTheThing",
+      localizedTitle: "Search the thing",
+      localizedSubtitle: "Subtitle for the thing",
+      icon: UIApplicationShortcutIcon(templateImageName: "search_the_thing.png"),
+      userInfo: nil)
+
+    let flutterApi: MockFlutterApi = MockFlutterApi()
+    let mockShortcutItemProvider = MockShortcutItemProvider()
+
+    let plugin = QuickActionsPlugin(
+      flutterApi: flutterApi,
+      shortcutItemProvider: mockShortcutItemProvider)
+
+    plugin.setShortcutItems(itemsList: [rawItem])
+    #expect(mockShortcutItemProvider.shortcutItems == [item])
+  }
+
+  @Test func handleMethodCallSetShortcutItemsWithoutIcon() {
+    let rawItem = ShortcutItemMessage(
+      type: "SearchTheThing",
+      localizedTitle: "Search the thing"
+    )
+
+    let item = UIApplicationShortcutItem(
+      type: "SearchTheThing",
+      localizedTitle: "Search the thing",
+      localizedSubtitle: nil,
+      icon: nil,
+      userInfo: nil)
+
+    let flutterApi: MockFlutterApi = MockFlutterApi()
+    let mockShortcutItemProvider = MockShortcutItemProvider()
+
+    let plugin = QuickActionsPlugin(
+      flutterApi: flutterApi,
+      shortcutItemProvider: mockShortcutItemProvider)
+
+    plugin.setShortcutItems(itemsList: [rawItem])
+    #expect(mockShortcutItemProvider.shortcutItems == [item])
+  }
+
+  @Test func handleMethodCallSetShortcutItemsWithMultipleItems() {
+    let rawFirstItem = ShortcutItemMessage(
+      type: "SearchTheThing",
+      localizedTitle: "Search the thing",
+      icon: "search_the_thing.png"
+    )
+    let rawSecondItem = ShortcutItemMessage(
+      type: "ShareTheThing",
+      localizedTitle: "Share the thing",
+      icon: "share_the_thing.png"
+    )
+
+    let firstItem = UIApplicationShortcutItem(
+      type: "SearchTheThing",
+      localizedTitle: "Search the thing",
+      localizedSubtitle: nil,
+      icon: UIApplicationShortcutIcon(templateImageName: "search_the_thing.png"),
+      userInfo: nil)
+    let secondItem = UIApplicationShortcutItem(
+      type: "ShareTheThing",
+      localizedTitle: "Share the thing",
+      localizedSubtitle: nil,
+      icon: UIApplicationShortcutIcon(templateImageName: "share_the_thing.png"),
+      userInfo: nil)
+
+    let flutterApi: MockFlutterApi = MockFlutterApi()
+    let mockShortcutItemProvider = MockShortcutItemProvider()
+
+    let plugin = QuickActionsPlugin(
+      flutterApi: flutterApi,
+      shortcutItemProvider: mockShortcutItemProvider)
+
+    plugin.setShortcutItems(itemsList: [rawFirstItem, rawSecondItem])
+    #expect(mockShortcutItemProvider.shortcutItems == [firstItem, secondItem])
+  }
+
   @Test func handleMethodCallClearShortcutItems() {
     let item = UIApplicationShortcutItem(
       type: "SearchTheThing",
