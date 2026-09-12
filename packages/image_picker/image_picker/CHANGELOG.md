@@ -1,3 +1,8 @@
+## 1.2.4
+
+* Documents that `retrieveLostData` is a one-time operation that clears the
+  stored lost data once it is returned.
+
 ## 1.2.3
 
 * Fixes `pickMultiImage(limit: 1)` and `pickMultipleMedia(limit: 1)` throwing an `ArgumentError` by delegating to
