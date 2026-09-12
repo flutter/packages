@@ -1087,7 +1087,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       (span) => !span.isPinned && span.trailingOffset >= _targetTrailingColumnPixel,
     );
     if (_firstNonPinnedColumn != null) {
-      _lastNonPinnedColumn ??= _columnMetrics.length - 1;
+      // The last column of the metrics may be a trailing pinned column, which
+      // is laid out separately. Exclude them so the same column is not laid out
+      // in both the non-pinned and the trailing pinned quadrants.
+      _lastNonPinnedColumn ??= _columnMetrics.length - 1 - delegate.trailingPinnedColumnCount;
     }
 
     if (_rowMetrics.isNotEmpty) {
@@ -1116,7 +1119,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       (span) => !span.isPinned && span.trailingOffset >= _targetTrailingRowPixel,
     );
     if (_firstNonPinnedRow != null) {
-      _lastNonPinnedRow ??= _rowMetrics.length - 1;
+      // The last row of the metrics may be a trailing pinned row, which is laid
+      // out separately. Exclude them so the same row is not laid out in both
+      // the non-pinned and the trailing pinned quadrants.
+      _lastNonPinnedRow ??= _rowMetrics.length - 1 - delegate.trailingPinnedRowCount;
     }
   }
 
