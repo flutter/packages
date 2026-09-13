@@ -576,8 +576,6 @@ class _CarouselViewState extends State<CarouselView> {
     }
     if (widget.flexWeights != oldWidget.flexWeights) {
       (_controller.position as _CarouselPosition).flexWeights = _flexWeights;
-      // We need to reset the last reported leading item because the leading item may have changed due to the new flex weights.
-      _lastReportedLeadingItem = _getInitialLeadingItem();
     }
     if (widget.itemExtent != oldWidget.itemExtent) {
       _itemExtent = widget.itemExtent;
