@@ -546,6 +546,15 @@ class _CarouselViewState extends State<CarouselView> {
   CarouselController get _controller => widget.controller ?? _internalController!;
   late int _lastReportedLeadingItem;
 
+  int? _cachedMaxWeightIndex;
+  int? get _maxWeightIndex {
+    if (widget.flexWeights == null) {
+      return null;
+    }
+    _cachedMaxWeightIndex ??= widget.flexWeights!.indexOf(widget.flexWeights!.max);
+    return _cachedMaxWeightIndex;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -575,6 +584,7 @@ class _CarouselViewState extends State<CarouselView> {
       }
     }
     if (widget.flexWeights != oldWidget.flexWeights) {
+      _cachedMaxWeightIndex = null;
       (_controller.position as _CarouselPosition).flexWeights = _flexWeights;
     }
     if (widget.itemExtent != oldWidget.itemExtent) {
@@ -608,7 +618,7 @@ class _CarouselViewState extends State<CarouselView> {
           .getItemFromPixels(carouselPosition.pixels, carouselPosition.viewportDimension)
           .round();
       if (!widget.consumeMaxWeight) {
-        currentLeadingIndex += widget.flexWeights!.indexOf(widget.flexWeights!.max);
+        currentLeadingIndex += _maxWeightIndex!;
       }
       if (widget.infinite) {
         final int? itemCount =
@@ -632,7 +642,7 @@ class _CarouselViewState extends State<CarouselView> {
     int index = _controller.initialItem;
     if (widget.flexWeights != null) {
       if (!widget.consumeMaxWeight) {
-        index += widget.flexWeights!.indexOf(widget.flexWeights!.max);
+        index += _maxWeightIndex!;
       }
     }
     if (widget.infinite) {
@@ -1738,6 +1748,16 @@ class _CarouselPosition extends ScrollPositionWithSingleContext implements _Caro
   @override
   List<int>? get flexWeights => _flexWeights;
   List<int>? _flexWeights;
+
+  int? _cachedMaxWeightIndex;
+  int? get _maxWeightIndex {
+    if (_flexWeights == null) {
+      return null;
+    }
+    _cachedMaxWeightIndex ??= _flexWeights!.indexOf(_flexWeights!.max);
+    return _cachedMaxWeightIndex;
+  }
+
   set flexWeights(List<int>? value) {
     if (flexWeights == value) {
       return;
@@ -1749,6 +1769,7 @@ class _CarouselPosition extends ScrollPositionWithSingleContext implements _Caro
       forcePixels(newPixel);
     }
     _flexWeights = value;
+    _cachedMaxWeightIndex = null;
   }
 
   // The index of the leading item in the carousel.
@@ -1767,7 +1788,7 @@ class _CarouselPosition extends ScrollPositionWithSingleContext implements _Caro
     // The subtraction may cause negative number for leading item. In this case,
     // constrain the leading item to 0.
     if (consumeMaxWeight && flexWeights != null) {
-      leadingItem = math.max(leadingItem - flexWeights!.indexOf(flexWeights!.max), 0);
+      leadingItem = math.max(leadingItem - _maxWeightIndex!, 0);
     }
     // For infinite scrolling, wrap the index to the range [0, itemCount - 1].
     if (infinite && itemCount != null && itemCount! > 0) {
@@ -1780,9 +1801,7 @@ class _CarouselPosition extends ScrollPositionWithSingleContext implements _Caro
     final double maxItem;
     if (hasPixels && flexWeights != null) {
       final double leadingItem = getItemFromPixels(pixels, viewportDimension);
-      maxItem = consumeMaxWeight
-          ? leadingItem
-          : leadingItem + flexWeights!.indexOf(flexWeights!.max);
+      maxItem = consumeMaxWeight ? leadingItem : leadingItem + _maxWeightIndex!;
     } else {
       if (!newConsumeMaxWeight) {
         return _itemToShowOnStartup;
