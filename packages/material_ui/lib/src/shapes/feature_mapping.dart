@@ -104,24 +104,23 @@ List<(double, double)> doMapping(
 
   distanceVertexList.sort((a, b) => a.distance.compareTo(b.distance));
 
-  // Special cases.
-  if (distanceVertexList.isEmpty) {
-    return [(0.0, 0.0), (0.5, 0.5)];
-  }
-
-  if (distanceVertexList.length == 1) {
-    final DistanceVertex d = distanceVertexList.first;
-
-    final double f1 = d.f1.progress;
-    final double f2 = d.f2.progress;
-
-    return [(f1, f2), ((f1 + 0.5) % 1, (f2 + 0.5) % 1)];
-  }
-
   final helper = _MappingHelper();
 
   for (final d in distanceVertexList) {
     helper.addMapping(d.f1, d.f2);
+  }
+
+  // The mapping needs at least two pairs to be valid.
+  if (helper.mapping.isEmpty) {
+    // No candidate pair was usable, fall back to the identity mapping.
+    return const [(0.0, 0.0), (0.5, 0.5)];
+  }
+
+  if (helper.mapping.length == 1) {
+    // All but one candidate pair were rejected, synthesize a second pair half
+    // a turn away from the surviving one on both shapes.
+    final (double f1, double f2) = helper.mapping.first;
+    return [(f1, f2), ((f1 + 0.5) % 1, (f2 + 0.5) % 1)];
   }
 
   return helper.mapping;

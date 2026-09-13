@@ -4,7 +4,9 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/src/shapes/corner_rounding.dart';
+import 'package:material_ui/src/shapes/cubic.dart';
 import 'package:material_ui/src/shapes/feature_mapping.dart';
+import 'package:material_ui/src/shapes/features.dart';
 import 'package:material_ui/src/shapes/point.dart';
 import 'package:material_ui/src/shapes/polygon_measure.dart';
 import 'package:material_ui/src/shapes/rounded_polygon.dart';
@@ -116,6 +118,34 @@ void main() {
         // And they are close enough
         expect(distances[0], lessThan(0.15));
       });
+    });
+
+    test('feature mapping does not crash when all but one candidate pair is rejected', () {
+      // Both shapes have two corners, and the corners of the first shape sit
+      // almost at the same progress. After the closest candidate pair is
+      // mapped, the remaining one is rejected for being within distanceEpsilon
+      // of the existing mapping, leaving a single pair, which is not enough
+      // for a valid mapping on its own.
+      final corner1 = Feature.convexCorner([
+        CubicBezier.straightLine(Point.zero, const Point(0.1, 0)),
+      ]);
+      final corner2 = Feature.convexCorner([
+        CubicBezier.straightLine(const Point(1, 1), const Point(1.1, 1)),
+      ]);
+
+      final features1 = <ProgressableFeature>[
+        ProgressableFeature(0, corner1),
+        ProgressableFeature(0.000001, corner2),
+      ];
+      final features2 = <ProgressableFeature>[
+        ProgressableFeature(0, corner1),
+        ProgressableFeature(0.5, corner2),
+      ];
+
+      final List<(double, double)> map = doMapping(features1, features2);
+      expect(map.length, 2);
+
+      expect(() => featureMapper(features1, features2), returnsNormally);
     });
   });
 }
