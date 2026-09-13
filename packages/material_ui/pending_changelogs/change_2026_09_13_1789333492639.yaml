@@ -1,0 +1,3 @@
+changelog: |
+  - Update `CarouselView.weighted` `onIndexChanged` to report the index of the maximum weight item.
+version: patch
