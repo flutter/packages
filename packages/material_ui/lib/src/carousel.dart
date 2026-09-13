@@ -485,7 +485,9 @@ class CarouselView extends StatefulWidget {
   /// {@template material_ui.CarouselView.onIndexChanged}
   /// A callback invoked when the leading item changes.
   ///
-  /// The leading item is the first visible item in the carousel view.
+  /// For an unweighted carousel, the leading item is the first visible item in
+  /// the carousel view. For a weighted carousel, the leading item is the item
+  /// that occupies the maximum weight.
   ///
   /// The callback fires only when the leading item is completely out of view,
   /// whether due to user interaction or programmatic scrolling. If the leading item
