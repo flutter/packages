@@ -2332,6 +2332,51 @@ void main() {
     }
   });
 
+  testWidgets('CarouselView.weightedBuilder infinite scrolling wraps correctly in onIndexChanged', (
+    WidgetTester tester,
+  ) async {
+    final controller = CarouselController();
+    addTearDown(controller.dispose);
+    final reportedIndices = <int>[];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CarouselView.weightedBuilder(
+            itemCount: 5,
+            flexWeights: const <int>[1, 2, 3, 2, 1],
+            infinite: true,
+            controller: controller,
+            onIndexChanged: (int index) {
+              reportedIndices.add(index);
+            },
+            itemBuilder: (BuildContext context, int index) {
+              return Center(child: Text('Item $index'));
+            },
+          ),
+        ),
+      ),
+    );
+
+    // Scroll forward by dragging left.
+    for (var i = 1; i <= 7; i++) {
+      await tester.drag(find.byType(CarouselView), const Offset(-200, 0));
+      await tester.pumpAndSettle();
+    }
+
+    // Scroll backward by dragging right.
+    for (var i = 1; i <= 7; i++) {
+      await tester.drag(find.byType(CarouselView), const Offset(200, 0));
+      await tester.pumpAndSettle();
+    }
+
+    // Verify the onIndexChanged callback was invoked with correct wrapped indices.
+    expect(reportedIndices.length, greaterThan(0));
+    for (final index in reportedIndices) {
+      expect(index, inInclusiveRange(0, 4));
+    }
+  });
+
   testWidgets('CarouselView infinite animateToItem scrolls forward to next item', (
     WidgetTester tester,
   ) async {
@@ -2609,7 +2654,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(controller.leadingItem, equals(3));
-        expect(leadingIndex, equals(3));
+        expect(leadingIndex, equals(4));
         expect(find.text('Item 3'), findsOneWidget);
       },
     );
@@ -2641,7 +2686,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(controller.leadingItem, equals(0));
-        expect(leadingIndex, equals(0));
+        expect(leadingIndex, equals(2));
       },
     );
 
@@ -2666,7 +2711,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(controller.leadingItem, equals(1));
-      expect(leadingIndex, equals(1));
+      expect(leadingIndex, equals(2));
     });
 
     testWidgets('CarouselView with reverse=true reports correct leading item after animation', (
@@ -2722,7 +2767,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(controller.leadingItem, equals(1));
-      expect(leadingIndex, equals(1));
+      expect(leadingIndex, equals(2));
     });
   });
 

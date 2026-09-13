@@ -576,6 +576,8 @@ class _CarouselViewState extends State<CarouselView> {
     }
     if (widget.flexWeights != oldWidget.flexWeights) {
       (_controller.position as _CarouselPosition).flexWeights = _flexWeights;
+      // We need to reset the last reported leading item because the leading item may have changed due to the new flex weights.
+      _lastReportedLeadingItem = _getInitialLeadingItem();
     }
     if (widget.itemExtent != oldWidget.itemExtent) {
       _itemExtent = widget.itemExtent;
@@ -600,7 +602,26 @@ class _CarouselViewState extends State<CarouselView> {
     }
 
     final ScrollPosition position = _controller.position;
-    final int currentLeadingIndex = (position as _CarouselPosition).leadingItem;
+    final carouselPosition = position as _CarouselPosition;
+    int currentLeadingIndex;
+
+    if (widget.flexWeights != null) {
+      currentLeadingIndex = carouselPosition
+          .getItemFromPixels(carouselPosition.pixels, carouselPosition.viewportDimension)
+          .round();
+      if (!widget.consumeMaxWeight) {
+        currentLeadingIndex += widget.flexWeights!.indexOf(widget.flexWeights!.max);
+      }
+      if (widget.infinite) {
+        final int? itemCount =
+            widget.itemCount ?? (widget.children.isNotEmpty ? widget.children.length : null);
+        if (itemCount != null && itemCount > 0) {
+          currentLeadingIndex = currentLeadingIndex % itemCount;
+        }
+      }
+    } else {
+      currentLeadingIndex = carouselPosition.leadingItem;
+    }
 
     if (currentLeadingIndex != _lastReportedLeadingItem) {
       _lastReportedLeadingItem = currentLeadingIndex;
@@ -608,17 +629,22 @@ class _CarouselViewState extends State<CarouselView> {
     }
   }
 
-  // For weighted carousel, the initialItem means the index of the item to occupy the first maximum weight
-  // in flexWeights. To get the initial leading item, it should be initialItem - index of the first max weight in flexWeights.
-  // So it might be negative when initialItem value is small but the first max weight index is large. In that case,
-  // the initial leading item should be 0.
+  // For weighted carousel, we want to always report the index of the max weight item.
   int _getInitialLeadingItem() {
+    int index = _controller.initialItem;
     if (widget.flexWeights != null) {
-      final int maxWeight = widget.flexWeights!.max;
-      final int firstMaxWeightIndex = widget.flexWeights!.indexOf(maxWeight);
-      return math.max(_controller.initialItem - firstMaxWeightIndex, 0);
+      if (!widget.consumeMaxWeight) {
+        index += widget.flexWeights!.indexOf(widget.flexWeights!.max);
+      }
     }
-    return _controller.initialItem;
+    if (widget.infinite) {
+      final int? itemCount =
+          widget.itemCount ?? (widget.children.isNotEmpty ? widget.children.length : null);
+      if (itemCount != null && itemCount > 0) {
+        index = index % itemCount;
+      }
+    }
+    return index;
   }
 
   Widget _buildCarouselItem(int index) {
