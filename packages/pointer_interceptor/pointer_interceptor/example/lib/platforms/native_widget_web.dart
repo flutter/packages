@@ -4,7 +4,7 @@
 
 import 'dart:ui_web' as ui_web;
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
 /// The web.HTMLElement that will be rendered underneath the flutter UI.

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pointer_interceptor_ios/pointer_interceptor_ios.dart';
 
@@ -20,18 +20,15 @@ class TestAppState extends State<TestApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: const Text('Body'),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          child: PointerInterceptorIOS().buildWidget(
-            child: TextButton(
-              onPressed: () => setState(() {
-                _buttonText = 'Clicked';
-              }),
-              child: Text(_buttonText),
-            ),
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Center(
+        child: PointerInterceptorIOS().buildWidget(
+          child: GestureDetector(
+            onTap: () => setState(() {
+              _buttonText = 'Clicked';
+            }),
+            child: Text(_buttonText),
           ),
         ),
       ),
