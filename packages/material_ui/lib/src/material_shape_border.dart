@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'material_shapes.dart';
+library;
+
 import 'dart:ui' as ui show lerpDouble;
 
 import 'package:flutter/foundation.dart';
@@ -37,6 +40,11 @@ class MaterialShapeBorder extends OutlinedBorder {
        assert(squash >= 0 && squash <= 1, 'squash has to be in range [0, 1]');
 
   /// The shape this border represents.
+  ///
+  /// The polygon is assumed to fit inside the (0, 0) -> (1, 1) unit square,
+  /// as the border scales it to the bounding rectangle of the widget it is
+  /// applied to. Shapes from [MaterialShapes] already satisfy this. For an
+  /// arbitrary polygon, use [RoundedPolygon.normalized].
   ///
   /// This value is `null` if the border is the result of a lerp, which stores
   /// its morph instead.
@@ -248,6 +256,14 @@ class MaterialShapeBorder extends OutlinedBorder {
   }
 
   Path _getPathFromRect(Rect rect) {
+    // The rect can collapse to a negative size when it is deflated by a stroke
+    // width larger than the rect itself. Scaling by the resulting negative
+    // dimensions would reflect the shape across the axes, so return an empty
+    // path instead.
+    if (rect.isEmpty || rect.width <= 0 || rect.height <= 0) {
+      return Path();
+    }
+
     var scale = Offset(rect.width, rect.height);
 
     if (rect.shortestSide == rect.width) {
@@ -294,6 +310,10 @@ class MaterialShapeBorder extends OutlinedBorder {
 
   @override
   bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+
     if (other.runtimeType != runtimeType) {
       return false;
     }

@@ -140,6 +140,18 @@ void main() {
       expect(outside.getInnerPath(rect).getBounds(), rect);
     });
 
+    test('getInnerPath returns an empty path when the side swallows the rect', () {
+      const rect = Rect.fromLTWH(0.0, 0.0, 16.0, 16.0);
+
+      // The stroke inset (10.0) is larger than half of the rect's size
+      // (16.0 / 2), so deflating the rect by it produces negative dimensions.
+      final border = MaterialShapeBorder(shape: unitSquare, side: const BorderSide(width: 10.0));
+
+      final Path path = border.getInnerPath(rect);
+      expect(path.getBounds(), Rect.zero);
+      expect(path.computeMetrics(), isEmpty);
+    });
+
     test('squash takes on the aspect ratio of a wide rect', () {
       const rect = Rect.fromLTWH(0.0, 0.0, 200.0, 100.0);
 
