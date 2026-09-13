@@ -1,3 +1,7 @@
+## 1.2.0
+
+- Adds the `StyleVariant` enum defining the Material 3 and Material 3 Expressive style variants.
+
 ## 1.1.1
 
 - Constrains Slider and RangeSlider value indicator labels to the screen width, truncating with an ellipsis instead of clipping.

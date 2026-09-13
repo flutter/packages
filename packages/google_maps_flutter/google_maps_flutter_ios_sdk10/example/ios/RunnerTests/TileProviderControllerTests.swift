@@ -5,7 +5,6 @@
 import Flutter
 import GoogleMaps
 import Testing
-import google_maps_flutter_ios_sdk10_objc
 
 @testable import google_maps_flutter_ios_sdk10
 
@@ -18,19 +17,18 @@ class StubTileReceiver: NSObject, GMSTileReceiver {
 // A tile provider that expects a single call to
 // tileWithOverlayIdentifier:location:zoom:completion: on the main thread,
 // and then confirms it.
-class TestTileProvider: NSObject, TileProviderDelegate {
+class TestTileProvider: TileProviderDelegate {
   var onTileCalled: () -> Void
 
   init(onTileCalled: @escaping () -> Void) {
     self.onTileCalled = onTileCalled
-    super.init()
   }
 
   func tile(
     withOverlayIdentifier tileOverlayId: String,
-    location: FGMPlatformPoint,
-    zoom: Int,
-    completion: @escaping (FGMPlatformTile?, FlutterError?) -> Void
+    location: PlatformPoint,
+    zoom: Int64,
+    completion: @escaping (Result<PlatformTile, PigeonError>) -> Void
   ) {
     #expect(Thread.isMainThread)
     onTileCalled()
