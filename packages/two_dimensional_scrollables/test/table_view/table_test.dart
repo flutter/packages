@@ -39,6 +39,20 @@ TableSpan getMouseTrackingSpan(
   );
 }
 
+// Counts how many times a span's decoration is painted, keyed by span index.
+class CountingSpanDecoration extends TableSpanDecoration {
+  const CountingSpanDecoration({required this.index, required this.paintCounts});
+
+  final int index;
+  final Map<int, int> paintCounts;
+
+  @override
+  void paint(TableSpanDecorationPaintDetails details) {
+    paintCounts.update(index, (int count) => count + 1, ifAbsent: () => 1);
+    super.paint(details);
+  }
+}
+
 void main() {
   group('TableView.builder', () {
     testWidgets('creates correct delegate', (WidgetTester tester) async {
@@ -4006,6 +4020,103 @@ void main() {
     expect(tester.getRect(find.text('R9 C0')).top, 300);
     expect(tester.getRect(find.text('R9 C9')).left, 300);
     expect(tester.getRect(find.text('R9 C9')).top, 300);
+  });
+
+  // Regression test for https://github.com/flutter/flutter/issues/185842.
+  testWidgets('Trailing pinned columns are excluded from the non-pinned column range', (
+    WidgetTester tester,
+  ) async {
+    final horizontalController = ScrollController();
+    addTearDown(horizontalController.dispose);
+    final paintCounts = <int, int>{};
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 400,
+            child: TableView.builder(
+              columnCount: 20,
+              rowCount: 4,
+              trailingPinnedColumnCount: 1,
+              horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
+              columnBuilder: (int index) => TableSpan(
+                extent: const FixedTableSpanExtent(100),
+                backgroundDecoration: CountingSpanDecoration(
+                  index: index,
+                  paintCounts: paintCounts,
+                ),
+              ),
+              rowBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(100)),
+              cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                return TableViewCell(child: Text('R${vicinity.row} C${vicinity.column}'));
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Once scrolled to the end, no regular column reaches the trailing edge of
+    // the layout target. That is where the range of non-pinned columns used to
+    // fall back to the last column of the table, which is a trailing pinned
+    // one, making it part of both the non-pinned and the trailing pinned
+    // region.
+    paintCounts.clear();
+    horizontalController.jumpTo(horizontalController.position.maxScrollExtent);
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    // The trailing pinned column is decorated once, by the trailing pinned
+    // region only.
+    expect(paintCounts[19], 1);
+    expect(find.text('R0 C19'), findsOneWidget);
+  });
+
+  // Regression test for https://github.com/flutter/flutter/issues/185842.
+  testWidgets('Trailing pinned rows are excluded from the non-pinned row range', (
+    WidgetTester tester,
+  ) async {
+    final verticalController = ScrollController();
+    addTearDown(verticalController.dispose);
+    final paintCounts = <int, int>{};
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 400,
+            child: TableView.builder(
+              columnCount: 4,
+              rowCount: 20,
+              trailingPinnedRowCount: 1,
+              verticalDetails: ScrollableDetails.vertical(controller: verticalController),
+              columnBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(100)),
+              rowBuilder: (int index) => TableSpan(
+                extent: const FixedTableSpanExtent(100),
+                backgroundDecoration: CountingSpanDecoration(
+                  index: index,
+                  paintCounts: paintCounts,
+                ),
+              ),
+              cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                return TableViewCell(child: Text('R${vicinity.row} C${vicinity.column}'));
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    paintCounts.clear();
+    verticalController.jumpTo(verticalController.position.maxScrollExtent);
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(paintCounts[19], 1);
+    expect(find.text('R19 C0'), findsOneWidget);
   });
 
   testWidgets('Intersections of leading and trailing pinned', (WidgetTester tester) async {
