@@ -86,7 +86,7 @@ abstract final class MaterialShapes {
       )
       .normalized;
 
-  /// An pill shape.
+  /// A pill shape.
   static final RoundedPolygon pill = _customPolygon(
     [
       const _PointNRound(Point(0.961, 0.039), CornerRounding(radius: 0.426)),
@@ -211,7 +211,7 @@ abstract final class MaterialShapes {
     mirroring: true,
   ).normalized;
 
-  /// A 8-leaf clover shape.
+  /// An 8-leaf clover shape.
   static final RoundedPolygon clover8Leaf = _customPolygon([
     const _PointNRound(Point(0.5, 0.036)),
     const _PointNRound(Point(0.758, -0.101), CornerRounding(radius: 0.209)),
