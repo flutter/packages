@@ -197,7 +197,9 @@ class GroundOverlaysController {
 
   func didTapGroundOverlay(withIdentifier identifier: String) {
     if hasGroundOverlays(withIdentifier: identifier) {
-      eventDelegate?.didTapGroundOverlay(withIdentifier: identifier) { _ in }
+      Task { @MainActor in
+        try await eventDelegate?.didTapGroundOverlay(withIdentifier: identifier)
+      }
     }
   }
 

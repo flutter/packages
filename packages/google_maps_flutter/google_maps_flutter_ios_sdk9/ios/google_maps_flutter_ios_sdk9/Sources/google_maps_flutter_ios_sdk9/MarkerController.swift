@@ -217,37 +217,47 @@ class MarkersController {
 
   func didTapMarker(withIdentifier identifier: String) -> Bool {
     guard let controller = markerIdentifierToController[identifier] else { return false }
-    eventDelegate?.didTapMarker(withIdentifier: identifier) { _ in }
+    Task { @MainActor in
+      try await eventDelegate?.didTapMarker(withIdentifier: identifier)
+    }
     return controller.consumeTapEvents
   }
 
   func didStartDraggingMarker(withIdentifier identifier: String, location: CLLocationCoordinate2D) {
     guard markerIdentifierToController[identifier] != nil else { return }
-    eventDelegate?.didStartDragForMarker(
-      withIdentifier: identifier,
-      at: PlatformLatLng.make(from: location)
-    ) { _ in }
+    Task { @MainActor in
+      try await eventDelegate?.didStartDragForMarker(
+        withIdentifier: identifier,
+        at: PlatformLatLng.make(from: location)
+      )
+    }
   }
 
   func didDragMarker(withIdentifier identifier: String, location: CLLocationCoordinate2D) {
     guard markerIdentifierToController[identifier] != nil else { return }
-    eventDelegate?.didDragMarker(
-      withIdentifier: identifier,
-      at: PlatformLatLng.make(from: location)
-    ) { _ in }
+    Task { @MainActor in
+      try await eventDelegate?.didDragMarker(
+        withIdentifier: identifier,
+        at: PlatformLatLng.make(from: location)
+      )
+    }
   }
 
   func didEndDraggingMarker(withIdentifier identifier: String, location: CLLocationCoordinate2D) {
     guard markerIdentifierToController[identifier] != nil else { return }
-    eventDelegate?.didEndDragForMarker(
-      withIdentifier: identifier,
-      at: PlatformLatLng.make(from: location)
-    ) { _ in }
+    Task { @MainActor in
+      try await eventDelegate?.didEndDragForMarker(
+        withIdentifier: identifier,
+        at: PlatformLatLng.make(from: location)
+      )
+    }
   }
 
   func didTapInfoWindowOfMarker(withIdentifier identifier: String) {
     if markerIdentifierToController[identifier] != nil {
-      eventDelegate?.didTapInfoWindowOfMarker(withIdentifier: identifier) { _ in }
+      Task { @MainActor in
+        try await eventDelegate?.didTapInfoWindowOfMarker(withIdentifier: identifier)
+      }
     }
   }
 
