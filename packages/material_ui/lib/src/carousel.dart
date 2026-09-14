@@ -1785,16 +1785,25 @@ class _CarouselPosition extends ScrollPositionWithSingleContext implements _Caro
   // For unweighted carousels, this is typically the first visible item.
   // For weighted carousels, this is the item occupying the maximum weight.
   int get activeIndex {
+    if (!hasPixels || viewportDimension <= 0) {
+      return 0;
+    }
+
+    final double itemPosition = getItemFromPixels(pixels, viewportDimension);
+    if (!itemPosition.isFinite) {
+      return 0;
+    }
+
     int index;
     if (flexWeights != null) {
-      index = getItemFromPixels(pixels, viewportDimension).round();
+      index = itemPosition.round();
       if (!consumeMaxWeight) {
         index += _maxWeightIndex!;
       }
     } else {
-      index = getItemFromPixels(pixels, viewportDimension).toInt();
+      index = itemPosition.toInt();
     }
-    
+
     // For infinite scrolling, wrap the index to the range [0, itemCount - 1].
     if (infinite && itemCount != null && itemCount! > 0) {
       index = index % itemCount!;
