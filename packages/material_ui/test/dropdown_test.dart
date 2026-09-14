@@ -234,45 +234,6 @@ Widget buildDropdownWithHint({
   );
 }
 
-class TestApp extends StatefulWidget {
-  const TestApp({super.key, required this.textDirection, required this.child, this.mediaSize});
-
-  final TextDirection textDirection;
-  final Widget child;
-  final Size? mediaSize;
-
-  @override
-  State<TestApp> createState() => _TestAppState();
-}
-
-class _TestAppState extends State<TestApp> {
-  @override
-  Widget build(BuildContext context) {
-    return Localizations(
-      locale: const Locale('en', 'US'),
-      delegates: const <LocalizationsDelegate<dynamic>>[
-        DefaultWidgetsLocalizations.delegate,
-        DefaultMaterialLocalizations.delegate,
-      ],
-      child: MediaQuery(
-        data: MediaQueryData.fromView(View.of(context)).copyWith(size: widget.mediaSize),
-        child: Directionality(
-          textDirection: widget.textDirection,
-          child: Navigator(
-            onGenerateRoute: (RouteSettings settings) {
-              assert(settings.name == '/');
-              return MaterialPageRoute<void>(
-                settings: settings,
-                builder: (BuildContext context) => widget.child,
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 // When the dropdown's menu is popped up, a RenderParagraph for the selected
 // menu's text item will appear both in the dropdown button and in the menu.
 // The RenderParagraphs should be aligned, i.e. they should have the same
