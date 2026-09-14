@@ -1,0 +1,4 @@
+changelog: |
+  - Fixed some leaks of TextEditingControllers in the cupertino_ui magnifier examples.
+  - Fixed an issue where the `CupertinoIcons` font was not included in the cupertino_ui examples.
+version: patch

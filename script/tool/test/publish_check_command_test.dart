@@ -11,6 +11,7 @@ import 'package:flutter_plugin_tools/src/publish_check_command.dart';
 import 'package:git/git.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -18,7 +19,7 @@ import 'util.dart';
 
 void main() {
   group('PublishCheckCommand tests', () {
-    late MockPlatform mockPlatform;
+    late NativePlatform mockPlatform;
     late Directory packagesDir;
     late RecordingProcessRunner processRunner;
     // Separate process runner for the mock gitDir to make asserting the
@@ -41,7 +42,7 @@ void main() {
     }
 
     setUp(() {
-      mockPlatform = MockPlatform();
+      mockPlatform = createMockPlatform();
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
         platform: mockPlatform,
       );
