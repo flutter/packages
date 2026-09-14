@@ -146,6 +146,17 @@ class ReadinessChecker {
       return false;
     }
 
+    final String? repoRoot = _findRepoRoot(workspaceRoot);
+    if (repoRoot != null) {
+      final File prePushFile = _fileSystem.file(
+        _fileSystem.path.join(repoRoot, 'script', 'githooks', 'pre-push'),
+      );
+      if (!prePushFile.existsSync()) {
+        _log('Error: Git pre-push hook is missing at "${prePushFile.path}".');
+        return false;
+      }
+    }
+
     _log('Git hooks are configured correctly.');
     return true;
   }
@@ -186,7 +197,7 @@ class ReadinessChecker {
       return false;
     }
     final ProcessResult activateResult = await _processManager.run(
-      [
+      <String>[
         'dart',
         'pub',
         'global',
