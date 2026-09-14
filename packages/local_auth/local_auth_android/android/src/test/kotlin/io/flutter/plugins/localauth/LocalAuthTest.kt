@@ -18,7 +18,8 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -97,11 +98,11 @@ class LocalAuthTest {
     Mockito.doNothing()
         .`when`(plugin)
         .sendAuthenticationRequest(
-            ArgumentMatchers.any(AuthOptions::class.java),
-            ArgumentMatchers.any(AuthStrings::class.java),
+            any(),
+            any(),
             allowCredentialsCaptor.capture(),
-            ArgumentMatchers.eq(activity),
-            ArgumentMatchers.any())
+            eq(activity),
+            any())
     val options = AuthOptions(biometricOnly = true, sensitiveTransaction = false, sticky = false)
 
     plugin.authenticate(options, dummyStrings) {}
@@ -127,11 +128,11 @@ class LocalAuthTest {
     Mockito.doNothing()
         .`when`(plugin)
         .sendAuthenticationRequest(
-            ArgumentMatchers.any(AuthOptions::class.java),
-            ArgumentMatchers.any(AuthStrings::class.java),
+            any(),
+            any(),
             allowCredentialsCaptor.capture()!!,
-            ArgumentMatchers.eq(activity),
-            ArgumentMatchers.any())
+            eq(activity),
+            any())
     plugin.authenticate(defaultOptions, dummyStrings) {}
     Assert.assertTrue(allowCredentialsCaptor.getValue())
   }
@@ -158,11 +159,11 @@ class LocalAuthTest {
     Mockito.doNothing()
         .`when`(plugin)
         .sendAuthenticationRequest(
-            ArgumentMatchers.any(AuthOptions::class.java),
-            ArgumentMatchers.any(AuthStrings::class.java),
+            any(),
+            any(),
             allowCredentialsCaptor.capture()!!,
-            ArgumentMatchers.eq(activity),
-            ArgumentMatchers.any())
+            eq(activity),
+            any())
     plugin.authenticate(defaultOptions, dummyStrings) {}
     Assert.assertTrue(allowCredentialsCaptor.getValue())
   }
@@ -259,7 +260,7 @@ class LocalAuthTest {
     val plugin = LocalAuthPlugin()
     setPluginActivity(plugin, buildMockActivityWithContext(Mockito.mock(Activity::class.java)))
     val mockBiometricManager = Mockito.mock(BiometricManager::class.java)
-    Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(ArgumentMatchers.anyInt()))
+    Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(any()))
         .thenReturn(BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE)
     plugin.setBiometricManager(mockBiometricManager)
 
@@ -272,7 +273,7 @@ class LocalAuthTest {
     val plugin = LocalAuthPlugin()
     setPluginActivity(plugin, buildMockActivityWithContext(Mockito.mock(Activity::class.java)))
     val mockBiometricManager = Mockito.mock(BiometricManager::class.java)
-    Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(ArgumentMatchers.anyInt()))
+    Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(any()))
         .thenReturn(BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED)
     plugin.setBiometricManager(mockBiometricManager)
 
