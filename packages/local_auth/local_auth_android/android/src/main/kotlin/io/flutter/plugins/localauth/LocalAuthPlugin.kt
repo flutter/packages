@@ -111,7 +111,9 @@ class LocalAuthPlugin
         options, strings, allowCredentials, currentActivity, completionHandler)
   }
 
-  internal fun createAuthCompletionHandler(callback: (Result<AuthResult>) -> Unit): (AuthResult) -> Unit {
+  internal fun createAuthCompletionHandler(
+      callback: (Result<AuthResult>) -> Unit
+  ): (AuthResult) -> Unit {
     return { authResult -> onAuthenticationCompleted(callback, authResult) }
   }
 

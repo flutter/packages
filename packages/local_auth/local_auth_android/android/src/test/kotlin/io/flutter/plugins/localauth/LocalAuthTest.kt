@@ -18,9 +18,9 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
+import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
-import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -98,11 +98,7 @@ class LocalAuthTest {
     Mockito.doNothing()
         .`when`(plugin)
         .sendAuthenticationRequest(
-            any(),
-            any(),
-            allowCredentialsCaptor.capture(),
-            eq(activity),
-            any())
+            any(), any(), allowCredentialsCaptor.capture(), eq(activity), any())
     val options = AuthOptions(biometricOnly = true, sensitiveTransaction = false, sticky = false)
 
     plugin.authenticate(options, dummyStrings) {}
@@ -128,11 +124,7 @@ class LocalAuthTest {
     Mockito.doNothing()
         .`when`(plugin)
         .sendAuthenticationRequest(
-            any(),
-            any(),
-            allowCredentialsCaptor.capture()!!,
-            eq(activity),
-            any())
+            any(), any(), allowCredentialsCaptor.capture()!!, eq(activity), any())
     plugin.authenticate(defaultOptions, dummyStrings) {}
     Assert.assertTrue(allowCredentialsCaptor.getValue())
   }
@@ -159,11 +151,7 @@ class LocalAuthTest {
     Mockito.doNothing()
         .`when`(plugin)
         .sendAuthenticationRequest(
-            any(),
-            any(),
-            allowCredentialsCaptor.capture()!!,
-            eq(activity),
-            any())
+            any(), any(), allowCredentialsCaptor.capture()!!, eq(activity), any())
     plugin.authenticate(defaultOptions, dummyStrings) {}
     Assert.assertTrue(allowCredentialsCaptor.getValue())
   }
