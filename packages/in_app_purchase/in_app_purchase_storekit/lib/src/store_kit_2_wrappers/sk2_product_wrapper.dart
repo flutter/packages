@@ -289,6 +289,7 @@ class SK2ProductPurchaseOptions {
     this.quantity,
     this.promotionalOffer,
     this.winBackOfferId,
+    this.introductoryOfferEligibilityCompactJWS,
   });
 
   /// Sets a UUID to associate the purchase with an account in your system.
@@ -303,6 +304,12 @@ class SK2ProductPurchaseOptions {
   /// Sets a win back offer to a purchase.
   final String? winBackOfferId;
 
+  /// Sets the customer's introductory offer eligibility for this purchase,
+  /// as a compact JWS signed by your server.
+  ///
+  /// See [Sk2PurchaseParam.introductoryOfferEligibilityCompactJWS].
+  final String? introductoryOfferEligibilityCompactJWS;
+
   /// Convert to pigeon representation [SK2ProductPurchaseOptionsMessage].
   SK2ProductPurchaseOptionsMessage convertToPigeon() {
     return SK2ProductPurchaseOptionsMessage(
@@ -310,6 +317,7 @@ class SK2ProductPurchaseOptions {
       quantity: quantity,
       winBackOfferId: winBackOfferId,
       promotionalOffer: promotionalOffer,
+      introductoryOfferEligibilityCompactJWS: introductoryOfferEligibilityCompactJWS,
     );
   }
 }
