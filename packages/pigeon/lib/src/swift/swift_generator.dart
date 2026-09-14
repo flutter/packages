@@ -826,28 +826,19 @@ if (wrapped == nil) {
     indent.addScoped('protocol ${api.name}Protocol {', '}', () {
       for (final Method func in api.methods) {
         addDocumentationComments(indent, func.documentationComments, _docCommentSpec);
-        final _AsynchronousFunction returnStyle = func.isAsynchronousCallback
-            ? .withCompletion(
-                annotations: <_SwiftClosureSignatureAnnotation>[
-                  .escaping,
-                  // @FlutterApis always send relies from the main thread.
-                  if (generatorOptions.swiftStrictConcurrency) .mainActor,
-                ],
-                successType: func.returnType,
-                errorType: _getErrorClassName(generatorOptions),
-              )
-            : .async(func.returnType);
         indent.writeln(
-          _SwiftFunctionComponents(
+          _getMethodSignature(
             name: func.name,
             parameters: func.parameters,
-            returnStyle: returnStyle,
-            annotations: <_SwiftMethodAnnotation>[
-              if (generatorOptions.swiftStrictConcurrency) _ActorIsolation.mainActor,
-            ],
+            returnType: func.returnType,
+            errorTypeName: _getErrorClassName(generatorOptions),
+            isAsynchronous: true,
+            isAsynchronousCallback: func.isAsynchronousCallback,
+            isMainActor: generatorOptions.swiftStrictConcurrency || !func.isAsynchronousCallback,
+            isMainActorCompletion: generatorOptions.swiftStrictConcurrency,
             swiftFunction: func.swiftFunction,
             getParameterName: _getSafeArgumentName,
-          ).signature,
+          ),
         );
       }
     });
@@ -873,17 +864,6 @@ if (wrapped == nil) {
 
       for (final Method func in api.methods) {
         addDocumentationComments(indent, func.documentationComments, _docCommentSpec);
-        final _AsynchronousFunction returnStyle = func.isAsynchronousCallback
-            ? .withCompletion(
-                annotations: <_SwiftClosureSignatureAnnotation>[
-                  .escaping,
-                  // @FlutterApis always send relies from the main thread.
-                  if (generatorOptions.swiftStrictConcurrency) .mainActor,
-                ],
-                successType: func.returnType,
-                errorType: _getErrorClassName(generatorOptions),
-              )
-            : .async(func.returnType);
         _writeFlutterMethod(
           indent,
           generatorOptions: generatorOptions,
@@ -891,7 +871,7 @@ if (wrapped == nil) {
           channelName: '${makeChannelName(api, func, dartPackageName)}\\(messageChannelSuffix)',
           parameters: func.parameters,
           returnType: func.returnType,
-          returnStyle: returnStyle,
+          isAsynchronousCallback: func.isAsynchronousCallback,
           swiftFunction: func.swiftFunction,
         );
       }
@@ -935,23 +915,18 @@ if (wrapped == nil) {
         final _ActorIsolation? isolation = generatorOptions.swiftStrictConcurrency
             ? _ActorIsolation.from(taskQueueType: method.taskQueueType)
             : null;
-        final returnStyle = _SwiftFunctionReturnStyle.forHostApiMethod(
-          method,
-          annotations: <_SwiftClosureSignatureAnnotation>[
-            .escaping,
-            // @HostApi completion handlers are provided by FlutterEngine
-            // and are thread-safe, regardless of the task queue.
-            if (generatorOptions.swiftStrictConcurrency) .sendable,
-          ],
-        );
         indent.writeln(
-          _SwiftFunctionComponents(
+          _getMethodSignature(
             name: method.name,
             parameters: method.parameters,
-            returnStyle: returnStyle,
-            annotations: <_SwiftMethodAnnotation>[if (isolation != null) isolation],
+            returnType: method.returnType,
+            errorTypeName: 'Error',
+            isAsynchronous: method.isAsynchronous,
+            isAsynchronousCallback: method.isAsynchronousCallback,
             swiftFunction: method.swiftFunction,
-          ).signature,
+            methodPrefix: isolation?.asPrefix,
+            isSendable: generatorOptions.swiftStrictConcurrency,
+          ),
         );
       }
     });
@@ -994,26 +969,16 @@ if (wrapped == nil) {
 #endif''');
         }
         for (final Method method in api.methods) {
-          final returnStyle = _SwiftFunctionReturnStyle.forHostApiMethod(
-            method,
-            annotations: <_SwiftClosureSignatureAnnotation>[
-              .escaping,
-              // @HostApi completion handlers are provided by FlutterEngine
-              // and are thread-safe, regardless of the task queue.
-              if (generatorOptions.swiftStrictConcurrency) .sendable,
-            ],
-          );
           _writeHostMethodMessageHandler(
             indent,
             generatorOptions: generatorOptions,
+            name: method.name,
             channelName: '${makeChannelName(api, method, dartPackageName)}\\(channelSuffix)',
-            components: _SwiftFunctionComponents(
-              name: method.name,
-              parameters: method.parameters,
-              returnStyle: returnStyle,
-              swiftFunction: method.swiftFunction,
-            ),
-            varChannelName: '${method.name}Channel',
+            parameters: method.parameters,
+            returnType: method.returnType,
+            isAsynchronous: method.isAsynchronous,
+            isAsynchronousCallback: method.isAsynchronousCallback,
+            swiftFunction: method.swiftFunction,
             documentationComments: method.documentationComments,
             serialBackgroundQueue: method.taskQueueType == TaskQueueType.serialBackgroundThread
                 ? serialBackgroundQueue
@@ -1080,19 +1045,18 @@ if (wrapped == nil) {
           _writeHostMethodMessageHandler(
             indent,
             generatorOptions: generatorOptions,
+            name: 'removeStrongReference',
             channelName: removeStrongReferenceName,
-            components: _SwiftFunctionComponents(
-              name: 'removeStrongReference',
-              parameters: <Parameter>[
-                Parameter(
-                  name: 'identifier',
-                  type: const TypeDeclaration(baseName: 'int', isNullable: false),
-                ),
-              ],
-              returnStyle: .sync(const .voidDeclaration()),
-              swiftFunction: 'method(withIdentifier:)',
-            ),
+            parameters: <Parameter>[
+              Parameter(
+                name: 'identifier',
+                type: const TypeDeclaration(baseName: 'int', isNullable: false),
+              ),
+            ],
+            returnType: const TypeDeclaration.voidDeclaration(),
+            swiftFunction: 'method(withIdentifier:)',
             setHandlerCondition: setHandlerCondition,
+            isAsynchronous: false,
             onCreateCall: (List<String> safeArgNames, {required String apiVarName}) {
               return 'let _: AnyObject? = try instanceManager.removeInstance(${safeArgNames.single})';
             },
@@ -1100,13 +1064,13 @@ if (wrapped == nil) {
           _writeHostMethodMessageHandler(
             indent,
             generatorOptions: generatorOptions,
+            name: 'clear',
             channelName: makeClearChannelName(dartPackageName),
-            components: _SwiftFunctionComponents(
-              name: 'clear',
-              parameters: <Parameter>[],
-              returnStyle: .sync(const .voidDeclaration()),
-            ),
+            parameters: <Parameter>[],
+            returnType: const TypeDeclaration.voidDeclaration(),
             setHandlerCondition: setHandlerCondition,
+            swiftFunction: null,
+            isAsynchronous: false,
             onCreateCall: (List<String> safeArgNames, {required String apiVarName}) {
               return 'try instanceManager.removeAllObjects()';
             },
@@ -1128,17 +1092,9 @@ if (wrapped == nil) {
             type: const TypeDeclaration(baseName: 'int', isNullable: false),
           ),
         ],
-        returnType: const .voidDeclaration(),
-        returnStyle: .withCompletion(
-          annotations: <_SwiftClosureSignatureAnnotation>[
-            .escaping,
-            // The Dart `InstanceManager` replies from the main thread.
-            if (generatorOptions.swiftStrictConcurrency) .mainActor,
-          ],
-          successType: const .voidDeclaration(),
-          errorType: _getErrorClassName(generatorOptions),
-        ),
+        returnType: const TypeDeclaration.voidDeclaration(),
         channelName: removeStrongReferenceName,
+        isAsynchronousCallback: true,
         swiftFunction: null,
       );
     });
@@ -1783,19 +1739,23 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
     required String channelName,
     required List<Parameter> parameters,
     required TypeDeclaration returnType,
-    required _AsynchronousFunction returnStyle,
+    bool isAsynchronous = true,
+    bool isAsynchronousCallback = false,
     required String? swiftFunction,
   }) {
-    final String methodSignature = _SwiftFunctionComponents(
+    final String methodSignature = _getMethodSignature(
       name: name,
       parameters: parameters,
-      returnStyle: returnStyle,
-      annotations: <_SwiftMethodAnnotation>[
-        if (generatorOptions.swiftStrictConcurrency) _ActorIsolation.mainActor,
-      ],
+      returnType: returnType,
+      errorTypeName: _getErrorClassName(generatorOptions),
+      isAsynchronous: isAsynchronous,
+      isAsynchronousCallback: isAsynchronousCallback,
+      isMainActor:
+          generatorOptions.swiftStrictConcurrency || (isAsynchronous && !isAsynchronousCallback),
+      isMainActorCompletion: generatorOptions.swiftStrictConcurrency,
       swiftFunction: swiftFunction,
       getParameterName: _getSafeArgumentName,
-    ).signature;
+    );
 
     indent.writeScoped('$methodSignature {', '}', () {
       _writeFlutterMethodMessageCall(
@@ -1804,7 +1764,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
         parameters: parameters,
         returnType: returnType,
         channelName: channelName,
-        returnStyle: returnStyle,
+        isAsynchronousCallback: isAsynchronousCallback,
       );
     });
   }
@@ -1815,7 +1775,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
     required List<Parameter> parameters,
     required TypeDeclaration returnType,
     required String channelName,
-    required _AsynchronousFunction returnStyle,
+    bool isAsynchronousCallback = false,
   }) {
     /// Returns an argument name that can be used in a context where it is possible to collide.
     String getEnumSafeArgumentExpression(int count, NamedType argument) {
@@ -1826,6 +1786,14 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
       (MapEntry<int, NamedType> e) => getEnumSafeArgumentExpression(e.key, e.value),
     );
     final sendArgument = parameters.isEmpty ? 'nil' : '[${enumSafeArgNames.join(', ')}] as [Any?]';
+
+    String resumeSuccess(String valStr) => isAsynchronousCallback
+        ? 'completion(.success($valStr))'
+        : (returnType.isVoid ? 'continuation.resume()' : 'continuation.resume(returning: $valStr)');
+
+    String resumeError(String errorExpr) => isAsynchronousCallback
+        ? 'completion(.failure($errorExpr))'
+        : 'continuation.resume(throwing: $errorExpr)';
 
     void sendBlock() {
       const channel = 'channel';
@@ -1842,11 +1810,9 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
           ? '(response: any Sendable)'
           : 'response';
       indent.addScoped('{ $responseArg in', '}', () {
-        indent.addScoped('MainActor.assumeIsolated {', '}', () {
+        void writeBody() {
           indent.writeScoped('guard let listResponse = response as? [Any?] else {', '}', () {
-            indent.writeln(
-              returnStyle.resumeError('createConnectionError(withChannelName: channelName)'),
-            );
+            indent.writeln(resumeError('createConnectionError(withChannelName: channelName)'));
             indent.writeln('return');
           });
           indent.writeScoped('if listResponse.count > 1 {', '} ', () {
@@ -1854,7 +1820,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
             indent.writeln('let message: String? = nilOrValue(listResponse[1])');
             indent.writeln('let details: String? = nilOrValue(listResponse[2])');
             indent.writeln(
-              returnStyle.resumeError(
+              resumeError(
                 '${_getErrorClassName(generatorOptions)}(code: code, message: message, details: details)',
               ),
             );
@@ -1862,7 +1828,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
           if (!returnType.isNullable && !returnType.isVoid) {
             indent.addScoped('else if listResponse[0] == nil {', '} ', () {
               indent.writeln(
-                returnStyle.resumeError(
+                resumeError(
                   '${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")',
                 ),
               );
@@ -1870,7 +1836,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
           }
           indent.addScoped('else {', '}', () {
             if (returnType.isVoid) {
-              indent.writeln(returnStyle.resumeSuccess('()'));
+              indent.writeln(resumeSuccess('()'));
             } else {
               final String fieldType = _swiftTypeForDartType(returnType);
               _writeGenericCasting(
@@ -1886,42 +1852,57 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
                       returnType.typeArguments.any((TypeDeclaration type) => type.isEnum)
                   ? '!'
                   : '';
-              indent.writeln(returnStyle.resumeSuccess('result$enumMapForceUnwrap'));
+              indent.writeln(resumeSuccess('result$enumMapForceUnwrap'));
             }
           });
-        });
+        }
+
+        if (generatorOptions.swiftStrictConcurrency) {
+          indent.addScoped('MainActor.assumeIsolated {', '}', () {
+            writeBody();
+          });
+        } else {
+          writeBody();
+        }
       });
     }
 
-    switch (returnStyle) {
-      case _ContinuationPassing():
-        sendBlock();
-      case _AsynchronousReturn():
-        indent.writeScoped(
-          'return try await withCheckedThrowingContinuation { continuation in',
-          '}',
-          () {
-            sendBlock();
-          },
-        );
+    if (isAsynchronousCallback) {
+      sendBlock();
+    } else {
+      indent.writeScoped(
+        'return try await withCheckedThrowingContinuation { continuation in',
+        '}',
+        () {
+          sendBlock();
+        },
+      );
     }
   }
 
   void _writeHostMethodMessageHandler(
     Indent indent, {
     required InternalSwiftOptions generatorOptions,
+    required String name,
     required String channelName,
-    required _SwiftFunctionComponents components,
-    String? varChannelName,
+    required Iterable<Parameter> parameters,
+    required TypeDeclaration returnType,
+    required bool isAsynchronous,
+    bool isAsynchronousCallback = false,
+    required String? swiftFunction,
     String? serialBackgroundQueue,
     String setHandlerCondition = 'let api = api',
     List<String> documentationComments = const <String>[],
     String Function(List<String> safeArgNames, {required String apiVarName})? onCreateCall,
   }) {
-    final String name = components.name;
-    final _SwiftFunctionReturnStyle returnStyle = components.returnStyle;
-    final TypeDeclaration returnType = returnStyle.returnType;
-    varChannelName ??= '${name}Channel';
+    final components = _SwiftFunctionComponents(
+      name: name,
+      parameters: parameters,
+      returnType: returnType,
+      swiftFunction: swiftFunction,
+    );
+
+    final varChannelName = '${name}Channel';
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
     final baseArgs =
         'name: "$channelName", '
@@ -1994,76 +1975,70 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
             }
           });
         }
-        final String tryStatement = switch (returnStyle) {
-          _SynchronousFunction() => 'try ',
-          _AsynchronousFunction() => '',
-        };
+        final bool useAsync = isAsynchronous && !isAsynchronousCallback;
+        final tryStatement = isAsynchronous ? '' : 'try ';
         late final String call;
         if (onCreateCall == null) {
           // Empty parens are not required when calling a method whose only
           // argument is a trailing closure.
-          final String argumentString = switch (returnStyle) {
-            _ContinuationPassing() when methodArgument.isEmpty => '',
-            _SynchronousFunction() || _AsynchronousFunction() => '(${methodArgument.join(', ')})',
-          };
+          final argumentString = methodArgument.isEmpty && isAsynchronousCallback
+              ? ''
+              : '(${methodArgument.join(', ')})';
           call = '${tryStatement}api.${components.name}$argumentString';
         } else {
           call = onCreateCall(methodArgument, apiVarName: 'api');
         }
-        switch (returnStyle) {
-          case _AsynchronousReturn():
-            final taskDeclaration = serialBackgroundQueue == null
-                ? 'Task { @MainActor in'
-                : 'Task {';
-            indent.writeln(taskDeclaration);
-            indent.nest(1, () {
-              indent.write('do ');
-              indent.addScoped('{', '}', () {
-                if (returnType.isVoid) {
-                  indent.writeln('try await $call');
-                  indent.writeln('reply(wrapResult(nil))');
-                } else {
-                  indent.writeln('let result = try await $call');
-                  indent.writeln('reply(wrapResult(result))');
-                }
-              }, addTrailingNewline: false);
-              indent.addScoped(' catch {', '}', () {
-                indent.writeln('reply(wrapError(error))');
-              });
-            });
-            indent.writeln('}');
-          case _ContinuationPassing():
-            final resultName = returnType.isVoid ? 'nil' : 'res';
-            final successVariableInit = returnType.isVoid ? '' : '(let res)';
-            indent.write('$call ');
-
-            indent.addScoped('{ result in', '}', () {
-              indent.write('switch result ');
-              indent.addScoped('{', '}', nestCount: 0, () {
-                indent.writeln('case .success$successVariableInit:');
-                indent.nest(1, () {
-                  indent.writeln('reply(wrapResult($resultName))');
-                });
-                indent.writeln('case .failure(let error):');
-                indent.nest(1, () {
-                  indent.writeln('reply(wrapError(error))');
-                });
-              });
-            });
-          case _SynchronousFunction():
+        if (useAsync) {
+          final taskDeclaration = serialBackgroundQueue == null ? 'Task { @MainActor in' : 'Task {';
+          indent.writeln(taskDeclaration);
+          indent.nest(1, () {
             indent.write('do ');
             indent.addScoped('{', '}', () {
               if (returnType.isVoid) {
-                indent.writeln(call);
+                indent.writeln('try await $call');
                 indent.writeln('reply(wrapResult(nil))');
               } else {
-                indent.writeln('let result = $call');
+                indent.writeln('let result = try await $call');
                 indent.writeln('reply(wrapResult(result))');
               }
             }, addTrailingNewline: false);
             indent.addScoped(' catch {', '}', () {
               indent.writeln('reply(wrapError(error))');
             });
+          });
+          indent.writeln('}');
+        } else if (isAsynchronous) {
+          final resultName = returnType.isVoid ? 'nil' : 'res';
+          final successVariableInit = returnType.isVoid ? '' : '(let res)';
+          indent.write('$call ');
+
+          indent.addScoped('{ result in', '}', () {
+            indent.write('switch result ');
+            indent.addScoped('{', '}', nestCount: 0, () {
+              indent.writeln('case .success$successVariableInit:');
+              indent.nest(1, () {
+                indent.writeln('reply(wrapResult($resultName))');
+              });
+              indent.writeln('case .failure(let error):');
+              indent.nest(1, () {
+                indent.writeln('reply(wrapError(error))');
+              });
+            });
+          });
+        } else {
+          indent.write('do ');
+          indent.addScoped('{', '}', () {
+            if (returnType.isVoid) {
+              indent.writeln(call);
+              indent.writeln('reply(wrapResult(nil))');
+            } else {
+              indent.writeln('let result = $call');
+              indent.writeln('reply(wrapResult(result))');
+            }
+          }, addTrailingNewline: false);
+          indent.addScoped(' catch {', '}', () {
+            indent.writeln('reply(wrapError(error))');
+          });
         }
       });
     }, addTrailingNewline: false);
@@ -2214,7 +2189,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
         indent.writeln('@$availableAnnotation');
       }
 
-      final String methodSignature = _SwiftFunctionComponents(
+      final String methodSignature = _getMethodSignature(
         name: constructor.name.isNotEmpty ? constructor.name : 'pigeonDefaultConstructor',
         parameters: <Parameter>[
           Parameter(
@@ -2226,11 +2201,10 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
           }),
           ...constructor.parameters,
         ],
-        returnStyle: _SwiftFunctionReturnStyle.sync(apiAsTypeDeclaration),
-        annotations: <_SwiftMethodAnnotation>[
-          if (generatorOptions.swiftStrictConcurrency) _ActorIsolation.mainActor,
-        ],
-      ).signature;
+        returnType: apiAsTypeDeclaration,
+        errorTypeName: '',
+        isMainActor: generatorOptions.swiftStrictConcurrency,
+      );
       indent.writeln(methodSignature);
 
       if (unsupportedPlatforms != null) {
@@ -2261,7 +2235,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
         indent.writeln('@$availableAnnotation');
       }
 
-      final String methodSignature = _SwiftFunctionComponents(
+      final String methodSignature = _getMethodSignature(
         name: field.name,
         parameters: <Parameter>[
           Parameter(
@@ -2270,11 +2244,10 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
           ),
           if (!field.isStatic) Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration),
         ],
-        returnStyle: _SwiftFunctionReturnStyle.sync(field.type),
-        annotations: <_SwiftMethodAnnotation>[
-          if (generatorOptions.swiftStrictConcurrency) _ActorIsolation.mainActor,
-        ],
-      ).signature;
+        returnType: field.type,
+        errorTypeName: '',
+        isMainActor: generatorOptions.swiftStrictConcurrency,
+      );
       indent.writeln(methodSignature);
 
       if (unsupportedPlatforms != null) {
@@ -2305,7 +2278,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
         indent.writeln('@$availableAnnotation');
       }
 
-      final String methodSignature = _SwiftFunctionComponents(
+      final String methodSignature = _getMethodSignature(
         name: field.name,
         parameters: <Parameter>[
           Parameter(
@@ -2314,11 +2287,10 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
           ),
           Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration),
         ],
-        returnStyle: _SwiftFunctionReturnStyle.sync(field.type),
-        annotations: <_SwiftMethodAnnotation>[
-          if (generatorOptions.swiftStrictConcurrency) _ActorIsolation.mainActor,
-        ],
-      ).signature;
+        returnType: field.type,
+        errorTypeName: '',
+        isMainActor: generatorOptions.swiftStrictConcurrency,
+      );
       indent.writeln(methodSignature);
 
       if (unsupportedPlatforms != null) {
@@ -2354,37 +2326,24 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
         indent.writeln('@$availableAnnotation');
       }
 
-      final _SwiftFunctionReturnStyle returnStyle = method.isAsynchronous
-          ? .withCompletion(
-              annotations: <_SwiftClosureSignatureAnnotation>[
-                .escaping,
-                // The native objects replies from the main thread.
-                if (generatorOptions.swiftStrictConcurrency) .sendable,
-              ],
-              successType: method.returnType,
-              errorType: 'Error',
-            )
-          : .sync(method.returnType);
-      final _SwiftFunctionComponents<_SwiftFunctionReturnStyle> swiftFunction =
-          _SwiftFunctionComponents(
-            name: method.name,
-            parameters: <Parameter>[
-              Parameter(
-                name: 'pigeonApi',
-                type: TypeDeclaration(
-                  baseName: '$hostProxyApiPrefix${api.name}',
-                  isNullable: false,
-                ),
-              ),
-              if (!method.isStatic) Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration),
-              ...method.parameters,
-            ],
-            returnStyle: returnStyle,
-            annotations: <_SwiftMethodAnnotation>[
-              if (generatorOptions.swiftStrictConcurrency) _ActorIsolation.mainActor,
-            ],
-          );
-      indent.writeln(swiftFunction.signature);
+      final String methodSignature = _getMethodSignature(
+        name: method.name,
+        parameters: <Parameter>[
+          Parameter(
+            name: 'pigeonApi',
+            type: TypeDeclaration(baseName: '$hostProxyApiPrefix${api.name}', isNullable: false),
+          ),
+          if (!method.isStatic) Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration),
+          ...method.parameters,
+        ],
+        returnType: method.returnType,
+        isAsynchronous: method.isAsynchronous,
+        isAsynchronousCallback: true,
+        errorTypeName: 'Error',
+        isMainActor: generatorOptions.swiftStrictConcurrency,
+        isSendable: generatorOptions.swiftStrictConcurrency,
+      );
+      indent.writeln(methodSignature);
 
       if (unsupportedPlatforms != null) {
         indent.writeln('#endif');
@@ -2499,21 +2458,11 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
               _writeHostMethodMessageHandler(
                 indent,
                 generatorOptions: generatorOptions,
+                name: name,
                 channelName: channelName,
-                components: _SwiftFunctionComponents(
-                  name: name,
-                  parameters: <Parameter>[
-                    Parameter(
-                      name: 'pigeonIdentifier',
-                      type: const TypeDeclaration(baseName: 'int', isNullable: false),
-                    ),
-                    ...api.unattachedFields.map((ApiField field) {
-                      return Parameter(name: field.name, type: field.type);
-                    }),
-                    ...constructor.parameters,
-                  ],
-                  returnStyle: .sync(const .voidDeclaration()),
-                ),
+                returnType: const TypeDeclaration.voidDeclaration(),
+                swiftFunction: null,
+                isAsynchronous: false,
                 onCreateCall: (List<String> methodParameters, {required String apiVarName}) {
                   final parameters = <String>[
                     'pigeonApi: $apiVarName',
@@ -2524,6 +2473,16 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
                       'try $apiVarName.pigeonDelegate.$name(${parameters.join(', ')}),\n'
                       'withIdentifier: pigeonIdentifierArg)';
                 },
+                parameters: <Parameter>[
+                  Parameter(
+                    name: 'pigeonIdentifier',
+                    type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                  ),
+                  ...api.unattachedFields.map((ApiField field) {
+                    return Parameter(name: field.name, type: field.type);
+                  }),
+                  ...constructor.parameters,
+                ],
               );
             },
           );
@@ -2543,25 +2502,25 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
               _writeHostMethodMessageHandler(
                 indent,
                 generatorOptions: generatorOptions,
+                name: field.name,
                 channelName: channelName,
-                components: _SwiftFunctionComponents(
-                  name: field.name,
-                  parameters: <Parameter>[
-                    if (!field.isStatic)
-                      Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration),
-                    Parameter(
-                      name: 'pigeonIdentifier',
-                      type: const TypeDeclaration(baseName: 'int', isNullable: false),
-                    ),
-                  ],
-                  returnStyle: .sync(const .voidDeclaration()),
-                ),
+                swiftFunction: null,
+                isAsynchronous: false,
+                returnType: const TypeDeclaration.voidDeclaration(),
                 onCreateCall: (List<String> methodParameters, {required String apiVarName}) {
                   final instanceArg = field.isStatic ? '' : ', pigeonInstance: pigeonInstanceArg';
                   return '$apiVarName.pigeonRegistrar.instanceManager.addDartCreatedInstance('
                       'try $apiVarName.pigeonDelegate.${field.name}(pigeonApi: api$instanceArg), '
                       'withIdentifier: pigeonIdentifierArg)';
                 },
+                parameters: <Parameter>[
+                  if (!field.isStatic)
+                    Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration),
+                  Parameter(
+                    name: 'pigeonIdentifier',
+                    type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                  ),
+                ],
               );
             },
           );
@@ -2578,34 +2537,17 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
             methodName: method.name,
             channelName: channelName,
             onWrite: () {
-              final _SwiftFunctionReturnStyle returnStyle = method.isAsynchronous
-                  ? .withCompletion(
-                      annotations: <_SwiftClosureSignatureAnnotation>[
-                        .escaping,
-                        if (generatorOptions.swiftStrictConcurrency) .sendable,
-                      ],
-                      successType: method.returnType,
-                      errorType: 'Error',
-                    )
-                  : .sync(method.returnType);
               _writeHostMethodMessageHandler(
                 indent,
                 generatorOptions: generatorOptions,
+                name: method.name,
                 channelName: makeChannelName(api, method, dartPackageName),
-                components: _SwiftFunctionComponents(
-                  name: method.name,
-                  parameters: <Parameter>[
-                    if (!method.isStatic)
-                      Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration),
-                    ...method.parameters,
-                  ],
-                  returnStyle: returnStyle,
-                ),
+                returnType: method.returnType,
+                isAsynchronous: method.isAsynchronous,
+                isAsynchronousCallback: true,
+                swiftFunction: null,
                 onCreateCall: (List<String> methodParameters, {required String apiVarName}) {
-                  final String tryStatement = switch (returnStyle) {
-                    _SynchronousFunction() => 'try ',
-                    _AsynchronousFunction() => '',
-                  };
+                  final tryStatement = method.isAsynchronous ? '' : 'try ';
                   final parameters = <String>[
                     'pigeonApi: $apiVarName',
                     // Skip the identifier used by the InstanceManager.
@@ -2614,6 +2556,11 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
 
                   return '$tryStatement$apiVarName.pigeonDelegate.${method.name}(${parameters.join(', ')})';
                 },
+                parameters: <Parameter>[
+                  if (!method.isStatic)
+                    Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration),
+                  ...method.parameters,
+                ],
               );
             },
           );
@@ -2650,22 +2597,16 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
       indent.writeln('@$availableAnnotation');
     }
 
-    final _AsynchronousFunction returnStyle = .withCompletion(
-      annotations: <_SwiftClosureSignatureAnnotation>[
-        .escaping,
-        if (generatorOptions.swiftStrictConcurrency) .mainActor,
-      ],
-      successType: const .voidDeclaration(),
-      errorType: _getErrorClassName(generatorOptions),
-    );
-    final String methodSignature = _SwiftFunctionComponents(
+    final String methodSignature = _getMethodSignature(
       name: 'pigeonNewInstance',
       parameters: <Parameter>[Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration)],
-      returnStyle: returnStyle,
-      annotations: <_SwiftMethodAnnotation>[
-        if (generatorOptions.swiftStrictConcurrency) _ActorIsolation.mainActor,
-      ],
-    ).signature;
+      returnType: const TypeDeclaration.voidDeclaration(),
+      isAsynchronous: true,
+      isAsynchronousCallback: true,
+      errorTypeName: _getErrorClassName(generatorOptions),
+      isMainActor: generatorOptions.swiftStrictConcurrency,
+      isMainActorCompletion: generatorOptions.swiftStrictConcurrency,
+    );
     indent.writeScoped('$methodSignature {', '}', () {
       indent.writeScoped('if pigeonRegistrar.ignoreCallsToDart {', '}', () {
         indent.format('''
@@ -2715,7 +2656,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
               methodName: newInstanceMethodName,
               dartPackageName: dartPackageName,
             ),
-            returnStyle: returnStyle,
+            isAsynchronousCallback: true,
           );
         } else {
           indent.format(
@@ -2763,26 +2704,20 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
         indent.writeln('@$availableAnnotation');
       }
 
-      final _AsynchronousFunction returnStyle = .withCompletion(
-        annotations: <_SwiftClosureSignatureAnnotation>[
-          .escaping,
-          if (generatorOptions.swiftStrictConcurrency) .mainActor,
-        ],
-        successType: method.returnType,
-        errorType: _getErrorClassName(generatorOptions),
-      );
-      final String methodSignature = _SwiftFunctionComponents(
+      final String methodSignature = _getMethodSignature(
         name: method.name,
         parameters: <Parameter>[
           Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration),
           ...method.parameters,
         ],
-        returnStyle: returnStyle,
-        annotations: <_SwiftMethodAnnotation>[
-          if (generatorOptions.swiftStrictConcurrency) _ActorIsolation.mainActor,
-        ],
+        returnType: method.returnType,
+        isAsynchronous: true,
+        isAsynchronousCallback: true,
+        errorTypeName: _getErrorClassName(generatorOptions),
+        isMainActor: generatorOptions.swiftStrictConcurrency,
+        isMainActorCompletion: generatorOptions.swiftStrictConcurrency,
         getParameterName: _getSafeArgumentName,
-      ).signature;
+      );
 
       indent.write(methodSignature);
       if (writeBody) {
@@ -2827,7 +2762,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
             ],
             returnType: method.returnType,
             channelName: makeChannelName(api, method, dartPackageName),
-            returnStyle: returnStyle,
+            isAsynchronousCallback: true,
           );
         });
       }
@@ -3099,31 +3034,7 @@ class _SwiftFunctionArgument {
   final String? label;
 }
 
-// Swift Annotations
-abstract interface class _SwiftMethodAnnotation {
-  String get methodAnnotation;
-}
-
-abstract interface class _SwiftClosureSignatureAnnotation {
-  static const _SwiftClosureSignatureAnnotation escaping =
-      _CommonSwiftClosureSignatureAnnotation.escaping;
-  static const _SwiftClosureSignatureAnnotation sendable =
-      _CommonSwiftClosureSignatureAnnotation.sendable;
-  static const _SwiftClosureSignatureAnnotation mainActor = _ActorIsolation.mainActor;
-
-  String get closureSignatureAnnotation;
-}
-
-enum _CommonSwiftClosureSignatureAnnotation implements _SwiftClosureSignatureAnnotation {
-  escaping('@escaping'),
-  sendable('@Sendable');
-
-  const _CommonSwiftClosureSignatureAnnotation(this.closureSignatureAnnotation);
-  @override
-  final String closureSignatureAnnotation;
-}
-
-enum _ActorIsolation implements _SwiftMethodAnnotation, _SwiftClosureSignatureAnnotation {
+enum _ActorIsolation {
   nonisolated('nonisolated'),
   mainActor('@MainActor');
 
@@ -3137,144 +3048,96 @@ enum _ActorIsolation implements _SwiftMethodAnnotation, _SwiftClosureSignatureAn
     };
   }
 
-  @override
-  String get methodAnnotation => annotation;
-  @override
-  String get closureSignatureAnnotation => switch (this) {
-    .nonisolated => '',
-    .mainActor => annotation,
-  };
-
   String get asPrefix => '$annotation ';
 }
 
-/// Represents the return style of a generated Swift function.
-///
-/// ```text
-/// _SwiftFunctionReturnStyle (sealed)
-/// ├── _SynchronousFunction (final)
-/// │   └── Example: func foo(...) throws -> T
-/// │
-/// └── _AsynchronousFunction (sealed)
-///     ├── _AsynchronousReturn (final)
-///     │   └── Example: func foo(...) async throws -> T
-///     │
-///     └── _ContinuationPassing (final)
-///         └── Example: func foo(..., completion: @escaping (Result<T, E>) -> Void)
-/// ```
-sealed class _SwiftFunctionReturnStyle {
-  factory _SwiftFunctionReturnStyle.sync(TypeDeclaration returnType) = _SynchronousFunction;
-  factory _SwiftFunctionReturnStyle.async(TypeDeclaration returnType) = _AsynchronousReturn;
-  factory _SwiftFunctionReturnStyle.withCompletion({
-    required Iterable<_SwiftClosureSignatureAnnotation> annotations,
-    required TypeDeclaration successType,
-    required String errorType,
-  }) = _ContinuationPassing.result;
+String _getMethodSignature({
+  required String name,
+  required Iterable<Parameter> parameters,
+  required TypeDeclaration returnType,
+  required String errorTypeName,
+  bool isAsynchronous = false,
+  bool isAsynchronousCallback = false,
+  bool isMainActor = false,
+  bool isSendable = false,
+  bool isMainActorCompletion = false,
+  String? methodPrefix,
+  String? swiftFunction,
+  _SwiftFunctionComponents? components,
+  String Function(int index, NamedType argument) getParameterName = _getArgumentName,
+}) {
+  components ??= _SwiftFunctionComponents(
+    name: name,
+    parameters: parameters,
+    returnType: returnType,
+    swiftFunction: swiftFunction,
+  );
+  final String returnTypeString = returnType.isVoid
+      ? 'Void'
+      : _nullSafeSwiftTypeForDartType(returnType);
 
-  /// Generates the [_SwiftFunctionReturnStyle] for a [HostApi] [method].
-  factory _SwiftFunctionReturnStyle.forHostApiMethod(
-    Method method, {
-    required Iterable<_SwiftClosureSignatureAnnotation> annotations,
-  }) {
-    if (!method.isAsynchronous) {
-      return .sync(method.returnType);
-    }
-    return method.isAsynchronousCallback
-        ? .withCompletion(
-            annotations: annotations,
-            successType: method.returnType,
-            errorType: 'Error',
-          )
-        : .async(method.returnType);
+  final Iterable<String> types = parameters.map(
+    (NamedType e) => _nullSafeSwiftTypeForDartType(e.type),
+  );
+  final Iterable<String> labels = indexMap(components.arguments, (
+    int index,
+    _SwiftFunctionArgument argument,
+  ) {
+    return argument.label ?? _getArgumentName(index, argument.namedType);
+  });
+  final Iterable<String> names = indexMap(parameters, getParameterName);
+  final String parameterSignature = map3(types, labels, names, (
+    String type,
+    String label,
+    String name,
+  ) {
+    return '${label != name ? '$label ' : ''}$name: $type';
+  }).join(', ');
+
+  final String prefix = methodPrefix ?? (isMainActor ? '@MainActor ' : '');
+
+  if (isAsynchronous && !isAsynchronousCallback) {
+    final returnTypeSuffix = returnType.isVoid ? '' : ' -> $returnTypeString';
+    return '${prefix}func ${components.name}($parameterSignature) async throws$returnTypeSuffix';
   }
 
-  TypeDeclaration get returnType;
+  if (isAsynchronous) {
+    final sendablePrefix = isSendable ? '@Sendable ' : '';
+    final mainActorCompletionPrefix = isMainActorCompletion ? '@MainActor ' : '';
+    final completion =
+        'completion: @escaping $sendablePrefix$mainActorCompletionPrefix(Result<$returnTypeString, $errorTypeName>) -> Void';
+    final params = parameters.isEmpty ? completion : '$parameterSignature, $completion';
+    return '${prefix}func ${components.name}($params)';
+  }
+
+  final returnTypeSuffix = returnType.isVoid ? '' : ' -> $returnTypeString';
+  return '${prefix}func ${components.name}($parameterSignature) throws$returnTypeSuffix';
 }
 
-final class _SynchronousFunction implements _SwiftFunctionReturnStyle {
-  _SynchronousFunction(this.returnType);
-  @override
-  final TypeDeclaration returnType;
-}
-
-sealed class _AsynchronousFunction implements _SwiftFunctionReturnStyle {
-  factory _AsynchronousFunction.async(TypeDeclaration returnType) = _AsynchronousReturn;
-  factory _AsynchronousFunction.withCompletion({
-    required Iterable<_SwiftClosureSignatureAnnotation> annotations,
-    required TypeDeclaration successType,
-    required String errorType,
-  }) = _ContinuationPassing.result;
-
-  // Helper methods for generating code that passes the computation result
-  // to a different function.
-  String resumeSuccess(String value);
-  String resumeError(String error);
-}
-
-final class _AsynchronousReturn implements _AsynchronousFunction {
-  _AsynchronousReturn(this.returnType);
-  @override
-  final TypeDeclaration returnType;
-
-  @override
-  String resumeSuccess(String value) =>
-      returnType.isVoid ? 'continuation.resume()' : 'continuation.resume(returning: $value)';
-  @override
-  String resumeError(String error) => 'continuation.resume(throwing: $error)';
-}
-
-final class _ContinuationPassing implements _AsynchronousFunction {
-  _ContinuationPassing({required this.closureType, this.returnType = const .voidDeclaration()});
-  _ContinuationPassing.result({
-    required Iterable<_SwiftClosureSignatureAnnotation> annotations,
-    required TypeDeclaration successType,
-    required String errorType,
-  }) : this(
-         closureType:
-             '${annotations.map((_SwiftClosureSignatureAnnotation a) => a.closureSignatureAnnotation).where((String a) => a.isNotEmpty).map((String a) => '$a ').join()}(Result<${successType.isVoid ? 'Void' : _nullSafeSwiftTypeForDartType(successType)}, $errorType>) -> Void',
-         returnType: successType,
-       );
-
-  final String closureType;
-  @override
-  final TypeDeclaration returnType;
-
-  @override
-  String resumeSuccess(String value) => 'completion(.success($value))';
-  @override
-  String resumeError(String error) => 'completion(.failure($error))';
-}
-
-/// Represents the components of a Swift function declaration.
+/// A class that represents a Swift function signature.
 ///
 /// The [name] is the name of the function.
 /// The [arguments] are the arguments of the function.
-/// The [returnType] describes how the function passes its result.
-class _SwiftFunctionComponents<ReturnStyle extends _SwiftFunctionReturnStyle> {
-  /// Constructor that generates a [_SwiftFunctionComponents] from a method.
+/// The [returnType] is the return type of the function.
+/// The [method] is the method that this function signature is generated from.
+class _SwiftFunctionComponents {
+  /// Constructor that generates a [_SwiftFunctionComponents] from a [Method].
   factory _SwiftFunctionComponents({
     required String name,
     required Iterable<Parameter> parameters,
-    required ReturnStyle returnStyle,
-    Iterable<_SwiftMethodAnnotation> annotations = const <_SwiftMethodAnnotation>[],
+    required TypeDeclaration returnType,
     String? swiftFunction,
-    String Function(int index, NamedType argument) getParameterName = _getArgumentName,
   }) {
     if (swiftFunction == null || swiftFunction.isEmpty) {
-      final Iterable<_SwiftFunctionArgument> arguments = parameters.map(
-        (NamedType field) =>
-            _SwiftFunctionArgument(name: field.name, type: field.type, namedType: field),
-      );
       return _SwiftFunctionComponents._(
         name: name,
-        returnStyle: returnStyle,
-        arguments: arguments,
-        annotations: annotations,
-        parameters: _getParameterSignature(
-          parameters: parameters,
-          arguments: arguments,
-          getParameterName: getParameterName,
-        ),
+        returnType: returnType,
+        arguments: parameters
+            .map(
+              (NamedType field) =>
+                  _SwiftFunctionArgument(name: field.name, type: field.type, namedType: field),
+            )
+            .toList(),
       );
     }
 
@@ -3286,89 +3149,29 @@ class _SwiftFunctionComponents<ReturnStyle extends _SwiftFunctionReturnStyle> {
         .groups(List<int>.generate(parameters.length, (int index) => index + 2))
         .whereType();
 
-    final List<_SwiftFunctionArgument> arguments = map2(
-      parameters,
-      labels,
-      (NamedType field, String label) => _SwiftFunctionArgument(
-        name: field.name,
-        label: label == field.name ? null : label,
-        type: field.type,
-        namedType: field,
-      ),
-    ).toList();
     return _SwiftFunctionComponents._(
       name: match.group(1)!,
-      returnStyle: returnStyle,
-      arguments: arguments,
-      annotations: annotations,
-      parameters: _getParameterSignature(
-        parameters: parameters,
-        arguments: arguments,
-        getParameterName: getParameterName,
-      ),
+      returnType: returnType,
+      arguments: map2(
+        parameters,
+        labels,
+        (NamedType field, String label) => _SwiftFunctionArgument(
+          name: field.name,
+          label: label == field.name ? null : label,
+          type: field.type,
+          namedType: field,
+        ),
+      ).toList(),
     );
   }
 
   _SwiftFunctionComponents._({
     required this.name,
     required this.arguments,
-    required this.returnStyle,
-    required String parameters,
-    this.annotations = const <_SwiftMethodAnnotation>[],
-  }) : _parametersString = parameters;
+    required this.returnType,
+  });
 
-  static String _getParameterSignature({
-    required Iterable<Parameter> parameters,
-    required Iterable<_SwiftFunctionArgument> arguments,
-    required String Function(int index, NamedType argument) getParameterName,
-  }) {
-    final Iterable<String> types = parameters.map(
-      (NamedType e) => _nullSafeSwiftTypeForDartType(e.type),
-    );
-    final Iterable<String> labels = indexMap(arguments, (
-      int index,
-      _SwiftFunctionArgument argument,
-    ) {
-      return argument.label ?? _getArgumentName(index, argument.namedType);
-    });
-    final Iterable<String> names = indexMap(parameters, getParameterName);
-    return map3(types, labels, names, (String type, String label, String name) {
-      return '${label != name ? '$label ' : ''}$name: $type';
-    }).join(', ');
-  }
-
-  /// The annotations on the method.
-  final Iterable<_SwiftMethodAnnotation> annotations;
-
-  /// The name of the Swift function.
   final String name;
-
-  /// The arguments of the Swift function.
-  final Iterable<_SwiftFunctionArgument> arguments;
-
-  /// The parameter signature of the function.
-  final String _parametersString;
-
-  /// The return style of the function.
-  final ReturnStyle returnStyle;
-
-  /// The return type of the function.
-  TypeDeclaration get returnType => returnStyle.returnType;
-
-  /// Returns the Swift method signature declaration as a string.
-  String get signature {
-    final String annotationPrefix = annotations
-        .map((_SwiftMethodAnnotation a) => a.methodAnnotation)
-        .where((String a) => a.isNotEmpty)
-        .map((String a) => '$a ')
-        .join();
-    return switch (returnStyle) {
-      _SynchronousFunction(:final TypeDeclaration returnType) =>
-        '${annotationPrefix}func $name($_parametersString) throws${returnType.isVoid ? '' : ' -> ${_nullSafeSwiftTypeForDartType(returnType)}'}',
-      _AsynchronousReturn(:final TypeDeclaration returnType) =>
-        '${annotationPrefix}func $name($_parametersString) async throws${returnType.isVoid ? '' : ' -> ${_nullSafeSwiftTypeForDartType(returnType)}'}',
-      _ContinuationPassing(:final String closureType) =>
-        '${annotationPrefix}func $name(${_parametersString.isEmpty ? 'completion: $closureType' : '$_parametersString, completion: $closureType'})',
-    };
-  }
+  final List<_SwiftFunctionArgument> arguments;
+  final TypeDeclaration returnType;
 }
