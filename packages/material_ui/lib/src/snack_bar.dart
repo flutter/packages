@@ -794,7 +794,7 @@ class _SnackBarState extends State<SnackBar> {
                 ),
               ),
               if (!willOverflowAction) ...maybeActionAndIcon,
-              if (willOverflowAction) SizedBox(width: horizontalPadding),
+              if (willOverflowAction && widget.padding == null) SizedBox(width: horizontalPadding),
             ],
           ),
           if (willOverflowAction)

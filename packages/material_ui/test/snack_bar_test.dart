@@ -4500,6 +4500,61 @@ void main() {
     expect(contentRow.children.last, isA<SizedBox>());
     expect((contentRow.children.last as SizedBox).width, 24.0);
   });
+
+  testWidgets('SnackBar respects custom padding when action overflows', (
+    WidgetTester tester,
+  ) async {
+    const double screenWidth = 500.0;
+    const EdgeInsets customPadding = EdgeInsets.only(left: 36, right: 48);
+    tester.view.physicalSize = const Size(screenWidth, 800.0);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) {
+              return GestureDetector(
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const SizedBox(key: Key('content'), height: 20),
+                      action: SnackBarAction(label: 'Overflow Action', onPressed: () {}),
+                      actionOverflowThreshold: 0.1,
+                      padding: customPadding,
+                    ),
+                  );
+                },
+                child: const Text('Show'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Show'));
+    await tester.pumpAndSettle();
+
+    // When a custom padding is provided, it is applied on both sides by the outer
+    // Padding, so no extra spacer is inserted in the content row.
+    final Row contentRow = tester.widget<Row>(
+      find.descendant(of: find.byType(SnackBar), matching: find.byType(Row)).first,
+    );
+    expect(contentRow.children.length, 1);
+    expect(contentRow.children.single, isA<Expanded>());
+
+    expect(
+      tester.getSize(find.byKey(const Key('content'))).width,
+      screenWidth - customPadding.horizontal,
+    );
+    expect(tester.getTopLeft(find.byKey(const Key('content'))).dx, customPadding.left);
+    expect(
+      tester.getTopRight(find.byKey(const Key('content'))).dx,
+      screenWidth - customPadding.right,
+    );
+  });
 }
 
 /// Start test for "SnackBar dismiss test".
