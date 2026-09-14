@@ -1,3 +1,7 @@
+## 3.27.0
+
+* Adds NavigationDelegate.onCreateWindow for target=_blank / window.open.
+
 ## 3.26.1
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
