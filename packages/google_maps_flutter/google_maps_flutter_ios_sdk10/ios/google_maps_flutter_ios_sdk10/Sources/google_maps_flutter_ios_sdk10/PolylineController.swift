@@ -96,7 +96,7 @@ class PolylinesController {
 
   func didTapPolyline(withIdentifier identifier: String) {
     if hasPolyline(withIdentifier: identifier) {
-      Task { @MainActor in
+      Task {
         try await eventDelegate?.didTapPolyline(withIdentifier: identifier)
       }
     }

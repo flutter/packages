@@ -313,21 +313,21 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   // MARK: - GMSMapViewDelegate methods
 
   public func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
-    Task { @MainActor in
+    Task {
       try await dartCallbackHandler.didStartCameraMove()
     }
   }
 
   public func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
     if trackCameraPosition {
-      Task { @MainActor in
+      Task {
         try await dartCallbackHandler.didMoveCamera(to: PlatformCameraPosition.make(from: position))
       }
     }
   }
 
   public func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
-    Task { @MainActor in
+    Task {
       try await dartCallbackHandler.didIdleCamera()
     }
   }
@@ -385,13 +385,13 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   }
 
   public func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
-    Task { @MainActor in
+    Task {
       try await dartCallbackHandler.didTap(at: PlatformLatLng.make(from: coordinate))
     }
   }
 
   public func mapView(_ mapView: GMSMapView, didLongPressAt coordinate: CLLocationCoordinate2D) {
-    Task { @MainActor in
+    Task {
       try await dartCallbackHandler.didLongPress(at: PlatformLatLng.make(from: coordinate))
     }
   }

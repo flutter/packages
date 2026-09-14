@@ -217,7 +217,7 @@ class MarkersController {
 
   func didTapMarker(withIdentifier identifier: String) -> Bool {
     guard let controller = markerIdentifierToController[identifier] else { return false }
-    Task { @MainActor in
+    Task {
       try await eventDelegate?.didTapMarker(withIdentifier: identifier)
     }
     return controller.consumeTapEvents
@@ -225,7 +225,7 @@ class MarkersController {
 
   func didStartDraggingMarker(withIdentifier identifier: String, location: CLLocationCoordinate2D) {
     guard markerIdentifierToController[identifier] != nil else { return }
-    Task { @MainActor in
+    Task {
       try await eventDelegate?.didStartDragForMarker(
         withIdentifier: identifier,
         at: PlatformLatLng.make(from: location)
@@ -235,7 +235,7 @@ class MarkersController {
 
   func didDragMarker(withIdentifier identifier: String, location: CLLocationCoordinate2D) {
     guard markerIdentifierToController[identifier] != nil else { return }
-    Task { @MainActor in
+    Task {
       try await eventDelegate?.didDragMarker(
         withIdentifier: identifier,
         at: PlatformLatLng.make(from: location)
@@ -245,7 +245,7 @@ class MarkersController {
 
   func didEndDraggingMarker(withIdentifier identifier: String, location: CLLocationCoordinate2D) {
     guard markerIdentifierToController[identifier] != nil else { return }
-    Task { @MainActor in
+    Task {
       try await eventDelegate?.didEndDragForMarker(
         withIdentifier: identifier,
         at: PlatformLatLng.make(from: location)
@@ -255,7 +255,7 @@ class MarkersController {
 
   func didTapInfoWindowOfMarker(withIdentifier identifier: String) {
     if markerIdentifierToController[identifier] != nil {
-      Task { @MainActor in
+      Task {
         try await eventDelegate?.didTapInfoWindowOfMarker(withIdentifier: identifier)
       }
     }

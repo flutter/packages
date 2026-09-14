@@ -86,7 +86,7 @@ class CirclesController {
 
   func didTapCircle(withIdentifier identifier: String) {
     if hasCircle(withIdentifier: identifier) {
-      Task { @MainActor in
+      Task {
         try await eventDelegate?.didTapCircle(withIdentifier: identifier)
       }
     }

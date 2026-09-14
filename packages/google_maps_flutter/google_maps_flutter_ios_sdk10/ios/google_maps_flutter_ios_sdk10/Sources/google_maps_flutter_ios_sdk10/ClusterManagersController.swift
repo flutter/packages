@@ -73,7 +73,7 @@ class ClusterManagersController {
     guard let clusterManagerId = clusterManagerIdentifier(for: cluster) else { return }
     let platformCluster = PlatformCluster.make(
       from: cluster, clusterManagerIdentifier: clusterManagerId)
-    Task { @MainActor in
+    Task {
       try await eventDelegate?.didTapCluster(platformCluster)
     }
   }

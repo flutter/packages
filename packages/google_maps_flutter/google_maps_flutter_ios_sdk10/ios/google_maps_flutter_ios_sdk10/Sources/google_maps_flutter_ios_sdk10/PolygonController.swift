@@ -91,7 +91,7 @@ class PolygonsController {
 
   func didTapPolygon(withIdentifier identifier: String) {
     if hasPolygon(withIdentifier: identifier) {
-      Task { @MainActor in
+      Task {
         try await eventDelegate?.didTapPolygon(withIdentifier: identifier)
       }
     }
