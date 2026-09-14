@@ -1,3 +1,7 @@
+## NEXT
+
+* Removes unnecessary Material imports.
+
 ## 4.5.0
 
 - Detects routes that resolve to the same URL pattern. Routes are compared by
