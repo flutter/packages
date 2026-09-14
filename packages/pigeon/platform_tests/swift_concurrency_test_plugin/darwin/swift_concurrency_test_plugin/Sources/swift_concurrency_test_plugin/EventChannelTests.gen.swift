@@ -831,6 +831,7 @@ class EventChannelTestsPigeonCodec: FlutterStandardMessageCodec, @unchecked Send
 let eventChannelTestsPigeonMethodCodec = FlutterStandardMethodCodec(
   readerWriter: EventChannelTestsPigeonCodecReaderWriter())
 
+@MainActor
 private class PigeonStreamHandler<ReturnType>: NSObject, @preconcurrency FlutterStreamHandler {
   private let wrapper: PigeonEventChannelWrapper<ReturnType>
   private var pigeonSink: PigeonEventSink<ReturnType>? = nil
@@ -854,11 +855,13 @@ private class PigeonStreamHandler<ReturnType>: NSObject, @preconcurrency Flutter
   }
 }
 
+@MainActor
 class PigeonEventChannelWrapper<ReturnType> {
   func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}
   func onCancel(withArguments arguments: Any?) {}
 }
 
+@MainActor
 class PigeonEventSink<ReturnType> {
   private let sink: FlutterEventSink
 
@@ -880,6 +883,7 @@ class PigeonEventSink<ReturnType> {
 
 }
 
+@MainActor
 class StreamIntsStreamHandler: PigeonEventChannelWrapper<Int64> {
   static func register(
     with messenger: FlutterBinaryMessenger,
@@ -897,6 +901,7 @@ class StreamIntsStreamHandler: PigeonEventChannelWrapper<Int64> {
   }
 }
 
+@MainActor
 class StreamEventsStreamHandler: PigeonEventChannelWrapper<PlatformEvent> {
   static func register(
     with messenger: FlutterBinaryMessenger,
@@ -914,6 +919,7 @@ class StreamEventsStreamHandler: PigeonEventChannelWrapper<PlatformEvent> {
   }
 }
 
+@MainActor
 class StreamConsistentNumbersStreamHandler: PigeonEventChannelWrapper<Int64> {
   static func register(
     with messenger: FlutterBinaryMessenger,

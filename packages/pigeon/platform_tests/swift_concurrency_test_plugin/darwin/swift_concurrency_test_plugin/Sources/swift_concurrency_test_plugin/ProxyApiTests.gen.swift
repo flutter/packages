@@ -85,19 +85,19 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 }
 
 /// Handles the callback when an object is deallocated.
-protocol ProxyApiTestsPigeonInternalFinalizerDelegate: AnyObject {
+nonisolated protocol ProxyApiTestsPigeonInternalFinalizerDelegate: AnyObject, Sendable {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
   func onDeinit(identifier: Int64)
 }
 
 // Attaches to an object to receive a callback when the object is deallocated.
-internal final class ProxyApiTestsPigeonInternalFinalizer {
-  internal static let associatedObjectKey = malloc(1)!
+internal nonisolated final class ProxyApiTestsPigeonInternalFinalizer: Sendable {
+  internal static nonisolated(unsafe) let associatedObjectKey = malloc(1)!
 
   private let identifier: Int64
   // Reference to the delegate is weak because the callback should be ignored if the
   // `InstanceManager` is deallocated.
-  internal weak var delegate: ProxyApiTestsPigeonInternalFinalizerDelegate?
+  internal weak nonisolated(unsafe) var delegate: ProxyApiTestsPigeonInternalFinalizerDelegate?
 
   private init(identifier: Int64, delegate: ProxyApiTestsPigeonInternalFinalizerDelegate) {
     self.identifier = identifier
@@ -142,7 +142,7 @@ internal final class ProxyApiTestsPigeonInternalFinalizer {
 /// again.
 ///
 /// Accessing and inserting to an InstanceManager is thread safe.
-final class ProxyApiTestsPigeonInstanceManager {
+nonisolated final class ProxyApiTestsPigeonInstanceManager: @unchecked Sendable {
   // Identifiers are locked to a specific range to avoid collisions with objects
   // created simultaneously from Dart.
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
@@ -312,7 +312,7 @@ final class ProxyApiTestsPigeonInstanceManager {
   }
 }
 
-private class ProxyApiTestsPigeonInstanceManagerApi {
+@MainActor private class ProxyApiTestsPigeonInstanceManagerApi {
   /// The codec used for serializing messages.
   var codec: FlutterStandardMessageCodec { ProxyApiTestsPigeonCodec.shared }
 
@@ -333,7 +333,8 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
         "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference",
       binaryMessenger: binaryMessenger, codec: codec)
     if let instanceManager = instanceManager {
-      methodChannel.setMessageHandler { message, reply in
+      methodChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let identifierArg = args[0] as! Int64
         do {
@@ -350,7 +351,8 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
       name: "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.clear",
       binaryMessenger: binaryMessenger, codec: codec)
     if let instanceManager = instanceManager {
-      clearChannel.setMessageHandler { _, reply in
+      clearChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         do {
           try instanceManager.removeAllObjects()
           reply(wrapResult(nil))
@@ -364,15 +366,15 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
   }
 
   /// Sends a message to the Dart `InstanceManager` to remove the strong reference of the instance associated with `identifier`.
-  func removeStrongReference(
+  @MainActor func removeStrongReference(
     identifier identifierArg: Int64,
-    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([identifierArg] as [Any?]) { response in
+    channel.sendMessage([identifierArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -393,24 +395,25 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
 protocol ProxyApiTestsPigeonProxyApiDelegate {
   /// An implementation of [PigeonApiProxyApiTestClass] used to add a new Dart instance of
   /// `ProxyApiTestClass` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiProxyApiTestClass(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
+  @MainActor func pigeonApiProxyApiTestClass(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
     -> PigeonApiProxyApiTestClass
   /// An implementation of [PigeonApiProxyApiSuperClass] used to add a new Dart instance of
   /// `ProxyApiSuperClass` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiProxyApiSuperClass(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
+  @MainActor func pigeonApiProxyApiSuperClass(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
     -> PigeonApiProxyApiSuperClass
   /// An implementation of [PigeonApiProxyApiInterface] used to add a new Dart instance of
   /// `ProxyApiInterface` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiProxyApiInterface(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
+  @MainActor func pigeonApiProxyApiInterface(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
     -> PigeonApiProxyApiInterface
   /// An implementation of [PigeonApiClassWithApiRequirement] used to add a new Dart instance of
   /// `ClassWithApiRequirement` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiClassWithApiRequirement(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
-    -> PigeonApiClassWithApiRequirement
+  @MainActor func pigeonApiClassWithApiRequirement(
+    _ registrar: ProxyApiTestsPigeonProxyApiRegistrar
+  ) -> PigeonApiClassWithApiRequirement
 }
 
 extension ProxyApiTestsPigeonProxyApiDelegate {
-  func pigeonApiProxyApiInterface(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
+  @MainActor func pigeonApiProxyApiInterface(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
     -> PigeonApiProxyApiInterface
   {
     return PigeonApiProxyApiInterface(
@@ -444,7 +447,9 @@ open class ProxyApiTestsPigeonProxyApiRegistrar {
     }
   }
 
-  init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: ProxyApiTestsPigeonProxyApiDelegate) {
+  @MainActor init(
+    binaryMessenger: FlutterBinaryMessenger, apiDelegate: ProxyApiTestsPigeonProxyApiDelegate
+  ) {
     self.binaryMessenger = binaryMessenger
     self.apiDelegate = apiDelegate
     self.instanceManager = ProxyApiTestsPigeonInstanceManager(
@@ -452,7 +457,7 @@ open class ProxyApiTestsPigeonProxyApiRegistrar {
         ProxyApiTestsPigeonInstanceManagerApi(binaryMessenger: binaryMessenger)))
   }
 
-  func setUp() {
+  @MainActor func setUp() {
     ProxyApiTestsPigeonInstanceManagerApi.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, instanceManager: instanceManager)
     PigeonApiProxyApiTestClass.setUpMessageHandlers(
@@ -462,7 +467,7 @@ open class ProxyApiTestsPigeonProxyApiRegistrar {
     PigeonApiClassWithApiRequirement.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiClassWithApiRequirement(self))
   }
-  func tearDown() {
+  @MainActor func tearDown() {
     ProxyApiTestsPigeonInstanceManagerApi.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, instanceManager: nil)
     PigeonApiProxyApiTestClass.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
@@ -653,7 +658,7 @@ class ProxyApiTestsPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable
 }
 
 protocol PigeonApiDelegateProxyApiTestClass {
-  func pigeonDefaultConstructor(
+  @MainActor func pigeonDefaultConstructor(
     pigeonApi: PigeonApiProxyApiTestClass, aBool: Bool, anInt: Int64, aDouble: Double,
     aString: String, aUint8List: FlutterStandardTypedData, aList: [Any?], aMap: [String?: Any?],
     anEnum: ProxyApiTestEnum, aProxyApi: ProxyApiSuperClass, aNullableBool: Bool?,
@@ -668,7 +673,7 @@ protocol PigeonApiDelegateProxyApiTestClass {
     nullableListParam: [Any?]?, nullableMapParam: [String?: Any?]?,
     nullableEnumParam: ProxyApiTestEnum?, nullableProxyApiParam: ProxyApiSuperClass?
   ) throws -> ProxyApiTestClass
-  func namedConstructor(
+  @MainActor func namedConstructor(
     pigeonApi: PigeonApiProxyApiTestClass, aBool: Bool, anInt: Int64, aDouble: Double,
     aString: String, aUint8List: FlutterStandardTypedData, aList: [Any?], aMap: [String?: Any?],
     anEnum: ProxyApiTestEnum, aProxyApi: ProxyApiSuperClass, aNullableBool: Bool?,
@@ -677,409 +682,424 @@ protocol PigeonApiDelegateProxyApiTestClass {
     aNullableMap: [String?: Any?]?, aNullableEnum: ProxyApiTestEnum?,
     aNullableProxyApi: ProxyApiSuperClass?
   ) throws -> ProxyApiTestClass
-  func attachedField(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> ProxyApiSuperClass
-  func staticAttachedField(pigeonApi: PigeonApiProxyApiTestClass) throws -> ProxyApiSuperClass
+  @MainActor func attachedField(
+    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
+  ) throws -> ProxyApiSuperClass
+  @MainActor func staticAttachedField(pigeonApi: PigeonApiProxyApiTestClass) throws
+    -> ProxyApiSuperClass
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
-  func noop(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-  /// Returns an error, to test error handling.
-  func throwError(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> Any?
-  /// Returns an error from a void function, to test error handling.
-  func throwErrorFromVoid(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
+  @MainActor func noop(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
     throws
+  /// Returns an error, to test error handling.
+  @MainActor func throwError(
+    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
+  ) throws -> Any?
+  /// Returns an error from a void function, to test error handling.
+  @MainActor func throwErrorFromVoid(
+    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
   /// Returns a Flutter error, to test error handling.
-  func throwFlutterError(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> Any?
+  @MainActor func throwFlutterError(
+    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
+  ) throws -> Any?
   /// Returns passed in int.
-  func echoInt(
+  @MainActor func echoInt(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64
   ) throws -> Int64
   /// Returns passed in double.
-  func echoDouble(
+  @MainActor func echoDouble(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aDouble: Double
   ) throws -> Double
   /// Returns the passed in boolean.
-  func echoBool(
+  @MainActor func echoBool(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool
   ) throws -> Bool
   /// Returns the passed in string.
-  func echoString(
+  @MainActor func echoString(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String
   ) throws -> String
   /// Returns the passed in Uint8List.
-  func echoUint8List(
+  @MainActor func echoUint8List(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aUint8List: FlutterStandardTypedData
   ) throws -> FlutterStandardTypedData
   /// Returns the passed in generic Object.
-  func echoObject(
+  @MainActor func echoObject(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anObject: Any
   ) throws -> Any
   /// Returns the passed list, to test serialization and deserialization.
-  func echoList(
+  @MainActor func echoList(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?]
   ) throws -> [Any?]
   /// Returns the passed list with ProxyApis, to test serialization and
   /// deserialization.
-  func echoProxyApiList(
+  @MainActor func echoProxyApiList(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aList: [ProxyApiTestClass]
   ) throws -> [ProxyApiTestClass]
   /// Returns the passed map, to test serialization and deserialization.
-  func echoMap(
+  @MainActor func echoMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aMap: [String?: Any?]
   ) throws -> [String?: Any?]
   /// Returns the passed map with ProxyApis, to test serialization and
   /// deserialization.
-  func echoProxyApiMap(
+  @MainActor func echoProxyApiMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aMap: [String: ProxyApiTestClass]
   ) throws -> [String: ProxyApiTestClass]
   /// Returns the passed enum to test serialization and deserialization.
-  func echoEnum(
+  @MainActor func echoEnum(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     anEnum: ProxyApiTestEnum
   ) throws -> ProxyApiTestEnum
   /// Returns the passed ProxyApi to test serialization and deserialization.
-  func echoProxyApi(
+  @MainActor func echoProxyApi(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aProxyApi: ProxyApiSuperClass
   ) throws -> ProxyApiSuperClass
   /// Returns passed in int.
-  func echoNullableInt(
+  @MainActor func echoNullableInt(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aNullableInt: Int64?
   ) throws -> Int64?
   /// Returns passed in double.
-  func echoNullableDouble(
+  @MainActor func echoNullableDouble(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aNullableDouble: Double?
   ) throws -> Double?
   /// Returns the passed in boolean.
-  func echoNullableBool(
+  @MainActor func echoNullableBool(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aNullableBool: Bool?
   ) throws -> Bool?
   /// Returns the passed in string.
-  func echoNullableString(
+  @MainActor func echoNullableString(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aNullableString: String?
   ) throws -> String?
   /// Returns the passed in Uint8List.
-  func echoNullableUint8List(
+  @MainActor func echoNullableUint8List(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aNullableUint8List: FlutterStandardTypedData?
   ) throws -> FlutterStandardTypedData?
   /// Returns the passed in generic Object.
-  func echoNullableObject(
+  @MainActor func echoNullableObject(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aNullableObject: Any?
   ) throws -> Any?
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullableList(
+  @MainActor func echoNullableList(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aNullableList: [Any?]?
   ) throws -> [Any?]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableMap(
+  @MainActor func echoNullableMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aNullableMap: [String?: Any?]?
   ) throws -> [String?: Any?]?
-  func echoNullableEnum(
+  @MainActor func echoNullableEnum(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aNullableEnum: ProxyApiTestEnum?
   ) throws -> ProxyApiTestEnum?
   /// Returns the passed ProxyApi to test serialization and deserialization.
-  func echoNullableProxyApi(
+  @MainActor func echoNullableProxyApi(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aNullableProxyApi: ProxyApiSuperClass?
   ) throws -> ProxyApiSuperClass?
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
-  func noopAsync(
+  @MainActor func noopAsync(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Void, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Void, Error>) -> Void)
   /// Returns passed in int asynchronously.
-  func echoAsyncInt(
+  @MainActor func echoAsyncInt(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64,
-    completion: @escaping (Result<Int64, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Int64, Error>) -> Void)
   /// Returns passed in double asynchronously.
-  func echoAsyncDouble(
+  @MainActor func echoAsyncDouble(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aDouble: Double,
-    completion: @escaping (Result<Double, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Double, Error>) -> Void)
   /// Returns the passed in boolean asynchronously.
-  func echoAsyncBool(
+  @MainActor func echoAsyncBool(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool,
-    completion: @escaping (Result<Bool, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Bool, Error>) -> Void)
   /// Returns the passed string asynchronously.
-  func echoAsyncString(
+  @MainActor func echoAsyncString(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String,
-    completion: @escaping (Result<String, Error>) -> Void)
+    completion: @escaping @Sendable (Result<String, Error>) -> Void)
   /// Returns the passed in Uint8List asynchronously.
-  func echoAsyncUint8List(
+  @MainActor func echoAsyncUint8List(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aUint8List: FlutterStandardTypedData,
-    completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void)
+    completion: @escaping @Sendable (Result<FlutterStandardTypedData, Error>) -> Void)
   /// Returns the passed in generic Object asynchronously.
-  func echoAsyncObject(
+  @MainActor func echoAsyncObject(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anObject: Any,
-    completion: @escaping (Result<Any, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Any, Error>) -> Void)
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  func echoAsyncList(
+  @MainActor func echoAsyncList(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?],
-    completion: @escaping (Result<[Any?], Error>) -> Void)
+    completion: @escaping @Sendable (Result<[Any?], Error>) -> Void)
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  func echoAsyncMap(
+  @MainActor func echoAsyncMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aMap: [String?: Any?],
-    completion: @escaping (Result<[String?: Any?], Error>) -> Void)
+    completion: @escaping @Sendable (Result<[String?: Any?], Error>) -> Void)
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
-  func echoAsyncEnum(
+  @MainActor func echoAsyncEnum(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    anEnum: ProxyApiTestEnum, completion: @escaping (Result<ProxyApiTestEnum, Error>) -> Void)
+    anEnum: ProxyApiTestEnum,
+    completion: @escaping @Sendable (Result<ProxyApiTestEnum, Error>) -> Void)
   /// Responds with an error from an async function returning a value.
-  func throwAsyncError(
+  @MainActor func throwAsyncError(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Any?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Any?, Error>) -> Void)
   /// Responds with an error from an async void function.
-  func throwAsyncErrorFromVoid(
+  @MainActor func throwAsyncErrorFromVoid(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Void, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Void, Error>) -> Void)
   /// Responds with a Flutter error from an async function returning a value.
-  func throwAsyncFlutterError(
+  @MainActor func throwAsyncFlutterError(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Any?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Any?, Error>) -> Void)
   /// Returns passed in int asynchronously.
-  func echoAsyncNullableInt(
+  @MainActor func echoAsyncNullableInt(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64?,
-    completion: @escaping (Result<Int64?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Int64?, Error>) -> Void)
   /// Returns passed in double asynchronously.
-  func echoAsyncNullableDouble(
+  @MainActor func echoAsyncNullableDouble(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aDouble: Double?,
-    completion: @escaping (Result<Double?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Double?, Error>) -> Void)
   /// Returns the passed in boolean asynchronously.
-  func echoAsyncNullableBool(
+  @MainActor func echoAsyncNullableBool(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool?,
-    completion: @escaping (Result<Bool?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Bool?, Error>) -> Void)
   /// Returns the passed string asynchronously.
-  func echoAsyncNullableString(
+  @MainActor func echoAsyncNullableString(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String?,
-    completion: @escaping (Result<String?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<String?, Error>) -> Void)
   /// Returns the passed in Uint8List asynchronously.
-  func echoAsyncNullableUint8List(
+  @MainActor func echoAsyncNullableUint8List(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aUint8List: FlutterStandardTypedData?,
-    completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<FlutterStandardTypedData?, Error>) -> Void)
   /// Returns the passed in generic Object asynchronously.
-  func echoAsyncNullableObject(
+  @MainActor func echoAsyncNullableObject(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anObject: Any?,
-    completion: @escaping (Result<Any?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Any?, Error>) -> Void)
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  func echoAsyncNullableList(
+  @MainActor func echoAsyncNullableList(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?]?,
-    completion: @escaping (Result<[Any?]?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<[Any?]?, Error>) -> Void)
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  func echoAsyncNullableMap(
+  @MainActor func echoAsyncNullableMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
+    aMap: [String?: Any?]?,
+    completion: @escaping @Sendable (Result<[String?: Any?]?, Error>) -> Void)
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
-  func echoAsyncNullableEnum(
+  @MainActor func echoAsyncNullableEnum(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    anEnum: ProxyApiTestEnum?, completion: @escaping (Result<ProxyApiTestEnum?, Error>) -> Void)
-  func staticNoop(pigeonApi: PigeonApiProxyApiTestClass) throws
-  func echoStaticString(pigeonApi: PigeonApiProxyApiTestClass, aString: String) throws -> String
-  func staticAsyncNoop(
-    pigeonApi: PigeonApiProxyApiTestClass, completion: @escaping (Result<Void, Error>) -> Void)
-  func callFlutterNoop(
+    anEnum: ProxyApiTestEnum?,
+    completion: @escaping @Sendable (Result<ProxyApiTestEnum?, Error>) -> Void)
+  @MainActor func staticNoop(pigeonApi: PigeonApiProxyApiTestClass) throws
+  @MainActor func echoStaticString(pigeonApi: PigeonApiProxyApiTestClass, aString: String) throws
+    -> String
+  @MainActor func staticAsyncNoop(
+    pigeonApi: PigeonApiProxyApiTestClass,
+    completion: @escaping @Sendable (Result<Void, Error>) -> Void)
+  @MainActor func callFlutterNoop(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Void, Error>) -> Void)
-  func callFlutterThrowError(
+    completion: @escaping @Sendable (Result<Void, Error>) -> Void)
+  @MainActor func callFlutterThrowError(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Any?, Error>) -> Void)
-  func callFlutterThrowErrorFromVoid(
+    completion: @escaping @Sendable (Result<Any?, Error>) -> Void)
+  @MainActor func callFlutterThrowErrorFromVoid(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Void, Error>) -> Void)
-  func callFlutterEchoBool(
+    completion: @escaping @Sendable (Result<Void, Error>) -> Void)
+  @MainActor func callFlutterEchoBool(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool,
-    completion: @escaping (Result<Bool, Error>) -> Void)
-  func callFlutterEchoInt(
+    completion: @escaping @Sendable (Result<Bool, Error>) -> Void)
+  @MainActor func callFlutterEchoInt(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64,
-    completion: @escaping (Result<Int64, Error>) -> Void)
-  func callFlutterEchoDouble(
+    completion: @escaping @Sendable (Result<Int64, Error>) -> Void)
+  @MainActor func callFlutterEchoDouble(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aDouble: Double,
-    completion: @escaping (Result<Double, Error>) -> Void)
-  func callFlutterEchoString(
+    completion: @escaping @Sendable (Result<Double, Error>) -> Void)
+  @MainActor func callFlutterEchoString(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String,
-    completion: @escaping (Result<String, Error>) -> Void)
-  func callFlutterEchoUint8List(
+    completion: @escaping @Sendable (Result<String, Error>) -> Void)
+  @MainActor func callFlutterEchoUint8List(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aUint8List: FlutterStandardTypedData,
-    completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void)
-  func callFlutterEchoList(
+    completion: @escaping @Sendable (Result<FlutterStandardTypedData, Error>) -> Void)
+  @MainActor func callFlutterEchoList(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?],
-    completion: @escaping (Result<[Any?], Error>) -> Void)
-  func callFlutterEchoProxyApiList(
+    completion: @escaping @Sendable (Result<[Any?], Error>) -> Void)
+  @MainActor func callFlutterEchoProxyApiList(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    aList: [ProxyApiTestClass?], completion: @escaping (Result<[ProxyApiTestClass?], Error>) -> Void
-  )
-  func callFlutterEchoMap(
+    aList: [ProxyApiTestClass?],
+    completion: @escaping @Sendable (Result<[ProxyApiTestClass?], Error>) -> Void)
+  @MainActor func callFlutterEchoMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aMap: [String?: Any?],
-    completion: @escaping (Result<[String?: Any?], Error>) -> Void)
-  func callFlutterEchoProxyApiMap(
+    completion: @escaping @Sendable (Result<[String?: Any?], Error>) -> Void)
+  @MainActor func callFlutterEchoProxyApiMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aMap: [String?: ProxyApiTestClass?],
-    completion: @escaping (Result<[String?: ProxyApiTestClass?], Error>) -> Void)
-  func callFlutterEchoEnum(
+    completion: @escaping @Sendable (Result<[String?: ProxyApiTestClass?], Error>) -> Void)
+  @MainActor func callFlutterEchoEnum(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    anEnum: ProxyApiTestEnum, completion: @escaping (Result<ProxyApiTestEnum, Error>) -> Void)
-  func callFlutterEchoProxyApi(
+    anEnum: ProxyApiTestEnum,
+    completion: @escaping @Sendable (Result<ProxyApiTestEnum, Error>) -> Void)
+  @MainActor func callFlutterEchoProxyApi(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    aProxyApi: ProxyApiSuperClass, completion: @escaping (Result<ProxyApiSuperClass, Error>) -> Void
-  )
-  func callFlutterEchoNullableBool(
+    aProxyApi: ProxyApiSuperClass,
+    completion: @escaping @Sendable (Result<ProxyApiSuperClass, Error>) -> Void)
+  @MainActor func callFlutterEchoNullableBool(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool?,
-    completion: @escaping (Result<Bool?, Error>) -> Void)
-  func callFlutterEchoNullableInt(
+    completion: @escaping @Sendable (Result<Bool?, Error>) -> Void)
+  @MainActor func callFlutterEchoNullableInt(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64?,
-    completion: @escaping (Result<Int64?, Error>) -> Void)
-  func callFlutterEchoNullableDouble(
+    completion: @escaping @Sendable (Result<Int64?, Error>) -> Void)
+  @MainActor func callFlutterEchoNullableDouble(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aDouble: Double?,
-    completion: @escaping (Result<Double?, Error>) -> Void)
-  func callFlutterEchoNullableString(
+    completion: @escaping @Sendable (Result<Double?, Error>) -> Void)
+  @MainActor func callFlutterEchoNullableString(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String?,
-    completion: @escaping (Result<String?, Error>) -> Void)
-  func callFlutterEchoNullableUint8List(
+    completion: @escaping @Sendable (Result<String?, Error>) -> Void)
+  @MainActor func callFlutterEchoNullableUint8List(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aUint8List: FlutterStandardTypedData?,
-    completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void)
-  func callFlutterEchoNullableList(
+    completion: @escaping @Sendable (Result<FlutterStandardTypedData?, Error>) -> Void)
+  @MainActor func callFlutterEchoNullableList(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?]?,
-    completion: @escaping (Result<[Any?]?, Error>) -> Void)
-  func callFlutterEchoNullableMap(
+    completion: @escaping @Sendable (Result<[Any?]?, Error>) -> Void)
+  @MainActor func callFlutterEchoNullableMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
-  func callFlutterEchoNullableEnum(
+    aMap: [String?: Any?]?,
+    completion: @escaping @Sendable (Result<[String?: Any?]?, Error>) -> Void)
+  @MainActor func callFlutterEchoNullableEnum(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    anEnum: ProxyApiTestEnum?, completion: @escaping (Result<ProxyApiTestEnum?, Error>) -> Void)
-  func callFlutterEchoNullableProxyApi(
+    anEnum: ProxyApiTestEnum?,
+    completion: @escaping @Sendable (Result<ProxyApiTestEnum?, Error>) -> Void)
+  @MainActor func callFlutterEchoNullableProxyApi(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aProxyApi: ProxyApiSuperClass?,
-    completion: @escaping (Result<ProxyApiSuperClass?, Error>) -> Void)
-  func callFlutterNoopAsync(
+    completion: @escaping @Sendable (Result<ProxyApiSuperClass?, Error>) -> Void)
+  @MainActor func callFlutterNoopAsync(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Void, Error>) -> Void)
-  func callFlutterEchoAsyncString(
+    completion: @escaping @Sendable (Result<Void, Error>) -> Void)
+  @MainActor func callFlutterEchoAsyncString(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String,
-    completion: @escaping (Result<String, Error>) -> Void)
+    completion: @escaping @Sendable (Result<String, Error>) -> Void)
 }
 
 protocol PigeonApiProtocolProxyApiTestClass {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
-  func flutterNoop(
+  @MainActor func flutterNoop(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
-    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<Void, ProxyApiTestsError>) -> Void)
   /// Responds with an error from an async function returning a value.
-  func flutterThrowError(
+  @MainActor func flutterThrowError(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
-    completion: @escaping (Result<Any?, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<Any?, ProxyApiTestsError>) -> Void)
   /// Responds with an error from an async void function.
-  func flutterThrowErrorFromVoid(
+  @MainActor func flutterThrowErrorFromVoid(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
-    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<Void, ProxyApiTestsError>) -> Void)
   /// Returns the passed boolean, to test serialization and deserialization.
-  func flutterEchoBool(
+  @MainActor func flutterEchoBool(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aBool aBoolArg: Bool,
-    completion: @escaping (Result<Bool, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<Bool, ProxyApiTestsError>) -> Void)
   /// Returns the passed int, to test serialization and deserialization.
-  func flutterEchoInt(
+  @MainActor func flutterEchoInt(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, anInt anIntArg: Int64,
-    completion: @escaping (Result<Int64, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<Int64, ProxyApiTestsError>) -> Void)
   /// Returns the passed double, to test serialization and deserialization.
-  func flutterEchoDouble(
+  @MainActor func flutterEchoDouble(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aDouble aDoubleArg: Double,
-    completion: @escaping (Result<Double, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<Double, ProxyApiTestsError>) -> Void)
   /// Returns the passed string, to test serialization and deserialization.
-  func flutterEchoString(
+  @MainActor func flutterEchoString(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aString aStringArg: String,
-    completion: @escaping (Result<String, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<String, ProxyApiTestsError>) -> Void)
   /// Returns the passed byte list, to test serialization and deserialization.
-  func flutterEchoUint8List(
+  @MainActor func flutterEchoUint8List(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: FlutterStandardTypedData,
-    completion: @escaping (Result<FlutterStandardTypedData, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<FlutterStandardTypedData, ProxyApiTestsError>) -> Void)
   /// Returns the passed list, to test serialization and deserialization.
-  func flutterEchoList(
+  @MainActor func flutterEchoList(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [Any?],
-    completion: @escaping (Result<[Any?], ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<[Any?], ProxyApiTestsError>) -> Void)
   /// Returns the passed list with ProxyApis, to test serialization and
   /// deserialization.
-  func flutterEchoProxyApiList(
+  @MainActor func flutterEchoProxyApiList(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [ProxyApiTestClass?],
-    completion: @escaping (Result<[ProxyApiTestClass?], ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<[ProxyApiTestClass?], ProxyApiTestsError>) -> Void)
   /// Returns the passed map, to test serialization and deserialization.
-  func flutterEchoMap(
+  @MainActor func flutterEchoMap(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aMap aMapArg: [String?: Any?],
-    completion: @escaping (Result<[String?: Any?], ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<[String?: Any?], ProxyApiTestsError>) -> Void)
   /// Returns the passed map with ProxyApis, to test serialization and
   /// deserialization.
-  func flutterEchoProxyApiMap(
+  @MainActor func flutterEchoProxyApiMap(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
     aMap aMapArg: [String?: ProxyApiTestClass?],
-    completion: @escaping (Result<[String?: ProxyApiTestClass?], ProxyApiTestsError>) -> Void)
+    completion:
+      @escaping @MainActor (Result<[String?: ProxyApiTestClass?], ProxyApiTestsError>) -> Void)
   /// Returns the passed enum to test serialization and deserialization.
-  func flutterEchoEnum(
+  @MainActor func flutterEchoEnum(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, anEnum anEnumArg: ProxyApiTestEnum,
-    completion: @escaping (Result<ProxyApiTestEnum, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<ProxyApiTestEnum, ProxyApiTestsError>) -> Void)
   /// Returns the passed ProxyApi to test serialization and deserialization.
-  func flutterEchoProxyApi(
+  @MainActor func flutterEchoProxyApi(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aProxyApi aProxyApiArg: ProxyApiSuperClass,
-    completion: @escaping (Result<ProxyApiSuperClass, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<ProxyApiSuperClass, ProxyApiTestsError>) -> Void)
   /// Returns the passed boolean, to test serialization and deserialization.
-  func flutterEchoNullableBool(
+  @MainActor func flutterEchoNullableBool(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aBool aBoolArg: Bool?,
-    completion: @escaping (Result<Bool?, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<Bool?, ProxyApiTestsError>) -> Void)
   /// Returns the passed int, to test serialization and deserialization.
-  func flutterEchoNullableInt(
+  @MainActor func flutterEchoNullableInt(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, anInt anIntArg: Int64?,
-    completion: @escaping (Result<Int64?, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<Int64?, ProxyApiTestsError>) -> Void)
   /// Returns the passed double, to test serialization and deserialization.
-  func flutterEchoNullableDouble(
+  @MainActor func flutterEchoNullableDouble(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aDouble aDoubleArg: Double?,
-    completion: @escaping (Result<Double?, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<Double?, ProxyApiTestsError>) -> Void)
   /// Returns the passed string, to test serialization and deserialization.
-  func flutterEchoNullableString(
+  @MainActor func flutterEchoNullableString(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aString aStringArg: String?,
-    completion: @escaping (Result<String?, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<String?, ProxyApiTestsError>) -> Void)
   /// Returns the passed byte list, to test serialization and deserialization.
-  func flutterEchoNullableUint8List(
+  @MainActor func flutterEchoNullableUint8List(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: FlutterStandardTypedData?,
-    completion: @escaping (Result<FlutterStandardTypedData?, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<FlutterStandardTypedData?, ProxyApiTestsError>) -> Void
+  )
   /// Returns the passed list, to test serialization and deserialization.
-  func flutterEchoNullableList(
+  @MainActor func flutterEchoNullableList(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [Any?]?,
-    completion: @escaping (Result<[Any?]?, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<[Any?]?, ProxyApiTestsError>) -> Void)
   /// Returns the passed map, to test serialization and deserialization.
-  func flutterEchoNullableMap(
+  @MainActor func flutterEchoNullableMap(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aMap aMapArg: [String?: Any?]?,
-    completion: @escaping (Result<[String?: Any?]?, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<[String?: Any?]?, ProxyApiTestsError>) -> Void)
   /// Returns the passed enum to test serialization and deserialization.
-  func flutterEchoNullableEnum(
+  @MainActor func flutterEchoNullableEnum(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, anEnum anEnumArg: ProxyApiTestEnum?,
-    completion: @escaping (Result<ProxyApiTestEnum?, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<ProxyApiTestEnum?, ProxyApiTestsError>) -> Void)
   /// Returns the passed ProxyApi to test serialization and deserialization.
-  func flutterEchoNullableProxyApi(
+  @MainActor func flutterEchoNullableProxyApi(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
     aProxyApi aProxyApiArg: ProxyApiSuperClass?,
-    completion: @escaping (Result<ProxyApiSuperClass?, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<ProxyApiSuperClass?, ProxyApiTestsError>) -> Void)
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
-  func flutterNoopAsync(
+  @MainActor func flutterNoopAsync(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
-    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<Void, ProxyApiTestsError>) -> Void)
   /// Returns the passed in generic Object asynchronously.
-  func flutterEchoAsyncString(
+  @MainActor func flutterEchoAsyncString(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aString aStringArg: String,
-    completion: @escaping (Result<String, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<String, ProxyApiTestsError>) -> Void)
 }
 
-final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
+@MainActor final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateProxyApiTestClass
   ///An implementation of [ProxyApiSuperClass] used to access callback methods
@@ -1113,7 +1133,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.pigeon_defaultConstructor",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
+      pigeonDefaultConstructorChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
         let aBoolArg = args[1] as! Bool
@@ -1185,7 +1206,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.namedConstructor",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      namedConstructorChannel.setMessageHandler { message, reply in
+      namedConstructorChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
         let aBoolArg = args[1] as! Bool
@@ -1229,7 +1251,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.attachedField",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      attachedFieldChannel.setMessageHandler { message, reply in
+      attachedFieldChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let pigeonIdentifierArg = args[1] as! Int64
@@ -1249,7 +1272,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.staticAttachedField",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      staticAttachedFieldChannel.setMessageHandler { message, reply in
+      staticAttachedFieldChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
         do {
@@ -1268,7 +1292,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.noop",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      noopChannel.setMessageHandler { message, reply in
+      noopChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         do {
@@ -1285,7 +1310,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwError",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwErrorChannel.setMessageHandler { message, reply in
+      throwErrorChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         do {
@@ -1303,7 +1329,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwErrorFromVoid",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwErrorFromVoidChannel.setMessageHandler { message, reply in
+      throwErrorFromVoidChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         do {
@@ -1321,7 +1348,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwFlutterError",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwFlutterErrorChannel.setMessageHandler { message, reply in
+      throwFlutterErrorChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         do {
@@ -1339,7 +1367,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoInt",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoIntChannel.setMessageHandler { message, reply in
+      echoIntChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anIntArg = args[1] as! Int64
@@ -1358,7 +1387,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoDouble",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoDoubleChannel.setMessageHandler { message, reply in
+      echoDoubleChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aDoubleArg = args[1] as! Double
@@ -1377,7 +1407,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoBool",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoBoolChannel.setMessageHandler { message, reply in
+      echoBoolChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aBoolArg = args[1] as! Bool
@@ -1396,7 +1427,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoString",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoStringChannel.setMessageHandler { message, reply in
+      echoStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aStringArg = args[1] as! String
@@ -1415,7 +1447,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoUint8List",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoUint8ListChannel.setMessageHandler { message, reply in
+      echoUint8ListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aUint8ListArg = args[1] as! FlutterStandardTypedData
@@ -1434,7 +1467,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoObject",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoObjectChannel.setMessageHandler { message, reply in
+      echoObjectChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anObjectArg = args[1]!
@@ -1453,7 +1487,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoList",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoListChannel.setMessageHandler { message, reply in
+      echoListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aListArg = args[1] as! [Any?]
@@ -1472,7 +1507,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoProxyApiList",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoProxyApiListChannel.setMessageHandler { message, reply in
+      echoProxyApiListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aListArg = args[1] as! [ProxyApiTestClass]
@@ -1491,7 +1527,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoMap",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoMapChannel.setMessageHandler { message, reply in
+      echoMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aMapArg = args[1] as! [String?: Any?]
@@ -1510,7 +1547,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoProxyApiMap",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoProxyApiMapChannel.setMessageHandler { message, reply in
+      echoProxyApiMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aMapArg = args[1] as! [String: ProxyApiTestClass]
@@ -1529,7 +1567,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoEnum",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoEnumChannel.setMessageHandler { message, reply in
+      echoEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anEnumArg = args[1] as! ProxyApiTestEnum
@@ -1548,7 +1587,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoProxyApi",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoProxyApiChannel.setMessageHandler { message, reply in
+      echoProxyApiChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aProxyApiArg = args[1] as! ProxyApiSuperClass
@@ -1567,7 +1607,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableInt",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableIntChannel.setMessageHandler { message, reply in
+      echoNullableIntChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aNullableIntArg: Int64? = nilOrValue(args[1])
@@ -1586,7 +1627,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableDouble",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableDoubleChannel.setMessageHandler { message, reply in
+      echoNullableDoubleChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aNullableDoubleArg: Double? = nilOrValue(args[1])
@@ -1605,7 +1647,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableBool",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableBoolChannel.setMessageHandler { message, reply in
+      echoNullableBoolChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aNullableBoolArg: Bool? = nilOrValue(args[1])
@@ -1624,7 +1667,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableString",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableStringChannel.setMessageHandler { message, reply in
+      echoNullableStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aNullableStringArg: String? = nilOrValue(args[1])
@@ -1643,7 +1687,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableUint8List",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableUint8ListChannel.setMessageHandler { message, reply in
+      echoNullableUint8ListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aNullableUint8ListArg: FlutterStandardTypedData? = nilOrValue(args[1])
@@ -1663,7 +1708,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableObject",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableObjectChannel.setMessageHandler { message, reply in
+      echoNullableObjectChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aNullableObjectArg: Any? = args[1]
@@ -1682,7 +1728,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableList",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableListChannel.setMessageHandler { message, reply in
+      echoNullableListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aNullableListArg: [Any?]? = nilOrValue(args[1])
@@ -1701,7 +1748,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableMap",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableMapChannel.setMessageHandler { message, reply in
+      echoNullableMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aNullableMapArg: [String?: Any?]? = nilOrValue(args[1])
@@ -1720,7 +1768,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableEnum",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableEnumChannel.setMessageHandler { message, reply in
+      echoNullableEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aNullableEnumArg: ProxyApiTestEnum? = nilOrValue(args[1])
@@ -1739,7 +1788,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableProxyApi",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableProxyApiChannel.setMessageHandler { message, reply in
+      echoNullableProxyApiChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aNullableProxyApiArg: ProxyApiSuperClass? = nilOrValue(args[1])
@@ -1759,7 +1809,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.noopAsync",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      noopAsyncChannel.setMessageHandler { message, reply in
+      noopAsyncChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         api.pigeonDelegate.noopAsync(pigeonApi: api, pigeonInstance: pigeonInstanceArg) { result in
@@ -1778,7 +1829,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncInt",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncIntChannel.setMessageHandler { message, reply in
+      echoAsyncIntChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anIntArg = args[1] as! Int64
@@ -1800,7 +1852,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncDouble",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncDoubleChannel.setMessageHandler { message, reply in
+      echoAsyncDoubleChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aDoubleArg = args[1] as! Double
@@ -1822,7 +1875,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncBool",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncBoolChannel.setMessageHandler { message, reply in
+      echoAsyncBoolChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aBoolArg = args[1] as! Bool
@@ -1844,7 +1898,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncString",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncStringChannel.setMessageHandler { message, reply in
+      echoAsyncStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aStringArg = args[1] as! String
@@ -1866,7 +1921,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncUint8List",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncUint8ListChannel.setMessageHandler { message, reply in
+      echoAsyncUint8ListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aUint8ListArg = args[1] as! FlutterStandardTypedData
@@ -1888,7 +1944,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncObject",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncObjectChannel.setMessageHandler { message, reply in
+      echoAsyncObjectChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anObjectArg = args[1]!
@@ -1910,7 +1967,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncList",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncListChannel.setMessageHandler { message, reply in
+      echoAsyncListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aListArg = args[1] as! [Any?]
@@ -1932,7 +1990,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncMap",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncMapChannel.setMessageHandler { message, reply in
+      echoAsyncMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aMapArg = args[1] as! [String?: Any?]
@@ -1954,7 +2013,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncEnum",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncEnumChannel.setMessageHandler { message, reply in
+      echoAsyncEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anEnumArg = args[1] as! ProxyApiTestEnum
@@ -1976,7 +2036,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwAsyncError",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwAsyncErrorChannel.setMessageHandler { message, reply in
+      throwAsyncErrorChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         api.pigeonDelegate.throwAsyncError(pigeonApi: api, pigeonInstance: pigeonInstanceArg) {
@@ -1996,7 +2057,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwAsyncErrorFromVoid",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwAsyncErrorFromVoidChannel.setMessageHandler { message, reply in
+      throwAsyncErrorFromVoidChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         api.pigeonDelegate.throwAsyncErrorFromVoid(
@@ -2017,7 +2079,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwAsyncFlutterError",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwAsyncFlutterErrorChannel.setMessageHandler { message, reply in
+      throwAsyncFlutterErrorChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         api.pigeonDelegate.throwAsyncFlutterError(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
@@ -2037,7 +2100,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableInt",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableIntChannel.setMessageHandler { message, reply in
+      echoAsyncNullableIntChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anIntArg: Int64? = nilOrValue(args[1])
@@ -2059,7 +2123,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableDouble",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableDoubleChannel.setMessageHandler { message, reply in
+      echoAsyncNullableDoubleChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aDoubleArg: Double? = nilOrValue(args[1])
@@ -2081,7 +2146,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableBool",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableBoolChannel.setMessageHandler { message, reply in
+      echoAsyncNullableBoolChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aBoolArg: Bool? = nilOrValue(args[1])
@@ -2103,7 +2169,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableString",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableStringChannel.setMessageHandler { message, reply in
+      echoAsyncNullableStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aStringArg: String? = nilOrValue(args[1])
@@ -2126,7 +2193,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableUint8List",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableUint8ListChannel.setMessageHandler { message, reply in
+      echoAsyncNullableUint8ListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aUint8ListArg: FlutterStandardTypedData? = nilOrValue(args[1])
@@ -2148,7 +2216,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableObject",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableObjectChannel.setMessageHandler { message, reply in
+      echoAsyncNullableObjectChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anObjectArg: Any? = args[1]
@@ -2170,7 +2239,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableList",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableListChannel.setMessageHandler { message, reply in
+      echoAsyncNullableListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aListArg: [Any?]? = nilOrValue(args[1])
@@ -2192,7 +2262,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableMap",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableMapChannel.setMessageHandler { message, reply in
+      echoAsyncNullableMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aMapArg: [String?: Any?]? = nilOrValue(args[1])
@@ -2214,7 +2285,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableEnum",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableEnumChannel.setMessageHandler { message, reply in
+      echoAsyncNullableEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anEnumArg: ProxyApiTestEnum? = nilOrValue(args[1])
@@ -2236,7 +2308,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.staticNoop",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      staticNoopChannel.setMessageHandler { _, reply in
+      staticNoopChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         do {
           try api.pigeonDelegate.staticNoop(pigeonApi: api)
           reply(wrapResult(nil))
@@ -2251,7 +2324,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoStaticString",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoStaticStringChannel.setMessageHandler { message, reply in
+      echoStaticStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
         do {
@@ -2268,7 +2342,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.staticAsyncNoop",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      staticAsyncNoopChannel.setMessageHandler { _, reply in
+      staticAsyncNoopChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         api.pigeonDelegate.staticAsyncNoop(pigeonApi: api) { result in
           switch result {
           case .success:
@@ -2285,7 +2360,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterNoop",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterNoopChannel.setMessageHandler { message, reply in
+      callFlutterNoopChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         api.pigeonDelegate.callFlutterNoop(pigeonApi: api, pigeonInstance: pigeonInstanceArg) {
@@ -2305,7 +2381,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterThrowError",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterThrowErrorChannel.setMessageHandler { message, reply in
+      callFlutterThrowErrorChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         api.pigeonDelegate.callFlutterThrowError(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
@@ -2326,7 +2403,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterThrowErrorFromVoid",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterThrowErrorFromVoidChannel.setMessageHandler { message, reply in
+      callFlutterThrowErrorFromVoidChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         api.pigeonDelegate.callFlutterThrowErrorFromVoid(
@@ -2347,7 +2425,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoBool",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoBoolChannel.setMessageHandler { message, reply in
+      callFlutterEchoBoolChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aBoolArg = args[1] as! Bool
@@ -2369,7 +2448,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoInt",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoIntChannel.setMessageHandler { message, reply in
+      callFlutterEchoIntChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anIntArg = args[1] as! Int64
@@ -2391,7 +2471,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoDouble",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoDoubleChannel.setMessageHandler { message, reply in
+      callFlutterEchoDoubleChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aDoubleArg = args[1] as! Double
@@ -2413,7 +2494,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoString",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoStringChannel.setMessageHandler { message, reply in
+      callFlutterEchoStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aStringArg = args[1] as! String
@@ -2436,7 +2518,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoUint8List",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoUint8ListChannel.setMessageHandler { message, reply in
+      callFlutterEchoUint8ListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aUint8ListArg = args[1] as! FlutterStandardTypedData
@@ -2458,7 +2541,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoList",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoListChannel.setMessageHandler { message, reply in
+      callFlutterEchoListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aListArg = args[1] as! [Any?]
@@ -2481,7 +2565,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoProxyApiList",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoProxyApiListChannel.setMessageHandler { message, reply in
+      callFlutterEchoProxyApiListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aListArg = args[1] as! [ProxyApiTestClass?]
@@ -2503,7 +2588,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoMap",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aMapArg = args[1] as! [String?: Any?]
@@ -2526,7 +2612,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoProxyApiMap",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoProxyApiMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoProxyApiMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aMapArg = args[1] as! [String?: ProxyApiTestClass?]
@@ -2548,7 +2635,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoEnum",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoEnumChannel.setMessageHandler { message, reply in
+      callFlutterEchoEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anEnumArg = args[1] as! ProxyApiTestEnum
@@ -2570,7 +2658,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoProxyApi",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoProxyApiChannel.setMessageHandler { message, reply in
+      callFlutterEchoProxyApiChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aProxyApiArg = args[1] as! ProxyApiSuperClass
@@ -2593,7 +2682,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableBool",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableBoolChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableBoolChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aBoolArg: Bool? = nilOrValue(args[1])
@@ -2616,7 +2706,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableInt",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableIntChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableIntChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anIntArg: Int64? = nilOrValue(args[1])
@@ -2639,7 +2730,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableDouble",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableDoubleChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableDoubleChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aDoubleArg: Double? = nilOrValue(args[1])
@@ -2662,7 +2754,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableString",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableStringChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aStringArg: String? = nilOrValue(args[1])
@@ -2685,7 +2778,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableUint8List",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableUint8ListChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableUint8ListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aUint8ListArg: FlutterStandardTypedData? = nilOrValue(args[1])
@@ -2708,7 +2802,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableList",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableListChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aListArg: [Any?]? = nilOrValue(args[1])
@@ -2731,7 +2826,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableMap",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aMapArg: [String?: Any?]? = nilOrValue(args[1])
@@ -2754,7 +2850,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableEnum",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableEnumChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anEnumArg: ProxyApiTestEnum? = nilOrValue(args[1])
@@ -2777,7 +2874,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableProxyApi",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableProxyApiChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableProxyApiChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aProxyApiArg: ProxyApiSuperClass? = nilOrValue(args[1])
@@ -2799,7 +2897,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterNoopAsync",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterNoopAsyncChannel.setMessageHandler { message, reply in
+      callFlutterNoopAsyncChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         api.pigeonDelegate.callFlutterNoopAsync(pigeonApi: api, pigeonInstance: pigeonInstanceArg) {
@@ -2820,7 +2919,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoAsyncString",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoAsyncStringChannel.setMessageHandler { message, reply in
+      callFlutterEchoAsyncStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aStringArg = args[1] as! String
@@ -2841,9 +2941,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   ///Creates a Dart instance of ProxyApiTestClass and attaches it to [pigeonInstance].
-  func pigeonNewInstance(
+  @MainActor func pigeonNewInstance(
     pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -2865,9 +2965,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
-  func flutterNoop(
+  @MainActor func flutterNoop(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
-    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -2892,7 +2992,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoop"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -2911,9 +3011,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Responds with an error from an async function returning a value.
-  func flutterThrowError(
+  @MainActor func flutterThrowError(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
-    completion: @escaping (Result<Any?, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<Any?, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -2938,7 +3038,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowError"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -2958,9 +3058,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Responds with an error from an async void function.
-  func flutterThrowErrorFromVoid(
+  @MainActor func flutterThrowErrorFromVoid(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
-    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -2985,7 +3085,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowErrorFromVoid"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3004,9 +3104,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed boolean, to test serialization and deserialization.
-  func flutterEchoBool(
+  @MainActor func flutterEchoBool(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aBool aBoolArg: Bool,
-    completion: @escaping (Result<Bool, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<Bool, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3031,7 +3131,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoBool"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, aBoolArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, aBoolArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3058,9 +3158,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed int, to test serialization and deserialization.
-  func flutterEchoInt(
+  @MainActor func flutterEchoInt(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, anInt anIntArg: Int64,
-    completion: @escaping (Result<Int64, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<Int64, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3085,7 +3185,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoInt"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, anIntArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, anIntArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3112,9 +3212,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed double, to test serialization and deserialization.
-  func flutterEchoDouble(
+  @MainActor func flutterEchoDouble(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aDouble aDoubleArg: Double,
-    completion: @escaping (Result<Double, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<Double, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3139,7 +3239,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoDouble"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, aDoubleArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, aDoubleArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3166,9 +3266,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed string, to test serialization and deserialization.
-  func flutterEchoString(
+  @MainActor func flutterEchoString(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aString aStringArg: String,
-    completion: @escaping (Result<String, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<String, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3193,7 +3293,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoString"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, aStringArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, aStringArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3220,9 +3320,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed byte list, to test serialization and deserialization.
-  func flutterEchoUint8List(
+  @MainActor func flutterEchoUint8List(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: FlutterStandardTypedData,
-    completion: @escaping (Result<FlutterStandardTypedData, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<FlutterStandardTypedData, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3247,7 +3347,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoUint8List"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3274,9 +3374,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  func flutterEchoList(
+  @MainActor func flutterEchoList(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [Any?],
-    completion: @escaping (Result<[Any?], ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<[Any?], ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3301,7 +3401,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoList"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3329,9 +3429,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
 
   /// Returns the passed list with ProxyApis, to test serialization and
   /// deserialization.
-  func flutterEchoProxyApiList(
+  @MainActor func flutterEchoProxyApiList(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [ProxyApiTestClass?],
-    completion: @escaping (Result<[ProxyApiTestClass?], ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<[ProxyApiTestClass?], ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3356,7 +3456,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiList"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3383,9 +3483,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  func flutterEchoMap(
+  @MainActor func flutterEchoMap(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aMap aMapArg: [String?: Any?],
-    completion: @escaping (Result<[String?: Any?], ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<[String?: Any?], ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3410,7 +3510,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoMap"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, aMapArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, aMapArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3438,10 +3538,11 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
 
   /// Returns the passed map with ProxyApis, to test serialization and
   /// deserialization.
-  func flutterEchoProxyApiMap(
+  @MainActor func flutterEchoProxyApiMap(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
     aMap aMapArg: [String?: ProxyApiTestClass?],
-    completion: @escaping (Result<[String?: ProxyApiTestClass?], ProxyApiTestsError>) -> Void
+    completion:
+      @escaping @MainActor (Result<[String?: ProxyApiTestClass?], ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3466,7 +3567,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiMap"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, aMapArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, aMapArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3493,9 +3594,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed enum to test serialization and deserialization.
-  func flutterEchoEnum(
+  @MainActor func flutterEchoEnum(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, anEnum anEnumArg: ProxyApiTestEnum,
-    completion: @escaping (Result<ProxyApiTestEnum, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<ProxyApiTestEnum, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3520,7 +3621,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, anEnumArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, anEnumArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3547,9 +3648,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
-  func flutterEchoProxyApi(
+  @MainActor func flutterEchoProxyApi(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aProxyApi aProxyApiArg: ProxyApiSuperClass,
-    completion: @escaping (Result<ProxyApiSuperClass, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<ProxyApiSuperClass, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3574,7 +3675,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApi"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, aProxyApiArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, aProxyApiArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3601,9 +3702,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed boolean, to test serialization and deserialization.
-  func flutterEchoNullableBool(
+  @MainActor func flutterEchoNullableBool(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aBool aBoolArg: Bool?,
-    completion: @escaping (Result<Bool?, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<Bool?, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3628,7 +3729,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableBool"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, aBoolArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, aBoolArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3648,9 +3749,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed int, to test serialization and deserialization.
-  func flutterEchoNullableInt(
+  @MainActor func flutterEchoNullableInt(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, anInt anIntArg: Int64?,
-    completion: @escaping (Result<Int64?, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<Int64?, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3675,7 +3776,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableInt"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, anIntArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, anIntArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3695,9 +3796,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed double, to test serialization and deserialization.
-  func flutterEchoNullableDouble(
+  @MainActor func flutterEchoNullableDouble(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aDouble aDoubleArg: Double?,
-    completion: @escaping (Result<Double?, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<Double?, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3722,7 +3823,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableDouble"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, aDoubleArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, aDoubleArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3742,9 +3843,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed string, to test serialization and deserialization.
-  func flutterEchoNullableString(
+  @MainActor func flutterEchoNullableString(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aString aStringArg: String?,
-    completion: @escaping (Result<String?, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<String?, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3769,7 +3870,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableString"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, aStringArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, aStringArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3789,9 +3890,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed byte list, to test serialization and deserialization.
-  func flutterEchoNullableUint8List(
+  @MainActor func flutterEchoNullableUint8List(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: FlutterStandardTypedData?,
-    completion: @escaping (Result<FlutterStandardTypedData?, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<FlutterStandardTypedData?, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3816,7 +3917,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableUint8List"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3836,9 +3937,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  func flutterEchoNullableList(
+  @MainActor func flutterEchoNullableList(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [Any?]?,
-    completion: @escaping (Result<[Any?]?, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<[Any?]?, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3863,7 +3964,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableList"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3883,9 +3984,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed map, to test serialization and deserialization.
-  func flutterEchoNullableMap(
+  @MainActor func flutterEchoNullableMap(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aMap aMapArg: [String?: Any?]?,
-    completion: @escaping (Result<[String?: Any?]?, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<[String?: Any?]?, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3910,7 +4011,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableMap"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, aMapArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, aMapArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3930,9 +4031,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed enum to test serialization and deserialization.
-  func flutterEchoNullableEnum(
+  @MainActor func flutterEchoNullableEnum(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, anEnum anEnumArg: ProxyApiTestEnum?,
-    completion: @escaping (Result<ProxyApiTestEnum?, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<ProxyApiTestEnum?, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3957,7 +4058,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableEnum"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, anEnumArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, anEnumArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3977,10 +4078,10 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
-  func flutterEchoNullableProxyApi(
+  @MainActor func flutterEchoNullableProxyApi(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
     aProxyApi aProxyApiArg: ProxyApiSuperClass?,
-    completion: @escaping (Result<ProxyApiSuperClass?, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<ProxyApiSuperClass?, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -4005,7 +4106,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableProxyApi"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, aProxyApiArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, aProxyApiArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -4026,9 +4127,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
-  func flutterNoopAsync(
+  @MainActor func flutterNoopAsync(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
-    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -4053,7 +4154,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoopAsync"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -4072,9 +4173,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
   /// Returns the passed in generic Object asynchronously.
-  func flutterEchoAsyncString(
+  @MainActor func flutterEchoAsyncString(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aString aStringArg: String,
-    completion: @escaping (Result<String, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<String, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -4099,7 +4200,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoAsyncString"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, aStringArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, aStringArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -4127,15 +4228,16 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
 
 }
 protocol PigeonApiDelegateProxyApiSuperClass {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiProxyApiSuperClass) throws -> ProxyApiSuperClass
-  func aSuperMethod(pigeonApi: PigeonApiProxyApiSuperClass, pigeonInstance: ProxyApiSuperClass)
-    throws
+  @MainActor func pigeonDefaultConstructor(pigeonApi: PigeonApiProxyApiSuperClass) throws
+    -> ProxyApiSuperClass
+  @MainActor func aSuperMethod(
+    pigeonApi: PigeonApiProxyApiSuperClass, pigeonInstance: ProxyApiSuperClass) throws
 }
 
 protocol PigeonApiProtocolProxyApiSuperClass {
 }
 
-final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
+@MainActor final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
   unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateProxyApiSuperClass
   init(
@@ -4159,7 +4261,8 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_defaultConstructor",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
+      pigeonDefaultConstructorChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
         do {
@@ -4178,7 +4281,8 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.aSuperMethod",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      aSuperMethodChannel.setMessageHandler { message, reply in
+      aSuperMethodChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiSuperClass
         do {
@@ -4194,9 +4298,9 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
   }
 
   ///Creates a Dart instance of ProxyApiSuperClass and attaches it to [pigeonInstance].
-  func pigeonNewInstance(
+  @MainActor func pigeonNewInstance(
     pigeonInstance: ProxyApiSuperClass,
-    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -4215,7 +4319,7 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+      channel.sendMessage([pigeonIdentifierArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -4238,12 +4342,12 @@ open class PigeonApiDelegateProxyApiInterface {
 }
 
 protocol PigeonApiProtocolProxyApiInterface {
-  func anInterfaceMethod(
+  @MainActor func anInterfaceMethod(
     pigeonInstance pigeonInstanceArg: ProxyApiInterface,
-    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void)
+    completion: @escaping @MainActor (Result<Void, ProxyApiTestsError>) -> Void)
 }
 
-final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
+@MainActor final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
   unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateProxyApiInterface
   init(
@@ -4254,9 +4358,9 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of ProxyApiInterface and attaches it to [pigeonInstance].
-  func pigeonNewInstance(
+  @MainActor func pigeonNewInstance(
     pigeonInstance: ProxyApiInterface,
-    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -4275,7 +4379,7 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+      channel.sendMessage([pigeonIdentifierArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -4293,9 +4397,9 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
       }
     }
   }
-  func anInterfaceMethod(
+  @MainActor func anInterfaceMethod(
     pigeonInstance pigeonInstanceArg: ProxyApiInterface,
-    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -4320,7 +4424,7 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.anInterfaceMethod"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -4341,17 +4445,17 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
 }
 protocol PigeonApiDelegateClassWithApiRequirement {
   @available(iOS 15.0.0, macOS 10.0.0, *)
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiClassWithApiRequirement) throws
+  @MainActor func pigeonDefaultConstructor(pigeonApi: PigeonApiClassWithApiRequirement) throws
     -> ClassWithApiRequirement
   @available(iOS 15.0.0, macOS 10.0.0, *)
-  func aMethod(pigeonApi: PigeonApiClassWithApiRequirement, pigeonInstance: ClassWithApiRequirement)
-    throws
+  @MainActor func aMethod(
+    pigeonApi: PigeonApiClassWithApiRequirement, pigeonInstance: ClassWithApiRequirement) throws
 }
 
 protocol PigeonApiProtocolClassWithApiRequirement {
 }
 
-final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequirement {
+@MainActor final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequirement {
   unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateClassWithApiRequirement
   init(
@@ -4376,7 +4480,8 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
           "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_defaultConstructor",
         binaryMessenger: binaryMessenger, codec: codec)
       if let api = api {
-        pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
+        pigeonDefaultConstructorChannel.setMessageHandler {
+          @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
           let args = message as! [Any?]
           let pigeonIdentifierArg = args[0] as! Int64
           do {
@@ -4416,7 +4521,8 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
         name: "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.aMethod",
         binaryMessenger: binaryMessenger, codec: codec)
       if let api = api {
-        aMethodChannel.setMessageHandler { message, reply in
+        aMethodChannel.setMessageHandler {
+          @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
           let args = message as! [Any?]
           let pigeonInstanceArg = args[0] as! ClassWithApiRequirement
           do {
@@ -4451,9 +4557,9 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
 
   ///Creates a Dart instance of ClassWithApiRequirement and attaches it to [pigeonInstance].
   @available(iOS 15.0.0, macOS 10.0.0, *)
-  func pigeonNewInstance(
+  @MainActor func pigeonNewInstance(
     pigeonInstance: ClassWithApiRequirement,
-    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
+    completion: @escaping @MainActor (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -4472,7 +4578,7 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
         "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_newInstance"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+      channel.sendMessage([pigeonIdentifierArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             completion(.failure(createConnectionError(withChannelName: channelName)))

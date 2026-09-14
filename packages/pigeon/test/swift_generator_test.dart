@@ -1844,5 +1844,115 @@ void main() {
       expect(sinkDisabled.toString(), contains('  func doWork() throws\n'));
       expect(sinkEnabled.toString(), contains('  @MainActor func doWork() throws\n'));
     });
+
+    test(
+      'emits (response: any Sendable) on Flutter API sendMessage with swiftStrictConcurrency',
+      () {
+        final root = Root(
+          apis: <Api>[
+            AstFlutterApi(
+              name: 'Api',
+              methods: <Method>[
+                Method(
+                  name: 'sendMessage',
+                  location: ApiLocation.flutter,
+                  parameters: <Parameter>[
+                    Parameter(
+                      name: 'arg',
+                      type: const TypeDeclaration(baseName: 'String', isNullable: false),
+                    ),
+                  ],
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+
+        final sinkDisabled = StringBuffer();
+        const generator = SwiftGenerator();
+        generator.generate(
+          const InternalSwiftOptions(swiftOut: ''),
+          root,
+          sinkDisabled,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+
+        final sinkEnabled = StringBuffer();
+        generator.generate(
+          const InternalSwiftOptions(swiftOut: '', swiftStrictConcurrency: true),
+          root,
+          sinkEnabled,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+
+        expect(
+          sinkDisabled.toString(),
+          contains('channel.sendMessage([argArg] as [Any?]) { response in'),
+        );
+        expect(
+          sinkEnabled.toString(),
+          contains('channel.sendMessage([argArg] as [Any?]) { (response: any Sendable) in'),
+        );
+      },
+    );
+
+    test(
+      'emits typed closure parameters on Host API setMessageHandler with swiftStrictConcurrency',
+      () {
+        final root = Root(
+          apis: <Api>[
+            AstHostApi(
+              name: 'Api',
+              methods: <Method>[
+                Method(
+                  name: 'doWork',
+                  location: ApiLocation.host,
+                  parameters: <Parameter>[
+                    Parameter(
+                      name: 'arg',
+                      type: const TypeDeclaration(baseName: 'String', isNullable: false),
+                    ),
+                  ],
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+
+        final sinkDisabled = StringBuffer();
+        const generator = SwiftGenerator();
+        generator.generate(
+          const InternalSwiftOptions(swiftOut: ''),
+          root,
+          sinkDisabled,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+
+        final sinkEnabled = StringBuffer();
+        generator.generate(
+          const InternalSwiftOptions(swiftOut: '', swiftStrictConcurrency: true),
+          root,
+          sinkEnabled,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+
+        expect(
+          sinkDisabled.toString(),
+          contains('doWorkChannel.setMessageHandler { message, reply in'),
+        );
+        expect(
+          sinkEnabled.toString(),
+          contains(
+            'doWorkChannel.setMessageHandler { @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in',
+          ),
+        );
+      },
+    );
   });
 }

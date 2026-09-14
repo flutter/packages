@@ -1171,316 +1171,336 @@ class CoreTestsPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
 /// platform_test integration tests.
 ///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
-protocol HostIntegrationCoreApi {
+protocol HostIntegrationCoreApi: Sendable {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
-  func noop() throws
+  @MainActor func noop() throws
   /// Returns the passed object, to test serialization and deserialization.
-  func echo(_ everything: AllTypes) throws -> AllTypes
+  @MainActor func echo(_ everything: AllTypes) throws -> AllTypes
   /// Returns an error, to test error handling.
-  func throwError() throws -> Any?
+  @MainActor func throwError() throws -> Any?
   /// Returns an error from a void function, to test error handling.
-  func throwErrorFromVoid() throws
+  @MainActor func throwErrorFromVoid() throws
   /// Returns a Flutter error, to test error handling.
-  func throwFlutterError() throws -> Any?
+  @MainActor func throwFlutterError() throws -> Any?
   /// Returns passed in int.
-  func echo(_ anInt: Int64) throws -> Int64
+  @MainActor func echo(_ anInt: Int64) throws -> Int64
   /// Returns passed in double.
-  func echo(_ aDouble: Double) throws -> Double
+  @MainActor func echo(_ aDouble: Double) throws -> Double
   /// Returns the passed in boolean.
-  func echo(_ aBool: Bool) throws -> Bool
+  @MainActor func echo(_ aBool: Bool) throws -> Bool
   /// Returns the passed in string.
-  func echo(_ aString: String) throws -> String
+  @MainActor func echo(_ aString: String) throws -> String
   /// Returns the passed in Uint8List.
-  func echo(_ aUint8List: FlutterStandardTypedData) throws -> FlutterStandardTypedData
+  @MainActor func echo(_ aUint8List: FlutterStandardTypedData) throws -> FlutterStandardTypedData
   /// Returns the passed in generic Object.
-  func echo(_ anObject: Any) throws -> Any
+  @MainActor func echo(_ anObject: Any) throws -> Any
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(_ list: [Any?]) throws -> [Any?]
+  @MainActor func echo(_ list: [Any?]) throws -> [Any?]
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(stringList: [String?]) throws -> [String?]
+  @MainActor func echo(stringList: [String?]) throws -> [String?]
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(intList: [Int64?]) throws -> [Int64?]
+  @MainActor func echo(intList: [Int64?]) throws -> [Int64?]
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(doubleList: [Double?]) throws -> [Double?]
+  @MainActor func echo(doubleList: [Double?]) throws -> [Double?]
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(boolList: [Bool?]) throws -> [Bool?]
+  @MainActor func echo(boolList: [Bool?]) throws -> [Bool?]
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(enumList: [AnEnum?]) throws -> [AnEnum?]
+  @MainActor func echo(enumList: [AnEnum?]) throws -> [AnEnum?]
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(classList: [AllNullableTypes?]) throws -> [AllNullableTypes?]
+  @MainActor func echo(classList: [AllNullableTypes?]) throws -> [AllNullableTypes?]
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNonNull(enumList: [AnEnum]) throws -> [AnEnum]
+  @MainActor func echoNonNull(enumList: [AnEnum]) throws -> [AnEnum]
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNonNull(classList: [AllNullableTypes]) throws -> [AllNullableTypes]
+  @MainActor func echoNonNull(classList: [AllNullableTypes]) throws -> [AllNullableTypes]
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(_ map: [AnyHashable?: Any?]) throws -> [AnyHashable?: Any?]
+  @MainActor func echo(_ map: [AnyHashable?: Any?]) throws -> [AnyHashable?: Any?]
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(stringMap: [String?: String?]) throws -> [String?: String?]
+  @MainActor func echo(stringMap: [String?: String?]) throws -> [String?: String?]
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(intMap: [Int64?: Int64?]) throws -> [Int64?: Int64?]
+  @MainActor func echo(intMap: [Int64?: Int64?]) throws -> [Int64?: Int64?]
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(enumMap: [AnEnum?: AnEnum?]) throws -> [AnEnum?: AnEnum?]
+  @MainActor func echo(enumMap: [AnEnum?: AnEnum?]) throws -> [AnEnum?: AnEnum?]
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(classMap: [Int64?: AllNullableTypes?]) throws -> [Int64?: AllNullableTypes?]
+  @MainActor func echo(classMap: [Int64?: AllNullableTypes?]) throws -> [Int64?: AllNullableTypes?]
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(stringMap: [String: String]) throws -> [String: String]
+  @MainActor func echoNonNull(stringMap: [String: String]) throws -> [String: String]
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(intMap: [Int64: Int64]) throws -> [Int64: Int64]
+  @MainActor func echoNonNull(intMap: [Int64: Int64]) throws -> [Int64: Int64]
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(enumMap: [AnEnum: AnEnum]) throws -> [AnEnum: AnEnum]
+  @MainActor func echoNonNull(enumMap: [AnEnum: AnEnum]) throws -> [AnEnum: AnEnum]
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(classMap: [Int64: AllNullableTypes]) throws -> [Int64: AllNullableTypes]
+  @MainActor func echoNonNull(classMap: [Int64: AllNullableTypes]) throws -> [Int64:
+    AllNullableTypes]
   /// Returns the passed class to test nested class serialization and deserialization.
-  func echo(_ wrapper: AllClassesWrapper) throws -> AllClassesWrapper
+  @MainActor func echo(_ wrapper: AllClassesWrapper) throws -> AllClassesWrapper
   /// Returns the passed enum to test serialization and deserialization.
-  func echo(_ anEnum: AnEnum) throws -> AnEnum
+  @MainActor func echo(_ anEnum: AnEnum) throws -> AnEnum
   /// Returns the passed enum to test serialization and deserialization.
-  func echo(_ anotherEnum: AnotherEnum) throws -> AnotherEnum
+  @MainActor func echo(_ anotherEnum: AnotherEnum) throws -> AnotherEnum
   /// Returns the default string.
-  func echoNamedDefault(_ aString: String) throws -> String
+  @MainActor func echoNamedDefault(_ aString: String) throws -> String
   /// Returns passed in double.
-  func echoOptionalDefault(_ aDouble: Double) throws -> Double
+  @MainActor func echoOptionalDefault(_ aDouble: Double) throws -> Double
   /// Returns passed in int.
-  func echoRequired(_ anInt: Int64) throws -> Int64
+  @MainActor func echoRequired(_ anInt: Int64) throws -> Int64
   /// Returns the result of platform-side equality check.
-  func areAllNullableTypesEqual(a: AllNullableTypes, b: AllNullableTypes) throws -> Bool
+  @MainActor func areAllNullableTypesEqual(a: AllNullableTypes, b: AllNullableTypes) throws -> Bool
   /// Returns the platform-side hash code for the given object.
-  func getAllNullableTypesHash(value: AllNullableTypes) throws -> Int64
+  @MainActor func getAllNullableTypesHash(value: AllNullableTypes) throws -> Int64
   /// Returns the platform-side hash code for the given object.
-  func getAllNullableTypesWithoutRecursionHash(value: AllNullableTypesWithoutRecursion) throws
-    -> Int64
+  @MainActor func getAllNullableTypesWithoutRecursionHash(value: AllNullableTypesWithoutRecursion)
+    throws -> Int64
   /// Returns the passed object, to test serialization and deserialization.
-  func echo(_ everything: AllNullableTypes?) throws -> AllNullableTypes?
+  @MainActor func echo(_ everything: AllNullableTypes?) throws -> AllNullableTypes?
   /// Returns the passed object, to test serialization and deserialization.
-  func echo(_ everything: AllNullableTypesWithoutRecursion?) throws
+  @MainActor func echo(_ everything: AllNullableTypesWithoutRecursion?) throws
     -> AllNullableTypesWithoutRecursion?
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
-  func extractNestedNullableString(from wrapper: AllClassesWrapper) throws -> String?
+  @MainActor func extractNestedNullableString(from wrapper: AllClassesWrapper) throws -> String?
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
-  func createNestedObject(with nullableString: String?) throws -> AllClassesWrapper
+  @MainActor func createNestedObject(with nullableString: String?) throws -> AllClassesWrapper
   /// Returns passed in arguments of multiple types.
-  func sendMultipleNullableTypes(
+  @MainActor func sendMultipleNullableTypes(
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
   ) throws -> AllNullableTypes
   /// Returns passed in arguments of multiple types.
-  func sendMultipleNullableTypesWithoutRecursion(
+  @MainActor func sendMultipleNullableTypesWithoutRecursion(
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
   ) throws -> AllNullableTypesWithoutRecursion
   /// Returns passed in int.
-  func echo(_ aNullableInt: Int64?) throws -> Int64?
+  @MainActor func echo(_ aNullableInt: Int64?) throws -> Int64?
   /// Returns passed in double.
-  func echo(_ aNullableDouble: Double?) throws -> Double?
+  @MainActor func echo(_ aNullableDouble: Double?) throws -> Double?
   /// Returns the passed in boolean.
-  func echo(_ aNullableBool: Bool?) throws -> Bool?
+  @MainActor func echo(_ aNullableBool: Bool?) throws -> Bool?
   /// Returns the passed in string.
-  func echo(_ aNullableString: String?) throws -> String?
+  @MainActor func echo(_ aNullableString: String?) throws -> String?
   /// Returns the passed in Uint8List.
-  func echo(_ aNullableUint8List: FlutterStandardTypedData?) throws -> FlutterStandardTypedData?
+  @MainActor func echo(_ aNullableUint8List: FlutterStandardTypedData?) throws
+    -> FlutterStandardTypedData?
   /// Returns the passed in generic Object.
-  func echo(_ aNullableObject: Any?) throws -> Any?
+  @MainActor func echo(_ aNullableObject: Any?) throws -> Any?
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullable(_ aNullableList: [Any?]?) throws -> [Any?]?
+  @MainActor func echoNullable(_ aNullableList: [Any?]?) throws -> [Any?]?
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullable(enumList: [AnEnum?]?) throws -> [AnEnum?]?
+  @MainActor func echoNullable(enumList: [AnEnum?]?) throws -> [AnEnum?]?
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullable(classList: [AllNullableTypes?]?) throws -> [AllNullableTypes?]?
+  @MainActor func echoNullable(classList: [AllNullableTypes?]?) throws -> [AllNullableTypes?]?
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullableNonNull(enumList: [AnEnum]?) throws -> [AnEnum]?
+  @MainActor func echoNullableNonNull(enumList: [AnEnum]?) throws -> [AnEnum]?
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullableNonNull(classList: [AllNullableTypes]?) throws -> [AllNullableTypes]?
+  @MainActor func echoNullableNonNull(classList: [AllNullableTypes]?) throws -> [AllNullableTypes]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(_ map: [AnyHashable?: Any?]?) throws -> [AnyHashable?: Any?]?
+  @MainActor func echoNullable(_ map: [AnyHashable?: Any?]?) throws -> [AnyHashable?: Any?]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(stringMap: [String?: String?]?) throws -> [String?: String?]?
+  @MainActor func echoNullable(stringMap: [String?: String?]?) throws -> [String?: String?]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(intMap: [Int64?: Int64?]?) throws -> [Int64?: Int64?]?
+  @MainActor func echoNullable(intMap: [Int64?: Int64?]?) throws -> [Int64?: Int64?]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(enumMap: [AnEnum?: AnEnum?]?) throws -> [AnEnum?: AnEnum?]?
+  @MainActor func echoNullable(enumMap: [AnEnum?: AnEnum?]?) throws -> [AnEnum?: AnEnum?]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(classMap: [Int64?: AllNullableTypes?]?) throws -> [Int64?: AllNullableTypes?]?
+  @MainActor func echoNullable(classMap: [Int64?: AllNullableTypes?]?) throws -> [Int64?:
+    AllNullableTypes?]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(stringMap: [String: String]?) throws -> [String: String]?
+  @MainActor func echoNullableNonNull(stringMap: [String: String]?) throws -> [String: String]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(intMap: [Int64: Int64]?) throws -> [Int64: Int64]?
+  @MainActor func echoNullableNonNull(intMap: [Int64: Int64]?) throws -> [Int64: Int64]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(enumMap: [AnEnum: AnEnum]?) throws -> [AnEnum: AnEnum]?
+  @MainActor func echoNullableNonNull(enumMap: [AnEnum: AnEnum]?) throws -> [AnEnum: AnEnum]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(classMap: [Int64: AllNullableTypes]?) throws -> [Int64:
+  @MainActor func echoNullableNonNull(classMap: [Int64: AllNullableTypes]?) throws -> [Int64:
     AllNullableTypes]?
-  func echoNullable(_ anEnum: AnEnum?) throws -> AnEnum?
-  func echoNullable(_ anotherEnum: AnotherEnum?) throws -> AnotherEnum?
+  @MainActor func echoNullable(_ anEnum: AnEnum?) throws -> AnEnum?
+  @MainActor func echoNullable(_ anotherEnum: AnotherEnum?) throws -> AnotherEnum?
   /// Returns passed in int.
-  func echoOptional(_ aNullableInt: Int64?) throws -> Int64?
+  @MainActor func echoOptional(_ aNullableInt: Int64?) throws -> Int64?
   /// Returns the passed in string.
-  func echoNamed(_ aNullableString: String?) throws -> String?
+  @MainActor func echoNamed(_ aNullableString: String?) throws -> String?
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
-  func noopAsync() async throws
+  @MainActor func noopAsync() async throws
   /// Returns passed in int asynchronously.
-  func echoAsync(_ anInt: Int64) async throws -> Int64
+  @MainActor func echoAsync(_ anInt: Int64) async throws -> Int64
   /// Returns passed in double asynchronously.
-  func echoAsync(_ aDouble: Double) async throws -> Double
+  @MainActor func echoAsync(_ aDouble: Double) async throws -> Double
   /// Returns the passed in boolean asynchronously.
-  func echoAsync(_ aBool: Bool) async throws -> Bool
+  @MainActor func echoAsync(_ aBool: Bool) async throws -> Bool
   /// Returns the passed string asynchronously.
-  func echoAsync(_ aString: String) async throws -> String
+  @MainActor func echoAsync(_ aString: String) async throws -> String
   /// Returns the passed in Uint8List asynchronously.
-  func echoAsync(_ aUint8List: FlutterStandardTypedData) async throws -> FlutterStandardTypedData
+  @MainActor func echoAsync(_ aUint8List: FlutterStandardTypedData) async throws
+    -> FlutterStandardTypedData
   /// Returns the passed in generic Object asynchronously.
-  func echoAsync(_ anObject: Any) async throws -> Any
+  @MainActor func echoAsync(_ anObject: Any) async throws -> Any
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  func echoAsync(_ list: [Any?]) async throws -> [Any?]
+  @MainActor func echoAsync(_ list: [Any?]) async throws -> [Any?]
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  func echoAsync(enumList: [AnEnum?]) async throws -> [AnEnum?]
+  @MainActor func echoAsync(enumList: [AnEnum?]) async throws -> [AnEnum?]
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  func echoAsync(classList: [AllNullableTypes?]) async throws -> [AllNullableTypes?]
+  @MainActor func echoAsync(classList: [AllNullableTypes?]) async throws -> [AllNullableTypes?]
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  func echoAsync(_ map: [AnyHashable?: Any?]) async throws -> [AnyHashable?: Any?]
+  @MainActor func echoAsync(_ map: [AnyHashable?: Any?]) async throws -> [AnyHashable?: Any?]
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  func echoAsync(stringMap: [String?: String?]) async throws -> [String?: String?]
+  @MainActor func echoAsync(stringMap: [String?: String?]) async throws -> [String?: String?]
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  func echoAsync(intMap: [Int64?: Int64?]) async throws -> [Int64?: Int64?]
+  @MainActor func echoAsync(intMap: [Int64?: Int64?]) async throws -> [Int64?: Int64?]
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  func echoAsync(enumMap: [AnEnum?: AnEnum?]) async throws -> [AnEnum?: AnEnum?]
+  @MainActor func echoAsync(enumMap: [AnEnum?: AnEnum?]) async throws -> [AnEnum?: AnEnum?]
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  func echoAsync(classMap: [Int64?: AllNullableTypes?]) async throws -> [Int64?: AllNullableTypes?]
+  @MainActor func echoAsync(classMap: [Int64?: AllNullableTypes?]) async throws -> [Int64?:
+    AllNullableTypes?]
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
-  func echoAsync(_ anEnum: AnEnum) async throws -> AnEnum
+  @MainActor func echoAsync(_ anEnum: AnEnum) async throws -> AnEnum
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
-  func echoAsync(_ anotherEnum: AnotherEnum) async throws -> AnotherEnum
+  @MainActor func echoAsync(_ anotherEnum: AnotherEnum) async throws -> AnotherEnum
   /// Responds with an error from an async function returning a value.
-  func throwAsyncError() async throws -> Any?
+  @MainActor func throwAsyncError() async throws -> Any?
   /// Responds with an error from an async void function.
-  func throwAsyncErrorFromVoid() async throws
+  @MainActor func throwAsyncErrorFromVoid() async throws
   /// Responds with a Flutter error from an async function returning a value.
-  func throwAsyncFlutterError() async throws -> Any?
+  @MainActor func throwAsyncFlutterError() async throws -> Any?
   /// Returns the passed object, to test async serialization and deserialization.
-  func echoAsync(_ everything: AllTypes) async throws -> AllTypes
+  @MainActor func echoAsync(_ everything: AllTypes) async throws -> AllTypes
   /// Returns the passed object, to test serialization and deserialization.
-  func echoAsync(_ everything: AllNullableTypes?) async throws -> AllNullableTypes?
+  @MainActor func echoAsync(_ everything: AllNullableTypes?) async throws -> AllNullableTypes?
   /// Returns the passed object, to test serialization and deserialization.
-  func echoAsync(_ everything: AllNullableTypesWithoutRecursion?) async throws
+  @MainActor func echoAsync(_ everything: AllNullableTypesWithoutRecursion?) async throws
     -> AllNullableTypesWithoutRecursion?
   /// Returns passed in int asynchronously.
-  func echoAsyncNullable(_ anInt: Int64?) async throws -> Int64?
+  @MainActor func echoAsyncNullable(_ anInt: Int64?) async throws -> Int64?
   /// Returns passed in double asynchronously.
-  func echoAsyncNullable(_ aDouble: Double?) async throws -> Double?
+  @MainActor func echoAsyncNullable(_ aDouble: Double?) async throws -> Double?
   /// Returns the passed in boolean asynchronously.
-  func echoAsyncNullable(_ aBool: Bool?) async throws -> Bool?
+  @MainActor func echoAsyncNullable(_ aBool: Bool?) async throws -> Bool?
   /// Returns the passed string asynchronously.
-  func echoAsyncNullable(_ aString: String?) async throws -> String?
+  @MainActor func echoAsyncNullable(_ aString: String?) async throws -> String?
   /// Returns the passed in Uint8List asynchronously.
-  func echoAsyncNullable(_ aUint8List: FlutterStandardTypedData?) async throws
+  @MainActor func echoAsyncNullable(_ aUint8List: FlutterStandardTypedData?) async throws
     -> FlutterStandardTypedData?
   /// Returns the passed in generic Object asynchronously.
-  func echoAsyncNullable(_ anObject: Any?) async throws -> Any?
+  @MainActor func echoAsyncNullable(_ anObject: Any?) async throws -> Any?
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  func echoAsyncNullable(_ list: [Any?]?) async throws -> [Any?]?
+  @MainActor func echoAsyncNullable(_ list: [Any?]?) async throws -> [Any?]?
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  func echoAsyncNullable(enumList: [AnEnum?]?) async throws -> [AnEnum?]?
+  @MainActor func echoAsyncNullable(enumList: [AnEnum?]?) async throws -> [AnEnum?]?
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  func echoAsyncNullable(classList: [AllNullableTypes?]?) async throws -> [AllNullableTypes?]?
+  @MainActor func echoAsyncNullable(classList: [AllNullableTypes?]?) async throws
+    -> [AllNullableTypes?]?
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  func echoAsyncNullable(_ map: [AnyHashable?: Any?]?) async throws -> [AnyHashable?: Any?]?
+  @MainActor func echoAsyncNullable(_ map: [AnyHashable?: Any?]?) async throws -> [AnyHashable?:
+    Any?]?
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  func echoAsyncNullable(stringMap: [String?: String?]?) async throws -> [String?: String?]?
+  @MainActor func echoAsyncNullable(stringMap: [String?: String?]?) async throws -> [String?:
+    String?]?
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  func echoAsyncNullable(intMap: [Int64?: Int64?]?) async throws -> [Int64?: Int64?]?
+  @MainActor func echoAsyncNullable(intMap: [Int64?: Int64?]?) async throws -> [Int64?: Int64?]?
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  func echoAsyncNullable(enumMap: [AnEnum?: AnEnum?]?) async throws -> [AnEnum?: AnEnum?]?
+  @MainActor func echoAsyncNullable(enumMap: [AnEnum?: AnEnum?]?) async throws -> [AnEnum?:
+    AnEnum?]?
   /// Returns the passed map, to test asynchronous serialization and deserialization.
-  func echoAsyncNullable(classMap: [Int64?: AllNullableTypes?]?) async throws -> [Int64?:
+  @MainActor func echoAsyncNullable(classMap: [Int64?: AllNullableTypes?]?) async throws -> [Int64?:
     AllNullableTypes?]?
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
-  func echoAsyncNullable(_ anEnum: AnEnum?) async throws -> AnEnum?
+  @MainActor func echoAsyncNullable(_ anEnum: AnEnum?) async throws -> AnEnum?
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
-  func echoAsyncNullable(_ anotherEnum: AnotherEnum?) async throws -> AnotherEnum?
+  @MainActor func echoAsyncNullable(_ anotherEnum: AnotherEnum?) async throws -> AnotherEnum?
   /// Returns true if the handler is run on a main thread, which should be
   /// true since there is no TaskQueue annotation.
-  func defaultIsMainThread() throws -> Bool
+  @MainActor func defaultIsMainThread() throws -> Bool
   /// Returns true if the handler is run on a non-main thread, which should be
   /// true for any platform with TaskQueue support.
-  func taskQueueIsBackgroundThread() throws -> Bool
+  nonisolated func taskQueueIsBackgroundThread() throws -> Bool
   /// Returns true if the handler is run on a non-main thread, which should be
   /// true for any platform with TaskQueue support.
-  func asyncTaskQueueIsBackgroundThread() async throws -> Bool
-  func callFlutterNoop() async throws
-  func callFlutterThrowError() async throws -> Any?
-  func callFlutterThrowErrorFromVoid() async throws
-  func callFlutterEcho(_ everything: AllTypes) async throws -> AllTypes
-  func callFlutterEcho(_ everything: AllNullableTypes?) async throws -> AllNullableTypes?
-  func callFlutterSendMultipleNullableTypes(
+  nonisolated func asyncTaskQueueIsBackgroundThread() async throws -> Bool
+  @MainActor func callFlutterNoop() async throws
+  @MainActor func callFlutterThrowError() async throws -> Any?
+  @MainActor func callFlutterThrowErrorFromVoid() async throws
+  @MainActor func callFlutterEcho(_ everything: AllTypes) async throws -> AllTypes
+  @MainActor func callFlutterEcho(_ everything: AllNullableTypes?) async throws -> AllNullableTypes?
+  @MainActor func callFlutterSendMultipleNullableTypes(
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
   ) async throws -> AllNullableTypes
-  func callFlutterEcho(_ everything: AllNullableTypesWithoutRecursion?) async throws
+  @MainActor func callFlutterEcho(_ everything: AllNullableTypesWithoutRecursion?) async throws
     -> AllNullableTypesWithoutRecursion?
-  func callFlutterSendMultipleNullableTypesWithoutRecursion(
+  @MainActor func callFlutterSendMultipleNullableTypesWithoutRecursion(
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
   ) async throws -> AllNullableTypesWithoutRecursion
-  func callFlutterEcho(_ aBool: Bool) async throws -> Bool
-  func callFlutterEcho(_ anInt: Int64) async throws -> Int64
-  func callFlutterEcho(_ aDouble: Double) async throws -> Double
-  func callFlutterEcho(_ aString: String) async throws -> String
-  func callFlutterEcho(_ list: FlutterStandardTypedData) async throws -> FlutterStandardTypedData
-  func callFlutterEcho(_ list: [Any?]) async throws -> [Any?]
-  func callFlutterEcho(enumList: [AnEnum?]) async throws -> [AnEnum?]
-  func callFlutterEcho(classList: [AllNullableTypes?]) async throws -> [AllNullableTypes?]
-  func callFlutterEchoNonNull(enumList: [AnEnum]) async throws -> [AnEnum]
-  func callFlutterEchoNonNull(classList: [AllNullableTypes]) async throws -> [AllNullableTypes]
-  func callFlutterEcho(_ map: [AnyHashable?: Any?]) async throws -> [AnyHashable?: Any?]
-  func callFlutterEcho(stringMap: [String?: String?]) async throws -> [String?: String?]
-  func callFlutterEcho(intMap: [Int64?: Int64?]) async throws -> [Int64?: Int64?]
-  func callFlutterEcho(enumMap: [AnEnum?: AnEnum?]) async throws -> [AnEnum?: AnEnum?]
-  func callFlutterEcho(classMap: [Int64?: AllNullableTypes?]) async throws -> [Int64?:
+  @MainActor func callFlutterEcho(_ aBool: Bool) async throws -> Bool
+  @MainActor func callFlutterEcho(_ anInt: Int64) async throws -> Int64
+  @MainActor func callFlutterEcho(_ aDouble: Double) async throws -> Double
+  @MainActor func callFlutterEcho(_ aString: String) async throws -> String
+  @MainActor func callFlutterEcho(_ list: FlutterStandardTypedData) async throws
+    -> FlutterStandardTypedData
+  @MainActor func callFlutterEcho(_ list: [Any?]) async throws -> [Any?]
+  @MainActor func callFlutterEcho(enumList: [AnEnum?]) async throws -> [AnEnum?]
+  @MainActor func callFlutterEcho(classList: [AllNullableTypes?]) async throws
+    -> [AllNullableTypes?]
+  @MainActor func callFlutterEchoNonNull(enumList: [AnEnum]) async throws -> [AnEnum]
+  @MainActor func callFlutterEchoNonNull(classList: [AllNullableTypes]) async throws
+    -> [AllNullableTypes]
+  @MainActor func callFlutterEcho(_ map: [AnyHashable?: Any?]) async throws -> [AnyHashable?: Any?]
+  @MainActor func callFlutterEcho(stringMap: [String?: String?]) async throws -> [String?: String?]
+  @MainActor func callFlutterEcho(intMap: [Int64?: Int64?]) async throws -> [Int64?: Int64?]
+  @MainActor func callFlutterEcho(enumMap: [AnEnum?: AnEnum?]) async throws -> [AnEnum?: AnEnum?]
+  @MainActor func callFlutterEcho(classMap: [Int64?: AllNullableTypes?]) async throws -> [Int64?:
     AllNullableTypes?]
-  func callFlutterEchoNonNull(stringMap: [String: String]) async throws -> [String: String]
-  func callFlutterEchoNonNull(intMap: [Int64: Int64]) async throws -> [Int64: Int64]
-  func callFlutterEchoNonNull(enumMap: [AnEnum: AnEnum]) async throws -> [AnEnum: AnEnum]
-  func callFlutterEchoNonNull(classMap: [Int64: AllNullableTypes]) async throws -> [Int64:
-    AllNullableTypes]
-  func callFlutterEcho(_ anEnum: AnEnum) async throws -> AnEnum
-  func callFlutterEcho(_ anotherEnum: AnotherEnum) async throws -> AnotherEnum
-  func callFlutterEchoNullable(_ aBool: Bool?) async throws -> Bool?
-  func callFlutterEchoNullable(_ anInt: Int64?) async throws -> Int64?
-  func callFlutterEchoNullable(_ aDouble: Double?) async throws -> Double?
-  func callFlutterEchoNullable(_ aString: String?) async throws -> String?
-  func callFlutterEchoNullable(_ list: FlutterStandardTypedData?) async throws
+  @MainActor func callFlutterEchoNonNull(stringMap: [String: String]) async throws -> [String:
+    String]
+  @MainActor func callFlutterEchoNonNull(intMap: [Int64: Int64]) async throws -> [Int64: Int64]
+  @MainActor func callFlutterEchoNonNull(enumMap: [AnEnum: AnEnum]) async throws -> [AnEnum: AnEnum]
+  @MainActor func callFlutterEchoNonNull(classMap: [Int64: AllNullableTypes]) async throws
+    -> [Int64: AllNullableTypes]
+  @MainActor func callFlutterEcho(_ anEnum: AnEnum) async throws -> AnEnum
+  @MainActor func callFlutterEcho(_ anotherEnum: AnotherEnum) async throws -> AnotherEnum
+  @MainActor func callFlutterEchoNullable(_ aBool: Bool?) async throws -> Bool?
+  @MainActor func callFlutterEchoNullable(_ anInt: Int64?) async throws -> Int64?
+  @MainActor func callFlutterEchoNullable(_ aDouble: Double?) async throws -> Double?
+  @MainActor func callFlutterEchoNullable(_ aString: String?) async throws -> String?
+  @MainActor func callFlutterEchoNullable(_ list: FlutterStandardTypedData?) async throws
     -> FlutterStandardTypedData?
-  func callFlutterEchoNullable(_ list: [Any?]?) async throws -> [Any?]?
-  func callFlutterEchoNullable(enumList: [AnEnum?]?) async throws -> [AnEnum?]?
-  func callFlutterEchoNullable(classList: [AllNullableTypes?]?) async throws -> [AllNullableTypes?]?
-  func callFlutterEchoNullableNonNull(enumList: [AnEnum]?) async throws -> [AnEnum]?
-  func callFlutterEchoNullableNonNull(classList: [AllNullableTypes]?) async throws
+  @MainActor func callFlutterEchoNullable(_ list: [Any?]?) async throws -> [Any?]?
+  @MainActor func callFlutterEchoNullable(enumList: [AnEnum?]?) async throws -> [AnEnum?]?
+  @MainActor func callFlutterEchoNullable(classList: [AllNullableTypes?]?) async throws
+    -> [AllNullableTypes?]?
+  @MainActor func callFlutterEchoNullableNonNull(enumList: [AnEnum]?) async throws -> [AnEnum]?
+  @MainActor func callFlutterEchoNullableNonNull(classList: [AllNullableTypes]?) async throws
     -> [AllNullableTypes]?
-  func callFlutterEchoNullable(_ map: [AnyHashable?: Any?]?) async throws -> [AnyHashable?: Any?]?
-  func callFlutterEchoNullable(stringMap: [String?: String?]?) async throws -> [String?: String?]?
-  func callFlutterEchoNullable(intMap: [Int64?: Int64?]?) async throws -> [Int64?: Int64?]?
-  func callFlutterEchoNullable(enumMap: [AnEnum?: AnEnum?]?) async throws -> [AnEnum?: AnEnum?]?
-  func callFlutterEchoNullable(classMap: [Int64?: AllNullableTypes?]?) async throws -> [Int64?:
-    AllNullableTypes?]?
-  func callFlutterEchoNullableNonNull(stringMap: [String: String]?) async throws -> [String:
-    String]?
-  func callFlutterEchoNullableNonNull(intMap: [Int64: Int64]?) async throws -> [Int64: Int64]?
-  func callFlutterEchoNullableNonNull(enumMap: [AnEnum: AnEnum]?) async throws -> [AnEnum: AnEnum]?
-  func callFlutterEchoNullableNonNull(classMap: [Int64: AllNullableTypes]?) async throws -> [Int64:
-    AllNullableTypes]?
-  func callFlutterEchoNullable(_ anEnum: AnEnum?) async throws -> AnEnum?
-  func callFlutterEchoNullable(_ anotherEnum: AnotherEnum?) async throws -> AnotherEnum?
-  func callFlutterSmallApiEcho(_ aString: String) async throws -> String
-  func callFlutterCallbackNoop() async throws
-  func callFlutterCallbackEcho(_ aString: String) async throws -> String
-  func callFlutterCallbackThrowError() async throws -> Any?
-  func callFlutterCallbackThrowErrorFromVoid() async throws
+  @MainActor func callFlutterEchoNullable(_ map: [AnyHashable?: Any?]?) async throws
+    -> [AnyHashable?: Any?]?
+  @MainActor func callFlutterEchoNullable(stringMap: [String?: String?]?) async throws -> [String?:
+    String?]?
+  @MainActor func callFlutterEchoNullable(intMap: [Int64?: Int64?]?) async throws -> [Int64?:
+    Int64?]?
+  @MainActor func callFlutterEchoNullable(enumMap: [AnEnum?: AnEnum?]?) async throws -> [AnEnum?:
+    AnEnum?]?
+  @MainActor func callFlutterEchoNullable(classMap: [Int64?: AllNullableTypes?]?) async throws
+    -> [Int64?: AllNullableTypes?]?
+  @MainActor func callFlutterEchoNullableNonNull(stringMap: [String: String]?) async throws
+    -> [String: String]?
+  @MainActor func callFlutterEchoNullableNonNull(intMap: [Int64: Int64]?) async throws -> [Int64:
+    Int64]?
+  @MainActor func callFlutterEchoNullableNonNull(enumMap: [AnEnum: AnEnum]?) async throws
+    -> [AnEnum: AnEnum]?
+  @MainActor func callFlutterEchoNullableNonNull(classMap: [Int64: AllNullableTypes]?) async throws
+    -> [Int64: AllNullableTypes]?
+  @MainActor func callFlutterEchoNullable(_ anEnum: AnEnum?) async throws -> AnEnum?
+  @MainActor func callFlutterEchoNullable(_ anotherEnum: AnotherEnum?) async throws -> AnotherEnum?
+  @MainActor func callFlutterSmallApiEcho(_ aString: String) async throws -> String
+  @MainActor func callFlutterCallbackNoop() async throws
+  @MainActor func callFlutterCallbackEcho(_ aString: String) async throws -> String
+  @MainActor func callFlutterCallbackThrowError() async throws -> Any?
+  @MainActor func callFlutterCallbackThrowErrorFromVoid() async throws
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class HostIntegrationCoreApiSetup {
   static var codec: FlutterStandardMessageCodec { CoreTestsPigeonCodec.shared }
   /// Sets up an instance of `HostIntegrationCoreApi` to handle messages through the `binaryMessenger`.
-  static func setUp(
+  @MainActor static func setUp(
     binaryMessenger: FlutterBinaryMessenger, api: HostIntegrationCoreApi?,
     messageChannelSuffix: String = ""
   ) {
@@ -1497,7 +1517,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      noopChannel.setMessageHandler { _, reply in
+      noopChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         do {
           try api.noop()
           reply(wrapResult(nil))
@@ -1514,7 +1535,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAllTypesChannel.setMessageHandler { message, reply in
+      echoAllTypesChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let everythingArg = args[0] as! AllTypes
         do {
@@ -1532,8 +1554,9 @@ class HostIntegrationCoreApiSetup {
       name:
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
-    if let api {
-      throwErrorChannel.setMessageHandler { _, reply in
+    if let api = api {
+      throwErrorChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         do {
           let result = try api.throwError()
           reply(wrapResult(result))
@@ -1550,7 +1573,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwErrorFromVoid\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwErrorFromVoidChannel.setMessageHandler { _, reply in
+      throwErrorFromVoidChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         do {
           try api.throwErrorFromVoid()
           reply(wrapResult(nil))
@@ -1567,7 +1591,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwFlutterError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwFlutterErrorChannel.setMessageHandler { _, reply in
+      throwFlutterErrorChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         do {
           let result = try api.throwFlutterError()
           reply(wrapResult(result))
@@ -1584,7 +1609,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoIntChannel.setMessageHandler { message, reply in
+      echoIntChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anIntArg = args[0] as! Int64
         do {
@@ -1603,7 +1629,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoDoubleChannel.setMessageHandler { message, reply in
+      echoDoubleChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aDoubleArg = args[0] as! Double
         do {
@@ -1622,7 +1649,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoBoolChannel.setMessageHandler { message, reply in
+      echoBoolChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aBoolArg = args[0] as! Bool
         do {
@@ -1641,7 +1669,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoStringChannel.setMessageHandler { message, reply in
+      echoStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
         do {
@@ -1660,7 +1689,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoUint8ListChannel.setMessageHandler { message, reply in
+      echoUint8ListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aUint8ListArg = args[0] as! FlutterStandardTypedData
         do {
@@ -1679,7 +1709,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoObject\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoObjectChannel.setMessageHandler { message, reply in
+      echoObjectChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anObjectArg = args[0]!
         do {
@@ -1698,7 +1729,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoListChannel.setMessageHandler { message, reply in
+      echoListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let listArg = args[0] as! [Any?]
         do {
@@ -1717,7 +1749,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoStringList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoStringListChannel.setMessageHandler { message, reply in
+      echoStringListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let stringListArg = args[0] as! [String?]
         do {
@@ -1736,7 +1769,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoIntList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoIntListChannel.setMessageHandler { message, reply in
+      echoIntListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let intListArg = args[0] as! [Int64?]
         do {
@@ -1755,7 +1789,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDoubleList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoDoubleListChannel.setMessageHandler { message, reply in
+      echoDoubleListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let doubleListArg = args[0] as! [Double?]
         do {
@@ -1774,7 +1809,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBoolList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoBoolListChannel.setMessageHandler { message, reply in
+      echoBoolListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let boolListArg = args[0] as! [Bool?]
         do {
@@ -1793,7 +1829,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoEnumListChannel.setMessageHandler { message, reply in
+      echoEnumListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumListArg = args[0] as! [AnEnum?]
         do {
@@ -1812,7 +1849,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoClassListChannel.setMessageHandler { message, reply in
+      echoClassListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classListArg = args[0] as! [AllNullableTypes?]
         do {
@@ -1831,7 +1869,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNonNullEnumListChannel.setMessageHandler { message, reply in
+      echoNonNullEnumListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumListArg = args[0] as! [AnEnum]
         do {
@@ -1850,7 +1889,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNonNullClassListChannel.setMessageHandler { message, reply in
+      echoNonNullClassListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classListArg = args[0] as! [AllNullableTypes]
         do {
@@ -1869,7 +1909,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoMapChannel.setMessageHandler { message, reply in
+      echoMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let mapArg = args[0] as! [AnyHashable?: Any?]
         do {
@@ -1888,7 +1929,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoStringMapChannel.setMessageHandler { message, reply in
+      echoStringMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let stringMapArg = args[0] as! [String?: String?]
         do {
@@ -1907,7 +1949,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoIntMapChannel.setMessageHandler { message, reply in
+      echoIntMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let intMapArg = args[0] as! [Int64?: Int64?]
         do {
@@ -1926,7 +1969,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoEnumMapChannel.setMessageHandler { message, reply in
+      echoEnumMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumMapArg = args[0] as? [AnEnum?: AnEnum?]
         do {
@@ -1945,7 +1989,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoClassMapChannel.setMessageHandler { message, reply in
+      echoClassMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classMapArg = args[0] as! [Int64?: AllNullableTypes?]
         do {
@@ -1964,7 +2009,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNonNullStringMapChannel.setMessageHandler { message, reply in
+      echoNonNullStringMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let stringMapArg = args[0] as! [String: String]
         do {
@@ -1983,7 +2029,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNonNullIntMapChannel.setMessageHandler { message, reply in
+      echoNonNullIntMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let intMapArg = args[0] as! [Int64: Int64]
         do {
@@ -2002,7 +2049,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNonNullEnumMapChannel.setMessageHandler { message, reply in
+      echoNonNullEnumMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumMapArg = args[0] as? [AnEnum: AnEnum]
         do {
@@ -2021,7 +2069,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNonNullClassMapChannel.setMessageHandler { message, reply in
+      echoNonNullClassMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classMapArg = args[0] as! [Int64: AllNullableTypes]
         do {
@@ -2040,7 +2089,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassWrapper\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoClassWrapperChannel.setMessageHandler { message, reply in
+      echoClassWrapperChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let wrapperArg = args[0] as! AllClassesWrapper
         do {
@@ -2059,7 +2109,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoEnumChannel.setMessageHandler { message, reply in
+      echoEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anEnumArg = args[0] as! AnEnum
         do {
@@ -2078,7 +2129,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAnotherEnumChannel.setMessageHandler { message, reply in
+      echoAnotherEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anotherEnumArg = args[0] as! AnotherEnum
         do {
@@ -2097,7 +2149,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedDefaultString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNamedDefaultStringChannel.setMessageHandler { message, reply in
+      echoNamedDefaultStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
         do {
@@ -2116,7 +2169,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalDefaultDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoOptionalDefaultDoubleChannel.setMessageHandler { message, reply in
+      echoOptionalDefaultDoubleChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aDoubleArg = args[0] as! Double
         do {
@@ -2135,7 +2189,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoRequiredInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoRequiredIntChannel.setMessageHandler { message, reply in
+      echoRequiredIntChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anIntArg = args[0] as! Int64
         do {
@@ -2154,7 +2209,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.areAllNullableTypesEqual\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      areAllNullableTypesEqualChannel.setMessageHandler { message, reply in
+      areAllNullableTypesEqualChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aArg = args[0] as! AllNullableTypes
         let bArg = args[1] as! AllNullableTypes
@@ -2174,7 +2230,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.getAllNullableTypesHash\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      getAllNullableTypesHashChannel.setMessageHandler { message, reply in
+      getAllNullableTypesHashChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let valueArg = args[0] as! AllNullableTypes
         do {
@@ -2193,7 +2250,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.getAllNullableTypesWithoutRecursionHash\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      getAllNullableTypesWithoutRecursionHashChannel.setMessageHandler { message, reply in
+      getAllNullableTypesWithoutRecursionHashChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let valueArg = args[0] as! AllNullableTypesWithoutRecursion
         do {
@@ -2212,7 +2270,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAllNullableTypesChannel.setMessageHandler { message, reply in
+      echoAllNullableTypesChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let everythingArg: AllNullableTypes? = nilOrValue(args[0])
         do {
@@ -2231,7 +2290,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypesWithoutRecursion\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAllNullableTypesWithoutRecursionChannel.setMessageHandler { message, reply in
+      echoAllNullableTypesWithoutRecursionChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let everythingArg: AllNullableTypesWithoutRecursion? = nilOrValue(args[0])
         do {
@@ -2251,7 +2311,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.extractNestedNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      extractNestedNullableStringChannel.setMessageHandler { message, reply in
+      extractNestedNullableStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let wrapperArg = args[0] as! AllClassesWrapper
         do {
@@ -2271,7 +2332,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.createNestedNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      createNestedNullableStringChannel.setMessageHandler { message, reply in
+      createNestedNullableStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let nullableStringArg: String? = nilOrValue(args[0])
         do {
@@ -2290,7 +2352,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      sendMultipleNullableTypesChannel.setMessageHandler { message, reply in
+      sendMultipleNullableTypesChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aNullableBoolArg: Bool? = nilOrValue(args[0])
         let aNullableIntArg: Int64? = nilOrValue(args[1])
@@ -2312,7 +2375,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      sendMultipleNullableTypesWithoutRecursionChannel.setMessageHandler { message, reply in
+      sendMultipleNullableTypesWithoutRecursionChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aNullableBoolArg: Bool? = nilOrValue(args[0])
         let aNullableIntArg: Int64? = nilOrValue(args[1])
@@ -2334,7 +2398,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableIntChannel.setMessageHandler { message, reply in
+      echoNullableIntChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aNullableIntArg: Int64? = nilOrValue(args[0])
         do {
@@ -2353,7 +2418,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableDoubleChannel.setMessageHandler { message, reply in
+      echoNullableDoubleChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aNullableDoubleArg: Double? = nilOrValue(args[0])
         do {
@@ -2372,7 +2438,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableBoolChannel.setMessageHandler { message, reply in
+      echoNullableBoolChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aNullableBoolArg: Bool? = nilOrValue(args[0])
         do {
@@ -2391,7 +2458,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableStringChannel.setMessageHandler { message, reply in
+      echoNullableStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aNullableStringArg: String? = nilOrValue(args[0])
         do {
@@ -2410,7 +2478,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableUint8ListChannel.setMessageHandler { message, reply in
+      echoNullableUint8ListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aNullableUint8ListArg: FlutterStandardTypedData? = nilOrValue(args[0])
         do {
@@ -2429,7 +2498,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableObject\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableObjectChannel.setMessageHandler { message, reply in
+      echoNullableObjectChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aNullableObjectArg: Any? = args[0]
         do {
@@ -2448,7 +2518,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableListChannel.setMessageHandler { message, reply in
+      echoNullableListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aNullableListArg: [Any?]? = nilOrValue(args[0])
         do {
@@ -2467,7 +2538,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableEnumListChannel.setMessageHandler { message, reply in
+      echoNullableEnumListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumListArg: [AnEnum?]? = nilOrValue(args[0])
         do {
@@ -2486,7 +2558,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableClassListChannel.setMessageHandler { message, reply in
+      echoNullableClassListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classListArg: [AllNullableTypes?]? = nilOrValue(args[0])
         do {
@@ -2505,7 +2578,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableNonNullEnumListChannel.setMessageHandler { message, reply in
+      echoNullableNonNullEnumListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumListArg: [AnEnum]? = nilOrValue(args[0])
         do {
@@ -2524,7 +2598,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableNonNullClassListChannel.setMessageHandler { message, reply in
+      echoNullableNonNullClassListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classListArg: [AllNullableTypes]? = nilOrValue(args[0])
         do {
@@ -2543,7 +2618,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableMapChannel.setMessageHandler { message, reply in
+      echoNullableMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let mapArg: [AnyHashable?: Any?]? = nilOrValue(args[0])
         do {
@@ -2562,7 +2638,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableStringMapChannel.setMessageHandler { message, reply in
+      echoNullableStringMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let stringMapArg: [String?: String?]? = nilOrValue(args[0])
         do {
@@ -2581,7 +2658,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableIntMapChannel.setMessageHandler { message, reply in
+      echoNullableIntMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let intMapArg: [Int64?: Int64?]? = nilOrValue(args[0])
         do {
@@ -2600,7 +2678,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableEnumMapChannel.setMessageHandler { message, reply in
+      echoNullableEnumMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumMapArg: [AnEnum?: AnEnum?]? = args[0] as? [AnEnum?: AnEnum?]
         do {
@@ -2619,7 +2698,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableClassMapChannel.setMessageHandler { message, reply in
+      echoNullableClassMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classMapArg: [Int64?: AllNullableTypes?]? = nilOrValue(args[0])
         do {
@@ -2638,7 +2718,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableNonNullStringMapChannel.setMessageHandler { message, reply in
+      echoNullableNonNullStringMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let stringMapArg: [String: String]? = nilOrValue(args[0])
         do {
@@ -2657,7 +2738,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableNonNullIntMapChannel.setMessageHandler { message, reply in
+      echoNullableNonNullIntMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let intMapArg: [Int64: Int64]? = nilOrValue(args[0])
         do {
@@ -2676,7 +2758,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableNonNullEnumMapChannel.setMessageHandler { message, reply in
+      echoNullableNonNullEnumMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumMapArg: [AnEnum: AnEnum]? = args[0] as? [AnEnum: AnEnum]
         do {
@@ -2695,7 +2778,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableNonNullClassMapChannel.setMessageHandler { message, reply in
+      echoNullableNonNullClassMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classMapArg: [Int64: AllNullableTypes]? = nilOrValue(args[0])
         do {
@@ -2713,7 +2797,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableEnumChannel.setMessageHandler { message, reply in
+      echoNullableEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anEnumArg: AnEnum? = nilOrValue(args[0])
         do {
@@ -2731,7 +2816,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherNullableEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAnotherNullableEnumChannel.setMessageHandler { message, reply in
+      echoAnotherNullableEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anotherEnumArg: AnotherEnum? = nilOrValue(args[0])
         do {
@@ -2750,7 +2836,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalNullableInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoOptionalNullableIntChannel.setMessageHandler { message, reply in
+      echoOptionalNullableIntChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aNullableIntArg: Int64? = nilOrValue(args[0])
         do {
@@ -2769,7 +2856,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNamedNullableStringChannel.setMessageHandler { message, reply in
+      echoNamedNullableStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aNullableStringArg: String? = nilOrValue(args[0])
         do {
@@ -2789,7 +2877,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      noopAsyncChannel.setMessageHandler { _, reply in
+      noopAsyncChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         Task { @MainActor in
           do {
             try await api.noopAsync()
@@ -2808,7 +2897,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncIntChannel.setMessageHandler { message, reply in
+      echoAsyncIntChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anIntArg = args[0] as! Int64
         Task { @MainActor in
@@ -2829,7 +2919,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncDoubleChannel.setMessageHandler { message, reply in
+      echoAsyncDoubleChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aDoubleArg = args[0] as! Double
         Task { @MainActor in
@@ -2850,7 +2941,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncBoolChannel.setMessageHandler { message, reply in
+      echoAsyncBoolChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aBoolArg = args[0] as! Bool
         Task { @MainActor in
@@ -2871,7 +2963,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncStringChannel.setMessageHandler { message, reply in
+      echoAsyncStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
         Task { @MainActor in
@@ -2892,7 +2985,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncUint8ListChannel.setMessageHandler { message, reply in
+      echoAsyncUint8ListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aUint8ListArg = args[0] as! FlutterStandardTypedData
         Task { @MainActor in
@@ -2913,7 +3007,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncObject\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncObjectChannel.setMessageHandler { message, reply in
+      echoAsyncObjectChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anObjectArg = args[0]!
         Task { @MainActor in
@@ -2934,7 +3029,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncListChannel.setMessageHandler { message, reply in
+      echoAsyncListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let listArg = args[0] as! [Any?]
         Task { @MainActor in
@@ -2955,7 +3051,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncEnumListChannel.setMessageHandler { message, reply in
+      echoAsyncEnumListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumListArg = args[0] as! [AnEnum?]
         Task { @MainActor in
@@ -2976,7 +3073,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncClassListChannel.setMessageHandler { message, reply in
+      echoAsyncClassListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classListArg = args[0] as! [AllNullableTypes?]
         Task { @MainActor in
@@ -2997,7 +3095,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncMapChannel.setMessageHandler { message, reply in
+      echoAsyncMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let mapArg = args[0] as! [AnyHashable?: Any?]
         Task { @MainActor in
@@ -3018,7 +3117,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncStringMapChannel.setMessageHandler { message, reply in
+      echoAsyncStringMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let stringMapArg = args[0] as! [String?: String?]
         Task { @MainActor in
@@ -3039,7 +3139,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncIntMapChannel.setMessageHandler { message, reply in
+      echoAsyncIntMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let intMapArg = args[0] as! [Int64?: Int64?]
         Task { @MainActor in
@@ -3060,7 +3161,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncEnumMapChannel.setMessageHandler { message, reply in
+      echoAsyncEnumMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumMapArg = args[0] as? [AnEnum?: AnEnum?]
         Task { @MainActor in
@@ -3081,7 +3183,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncClassMapChannel.setMessageHandler { message, reply in
+      echoAsyncClassMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classMapArg = args[0] as! [Int64?: AllNullableTypes?]
         Task { @MainActor in
@@ -3102,7 +3205,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncEnumChannel.setMessageHandler { message, reply in
+      echoAsyncEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anEnumArg = args[0] as! AnEnum
         Task { @MainActor in
@@ -3123,7 +3227,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherAsyncEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAnotherAsyncEnumChannel.setMessageHandler { message, reply in
+      echoAnotherAsyncEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anotherEnumArg = args[0] as! AnotherEnum
         Task { @MainActor in
@@ -3144,7 +3249,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwAsyncErrorChannel.setMessageHandler { _, reply in
+      throwAsyncErrorChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         Task { @MainActor in
           do {
             let result = try await api.throwAsyncError()
@@ -3163,7 +3269,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncErrorFromVoid\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwAsyncErrorFromVoidChannel.setMessageHandler { _, reply in
+      throwAsyncErrorFromVoidChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         Task { @MainActor in
           do {
             try await api.throwAsyncErrorFromVoid()
@@ -3182,7 +3289,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncFlutterError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwAsyncFlutterErrorChannel.setMessageHandler { _, reply in
+      throwAsyncFlutterErrorChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         Task { @MainActor in
           do {
             let result = try await api.throwAsyncFlutterError()
@@ -3201,7 +3309,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncAllTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncAllTypesChannel.setMessageHandler { message, reply in
+      echoAsyncAllTypesChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let everythingArg = args[0] as! AllTypes
         Task { @MainActor in
@@ -3222,7 +3331,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableAllNullableTypesChannel.setMessageHandler { message, reply in
+      echoAsyncNullableAllNullableTypesChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let everythingArg: AllNullableTypes? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3243,7 +3353,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypesWithoutRecursion\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableAllNullableTypesWithoutRecursionChannel.setMessageHandler { message, reply in
+      echoAsyncNullableAllNullableTypesWithoutRecursionChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let everythingArg: AllNullableTypesWithoutRecursion? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3264,7 +3375,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableIntChannel.setMessageHandler { message, reply in
+      echoAsyncNullableIntChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anIntArg: Int64? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3285,7 +3397,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableDoubleChannel.setMessageHandler { message, reply in
+      echoAsyncNullableDoubleChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aDoubleArg: Double? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3306,7 +3419,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableBoolChannel.setMessageHandler { message, reply in
+      echoAsyncNullableBoolChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aBoolArg: Bool? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3327,7 +3441,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableStringChannel.setMessageHandler { message, reply in
+      echoAsyncNullableStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aStringArg: String? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3348,7 +3463,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableUint8ListChannel.setMessageHandler { message, reply in
+      echoAsyncNullableUint8ListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aUint8ListArg: FlutterStandardTypedData? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3369,7 +3485,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableObject\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableObjectChannel.setMessageHandler { message, reply in
+      echoAsyncNullableObjectChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anObjectArg: Any? = args[0]
         Task { @MainActor in
@@ -3390,7 +3507,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableListChannel.setMessageHandler { message, reply in
+      echoAsyncNullableListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let listArg: [Any?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3411,7 +3529,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableEnumListChannel.setMessageHandler { message, reply in
+      echoAsyncNullableEnumListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumListArg: [AnEnum?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3432,7 +3551,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableClassListChannel.setMessageHandler { message, reply in
+      echoAsyncNullableClassListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classListArg: [AllNullableTypes?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3453,7 +3573,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableMapChannel.setMessageHandler { message, reply in
+      echoAsyncNullableMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let mapArg: [AnyHashable?: Any?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3474,7 +3595,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableStringMapChannel.setMessageHandler { message, reply in
+      echoAsyncNullableStringMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let stringMapArg: [String?: String?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3495,7 +3617,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableIntMapChannel.setMessageHandler { message, reply in
+      echoAsyncNullableIntMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let intMapArg: [Int64?: Int64?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3516,7 +3639,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableEnumMapChannel.setMessageHandler { message, reply in
+      echoAsyncNullableEnumMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumMapArg: [AnEnum?: AnEnum?]? = args[0] as? [AnEnum?: AnEnum?]
         Task { @MainActor in
@@ -3537,7 +3661,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableClassMapChannel.setMessageHandler { message, reply in
+      echoAsyncNullableClassMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classMapArg: [Int64?: AllNullableTypes?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3558,7 +3683,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableEnumChannel.setMessageHandler { message, reply in
+      echoAsyncNullableEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anEnumArg: AnEnum? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3579,7 +3705,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherAsyncNullableEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAnotherAsyncNullableEnumChannel.setMessageHandler { message, reply in
+      echoAnotherAsyncNullableEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anotherEnumArg: AnotherEnum? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3601,7 +3728,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.defaultIsMainThread\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      defaultIsMainThreadChannel.setMessageHandler { _, reply in
+      defaultIsMainThreadChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         do {
           let result = try api.defaultIsMainThread()
           reply(wrapResult(result))
@@ -3625,7 +3753,8 @@ class HostIntegrationCoreApiSetup {
           "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.taskQueueIsBackgroundThread\(channelSuffix)",
         binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
     if let api = api {
-      taskQueueIsBackgroundThreadChannel.setMessageHandler { _, reply in
+      taskQueueIsBackgroundThreadChannel.setMessageHandler {
+        (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         do {
           let result = try api.taskQueueIsBackgroundThread()
           reply(wrapResult(result))
@@ -3649,7 +3778,8 @@ class HostIntegrationCoreApiSetup {
           "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.asyncTaskQueueIsBackgroundThread\(channelSuffix)",
         binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
     if let api = api {
-      asyncTaskQueueIsBackgroundThreadChannel.setMessageHandler { _, reply in
+      asyncTaskQueueIsBackgroundThreadChannel.setMessageHandler {
+        (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         Task {
           do {
             let result = try await api.asyncTaskQueueIsBackgroundThread()
@@ -3667,7 +3797,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterNoopChannel.setMessageHandler { _, reply in
+      callFlutterNoopChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         Task { @MainActor in
           do {
             try await api.callFlutterNoop()
@@ -3685,7 +3816,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterThrowErrorChannel.setMessageHandler { _, reply in
+      callFlutterThrowErrorChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         Task { @MainActor in
           do {
             let result = try await api.callFlutterThrowError()
@@ -3703,7 +3835,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterThrowErrorFromVoidChannel.setMessageHandler { _, reply in
+      callFlutterThrowErrorFromVoidChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         Task { @MainActor in
           do {
             try await api.callFlutterThrowErrorFromVoid()
@@ -3721,7 +3854,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoAllTypesChannel.setMessageHandler { message, reply in
+      callFlutterEchoAllTypesChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let everythingArg = args[0] as! AllTypes
         Task { @MainActor in
@@ -3741,7 +3875,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoAllNullableTypesChannel.setMessageHandler { message, reply in
+      callFlutterEchoAllNullableTypesChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let everythingArg: AllNullableTypes? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3761,7 +3896,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterSendMultipleNullableTypesChannel.setMessageHandler { message, reply in
+      callFlutterSendMultipleNullableTypesChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aNullableBoolArg: Bool? = nilOrValue(args[0])
         let aNullableIntArg: Int64? = nilOrValue(args[1])
@@ -3784,7 +3920,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypesWithoutRecursion\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoAllNullableTypesWithoutRecursionChannel.setMessageHandler { message, reply in
+      callFlutterEchoAllNullableTypesWithoutRecursionChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let everythingArg: AllNullableTypesWithoutRecursion? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3805,7 +3942,7 @@ class HostIntegrationCoreApiSetup {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterSendMultipleNullableTypesWithoutRecursionChannel.setMessageHandler {
-        message, reply in
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aNullableBoolArg: Bool? = nilOrValue(args[0])
         let aNullableIntArg: Int64? = nilOrValue(args[1])
@@ -3828,7 +3965,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoBoolChannel.setMessageHandler { message, reply in
+      callFlutterEchoBoolChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aBoolArg = args[0] as! Bool
         Task { @MainActor in
@@ -3848,7 +3986,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoIntChannel.setMessageHandler { message, reply in
+      callFlutterEchoIntChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anIntArg = args[0] as! Int64
         Task { @MainActor in
@@ -3868,7 +4007,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoDoubleChannel.setMessageHandler { message, reply in
+      callFlutterEchoDoubleChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aDoubleArg = args[0] as! Double
         Task { @MainActor in
@@ -3888,7 +4028,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoStringChannel.setMessageHandler { message, reply in
+      callFlutterEchoStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
         Task { @MainActor in
@@ -3908,7 +4049,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoUint8ListChannel.setMessageHandler { message, reply in
+      callFlutterEchoUint8ListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let listArg = args[0] as! FlutterStandardTypedData
         Task { @MainActor in
@@ -3928,7 +4070,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoListChannel.setMessageHandler { message, reply in
+      callFlutterEchoListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let listArg = args[0] as! [Any?]
         Task { @MainActor in
@@ -3948,7 +4091,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoEnumListChannel.setMessageHandler { message, reply in
+      callFlutterEchoEnumListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumListArg = args[0] as! [AnEnum?]
         Task { @MainActor in
@@ -3968,7 +4112,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoClassListChannel.setMessageHandler { message, reply in
+      callFlutterEchoClassListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classListArg = args[0] as! [AllNullableTypes?]
         Task { @MainActor in
@@ -3988,7 +4133,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNonNullEnumListChannel.setMessageHandler { message, reply in
+      callFlutterEchoNonNullEnumListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumListArg = args[0] as! [AnEnum]
         Task { @MainActor in
@@ -4008,7 +4154,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNonNullClassListChannel.setMessageHandler { message, reply in
+      callFlutterEchoNonNullClassListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classListArg = args[0] as! [AllNullableTypes]
         Task { @MainActor in
@@ -4028,7 +4175,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let mapArg = args[0] as! [AnyHashable?: Any?]
         Task { @MainActor in
@@ -4048,7 +4196,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoStringMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoStringMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let stringMapArg = args[0] as! [String?: String?]
         Task { @MainActor in
@@ -4068,7 +4217,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoIntMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoIntMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let intMapArg = args[0] as! [Int64?: Int64?]
         Task { @MainActor in
@@ -4088,7 +4238,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoEnumMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoEnumMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumMapArg = args[0] as? [AnEnum?: AnEnum?]
         Task { @MainActor in
@@ -4108,7 +4259,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoClassMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoClassMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classMapArg = args[0] as! [Int64?: AllNullableTypes?]
         Task { @MainActor in
@@ -4128,7 +4280,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNonNullStringMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoNonNullStringMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let stringMapArg = args[0] as! [String: String]
         Task { @MainActor in
@@ -4148,7 +4301,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNonNullIntMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoNonNullIntMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let intMapArg = args[0] as! [Int64: Int64]
         Task { @MainActor in
@@ -4168,7 +4322,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNonNullEnumMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoNonNullEnumMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumMapArg = args[0] as? [AnEnum: AnEnum]
         Task { @MainActor in
@@ -4188,7 +4343,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNonNullClassMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoNonNullClassMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classMapArg = args[0] as! [Int64: AllNullableTypes]
         Task { @MainActor in
@@ -4208,7 +4364,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoEnumChannel.setMessageHandler { message, reply in
+      callFlutterEchoEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anEnumArg = args[0] as! AnEnum
         Task { @MainActor in
@@ -4228,7 +4385,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoAnotherEnumChannel.setMessageHandler { message, reply in
+      callFlutterEchoAnotherEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anotherEnumArg = args[0] as! AnotherEnum
         Task { @MainActor in
@@ -4248,7 +4406,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableBoolChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableBoolChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aBoolArg: Bool? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4268,7 +4427,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableIntChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableIntChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anIntArg: Int64? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4288,7 +4448,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableDoubleChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableDoubleChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aDoubleArg: Double? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4308,7 +4469,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableStringChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aStringArg: String? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4328,7 +4490,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableUint8ListChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableUint8ListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let listArg: FlutterStandardTypedData? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4348,7 +4511,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableListChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let listArg: [Any?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4368,7 +4532,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableEnumListChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableEnumListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumListArg: [AnEnum?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4388,7 +4553,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableClassListChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableClassListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classListArg: [AllNullableTypes?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4408,7 +4574,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableNonNullEnumListChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableNonNullEnumListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumListArg: [AnEnum]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4428,7 +4595,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableNonNullClassListChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableNonNullClassListChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classListArg: [AllNullableTypes]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4448,7 +4616,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let mapArg: [AnyHashable?: Any?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4468,7 +4637,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableStringMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableStringMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let stringMapArg: [String?: String?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4488,7 +4658,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableIntMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableIntMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let intMapArg: [Int64?: Int64?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4508,7 +4679,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableEnumMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableEnumMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumMapArg: [AnEnum?: AnEnum?]? = args[0] as? [AnEnum?: AnEnum?]
         Task { @MainActor in
@@ -4528,7 +4700,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableClassMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableClassMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classMapArg: [Int64?: AllNullableTypes?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4548,7 +4721,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableNonNullStringMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableNonNullStringMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let stringMapArg: [String: String]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4568,7 +4742,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableNonNullIntMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableNonNullIntMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let intMapArg: [Int64: Int64]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4588,7 +4763,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableNonNullEnumMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableNonNullEnumMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let enumMapArg: [AnEnum: AnEnum]? = args[0] as? [AnEnum: AnEnum]
         Task { @MainActor in
@@ -4608,7 +4784,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableNonNullClassMapChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableNonNullClassMapChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let classMapArg: [Int64: AllNullableTypes]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4628,7 +4805,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableEnumChannel.setMessageHandler { message, reply in
+      callFlutterEchoNullableEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anEnumArg: AnEnum? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4648,7 +4826,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherNullableEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoAnotherNullableEnumChannel.setMessageHandler { message, reply in
+      callFlutterEchoAnotherNullableEnumChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let anotherEnumArg: AnotherEnum? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4668,7 +4847,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSmallApiEchoString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterSmallApiEchoStringChannel.setMessageHandler { message, reply in
+      callFlutterSmallApiEchoStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
         Task { @MainActor in
@@ -4688,7 +4868,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterCallbackNoop\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterCallbackNoopChannel.setMessageHandler { _, reply in
+      callFlutterCallbackNoopChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         Task { @MainActor in
           do {
             try await api.callFlutterCallbackNoop()
@@ -4706,7 +4887,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterCallbackEchoString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterCallbackEchoStringChannel.setMessageHandler { message, reply in
+      callFlutterCallbackEchoStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
         Task { @MainActor in
@@ -4726,7 +4908,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterCallbackThrowError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterCallbackThrowErrorChannel.setMessageHandler { _, reply in
+      callFlutterCallbackThrowErrorChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         Task { @MainActor in
           do {
             let result = try await api.callFlutterCallbackThrowError()
@@ -4744,7 +4927,8 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterCallbackThrowErrorFromVoid\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterCallbackThrowErrorFromVoidChannel.setMessageHandler { _, reply in
+      callFlutterCallbackThrowErrorFromVoidChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         Task { @MainActor in
           do {
             try await api.callFlutterCallbackThrowErrorFromVoid()
@@ -4764,10 +4948,13 @@ class HostIntegrationCoreApiSetup {
 ///
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol FlutterCallbackCoreApiProtocol {
-  func noop(completion: @escaping (Result<Void, PigeonError>) -> Void)
-  func echo(string aStringArg: String, completion: @escaping (Result<String, PigeonError>) -> Void)
-  func throwError(completion: @escaping (Result<Any?, PigeonError>) -> Void)
-  func throwErrorFromVoid(completion: @escaping (Result<Void, PigeonError>) -> Void)
+  @MainActor func noop(completion: @escaping @MainActor (Result<Void, PigeonError>) -> Void)
+  @MainActor func echo(
+    string aStringArg: String,
+    completion: @escaping @MainActor (Result<String, PigeonError>) -> Void)
+  @MainActor func throwError(completion: @escaping @MainActor (Result<Any?, PigeonError>) -> Void)
+  @MainActor func throwErrorFromVoid(
+    completion: @escaping @MainActor (Result<Void, PigeonError>) -> Void)
 }
 class FlutterCallbackCoreApi: FlutterCallbackCoreApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -4779,12 +4966,12 @@ class FlutterCallbackCoreApi: FlutterCallbackCoreApiProtocol {
   var codec: CoreTestsPigeonCodec {
     return CoreTestsPigeonCodec.shared
   }
-  func noop(completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  @MainActor func noop(completion: @escaping @MainActor (Result<Void, PigeonError>) -> Void) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterCallbackCoreApi.noop\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage(nil) { response in
+    channel.sendMessage(nil) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -4801,13 +4988,15 @@ class FlutterCallbackCoreApi: FlutterCallbackCoreApiProtocol {
       }
     }
   }
-  func echo(string aStringArg: String, completion: @escaping (Result<String, PigeonError>) -> Void)
-  {
+  @MainActor func echo(
+    string aStringArg: String,
+    completion: @escaping @MainActor (Result<String, PigeonError>) -> Void
+  ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterCallbackCoreApi.echoString\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([aStringArg] as [Any?]) { response in
+    channel.sendMessage([aStringArg] as [Any?]) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -4832,12 +5021,12 @@ class FlutterCallbackCoreApi: FlutterCallbackCoreApiProtocol {
       }
     }
   }
-  func throwError(completion: @escaping (Result<Any?, PigeonError>) -> Void) {
+  @MainActor func throwError(completion: @escaping @MainActor (Result<Any?, PigeonError>) -> Void) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterCallbackCoreApi.throwError\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage(nil) { response in
+    channel.sendMessage(nil) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -4855,12 +5044,14 @@ class FlutterCallbackCoreApi: FlutterCallbackCoreApiProtocol {
       }
     }
   }
-  func throwErrorFromVoid(completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  @MainActor func throwErrorFromVoid(
+    completion: @escaping @MainActor (Result<Void, PigeonError>) -> Void
+  ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterCallbackCoreApi.throwErrorFromVoid\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage(nil) { response in
+    channel.sendMessage(nil) { (response: any Sendable) in
       MainActor.assumeIsolated {
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -4886,128 +5077,139 @@ class FlutterCallbackCoreApi: FlutterCallbackCoreApiProtocol {
 protocol FlutterIntegrationCoreApiProtocol {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
-  func noop() async throws
+  @MainActor func noop() async throws
   /// Responds with an error from an async function returning a value.
-  func throwError() async throws -> Any?
+  @MainActor func throwError() async throws -> Any?
   /// Responds with an error from an async void function.
-  func throwErrorFromVoid() async throws
+  @MainActor func throwErrorFromVoid() async throws
   /// Returns the passed object, to test serialization and deserialization.
-  func echo(_ everythingArg: AllTypes) async throws -> AllTypes
+  @MainActor func echo(_ everythingArg: AllTypes) async throws -> AllTypes
   /// Returns the passed object, to test serialization and deserialization.
-  func echoNullable(_ everythingArg: AllNullableTypes?) async throws -> AllNullableTypes?
+  @MainActor func echoNullable(_ everythingArg: AllNullableTypes?) async throws -> AllNullableTypes?
   /// Returns passed in arguments of multiple types.
   ///
   /// Tests multiple-arity FlutterApi handling.
-  func sendMultipleNullableTypes(
+  @MainActor func sendMultipleNullableTypes(
     aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?,
     aString aNullableStringArg: String?
   ) async throws -> AllNullableTypes
   /// Returns the passed object, to test serialization and deserialization.
-  func echoNullable(_ everythingArg: AllNullableTypesWithoutRecursion?) async throws
+  @MainActor func echoNullable(_ everythingArg: AllNullableTypesWithoutRecursion?) async throws
     -> AllNullableTypesWithoutRecursion?
   /// Returns passed in arguments of multiple types.
   ///
   /// Tests multiple-arity FlutterApi handling.
-  func sendMultipleNullableTypesWithoutRecursion(
+  @MainActor func sendMultipleNullableTypesWithoutRecursion(
     aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?,
     aString aNullableStringArg: String?
   ) async throws -> AllNullableTypesWithoutRecursion
   /// Returns the passed boolean, to test serialization and deserialization.
-  func echo(_ aBoolArg: Bool) async throws -> Bool
+  @MainActor func echo(_ aBoolArg: Bool) async throws -> Bool
   /// Returns the passed int, to test serialization and deserialization.
-  func echo(_ anIntArg: Int64) async throws -> Int64
+  @MainActor func echo(_ anIntArg: Int64) async throws -> Int64
   /// Returns the passed double, to test serialization and deserialization.
-  func echo(_ aDoubleArg: Double) async throws -> Double
+  @MainActor func echo(_ aDoubleArg: Double) async throws -> Double
   /// Returns the passed string, to test serialization and deserialization.
-  func echo(_ aStringArg: String) async throws -> String
+  @MainActor func echo(_ aStringArg: String) async throws -> String
   /// Returns the passed byte list, to test serialization and deserialization.
-  func echo(_ listArg: FlutterStandardTypedData) async throws -> FlutterStandardTypedData
+  @MainActor func echo(_ listArg: FlutterStandardTypedData) async throws -> FlutterStandardTypedData
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(_ listArg: [Any?]) async throws -> [Any?]
+  @MainActor func echo(_ listArg: [Any?]) async throws -> [Any?]
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(enumList enumListArg: [AnEnum?]) async throws -> [AnEnum?]
+  @MainActor func echo(enumList enumListArg: [AnEnum?]) async throws -> [AnEnum?]
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(classList classListArg: [AllNullableTypes?]) async throws -> [AllNullableTypes?]
+  @MainActor func echo(classList classListArg: [AllNullableTypes?]) async throws
+    -> [AllNullableTypes?]
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNonNull(enumList enumListArg: [AnEnum]) async throws -> [AnEnum]
+  @MainActor func echoNonNull(enumList enumListArg: [AnEnum]) async throws -> [AnEnum]
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNonNull(classList classListArg: [AllNullableTypes]) async throws -> [AllNullableTypes]
+  @MainActor func echoNonNull(classList classListArg: [AllNullableTypes]) async throws
+    -> [AllNullableTypes]
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(_ mapArg: [AnyHashable?: Any?]) async throws -> [AnyHashable?: Any?]
+  @MainActor func echo(_ mapArg: [AnyHashable?: Any?]) async throws -> [AnyHashable?: Any?]
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(stringMap stringMapArg: [String?: String?]) async throws -> [String?: String?]
+  @MainActor func echo(stringMap stringMapArg: [String?: String?]) async throws -> [String?:
+    String?]
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(intMap intMapArg: [Int64?: Int64?]) async throws -> [Int64?: Int64?]
+  @MainActor func echo(intMap intMapArg: [Int64?: Int64?]) async throws -> [Int64?: Int64?]
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(enumMap enumMapArg: [AnEnum?: AnEnum?]) async throws -> [AnEnum?: AnEnum?]
+  @MainActor func echo(enumMap enumMapArg: [AnEnum?: AnEnum?]) async throws -> [AnEnum?: AnEnum?]
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(classMap classMapArg: [Int64?: AllNullableTypes?]) async throws -> [Int64?:
+  @MainActor func echo(classMap classMapArg: [Int64?: AllNullableTypes?]) async throws -> [Int64?:
     AllNullableTypes?]
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(stringMap stringMapArg: [String: String]) async throws -> [String: String]
+  @MainActor func echoNonNull(stringMap stringMapArg: [String: String]) async throws -> [String:
+    String]
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(intMap intMapArg: [Int64: Int64]) async throws -> [Int64: Int64]
+  @MainActor func echoNonNull(intMap intMapArg: [Int64: Int64]) async throws -> [Int64: Int64]
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(enumMap enumMapArg: [AnEnum: AnEnum]) async throws -> [AnEnum: AnEnum]
+  @MainActor func echoNonNull(enumMap enumMapArg: [AnEnum: AnEnum]) async throws -> [AnEnum: AnEnum]
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(classMap classMapArg: [Int64: AllNullableTypes]) async throws -> [Int64:
-    AllNullableTypes]
+  @MainActor func echoNonNull(classMap classMapArg: [Int64: AllNullableTypes]) async throws
+    -> [Int64: AllNullableTypes]
   /// Returns the passed enum to test serialization and deserialization.
-  func echo(_ anEnumArg: AnEnum) async throws -> AnEnum
+  @MainActor func echo(_ anEnumArg: AnEnum) async throws -> AnEnum
   /// Returns the passed enum to test serialization and deserialization.
-  func echo(_ anotherEnumArg: AnotherEnum) async throws -> AnotherEnum
+  @MainActor func echo(_ anotherEnumArg: AnotherEnum) async throws -> AnotherEnum
   /// Returns the passed boolean, to test serialization and deserialization.
-  func echoNullable(_ aBoolArg: Bool?) async throws -> Bool?
+  @MainActor func echoNullable(_ aBoolArg: Bool?) async throws -> Bool?
   /// Returns the passed int, to test serialization and deserialization.
-  func echoNullable(_ anIntArg: Int64?) async throws -> Int64?
+  @MainActor func echoNullable(_ anIntArg: Int64?) async throws -> Int64?
   /// Returns the passed double, to test serialization and deserialization.
-  func echoNullable(_ aDoubleArg: Double?) async throws -> Double?
+  @MainActor func echoNullable(_ aDoubleArg: Double?) async throws -> Double?
   /// Returns the passed string, to test serialization and deserialization.
-  func echoNullable(_ aStringArg: String?) async throws -> String?
+  @MainActor func echoNullable(_ aStringArg: String?) async throws -> String?
   /// Returns the passed byte list, to test serialization and deserialization.
-  func echoNullable(_ listArg: FlutterStandardTypedData?) async throws -> FlutterStandardTypedData?
+  @MainActor func echoNullable(_ listArg: FlutterStandardTypedData?) async throws
+    -> FlutterStandardTypedData?
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullable(_ listArg: [Any?]?) async throws -> [Any?]?
+  @MainActor func echoNullable(_ listArg: [Any?]?) async throws -> [Any?]?
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullable(enumList enumListArg: [AnEnum?]?) async throws -> [AnEnum?]?
+  @MainActor func echoNullable(enumList enumListArg: [AnEnum?]?) async throws -> [AnEnum?]?
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullable(classList classListArg: [AllNullableTypes?]?) async throws
+  @MainActor func echoNullable(classList classListArg: [AllNullableTypes?]?) async throws
     -> [AllNullableTypes?]?
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullableNonNull(enumList enumListArg: [AnEnum]?) async throws -> [AnEnum]?
+  @MainActor func echoNullableNonNull(enumList enumListArg: [AnEnum]?) async throws -> [AnEnum]?
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullableNonNull(classList classListArg: [AllNullableTypes]?) async throws
+  @MainActor func echoNullableNonNull(classList classListArg: [AllNullableTypes]?) async throws
     -> [AllNullableTypes]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(_ mapArg: [AnyHashable?: Any?]?) async throws -> [AnyHashable?: Any?]?
+  @MainActor func echoNullable(_ mapArg: [AnyHashable?: Any?]?) async throws -> [AnyHashable?:
+    Any?]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(stringMap stringMapArg: [String?: String?]?) async throws -> [String?: String?]?
+  @MainActor func echoNullable(stringMap stringMapArg: [String?: String?]?) async throws
+    -> [String?: String?]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(intMap intMapArg: [Int64?: Int64?]?) async throws -> [Int64?: Int64?]?
+  @MainActor func echoNullable(intMap intMapArg: [Int64?: Int64?]?) async throws -> [Int64?:
+    Int64?]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(enumMap enumMapArg: [AnEnum?: AnEnum?]?) async throws -> [AnEnum?: AnEnum?]?
+  @MainActor func echoNullable(enumMap enumMapArg: [AnEnum?: AnEnum?]?) async throws -> [AnEnum?:
+    AnEnum?]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(classMap classMapArg: [Int64?: AllNullableTypes?]?) async throws -> [Int64?:
-    AllNullableTypes?]?
+  @MainActor func echoNullable(classMap classMapArg: [Int64?: AllNullableTypes?]?) async throws
+    -> [Int64?: AllNullableTypes?]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(stringMap stringMapArg: [String: String]?) async throws -> [String:
-    String]?
+  @MainActor func echoNullableNonNull(stringMap stringMapArg: [String: String]?) async throws
+    -> [String: String]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(intMap intMapArg: [Int64: Int64]?) async throws -> [Int64: Int64]?
+  @MainActor func echoNullableNonNull(intMap intMapArg: [Int64: Int64]?) async throws -> [Int64:
+    Int64]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(enumMap enumMapArg: [AnEnum: AnEnum]?) async throws -> [AnEnum: AnEnum]?
+  @MainActor func echoNullableNonNull(enumMap enumMapArg: [AnEnum: AnEnum]?) async throws
+    -> [AnEnum: AnEnum]?
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(classMap classMapArg: [Int64: AllNullableTypes]?) async throws -> [Int64:
-    AllNullableTypes]?
+  @MainActor func echoNullableNonNull(classMap classMapArg: [Int64: AllNullableTypes]?) async throws
+    -> [Int64: AllNullableTypes]?
   /// Returns the passed enum to test serialization and deserialization.
-  func echoNullable(_ anEnumArg: AnEnum?) async throws -> AnEnum?
+  @MainActor func echoNullable(_ anEnumArg: AnEnum?) async throws -> AnEnum?
   /// Returns the passed enum to test serialization and deserialization.
-  func echoNullable(_ anotherEnumArg: AnotherEnum?) async throws -> AnotherEnum?
+  @MainActor func echoNullable(_ anotherEnumArg: AnotherEnum?) async throws -> AnotherEnum?
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
-  func noopAsync() async throws
+  @MainActor func noopAsync() async throws
   /// Returns the passed in generic Object asynchronously.
-  func echoAsync(_ aStringArg: String) async throws -> String
+  @MainActor func echoAsync(_ aStringArg: String) async throws -> String
 }
 class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -5021,13 +5223,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
-  func noop() async throws {
+  @MainActor func noop() async throws {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage(nil) { response in
+      channel.sendMessage(nil) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5047,13 +5249,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Responds with an error from an async function returning a value.
-  func throwError() async throws -> Any? {
+  @MainActor func throwError() async throws -> Any? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwError\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage(nil) { response in
+      channel.sendMessage(nil) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5074,13 +5276,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Responds with an error from an async void function.
-  func throwErrorFromVoid() async throws {
+  @MainActor func throwErrorFromVoid() async throws {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage(nil) { response in
+      channel.sendMessage(nil) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5100,13 +5302,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed object, to test serialization and deserialization.
-  func echo(_ everythingArg: AllTypes) async throws -> AllTypes {
+  @MainActor func echo(_ everythingArg: AllTypes) async throws -> AllTypes {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([everythingArg] as [Any?]) { response in
+      channel.sendMessage([everythingArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5132,13 +5334,14 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed object, to test serialization and deserialization.
-  func echoNullable(_ everythingArg: AllNullableTypes?) async throws -> AllNullableTypes? {
+  @MainActor func echoNullable(_ everythingArg: AllNullableTypes?) async throws -> AllNullableTypes?
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([everythingArg] as [Any?]) { response in
+      channel.sendMessage([everythingArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5161,7 +5364,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   /// Returns passed in arguments of multiple types.
   ///
   /// Tests multiple-arity FlutterApi handling.
-  func sendMultipleNullableTypes(
+  @MainActor func sendMultipleNullableTypes(
     aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?,
     aString aNullableStringArg: String?
   ) async throws -> AllNullableTypes {
@@ -5171,7 +5374,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([aNullableBoolArg, aNullableIntArg, aNullableStringArg] as [Any?]) {
-        response in
+        (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5197,7 +5400,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed object, to test serialization and deserialization.
-  func echoNullable(_ everythingArg: AllNullableTypesWithoutRecursion?) async throws
+  @MainActor func echoNullable(_ everythingArg: AllNullableTypesWithoutRecursion?) async throws
     -> AllNullableTypesWithoutRecursion?
   {
     return try await withCheckedThrowingContinuation { continuation in
@@ -5205,7 +5408,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypesWithoutRecursion\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([everythingArg] as [Any?]) { response in
+      channel.sendMessage([everythingArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5228,7 +5431,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   /// Returns passed in arguments of multiple types.
   ///
   /// Tests multiple-arity FlutterApi handling.
-  func sendMultipleNullableTypesWithoutRecursion(
+  @MainActor func sendMultipleNullableTypesWithoutRecursion(
     aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?,
     aString aNullableStringArg: String?
   ) async throws -> AllNullableTypesWithoutRecursion {
@@ -5238,7 +5441,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([aNullableBoolArg, aNullableIntArg, aNullableStringArg] as [Any?]) {
-        response in
+        (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5264,13 +5467,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed boolean, to test serialization and deserialization.
-  func echo(_ aBoolArg: Bool) async throws -> Bool {
+  @MainActor func echo(_ aBoolArg: Bool) async throws -> Bool {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([aBoolArg] as [Any?]) { response in
+      channel.sendMessage([aBoolArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5296,13 +5499,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed int, to test serialization and deserialization.
-  func echo(_ anIntArg: Int64) async throws -> Int64 {
+  @MainActor func echo(_ anIntArg: Int64) async throws -> Int64 {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([anIntArg] as [Any?]) { response in
+      channel.sendMessage([anIntArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5328,13 +5531,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed double, to test serialization and deserialization.
-  func echo(_ aDoubleArg: Double) async throws -> Double {
+  @MainActor func echo(_ aDoubleArg: Double) async throws -> Double {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([aDoubleArg] as [Any?]) { response in
+      channel.sendMessage([aDoubleArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5360,13 +5563,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed string, to test serialization and deserialization.
-  func echo(_ aStringArg: String) async throws -> String {
+  @MainActor func echo(_ aStringArg: String) async throws -> String {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([aStringArg] as [Any?]) { response in
+      channel.sendMessage([aStringArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5392,13 +5595,14 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed byte list, to test serialization and deserialization.
-  func echo(_ listArg: FlutterStandardTypedData) async throws -> FlutterStandardTypedData {
+  @MainActor func echo(_ listArg: FlutterStandardTypedData) async throws -> FlutterStandardTypedData
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([listArg] as [Any?]) { response in
+      channel.sendMessage([listArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5424,13 +5628,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(_ listArg: [Any?]) async throws -> [Any?] {
+  @MainActor func echo(_ listArg: [Any?]) async throws -> [Any?] {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([listArg] as [Any?]) { response in
+      channel.sendMessage([listArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5456,13 +5660,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(enumList enumListArg: [AnEnum?]) async throws -> [AnEnum?] {
+  @MainActor func echo(enumList enumListArg: [AnEnum?]) async throws -> [AnEnum?] {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnumList\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([enumListArg] as [Any?]) { response in
+      channel.sendMessage([enumListArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5488,13 +5692,15 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(classList classListArg: [AllNullableTypes?]) async throws -> [AllNullableTypes?] {
+  @MainActor func echo(classList classListArg: [AllNullableTypes?]) async throws
+    -> [AllNullableTypes?]
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoClassList\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([classListArg] as [Any?]) { response in
+      channel.sendMessage([classListArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5520,13 +5726,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNonNull(enumList enumListArg: [AnEnum]) async throws -> [AnEnum] {
+  @MainActor func echoNonNull(enumList enumListArg: [AnEnum]) async throws -> [AnEnum] {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullEnumList\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([enumListArg] as [Any?]) { response in
+      channel.sendMessage([enumListArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5552,13 +5758,15 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNonNull(classList classListArg: [AllNullableTypes]) async throws -> [AllNullableTypes] {
+  @MainActor func echoNonNull(classList classListArg: [AllNullableTypes]) async throws
+    -> [AllNullableTypes]
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullClassList\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([classListArg] as [Any?]) { response in
+      channel.sendMessage([classListArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5584,13 +5792,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(_ mapArg: [AnyHashable?: Any?]) async throws -> [AnyHashable?: Any?] {
+  @MainActor func echo(_ mapArg: [AnyHashable?: Any?]) async throws -> [AnyHashable?: Any?] {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([mapArg] as [Any?]) { response in
+      channel.sendMessage([mapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5616,13 +5824,15 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(stringMap stringMapArg: [String?: String?]) async throws -> [String?: String?] {
+  @MainActor func echo(stringMap stringMapArg: [String?: String?]) async throws -> [String?:
+    String?]
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoStringMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([stringMapArg] as [Any?]) { response in
+      channel.sendMessage([stringMapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5648,13 +5858,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(intMap intMapArg: [Int64?: Int64?]) async throws -> [Int64?: Int64?] {
+  @MainActor func echo(intMap intMapArg: [Int64?: Int64?]) async throws -> [Int64?: Int64?] {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoIntMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([intMapArg] as [Any?]) { response in
+      channel.sendMessage([intMapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5680,13 +5890,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(enumMap enumMapArg: [AnEnum?: AnEnum?]) async throws -> [AnEnum?: AnEnum?] {
+  @MainActor func echo(enumMap enumMapArg: [AnEnum?: AnEnum?]) async throws -> [AnEnum?: AnEnum?] {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnumMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([enumMapArg] as [Any?]) { response in
+      channel.sendMessage([enumMapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5712,7 +5922,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echo(classMap classMapArg: [Int64?: AllNullableTypes?]) async throws -> [Int64?:
+  @MainActor func echo(classMap classMapArg: [Int64?: AllNullableTypes?]) async throws -> [Int64?:
     AllNullableTypes?]
   {
     return try await withCheckedThrowingContinuation { continuation in
@@ -5720,7 +5930,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoClassMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([classMapArg] as [Any?]) { response in
+      channel.sendMessage([classMapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5746,13 +5956,15 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(stringMap stringMapArg: [String: String]) async throws -> [String: String] {
+  @MainActor func echoNonNull(stringMap stringMapArg: [String: String]) async throws -> [String:
+    String]
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullStringMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([stringMapArg] as [Any?]) { response in
+      channel.sendMessage([stringMapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5778,13 +5990,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(intMap intMapArg: [Int64: Int64]) async throws -> [Int64: Int64] {
+  @MainActor func echoNonNull(intMap intMapArg: [Int64: Int64]) async throws -> [Int64: Int64] {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullIntMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([intMapArg] as [Any?]) { response in
+      channel.sendMessage([intMapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5810,13 +6022,14 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(enumMap enumMapArg: [AnEnum: AnEnum]) async throws -> [AnEnum: AnEnum] {
+  @MainActor func echoNonNull(enumMap enumMapArg: [AnEnum: AnEnum]) async throws -> [AnEnum: AnEnum]
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullEnumMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([enumMapArg] as [Any?]) { response in
+      channel.sendMessage([enumMapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5842,15 +6055,15 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNonNull(classMap classMapArg: [Int64: AllNullableTypes]) async throws -> [Int64:
-    AllNullableTypes]
+  @MainActor func echoNonNull(classMap classMapArg: [Int64: AllNullableTypes]) async throws
+    -> [Int64: AllNullableTypes]
   {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullClassMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([classMapArg] as [Any?]) { response in
+      channel.sendMessage([classMapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5876,13 +6089,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed enum to test serialization and deserialization.
-  func echo(_ anEnumArg: AnEnum) async throws -> AnEnum {
+  @MainActor func echo(_ anEnumArg: AnEnum) async throws -> AnEnum {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([anEnumArg] as [Any?]) { response in
+      channel.sendMessage([anEnumArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5908,13 +6121,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed enum to test serialization and deserialization.
-  func echo(_ anotherEnumArg: AnotherEnum) async throws -> AnotherEnum {
+  @MainActor func echo(_ anotherEnumArg: AnotherEnum) async throws -> AnotherEnum {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherEnum\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([anotherEnumArg] as [Any?]) { response in
+      channel.sendMessage([anotherEnumArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5940,13 +6153,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed boolean, to test serialization and deserialization.
-  func echoNullable(_ aBoolArg: Bool?) async throws -> Bool? {
+  @MainActor func echoNullable(_ aBoolArg: Bool?) async throws -> Bool? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([aBoolArg] as [Any?]) { response in
+      channel.sendMessage([aBoolArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5967,13 +6180,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed int, to test serialization and deserialization.
-  func echoNullable(_ anIntArg: Int64?) async throws -> Int64? {
+  @MainActor func echoNullable(_ anIntArg: Int64?) async throws -> Int64? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([anIntArg] as [Any?]) { response in
+      channel.sendMessage([anIntArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -5994,13 +6207,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed double, to test serialization and deserialization.
-  func echoNullable(_ aDoubleArg: Double?) async throws -> Double? {
+  @MainActor func echoNullable(_ aDoubleArg: Double?) async throws -> Double? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([aDoubleArg] as [Any?]) { response in
+      channel.sendMessage([aDoubleArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6021,13 +6234,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed string, to test serialization and deserialization.
-  func echoNullable(_ aStringArg: String?) async throws -> String? {
+  @MainActor func echoNullable(_ aStringArg: String?) async throws -> String? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([aStringArg] as [Any?]) { response in
+      channel.sendMessage([aStringArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6048,14 +6261,15 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed byte list, to test serialization and deserialization.
-  func echoNullable(_ listArg: FlutterStandardTypedData?) async throws -> FlutterStandardTypedData?
+  @MainActor func echoNullable(_ listArg: FlutterStandardTypedData?) async throws
+    -> FlutterStandardTypedData?
   {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([listArg] as [Any?]) { response in
+      channel.sendMessage([listArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6076,13 +6290,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullable(_ listArg: [Any?]?) async throws -> [Any?]? {
+  @MainActor func echoNullable(_ listArg: [Any?]?) async throws -> [Any?]? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([listArg] as [Any?]) { response in
+      channel.sendMessage([listArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6103,13 +6317,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullable(enumList enumListArg: [AnEnum?]?) async throws -> [AnEnum?]? {
+  @MainActor func echoNullable(enumList enumListArg: [AnEnum?]?) async throws -> [AnEnum?]? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnumList\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([enumListArg] as [Any?]) { response in
+      channel.sendMessage([enumListArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6130,7 +6344,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullable(classList classListArg: [AllNullableTypes?]?) async throws
+  @MainActor func echoNullable(classList classListArg: [AllNullableTypes?]?) async throws
     -> [AllNullableTypes?]?
   {
     return try await withCheckedThrowingContinuation { continuation in
@@ -6138,7 +6352,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableClassList\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([classListArg] as [Any?]) { response in
+      channel.sendMessage([classListArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6159,13 +6373,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullableNonNull(enumList enumListArg: [AnEnum]?) async throws -> [AnEnum]? {
+  @MainActor func echoNullableNonNull(enumList enumListArg: [AnEnum]?) async throws -> [AnEnum]? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullEnumList\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([enumListArg] as [Any?]) { response in
+      channel.sendMessage([enumListArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6186,7 +6400,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echoNullableNonNull(classList classListArg: [AllNullableTypes]?) async throws
+  @MainActor func echoNullableNonNull(classList classListArg: [AllNullableTypes]?) async throws
     -> [AllNullableTypes]?
   {
     return try await withCheckedThrowingContinuation { continuation in
@@ -6194,7 +6408,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullClassList\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([classListArg] as [Any?]) { response in
+      channel.sendMessage([classListArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6215,13 +6429,15 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(_ mapArg: [AnyHashable?: Any?]?) async throws -> [AnyHashable?: Any?]? {
+  @MainActor func echoNullable(_ mapArg: [AnyHashable?: Any?]?) async throws -> [AnyHashable?:
+    Any?]?
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([mapArg] as [Any?]) { response in
+      channel.sendMessage([mapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6242,14 +6458,15 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(stringMap stringMapArg: [String?: String?]?) async throws -> [String?: String?]?
+  @MainActor func echoNullable(stringMap stringMapArg: [String?: String?]?) async throws
+    -> [String?: String?]?
   {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableStringMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([stringMapArg] as [Any?]) { response in
+      channel.sendMessage([stringMapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6270,13 +6487,15 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(intMap intMapArg: [Int64?: Int64?]?) async throws -> [Int64?: Int64?]? {
+  @MainActor func echoNullable(intMap intMapArg: [Int64?: Int64?]?) async throws -> [Int64?:
+    Int64?]?
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableIntMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([intMapArg] as [Any?]) { response in
+      channel.sendMessage([intMapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6297,13 +6516,15 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(enumMap enumMapArg: [AnEnum?: AnEnum?]?) async throws -> [AnEnum?: AnEnum?]? {
+  @MainActor func echoNullable(enumMap enumMapArg: [AnEnum?: AnEnum?]?) async throws -> [AnEnum?:
+    AnEnum?]?
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnumMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([enumMapArg] as [Any?]) { response in
+      channel.sendMessage([enumMapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6324,15 +6545,15 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullable(classMap classMapArg: [Int64?: AllNullableTypes?]?) async throws -> [Int64?:
-    AllNullableTypes?]?
+  @MainActor func echoNullable(classMap classMapArg: [Int64?: AllNullableTypes?]?) async throws
+    -> [Int64?: AllNullableTypes?]?
   {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableClassMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([classMapArg] as [Any?]) { response in
+      channel.sendMessage([classMapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6353,15 +6574,15 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(stringMap stringMapArg: [String: String]?) async throws -> [String:
-    String]?
+  @MainActor func echoNullableNonNull(stringMap stringMapArg: [String: String]?) async throws
+    -> [String: String]?
   {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullStringMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([stringMapArg] as [Any?]) { response in
+      channel.sendMessage([stringMapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6382,13 +6603,15 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(intMap intMapArg: [Int64: Int64]?) async throws -> [Int64: Int64]? {
+  @MainActor func echoNullableNonNull(intMap intMapArg: [Int64: Int64]?) async throws -> [Int64:
+    Int64]?
+  {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullIntMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([intMapArg] as [Any?]) { response in
+      channel.sendMessage([intMapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6409,14 +6632,15 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(enumMap enumMapArg: [AnEnum: AnEnum]?) async throws -> [AnEnum: AnEnum]?
+  @MainActor func echoNullableNonNull(enumMap enumMapArg: [AnEnum: AnEnum]?) async throws
+    -> [AnEnum: AnEnum]?
   {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullEnumMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([enumMapArg] as [Any?]) { response in
+      channel.sendMessage([enumMapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6437,15 +6661,15 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed map, to test serialization and deserialization.
-  func echoNullableNonNull(classMap classMapArg: [Int64: AllNullableTypes]?) async throws -> [Int64:
-    AllNullableTypes]?
+  @MainActor func echoNullableNonNull(classMap classMapArg: [Int64: AllNullableTypes]?) async throws
+    -> [Int64: AllNullableTypes]?
   {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullClassMap\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([classMapArg] as [Any?]) { response in
+      channel.sendMessage([classMapArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6466,13 +6690,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed enum to test serialization and deserialization.
-  func echoNullable(_ anEnumArg: AnEnum?) async throws -> AnEnum? {
+  @MainActor func echoNullable(_ anEnumArg: AnEnum?) async throws -> AnEnum? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([anEnumArg] as [Any?]) { response in
+      channel.sendMessage([anEnumArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6493,13 +6717,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed enum to test serialization and deserialization.
-  func echoNullable(_ anotherEnumArg: AnotherEnum?) async throws -> AnotherEnum? {
+  @MainActor func echoNullable(_ anotherEnumArg: AnotherEnum?) async throws -> AnotherEnum? {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherNullableEnum\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([anotherEnumArg] as [Any?]) { response in
+      channel.sendMessage([anotherEnumArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6521,13 +6745,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
-  func noopAsync() async throws {
+  @MainActor func noopAsync() async throws {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage(nil) { response in
+      channel.sendMessage(nil) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6547,13 +6771,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed in generic Object asynchronously.
-  func echoAsync(_ aStringArg: String) async throws -> String {
+  @MainActor func echoAsync(_ aStringArg: String) async throws -> String {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([aStringArg] as [Any?]) { response in
+      channel.sendMessage([aStringArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6582,21 +6806,25 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
 /// A Host API using callback-based asynchronous methods (@asyncCallback).
 ///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
-protocol HostCallbackCoreApi {
-  func noop(completion: @escaping (Result<Void, Error>) -> Void)
-  func echo(_ aString: String, completion: @escaping (Result<String, Error>) -> Void)
-  func echo(_ everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void)
-  func echoNullable(_ aString: String?, completion: @escaping (Result<String?, Error>) -> Void)
-  func throwError(completion: @escaping (Result<Any?, Error>) -> Void)
-  func throwErrorFromVoid(completion: @escaping (Result<Void, Error>) -> Void)
-  func taskQueueIsBackgroundThread(completion: @escaping (Result<Bool, Error>) -> Void)
+protocol HostCallbackCoreApi: Sendable {
+  @MainActor func noop(completion: @escaping @Sendable (Result<Void, Error>) -> Void)
+  @MainActor func echo(
+    _ aString: String, completion: @escaping @Sendable (Result<String, Error>) -> Void)
+  @MainActor func echo(
+    _ everything: AllTypes, completion: @escaping @Sendable (Result<AllTypes, Error>) -> Void)
+  @MainActor func echoNullable(
+    _ aString: String?, completion: @escaping @Sendable (Result<String?, Error>) -> Void)
+  @MainActor func throwError(completion: @escaping @Sendable (Result<Any?, Error>) -> Void)
+  @MainActor func throwErrorFromVoid(completion: @escaping @Sendable (Result<Void, Error>) -> Void)
+  nonisolated func taskQueueIsBackgroundThread(
+    completion: @escaping @Sendable (Result<Bool, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class HostCallbackCoreApiSetup {
   static var codec: FlutterStandardMessageCodec { CoreTestsPigeonCodec.shared }
   /// Sets up an instance of `HostCallbackCoreApi` to handle messages through the `binaryMessenger`.
-  static func setUp(
+  @MainActor static func setUp(
     binaryMessenger: FlutterBinaryMessenger, api: HostCallbackCoreApi?,
     messageChannelSuffix: String = ""
   ) {
@@ -6610,7 +6838,8 @@ class HostCallbackCoreApiSetup {
       name: "dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.noop\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      noopChannel.setMessageHandler { _, reply in
+      noopChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         api.noop { result in
           switch result {
           case .success:
@@ -6628,7 +6857,8 @@ class HostCallbackCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.echoString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoStringChannel.setMessageHandler { message, reply in
+      echoStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
         api.echo(aStringArg) { result in
@@ -6648,7 +6878,8 @@ class HostCallbackCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.echoAllTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAllTypesChannel.setMessageHandler { message, reply in
+      echoAllTypesChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let everythingArg = args[0] as! AllTypes
         api.echo(everythingArg) { result in
@@ -6668,7 +6899,8 @@ class HostCallbackCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.echoNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableStringChannel.setMessageHandler { message, reply in
+      echoNullableStringChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aStringArg: String? = nilOrValue(args[0])
         api.echoNullable(aStringArg) { result in
@@ -6688,7 +6920,8 @@ class HostCallbackCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.throwError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwErrorChannel.setMessageHandler { _, reply in
+      throwErrorChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         api.throwError { result in
           switch result {
           case .success(let res):
@@ -6706,7 +6939,8 @@ class HostCallbackCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.throwErrorFromVoid\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwErrorFromVoidChannel.setMessageHandler { _, reply in
+      throwErrorFromVoidChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         api.throwErrorFromVoid { result in
           switch result {
           case .success:
@@ -6730,7 +6964,8 @@ class HostCallbackCoreApiSetup {
           "dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.taskQueueIsBackgroundThread\(channelSuffix)",
         binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
     if let api = api {
-      taskQueueIsBackgroundThreadChannel.setMessageHandler { _, reply in
+      taskQueueIsBackgroundThreadChannel.setMessageHandler {
+        (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         api.taskQueueIsBackgroundThread { result in
           switch result {
           case .success(let res):
@@ -6749,14 +6984,14 @@ class HostCallbackCoreApiSetup {
 ///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol HostTrivialApi {
-  func noop() throws
+  @MainActor func noop() throws
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class HostTrivialApiSetup {
   static var codec: FlutterStandardMessageCodec { CoreTestsPigeonCodec.shared }
   /// Sets up an instance of `HostTrivialApi` to handle messages through the `binaryMessenger`.
-  static func setUp(
+  @MainActor static func setUp(
     binaryMessenger: FlutterBinaryMessenger, api: HostTrivialApi?, messageChannelSuffix: String = ""
   ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
@@ -6764,7 +6999,8 @@ class HostTrivialApiSetup {
       name: "dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      noopChannel.setMessageHandler { _, reply in
+      noopChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         do {
           try api.noop()
           reply(wrapResult(nil))
@@ -6781,15 +7017,15 @@ class HostTrivialApiSetup {
 ///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol HostSmallApi {
-  func echo(aString: String) async throws -> String
-  func voidVoid() async throws
+  @MainActor func echo(aString: String) async throws -> String
+  @MainActor func voidVoid() async throws
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class HostSmallApiSetup {
   static var codec: FlutterStandardMessageCodec { CoreTestsPigeonCodec.shared }
   /// Sets up an instance of `HostSmallApi` to handle messages through the `binaryMessenger`.
-  static func setUp(
+  @MainActor static func setUp(
     binaryMessenger: FlutterBinaryMessenger, api: HostSmallApi?, messageChannelSuffix: String = ""
   ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
@@ -6797,7 +7033,8 @@ class HostSmallApiSetup {
       name: "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoChannel.setMessageHandler { message, reply in
+      echoChannel.setMessageHandler {
+        @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
         Task { @MainActor in
@@ -6816,7 +7053,8 @@ class HostSmallApiSetup {
       name: "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      voidVoidChannel.setMessageHandler { _, reply in
+      voidVoidChannel.setMessageHandler {
+        @MainActor (_: Any?, reply: @escaping @Sendable (Any?) -> Void) in
         Task { @MainActor in
           do {
             try await api.voidVoid()
@@ -6836,8 +7074,8 @@ class HostSmallApiSetup {
 ///
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol FlutterSmallApiProtocol {
-  func echo(_ msgArg: TestMessage) async throws -> TestMessage
-  func echo(string aStringArg: String) async throws -> String
+  @MainActor func echo(_ msgArg: TestMessage) async throws -> TestMessage
+  @MainActor func echo(string aStringArg: String) async throws -> String
 }
 class FlutterSmallApi: FlutterSmallApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -6849,13 +7087,13 @@ class FlutterSmallApi: FlutterSmallApiProtocol {
   var codec: CoreTestsPigeonCodec {
     return CoreTestsPigeonCodec.shared
   }
-  func echo(_ msgArg: TestMessage) async throws -> TestMessage {
+  @MainActor func echo(_ msgArg: TestMessage) async throws -> TestMessage {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([msgArg] as [Any?]) { response in
+      channel.sendMessage([msgArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
@@ -6880,13 +7118,13 @@ class FlutterSmallApi: FlutterSmallApiProtocol {
       }
     }
   }
-  func echo(string aStringArg: String) async throws -> String {
+  @MainActor func echo(string aStringArg: String) async throws -> String {
     return try await withCheckedThrowingContinuation { continuation in
       let channelName: String =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([aStringArg] as [Any?]) { response in
+      channel.sendMessage([aStringArg] as [Any?]) { (response: any Sendable) in
         MainActor.assumeIsolated {
           guard let listResponse = response as? [Any?] else {
             continuation.resume(throwing: createConnectionError(withChannelName: channelName))
