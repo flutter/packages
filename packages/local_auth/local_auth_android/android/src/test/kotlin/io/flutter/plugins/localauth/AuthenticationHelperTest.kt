@@ -23,7 +23,7 @@ class AuthenticationHelperTest {
         val helper =
             AuthenticationHelper(
                 null,
-                buildMockActivityWithContext(Mockito.mock<FragmentActivity?>(FragmentActivity::class.java)),
+                buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
                 defaultOptions,
                 dummyStrings,
                 ({ authResult: AuthResult? ->
@@ -45,7 +45,7 @@ class AuthenticationHelperTest {
         val helper =
             AuthenticationHelper(
                 null,
-                buildMockActivityWithContext(Mockito.mock<FragmentActivity?>(FragmentActivity::class.java)),
+                buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
                 defaultOptions,
                 dummyStrings,
                 ({ authResult: AuthResult? ->
@@ -67,7 +67,7 @@ class AuthenticationHelperTest {
         val helper =
             AuthenticationHelper(
                 null,
-                buildMockActivityWithContext(Mockito.mock<FragmentActivity?>(FragmentActivity::class.java)),
+                buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
                 defaultOptions,
                 dummyStrings,
                 ({ authResult: AuthResult? ->
@@ -89,7 +89,7 @@ class AuthenticationHelperTest {
         val helper =
             AuthenticationHelper(
                 null,
-                buildMockActivityWithContext(Mockito.mock<FragmentActivity?>(FragmentActivity::class.java)),
+                buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
                 defaultOptions,
                 dummyStrings,
                 ({ authResult: AuthResult? ->
@@ -111,7 +111,7 @@ class AuthenticationHelperTest {
         val helper =
             AuthenticationHelper(
                 null,
-                buildMockActivityWithContext(Mockito.mock<FragmentActivity?>(FragmentActivity::class.java)),
+                buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
                 defaultOptions,
                 dummyStrings,
                 ({ authResult: AuthResult? ->
@@ -133,7 +133,7 @@ class AuthenticationHelperTest {
         val helper =
             AuthenticationHelper(
                 null,
-                buildMockActivityWithContext(Mockito.mock<FragmentActivity?>(FragmentActivity::class.java)),
+                buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
                 defaultOptions,
                 dummyStrings,
                 ({ authResult: AuthResult? ->
@@ -155,7 +155,7 @@ class AuthenticationHelperTest {
         val helper =
             AuthenticationHelper(
                 null,
-                buildMockActivityWithContext(Mockito.mock<FragmentActivity?>(FragmentActivity::class.java)),
+                buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
                 defaultOptions,
                 dummyStrings,
                 ({ authResult: AuthResult? ->
@@ -177,7 +177,7 @@ class AuthenticationHelperTest {
         val helper =
             AuthenticationHelper(
                 null,
-                buildMockActivityWithContext(Mockito.mock<FragmentActivity?>(FragmentActivity::class.java)),
+                buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
                 defaultOptions,
                 dummyStrings,
                 ({ authResult: AuthResult? ->
@@ -199,7 +199,7 @@ class AuthenticationHelperTest {
         val helper =
             AuthenticationHelper(
                 null,
-                buildMockActivityWithContext(Mockito.mock<FragmentActivity?>(FragmentActivity::class.java)),
+                buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
                 defaultOptions,
                 dummyStrings,
                 ({ authResult: AuthResult? ->
@@ -221,7 +221,7 @@ class AuthenticationHelperTest {
         val helper =
             AuthenticationHelper(
                 null,
-                buildMockActivityWithContext(Mockito.mock<FragmentActivity?>(FragmentActivity::class.java)),
+                buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
                 defaultOptions,
                 dummyStrings,
                 ({ authResult: AuthResult? ->
@@ -243,7 +243,7 @@ class AuthenticationHelperTest {
         val helper =
             AuthenticationHelper(
                 null,
-                buildMockActivityWithContext(Mockito.mock<FragmentActivity?>(FragmentActivity::class.java)),
+                buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
                 defaultOptions,
                 dummyStrings,
                 ({ authResult: AuthResult? ->
@@ -265,7 +265,7 @@ class AuthenticationHelperTest {
         val helper =
             AuthenticationHelper(
                 null,
-                buildMockActivityWithContext(Mockito.mock<FragmentActivity?>(FragmentActivity::class.java)),
+                buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
                 defaultOptions,
                 dummyStrings,
                 ({ authResult: AuthResult? ->
@@ -287,7 +287,7 @@ class AuthenticationHelperTest {
         val helper =
             AuthenticationHelper(
                 null,
-                buildMockActivityWithContext(Mockito.mock<FragmentActivity?>(FragmentActivity::class.java)),
+                buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
                 defaultOptions,
                 dummyStrings,
                 ({ authResult: AuthResult? ->
@@ -304,8 +304,8 @@ class AuthenticationHelperTest {
     }
 
     private fun buildMockActivityWithContext(mockActivity: FragmentActivity): FragmentActivity {
-        val mockApplication = Mockito.mock<Application?>(Application::class.java)
-        val mockContext = Mockito.mock<Context?>(Context::class.java)
+        val mockApplication = Mockito.mock(Application::class.java)
+        val mockContext = Mockito.mock(Context::class.java)
         Mockito.`when`<Context?>(mockActivity.getBaseContext()).thenReturn(mockContext)
         Mockito.`when`<Context?>(mockActivity.getApplicationContext()).thenReturn(mockContext)
         Mockito.`when`<Application?>(mockActivity.getApplication()).thenReturn(mockApplication)

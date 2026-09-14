@@ -22,7 +22,6 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import kotlin.jvm.functions.Function1
 
 @RunWith(RobolectricTestRunner::class)
 class LocalAuthTest {
@@ -63,7 +62,7 @@ class LocalAuthTest {
         val plugin = LocalAuthPlugin()
         setPluginActivity(
             plugin,
-            buildMockActivityWithContext(Mockito.mock<NativeActivity?>(NativeActivity::class.java))
+            buildMockActivityWithContext(Mockito.mock(NativeActivity::class.java))
         )
         val callbackCalled = arrayOfNulls<Boolean>(1)
         plugin.authenticate(
@@ -85,7 +84,7 @@ class LocalAuthTest {
         val plugin = LocalAuthPlugin()
         setPluginActivity(
             plugin, buildMockActivityWithContext(
-                Mockito.mock<FragmentActivity?>(
+                Mockito.mock(
                     FragmentActivity::class.java
                 )
             )
@@ -105,13 +104,13 @@ class LocalAuthTest {
 
     @Test
     fun authenticate_properlyConfiguresBiometricOnlyAuthenticationRequest() {
-        val plugin = Mockito.spy<LocalAuthPlugin>(LocalAuthPlugin())
+        val plugin = Mockito.spy(LocalAuthPlugin())
         val activity =
-            buildMockActivityWithContext(Mockito.mock<FragmentActivity?>(FragmentActivity::class.java)) as FragmentActivity
+            buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)) as FragmentActivity
         setPluginActivity(plugin, activity)
         Mockito.`when`<Boolean?>(plugin.isDeviceSupported()).thenReturn(true)
 
-        val mockBiometricManager = Mockito.mock<BiometricManager>(BiometricManager::class.java)
+        val mockBiometricManager = Mockito.mock(BiometricManager::class.java)
         Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK))
             .thenReturn(BiometricManager.BIOMETRIC_SUCCESS)
         Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.DEVICE_CREDENTIAL))
@@ -119,15 +118,15 @@ class LocalAuthTest {
         plugin.setBiometricManager(mockBiometricManager)
 
         val allowCredentialsCaptor =
-            ArgumentCaptor.forClass<Boolean?, Boolean?>(Boolean::class.java)
+            ArgumentCaptor.forClass(Boolean::class.java)
         Mockito.doNothing()
-            .`when`<LocalAuthPlugin?>(plugin)
+            .`when`(plugin)
             .sendAuthenticationRequest(
-                ArgumentMatchers.any<AuthOptions?>(AuthOptions::class.java),
-                ArgumentMatchers.any<AuthStrings?>(AuthStrings::class.java),
+                ArgumentMatchers.any(AuthOptions::class.java),
+                ArgumentMatchers.any(AuthStrings::class.java),
                 allowCredentialsCaptor.capture()!!,
-                ArgumentMatchers.eq<FragmentActivity?>(activity),
-                ArgumentMatchers.any<Function1<in AuthResult, Unit>>()
+                ArgumentMatchers.eq(activity),
+                ArgumentMatchers.any()
             )
         val options =
             AuthOptions( /* biometricOnly */
@@ -144,27 +143,27 @@ class LocalAuthTest {
     @Test
     @Config(sdk = [30])
     fun authenticate_properlyConfiguresBiometricAndDeviceCredentialAuthenticationRequest() {
-        val plugin = Mockito.spy<LocalAuthPlugin>(LocalAuthPlugin())
+        val plugin = Mockito.spy(LocalAuthPlugin())
         val activity =
-            buildMockActivityWithContext(Mockito.mock<FragmentActivity?>(FragmentActivity::class.java)) as FragmentActivity
+            buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)) as FragmentActivity
         setPluginActivity(plugin, activity)
         Mockito.`when`<Boolean?>(plugin.isDeviceSupported()).thenReturn(true)
 
-        val mockBiometricManager = Mockito.mock<BiometricManager>(BiometricManager::class.java)
+        val mockBiometricManager = Mockito.mock(BiometricManager::class.java)
         Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.DEVICE_CREDENTIAL))
             .thenReturn(BiometricManager.BIOMETRIC_SUCCESS)
         plugin.setBiometricManager(mockBiometricManager)
 
         val allowCredentialsCaptor =
-            ArgumentCaptor.forClass<Boolean?, Boolean?>(Boolean::class.java)
+            ArgumentCaptor.forClass(Boolean::class.java)
         Mockito.doNothing()
-            .`when`<LocalAuthPlugin?>(plugin)
+            .`when`<LocalAuthPlugin>(plugin)
             .sendAuthenticationRequest(
-                ArgumentMatchers.any<AuthOptions?>(AuthOptions::class.java),
-                ArgumentMatchers.any<AuthStrings?>(AuthStrings::class.java),
+                ArgumentMatchers.any(AuthOptions::class.java),
+                ArgumentMatchers.any(AuthStrings::class.java),
                 allowCredentialsCaptor.capture()!!,
-                ArgumentMatchers.eq<FragmentActivity?>(activity),
-                ArgumentMatchers.any<Function1<in AuthResult, Unit>>()
+                ArgumentMatchers.eq(activity),
+                ArgumentMatchers.any()
             )
         plugin.authenticate(
             defaultOptions,
@@ -178,11 +177,11 @@ class LocalAuthTest {
     fun authenticate_properlyConfiguresDeviceCredentialOnlyAuthenticationRequest() {
         val plugin = Mockito.spy<LocalAuthPlugin>(LocalAuthPlugin())
         val activity =
-            buildMockActivityWithContext(Mockito.mock<FragmentActivity?>(FragmentActivity::class.java)) as FragmentActivity
+            buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)) as FragmentActivity
         setPluginActivity(plugin, activity)
         Mockito.`when`<Boolean?>(plugin.isDeviceSupported()).thenReturn(true)
 
-        val mockBiometricManager = Mockito.mock<BiometricManager>(BiometricManager::class.java)
+        val mockBiometricManager = Mockito.mock(BiometricManager::class.java)
         Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK))
             .thenReturn(BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED)
         Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.DEVICE_CREDENTIAL))
@@ -190,15 +189,15 @@ class LocalAuthTest {
         plugin.setBiometricManager(mockBiometricManager)
 
         val allowCredentialsCaptor =
-            ArgumentCaptor.forClass<Boolean?, Boolean?>(Boolean::class.java)
+            ArgumentCaptor.forClass(Boolean::class.java)
         Mockito.doNothing()
-            .`when`<LocalAuthPlugin?>(plugin)
+            .`when`(plugin)
             .sendAuthenticationRequest(
-                ArgumentMatchers.any<AuthOptions?>(AuthOptions::class.java),
-                ArgumentMatchers.any<AuthStrings?>(AuthStrings::class.java),
+                ArgumentMatchers.any(AuthOptions::class.java),
+                ArgumentMatchers.any(AuthStrings::class.java),
                 allowCredentialsCaptor.capture()!!,
-                ArgumentMatchers.eq<FragmentActivity?>(activity),
-                ArgumentMatchers.any<Function1<in AuthResult, Unit>>()
+                ArgumentMatchers.eq(activity),
+                ArgumentMatchers.any()
             )
         plugin.authenticate(
             defaultOptions,
@@ -216,7 +215,7 @@ class LocalAuthTest {
     @Test
     fun deviceCanSupportBiometrics_returnsTrueForPresentNonEnrolledBiometrics() {
         val plugin = LocalAuthPlugin()
-        val mockBiometricManager = Mockito.mock<BiometricManager>(BiometricManager::class.java)
+        val mockBiometricManager = Mockito.mock(BiometricManager::class.java)
         Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK))
             .thenReturn(BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED)
         plugin.setBiometricManager(mockBiometricManager)
@@ -227,7 +226,7 @@ class LocalAuthTest {
     @Test
     fun deviceSupportsBiometrics_returnsTrueForPresentEnrolledBiometrics() {
         val plugin = LocalAuthPlugin()
-        val mockBiometricManager = Mockito.mock<BiometricManager>(BiometricManager::class.java)
+        val mockBiometricManager = Mockito.mock(BiometricManager::class.java)
         Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK))
             .thenReturn(BiometricManager.BIOMETRIC_SUCCESS)
         plugin.setBiometricManager(mockBiometricManager)
@@ -238,7 +237,7 @@ class LocalAuthTest {
     @Test
     fun deviceSupportsBiometrics_returnsFalseForNoBiometricHardware() {
         val plugin = LocalAuthPlugin()
-        val mockBiometricManager = Mockito.mock<BiometricManager>(BiometricManager::class.java)
+        val mockBiometricManager = Mockito.mock(BiometricManager::class.java)
         Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK))
             .thenReturn(BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE)
         plugin.setBiometricManager(mockBiometricManager)
@@ -256,24 +255,22 @@ class LocalAuthTest {
 
     @Test
     fun onDetachedFromActivity_ShouldReleaseActivity() {
-        val mockActivity = Mockito.mock<Activity>(Activity::class.java)
-        val mockActivityBinding =
-            Mockito.mock<ActivityPluginBinding>(ActivityPluginBinding::class.java)
+        val mockActivity = Mockito.mock(Activity::class.java)
+        val mockActivityBinding = Mockito.mock(ActivityPluginBinding::class.java)
         Mockito.`when`<Activity?>(mockActivityBinding.getActivity()).thenReturn(mockActivity)
 
-        val mockContext = Mockito.mock<Context?>(Context::class.java)
+        val mockContext = Mockito.mock(Context::class.java)
         Mockito.`when`<Context?>(mockActivity.getBaseContext()).thenReturn(mockContext)
         Mockito.`when`<Context?>(mockActivity.getApplicationContext()).thenReturn(mockContext)
 
-        val mockLifecycleReference =
-            Mockito.mock<HiddenLifecycleReference>(HiddenLifecycleReference::class.java)
+        val mockLifecycleReference = Mockito.mock(HiddenLifecycleReference::class.java)
         Mockito.`when`<Any?>(mockActivityBinding.getLifecycle()).thenReturn(mockLifecycleReference)
 
-        val mockLifecycle = Mockito.mock<Lifecycle?>(Lifecycle::class.java)
+        val mockLifecycle = Mockito.mock(Lifecycle::class.java)
         Mockito.`when`<Lifecycle?>(mockLifecycleReference.getLifecycle()).thenReturn(mockLifecycle)
 
-        val mockPluginBinding = Mockito.mock<FlutterPluginBinding>(FlutterPluginBinding::class.java)
-        val mockMessenger = Mockito.mock<BinaryMessenger?>(BinaryMessenger::class.java)
+        val mockPluginBinding = Mockito.mock(FlutterPluginBinding::class.java)
+        val mockMessenger = Mockito.mock(BinaryMessenger::class.java)
         Mockito.`when`<BinaryMessenger?>(mockPluginBinding.getBinaryMessenger())
             .thenReturn(mockMessenger)
 
@@ -290,7 +287,7 @@ class LocalAuthTest {
     fun getEnrolledBiometrics_shouldReturnNullForNoActivity() {
         val plugin = LocalAuthPlugin()
 
-        val enrolled: MutableList<AuthClassification?>? = plugin.getEnrolledBiometrics()
+        val enrolled: List<AuthClassification>? = plugin.getEnrolledBiometrics()
         Assert.assertNull(enrolled)
     }
 
@@ -299,14 +296,14 @@ class LocalAuthTest {
         val plugin = LocalAuthPlugin()
         setPluginActivity(
             plugin,
-            buildMockActivityWithContext(Mockito.mock<Activity?>(Activity::class.java))
+            buildMockActivityWithContext(Mockito.mock(Activity::class.java))
         )
-        val mockBiometricManager = Mockito.mock<BiometricManager>(BiometricManager::class.java)
+        val mockBiometricManager = Mockito.mock(BiometricManager::class.java)
         Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(ArgumentMatchers.anyInt()))
             .thenReturn(BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE)
         plugin.setBiometricManager(mockBiometricManager)
 
-        val enrolled: MutableList<AuthClassification?>? = plugin.getEnrolledBiometrics()
+        val enrolled: List<AuthClassification>? = plugin.getEnrolledBiometrics()
         Assert.assertTrue(enrolled!!.isEmpty())
     }
 
@@ -315,14 +312,14 @@ class LocalAuthTest {
         val plugin = LocalAuthPlugin()
         setPluginActivity(
             plugin,
-            buildMockActivityWithContext(Mockito.mock<Activity?>(Activity::class.java))
+            buildMockActivityWithContext(Mockito.mock(Activity::class.java))
         )
-        val mockBiometricManager = Mockito.mock<BiometricManager>(BiometricManager::class.java)
+        val mockBiometricManager = Mockito.mock(BiometricManager::class.java)
         Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(ArgumentMatchers.anyInt()))
             .thenReturn(BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED)
         plugin.setBiometricManager(mockBiometricManager)
 
-        val enrolled: MutableList<AuthClassification?>? = plugin.getEnrolledBiometrics()
+        val enrolled: List<AuthClassification>? = plugin.getEnrolledBiometrics()
         Assert.assertTrue(enrolled!!.isEmpty())
     }
 
@@ -331,16 +328,16 @@ class LocalAuthTest {
         val plugin = LocalAuthPlugin()
         setPluginActivity(
             plugin,
-            buildMockActivityWithContext(Mockito.mock<Activity?>(Activity::class.java))
+            buildMockActivityWithContext(Mockito.mock(Activity::class.java))
         )
-        val mockBiometricManager = Mockito.mock<BiometricManager>(BiometricManager::class.java)
+        val mockBiometricManager = Mockito.mock(BiometricManager::class.java)
         Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK))
             .thenReturn(BiometricManager.BIOMETRIC_SUCCESS)
         Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG))
             .thenReturn(BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED)
         plugin.setBiometricManager(mockBiometricManager)
 
-        val enrolled: MutableList<AuthClassification?>? = plugin.getEnrolledBiometrics()
+        val enrolled: List<AuthClassification>? = plugin.getEnrolledBiometrics()
         Assert.assertEquals(1, enrolled!!.size.toLong())
         Assert.assertEquals(AuthClassification.WEAK, enrolled.get(0))
     }
@@ -350,16 +347,16 @@ class LocalAuthTest {
         val plugin = LocalAuthPlugin()
         setPluginActivity(
             plugin,
-            buildMockActivityWithContext(Mockito.mock<Activity?>(Activity::class.java))
+            buildMockActivityWithContext(Mockito.mock(Activity::class.java))
         )
-        val mockBiometricManager = Mockito.mock<BiometricManager>(BiometricManager::class.java)
+        val mockBiometricManager = Mockito.mock(BiometricManager::class.java)
         Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK))
             .thenReturn(BiometricManager.BIOMETRIC_SUCCESS)
         Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG))
             .thenReturn(BiometricManager.BIOMETRIC_SUCCESS)
         plugin.setBiometricManager(mockBiometricManager)
 
-        val enrolled: MutableList<AuthClassification?>? = plugin.getEnrolledBiometrics()
+        val enrolled: List<AuthClassification>? = plugin.getEnrolledBiometrics()
         Assert.assertEquals(2, enrolled!!.size.toLong())
         Assert.assertEquals(AuthClassification.WEAK, enrolled.get(0))
         Assert.assertEquals(AuthClassification.STRONG, enrolled.get(1))
@@ -368,7 +365,7 @@ class LocalAuthTest {
     @Test
     fun isDeviceSecure_returnsTrueIfDeviceIsSecure() {
         val plugin = LocalAuthPlugin()
-        val mockKeyguardManager = Mockito.mock<KeyguardManager>(KeyguardManager::class.java)
+        val mockKeyguardManager = Mockito.mock(KeyguardManager::class.java)
         plugin.setKeyguardManager(mockKeyguardManager)
 
         Mockito.`when`<Boolean?>(mockKeyguardManager.isDeviceSecure()).thenReturn(true)
@@ -382,7 +379,7 @@ class LocalAuthTest {
     @Config(sdk = [30])
     fun canAuthenticateWithDeviceCredential_returnsTrueIfHasBiometricManagerSupportAboveApi30() {
         val plugin = LocalAuthPlugin()
-        val mockBiometricManager = Mockito.mock<BiometricManager>(BiometricManager::class.java)
+        val mockBiometricManager = Mockito.mock(BiometricManager::class.java)
         plugin.setBiometricManager(mockBiometricManager)
 
         Mockito.`when`<Int?>(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.DEVICE_CREDENTIAL))
@@ -395,7 +392,7 @@ class LocalAuthTest {
     }
 
     private fun buildMockActivityWithContext(mockActivity: Activity): Activity {
-        val mockContext = Mockito.mock<Context?>(Context::class.java)
+        val mockContext = Mockito.mock(Context::class.java)
         Mockito.`when`<Context?>(mockActivity.getBaseContext()).thenReturn(mockContext)
         Mockito.`when`<Context?>(mockActivity.getApplicationContext()).thenReturn(mockContext)
         return mockActivity
@@ -403,11 +400,11 @@ class LocalAuthTest {
 
     private fun setPluginActivity(plugin: LocalAuthPlugin, activity: Activity?) {
         val mockLifecycleReference =
-            Mockito.mock<HiddenLifecycleReference?>(HiddenLifecycleReference::class.java)
-        val mockPluginBinding = Mockito.mock<FlutterPluginBinding>(FlutterPluginBinding::class.java)
+            Mockito.mock(HiddenLifecycleReference::class.java)
+        val mockPluginBinding = Mockito.mock(FlutterPluginBinding::class.java)
         val mockActivityBinding =
-            Mockito.mock<ActivityPluginBinding>(ActivityPluginBinding::class.java)
-        val mockMessenger = Mockito.mock<BinaryMessenger?>(BinaryMessenger::class.java)
+            Mockito.mock(ActivityPluginBinding::class.java)
+        val mockMessenger = Mockito.mock(BinaryMessenger::class.java)
         Mockito.`when`<BinaryMessenger?>(mockPluginBinding.getBinaryMessenger())
             .thenReturn(mockMessenger)
         Mockito.`when`<Activity?>(mockActivityBinding.getActivity()).thenReturn(activity)
