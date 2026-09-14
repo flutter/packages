@@ -2843,107 +2843,110 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
 
     indent.write('if $setHandlerCondition ');
     indent.addScoped('{', '}', () {
-      indent.write('$varChannelName.setMessageHandler ');
       final messageVarName = components.arguments.isNotEmpty ? 'message' : '_';
-      final closureArgs = generatorOptions.swiftStrictConcurrency
-          ? '$mainActorIfSerialQueue($messageVarName: Any?, reply: @escaping $replyType)'
-          : '$messageVarName, reply';
-      indent.addScoped('{ $closureArgs in', '}', () {
-        final methodArgument = <String>[];
-        if (components.arguments.isNotEmpty) {
-          indent.writeln('let args = message as! [Any?]');
-          enumerate(components.arguments, (int index, _SwiftFunctionArgument arg) {
-            final String argName = _getSafeArgumentName(index, arg.namedType);
-            final argIndex = 'args[$index]';
-            final String fieldType = _swiftTypeForDartType(arg.type);
-            // There is a swift bug with unwrapping maps of nullable Enums;
-            final enumMapForceUnwrap =
-                arg.type.baseName == 'Map' &&
-                    arg.type.typeArguments.any((TypeDeclaration type) => type.isEnum)
-                ? '!'
-                : '';
+      indent.writeScoped(
+        '${mainActorIfSerialQueue}func handler($messageVarName: Any?, reply: @escaping $replyType) {',
+        '}',
+        () {
+          final methodArgument = <String>[];
+          if (components.arguments.isNotEmpty) {
+            indent.writeln('let args = message as! [Any?]');
+            enumerate(components.arguments, (int index, _SwiftFunctionArgument arg) {
+              final String argName = _getSafeArgumentName(index, arg.namedType);
+              final argIndex = 'args[$index]';
+              final String fieldType = _swiftTypeForDartType(arg.type);
+              // There is a swift bug with unwrapping maps of nullable Enums;
+              final enumMapForceUnwrap =
+                  arg.type.baseName == 'Map' &&
+                      arg.type.typeArguments.any((TypeDeclaration type) => type.isEnum)
+                  ? '!'
+                  : '';
 
-            _writeGenericCasting(
-              indent: indent,
-              value: argIndex,
-              variableName: argName,
-              fieldType: fieldType,
-              type: arg.type,
-            );
+              _writeGenericCasting(
+                indent: indent,
+                value: argIndex,
+                variableName: argName,
+                fieldType: fieldType,
+                type: arg.type,
+              );
 
-            if (arg.label == '_') {
-              methodArgument.add('$argName$enumMapForceUnwrap');
-            } else {
-              methodArgument.add('${arg.label ?? arg.name}: $argName$enumMapForceUnwrap');
-            }
-          });
-        }
-        final bool useAsync = isAsynchronous && !isAsynchronousCallback;
-        final tryStatement = isAsynchronous ? '' : 'try ';
-        late final String call;
-        if (onCreateCall == null) {
-          // Empty parens are not required when calling a method whose only
-          // argument is a trailing closure.
-          final argumentString = methodArgument.isEmpty && isAsynchronousCallback
-              ? ''
-              : '(${methodArgument.join(', ')})';
-          call = '${tryStatement}api.${components.name}$argumentString';
-        } else {
-          call = onCreateCall(methodArgument, apiVarName: 'api');
-        }
-        if (useAsync) {
-          final taskDeclaration = serialBackgroundQueue == null ? 'Task { @MainActor in' : 'Task {';
-          indent.writeln(taskDeclaration);
-          indent.nest(1, () {
+              if (arg.label == '_') {
+                methodArgument.add('$argName$enumMapForceUnwrap');
+              } else {
+                methodArgument.add('${arg.label ?? arg.name}: $argName$enumMapForceUnwrap');
+              }
+            });
+          }
+          final bool useAsync = isAsynchronous && !isAsynchronousCallback;
+          final tryStatement = isAsynchronous ? '' : 'try ';
+          final String call;
+          if (onCreateCall == null) {
+            // Empty parens are not required when calling a method whose only
+            // argument is a trailing closure.
+            final argumentString = methodArgument.isEmpty && isAsynchronousCallback
+                ? ''
+                : '(${methodArgument.join(', ')})';
+            call = '${tryStatement}api.${components.name}$argumentString';
+          } else {
+            call = onCreateCall(methodArgument, apiVarName: 'api');
+          }
+          if (useAsync) {
+            final taskDeclaration = serialBackgroundQueue == null
+                ? 'Task { @MainActor in'
+                : 'Task {';
+            indent.writeln(taskDeclaration);
+            indent.nest(1, () {
+              indent.write('do ');
+              indent.addScoped('{', '}', () {
+                if (returnType.isVoid) {
+                  indent.writeln('try await $call');
+                  indent.writeln('reply(wrapResult(nil))');
+                } else {
+                  indent.writeln('let result = try await $call');
+                  indent.writeln('reply(wrapResult(result))');
+                }
+              }, addTrailingNewline: false);
+              indent.addScoped(' catch {', '}', () {
+                indent.writeln('reply(wrapError(error))');
+              });
+            });
+            indent.writeln('}');
+          } else if (isAsynchronous) {
+            final resultName = returnType.isVoid ? 'nil' : 'res';
+            final successVariableInit = returnType.isVoid ? '' : '(let res)';
+            indent.write('$call ');
+
+            indent.addScoped('{ result in', '}', () {
+              indent.write('switch result ');
+              indent.addScoped('{', '}', nestCount: 0, () {
+                indent.writeln('case .success$successVariableInit:');
+                indent.nest(1, () {
+                  indent.writeln('reply(wrapResult($resultName))');
+                });
+                indent.writeln('case .failure(let error):');
+                indent.nest(1, () {
+                  indent.writeln('reply(wrapError(error))');
+                });
+              });
+            });
+          } else {
             indent.write('do ');
             indent.addScoped('{', '}', () {
               if (returnType.isVoid) {
-                indent.writeln('try await $call');
+                indent.writeln(call);
                 indent.writeln('reply(wrapResult(nil))');
               } else {
-                indent.writeln('let result = try await $call');
+                indent.writeln('let result = $call');
                 indent.writeln('reply(wrapResult(result))');
               }
             }, addTrailingNewline: false);
             indent.addScoped(' catch {', '}', () {
               indent.writeln('reply(wrapError(error))');
             });
-          });
-          indent.writeln('}');
-        } else if (isAsynchronous) {
-          final resultName = returnType.isVoid ? 'nil' : 'res';
-          final successVariableInit = returnType.isVoid ? '' : '(let res)';
-          indent.write('$call ');
-
-          indent.addScoped('{ result in', '}', () {
-            indent.write('switch result ');
-            indent.addScoped('{', '}', nestCount: 0, () {
-              indent.writeln('case .success$successVariableInit:');
-              indent.nest(1, () {
-                indent.writeln('reply(wrapResult($resultName))');
-              });
-              indent.writeln('case .failure(let error):');
-              indent.nest(1, () {
-                indent.writeln('reply(wrapError(error))');
-              });
-            });
-          });
-        } else {
-          indent.write('do ');
-          indent.addScoped('{', '}', () {
-            if (returnType.isVoid) {
-              indent.writeln(call);
-              indent.writeln('reply(wrapResult(nil))');
-            } else {
-              indent.writeln('let result = $call');
-              indent.writeln('reply(wrapResult(result))');
-            }
-          }, addTrailingNewline: false);
-          indent.addScoped(' catch {', '}', () {
-            indent.writeln('reply(wrapError(error))');
-          });
-        }
-      });
+          }
+        },
+      );
+      indent.writeln('$varChannelName.setMessageHandler(handler)');
     }, addTrailingNewline: false);
     indent.addScoped(' else {', '}', () {
       indent.writeln('$varChannelName.setMessageHandler(nil)');

@@ -1992,14 +1992,16 @@ void main() {
 
         expect(
           sinkDisabled.toString(),
-          contains('doWorkChannel.setMessageHandler { message, reply in'),
+          contains('func handler(message: Any?, reply: @escaping FlutterReply) {'),
         );
+        expect(sinkDisabled.toString(), contains('doWorkChannel.setMessageHandler(handler)'));
         expect(
           sinkEnabled.toString(),
           contains(
-            'doWorkChannel.setMessageHandler { @MainActor (message: Any?, reply: @escaping @Sendable (Any?) -> Void) in',
+            '@MainActor func handler(message: Any?, reply: @escaping @Sendable (Any?) -> Void) {',
           ),
         );
+        expect(sinkEnabled.toString(), contains('doWorkChannel.setMessageHandler(handler)'));
       },
     );
   });
