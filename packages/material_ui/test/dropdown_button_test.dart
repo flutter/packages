@@ -6,9 +6,35 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'dropdown_button_tester.dart';
+
 // TODO(navaronbracke): port tests from dropdown_button_form_field_test.dart to plain DropdownButton tests as well
 
 void main() {
+  Widget buildDropdownWithHint({
+    required AlignmentDirectional alignment,
+    required bool isExpanded,
+    bool enableSelectedItemBuilder = false,
+  }) {
+    return buildFrame(
+      useMaterial3: false,
+      mediaSize: const Size(800, 600),
+      dropdownAlignment: alignment,
+      child: buildDropdownButton(
+        hint: const Text('hint'),
+        itemHeight: 100.0,
+        isExpanded: isExpanded,
+        selectedItemBuilder: enableSelectedItemBuilder
+            ? (BuildContext context) {
+                return menuItems.map<Widget>((String item) {
+                  return ColoredBox(color: const Color(0xff00ff00), child: Text(item));
+                }).toList();
+              }
+            : null,
+      ),
+    );
+  }
+
   Future<void> checkDropdownButtonColor(WidgetTester tester, {Color? color}) async {
     const text = 'foo';
     await tester.pumpWidget(
