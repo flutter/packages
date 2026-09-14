@@ -99,6 +99,27 @@ void main() {
     }
   });
 
+  test('concurrent writes to both stores all land', () async {
+    final SharedPreferencesWindows legacy = getLegacyPreferences();
+    final SharedPreferencesAsyncWindows async = getAsyncPreferences();
+
+    // Nothing here awaits the previous write, which is what a fire-and-forget
+    // caller does: each read-modify-write has to be atomic against the others.
+    await Future.wait(<Future<void>>[
+      async.setInt('${asyncKey}1', 1, options),
+      legacy.setValue('int', '${legacyKey}1', 1),
+      async.setInt('${asyncKey}2', 2, options),
+      legacy.setValue('int', '${legacyKey}2', 2),
+    ]);
+
+    expect(await readFile(), <String, Object?>{
+      '${asyncKey}1': 1,
+      '${legacyKey}1': 1,
+      '${asyncKey}2': 2,
+      '${legacyKey}2': 2,
+    });
+  });
+
   test('a legacy remove leaves the async store alone', () async {
     final SharedPreferencesWindows legacy = getLegacyPreferences();
     final SharedPreferencesAsyncWindows async = getAsyncPreferences();

@@ -56,22 +56,6 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
     return _cachedPreferences!;
   }
 
-  /// Re-reads the preferences file and returns the refreshed cache, for use
-  /// before a write.
-  ///
-  /// Writes replace the whole file with this map, so it has to reflect what is
-  /// on disk at the time of the write rather than what was on disk the first
-  /// time this store read it. [SharedPreferencesAsyncWindows] writes to the
-  /// same file, so a stale map here would silently drop every key that store
-  /// has written since.
-  Future<Map<String, Object>> _reloadPreferences() async {
-    return _cachedPreferences = await _readFromFile(
-      _defaultFileName,
-      fs: fs,
-      pathProvider: pathProvider,
-    );
-  }
-
   @override
   Future<bool> clear() async {
     return clearWithParameters(ClearParameters(filter: PreferencesFilter(prefix: _defaultPrefix)));
@@ -86,13 +70,21 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
   Future<bool> clearWithParameters(ClearParameters parameters) async {
     final PreferencesFilter filter = parameters.filter;
 
-    final Map<String, Object> preferences = await _reloadPreferences();
-    preferences.removeWhere(
-      (String key, _) =>
-          key.startsWith(filter.prefix) &&
-          (filter.allowList == null || filter.allowList!.contains(key)),
+    final Map<String, Object>? preferences = await _updatePreferences(
+      _defaultFileName,
+      (Map<String, Object> preferences) => preferences.removeWhere(
+        (String key, _) =>
+            key.startsWith(filter.prefix) &&
+            (filter.allowList == null || filter.allowList!.contains(key)),
+      ),
+      fs: fs,
+      pathProvider: pathProvider,
     );
-    return _writePreferences(preferences, _defaultFileName, fs: fs, pathProvider: pathProvider);
+    if (preferences == null) {
+      return false;
+    }
+    _cachedPreferences = preferences;
+    return true;
   }
 
   @override
@@ -120,16 +112,32 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> remove(String key) async {
-    final Map<String, Object> preferences = await _reloadPreferences();
-    preferences.remove(key);
-    return _writePreferences(preferences, _defaultFileName, fs: fs, pathProvider: pathProvider);
+    final Map<String, Object>? preferences = await _updatePreferences(
+      _defaultFileName,
+      (Map<String, Object> preferences) => preferences.remove(key),
+      fs: fs,
+      pathProvider: pathProvider,
+    );
+    if (preferences == null) {
+      return false;
+    }
+    _cachedPreferences = preferences;
+    return true;
   }
 
   @override
   Future<bool> setValue(String valueType, String key, Object value) async {
-    final Map<String, Object> preferences = await _reloadPreferences();
-    preferences[key] = value;
-    return _writePreferences(preferences, _defaultFileName, fs: fs, pathProvider: pathProvider);
+    final Map<String, Object>? preferences = await _updatePreferences(
+      _defaultFileName,
+      (Map<String, Object> preferences) => preferences[key] = value,
+      fs: fs,
+      pathProvider: pathProvider,
+    );
+    if (preferences == null) {
+      return false;
+    }
+    _cachedPreferences = preferences;
+    return true;
   }
 }
 
@@ -224,16 +232,17 @@ base class SharedPreferencesAsyncWindows extends SharedPreferencesAsyncPlatform 
     final SharedPreferencesWindowsOptions windowsOptions =
         SharedPreferencesWindowsOptions.fromSharedPreferencesOptions(options);
     final PreferencesFilters filter = parameters.filter;
-    final Map<String, Object> preferences = await _reloadPreferences(windowsOptions.fileName);
-    preferences.removeWhere(
-      (String key, _) => filter.allowList == null || filter.allowList!.contains(key),
-    );
-    await _writePreferences(
-      preferences,
+    final Map<String, Object>? preferences = await _updatePreferences(
       windowsOptions.fileName,
+      (Map<String, Object> preferences) => preferences.removeWhere(
+        (String key, _) => filter.allowList == null || filter.allowList!.contains(key),
+      ),
       fs: fs,
       pathProvider: pathProvider,
     );
+    if (preferences != null) {
+      _cachedPreferences = preferences;
+    }
   }
 
   @override
@@ -264,14 +273,15 @@ base class SharedPreferencesAsyncWindows extends SharedPreferencesAsyncPlatform 
   Future<void> _setValue(String key, Object value, SharedPreferencesOptions options) async {
     final SharedPreferencesWindowsOptions windowsOptions =
         SharedPreferencesWindowsOptions.fromSharedPreferencesOptions(options);
-    final Map<String, Object> preferences = await _reloadPreferences(windowsOptions.fileName);
-    preferences[key] = value;
-    await _writePreferences(
-      preferences,
+    final Map<String, Object>? preferences = await _updatePreferences(
       windowsOptions.fileName,
+      (Map<String, Object> preferences) => preferences[key] = value,
       fs: fs,
       pathProvider: pathProvider,
     );
+    if (preferences != null) {
+      _cachedPreferences = preferences;
+    }
   }
 
   /// Checks for cached preferences and returns them or loads preferences from
@@ -279,18 +289,6 @@ base class SharedPreferencesAsyncWindows extends SharedPreferencesAsyncPlatform 
   Future<Map<String, Object>> _readPreferences(String fileName) async {
     _cachedPreferences ??= await _readFromFile(fileName, fs: fs, pathProvider: pathProvider);
     return _cachedPreferences!;
-  }
-
-  /// Re-reads the preferences file and returns the refreshed cache, for use
-  /// before a write.
-  ///
-  /// Writes replace the whole file with this map, so it has to reflect what is
-  /// on disk at the time of the write rather than what was on disk the first
-  /// time this store read it. [SharedPreferencesWindows] writes to the same
-  /// file, so a stale map here would silently drop every key that store has
-  /// written since.
-  Future<Map<String, Object>> _reloadPreferences(String fileName) async {
-    return _cachedPreferences = await _readFromFile(fileName, fs: fs, pathProvider: pathProvider);
   }
 }
 
@@ -315,48 +313,57 @@ Future<Map<String, Object>> _readFromFile(
   FileSystem fs = const LocalFileSystem(),
   PathProviderWindows? pathProvider,
 }) async {
-  var preferences = <String, Object>{};
   final File? localDataFile = await _getLocalDataFile(fileName, fs: fs, pathProvider: pathProvider);
-  if (localDataFile != null && localDataFile.existsSync()) {
-    final String stringMap = localDataFile.readAsStringSync();
-    if (stringMap.isNotEmpty) {
-      final Object? data = json.decode(stringMap);
-      if (data is Map) {
-        preferences = data.cast<String, Object>();
-      }
-    }
-  }
-  return preferences;
+  return localDataFile == null ? <String, Object>{} : _readFileSync(localDataFile);
 }
 
-/// Writes the cached preferences to disk. Returns [true] if the operation
-/// succeeded.
-Future<bool> _writePreferences(
-  Map<String, Object> preferences,
-  String fileName, {
+/// Gets the preferences from an already-resolved file.
+Map<String, Object> _readFileSync(File localDataFile) {
+  if (!localDataFile.existsSync()) {
+    return <String, Object>{};
+  }
+  final String stringMap = localDataFile.readAsStringSync();
+  if (stringMap.isEmpty) {
+    return <String, Object>{};
+  }
+  final Object? data = json.decode(stringMap);
+  return data is Map ? data.cast<String, Object>() : <String, Object>{};
+}
+
+/// Applies [update] to what is currently stored in [fileName] and writes the
+/// result back, returning the updated preferences, or null if the write failed.
+///
+/// Both [SharedPreferencesWindows] and [SharedPreferencesAsyncWindows] store
+/// their data in this one file, and a write replaces all of it, so a write has
+/// to start from what is on disk now rather than from a map the calling store
+/// read earlier -- otherwise it silently drops every key written since.
+///
+/// The read, the update and the write run with no `await` between them, so no
+/// other write can land in the middle of one: concurrent writes, from either
+/// store, each see the previous one's result.
+Future<Map<String, Object>?> _updatePreferences(
+  String fileName,
+  void Function(Map<String, Object> preferences) update, {
   FileSystem fs = const LocalFileSystem(),
   PathProviderWindows? pathProvider,
 }) async {
+  final File? localDataFile = await _getLocalDataFile(fileName, fs: fs, pathProvider: pathProvider);
+  if (localDataFile == null) {
+    debugPrint('Unable to determine where to write preferences.');
+    return null;
+  }
   try {
-    final File? localDataFile = await _getLocalDataFile(
-      fileName,
-      fs: fs,
-      pathProvider: pathProvider,
-    );
-    if (localDataFile == null) {
-      debugPrint('Unable to determine where to write preferences.');
-      return false;
-    }
+    final Map<String, Object> preferences = _readFileSync(localDataFile);
+    update(preferences);
     if (!localDataFile.existsSync()) {
       localDataFile.createSync(recursive: true);
     }
-    final String stringMap = json.encode(preferences);
-    localDataFile.writeAsStringSync(stringMap);
+    localDataFile.writeAsStringSync(json.encode(preferences));
+    return preferences;
   } catch (e) {
     debugPrint('Error saving preferences to disk: $e');
-    return false;
+    return null;
   }
-  return true;
 }
 
 /// Windows specific SharedPreferences Options.
