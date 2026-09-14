@@ -1,3 +1,7 @@
+## 2.15.0
+
+* Adds `VideoPlayerAndroidOptions` to configure Android renderer settings during player creation.
+
 ## 2.14.0
 
 * Adds video quality selection support for HLS/DASH adaptive streams via
