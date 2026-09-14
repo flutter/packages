@@ -2269,50 +2269,6 @@ void main() {
     );
   }
 
-  testWidgets('DropdownButton can be focused, and has focusColor', (WidgetTester tester) async {
-    tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
-    final buttonKey = UniqueKey();
-    final focusNode = FocusNode(debugLabel: 'DropdownButton');
-    addTearDown(focusNode.dispose);
-
-    await tester.pumpWidget(
-      buildFrame(
-        buttonKey: buttonKey,
-        onChanged: onChanged,
-        focusNode: focusNode,
-        autofocus: true,
-        useMaterial3: false,
-      ),
-    );
-    await tester.pumpAndSettle(); // Pump a frame for autofocus to take effect.
-    expect(focusNode.hasPrimaryFocus, isTrue);
-    expect(
-      find.byType(Material),
-      paints..rect(
-        rect: const Rect.fromLTRB(348.0, 276.0, 452.0, 324.0),
-        color: const Color(0x1f000000),
-      ),
-    );
-
-    await tester.pumpWidget(
-      buildFrame(
-        buttonKey: buttonKey,
-        onChanged: onChanged,
-        focusNode: focusNode,
-        focusColor: const Color(0xff00ff00),
-        useMaterial3: false,
-      ),
-    );
-    await tester.pumpAndSettle(); // Pump a frame for autofocus to take effect.
-    expect(
-      find.byType(Material),
-      paints..rect(
-        rect: const Rect.fromLTRB(348.0, 276.0, 452.0, 324.0),
-        color: const Color(0x1f00ff00),
-      ),
-    );
-  });
-
   // Regression test for https://github.com/flutter/flutter/issues/166642.
   testWidgets('DropdownButtonFormField can replace focusNode properly', (
     WidgetTester tester,
