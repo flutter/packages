@@ -17,6 +17,9 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.embedding.engine.plugins.lifecycle.FlutterLifecycleAdapter
 import io.flutter.plugins.localauth.LocalAuthApi.Companion.setUp
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * Flutter plugin providing access to local authentication.
@@ -76,45 +79,42 @@ class LocalAuthPlugin
     }
   }
 
-  override fun authenticate(
-      options: AuthOptions,
-      strings: AuthStrings,
-      callback: (Result<AuthResult>) -> Unit
-  ) {
+  override suspend fun authenticate(options: AuthOptions, strings: AuthStrings): AuthResult {
     val currentActivity = activity
     if (authInProgress.get()) {
-      callback(Result.success(AuthResult(AuthResultCode.ALREADY_IN_PROGRESS, null)))
-      return
+      return AuthResult(AuthResultCode.ALREADY_IN_PROGRESS, null)
     }
 
     if (currentActivity?.isFinishing ?: true) {
-      callback(Result.success(AuthResult(AuthResultCode.NO_ACTIVITY, null)))
-      return
+      return AuthResult(AuthResultCode.NO_ACTIVITY, null)
     }
 
     if (currentActivity !is FragmentActivity) {
-      callback(Result.success(AuthResult(AuthResultCode.NOT_FRAGMENT_ACTIVITY, null)))
-      return
+      return AuthResult(AuthResultCode.NOT_FRAGMENT_ACTIVITY, null)
     }
 
     if (!isDeviceSupported()) {
-      callback(Result.success(AuthResult(AuthResultCode.NO_CREDENTIALS, null)))
-      return
+      return AuthResult(AuthResultCode.NO_CREDENTIALS, null)
     }
 
     authInProgress.set(true)
-    val completionHandler = createAuthCompletionHandler(callback)
-
     val allowCredentials = !options.biometricOnly && canAuthenticateWithDeviceCredential()
 
-    sendAuthenticationRequest(
-        options, strings, allowCredentials, currentActivity, completionHandler)
+    return suspendCoroutine { continuation ->
+      val completionHandler = createAuthCompletionHandler(continuation)
+      sendAuthenticationRequest(
+          options, strings, allowCredentials, currentActivity, completionHandler)
+    }
   }
 
   internal fun createAuthCompletionHandler(
-      callback: (Result<AuthResult>) -> Unit
+      continuation: Continuation<AuthResult>
   ): (AuthResult) -> Unit {
-    return { authResult -> onAuthenticationCompleted(callback, authResult) }
+    return { authResult ->
+      if (authInProgress.compareAndSet(true, false)) {
+        continuation.resume(authResult)
+      }
+    }
   }
 
   internal fun sendAuthenticationRequest(
@@ -129,12 +129,6 @@ class LocalAuthPlugin
             lifecycle, fragmentActivity, options, strings, completionHandler, allowCredentials)
     authHelper = helper
     helper.authenticate()
-  }
-
-  private fun onAuthenticationCompleted(callback: (Result<AuthResult>) -> Unit, value: AuthResult) {
-    if (authInProgress.compareAndSet(true, false)) {
-      callback(Result.success(value))
-    }
   }
 
   internal val isDeviceSecure: Boolean
