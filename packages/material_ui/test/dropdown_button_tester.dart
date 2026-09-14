@@ -28,7 +28,7 @@ class _TestAppState extends State<TestApp> {
         DefaultMaterialLocalizations.delegate,
       ],
       child: MediaQuery(
-        data: const MediaQueryData().copyWith(size: widget.mediaSize),
+        data: MediaQuery.of(context).copyWith(size: widget.mediaSize),
         child: Directionality(
           textDirection: widget.textDirection,
           child: Navigator(
@@ -177,7 +177,7 @@ Widget buildFrame({
   required Widget child,
   TextDirection textDirection = TextDirection.ltr,
   Size? mediaSize,
-  AlignmentDirectional dropdownAlignment = AlignmentDirectional.center,
+  AlignmentGeometry dropdownAlignment = AlignmentDirectional.center,
   bool? useMaterial3,
   InputDecorationThemeData? localInputDecorationTheme,
 }) {
