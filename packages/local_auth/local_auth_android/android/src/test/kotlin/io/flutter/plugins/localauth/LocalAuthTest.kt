@@ -32,12 +32,11 @@ class LocalAuthTest {
         val callbackCalled = arrayOfNulls<Boolean>(1)
         plugin.authenticate(
             defaultOptions,
-            dummyStrings,
+            dummyStrings)
             { reply: Result<AuthResult> ->
                 callbackCalled[0] = true
                 Assert.assertEquals(AuthResultCode.ALREADY_IN_PROGRESS, reply.getOrNull()?.code)
-                null
-            })
+            }
         Assert.assertTrue(callbackCalled[0]!!)
     }
 
@@ -48,12 +47,11 @@ class LocalAuthTest {
 
         plugin.authenticate(
             defaultOptions,
-            dummyStrings,
+            dummyStrings)
             { reply: Result<AuthResult> ->
                 callbackCalled[0] = true
                 Assert.assertEquals(AuthResultCode.NO_ACTIVITY, reply.getOrNull()?.code)
-                null
-            })
+            }
         Assert.assertTrue(callbackCalled[0]!!)
     }
 
@@ -67,15 +65,14 @@ class LocalAuthTest {
         val callbackCalled = arrayOfNulls<Boolean>(1)
         plugin.authenticate(
             defaultOptions,
-            dummyStrings,
+            dummyStrings)
             { reply: Result<AuthResult> ->
                 callbackCalled[0] = true
                 Assert.assertEquals(
                     AuthResultCode.NOT_FRAGMENT_ACTIVITY,
                     reply.getOrNull()?.code
                 )
-                null
-            })
+            }
         Assert.assertTrue(callbackCalled[0]!!)
     }
 
@@ -93,12 +90,11 @@ class LocalAuthTest {
 
         plugin.authenticate(
             defaultOptions,
-            dummyStrings,
+            dummyStrings)
             { reply: Result<AuthResult> ->
                 callbackCalled[0] = true
                 Assert.assertEquals(AuthResultCode.NO_CREDENTIALS, reply.getOrNull()?.code)
-                null
-            })
+            }
         Assert.assertTrue(callbackCalled[0]!!)
     }
 
@@ -129,14 +125,14 @@ class LocalAuthTest {
                 ArgumentMatchers.any()
             )
         val options =
-            AuthOptions( /* biometricOnly */
-                true,  /* sensitiveTransaction */false,  /* sticky */false
+            AuthOptions( biometricOnly =
+                true,  sensitiveTransaction = false, sticky = false
             )
 
         plugin.authenticate(
             options,
-            dummyStrings,
-            { reply: Result<AuthResult> -> null })
+            dummyStrings)
+            { }
         Assert.assertFalse(allowCredentialsCaptor.getValue()!!)
     }
 
@@ -157,7 +153,7 @@ class LocalAuthTest {
         val allowCredentialsCaptor =
             ArgumentCaptor.forClass(Boolean::class.java)
         Mockito.doNothing()
-            .`when`<LocalAuthPlugin>(plugin)
+            .`when`(plugin)
             .sendAuthenticationRequest(
                 ArgumentMatchers.any(AuthOptions::class.java),
                 ArgumentMatchers.any(AuthStrings::class.java),
@@ -167,15 +163,15 @@ class LocalAuthTest {
             )
         plugin.authenticate(
             defaultOptions,
-            dummyStrings,
-            { reply: Result<AuthResult> -> null })
+            dummyStrings)
+            {}
         Assert.assertTrue(allowCredentialsCaptor.getValue()!!)
     }
 
     @Test
     @Config(sdk = [30])
     fun authenticate_properlyConfiguresDeviceCredentialOnlyAuthenticationRequest() {
-        val plugin = Mockito.spy<LocalAuthPlugin>(LocalAuthPlugin())
+        val plugin = Mockito.spy(LocalAuthPlugin())
         val activity =
             buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)) as FragmentActivity
         setPluginActivity(plugin, activity)
@@ -201,8 +197,8 @@ class LocalAuthTest {
             )
         plugin.authenticate(
             defaultOptions,
-            dummyStrings,
-            { reply: Result<AuthResult> -> null })
+            dummyStrings)
+            {  }
         Assert.assertTrue(allowCredentialsCaptor.getValue()!!)
     }
 
@@ -257,21 +253,21 @@ class LocalAuthTest {
     fun onDetachedFromActivity_ShouldReleaseActivity() {
         val mockActivity = Mockito.mock(Activity::class.java)
         val mockActivityBinding = Mockito.mock(ActivityPluginBinding::class.java)
-        Mockito.`when`<Activity?>(mockActivityBinding.getActivity()).thenReturn(mockActivity)
+        Mockito.`when`<Activity?>(mockActivityBinding.activity).thenReturn(mockActivity)
 
         val mockContext = Mockito.mock(Context::class.java)
-        Mockito.`when`<Context?>(mockActivity.getBaseContext()).thenReturn(mockContext)
-        Mockito.`when`<Context?>(mockActivity.getApplicationContext()).thenReturn(mockContext)
+        Mockito.`when`<Context?>(mockActivity.baseContext).thenReturn(mockContext)
+        Mockito.`when`<Context?>(mockActivity.applicationContext).thenReturn(mockContext)
 
         val mockLifecycleReference = Mockito.mock(HiddenLifecycleReference::class.java)
-        Mockito.`when`<Any?>(mockActivityBinding.getLifecycle()).thenReturn(mockLifecycleReference)
+        Mockito.`when`<Any?>(mockActivityBinding.lifecycle).thenReturn(mockLifecycleReference)
 
         val mockLifecycle = Mockito.mock(Lifecycle::class.java)
-        Mockito.`when`<Lifecycle?>(mockLifecycleReference.getLifecycle()).thenReturn(mockLifecycle)
+        Mockito.`when`<Lifecycle?>(mockLifecycleReference.lifecycle).thenReturn(mockLifecycle)
 
         val mockPluginBinding = Mockito.mock(FlutterPluginBinding::class.java)
         val mockMessenger = Mockito.mock(BinaryMessenger::class.java)
-        Mockito.`when`<BinaryMessenger?>(mockPluginBinding.getBinaryMessenger())
+        Mockito.`when`<BinaryMessenger?>(mockPluginBinding.binaryMessenger)
             .thenReturn(mockMessenger)
 
         val plugin = LocalAuthPlugin()
@@ -339,7 +335,7 @@ class LocalAuthTest {
 
         val enrolled: List<AuthClassification>? = plugin.getEnrolledBiometrics()
         Assert.assertEquals(1, enrolled!!.size.toLong())
-        Assert.assertEquals(AuthClassification.WEAK, enrolled.get(0))
+        Assert.assertEquals(AuthClassification.WEAK, enrolled[0])
     }
 
     @Test
@@ -358,8 +354,8 @@ class LocalAuthTest {
 
         val enrolled: List<AuthClassification>? = plugin.getEnrolledBiometrics()
         Assert.assertEquals(2, enrolled!!.size.toLong())
-        Assert.assertEquals(AuthClassification.WEAK, enrolled.get(0))
-        Assert.assertEquals(AuthClassification.STRONG, enrolled.get(1))
+        Assert.assertEquals(AuthClassification.WEAK, enrolled[0])
+        Assert.assertEquals(AuthClassification.STRONG, enrolled[1])
     }
 
     @Test
@@ -368,10 +364,10 @@ class LocalAuthTest {
         val mockKeyguardManager = Mockito.mock(KeyguardManager::class.java)
         plugin.setKeyguardManager(mockKeyguardManager)
 
-        Mockito.`when`<Boolean?>(mockKeyguardManager.isDeviceSecure()).thenReturn(true)
+        Mockito.`when`<Boolean?>(mockKeyguardManager.isDeviceSecure).thenReturn(true)
         Assert.assertTrue(plugin.isDeviceSecure)
 
-        Mockito.`when`<Boolean?>(mockKeyguardManager.isDeviceSecure()).thenReturn(false)
+        Mockito.`when`<Boolean?>(mockKeyguardManager.isDeviceSecure).thenReturn(false)
         Assert.assertFalse(plugin.isDeviceSecure)
     }
 
@@ -393,8 +389,8 @@ class LocalAuthTest {
 
     private fun buildMockActivityWithContext(mockActivity: Activity): Activity {
         val mockContext = Mockito.mock(Context::class.java)
-        Mockito.`when`<Context?>(mockActivity.getBaseContext()).thenReturn(mockContext)
-        Mockito.`when`<Context?>(mockActivity.getApplicationContext()).thenReturn(mockContext)
+        Mockito.`when`<Context?>(mockActivity.baseContext).thenReturn(mockContext)
+        Mockito.`when`<Context?>(mockActivity.applicationContext).thenReturn(mockContext)
         return mockActivity
     }
 
@@ -405,10 +401,10 @@ class LocalAuthTest {
         val mockActivityBinding =
             Mockito.mock(ActivityPluginBinding::class.java)
         val mockMessenger = Mockito.mock(BinaryMessenger::class.java)
-        Mockito.`when`<BinaryMessenger?>(mockPluginBinding.getBinaryMessenger())
+        Mockito.`when`<BinaryMessenger?>(mockPluginBinding.binaryMessenger)
             .thenReturn(mockMessenger)
-        Mockito.`when`<Activity?>(mockActivityBinding.getActivity()).thenReturn(activity)
-        Mockito.`when`<Any?>(mockActivityBinding.getLifecycle()).thenReturn(mockLifecycleReference)
+        Mockito.`when`<Activity?>(mockActivityBinding.activity).thenReturn(activity)
+        Mockito.`when`<Any?>(mockActivityBinding.lifecycle).thenReturn(mockLifecycleReference)
         plugin.onAttachedToEngine(mockPluginBinding)
         plugin.onAttachedToActivity(mockActivityBinding)
     }
@@ -416,8 +412,8 @@ class LocalAuthTest {
     companion object {
         val dummyStrings: AuthStrings = AuthStrings("a reason", "a hint", "cancel", "sign in")
 
-        val defaultOptions: AuthOptions = AuthOptions( /* biometricOnly */
-            false,  /* sensitiveTransaction */false,  /* sticky */false
+        val defaultOptions: AuthOptions = AuthOptions( biometricOnly =
+            false,  sensitiveTransaction = false,  sticky = false
         )
     }
 }

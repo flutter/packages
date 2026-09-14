@@ -28,7 +28,6 @@ class AuthenticationHelperTest {
                 dummyStrings,
                 ({ authResult: AuthResult? ->
                     result[0] = authResult
-                    Unit
                 }),
                 true
             )
@@ -36,7 +35,7 @@ class AuthenticationHelperTest {
         helper.onAuthenticationError(BiometricPrompt.ERROR_USER_CANCELED, "")
 
         Assert.assertNotNull(result[0])
-        Assert.assertEquals(AuthResultCode.USER_CANCELED, result[0]!!.code)
+        Assert.assertEquals(AuthResultCode.USER_CANCELED, result[0]?.code)
     }
 
     @Test
@@ -50,7 +49,6 @@ class AuthenticationHelperTest {
                 dummyStrings,
                 ({ authResult: AuthResult? ->
                     result[0] = authResult
-                    Unit
                 }),
                 true
             )
@@ -58,7 +56,7 @@ class AuthenticationHelperTest {
         helper.onAuthenticationError(BiometricPrompt.ERROR_NEGATIVE_BUTTON, "")
 
         Assert.assertNotNull(result[0])
-        Assert.assertEquals(AuthResultCode.NEGATIVE_BUTTON, result[0]!!.code)
+        Assert.assertEquals(AuthResultCode.NEGATIVE_BUTTON, result[0]?.code)
     }
 
     @Test
@@ -72,7 +70,6 @@ class AuthenticationHelperTest {
                 dummyStrings,
                 ({ authResult: AuthResult? ->
                     result[0] = authResult
-                    Unit
                 }),
                 true
             )
@@ -80,7 +77,7 @@ class AuthenticationHelperTest {
         helper.onAuthenticationError(BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL, "")
 
         Assert.assertNotNull(result[0])
-        Assert.assertEquals(AuthResultCode.NO_CREDENTIALS, result[0]!!.code)
+        Assert.assertEquals(AuthResultCode.NO_CREDENTIALS, result[0]?.code)
     }
 
     @Test
@@ -94,7 +91,6 @@ class AuthenticationHelperTest {
                 dummyStrings,
                 ({ authResult: AuthResult? ->
                     result.add(authResult)
-                    Unit
                 }),
                 true
             )
@@ -102,7 +98,7 @@ class AuthenticationHelperTest {
         helper.onAuthenticationError(BiometricPrompt.ERROR_NO_BIOMETRICS, "")
 
         Assert.assertEquals(1, result.size.toLong())
-        Assert.assertEquals(AuthResultCode.NOT_ENROLLED, result.get(0)!!.code)
+        Assert.assertEquals(AuthResultCode.NOT_ENROLLED, result[0]?.code)
     }
 
     @Test
@@ -116,7 +112,6 @@ class AuthenticationHelperTest {
                 dummyStrings,
                 ({ authResult: AuthResult? ->
                     result.add(authResult)
-                    Unit
                 }),
                 true
             )
@@ -124,7 +119,7 @@ class AuthenticationHelperTest {
         helper.onAuthenticationError(BiometricPrompt.ERROR_HW_UNAVAILABLE, "")
 
         Assert.assertEquals(1, result.size.toLong())
-        Assert.assertEquals(AuthResultCode.HARDWARE_UNAVAILABLE, result.get(0)!!.code)
+        Assert.assertEquals(AuthResultCode.HARDWARE_UNAVAILABLE, result[0]?.code)
     }
 
     @Test
@@ -138,7 +133,6 @@ class AuthenticationHelperTest {
                 dummyStrings,
                 ({ authResult: AuthResult? ->
                     result.add(authResult)
-                    Unit
                 }),
                 true
             )
@@ -146,7 +140,7 @@ class AuthenticationHelperTest {
         helper.onAuthenticationError(BiometricPrompt.ERROR_HW_NOT_PRESENT, "")
 
         Assert.assertEquals(1, result.size.toLong())
-        Assert.assertEquals(AuthResultCode.NO_HARDWARE, result.get(0)!!.code)
+        Assert.assertEquals(AuthResultCode.NO_HARDWARE, result[0]?.code)
     }
 
     @Test
@@ -160,7 +154,6 @@ class AuthenticationHelperTest {
                 dummyStrings,
                 ({ authResult: AuthResult? ->
                     result.add(authResult)
-                    Unit
                 }),
                 true
             )
@@ -168,7 +161,7 @@ class AuthenticationHelperTest {
         helper.onAuthenticationError(BiometricPrompt.ERROR_LOCKOUT, "")
 
         Assert.assertEquals(1, result.size.toLong())
-        Assert.assertEquals(AuthResultCode.LOCKED_OUT_TEMPORARILY, result.get(0)!!.code)
+        Assert.assertEquals(AuthResultCode.LOCKED_OUT_TEMPORARILY, result[0]?.code)
     }
 
     @Test
@@ -182,7 +175,6 @@ class AuthenticationHelperTest {
                 dummyStrings,
                 ({ authResult: AuthResult? ->
                     result.add(authResult)
-                    Unit
                 }),
                 true
             )
@@ -190,7 +182,7 @@ class AuthenticationHelperTest {
         helper.onAuthenticationError(BiometricPrompt.ERROR_LOCKOUT_PERMANENT, "")
 
         Assert.assertEquals(1, result.size.toLong())
-        Assert.assertEquals(AuthResultCode.LOCKED_OUT_PERMANENTLY, result.get(0)!!.code)
+        Assert.assertEquals(AuthResultCode.LOCKED_OUT_PERMANENTLY, result[0]?.code)
     }
 
     @Test
@@ -204,7 +196,6 @@ class AuthenticationHelperTest {
                 dummyStrings,
                 ({ authResult: AuthResult? ->
                     result.add(authResult)
-                    Unit
                 }),
                 true
             )
@@ -212,7 +203,7 @@ class AuthenticationHelperTest {
         helper.onAuthenticationError(BiometricPrompt.ERROR_CANCELED, "")
 
         Assert.assertEquals(1, result.size.toLong())
-        Assert.assertEquals(AuthResultCode.SYSTEM_CANCELED, result.get(0)!!.code)
+        Assert.assertEquals(AuthResultCode.SYSTEM_CANCELED, result[0]?.code)
     }
 
     @Test
@@ -226,7 +217,6 @@ class AuthenticationHelperTest {
                 dummyStrings,
                 ({ authResult: AuthResult? ->
                     result.add(authResult)
-                    Unit
                 }),
                 true
             )
@@ -234,7 +224,7 @@ class AuthenticationHelperTest {
         helper.onAuthenticationError(BiometricPrompt.ERROR_TIMEOUT, "")
 
         Assert.assertEquals(1, result.size.toLong())
-        Assert.assertEquals(AuthResultCode.TIMEOUT, result.get(0)!!.code)
+        Assert.assertEquals(AuthResultCode.TIMEOUT, result[0]?.code)
     }
 
     @Test
@@ -248,7 +238,6 @@ class AuthenticationHelperTest {
                 dummyStrings,
                 ({ authResult: AuthResult? ->
                     result.add(authResult)
-                    Unit
                 }),
                 true
             )
@@ -256,7 +245,7 @@ class AuthenticationHelperTest {
         helper.onAuthenticationError(BiometricPrompt.ERROR_NO_SPACE, "")
 
         Assert.assertEquals(1, result.size.toLong())
-        Assert.assertEquals(AuthResultCode.NO_SPACE, result.get(0)!!.code)
+        Assert.assertEquals(AuthResultCode.NO_SPACE, result[0]?.code)
     }
 
     @Test
@@ -270,7 +259,6 @@ class AuthenticationHelperTest {
                 dummyStrings,
                 ({ authResult: AuthResult? ->
                     result.add(authResult)
-                    Unit
                 }),
                 true
             )
@@ -278,7 +266,7 @@ class AuthenticationHelperTest {
         helper.onAuthenticationError(BiometricPrompt.ERROR_SECURITY_UPDATE_REQUIRED, "")
 
         Assert.assertEquals(1, result.size.toLong())
-        Assert.assertEquals(AuthResultCode.SECURITY_UPDATE_REQUIRED, result.get(0)!!.code)
+        Assert.assertEquals(AuthResultCode.SECURITY_UPDATE_REQUIRED, result[0]?.code)
     }
 
     @Test
@@ -292,7 +280,6 @@ class AuthenticationHelperTest {
                 dummyStrings,
                 ({ authResult: AuthResult? ->
                     result.add(authResult)
-                    Unit
                 }),
                 true
             )
@@ -300,23 +287,23 @@ class AuthenticationHelperTest {
         helper.onAuthenticationError(BiometricPrompt.ERROR_UNABLE_TO_PROCESS, "")
 
         Assert.assertEquals(1, result.size.toLong())
-        Assert.assertEquals(AuthResultCode.UNKNOWN_ERROR, result.get(0)!!.code)
+        Assert.assertEquals(AuthResultCode.UNKNOWN_ERROR, result[0]?.code)
     }
 
     private fun buildMockActivityWithContext(mockActivity: FragmentActivity): FragmentActivity {
         val mockApplication = Mockito.mock(Application::class.java)
         val mockContext = Mockito.mock(Context::class.java)
-        Mockito.`when`<Context?>(mockActivity.getBaseContext()).thenReturn(mockContext)
-        Mockito.`when`<Context?>(mockActivity.getApplicationContext()).thenReturn(mockContext)
-        Mockito.`when`<Application?>(mockActivity.getApplication()).thenReturn(mockApplication)
+        Mockito.`when`<Context?>(mockActivity.baseContext).thenReturn(mockContext)
+        Mockito.`when`<Context?>(mockActivity.applicationContext).thenReturn(mockContext)
+        Mockito.`when`<Application?>(mockActivity.application).thenReturn(mockApplication)
         return mockActivity
     }
 
     companion object {
         val dummyStrings: AuthStrings = AuthStrings("a reason", "a hint", "cancel", "sign in")
 
-        val defaultOptions: AuthOptions = AuthOptions( /* biometricOnly */
-            false,  /* sensitiveTransaction */false,  /* sticky */false
+        val defaultOptions: AuthOptions = AuthOptions(biometricOnly =
+            false, sensitiveTransaction = false, sticky = false
         )
     }
 }
