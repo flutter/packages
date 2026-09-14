@@ -7,7 +7,6 @@ import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
 import android.os.Build
-import androidx.annotation.VisibleForTesting
 import androidx.biometric.BiometricManager
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
@@ -31,13 +30,12 @@ class LocalAuthPlugin
  * Use this constructor when adding this plugin to an app with v2 embedding.
  */
 : FlutterPlugin, ActivityAware, LocalAuthApi {
-  @get:VisibleForTesting
-  var activity: Activity? = null
+  internal var activity: Activity? = null
     private set
 
   private var authHelper: AuthenticationHelper? = null
 
-  @JvmField @VisibleForTesting val authInProgress: AtomicBoolean = AtomicBoolean(false)
+  internal val authInProgress: AtomicBoolean = AtomicBoolean(false)
 
   private var lifecycle: Lifecycle? = null
   private var biometricManager: BiometricManager? = null
@@ -52,10 +50,7 @@ class LocalAuthPlugin
   }
 
   override fun getEnrolledBiometrics(): List<AuthClassification>? {
-    val manager = biometricManager
-    if (manager == null) {
-      return null
-    }
+    val manager = biometricManager ?: return null
     return buildList {
       if (manager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) ==
           BiometricManager.BIOMETRIC_SUCCESS) {
@@ -116,13 +111,11 @@ class LocalAuthPlugin
         options, strings, allowCredentials, currentActivity, completionHandler)
   }
 
-  @VisibleForTesting
-  fun createAuthCompletionHandler(callback: (Result<AuthResult>) -> Unit): (AuthResult) -> Unit {
+  internal fun createAuthCompletionHandler(callback: (Result<AuthResult>) -> Unit): (AuthResult) -> Unit {
     return { authResult -> onAuthenticationCompleted(callback, authResult) }
   }
 
-  @VisibleForTesting
-  fun sendAuthenticationRequest(
+  internal fun sendAuthenticationRequest(
       options: AuthOptions,
       strings: AuthStrings,
       allowCredentials: Boolean,
@@ -142,8 +135,7 @@ class LocalAuthPlugin
     }
   }
 
-  @get:VisibleForTesting
-  val isDeviceSecure: Boolean
+  internal val isDeviceSecure: Boolean
     get() {
       return keyguardManager?.isDeviceSecure ?: false
     }
@@ -159,8 +151,7 @@ class LocalAuthPlugin
         BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE
   }
 
-  @VisibleForTesting
-  fun canAuthenticateWithDeviceCredential(): Boolean {
+  internal fun canAuthenticateWithDeviceCredential(): Boolean {
     if (Build.VERSION.SDK_INT < 30) {
       // Checking for device credential only authentication via the BiometricManager
       // is not allowed before API level 30, so we check for presence of PIN, pattern,
@@ -208,13 +199,11 @@ class LocalAuthPlugin
     activity = null
   }
 
-  @VisibleForTesting
-  fun setBiometricManager(biometricManager: BiometricManager?) {
+  internal fun setBiometricManager(biometricManager: BiometricManager?) {
     this.biometricManager = biometricManager
   }
 
-  @VisibleForTesting
-  fun setKeyguardManager(keyguardManager: KeyguardManager?) {
+  internal fun setKeyguardManager(keyguardManager: KeyguardManager?) {
     this.keyguardManager = keyguardManager
   }
 }
