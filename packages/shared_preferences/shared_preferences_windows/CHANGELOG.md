@@ -1,5 +1,10 @@
-## NEXT
+## 2.4.2
 
+* Fixes `SharedPreferencesWindows` and `SharedPreferencesAsyncWindows` silently
+  deleting each other's preferences. Both stores share
+  `shared_preferences.json` and each write replaced the whole file with that
+  store's cache, which is read once, so whichever store wrote last dropped
+  every key the other had written since. Writes now re-read the file first.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.4.1
