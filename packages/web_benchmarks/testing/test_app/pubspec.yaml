@@ -6,7 +6,8 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.10.0
+  sdk: ^3.12.0
+  flutter: ">=3.44.0"
 
 dependencies:
   flutter:
@@ -14,6 +15,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   go_router: ^14.2.7
+  material_ui: ^1.0.0
 
 dev_dependencies:
   flutter_lints: ^4.0.0
