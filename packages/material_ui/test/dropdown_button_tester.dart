@@ -4,6 +4,8 @@
 
 import 'package:material_ui/material_ui.dart';
 
+const menuItems = <String>['one', 'two', 'three', 'four'];
+
 /// The test app for the [DropdownButton] and [DropdownButtonFormField] widget tests.
 class TestApp extends StatefulWidget {
   const TestApp({super.key, required this.textDirection, required this.child, this.mediaSize});
@@ -44,6 +46,16 @@ class _TestAppState extends State<TestApp> {
   }
 }
 
+List<DropdownMenuItem<String>>? _buildDropdownMenuItems(List<String>? items) {
+  return items?.map<DropdownMenuItem<String>>((String item) {
+    return DropdownMenuItem<String>(
+      key: ValueKey<String>(item),
+      value: item,
+      child: Text(item, key: ValueKey<String>('${item}Text')),
+    );
+  }).toList();
+}
+
 /// Build a [DropdownButton] for testing.
 Widget buildDropdownButton({
   Key? buttonKey,
@@ -59,7 +71,7 @@ Widget buildDropdownButton({
   Widget? hint,
   Widget? disabledHint,
   Widget? underline,
-  List<String>? items = const <String>['one', 'two', 'three', 'four'],
+  List<String>? items = menuItems,
   List<Widget> Function(BuildContext)? selectedItemBuilder,
   double? itemHeight = kMinInteractiveDimension,
   double? menuWidth,
@@ -71,16 +83,6 @@ Widget buildDropdownButton({
   double? menuMaxHeight,
   EdgeInsetsGeometry? padding,
 }) {
-  final List<DropdownMenuItem<String>>? listItems = items?.map<DropdownMenuItem<String>>((
-    String item,
-  ) {
-    return DropdownMenuItem<String>(
-      key: ValueKey<String>(item),
-      value: item,
-      child: Text(item, key: ValueKey<String>('${item}Text')),
-    );
-  }).toList();
-
   return DropdownButton<String>(
     key: buttonKey,
     value: initialValue,
@@ -99,7 +101,7 @@ Widget buildDropdownButton({
     autofocus: autofocus,
     focusColor: focusColor,
     dropdownColor: dropdownColor,
-    items: listItems,
+    items: _buildDropdownMenuItems(items),
     selectedItemBuilder: selectedItemBuilder,
     itemHeight: itemHeight,
     menuWidth: menuWidth,
@@ -109,12 +111,73 @@ Widget buildDropdownButton({
   );
 }
 
+/// Build a [DropdownButtonFormField] for testing.
+Widget buildDropdownFormField({
+  Key? buttonKey,
+  AutovalidateMode autovalidateMode = AutovalidateMode.disabled,
+  int elevation = 8,
+  String? initialValue = 'two',
+  ValueChanged<String?>? onChanged,
+  VoidCallback? onTap,
+  Widget? icon,
+  Color? iconDisabledColor,
+  Color? iconEnabledColor,
+  double iconSize = 24.0,
+  bool isDense = false,
+  bool isExpanded = false,
+  Widget? hint,
+  Widget? disabledHint,
+  Widget? underline,
+  FocusNode? focusNode,
+  bool autofocus = false,
+  Color? focusColor,
+  Color? dropdownColor,
+  double? menuMaxHeight,
+  List<String>? items = menuItems,
+  double? itemHeight = kMinInteractiveDimension,
+  List<Widget> Function(BuildContext)? selectedItemBuilder,
+  AlignmentGeometry buttonAlignment = AlignmentDirectional.centerStart,
+  EdgeInsetsGeometry? padding,
+  InputDecoration? decoration,
+}) {
+  return Form(
+    child: DropdownButtonFormField<String>(
+      key: buttonKey,
+      autovalidateMode: autovalidateMode,
+      initialValue: initialValue,
+      elevation: elevation,
+      hint: hint,
+      disabledHint: disabledHint,
+      onChanged: onChanged,
+      onTap: onTap,
+      icon: icon,
+      iconSize: iconSize,
+      iconDisabledColor: iconDisabledColor,
+      iconEnabledColor: iconEnabledColor,
+      isDense: isDense,
+      isExpanded: isExpanded,
+      // No underline attribute
+      focusNode: focusNode,
+      autofocus: autofocus,
+      focusColor: focusColor,
+      dropdownColor: dropdownColor,
+      items: _buildDropdownMenuItems(items),
+      selectedItemBuilder: selectedItemBuilder,
+      itemHeight: itemHeight,
+      alignment: buttonAlignment,
+      menuMaxHeight: menuMaxHeight,
+      padding: padding,
+      decoration: decoration,
+    ),
+  );
+}
+
 /// Build the [TestApp] frame for the dropdown test.
 Widget buildFrame({
   required Widget child,
   TextDirection textDirection = TextDirection.ltr,
   Size? mediaSize,
-  Alignment dropdownAlignment = Alignment.center,
+  AlignmentDirectional dropdownAlignment = AlignmentDirectional.center,
   bool? useMaterial3,
   InputDecorationThemeData? localInputDecorationTheme,
 }) {
