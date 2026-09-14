@@ -4,6 +4,9 @@ on:
   repository_dispatch:
     types: [batch-release-pr]
 
+# Declare default permissions as read only.
+permissions: read-all
+
 env:
   HEAD_BRANCH_NAME: ${{ github.event.client_payload.package }}-${{ github.run_id }}-${{ github.run_attempt }}
 
@@ -112,6 +115,7 @@ jobs:
   report_blocked_release:
     needs: [create_batch_release_branch, unblock_sync]
     if: ${{ !cancelled() && needs.create_batch_release_branch.outputs.blocking_branch != '' }}
+    permissions: {} # Only writes a log annotation.
     runs-on: ubuntu-latest
     steps:
       - name: Report blocked release

@@ -58,7 +58,7 @@ class InFlightReleaseCheckCommand extends PackageCommand {
         .toList();
     if (packages.length != 1) {
       printError('Exactly one package must be specified.');
-      throw ToolExit(2);
+      throw ToolExit(exitInvalidArguments);
     }
     final RepositoryPackage package = packages.single;
 
