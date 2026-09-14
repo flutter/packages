@@ -1,0 +1,3 @@
+changelog: |
+  - Adds a semanticLabel to MenuAnchor for the expanded menu overlay.
+version: minor
