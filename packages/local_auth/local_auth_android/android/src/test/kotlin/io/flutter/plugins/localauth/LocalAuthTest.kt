@@ -29,30 +29,30 @@ class LocalAuthTest {
     fun authenticate_returnsErrorWhenAuthInProgress() {
         val plugin = LocalAuthPlugin()
         plugin.authInProgress.set(true)
-        val callbackCalled = arrayOfNulls<Boolean>(1)
+        val callbackCalled = ArrayList<Boolean>()
         plugin.authenticate(
             defaultOptions,
             dummyStrings)
             { reply: Result<AuthResult> ->
-                callbackCalled[0] = true
+                callbackCalled.add(true)
                 Assert.assertEquals(AuthResultCode.ALREADY_IN_PROGRESS, reply.getOrNull()?.code)
             }
-        Assert.assertTrue(callbackCalled[0]!!)
+        Assert.assertTrue(callbackCalled[0])
     }
 
     @Test
     fun authenticate_returnsErrorWithNoForegroundActivity() {
         val plugin = LocalAuthPlugin()
-        val callbackCalled = arrayOfNulls<Boolean>(1)
+        val callbackCalled = ArrayList<Boolean>()
 
         plugin.authenticate(
             defaultOptions,
             dummyStrings)
             { reply: Result<AuthResult> ->
-                callbackCalled[0] = true
+                callbackCalled.add(true)
                 Assert.assertEquals(AuthResultCode.NO_ACTIVITY, reply.getOrNull()?.code)
             }
-        Assert.assertTrue(callbackCalled[0]!!)
+        Assert.assertTrue(callbackCalled[0])
     }
 
     @Test
@@ -62,18 +62,18 @@ class LocalAuthTest {
             plugin,
             buildMockActivityWithContext(Mockito.mock(NativeActivity::class.java))
         )
-        val callbackCalled = arrayOfNulls<Boolean>(1)
+        val callbackCalled = ArrayList<Boolean>()
         plugin.authenticate(
             defaultOptions,
             dummyStrings)
             { reply: Result<AuthResult> ->
-                callbackCalled[0] = true
+                callbackCalled.add(true)
                 Assert.assertEquals(
                     AuthResultCode.NOT_FRAGMENT_ACTIVITY,
                     reply.getOrNull()?.code
                 )
             }
-        Assert.assertTrue(callbackCalled[0]!!)
+        Assert.assertTrue(callbackCalled[0])
     }
 
     @Test
@@ -86,16 +86,16 @@ class LocalAuthTest {
                 )
             )
         )
-        val callbackCalled = arrayOfNulls<Boolean>(1)
+        val callbackCalled = ArrayList<Boolean>()
 
         plugin.authenticate(
             defaultOptions,
             dummyStrings)
             { reply: Result<AuthResult> ->
-                callbackCalled[0] = true
+                callbackCalled.add(true)
                 Assert.assertEquals(AuthResultCode.NO_CREDENTIALS, reply.getOrNull()?.code)
             }
-        Assert.assertTrue(callbackCalled[0]!!)
+        Assert.assertTrue(callbackCalled[0])
     }
 
     @Test
