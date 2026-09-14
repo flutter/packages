@@ -34,28 +34,6 @@ Finder _iconRichText(Key iconKey) {
   return find.descendant(of: find.byKey(iconKey), matching: find.byType(RichText));
 }
 
-Widget buildDropdownWithHint({
-  required AlignmentDirectional alignment,
-  required bool isExpanded,
-  bool enableSelectedItemBuilder = false,
-}) {
-  return buildFrame(
-    useMaterial3: false,
-    mediaSize: const Size(800, 600),
-    itemHeight: 100.0,
-    alignment: alignment,
-    isExpanded: isExpanded,
-    selectedItemBuilder: enableSelectedItemBuilder
-        ? (BuildContext context) {
-            return menuItems.map<Widget>((String item) {
-              return ColoredBox(color: const Color(0xff00ff00), child: Text(item));
-            }).toList();
-          }
-        : null,
-    hint: const Text('hint'),
-  );
-}
-
 // When the dropdown's menu is popped up, a RenderParagraph for the selected
 // menu's text item will appear both in the dropdown button and in the menu.
 // The RenderParagraphs should be aligned, i.e. they should have the same
