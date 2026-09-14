@@ -10,6 +10,8 @@ import 'package:flutter/rendering.dart' show RenderParagraph, RendererBinding;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'dropdown_button_tester.dart';
+
 const List<String> menuItems = <String>['one', 'two', 'three', 'four'];
 void onChanged<T>(T _) {}
 Finder _iconRichText(Key iconKey) {
@@ -77,82 +79,6 @@ void verifyPaintedShadow(Finder customPaint, int elevation) {
       ..rrect(rrect: rrects[0], color: boxShadows[0].color, hasMaskFilter: true)
       ..rrect(rrect: rrects[1], color: boxShadows[1].color, hasMaskFilter: true)
       ..rrect(rrect: rrects[2], color: boxShadows[2].color, hasMaskFilter: true),
-  );
-}
-
-Widget buildFormFrame({
-  Key? buttonKey,
-  AutovalidateMode autovalidateMode = AutovalidateMode.disabled,
-  int elevation = 8,
-  String? value = 'two',
-  ValueChanged<String?>? onChanged,
-  VoidCallback? onTap,
-  Widget? icon,
-  Color? iconDisabledColor,
-  Color? iconEnabledColor,
-  double iconSize = 24.0,
-  bool isDense = true,
-  bool isExpanded = false,
-  Widget? hint,
-  Widget? disabledHint,
-  Widget? underline,
-  List<String>? items = menuItems,
-  Alignment alignment = Alignment.center,
-  TextDirection textDirection = TextDirection.ltr,
-  AlignmentGeometry buttonAlignment = AlignmentDirectional.centerStart,
-  FocusNode? focusNode,
-  bool autofocus = false,
-  Color? focusColor,
-  Color? dropdownColor,
-  double? menuMaxHeight,
-  EdgeInsetsGeometry? padding,
-  InputDecoration? decoration,
-  List<Widget> Function(BuildContext)? selectedItemBuilder,
-  double? itemHeight = kMinInteractiveDimension,
-}) {
-  return TestApp(
-    textDirection: textDirection,
-    child: Material(
-      child: Align(
-        alignment: alignment,
-        child: RepaintBoundary(
-          child: DropdownButtonFormField<String>(
-            key: buttonKey,
-            autovalidateMode: autovalidateMode,
-            elevation: elevation,
-            initialValue: value,
-            hint: hint,
-            disabledHint: disabledHint,
-            onChanged: onChanged,
-            onTap: onTap,
-            icon: icon,
-            iconSize: iconSize,
-            iconDisabledColor: iconDisabledColor,
-            iconEnabledColor: iconEnabledColor,
-            isDense: isDense,
-            isExpanded: isExpanded,
-            // No underline attribute
-            focusNode: focusNode,
-            autofocus: autofocus,
-            focusColor: focusColor,
-            dropdownColor: dropdownColor,
-            selectedItemBuilder: selectedItemBuilder,
-            itemHeight: itemHeight,
-            menuMaxHeight: menuMaxHeight,
-            padding: padding,
-            decoration: decoration,
-            alignment: buttonAlignment,
-            items: items?.map<DropdownMenuItem<String>>((String item) {
-              return DropdownMenuItem<String>(
-                key: ValueKey<String>(item),
-                value: item,
-                child: Text(item, key: ValueKey<String>('${item}Text')),
-              );
-            }).toList(),
-          ),
-        ),
-      ),
-    ),
   );
 }
 
@@ -453,12 +379,14 @@ void main() {
     ];
 
     await tester.pumpWidget(
-      buildFormFrame(
-        buttonKey: buttonKey,
-        value: '1234567890',
-        isExpanded: true,
-        onChanged: onChanged,
-        items: items,
+      buildFrame(
+        child: buildDropdownFormField(
+          buttonKey: buttonKey,
+          initialValue: '1234567890',
+          isExpanded: true,
+          onChanged: onChanged,
+          items: items,
+        ),
       ),
     );
     final RenderBox buttonBox = tester.renderObject<RenderBox>(find.byKey(buttonKey));
@@ -479,7 +407,11 @@ void main() {
   ) async {
     final Key buttonKey = UniqueKey();
 
-    await tester.pumpWidget(buildFormFrame(buttonKey: buttonKey, onChanged: onChanged));
+    await tester.pumpWidget(
+      buildFrame(
+        child: buildDropdownFormField(buttonKey: buttonKey, onChanged: onChanged, isDense: true),
+      ),
+    );
     final RenderBox buttonBox = tester.renderObject<RenderBox>(find.byKey(buttonKey));
     expect(buttonBox.attached, isTrue);
 
@@ -672,12 +604,14 @@ void main() {
       final Key buttonKey = UniqueKey();
 
       Widget build({List<String>? items}) {
-        return buildFormFrame(
-          items: items,
-          buttonKey: buttonKey,
-          value: null,
-          hint: const Text('enabled'),
-          disabledHint: const Text('disabled'),
+        return buildFrame(
+          child: buildDropdownFormField(
+            items: items,
+            buttonKey: buttonKey,
+            initialValue: null,
+            hint: const Text('enabled'),
+            disabledHint: const Text('disabled'),
+          ),
         );
       }
 
@@ -698,11 +632,13 @@ void main() {
     final Key buttonKey = UniqueKey();
 
     Widget build({List<String>? items}) {
-      return buildFormFrame(
-        items: items,
-        buttonKey: buttonKey,
-        value: null,
-        hint: const Text('hint used when disabled'),
+      return buildFrame(
+        child: buildDropdownFormField(
+          items: items,
+          buttonKey: buttonKey,
+          initialValue: null,
+          hint: const Text('hint used when disabled'),
+        ),
       );
     }
 
@@ -721,11 +657,13 @@ void main() {
     final Key buttonKey = UniqueKey();
 
     Widget build({List<String>? items}) {
-      return buildFormFrame(
-        items: items,
-        buttonKey: buttonKey,
-        value: null,
-        hint: const Text('hint used when disabled'),
+      return buildFrame(
+        child: buildDropdownFormField(
+          items: items,
+          buttonKey: buttonKey,
+          initialValue: null,
+          hint: const Text('hint used when disabled'),
+        ),
       );
     }
 
@@ -744,11 +682,13 @@ void main() {
     final Key buttonKey = UniqueKey();
 
     Widget build({List<String>? items}) {
-      return buildFormFrame(
-        items: items,
-        buttonKey: buttonKey,
-        value: null,
-        hint: const Text('hint used when disabled'),
+      return buildFrame(
+        child: buildDropdownFormField(
+          items: items,
+          buttonKey: buttonKey,
+          initialValue: null,
+          hint: const Text('hint used when disabled'),
+        ),
       );
     }
 
@@ -767,13 +707,15 @@ void main() {
     final Key buttonKey = UniqueKey();
 
     Widget build({List<String>? items, ValueChanged<String?>? onChanged}) {
-      return buildFormFrame(
-        items: items,
-        buttonKey: buttonKey,
-        value: null,
-        onChanged: onChanged,
-        hint: const Text('enabled'),
-        disabledHint: const Text('disabled'),
+      return buildFrame(
+        child: buildDropdownFormField(
+          items: items,
+          buttonKey: buttonKey,
+          initialValue: null,
+          onChanged: onChanged,
+          hint: const Text('enabled'),
+          disabledHint: const Text('disabled'),
+        ),
       );
     }
 
@@ -788,12 +730,14 @@ void main() {
     final Key buttonKey = UniqueKey();
 
     Widget build({List<String>? items}) {
-      return buildFormFrame(
-        items: items,
-        buttonKey: buttonKey,
-        value: null,
-        hint: const Text('enabled'),
-        disabledHint: const Text('disabled'),
+      return buildFrame(
+        child: buildDropdownFormField(
+          items: items,
+          buttonKey: buttonKey,
+          initialValue: null,
+          hint: const Text('enabled'),
+          disabledHint: const Text('disabled'),
+        ),
       );
     }
 
@@ -814,12 +758,14 @@ void main() {
     final customIcon = Icon(Icons.assessment, key: iconKey);
 
     await tester.pumpWidget(
-      buildFormFrame(
-        icon: customIcon,
-        iconSize: 30.0,
-        iconEnabledColor: Colors.pink,
-        iconDisabledColor: Colors.orange,
-        onChanged: onChanged,
+      buildFrame(
+        child: buildDropdownFormField(
+          icon: customIcon,
+          iconSize: 30.0,
+          iconEnabledColor: Colors.pink,
+          iconDisabledColor: Colors.orange,
+          onChanged: onChanged,
+        ),
       ),
     );
 
@@ -833,12 +779,14 @@ void main() {
 
     // test for disabled color
     await tester.pumpWidget(
-      buildFormFrame(
-        icon: customIcon,
-        iconSize: 30.0,
-        iconEnabledColor: Colors.pink,
-        iconDisabledColor: Colors.orange,
-        items: null,
+      buildFrame(
+        child: buildDropdownFormField(
+          icon: customIcon,
+          iconSize: 30.0,
+          iconEnabledColor: Colors.pink,
+          iconDisabledColor: Colors.orange,
+          items: null,
+        ),
       ),
     );
 
@@ -849,7 +797,11 @@ void main() {
   testWidgets('DropdownButtonFormField - default elevation', (WidgetTester tester) async {
     final Key buttonKey = UniqueKey();
     debugDisableShadows = false;
-    await tester.pumpWidget(buildFormFrame(buttonKey: buttonKey, onChanged: onChanged));
+    await tester.pumpWidget(
+      buildFrame(
+        child: buildDropdownFormField(buttonKey: buttonKey, onChanged: onChanged),
+      ),
+    );
     await tester.tap(find.byKey(buttonKey));
     await tester.pumpAndSettle();
 
@@ -868,7 +820,9 @@ void main() {
     final Key buttonKeyTwo = UniqueKey();
 
     await tester.pumpWidget(
-      buildFormFrame(buttonKey: buttonKeyOne, elevation: 16, onChanged: onChanged),
+      buildFrame(
+        child: buildDropdownFormField(buttonKey: buttonKeyOne, elevation: 16, onChanged: onChanged),
+      ),
     );
     await tester.tap(find.byKey(buttonKeyOne));
     await tester.pumpAndSettle();
@@ -880,7 +834,9 @@ void main() {
     verifyPaintedShadow(customPaintOne, 16);
     await tester.tap(find.text('one').last);
     await tester.pumpWidget(
-      buildFormFrame(buttonKey: buttonKeyTwo, elevation: 24, onChanged: onChanged),
+      buildFrame(
+        child: buildDropdownFormField(buttonKey: buttonKeyTwo, elevation: 24, onChanged: onChanged),
+      ),
     );
     await tester.tap(find.byKey(buttonKeyTwo));
     await tester.pumpAndSettle();
@@ -1007,7 +963,12 @@ void main() {
       dropdownButtonTapCounter += 1;
     }
 
-    Widget build() => buildFormFrame(value: value, onChanged: onChanged, onTap: onTap);
+    Widget build() {
+      return buildFrame(
+        child: buildDropdownFormField(initialValue: value, onChanged: onChanged, onTap: onTap),
+      );
+    }
+
     await tester.pumpWidget(build());
 
     expect(dropdownButtonTapCounter, 0);
@@ -1119,10 +1080,12 @@ void main() {
 
   testWidgets('DropdownButtonFormField - Custom button alignment', (WidgetTester tester) async {
     await tester.pumpWidget(
-      buildFormFrame(
-        buttonAlignment: AlignmentDirectional.center,
-        items: <String>['one'],
-        value: 'one',
+      buildFrame(
+        child: buildDropdownFormField(
+          buttonAlignment: AlignmentDirectional.center,
+          items: <String>['one'],
+          initialValue: 'one',
+        ),
       ),
     );
 
@@ -1867,12 +1830,14 @@ void main() {
     addTearDown(focusNode.dispose);
 
     await tester.pumpWidget(
-      buildFormFrame(
-        buttonKey: buttonKey,
-        onChanged: onChanged,
-        focusNode: focusNode,
-        autofocus: true,
-        decoration: const InputDecoration(filled: true),
+      buildFrame(
+        child: buildDropdownFormField(
+          buttonKey: buttonKey,
+          onChanged: onChanged,
+          focusNode: focusNode,
+          autofocus: true,
+          decoration: const InputDecoration(filled: true),
+        ),
       ),
     );
 
@@ -1888,33 +1853,37 @@ void main() {
 
     // Focus color from Decoration.
     await tester.pumpWidget(
-      buildFormFrame(
-        buttonKey: buttonKey,
-        onChanged: onChanged,
-        focusNode: focusNode,
-        decoration: const InputDecoration(filled: true, focusColor: Color(0xff00ffff)),
+      buildFrame(
+        child: buildDropdownFormField(
+          buttonKey: buttonKey,
+          onChanged: onChanged,
+          focusNode: focusNode,
+          decoration: const InputDecoration(filled: true, focusColor: Color(0xFF00FFFF)),
+        ),
       ),
     );
 
     expect(
       findInputDecoratorBorderPainter(),
-      paints..rrect(style: PaintingStyle.fill, color: const Color(0xff00ffff)),
+      paints..rrect(style: PaintingStyle.fill, color: const Color(0xFF00FFFF)),
     );
 
     // Focus color from focusColor property.
     await tester.pumpWidget(
-      buildFormFrame(
-        buttonKey: buttonKey,
-        onChanged: onChanged,
-        focusNode: focusNode,
-        decoration: const InputDecoration(filled: true, focusColor: Color(0xff00ffff)),
-        focusColor: const Color(0xff00ff00),
+      buildFrame(
+        child: buildDropdownFormField(
+          buttonKey: buttonKey,
+          onChanged: onChanged,
+          focusNode: focusNode,
+          decoration: const InputDecoration(filled: true, focusColor: Color(0xFF00FFFF)),
+          focusColor: const Color(0xFF00FF00),
+        ),
       ),
     );
 
     expect(
       findInputDecoratorBorderPainter(),
-      paints..rrect(style: PaintingStyle.fill, color: const Color(0xff00ff00)),
+      paints..rrect(style: PaintingStyle.fill, color: const Color(0xFF00FF00)),
     );
   });
 }
