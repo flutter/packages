@@ -1,3 +1,7 @@
+## 0.8.13+8
+
+* Replaces deprecated `kUTTypeImage` and `kUTTypeMovie` with `UTTypeImage` and `UTTypeMovie` to fix iOS 15+ deprecation warnings.
+
 ## 0.8.13+7
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
