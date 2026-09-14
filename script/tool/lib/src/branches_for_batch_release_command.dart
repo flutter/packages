@@ -96,7 +96,6 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
 
     await _createAndPushReleaseBranch(
       git: repository,
-      package: package,
       releaseBranchName: releaseBranchName,
       remoteName: remoteName,
     );
@@ -171,7 +170,6 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
   /// Throws a [ToolExit] if any of the steps fail.
   Future<void> _createAndPushReleaseBranch({
     required GitDir git,
-    required RepositoryPackage package,
     required String releaseBranchName,
     required String remoteName,
   }) async {
@@ -189,11 +187,7 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
 
     await _pushBranch(git, remoteName, releaseBranchName);
 
-    final String? githubOutput = platform.environment['GITHUB_OUTPUT'];
-    if (githubOutput != null && githubOutput.isNotEmpty) {
-      final File file = package.directory.fileSystem.file(githubOutput);
-      file.writeAsStringSync('release_branch=$releaseBranchName\n', mode: io.FileMode.append);
-    }
+    writeGitHubActionsOutput('release_branch', releaseBranchName);
   }
 
   Future<void> _createHeadBranchAndCommit({
