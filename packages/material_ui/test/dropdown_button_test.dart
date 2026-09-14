@@ -330,4 +330,54 @@ void main() {
   testWidgets('DropdownButton uses dropdownColor when expanded', (WidgetTester tester) async {
     await checkDropdownButtonColor(tester, color: const Color.fromRGBO(120, 220, 70, 0.8));
   });
+
+  testWidgets('DropdownButton can be focused, and has focusColor', (WidgetTester tester) async {
+    tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
+    final buttonKey = UniqueKey();
+    final focusNode = FocusNode(debugLabel: 'DropdownButton');
+    addTearDown(focusNode.dispose);
+
+    void onChanged<T>(T _) {}
+
+    await tester.pumpWidget(
+      buildFrame(
+        useMaterial3: false,
+        child: buildDropdownButton(
+          buttonKey: buttonKey,
+          onChanged: onChanged,
+          focusNode: focusNode,
+          autofocus: true,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle(); // Pump a frame for autofocus to take effect.
+    expect(focusNode.hasPrimaryFocus, isTrue);
+    expect(
+      find.byType(Material),
+      paints..rect(
+        rect: const Rect.fromLTRB(348.0, 276.0, 452.0, 324.0),
+        color: const Color(0x1F000000),
+      ),
+    );
+
+    await tester.pumpWidget(
+      buildFrame(
+        useMaterial3: false,
+        child: buildDropdownButton(
+          buttonKey: buttonKey,
+          onChanged: onChanged,
+          focusNode: focusNode,
+          focusColor: const Color(0xFF00FF00),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle(); // Pump a frame for autofocus to take effect.
+    expect(
+      find.byType(Material),
+      paints..rect(
+        rect: const Rect.fromLTRB(348.0, 276.0, 452.0, 324.0),
+        color: const Color(0x1F00FF00),
+      ),
+    );
+  });
 }
