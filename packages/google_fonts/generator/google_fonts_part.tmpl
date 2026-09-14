@@ -41,7 +41,7 @@ class Part{{part}} {
   }) {
     final fonts = <GoogleFontsVariant, GoogleFontsFile>{
       {{#fontUrls}}
-      const GoogleFontsVariant(fontWeight: FontWeight.w{{variantWeight}}, fontStyle: FontStyle.{{variantStyle}},): GoogleFontsFile('{{hash}}', {{length}},),
+      const GoogleFontsVariant(fontWeight: FontWeight.w{{variantWeight}}, fontStyle: FontStyle.{{variantStyle}},): const GoogleFontsFile('{{hash}}', {{length}},),
       {{/fontUrls}}
     };
 

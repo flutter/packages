@@ -5,6 +5,10 @@
 * Introduces `AndroidDocumentStartJavaScriptParams`, a platform-specific extension of
   `DocumentStartJavaScriptParams` for Android that adds support for `allowedOriginRules`.
 
+## 4.14.1
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
 ## 4.14.0
 * Adds support for configuring Web Authentication in `AndroidWebViewController` with `setWebAuthenticationSupport` to enable Passkey and other related Authentication.
 

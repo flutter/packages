@@ -98,6 +98,21 @@ class RoutingConfig {
   /// When a deep link opens the app and `onEnter` returns [Block], GoRouter
   /// will stay on the current route or redirect to the initial route.
   ///
+  /// [onEnter] is evaluated exactly once per navigation, against the literal
+  /// URI being navigated to. It runs strictly before both the legacy top-level
+  /// [redirect] and any [GoRoute.redirect] chains, and is not re-invoked as
+  /// those redirects resolve intermediate locations. This means `next.uri.path`
+  /// will never equal a path that is only reached through a redirect callback.
+  ///
+  /// For example, given a route at `/` that redirects to `/a`, an [onEnter] guard
+  /// checking if `next` equals `/a` will never match when navigating to `/`,
+  /// because `next` reflects the pre-redirect target (`/`). If you need to guard
+  /// a location that only exists as a redirect destination, put that check inside
+  /// a `redirect` callback instead (top-level or route-level) -- `redirect`
+  /// callbacks see each resolved hop in the chain as they produce it. Reserve
+  /// [onEnter] for guarding the literal, user- or app-initiated navigation
+  /// target (deep links, [GoRouter.go] or [GoRouter.push] calls, etc.).
+  ///
   /// Example:
   /// ```dart
   /// final GoRouter router = GoRouter(

@@ -28,17 +28,8 @@ struct NullableReturnsTests {
     binaryMessenger.defaultReturn = 99
     let api = NullableArgFlutterApi(binaryMessenger: binaryMessenger)
 
-    await confirmation { confirmed in
-      api.doit(x: nil) { result in
-        switch result {
-        case .success(let res):
-          #expect(res == 99)
-          confirmed()
-        case .failure(let error):
-          Issue.record("Failed with error: \(error)")
-        }
-      }
-    }
+    let res = try await api.doit(x: nil)
+    #expect(res == 99)
   }
 
   @Test
