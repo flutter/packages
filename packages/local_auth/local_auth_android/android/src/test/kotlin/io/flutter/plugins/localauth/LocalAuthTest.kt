@@ -34,9 +34,9 @@ class LocalAuthTest {
         plugin.authenticate(
             defaultOptions,
             dummyStrings,
-            ResultCompat.asCompatCallback<AuthResult> { reply: ResultCompat<AuthResult?>? ->
+            { reply: Result<AuthResult> ->
                 callbackCalled[0] = true
-                Assert.assertEquals(AuthResultCode.ALREADY_IN_PROGRESS, reply!!.getOrNull()!!.code)
+                Assert.assertEquals(AuthResultCode.ALREADY_IN_PROGRESS, reply.getOrNull()?.code)
                 null
             })
         Assert.assertTrue(callbackCalled[0]!!)
@@ -50,9 +50,9 @@ class LocalAuthTest {
         plugin.authenticate(
             defaultOptions,
             dummyStrings,
-            ResultCompat.asCompatCallback<AuthResult> { reply: ResultCompat<AuthResult?>? ->
+            { reply: Result<AuthResult> ->
                 callbackCalled[0] = true
-                Assert.assertEquals(AuthResultCode.NO_ACTIVITY, reply!!.getOrNull()!!.code)
+                Assert.assertEquals(AuthResultCode.NO_ACTIVITY, reply.getOrNull()?.code)
                 null
             })
         Assert.assertTrue(callbackCalled[0]!!)
@@ -69,11 +69,11 @@ class LocalAuthTest {
         plugin.authenticate(
             defaultOptions,
             dummyStrings,
-            ResultCompat.asCompatCallback<AuthResult> { reply: ResultCompat<AuthResult?>? ->
+            { reply: Result<AuthResult> ->
                 callbackCalled[0] = true
                 Assert.assertEquals(
                     AuthResultCode.NOT_FRAGMENT_ACTIVITY,
-                    reply!!.getOrNull()!!.code
+                    reply.getOrNull()?.code
                 )
                 null
             })
@@ -95,9 +95,9 @@ class LocalAuthTest {
         plugin.authenticate(
             defaultOptions,
             dummyStrings,
-            ResultCompat.asCompatCallback<AuthResult> { reply: ResultCompat<AuthResult?>? ->
+            { reply: Result<AuthResult> ->
                 callbackCalled[0] = true
-                Assert.assertEquals(AuthResultCode.NO_CREDENTIALS, reply!!.getOrNull()!!.code)
+                Assert.assertEquals(AuthResultCode.NO_CREDENTIALS, reply.getOrNull()?.code)
                 null
             })
         Assert.assertTrue(callbackCalled[0]!!)
@@ -137,7 +137,7 @@ class LocalAuthTest {
         plugin.authenticate(
             options,
             dummyStrings,
-            ResultCompat.asCompatCallback<AuthResult> { reply: ResultCompat<AuthResult?>? -> null })
+            { reply: Result<AuthResult> -> null })
         Assert.assertFalse(allowCredentialsCaptor.getValue()!!)
     }
 
@@ -169,7 +169,7 @@ class LocalAuthTest {
         plugin.authenticate(
             defaultOptions,
             dummyStrings,
-            ResultCompat.asCompatCallback<AuthResult> { reply: ResultCompat<AuthResult?>? -> null })
+            { reply: Result<AuthResult> -> null })
         Assert.assertTrue(allowCredentialsCaptor.getValue()!!)
     }
 
@@ -203,7 +203,7 @@ class LocalAuthTest {
         plugin.authenticate(
             defaultOptions,
             dummyStrings,
-            ResultCompat.asCompatCallback<AuthResult> { reply: ResultCompat<AuthResult?>? -> null })
+            { reply: Result<AuthResult> -> null })
         Assert.assertTrue(allowCredentialsCaptor.getValue()!!)
     }
 
