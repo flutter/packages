@@ -246,9 +246,9 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
 
     indent.format('''
 #if os(iOS)
-  import Flutter
+  @preconcurrency import Flutter
 #elseif os(macOS)
-  import FlutterMacOS
+  @preconcurrency import FlutterMacOS
 #else
   #error("Unsupported platform.")
 #endif''');
@@ -437,7 +437,7 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     indent.newln();
     if (root.containsEventChannel) {
       indent.writeln(
-        'var ${_getMethodCodecVarName(generatorOptions)} = FlutterStandardMethodCodec(readerWriter: $readerWriterName());',
+        'let ${_getMethodCodecVarName(generatorOptions)} = FlutterStandardMethodCodec(readerWriter: $readerWriterName());',
       );
       indent.newln();
     }
@@ -923,7 +923,12 @@ if (wrapped == nil) {
       generatorComments: generatedComments,
     );
 
-    indent.write('protocol $apiName ');
+    final inheritance =
+        generatorOptions.swiftStrictConcurrency &&
+            api.methods.any((Method m) => m.taskQueueType == TaskQueueType.serialBackgroundThread)
+        ? ': Sendable '
+        : ' ';
+    indent.write('protocol $apiName$inheritance');
     indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
         addDocumentationComments(indent, method.documentationComments, _docCommentSpec);
@@ -951,7 +956,7 @@ if (wrapped == nil) {
       }
     });
 
-    final mainActorAsPrefix = generatorOptions.swiftStrictConcurrency ? '@MainActor ' : '';
+    final mainActor = generatorOptions.swiftStrictConcurrency ? '@MainActor ' : '';
 
     indent.newln();
     indent.writeln(
@@ -966,7 +971,7 @@ if (wrapped == nil) {
         '$_docCommentPrefix Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`.',
       );
       indent.write(
-        '${mainActorAsPrefix}static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?, messageChannelSuffix: String = "") ',
+        '${mainActor}static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?, messageChannelSuffix: String = "") ',
       );
       indent.addScoped('{', '}', () {
         indent.writeln(
@@ -1008,6 +1013,7 @@ if (wrapped == nil) {
               returnStyle: returnStyle,
               swiftFunction: method.swiftFunction,
             ),
+            varChannelName: '${method.name}Channel',
             documentationComments: method.documentationComments,
             serialBackgroundQueue: method.taskQueueType == TaskQueueType.serialBackgroundThread
                 ? serialBackgroundQueue
@@ -1040,8 +1046,9 @@ if (wrapped == nil) {
     final instanceManagerApiName = '${swiftInstanceManagerClassName(generatorOptions)}Api';
 
     final String removeStrongReferenceName = makeRemoveStrongReferenceChannelName(dartPackageName);
+    final mainActor = generatorOptions.swiftStrictConcurrency ? '@MainActor ' : '';
 
-    indent.writeScoped('private class $instanceManagerApiName {', '}', () {
+    indent.writeScoped('${mainActor}private class $instanceManagerApiName {', '}', () {
       addDocumentationComments(indent, <String>[
         ' The codec used for serializing messages.',
       ], _docCommentSpec);
@@ -1061,12 +1068,11 @@ if (wrapped == nil) {
       });
       indent.newln();
 
-      final mainActorAsPrefix = generatorOptions.swiftStrictConcurrency ? '@MainActor ' : '';
       addDocumentationComments(indent, <String>[
         ' Sets up an instance of `$instanceManagerApiName` to handle messages through the `binaryMessenger`.',
       ], _docCommentSpec);
       indent.writeScoped(
-        '${mainActorAsPrefix}static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, instanceManager: ${swiftInstanceManagerClassName(generatorOptions)}?) {',
+        'static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, instanceManager: ${swiftInstanceManagerClassName(generatorOptions)}?) {',
         '}',
         () {
           indent.writeln('let codec = ${_getMessageCodecName(generatorOptions)}.shared');
@@ -1268,12 +1274,16 @@ if (wrapped == nil) {
                 indent.format('''
                       ${unsupportedPlatforms != null ? '#if $unsupportedPlatforms' : ''}
                       if ${availability != null ? '#$availability, ' : ''}let instance = value as? $className {
-                        pigeonRegistrar.apiDelegate.pigeonApi${api.name}(pigeonRegistrar).pigeonNewInstance(
+                        nonisolated(unsafe) let instance = instance
+                        nonisolated(unsafe) let pigeonRegistrar = pigeonRegistrar
+                        let identifier = MainActor.assumeIsolated {
+                          pigeonRegistrar.apiDelegate.pigeonApi${api.name}(pigeonRegistrar).pigeonNewInstance(
                           pigeonInstance: instance
-                        ) { _ in }
+                          ) { _ in }
+                          return pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!
+                        }
                         super.writeByte($proxyApiCodecInstanceManagerKey)
-                        super.writeValue(
-                          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+                        super.writeValue(identifier)
                         return
                       }
                       ${unsupportedPlatforms != null ? '#endif' : ''}''');
@@ -1376,7 +1386,9 @@ if (wrapped == nil) {
     indent.newln();
 
     final swiftApiName = '$hostProxyApiPrefix${api.name}';
-    indent.writeScoped('final class $swiftApiName: $swiftApiProtocolName  {', '}', () {
+    final mainActor = generatorOptions.swiftStrictConcurrency ? '@MainActor ' : '';
+
+    indent.writeScoped('${mainActor}final class $swiftApiName: $swiftApiProtocolName  {', '}', () {
       indent.writeln('unowned let pigeonRegistrar: ${proxyApiRegistrarName(generatorOptions)}');
       indent.writeln('let pigeonDelegate: $swiftApiDelegateName');
 
@@ -1689,7 +1701,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
     indent.newln();
     indent.format('''
       $mainActor
-      private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
+      private class PigeonStreamHandler<ReturnType>: NSObject, @preconcurrency FlutterStreamHandler {
         private let wrapper: PigeonEventChannelWrapper<ReturnType>
         private var pigeonSink: PigeonEventSink<ReturnType>? = nil
 
@@ -1826,56 +1838,57 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
       // Without annotations from the library, Swift infers completion blocks @Sendable.
       // Use MainActor.assumeIsolated to workaround this until the Flutter runner API is
       // properly annotated.
-      final beginScope = generatorOptions.swiftStrictConcurrency
-          ? '{ (response: any Sendable) in MainActor.assumeIsolated {'
-          : '{ response in';
-      final endScope = generatorOptions.swiftStrictConcurrency ? '} }' : '}';
-      indent.addScoped(beginScope, endScope, () {
-        indent.writeScoped('guard let listResponse = response as? [Any?] else {', '}', () {
-          indent.writeln(
-            returnStyle.resumeError('createConnectionError(withChannelName: channelName)'),
-          );
-          indent.writeln('return');
-        });
-        indent.writeScoped('if listResponse.count > 1 {', '} ', () {
-          indent.writeln('let code: String = listResponse[0] as! String');
-          indent.writeln('let message: String? = nilOrValue(listResponse[1])');
-          indent.writeln('let details: String? = nilOrValue(listResponse[2])');
-          indent.writeln(
-            returnStyle.resumeError(
-              '${_getErrorClassName(generatorOptions)}(code: code, message: message, details: details)',
-            ),
-          );
-        }, addTrailingNewline: false);
-        if (!returnType.isNullable && !returnType.isVoid) {
-          indent.addScoped('else if listResponse[0] == nil {', '} ', () {
+      final responseArg = generatorOptions.swiftStrictConcurrency
+          ? '(response: any Sendable)'
+          : 'response';
+      indent.addScoped('{ $responseArg in', '}', () {
+        indent.addScoped('MainActor.assumeIsolated {', '}', () {
+          indent.writeScoped('guard let listResponse = response as? [Any?] else {', '}', () {
+            indent.writeln(
+              returnStyle.resumeError('createConnectionError(withChannelName: channelName)'),
+            );
+            indent.writeln('return');
+          });
+          indent.writeScoped('if listResponse.count > 1 {', '} ', () {
+            indent.writeln('let code: String = listResponse[0] as! String');
+            indent.writeln('let message: String? = nilOrValue(listResponse[1])');
+            indent.writeln('let details: String? = nilOrValue(listResponse[2])');
             indent.writeln(
               returnStyle.resumeError(
-                '${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")',
+                '${_getErrorClassName(generatorOptions)}(code: code, message: message, details: details)',
               ),
             );
           }, addTrailingNewline: false);
-        }
-        indent.addScoped('else {', '}', () {
-          if (returnType.isVoid) {
-            indent.writeln(returnStyle.resumeSuccess('()'));
-          } else {
-            final String fieldType = _swiftTypeForDartType(returnType);
-            _writeGenericCasting(
-              indent: indent,
-              value: 'listResponse[0]',
-              variableName: 'result',
-              fieldType: fieldType,
-              type: returnType,
-            );
-            // There is a swift bug with unwrapping maps of nullable Enums;
-            final enumMapForceUnwrap =
-                returnType.baseName == 'Map' &&
-                    returnType.typeArguments.any((TypeDeclaration type) => type.isEnum)
-                ? '!'
-                : '';
-            indent.writeln(returnStyle.resumeSuccess('result$enumMapForceUnwrap'));
+          if (!returnType.isNullable && !returnType.isVoid) {
+            indent.addScoped('else if listResponse[0] == nil {', '} ', () {
+              indent.writeln(
+                returnStyle.resumeError(
+                  '${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")',
+                ),
+              );
+            }, addTrailingNewline: false);
           }
+          indent.addScoped('else {', '}', () {
+            if (returnType.isVoid) {
+              indent.writeln(returnStyle.resumeSuccess('()'));
+            } else {
+              final String fieldType = _swiftTypeForDartType(returnType);
+              _writeGenericCasting(
+                indent: indent,
+                value: 'listResponse[0]',
+                variableName: 'result',
+                fieldType: fieldType,
+                type: returnType,
+              );
+              // There is a swift bug with unwrapping maps of nullable Enums;
+              final enumMapForceUnwrap =
+                  returnType.baseName == 'Map' &&
+                      returnType.typeArguments.any((TypeDeclaration type) => type.isEnum)
+                  ? '!'
+                  : '';
+              indent.writeln(returnStyle.resumeSuccess('result$enumMapForceUnwrap'));
+            }
+          });
         });
       });
     }
@@ -1899,6 +1912,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
     required InternalSwiftOptions generatorOptions,
     required String channelName,
     required _SwiftFunctionComponents components,
+    String? varChannelName,
     String? serialBackgroundQueue,
     String setHandlerCondition = 'let api = api',
     List<String> documentationComments = const <String>[],
@@ -1907,7 +1921,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
     final String name = components.name;
     final _SwiftFunctionReturnStyle returnStyle = components.returnStyle;
     final TypeDeclaration returnType = returnStyle.returnType;
-    final varChannelName = '${name}Channel';
+    varChannelName ??= '${name}Channel';
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
     final baseArgs =
         'name: "$channelName", '
@@ -1939,12 +1953,18 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
         generatorOptions.swiftStrictConcurrency && serialBackgroundQueue == null
         ? '@MainActor '
         : '';
+    final replyType = generatorOptions.swiftStrictConcurrency
+        ? '@Sendable (Any?) -> Void'
+        : 'FlutterReply';
 
     indent.write('if $setHandlerCondition ');
     indent.addScoped('{', '}', () {
       indent.write('$varChannelName.setMessageHandler ');
       final messageVarName = components.arguments.isNotEmpty ? 'message' : '_';
-      indent.addScoped('{ $mainActorIfSerialQueue$messageVarName, reply in', '}', () {
+      final closureArgs = generatorOptions.swiftStrictConcurrency
+          ? '$mainActorIfSerialQueue($messageVarName: Any?, reply: @escaping $replyType)'
+          : '$messageVarName, reply';
+      indent.addScoped('{ $closureArgs in', '}', () {
         final methodArgument = <String>[];
         if (components.arguments.isNotEmpty) {
           indent.writeln('let args = message as! [Any?]');
@@ -2057,6 +2077,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
     required InternalSwiftOptions generatorOptions,
     required Iterable<AstProxyApi> allProxyApis,
   }) {
+    final mainActor = generatorOptions.swiftStrictConcurrency ? '@MainActor ' : '';
     final delegateName =
         '${generatorOptions.fileSpecificClassNameComponent ?? ''}${proxyApiClassNamePrefix}ProxyApiDelegate';
     indent.writeScoped('protocol $delegateName {', '}', () {
@@ -2067,7 +2088,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
           ' `${api.name}` to the Dart `InstanceManager` and make calls to Dart.',
         ], _docCommentSpec);
         indent.writeln(
-          'func pigeonApi${api.name}(_ registrar: ${proxyApiRegistrarName(generatorOptions)}) -> $hostApiName',
+          '${mainActor}func pigeonApi${api.name}(_ registrar: ${proxyApiRegistrarName(generatorOptions)}) -> $hostApiName',
         );
       }
     });
@@ -2084,8 +2105,9 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
         for (final api in apisThatCanHaveADefaultImpl) {
           final hostApiName = '$hostProxyApiPrefix${api.name}';
           final swiftApiDelegateName = '${hostProxyApiPrefix}Delegate${api.name}';
+          // Calling into dart using the Flutter binaryMessenger can only happen on the main thread.
           indent.format('''
-            func pigeonApi${api.name}(_ registrar: ${proxyApiRegistrarName(generatorOptions)}) -> $hostApiName {
+            $mainActor func pigeonApi${api.name}(_ registrar: ${proxyApiRegistrarName(generatorOptions)}) -> $hostApiName {
               return $hostApiName(pigeonRegistrar: registrar, delegate: $swiftApiDelegateName())
             }''');
         }
@@ -2105,19 +2127,14 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
       ], _docCommentSpec);
       indent.writeln('public var ignoreCallsToDart = false');
 
-      indent.writeln('private var _codec: FlutterStandardMessageCodec?');
       indent.format('''
-        var codec: FlutterStandardMessageCodec {
-          if _codec == nil {
-            _codec = FlutterStandardMessageCodec(
-              readerWriter: ${proxyApiReaderWriterName(generatorOptions)}(pigeonRegistrar: self))
-          }
-          return _codec!
-        }''');
+        private(set) lazy var codec: FlutterStandardMessageCodec =
+          FlutterStandardMessageCodec(readerWriter: ${proxyApiReaderWriterName(generatorOptions)}(pigeonRegistrar: self))
+        ''');
       indent.newln();
 
       indent.format('''
-        private class InstanceManagerApiFinalizerDelegate: ${instanceManagerFinalizerDelegateName(generatorOptions)} {
+        final private class InstanceManagerApiFinalizerDelegate: ${instanceManagerFinalizerDelegateName(generatorOptions)} {
           let api: $instanceManagerApiName
 
           init(_ api: $instanceManagerApiName) {
@@ -2125,15 +2142,15 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
           }
 
           public func onDeinit(identifier: Int64) {
-            api.removeStrongReference(identifier: identifier) {
-              _ in
+            DispatchQueue.main.async { [api] in
+              api.removeStrongReference(identifier: identifier) {_ in }
             }
           }
         }''');
       indent.newln();
 
       indent.format('''
-        init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: $delegateName) {
+        ${mainActor}init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: $delegateName) {
           self.binaryMessenger = binaryMessenger
           self.apiDelegate = apiDelegate
           self.instanceManager = ${swiftInstanceManagerClassName(generatorOptions)}(
@@ -2142,7 +2159,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
         }''');
       indent.newln();
 
-      indent.writeScoped('func setUp() {', '}', () {
+      indent.writeScoped('${mainActor}func setUp() {', '}', () {
         indent.writeln(
           '$instanceManagerApiName.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: instanceManager)',
         );
@@ -2155,7 +2172,7 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
         }
       });
 
-      indent.writeScoped('func tearDown() {', '}', () {
+      indent.writeScoped('${mainActor}func tearDown() {', '}', () {
         indent.writeln(
           '$instanceManagerApiName.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: nil)',
         );

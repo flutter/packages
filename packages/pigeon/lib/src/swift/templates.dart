@@ -23,27 +23,38 @@ String swiftInstanceManagerClassName(InternalSwiftOptions options) =>
     '${options.fileSpecificClassNameComponent ?? ''}${proxyApiClassNamePrefix}InstanceManager';
 
 /// Template for delegate with callback when an object is deallocated.
-String instanceManagerFinalizerDelegateTemplate(InternalSwiftOptions options) =>
-    '''
+String instanceManagerFinalizerDelegateTemplate(InternalSwiftOptions options) {
+  final (String isolation, String sendable) = options.swiftStrictConcurrency
+      ? ('nonisolated ', ', Sendable')
+      : ('', '');
+  return '''
 /// Handles the callback when an object is deallocated.
-protocol ${instanceManagerFinalizerDelegateName(options)}: AnyObject {
+${isolation}protocol ${instanceManagerFinalizerDelegateName(options)}: AnyObject$sendable {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
   func onDeinit(identifier: Int64)
 }
 
 ''';
+}
 
 /// Template for an object that tracks when an object is deallocated.
-String instanceManagerFinalizerTemplate(InternalSwiftOptions options) =>
-    '''
+String instanceManagerFinalizerTemplate(InternalSwiftOptions options) {
+  final (
+    String nonisolated,
+    String unsafeNonisolated,
+    String sendable,
+  ) = options.swiftStrictConcurrency
+      ? ('nonisolated', 'nonisolated(unsafe) ', ': Sendable')
+      : ('', '', '');
+  return '''
 // Attaches to an object to receive a callback when the object is deallocated.
-internal final class ${_instanceManagerFinalizerName(options)} {
-  internal static let associatedObjectKey = malloc(1)!
+internal $nonisolated final class ${_instanceManagerFinalizerName(options)}$sendable {
+  internal static ${unsafeNonisolated}let associatedObjectKey = malloc(1)!
 
   private let identifier: Int64
   // Reference to the delegate is weak because the callback should be ignored if the
   // `InstanceManager` is deallocated.
-  internal weak var delegate: ${instanceManagerFinalizerDelegateName(options)}?
+  internal weak ${unsafeNonisolated}var delegate: ${instanceManagerFinalizerDelegateName(options)}?
 
   private init(identifier: Int64, delegate: ${instanceManagerFinalizerDelegateName(options)}) {
     self.identifier = identifier
@@ -71,9 +82,11 @@ internal final class ${_instanceManagerFinalizerName(options)} {
 }
 
 ''';
+}
 
 /// The Swift `InstanceManager`.
 String instanceManagerTemplate(InternalSwiftOptions options) {
+  final nonisolated = options.swiftStrictConcurrency ? 'nonisolated ' : '';
   return '''
 /// Maintains instances used to communicate with the corresponding objects in Dart.
 ///
@@ -90,7 +103,7 @@ String instanceManagerTemplate(InternalSwiftOptions options) {
 /// again.
 ///
 /// Accessing and inserting to an InstanceManager is thread safe.
-final class ${swiftInstanceManagerClassName(options)} {
+${nonisolated}final class ${swiftInstanceManagerClassName(options)}${options.swiftStrictConcurrency ? ': @unchecked Sendable' : ''} {
   // Identifiers are locked to a specific range to avoid collisions with objects
   // created simultaneously from Dart.
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
