@@ -2,6 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// reduced-test-set:
+//   This file is run as part of a reduced test set in CI on Mac and Windows
+//   machines.
+@Tags(<String>['reduced-test-set'])
+library;
+
 import 'dart:math' as math;
 import 'dart:ui' show PointerDeviceKind;
 
@@ -31,7 +37,7 @@ Future<void> checkDropdownFormFieldColor(WidgetTester tester, {Color? color}) as
             items: const <DropdownMenuItem<String>>[
               DropdownMenuItem<String>(value: text, child: Text(text)),
             ],
-            onChanged: (_) {},
+            onChanged: onChanged,
           ),
         ),
       ),
@@ -164,7 +170,7 @@ void main() {
             decoration: const InputDecoration(labelText: 'labelText'),
             initialValue: value,
             disabledHint: const Text('disabledHint'),
-            onChanged: (_) {},
+            onChanged: onChanged,
             items: null,
           ),
         ),
@@ -189,7 +195,7 @@ void main() {
             decoration: const InputDecoration(labelText: 'labelText'),
             initialValue: value,
             disabledHint: const Text('disabledHint'),
-            onChanged: (_) {},
+            onChanged: onChanged,
             items: const <DropdownMenuItem<int?>>[],
           ),
         ),
@@ -212,7 +218,7 @@ void main() {
             decoration: const InputDecoration(labelText: 'labelText'),
             initialValue: value,
             hint: const Text('hint'),
-            onChanged: (_) {},
+            onChanged: onChanged,
             items: const <DropdownMenuItem<int?>>[],
           ),
         ),
@@ -237,7 +243,7 @@ void main() {
             decoration: const InputDecoration(labelText: 'labelText'),
             initialValue: value,
             disabledHint: const Text('disabledHint'),
-            onChanged: (_) {},
+            onChanged: onChanged,
             items: const <DropdownMenuItem<int?>>[
               DropdownMenuItem<int?>(value: 1, child: Text('One')),
               DropdownMenuItem<int?>(value: 2, child: Text('Two')),
@@ -587,7 +593,7 @@ void main() {
             items: <DropdownMenuItem<String>>[
               DropdownMenuItem<String>(key: itemKey, value: 'foo', child: const Text(value)),
             ],
-            onChanged: (_) {},
+            onChanged: onChanged,
             style: const TextStyle(color: Colors.amber, fontSize: 20.0),
           ),
         ),
@@ -1400,7 +1406,7 @@ void main() {
               DropdownMenuItem<String>(value: 'first', child: Text('first')),
               DropdownMenuItem<String>(value: 'second', child: Text('second')),
             ],
-            onChanged: (_) {},
+            onChanged: onChanged,
           ),
         ),
       ),
@@ -1432,7 +1438,7 @@ void main() {
               DropdownMenuItem<String>(value: 'first', child: Text('first')),
               DropdownMenuItem<String>(value: 'second', child: Text('second')),
             ],
-            onChanged: (_) {},
+            onChanged: onChanged,
           ),
         ),
       ),
@@ -1574,7 +1580,7 @@ void main() {
           body: Center(
             child: SizedBox.shrink(
               child: DropdownButtonFormField<String>(
-                onChanged: (_) {},
+                onChanged: onChanged,
                 items: items,
                 selectedItemBuilder: (BuildContext context) {
                   return <Widget>[const Text('a')];
@@ -1663,7 +1669,7 @@ void main() {
               ) {
                 return DropdownMenuItem<String>(value: value, child: Text(value));
               }).toList(),
-              onChanged: (_) {},
+              onChanged: onChanged,
             ),
           ),
         ),
@@ -1699,7 +1705,7 @@ void main() {
               ) {
                 return DropdownMenuItem<String>(value: value, child: Text(value));
               }).toList(),
-              onChanged: (_) {},
+              onChanged: onChanged,
             ),
           ),
         ),
@@ -1729,7 +1735,7 @@ void main() {
                   items: menuItems.map((String val) {
                     return DropdownMenuItem<String>(value: val, child: Text(val));
                   }).toList(),
-                  onChanged: (_) {},
+                  onChanged: onChanged,
                 ),
               ),
             );
@@ -1941,7 +1947,7 @@ void main() {
             child: SizedBox.shrink(
               child: DropdownButtonFormField<String>(
                 value: 'a',
-                onChanged: (_) {},
+                onChanged: onChanged,
                 items: const <DropdownMenuItem<String>>[
                   DropdownMenuItem<String>(value: 'a', child: Text('a')),
                 ],
@@ -1952,5 +1958,258 @@ void main() {
       ),
     );
     expect(tester.getSize(find.byType(DropdownButtonFormField<String>)), Size.zero);
+  });
+
+  // Regression test for https://github.com/flutter/flutter/issues/151460.
+  testWidgets('DropdownButtonFormField has hover color', (WidgetTester tester) async {
+    tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
+    final buttonKey = UniqueKey();
+
+    await tester.pumpWidget(
+      buildFrame(
+        child: buildDropdownButtonFormField(
+          buttonKey: buttonKey,
+          onChanged: onChanged,
+          // Setting InputDecoration.filled to true is required to get overlay showing.
+          decoration: const InputDecoration(filled: true),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.moveTo(tester.getCenter(find.byKey(buttonKey)));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 15)); // Hover animation.
+
+    // Default hover color.
+    final ThemeData theme = Theme.of(tester.element(find.byType(InputDecorator)));
+    expect(
+      findInputDecoratorBorderPainter(),
+      paints..rrect(
+        style: PaintingStyle.fill,
+        color: Color.alphaBlend(theme.hoverColor, theme.colorScheme.surfaceContainerHighest),
+      ),
+    );
+
+    // Custom hover color.
+    const hoverColor = Color(0xAA00FF00);
+    await tester.pumpWidget(
+      buildFrame(
+        child: buildDropdownButtonFormField(
+          buttonKey: buttonKey,
+          onChanged: onChanged,
+          decoration: const InputDecoration(filled: true, hoverColor: hoverColor),
+        ),
+      ),
+    );
+    expect(
+      findInputDecoratorBorderPainter(),
+      paints..rrect(
+        style: PaintingStyle.fill,
+        color: Color.alphaBlend(hoverColor, theme.colorScheme.surfaceContainerHighest),
+      ),
+    );
+  });
+
+  // Regression test for https://github.com/flutter/flutter/issues/147069.
+  testWidgets('DropdownButtonFormField can be hovered', (WidgetTester tester) async {
+    tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
+    final buttonKey = UniqueKey();
+
+    await tester.pumpWidget(
+      buildFrame(
+        child: buildDropdownButtonFormField(buttonKey: buttonKey, onChanged: onChanged),
+      ),
+    );
+    await tester.pump();
+
+    // Check inputDecorator.isHovering value because DropdownButtonFormField
+    // delegates to the InputDecorator which manages hover overlay.
+    InputDecorator inputDecorator = tester.widget(find.byType(InputDecorator));
+    expect(inputDecorator.isHovering, false);
+
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.moveTo(tester.getCenter(find.byKey(buttonKey)));
+    await tester.pump();
+
+    inputDecorator = tester.widget(find.byType(InputDecorator));
+    expect(inputDecorator.isHovering, true);
+  });
+
+  // Regression test for https://github.com/flutter/flutter/issues/166642.
+  testWidgets('DropdownButtonFormField can replace focusNode properly', (
+    WidgetTester tester,
+  ) async {
+    tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
+    final buttonKey = UniqueKey();
+    var focusNode = FocusNode(debugLabel: 'DropdownButtonFormField');
+    addTearDown(() => focusNode.dispose());
+
+    Widget buildFormField() => buildFrame(
+      child: buildDropdownButtonFormField(
+        buttonKey: buttonKey,
+        onChanged: onChanged,
+        focusNode: focusNode,
+        decoration: const InputDecoration(filled: true),
+        focusColor: const Color(0xFF00FF00),
+      ),
+    );
+
+    await tester.pumpWidget(buildFormField());
+    final Color defaultBorderColor = Theme.of(
+      tester.element(find.byType(InputDecorator)),
+    ).colorScheme.surfaceContainerHighest;
+    expect(
+      findInputDecoratorBorderPainter(),
+      paints..rrect(style: PaintingStyle.fill, color: defaultBorderColor),
+    );
+
+    // Replace focusNode and request focus.
+    focusNode.dispose();
+    focusNode = FocusNode(debugLabel: 'DropdownButtonFormField');
+    focusNode.requestFocus();
+
+    await tester.pumpWidget(buildFormField());
+    await tester.pump(); // Wait for requestFocus to take effect.
+    expect(
+      findInputDecoratorBorderPainter(),
+      paints..rrect(style: PaintingStyle.fill, color: const Color(0xFF00FF00)),
+    );
+
+    // Replace focusNode and request focus.
+    focusNode.dispose();
+    focusNode = FocusNode(debugLabel: 'DropdownButtonFormField');
+    focusNode.requestFocus();
+
+    await tester.pumpWidget(buildFormField());
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pump(); // Wait for unfocus to take effect.
+    expect(
+      findInputDecoratorBorderPainter(),
+      paints..rrect(style: PaintingStyle.fill, color: defaultBorderColor),
+    );
+  });
+
+  testWidgets('DropdownButtonFormField should properly dispose its internal FocusNode '
+      'when replaced by an external FocusNode', (WidgetTester tester) async {
+    final buttonKey = UniqueKey();
+    FocusNode? focusNode;
+    addTearDown(() => focusNode?.dispose());
+
+    Widget buildFormField() => buildFrame(
+      child: buildDropdownButtonFormField(
+        buttonKey: buttonKey,
+        onChanged: onChanged,
+        focusNode: focusNode,
+      ),
+    );
+
+    await tester.pumpWidget(buildFormField());
+    final FocusNode internalNode = tester
+        .widget<Focus>(
+          find
+              .descendant(of: find.byType(DropdownButton<String>), matching: find.byType(Focus))
+              .first,
+        )
+        .focusNode!;
+
+    // Replace internal FocusNode with external FocusNode.
+    focusNode = FocusNode(debugLabel: 'DropdownButtonFormField');
+    await tester.pumpWidget(buildFormField());
+
+    expect(
+      internalNode.dispose,
+      throwsA(
+        isA<FlutterError>().having(
+          (FlutterError error) => error.message,
+          'message',
+          startsWith('A FocusNode was used after being disposed.'),
+        ),
+      ),
+    );
+  });
+
+  group('DropdownButtonFormField decoration hintText', () {
+    const decorationHintText = 'Decoration Hint text';
+    const hintText = 'Hint text';
+    const disabledHintText = 'Disabled Hint text';
+
+    testWidgets('is the fallback value for DropdownButtonFormField.hint', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        buildFrame(
+          child: buildDropdownButtonFormField(
+            decoration: const InputDecoration(hintText: decorationHintText),
+          ),
+        ),
+      );
+
+      expect(find.text(decorationHintText, skipOffstage: false), findsOne);
+    });
+
+    testWidgets('does not override DropdownButtonFormField.hint', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildFrame(
+          child: buildDropdownButtonFormField(
+            hint: const Text(hintText),
+            decoration: const InputDecoration(hintText: decorationHintText),
+          ),
+        ),
+      );
+
+      expect(find.text(hintText, skipOffstage: false), findsOne);
+      expect(find.text(decorationHintText, skipOffstage: false), findsNothing);
+    });
+
+    testWidgets('is the fallback value for DropdownButtonFormField.disabledHint', (
+      WidgetTester tester,
+    ) async {
+      // The Dropdown is disabled because onChanged is not defined.
+      await tester.pumpWidget(
+        buildFrame(
+          child: buildDropdownButtonFormField(
+            decoration: const InputDecoration(hintText: decorationHintText),
+          ),
+        ),
+      );
+
+      expect(find.text(decorationHintText, skipOffstage: false), findsOne);
+    });
+
+    testWidgets('does not override DropdownButtonFormField.disabledHint', (
+      WidgetTester tester,
+    ) async {
+      // The Dropdown is disabled because onChanged is not defined.
+      await tester.pumpWidget(
+        buildFrame(
+          child: buildDropdownButtonFormField(
+            disabledHint: const Text(disabledHintText),
+            decoration: const InputDecoration(hintText: decorationHintText),
+          ),
+        ),
+      );
+
+      expect(find.text(disabledHintText, skipOffstage: false), findsOne);
+      expect(find.text(decorationHintText, skipOffstage: false), findsNothing);
+    });
+
+    testWidgets('is not used for disabledHint if DropdownButtonFormField.hint is provided', (
+      WidgetTester tester,
+    ) async {
+      // The Dropdown is disabled because onChanged is not defined.
+      await tester.pumpWidget(
+        buildFrame(
+          child: buildDropdownButtonFormField(
+            hint: const Text(hintText),
+            decoration: const InputDecoration(hintText: decorationHintText),
+          ),
+        ),
+      );
+
+      expect(find.text(hintText, skipOffstage: false), findsOne);
+      expect(find.text(decorationHintText, skipOffstage: false), findsNothing);
+    });
   });
 }
