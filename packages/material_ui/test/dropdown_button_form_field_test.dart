@@ -156,45 +156,6 @@ Widget buildFormFrame({
   );
 }
 
-class TestApp extends StatefulWidget {
-  const TestApp({super.key, required this.textDirection, required this.child, this.mediaSize});
-
-  final TextDirection textDirection;
-  final Widget child;
-  final Size? mediaSize;
-
-  @override
-  State<TestApp> createState() => _TestAppState();
-}
-
-class _TestAppState extends State<TestApp> {
-  @override
-  Widget build(BuildContext context) {
-    return Localizations(
-      locale: const Locale('en', 'US'),
-      delegates: const <LocalizationsDelegate<dynamic>>[
-        DefaultWidgetsLocalizations.delegate,
-        DefaultMaterialLocalizations.delegate,
-      ],
-      child: MediaQuery(
-        data: const MediaQueryData().copyWith(size: widget.mediaSize),
-        child: Directionality(
-          textDirection: widget.textDirection,
-          child: Navigator(
-            onGenerateRoute: (RouteSettings settings) {
-              assert(settings.name == '/');
-              return MaterialPageRoute<void>(
-                settings: settings,
-                builder: (BuildContext context) => widget.child,
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 void main() {
   // Regression test for https://github.com/flutter/flutter/issues/87102
   testWidgets('label position test - show hint', (WidgetTester tester) async {
