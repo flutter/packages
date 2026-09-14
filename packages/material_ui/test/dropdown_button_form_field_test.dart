@@ -380,7 +380,7 @@ void main() {
 
     await tester.pumpWidget(
       buildFrame(
-        child: buildDropdownFormField(
+        child: buildDropdownButtonFormField(
           buttonKey: buttonKey,
           initialValue: '1234567890',
           isExpanded: true,
@@ -409,7 +409,11 @@ void main() {
 
     await tester.pumpWidget(
       buildFrame(
-        child: buildDropdownFormField(buttonKey: buttonKey, onChanged: onChanged, isDense: true),
+        child: buildDropdownButtonFormField(
+          buttonKey: buttonKey,
+          onChanged: onChanged,
+          isDense: true,
+        ),
       ),
     );
     final RenderBox buttonBox = tester.renderObject<RenderBox>(find.byKey(buttonKey));
@@ -605,7 +609,7 @@ void main() {
 
       Widget build({List<String>? items}) {
         return buildFrame(
-          child: buildDropdownFormField(
+          child: buildDropdownButtonFormField(
             items: items,
             buttonKey: buttonKey,
             initialValue: null,
@@ -633,7 +637,7 @@ void main() {
 
     Widget build({List<String>? items}) {
       return buildFrame(
-        child: buildDropdownFormField(
+        child: buildDropdownButtonFormField(
           items: items,
           buttonKey: buttonKey,
           initialValue: null,
@@ -658,7 +662,7 @@ void main() {
 
     Widget build({List<String>? items}) {
       return buildFrame(
-        child: buildDropdownFormField(
+        child: buildDropdownButtonFormField(
           items: items,
           buttonKey: buttonKey,
           initialValue: null,
@@ -683,7 +687,7 @@ void main() {
 
     Widget build({List<String>? items}) {
       return buildFrame(
-        child: buildDropdownFormField(
+        child: buildDropdownButtonFormField(
           items: items,
           buttonKey: buttonKey,
           initialValue: null,
@@ -708,7 +712,7 @@ void main() {
 
     Widget build({List<String>? items, ValueChanged<String?>? onChanged}) {
       return buildFrame(
-        child: buildDropdownFormField(
+        child: buildDropdownButtonFormField(
           items: items,
           buttonKey: buttonKey,
           initialValue: null,
@@ -731,7 +735,7 @@ void main() {
 
     Widget build({List<String>? items}) {
       return buildFrame(
-        child: buildDropdownFormField(
+        child: buildDropdownButtonFormField(
           items: items,
           buttonKey: buttonKey,
           initialValue: null,
@@ -759,7 +763,7 @@ void main() {
 
     await tester.pumpWidget(
       buildFrame(
-        child: buildDropdownFormField(
+        child: buildDropdownButtonFormField(
           icon: customIcon,
           iconSize: 30.0,
           iconEnabledColor: Colors.pink,
@@ -780,7 +784,7 @@ void main() {
     // test for disabled color
     await tester.pumpWidget(
       buildFrame(
-        child: buildDropdownFormField(
+        child: buildDropdownButtonFormField(
           icon: customIcon,
           iconSize: 30.0,
           iconEnabledColor: Colors.pink,
@@ -799,7 +803,7 @@ void main() {
     debugDisableShadows = false;
     await tester.pumpWidget(
       buildFrame(
-        child: buildDropdownFormField(buttonKey: buttonKey, onChanged: onChanged),
+        child: buildDropdownButtonFormField(buttonKey: buttonKey, onChanged: onChanged),
       ),
     );
     await tester.tap(find.byKey(buttonKey));
@@ -821,7 +825,11 @@ void main() {
 
     await tester.pumpWidget(
       buildFrame(
-        child: buildDropdownFormField(buttonKey: buttonKeyOne, elevation: 16, onChanged: onChanged),
+        child: buildDropdownButtonFormField(
+          buttonKey: buttonKeyOne,
+          elevation: 16,
+          onChanged: onChanged,
+        ),
       ),
     );
     await tester.tap(find.byKey(buttonKeyOne));
@@ -835,7 +843,11 @@ void main() {
     await tester.tap(find.text('one').last);
     await tester.pumpWidget(
       buildFrame(
-        child: buildDropdownFormField(buttonKey: buttonKeyTwo, elevation: 24, onChanged: onChanged),
+        child: buildDropdownButtonFormField(
+          buttonKey: buttonKeyTwo,
+          elevation: 24,
+          onChanged: onChanged,
+        ),
       ),
     );
     await tester.tap(find.byKey(buttonKeyTwo));
@@ -965,7 +977,11 @@ void main() {
 
     Widget build() {
       return buildFrame(
-        child: buildDropdownFormField(initialValue: value, onChanged: onChanged, onTap: onTap),
+        child: buildDropdownButtonFormField(
+          initialValue: value,
+          onChanged: onChanged,
+          onTap: onTap,
+        ),
       );
     }
 
@@ -1081,7 +1097,7 @@ void main() {
   testWidgets('DropdownButtonFormField - Custom button alignment', (WidgetTester tester) async {
     await tester.pumpWidget(
       buildFrame(
-        child: buildDropdownFormField(
+        child: buildDropdownButtonFormField(
           buttonAlignment: AlignmentDirectional.center,
           items: <String>['one'],
           initialValue: 'one',
@@ -1831,7 +1847,7 @@ void main() {
 
     await tester.pumpWidget(
       buildFrame(
-        child: buildDropdownFormField(
+        child: buildDropdownButtonFormField(
           buttonKey: buttonKey,
           onChanged: onChanged,
           focusNode: focusNode,
@@ -1854,7 +1870,7 @@ void main() {
     // Focus color from Decoration.
     await tester.pumpWidget(
       buildFrame(
-        child: buildDropdownFormField(
+        child: buildDropdownButtonFormField(
           buttonKey: buttonKey,
           onChanged: onChanged,
           focusNode: focusNode,
@@ -1871,7 +1887,7 @@ void main() {
     // Focus color from focusColor property.
     await tester.pumpWidget(
       buildFrame(
-        child: buildDropdownFormField(
+        child: buildDropdownButtonFormField(
           buttonKey: buttonKey,
           onChanged: onChanged,
           focusNode: focusNode,

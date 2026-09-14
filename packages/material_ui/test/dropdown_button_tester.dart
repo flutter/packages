@@ -112,7 +112,7 @@ Widget buildDropdownButton({
 }
 
 /// Build a [DropdownButtonFormField] for testing.
-Widget buildDropdownFormField({
+Widget buildDropdownButtonFormField({
   Key? buttonKey,
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled,
   int elevation = 8,
