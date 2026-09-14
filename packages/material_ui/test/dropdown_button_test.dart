@@ -285,7 +285,7 @@ void main() {
     await tester.pumpWidget(build(onChanged: (_) {}, value: 'two'));
     // The dropdown icon and the selected menu item are vertically aligned.
     expect(tester.getCenter(find.text('two')).dy, tester.getCenter(find.byType(Icon)).dy);
-    // Selected item has a normal color from [DropdownButtonFormField.style]
+    // Selected item has a normal color from [DropdownButton.style]
     // when the button is enabled.
     expect(textColor('two'), Colors.yellow);
 
