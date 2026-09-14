@@ -112,10 +112,9 @@ class XFile extends XFileBase {
 
   @override
   Future<String> readAsString({Encoding encoding = utf8}) {
-    if (_bytes != null) {
-      // TODO(kevmoo): Remove ignore and fix when the MIN Dart SDK is 3.3
-      // ignore: unnecessary_non_null_assertion
-      return Future<String>.value(String.fromCharCodes(_bytes!));
+    final Uint8List? bytes = _bytes;
+    if (bytes != null) {
+      return Future<String>.sync(() => encoding.decode(bytes));
     }
     return _file.readAsString(encoding: encoding);
   }
