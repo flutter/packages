@@ -222,6 +222,14 @@ enum SK2SubscriptionPeriodUnitMessage: Int, CaseIterable {
   case year = 3
 }
 
+/// The way a subscription bills: up front for the whole period, or monthly
+/// under a 12-month commitment.
+/// https://developer.apple.com/documentation/storekit/product/subscriptioninfo/billingplantype
+enum SK2BillingPlanTypeMessage: Int, CaseIterable {
+  case upFront = 0
+  case monthly = 1
+}
+
 enum SK2ProductPurchaseResultMessage: Int, CaseIterable {
   case success = 0
   case unverified = 1
@@ -350,6 +358,113 @@ struct SK2SubscriptionPeriodMessage: Hashable, CustomStringConvertible {
   }
 }
 
+/// Details of the 12-month commitment attached to a monthly billing plan.
+/// https://developer.apple.com/documentation/storekit/product/subscriptioninfo/commitmentinfo
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct SK2CommitmentInfoMessage: Hashable, CustomStringConvertible {
+  /// The total price of the full commitment.
+  var price: Double
+  /// The localized total price of the full commitment, suitable for display.
+  var displayPrice: String
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> SK2CommitmentInfoMessage? {
+    let price = pigeonVar_list[0] as! Double
+    let displayPrice = pigeonVar_list[1] as! String
+
+    return SK2CommitmentInfoMessage(
+      price: price,
+      displayPrice: displayPrice
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      price,
+      displayPrice,
+    ]
+  }
+  static func == (lhs: SK2CommitmentInfoMessage, rhs: SK2CommitmentInfoMessage) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return StoreKit2MessagesPigeonInternal.deepEquals(lhs.price, rhs.price)
+      && StoreKit2MessagesPigeonInternal.deepEquals(lhs.displayPrice, rhs.displayPrice)
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine("SK2CommitmentInfoMessage")
+    StoreKit2MessagesPigeonInternal.deepHash(value: price, hasher: &hasher)
+    StoreKit2MessagesPigeonInternal.deepHash(value: displayPrice, hasher: &hasher)
+  }
+
+  public var description: String {
+    return
+      "SK2CommitmentInfoMessage(price: \(String(describing: price)), displayPrice: \(String(describing: displayPrice)))"
+  }
+}
+
+/// One billing plan available for a subscription.
+/// https://developer.apple.com/documentation/storekit/product/subscriptioninfo/pricingterms-swift.struct
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct SK2PricingTermsMessage: Hashable, CustomStringConvertible {
+  /// Whether this plan bills up front or monthly.
+  var billingPlanType: SK2BillingPlanTypeMessage
+  /// The price charged for each billing period.
+  var billingPrice: Double
+  /// The localized price charged for each billing period, suitable for display.
+  var billingDisplayPrice: String
+  /// Only set when [billingPlanType] is [SK2BillingPlanTypeMessage.monthly].
+  var commitmentInfo: SK2CommitmentInfoMessage? = nil
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> SK2PricingTermsMessage? {
+    let billingPlanType = pigeonVar_list[0] as! SK2BillingPlanTypeMessage
+    let billingPrice = pigeonVar_list[1] as! Double
+    let billingDisplayPrice = pigeonVar_list[2] as! String
+    let commitmentInfo: SK2CommitmentInfoMessage? = nilOrValue(pigeonVar_list[3])
+
+    return SK2PricingTermsMessage(
+      billingPlanType: billingPlanType,
+      billingPrice: billingPrice,
+      billingDisplayPrice: billingDisplayPrice,
+      commitmentInfo: commitmentInfo
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      billingPlanType,
+      billingPrice,
+      billingDisplayPrice,
+      commitmentInfo,
+    ]
+  }
+  static func == (lhs: SK2PricingTermsMessage, rhs: SK2PricingTermsMessage) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return StoreKit2MessagesPigeonInternal.deepEquals(lhs.billingPlanType, rhs.billingPlanType)
+      && StoreKit2MessagesPigeonInternal.deepEquals(lhs.billingPrice, rhs.billingPrice)
+      && StoreKit2MessagesPigeonInternal.deepEquals(
+        lhs.billingDisplayPrice, rhs.billingDisplayPrice)
+      && StoreKit2MessagesPigeonInternal.deepEquals(lhs.commitmentInfo, rhs.commitmentInfo)
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine("SK2PricingTermsMessage")
+    StoreKit2MessagesPigeonInternal.deepHash(value: billingPlanType, hasher: &hasher)
+    StoreKit2MessagesPigeonInternal.deepHash(value: billingPrice, hasher: &hasher)
+    StoreKit2MessagesPigeonInternal.deepHash(value: billingDisplayPrice, hasher: &hasher)
+    StoreKit2MessagesPigeonInternal.deepHash(value: commitmentInfo, hasher: &hasher)
+  }
+
+  public var description: String {
+    return
+      "SK2PricingTermsMessage(billingPlanType: \(String(describing: billingPlanType)), billingPrice: \(String(describing: billingPrice)), billingDisplayPrice: \(String(describing: billingDisplayPrice)), commitmentInfo: \(String(describing: commitmentInfo)))"
+  }
+}
+
 /// Generated class from Pigeon that represents data sent in messages.
 struct SK2SubscriptionInfoMessage: Hashable, CustomStringConvertible {
   /// An array of all the promotional offers configured for this subscription.
@@ -358,17 +473,22 @@ struct SK2SubscriptionInfoMessage: Hashable, CustomStringConvertible {
   var subscriptionGroupID: String
   /// The duration that this subscription lasts before auto-renewing.
   var subscriptionPeriod: SK2SubscriptionPeriodMessage
+  /// Every billing plan available for this subscription in the current
+  /// storefront. `null` below iOS 26.4, where the API does not exist.
+  var pricingTerms: [SK2PricingTermsMessage]? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> SK2SubscriptionInfoMessage? {
     let promotionalOffers = pigeonVar_list[0] as! [SK2SubscriptionOfferMessage]
     let subscriptionGroupID = pigeonVar_list[1] as! String
     let subscriptionPeriod = pigeonVar_list[2] as! SK2SubscriptionPeriodMessage
+    let pricingTerms: [SK2PricingTermsMessage]? = nilOrValue(pigeonVar_list[3])
 
     return SK2SubscriptionInfoMessage(
       promotionalOffers: promotionalOffers,
       subscriptionGroupID: subscriptionGroupID,
-      subscriptionPeriod: subscriptionPeriod
+      subscriptionPeriod: subscriptionPeriod,
+      pricingTerms: pricingTerms
     )
   }
   func toList() -> [Any?] {
@@ -376,6 +496,7 @@ struct SK2SubscriptionInfoMessage: Hashable, CustomStringConvertible {
       promotionalOffers,
       subscriptionGroupID,
       subscriptionPeriod,
+      pricingTerms,
     ]
   }
   static func == (lhs: SK2SubscriptionInfoMessage, rhs: SK2SubscriptionInfoMessage) -> Bool {
@@ -386,6 +507,7 @@ struct SK2SubscriptionInfoMessage: Hashable, CustomStringConvertible {
       && StoreKit2MessagesPigeonInternal.deepEquals(
         lhs.subscriptionGroupID, rhs.subscriptionGroupID)
       && StoreKit2MessagesPigeonInternal.deepEquals(lhs.subscriptionPeriod, rhs.subscriptionPeriod)
+      && StoreKit2MessagesPigeonInternal.deepEquals(lhs.pricingTerms, rhs.pricingTerms)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -393,11 +515,12 @@ struct SK2SubscriptionInfoMessage: Hashable, CustomStringConvertible {
     StoreKit2MessagesPigeonInternal.deepHash(value: promotionalOffers, hasher: &hasher)
     StoreKit2MessagesPigeonInternal.deepHash(value: subscriptionGroupID, hasher: &hasher)
     StoreKit2MessagesPigeonInternal.deepHash(value: subscriptionPeriod, hasher: &hasher)
+    StoreKit2MessagesPigeonInternal.deepHash(value: pricingTerms, hasher: &hasher)
   }
 
   public var description: String {
     return
-      "SK2SubscriptionInfoMessage(promotionalOffers: \(String(describing: promotionalOffers)), subscriptionGroupID: \(String(describing: subscriptionGroupID)), subscriptionPeriod: \(String(describing: subscriptionPeriod)))"
+      "SK2SubscriptionInfoMessage(promotionalOffers: \(String(describing: promotionalOffers)), subscriptionGroupID: \(String(describing: subscriptionGroupID)), subscriptionPeriod: \(String(describing: subscriptionPeriod)), pricingTerms: \(String(describing: pricingTerms)))"
   }
 }
 
@@ -646,6 +769,8 @@ struct SK2ProductPurchaseOptionsMessage: Hashable, CustomStringConvertible {
   /// This is passed to StoreKit verbatim; it is never parsed or validated
   /// client-side.
   var introductoryOfferEligibilityCompactJWS: String? = nil
+  /// Which billing plan to purchase. `null` selects the default, up-front plan.
+  var billingPlanType: SK2BillingPlanTypeMessage? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> SK2ProductPurchaseOptionsMessage? {
@@ -654,13 +779,15 @@ struct SK2ProductPurchaseOptionsMessage: Hashable, CustomStringConvertible {
     let promotionalOffer: SK2SubscriptionOfferPurchaseMessage? = nilOrValue(pigeonVar_list[2])
     let winBackOfferId: String? = nilOrValue(pigeonVar_list[3])
     let introductoryOfferEligibilityCompactJWS: String? = nilOrValue(pigeonVar_list[4])
+    let billingPlanType: SK2BillingPlanTypeMessage? = nilOrValue(pigeonVar_list[5])
 
     return SK2ProductPurchaseOptionsMessage(
       appAccountToken: appAccountToken,
       quantity: quantity,
       promotionalOffer: promotionalOffer,
       winBackOfferId: winBackOfferId,
-      introductoryOfferEligibilityCompactJWS: introductoryOfferEligibilityCompactJWS
+      introductoryOfferEligibilityCompactJWS: introductoryOfferEligibilityCompactJWS,
+      billingPlanType: billingPlanType
     )
   }
   func toList() -> [Any?] {
@@ -670,6 +797,7 @@ struct SK2ProductPurchaseOptionsMessage: Hashable, CustomStringConvertible {
       promotionalOffer,
       winBackOfferId,
       introductoryOfferEligibilityCompactJWS,
+      billingPlanType,
     ]
   }
   static func == (lhs: SK2ProductPurchaseOptionsMessage, rhs: SK2ProductPurchaseOptionsMessage)
@@ -684,6 +812,7 @@ struct SK2ProductPurchaseOptionsMessage: Hashable, CustomStringConvertible {
       && StoreKit2MessagesPigeonInternal.deepEquals(lhs.winBackOfferId, rhs.winBackOfferId)
       && StoreKit2MessagesPigeonInternal.deepEquals(
         lhs.introductoryOfferEligibilityCompactJWS, rhs.introductoryOfferEligibilityCompactJWS)
+      && StoreKit2MessagesPigeonInternal.deepEquals(lhs.billingPlanType, rhs.billingPlanType)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -694,11 +823,12 @@ struct SK2ProductPurchaseOptionsMessage: Hashable, CustomStringConvertible {
     StoreKit2MessagesPigeonInternal.deepHash(value: winBackOfferId, hasher: &hasher)
     StoreKit2MessagesPigeonInternal.deepHash(
       value: introductoryOfferEligibilityCompactJWS, hasher: &hasher)
+    StoreKit2MessagesPigeonInternal.deepHash(value: billingPlanType, hasher: &hasher)
   }
 
   public var description: String {
     return
-      "SK2ProductPurchaseOptionsMessage(appAccountToken: \(String(describing: appAccountToken)), quantity: \(String(describing: quantity)), promotionalOffer: \(String(describing: promotionalOffer)), winBackOfferId: \(String(describing: winBackOfferId)), introductoryOfferEligibilityCompactJWS: \(String(describing: introductoryOfferEligibilityCompactJWS)))"
+      "SK2ProductPurchaseOptionsMessage(appAccountToken: \(String(describing: appAccountToken)), quantity: \(String(describing: quantity)), promotionalOffer: \(String(describing: promotionalOffer)), winBackOfferId: \(String(describing: winBackOfferId)), introductoryOfferEligibilityCompactJWS: \(String(describing: introductoryOfferEligibilityCompactJWS)), billingPlanType: \(String(describing: billingPlanType)))"
   }
 }
 
@@ -876,34 +1006,44 @@ private class StoreKit2MessagesPigeonCodecReader: FlutterStandardReader {
     case 133:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return SK2ProductPurchaseResultMessage(rawValue: enumResultAsInt)
+        return SK2BillingPlanTypeMessage(rawValue: enumResultAsInt)
       }
       return nil
     case 134:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return SK2PurchaseStatusMessage(rawValue: enumResultAsInt)
+        return SK2ProductPurchaseResultMessage(rawValue: enumResultAsInt)
       }
       return nil
     case 135:
-      return SK2SubscriptionOfferMessage.fromList(self.readValue() as! [Any?])
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return SK2PurchaseStatusMessage(rawValue: enumResultAsInt)
+      }
+      return nil
     case 136:
-      return SK2SubscriptionPeriodMessage.fromList(self.readValue() as! [Any?])
+      return SK2SubscriptionOfferMessage.fromList(self.readValue() as! [Any?])
     case 137:
-      return SK2SubscriptionInfoMessage.fromList(self.readValue() as! [Any?])
+      return SK2SubscriptionPeriodMessage.fromList(self.readValue() as! [Any?])
     case 138:
-      return SK2ProductMessage.fromList(self.readValue() as! [Any?])
+      return SK2CommitmentInfoMessage.fromList(self.readValue() as! [Any?])
     case 139:
-      return SK2PriceLocaleMessage.fromList(self.readValue() as! [Any?])
+      return SK2PricingTermsMessage.fromList(self.readValue() as! [Any?])
     case 140:
-      return SK2SubscriptionOfferSignatureMessage.fromList(self.readValue() as! [Any?])
+      return SK2SubscriptionInfoMessage.fromList(self.readValue() as! [Any?])
     case 141:
-      return SK2SubscriptionOfferPurchaseMessage.fromList(self.readValue() as! [Any?])
+      return SK2ProductMessage.fromList(self.readValue() as! [Any?])
     case 142:
-      return SK2ProductPurchaseOptionsMessage.fromList(self.readValue() as! [Any?])
+      return SK2PriceLocaleMessage.fromList(self.readValue() as! [Any?])
     case 143:
-      return SK2TransactionMessage.fromList(self.readValue() as! [Any?])
+      return SK2SubscriptionOfferSignatureMessage.fromList(self.readValue() as! [Any?])
     case 144:
+      return SK2SubscriptionOfferPurchaseMessage.fromList(self.readValue() as! [Any?])
+    case 145:
+      return SK2ProductPurchaseOptionsMessage.fromList(self.readValue() as! [Any?])
+    case 146:
+      return SK2TransactionMessage.fromList(self.readValue() as! [Any?])
+    case 147:
       return SK2ErrorMessage.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -925,41 +1065,50 @@ private class StoreKit2MessagesPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? SK2SubscriptionPeriodUnitMessage {
       super.writeByte(132)
       super.writeValue(value.rawValue)
-    } else if let value = value as? SK2ProductPurchaseResultMessage {
+    } else if let value = value as? SK2BillingPlanTypeMessage {
       super.writeByte(133)
       super.writeValue(value.rawValue)
-    } else if let value = value as? SK2PurchaseStatusMessage {
+    } else if let value = value as? SK2ProductPurchaseResultMessage {
       super.writeByte(134)
       super.writeValue(value.rawValue)
-    } else if let value = value as? SK2SubscriptionOfferMessage {
+    } else if let value = value as? SK2PurchaseStatusMessage {
       super.writeByte(135)
-      super.writeValue(value.toList())
-    } else if let value = value as? SK2SubscriptionPeriodMessage {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? SK2SubscriptionOfferMessage {
       super.writeByte(136)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2SubscriptionInfoMessage {
+    } else if let value = value as? SK2SubscriptionPeriodMessage {
       super.writeByte(137)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2ProductMessage {
+    } else if let value = value as? SK2CommitmentInfoMessage {
       super.writeByte(138)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2PriceLocaleMessage {
+    } else if let value = value as? SK2PricingTermsMessage {
       super.writeByte(139)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2SubscriptionOfferSignatureMessage {
+    } else if let value = value as? SK2SubscriptionInfoMessage {
       super.writeByte(140)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2SubscriptionOfferPurchaseMessage {
+    } else if let value = value as? SK2ProductMessage {
       super.writeByte(141)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2ProductPurchaseOptionsMessage {
+    } else if let value = value as? SK2PriceLocaleMessage {
       super.writeByte(142)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2TransactionMessage {
+    } else if let value = value as? SK2SubscriptionOfferSignatureMessage {
       super.writeByte(143)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2ErrorMessage {
+    } else if let value = value as? SK2SubscriptionOfferPurchaseMessage {
       super.writeByte(144)
+      super.writeValue(value.toList())
+    } else if let value = value as? SK2ProductPurchaseOptionsMessage {
+      super.writeByte(145)
+      super.writeValue(value.toList())
+    } else if let value = value as? SK2TransactionMessage {
+      super.writeByte(146)
+      super.writeValue(value.toList())
+    } else if let value = value as? SK2ErrorMessage {
+      super.writeByte(147)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)

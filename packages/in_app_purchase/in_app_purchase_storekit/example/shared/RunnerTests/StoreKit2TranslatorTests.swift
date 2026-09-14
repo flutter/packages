@@ -72,7 +72,10 @@ final class StoreKit2TranslatorTests: XCTestCase {
 
   func testPigeonConversionForProduct() async throws {
     XCTAssertNotNil(product)
-    let pigeonMessage = product.convertToPigeon
+    var pigeonMessage = product.convertToPigeon
+    // Billing plans depend on the OS version rather than on the configuration
+    // file, and are covered by `testPigeonConversionForPricingTerms`.
+    pigeonMessage.subscription?.pricingTerms = nil
     XCTAssertEqual(pigeonMessage, productMessage)
   }
 
@@ -83,6 +86,35 @@ final class StoreKit2TranslatorTests: XCTestCase {
     }
     let pigeonMessage = subscription.convertToPigeon
     XCTAssertEqual(pigeonMessage, productMessage.subscription)
+  }
+
+  func testPigeonConversionForPricingTerms() async throws {
+    guard #available(iOS 26.4, macOS 26.4, *) else {
+      throw XCTSkip("Billing plans require iOS 26.4 or macOS 26.4.")
+    }
+    guard let subscription = product.subscription else {
+      XCTFail("SubscriptionInfo should not be nil")
+      return
+    }
+
+    let pricingTerms = subscription.pricingTerms
+    let converted = subscription.convertToPigeon.pricingTerms
+
+    XCTAssertEqual(converted?.count, pricingTerms.count)
+
+    for (terms, message) in zip(pricingTerms, converted ?? []) {
+      XCTAssertEqual(message.billingPlanType, terms.billingPlanType.convertToPigeon)
+      XCTAssertEqual(message.billingPrice, NSDecimalNumber(decimal: terms.billingPrice).doubleValue)
+      XCTAssertEqual(message.billingDisplayPrice, terms.billingDisplayPrice)
+      if message.billingPlanType == .monthly {
+        XCTAssertEqual(
+          message.commitmentInfo?.price,
+          NSDecimalNumber(decimal: terms.commitmentInfo.price).doubleValue)
+        XCTAssertEqual(message.commitmentInfo?.displayPrice, terms.commitmentInfo.displayPrice)
+      } else {
+        XCTAssertNil(message.commitmentInfo)
+      }
+    }
   }
 
   func testPigeonConversionForProductType() async throws {
