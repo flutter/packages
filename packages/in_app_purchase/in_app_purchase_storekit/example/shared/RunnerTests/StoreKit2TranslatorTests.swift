@@ -84,7 +84,10 @@ final class StoreKit2TranslatorTests: XCTestCase {
       XCTFail("SubscriptionInfo should not be nil")
       return
     }
-    let pigeonMessage = subscription.convertToPigeon
+    var pigeonMessage = subscription.convertToPigeon
+    // Billing plans depend on the OS version rather than on the configuration
+    // file, and are covered by `testPigeonConversionForPricingTerms`.
+    pigeonMessage.pricingTerms = nil
     XCTAssertEqual(pigeonMessage, productMessage.subscription)
   }
 
@@ -98,23 +101,46 @@ final class StoreKit2TranslatorTests: XCTestCase {
     }
 
     let pricingTerms = subscription.pricingTerms
-    let converted = subscription.convertToPigeon.pricingTerms
+    guard let converted = subscription.convertToPigeon.pricingTerms else {
+      XCTFail("Pricing terms should not be nil on an OS that supports billing plans")
+      return
+    }
 
-    XCTAssertEqual(converted?.count, pricingTerms.count)
+    // Every auto-renewable subscription has at least an up-front billing plan,
+    // so an empty array would mean the assertions below never run.
+    XCTAssertFalse(pricingTerms.isEmpty)
+    XCTAssertEqual(converted.count, pricingTerms.count)
 
-    for (terms, message) in zip(pricingTerms, converted ?? []) {
-      XCTAssertEqual(message.billingPlanType, terms.billingPlanType.convertToPigeon)
-      XCTAssertEqual(message.billingPrice, NSDecimalNumber(decimal: terms.billingPrice).doubleValue)
+    for (terms, message) in zip(pricingTerms, converted) {
+      // Compare against the StoreKit value rather than against
+      // `terms.billingPlanType.convertToPigeon`, which is the code under test.
+      let isMonthly = terms.billingPlanType == .monthly
+      XCTAssertEqual(message.billingPlanType, isMonthly ? .monthly : .upFront)
       XCTAssertEqual(message.billingDisplayPrice, terms.billingDisplayPrice)
-      if message.billingPlanType == .monthly {
+      XCTAssertEqual(message.billingPrice, NSDecimalNumber(decimal: terms.billingPrice).doubleValue)
+      if isMonthly {
+        XCTAssertEqual(message.commitmentInfo?.displayPrice, terms.commitmentInfo.displayPrice)
         XCTAssertEqual(
           message.commitmentInfo?.price,
           NSDecimalNumber(decimal: terms.commitmentInfo.price).doubleValue)
-        XCTAssertEqual(message.commitmentInfo?.displayPrice, terms.commitmentInfo.displayPrice)
       } else {
         XCTAssertNil(message.commitmentInfo)
       }
     }
+
+    // The up-front plan bills the subscription's regular price, so its
+    // converted prices can be checked against the product itself instead of
+    // against the conversion that produced them.
+    guard
+      let upFront = zip(pricingTerms, converted).first(where: {
+        $0.0.billingPlanType == .upFront
+      })?.1
+    else {
+      XCTFail("Every subscription should offer an up-front billing plan")
+      return
+    }
+    XCTAssertEqual(upFront.billingPrice, NSDecimalNumber(decimal: product.price).doubleValue)
+    XCTAssertEqual(upFront.billingDisplayPrice, product.displayPrice)
   }
 
   func testPigeonConversionForProductType() async throws {

@@ -414,6 +414,21 @@ void main() {
       expect(lastPurchaseOptions.billingPlanType, SK2BillingPlanTypeMessage.upFront);
     });
 
+    test('should forward the quantity together with a monthly billing plan', () async {
+      final purchaseParam = Sk2PurchaseParam(
+        productDetails: AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+        billingPlanType: SK2BillingPlanType.monthly,
+      );
+
+      await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+
+      final SK2ProductPurchaseOptionsMessage lastPurchaseOptions =
+          fakeStoreKit2Platform.lastPurchaseOptions!;
+
+      expect(lastPurchaseOptions.quantity, 1);
+      expect(lastPurchaseOptions.billingPlanType, SK2BillingPlanTypeMessage.monthly);
+    });
+
     test('should not set a billing plan type for a generic PurchaseParam', () async {
       final purchaseParam = PurchaseParam(
         productDetails: AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
