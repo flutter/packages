@@ -13,6 +13,7 @@ import android.app.Application;
 import android.content.Context;
 import androidx.biometric.BiometricPrompt;
 import androidx.fragment.app.FragmentActivity;
+import java.util.ArrayList;
 import kotlin.Unit;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -95,7 +96,7 @@ public class AuthenticationHelperTest {
 
   @Test
   public void onAuthenticationError_withoutDialogs_returnsNotEnrolledForNoBiometrics() {
-    final AuthResult[] result = new AuthResult[1];
+    final ArrayList<AuthResult> result = new ArrayList<>();
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
@@ -103,20 +104,20 @@ public class AuthenticationHelperTest {
             defaultOptions,
             dummyStrings,
             (authResult -> {
-              result[0] = authResult;
+              result.add(authResult);
               return Unit.INSTANCE;
             }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_NO_BIOMETRICS, "");
 
-    assertNotNull(result[0]);
-    assertEquals(AuthResultCode.NOT_ENROLLED, result[0].getCode());
+    assertEquals(1, result.size());
+    assertEquals(AuthResultCode.NOT_ENROLLED, result.get(0).getCode());
   }
 
   @Test
   public void onAuthenticationError_returnsHardwareUnavailable() {
-    final AuthResult[] result = new AuthResult[1];
+    final ArrayList<AuthResult> result = new ArrayList<>();
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
@@ -124,20 +125,20 @@ public class AuthenticationHelperTest {
             defaultOptions,
             dummyStrings,
             (authResult -> {
-              result[0] = authResult;
+              result.add(authResult);
               return Unit.INSTANCE;
             }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_HW_UNAVAILABLE, "");
 
-    assertNotNull(result[0]);
-    assertEquals(AuthResultCode.HARDWARE_UNAVAILABLE, result[0].getCode());
+    assertEquals(1, result.size());
+    assertEquals(AuthResultCode.HARDWARE_UNAVAILABLE, result.get(0).getCode());
   }
 
   @Test
   public void onAuthenticationError_returnsHardwareNotPresent() {
-    final AuthResult[] result = new AuthResult[1];
+    final ArrayList<AuthResult> result = new ArrayList<>();
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
@@ -145,20 +146,20 @@ public class AuthenticationHelperTest {
             defaultOptions,
             dummyStrings,
             (authResult -> {
-              result[0] = authResult;
+              result.add(authResult);
               return Unit.INSTANCE;
             }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_HW_NOT_PRESENT, "");
 
-    assertNotNull(result[0]);
-    assertEquals(AuthResultCode.NO_HARDWARE, result[0].getCode());
+    assertEquals(1, result.size());
+    assertEquals(AuthResultCode.NO_HARDWARE, result.get(0).getCode());
   }
 
   @Test
   public void onAuthenticationError_returnsTemporaryLockoutForLockout() {
-    final AuthResult[] result = new AuthResult[1];
+    final ArrayList<AuthResult> result = new ArrayList<>();
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
@@ -166,20 +167,20 @@ public class AuthenticationHelperTest {
             defaultOptions,
             dummyStrings,
             (authResult -> {
-              result[0] = authResult;
+              result.add(authResult);
               return Unit.INSTANCE;
             }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_LOCKOUT, "");
 
-    assertNotNull(result[0]);
-    assertEquals(AuthResultCode.LOCKED_OUT_TEMPORARILY, result[0].getCode());
+    assertEquals(1, result.size());
+    assertEquals(AuthResultCode.LOCKED_OUT_TEMPORARILY, result.get(0).getCode());
   }
 
   @Test
   public void onAuthenticationError_returnsPermanentLockoutForLockoutPermanent() {
-    final AuthResult[] result = new AuthResult[1];
+    final ArrayList<AuthResult> result = new ArrayList<>();
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
@@ -187,20 +188,20 @@ public class AuthenticationHelperTest {
             defaultOptions,
             dummyStrings,
             (authResult -> {
-              result[0] = authResult;
+              result.add(authResult);
               return Unit.INSTANCE;
             }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_LOCKOUT_PERMANENT, "");
 
-    assertNotNull(result[0]);
-    assertEquals(AuthResultCode.LOCKED_OUT_PERMANENTLY, result[0].getCode());
+    assertEquals(1, result.size());
+    assertEquals(AuthResultCode.LOCKED_OUT_PERMANENTLY, result.get(0).getCode());
   }
 
   @Test
   public void onAuthenticationError_withoutSticky_returnsSystemCanceled() {
-    final AuthResult[] result = new AuthResult[1];
+    final ArrayList<AuthResult> result = new ArrayList<>();
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
@@ -208,20 +209,20 @@ public class AuthenticationHelperTest {
             defaultOptions,
             dummyStrings,
             (authResult -> {
-              result[0] = authResult;
+              result.add(authResult);
               return Unit.INSTANCE;
             }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_CANCELED, "");
 
-    assertNotNull(result[0]);
-    assertEquals(AuthResultCode.SYSTEM_CANCELED, result[0].getCode());
+    assertEquals(1, result.size());
+    assertEquals(AuthResultCode.SYSTEM_CANCELED, result.get(0).getCode());
   }
 
   @Test
   public void onAuthenticationError_returnsTimeout() {
-    final AuthResult[] result = new AuthResult[1];
+    final ArrayList<AuthResult> result = new ArrayList<>();
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
@@ -229,20 +230,20 @@ public class AuthenticationHelperTest {
             defaultOptions,
             dummyStrings,
             (authResult -> {
-              result[0] = authResult;
+              result.add(authResult);
               return Unit.INSTANCE;
             }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_TIMEOUT, "");
 
-    assertNotNull(result[0]);
-    assertEquals(AuthResultCode.TIMEOUT, result[0].getCode());
+    assertEquals(1, result.size());
+    assertEquals(AuthResultCode.TIMEOUT, result.get(0).getCode());
   }
 
   @Test
   public void onAuthenticationError_returnsNoSpace() {
-    final AuthResult[] result = new AuthResult[1];
+    final ArrayList<AuthResult> result = new ArrayList<>();
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
@@ -250,20 +251,20 @@ public class AuthenticationHelperTest {
             defaultOptions,
             dummyStrings,
             (authResult -> {
-              result[0] = authResult;
+              result.add(authResult);
               return Unit.INSTANCE;
             }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_NO_SPACE, "");
 
-    assertNotNull(result[0]);
-    assertEquals(AuthResultCode.NO_SPACE, result[0].getCode());
+    assertEquals(1, result.size());
+    assertEquals(AuthResultCode.NO_SPACE, result.get(0).getCode());
   }
 
   @Test
   public void onAuthenticationError_returnsSecurityUpdateRequired() {
-    final AuthResult[] result = new AuthResult[1];
+    final ArrayList<AuthResult> result = new ArrayList<>();
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
@@ -271,20 +272,20 @@ public class AuthenticationHelperTest {
             defaultOptions,
             dummyStrings,
             (authResult -> {
-              result[0] = authResult;
+              result.add(authResult);
               return Unit.INSTANCE;
             }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_SECURITY_UPDATE_REQUIRED, "");
 
-    assertNotNull(result[0]);
-    assertEquals(AuthResultCode.SECURITY_UPDATE_REQUIRED, result[0].getCode());
+    assertEquals(1, result.size());
+    assertEquals(AuthResultCode.SECURITY_UPDATE_REQUIRED, result.get(0).getCode());
   }
 
   @Test
   public void onAuthenticationError_returnsUnknownForOtherCases() {
-    final AuthResult[] result = new AuthResult[1];
+    final ArrayList<AuthResult> result = new ArrayList<>();
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
@@ -292,15 +293,15 @@ public class AuthenticationHelperTest {
             defaultOptions,
             dummyStrings,
             (authResult -> {
-              result[0] = authResult;
+              result.add(authResult);
               return Unit.INSTANCE;
             }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_UNABLE_TO_PROCESS, "");
 
-    assertNotNull(result[0]);
-    assertEquals(AuthResultCode.UNKNOWN_ERROR, result[0].getCode());
+    assertEquals(1, result.size());
+    assertEquals(AuthResultCode.UNKNOWN_ERROR, result.get(0).getCode());
   }
 
   private FragmentActivity buildMockActivityWithContext(FragmentActivity mockActivity) {

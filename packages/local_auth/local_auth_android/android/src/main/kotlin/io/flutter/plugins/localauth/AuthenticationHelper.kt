@@ -131,6 +131,8 @@ internal class AuthenticationHelper(
   private fun handleResume() {
     if (isAuthSticky) {
       activityPaused = false
+      // TODO(stuartmorgan): This should be assigning to biometricPrompt instead; see
+      // https://github.com/flutter/flutter/issues/191804
       val prompt = BiometricPrompt(activity, uiThreadExecutor, this)
       // When activity is resuming, we cannot show the prompt right away. We need to post it to the
       // UI queue.

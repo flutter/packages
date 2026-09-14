@@ -136,7 +136,7 @@ class LocalAuthPlugin
     helper.authenticate()
   }
 
-  fun onAuthenticationCompleted(callback: (Result<AuthResult>) -> Unit, value: AuthResult) {
+  private fun onAuthenticationCompleted(callback: (Result<AuthResult>) -> Unit, value: AuthResult) {
     if (authInProgress.compareAndSet(true, false)) {
       callback(Result.success(value))
     }
