@@ -409,6 +409,28 @@ final class InAppPurchase2PluginTests: XCTestCase {
     await fulfillment(of: [expectation], timeout: 5)
   }
 
+  func testPurchaseWithBillingPlanType() async throws {
+    guard #available(iOS 26.4, macOS 26.4, *) else {
+      throw XCTSkip("Billing plans require iOS 26.4 or macOS 26.4.")
+    }
+
+    let expectation = self.expectation(
+      description: "Purchase with a billing plan type should complete")
+
+    // `subscription_silver` has no monthly billing plan configured, so StoreKit
+    // falls back to the up-front plan. The purchase is driven end to end to
+    // exercise the option-building path.
+    let options = SK2ProductPurchaseOptionsMessage(
+      appAccountToken: nil, promotionalOffer: nil, winBackOfferId: nil,
+      introductoryOfferEligibilityCompactJWS: nil, billingPlanType: .monthly)
+
+    plugin.purchase(id: "subscription_silver", options: options) { _ in
+      expectation.fulfill()
+    }
+
+    await fulfillment(of: [expectation], timeout: 5)
+  }
+
   func testRestoreProductSuccess() async throws {
     let purchaseExpectation = self.expectation(description: "Purchase request should succeed")
     let restoreExpectation = self.expectation(description: "Restore request should succeed")
