@@ -6,7 +6,7 @@ import 'dart:math' as math;
 import 'dart:ui' show PointerDeviceKind;
 
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter/rendering.dart' show RenderParagraph, RendererBinding;
+import 'package:flutter/rendering.dart' show RenderClipRRect, RenderParagraph, RendererBinding;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -1646,26 +1646,6 @@ void main() {
     expect(value, equals('three'));
   });
 
-  testWidgets('DropdownButtonFormField does not crash at zero area', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: SizedBox.shrink(
-              child: DropdownButtonFormField<String>(
-                onChanged: (_) {},
-                items: const <DropdownMenuItem<String>>[
-                  DropdownMenuItem<String>(value: 'a', child: Text('a')),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-    expect(tester.getSize(find.byType(DropdownButtonFormField<String>)), Size.zero);
-  });
-
   testWidgets('BorderRadius property works properly for DropdownButtonFormField', (
     WidgetTester tester,
   ) async {
@@ -1702,6 +1682,35 @@ void main() {
         ..rrect()
         ..rrect(rrect: const RRect.fromLTRBXY(0.0, 0.0, 800.0, 208.0, radius, radius)),
     );
+  });
+
+  testWidgets('BorderRadius property clips DropdownButtonFormField', (WidgetTester tester) async {
+    const radius = 20.0;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: DropdownButtonFormField<String>(
+              borderRadius: const BorderRadius.all(Radius.circular(radius)),
+              initialValue: 'One',
+              items: <String>['One', 'Two', 'Three', 'Four'].map<DropdownMenuItem<String>>((
+                String value,
+              ) {
+                return DropdownMenuItem<String>(value: value, child: Text(value));
+              }).toList(),
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('One'));
+    await tester.pumpAndSettle();
+
+    final RenderClipRRect renderClip = tester.allRenderObjects.whereType<RenderClipRRect>().first;
+    expect(renderClip.borderRadius, const BorderRadius.all(Radius.circular(radius)));
   });
 
   testWidgets(
@@ -1901,5 +1910,47 @@ void main() {
       findInputDecoratorBorderPainter(),
       paints..rrect(style: PaintingStyle.fill, color: const Color(0xFF00FF00)),
     );
+  });
+
+  testWidgets('DropdownButtonFormField can inherit from local InputDecorationThemeData', (
+    WidgetTester tester,
+  ) async {
+    const labelText = 'Label';
+    const Color labelColor = Colors.green;
+    const decoration = InputDecoration(labelText: labelText);
+    const decorationTheme = InputDecorationThemeData(labelStyle: TextStyle(color: labelColor));
+
+    await tester.pumpWidget(
+      buildFrame(
+        localInputDecorationTheme: decorationTheme,
+        child: buildDropdownButtonFormField(decoration: decoration),
+      ),
+    );
+
+    final TextStyle labelStyle = DefaultTextStyle.of(
+      tester.firstElement(find.text(labelText)),
+    ).style;
+    expect(labelStyle.color, labelColor);
+  });
+
+  testWidgets('DropdownButtonFormField does not crash at zero area', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: SizedBox.shrink(
+              child: DropdownButtonFormField<String>(
+                value: 'a',
+                onChanged: (_) {},
+                items: const <DropdownMenuItem<String>>[
+                  DropdownMenuItem<String>(value: 'a', child: Text('a')),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(tester.getSize(find.byType(DropdownButtonFormField<String>)), Size.zero);
   });
 }
