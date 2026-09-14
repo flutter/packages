@@ -6,8 +6,6 @@ import 'package:flutter/src/services/text_formatter.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
-import 'dropdown_button_tester.dart';
-
 enum MenuItem {
   menuItem0('Item 0'),
   menuItem1('Item 1'),
@@ -1581,88 +1579,5 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(controller.text, selectNoneLabel);
-  });
-
-  group('DropdownButtonFormField decoration hintText', () {
-    const decorationHintText = 'Decoration Hint text';
-    const hintText = 'Hint text';
-    const disabledHintText = 'Disabled Hint text';
-
-    testWidgets('is the fallback value for DropdownButtonFormField.hint', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        buildFrame(
-          child: buildDropdownButtonFormField(
-            decoration: const InputDecoration(hintText: decorationHintText),
-          ),
-        ),
-      );
-
-      expect(find.text(decorationHintText, skipOffstage: false), findsOne);
-    });
-
-    testWidgets('does not override DropdownButtonFormField.hint', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        buildFrame(
-          child: buildDropdownButtonFormField(
-            hint: const Text(hintText),
-            decoration: const InputDecoration(hintText: decorationHintText),
-          ),
-        ),
-      );
-
-      expect(find.text(hintText, skipOffstage: false), findsOne);
-      expect(find.text(decorationHintText, skipOffstage: false), findsNothing);
-    });
-
-    testWidgets('is the fallback value for DropdownButtonFormField.disabledHint', (
-      WidgetTester tester,
-    ) async {
-      // The Dropdown is disabled because onChanged is not defined.
-      await tester.pumpWidget(
-        buildFrame(
-          child: buildDropdownButtonFormField(
-            decoration: const InputDecoration(hintText: decorationHintText),
-          ),
-        ),
-      );
-
-      expect(find.text(decorationHintText, skipOffstage: false), findsOne);
-    });
-
-    testWidgets('does not override DropdownButtonFormField.disabledHint', (
-      WidgetTester tester,
-    ) async {
-      // The Dropdown is disabled because onChanged is not defined.
-      await tester.pumpWidget(
-        buildFrame(
-          child: buildDropdownButtonFormField(
-            disabledHint: const Text(disabledHintText),
-            decoration: const InputDecoration(hintText: decorationHintText),
-          ),
-        ),
-      );
-
-      expect(find.text(disabledHintText, skipOffstage: false), findsOne);
-      expect(find.text(decorationHintText, skipOffstage: false), findsNothing);
-    });
-
-    testWidgets('is not used for disabledHint if DropdownButtonFormField.hint is provided', (
-      WidgetTester tester,
-    ) async {
-      // The Dropdown is disabled because onChanged is not defined.
-      await tester.pumpWidget(
-        buildFrame(
-          child: buildDropdownButtonFormField(
-            hint: const Text(hintText),
-            decoration: const InputDecoration(hintText: decorationHintText),
-          ),
-        ),
-      );
-
-      expect(find.text(hintText, skipOffstage: false), findsOne);
-      expect(find.text(decorationHintText, skipOffstage: false), findsNothing);
-    });
   });
 }
