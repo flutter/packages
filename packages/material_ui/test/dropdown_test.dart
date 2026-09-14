@@ -1376,7 +1376,7 @@ void main() {
   );
 
   testWidgets(
-    'Dropdown menu opened inside a dialog is dismissed on orientation change without throwing',
+    'DropdownButton opened inside a dialog is dismissed on orientation change without throwing',
     (WidgetTester tester) async {
       // Regression test for https://github.com/flutter/flutter/issues/171011
       addTearDown(tester.view.reset);
