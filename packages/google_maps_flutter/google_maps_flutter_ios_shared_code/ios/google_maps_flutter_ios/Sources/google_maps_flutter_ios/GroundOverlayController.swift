@@ -3,18 +3,15 @@
 // found in the LICENSE file.
 
 import GoogleMaps
+import GoogleMapsUtils
 import UIKit
 
-#if canImport(google_maps_flutter_ios_objc)
-  import google_maps_flutter_ios_objc
-#endif
-
 /// Controller of a single ground overlay on the map.
-class GroundOverlayController: NSObject {
+class GroundOverlayController {
   let groundOverlay: GMSGroundOverlay
   private weak var mapView: GMSMapView?
   let createdWithBounds: Bool
-  var zoomLevel: NSNumber?
+  var zoomLevel: Double?
 
   init(
     groundOverlay: GMSGroundOverlay, identifier: String, mapView: GMSMapView,
@@ -24,18 +21,18 @@ class GroundOverlayController: NSObject {
     self.mapView = mapView
     self.groundOverlay.userData = [identifier]
     self.createdWithBounds = isCreatedWithBounds
-    super.init()
   }
 
   func removeGroundOverlay() {
     groundOverlay.map = nil
   }
 
-  /// Updates the controller's ground overlay with the properties from a FGMPlatformGroundOverlay.
+  /// Updates the controller's ground overlay with the properties from a PlatformGroundOverlay.
   ///
   /// Setting the ground overlay to visible will set its map to the controller's mapView.
   func update(
-    from platformGroundOverlay: FGMPlatformGroundOverlay, assetProvider: FGMAssetProvider,
+    from platformGroundOverlay: PlatformGroundOverlay,
+    assetProvider: AssetProvider,
     screenScale: CGFloat
   ) {
     if let mapView = mapView {
@@ -50,14 +47,14 @@ class GroundOverlayController: NSObject {
     }
   }
 
-  /// Updates the given GMSGroundOverlay with the properties from a FGMPlatformGroundOverlay.
+  /// Updates the given GMSGroundOverlay with the properties from a PlatformGroundOverlay.
   ///
   /// Setting the ground overlay to visible will set its map to the given mapView.
   static func update(
     _ groundOverlay: GMSGroundOverlay,
-    from platformGroundOverlay: FGMPlatformGroundOverlay,
+    from platformGroundOverlay: PlatformGroundOverlay,
     mapView: GMSMapView,
-    assetProvider: FGMAssetProvider,
+    assetProvider: AssetProvider,
     screenScale: CGFloat,
     usingBounds useBounds: Bool
   ) {
@@ -100,20 +97,19 @@ class GroundOverlayController: NSObject {
 }
 
 /// Controller of multiple ground overlays on the map.
-class GroundOverlaysController: NSObject {
+class GroundOverlaysController {
   private var groundOverlayControllerByIdentifier: [String: GroundOverlayController] = [:]
-  private weak var eventDelegate: FGMMapEventDelegate?
-  private let assetProvider: FGMAssetProvider
+  private weak var eventDelegate: MapEventDelegate?
+  private let assetProvider: AssetProvider
   private weak var mapView: GMSMapView?
 
-  init(mapView: GMSMapView, eventDelegate: FGMMapEventDelegate, assetProvider: FGMAssetProvider) {
+  init(mapView: GMSMapView, eventDelegate: MapEventDelegate, assetProvider: AssetProvider) {
     self.mapView = mapView
     self.eventDelegate = eventDelegate
     self.assetProvider = assetProvider
-    super.init()
   }
 
-  func add(_ groundOverlaysToAdd: [FGMPlatformGroundOverlay]) {
+  func add(_ groundOverlaysToAdd: [PlatformGroundOverlay]) {
     guard let mapView = mapView else { return }
     let screenScale = getScreenScale()
     for groundOverlay in groundOverlaysToAdd {
@@ -135,7 +131,7 @@ class GroundOverlaysController: NSObject {
           ),
           // The actual icon will be set in the update() call below.
           icon: nil,
-          zoomLevel: CGFloat(zoomLevel.doubleValue)
+          zoomLevel: CGFloat(zoomLevel)
         )
       } else {
         isCreatedWithBounds = true
@@ -178,7 +174,7 @@ class GroundOverlaysController: NSObject {
     }
   }
 
-  func change(_ groundOverlaysToChange: [FGMPlatformGroundOverlay]) {
+  func change(_ groundOverlaysToChange: [PlatformGroundOverlay]) {
     let screenScale = getScreenScale()
     for groundOverlay in groundOverlaysToChange {
       let identifier = groundOverlay.groundOverlayId
@@ -201,7 +197,7 @@ class GroundOverlaysController: NSObject {
 
   func didTapGroundOverlay(withIdentifier identifier: String) {
     if hasGroundOverlays(withIdentifier: identifier) {
-      eventDelegate?.didTapGroundOverlay(withIdentifier: identifier)
+      eventDelegate?.didTapGroundOverlay(withIdentifier: identifier) { _ in }
     }
   }
 
@@ -219,11 +215,11 @@ class GroundOverlaysController: NSObject {
     return mapView?.traitCollection.displayScale ?? 1.0
   }
 
-  func groundOverlay(withIdentifier identifier: String) -> FGMPlatformGroundOverlay? {
+  func groundOverlay(withIdentifier identifier: String) -> PlatformGroundOverlay? {
     guard let controller = groundOverlayControllerByIdentifier[identifier] else {
       return nil
     }
-    return FGMPlatformGroundOverlay.make(
+    return PlatformGroundOverlay.make(
       from: controller.groundOverlay,
       overlayId: identifier,
       isCreatedWithBounds: controller.createdWithBounds,
