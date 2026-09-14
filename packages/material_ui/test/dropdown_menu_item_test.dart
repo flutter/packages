@@ -214,4 +214,159 @@ void main() {
       SystemMouseCursors.basic,
     );
   });
+
+  testWidgets('Disabled DropdownMenuItem should not be focusable', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DropdownButton<String>(
+            value: 'enabled',
+            onChanged: (_) {},
+            items: const <DropdownMenuItem<String>>[
+              DropdownMenuItem<String>(enabled: false, child: Text('disabled')),
+              DropdownMenuItem<String>(value: 'enabled', child: Text('enabled')),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    // Open dropdown.
+    await tester.tap(find.text('enabled').hitTestable());
+    await tester.pumpAndSettle();
+
+    // The `FocusNode` of [disabledItem] should be `null` as enabled is false.
+    final Element disabledItem = tester.element(find.text('disabled').hitTestable());
+    expect(
+      Focus.maybeOf(disabledItem),
+      null,
+      reason: 'Disabled menu item should not be able to request focus',
+    );
+  });
+
+  testWidgets('Tapping a disabled DropdownMenuItem should not close DropdownButton', (
+    WidgetTester tester,
+  ) async {
+    String? value = 'first';
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) => DropdownButton<String>(
+              value: value,
+              items: const <DropdownMenuItem<String>>[
+                DropdownMenuItem<String>(enabled: false, child: Text('disabled')),
+                DropdownMenuItem<String>(value: 'first', child: Text('first')),
+                DropdownMenuItem<String>(value: 'second', child: Text('second')),
+              ],
+              onChanged: (String? newValue) {
+                setState(() {
+                  value = newValue;
+                });
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Open dropdown.
+    await tester.tap(find.text('first').hitTestable());
+    await tester.pumpAndSettle();
+
+    // Tap on a disabled item.
+    await tester.tap(find.text('disabled').hitTestable());
+    await tester.pumpAndSettle();
+
+    // The dropdown should still be open, i.e., there should be one widget with 'second' text.
+    expect(find.text('second').hitTestable(), findsOneWidget);
+  });
+
+  testWidgets('DropdownMenuItem alignment test', (WidgetTester tester) async {
+    final Key buttonKey = UniqueKey();
+    Widget buildFrame({AlignmentGeometry? buttonAlignment, AlignmentGeometry? menuAlignment}) {
+      return MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: DropdownButton<String>(
+              key: buttonKey,
+              alignment: buttonAlignment ?? AlignmentDirectional.centerStart,
+              value: 'enabled',
+              onChanged: (_) {},
+              items: <DropdownMenuItem<String>>[
+                DropdownMenuItem<String>(
+                  alignment: buttonAlignment ?? AlignmentDirectional.centerStart,
+                  enabled: false,
+                  child: const Text('disabled'),
+                ),
+                DropdownMenuItem<String>(
+                  alignment: buttonAlignment ?? AlignmentDirectional.centerStart,
+                  value: 'enabled',
+                  child: const Text('enabled'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildFrame());
+
+    final RenderBox buttonBox = tester.renderObject(find.byKey(buttonKey));
+    RenderBox selectedItemBox = tester.renderObject(find.text('enabled'));
+    // Default to center-start aligned.
+    expect(
+      buttonBox.localToGlobal(Offset(0.0, buttonBox.size.height / 2.0)),
+      selectedItemBox.localToGlobal(Offset(0.0, selectedItemBox.size.height / 2.0)),
+    );
+
+    await tester.pumpWidget(
+      buildFrame(
+        buttonAlignment: AlignmentDirectional.center,
+        menuAlignment: AlignmentDirectional.center,
+      ),
+    );
+
+    selectedItemBox = tester.renderObject(find.text('enabled'));
+    // Should be center-center aligned, the icon size is 24.0 pixels.
+    expect(
+      buttonBox.localToGlobal(
+        Offset((buttonBox.size.width - 24.0) / 2.0, buttonBox.size.height / 2.0),
+      ),
+      offsetMoreOrLessEquals(
+        selectedItemBox.localToGlobal(
+          Offset(selectedItemBox.size.width / 2.0, selectedItemBox.size.height / 2.0),
+        ),
+      ),
+    );
+
+    // Open dropdown.
+    await tester.tap(find.text('enabled').hitTestable());
+    await tester.pumpAndSettle();
+
+    final RenderBox selectedItemBoxInMenu = tester
+        .renderObjectList<RenderBox>(find.text('enabled'))
+        .toList()[1];
+    final Finder menu = find.byWidgetPredicate((Widget widget) {
+      return widget.runtimeType.toString().startsWith('_DropdownMenu<');
+    });
+    final Rect menuRect = tester.getRect(menu);
+    final Offset center = selectedItemBoxInMenu.localToGlobal(
+      Offset(selectedItemBoxInMenu.size.width / 2.0, selectedItemBoxInMenu.size.height / 2.0),
+    );
+
+    expect(center.dx, moreOrLessEquals(menuRect.topCenter.dx));
+    expect(
+      center.dy,
+      moreOrLessEquals(
+        selectedItemBox
+            .localToGlobal(
+              Offset(selectedItemBox.size.width / 2.0, selectedItemBox.size.height / 2.0),
+            )
+            .dy,
+      ),
+    );
+  });
 }
