@@ -3081,8 +3081,8 @@ void main() {
       expect(controller.activeIndex, 0);
       expect(reportedIndex, 0);
 
-      // Scroll by exactly half an item (400px / 8 = 50px for item 0)
-      // We scroll by 50px, which is > half of the first item (44.44px).
+      // Scroll by more than half of the first item (400px / 9 = 44.44px for item 0, half is 22.22px).
+      // We scroll by 50px, which is > half of the first item.
       controller.jumpTo(50.0);
       await tester.pumpAndSettle();
 
