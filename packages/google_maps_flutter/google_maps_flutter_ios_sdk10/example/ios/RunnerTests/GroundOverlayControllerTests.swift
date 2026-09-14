@@ -75,18 +75,16 @@ import Testing
     let (groundOverlayController, mapView) =
       try GroundOverlayControllerTests.groundOverlayControllerWithPositionWithMockedMap()
 
-    let position = FGMPlatformLatLng.make(withLatitude: 52.4816, longitude: 3.1791)
+    let position = PlatformLatLng(latitude: 52.4816, longitude: 3.1791)
 
-    let bitmap = FGMPlatformBitmap.make(
-      withBitmap: FGMPlatformBitmapDefaultMarker.make(withHue: 0)
-    )
+    let bitmap = PlatformBitmapDefaultMarker(hue: 0)
 
-    let platformGroundOverlay = FGMPlatformGroundOverlay.make(
-      withGroundOverlayId: "id_1",
+    let platformGroundOverlay = PlatformGroundOverlay(
+      groundOverlayId: "id_1",
       image: bitmap,
       position: position,
       bounds: nil,
-      anchor: FGMPlatformPoint.makeWith(x: 0.5, y: 0.5),
+      anchor: PlatformPoint(x: 0.5, y: 0.5),
       transparency: 0.5,
       bearing: 65.0,
       zIndex: 2,
@@ -115,11 +113,11 @@ import Testing
     #expect(abs(groundOverlayController.groundOverlay.anchor.y - 0.5) <= Double.ulpOfOne)
     #expect(groundOverlayController.groundOverlay.zIndex == Int32(platformGroundOverlay.zIndex))
 
-    let convertedPlatformGroundOverlay = FGMGetPigeonGroundOverlay(
-      groundOverlayController.groundOverlay,
-      "id_1",
-      false,
-      14.0
+    let convertedPlatformGroundOverlay = PlatformGroundOverlay.make(
+      from: groundOverlayController.groundOverlay,
+      overlayId: "id_1",
+      isCreatedWithBounds: false,
+      zoomLevel: 14.0
     )
     #expect(convertedPlatformGroundOverlay.groundOverlayId == "id_1")
     #expect(
@@ -127,7 +125,7 @@ import Testing
     #expect(
       abs(convertedPlatformGroundOverlay.position!.longitude - position.longitude)
         <= Double.ulpOfOne)
-    #expect(convertedPlatformGroundOverlay.zoomLevel!.doubleValue == 14.0)
+    #expect(convertedPlatformGroundOverlay.zoomLevel == 14.0)
     #expect(convertedPlatformGroundOverlay.transparency == platformGroundOverlay.transparency)
     #expect(convertedPlatformGroundOverlay.bearing == platformGroundOverlay.bearing)
     #expect(abs(convertedPlatformGroundOverlay.anchor!.x - 0.5) <= Double.ulpOfOne)
@@ -140,21 +138,19 @@ import Testing
     let (groundOverlayController, mapView) =
       try GroundOverlayControllerTests.groundOverlayControllerWithBoundsWithMockedMap()
 
-    let bounds = FGMPlatformLatLngBounds.make(
-      withNortheast: FGMPlatformLatLng.make(withLatitude: 54.4816, longitude: 5.1791),
-      southwest: FGMPlatformLatLng.make(withLatitude: 52.4816, longitude: 3.1791)
+    let bounds = PlatformLatLngBounds(
+      northeast: PlatformLatLng(latitude: 54.4816, longitude: 5.1791),
+      southwest: PlatformLatLng(latitude: 52.4816, longitude: 3.1791)
     )
 
-    let bitmap = FGMPlatformBitmap.make(
-      withBitmap: FGMPlatformBitmapDefaultMarker.make(withHue: 0)
-    )
+    let bitmap = PlatformBitmapDefaultMarker(hue: 0)
 
-    let platformGroundOverlay = FGMPlatformGroundOverlay.make(
-      withGroundOverlayId: "id_1",
+    let platformGroundOverlay = PlatformGroundOverlay(
+      groundOverlayId: "id_1",
       image: bitmap,
       position: nil,
       bounds: bounds,
-      anchor: FGMPlatformPoint.makeWith(x: 0.5, y: 0.5),
+      anchor: PlatformPoint(x: 0.5, y: 0.5),
       transparency: 0.5,
       bearing: 65.0,
       zIndex: 2,
@@ -182,11 +178,11 @@ import Testing
     #expect(abs(groundOverlayController.groundOverlay.anchor.y - 0.5) <= Double.ulpOfOne)
     #expect(groundOverlayController.groundOverlay.zIndex == Int32(platformGroundOverlay.zIndex))
 
-    let convertedPlatformGroundOverlay = FGMGetPigeonGroundOverlay(
-      groundOverlayController.groundOverlay,
-      "id_1",
-      true,
-      nil
+    let convertedPlatformGroundOverlay = PlatformGroundOverlay.make(
+      from: groundOverlayController.groundOverlay,
+      overlayId: "id_1",
+      isCreatedWithBounds: true,
+      zoomLevel: nil
     )
     #expect(convertedPlatformGroundOverlay.groundOverlayId == "id_1")
     #expect(
@@ -213,17 +209,15 @@ import Testing
     let groundOverlay = PropertyOrderValidatingGroundOverlay()
     GroundOverlayController.update(
       groundOverlay,
-      from: FGMPlatformGroundOverlay.make(
-        withGroundOverlayId: "groundOverlay",
-        image: FGMPlatformBitmap.make(
-          withBitmap: FGMPlatformBitmapDefaultMarker.make(withHue: 0)
+      from: PlatformGroundOverlay(
+        groundOverlayId: "groundOverlay",
+        image: PlatformBitmapDefaultMarker(hue: 0),
+        position: PlatformLatLng(latitude: 0, longitude: 0),
+        bounds: PlatformLatLngBounds(
+          northeast: PlatformLatLng(latitude: 54.4816, longitude: 5.1791),
+          southwest: PlatformLatLng(latitude: 52.4816, longitude: 3.1791)
         ),
-        position: FGMPlatformLatLng.make(withLatitude: 0, longitude: 0),
-        bounds: FGMPlatformLatLngBounds.make(
-          withNortheast: FGMPlatformLatLng.make(withLatitude: 54.4816, longitude: 5.1791),
-          southwest: FGMPlatformLatLng.make(withLatitude: 52.4816, longitude: 3.1791)
-        ),
-        anchor: FGMPlatformPoint.makeWith(x: 0.5, y: 0.5),
+        anchor: PlatformPoint(x: 0.5, y: 0.5),
         transparency: 0.5,
         bearing: 65.0,
         zIndex: 2,
