@@ -2713,89 +2713,74 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         ? 'completion(.failure($errorExpr))'
         : 'continuation.resume(throwing: $errorExpr)';
 
-    void sendBlock() {
-      const channel = 'channel';
-      indent.writeln('let channelName: String = "$channelName"');
-      indent.writeln(
-        'let $channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)',
-      );
-      indent.write('$channel.sendMessage($sendArgument) ');
+    indent.maybeWriteScoped(
+      'return try await withCheckedThrowingContinuation { continuation in',
+      '}',
+      condition: !isAsynchronousCallback,
+      () {
+        const channel = 'channel';
+        indent.writeln('let channelName: String = "$channelName"');
+        indent.writeln(
+          'let $channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)',
+        );
+        indent.write('$channel.sendMessage($sendArgument) ');
 
-      // Without annotations from the library, Swift infers completion blocks @Sendable.
-      // Use MainActor.assumeIsolated to workaround this until the Flutter runner API is
-      // properly annotated.
-      final responseArg = generatorOptions.swiftStrictConcurrency
-          ? '(response: any Sendable)'
-          : 'response';
-      indent.addScoped('{ $responseArg in', '}', () {
-        void writeBody() {
-          indent.writeScoped('guard let listResponse = response as? [Any?] else {', '}', () {
-            indent.writeln(resumeError('createConnectionError(withChannelName: channelName)'));
-            indent.writeln('return');
-          });
-          indent.writeScoped('if listResponse.count > 1 {', '} ', () {
-            indent.writeln('let code: String = listResponse[0] as! String');
-            indent.writeln('let message: String? = nilOrValue(listResponse[1])');
-            indent.writeln('let details: String? = nilOrValue(listResponse[2])');
-            indent.writeln(
-              resumeError(
-                '${_getErrorClassName(generatorOptions)}(code: code, message: message, details: details)',
-              ),
-            );
-          }, addTrailingNewline: false);
-          if (!returnType.isNullable && !returnType.isVoid) {
-            indent.addScoped('else if listResponse[0] == nil {', '} ', () {
+        final responseArg = generatorOptions.swiftStrictConcurrency
+            ? '(response: any Sendable)'
+            : 'response';
+        indent.addScoped('{ $responseArg in', '}', () {
+          // Without annotations from the library, Swift assumes completion blocks are @Sendable.
+          // Use MainActor.assumeIsolated to workaround this until the Flutter runner API is
+          // properly annotated.
+          indent.writeScoped('MainActor.assumeIsolated {', '}', () {
+            indent.writeScoped('guard let listResponse = response as? [Any?] else {', '}', () {
+              indent.writeln(resumeError('createConnectionError(withChannelName: channelName)'));
+              indent.writeln('return');
+            });
+            indent.writeScoped('if listResponse.count > 1 {', '} ', () {
+              indent.writeln('let code: String = listResponse[0] as! String');
+              indent.writeln('let message: String? = nilOrValue(listResponse[1])');
+              indent.writeln('let details: String? = nilOrValue(listResponse[2])');
               indent.writeln(
                 resumeError(
-                  '${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")',
+                  '${_getErrorClassName(generatorOptions)}(code: code, message: message, details: details)',
                 ),
               );
             }, addTrailingNewline: false);
-          }
-          indent.addScoped('else {', '}', () {
-            if (returnType.isVoid) {
-              indent.writeln(resumeSuccess('()'));
-            } else {
-              final String fieldType = _swiftTypeForDartType(returnType);
-              _writeGenericCasting(
-                indent: indent,
-                value: 'listResponse[0]',
-                variableName: 'result',
-                fieldType: fieldType,
-                type: returnType,
-              );
-              // There is a swift bug with unwrapping maps of nullable Enums;
-              final enumMapForceUnwrap =
-                  returnType.baseName == 'Map' &&
-                      returnType.typeArguments.any((TypeDeclaration type) => type.isEnum)
-                  ? '!'
-                  : '';
-              indent.writeln(resumeSuccess('result$enumMapForceUnwrap'));
+            if (!returnType.isNullable && !returnType.isVoid) {
+              indent.addScoped('else if listResponse[0] == nil {', '} ', () {
+                indent.writeln(
+                  resumeError(
+                    '${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")',
+                  ),
+                );
+              }, addTrailingNewline: false);
             }
+            indent.addScoped('else {', '}', () {
+              if (returnType.isVoid) {
+                indent.writeln(resumeSuccess('()'));
+              } else {
+                final String fieldType = _swiftTypeForDartType(returnType);
+                _writeGenericCasting(
+                  indent: indent,
+                  value: 'listResponse[0]',
+                  variableName: 'result',
+                  fieldType: fieldType,
+                  type: returnType,
+                );
+                // There is a swift bug with unwrapping maps of nullable Enums;
+                final enumMapForceUnwrap =
+                    returnType.baseName == 'Map' &&
+                        returnType.typeArguments.any((TypeDeclaration type) => type.isEnum)
+                    ? '!'
+                    : '';
+                indent.writeln(resumeSuccess('result$enumMapForceUnwrap'));
+              }
+            });
           });
-        }
-
-        if (generatorOptions.swiftStrictConcurrency) {
-          indent.addScoped('MainActor.assumeIsolated {', '}', () {
-            writeBody();
-          });
-        } else {
-          writeBody();
-        }
-      });
-    }
-
-    if (isAsynchronousCallback) {
-      sendBlock();
-    } else {
-      indent.writeScoped(
-        'return try await withCheckedThrowingContinuation { continuation in',
-        '}',
-        () {
-          sendBlock();
-        },
-      );
-    }
+        });
+      },
+    );
   }
 
   void _writeHostMethodMessageHandler(

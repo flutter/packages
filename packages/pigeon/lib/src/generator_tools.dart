@@ -214,6 +214,23 @@ class Indent {
     );
   }
 
+  /// Like [writeScoped], but only scopes [func] if [condition] is true.
+  /// Otherwise, executes [func] directly.
+  void maybeWriteScoped(
+    String? begin,
+    String? end,
+    void Function() func, {
+    required bool condition,
+    int nestCount = 1,
+    bool addTrailingNewline = true,
+  }) {
+    if (condition) {
+      writeScoped(begin, end, func, nestCount: nestCount, addTrailingNewline: addTrailingNewline);
+    } else {
+      func();
+    }
+  }
+
   /// Scoped increase of the indent level.
   ///
   /// For the execution of [func] the indentation will be incremented by the given amount.
