@@ -175,13 +175,18 @@ enum SK2BillingPlanType {
 /// The total commitment behind a [SK2BillingPlanType.monthly] plan.
 class SK2CommitmentInfo {
   /// Creates a new instance of [SK2CommitmentInfo]
-  const SK2CommitmentInfo({required this.price, required this.displayPrice});
+  const SK2CommitmentInfo({required this.price, required this.displayPrice, required this.period});
 
   /// The total price of the full commitment.
   final double price;
 
   /// The localized total price of the full commitment, suitable for display.
   final String displayPrice;
+
+  /// How long the commitment lasts, as configured in App Store Connect.
+  ///
+  /// Read this rather than assuming twelve months.
+  final SK2SubscriptionPeriod period;
 }
 
 /// A wrapper around StoreKit2's PricingTerms
@@ -193,6 +198,8 @@ class SK2PricingTerms {
     required this.billingPlanType,
     required this.billingPrice,
     required this.billingDisplayPrice,
+    required this.billingPeriod,
+    required this.subscriptionOffers,
     this.commitmentInfo,
   });
 
@@ -204,6 +211,19 @@ class SK2PricingTerms {
 
   /// The localized price charged for each billing period, suitable for display.
   final String billingDisplayPrice;
+
+  /// How often this plan bills.
+  ///
+  /// A [SK2BillingPlanType.monthly] plan bills monthly even though
+  /// [SK2SubscriptionInfo.subscriptionPeriod] is a year.
+  final SK2SubscriptionPeriod billingPeriod;
+
+  /// The offers available on this billing plan specifically.
+  ///
+  /// This is not the same as [SK2SubscriptionInfo.promotionalOffers], which
+  /// lists the offers of the subscription as a whole; an offer may be
+  /// configured for one billing plan and not another.
+  final List<SK2SubscriptionOffer> subscriptionOffers;
 
   /// Only set when [billingPlanType] is [SK2BillingPlanType.monthly].
   final SK2CommitmentInfo? commitmentInfo;
@@ -229,7 +249,11 @@ extension on SK2BillingPlanType {
 
 extension on SK2CommitmentInfoMessage {
   SK2CommitmentInfo convertFromPigeon() {
-    return SK2CommitmentInfo(price: price, displayPrice: displayPrice);
+    return SK2CommitmentInfo(
+      price: price,
+      displayPrice: displayPrice,
+      period: period.convertFromPigeon(),
+    );
   }
 }
 
@@ -239,6 +263,10 @@ extension on SK2PricingTermsMessage {
       billingPlanType: billingPlanType.convertFromPigeon(),
       billingPrice: billingPrice,
       billingDisplayPrice: billingDisplayPrice,
+      billingPeriod: billingPeriod.convertFromPigeon(),
+      subscriptionOffers: subscriptionOffers
+          .map((SK2SubscriptionOfferMessage offer) => offer.convertFromPigeon())
+          .toList(),
       commitmentInfo: commitmentInfo?.convertFromPigeon(),
     );
   }

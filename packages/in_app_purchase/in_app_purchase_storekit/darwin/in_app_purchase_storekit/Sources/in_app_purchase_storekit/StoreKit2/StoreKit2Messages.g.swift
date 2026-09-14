@@ -367,21 +367,26 @@ struct SK2CommitmentInfoMessage: Hashable, CustomStringConvertible {
   var price: Double
   /// The localized total price of the full commitment, suitable for display.
   var displayPrice: String
+  /// How long the commitment lasts.
+  var period: SK2SubscriptionPeriodMessage
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> SK2CommitmentInfoMessage? {
     let price = pigeonVar_list[0] as! Double
     let displayPrice = pigeonVar_list[1] as! String
+    let period = pigeonVar_list[2] as! SK2SubscriptionPeriodMessage
 
     return SK2CommitmentInfoMessage(
       price: price,
-      displayPrice: displayPrice
+      displayPrice: displayPrice,
+      period: period
     )
   }
   func toList() -> [Any?] {
     return [
       price,
       displayPrice,
+      period,
     ]
   }
   static func == (lhs: SK2CommitmentInfoMessage, rhs: SK2CommitmentInfoMessage) -> Bool {
@@ -390,17 +395,19 @@ struct SK2CommitmentInfoMessage: Hashable, CustomStringConvertible {
     }
     return StoreKit2MessagesPigeonInternal.deepEquals(lhs.price, rhs.price)
       && StoreKit2MessagesPigeonInternal.deepEquals(lhs.displayPrice, rhs.displayPrice)
+      && StoreKit2MessagesPigeonInternal.deepEquals(lhs.period, rhs.period)
   }
 
   func hash(into hasher: inout Hasher) {
     hasher.combine("SK2CommitmentInfoMessage")
     StoreKit2MessagesPigeonInternal.deepHash(value: price, hasher: &hasher)
     StoreKit2MessagesPigeonInternal.deepHash(value: displayPrice, hasher: &hasher)
+    StoreKit2MessagesPigeonInternal.deepHash(value: period, hasher: &hasher)
   }
 
   public var description: String {
     return
-      "SK2CommitmentInfoMessage(price: \(String(describing: price)), displayPrice: \(String(describing: displayPrice)))"
+      "SK2CommitmentInfoMessage(price: \(String(describing: price)), displayPrice: \(String(describing: displayPrice)), period: \(String(describing: period)))"
   }
 }
 
@@ -415,6 +422,10 @@ struct SK2PricingTermsMessage: Hashable, CustomStringConvertible {
   var billingPrice: Double
   /// The localized price charged for each billing period, suitable for display.
   var billingDisplayPrice: String
+  /// How often this plan bills.
+  var billingPeriod: SK2SubscriptionPeriodMessage
+  /// The offers available on this billing plan specifically.
+  var subscriptionOffers: [SK2SubscriptionOfferMessage]
   /// Only set when [billingPlanType] is [SK2BillingPlanTypeMessage.monthly].
   var commitmentInfo: SK2CommitmentInfoMessage? = nil
 
@@ -423,12 +434,16 @@ struct SK2PricingTermsMessage: Hashable, CustomStringConvertible {
     let billingPlanType = pigeonVar_list[0] as! SK2BillingPlanTypeMessage
     let billingPrice = pigeonVar_list[1] as! Double
     let billingDisplayPrice = pigeonVar_list[2] as! String
-    let commitmentInfo: SK2CommitmentInfoMessage? = nilOrValue(pigeonVar_list[3])
+    let billingPeriod = pigeonVar_list[3] as! SK2SubscriptionPeriodMessage
+    let subscriptionOffers = pigeonVar_list[4] as! [SK2SubscriptionOfferMessage]
+    let commitmentInfo: SK2CommitmentInfoMessage? = nilOrValue(pigeonVar_list[5])
 
     return SK2PricingTermsMessage(
       billingPlanType: billingPlanType,
       billingPrice: billingPrice,
       billingDisplayPrice: billingDisplayPrice,
+      billingPeriod: billingPeriod,
+      subscriptionOffers: subscriptionOffers,
       commitmentInfo: commitmentInfo
     )
   }
@@ -437,6 +452,8 @@ struct SK2PricingTermsMessage: Hashable, CustomStringConvertible {
       billingPlanType,
       billingPrice,
       billingDisplayPrice,
+      billingPeriod,
+      subscriptionOffers,
       commitmentInfo,
     ]
   }
@@ -448,6 +465,8 @@ struct SK2PricingTermsMessage: Hashable, CustomStringConvertible {
       && StoreKit2MessagesPigeonInternal.deepEquals(lhs.billingPrice, rhs.billingPrice)
       && StoreKit2MessagesPigeonInternal.deepEquals(
         lhs.billingDisplayPrice, rhs.billingDisplayPrice)
+      && StoreKit2MessagesPigeonInternal.deepEquals(lhs.billingPeriod, rhs.billingPeriod)
+      && StoreKit2MessagesPigeonInternal.deepEquals(lhs.subscriptionOffers, rhs.subscriptionOffers)
       && StoreKit2MessagesPigeonInternal.deepEquals(lhs.commitmentInfo, rhs.commitmentInfo)
   }
 
@@ -456,12 +475,14 @@ struct SK2PricingTermsMessage: Hashable, CustomStringConvertible {
     StoreKit2MessagesPigeonInternal.deepHash(value: billingPlanType, hasher: &hasher)
     StoreKit2MessagesPigeonInternal.deepHash(value: billingPrice, hasher: &hasher)
     StoreKit2MessagesPigeonInternal.deepHash(value: billingDisplayPrice, hasher: &hasher)
+    StoreKit2MessagesPigeonInternal.deepHash(value: billingPeriod, hasher: &hasher)
+    StoreKit2MessagesPigeonInternal.deepHash(value: subscriptionOffers, hasher: &hasher)
     StoreKit2MessagesPigeonInternal.deepHash(value: commitmentInfo, hasher: &hasher)
   }
 
   public var description: String {
     return
-      "SK2PricingTermsMessage(billingPlanType: \(String(describing: billingPlanType)), billingPrice: \(String(describing: billingPrice)), billingDisplayPrice: \(String(describing: billingDisplayPrice)), commitmentInfo: \(String(describing: commitmentInfo)))"
+      "SK2PricingTermsMessage(billingPlanType: \(String(describing: billingPlanType)), billingPrice: \(String(describing: billingPrice)), billingDisplayPrice: \(String(describing: billingDisplayPrice)), billingPeriod: \(String(describing: billingPeriod)), subscriptionOffers: \(String(describing: subscriptionOffers)), commitmentInfo: \(String(describing: commitmentInfo)))"
   }
 }
 

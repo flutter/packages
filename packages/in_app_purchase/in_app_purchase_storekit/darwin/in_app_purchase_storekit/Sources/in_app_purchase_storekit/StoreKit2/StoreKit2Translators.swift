@@ -81,7 +81,8 @@ extension Product.SubscriptionInfo.CommitmentInfo {
   var convertToPigeon: SK2CommitmentInfoMessage {
     return SK2CommitmentInfoMessage(
       price: NSDecimalNumber(decimal: price).doubleValue,
-      displayPrice: displayPrice
+      displayPrice: displayPrice,
+      period: period.convertToPigeon
     )
   }
 }
@@ -94,6 +95,8 @@ extension Product.SubscriptionInfo.PricingTerms {
       billingPlanType: planType,
       billingPrice: NSDecimalNumber(decimal: billingPrice).doubleValue,
       billingDisplayPrice: billingDisplayPrice,
+      billingPeriod: billingPeriod.convertToPigeon,
+      subscriptionOffers: subscriptionOffers.map { $0.convertToPigeon },
       // Only a monthly plan carries a commitment; the value is meaningless
       // for an up-front plan.
       commitmentInfo: planType == .monthly ? commitmentInfo.convertToPigeon : nil

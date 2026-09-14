@@ -67,13 +67,20 @@ enum SK2BillingPlanTypeMessage { upFront, monthly }
 /// Details of the 12-month commitment attached to a monthly billing plan.
 /// https://developer.apple.com/documentation/storekit/product/subscriptioninfo/commitmentinfo
 class SK2CommitmentInfoMessage {
-  const SK2CommitmentInfoMessage({required this.price, required this.displayPrice});
+  const SK2CommitmentInfoMessage({
+    required this.price,
+    required this.displayPrice,
+    required this.period,
+  });
 
   /// The total price of the full commitment.
   final double price;
 
   /// The localized total price of the full commitment, suitable for display.
   final String displayPrice;
+
+  /// How long the commitment lasts.
+  final SK2SubscriptionPeriodMessage period;
 }
 
 /// One billing plan available for a subscription.
@@ -83,6 +90,8 @@ class SK2PricingTermsMessage {
     required this.billingPlanType,
     required this.billingPrice,
     required this.billingDisplayPrice,
+    required this.billingPeriod,
+    required this.subscriptionOffers,
     this.commitmentInfo,
   });
 
@@ -94,6 +103,12 @@ class SK2PricingTermsMessage {
 
   /// The localized price charged for each billing period, suitable for display.
   final String billingDisplayPrice;
+
+  /// How often this plan bills.
+  final SK2SubscriptionPeriodMessage billingPeriod;
+
+  /// The offers available on this billing plan specifically.
+  final List<SK2SubscriptionOfferMessage> subscriptionOffers;
 
   /// Only set when [billingPlanType] is [SK2BillingPlanTypeMessage.monthly].
   final SK2CommitmentInfoMessage? commitmentInfo;

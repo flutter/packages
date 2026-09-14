@@ -270,7 +270,7 @@ class SK2SubscriptionPeriodMessage {
 /// Details of the 12-month commitment attached to a monthly billing plan.
 /// https://developer.apple.com/documentation/storekit/product/subscriptioninfo/commitmentinfo
 class SK2CommitmentInfoMessage {
-  SK2CommitmentInfoMessage({required this.price, required this.displayPrice});
+  SK2CommitmentInfoMessage({required this.price, required this.displayPrice, required this.period});
 
   /// The total price of the full commitment.
   double price;
@@ -278,8 +278,11 @@ class SK2CommitmentInfoMessage {
   /// The localized total price of the full commitment, suitable for display.
   String displayPrice;
 
+  /// How long the commitment lasts.
+  SK2SubscriptionPeriodMessage period;
+
   List<Object?> _toList() {
-    return <Object?>[price, displayPrice];
+    return <Object?>[price, displayPrice, period];
   }
 
   Object encode() {
@@ -291,6 +294,7 @@ class SK2CommitmentInfoMessage {
     return SK2CommitmentInfoMessage(
       price: result[0]! as double,
       displayPrice: result[1]! as String,
+      period: result[2]! as SK2SubscriptionPeriodMessage,
     );
   }
 
@@ -303,7 +307,9 @@ class SK2CommitmentInfoMessage {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(price, other.price) && _deepEquals(displayPrice, other.displayPrice);
+    return _deepEquals(price, other.price) &&
+        _deepEquals(displayPrice, other.displayPrice) &&
+        _deepEquals(period, other.period);
   }
 
   @override
@@ -312,7 +318,7 @@ class SK2CommitmentInfoMessage {
 
   @override
   String toString() {
-    return 'SK2CommitmentInfoMessage(price: $price, displayPrice: $displayPrice)';
+    return 'SK2CommitmentInfoMessage(price: $price, displayPrice: $displayPrice, period: $period)';
   }
 }
 
@@ -323,6 +329,8 @@ class SK2PricingTermsMessage {
     required this.billingPlanType,
     required this.billingPrice,
     required this.billingDisplayPrice,
+    required this.billingPeriod,
+    required this.subscriptionOffers,
     this.commitmentInfo,
   });
 
@@ -335,11 +343,24 @@ class SK2PricingTermsMessage {
   /// The localized price charged for each billing period, suitable for display.
   String billingDisplayPrice;
 
+  /// How often this plan bills.
+  SK2SubscriptionPeriodMessage billingPeriod;
+
+  /// The offers available on this billing plan specifically.
+  List<SK2SubscriptionOfferMessage> subscriptionOffers;
+
   /// Only set when [billingPlanType] is [SK2BillingPlanTypeMessage.monthly].
   SK2CommitmentInfoMessage? commitmentInfo;
 
   List<Object?> _toList() {
-    return <Object?>[billingPlanType, billingPrice, billingDisplayPrice, commitmentInfo];
+    return <Object?>[
+      billingPlanType,
+      billingPrice,
+      billingDisplayPrice,
+      billingPeriod,
+      subscriptionOffers,
+      commitmentInfo,
+    ];
   }
 
   Object encode() {
@@ -352,7 +373,9 @@ class SK2PricingTermsMessage {
       billingPlanType: result[0]! as SK2BillingPlanTypeMessage,
       billingPrice: result[1]! as double,
       billingDisplayPrice: result[2]! as String,
-      commitmentInfo: result[3] as SK2CommitmentInfoMessage?,
+      billingPeriod: result[3]! as SK2SubscriptionPeriodMessage,
+      subscriptionOffers: (result[4]! as List<Object?>).cast<SK2SubscriptionOfferMessage>(),
+      commitmentInfo: result[5] as SK2CommitmentInfoMessage?,
     );
   }
 
@@ -368,6 +391,8 @@ class SK2PricingTermsMessage {
     return _deepEquals(billingPlanType, other.billingPlanType) &&
         _deepEquals(billingPrice, other.billingPrice) &&
         _deepEquals(billingDisplayPrice, other.billingDisplayPrice) &&
+        _deepEquals(billingPeriod, other.billingPeriod) &&
+        _deepEquals(subscriptionOffers, other.subscriptionOffers) &&
         _deepEquals(commitmentInfo, other.commitmentInfo);
   }
 
@@ -377,7 +402,7 @@ class SK2PricingTermsMessage {
 
   @override
   String toString() {
-    return 'SK2PricingTermsMessage(billingPlanType: $billingPlanType, billingPrice: $billingPrice, billingDisplayPrice: $billingDisplayPrice, commitmentInfo: $commitmentInfo)';
+    return 'SK2PricingTermsMessage(billingPlanType: $billingPlanType, billingPrice: $billingPrice, billingDisplayPrice: $billingDisplayPrice, billingPeriod: $billingPeriod, subscriptionOffers: $subscriptionOffers, commitmentInfo: $commitmentInfo)';
   }
 }
 

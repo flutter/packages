@@ -78,12 +78,41 @@ void main() {
             billingPlanType: SK2BillingPlanTypeMessage.upFront,
             billingPrice: 119.88,
             billingDisplayPrice: r'$119.88',
+            billingPeriod: SK2SubscriptionPeriodMessage(
+              value: 1,
+              unit: SK2SubscriptionPeriodUnitMessage.year,
+            ),
+            subscriptionOffers: <SK2SubscriptionOfferMessage>[],
           ),
           SK2PricingTermsMessage(
             billingPlanType: SK2BillingPlanTypeMessage.monthly,
             billingPrice: 9.99,
             billingDisplayPrice: r'$9.99',
-            commitmentInfo: SK2CommitmentInfoMessage(price: 119.88, displayPrice: r'$119.88'),
+            billingPeriod: SK2SubscriptionPeriodMessage(
+              value: 1,
+              unit: SK2SubscriptionPeriodUnitMessage.month,
+            ),
+            subscriptionOffers: <SK2SubscriptionOfferMessage>[
+              SK2SubscriptionOfferMessage(
+                id: 'monthly_intro',
+                price: 0,
+                type: SK2SubscriptionOfferTypeMessage.introductory,
+                period: SK2SubscriptionPeriodMessage(
+                  value: 1,
+                  unit: SK2SubscriptionPeriodUnitMessage.month,
+                ),
+                periodCount: 1,
+                paymentMode: SK2SubscriptionOfferPaymentModeMessage.freeTrial,
+              ),
+            ],
+            commitmentInfo: SK2CommitmentInfoMessage(
+              price: 119.88,
+              displayPrice: r'$119.88',
+              period: SK2SubscriptionPeriodMessage(
+                value: 12,
+                unit: SK2SubscriptionPeriodUnitMessage.month,
+              ),
+            ),
           ),
         ],
       );
@@ -97,12 +126,20 @@ void main() {
       expect(terms, hasLength(2));
       expect(terms.first.billingPlanType, SK2BillingPlanType.upFront);
       expect(terms.first.billingDisplayPrice, r'$119.88');
+      expect(terms.first.billingPeriod.unit, SK2SubscriptionPeriodUnit.year);
+      expect(terms.first.subscriptionOffers, isEmpty);
       expect(terms.first.commitmentInfo, isNull);
       expect(terms[1].billingPlanType, SK2BillingPlanType.monthly);
       expect(terms[1].billingPrice, 9.99);
       expect(terms[1].billingDisplayPrice, r'$9.99');
+      expect(terms[1].billingPeriod.value, 1);
+      expect(terms[1].billingPeriod.unit, SK2SubscriptionPeriodUnit.month);
+      expect(terms[1].subscriptionOffers, hasLength(1));
+      expect(terms[1].subscriptionOffers.first.id, 'monthly_intro');
       expect(terms[1].commitmentInfo!.price, 119.88);
       expect(terms[1].commitmentInfo!.displayPrice, r'$119.88');
+      expect(terms[1].commitmentInfo!.period.value, 12);
+      expect(terms[1].commitmentInfo!.period.unit, SK2SubscriptionPeriodUnit.month);
     });
 
     test('should expose no billing plans when the platform reports none', () async {

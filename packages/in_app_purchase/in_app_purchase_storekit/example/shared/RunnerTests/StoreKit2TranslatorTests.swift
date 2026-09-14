@@ -118,7 +118,11 @@ final class StoreKit2TranslatorTests: XCTestCase {
       XCTAssertEqual(message.billingPlanType, isMonthly ? .monthly : .upFront)
       XCTAssertEqual(message.billingDisplayPrice, terms.billingDisplayPrice)
       XCTAssertEqual(message.billingPrice, NSDecimalNumber(decimal: terms.billingPrice).doubleValue)
+      XCTAssertEqual(message.billingPeriod.value, Int64(terms.billingPeriod.value))
+      XCTAssertEqual(message.subscriptionOffers.count, terms.subscriptionOffers.count)
       if isMonthly {
+        XCTAssertEqual(
+          message.commitmentInfo?.period.value, Int64(terms.commitmentInfo.period.value))
         XCTAssertEqual(message.commitmentInfo?.displayPrice, terms.commitmentInfo.displayPrice)
         XCTAssertEqual(
           message.commitmentInfo?.price,
@@ -141,6 +145,8 @@ final class StoreKit2TranslatorTests: XCTestCase {
     }
     XCTAssertEqual(upFront.billingPrice, NSDecimalNumber(decimal: product.price).doubleValue)
     XCTAssertEqual(upFront.billingDisplayPrice, product.displayPrice)
+    // An up-front plan bills once per subscription period.
+    XCTAssertEqual(upFront.billingPeriod.value, Int64(subscription.subscriptionPeriod.value))
   }
 
   func testPigeonConversionForProductType() async throws {
