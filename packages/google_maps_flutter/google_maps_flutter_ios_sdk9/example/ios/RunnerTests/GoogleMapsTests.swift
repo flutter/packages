@@ -38,6 +38,28 @@ class StubBinaryMessenger: NSObject, FlutterBinaryMessenger {
   }
 }
 
+/// Fake MapEventDelegate that records POI tap callbacks for unit tests.
+class MockMapsCallbackApi: TestMapEventHandler {
+  var lastTappedPointOfInterestPlaceIdentifier: String?
+  private var pointOfInterestTapContinuation: CheckedContinuation<Void, Never>?
+
+  /// Completes when `didTapPointOfInterest` has been invoked (or immediately if already recorded).
+  func waitForPointOfInterestTap() async {
+    if lastTappedPointOfInterestPlaceIdentifier != nil {
+      return
+    }
+    await withCheckedContinuation { continuation in
+      pointOfInterestTapContinuation = continuation
+    }
+  }
+
+  override func didTapPointOfInterest(withPlaceIdentifier placeIdArg: String) async throws {
+    lastTappedPointOfInterestPlaceIdentifier = placeIdArg
+    pointOfInterestTapContinuation?.resume()
+    pointOfInterestTapContinuation = nil
+  }
+}
+
 class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
   var viewController: UIViewController? { nil }
   func publish(_ value: NSObject) {}
@@ -165,6 +187,36 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     #expect(mockTransactionWrapper.beginCalled)
     #expect(mockTransactionWrapper.commitCalled)
     #expect(mockTransactionWrapper.animationDuration == Double(durationMilliseconds) / 1000)
+  }
+
+  @Test func didTapPOIForwardsPlaceIdentifierToCallbackApi() async {
+    let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+    let mapViewOptions = GMSMapViewOptions()
+    mapViewOptions.frame = frame
+    mapViewOptions.camera = GMSCameraPosition(latitude: 0, longitude: 0, zoom: 0)
+
+    let mapView = PartiallyMockedMapView(options: mapViewOptions)
+
+    let callbackApi = MockMapsCallbackApi()
+    let controller = GoogleMapController(
+      mapView: mapView,
+      viewIdentifier: 0,
+      creationParameters: emptyCreationParameters(),
+      assetProvider: TestAssetProvider(),
+      binaryMessenger: StubBinaryMessenger(),
+      callbackHandler: callbackApi
+    )
+
+    async let poiTapReceived: Void = callbackApi.waitForPointOfInterestTap()
+    controller.mapView(
+      mapView,
+      didTapPOIWithPlaceID: "place-123",
+      name: "Test Place",
+      location: CLLocationCoordinate2DMake(0, 0)
+    )
+    await poiTapReceived
+
+    #expect(callbackApi.lastTappedPointOfInterestPlaceIdentifier == "place-123")
   }
 
   @Test func inspectorAPICameraPosition() throws {
