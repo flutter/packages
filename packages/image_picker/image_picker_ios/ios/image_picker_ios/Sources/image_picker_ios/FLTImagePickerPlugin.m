@@ -63,6 +63,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
     if (@available(iOS 14.0, *)) {
       _phPickerCreator = [[FIPDefaultPHPickerCreator alloc] init];
     }
+    _imageDataRequester = [[FIPDefaultImageDataRequester alloc] init];
   }
   return self;
 }
@@ -601,29 +602,15 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
                                    maxHeight:maxHeight
                                 imageQuality:desiredImageQuality];
       };
-      if (@available(iOS 13.0, *)) {
-        [[PHImageManager defaultManager]
-            requestImageDataAndOrientationForAsset:originalAsset
-                                           options:nil
-                                     resultHandler:^(NSData *_Nullable imageData,
-                                                     NSString *_Nullable dataUTI,
-                                                     CGImagePropertyOrientation orientation,
-                                                     NSDictionary *_Nullable info) {
-                                       resultHandler(imageData, dataUTI, info);
-                                     }];
-      } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [[PHImageManager defaultManager]
-            requestImageDataForAsset:originalAsset
-                             options:nil
-                       resultHandler:^(NSData *_Nullable imageData, NSString *_Nullable dataUTI,
-                                       UIImageOrientation orientation,
-                                       NSDictionary *_Nullable info) {
-                         resultHandler(imageData, dataUTI, info);
-                       }];
-#pragma clang diagnostic pop
-      }
+      [self.imageDataRequester
+          requestImageDataAndOrientationForAsset:originalAsset
+                                         options:nil
+                                   resultHandler:^(NSData *_Nullable imageData,
+                                                   NSString *_Nullable dataUTI,
+                                                   CGImagePropertyOrientation orientation,
+                                                   NSDictionary *_Nullable info) {
+                                     resultHandler(imageData, dataUTI, info);
+                                   }];
     }
   }
 }

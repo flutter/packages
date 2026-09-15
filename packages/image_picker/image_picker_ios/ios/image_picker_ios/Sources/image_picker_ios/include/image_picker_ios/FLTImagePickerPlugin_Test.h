@@ -78,6 +78,9 @@ typedef void (^FlutterResultAdapter)(NSArray<NSString *> *_Nullable, FlutterErro
 /// PHPicker factory. Overridable for tests.
 @property(nonatomic, strong) NSObject<FIPPHPickerCreating> *phPickerCreator API_AVAILABLE(ios(14));
 
+/// PHAsset image-data requests. Overridable for tests.
+@property(nonatomic, strong) NSObject<FIPImageDataRequesting> *imageDataRequester;
+
 /// Temporary window that swallows taps while UIImagePickerController dismisses.
 @property(nonatomic, strong, nullable) UIWindow *interactionBlockerWindow;
 
