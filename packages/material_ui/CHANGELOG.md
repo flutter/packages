@@ -1,3 +1,14 @@
+## 1.3.0
+
+- Adds `@awaitNotRequired` annotations to asynchronous functions that do not need to be awaited.
+- Adds an option for `MaterialPageRoute` and `MaterialPage` to opt out of introducing a semantics route scope.
+- Fixes SliverGeometry maxPaintExtent assertion in CarouselView.weighted
+- Corrects the Material 3 default style documentation for FilledButton to match its implementation.
+- Adds support for customizing date input formatters via
+  `CalendarDelegate.keyboardInputFormatters`, allowing custom date input
+  behavior in the Material date picker.
+- Adds a semanticLabel to MenuAnchor for the expanded menu overlay.
+
 ## 1.2.0
 
 - Adds the `StyleVariant` enum defining the Material 3 and Material 3 Expressive style variants.
