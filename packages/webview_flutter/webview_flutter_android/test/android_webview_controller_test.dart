@@ -1843,6 +1843,66 @@ void main() {
     expect(expectedIsWebViewFeatureEnabled, result);
   });
 
+  test('supportsAddDocumentStartJavaScript', () async {
+    String? captured;
+
+    final AndroidWebViewController controller = createControllerWithMocks(
+      isWebViewFeatureSupported: (String feature) async {
+        captured = feature;
+        return true;
+      },
+    );
+
+    await expectLater(controller.supportsAddDocumentStartJavaScript(), completion(isTrue));
+    expect(captured, WebViewFeatureConstants.documentStartScript);
+  });
+
+  group('addDocumentStartJavaScript', () {
+    test('Using AndroidDocumentStartJavaScriptParams model', () async {
+      final mockWebView = MockWebView();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        mockWebView: mockWebView,
+      );
+
+      android_webview.WebView? capturedWebView;
+      String? capturedScript;
+      List<String>? capturedRules;
+      android_webview.PigeonOverrides.webViewCompat_addDocumentStartJavaScript =
+          (android_webview.WebView webView, String script, List<String> allowedOriginRules) async {
+            capturedWebView = webView;
+            capturedScript = script;
+            capturedRules = allowedOriginRules;
+          };
+
+      await controller.addDocumentStartJavaScript(
+        const AndroidDocumentStartJavaScriptParams(
+          source: 'window.injected = true;',
+          allowedOriginRules: <String>{'https://example.com'},
+        ),
+      );
+
+      expect(capturedWebView, mockWebView);
+      expect(capturedScript, 'window.injected = true;');
+      expect(capturedRules, <String>['https://example.com']);
+    });
+
+    test('Using DocumentStartJavaScriptParams model defaults to every origin', () async {
+      final AndroidWebViewController controller = createControllerWithMocks();
+
+      List<String>? capturedRules;
+      android_webview.PigeonOverrides.webViewCompat_addDocumentStartJavaScript =
+          (android_webview.WebView webView, String script, List<String> allowedOriginRules) async {
+            capturedRules = allowedOriginRules;
+          };
+
+      await controller.addDocumentStartJavaScript(
+        const DocumentStartJavaScriptParams(source: 'window.injected = true;'),
+      );
+
+      expect(capturedRules, <String>['*']);
+    });
+  });
+
   test('isWebViewFeatureSupported webAuthentication', () async {
     String? captured;
     const expectedIsWebViewFeatureEnabled = true;

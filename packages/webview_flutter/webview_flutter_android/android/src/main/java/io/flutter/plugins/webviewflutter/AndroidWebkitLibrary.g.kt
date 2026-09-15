@@ -609,6 +609,12 @@ abstract class AndroidWebkitLibraryPigeonProxyApiRegistrar(val binaryMessenger: 
    */
   abstract fun getPigeonApiWebViewFeature(): PigeonApiWebViewFeature
 
+  /**
+   * An implementation of [PigeonApiWebViewCompat] used to add a new Dart instance of
+   * `WebViewCompat` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiWebViewCompat(): PigeonApiWebViewCompat
+
   fun setUp() {
     AndroidWebkitLibraryPigeonInstanceManagerApi.setUpMessageHandlers(
         binaryMessenger, instanceManager)
@@ -643,6 +649,7 @@ abstract class AndroidWebkitLibraryPigeonProxyApiRegistrar(val binaryMessenger: 
     PigeonApiWebSettingsCompat.setUpMessageHandlers(
         binaryMessenger, getPigeonApiWebSettingsCompat())
     PigeonApiWebViewFeature.setUpMessageHandlers(binaryMessenger, getPigeonApiWebViewFeature())
+    PigeonApiWebViewCompat.setUpMessageHandlers(binaryMessenger, getPigeonApiWebViewCompat())
   }
 
   fun tearDown() {
@@ -670,6 +677,7 @@ abstract class AndroidWebkitLibraryPigeonProxyApiRegistrar(val binaryMessenger: 
     PigeonApiCertificate.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiWebSettingsCompat.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiWebViewFeature.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiWebViewCompat.setUpMessageHandlers(binaryMessenger, null)
   }
 }
 
@@ -911,6 +919,12 @@ private class AndroidWebkitLibraryPigeonProxyApiBaseCodec(
       registrar.getPigeonApiWebViewFeature().pigeon_newInstance(value) {
         if (it.isFailure) {
           logNewInstanceFailure("WebViewFeature", value, it.exceptionOrNull())
+        }
+      }
+    } else if (value is androidx.webkit.WebViewCompat) {
+      registrar.getPigeonApiWebViewCompat().pigeon_newInstance(value) {
+        if (it.isFailure) {
+          logNewInstanceFailure("WebViewCompat", value, it.exceptionOrNull())
         }
       }
     }
@@ -6979,6 +6993,97 @@ abstract class PigeonApiWebViewFeature(
       val codec = pigeonRegistrar.codec
       val channelName =
           "dev.flutter.pigeon.webview_flutter_android.WebViewFeature.pigeon_newInstance"
+      val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+      channel.send(listOf(pigeon_identifierArg)) {
+        if (it is List<*>) {
+          if (it.size > 1) {
+            callback(
+                Result.failure(
+                    AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+          } else {
+            callback(Result.success(Unit))
+          }
+        } else {
+          callback(
+              Result.failure(AndroidWebkitLibraryPigeonUtils.createConnectionError(channelName)))
+        }
+      }
+    }
+  }
+}
+/**
+ * Compatibility version of `WebView`.
+ *
+ * See https://developer.android.com/reference/kotlin/androidx/webkit/WebViewCompat.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiWebViewCompat(
+    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+) {
+  /**
+   * Adds a JavaScript script to the `WebView` which will be executed in any frame whose origin
+   * matches `allowedOriginRules` when the document begins to load.
+   *
+   * This method should only be called if `WebViewFeature.isFeatureSupported` returns true for
+   * `WebViewFeature.DOCUMENT_START_SCRIPT`.
+   */
+  abstract fun addDocumentStartJavaScript(
+      webView: android.webkit.WebView,
+      script: String,
+      allowedOriginRules: List<String>
+  )
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiWebViewCompat?) {
+      val codec = api?.pigeonRegistrar?.codec ?: AndroidWebkitLibraryPigeonCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.WebViewCompat.addDocumentStartJavaScript",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val webViewArg = args[0] as android.webkit.WebView
+            val scriptArg = args[1] as String
+            val allowedOriginRulesArg = args[2] as List<String>
+            val wrapped: List<Any?> =
+                try {
+                  api.addDocumentStartJavaScript(webViewArg, scriptArg, allowedOriginRulesArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  AndroidWebkitLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of WebViewCompat and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: androidx.webkit.WebViewCompat,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+    } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      callback(Result.success(Unit))
+    } else {
+      val pigeon_identifierArg =
+          pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      val binaryMessenger = pigeonRegistrar.binaryMessenger
+      val codec = pigeonRegistrar.codec
+      val channelName =
+          "dev.flutter.pigeon.webview_flutter_android.WebViewCompat.pigeon_newInstance"
       val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
       channel.send(listOf(pigeon_identifierArg)) {
         if (it is List<*>) {
