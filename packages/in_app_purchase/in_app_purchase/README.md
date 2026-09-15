@@ -160,7 +160,7 @@ if (!available) {
 
 <?code-excerpt "readme_examples.dart (product-query)"?>
 ```dart
-const Set<String> productIds = <String>{'product1', 'product2'};
+const productIds = <String>{'product1', 'product2'};
 final ProductDetailsResponse response = await InAppPurchase.instance.queryProductDetails(
   productIds,
 );
@@ -168,6 +168,7 @@ if (response.notFoundIDs.isNotEmpty) {
   // Handle the error.
 }
 final List<ProductDetails> products = response.productDetails;
+print(products);
 ```
 
 ### Restoring previous purchases
@@ -200,7 +201,7 @@ call the right purchase method for each type.
 <?code-excerpt "readme_examples.dart (purchase-flow)"?>
 ```dart
 // `productDetails` was obtained earlier from `queryProductDetails()`.
-final PurchaseParam purchaseParam = PurchaseParam(productDetails: productDetails);
+final purchaseParam = PurchaseParam(productDetails: productDetails);
 if (_isConsumable(productDetails)) {
   InAppPurchase.instance.buyConsumable(purchaseParam: purchaseParam);
 } else {
@@ -220,7 +221,7 @@ import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 // ···
 Future<void> makeStoreKit2Purchase(ProductDetails productDetails) async {
   if (Platform.isIOS || Platform.isMacOS) {
-    final Sk2PurchaseParam purchaseParamSk2 = Sk2PurchaseParam(
+    final purchaseParamSk2 = Sk2PurchaseParam(
       productDetails: productDetails,
       winBackOfferId: 'your_win_back_offer_id',
     );

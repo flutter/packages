@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_print, public_member_api_docs
+
 import 'dart:async';
 import 'dart:io';
 
@@ -129,7 +131,7 @@ Future<void> checkStoreAvailability() async {
 
 Future<void> loadProducts() async {
   // #docregion product-query
-  const Set<String> productIds = <String>{'product1', 'product2'};
+  const productIds = <String>{'product1', 'product2'};
   final ProductDetailsResponse response = await InAppPurchase.instance.queryProductDetails(
     productIds,
   );
@@ -137,6 +139,7 @@ Future<void> loadProducts() async {
     // Handle the error.
   }
   final List<ProductDetails> products = response.productDetails;
+  print(products);
   // #enddocregion product-query
 }
 
@@ -149,7 +152,7 @@ Future<void> restorePurchases() async {
 void makePurchase(ProductDetails productDetails) {
   // #docregion purchase-flow
   // `productDetails` was obtained earlier from `queryProductDetails()`.
-  final PurchaseParam purchaseParam = PurchaseParam(productDetails: productDetails);
+  final purchaseParam = PurchaseParam(productDetails: productDetails);
   if (_isConsumable(productDetails)) {
     InAppPurchase.instance.buyConsumable(purchaseParam: purchaseParam);
   } else {
@@ -165,7 +168,7 @@ bool _isConsumable(ProductDetails productDetails) => productDetails.id == 'consu
 // #docregion sk2-purchase
 Future<void> makeStoreKit2Purchase(ProductDetails productDetails) async {
   if (Platform.isIOS || Platform.isMacOS) {
-    final Sk2PurchaseParam purchaseParamSk2 = Sk2PurchaseParam(
+    final purchaseParamSk2 = Sk2PurchaseParam(
       productDetails: productDetails,
       winBackOfferId: 'your_win_back_offer_id',
     );
