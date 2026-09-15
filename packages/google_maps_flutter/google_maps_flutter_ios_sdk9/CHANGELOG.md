@@ -1,3 +1,15 @@
+## 2.18.14
+
+* Adopts new Pigeon async Swift support.
+
+## 2.18.13
+
+* Converts remaining Objective-C code to Swift.
+
+## 2.18.12
+
+* Converts heatmap controller and data conversion to Swift.
+
 ## 2.18.11
 
 * Converts marker controllers to Swift.

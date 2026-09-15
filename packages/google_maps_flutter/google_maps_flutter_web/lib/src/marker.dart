@@ -303,11 +303,21 @@ class AdvancedMarkerController
 
   @override
   void update(gmaps.AdvancedMarkerElementOptions options, {web.HTMLElement? newInfoWindowContent}) {
+    _update(options, isContentUpdateRequired: true, newInfoWindowContent: newInfoWindowContent);
+  }
+
+  void _update(
+    gmaps.AdvancedMarkerElementOptions options, {
+    required bool isContentUpdateRequired,
+    web.HTMLElement? newInfoWindowContent,
+  }) {
     assert(_marker != null, 'Cannot `update` Marker after calling `remove`.');
 
     final gmaps.AdvancedMarkerElement marker = _marker!;
     marker.collisionBehavior = options.collisionBehavior;
-    marker.content = options.content;
+    if (isContentUpdateRequired) {
+      marker.content = options.content;
+    }
     marker.gmpDraggable = options.gmpDraggable;
     marker.position = options.position;
     marker.title = options.title ?? '';
