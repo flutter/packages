@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'dart:io';
+///
 /// @docImport 'package:cupertino_ui/cupertino_ui.dart';
 ///
 /// @docImport 'drawer.dart';
@@ -9,13 +11,13 @@
 library;
 
 import 'dart:developer' show Flow, Timeline;
-import 'dart:io' show Platform;
 
 import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoDialogAction;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart' hide Flow;
 
+import '_about_io.dart' if (dart.library.js_interop) '_about_web.dart' as about;
 import 'app_bar.dart';
 import 'back_button.dart';
 import 'card.dart';
@@ -1201,7 +1203,7 @@ String _defaultApplicationName(BuildContext context) {
   // can provide an explicit applicationName to the widgets defined in this
   // file, instead of relying on the default.
   final Title? ancestorTitle = context.findAncestorWidgetOfExactType<Title>();
-  return ancestorTitle?.title ?? Platform.resolvedExecutable.split(Platform.pathSeparator).last;
+  return ancestorTitle?.title ?? about.executableName;
 }
 
 String _defaultApplicationVersion(BuildContext context) {
