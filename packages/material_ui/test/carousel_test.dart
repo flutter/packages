@@ -2332,6 +2332,51 @@ void main() {
     }
   });
 
+  testWidgets('CarouselView.weightedBuilder infinite scrolling wraps correctly in onIndexChanged', (
+    WidgetTester tester,
+  ) async {
+    final controller = CarouselController();
+    addTearDown(controller.dispose);
+    final reportedIndices = <int>[];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CarouselView.weightedBuilder(
+            itemCount: 5,
+            flexWeights: const <int>[1, 2, 3, 2, 1],
+            infinite: true,
+            controller: controller,
+            onIndexChanged: (int index) {
+              reportedIndices.add(index);
+            },
+            itemBuilder: (BuildContext context, int index) {
+              return Center(child: Text('Item $index'));
+            },
+          ),
+        ),
+      ),
+    );
+
+    // Scroll forward by dragging left.
+    for (var i = 1; i <= 7; i++) {
+      await tester.drag(find.byType(CarouselView), const Offset(-200, 0));
+      await tester.pumpAndSettle();
+    }
+
+    // Scroll backward by dragging right.
+    for (var i = 1; i <= 7; i++) {
+      await tester.drag(find.byType(CarouselView), const Offset(200, 0));
+      await tester.pumpAndSettle();
+    }
+
+    // Verify the onIndexChanged callback was invoked with correct wrapped indices.
+    expect(reportedIndices.length, greaterThan(0));
+    for (final index in reportedIndices) {
+      expect(index, inInclusiveRange(0, 4));
+    }
+  });
+
   testWidgets('CarouselView infinite animateToItem scrolls forward to next item', (
     WidgetTester tester,
   ) async {
@@ -2566,6 +2611,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(controller.leadingItem, equals(3));
+      expect(controller.activeIndex, equals(3));
       expect(leadingIndex, equals(3));
 
       unawaited(
@@ -2577,6 +2623,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(controller.leadingItem, equals(1));
+      expect(controller.activeIndex, equals(1));
       expect(leadingIndex, equals(1));
     });
 
@@ -2609,7 +2656,8 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(controller.leadingItem, equals(3));
-        expect(leadingIndex, equals(3));
+        expect(controller.activeIndex, equals(4));
+        expect(leadingIndex, equals(4));
         expect(find.text('Item 3'), findsOneWidget);
       },
     );
@@ -2641,7 +2689,8 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(controller.leadingItem, equals(0));
-        expect(leadingIndex, equals(0));
+        expect(controller.activeIndex, equals(2));
+        expect(leadingIndex, equals(2));
       },
     );
 
@@ -2666,7 +2715,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(controller.leadingItem, equals(1));
-      expect(leadingIndex, equals(1));
+      expect(controller.activeIndex, equals(2));
+      expect(leadingIndex, equals(2));
     });
 
     testWidgets('CarouselView with reverse=true reports correct leading item after animation', (
@@ -2695,6 +2745,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(controller.leadingItem, equals(2));
+      expect(controller.activeIndex, equals(2));
       expect(leadingIndex, equals(2));
     });
 
@@ -2722,7 +2773,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(controller.leadingItem, equals(1));
-      expect(leadingIndex, equals(1));
+      expect(controller.activeIndex, equals(2));
+      expect(leadingIndex, equals(2));
     });
   });
 
@@ -2998,6 +3050,107 @@ void main() {
     // Verify no SliverGeometry exception was thrown.
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('CarouselController activeIndex updates midway through scroll for weighted carousels', (
+    WidgetTester tester,
+  ) async {
+    final controller = CarouselController();
+    addTearDown(controller.dispose);
+    var reportedIndex = 0;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CarouselView.weighted(
+            controller: controller,
+            flexWeights: const <int>[1, 7, 1], // Max weight at index 1
+            onIndexChanged: (int index) {
+              reportedIndex = index;
+            },
+            children: List<Widget>.generate(10, (int index) {
+              return Center(child: Text('Item $index'));
+            }),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Initial state: leadingItem is 0, activeIndex is 0
+    expect(controller.leadingItem, 0);
+    expect(controller.activeIndex, 0);
+    expect(reportedIndex, 0);
+
+    // Scroll by more than half of the first item (400px / 9 = 44.44px for item 0, half is 22.22px).
+    // We scroll by 50px, which is > half of the first item.
+    controller.jumpTo(50.0);
+    await tester.pumpAndSettle();
+
+    // At > 0.5 of the first item, activeIndex should round up to the next item (1),
+    // but leadingItem should still be 0 since it hasn't crossed the full item boundary yet.
+    expect(controller.leadingItem, 0);
+    expect(controller.activeIndex, 1);
+    expect(reportedIndex, 1);
+
+    // Scroll past the full item boundary (e.g., 90px > 88.88px)
+    controller.jumpTo(90.0);
+    await tester.pumpAndSettle();
+
+    // Now leadingItem should be 0 (because of maxWeightIndex offset logic internally),
+    // activeIndex should still be 1.
+    expect(controller.leadingItem, 0);
+    expect(controller.activeIndex, 1);
+    expect(reportedIndex, 1);
+  });
+
+  testWidgets(
+    'CarouselController activeIndex updates midway through scroll for unweighted carousels',
+    (WidgetTester tester) async {
+      final controller = CarouselController();
+      addTearDown(controller.dispose);
+      var reportedIndex = 0;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: CarouselView(
+              itemExtent: 200,
+              controller: controller,
+              onIndexChanged: (int index) {
+                reportedIndex = index;
+              },
+              children: List<Widget>.generate(10, (int index) {
+                return Center(child: Text('Item $index'));
+              }),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Initial state
+      expect(controller.leadingItem, 0);
+      expect(controller.activeIndex, 0);
+      expect(reportedIndex, 0);
+
+      // Scroll by half an item (100px). For unweighted carousels, activeIndex should
+      // update to 1 because it uses `.round()`, but leadingItem remains 0.
+      controller.jumpTo(100.0);
+      await tester.pumpAndSettle();
+
+      expect(controller.leadingItem, 0);
+      expect(controller.activeIndex, 1);
+      expect(reportedIndex, 1);
+
+      // Scroll past the item (200px)
+      controller.jumpTo(201.0);
+      await tester.pumpAndSettle();
+
+      expect(controller.leadingItem, 1);
+      expect(controller.activeIndex, 1);
+      expect(reportedIndex, 1);
+    },
+  );
 }
 
 Finder getItem(int index) {
