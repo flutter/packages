@@ -279,22 +279,41 @@ struct ImagePickerPluginTests {
     }
   }
 
-  @Test func sendsImageInvalidSourceError() async {
-    let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
+  /// Captures `processPickerItems` completion.
+  ///
+  /// `#expect` inside that callback is not attributed to the test: the
+  /// picker delivers results off the calling thread, so those expectations
+  /// cannot fail `xcodebuild`. Capture here and assert after `confirmation`.
+  private func processPickerItems(
+    _ items: [any PickerItem], using plugin: FLTImagePickerPlugin
+  ) async -> (paths: [String]?, error: FlutterError?, onMainThread: Bool) {
     let picker = PHPickerViewController(configuration: PHPickerConfiguration())
-    let failItem = FakePickerItem(itemProvider: NSItemProvider(), assetIdentifier: nil)
+    nonisolated(unsafe) var received: [String]?
+    nonisolated(unsafe) var receivedError: FlutterError?
+    nonisolated(unsafe) var onMainThread = false
     await confirmation("result") { confirmed in
       await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
         plugin.callContext = FLTImagePickerMethodCallContext { result, error in
-          #expect(Thread.isMainThread)
-          #expect(result == nil)
-          #expect(error?.code == "invalid_source")
+          onMainThread = Thread.isMainThread
+          received = result
+          receivedError = error
           confirmed()
           continuation.resume()
         }
-        plugin.processPickerItems([failItem, failItem], fromPicker: picker)
+        plugin.processPickerItems(items, fromPicker: picker)
       }
     }
+    return (received, receivedError, onMainThread)
+  }
+
+  @Test func sendsImageInvalidSourceError() async {
+    let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
+    let failItem = FakePickerItem(itemProvider: NSItemProvider(), assetIdentifier: nil)
+    let (paths, error, onMainThread) = await processPickerItems(
+      [failItem, failItem], using: plugin)
+    #expect(onMainThread)
+    #expect(paths == nil)
+    #expect(error?.code == "invalid_source")
   }
 
   @Test func sendsImageInvalidErrorWhenOneFails() async throws {
@@ -306,19 +325,11 @@ struct ImagePickerPluginTests {
     let tiffItem = FakePickerItem(
       itemProvider: NSItemProvider(contentsOf: tiffURL)!, assetIdentifier: nil)
     let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
-    let picker = PHPickerViewController(configuration: PHPickerConfiguration())
-    await confirmation("result") { confirmed in
-      await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-        plugin.callContext = FLTImagePickerMethodCallContext { result, error in
-          #expect(Thread.isMainThread)
-          #expect(result == nil)
-          #expect(error?.code == "invalid_image")
-          confirmed()
-          continuation.resume()
-        }
-        plugin.processPickerItems([failItem, tiffItem], fromPicker: picker)
-      }
-    }
+    let (paths, error, onMainThread) = await processPickerItems(
+      [failItem, tiffItem], using: plugin)
+    #expect(onMainThread)
+    #expect(paths == nil)
+    #expect(error?.code == "invalid_image")
   }
 
   @Test func savesImages() async throws {
@@ -331,19 +342,11 @@ struct ImagePickerPluginTests {
     let pngItem = FakePickerItem(
       itemProvider: NSItemProvider(contentsOf: pngURL)!, assetIdentifier: nil)
     let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
-    let picker = PHPickerViewController(configuration: PHPickerConfiguration())
-    await confirmation("result") { confirmed in
-      await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-        plugin.callContext = FLTImagePickerMethodCallContext { result, error in
-          #expect(Thread.isMainThread)
-          #expect(result?.count == 2)
-          #expect(error == nil)
-          confirmed()
-          continuation.resume()
-        }
-        plugin.processPickerItems([tiffItem, pngItem], fromPicker: picker)
-      }
-    }
+    let (paths, error, onMainThread) = await processPickerItems(
+      [tiffItem, pngItem], using: plugin)
+    #expect(onMainThread)
+    #expect(paths?.count == 2)
+    #expect(error == nil)
   }
 
   @Test func pickImageDoesntRequestAuthorization() {
@@ -962,6 +965,40 @@ struct ImagePickerPluginTests {
         UIImagePickerController(),
         didFinishPickingMediaWithInfo: [.originalImage: image])
     }
+  }
+
+  @Test func imagePickerDidFinishPickingWithFullMetadataAsset() async {
+    let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
+    let requester = FakeImageDataRequester()
+    requester.imageData = ImagePickerTestImages.jpgTestData
+    plugin.imageDataRequester = requester
+    let image = UIImage(data: ImagePickerTestImages.jpgTestData)!
+    let asset = PHAsset()
+    nonisolated(unsafe) var received: [String]?
+    await confirmation("result") { confirmed in
+      plugin.callContext = FLTImagePickerMethodCallContext { result, _ in
+        received = result
+        confirmed()
+      }
+      plugin.callContext?.maxSize = FLTMaxSize()
+      plugin.callContext?.requestFullMetadata = true
+      plugin.imagePickerController(
+        UIImagePickerController(),
+        didFinishPickingMediaWithInfo: [
+          .originalImage: image,
+          .phAsset: asset,
+        ])
+    }
+    #expect(requester.requestedAsset === asset)
+    #expect(received?.count == 1)
+  }
+
+  @Test func defaultViewProviderReturnsRegistrarViewController() {
+    let host = UIViewController()
+    let registrar = TestFlutterPluginRegistrar()
+    registrar.viewController = host
+    let provider = FIPDefaultViewProvider(registrar: registrar)
+    #expect(provider.viewController === host)
   }
 
   @Test func imagePickerDidFinishPickingVideo() async {

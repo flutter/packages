@@ -1,6 +1,6 @@
 ## 0.8.13+9
 
-* Adds injectable protocol seams for camera, photo library, and PHPicker APIs.
+* Adds injectable protocol seams for camera, photo library, PHPicker, and PHImageManager APIs.
 
 ## 0.8.13+8
 

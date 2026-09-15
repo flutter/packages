@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 import AVFoundation
+import Flutter
+import ImageIO
 import Photos
 import PhotosUI
 import UIKit
@@ -16,6 +18,30 @@ final class StubViewProvider: NSObject, FIPViewProvider {
   init(viewController: UIViewController? = nil) {
     self.viewController = viewController
   }
+}
+
+/// Minimal `FlutterPluginRegistrar` so tests can exercise `FIPDefaultViewProvider`.
+final class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
+  var viewController: UIViewController?
+
+  func publish(_ value: NSObject) {}
+  func addMethodCallDelegate(_ delegate: FlutterPlugin, channel: FlutterMethodChannel) {}
+  func addApplicationDelegate(_ delegate: FlutterPlugin) {}
+  func addSceneDelegate(_ delegate: FlutterSceneLifeCycleDelegate) {}
+  func lookupKey(forAsset asset: String) -> String { "" }
+  func lookupKey(forAsset asset: String, fromPackage package: String) -> String { "" }
+  func valuePublished(byPlugin pluginKey: String) -> NSObject? { nil }
+  func messenger() -> FlutterBinaryMessenger {
+    fatalError("TestFlutterPluginRegistrar.messenger is unused")
+  }
+  func textures() -> FlutterTextureRegistry {
+    fatalError("TestFlutterPluginRegistrar.textures is unused")
+  }
+  func register(_ factory: FlutterPlatformViewFactory, withId factoryId: String) {}
+  func register(
+    _ factory: FlutterPlatformViewFactory, withId factoryId: String,
+    gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy
+  ) {}
 }
 
 /// Records `sourceType` / `cameraDevice` without UIKit's availability checks.
@@ -128,6 +154,24 @@ final class RecordingPHPickerCreator: NSObject, PHPickerCreating {
   func makePicker(configuration: __PHPickerConfiguration) -> PHPickerViewController {
     lastConfiguration = configuration
     return picker
+  }
+}
+
+/// Stubs `PHImageManager.requestImageDataAndOrientation` for plugin tests.
+final class FakeImageDataRequester: NSObject, ImageDataRequesting {
+  private(set) var requestedAsset: PHAsset?
+  var imageData: Data?
+  var dataUTI: String? = "public.jpeg"
+  var orientation: CGImagePropertyOrientation = .up
+
+  func requestImageDataAndOrientation(
+    for asset: PHAsset, options: PHImageRequestOptions?,
+    resultHandler:
+      @escaping (Data?, String?, CGImagePropertyOrientation, [AnyHashable: Any]?) ->
+      Void
+  ) {
+    requestedAsset = asset
+    resultHandler(imageData, dataUTI, orientation, nil)
   }
 }
 
