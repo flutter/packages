@@ -60,6 +60,13 @@ class SwiftOptions {
   /// concurrency annotations (such as `@Sendable` or `@MainActor`) that allows
   /// the Swift compiler to catch data races in the client plugin's Swift code.
   ///
+  /// Consider disabling this flag when [useFfi] is true since it is not fully supported.
+  ///
+  /// Pigeon may still add concurrency annotations to generated Swift code when
+  /// this is disabled, as some concurrency annotations predate this flag and are
+  /// crucial to the execution semantics of the Swift code, for backward compatibility
+  /// they are always added regardless of this flag.
+  ///
   /// To get the full benefit, consider enabling Swift strict concurrency checking
   /// in your plugin's Swift targets. For more details, see the
   /// [Swift Concurrency Migration Guide](https://www.swift.org/migration/documentation/swift-6-concurrency-migration-guide/).
@@ -1282,7 +1289,12 @@ if (wrapped == nil) {
             errorTypeName: _getErrorClassName(generatorOptions),
             isAsynchronous: true,
             isAsynchronousCallback: func.isAsynchronousCallback,
-            isMainActor: generatorOptions.swiftStrictConcurrency || !func.isAsynchronousCallback,
+            methodAnnotations: <String>[
+              // Some @MainActor annotation predates the GeneratorOptions flag:
+              // https://github.com/flutter/flutter/issues/192199
+              if (generatorOptions.swiftStrictConcurrency || !func.isAsynchronousCallback)
+                '@MainActor',
+            ],
             isCompletionClosureMainActor: generatorOptions.swiftStrictConcurrency,
             swiftFunction: func.swiftFunction,
             getParameterName: _getSafeArgumentName,
@@ -1360,7 +1372,8 @@ if (wrapped == nil) {
     indent.newln();
     indent.write('@objc class ${api.name}Registrar: NSObject ');
     indent.addScoped('{', '}', () {
-      indent.writeln('static var registered${api.name} = [String: ${api.name}]()');
+      final isolation = generatorOptions.swiftStrictConcurrency ? 'nonisolated(unsafe) ' : '';
+      indent.writeln('${isolation}static var registered${api.name} = [String: ${api.name}]()');
       indent.newln();
       indent.write(
         '@objc static func registerInstance(api: ${api.name}Bridge?, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) ',
@@ -1582,9 +1595,10 @@ if (wrapped == nil) {
   }) {
     final String apiName = api.name;
     if (generatorOptions.useFfi) {
+      final isolation = generatorOptions.swiftStrictConcurrency ? 'nonisolated(unsafe) ' : '';
       indent.format('''
         class ${apiName}InstanceTracker {
-          static var instancesOf$apiName = [String: ${apiName}Setup?]()
+          ${isolation}static var instancesOf$apiName = [String: ${apiName}Setup?]()
         }
         ''');
     }
@@ -1618,10 +1632,11 @@ if (wrapped == nil) {
             isAsynchronousCallback: method.isAsynchronousCallback,
             swiftFunction: method.swiftFunction,
             methodAnnotations: [
-              if (generatorOptions.swiftStrictConcurrency)
+              if (generatorOptions.swiftStrictConcurrency && !generatorOptions.useFfi)
                 _ActorIsolation.from(taskQueueType: method.taskQueueType).annotation,
             ],
-            isCompletionClosureSendable: generatorOptions.swiftStrictConcurrency,
+            isCompletionClosureSendable:
+                generatorOptions.swiftStrictConcurrency && !generatorOptions.useFfi,
             ffiUserApi: generatorOptions.useFfi,
           ),
         );
@@ -2668,8 +2683,10 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
       errorTypeName: _getErrorClassName(generatorOptions),
       isAsynchronous: isAsynchronous,
       isAsynchronousCallback: isAsynchronousCallback,
-      isMainActor:
-          generatorOptions.swiftStrictConcurrency || (isAsynchronous && !isAsynchronousCallback),
+      methodAnnotations: <String>[
+        if (generatorOptions.swiftStrictConcurrency || (isAsynchronous && !isAsynchronousCallback))
+          '@MainActor',
+      ],
       isCompletionClosureMainActor: generatorOptions.swiftStrictConcurrency,
       swiftFunction: swiftFunction,
       getParameterName: _getSafeArgumentName,
@@ -3108,7 +3125,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         ],
         returnType: apiAsTypeDeclaration,
         errorTypeName: '',
-        isMainActor: generatorOptions.swiftStrictConcurrency,
+        methodAnnotations: <String>[if (generatorOptions.swiftStrictConcurrency) '@MainActor'],
       );
       indent.writeln(methodSignature);
 
@@ -3151,7 +3168,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         ],
         returnType: field.type,
         errorTypeName: '',
-        isMainActor: generatorOptions.swiftStrictConcurrency,
+        methodAnnotations: <String>[if (generatorOptions.swiftStrictConcurrency) '@MainActor'],
       );
       indent.writeln(methodSignature);
 
@@ -3194,7 +3211,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         ],
         returnType: field.type,
         errorTypeName: '',
-        isMainActor: generatorOptions.swiftStrictConcurrency,
+        methodAnnotations: <String>[if (generatorOptions.swiftStrictConcurrency) '@MainActor'],
       );
       indent.writeln(methodSignature);
 
@@ -3245,7 +3262,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         isAsynchronous: method.isAsynchronous,
         isAsynchronousCallback: true,
         errorTypeName: 'Error',
-        isMainActor: generatorOptions.swiftStrictConcurrency,
+        methodAnnotations: <String>[if (generatorOptions.swiftStrictConcurrency) '@MainActor'],
         isCompletionClosureSendable: generatorOptions.swiftStrictConcurrency,
       );
       indent.writeln(methodSignature);
@@ -3509,7 +3526,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
       isAsynchronous: true,
       isAsynchronousCallback: true,
       errorTypeName: _getErrorClassName(generatorOptions),
-      isMainActor: generatorOptions.swiftStrictConcurrency,
+      methodAnnotations: <String>[if (generatorOptions.swiftStrictConcurrency) '@MainActor'],
       isCompletionClosureMainActor: generatorOptions.swiftStrictConcurrency,
     );
     indent.writeScoped('$methodSignature {', '}', () {
@@ -3619,7 +3636,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         isAsynchronous: true,
         isAsynchronousCallback: true,
         errorTypeName: _getErrorClassName(generatorOptions),
-        isMainActor: generatorOptions.swiftStrictConcurrency,
+        methodAnnotations: <String>[if (generatorOptions.swiftStrictConcurrency) '@MainActor'],
         isCompletionClosureMainActor: generatorOptions.swiftStrictConcurrency,
         getParameterName: _getSafeArgumentName,
       );
@@ -4084,7 +4101,6 @@ String _getMethodSignature({
   bool isAsynchronous = false,
   bool ffiUserApi = false,
   bool isAsynchronousCallback = false,
-  bool isMainActor = false,
   bool isCompletionClosureSendable = false,
   bool isCompletionClosureMainActor = false,
   Iterable<String> methodAnnotations = const <Never>[],
