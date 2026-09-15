@@ -8,7 +8,7 @@ A Flutter plugin that provides a [Google Maps](https://developers.google.com/map
 
 |             | Android | iOS     | Web                              |
 |-------------|---------|---------|----------------------------------|
-| **Support** | SDK 24+ | iOS 14+ | Same as [Flutter's][web-support] |
+| **Support** | SDK 24+ | iOS 15+ | Same as [Flutter's][web-support] |
 
 [web-support]: https://docs.flutter.dev/reference/supported-platforms
 
@@ -39,10 +39,12 @@ For more details, see [Getting started with Google Maps Platform](https://develo
 ### Platform Setup
 
 * **Android**: Please see [the `google_maps_flutter_android` README](https://pub.dev/packages/google_maps_flutter_android#setup).
-* **iOS**: Please select an SDK version, and see the relevant README:
-  * [8.4 (iOS 14+)](https://pub.dev/packages/google_maps_flutter_ios#setup)
-  * [SDK 9.x (iOS 15+)](https://pub.dev/packages/google_maps_flutter_ios_sdk9#setup)
+* **iOS**: Please select an SDK version, and see the relevant README. Note that
+  the default implementation, `google_maps_ios`, is a legacy implementation that
+  does not support Swift Package Manager, and will not receive future updates.
+  All clients should migrate to one of the following implementations:
   * [SDK 10.x (iOS 16+)](https://pub.dev/packages/google_maps_flutter_ios_sdk10#setup)
+  * [SDK 9.x (iOS 15+)](https://pub.dev/packages/google_maps_flutter_ios_sdk9#setup)
 * **Web**: Please see [the `google_maps_flutter_web` README](https://pub.dev/packages/google_maps_flutter_web#setup).
 
 ### Advanced Markers
