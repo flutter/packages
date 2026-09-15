@@ -374,6 +374,20 @@ void main() {
       expect(package.requiresFlutter(), true);
     });
 
+    for (final dependencyType in <String>['dependencies', 'dev_dependencies']) {
+      test('returns true for jni in $dependencyType', () {
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+        final String pubspec = package.pubspecFile.readAsStringSync();
+        package.pubspecFile.writeAsStringSync(
+          dependencyType == 'dependencies'
+              ? pubspec.replaceFirst('dependencies:\n', 'dependencies:\n  jni: ^0.1.1\n')
+              : '$pubspec\ndev_dependencies:\n  jni: ^0.1.1\n',
+        );
+
+        expect(package.requiresFlutter(), true);
+      });
+    }
+
     test('returns false for non-Flutter package', () async {
       final RepositoryPackage package = createFakePackage('a_package', packagesDir);
       expect(package.requiresFlutter(), false);
