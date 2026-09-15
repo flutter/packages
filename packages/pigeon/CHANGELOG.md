@@ -1,3 +1,7 @@
+## 29.0.2
+
+* [swift] Added experimental support for Swift strict concurrency annotations via `SwiftOptions`.
+
 ## 29.0.1
 
 * [swift] Annotates async `FlutterApi` methods with `@MainActor`.
