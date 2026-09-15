@@ -1145,6 +1145,13 @@ class _ViewContentState extends State<_ViewContent> {
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
+        final double keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
+        // Keep non-fullscreen search views above the keyboard so suggestions
+        // remain visible while the search field is focused.
+        final double maxNonFullScreenHeight = math.max(
+          minHeight,
+          math.min(_viewRect.height, constraints.maxHeight - keyboardInset - _viewRect.top),
+        );
         return Align(
           alignment: Alignment.topLeft,
           child: Transform.translate(
@@ -1158,7 +1165,7 @@ class _ViewContentState extends State<_ViewContent> {
                 minHeight: minHeight,
                 maxHeight: widget.showFullScreenView
                     ? math.max(constraints.maxHeight, minHeight)
-                    : _viewRect.height,
+                    : maxNonFullScreenHeight,
               ),
               child: Padding(
                 padding: widget.showFullScreenView
@@ -1242,9 +1249,12 @@ class _ViewContentState extends State<_ViewContent> {
                                         context: context,
                                         removeTop: true,
                                         child: ListView(
-                                          padding: EdgeInsets.only(
-                                            bottom: MediaQuery.viewInsetsOf(context).bottom,
-                                          ),
+                                          // Non-fullscreen views shrink to sit above the keyboard.
+                                          // Fullscreen views keep bottom padding so the list can
+                                          // scroll clear of the keyboard.
+                                          padding: widget.showFullScreenView
+                                              ? EdgeInsets.only(bottom: keyboardInset)
+                                              : EdgeInsets.zero,
                                           shrinkWrap: effectiveShrinkWrap,
                                           children: result.toList(),
                                         ),
