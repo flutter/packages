@@ -62,7 +62,7 @@ class InFlightReleaseCheckCommand extends PackageCommand {
     }
     final RepositoryPackage package = packages.single;
 
-    final pubspec = Pubspec.parse(package.pubspecFile.readAsStringSync());
+    final Pubspec pubspec = package.parsePubspec();
     final Version? currentVersion = pubspec.version;
     if (currentVersion == null) {
       printError('The package has no version specified.');

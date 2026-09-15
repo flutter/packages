@@ -77,7 +77,7 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
       return;
     }
 
-    final pubspec = Pubspec.parse(package.pubspecFile.readAsStringSync());
+    final Pubspec pubspec = package.parsePubspec();
     if (pubspec.version == null) {
       printError('The package has no version specified.');
       throw ToolExit(_kExitPackageMalformed);
