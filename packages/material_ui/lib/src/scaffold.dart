@@ -8,6 +8,7 @@
 /// @docImport 'bottom_app_bar.dart';
 /// @docImport 'bottom_navigation_bar.dart';
 /// @docImport 'bottom_sheet_theme.dart';
+/// @docImport 'color_scheme.dart';
 /// @docImport 'drawer_theme.dart';
 /// @docImport 'icon_button.dart';
 /// @docImport 'tab_controller.dart';
@@ -1955,7 +1956,8 @@ class Scaffold extends StatefulWidget {
   /// The color to use for the scrim that obscures primary content while a drawer is open.
   ///
   /// If this is null, then [DrawerThemeData.scrimColor] is used. If that
-  /// is also null, then it defaults to [Colors.black54].
+  /// is also null, then [ColorScheme.scrim] is used with an opacity matching
+  /// [Colors.black54].
   final Color? drawerScrimColor;
 
   /// A builder for the widget that obscures primary content while a bottom sheet is open.
