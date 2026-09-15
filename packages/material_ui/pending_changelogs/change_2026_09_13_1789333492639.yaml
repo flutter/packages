@@ -1,4 +1,5 @@
 changelog: |
-  - Introduce `activeIndex` property to `CarouselController` and `CarouselPosition`.
-  - Update `CarouselView.weighted` `onIndexChanged` to report the index of the maximum weight item based on `activeIndex`.
+  - Introduce `activeIndex` property to `CarouselController` and `CarouselPosition` for tracking the most prominent item.
+  - Update `onIndexChanged` callback to rely on `activeIndex` for both weighted and unweighted `CarouselView`s.
+  - Update documentation to clearly distinguish `activeIndex` from `leadingItem`.
 version: minor
