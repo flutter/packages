@@ -1309,7 +1309,7 @@ class _SearchAnchorWithSearchBar extends SearchAnchor {
     super.textInputAction,
     super.keyboardType,
     EdgeInsets scrollPadding = const EdgeInsets.all(20.0),
-    EditableTextContextMenuBuilder contextMenuBuilder = SearchBar._defaultContextMenuBuilder,
+    EditableTextContextMenuBuilder? contextMenuBuilder,
     super.enabled,
     super.smartDashesType,
     super.smartQuotesType,
@@ -1486,7 +1486,7 @@ class SearchBar extends StatefulWidget {
     this.textInputAction,
     this.keyboardType,
     this.scrollPadding = const EdgeInsets.all(20.0),
-    this.contextMenuBuilder = _defaultContextMenuBuilder,
+    this.contextMenuBuilder,
     this.readOnly = false,
     this.smartDashesType,
     this.smartQuotesType,
@@ -1677,16 +1677,6 @@ class SearchBar extends StatefulWidget {
   ///  * [TextField.smartQuotesType], which provides the same
   ///    configuration option on a standalone [TextField].
   final SmartQuotesType? smartQuotesType;
-
-  static Widget _defaultContextMenuBuilder(
-    BuildContext context,
-    EditableTextState editableTextState,
-  ) {
-    if (SystemContextMenu.isSupportedByField(editableTextState)) {
-      return SystemContextMenu.editableText(editableTextState: editableTextState);
-    }
-    return AdaptiveTextSelectionToolbar.editableText(editableTextState: editableTextState);
-  }
 
   @override
   State<SearchBar> createState() => _SearchBarState();
