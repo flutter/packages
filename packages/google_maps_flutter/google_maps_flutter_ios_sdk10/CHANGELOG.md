@@ -1,3 +1,7 @@
+## 2.18.13
+
+* Adopts new Pigeon async Swift support.
+
 ## 2.18.12
 
 * Converts remaining Objective-C code to Swift.

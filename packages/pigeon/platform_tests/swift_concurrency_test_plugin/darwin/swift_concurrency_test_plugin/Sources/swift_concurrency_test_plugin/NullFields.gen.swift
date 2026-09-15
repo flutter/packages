@@ -418,7 +418,7 @@ class NullFieldsFlutterApi: NullFieldsFlutterApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: NullFieldsError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: NullFieldsError(
                 code: "null-error",

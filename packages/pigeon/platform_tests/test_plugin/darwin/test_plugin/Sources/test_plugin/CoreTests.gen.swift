@@ -5002,7 +5002,7 @@ class FlutterCallbackCoreApi: FlutterCallbackCoreApiProtocol {
           let message: String? = nilOrValue(listResponse[1])
           let details: String? = nilOrValue(listResponse[2])
           completion(.failure(PigeonError(code: code, message: message, details: details)))
-        } else if listResponse[0] == nil {
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
           completion(
             .failure(
               PigeonError(
@@ -5315,7 +5315,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5381,7 +5381,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5448,7 +5448,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5480,7 +5480,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5512,7 +5512,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5544,7 +5544,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5576,7 +5576,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5609,7 +5609,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5641,7 +5641,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5673,7 +5673,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5707,7 +5707,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5739,7 +5739,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5773,7 +5773,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5805,7 +5805,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5839,7 +5839,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5871,7 +5871,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5903,7 +5903,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5937,7 +5937,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -5971,7 +5971,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -6003,7 +6003,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -6036,7 +6036,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -6070,7 +6070,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -6102,7 +6102,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -6134,7 +6134,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -6784,7 +6784,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -6816,7 +6816,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -7128,7 +7128,7 @@ class FlutterSmallApi: FlutterSmallApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
@@ -7159,7 +7159,7 @@ class FlutterSmallApi: FlutterSmallApiProtocol {
             let details: String? = nilOrValue(listResponse[2])
             continuation.resume(
               throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil {
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
             continuation.resume(
               throwing: PigeonError(
                 code: "null-error",
