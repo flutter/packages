@@ -6,10 +6,7 @@ environment:
   flutter: ">=3.38.0"
 
 dependencies:
-  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_platform_interface` is
-  # released.
-  cross_file_platform_interface:
-    path: ../../cross_file_platform_interface
+  cross_file_platform_interface: ^1.0.0
   cross_file_web:
     # When depending on this package from a real application you should use:
     #   cross_file_web: ^x.y.z

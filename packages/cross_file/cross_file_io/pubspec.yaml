@@ -19,10 +19,7 @@ flutter:
         dartPluginClass: CrossFileIO
 
 dependencies:
-  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_platform_interface` is
-  # released.
-  cross_file_platform_interface:
-    path: ../cross_file_platform_interface
+  cross_file_platform_interface: ^1.0.0
   flutter:
     sdk: flutter
   path: ^1.9.1

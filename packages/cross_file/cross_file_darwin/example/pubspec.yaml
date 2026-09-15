@@ -14,10 +14,7 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_platform_interface` is
-  # released.
-  cross_file_platform_interface:
-    path: ../../cross_file_platform_interface
+  cross_file_platform_interface: ^1.0.0
   cupertino_icons: ^1.0.8
   flutter:
     sdk: flutter

@@ -35,8 +35,6 @@ dependencies:
   # TODO(bparrishMines): Change this to hosted dependency once `cross_file_io` is released.
   cross_file_io:
     path: ../cross_file_io
-  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_platform_interface` is
-  # released.
   cross_file_platform_interface: ^1.0.0
   # TODO(bparrishMines): Change this to hosted dependency once `cross_file_web` is released.
   cross_file_web:
