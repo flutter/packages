@@ -293,6 +293,8 @@ class MaterialApp extends StatefulWidget {
   /// Creates a [MaterialApp] that uses the [Router] instead of a [Navigator].
   ///
   /// {@macro flutter.widgets.WidgetsApp.router}
+  ///
+  /// {@example /example/lib/app/app.1.dart#body}
   const MaterialApp.router({
     super.key,
     this.scaffoldMessengerKey,
