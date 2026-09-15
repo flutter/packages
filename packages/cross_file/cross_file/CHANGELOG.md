@@ -18,6 +18,7 @@
   * Removes `XFile.path`. This has been replaced by `FileSystemXFile.path`.
   * Changes `XFile.name` to a method that returns `Future<String>` rather than a field that returns
     `String`.
+  * Adds Flutter as a dependency.
 
 ## 0.3.5+5
 
