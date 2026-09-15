@@ -1,3 +1,8 @@
+## 0.14.4+2
+
+* Uses Flutter for pub commands when a package depends on `jni`, including through
+  a dev dependency.
+
 ## 0.14.4+1
 
 * Adds support for batch release of pre-1.0 packages.

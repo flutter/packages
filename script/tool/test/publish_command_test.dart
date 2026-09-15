@@ -256,6 +256,20 @@ void main() {
       );
     });
 
+    test('uses flutter for a Dart package with a jni dev dependency', () async {
+      final RepositoryPackage package = createFakePackage('foo', packagesDir, examples: <String>[]);
+      package.pubspecFile.writeAsStringSync(
+        '${package.pubspecFile.readAsStringSync()}\ndev_dependencies:\n  jni: ^0.1.1\n',
+      );
+
+      await runCapturingPrint(commandRunner, <String>['publish', '--packages=foo']);
+
+      expect(
+        processRunner.recordedCalls,
+        contains(ProcessCall('flutter', const <String>['pub', 'publish'], package.directory.path)),
+      );
+    });
+
     test('forwards --pub-publish-flags to pub publish', () async {
       final RepositoryPackage plugin = createFakePlugin('foo', packagesDir, examples: <String>[]);
 
