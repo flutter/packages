@@ -5,7 +5,6 @@
 import ImageIO
 import Testing
 import UIKit
-import UniformTypeIdentifiers
 
 @testable import image_picker_ios
 
@@ -39,22 +38,48 @@ struct PickerSaveImageToPathOperationTests {
     #expect(operation.isFinished)
   }
 
+  /// Runs a save operation and returns the `savedPathBlock` arguments.
+  ///
+  /// `#expect` inside `savedPathBlock` is not attributed to the test case: the
+  /// operation queue has no Swift Testing task-local context, so those
+  /// expectations cannot fail `xcodebuild`. Capture here and assert after
+  /// `confirmation` returns; `confirmation` still fails if the block never runs.
+  private func runSaveOperation(
+    result: PickerItem,
+    maxHeight: NSNumber = 100,
+    maxWidth: NSNumber = 100,
+    desiredImageQuality: NSNumber = 100,
+    fullMetadata: Bool
+  ) async throws -> (savedPath: String?, error: FlutterError?) {
+    nonisolated(unsafe) var savedPath: String?
+    nonisolated(unsafe) var savedError: FlutterError?
+    try await confirmation("savedPathBlock called") { saved in
+      let operation = try #require(
+        FLTPHPickerSaveImageToPathOperation(
+          result: result,
+          maxHeight: maxHeight,
+          maxWidth: maxWidth,
+          desiredImageQuality: desiredImageQuality,
+          fullMetadata: fullMetadata,
+          savedPathBlock: { path, error in
+            savedPath = path
+            savedError = error
+            saved()
+          }))
+      await runUntilFinished(operation)
+    }
+    return (savedPath, savedError)
+  }
+
   private func verifySavingImage(
     _ result: PickerItem, fullMetadata: Bool, extension expectedExtension: String
   ) async throws {
-    let operation = try #require(
-      FLTPHPickerSaveImageToPathOperation(
-        result: result,
-        maxHeight: 100,
-        maxWidth: 100,
-        desiredImageQuality: 100,
-        fullMetadata: fullMetadata,
-        savedPathBlock: { savedPath, error in
-          #expect(error == nil)
-          #expect(FileManager.default.fileExists(atPath: savedPath ?? ""))
-          #expect(URL(string: savedPath ?? "")?.pathExtension == expectedExtension)
-        }))
-    await runUntilFinished(operation)
+    let (savedPath, savedError) = try await runSaveOperation(
+      result: result, fullMetadata: fullMetadata)
+    #expect(savedError == nil)
+    let path = try #require(savedPath)
+    #expect(FileManager.default.fileExists(atPath: path))
+    #expect(URL(fileURLWithPath: path).pathExtension == expectedExtension)
   }
 
   @Test func saveWebPImage() async throws {
@@ -82,22 +107,15 @@ struct PickerSaveImageToPathOperationTests {
     let imageSource = CGImageSourceCreateWithData(dataGIF as CFData, nil)!
     let numberOfFrames = CGImageSourceGetCount(imageSource)
 
-    let operation = try #require(
-      FLTPHPickerSaveImageToPathOperation(
-        result: result,
-        maxHeight: 100,
-        maxWidth: 100,
-        desiredImageQuality: 100,
-        fullMetadata: false,
-        savedPathBlock: { savedPath, error in
-          #expect(FileManager.default.fileExists(atPath: savedPath ?? ""))
-          #expect(URL(string: savedPath ?? "")?.pathExtension == "gif")
-          let newDataGIF = try? Data(contentsOf: URL(fileURLWithPath: savedPath ?? ""))
-          let newImageSource = CGImageSourceCreateWithData(
-            (newDataGIF ?? Data()) as CFData, nil)!
-          #expect(CGImageSourceGetCount(newImageSource) == numberOfFrames)
-        }))
-    await runUntilFinished(operation)
+    let (savedPath, savedError) = try await runSaveOperation(
+      result: result, fullMetadata: false)
+    #expect(savedError == nil)
+    let path = try #require(savedPath)
+    #expect(FileManager.default.fileExists(atPath: path))
+    #expect(URL(fileURLWithPath: path).pathExtension == "gif")
+    let newDataGIF = try Data(contentsOf: URL(fileURLWithPath: path))
+    let newImageSource = try #require(CGImageSourceCreateWithData(newDataGIF as CFData, nil))
+    #expect(CGImageSourceGetCount(newImageSource) == numberOfFrames)
   }
 
   @Test func saveBMPImage() async throws {
@@ -112,22 +130,16 @@ struct PickerSaveImageToPathOperationTests {
 
   @Test func saveWithOrientation() async throws {
     let result = try pickerItem(forResource: "jpgImageWithRightOrientation", ext: "jpg")
-    let operation = try #require(
-      FLTPHPickerSaveImageToPathOperation(
-        result: result,
-        maxHeight: 10,
-        maxWidth: 10,
-        desiredImageQuality: 100,
-        fullMetadata: false,
-        savedPathBlock: { savedPath, error in
-          #expect(FileManager.default.fileExists(atPath: savedPath ?? ""))
-          #expect(URL(string: savedPath ?? "")?.pathExtension == "jpg")
-          let image = UIImage(contentsOfFile: savedPath ?? "")
-          #expect(image?.imageOrientation == .right)
-          #expect(image?.size.width == 7)
-          #expect(image?.size.height == 10)
-        }))
-    await runUntilFinished(operation)
+    let (savedPath, savedError) = try await runSaveOperation(
+      result: result, maxHeight: 10, maxWidth: 10, fullMetadata: false)
+    #expect(savedError == nil)
+    let path = try #require(savedPath)
+    #expect(FileManager.default.fileExists(atPath: path))
+    #expect(URL(fileURLWithPath: path).pathExtension == "jpg")
+    let image = try #require(UIImage(contentsOfFile: path))
+    #expect(image.imageOrientation == .right)
+    #expect(image.size.width == 7)
+    #expect(image.size.height == 10)
   }
 
   @Test func saveICNSImage() async throws {
@@ -156,36 +168,18 @@ struct PickerSaveImageToPathOperationTests {
         contentsOf: testBundle.url(forResource: "bogus", withExtension: "png"))
       ?? NSItemProvider()
     let result = FakePickerItem(itemProvider: itemProvider, assetIdentifier: nil)
-    let operation = try #require(
-      FLTPHPickerSaveImageToPathOperation(
-        result: result,
-        maxHeight: 100,
-        maxWidth: 100,
-        desiredImageQuality: 100,
-        fullMetadata: true,
-        savedPathBlock: { _, error in
-          #expect(error?.code == "invalid_source")
-        }))
-    await runUntilFinished(operation)
+    let (_, savedError) = try await runSaveOperation(result: result, fullMetadata: true)
+    #expect(savedError?.code == "invalid_source")
   }
 
   @Test func failingImageLoad() async throws {
     let loadDataError = NSError(domain: "PHPickerDomain", code: 1234)
     let itemProvider = FailingDataItemProvider(error: loadDataError)
     let result = FakePickerItem(itemProvider: itemProvider, assetIdentifier: nil)
-    let operation = try #require(
-      FLTPHPickerSaveImageToPathOperation(
-        result: result,
-        maxHeight: 100,
-        maxWidth: 100,
-        desiredImageQuality: 100,
-        fullMetadata: true,
-        savedPathBlock: { _, error in
-          #expect(error?.code == "invalid_image")
-          #expect(error?.message == loadDataError.localizedDescription)
-          #expect(error?.details as? String == "PHPickerDomain")
-        }))
-    await runUntilFinished(operation)
+    let (_, savedError) = try await runSaveOperation(result: result, fullMetadata: true)
+    #expect(savedError?.code == "invalid_image")
+    #expect(savedError?.message == loadDataError.localizedDescription)
+    #expect(savedError?.details as? String == "PHPickerDomain")
   }
 
   @Test func savePNGImageWithoutFullMetadata() async throws {
@@ -234,59 +228,30 @@ struct PickerSaveImageToPathOperationTests {
     let videoURL = URL(fileURLWithPath: sourcePath)
     let result = FakePickerItem(
       itemProvider: MovieItemProvider(movieURL: videoURL), assetIdentifier: nil)
-    var copiedPath: String?
-    let operation = try #require(
-      FLTPHPickerSaveImageToPathOperation(
-        result: result,
-        maxHeight: 100,
-        maxWidth: 100,
-        desiredImageQuality: 100,
-        fullMetadata: false,
-        savedPathBlock: { savedPath, error in
-          #expect(error == nil)
-          #expect(FileManager.default.fileExists(atPath: savedPath ?? ""))
-          copiedPath = savedPath
-        }))
-    await runUntilFinished(operation)
+    let (copiedPath, savedError) = try await runSaveOperation(
+      result: result, fullMetadata: false)
+    #expect(savedError == nil)
+    let path = try #require(copiedPath)
+    #expect(FileManager.default.fileExists(atPath: path))
     try? FileManager.default.removeItem(atPath: sourcePath)
-    if let copiedPath {
-      try? FileManager.default.removeItem(atPath: copiedPath)
-    }
+    try? FileManager.default.removeItem(atPath: path)
   }
 
   @Test func saveVideoFailsWhenLoadReturnsError() async throws {
     let loadError = NSError(domain: "PHPickerDomain", code: 1234)
     let result = FakePickerItem(
       itemProvider: MovieItemProvider(loadError: loadError), assetIdentifier: nil)
-    let operation = try #require(
-      FLTPHPickerSaveImageToPathOperation(
-        result: result,
-        maxHeight: 100,
-        maxWidth: 100,
-        desiredImageQuality: 100,
-        fullMetadata: false,
-        savedPathBlock: { _, error in
-          #expect(error?.code == "invalid_image")
-          #expect(error?.message == loadError.localizedDescription)
-          #expect(error?.details as? String == "PHPickerDomain")
-        }))
-    await runUntilFinished(operation)
+    let (_, savedError) = try await runSaveOperation(result: result, fullMetadata: false)
+    #expect(savedError?.code == "invalid_image")
+    #expect(savedError?.message == loadError.localizedDescription)
+    #expect(savedError?.details as? String == "PHPickerDomain")
   }
 
   @Test func saveVideoFailsWhenCopyFails() async throws {
     let missing = URL(fileURLWithPath: "/this/path/does/not/exist.mov")
     let result = FakePickerItem(
       itemProvider: MovieItemProvider(movieURL: missing), assetIdentifier: nil)
-    let operation = try #require(
-      FLTPHPickerSaveImageToPathOperation(
-        result: result,
-        maxHeight: 100,
-        maxWidth: 100,
-        desiredImageQuality: 100,
-        fullMetadata: false,
-        savedPathBlock: { _, error in
-          #expect(error?.code == "flutter_image_picker_copy_video_error")
-        }))
-    await runUntilFinished(operation)
+    let (_, savedError) = try await runSaveOperation(result: result, fullMetadata: false)
+    #expect(savedError?.code == "flutter_image_picker_copy_video_error")
   }
 }
