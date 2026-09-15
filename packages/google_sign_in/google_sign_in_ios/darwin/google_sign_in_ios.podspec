@@ -12,8 +12,15 @@ Enables Google Sign-In in Flutter apps.
   s.license          = { :type => 'BSD', :file => '../LICENSE' }
   s.author           = { 'Flutter Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/google_sign_in/google_sign_in_ios' }
-  s.source_files = 'google_sign_in_ios/Sources/google_sign_in_ios/**/*.{h,m}'
-  s.public_header_files = 'google_sign_in_ios/Sources/google_sign_in_ios/include/**/*.h'
+  # Combine google_sign_in_ios and google_sign_in_ios_objc sources into a single
+  # pod, unlike SwiftPM, where separate Swift and Objective-C targets are required.
+  s.source_files = 'google_sign_in_ios/Sources/google_sign_in_ios*/**/*.{h,m,swift}'
+  s.public_header_files = 'google_sign_in_ios/Sources/google_sign_in_ios_objc/include/**/*.h'
+  s.swift_version = '5.0'
+  s.xcconfig = {
+    'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
+    'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
+  }
 
   # GTMSessionFetcher is a GoogleSignIn transitive dependency, added here as a
   # direct dependency to ensure a version which defines modules.
@@ -25,11 +32,6 @@ Enables Google Sign-In in Flutter apps.
   s.ios.deployment_target = '13.0'
   s.osx.deployment_target = '10.15'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
-
-  # google_sign_in_ios does not contain Swift files. For some reason, there
-  # is a "pod lib lint" warning unless swift_version is set. This seems related to
-  # GoogleSignIn depending a Swift pod (GTMAppAuth).
-  s.swift_version = '5.0'
 
   s.resource_bundles = {'google_sign_in_ios_privacy' => ['google_sign_in_ios/Sources/google_sign_in_ios/Resources/PrivacyInfo.xcprivacy']}
 end
