@@ -40,7 +40,7 @@ private func sanitizedCodecValue(_ value: Any) -> any Sendable {
       "domain": error.domain,
       "code": "\(error.code)",
       "localizedDescription": error.localizedDescription,
-      "userInfo": error.sanitizedUserInfo,
+      "userInfo": sanitizedUserInfo(error.userInfo),
     ] as [String: any Sendable]
   case let string as String:
     return string
@@ -67,22 +67,22 @@ private func sanitizedCodecDictionary(_ dict: [AnyHashable: Any]) -> [String: an
   return safeValues
 }
 
-extension NSError {
-  /// `userInfo` values that can be sent through the standard message codec.
-  var sanitizedUserInfo: [String: any Sendable] {
-    sanitizedCodecDictionary(userInfo)
-  }
+/// `userInfo` values that can be sent through the standard message codec.
+private func sanitizedUserInfo(_ userInfo: [AnyHashable: Any]) -> [String: any Sendable] {
+  sanitizedCodecDictionary(userInfo)
 }
 
-/// Maps an NSError to a corresponding PigeonError.
-///
-/// This should only be used when an error can't be recognized and mapped to a
-/// GoogleSignInErrorCode.
-private func pigeonError(from error: NSError) -> PigeonError {
-  return PigeonError(
-    code: "\(error.domain): \(error.code)",
-    message: error.localizedDescription,
-    details: error.sanitizedUserInfo)
+extension PigeonError {
+  /// Maps an NSError to a corresponding PigeonError.
+  ///
+  /// This should only be used when an error can't be recognized and mapped to a
+  /// GoogleSignInErrorCode.
+  static func make(from error: NSError) -> PigeonError {
+    return PigeonError(
+      code: "\(error.domain): \(error.code)",
+      message: error.localizedDescription,
+      details: sanitizedUserInfo(error.userInfo))
+  }
 }
 
 /// Maps a GIDSignInErrorCode to the corresponding Pigeon GoogleSignInErrorCode.
@@ -250,8 +250,8 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
   }
 
   func addScopes(
-    scopes: [String],
-    userId: String,
+    _ scopes: [String],
+    forUser userId: String,
     completion: @escaping (Result<SignInResult, Error>) -> Void
   ) {
     guard let user = usersByIdentifier[userId] else {
@@ -289,7 +289,7 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
   func disconnect(completion: @escaping (Result<Void, Error>) -> Void) {
     signIn.disconnect { error in
       if let error {
-        completion(.failure(pigeonError(from: error as NSError)))
+        completion(.failure(PigeonError.make(from: error as NSError)))
       } else {
         completion(.success(()))
       }
@@ -388,9 +388,9 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
           SignInFailure(
             type: pigeonErrorCode(for: nsError.code),
             message: nsError.localizedDescription,
-            details: nsError.sanitizedUserInfo)))
+            details: sanitizedUserInfo(nsError.userInfo))))
     } else if let nsError {
-      completion(.failure(pigeonError(from: nsError)))
+      completion(.failure(PigeonError.make(from: nsError)))
     } else {
       // GIDSignIn is expected to provide a user or an error. Keep a defensive
       // fallback with a clear message rather than reporting a codec placeholder.

@@ -107,7 +107,6 @@ class SignInSuccess extends SignInResult {
 @HostApi()
 abstract class GoogleSignInApi {
   /// Configures the sign in object with application-level parameters.
-  @ObjCSelector('configureWithParameters:')
   void configure(PlatformConfigurationParams params);
 
   /// Attempts to restore an existing sign-in, if any, with minimal user
@@ -117,17 +116,15 @@ abstract class GoogleSignInApi {
 
   /// Starts a sign in with user interaction.
   @async
-  @ObjCSelector('signInWithScopeHint:nonce:')
   SignInResult signIn(List<String> scopeHint, String? nonce);
 
   /// Requests the access token for the current sign in.
   @async
-  @ObjCSelector('refreshedAuthorizationTokensForUser:')
   SignInResult getRefreshedAuthorizationTokens(String userId);
 
   /// Requests authorization of the given additional scopes.
   @async
-  @ObjCSelector('addScopes:forUser:')
+  @SwiftFunction('addScopes(_:forUser:)')
   SignInResult addScopes(List<String> scopes, String userId);
 
   /// Signs out the current user.

@@ -31,6 +31,9 @@ let package = Package(
         .process("Resources")
       ]
     ),
+    // Swift cannot catch NSException, so ExceptionCatcher.m stays in a separate
+    // Objective-C target. That target also holds the CocoaPods placeholder
+    // header required to import google_sign_in_ios.h.
     .target(
       name: "google_sign_in_ios_objc",
       publicHeadersPath: "include/google_sign_in_ios_objc"
