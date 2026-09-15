@@ -256,7 +256,6 @@ Future<int> generateTestPigeons({required String baseDir, bool includeOverflow =
           : '$outputBase/darwin/$testPluginName/Sources/$testPluginName/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
       swiftIncludeErrorClass: input != 'primitive',
-      swiftStrictConcurrency: input != 'native_interop_tests',
       swiftUseFfi:
           !skipLanguages.contains(GeneratorLanguage.swift) && input == 'native_interop_tests',
       swiftAppDirectory: '$outputBase/example',

@@ -1498,7 +1498,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      noopChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         do {
           try api.noop()
           reply(wrapResult(nil))
@@ -1506,6 +1506,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      noopChannel.setMessageHandler(handler)
     } else {
       noopChannel.setMessageHandler(nil)
     }
@@ -1515,7 +1516,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAllTypesChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let everythingArg = args[0] as! AllTypes
         do {
@@ -1525,6 +1526,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoAllTypesChannel.setMessageHandler(handler)
     } else {
       echoAllTypesChannel.setMessageHandler(nil)
     }
@@ -1533,8 +1535,8 @@ class HostIntegrationCoreApiSetup {
       name:
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
-    if let api {
-      throwErrorChannel.setMessageHandler { _, reply in
+    if let api = api {
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         do {
           let result = try api.throwError()
           reply(wrapResult(result))
@@ -1542,6 +1544,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      throwErrorChannel.setMessageHandler(handler)
     } else {
       throwErrorChannel.setMessageHandler(nil)
     }
@@ -1551,7 +1554,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwErrorFromVoid\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwErrorFromVoidChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         do {
           try api.throwErrorFromVoid()
           reply(wrapResult(nil))
@@ -1559,6 +1562,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      throwErrorFromVoidChannel.setMessageHandler(handler)
     } else {
       throwErrorFromVoidChannel.setMessageHandler(nil)
     }
@@ -1568,7 +1572,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwFlutterError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwFlutterErrorChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         do {
           let result = try api.throwFlutterError()
           reply(wrapResult(result))
@@ -1576,6 +1580,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      throwFlutterErrorChannel.setMessageHandler(handler)
     } else {
       throwFlutterErrorChannel.setMessageHandler(nil)
     }
@@ -1585,7 +1590,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoIntChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anIntArg = args[0] as! Int64
         do {
@@ -1595,6 +1600,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoIntChannel.setMessageHandler(handler)
     } else {
       echoIntChannel.setMessageHandler(nil)
     }
@@ -1604,7 +1610,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoDoubleChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aDoubleArg = args[0] as! Double
         do {
@@ -1614,6 +1620,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoDoubleChannel.setMessageHandler(handler)
     } else {
       echoDoubleChannel.setMessageHandler(nil)
     }
@@ -1623,7 +1630,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoBoolChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aBoolArg = args[0] as! Bool
         do {
@@ -1633,6 +1640,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoBoolChannel.setMessageHandler(handler)
     } else {
       echoBoolChannel.setMessageHandler(nil)
     }
@@ -1642,7 +1650,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoStringChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
         do {
@@ -1652,6 +1660,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoStringChannel.setMessageHandler(handler)
     } else {
       echoStringChannel.setMessageHandler(nil)
     }
@@ -1661,7 +1670,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoUint8ListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aUint8ListArg = args[0] as! FlutterStandardTypedData
         do {
@@ -1671,6 +1680,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoUint8ListChannel.setMessageHandler(handler)
     } else {
       echoUint8ListChannel.setMessageHandler(nil)
     }
@@ -1680,7 +1690,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoObject\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoObjectChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anObjectArg = args[0]!
         do {
@@ -1690,6 +1700,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoObjectChannel.setMessageHandler(handler)
     } else {
       echoObjectChannel.setMessageHandler(nil)
     }
@@ -1699,7 +1710,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let listArg = args[0] as! [Any?]
         do {
@@ -1709,6 +1720,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoListChannel.setMessageHandler(handler)
     } else {
       echoListChannel.setMessageHandler(nil)
     }
@@ -1718,7 +1730,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoStringList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoStringListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let stringListArg = args[0] as! [String?]
         do {
@@ -1728,6 +1740,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoStringListChannel.setMessageHandler(handler)
     } else {
       echoStringListChannel.setMessageHandler(nil)
     }
@@ -1737,7 +1750,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoIntList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoIntListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let intListArg = args[0] as! [Int64?]
         do {
@@ -1747,6 +1760,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoIntListChannel.setMessageHandler(handler)
     } else {
       echoIntListChannel.setMessageHandler(nil)
     }
@@ -1756,7 +1770,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDoubleList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoDoubleListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let doubleListArg = args[0] as! [Double?]
         do {
@@ -1766,6 +1780,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoDoubleListChannel.setMessageHandler(handler)
     } else {
       echoDoubleListChannel.setMessageHandler(nil)
     }
@@ -1775,7 +1790,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBoolList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoBoolListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let boolListArg = args[0] as! [Bool?]
         do {
@@ -1785,6 +1800,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoBoolListChannel.setMessageHandler(handler)
     } else {
       echoBoolListChannel.setMessageHandler(nil)
     }
@@ -1794,7 +1810,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoEnumListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumListArg = args[0] as! [AnEnum?]
         do {
@@ -1804,6 +1820,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoEnumListChannel.setMessageHandler(handler)
     } else {
       echoEnumListChannel.setMessageHandler(nil)
     }
@@ -1813,7 +1830,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoClassListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classListArg = args[0] as! [AllNullableTypes?]
         do {
@@ -1823,6 +1840,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoClassListChannel.setMessageHandler(handler)
     } else {
       echoClassListChannel.setMessageHandler(nil)
     }
@@ -1832,7 +1850,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNonNullEnumListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumListArg = args[0] as! [AnEnum]
         do {
@@ -1842,6 +1860,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNonNullEnumListChannel.setMessageHandler(handler)
     } else {
       echoNonNullEnumListChannel.setMessageHandler(nil)
     }
@@ -1851,7 +1870,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNonNullClassListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classListArg = args[0] as! [AllNullableTypes]
         do {
@@ -1861,6 +1880,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNonNullClassListChannel.setMessageHandler(handler)
     } else {
       echoNonNullClassListChannel.setMessageHandler(nil)
     }
@@ -1870,7 +1890,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let mapArg = args[0] as! [AnyHashable?: Any?]
         do {
@@ -1880,6 +1900,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoMapChannel.setMessageHandler(handler)
     } else {
       echoMapChannel.setMessageHandler(nil)
     }
@@ -1889,7 +1910,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoStringMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let stringMapArg = args[0] as! [String?: String?]
         do {
@@ -1899,6 +1920,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoStringMapChannel.setMessageHandler(handler)
     } else {
       echoStringMapChannel.setMessageHandler(nil)
     }
@@ -1908,7 +1930,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoIntMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let intMapArg = args[0] as! [Int64?: Int64?]
         do {
@@ -1918,6 +1940,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoIntMapChannel.setMessageHandler(handler)
     } else {
       echoIntMapChannel.setMessageHandler(nil)
     }
@@ -1927,7 +1950,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoEnumMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumMapArg = args[0] as? [AnEnum?: AnEnum?]
         do {
@@ -1937,6 +1960,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoEnumMapChannel.setMessageHandler(handler)
     } else {
       echoEnumMapChannel.setMessageHandler(nil)
     }
@@ -1946,7 +1970,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoClassMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classMapArg = args[0] as! [Int64?: AllNullableTypes?]
         do {
@@ -1956,6 +1980,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoClassMapChannel.setMessageHandler(handler)
     } else {
       echoClassMapChannel.setMessageHandler(nil)
     }
@@ -1965,7 +1990,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNonNullStringMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let stringMapArg = args[0] as! [String: String]
         do {
@@ -1975,6 +2000,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNonNullStringMapChannel.setMessageHandler(handler)
     } else {
       echoNonNullStringMapChannel.setMessageHandler(nil)
     }
@@ -1984,7 +2010,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNonNullIntMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let intMapArg = args[0] as! [Int64: Int64]
         do {
@@ -1994,6 +2020,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNonNullIntMapChannel.setMessageHandler(handler)
     } else {
       echoNonNullIntMapChannel.setMessageHandler(nil)
     }
@@ -2003,7 +2030,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNonNullEnumMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumMapArg = args[0] as? [AnEnum: AnEnum]
         do {
@@ -2013,6 +2040,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNonNullEnumMapChannel.setMessageHandler(handler)
     } else {
       echoNonNullEnumMapChannel.setMessageHandler(nil)
     }
@@ -2022,7 +2050,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNonNullClassMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classMapArg = args[0] as! [Int64: AllNullableTypes]
         do {
@@ -2032,6 +2060,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNonNullClassMapChannel.setMessageHandler(handler)
     } else {
       echoNonNullClassMapChannel.setMessageHandler(nil)
     }
@@ -2041,7 +2070,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassWrapper\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoClassWrapperChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let wrapperArg = args[0] as! AllClassesWrapper
         do {
@@ -2051,6 +2080,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoClassWrapperChannel.setMessageHandler(handler)
     } else {
       echoClassWrapperChannel.setMessageHandler(nil)
     }
@@ -2060,7 +2090,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoEnumChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anEnumArg = args[0] as! AnEnum
         do {
@@ -2070,6 +2100,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoEnumChannel.setMessageHandler(handler)
     } else {
       echoEnumChannel.setMessageHandler(nil)
     }
@@ -2079,7 +2110,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAnotherEnumChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anotherEnumArg = args[0] as! AnotherEnum
         do {
@@ -2089,6 +2120,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoAnotherEnumChannel.setMessageHandler(handler)
     } else {
       echoAnotherEnumChannel.setMessageHandler(nil)
     }
@@ -2098,7 +2130,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedDefaultString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNamedDefaultStringChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
         do {
@@ -2108,6 +2140,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNamedDefaultStringChannel.setMessageHandler(handler)
     } else {
       echoNamedDefaultStringChannel.setMessageHandler(nil)
     }
@@ -2117,7 +2150,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalDefaultDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoOptionalDefaultDoubleChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aDoubleArg = args[0] as! Double
         do {
@@ -2127,6 +2160,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoOptionalDefaultDoubleChannel.setMessageHandler(handler)
     } else {
       echoOptionalDefaultDoubleChannel.setMessageHandler(nil)
     }
@@ -2136,7 +2170,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoRequiredInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoRequiredIntChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anIntArg = args[0] as! Int64
         do {
@@ -2146,6 +2180,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoRequiredIntChannel.setMessageHandler(handler)
     } else {
       echoRequiredIntChannel.setMessageHandler(nil)
     }
@@ -2155,7 +2190,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.areAllNullableTypesEqual\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      areAllNullableTypesEqualChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aArg = args[0] as! AllNullableTypes
         let bArg = args[1] as! AllNullableTypes
@@ -2166,6 +2201,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      areAllNullableTypesEqualChannel.setMessageHandler(handler)
     } else {
       areAllNullableTypesEqualChannel.setMessageHandler(nil)
     }
@@ -2175,7 +2211,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.getAllNullableTypesHash\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      getAllNullableTypesHashChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let valueArg = args[0] as! AllNullableTypes
         do {
@@ -2185,6 +2221,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      getAllNullableTypesHashChannel.setMessageHandler(handler)
     } else {
       getAllNullableTypesHashChannel.setMessageHandler(nil)
     }
@@ -2194,7 +2231,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.getAllNullableTypesWithoutRecursionHash\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      getAllNullableTypesWithoutRecursionHashChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let valueArg = args[0] as! AllNullableTypesWithoutRecursion
         do {
@@ -2204,6 +2241,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      getAllNullableTypesWithoutRecursionHashChannel.setMessageHandler(handler)
     } else {
       getAllNullableTypesWithoutRecursionHashChannel.setMessageHandler(nil)
     }
@@ -2213,7 +2251,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAllNullableTypesChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let everythingArg: AllNullableTypes? = nilOrValue(args[0])
         do {
@@ -2223,6 +2261,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoAllNullableTypesChannel.setMessageHandler(handler)
     } else {
       echoAllNullableTypesChannel.setMessageHandler(nil)
     }
@@ -2232,7 +2271,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypesWithoutRecursion\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAllNullableTypesWithoutRecursionChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let everythingArg: AllNullableTypesWithoutRecursion? = nilOrValue(args[0])
         do {
@@ -2242,6 +2281,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoAllNullableTypesWithoutRecursionChannel.setMessageHandler(handler)
     } else {
       echoAllNullableTypesWithoutRecursionChannel.setMessageHandler(nil)
     }
@@ -2252,7 +2292,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.extractNestedNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      extractNestedNullableStringChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let wrapperArg = args[0] as! AllClassesWrapper
         do {
@@ -2262,6 +2302,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      extractNestedNullableStringChannel.setMessageHandler(handler)
     } else {
       extractNestedNullableStringChannel.setMessageHandler(nil)
     }
@@ -2272,7 +2313,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.createNestedNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      createNestedNullableStringChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let nullableStringArg: String? = nilOrValue(args[0])
         do {
@@ -2282,6 +2323,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      createNestedNullableStringChannel.setMessageHandler(handler)
     } else {
       createNestedNullableStringChannel.setMessageHandler(nil)
     }
@@ -2291,7 +2333,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      sendMultipleNullableTypesChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aNullableBoolArg: Bool? = nilOrValue(args[0])
         let aNullableIntArg: Int64? = nilOrValue(args[1])
@@ -2304,6 +2346,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      sendMultipleNullableTypesChannel.setMessageHandler(handler)
     } else {
       sendMultipleNullableTypesChannel.setMessageHandler(nil)
     }
@@ -2313,7 +2356,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      sendMultipleNullableTypesWithoutRecursionChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aNullableBoolArg: Bool? = nilOrValue(args[0])
         let aNullableIntArg: Int64? = nilOrValue(args[1])
@@ -2326,6 +2369,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      sendMultipleNullableTypesWithoutRecursionChannel.setMessageHandler(handler)
     } else {
       sendMultipleNullableTypesWithoutRecursionChannel.setMessageHandler(nil)
     }
@@ -2335,7 +2379,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableIntChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aNullableIntArg: Int64? = nilOrValue(args[0])
         do {
@@ -2345,6 +2389,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableIntChannel.setMessageHandler(handler)
     } else {
       echoNullableIntChannel.setMessageHandler(nil)
     }
@@ -2354,7 +2399,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableDoubleChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aNullableDoubleArg: Double? = nilOrValue(args[0])
         do {
@@ -2364,6 +2409,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableDoubleChannel.setMessageHandler(handler)
     } else {
       echoNullableDoubleChannel.setMessageHandler(nil)
     }
@@ -2373,7 +2419,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableBoolChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aNullableBoolArg: Bool? = nilOrValue(args[0])
         do {
@@ -2383,6 +2429,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableBoolChannel.setMessageHandler(handler)
     } else {
       echoNullableBoolChannel.setMessageHandler(nil)
     }
@@ -2392,7 +2439,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableStringChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aNullableStringArg: String? = nilOrValue(args[0])
         do {
@@ -2402,6 +2449,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableStringChannel.setMessageHandler(handler)
     } else {
       echoNullableStringChannel.setMessageHandler(nil)
     }
@@ -2411,7 +2459,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableUint8ListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aNullableUint8ListArg: FlutterStandardTypedData? = nilOrValue(args[0])
         do {
@@ -2421,6 +2469,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableUint8ListChannel.setMessageHandler(handler)
     } else {
       echoNullableUint8ListChannel.setMessageHandler(nil)
     }
@@ -2430,7 +2479,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableObject\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableObjectChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aNullableObjectArg: Any? = args[0]
         do {
@@ -2440,6 +2489,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableObjectChannel.setMessageHandler(handler)
     } else {
       echoNullableObjectChannel.setMessageHandler(nil)
     }
@@ -2449,7 +2499,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aNullableListArg: [Any?]? = nilOrValue(args[0])
         do {
@@ -2459,6 +2509,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableListChannel.setMessageHandler(handler)
     } else {
       echoNullableListChannel.setMessageHandler(nil)
     }
@@ -2468,7 +2519,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableEnumListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumListArg: [AnEnum?]? = nilOrValue(args[0])
         do {
@@ -2478,6 +2529,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableEnumListChannel.setMessageHandler(handler)
     } else {
       echoNullableEnumListChannel.setMessageHandler(nil)
     }
@@ -2487,7 +2539,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableClassListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classListArg: [AllNullableTypes?]? = nilOrValue(args[0])
         do {
@@ -2497,6 +2549,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableClassListChannel.setMessageHandler(handler)
     } else {
       echoNullableClassListChannel.setMessageHandler(nil)
     }
@@ -2506,7 +2559,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableNonNullEnumListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumListArg: [AnEnum]? = nilOrValue(args[0])
         do {
@@ -2516,6 +2569,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableNonNullEnumListChannel.setMessageHandler(handler)
     } else {
       echoNullableNonNullEnumListChannel.setMessageHandler(nil)
     }
@@ -2525,7 +2579,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableNonNullClassListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classListArg: [AllNullableTypes]? = nilOrValue(args[0])
         do {
@@ -2535,6 +2589,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableNonNullClassListChannel.setMessageHandler(handler)
     } else {
       echoNullableNonNullClassListChannel.setMessageHandler(nil)
     }
@@ -2544,7 +2599,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let mapArg: [AnyHashable?: Any?]? = nilOrValue(args[0])
         do {
@@ -2554,6 +2609,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableMapChannel.setMessageHandler(handler)
     } else {
       echoNullableMapChannel.setMessageHandler(nil)
     }
@@ -2563,7 +2619,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableStringMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let stringMapArg: [String?: String?]? = nilOrValue(args[0])
         do {
@@ -2573,6 +2629,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableStringMapChannel.setMessageHandler(handler)
     } else {
       echoNullableStringMapChannel.setMessageHandler(nil)
     }
@@ -2582,7 +2639,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableIntMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let intMapArg: [Int64?: Int64?]? = nilOrValue(args[0])
         do {
@@ -2592,6 +2649,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableIntMapChannel.setMessageHandler(handler)
     } else {
       echoNullableIntMapChannel.setMessageHandler(nil)
     }
@@ -2601,7 +2659,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableEnumMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumMapArg: [AnEnum?: AnEnum?]? = args[0] as? [AnEnum?: AnEnum?]
         do {
@@ -2611,6 +2669,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableEnumMapChannel.setMessageHandler(handler)
     } else {
       echoNullableEnumMapChannel.setMessageHandler(nil)
     }
@@ -2620,7 +2679,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableClassMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classMapArg: [Int64?: AllNullableTypes?]? = nilOrValue(args[0])
         do {
@@ -2630,6 +2689,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableClassMapChannel.setMessageHandler(handler)
     } else {
       echoNullableClassMapChannel.setMessageHandler(nil)
     }
@@ -2639,7 +2699,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableNonNullStringMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let stringMapArg: [String: String]? = nilOrValue(args[0])
         do {
@@ -2649,6 +2709,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableNonNullStringMapChannel.setMessageHandler(handler)
     } else {
       echoNullableNonNullStringMapChannel.setMessageHandler(nil)
     }
@@ -2658,7 +2719,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableNonNullIntMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let intMapArg: [Int64: Int64]? = nilOrValue(args[0])
         do {
@@ -2668,6 +2729,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableNonNullIntMapChannel.setMessageHandler(handler)
     } else {
       echoNullableNonNullIntMapChannel.setMessageHandler(nil)
     }
@@ -2677,7 +2739,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableNonNullEnumMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumMapArg: [AnEnum: AnEnum]? = args[0] as? [AnEnum: AnEnum]
         do {
@@ -2687,6 +2749,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableNonNullEnumMapChannel.setMessageHandler(handler)
     } else {
       echoNullableNonNullEnumMapChannel.setMessageHandler(nil)
     }
@@ -2696,7 +2759,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableNonNullClassMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classMapArg: [Int64: AllNullableTypes]? = nilOrValue(args[0])
         do {
@@ -2706,6 +2769,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableNonNullClassMapChannel.setMessageHandler(handler)
     } else {
       echoNullableNonNullClassMapChannel.setMessageHandler(nil)
     }
@@ -2714,7 +2778,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableEnumChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anEnumArg: AnEnum? = nilOrValue(args[0])
         do {
@@ -2724,6 +2788,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNullableEnumChannel.setMessageHandler(handler)
     } else {
       echoNullableEnumChannel.setMessageHandler(nil)
     }
@@ -2732,7 +2797,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherNullableEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAnotherNullableEnumChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anotherEnumArg: AnotherEnum? = nilOrValue(args[0])
         do {
@@ -2742,6 +2807,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoAnotherNullableEnumChannel.setMessageHandler(handler)
     } else {
       echoAnotherNullableEnumChannel.setMessageHandler(nil)
     }
@@ -2751,7 +2817,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalNullableInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoOptionalNullableIntChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aNullableIntArg: Int64? = nilOrValue(args[0])
         do {
@@ -2761,6 +2827,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoOptionalNullableIntChannel.setMessageHandler(handler)
     } else {
       echoOptionalNullableIntChannel.setMessageHandler(nil)
     }
@@ -2770,7 +2837,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNamedNullableStringChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aNullableStringArg: String? = nilOrValue(args[0])
         do {
@@ -2780,6 +2847,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      echoNamedNullableStringChannel.setMessageHandler(handler)
     } else {
       echoNamedNullableStringChannel.setMessageHandler(nil)
     }
@@ -2790,7 +2858,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      noopAsyncChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         Task { @MainActor in
           do {
             try await api.noopAsync()
@@ -2800,6 +2868,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      noopAsyncChannel.setMessageHandler(handler)
     } else {
       noopAsyncChannel.setMessageHandler(nil)
     }
@@ -2809,7 +2878,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncIntChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anIntArg = args[0] as! Int64
         Task { @MainActor in
@@ -2821,6 +2890,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncIntChannel.setMessageHandler(handler)
     } else {
       echoAsyncIntChannel.setMessageHandler(nil)
     }
@@ -2830,7 +2900,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncDoubleChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aDoubleArg = args[0] as! Double
         Task { @MainActor in
@@ -2842,6 +2912,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncDoubleChannel.setMessageHandler(handler)
     } else {
       echoAsyncDoubleChannel.setMessageHandler(nil)
     }
@@ -2851,7 +2922,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncBoolChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aBoolArg = args[0] as! Bool
         Task { @MainActor in
@@ -2863,6 +2934,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncBoolChannel.setMessageHandler(handler)
     } else {
       echoAsyncBoolChannel.setMessageHandler(nil)
     }
@@ -2872,7 +2944,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncStringChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
         Task { @MainActor in
@@ -2884,6 +2956,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncStringChannel.setMessageHandler(handler)
     } else {
       echoAsyncStringChannel.setMessageHandler(nil)
     }
@@ -2893,7 +2966,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncUint8ListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aUint8ListArg = args[0] as! FlutterStandardTypedData
         Task { @MainActor in
@@ -2905,6 +2978,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncUint8ListChannel.setMessageHandler(handler)
     } else {
       echoAsyncUint8ListChannel.setMessageHandler(nil)
     }
@@ -2914,7 +2988,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncObject\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncObjectChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anObjectArg = args[0]!
         Task { @MainActor in
@@ -2926,6 +3000,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncObjectChannel.setMessageHandler(handler)
     } else {
       echoAsyncObjectChannel.setMessageHandler(nil)
     }
@@ -2935,7 +3010,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let listArg = args[0] as! [Any?]
         Task { @MainActor in
@@ -2947,6 +3022,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncListChannel.setMessageHandler(handler)
     } else {
       echoAsyncListChannel.setMessageHandler(nil)
     }
@@ -2956,7 +3032,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncEnumListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumListArg = args[0] as! [AnEnum?]
         Task { @MainActor in
@@ -2968,6 +3044,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncEnumListChannel.setMessageHandler(handler)
     } else {
       echoAsyncEnumListChannel.setMessageHandler(nil)
     }
@@ -2977,7 +3054,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncClassListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classListArg = args[0] as! [AllNullableTypes?]
         Task { @MainActor in
@@ -2989,6 +3066,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncClassListChannel.setMessageHandler(handler)
     } else {
       echoAsyncClassListChannel.setMessageHandler(nil)
     }
@@ -2998,7 +3076,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let mapArg = args[0] as! [AnyHashable?: Any?]
         Task { @MainActor in
@@ -3010,6 +3088,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncMapChannel.setMessageHandler(handler)
     } else {
       echoAsyncMapChannel.setMessageHandler(nil)
     }
@@ -3019,7 +3098,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncStringMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let stringMapArg = args[0] as! [String?: String?]
         Task { @MainActor in
@@ -3031,6 +3110,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncStringMapChannel.setMessageHandler(handler)
     } else {
       echoAsyncStringMapChannel.setMessageHandler(nil)
     }
@@ -3040,7 +3120,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncIntMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let intMapArg = args[0] as! [Int64?: Int64?]
         Task { @MainActor in
@@ -3052,6 +3132,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncIntMapChannel.setMessageHandler(handler)
     } else {
       echoAsyncIntMapChannel.setMessageHandler(nil)
     }
@@ -3061,7 +3142,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncEnumMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumMapArg = args[0] as? [AnEnum?: AnEnum?]
         Task { @MainActor in
@@ -3073,6 +3154,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncEnumMapChannel.setMessageHandler(handler)
     } else {
       echoAsyncEnumMapChannel.setMessageHandler(nil)
     }
@@ -3082,7 +3164,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncClassMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classMapArg = args[0] as! [Int64?: AllNullableTypes?]
         Task { @MainActor in
@@ -3094,6 +3176,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncClassMapChannel.setMessageHandler(handler)
     } else {
       echoAsyncClassMapChannel.setMessageHandler(nil)
     }
@@ -3103,7 +3186,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncEnumChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anEnumArg = args[0] as! AnEnum
         Task { @MainActor in
@@ -3115,6 +3198,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncEnumChannel.setMessageHandler(handler)
     } else {
       echoAsyncEnumChannel.setMessageHandler(nil)
     }
@@ -3124,7 +3208,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherAsyncEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAnotherAsyncEnumChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anotherEnumArg = args[0] as! AnotherEnum
         Task { @MainActor in
@@ -3136,6 +3220,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAnotherAsyncEnumChannel.setMessageHandler(handler)
     } else {
       echoAnotherAsyncEnumChannel.setMessageHandler(nil)
     }
@@ -3145,7 +3230,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwAsyncErrorChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         Task { @MainActor in
           do {
             let result = try await api.throwAsyncError()
@@ -3155,6 +3240,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      throwAsyncErrorChannel.setMessageHandler(handler)
     } else {
       throwAsyncErrorChannel.setMessageHandler(nil)
     }
@@ -3164,7 +3250,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncErrorFromVoid\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwAsyncErrorFromVoidChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         Task { @MainActor in
           do {
             try await api.throwAsyncErrorFromVoid()
@@ -3174,6 +3260,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      throwAsyncErrorFromVoidChannel.setMessageHandler(handler)
     } else {
       throwAsyncErrorFromVoidChannel.setMessageHandler(nil)
     }
@@ -3183,7 +3270,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncFlutterError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwAsyncFlutterErrorChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         Task { @MainActor in
           do {
             let result = try await api.throwAsyncFlutterError()
@@ -3193,6 +3280,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      throwAsyncFlutterErrorChannel.setMessageHandler(handler)
     } else {
       throwAsyncFlutterErrorChannel.setMessageHandler(nil)
     }
@@ -3202,7 +3290,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncAllTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncAllTypesChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let everythingArg = args[0] as! AllTypes
         Task { @MainActor in
@@ -3214,6 +3302,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncAllTypesChannel.setMessageHandler(handler)
     } else {
       echoAsyncAllTypesChannel.setMessageHandler(nil)
     }
@@ -3223,7 +3312,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableAllNullableTypesChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let everythingArg: AllNullableTypes? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3235,6 +3324,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncNullableAllNullableTypesChannel.setMessageHandler(handler)
     } else {
       echoAsyncNullableAllNullableTypesChannel.setMessageHandler(nil)
     }
@@ -3244,7 +3334,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypesWithoutRecursion\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableAllNullableTypesWithoutRecursionChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let everythingArg: AllNullableTypesWithoutRecursion? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3256,6 +3346,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncNullableAllNullableTypesWithoutRecursionChannel.setMessageHandler(handler)
     } else {
       echoAsyncNullableAllNullableTypesWithoutRecursionChannel.setMessageHandler(nil)
     }
@@ -3265,7 +3356,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableIntChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anIntArg: Int64? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3277,6 +3368,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncNullableIntChannel.setMessageHandler(handler)
     } else {
       echoAsyncNullableIntChannel.setMessageHandler(nil)
     }
@@ -3286,7 +3378,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableDoubleChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aDoubleArg: Double? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3298,6 +3390,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncNullableDoubleChannel.setMessageHandler(handler)
     } else {
       echoAsyncNullableDoubleChannel.setMessageHandler(nil)
     }
@@ -3307,7 +3400,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableBoolChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aBoolArg: Bool? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3319,6 +3412,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncNullableBoolChannel.setMessageHandler(handler)
     } else {
       echoAsyncNullableBoolChannel.setMessageHandler(nil)
     }
@@ -3328,7 +3422,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableStringChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aStringArg: String? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3340,6 +3434,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncNullableStringChannel.setMessageHandler(handler)
     } else {
       echoAsyncNullableStringChannel.setMessageHandler(nil)
     }
@@ -3349,7 +3444,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableUint8ListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aUint8ListArg: FlutterStandardTypedData? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3361,6 +3456,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncNullableUint8ListChannel.setMessageHandler(handler)
     } else {
       echoAsyncNullableUint8ListChannel.setMessageHandler(nil)
     }
@@ -3370,7 +3466,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableObject\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableObjectChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anObjectArg: Any? = args[0]
         Task { @MainActor in
@@ -3382,6 +3478,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncNullableObjectChannel.setMessageHandler(handler)
     } else {
       echoAsyncNullableObjectChannel.setMessageHandler(nil)
     }
@@ -3391,7 +3488,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let listArg: [Any?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3403,6 +3500,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncNullableListChannel.setMessageHandler(handler)
     } else {
       echoAsyncNullableListChannel.setMessageHandler(nil)
     }
@@ -3412,7 +3510,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableEnumListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumListArg: [AnEnum?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3424,6 +3522,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncNullableEnumListChannel.setMessageHandler(handler)
     } else {
       echoAsyncNullableEnumListChannel.setMessageHandler(nil)
     }
@@ -3433,7 +3532,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableClassListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classListArg: [AllNullableTypes?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3445,6 +3544,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncNullableClassListChannel.setMessageHandler(handler)
     } else {
       echoAsyncNullableClassListChannel.setMessageHandler(nil)
     }
@@ -3454,7 +3554,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let mapArg: [AnyHashable?: Any?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3466,6 +3566,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncNullableMapChannel.setMessageHandler(handler)
     } else {
       echoAsyncNullableMapChannel.setMessageHandler(nil)
     }
@@ -3475,7 +3576,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableStringMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let stringMapArg: [String?: String?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3487,6 +3588,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncNullableStringMapChannel.setMessageHandler(handler)
     } else {
       echoAsyncNullableStringMapChannel.setMessageHandler(nil)
     }
@@ -3496,7 +3598,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableIntMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let intMapArg: [Int64?: Int64?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3508,6 +3610,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncNullableIntMapChannel.setMessageHandler(handler)
     } else {
       echoAsyncNullableIntMapChannel.setMessageHandler(nil)
     }
@@ -3517,7 +3620,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableEnumMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumMapArg: [AnEnum?: AnEnum?]? = args[0] as? [AnEnum?: AnEnum?]
         Task { @MainActor in
@@ -3529,6 +3632,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncNullableEnumMapChannel.setMessageHandler(handler)
     } else {
       echoAsyncNullableEnumMapChannel.setMessageHandler(nil)
     }
@@ -3538,7 +3642,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableClassMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classMapArg: [Int64?: AllNullableTypes?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3550,6 +3654,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncNullableClassMapChannel.setMessageHandler(handler)
     } else {
       echoAsyncNullableClassMapChannel.setMessageHandler(nil)
     }
@@ -3559,7 +3664,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAsyncNullableEnumChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anEnumArg: AnEnum? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3571,6 +3676,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAsyncNullableEnumChannel.setMessageHandler(handler)
     } else {
       echoAsyncNullableEnumChannel.setMessageHandler(nil)
     }
@@ -3580,7 +3686,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherAsyncNullableEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAnotherAsyncNullableEnumChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anotherEnumArg: AnotherEnum? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3592,6 +3698,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      echoAnotherAsyncNullableEnumChannel.setMessageHandler(handler)
     } else {
       echoAnotherAsyncNullableEnumChannel.setMessageHandler(nil)
     }
@@ -3602,7 +3709,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.defaultIsMainThread\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      defaultIsMainThreadChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         do {
           let result = try api.defaultIsMainThread()
           reply(wrapResult(result))
@@ -3610,6 +3717,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      defaultIsMainThreadChannel.setMessageHandler(handler)
     } else {
       defaultIsMainThreadChannel.setMessageHandler(nil)
     }
@@ -3626,7 +3734,7 @@ class HostIntegrationCoreApiSetup {
           "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.taskQueueIsBackgroundThread\(channelSuffix)",
         binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
     if let api = api {
-      taskQueueIsBackgroundThreadChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         do {
           let result = try api.taskQueueIsBackgroundThread()
           reply(wrapResult(result))
@@ -3634,6 +3742,7 @@ class HostIntegrationCoreApiSetup {
           reply(wrapError(error))
         }
       }
+      taskQueueIsBackgroundThreadChannel.setMessageHandler(handler)
     } else {
       taskQueueIsBackgroundThreadChannel.setMessageHandler(nil)
     }
@@ -3650,7 +3759,7 @@ class HostIntegrationCoreApiSetup {
           "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.asyncTaskQueueIsBackgroundThread\(channelSuffix)",
         binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
     if let api = api {
-      asyncTaskQueueIsBackgroundThreadChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         Task {
           do {
             let result = try await api.asyncTaskQueueIsBackgroundThread()
@@ -3660,6 +3769,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      asyncTaskQueueIsBackgroundThreadChannel.setMessageHandler(handler)
     } else {
       asyncTaskQueueIsBackgroundThreadChannel.setMessageHandler(nil)
     }
@@ -3668,7 +3778,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterNoopChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         Task { @MainActor in
           do {
             try await api.callFlutterNoop()
@@ -3678,6 +3788,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterNoopChannel.setMessageHandler(handler)
     } else {
       callFlutterNoopChannel.setMessageHandler(nil)
     }
@@ -3686,7 +3797,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterThrowErrorChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         Task { @MainActor in
           do {
             let result = try await api.callFlutterThrowError()
@@ -3696,6 +3807,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterThrowErrorChannel.setMessageHandler(handler)
     } else {
       callFlutterThrowErrorChannel.setMessageHandler(nil)
     }
@@ -3704,7 +3816,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterThrowErrorFromVoidChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         Task { @MainActor in
           do {
             try await api.callFlutterThrowErrorFromVoid()
@@ -3714,6 +3826,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterThrowErrorFromVoidChannel.setMessageHandler(handler)
     } else {
       callFlutterThrowErrorFromVoidChannel.setMessageHandler(nil)
     }
@@ -3722,7 +3835,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoAllTypesChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let everythingArg = args[0] as! AllTypes
         Task { @MainActor in
@@ -3734,6 +3847,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoAllTypesChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoAllTypesChannel.setMessageHandler(nil)
     }
@@ -3742,7 +3856,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoAllNullableTypesChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let everythingArg: AllNullableTypes? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3754,6 +3868,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoAllNullableTypesChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoAllNullableTypesChannel.setMessageHandler(nil)
     }
@@ -3762,7 +3877,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterSendMultipleNullableTypesChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aNullableBoolArg: Bool? = nilOrValue(args[0])
         let aNullableIntArg: Int64? = nilOrValue(args[1])
@@ -3777,6 +3892,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterSendMultipleNullableTypesChannel.setMessageHandler(handler)
     } else {
       callFlutterSendMultipleNullableTypesChannel.setMessageHandler(nil)
     }
@@ -3785,7 +3901,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypesWithoutRecursion\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoAllNullableTypesWithoutRecursionChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let everythingArg: AllNullableTypesWithoutRecursion? = nilOrValue(args[0])
         Task { @MainActor in
@@ -3797,6 +3913,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoAllNullableTypesWithoutRecursionChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoAllNullableTypesWithoutRecursionChannel.setMessageHandler(nil)
     }
@@ -3805,8 +3922,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypesWithoutRecursion\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterSendMultipleNullableTypesWithoutRecursionChannel.setMessageHandler {
-        message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aNullableBoolArg: Bool? = nilOrValue(args[0])
         let aNullableIntArg: Int64? = nilOrValue(args[1])
@@ -3821,6 +3937,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterSendMultipleNullableTypesWithoutRecursionChannel.setMessageHandler(handler)
     } else {
       callFlutterSendMultipleNullableTypesWithoutRecursionChannel.setMessageHandler(nil)
     }
@@ -3829,7 +3946,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoBoolChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aBoolArg = args[0] as! Bool
         Task { @MainActor in
@@ -3841,6 +3958,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoBoolChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoBoolChannel.setMessageHandler(nil)
     }
@@ -3849,7 +3967,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoIntChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anIntArg = args[0] as! Int64
         Task { @MainActor in
@@ -3861,6 +3979,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoIntChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoIntChannel.setMessageHandler(nil)
     }
@@ -3869,7 +3988,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoDoubleChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aDoubleArg = args[0] as! Double
         Task { @MainActor in
@@ -3881,6 +4000,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoDoubleChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoDoubleChannel.setMessageHandler(nil)
     }
@@ -3889,7 +4009,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoStringChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
         Task { @MainActor in
@@ -3901,6 +4021,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoStringChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoStringChannel.setMessageHandler(nil)
     }
@@ -3909,7 +4030,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoUint8ListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let listArg = args[0] as! FlutterStandardTypedData
         Task { @MainActor in
@@ -3921,6 +4042,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoUint8ListChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoUint8ListChannel.setMessageHandler(nil)
     }
@@ -3929,7 +4051,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let listArg = args[0] as! [Any?]
         Task { @MainActor in
@@ -3941,6 +4063,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoListChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoListChannel.setMessageHandler(nil)
     }
@@ -3949,7 +4072,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoEnumListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumListArg = args[0] as! [AnEnum?]
         Task { @MainActor in
@@ -3961,6 +4084,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoEnumListChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoEnumListChannel.setMessageHandler(nil)
     }
@@ -3969,7 +4093,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoClassListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classListArg = args[0] as! [AllNullableTypes?]
         Task { @MainActor in
@@ -3981,6 +4105,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoClassListChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoClassListChannel.setMessageHandler(nil)
     }
@@ -3989,7 +4114,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNonNullEnumListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumListArg = args[0] as! [AnEnum]
         Task { @MainActor in
@@ -4001,6 +4126,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNonNullEnumListChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNonNullEnumListChannel.setMessageHandler(nil)
     }
@@ -4009,7 +4135,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNonNullClassListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classListArg = args[0] as! [AllNullableTypes]
         Task { @MainActor in
@@ -4021,6 +4147,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNonNullClassListChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNonNullClassListChannel.setMessageHandler(nil)
     }
@@ -4029,7 +4156,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let mapArg = args[0] as! [AnyHashable?: Any?]
         Task { @MainActor in
@@ -4041,6 +4168,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoMapChannel.setMessageHandler(nil)
     }
@@ -4049,7 +4177,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoStringMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let stringMapArg = args[0] as! [String?: String?]
         Task { @MainActor in
@@ -4061,6 +4189,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoStringMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoStringMapChannel.setMessageHandler(nil)
     }
@@ -4069,7 +4198,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoIntMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let intMapArg = args[0] as! [Int64?: Int64?]
         Task { @MainActor in
@@ -4081,6 +4210,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoIntMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoIntMapChannel.setMessageHandler(nil)
     }
@@ -4089,7 +4219,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoEnumMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumMapArg = args[0] as? [AnEnum?: AnEnum?]
         Task { @MainActor in
@@ -4101,6 +4231,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoEnumMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoEnumMapChannel.setMessageHandler(nil)
     }
@@ -4109,7 +4240,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoClassMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classMapArg = args[0] as! [Int64?: AllNullableTypes?]
         Task { @MainActor in
@@ -4121,6 +4252,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoClassMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoClassMapChannel.setMessageHandler(nil)
     }
@@ -4129,7 +4261,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNonNullStringMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let stringMapArg = args[0] as! [String: String]
         Task { @MainActor in
@@ -4141,6 +4273,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNonNullStringMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNonNullStringMapChannel.setMessageHandler(nil)
     }
@@ -4149,7 +4282,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNonNullIntMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let intMapArg = args[0] as! [Int64: Int64]
         Task { @MainActor in
@@ -4161,6 +4294,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNonNullIntMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNonNullIntMapChannel.setMessageHandler(nil)
     }
@@ -4169,7 +4303,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNonNullEnumMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumMapArg = args[0] as? [AnEnum: AnEnum]
         Task { @MainActor in
@@ -4181,6 +4315,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNonNullEnumMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNonNullEnumMapChannel.setMessageHandler(nil)
     }
@@ -4189,7 +4324,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNonNullClassMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classMapArg = args[0] as! [Int64: AllNullableTypes]
         Task { @MainActor in
@@ -4201,6 +4336,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNonNullClassMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNonNullClassMapChannel.setMessageHandler(nil)
     }
@@ -4209,7 +4345,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoEnumChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anEnumArg = args[0] as! AnEnum
         Task { @MainActor in
@@ -4221,6 +4357,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoEnumChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoEnumChannel.setMessageHandler(nil)
     }
@@ -4229,7 +4366,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoAnotherEnumChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anotherEnumArg = args[0] as! AnotherEnum
         Task { @MainActor in
@@ -4241,6 +4378,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoAnotherEnumChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoAnotherEnumChannel.setMessageHandler(nil)
     }
@@ -4249,7 +4387,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableBoolChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aBoolArg: Bool? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4261,6 +4399,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableBoolChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableBoolChannel.setMessageHandler(nil)
     }
@@ -4269,7 +4408,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableInt\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableIntChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anIntArg: Int64? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4281,6 +4420,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableIntChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableIntChannel.setMessageHandler(nil)
     }
@@ -4289,7 +4429,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableDouble\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableDoubleChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aDoubleArg: Double? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4301,6 +4441,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableDoubleChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableDoubleChannel.setMessageHandler(nil)
     }
@@ -4309,7 +4450,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableStringChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aStringArg: String? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4321,6 +4462,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableStringChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableStringChannel.setMessageHandler(nil)
     }
@@ -4329,7 +4471,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableUint8List\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableUint8ListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let listArg: FlutterStandardTypedData? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4341,6 +4483,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableUint8ListChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableUint8ListChannel.setMessageHandler(nil)
     }
@@ -4349,7 +4492,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let listArg: [Any?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4361,6 +4504,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableListChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableListChannel.setMessageHandler(nil)
     }
@@ -4369,7 +4513,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableEnumListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumListArg: [AnEnum?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4381,6 +4525,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableEnumListChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableEnumListChannel.setMessageHandler(nil)
     }
@@ -4389,7 +4534,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableClassListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classListArg: [AllNullableTypes?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4401,6 +4546,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableClassListChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableClassListChannel.setMessageHandler(nil)
     }
@@ -4409,7 +4555,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullEnumList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableNonNullEnumListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumListArg: [AnEnum]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4421,6 +4567,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableNonNullEnumListChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableNonNullEnumListChannel.setMessageHandler(nil)
     }
@@ -4429,7 +4576,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullClassList\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableNonNullClassListChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classListArg: [AllNullableTypes]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4441,6 +4588,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableNonNullClassListChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableNonNullClassListChannel.setMessageHandler(nil)
     }
@@ -4449,7 +4597,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let mapArg: [AnyHashable?: Any?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4461,6 +4609,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableMapChannel.setMessageHandler(nil)
     }
@@ -4469,7 +4618,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableStringMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let stringMapArg: [String?: String?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4481,6 +4630,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableStringMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableStringMapChannel.setMessageHandler(nil)
     }
@@ -4489,7 +4639,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableIntMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let intMapArg: [Int64?: Int64?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4501,6 +4651,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableIntMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableIntMapChannel.setMessageHandler(nil)
     }
@@ -4509,7 +4660,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableEnumMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumMapArg: [AnEnum?: AnEnum?]? = args[0] as? [AnEnum?: AnEnum?]
         Task { @MainActor in
@@ -4521,6 +4672,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableEnumMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableEnumMapChannel.setMessageHandler(nil)
     }
@@ -4529,7 +4681,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableClassMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classMapArg: [Int64?: AllNullableTypes?]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4541,6 +4693,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableClassMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableClassMapChannel.setMessageHandler(nil)
     }
@@ -4549,7 +4702,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullStringMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableNonNullStringMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let stringMapArg: [String: String]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4561,6 +4714,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableNonNullStringMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableNonNullStringMapChannel.setMessageHandler(nil)
     }
@@ -4569,7 +4723,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullIntMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableNonNullIntMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let intMapArg: [Int64: Int64]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4581,6 +4735,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableNonNullIntMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableNonNullIntMapChannel.setMessageHandler(nil)
     }
@@ -4589,7 +4744,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullEnumMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableNonNullEnumMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let enumMapArg: [AnEnum: AnEnum]? = args[0] as? [AnEnum: AnEnum]
         Task { @MainActor in
@@ -4601,6 +4756,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableNonNullEnumMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableNonNullEnumMapChannel.setMessageHandler(nil)
     }
@@ -4609,7 +4765,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullClassMap\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableNonNullClassMapChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let classMapArg: [Int64: AllNullableTypes]? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4621,6 +4777,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableNonNullClassMapChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableNonNullClassMapChannel.setMessageHandler(nil)
     }
@@ -4629,7 +4786,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoNullableEnumChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anEnumArg: AnEnum? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4641,6 +4798,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoNullableEnumChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoNullableEnumChannel.setMessageHandler(nil)
     }
@@ -4649,7 +4807,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherNullableEnum\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterEchoAnotherNullableEnumChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let anotherEnumArg: AnotherEnum? = nilOrValue(args[0])
         Task { @MainActor in
@@ -4661,6 +4819,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterEchoAnotherNullableEnumChannel.setMessageHandler(handler)
     } else {
       callFlutterEchoAnotherNullableEnumChannel.setMessageHandler(nil)
     }
@@ -4669,7 +4828,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSmallApiEchoString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterSmallApiEchoStringChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
         Task { @MainActor in
@@ -4681,6 +4840,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterSmallApiEchoStringChannel.setMessageHandler(handler)
     } else {
       callFlutterSmallApiEchoStringChannel.setMessageHandler(nil)
     }
@@ -4689,7 +4849,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterCallbackNoop\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterCallbackNoopChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         Task { @MainActor in
           do {
             try await api.callFlutterCallbackNoop()
@@ -4699,6 +4859,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterCallbackNoopChannel.setMessageHandler(handler)
     } else {
       callFlutterCallbackNoopChannel.setMessageHandler(nil)
     }
@@ -4707,7 +4868,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterCallbackEchoString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterCallbackEchoStringChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
         Task { @MainActor in
@@ -4719,6 +4880,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterCallbackEchoStringChannel.setMessageHandler(handler)
     } else {
       callFlutterCallbackEchoStringChannel.setMessageHandler(nil)
     }
@@ -4727,7 +4889,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterCallbackThrowError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterCallbackThrowErrorChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         Task { @MainActor in
           do {
             let result = try await api.callFlutterCallbackThrowError()
@@ -4737,6 +4899,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterCallbackThrowErrorChannel.setMessageHandler(handler)
     } else {
       callFlutterCallbackThrowErrorChannel.setMessageHandler(nil)
     }
@@ -4745,7 +4908,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterCallbackThrowErrorFromVoid\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterCallbackThrowErrorFromVoidChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         Task { @MainActor in
           do {
             try await api.callFlutterCallbackThrowErrorFromVoid()
@@ -4755,6 +4918,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterCallbackThrowErrorFromVoidChannel.setMessageHandler(handler)
     } else {
       callFlutterCallbackThrowErrorFromVoidChannel.setMessageHandler(nil)
     }
@@ -4763,7 +4927,7 @@ class HostIntegrationCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterIsAsyncFlutterApiOnRoot\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      callFlutterIsAsyncFlutterApiOnRootChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         Task { @MainActor in
           do {
             let result = try await api.callFlutterIsAsyncFlutterApiOnRoot()
@@ -4773,6 +4937,7 @@ class HostIntegrationCoreApiSetup {
           }
         }
       }
+      callFlutterIsAsyncFlutterApiOnRootChannel.setMessageHandler(handler)
     } else {
       callFlutterIsAsyncFlutterApiOnRootChannel.setMessageHandler(nil)
     }
@@ -6640,23 +6805,26 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage(nil) { response in
-        guard let listResponse = response as? [Any?] else {
-          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
-        } else if listResponse[0] == nil {
-          continuation.resume(
-            throwing: PigeonError(
-              code: "null-error",
-              message: "Flutter api returned null value for non-null return value.", details: ""))
-        } else {
-          let result = listResponse[0] as! Bool
-          continuation.resume(returning: result)
+        MainActor.assumeIsolated {
+          guard let listResponse = response as? [Any?] else {
+            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+            return
+          }
+          if listResponse.count > 1 {
+            let code: String = listResponse[0] as! String
+            let message: String? = nilOrValue(listResponse[1])
+            let details: String? = nilOrValue(listResponse[2])
+            continuation.resume(
+              throwing: PigeonError(code: code, message: message, details: details))
+          } else if listResponse[0] == nil {
+            continuation.resume(
+              throwing: PigeonError(
+                code: "null-error",
+                message: "Flutter api returned null value for non-null return value.", details: ""))
+          } else {
+            let result = listResponse[0] as! Bool
+            continuation.resume(returning: result)
+          }
         }
       }
     }
@@ -6693,7 +6861,7 @@ class HostCallbackCoreApiSetup {
       name: "dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.noop\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      noopChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         api.noop { result in
           switch result {
           case .success:
@@ -6703,6 +6871,7 @@ class HostCallbackCoreApiSetup {
           }
         }
       }
+      noopChannel.setMessageHandler(handler)
     } else {
       noopChannel.setMessageHandler(nil)
     }
@@ -6711,7 +6880,7 @@ class HostCallbackCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.echoString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoStringChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
         api.echo(aStringArg) { result in
@@ -6723,6 +6892,7 @@ class HostCallbackCoreApiSetup {
           }
         }
       }
+      echoStringChannel.setMessageHandler(handler)
     } else {
       echoStringChannel.setMessageHandler(nil)
     }
@@ -6731,7 +6901,7 @@ class HostCallbackCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.echoAllTypes\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoAllTypesChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let everythingArg = args[0] as! AllTypes
         api.echo(everythingArg) { result in
@@ -6743,6 +6913,7 @@ class HostCallbackCoreApiSetup {
           }
         }
       }
+      echoAllTypesChannel.setMessageHandler(handler)
     } else {
       echoAllTypesChannel.setMessageHandler(nil)
     }
@@ -6751,7 +6922,7 @@ class HostCallbackCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.echoNullableString\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoNullableStringChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aStringArg: String? = nilOrValue(args[0])
         api.echoNullable(aStringArg) { result in
@@ -6763,6 +6934,7 @@ class HostCallbackCoreApiSetup {
           }
         }
       }
+      echoNullableStringChannel.setMessageHandler(handler)
     } else {
       echoNullableStringChannel.setMessageHandler(nil)
     }
@@ -6771,7 +6943,7 @@ class HostCallbackCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.throwError\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwErrorChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         api.throwError { result in
           switch result {
           case .success(let res):
@@ -6781,6 +6953,7 @@ class HostCallbackCoreApiSetup {
           }
         }
       }
+      throwErrorChannel.setMessageHandler(handler)
     } else {
       throwErrorChannel.setMessageHandler(nil)
     }
@@ -6789,7 +6962,7 @@ class HostCallbackCoreApiSetup {
         "dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.throwErrorFromVoid\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      throwErrorFromVoidChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         api.throwErrorFromVoid { result in
           switch result {
           case .success:
@@ -6799,6 +6972,7 @@ class HostCallbackCoreApiSetup {
           }
         }
       }
+      throwErrorFromVoidChannel.setMessageHandler(handler)
     } else {
       throwErrorFromVoidChannel.setMessageHandler(nil)
     }
@@ -6813,7 +6987,7 @@ class HostCallbackCoreApiSetup {
           "dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.taskQueueIsBackgroundThread\(channelSuffix)",
         binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
     if let api = api {
-      taskQueueIsBackgroundThreadChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         api.taskQueueIsBackgroundThread { result in
           switch result {
           case .success(let res):
@@ -6823,6 +6997,7 @@ class HostCallbackCoreApiSetup {
           }
         }
       }
+      taskQueueIsBackgroundThreadChannel.setMessageHandler(handler)
     } else {
       taskQueueIsBackgroundThreadChannel.setMessageHandler(nil)
     }
@@ -6847,7 +7022,7 @@ class HostTrivialApiSetup {
       name: "dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      noopChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         do {
           try api.noop()
           reply(wrapResult(nil))
@@ -6855,6 +7030,7 @@ class HostTrivialApiSetup {
           reply(wrapError(error))
         }
       }
+      noopChannel.setMessageHandler(handler)
     } else {
       noopChannel.setMessageHandler(nil)
     }
@@ -6880,7 +7056,7 @@ class HostSmallApiSetup {
       name: "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      echoChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aStringArg = args[0] as! String
         Task { @MainActor in
@@ -6892,6 +7068,7 @@ class HostSmallApiSetup {
           }
         }
       }
+      echoChannel.setMessageHandler(handler)
     } else {
       echoChannel.setMessageHandler(nil)
     }
@@ -6899,7 +7076,7 @@ class HostSmallApiSetup {
       name: "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      voidVoidChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         Task { @MainActor in
           do {
             try await api.voidVoid()
@@ -6909,6 +7086,7 @@ class HostSmallApiSetup {
           }
         }
       }
+      voidVoidChannel.setMessageHandler(handler)
     } else {
       voidVoidChannel.setMessageHandler(nil)
     }
