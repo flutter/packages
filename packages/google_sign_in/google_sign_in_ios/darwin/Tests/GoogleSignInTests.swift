@@ -424,11 +424,6 @@ struct GoogleSignInPluginTests {
         }
       }
     }
-          }
-          confirmed()
-        }
-      }
-    }
   }
 
   @Suite("signIn") struct SignInTests {
@@ -742,7 +737,7 @@ struct GoogleSignInPluginTests {
       let scopes = ["mockScope1"]
 
       await confirmation("completion called") { confirmed in
-        plugin.addScopes(scopes: scopes, userId: fakeUser.userID!) { result in
+        plugin.addScopes(scopes, forUser: fakeUser.userID!) { result in
           switch result {
           case .success(let signInResult):
             guard signInResult is SignInSuccess else {
@@ -761,7 +756,7 @@ struct GoogleSignInPluginTests {
     @Test func addScopesErrorsIfNotSignedIn() async {
       let (plugin, _) = createTestPlugin()
       await confirmation("completion called") { confirmed in
-        plugin.addScopes(scopes: ["mockScope1"], userId: "unknownUser") { result in
+        plugin.addScopes(["mockScope1"], forUser: "unknownUser") { result in
           switch result {
           case .success(let signInResult):
             guard let failure = signInResult as? SignInFailure else {
@@ -793,7 +788,7 @@ struct GoogleSignInPluginTests {
       fakeUser.error = sdkError
 
       await confirmation("completion called") { confirmed in
-        plugin.addScopes(scopes: ["mockScope1"], userId: fakeUser.userID!) { result in
+        plugin.addScopes(["mockScope1"], forUser: fakeUser.userID!) { result in
           switch result {
           case .success(let signInResult):
             guard let failure = signInResult as? SignInFailure else {
@@ -817,7 +812,7 @@ struct GoogleSignInPluginTests {
       fakeUser.error = sdkError
 
       await confirmation("completion called") { confirmed in
-        plugin.addScopes(scopes: ["mockScope1"], userId: fakeUser.userID!) { result in
+        plugin.addScopes(["mockScope1"], forUser: fakeUser.userID!) { result in
           switch result {
           case .success:
             Issue.record("Expected a PigeonError for an unknown error domain")
@@ -843,7 +838,7 @@ struct GoogleSignInPluginTests {
         userInfo: nil)
 
       await confirmation("completion called") { confirmed in
-        plugin.addScopes(scopes: [], userId: fakeUser.userID!) { result in
+        plugin.addScopes([], forUser: fakeUser.userID!) { result in
           switch result {
           case .success:
             Issue.record("Expected a PigeonError for the runtime exception")

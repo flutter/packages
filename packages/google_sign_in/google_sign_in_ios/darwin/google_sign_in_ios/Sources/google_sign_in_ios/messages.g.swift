@@ -517,7 +517,8 @@ protocol GoogleSignInApi {
     userId: String, completion: @escaping (Result<SignInResult, Error>) -> Void)
   /// Requests authorization of the given additional scopes.
   func addScopes(
-    scopes: [String], userId: String, completion: @escaping (Result<SignInResult, Error>) -> Void)
+    _ scopes: [String], forUser userId: String,
+    completion: @escaping (Result<SignInResult, Error>) -> Void)
   /// Signs out the current user.
   func signOut() throws
   /// Revokes scope grants to the application.
@@ -622,7 +623,7 @@ class GoogleSignInApiSetup {
         let args = message as! [Any?]
         let scopesArg = args[0] as! [String]
         let userIdArg = args[1] as! String
-        api.addScopes(scopes: scopesArg, userId: userIdArg) { result in
+        api.addScopes(scopesArg, forUser: userIdArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
