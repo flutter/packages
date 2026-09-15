@@ -3104,7 +3104,7 @@ void main() {
   });
 
   testWidgets(
-    'CarouselController activeIndex behaves identically to leadingItem for unweighted carousels',
+    'CarouselController activeIndex updates midway through scroll for unweighted carousels',
     (WidgetTester tester) async {
       final controller = CarouselController();
       addTearDown(controller.dispose);
@@ -3133,14 +3133,14 @@ void main() {
       expect(controller.activeIndex, 0);
       expect(reportedIndex, 0);
 
-      // Scroll by half an item (100px). For unweighted carousels, both should remain 0
-      // because unweighted carousels use `.toInt()` for both.
+      // Scroll by half an item (100px). For unweighted carousels, activeIndex should
+      // update to 1 because it uses `.round()`, but leadingItem remains 0.
       controller.jumpTo(100.0);
       await tester.pumpAndSettle();
 
       expect(controller.leadingItem, 0);
-      expect(controller.activeIndex, 0);
-      expect(reportedIndex, 0);
+      expect(controller.activeIndex, 1);
+      expect(reportedIndex, 1);
 
       // Scroll past the item (200px)
       controller.jumpTo(201.0);

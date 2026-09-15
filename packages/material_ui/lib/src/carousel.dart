@@ -1801,7 +1801,7 @@ class _CarouselPosition extends ScrollPositionWithSingleContext implements _Caro
         index += _maxWeightIndex!;
       }
     } else {
-      index = itemPosition.toInt();
+      index = itemPosition.round();
     }
 
     // For infinite scrolling, wrap the index to the range [0, itemCount - 1].
