@@ -1283,7 +1283,7 @@ if (wrapped == nil) {
             isAsynchronous: true,
             isAsynchronousCallback: func.isAsynchronousCallback,
             isMainActor: generatorOptions.swiftStrictConcurrency || !func.isAsynchronousCallback,
-            isMainActorCompletion: generatorOptions.swiftStrictConcurrency,
+            isCompletionClosureMainActor: generatorOptions.swiftStrictConcurrency,
             swiftFunction: func.swiftFunction,
             getParameterName: _getSafeArgumentName,
           ),
@@ -1608,9 +1608,6 @@ if (wrapped == nil) {
     indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
         addDocumentationComments(indent, method.documentationComments, _docCommentSpec);
-        final _ActorIsolation? isolation = generatorOptions.swiftStrictConcurrency
-            ? _ActorIsolation.from(taskQueueType: method.taskQueueType)
-            : null;
         indent.writeln(
           _getMethodSignature(
             name: method.name,
@@ -1620,8 +1617,11 @@ if (wrapped == nil) {
             isAsynchronous: method.isAsynchronous,
             isAsynchronousCallback: method.isAsynchronousCallback,
             swiftFunction: method.swiftFunction,
-            methodPrefix: isolation?.asPrefix,
-            isSendable: generatorOptions.swiftStrictConcurrency,
+            methodAnnotations: [
+              if (generatorOptions.swiftStrictConcurrency)
+                _ActorIsolation.from(taskQueueType: method.taskQueueType).annotation,
+            ],
+            isCompletionClosureSendable: generatorOptions.swiftStrictConcurrency,
             ffiUserApi: generatorOptions.useFfi,
           ),
         );
@@ -2670,7 +2670,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
       isAsynchronousCallback: isAsynchronousCallback,
       isMainActor:
           generatorOptions.swiftStrictConcurrency || (isAsynchronous && !isAsynchronousCallback),
-      isMainActorCompletion: generatorOptions.swiftStrictConcurrency,
+      isCompletionClosureMainActor: generatorOptions.swiftStrictConcurrency,
       swiftFunction: swiftFunction,
       getParameterName: _getSafeArgumentName,
     );
@@ -2831,8 +2831,6 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
       });
     }
 
-    // The `@MainActor` annotation in the closure isn't strictly needed. This can be removed
-    // after the setMessageHandler API is correctly annotated.
     final mainActorIfSerialQueue =
         generatorOptions.swiftStrictConcurrency && serialBackgroundQueue == null
         ? '@MainActor '
@@ -3248,7 +3246,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         isAsynchronousCallback: true,
         errorTypeName: 'Error',
         isMainActor: generatorOptions.swiftStrictConcurrency,
-        isSendable: generatorOptions.swiftStrictConcurrency,
+        isCompletionClosureSendable: generatorOptions.swiftStrictConcurrency,
       );
       indent.writeln(methodSignature);
 
@@ -3512,7 +3510,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
       isAsynchronousCallback: true,
       errorTypeName: _getErrorClassName(generatorOptions),
       isMainActor: generatorOptions.swiftStrictConcurrency,
-      isMainActorCompletion: generatorOptions.swiftStrictConcurrency,
+      isCompletionClosureMainActor: generatorOptions.swiftStrictConcurrency,
     );
     indent.writeScoped('$methodSignature {', '}', () {
       indent.writeScoped('if pigeonRegistrar.ignoreCallsToDart {', '}', () {
@@ -3622,7 +3620,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         isAsynchronousCallback: true,
         errorTypeName: _getErrorClassName(generatorOptions),
         isMainActor: generatorOptions.swiftStrictConcurrency,
-        isMainActorCompletion: generatorOptions.swiftStrictConcurrency,
+        isCompletionClosureMainActor: generatorOptions.swiftStrictConcurrency,
         getParameterName: _getSafeArgumentName,
       );
 
@@ -4076,8 +4074,6 @@ enum _ActorIsolation {
       .serialBackgroundThread => .nonisolated,
     };
   }
-
-  String get asPrefix => '$annotation ';
 }
 
 String _getMethodSignature({
@@ -4089,9 +4085,9 @@ String _getMethodSignature({
   bool ffiUserApi = false,
   bool isAsynchronousCallback = false,
   bool isMainActor = false,
-  bool isSendable = false,
-  bool isMainActorCompletion = false,
-  String? methodPrefix,
+  bool isCompletionClosureSendable = false,
+  bool isCompletionClosureMainActor = false,
+  Iterable<String> methodAnnotations = const <Never>[],
   String? swiftFunction,
   bool ffiBridgeApi = false,
   _SwiftFunctionComponents? components,
@@ -4143,7 +4139,7 @@ String _getMethodSignature({
     return '${label != name ? '$label ' : ''}$name: $type';
   }).join(', ');
 
-  final String prefix = methodPrefix ?? (isMainActor ? '@MainActor ' : '');
+  final String prefix = methodAnnotations.map((String annotation) => '$annotation ').join();
   final String methodName = ffiBridgeApi ? name : components.name;
 
   if (ffiBridgeApi) {
@@ -4161,8 +4157,11 @@ String _getMethodSignature({
   }
 
   if (isAsynchronous) {
-    final sendablePrefix = isSendable ? '@Sendable ' : '';
-    final mainActorCompletionPrefix = isMainActorCompletion ? '@MainActor ' : '';
+    // With the "approchable concurrency" (the default in Swift 6.0+), @MainActor implies
+    // @Sendable. Explicitly add @Sendable even when @MainActor in case the feature flag
+    // is not on or the target is compiled with an old compiler.
+    final sendablePrefix = isCompletionClosureSendable ? '@Sendable ' : '';
+    final mainActorCompletionPrefix = isCompletionClosureMainActor ? '@MainActor ' : '';
     final completion =
         'completion: @escaping $sendablePrefix$mainActorCompletionPrefix(Result<$returnTypeString, $errorTypeName>) -> Void';
     final params = parameters.isEmpty ? completion : '$parameterSignature, $completion';
