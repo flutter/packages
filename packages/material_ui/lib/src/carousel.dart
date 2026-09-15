@@ -483,16 +483,16 @@ class CarouselView extends StatefulWidget {
   final List<Widget> children;
 
   /// {@template material_ui.CarouselView.onIndexChanged}
-  /// A callback invoked when the leading item changes.
+  /// A callback invoked when the active item changes.
   ///
-  /// For an unweighted carousel, the leading item is the first visible item in
-  /// the carousel view. For a weighted carousel, the leading item is the item
+  /// For an unweighted carousel, the active item is the first visible item in
+  /// the carousel view. For a weighted carousel, the active item is the item
   /// that occupies the maximum weight.
   ///
-  /// The callback fires only when the leading item is completely out of view,
-  /// whether due to user interaction or programmatic scrolling. If the leading item
-  /// remains partially visible, the leading index will not change and the callback will
-  /// not be invoked.
+  /// The callback fires only when the active item changes,
+  /// whether due to user interaction or programmatic scrolling. If the active item
+  /// remains partially visible and has not shifted enough to change the active index,
+  /// the callback will not be invoked.
   /// {@endtemplate}
   ///
   /// Example:
@@ -1987,11 +1987,11 @@ class CarouselController extends ScrollController {
 
   /// The current leading item index in the [CarouselView].
   ///
+  /// This index represents the first item that is currently visible at the leading
+  /// edge of the carousel's scrollable area. For the currently active (focused or
+  /// expanded) item, see [activeIndex].
+  ///
   /// {@macro material_ui.CarouselView.onIndexChanged}
-  @Deprecated(
-    'Use activeIndex instead. '
-    'This feature was deprecated after material_ui v1.2.0.',
-  )
   int get leadingItem {
     assert(
       positions.isNotEmpty,
@@ -2006,6 +2006,10 @@ class CarouselController extends ScrollController {
   }
 
   /// The currently active item index in the [CarouselView].
+  ///
+  /// This index represents the item that is currently active, such as the one
+  /// most prominently displayed or expanded. For the first visible item at the
+  /// leading edge of the scroll, see [leadingItem].
   ///
   /// {@macro material_ui.CarouselView.onIndexChanged}
   int get activeIndex {
