@@ -9,4 +9,4 @@ https://github.com/flutter/flutter/blob/master/.agents/skills/README.md
 
 ## Packages specific guidance
 
-When there is specific guidance for packages it will go here.
+- [Material 3 Expressive migration](material-3-expressive-migration/SKILL.md): guidance for migrating `packages/material_ui` components to Material 3 Expressive.
