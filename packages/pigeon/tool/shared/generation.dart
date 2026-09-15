@@ -334,7 +334,7 @@ Future<int> generateTestPigeons({required String baseDir, bool includeOverflow =
         swiftOut: '$swiftConcurrencyBase/$pascalCaseName.gen.swift',
         swiftErrorClassName: swiftErrorClassName,
         swiftIncludeErrorClass: input != 'primitive',
-        swiftStrictConcurrency: true,
+        strictConcurrency: true,
         mergeDefinitionFileOptions: input != 'enum',
       );
       if (generateCode != 0) {
@@ -373,7 +373,7 @@ Future<int> runPigeon({
   bool swiftIncludeErrorClass = true,
   Object? swiftOut,
   String? swiftErrorClassName,
-  bool swiftStrictConcurrency = false,
+  bool strictConcurrency = false,
   bool swiftUseFfi = false,
   String swiftAppDirectory = '',
   String? cppHeaderOut,
@@ -456,7 +456,7 @@ Future<int> runPigeon({
       swiftOptions: SwiftOptions(
         errorClassName: swiftErrorClassName,
         includeErrorClass: swiftIncludeErrorClass,
-        swiftStrictConcurrency: swiftStrictConcurrency,
+        strictConcurrency: strictConcurrency,
         useFfi: swiftUseFfi,
         appDirectory: swiftAppDirectory.isNotEmpty ? swiftAppDirectory : null,
         configDirectory: swiftAppDirectory.isNotEmpty ? swiftAppDirectory : null,

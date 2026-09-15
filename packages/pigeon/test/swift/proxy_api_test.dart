@@ -1074,7 +1074,7 @@ void main() {
         final sink = StringBuffer();
         const generator = SwiftGenerator();
         generator.generate(
-          const InternalSwiftOptions(swiftOut: '', swiftStrictConcurrency: true),
+          const InternalSwiftOptions(swiftOut: '', strictConcurrency: true),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,

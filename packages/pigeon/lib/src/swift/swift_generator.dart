@@ -30,7 +30,7 @@ class SwiftOptions {
     this.fileSpecificClassNameComponent,
     this.errorClassName,
     this.includeErrorClass = true,
-    this.swiftStrictConcurrency = false,
+    this.strictConcurrency = false,
     this.useFfi = false,
     this.ffiModuleName,
     this.appDirectory,
@@ -71,7 +71,7 @@ class SwiftOptions {
   /// To get the full benefit, consider enabling Swift strict concurrency checking
   /// in your plugin's Swift targets. For more details, see the
   /// [Swift Concurrency Migration Guide](https://www.swift.org/migration/documentation/swift-6-concurrency-migration-guide/).
-  final bool swiftStrictConcurrency;
+  final bool strictConcurrency;
 
   /// Whether to use FFI when possible.
   final bool useFfi;
@@ -109,7 +109,7 @@ class SwiftOptions {
       fileSpecificClassNameComponent: map['fileSpecificClassNameComponent'] as String?,
       errorClassName: map['errorClassName'] as String?,
       includeErrorClass: map['includeErrorClass'] as bool? ?? true,
-      swiftStrictConcurrency: map['swiftStrictConcurrency'] as bool? ?? false,
+      strictConcurrency: map['strictConcurrency'] as bool? ?? false,
       useFfi: map['useFfi'] as bool? ?? false,
       ffiModuleName: map['ffiModuleName'] as String?,
       appDirectory: map['appDirectory'] as String?,
@@ -128,7 +128,7 @@ class SwiftOptions {
         'fileSpecificClassNameComponent': fileSpecificClassNameComponent!,
       if (errorClassName != null) 'errorClassName': errorClassName!,
       'includeErrorClass': includeErrorClass,
-      'swiftStrictConcurrency': swiftStrictConcurrency,
+      'strictConcurrency': strictConcurrency,
       'useFfi': useFfi,
       if (ffiModuleName != null) 'ffiModuleName': ffiModuleName!,
       if (appDirectory != null) 'appDirectory': appDirectory!,
@@ -156,7 +156,7 @@ class InternalSwiftOptions extends InternalOptions {
     this.fileSpecificClassNameComponent,
     this.errorClassName,
     this.includeErrorClass = true,
-    this.swiftStrictConcurrency = false,
+    this.strictConcurrency = false,
     this.useFfi = false,
     this.ffiModuleName,
     this.appDirectory,
@@ -189,7 +189,7 @@ class InternalSwiftOptions extends InternalOptions {
        appleSdkTriple = options.appleSdkTriple,
        swiftOut = swiftOut ?? swiftOuts?.firstOrNull ?? '',
        swiftOuts = swiftOuts ?? (swiftOut != null ? <String>[swiftOut] : const <String>[]),
-       swiftStrictConcurrency = options.swiftStrictConcurrency;
+       strictConcurrency = options.strictConcurrency;
 
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
@@ -219,7 +219,7 @@ class InternalSwiftOptions extends InternalOptions {
   final bool includeErrorClass;
 
   /// Whether to emit Swift code with strict concurrency annotations.
-  final bool swiftStrictConcurrency;
+  final bool strictConcurrency;
 
   /// Whether to use FFI when possible.
   final bool useFfi;
@@ -1293,10 +1293,9 @@ if (wrapped == nil) {
             methodAnnotations: <String>[
               // Some @MainActor annotation predates the GeneratorOptions flag:
               // https://github.com/flutter/flutter/issues/192199
-              if (generatorOptions.swiftStrictConcurrency || !func.isAsynchronousCallback)
-                '@MainActor',
+              if (generatorOptions.strictConcurrency || !func.isAsynchronousCallback) '@MainActor',
             ],
-            isCompletionClosureMainActor: generatorOptions.swiftStrictConcurrency,
+            isCompletionClosureMainActor: generatorOptions.strictConcurrency,
             swiftFunction: func.swiftFunction,
             getParameterName: _getSafeArgumentName,
           ),
@@ -1373,7 +1372,7 @@ if (wrapped == nil) {
     indent.newln();
     indent.write('@objc class ${api.name}Registrar: NSObject ');
     indent.addScoped('{', '}', () {
-      final isolation = generatorOptions.swiftStrictConcurrency ? 'nonisolated(unsafe) ' : '';
+      final isolation = generatorOptions.strictConcurrency ? 'nonisolated(unsafe) ' : '';
       indent.writeln('${isolation}static var registered${api.name} = [String: ${api.name}]()');
       indent.newln();
       indent.write(
@@ -1596,7 +1595,7 @@ if (wrapped == nil) {
   }) {
     final String apiName = api.name;
     if (generatorOptions.useFfi) {
-      final isolation = generatorOptions.swiftStrictConcurrency ? 'nonisolated(unsafe) ' : '';
+      final isolation = generatorOptions.strictConcurrency ? 'nonisolated(unsafe) ' : '';
       indent.format('''
         class ${apiName}InstanceTracker {
           ${isolation}static var instancesOf$apiName = [String: ${apiName}Setup?]()
@@ -1615,7 +1614,7 @@ if (wrapped == nil) {
     );
 
     final inheritance =
-        generatorOptions.swiftStrictConcurrency &&
+        generatorOptions.strictConcurrency &&
             api.methods.any((Method m) => m.taskQueueType == TaskQueueType.serialBackgroundThread)
         ? ': Sendable '
         : ' ';
@@ -1633,18 +1632,18 @@ if (wrapped == nil) {
             isAsynchronousCallback: method.isAsynchronousCallback,
             swiftFunction: method.swiftFunction,
             methodAnnotations: [
-              if (generatorOptions.swiftStrictConcurrency && !generatorOptions.useFfi)
+              if (generatorOptions.strictConcurrency && !generatorOptions.useFfi)
                 _ActorIsolation.from(taskQueueType: method.taskQueueType).annotation,
             ],
             isCompletionClosureSendable:
-                generatorOptions.swiftStrictConcurrency && !generatorOptions.useFfi,
+                generatorOptions.strictConcurrency && !generatorOptions.useFfi,
             ffiUserApi: generatorOptions.useFfi,
           ),
         );
       }
     });
 
-    final mainActor = generatorOptions.swiftStrictConcurrency ? '@MainActor ' : '';
+    final mainActor = generatorOptions.strictConcurrency ? '@MainActor ' : '';
 
     if (generatorOptions.useFfi) {
       _writeFfiHostApi(generatorOptions, root, indent, api, dartPackageName: dartPackageName);
@@ -1727,7 +1726,7 @@ if (wrapped == nil) {
     final instanceManagerApiName = '${swiftInstanceManagerClassName(generatorOptions)}Api';
 
     final String removeStrongReferenceName = makeRemoveStrongReferenceChannelName(dartPackageName);
-    final mainActor = generatorOptions.swiftStrictConcurrency ? '@MainActor ' : '';
+    final mainActor = generatorOptions.strictConcurrency ? '@MainActor ' : '';
 
     indent.writeScoped('${mainActor}private class $instanceManagerApiName {', '}', () {
       addDocumentationComments(indent, <String>[
@@ -2058,7 +2057,7 @@ if (wrapped == nil) {
     indent.newln();
 
     final swiftApiName = '$hostProxyApiPrefix${api.name}';
-    final mainActor = generatorOptions.swiftStrictConcurrency ? '@MainActor ' : '';
+    final mainActor = generatorOptions.strictConcurrency ? '@MainActor ' : '';
 
     indent.writeScoped('${mainActor}final class $swiftApiName: $swiftApiProtocolName  {', '}', () {
       indent.writeln('unowned let pigeonRegistrar: ${proxyApiRegistrarName(generatorOptions)}');
@@ -2585,7 +2584,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
     required String dartPackageName,
   }) {
     // @EventChannelApi currently does not support background queue.
-    final mainActor = generatorOptions.swiftStrictConcurrency ? '@MainActor' : '';
+    final mainActor = generatorOptions.strictConcurrency ? '@MainActor' : '';
     indent.newln();
     // TODO(tarrinneal): Prefix this class to avoid name collisions.
     indent.format('''
@@ -2685,10 +2684,10 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
       isAsynchronous: isAsynchronous,
       isAsynchronousCallback: isAsynchronousCallback,
       methodAnnotations: <String>[
-        if (generatorOptions.swiftStrictConcurrency || (isAsynchronous && !isAsynchronousCallback))
+        if (generatorOptions.strictConcurrency || (isAsynchronous && !isAsynchronousCallback))
           '@MainActor',
       ],
-      isCompletionClosureMainActor: generatorOptions.swiftStrictConcurrency,
+      isCompletionClosureMainActor: generatorOptions.strictConcurrency,
       swiftFunction: swiftFunction,
       getParameterName: _getSafeArgumentName,
     );
@@ -2743,7 +2742,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         );
         indent.write('$channel.sendMessage($sendArgument) ');
 
-        final responseArg = generatorOptions.swiftStrictConcurrency
+        final responseArg = generatorOptions.strictConcurrency
             ? '(response: any Sendable)'
             : 'response';
         indent.addScoped('{ $responseArg in', '}', () {
@@ -2855,10 +2854,8 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
     }
 
     final mainActorIfSerialQueue =
-        generatorOptions.swiftStrictConcurrency && serialBackgroundQueue == null
-        ? '@MainActor '
-        : '';
-    final replyType = generatorOptions.swiftStrictConcurrency
+        generatorOptions.strictConcurrency && serialBackgroundQueue == null ? '@MainActor ' : '';
+    final replyType = generatorOptions.strictConcurrency
         ? '@Sendable (Any?) -> Void'
         : 'FlutterReply';
 
@@ -2979,7 +2976,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
     required InternalSwiftOptions generatorOptions,
     required Iterable<AstProxyApi> allProxyApis,
   }) {
-    final mainActor = generatorOptions.swiftStrictConcurrency ? '@MainActor ' : '';
+    final mainActor = generatorOptions.strictConcurrency ? '@MainActor ' : '';
     final delegateName =
         '${generatorOptions.fileSpecificClassNameComponent ?? ''}${proxyApiClassNamePrefix}ProxyApiDelegate';
     indent.writeScoped('protocol $delegateName {', '}', () {
@@ -3131,7 +3128,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         ],
         returnType: apiAsTypeDeclaration,
         errorTypeName: '',
-        methodAnnotations: <String>[if (generatorOptions.swiftStrictConcurrency) '@MainActor'],
+        methodAnnotations: <String>[if (generatorOptions.strictConcurrency) '@MainActor'],
       );
       indent.writeln(methodSignature);
 
@@ -3174,7 +3171,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         ],
         returnType: field.type,
         errorTypeName: '',
-        methodAnnotations: <String>[if (generatorOptions.swiftStrictConcurrency) '@MainActor'],
+        methodAnnotations: <String>[if (generatorOptions.strictConcurrency) '@MainActor'],
       );
       indent.writeln(methodSignature);
 
@@ -3217,7 +3214,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         ],
         returnType: field.type,
         errorTypeName: '',
-        methodAnnotations: <String>[if (generatorOptions.swiftStrictConcurrency) '@MainActor'],
+        methodAnnotations: <String>[if (generatorOptions.strictConcurrency) '@MainActor'],
       );
       indent.writeln(methodSignature);
 
@@ -3268,8 +3265,8 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         isAsynchronous: method.isAsynchronous,
         isAsynchronousCallback: true,
         errorTypeName: 'Error',
-        methodAnnotations: <String>[if (generatorOptions.swiftStrictConcurrency) '@MainActor'],
-        isCompletionClosureSendable: generatorOptions.swiftStrictConcurrency,
+        methodAnnotations: <String>[if (generatorOptions.strictConcurrency) '@MainActor'],
+        isCompletionClosureSendable: generatorOptions.strictConcurrency,
       );
       indent.writeln(methodSignature);
 
@@ -3532,8 +3529,8 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
       isAsynchronous: true,
       isAsynchronousCallback: true,
       errorTypeName: _getErrorClassName(generatorOptions),
-      methodAnnotations: <String>[if (generatorOptions.swiftStrictConcurrency) '@MainActor'],
-      isCompletionClosureMainActor: generatorOptions.swiftStrictConcurrency,
+      methodAnnotations: <String>[if (generatorOptions.strictConcurrency) '@MainActor'],
+      isCompletionClosureMainActor: generatorOptions.strictConcurrency,
     );
     indent.writeScoped('$methodSignature {', '}', () {
       indent.writeScoped('if pigeonRegistrar.ignoreCallsToDart {', '}', () {
@@ -3642,8 +3639,8 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         isAsynchronous: true,
         isAsynchronousCallback: true,
         errorTypeName: _getErrorClassName(generatorOptions),
-        methodAnnotations: <String>[if (generatorOptions.swiftStrictConcurrency) '@MainActor'],
-        isCompletionClosureMainActor: generatorOptions.swiftStrictConcurrency,
+        methodAnnotations: <String>[if (generatorOptions.strictConcurrency) '@MainActor'],
+        isCompletionClosureMainActor: generatorOptions.strictConcurrency,
         getParameterName: _getSafeArgumentName,
       );
 

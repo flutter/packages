@@ -1,6 +1,6 @@
 ## 29.1.0
 
-* [swift] Adds experimental support for adding Swift strict concurrency annotations to platform-channel-based APIs. See `SwiftOptions.swiftStrictConcurrency` for details.
+* [swift] Adds experimental support for adding Swift strict concurrency annotations to platform-channel-based APIs. See `SwiftOptions.strictConcurrency` for details.
 
 ## 29.0.2
 

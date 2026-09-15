@@ -24,7 +24,7 @@ String swiftInstanceManagerClassName(InternalSwiftOptions options) =>
 
 /// Template for delegate with callback when an object is deallocated.
 String instanceManagerFinalizerDelegateTemplate(InternalSwiftOptions options) {
-  final (String isolation, String sendable) = options.swiftStrictConcurrency
+  final (String isolation, String sendable) = options.strictConcurrency
       ? ('nonisolated ', ', Sendable')
       : ('', '');
   return '''
@@ -39,11 +39,7 @@ ${isolation}protocol ${instanceManagerFinalizerDelegateName(options)}: AnyObject
 
 /// Template for an object that tracks when an object is deallocated.
 String instanceManagerFinalizerTemplate(InternalSwiftOptions options) {
-  final (
-    String nonisolated,
-    String unsafeNonisolated,
-    String sendable,
-  ) = options.swiftStrictConcurrency
+  final (String nonisolated, String unsafeNonisolated, String sendable) = options.strictConcurrency
       ? ('nonisolated', 'nonisolated(unsafe) ', ': Sendable')
       : ('', '', '');
   return '''
@@ -86,7 +82,7 @@ internal $nonisolated final class ${_instanceManagerFinalizerName(options)}$send
 
 /// The Swift `InstanceManager`.
 String instanceManagerTemplate(InternalSwiftOptions options) {
-  final nonisolated = options.swiftStrictConcurrency ? 'nonisolated ' : '';
+  final nonisolated = options.strictConcurrency ? 'nonisolated ' : '';
   return '''
 /// Maintains instances used to communicate with the corresponding objects in Dart.
 ///
@@ -103,7 +99,7 @@ String instanceManagerTemplate(InternalSwiftOptions options) {
 /// again.
 ///
 /// Accessing and inserting to an InstanceManager is thread safe.
-${nonisolated}final class ${swiftInstanceManagerClassName(options)}${options.swiftStrictConcurrency ? ': @unchecked Sendable' : ''} {
+${nonisolated}final class ${swiftInstanceManagerClassName(options)}${options.strictConcurrency ? ': @unchecked Sendable' : ''} {
   // Identifiers are locked to a specific range to avoid collisions with objects
   // created simultaneously from Dart.
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
