@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
@@ -1512,5 +1514,135 @@ void main() {
     );
     expect(tester.getSize(find.byType(Drawer)), Size.zero);
     expect(tester.getSize(find.byType(DrawerHeader)), Size.zero);
+  });
+
+  testWidgets('Drawer double tap to close does not leak LocalHistoryEntry', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(platform: TargetPlatform.iOS),
+        home: const Scaffold(body: Center(child: Text('Home'))),
+      ),
+    );
+
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) {
+                return Scaffold(
+                  appBar: AppBar(title: const Text('Second')),
+                  endDrawer: const Drawer(child: Text('Drawer Item')),
+                  body: const Center(child: Text('Second Body')),
+                );
+              },
+            ),
+          ),
+    );
+    await tester.pumpAndSettle();
+
+    // Open the end drawer.
+    Scaffold.of(tester.element(find.text('Second Body'))).openEndDrawer();
+    await tester.pumpAndSettle();
+
+    // Rapid double tap on the scrim.
+    // Use manual pointer events to simulate tapping the scrim twice rapidly.
+    final TestGesture gesture1 = await tester.startGesture(const Offset(10.0, 200.0));
+    await gesture1.up();
+
+    // Pump once to start the closing animation ticker.
+    await tester.pump();
+    // Advance time by 150ms so the drawer is more than half closed.
+    await tester.pump(const Duration(milliseconds: 150));
+
+    final TestGesture gesture2 = await tester.startGesture(const Offset(10.0, 200.0));
+    await gesture2.up();
+
+    await tester.pumpAndSettle();
+
+    final BuildContext routeContext = tester.element(find.text('Second Body'));
+    final ModalRoute<dynamic> route = ModalRoute.of(routeContext)!;
+
+    // The drawer should be closed.
+    expect(find.text('Drawer Item'), findsNothing);
+
+    // The history entry should have been removed, meaning it won't handle pop internally.
+    expect(route.willHandlePopInternally, false);
+
+    // Attempt swipe to go back.
+    await tester.dragFrom(const Offset(5.0, 200.0), const Offset(500.0, 0.0));
+    await tester.pump();
+    await tester.pumpAndSettle();
+
+    // Verify it went back.
+    expect(find.text('Home'), findsOneWidget);
+    expect(find.text('Second Body'), findsNothing);
+  });
+
+  testWidgets('Drawer drag while closing does not leak LocalHistoryEntry', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(platform: TargetPlatform.iOS),
+        home: const Scaffold(body: Center(child: Text('Home'))),
+      ),
+    );
+
+    unawaited(
+      tester
+          .state<NavigatorState>(find.byType(Navigator))
+          .push(
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) {
+                return Scaffold(
+                  appBar: AppBar(title: const Text('Second')),
+                  drawer: const Drawer(child: Text('Drawer Item')),
+                  body: const Center(child: Text('Second Body')),
+                );
+              },
+            ),
+          ),
+    );
+    await tester.pumpAndSettle();
+
+    // Open the drawer.
+    Scaffold.of(tester.element(find.text('Second Body'))).openDrawer();
+    await tester.pumpAndSettle();
+
+    final BuildContext routeContext = tester.element(find.text('Second Body'));
+    final ModalRoute<dynamic> route = ModalRoute.of(routeContext)!;
+    expect(route.willHandlePopInternally, true);
+
+    // Start closing the drawer programmatically to begin the closing animation.
+    Scaffold.of(tester.element(find.text('Second Body'))).closeDrawer();
+
+    // Pump once to start the closing animation ticker.
+    await tester.pump();
+    // Advance time so the drawer is in the middle of closing.
+    await tester.pump(const Duration(milliseconds: 100));
+
+    // While it is closing (status == AnimationStatus.reverse), grab the drawer.
+    // This triggers _handleDragDown, which adds the history entry back.
+    final TestGesture gesture = await tester.startGesture(const Offset(50.0, 200.0));
+    await tester.pump();
+
+    // The history entry should have been re-added.
+    expect(route.willHandlePopInternally, true);
+
+    // Fling it closed again by dragging left and releasing.
+    await gesture.moveBy(const Offset(-20.0, 0.0));
+    await tester.pump();
+    await gesture.up();
+
+    await tester.pump();
+
+    expect(route.willHandlePopInternally, false);
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('Drawer Item'), findsNothing);
   });
 }
