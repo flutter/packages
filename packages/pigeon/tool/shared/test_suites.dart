@@ -18,9 +18,12 @@ const int _noDeviceAvailableExitCode = 100;
 
 const String _testPluginName = 'test_plugin';
 const String _alternateLanguageTestPluginName = 'alternate_language_test_plugin';
+const String _swiftConcurrencyTestPluginName = 'swift_concurrency_test_plugin';
 const String _testPluginRelativePath = 'platform_tests/$_testPluginName';
 const String _alternateLanguageTestPluginRelativePath =
     'platform_tests/$_alternateLanguageTestPluginName';
+const String _swiftConcurrencyTestPluginRelativePath =
+    'platform_tests/$_swiftConcurrencyTestPluginName';
 const String _integrationTestFileRelativePath = 'integration_test/test.dart';
 
 /// Information about a test suite.
@@ -46,11 +49,17 @@ const String iOSObjCUnitTests = 'ios_objc_unittests';
 const String iOSObjCIntegrationTests = 'ios_objc_integration_tests';
 const String iOSSwiftUnitTests = 'ios_swift_unittests';
 const String iOSSwiftIntegrationTests = 'ios_swift_integration_tests';
+const String iOSSwiftStrictConcurrencyUnitTests = 'ios_swift_strict_concurrency_unittests';
+const String iOSSwiftStrictConcurrencyIntegrationTests =
+    'ios_swift_strict_concurrency_integration_tests';
 const String linuxUnitTests = 'linux_unittests';
 const String linuxIntegrationTests = 'linux_integration_tests';
 const String macOSObjCIntegrationTests = 'macos_objc_integration_tests';
 const String macOSSwiftUnitTests = 'macos_swift_unittests';
 const String macOSSwiftIntegrationTests = 'macos_swift_integration_tests';
+const String macOSSwiftStrictConcurrencyUnitTests = 'macos_swift_strict_concurrency_unittests';
+const String macOSSwiftStrictConcurrencyIntegrationTests =
+    'macos_swift_strict_concurrency_integration_tests';
 const String windowsUnitTests = 'windows_unittests';
 const String windowsIntegrationTests = 'windows_integration_tests';
 const String dartUnitTests = 'dart_unittests';
@@ -114,6 +123,14 @@ const Map<String, TestInfo> testSuites = <String, TestInfo>{
     function: _runIOSSwiftIntegrationTests,
     description: 'Integration tests on generated Swift code.',
   ),
+  iOSSwiftStrictConcurrencyUnitTests: TestInfo(
+    function: _runIOSSwiftStrictConcurrencyUnitTests,
+    description: 'Unit tests on generated Swift code with strict concurrency.',
+  ),
+  iOSSwiftStrictConcurrencyIntegrationTests: TestInfo(
+    function: _runIOSSwiftStrictConcurrencyIntegrationTests,
+    description: 'Integration tests on generated Swift code with strict concurrency.',
+  ),
   linuxUnitTests: TestInfo(
     function: _runLinuxUnitTests,
     description: 'Unit tests on generated Linux C code.',
@@ -133,6 +150,14 @@ const Map<String, TestInfo> testSuites = <String, TestInfo>{
   macOSSwiftIntegrationTests: TestInfo(
     function: _runMacOSSwiftIntegrationTests,
     description: 'Integration tests on generated Swift code on macOS.',
+  ),
+  macOSSwiftStrictConcurrencyUnitTests: TestInfo(
+    function: _runMacOSSwiftStrictConcurrencyUnitTests,
+    description: 'Unit tests on generated Swift code with strict concurrency on macOS.',
+  ),
+  macOSSwiftStrictConcurrencyIntegrationTests: TestInfo(
+    function: _runMacOSSwiftStrictConcurrencyIntegrationTests,
+    description: 'Integration tests on generated Swift code with strict concurrency on macOS.',
   ),
   commandLineTests: TestInfo(
     function: _runCommandLineTests,
@@ -324,8 +349,34 @@ Future<int> _runMacOSSwiftIntegrationTests({bool ciMode = false}) async {
   ]);
 }
 
+Future<int> _runMacOSSwiftStrictConcurrencyUnitTests({bool ciMode = false}) async {
+  const examplePath = './$_swiftConcurrencyTestPluginRelativePath/example';
+  final int compileCode = await runFlutterBuild(examplePath, 'macos');
+  if (compileCode != 0) {
+    return compileCode;
+  }
+
+  return runXcodeBuild(
+    '$examplePath/macos',
+    extraArguments: <String>['-configuration', 'Debug', 'test'],
+  );
+}
+
+Future<int> _runMacOSSwiftStrictConcurrencyIntegrationTests({bool ciMode = false}) async {
+  const examplePath = './$_swiftConcurrencyTestPluginRelativePath/example';
+  return runFlutterCommand(examplePath, 'test', <String>[
+    _integrationTestFileRelativePath,
+    '-d',
+    'macos',
+  ]);
+}
+
 Future<int> _runIOSSwiftUnitTests({bool ciMode = false}) async {
   return _runIOSPluginUnitTests(_testPluginRelativePath);
+}
+
+Future<int> _runIOSSwiftStrictConcurrencyUnitTests({bool ciMode = false}) async {
+  return _runIOSPluginUnitTests(_swiftConcurrencyTestPluginRelativePath);
 }
 
 Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
@@ -374,6 +425,10 @@ Future<int> _deleteSimulator(String deviceName) async {
 
 Future<int> _runIOSSwiftIntegrationTests({bool ciMode = false}) async {
   return _runMobileIntegrationTests('iOS', _testPluginRelativePath);
+}
+
+Future<int> _runIOSSwiftStrictConcurrencyIntegrationTests({bool ciMode = false}) async {
+  return _runMobileIntegrationTests('iOS', _swiftConcurrencyTestPluginRelativePath);
 }
 
 Future<int> _runLinuxUnitTests({bool ciMode = false}) async {

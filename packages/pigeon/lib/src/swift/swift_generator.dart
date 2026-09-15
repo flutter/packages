@@ -60,12 +60,13 @@ class SwiftOptions {
   /// concurrency annotations (such as `@Sendable` or `@MainActor`) that allows
   /// the Swift compiler to catch data races in the client plugin's Swift code.
   ///
-  /// Consider disabling this flag when [useFfi] is true since it is not fully supported.
+  /// Consider disabling this flag when [useFfi] is true since it is not yet supported.
   ///
   /// Pigeon may still add concurrency annotations to generated Swift code when
   /// this is disabled, as some concurrency annotations predate this flag and are
-  /// crucial to the execution semantics of the Swift code, for backward compatibility
-  /// they are always added regardless of this flag.
+  /// crucial to the execution semantics of the Swift code (`@MainActor` on async
+  /// APIs for example), for backward compatibility those annotatons are always
+  /// added regardless of this flag.
   ///
   /// To get the full benefit, consider enabling Swift strict concurrency checking
   /// in your plugin's Swift targets. For more details, see the
