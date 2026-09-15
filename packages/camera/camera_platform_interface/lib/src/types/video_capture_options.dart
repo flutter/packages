@@ -16,6 +16,7 @@ class VideoCaptureOptions {
     this.streamCallback,
     this.streamOptions,
     this.enablePersistentRecording = true,
+    this.videoOutputPath,
   }) : assert(
          streamOptions == null || streamCallback != null,
          'Must specify streamCallback if providing streamOptions.',
@@ -52,6 +53,11 @@ class VideoCaptureOptions {
   /// Defaults to `true`.
   final bool enablePersistentRecording;
 
+  /// The path where the video should be saved.
+  ///
+  /// If null, the platform will generate a temporary path.
+  final String? videoOutputPath;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -61,7 +67,8 @@ class VideoCaptureOptions {
           maxDuration == other.maxDuration &&
           streamCallback == other.streamCallback &&
           streamOptions == other.streamOptions &&
-          enablePersistentRecording == other.enablePersistentRecording;
+          enablePersistentRecording == other.enablePersistentRecording &&
+          videoOutputPath == other.videoOutputPath;
 
   @override
   int get hashCode =>

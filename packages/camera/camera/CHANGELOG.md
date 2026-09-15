@@ -1,3 +1,7 @@
+## 0.13.0
+
+* Adds `videoOutputPath` support to `startVideoRecording`.
+
 ## 0.12.1
 
 * Adds `setJpegImageQuality` for controlling JPEG compression quality.

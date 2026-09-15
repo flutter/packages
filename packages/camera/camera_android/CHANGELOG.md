@@ -1,3 +1,7 @@
+## 0.10.12
+
+* Adds support for custom video output path in video recording.
+
 ## 0.10.11+1
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
