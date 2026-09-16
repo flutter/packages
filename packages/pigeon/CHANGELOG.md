@@ -1,3 +1,8 @@
+## 29.0.2
+
+* [swift] Fixes a crash when a Flutter API returns null for a non-null return
+  value and the null arrives as `NSNull`.
+
 ## 29.0.1
 
 * [swift] Annotates async `FlutterApi` methods with `@MainActor`.
