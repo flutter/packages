@@ -29,9 +29,9 @@ String instanceManagerFinalizerDelegateTemplate(InternalSwiftOptions options) {
       : ('', '');
   return '''
 /// Handles the callback when an object is deallocated.
-${isolation}protocol ${instanceManagerFinalizerDelegateName(options)}: AnyObject$sendable {
+protocol ${instanceManagerFinalizerDelegateName(options)}: AnyObject$sendable {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
-  func onDeinit(identifier: Int64)
+  ${isolation}func onDeinit(identifier: Int64)
 }
 
 ''';
@@ -40,11 +40,11 @@ ${isolation}protocol ${instanceManagerFinalizerDelegateName(options)}: AnyObject
 /// Template for an object that tracks when an object is deallocated.
 String instanceManagerFinalizerTemplate(InternalSwiftOptions options) {
   final (String nonisolated, String unsafeNonisolated, String sendable) = options.strictConcurrency
-      ? ('nonisolated', 'nonisolated(unsafe) ', ': Sendable')
+      ? ('nonisolated ', 'nonisolated(unsafe) ', ': Sendable')
       : ('', '', '');
   return '''
 // Attaches to an object to receive a callback when the object is deallocated.
-internal $nonisolated final class ${_instanceManagerFinalizerName(options)}$sendable {
+internal final class ${_instanceManagerFinalizerName(options)}$sendable {
   internal static ${unsafeNonisolated}let associatedObjectKey = malloc(1)!
 
   private let identifier: Int64
@@ -52,19 +52,19 @@ internal $nonisolated final class ${_instanceManagerFinalizerName(options)}$send
   // `InstanceManager` is deallocated.
   internal weak ${unsafeNonisolated}var delegate: ${instanceManagerFinalizerDelegateName(options)}?
 
-  private init(identifier: Int64, delegate: ${instanceManagerFinalizerDelegateName(options)}) {
+  private ${nonisolated}init(identifier: Int64, delegate: ${instanceManagerFinalizerDelegateName(options)}) {
     self.identifier = identifier
     self.delegate = delegate
   }
 
-  internal static func attach(
+  internal ${nonisolated}static func attach(
     to instance: AnyObject, identifier: Int64, delegate: ${instanceManagerFinalizerDelegateName(options)}
   ) {
     let finalizer = ${_instanceManagerFinalizerName(options)}(identifier: identifier, delegate: delegate)
     objc_setAssociatedObject(instance, associatedObjectKey, finalizer, .OBJC_ASSOCIATION_RETAIN)
   }
 
-  static func detach(from instance: AnyObject) {
+  ${nonisolated}static func detach(from instance: AnyObject) {
     let finalizer = objc_getAssociatedObject(instance, associatedObjectKey) as? ${_instanceManagerFinalizerName(options)}
     if let finalizer = finalizer {
       finalizer.delegate = nil
@@ -99,7 +99,7 @@ String instanceManagerTemplate(InternalSwiftOptions options) {
 /// again.
 ///
 /// Accessing and inserting to an InstanceManager is thread safe.
-${nonisolated}final class ${swiftInstanceManagerClassName(options)}${options.strictConcurrency ? ': @unchecked Sendable' : ''} {
+final class ${swiftInstanceManagerClassName(options)}${options.strictConcurrency ? ': @unchecked Sendable' : ''} {
   // Identifiers are locked to a specific range to avoid collisions with objects
   // created simultaneously from Dart.
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
@@ -116,7 +116,7 @@ ${nonisolated}final class ${swiftInstanceManagerClassName(options)}${options.str
   private let finalizerDelegate: ${instanceManagerFinalizerDelegateName(options)}
   private var nextIdentifier: Int64 = minHostCreatedIdentifier
 
-  public init(finalizerDelegate: ${instanceManagerFinalizerDelegateName(options)}) {
+  public ${nonisolated}init(finalizerDelegate: ${instanceManagerFinalizerDelegateName(options)}) {
     self.finalizerDelegate = finalizerDelegate
   }
 
@@ -128,7 +128,7 @@ ${nonisolated}final class ${swiftInstanceManagerClassName(options)}${options.str
   /// - Parameters:
   ///   - instance: the instance to be stored
   ///   - identifier: the identifier to be paired with instance. This value must be >= 0 and unique
-  func addDartCreatedInstance(_ instance: AnyObject, withIdentifier identifier: Int64) {
+  ${nonisolated}func addDartCreatedInstance(_ instance: AnyObject, withIdentifier identifier: Int64) {
     lockQueue.async {
       self.addInstance(instance, withIdentifier: identifier)
     }
@@ -139,7 +139,7 @@ ${nonisolated}final class ${swiftInstanceManagerClassName(options)}${options.str
   /// - Parameters:
   ///   - instance: the instance to be stored. This must be unique to all other added instances.
   /// - Returns: the unique identifier (>= 0) stored with instance
-  func addHostCreatedInstance(_ instance: AnyObject) -> Int64 {
+  ${nonisolated}func addHostCreatedInstance(_ instance: AnyObject) -> Int64 {
     assert(!containsInstance(instance), "Instance of \\(instance) has already been added.")
     var identifier: Int64 = -1
     lockQueue.sync {
@@ -156,7 +156,7 @@ ${nonisolated}final class ${swiftInstanceManagerClassName(options)}${options.str
   ///   - instanceIdentifier: the identifier paired to an instance.
   /// - Returns: removed instance if the manager contains the given identifier, otherwise `nil` if
   ///   the manager doesn't contain the value
-  func removeInstance<T: AnyObject>(withIdentifier instanceIdentifier: Int64) throws -> T? {
+  ${nonisolated}func removeInstance<T: AnyObject>(withIdentifier instanceIdentifier: Int64) throws -> T? {
     var instance: AnyObject? = nil
     lockQueue.sync {
       instance = strongInstances.object(forKey: NSNumber(value: instanceIdentifier))
@@ -171,7 +171,7 @@ ${nonisolated}final class ${swiftInstanceManagerClassName(options)}${options.str
   ///   - instanceIdentifier: the identifier associated with an instance
   /// - Returns: the instance associated with `instanceIdentifier` if the manager contains the value, otherwise
   ///   `nil` if the manager doesn't contain the value
-  func instance<T: AnyObject>(forIdentifier instanceIdentifier: Int64) -> T? {
+  ${nonisolated}func instance<T: AnyObject>(forIdentifier instanceIdentifier: Int64) -> T? {
     var instance: AnyObject? = nil
     lockQueue.sync {
       instance = weakInstances.object(forKey: NSNumber(value: instanceIdentifier))
@@ -179,7 +179,7 @@ ${nonisolated}final class ${swiftInstanceManagerClassName(options)}${options.str
     return instance as? T
   }
 
-  private func addInstance(_ instance: AnyObject, withIdentifier identifier: Int64) {
+  private ${nonisolated}func addInstance(_ instance: AnyObject, withIdentifier identifier: Int64) {
     assert(identifier >= 0)
     assert(
       weakInstances.object(forKey: identifier as NSNumber) == nil,
@@ -204,7 +204,7 @@ ${nonisolated}final class ${swiftInstanceManagerClassName(options)}${options.str
   ///   - instance: an instance that may be stored in the manager
   /// - Returns: the identifier associated with `instance` if the manager contains the value, otherwise
   ///   `nil` if the manager doesn't contain the value
-  func identifierWithStrongReference(forInstance instance: AnyObject) -> Int64? {
+  ${nonisolated}func identifierWithStrongReference(forInstance instance: AnyObject) -> Int64? {
     var identifier: Int64? = nil
     lockQueue.sync {
       if let existingIdentifier = identifiers.object(forKey: instance)?.int64Value {
@@ -220,7 +220,7 @@ ${nonisolated}final class ${swiftInstanceManagerClassName(options)}${options.str
   /// - Parameters:
   ///   - instance: the instance whose presence in this manager is to be tested
   /// - Returns: whether this manager contains the given `instance`
-  func containsInstance(_ instance: AnyObject) -> Bool {
+  ${nonisolated}func containsInstance(_ instance: AnyObject) -> Bool {
     var containsInstance = false
     lockQueue.sync {
       containsInstance = identifiers.object(forKey: instance) != nil
@@ -231,7 +231,7 @@ ${nonisolated}final class ${swiftInstanceManagerClassName(options)}${options.str
   /// Removes all of the instances from this manager.
   ///
   /// The manager will be empty after this call returns.
-  func removeAllObjects() throws {
+  ${nonisolated}func removeAllObjects() throws {
     lockQueue.sync {
       let weakInstancesEnumerator = weakInstances.objectEnumerator()!
       while let instance = weakInstancesEnumerator.nextObject() {
@@ -247,7 +247,7 @@ ${nonisolated}final class ${swiftInstanceManagerClassName(options)}${options.str
   /// The number of instances stored as a strong reference.
   ///
   /// For debugging and testing purposes.
-  internal var strongInstanceCount: Int {
+  internal ${nonisolated}var strongInstanceCount: Int {
     var count: Int = 0
     lockQueue.sync {
       count = strongInstances.count
@@ -259,7 +259,7 @@ ${nonisolated}final class ${swiftInstanceManagerClassName(options)}${options.str
   ///
   /// For debugging and testing purposes. NSMapTables that store keys or objects as weak
   /// reference will be reclaimed non-deterministically.
-  internal var weakInstanceCount: Int {
+  internal ${nonisolated}var weakInstanceCount: Int {
     var count: Int = 0
     lockQueue.sync {
       count = weakInstances.count

@@ -375,19 +375,17 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([identifierArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else {
-          completion(.success(()))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(()))
       }
     }
   }
@@ -2975,19 +2973,17 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else {
-          completion(.success(()))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(()))
       }
     }
   }
@@ -3021,20 +3017,18 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else {
-          let result: Any? = listResponse[0]
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else {
+        let result: Any? = listResponse[0]
+        completion(.success(result))
       }
     }
   }
@@ -3068,19 +3062,17 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else {
-          completion(.success(()))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(()))
       }
     }
   }
@@ -3114,27 +3106,24 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aBoolArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else if listResponse[0] == nil || listResponse[0] is NSNull {
-          completion(
-            .failure(
-              ProxyApiTestsError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          )
-        } else {
-          let result = listResponse[0] as! Bool
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil || listResponse[0] is NSNull {
+        completion(
+          .failure(
+            ProxyApiTestsError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! Bool
+        completion(.success(result))
       }
     }
   }
@@ -3168,27 +3157,24 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, anIntArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else if listResponse[0] == nil || listResponse[0] is NSNull {
-          completion(
-            .failure(
-              ProxyApiTestsError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          )
-        } else {
-          let result = listResponse[0] as! Int64
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil || listResponse[0] is NSNull {
+        completion(
+          .failure(
+            ProxyApiTestsError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! Int64
+        completion(.success(result))
       }
     }
   }
@@ -3222,27 +3208,24 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aDoubleArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else if listResponse[0] == nil || listResponse[0] is NSNull {
-          completion(
-            .failure(
-              ProxyApiTestsError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          )
-        } else {
-          let result = listResponse[0] as! Double
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil || listResponse[0] is NSNull {
+        completion(
+          .failure(
+            ProxyApiTestsError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! Double
+        completion(.success(result))
       }
     }
   }
@@ -3276,27 +3259,24 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aStringArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else if listResponse[0] == nil || listResponse[0] is NSNull {
-          completion(
-            .failure(
-              ProxyApiTestsError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          )
-        } else {
-          let result = listResponse[0] as! String
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil || listResponse[0] is NSNull {
+        completion(
+          .failure(
+            ProxyApiTestsError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! String
+        completion(.success(result))
       }
     }
   }
@@ -3330,27 +3310,24 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else if listResponse[0] == nil || listResponse[0] is NSNull {
-          completion(
-            .failure(
-              ProxyApiTestsError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          )
-        } else {
-          let result = listResponse[0] as! FlutterStandardTypedData
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil || listResponse[0] is NSNull {
+        completion(
+          .failure(
+            ProxyApiTestsError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! FlutterStandardTypedData
+        completion(.success(result))
       }
     }
   }
@@ -3384,27 +3361,24 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else if listResponse[0] == nil || listResponse[0] is NSNull {
-          completion(
-            .failure(
-              ProxyApiTestsError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          )
-        } else {
-          let result = listResponse[0] as! [Any?]
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil || listResponse[0] is NSNull {
+        completion(
+          .failure(
+            ProxyApiTestsError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! [Any?]
+        completion(.success(result))
       }
     }
   }
@@ -3439,27 +3413,24 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else if listResponse[0] == nil || listResponse[0] is NSNull {
-          completion(
-            .failure(
-              ProxyApiTestsError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          )
-        } else {
-          let result = listResponse[0] as! [ProxyApiTestClass?]
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil || listResponse[0] is NSNull {
+        completion(
+          .failure(
+            ProxyApiTestsError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! [ProxyApiTestClass?]
+        completion(.success(result))
       }
     }
   }
@@ -3493,27 +3464,24 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aMapArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else if listResponse[0] == nil || listResponse[0] is NSNull {
-          completion(
-            .failure(
-              ProxyApiTestsError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          )
-        } else {
-          let result = listResponse[0] as! [String?: Any?]
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil || listResponse[0] is NSNull {
+        completion(
+          .failure(
+            ProxyApiTestsError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! [String?: Any?]
+        completion(.success(result))
       }
     }
   }
@@ -3549,27 +3517,24 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aMapArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else if listResponse[0] == nil || listResponse[0] is NSNull {
-          completion(
-            .failure(
-              ProxyApiTestsError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          )
-        } else {
-          let result = listResponse[0] as! [String?: ProxyApiTestClass?]
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil || listResponse[0] is NSNull {
+        completion(
+          .failure(
+            ProxyApiTestsError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! [String?: ProxyApiTestClass?]
+        completion(.success(result))
       }
     }
   }
@@ -3603,27 +3568,24 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, anEnumArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else if listResponse[0] == nil || listResponse[0] is NSNull {
-          completion(
-            .failure(
-              ProxyApiTestsError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          )
-        } else {
-          let result = listResponse[0] as! ProxyApiTestEnum
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil || listResponse[0] is NSNull {
+        completion(
+          .failure(
+            ProxyApiTestsError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! ProxyApiTestEnum
+        completion(.success(result))
       }
     }
   }
@@ -3657,27 +3619,24 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aProxyApiArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else if listResponse[0] == nil || listResponse[0] is NSNull {
-          completion(
-            .failure(
-              ProxyApiTestsError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          )
-        } else {
-          let result = listResponse[0] as! ProxyApiSuperClass
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil || listResponse[0] is NSNull {
+        completion(
+          .failure(
+            ProxyApiTestsError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! ProxyApiSuperClass
+        completion(.success(result))
       }
     }
   }
@@ -3711,20 +3670,18 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aBoolArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else {
-          let result: Bool? = nilOrValue(listResponse[0])
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else {
+        let result: Bool? = nilOrValue(listResponse[0])
+        completion(.success(result))
       }
     }
   }
@@ -3758,20 +3715,18 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, anIntArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else {
-          let result: Int64? = nilOrValue(listResponse[0])
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else {
+        let result: Int64? = nilOrValue(listResponse[0])
+        completion(.success(result))
       }
     }
   }
@@ -3805,20 +3760,18 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aDoubleArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else {
-          let result: Double? = nilOrValue(listResponse[0])
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else {
+        let result: Double? = nilOrValue(listResponse[0])
+        completion(.success(result))
       }
     }
   }
@@ -3852,20 +3805,18 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aStringArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else {
-          let result: String? = nilOrValue(listResponse[0])
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else {
+        let result: String? = nilOrValue(listResponse[0])
+        completion(.success(result))
       }
     }
   }
@@ -3899,20 +3850,18 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else {
-          let result: FlutterStandardTypedData? = nilOrValue(listResponse[0])
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else {
+        let result: FlutterStandardTypedData? = nilOrValue(listResponse[0])
+        completion(.success(result))
       }
     }
   }
@@ -3946,20 +3895,18 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else {
-          let result: [Any?]? = nilOrValue(listResponse[0])
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else {
+        let result: [Any?]? = nilOrValue(listResponse[0])
+        completion(.success(result))
       }
     }
   }
@@ -3993,20 +3940,18 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aMapArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else {
-          let result: [String?: Any?]? = nilOrValue(listResponse[0])
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else {
+        let result: [String?: Any?]? = nilOrValue(listResponse[0])
+        completion(.success(result))
       }
     }
   }
@@ -4040,20 +3985,18 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, anEnumArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else {
-          let result: ProxyApiTestEnum? = nilOrValue(listResponse[0])
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else {
+        let result: ProxyApiTestEnum? = nilOrValue(listResponse[0])
+        completion(.success(result))
       }
     }
   }
@@ -4088,20 +4031,18 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aProxyApiArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else {
-          let result: ProxyApiSuperClass? = nilOrValue(listResponse[0])
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else {
+        let result: ProxyApiSuperClass? = nilOrValue(listResponse[0])
+        completion(.success(result))
       }
     }
   }
@@ -4136,19 +4077,17 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else {
-          completion(.success(()))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(()))
       }
     }
   }
@@ -4182,27 +4121,24 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aStringArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else if listResponse[0] == nil || listResponse[0] is NSNull {
-          completion(
-            .failure(
-              ProxyApiTestsError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          )
-        } else {
-          let result = listResponse[0] as! String
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil || listResponse[0] is NSNull {
+        completion(
+          .failure(
+            ProxyApiTestsError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! String
+        completion(.success(result))
       }
     }
   }
@@ -4300,19 +4236,17 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            completion(.failure(createConnectionError(withChannelName: channelName)))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-          } else {
-            completion(.success(()))
-          }
+        guard let listResponse = response as? [Any?] else {
+          completion(.failure(createConnectionError(withChannelName: channelName)))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+        } else {
+          completion(.success(()))
         }
       }
     }
@@ -4360,19 +4294,17 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            completion(.failure(createConnectionError(withChannelName: channelName)))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-          } else {
-            completion(.success(()))
-          }
+        guard let listResponse = response as? [Any?] else {
+          completion(.failure(createConnectionError(withChannelName: channelName)))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+        } else {
+          completion(.success(()))
         }
       }
     }
@@ -4405,19 +4337,17 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-        } else {
-          completion(.success(()))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(()))
       }
     }
   }
@@ -4559,19 +4489,17 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            completion(.failure(createConnectionError(withChannelName: channelName)))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-          } else {
-            completion(.success(()))
-          }
+        guard let listResponse = response as? [Any?] else {
+          completion(.failure(createConnectionError(withChannelName: channelName)))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+        } else {
+          completion(.success(()))
         }
       }
     }

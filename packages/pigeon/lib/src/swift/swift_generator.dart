@@ -2749,57 +2749,62 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
           // Without annotations from the library, Swift assumes completion blocks are @Sendable.
           // Use MainActor.assumeIsolated to workaround this until the Flutter runner API is
           // properly annotated.
-          indent.writeScoped('MainActor.assumeIsolated {', '}', () {
-            indent.writeScoped('guard let listResponse = response as? [Any?] else {', '}', () {
-              indent.writeln(resumeError('createConnectionError(withChannelName: channelName)'));
-              indent.writeln('return');
-            });
-            indent.writeScoped('if listResponse.count > 1 {', '} ', () {
-              indent.writeln('let code: String = listResponse[0] as! String');
-              indent.writeln('let message: String? = nilOrValue(listResponse[1])');
-              indent.writeln('let details: String? = nilOrValue(listResponse[2])');
-              indent.writeln(
-                resumeError(
-                  '${_getErrorClassName(generatorOptions)}(code: code, message: message, details: details)',
-                ),
-              );
-            }, addTrailingNewline: false);
-            if (!returnType.isNullable && !returnType.isVoid) {
-              indent.addScoped(
-                'else if listResponse[0] == nil || listResponse[0] is NSNull {',
-                '} ',
-                () {
-                  indent.writeln(
-                    resumeError(
-                      '${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")',
-                    ),
-                  );
-                },
-                addTrailingNewline: false,
-              );
-            }
-            indent.addScoped('else {', '}', () {
-              if (returnType.isVoid) {
-                indent.writeln(resumeSuccess('()'));
-              } else {
-                final String fieldType = _swiftTypeForDartType(returnType);
-                _writeGenericCasting(
-                  indent: indent,
-                  value: 'listResponse[0]',
-                  variableName: 'result',
-                  fieldType: fieldType,
-                  type: returnType,
+          indent.maybeWriteScoped(
+            'MainActor.assumeIsolated {',
+            '}',
+            condition: generatorOptions.strictConcurrency,
+            () {
+              indent.writeScoped('guard let listResponse = response as? [Any?] else {', '}', () {
+                indent.writeln(resumeError('createConnectionError(withChannelName: channelName)'));
+                indent.writeln('return');
+              });
+              indent.writeScoped('if listResponse.count > 1 {', '} ', () {
+                indent.writeln('let code: String = listResponse[0] as! String');
+                indent.writeln('let message: String? = nilOrValue(listResponse[1])');
+                indent.writeln('let details: String? = nilOrValue(listResponse[2])');
+                indent.writeln(
+                  resumeError(
+                    '${_getErrorClassName(generatorOptions)}(code: code, message: message, details: details)',
+                  ),
                 );
-                // There is a swift bug with unwrapping maps of nullable Enums;
-                final enumMapForceUnwrap =
-                    returnType.baseName == 'Map' &&
-                        returnType.typeArguments.any((TypeDeclaration type) => type.isEnum)
-                    ? '!'
-                    : '';
-                indent.writeln(resumeSuccess('result$enumMapForceUnwrap'));
+              }, addTrailingNewline: false);
+              if (!returnType.isNullable && !returnType.isVoid) {
+                indent.addScoped(
+                  'else if listResponse[0] == nil || listResponse[0] is NSNull {',
+                  '} ',
+                  () {
+                    indent.writeln(
+                      resumeError(
+                        '${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")',
+                      ),
+                    );
+                  },
+                  addTrailingNewline: false,
+                );
               }
-            });
-          });
+              indent.addScoped('else {', '}', () {
+                if (returnType.isVoid) {
+                  indent.writeln(resumeSuccess('()'));
+                } else {
+                  final String fieldType = _swiftTypeForDartType(returnType);
+                  _writeGenericCasting(
+                    indent: indent,
+                    value: 'listResponse[0]',
+                    variableName: 'result',
+                    fieldType: fieldType,
+                    type: returnType,
+                  );
+                  // There is a swift bug with unwrapping maps of nullable Enums;
+                  final enumMapForceUnwrap =
+                      returnType.baseName == 'Map' &&
+                          returnType.typeArguments.any((TypeDeclaration type) => type.isEnum)
+                      ? '!'
+                      : '';
+                  indent.writeln(resumeSuccess('result$enumMapForceUnwrap'));
+                }
+              });
+            },
+          );
         });
       },
     );

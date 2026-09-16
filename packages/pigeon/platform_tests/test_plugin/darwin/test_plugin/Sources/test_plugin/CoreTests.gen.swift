@@ -4969,19 +4969,17 @@ class FlutterCallbackCoreApi: FlutterCallbackCoreApiProtocol {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage(nil) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(PigeonError(code: code, message: message, details: details)))
-        } else {
-          completion(.success(()))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(()))
       }
     }
   }
@@ -4992,27 +4990,24 @@ class FlutterCallbackCoreApi: FlutterCallbackCoreApiProtocol {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aStringArg] as [Any?]) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(PigeonError(code: code, message: message, details: details)))
-        } else if listResponse[0] == nil || listResponse[0] is NSNull {
-          completion(
-            .failure(
-              PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          )
-        } else {
-          let result = listResponse[0] as! String
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else if listResponse[0] == nil || listResponse[0] is NSNull {
+        completion(
+          .failure(
+            PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! String
+        completion(.success(result))
       }
     }
   }
@@ -5022,20 +5017,18 @@ class FlutterCallbackCoreApi: FlutterCallbackCoreApiProtocol {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage(nil) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(PigeonError(code: code, message: message, details: details)))
-        } else {
-          let result: Any? = listResponse[0]
-          completion(.success(result))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        let result: Any? = listResponse[0]
+        completion(.success(result))
       }
     }
   }
@@ -5045,19 +5038,17 @@ class FlutterCallbackCoreApi: FlutterCallbackCoreApiProtocol {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage(nil) { response in
-      MainActor.assumeIsolated {
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(PigeonError(code: code, message: message, details: details)))
-        } else {
-          completion(.success(()))
-        }
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(()))
       }
     }
   }
@@ -5225,20 +5216,17 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage(nil) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            continuation.resume()
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          continuation.resume()
         }
       }
     }
@@ -5251,21 +5239,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage(nil) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: Any? = listResponse[0]
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: Any? = listResponse[0]
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5278,20 +5263,17 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage(nil) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            continuation.resume()
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          continuation.resume()
         }
       }
     }
@@ -5304,26 +5286,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([everythingArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! AllTypes
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! AllTypes
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5337,21 +5316,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([everythingArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: AllNullableTypes? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: AllNullableTypes? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5370,26 +5346,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([aNullableBoolArg, aNullableIntArg, aNullableStringArg] as [Any?]) {
         response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! AllNullableTypes
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! AllNullableTypes
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5404,21 +5377,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([everythingArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: AllNullableTypesWithoutRecursion? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: AllNullableTypesWithoutRecursion? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5437,26 +5407,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([aNullableBoolArg, aNullableIntArg, aNullableStringArg] as [Any?]) {
         response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! AllNullableTypesWithoutRecursion
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! AllNullableTypesWithoutRecursion
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5469,26 +5436,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([aBoolArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! Bool
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! Bool
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5501,26 +5465,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([anIntArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! Int64
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! Int64
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5533,26 +5494,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([aDoubleArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! Double
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! Double
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5565,26 +5523,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([aStringArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! String
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! String
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5598,26 +5553,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([listArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! FlutterStandardTypedData
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! FlutterStandardTypedData
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5630,26 +5582,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([listArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! [Any?]
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! [Any?]
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5662,26 +5611,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([enumListArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! [AnEnum?]
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! [AnEnum?]
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5696,26 +5642,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([classListArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! [AllNullableTypes?]
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! [AllNullableTypes?]
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5728,26 +5671,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([enumListArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! [AnEnum]
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! [AnEnum]
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5762,26 +5702,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([classListArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! [AllNullableTypes]
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! [AllNullableTypes]
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5794,26 +5731,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([mapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! [AnyHashable?: Any?]
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! [AnyHashable?: Any?]
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5828,26 +5762,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([stringMapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! [String?: String?]
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! [String?: String?]
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5860,26 +5791,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([intMapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! [Int64?: Int64?]
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! [Int64?: Int64?]
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5892,26 +5820,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([enumMapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as? [AnEnum?: AnEnum?]
-            continuation.resume(returning: result!)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as? [AnEnum?: AnEnum?]
+          continuation.resume(returning: result!)
         }
       }
     }
@@ -5926,26 +5851,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([classMapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! [Int64?: AllNullableTypes?]
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! [Int64?: AllNullableTypes?]
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5960,26 +5882,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([stringMapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! [String: String]
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! [String: String]
+          continuation.resume(returning: result)
         }
       }
     }
@@ -5992,26 +5911,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([intMapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! [Int64: Int64]
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! [Int64: Int64]
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6025,26 +5941,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([enumMapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as? [AnEnum: AnEnum]
-            continuation.resume(returning: result!)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as? [AnEnum: AnEnum]
+          continuation.resume(returning: result!)
         }
       }
     }
@@ -6059,26 +5972,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([classMapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! [Int64: AllNullableTypes]
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! [Int64: AllNullableTypes]
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6091,26 +6001,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([anEnumArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! AnEnum
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! AnEnum
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6123,26 +6030,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([anotherEnumArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! AnotherEnum
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! AnotherEnum
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6155,21 +6059,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([aBoolArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: Bool? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: Bool? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6182,21 +6083,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([anIntArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: Int64? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: Int64? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6209,21 +6107,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([aDoubleArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: Double? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: Double? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6236,21 +6131,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([aStringArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: String? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: String? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6265,21 +6157,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([listArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: FlutterStandardTypedData? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: FlutterStandardTypedData? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6292,21 +6181,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([listArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: [Any?]? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: [Any?]? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6319,21 +6205,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([enumListArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: [AnEnum?]? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: [AnEnum?]? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6348,21 +6231,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([classListArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: [AllNullableTypes?]? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: [AllNullableTypes?]? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6375,21 +6255,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([enumListArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: [AnEnum]? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: [AnEnum]? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6404,21 +6281,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([classListArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: [AllNullableTypes]? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: [AllNullableTypes]? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6433,21 +6307,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([mapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: [AnyHashable?: Any?]? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: [AnyHashable?: Any?]? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6462,21 +6333,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([stringMapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: [String?: String?]? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: [String?: String?]? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6491,21 +6359,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([intMapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: [Int64?: Int64?]? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: [Int64?: Int64?]? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6520,21 +6385,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([enumMapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: [AnEnum?: AnEnum?]? = listResponse[0] as? [AnEnum?: AnEnum?]
-            continuation.resume(returning: result!)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: [AnEnum?: AnEnum?]? = listResponse[0] as? [AnEnum?: AnEnum?]
+          continuation.resume(returning: result!)
         }
       }
     }
@@ -6549,21 +6411,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([classMapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: [Int64?: AllNullableTypes?]? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: [Int64?: AllNullableTypes?]? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6578,21 +6437,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([stringMapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: [String: String]? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: [String: String]? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6607,21 +6463,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([intMapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: [Int64: Int64]? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: [Int64: Int64]? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6636,21 +6489,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([enumMapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: [AnEnum: AnEnum]? = listResponse[0] as? [AnEnum: AnEnum]
-            continuation.resume(returning: result!)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: [AnEnum: AnEnum]? = listResponse[0] as? [AnEnum: AnEnum]
+          continuation.resume(returning: result!)
         }
       }
     }
@@ -6665,21 +6515,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([classMapArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: [Int64: AllNullableTypes]? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: [Int64: AllNullableTypes]? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6692,21 +6539,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([anEnumArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: AnEnum? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: AnEnum? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6719,21 +6563,18 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([anotherEnumArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            let result: AnotherEnum? = nilOrValue(listResponse[0])
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          let result: AnotherEnum? = nilOrValue(listResponse[0])
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6747,20 +6588,17 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage(nil) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else {
-            continuation.resume()
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else {
+          continuation.resume()
         }
       }
     }
@@ -6773,26 +6611,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([aStringArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! String
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! String
+          continuation.resume(returning: result)
         }
       }
     }
@@ -6805,26 +6640,23 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage(nil) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! Bool
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! Bool
+          continuation.resume(returning: result)
         }
       }
     }
@@ -7117,26 +6949,23 @@ class FlutterSmallApi: FlutterSmallApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([msgArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! TestMessage
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! TestMessage
+          continuation.resume(returning: result)
         }
       }
     }
@@ -7148,26 +6977,23 @@ class FlutterSmallApi: FlutterSmallApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([aStringArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! String
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! String
+          continuation.resume(returning: result)
         }
       }
     }

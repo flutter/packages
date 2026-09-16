@@ -395,26 +395,23 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([aStringArg] as [Any?]) { response in
-        MainActor.assumeIsolated {
-          guard let listResponse = response as? [Any?] else {
-            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-            return
-          }
-          if listResponse.count > 1 {
-            let code: String = listResponse[0] as! String
-            let message: String? = nilOrValue(listResponse[1])
-            let details: String? = nilOrValue(listResponse[2])
-            continuation.resume(
-              throwing: PigeonError(code: code, message: message, details: details))
-          } else if listResponse[0] == nil || listResponse[0] is NSNull {
-            continuation.resume(
-              throwing: PigeonError(
-                code: "null-error",
-                message: "Flutter api returned null value for non-null return value.", details: ""))
-          } else {
-            let result = listResponse[0] as! String
-            continuation.resume(returning: result)
-          }
+        guard let listResponse = response as? [Any?] else {
+          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
+        } else if listResponse[0] == nil || listResponse[0] is NSNull {
+          continuation.resume(
+            throwing: PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: ""))
+        } else {
+          let result = listResponse[0] as! String
+          continuation.resume(returning: result)
         }
       }
     }
