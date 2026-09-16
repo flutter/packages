@@ -1,3 +1,7 @@
+## NEXT
+
+* Removes unnecessary Material imports.
+
 ## 0.3.5+6
 
 * Fixes a `TypeError` in `setFlashMode` and `takePicture` caused by browsers reporting the
