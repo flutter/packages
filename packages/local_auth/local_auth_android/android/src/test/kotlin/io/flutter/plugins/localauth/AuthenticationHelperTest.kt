@@ -10,7 +10,8 @@ import androidx.fragment.app.FragmentActivity
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 
 // TODO(stuartmorgan): Add injectable BiometricPrompt factory, and AlertDialog factor, and add
@@ -23,10 +24,10 @@ class AuthenticationHelperTest {
     val helper =
         AuthenticationHelper(
             null,
-            buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
+            buildMockActivityWithContext(mock<FragmentActivity>()),
             defaultOptions,
             dummyStrings,
-            ({ authResult: AuthResult -> result.add(authResult) }),
+            { authResult -> result.add(authResult) },
             true)
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_USER_CANCELED, "")
@@ -41,10 +42,10 @@ class AuthenticationHelperTest {
     val helper =
         AuthenticationHelper(
             null,
-            buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
+            buildMockActivityWithContext(mock<FragmentActivity>()),
             defaultOptions,
             dummyStrings,
-            ({ authResult: AuthResult -> result.add(authResult) }),
+            { authResult -> result.add(authResult) },
             true)
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_NEGATIVE_BUTTON, "")
@@ -59,10 +60,10 @@ class AuthenticationHelperTest {
     val helper =
         AuthenticationHelper(
             null,
-            buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
+            buildMockActivityWithContext(mock<FragmentActivity>()),
             defaultOptions,
             dummyStrings,
-            ({ authResult: AuthResult -> result.add(authResult) }),
+            { authResult -> result.add(authResult) },
             true)
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL, "")
@@ -77,10 +78,10 @@ class AuthenticationHelperTest {
     val helper =
         AuthenticationHelper(
             null,
-            buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
+            buildMockActivityWithContext(mock<FragmentActivity>()),
             defaultOptions,
             dummyStrings,
-            ({ authResult: AuthResult -> result.add(authResult) }),
+            { authResult -> result.add(authResult) },
             true)
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_NO_BIOMETRICS, "")
@@ -95,10 +96,10 @@ class AuthenticationHelperTest {
     val helper =
         AuthenticationHelper(
             null,
-            buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
+            buildMockActivityWithContext(mock<FragmentActivity>()),
             defaultOptions,
             dummyStrings,
-            ({ authResult: AuthResult -> result.add(authResult) }),
+            { authResult -> result.add(authResult) },
             true)
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_HW_UNAVAILABLE, "")
@@ -113,10 +114,10 @@ class AuthenticationHelperTest {
     val helper =
         AuthenticationHelper(
             null,
-            buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
+            buildMockActivityWithContext(mock<FragmentActivity>()),
             defaultOptions,
             dummyStrings,
-            ({ authResult: AuthResult -> result.add(authResult) }),
+            { authResult -> result.add(authResult) },
             true)
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_HW_NOT_PRESENT, "")
@@ -131,10 +132,10 @@ class AuthenticationHelperTest {
     val helper =
         AuthenticationHelper(
             null,
-            buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
+            buildMockActivityWithContext(mock<FragmentActivity>()),
             defaultOptions,
             dummyStrings,
-            ({ authResult: AuthResult -> result.add(authResult) }),
+            { authResult -> result.add(authResult) },
             true)
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_LOCKOUT, "")
@@ -149,10 +150,10 @@ class AuthenticationHelperTest {
     val helper =
         AuthenticationHelper(
             null,
-            buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
+            buildMockActivityWithContext(mock<FragmentActivity>()),
             defaultOptions,
             dummyStrings,
-            ({ authResult: AuthResult -> result.add(authResult) }),
+            { authResult -> result.add(authResult) },
             true)
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_LOCKOUT_PERMANENT, "")
@@ -167,10 +168,10 @@ class AuthenticationHelperTest {
     val helper =
         AuthenticationHelper(
             null,
-            buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
+            buildMockActivityWithContext(mock<FragmentActivity>()),
             defaultOptions,
             dummyStrings,
-            ({ authResult: AuthResult -> result.add(authResult) }),
+            { authResult -> result.add(authResult) },
             true)
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_CANCELED, "")
@@ -185,10 +186,10 @@ class AuthenticationHelperTest {
     val helper =
         AuthenticationHelper(
             null,
-            buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
+            buildMockActivityWithContext(mock<FragmentActivity>()),
             defaultOptions,
             dummyStrings,
-            ({ authResult: AuthResult -> result.add(authResult) }),
+            { authResult -> result.add(authResult) },
             true)
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_TIMEOUT, "")
@@ -203,10 +204,10 @@ class AuthenticationHelperTest {
     val helper =
         AuthenticationHelper(
             null,
-            buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
+            buildMockActivityWithContext(mock<FragmentActivity>()),
             defaultOptions,
             dummyStrings,
-            ({ authResult: AuthResult -> result.add(authResult) }),
+            { authResult -> result.add(authResult) },
             true)
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_NO_SPACE, "")
@@ -221,10 +222,10 @@ class AuthenticationHelperTest {
     val helper =
         AuthenticationHelper(
             null,
-            buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
+            buildMockActivityWithContext(mock<FragmentActivity>()),
             defaultOptions,
             dummyStrings,
-            ({ authResult: AuthResult -> result.add(authResult) }),
+            { authResult -> result.add(authResult) },
             true)
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_SECURITY_UPDATE_REQUIRED, "")
@@ -239,10 +240,10 @@ class AuthenticationHelperTest {
     val helper =
         AuthenticationHelper(
             null,
-            buildMockActivityWithContext(Mockito.mock(FragmentActivity::class.java)),
+            buildMockActivityWithContext(mock<FragmentActivity>()),
             defaultOptions,
             dummyStrings,
-            ({ authResult: AuthResult -> result.add(authResult) }),
+            { authResult -> result.add(authResult) },
             true)
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_UNABLE_TO_PROCESS, "")
@@ -252,18 +253,15 @@ class AuthenticationHelperTest {
   }
 
   private fun buildMockActivityWithContext(mockActivity: FragmentActivity): FragmentActivity {
-    val mockApplication = Mockito.mock(Application::class.java)
-    val mockContext = Mockito.mock(Context::class.java)
-    Mockito.`when`<Context?>(mockActivity.baseContext).thenReturn(mockContext)
-    Mockito.`when`<Context?>(mockActivity.applicationContext).thenReturn(mockContext)
-    Mockito.`when`<Application?>(mockActivity.application).thenReturn(mockApplication)
+    val mockApplication = mock<Application>()
+    val mockContext = mock<Context>()
+    whenever(mockActivity.baseContext).thenReturn(mockContext)
+    whenever(mockActivity.applicationContext).thenReturn(mockContext)
+    whenever(mockActivity.application).thenReturn(mockApplication)
     return mockActivity
   }
-
-  companion object {
-    val dummyStrings: AuthStrings = AuthStrings("a reason", "a hint", "cancel", "sign in")
-
-    val defaultOptions: AuthOptions =
-        AuthOptions(biometricOnly = false, sensitiveTransaction = false, sticky = false)
-  }
 }
+
+private val dummyStrings = AuthStrings("a reason", "a hint", "cancel", "sign in")
+private val defaultOptions =
+    AuthOptions(biometricOnly = false, sensitiveTransaction = false, sticky = false)
