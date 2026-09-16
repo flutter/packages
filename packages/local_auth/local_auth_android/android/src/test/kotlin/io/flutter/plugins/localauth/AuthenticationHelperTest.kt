@@ -261,7 +261,7 @@ class AuthenticationHelperTest {
     return mockActivity
   }
 
-    companion object {
+  companion object {
     val dummyStrings: AuthStrings = AuthStrings("a reason", "a hint", "cancel", "sign in")
 
     val defaultOptions: AuthOptions =
