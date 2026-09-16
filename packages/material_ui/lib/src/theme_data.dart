@@ -306,8 +306,8 @@ class ThemeData with Diagnosticable {
   /// select a token-backed Material 3 baseline color scheme.
   /// Use [ContrastLevel.standard], [ContrastLevel.medium], or
   /// [ContrastLevel.high] to choose between the standard, medium, and high
-  /// contrast baselines. Other custom [contrastLevel] values, such as 0.6, are
-  /// ignored and the standard contrast baseline is used.
+  /// contrast baselines. Other custom [contrastLevel] values, such as 0.6,
+  /// require a [colorSchemeSeed].
   ///
   /// If the app wants to customize a generated color scheme, it can use
   /// [ColorScheme.fromSeed] directly and then [ColorScheme.copyWith] on the
@@ -492,10 +492,19 @@ class ThemeData with Diagnosticable {
     useMaterial3 ??= true;
     useSystemColors ??= false;
     assert(
-      contrastLevel == null || (contrastLevel >= -1.0 && contrastLevel <= 1.0),
+      contrastLevel == null ||
+          (contrastLevel + precisionErrorTolerance >= -1.0 &&
+              contrastLevel - precisionErrorTolerance <= 1.0),
       'contrastLevel must be between -1.0 and 1.0 inclusive.',
     );
     contrastLevel ??= ContrastLevel.standard;
+    assert(
+      colorSchemeSeed != null || _isM3BaselineContrastLevel(contrastLevel),
+      'colorSchemeSeed must be provided to use a custom contrastLevel. '
+      'Without a colorSchemeSeed, contrastLevel must be '
+      'ContrastLevel.standard (0.0), ContrastLevel.medium (0.5), or '
+      'ContrastLevel.high (1.0).',
+    );
     final bool useInkSparkle = platform == TargetPlatform.android && !kIsWeb;
     splashFactory ??= useMaterial3
         ? useInkSparkle
@@ -3032,14 +3041,20 @@ class ThemeData with Diagnosticable {
 }
 
 ColorScheme _defaultM3ColorScheme(Brightness brightness, double contrastLevel) {
-  final isDark = brightness == Brightness.dark;
-  if (contrastLevel == ContrastLevel.medium) {
-    return isDark ? _colorSchemeDarkMediumContrastM3 : _colorSchemeLightMediumContrastM3;
-  }
-  if (contrastLevel == ContrastLevel.high) {
-    return isDark ? _colorSchemeDarkHighContrastM3 : _colorSchemeLightHighContrastM3;
-  }
-  return isDark ? _colorSchemeDarkM3 : _colorSchemeLightM3;
+  return switch ((brightness, contrastLevel)) {
+    (Brightness.light, ContrastLevel.medium) => _colorSchemeLightMediumContrastM3,
+    (Brightness.dark, ContrastLevel.medium) => _colorSchemeDarkMediumContrastM3,
+    (Brightness.light, ContrastLevel.high) => _colorSchemeLightHighContrastM3,
+    (Brightness.dark, ContrastLevel.high) => _colorSchemeDarkHighContrastM3,
+    (Brightness.light, _) => _colorSchemeLightM3,
+    (Brightness.dark, _) => _colorSchemeDarkM3,
+  };
+}
+
+bool _isM3BaselineContrastLevel(double contrastLevel) {
+  return contrastLevel == ContrastLevel.standard ||
+      contrastLevel == ContrastLevel.medium ||
+      contrastLevel == ContrastLevel.high;
 }
 
 /// A [CupertinoThemeData] that defers unspecified theme attributes to an
