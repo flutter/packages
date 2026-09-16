@@ -9,8 +9,8 @@ library;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics/src/listener.dart';
 import 'package:vector_graphics/src/render_vector_graphic.dart';
@@ -115,7 +115,10 @@ void main() {
 
     final ui.Image firstImage = context.canvas.lastImage!;
 
-    renderVectorGraphic.colorFilter = const ui.ColorFilter.mode(Colors.red, ui.BlendMode.colorBurn);
+    renderVectorGraphic.colorFilter = const ui.ColorFilter.mode(
+      ui.Color(0xFFFF0000),
+      ui.BlendMode.colorBurn,
+    );
     renderVectorGraphic.paint(context, Offset.zero);
 
     expect(firstImage.debugDisposed, false);
@@ -288,7 +291,7 @@ void main() {
   test('Color filter applies clip', () async {
     final render = RenderPictureVectorGraphic(
       pictureInfo,
-      const ui.ColorFilter.mode(Colors.green, ui.BlendMode.difference),
+      const ui.ColorFilter.mode(ui.Color(0xFF00FF00), ui.BlendMode.difference),
       null,
     );
     render.layout(BoxConstraints.tight(const Size(50, 50)));

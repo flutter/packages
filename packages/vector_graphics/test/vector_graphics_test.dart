@@ -6,8 +6,8 @@ import 'dart:async';
 import 'dart:convert' show base64Decode;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics/src/listener.dart';
 import 'package:vector_graphics/src/vector_graphics.dart';
@@ -575,7 +575,7 @@ void main() {
             textDirection: TextDirection.ltr,
             child: createCompatVectorGraphic(
               loader: const AssetBytesLoader('foo.svg'),
-              colorFilter: const ColorFilter.mode(Colors.red, BlendMode.srcIn),
+              colorFilter: const ColorFilter.mode(Color(0xFFFF0000), BlendMode.srcIn),
               opacity: const AlwaysStoppedAnimation<double>(0.5),
             ),
           ),
