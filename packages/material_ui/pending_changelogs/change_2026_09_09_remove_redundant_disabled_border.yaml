@@ -1,3 +1,0 @@
-changelog: |
-  - Removes redundant `disabledBorder` check in `InputDecorationThemeData.==`.
-version: patch
