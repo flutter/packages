@@ -106,6 +106,8 @@ allowed_dependencies:
     - shelf_static
     - source_gen
     - stream_transform
+    - swift2objc
+    - swiftgen
     - test
     - test_api
     - vm_service
