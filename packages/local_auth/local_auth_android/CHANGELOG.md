@@ -1,6 +1,6 @@
 ## 2.2.0
 
-* Adjusts the code slightly to support the migration of unit tests to Kotlin.
+* Adjusts visibilty modifiers to support the migration of unit tests to Kotlin.
 
 ## 2.1.0
 

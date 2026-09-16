@@ -341,8 +341,11 @@ class LocalAuthTest {
     plugin.onAttachedToEngine(mockPluginBinding)
     plugin.onAttachedToActivity(mockActivityBinding)
   }
-}
 
-private val dummyStrings = AuthStrings("a reason", "a hint", "cancel", "sign in")
-private val defaultOptions =
-    AuthOptions(biometricOnly = false, sensitiveTransaction = false, sticky = false)
+  companion object {
+    val dummyStrings: AuthStrings = AuthStrings("a reason", "a hint", "cancel", "sign in")
+
+    val defaultOptions: AuthOptions =
+        AuthOptions(biometricOnly = false, sensitiveTransaction = false, sticky = false)
+  }
+}
