@@ -1,0 +1,5 @@
+changelog: |
+  - Adds support for customizing date input formatters via
+    `CalendarDelegate.keyboardInputFormatters`, allowing custom date input
+    behavior in the Material date picker.
+version: minor

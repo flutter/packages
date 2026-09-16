@@ -1,3 +1,13 @@
+## 1.2.0
+
+- Adds the `StyleVariant` enum defining the Material 3 and Material 3 Expressive style variants.
+
+## 1.1.1
+
+- Constrains Slider and RangeSlider value indicator labels to the screen width, truncating with an ellipsis instead of clipping.
+- Prevents stale asynchronous suggestions from replacing newer `SearchAnchor` results.
+- Fix RangeSlider thumb overlay remaining visible after touch interaction
+
 ## 1.1.0
 
 - Add missing Widget of the Week videos to widget API docs.

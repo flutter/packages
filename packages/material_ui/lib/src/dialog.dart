@@ -1669,6 +1669,7 @@ class _DialogContentPage extends Page<void> {
 ///    [DisplayFeature]s can split the screen into sub-screens.
 ///  * <https://material.io/design/components/dialogs.html>
 ///  * <https://m3.material.io/components/dialogs>
+@awaitNotRequired
 Future<T?> showDialog<T>({
   required BuildContext context,
   required WidgetBuilder builder,
@@ -1754,6 +1755,7 @@ Future<T?> showDialog<T>({
 ///
 /// On Cupertino platforms, [barrierColor], [useSafeArea], and
 /// [traversalEdgeBehavior] are ignored.
+@awaitNotRequired
 Future<T?> showAdaptiveDialog<T>({
   required BuildContext context,
   required WidgetBuilder builder,

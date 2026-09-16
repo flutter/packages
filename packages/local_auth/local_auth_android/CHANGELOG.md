@@ -1,3 +1,7 @@
+## 2.1.0
+
+* Converts the implementation to Kotlin.
+
 ## 2.0.10
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.

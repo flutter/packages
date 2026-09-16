@@ -30,6 +30,10 @@ abstract class MarkersController<T extends Object, O> extends GeometryController
   // A cache of [MarkerController]s indexed by their [MarkerId].
   final Map<MarkerId, MarkerController<T, O>> _markerIdToController;
 
+  // A cache of the advanced marker content configuration indexed by [MarkerId].
+  final Map<MarkerId, _AdvancedMarkerContentConfiguration> _contentConfigurationByMarkerId =
+      <MarkerId, _AdvancedMarkerContentConfiguration>{};
+
   // The stream over which markers broadcast their events
   final StreamController<MapEvent<Object?>> _streamController;
 
@@ -103,6 +107,7 @@ abstract class MarkersController<T extends Object, O> extends GeometryController
       gmInfoWindow,
     );
     _markerIdToController[marker.markerId] = controller;
+    _updateAdvancedMarkerContentConfiguration(marker);
 
     return controller;
   }
@@ -136,13 +141,39 @@ abstract class MarkersController<T extends Object, O> extends GeometryController
         _removeMarker(marker.markerId);
         await _addMarker(marker);
       } else {
-        final O markerOptions = await _markerOptionsFromMarker(marker, markerController.marker);
-        final gmaps.InfoWindowOptions? infoWindow = _infoWindowOptionsFromMarker(marker);
-        markerController.update(
-          markerOptions,
-          newInfoWindowContent: infoWindow?.content as web.HTMLElement?,
+        final _AdvancedMarkerContentConfiguration? previousContentConfiguration =
+            _contentConfigurationByMarkerId[marker.markerId];
+        final bool isAdvancedMarkerContentUpdateRequired = _isAdvancedMarkerContentUpdateRequired(
+          marker,
+          previousContentConfiguration,
         );
+        final O markerOptions = await _markerOptionsFromMarker(
+          marker,
+          markerController.marker,
+          isAdvancedMarkerContentUpdateRequired: isAdvancedMarkerContentUpdateRequired,
+        );
+        final gmaps.InfoWindowOptions? infoWindow = _infoWindowOptionsFromMarker(marker);
+        final infoWindowContent = infoWindow?.content as web.HTMLElement?;
+        if (markerController is AdvancedMarkerController) {
+          (markerController as AdvancedMarkerController)._update(
+            markerOptions as gmaps.AdvancedMarkerElementOptions,
+            isContentUpdateRequired: isAdvancedMarkerContentUpdateRequired,
+            newInfoWindowContent: infoWindowContent,
+          );
+        } else {
+          markerController.update(markerOptions, newInfoWindowContent: infoWindowContent);
+        }
+        _updateAdvancedMarkerContentConfiguration(marker);
       }
+    }
+  }
+
+  void _updateAdvancedMarkerContentConfiguration(Marker marker) {
+    if (marker is AdvancedMarker) {
+      _contentConfigurationByMarkerId[marker.markerId] =
+          _AdvancedMarkerContentConfiguration.fromMarker(marker);
+    } else {
+      _contentConfigurationByMarkerId.remove(marker.markerId);
     }
   }
 
@@ -182,6 +213,7 @@ abstract class MarkersController<T extends Object, O> extends GeometryController
     for (final markerController in markersControllers) {
       markerController.value?.remove();
       _markerIdToController.remove(markerController.key);
+      _contentConfigurationByMarkerId.remove(markerController.key);
     }
   }
 
@@ -195,6 +227,7 @@ abstract class MarkersController<T extends Object, O> extends GeometryController
     }
     markerController?.remove();
     _markerIdToController.remove(markerId);
+    _contentConfigurationByMarkerId.remove(markerId);
   }
 
   // InfoWindow...

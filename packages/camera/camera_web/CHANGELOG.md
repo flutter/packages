@@ -1,3 +1,9 @@
+## 0.3.5+6
+
+* Fixes a `TypeError` in `setFlashMode` and `takePicture` caused by browsers reporting the
+  `torch` capability as a `boolean` instead of the `boolean` sequence the Image Capture
+  specification describes.
+
 ## 0.3.5+5
 
 * Removes invalid @JS annotation from extension type constructors.

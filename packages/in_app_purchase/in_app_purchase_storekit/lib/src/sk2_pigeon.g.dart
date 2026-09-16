@@ -579,6 +579,7 @@ class SK2ProductPurchaseOptionsMessage {
     this.quantity = 1,
     this.promotionalOffer,
     this.winBackOfferId,
+    this.introductoryOfferEligibilityCompactJWS,
   });
 
   String? appAccountToken;
@@ -589,8 +590,21 @@ class SK2ProductPurchaseOptionsMessage {
 
   String? winBackOfferId;
 
+  /// A compact JWS, signed by the developer's server, that sets the customer's
+  /// eligibility for an introductory offer on this purchase.
+  ///
+  /// This is passed to StoreKit verbatim; it is never parsed or validated
+  /// client-side.
+  String? introductoryOfferEligibilityCompactJWS;
+
   List<Object?> _toList() {
-    return <Object?>[appAccountToken, quantity, promotionalOffer, winBackOfferId];
+    return <Object?>[
+      appAccountToken,
+      quantity,
+      promotionalOffer,
+      winBackOfferId,
+      introductoryOfferEligibilityCompactJWS,
+    ];
   }
 
   Object encode() {
@@ -604,6 +618,7 @@ class SK2ProductPurchaseOptionsMessage {
       quantity: result[1] as int?,
       promotionalOffer: result[2] as SK2SubscriptionOfferPurchaseMessage?,
       winBackOfferId: result[3] as String?,
+      introductoryOfferEligibilityCompactJWS: result[4] as String?,
     );
   }
 
@@ -619,7 +634,11 @@ class SK2ProductPurchaseOptionsMessage {
     return _deepEquals(appAccountToken, other.appAccountToken) &&
         _deepEquals(quantity, other.quantity) &&
         _deepEquals(promotionalOffer, other.promotionalOffer) &&
-        _deepEquals(winBackOfferId, other.winBackOfferId);
+        _deepEquals(winBackOfferId, other.winBackOfferId) &&
+        _deepEquals(
+          introductoryOfferEligibilityCompactJWS,
+          other.introductoryOfferEligibilityCompactJWS,
+        );
   }
 
   @override
@@ -628,7 +647,7 @@ class SK2ProductPurchaseOptionsMessage {
 
   @override
   String toString() {
-    return 'SK2ProductPurchaseOptionsMessage(appAccountToken: $appAccountToken, quantity: $quantity, promotionalOffer: $promotionalOffer, winBackOfferId: $winBackOfferId)';
+    return 'SK2ProductPurchaseOptionsMessage(appAccountToken: $appAccountToken, quantity: $quantity, promotionalOffer: $promotionalOffer, winBackOfferId: $winBackOfferId, introductoryOfferEligibilityCompactJWS: $introductoryOfferEligibilityCompactJWS)';
   }
 }
 

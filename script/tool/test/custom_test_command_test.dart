@@ -7,20 +7,21 @@ import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/custom_test_command.dart';
 import 'package:git/git.dart';
+import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
 import 'util.dart';
 
 void main() {
-  late MockPlatform mockPlatform;
+  late NativePlatform mockPlatform;
   late Directory packagesDir;
   late RecordingProcessRunner processRunner;
   late CommandRunner<void> runner;
 
   group('posix', () {
     setUp(() {
-      mockPlatform = MockPlatform();
+      mockPlatform = createMockPlatform();
       final GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
         platform: mockPlatform,
@@ -226,7 +227,7 @@ void main() {
 
   group('Windows', () {
     setUp(() {
-      mockPlatform = MockPlatform(isWindows: true);
+      mockPlatform = createMockPlatform(isWindows: true);
       final GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
         platform: mockPlatform,
