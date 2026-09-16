@@ -1,0 +1,3 @@
+changelog: |
+  - Adds the `supportingTextPadding` property to `InputDecorator`, `InputDecoration`, `InputDecorationTheme`, and `InputDecorationThemeData`.
+version: minor
