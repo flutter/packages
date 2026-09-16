@@ -161,17 +161,30 @@ void main() {
     );
   });
 
-  test('ThemeData defaults to standard Material 3 color scheme for custom contrast levels', () {
-    final standardTheme = ThemeData();
-    const contrastLevel = 0.25;
-    final customContrastTheme = ThemeData(contrastLevel: contrastLevel);
-
-    expect(customContrastTheme.colorScheme, standardTheme.colorScheme);
+  test('ThemeData requires a seed color for custom contrast levels', () {
+    expect(() => ThemeData(contrastLevel: 0.25), throwsAssertionError);
+    expect(
+      () => ThemeData(colorScheme: const ColorScheme.light(), contrastLevel: 0.25),
+      throwsAssertionError,
+    );
   });
 
   test('ThemeData throws for contrast levels outside the valid range', () {
     expect(() => ThemeData(contrastLevel: -1.5), throwsAssertionError);
     expect(() => ThemeData(contrastLevel: 1.5), throwsAssertionError);
+  });
+
+  test('ThemeData allows precision errors at contrast level limits', () {
+    const double precisionError = precisionErrorTolerance / 2.0;
+
+    expect(
+      () => ThemeData(colorSchemeSeed: Colors.blue, contrastLevel: -1.0 - precisionError),
+      returnsNormally,
+    );
+    expect(
+      () => ThemeData(colorSchemeSeed: Colors.blue, contrastLevel: 1.0 + precisionError),
+      returnsNormally,
+    );
   });
 
   testWidgets(
