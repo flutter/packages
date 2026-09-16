@@ -9,4 +9,4 @@
 /// Delegate for map callbacks that need Dart handling.
 ///
 /// This exists to add AnyObject to the requirements, so that references to it can be weak.
-protocol MapEventDelegate: AnyObject, MapsCallbackApiProtocol, TileProviderDelegate {}
+protocol MapEventDelegate: AnyObject, MapsCallbackApiProtocol {}

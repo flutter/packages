@@ -16,6 +16,9 @@ protocol MapAnimationCATransactionProtocol {
 /// Add the AnyObject-required protocol to MapsCallbackApi to allow it to be passed to sub-controllers.
 extension MapsCallbackApi: MapEventDelegate {}
 
+/// Add TileProviderDelegate to avoid needing to pass the entire API surface to TileOverlayController.
+extension MapsCallbackApi: TileProviderDelegate {}
+
 /// Non-test implementation of MapAnimationCATransactionProtocol.
 class DefaultMapAnimationCATransaction: MapAnimationCATransactionProtocol {
   func begin() {
@@ -98,12 +101,37 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
       options.mapID = GMSMapID(identifier: mapId)
     }
 
+    let binaryMessenger = registrar.messenger()
     self.init(
       mapView: GMSMapView(options: options),
       viewIdentifier: viewId,
       creationParameters: creationParameters,
       assetProvider: DefaultAssetProvider(registrar: registrar),
-      binaryMessenger: registrar.messenger()
+      binaryMessenger: binaryMessenger,
+      callbackHandler: MapsCallbackApi(
+        binaryMessenger: binaryMessenger,
+        messageChannelSuffix: String(format: "%lld", viewId)
+      )
+    )
+  }
+
+  convenience init(
+    mapView: GMSMapView,
+    viewIdentifier viewId: Int64,
+    creationParameters: PlatformMapViewCreationParams,
+    assetProvider: AssetProvider,
+    binaryMessenger: FlutterBinaryMessenger
+  ) {
+    self.init(
+      mapView: mapView,
+      viewIdentifier: viewId,
+      creationParameters: creationParameters,
+      assetProvider: assetProvider,
+      binaryMessenger: binaryMessenger,
+      callbackHandler: MapsCallbackApi(
+        binaryMessenger: binaryMessenger,
+        messageChannelSuffix: String(format: "%lld", viewId)
+      )
     )
   }
 
@@ -113,7 +141,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     creationParameters: PlatformMapViewCreationParams,
     assetProvider: AssetProvider,
     binaryMessenger: FlutterBinaryMessenger,
-    callbackHandler: MapEventDelegate? = nil
+    callbackHandler: MapEventDelegate
   ) {
     self.mapView = mapView
     mapView.accessibilityElementsHidden = false
@@ -132,12 +160,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     // End duplicate code.
 
     let pigeonSuffix = String(format: "%lld", viewId)
-    dartCallbackHandler =
-      callbackHandler
-      ?? MapsCallbackApi(
-        binaryMessenger: binaryMessenger,
-        messageChannelSuffix: pigeonSuffix
-      )
+    dartCallbackHandler = callbackHandler
 
     let markerType = creationParameters.mapConfiguration.markerType
 
@@ -167,7 +190,8 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     heatmapsController = HeatmapsController(mapView: mapView)
     tileOverlaysController = TileOverlaysController(
       mapView: mapView,
-      tileProvider: dartCallbackHandler
+      tileProvider: (callbackHandler as? MapsCallbackApi)
+        ?? MapsCallbackApi(binaryMessenger: binaryMessenger, messageChannelSuffix: pigeonSuffix)
     )
     groundOverlaysController = GroundOverlaysController(
       mapView: mapView,

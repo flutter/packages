@@ -38,12 +38,11 @@ class StubBinaryMessenger: NSObject, FlutterBinaryMessenger {
   }
 }
 
-/// Fake MapEventDelegate that records POI tap callbacks for unit tests.
-class MockMapsCallbackApi: TestMapEventHandler {
+/// Records POI tap callbacks for unit tests.
+class MockMapEventHandler: TestMapEventHandler {
   var lastTappedPointOfInterestPlaceIdentifier: String?
   private var pointOfInterestTapContinuation: CheckedContinuation<Void, Never>?
 
-  /// Completes when `didTapPointOfInterest` has been invoked (or immediately if already recorded).
   func waitForPointOfInterestTap() async {
     if lastTappedPointOfInterestPlaceIdentifier != nil {
       return
@@ -197,17 +196,17 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
 
     let mapView = PartiallyMockedMapView(options: mapViewOptions)
 
-    let callbackApi = MockMapsCallbackApi()
+    let mapEventHandler = MockMapEventHandler()
     let controller = GoogleMapController(
       mapView: mapView,
       viewIdentifier: 0,
       creationParameters: emptyCreationParameters(),
       assetProvider: TestAssetProvider(),
       binaryMessenger: StubBinaryMessenger(),
-      callbackHandler: callbackApi
+      callbackHandler: mapEventHandler
     )
 
-    async let poiTapReceived: Void = callbackApi.waitForPointOfInterestTap()
+    async let poiTapReceived: Void = mapEventHandler.waitForPointOfInterestTap()
     controller.mapView(
       mapView,
       didTapPOIWithPlaceID: "place-123",
@@ -216,7 +215,7 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     )
     await poiTapReceived
 
-    #expect(callbackApi.lastTappedPointOfInterestPlaceIdentifier == "place-123")
+    #expect(mapEventHandler.lastTappedPointOfInterestPlaceIdentifier == "place-123")
   }
 
   @Test func inspectorAPICameraPosition() throws {
