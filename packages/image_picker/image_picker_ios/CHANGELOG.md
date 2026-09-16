@@ -1,5 +1,7 @@
 ## 0.8.13+7
 
+* Returns an error when selected image data cannot be decoded.
+
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
 
 ## 0.8.13+6
