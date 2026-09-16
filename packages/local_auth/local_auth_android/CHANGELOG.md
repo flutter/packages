@@ -1,3 +1,7 @@
+## 2.2.0
+
+* Adjusts visibilty modifiers to support the migration of unit tests to Kotlin.
+
 ## 2.1.0
 
 * Converts the implementation to Kotlin.
