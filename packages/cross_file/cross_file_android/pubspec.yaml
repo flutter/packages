@@ -19,9 +19,7 @@ flutter:
         pluginClass: CrossFileAndroidPlugin
 
 dependencies:
-  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_platform_io` is released.
-  cross_file_io:
-    path: ../cross_file_io
+  cross_file_io: ^1.0.0
   cross_file_platform_interface: ^1.0.0
   flutter:
     sdk: flutter
