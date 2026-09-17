@@ -129,7 +129,7 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
   @override
   Future<bool> canRead() async {
     return NSFileManager.getDefaultManager().isReadableFileAtPath(
-      Uri.file(params.uri).path.toNSString(),
+      Uri.parse(params.uri).toFilePath().toNSString(),
     );
   }
 
@@ -181,7 +181,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     if (_tryGetAsset(identifier: params.uri) case final PHAsset asset) {
       final NSDate? date = asset.modificationDate;
       if (date != null) {
-        DateTime.fromMillisecondsSinceEpoch((date.timeIntervalSince1970 * 1000).round());
+        return DateTime.fromMillisecondsSinceEpoch((date.timeIntervalSince1970 * 1000).round());
       }
     }
 
