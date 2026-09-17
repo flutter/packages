@@ -1,3 +1,7 @@
+## 1.2.4
+
+* Adds agent skill for package setup and usage.
+
 ## 1.2.3
 
 * Fixes `pickMultiImage(limit: 1)` and `pickMultipleMedia(limit: 1)` throwing an `ArgumentError` by delegating to

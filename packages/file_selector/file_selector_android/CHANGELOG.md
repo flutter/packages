@@ -1,3 +1,7 @@
+## 0.5.2+12
+
+* Adds agent skill for package setup and usage.
+
 ## 0.5.2+11
 
 * Fixes a crash when the content provider returns no stream for a selected

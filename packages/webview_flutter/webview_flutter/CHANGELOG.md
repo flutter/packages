@@ -1,3 +1,7 @@
+## 4.14.2
+
+* Adds agent skill for package setup and usage.
+
 ## 4.14.1
 
 * Adds documentation for `NavigationDelegate` callback parameters.

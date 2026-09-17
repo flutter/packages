@@ -1,5 +1,6 @@
-## NEXT
+## 6.3.3
 
+* Adds agent skill for package setup and usage.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.

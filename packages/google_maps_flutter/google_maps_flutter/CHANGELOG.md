@@ -1,3 +1,7 @@
+## 2.18.2
+
+* Adds agent skill for package setup and usage.
+
 ## 2.18.1
 
 * Clarifies that clearing a tile cache may cause flickering on some platforms.

@@ -1,3 +1,7 @@
+## 0.9.5+1
+
+* Adds agent skill for package setup and usage.
+
 ## 0.9.5
 
 * Adds support for mimeType on XFile.

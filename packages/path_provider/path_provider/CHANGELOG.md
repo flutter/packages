@@ -1,3 +1,7 @@
+## 2.1.7
+
+* Adds agent skill for package setup and usage.
+
 ## 2.1.6
 
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.

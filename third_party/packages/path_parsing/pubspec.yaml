@@ -3,7 +3,7 @@ description: >
   A Dart library to help with SVG Path parsing and code generation.  Used by Flutter SVG.
 repository: https://github.com/flutter/packages/tree/main/third_party/packages/path_parsing
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+path_parsing%22
-version: 1.1.0
+version: 1.1.1
 
 environment:
   sdk: ^3.10.0
@@ -13,7 +13,9 @@ dependencies:
   vector_math: ^2.2.0
 
 dev_dependencies:
+  logging: ^1.2.0
   path: ^1.8.0
+  skills_lint: ^0.5.1
   test: ^1.16.0
 
 topics:

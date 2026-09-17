@@ -1,3 +1,7 @@
+## 0.7.4+9
+
+* Adds agent skill for package setup and usage.
+
 ## 0.7.4+8
 
 * Bumps cameraxVersion from 1.6.1 to 1.6.2.

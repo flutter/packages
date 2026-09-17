@@ -1,3 +1,7 @@
+## 1.3.1
+
+* Adds agent skill for package setup and usage.
+
 ## 1.3.0
 
 * An unrecognized `font-weight` value is now ignored with a warning (and still

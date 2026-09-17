@@ -1,3 +1,7 @@
+## 3.0.3
+
+* Adds agent skill for package setup and usage.
+
 ## 3.0.2
 
 * Clarifies the `getAvailableBiometrics` documentation regarding iOS permission requirements.

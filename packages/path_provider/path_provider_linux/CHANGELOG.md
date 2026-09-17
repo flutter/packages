@@ -1,3 +1,7 @@
+## 2.2.3
+
+* Adds agent skill for package setup and usage.
+
 ## 2.2.2
 
 * Fixes getApplicationId() behavior on Linux when GLib development packages are not installed.

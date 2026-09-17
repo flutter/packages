@@ -1,3 +1,7 @@
+## 2.18.15
+
+* Adds agent skill for package setup and usage.
+
 ## 2.18.14
 
 * Adopts new Pigeon async Swift support.

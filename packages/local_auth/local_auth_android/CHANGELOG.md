@@ -1,3 +1,7 @@
+## 2.1.1
+
+* Adds agent skill for package setup and usage.
+
 ## 2.1.0
 
 * Converts the implementation to Kotlin.

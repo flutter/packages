@@ -1,3 +1,7 @@
+## 3.0.1
+
+* Adds agent skill for package setup and usage.
+
 ## 3.0.0
 
 * Migrates to material_ui.

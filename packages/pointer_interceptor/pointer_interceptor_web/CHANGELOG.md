@@ -1,5 +1,6 @@
-## NEXT
+## 0.10.3+1
 
+* Adds agent skill for package setup and usage.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.10.3

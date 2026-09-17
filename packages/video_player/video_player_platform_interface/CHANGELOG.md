@@ -1,3 +1,7 @@
+## 6.9.1
+
+* Adds agent skill for package setup and usage.
+
 ## 6.9.0
 
 * Adds `backBufferDurationMs` to `VideoPlayerOptions` to support configuring the back buffer duration.

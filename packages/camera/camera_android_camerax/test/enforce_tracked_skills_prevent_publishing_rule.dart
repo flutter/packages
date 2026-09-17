@@ -37,6 +37,12 @@ class EnforceTrackedSkillsPreventPublishingRule extends SkillRule {
       // Fallback to normal validation if link resolution fails
     }
 
+    // Published skills in `skills/` are intended to be published to pub.dev
+    // and are exempt from prevent-skills-sh-publishing enforcement (which applies to .agents/skills).
+    if (!p.split(context.directory.path).contains('.agents')) {
+      return [];
+    }
+
     // 2. Check if the skill directory is tracked in git
     final ProcessResult processResult;
     try {

@@ -1,3 +1,7 @@
+## 1.0.34
+
+* Adds agent skill for package setup and usage.
+
 ## 1.0.33
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.

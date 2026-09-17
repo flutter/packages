@@ -3,7 +3,7 @@ description: "A common platform interface for the pointer_interceptor plugin."
 repository: https://github.com/flutter/packages/tree/main/packages/pointer_interceptor/pointer_interceptor_platform_interface
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+pointer_interceptor%22
 
-version: 0.10.0+1
+version: 0.10.0+2
 
 environment:
   sdk: ^3.10.0
@@ -17,6 +17,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  logging: ^1.2.0
+  skills_lint: ^0.5.1
 
 topics:
   - widgets

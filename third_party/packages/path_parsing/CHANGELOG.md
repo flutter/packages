@@ -1,5 +1,6 @@
-## NEXT
+## 1.1.1
 
+* Adds agent skill for package setup and usage.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 * Fixes deprecation lints and updates minimum vector_math dependency.
 

@@ -1,3 +1,7 @@
+## 2.0.36
+
+* Adds agent skill for package setup and usage.
+
 ## 2.0.35
 
 * Bumps the androidx group across 10 directories with 1 update.

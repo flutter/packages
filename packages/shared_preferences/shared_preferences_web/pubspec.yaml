@@ -2,7 +2,7 @@ name: shared_preferences_web
 description: Web platform implementation of shared_preferences
 repository: https://github.com/flutter/packages/tree/main/packages/shared_preferences/shared_preferences_web
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+shared_preferences%22
-version: 2.4.3
+version: 2.4.4
 
 environment:
   sdk: ^3.10.0
@@ -27,6 +27,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  logging: ^1.2.0
+  skills_lint: ^0.5.1
 
 topics:
   - persistence

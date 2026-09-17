@@ -1,3 +1,7 @@
+## 4.5.1
+
+* Adds agent skill for package setup and usage.
+
 ## 4.5.0
 
 - Detects routes that resolve to the same URL pattern. Routes are compared by

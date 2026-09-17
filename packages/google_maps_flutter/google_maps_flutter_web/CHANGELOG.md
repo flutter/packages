@@ -1,3 +1,7 @@
+## 0.6.3+2
+
+* Adds agent skill for package setup and usage.
+
 ## 0.6.3+1
 
 * Fixes flickering of byte-backed advanced markers when updating their position on web.

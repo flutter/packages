@@ -1,3 +1,7 @@
+## 2.13.2
+
+* Adds agent skill for package setup and usage.
+
 ## 2.13.1
 
 * Changes the default implementation of `setJpegImageQuality` to a no-op so that

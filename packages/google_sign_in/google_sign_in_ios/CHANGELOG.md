@@ -1,3 +1,7 @@
+## 6.3.4
+
+* Adds agent skill for package setup and usage.
+
 ## 6.3.3
 
 * Creates Swift Package Manager target for Swift implementation.

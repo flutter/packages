@@ -1,3 +1,7 @@
+## 2.17.1
+
+* Adds agent skill for package setup and usage.
+
 ## 2.17.0
 
 * Adds support for tapping points of interest on the map.

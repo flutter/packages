@@ -1,3 +1,7 @@
+## 4.1.3
+
+* Adds agent skill for package setup and usage.
+
 ## 4.1.2
 
 * Updates Chrome launch arguments to unblock Chrome 145+ upgrade.

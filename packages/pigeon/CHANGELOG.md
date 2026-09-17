@@ -1,3 +1,7 @@
+## 29.0.3
+
+* Adds agent skill for package setup and usage.
+
 ## 29.0.2
 
 * [swift] Fixes a crash when a Flutter API returns null for a non-null return

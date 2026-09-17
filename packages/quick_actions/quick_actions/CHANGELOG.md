@@ -1,3 +1,7 @@
+## 1.1.2
+
+* Adds agent skill for package setup and usage.
+
 ## 1.1.1
 
 * Adopts `code-excerpt` for the README's Dart snippets so they are validated

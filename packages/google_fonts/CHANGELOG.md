@@ -1,5 +1,6 @@
-## NEXT
+## 8.2.2
 
+- Adds agent skill for package setup and usage.
 - Adds the `GoogleFontsLite` class to allow tree-shaking unused font code.
 - Added fonts:
   - `Akt`

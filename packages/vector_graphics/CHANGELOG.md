@@ -1,5 +1,6 @@
-## NEXT
+## 1.2.4
 
+* Adds agent skill for package setup and usage.
 * Fixes deprecation lints.
 
 ## 1.2.3

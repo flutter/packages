@@ -1,3 +1,7 @@
+## 2.14.1
+
+* Adds agent skill for package setup and usage.
+
 ## 2.14.0
 
 * Adds video quality selection support for HLS/DASH adaptive streams via

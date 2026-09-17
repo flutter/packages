@@ -1,3 +1,7 @@
+## 0.4.0+27
+
+* Adds agent skill for package setup and usage.
+
 ## 0.4.0+26
 
 * Adopts `code-excerpt` for the README's Dart driver snippet so it is

@@ -1,3 +1,7 @@
+## 0.5.4+1
+
+* Adds agent skill for package setup and usage.
+
 ## 0.5.4
 
 * Fixes memory leaks.

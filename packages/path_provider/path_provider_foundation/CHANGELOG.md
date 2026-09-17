@@ -1,3 +1,7 @@
+## 2.6.1
+
+* Adds agent skill for package setup and usage.
+
 ## 2.6.0
 
 * Re-release: replaces Flutter-plugin-based implementation with direct

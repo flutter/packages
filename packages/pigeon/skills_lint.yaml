@@ -1,0 +1,6 @@
+skills_lint:
+  rules:
+    check-relative-paths: error
+    check-trailing-whitespace: error
+  directories:
+    - path: "skills"

@@ -1,3 +1,7 @@
+## 2.12.1
+
+* Adds agent skill for package setup and usage.
+
 ## 2.12.0
 
 * Routes video over AirPlay when an external screen is active, by setting

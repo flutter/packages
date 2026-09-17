@@ -1,3 +1,7 @@
+## 0.4.13+1
+
+* Adds agent skill for package setup and usage.
+
 ## 0.4.13
 
 * Exposes expirationDate on SK2PurchaseDetails.

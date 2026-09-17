@@ -1,3 +1,7 @@
+## 0.12.1+1
+
+* Adds agent skill for package setup and usage.
+
 ## 0.12.1
 
 * Adds `setJpegImageQuality` for controlling JPEG compression quality.

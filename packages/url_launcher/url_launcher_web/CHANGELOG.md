@@ -1,3 +1,7 @@
+## 2.4.4
+
+* Adds agent skill for package setup and usage.
+
 ## 2.4.3
 
 * Removes a LICENSE entry for code that no longer exists in the package.

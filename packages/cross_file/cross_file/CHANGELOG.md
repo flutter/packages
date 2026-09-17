@@ -1,3 +1,7 @@
+## 0.3.5+6
+
+* Adds agent skill for package setup and usage.
+
 ## 0.3.5+5
 
 * Fixes native `readAsString` returning mojibake for `XFile.fromData`, which

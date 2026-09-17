@@ -1,0 +1,3 @@
+changelog: |
+  - Adds agent skill for package setup and usage.
+version: patch

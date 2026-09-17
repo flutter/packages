@@ -1,3 +1,7 @@
+## 0.3.5+7
+
+* Adds agent skill for package setup and usage.
+
 ## 0.3.5+6
 
 * Fixes a `TypeError` in `setFlashMode` and `takePicture` caused by browsers reporting the
