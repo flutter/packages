@@ -114,11 +114,9 @@ void main() {
 
     test('color generates color expression', () {
       final template = IconButtonTemplateM3(testPath());
-      expect(template.color(TokenColorRole.onSurface, '_colors'), '_colors.onSurface');
-      expect(
-        template.color(TokenColorRole.inverseOnSurface, '_colors'),
-        '_colors.onInverseSurface',
-      );
+      expect(template.color(TokenColorRole.onSurface), '_colors.onSurface');
+      expect(template.color(TokenColorRole.inverseOnSurface), '_colors.onInverseSurface');
+      expect(template.color(TokenColorRole.onSurface, '_customColors'), '_customColors.onSurface');
     });
 
     test('textStyle generates text name', () {
@@ -138,31 +136,32 @@ void main() {
     test('M3 colorWithOpacity generates color expression with opacity', () {
       final template = IconButtonTemplateM3(testPath());
       expect(
-        template.colorWithOpacity(TokenColorRole.onSurface, 0.12, '_colors'),
+        template.colorWithOpacity(TokenColorRole.onSurface, 0.12),
         '_colors.onSurface.withOpacity(0.12)',
       );
       expect(
-        template.colorWithOpacity(TokenColorRole.inverseOnSurface, 0.12, '_colors'),
+        template.colorWithOpacity(TokenColorRole.inverseOnSurface, 0.12),
         '_colors.onInverseSurface.withOpacity(0.12)',
       );
+      expect(template.colorWithOpacity(TokenColorRole.onSurface, 1.0), '_colors.onSurface');
       expect(
-        template.colorWithOpacity(TokenColorRole.onSurface, 1.0, '_colors'),
-        '_colors.onSurface',
+        template.colorWithOpacity(TokenColorRole.onSurface, 0.12, '_customColors'),
+        '_customColors.onSurface.withOpacity(0.12)',
       );
     });
 
     test('M3E colorWithOpacity uses withValues', () {
       final template = IconButtonTemplateM3E(testPath());
       expect(
-        template.colorWithOpacity(TokenColorRole.onSurface, 0.12, '_colors'),
+        template.colorWithOpacity(TokenColorRole.onSurface, 0.12),
         '_colors.onSurface.withValues(alpha: 0.12)',
       );
       expect(
-        template.colorWithOpacity(TokenColorRole.inverseOnSurface, 0.12, '_colors'),
+        template.colorWithOpacity(TokenColorRole.inverseOnSurface, 0.12),
         '_colors.onInverseSurface.withValues(alpha: 0.12)',
       );
       expect(
-        template.colorWithOpacity(TokenColorRole.inverseOnSurface, 1.0, '_colors'),
+        template.colorWithOpacity(TokenColorRole.inverseOnSurface, 1.0),
         '_colors.onInverseSurface',
       );
     });
