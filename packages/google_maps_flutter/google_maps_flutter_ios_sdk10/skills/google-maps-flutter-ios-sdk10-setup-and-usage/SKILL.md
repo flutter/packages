@@ -76,10 +76,10 @@ class MapSdk10Screen extends StatelessWidget {
           zoom: 15,
         ),
         markers: <Marker>{
-          const Marker(
-            markerId: MarkerId('hq'),
-            position: LatLng(37.4220, -122.0841),
-            infoWindow: InfoWindow(title: 'Googleplex'),
+          AdvancedMarker(
+            markerId: const MarkerId('hq'),
+            position: const LatLng(37.4220, -122.0841),
+            infoWindow: const InfoWindow(title: 'Googleplex'),
           ),
         },
       ),

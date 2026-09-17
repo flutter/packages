@@ -98,6 +98,8 @@ class MyCustomCameraPlatform extends CameraPlatform {
 
 When writing widget or unit tests for code that uses `package:camera`, replace `CameraPlatform.instance` with a fake or mock subclass that mixes in `MockPlatformInterfaceMixin`:
 
+Unlike real platform implementations, test doubles may use `implements CameraPlatform` (typically combined with `Fake` or mockito's `Mock`). `MockPlatformInterfaceMixin` exists precisely to allow this: it satisfies the `PlatformInterface.verify` token check that would otherwise reject an `implements`-based class. Using `extends Fake` also means only the methods exercised by the test need to be overridden.
+
 ```dart
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/widgets.dart';

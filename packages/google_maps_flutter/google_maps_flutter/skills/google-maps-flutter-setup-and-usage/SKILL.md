@@ -143,6 +143,8 @@ class MapSampleState extends State<MapSample> {
 
 To use standard markers or [Advanced Markers](https://developers.google.com/maps/documentation/javascript/advanced-markers/overview) (which require a `mapId` configured in the Google Cloud Console):
 
+When `markerType` is `GoogleMapMarkerType.advancedMarker`, every entry in `markers` must be an `AdvancedMarker`; mixing in plain `Marker` instances results in undefined behavior. Conversely, with the default `GoogleMapMarkerType.marker`, no marker may be an `AdvancedMarker`.
+
 ```dart
 GoogleMap(
   mapId: 'YOUR_CLOUD_MAP_ID',
@@ -152,10 +154,10 @@ GoogleMap(
     zoom: 12,
   ),
   markers: <Marker>{
-    const Marker(
-      markerId: MarkerId('san_francisco'),
-      position: LatLng(37.7749, -122.4194),
-      infoWindow: InfoWindow(
+    AdvancedMarker(
+      markerId: const MarkerId('san_francisco'),
+      position: const LatLng(37.7749, -122.4194),
+      infoWindow: const InfoWindow(
         title: 'San Francisco',
         snippet: 'California, USA',
       ),

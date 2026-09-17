@@ -84,6 +84,7 @@ class CameraApp extends StatefulWidget {
 
 class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
   CameraController? _controller;
+  CameraDescription? _currentCamera;
   bool _isCameraInitialized = false;
 
   @override
@@ -105,6 +106,7 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
     );
 
     _controller = cameraController;
+    _currentCamera = description;
 
     try {
       await cameraController.initialize();
@@ -133,16 +135,23 @@ class _CameraAppState extends State<CameraApp> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    final CameraController? cameraController = _controller;
-
-    if (cameraController == null || !cameraController.value.isInitialized) {
-      return;
-    }
-
     if (state == AppLifecycleState.inactive) {
+      final CameraController? cameraController = _controller;
+      if (cameraController == null || !cameraController.value.isInitialized) {
+        return;
+      }
+      // Clear the controller before disposing it so that the widget tree never
+      // renders a disposed controller.
+      _controller = null;
+      setState(() {
+        _isCameraInitialized = false;
+      });
       cameraController.dispose();
     } else if (state == AppLifecycleState.resumed) {
-      _initializeCameraController(cameraController.description);
+      final CameraDescription? description = _currentCamera;
+      if (description != null) {
+        _initializeCameraController(description);
+      }
     }
   }
 

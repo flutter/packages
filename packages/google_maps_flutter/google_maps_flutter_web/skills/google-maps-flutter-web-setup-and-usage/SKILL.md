@@ -71,10 +71,10 @@ class WebMapScreen extends StatelessWidget {
           zoom: 13,
         ),
         markers: <Marker>{
-          const Marker(
-            markerId: MarkerId('london'),
-            position: LatLng(51.5074, -0.1278),
-            infoWindow: InfoWindow(title: 'London'),
+          AdvancedMarker(
+            markerId: const MarkerId('london'),
+            position: const LatLng(51.5074, -0.1278),
+            infoWindow: const InfoWindow(title: 'London'),
           ),
         },
       ),
