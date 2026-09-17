@@ -55,6 +55,7 @@ struct PhotoAssetUtilTests {
     let savedPathJPG = FLTImagePickerPhotoAssetUtil.saveImage(
       withOriginalImageData: dataJPG, image: imageJPG, maxWidth: nil, maxHeight: nil,
       imageQuality: nil)
+    defer { try? FileManager.default.removeItem(atPath: savedPathJPG) }
     #expect(URL(string: savedPathJPG)?.pathExtension == "jpg")
 
     let originalMetaDataJPG = FLTImagePickerMetaDataUtil.getMetaData(fromImageData: dataJPG)
@@ -70,6 +71,7 @@ struct PhotoAssetUtilTests {
     let savedPathPNG = FLTImagePickerPhotoAssetUtil.saveImage(
       withOriginalImageData: dataPNG, image: imagePNG, maxWidth: nil, maxHeight: nil,
       imageQuality: nil)
+    defer { try? FileManager.default.removeItem(atPath: savedPathPNG) }
     #expect(URL(string: savedPathPNG)?.pathExtension == "png")
 
     let originalMetaDataPNG = FLTImagePickerMetaDataUtil.getMetaData(fromImageData: dataPNG)
@@ -85,6 +87,7 @@ struct PhotoAssetUtilTests {
     let imageJPG = UIImage(data: ImagePickerTestImages.jpgTestData)!
     let savedPathJPG = FLTImagePickerPhotoAssetUtil.saveImage(
       withPickerInfo: nil, image: imageJPG, imageQuality: nil)
+    defer { try? FileManager.default.removeItem(atPath: savedPathJPG) }
     #expect(
       (savedPathJPG as NSString).substring(from: savedPathJPG.count - 4)
         == kFLTImagePickerDefaultSuffix
@@ -102,6 +105,7 @@ struct PhotoAssetUtilTests {
     let imageJPG = UIImage(data: ImagePickerTestImages.jpgTestData)!
     let savedPathJPG = FLTImagePickerPhotoAssetUtil.saveImage(
       withPickerInfo: dummyInfo, image: imageJPG, imageQuality: nil)
+    defer { try? FileManager.default.removeItem(atPath: savedPathJPG) }
     let data = try? Data(contentsOf: URL(fileURLWithPath: savedPathJPG))
     let meta = FLTImagePickerMetaDataUtil.getMetaData(fromImageData: data ?? Data())
     let comment =
@@ -119,6 +123,7 @@ struct PhotoAssetUtilTests {
     let savedPathGIF = FLTImagePickerPhotoAssetUtil.saveImage(
       withOriginalImageData: dataGIF, image: imageGIF, maxWidth: nil, maxHeight: nil,
       imageQuality: nil)
+    defer { try? FileManager.default.removeItem(atPath: savedPathGIF) }
     #expect(URL(string: savedPathGIF)?.pathExtension == "gif")
 
     let newDataGIF = try? Data(contentsOf: URL(fileURLWithPath: savedPathGIF))
@@ -135,6 +140,7 @@ struct PhotoAssetUtilTests {
 
     let savedPathGIF = FLTImagePickerPhotoAssetUtil.saveImage(
       withOriginalImageData: dataGIF, image: imageGIF, maxWidth: 3, maxHeight: 2, imageQuality: nil)
+    defer { try? FileManager.default.removeItem(atPath: savedPathGIF) }
     let newDataGIF = try? Data(contentsOf: URL(fileURLWithPath: savedPathGIF))
     let newImage = UIImage(data: newDataGIF ?? Data())
     #expect(newImage?.size.width == 3)

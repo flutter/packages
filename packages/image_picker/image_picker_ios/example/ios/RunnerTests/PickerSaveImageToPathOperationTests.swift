@@ -78,6 +78,7 @@ struct PickerSaveImageToPathOperationTests {
       result: result, fullMetadata: fullMetadata)
     #expect(savedError == nil)
     let path = try #require(savedPath)
+    defer { try? FileManager.default.removeItem(atPath: path) }
     #expect(FileManager.default.fileExists(atPath: path))
     #expect(URL(fileURLWithPath: path).pathExtension == expectedExtension)
   }
@@ -111,6 +112,7 @@ struct PickerSaveImageToPathOperationTests {
       result: result, fullMetadata: false)
     #expect(savedError == nil)
     let path = try #require(savedPath)
+    defer { try? FileManager.default.removeItem(atPath: path) }
     #expect(FileManager.default.fileExists(atPath: path))
     #expect(URL(fileURLWithPath: path).pathExtension == "gif")
     let newDataGIF = try Data(contentsOf: URL(fileURLWithPath: path))
@@ -134,6 +136,7 @@ struct PickerSaveImageToPathOperationTests {
       result: result, maxHeight: 10, maxWidth: 10, fullMetadata: false)
     #expect(savedError == nil)
     let path = try #require(savedPath)
+    defer { try? FileManager.default.removeItem(atPath: path) }
     #expect(FileManager.default.fileExists(atPath: path))
     #expect(URL(fileURLWithPath: path).pathExtension == "jpg")
     let image = try #require(UIImage(contentsOfFile: path))
