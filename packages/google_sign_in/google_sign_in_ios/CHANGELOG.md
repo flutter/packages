@@ -1,3 +1,8 @@
+## 6.3.4
+
+* Fixes a compile warning by returning `BOOL` from `scene:openURLContexts:` to
+  match the `FlutterSceneLifeCycleDelegate` protocol.
+
 ## 6.3.3
 
 * Creates Swift Package Manager target for Swift implementation.
