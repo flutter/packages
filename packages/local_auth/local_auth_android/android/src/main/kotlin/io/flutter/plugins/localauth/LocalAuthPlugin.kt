@@ -72,7 +72,6 @@ class LocalAuthPlugin
         authHelper?.stopAuthentication()
         authHelper = null
       }
-      authInProgress.set(false)
       return true
     } catch (_: Exception) {
       return false
