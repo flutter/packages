@@ -6,7 +6,6 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:cupertino_ui_examples/checkbox/cupertino_checkbox.snippet.0.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart' show Colors;
 
 void main() {
   testWidgets('Checkbox color is affected by whether it is enabled', (
@@ -32,13 +31,18 @@ void main() {
 
     await tester.pumpWidget(buildApp(onChanged: (bool? _) {}));
     await tester.pumpAndSettle();
-    expect(getCheckboxRenderer(), paints..rrect(color: Colors.orange));
+    expect(
+      getCheckboxRenderer(),
+      paints..rrect(color: CupertinoColors.activeOrange.color),
+    );
 
     await tester.pumpWidget(buildApp(onChanged: null));
     await tester.pumpAndSettle();
     expect(
       getCheckboxRenderer(),
-      paints..rrect(color: Colors.orange.withValues(alpha: .32)),
+      paints..rrect(
+        color: CupertinoColors.activeOrange.color.withValues(alpha: .32),
+      ),
     );
   });
 }

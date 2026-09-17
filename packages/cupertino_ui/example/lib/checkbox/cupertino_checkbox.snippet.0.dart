@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:material_ui/material_ui.dart' show Colors;
 
 /// Flutter code sample for [CupertinoCheckbox].
 
@@ -28,9 +27,9 @@ class CupertinoCheckboxExample extends StatelessWidget {
         Set<WidgetState> states,
       ) {
         if (states.contains(WidgetState.disabled)) {
-          return Colors.orange.withValues(alpha: .32);
+          return CupertinoColors.activeOrange.withValues(alpha: .32);
         }
-        return Colors.orange;
+        return CupertinoColors.activeOrange;
       }),
     )
     // #endregion body
