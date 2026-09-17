@@ -814,8 +814,6 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    // The annotation is not conditional on the task queue; the Flutter reply
-    // callback can be invoked from any thread either way.
     expect(
       code,
       contains(
