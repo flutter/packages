@@ -21,11 +21,27 @@ class PlatformVideoViewCreationParams {
   final int playerId;
 }
 
+/// Pigeon equivalent of video_player_avfoundation's FairPlayDrmConfiguration.
+class PlatformFairPlayDrmConfiguration {
+  PlatformFairPlayDrmConfiguration({
+    required this.certificateUri,
+    required this.licenseUri,
+    required this.licenseHeaders,
+    this.contentId,
+  });
+
+  String certificateUri;
+  String licenseUri;
+  Map<String, String> licenseHeaders;
+  String? contentId;
+}
+
 class CreationOptions {
   CreationOptions({required this.uri, required this.httpHeaders});
 
   String uri;
   Map<String, String> httpHeaders;
+  PlatformFairPlayDrmConfiguration? fairPlayDrm;
 }
 
 class TexturePlayerIds {

@@ -8,13 +8,21 @@
 
 @interface FVPDefaultAVAsset : NSObject <FVPAVAsset>
 @property(nonatomic, readwrite) AVAsset *asset;
+/// The asset's resource loader delegate, if any.
+///
+/// AVAssetResourceLoader holds its delegate weakly, so ownership of the delegate has to live
+/// alongside the asset.
+@property(nonatomic, nullable) NSObject<AVAssetResourceLoaderDelegate> *resourceLoaderDelegate;
 @end
 
 @implementation FVPDefaultAVAsset
-- (instancetype)initWithAsset:(AVAsset *)asset {
+- (instancetype)initWithAsset:(AVAsset *)asset
+       resourceLoaderDelegate:
+           (nullable NSObject<AVAssetResourceLoaderDelegate> *)resourceLoaderDelegate {
   self = [super init];
   if (self) {
     _asset = asset;
+    _resourceLoaderDelegate = resourceLoaderDelegate;
   }
   return self;
 }
@@ -53,19 +61,25 @@
 
 @interface FVPDefaultAVPlayerItem : NSObject <FVPAVPlayerItem>
 @property(nonatomic, readwrite) AVPlayerItem *playerItem;
+/// The resource loader delegate of the item's asset, if any. See FVPDefaultAVAsset.
+@property(nonatomic, nullable) NSObject<AVAssetResourceLoaderDelegate> *resourceLoaderDelegate;
 @end
 
 @implementation FVPDefaultAVPlayerItem
-- (instancetype)initWithPlayerItem:(AVPlayerItem *)playerItem {
+- (instancetype)initWithPlayerItem:(AVPlayerItem *)playerItem
+            resourceLoaderDelegate:
+                (nullable NSObject<AVAssetResourceLoaderDelegate> *)resourceLoaderDelegate {
   self = [super init];
   if (self) {
     _playerItem = playerItem;
+    _resourceLoaderDelegate = resourceLoaderDelegate;
   }
   return self;
 }
 
 - (NSObject<FVPAVAsset> *)asset {
-  return [[FVPDefaultAVAsset alloc] initWithAsset:self.playerItem.asset];
+  return [[FVPDefaultAVAsset alloc] initWithAsset:self.playerItem.asset
+                           resourceLoaderDelegate:self.resourceLoaderDelegate];
 }
 
 - (AVVideoComposition *)videoComposition {
@@ -135,14 +149,25 @@
 
 @implementation FVPDefaultAVFactory
 - (NSObject<FVPAVAsset> *)URLAssetWithURL:(NSURL *)URL
-                                  options:(nullable NSDictionary<NSString *, id> *)options {
-  return [[FVPDefaultAVAsset alloc] initWithAsset:[AVURLAsset URLAssetWithURL:URL options:options]];
+                                  options:(nullable NSDictionary<NSString *, id> *)options
+                   resourceLoaderDelegate:
+                       (nullable NSObject<AVAssetResourceLoaderDelegate> *)resourceLoaderDelegate {
+  AVURLAsset *asset = [AVURLAsset URLAssetWithURL:URL options:options];
+  if (resourceLoaderDelegate != nil) {
+    dispatch_queue_t queue =
+        dispatch_queue_create("dev.flutter.video_player.resourceLoader", DISPATCH_QUEUE_SERIAL);
+    [asset.resourceLoader setDelegate:resourceLoaderDelegate queue:queue];
+  }
+  return [[FVPDefaultAVAsset alloc] initWithAsset:asset
+                           resourceLoaderDelegate:resourceLoaderDelegate];
 }
 
 - (NSObject<FVPAVPlayerItem> *)playerItemWithAsset:(NSObject<FVPAVAsset> *)asset {
   // The default factory always vends FVPDefault* implementations, so it is safe to cast back.
+  FVPDefaultAVAsset *defaultAsset = (FVPDefaultAVAsset *)asset;
   return [[FVPDefaultAVPlayerItem alloc]
-      initWithPlayerItem:[AVPlayerItem playerItemWithAsset:((FVPDefaultAVAsset *)asset).asset]];
+          initWithPlayerItem:[AVPlayerItem playerItemWithAsset:defaultAsset.asset]
+      resourceLoaderDelegate:defaultAsset.resourceLoaderDelegate];
 }
 
 - (AVPlayer *)playerWithPlayerItem:(NSObject<FVPAVPlayerItem> *)playerItem {
