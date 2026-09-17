@@ -483,14 +483,16 @@ class CarouselView extends StatefulWidget {
   final List<Widget> children;
 
   /// {@template material_ui.CarouselView.onIndexChanged}
-  /// A callback invoked when the leading item changes.
+  /// A callback invoked when the active item changes.
   ///
-  /// The leading item is the first visible item in the carousel view.
+  /// For an unweighted carousel, the active item is the first visible item in
+  /// the carousel view. For a weighted carousel, the active item is the item
+  /// that occupies the maximum weight.
   ///
-  /// The callback fires only when the leading item is completely out of view,
-  /// whether due to user interaction or programmatic scrolling. If the leading item
-  /// remains partially visible, the leading index will not change and the callback will
-  /// not be invoked.
+  /// The callback fires only when the active item changes,
+  /// whether due to user interaction or programmatic scrolling. If the active item
+  /// remains partially visible and has not shifted enough to change the active index,
+  /// the callback will not be invoked.
   /// {@endtemplate}
   ///
   /// Example:
@@ -546,6 +548,15 @@ class _CarouselViewState extends State<CarouselView> {
   CarouselController get _controller => widget.controller ?? _internalController!;
   late int _lastReportedLeadingItem;
 
+  int? _cachedMaxWeightIndex;
+  int? get _maxWeightIndex {
+    if (widget.flexWeights == null) {
+      return null;
+    }
+    _cachedMaxWeightIndex ??= widget.flexWeights!.indexOf(widget.flexWeights!.max);
+    return _cachedMaxWeightIndex;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -575,6 +586,7 @@ class _CarouselViewState extends State<CarouselView> {
       }
     }
     if (widget.flexWeights != oldWidget.flexWeights) {
+      _cachedMaxWeightIndex = null;
       (_controller.position as _CarouselPosition).flexWeights = _flexWeights;
     }
     if (widget.itemExtent != oldWidget.itemExtent) {
@@ -600,7 +612,8 @@ class _CarouselViewState extends State<CarouselView> {
     }
 
     final ScrollPosition position = _controller.position;
-    final int currentLeadingIndex = (position as _CarouselPosition).leadingItem;
+    final carouselPosition = position as _CarouselPosition;
+    final int currentLeadingIndex = carouselPosition.activeIndex;
 
     if (currentLeadingIndex != _lastReportedLeadingItem) {
       _lastReportedLeadingItem = currentLeadingIndex;
@@ -608,17 +621,22 @@ class _CarouselViewState extends State<CarouselView> {
     }
   }
 
-  // For weighted carousel, the initialItem means the index of the item to occupy the first maximum weight
-  // in flexWeights. To get the initial leading item, it should be initialItem - index of the first max weight in flexWeights.
-  // So it might be negative when initialItem value is small but the first max weight index is large. In that case,
-  // the initial leading item should be 0.
+  // For weighted carousel, we want to always report the index of the max weight item.
   int _getInitialLeadingItem() {
+    int index = _controller.initialItem;
     if (widget.flexWeights != null) {
-      final int maxWeight = widget.flexWeights!.max;
-      final int firstMaxWeightIndex = widget.flexWeights!.indexOf(maxWeight);
-      return math.max(_controller.initialItem - firstMaxWeightIndex, 0);
+      if (!widget.consumeMaxWeight) {
+        index += _maxWeightIndex!;
+      }
     }
-    return _controller.initialItem;
+    if (widget.infinite) {
+      final int? itemCount =
+          widget.itemCount ?? (widget.children.isNotEmpty ? widget.children.length : null);
+      if (itemCount != null && itemCount > 0) {
+        index = index % itemCount;
+      }
+    }
+    return index;
   }
 
   Widget _buildCarouselItem(int index) {
@@ -1714,6 +1732,16 @@ class _CarouselPosition extends ScrollPositionWithSingleContext implements _Caro
   @override
   List<int>? get flexWeights => _flexWeights;
   List<int>? _flexWeights;
+
+  int? _cachedMaxWeightIndex;
+  int? get _maxWeightIndex {
+    if (_flexWeights == null) {
+      return null;
+    }
+    _cachedMaxWeightIndex ??= _flexWeights!.indexOf(_flexWeights!.max);
+    return _cachedMaxWeightIndex;
+  }
+
   set flexWeights(List<int>? value) {
     if (flexWeights == value) {
       return;
@@ -1725,6 +1753,7 @@ class _CarouselPosition extends ScrollPositionWithSingleContext implements _Caro
       forcePixels(newPixel);
     }
     _flexWeights = value;
+    _cachedMaxWeightIndex = null;
   }
 
   // The index of the leading item in the carousel.
@@ -1743,7 +1772,7 @@ class _CarouselPosition extends ScrollPositionWithSingleContext implements _Caro
     // The subtraction may cause negative number for leading item. In this case,
     // constrain the leading item to 0.
     if (consumeMaxWeight && flexWeights != null) {
-      leadingItem = math.max(leadingItem - flexWeights!.indexOf(flexWeights!.max), 0);
+      leadingItem = math.max(leadingItem - _maxWeightIndex!, 0);
     }
     // For infinite scrolling, wrap the index to the range [0, itemCount - 1].
     if (infinite && itemCount != null && itemCount! > 0) {
@@ -1752,13 +1781,41 @@ class _CarouselPosition extends ScrollPositionWithSingleContext implements _Caro
     return leadingItem;
   }
 
+  // The active item index in the carousel, reflecting the most prominent or focused item.
+  // For unweighted carousels, this is typically the first visible item.
+  // For weighted carousels, this is the item occupying the maximum weight.
+  int get activeIndex {
+    if (!hasPixels || viewportDimension <= 0) {
+      return 0;
+    }
+
+    final double itemPosition = getItemFromPixels(pixels, viewportDimension);
+    if (!itemPosition.isFinite) {
+      return 0;
+    }
+
+    int index;
+    if (flexWeights != null) {
+      index = itemPosition.round();
+      if (!consumeMaxWeight) {
+        index += _maxWeightIndex!;
+      }
+    } else {
+      index = itemPosition.round();
+    }
+
+    // For infinite scrolling, wrap the index to the range [0, itemCount - 1].
+    if (infinite && itemCount != null && itemCount! > 0) {
+      index = index % itemCount!;
+    }
+    return index;
+  }
+
   double updateLeadingItem(List<int>? newFlexWeights, bool newConsumeMaxWeight) {
     final double maxItem;
     if (hasPixels && flexWeights != null) {
       final double leadingItem = getItemFromPixels(pixels, viewportDimension);
-      maxItem = consumeMaxWeight
-          ? leadingItem
-          : leadingItem + flexWeights!.indexOf(flexWeights!.max);
+      maxItem = consumeMaxWeight ? leadingItem : leadingItem + _maxWeightIndex!;
     } else {
       if (!newConsumeMaxWeight) {
         return _itemToShowOnStartup;
@@ -1930,6 +1987,10 @@ class CarouselController extends ScrollController {
 
   /// The current leading item index in the [CarouselView].
   ///
+  /// This index represents the first item that is currently visible at the leading
+  /// edge of the carousel's scrollable area. For the currently active (focused or
+  /// expanded) item, see [activeIndex].
+  ///
   /// {@macro material_ui.CarouselView.onIndexChanged}
   int get leadingItem {
     assert(
@@ -1942,6 +2003,26 @@ class CarouselController extends ScrollController {
       'are attached to the same controller.',
     );
     return (position as _CarouselPosition).leadingItem;
+  }
+
+  /// The currently active item index in the [CarouselView].
+  ///
+  /// This index represents the item that is currently active, such as the one
+  /// most prominently displayed or expanded. For the first visible item at the
+  /// leading edge of the scroll, see [leadingItem].
+  ///
+  /// {@macro material_ui.CarouselView.onIndexChanged}
+  int get activeIndex {
+    assert(
+      positions.isNotEmpty,
+      'CarouselController.activeIndex cannot be accessed before a CarouselView is built with it.',
+    );
+    assert(
+      positions.length == 1,
+      'CarouselController.activeIndex cannot be read when multiple CarouselViews '
+      'are attached to the same controller.',
+    );
+    return (position as _CarouselPosition).activeIndex;
   }
 
   _CarouselViewState? _carouselState;
