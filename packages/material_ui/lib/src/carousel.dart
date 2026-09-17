@@ -24,6 +24,8 @@ import 'theme.dart';
 
 /// A Material Design carousel widget.
 ///
+/// Learn more about [CarouselView] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=GQ8ajYVF0bo).
+///
 /// The [CarouselView] presents a scrollable list of items, each of which can dynamically
 /// change size based on the chosen layout.
 ///
@@ -130,7 +132,7 @@ import 'theme.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/carousel/carousel.0.dart}
+/// {@example /example/lib/carousel/carousel.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -247,7 +249,7 @@ class CarouselView extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/carousel/carousel.1.dart}
+  /// {@example /example/lib/carousel/carousel.1.dart#body}
   ///
   /// </callout-box>
   ///
@@ -480,7 +482,7 @@ class CarouselView extends StatefulWidget {
   /// The child widgets for the carousel.
   final List<Widget> children;
 
-  /// {@template flutter.material.CarouselView.onIndexChanged}
+  /// {@template material_ui.CarouselView.onIndexChanged}
   /// A callback invoked when the leading item changes.
   ///
   /// The leading item is the first visible item in the carousel view.
@@ -1438,6 +1440,7 @@ class _RenderSliverWeightedCarousel extends RenderSliverFixedExtentBoxAdaptor {
         _buildItemExtent(lastIndex, layoutDimensions),
       );
       trailingScrollOffset += extraLayoutOffset;
+      estimatedMaxScrollOffset = trailingScrollOffset;
     } else {
       trailingScrollOffset = indexToLayoutOffset(deprecatedExtraItemExtent, lastIndex + 1);
     }
@@ -1927,7 +1930,7 @@ class CarouselController extends ScrollController {
 
   /// The current leading item index in the [CarouselView].
   ///
-  /// {@macro flutter.material.CarouselView.onIndexChanged}
+  /// {@macro material_ui.CarouselView.onIndexChanged}
   int get leadingItem {
     assert(
       positions.isNotEmpty,
@@ -1976,6 +1979,7 @@ class CarouselController extends ScrollController {
   /// direction.
   ///
   /// Does nothing if the carousel is not attached to this controller.
+  @awaitNotRequired
   Future<void> animateToItem(
     int index, {
     Duration duration = const Duration(milliseconds: 300),

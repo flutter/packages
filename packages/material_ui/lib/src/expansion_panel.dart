@@ -62,7 +62,7 @@ typedef ExpansionPanelHeaderBuilder = Widget Function(BuildContext context, bool
 /// expanded or collapsed. The body of the panel is only visible when it is
 /// expanded.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=2aJZzRMziJc}
+/// Learn more about [ExpansionPanel] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=2aJZzRMziJc).
 ///
 /// Expansion panels are only intended to be used as children for
 /// [ExpansionPanelList].
@@ -179,7 +179,7 @@ class ExpansionPanelRadio extends ExpansionPanel {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/expansion_panel/expansion_panel_list.0.dart}
+/// {@example /example/lib/expansion_panel/expansion_panel_list.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -219,7 +219,7 @@ class ExpansionPanelList extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/expansion_panel/expansion_panel_list.expansion_panel_list_radio.0.dart}
+  /// {@example /example/lib/expansion_panel/expansion_panel_list.expansion_panel_list_radio.0.dart#body}
   ///
   /// </callout-box>
   const ExpansionPanelList.radio({
@@ -286,7 +286,7 @@ class ExpansionPanelList extends StatefulWidget {
   /// By default, the value of elevation is 2.
   final double elevation;
 
-  /// {@macro flutter.material.ExpandIcon.color}
+  /// {@macro material_ui.ExpandIcon.color}
   final Color? expandIconColor;
 
   /// Defines the [MaterialGap.size] of the [MaterialGap] which is placed

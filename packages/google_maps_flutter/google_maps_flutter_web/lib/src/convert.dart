@@ -113,11 +113,10 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
     options.rotateControl = configuration.fortyFiveDegreeImageryEnabled;
   }
 
-  // These don't have any configuration entries, but they seem to be off in the
-  // native maps.
-  options.mapTypeControl = false;
-  options.fullscreenControl = false;
-  options.streetViewControl = false;
+  // These are off by default in the native maps.
+  options.mapTypeControl = configuration.mapTypeControlEnabled ?? false;
+  options.fullscreenControl = configuration.fullscreenControlEnabled ?? false;
+  options.streetViewControl = configuration.streetViewControlEnabled ?? false;
 
   // Treat an empty mapId as null, as the app-facing package may pass it either
   // way.
@@ -689,22 +688,72 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
   return icon;
 }
 
+class _AdvancedMarkerContentConfiguration {
+  _AdvancedMarkerContentConfiguration({
+    required this.alpha,
+    required this.visible,
+    required this.rotation,
+    required this.icon,
+    required this.iconConfiguration,
+  });
+
+  factory _AdvancedMarkerContentConfiguration.fromMarker(AdvancedMarker marker) {
+    return _AdvancedMarkerContentConfiguration(
+      alpha: marker.alpha,
+      visible: marker.visible,
+      rotation: marker.rotation,
+      icon: marker.icon,
+      iconConfiguration: marker.icon.toJson(),
+    );
+  }
+
+  final double alpha;
+  final bool visible;
+  final double rotation;
+  final BitmapDescriptor icon;
+  final Object iconConfiguration;
+
+  bool isMatchFor(AdvancedMarker marker) {
+    return alpha == marker.alpha &&
+        visible == marker.visible &&
+        rotation == marker.rotation &&
+        (identical(icon, marker.icon) ||
+            const DeepCollectionEquality().equals(iconConfiguration, marker.icon.toJson()));
+  }
+}
+
+bool _isAdvancedMarkerContentUpdateRequired(
+  Marker marker,
+  _AdvancedMarkerContentConfiguration? previousConfiguration,
+) {
+  if (marker is! AdvancedMarker || previousConfiguration == null) {
+    return true;
+  }
+  return !previousConfiguration.isMatchFor(marker);
+}
+
 // Computes the options for a new [gmaps.Marker] from an incoming set of options
 // [marker], and the existing marker registered with the map: [currentMarker].
-Future<O> _markerOptionsFromMarker<T, O>(Marker marker, T? currentMarker) async {
+Future<O> _markerOptionsFromMarker<T, O>(
+  Marker marker,
+  T? currentMarker, {
+  bool isAdvancedMarkerContentUpdateRequired = true,
+}) async {
   if (marker is AdvancedMarker) {
     final options = gmaps.AdvancedMarkerElementOptions()
       ..collisionBehavior = _markerCollisionBehaviorToGmCollisionBehavior(marker.collisionBehavior)
-      ..content = await _advancedMarkerIconFromBitmapDescriptor(
-        marker.icon,
-        opacity: marker.alpha,
-        isVisible: marker.visible,
-        rotation: marker.rotation,
-      )
       ..position = gmaps.LatLng(marker.position.latitude, marker.position.longitude)
       ..title = sanitizeHtml(marker.infoWindow.title ?? '')
       ..zIndex = marker.zIndex
       ..gmpDraggable = marker.draggable;
+    if (isAdvancedMarkerContentUpdateRequired) {
+      options.content = await _advancedMarkerIconFromBitmapDescriptor(
+        marker.icon,
+        opacity: marker.alpha,
+        isVisible: marker.visible,
+        rotation: marker.rotation,
+      );
+    }
     return options as O;
   } else {
     final options = gmaps.MarkerOptions()

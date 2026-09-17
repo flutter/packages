@@ -44,7 +44,7 @@ enum StretchMode {
 /// The part of a Material Design [AppBar] that expands, collapses, and
 /// stretches.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=mSc7qFzxHDw}
+/// Learn more about [FlexibleSpaceBar] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=mSc7qFzxHDw).
 ///
 /// Most commonly used in the [SliverAppBar.flexibleSpace] field, a flexible
 /// space bar expands and contracts as the app scrolls so that the [AppBar]
@@ -73,7 +73,7 @@ enum StretchMode {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/flexible_space_bar/flexible_space_bar.0.dart}
+/// {@example /example/lib/flexible_space_bar/flexible_space_bar.0.dart#body}
 ///
 /// </callout-box>
 ///

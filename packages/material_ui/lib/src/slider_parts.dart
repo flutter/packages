@@ -43,9 +43,9 @@ abstract class SliderTickMarkShape {
   ///
   /// It is used to help position the tick marks within the slider.
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.sliderTheme}
+  /// {@macro material_ui.SliderComponentShape.paint.sliderTheme}
   ///
-  /// {@template flutter.material.SliderTickMarkShape.getPreferredSize.isEnabled}
+  /// {@template material_ui.SliderTickMarkShape.getPreferredSize.isEnabled}
   /// The `isEnabled` argument is false when [Slider.onChanged] is null and true
   /// otherwise. When true, the slider will respond to input.
   /// {@endtemplate}
@@ -53,17 +53,17 @@ abstract class SliderTickMarkShape {
 
   /// Paints the slider track.
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.context}
+  /// {@macro material_ui.SliderComponentShape.paint.context}
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.center}
+  /// {@macro material_ui.SliderComponentShape.paint.center}
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.parentBox}
+  /// {@macro material_ui.SliderComponentShape.paint.parentBox}
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.sliderTheme}
+  /// {@macro material_ui.SliderComponentShape.paint.sliderTheme}
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.enableAnimation}
+  /// {@macro material_ui.SliderComponentShape.paint.enableAnimation}
   ///
-  /// {@macro flutter.material.SliderTickMarkShape.getPreferredSize.isEnabled}
+  /// {@macro material_ui.SliderTickMarkShape.getPreferredSize.isEnabled}
   ///
   /// The `textDirection` argument can be used to determine how the tick marks
   /// are painting depending on whether they are on an active track segment or
@@ -126,11 +126,11 @@ abstract class SliderTrackShape {
   /// The `offset` argument is relative to the caller's bounding box. It can be used to
   /// convert gesture coordinates from global to slider-relative coordinates.
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.sliderTheme}
+  /// {@macro material_ui.SliderComponentShape.paint.sliderTheme}
   ///
-  /// {@macro flutter.material.SliderTickMarkShape.getPreferredSize.isEnabled}
+  /// {@macro material_ui.SliderTickMarkShape.getPreferredSize.isEnabled}
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.isDiscrete}
+  /// {@macro material_ui.SliderComponentShape.paint.isDiscrete}
   Rect getPreferredRect({
     required RenderBox parentBox,
     Offset offset = Offset.zero,
@@ -141,17 +141,17 @@ abstract class SliderTrackShape {
 
   /// Paints the track shape based on the state passed to it.
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.context}
+  /// {@macro material_ui.SliderComponentShape.paint.context}
   ///
   /// The `offset` argument the offset of the origin of the `parentBox` to the
   /// origin of its `context` canvas. This shape must be painted relative to
   /// this offset. See [PaintingContextCallback].
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.parentBox}
+  /// {@macro material_ui.SliderComponentShape.paint.parentBox}
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.sliderTheme}
+  /// {@macro material_ui.SliderComponentShape.paint.sliderTheme}
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.enableAnimation}
+  /// {@macro material_ui.SliderComponentShape.paint.enableAnimation}
   ///
   /// The `thumbCenter` argument is the offset of the center of the thumb
   /// relative to the origin of the [PaintingContext.canvas]. It can be used as
@@ -162,14 +162,14 @@ abstract class SliderTrackShape {
   ///
   /// If not null, the track is divided into 3 segments.
   ///
-  /// {@macro flutter.material.SliderTickMarkShape.getPreferredSize.isEnabled}
+  /// {@macro material_ui.SliderTickMarkShape.getPreferredSize.isEnabled}
   ///
-  /// {@macro flutter.material.SliderComponentShape.paint.isDiscrete}
+  /// {@macro material_ui.SliderComponentShape.paint.isDiscrete}
   ///
   /// The `textDirection` argument can be used to determine how the track
   /// segments are painted depending on whether they are active or not.
   ///
-  /// {@template flutter.material.SliderTrackShape.paint.trackSegment}
+  /// {@template material_ui.SliderTrackShape.paint.trackSegment}
   /// The track segment between the start of the slider and the thumb is the
   /// active track segment. The track segment between the thumb and the end of the
   /// slider is the inactive track segment. In [TextDirection.ltr], the start of
@@ -275,7 +275,7 @@ mixin BaseSliderTrackShape {
 ///   [SliderThemeData.disabledActiveTrackColor],
 ///   [SliderThemeData.disabledInactiveTrackColor].
 ///
-/// {@macro flutter.material.SliderTrackShape.paint.trackSegment}
+/// {@macro material_ui.SliderTrackShape.paint.trackSegment}
 ///
 /// ![A slider widget, consisting of 5 divisions and showing the rectangular slider track shape.](https://flutter.github.io/assets-for-api-docs/assets/material/rectangular_slider_track_shape.png)
 ///
@@ -408,7 +408,7 @@ class RectangularSliderTrackShape extends SliderTrackShape with BaseSliderTrackS
 ///   [SliderThemeData.disabledActiveTrackColor],
 ///   [SliderThemeData.disabledInactiveTrackColor].
 ///
-/// {@macro flutter.material.SliderTrackShape.paint.trackSegment}
+/// {@macro material_ui.SliderTrackShape.paint.trackSegment}
 ///
 /// ![A slider widget, consisting of 5 divisions and showing the rounded rect slider track shape.](https://flutter.github.io/assets-for-api-docs/assets/material/rounded_rect_slider_track_shape.png)
 ///

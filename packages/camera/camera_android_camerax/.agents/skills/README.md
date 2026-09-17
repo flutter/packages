@@ -1,6 +1,6 @@
 # Agent Skills
 
-This directory contains skills intended for repository maintainers and contributors. Local, checked-in skills are evaluated by `dart_skills_lint` and should be configured to prevent publishing to pub.dev.
+This directory contains skills intended for repository maintainers and contributors. Local, checked-in skills are evaluated by `skills_lint` and should be configured to prevent publishing to pub.dev.
 
 ## Key Terms for Skills
 - **user**: The human user of the skill.

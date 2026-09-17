@@ -14,6 +14,7 @@ import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
 import 'package:collection/collection.dart' as collection;
 import 'package:path/path.dart' as path;
 import 'package:pub_semver/pub_semver.dart';
+import 'package:yaml/yaml.dart' as yaml;
 
 import 'ast.dart';
 import 'ast_generator.dart';
@@ -22,9 +23,11 @@ import 'dart/dart_generator.dart';
 import 'generator_tools.dart';
 import 'gobject/gobject_generator.dart';
 import 'java/java_generator.dart';
+import 'kotlin/jnigen_config_generator.dart';
 import 'kotlin/kotlin_generator.dart';
 import 'objc/objc_generator.dart';
 import 'pigeon_lib.dart';
+import 'swift/ffigen_config_generator.dart';
 import 'swift/swift_generator.dart';
 
 /// Options used when running the code generator.
@@ -32,6 +35,8 @@ class InternalPigeonOptions {
   /// Creates a instance of InternalPigeonOptions
   const InternalPigeonOptions({
     required this.input,
+    required this.appDirectory,
+    this.configDirectory,
     required this.objcOptions,
     required this.javaOptions,
     required this.swiftOptions,
@@ -50,6 +55,16 @@ class InternalPigeonOptions {
     PigeonOptions options,
     Iterable<String>? copyrightHeader,
   ) : input = options.input,
+      appDirectory = (options.basePath != null && options.basePath!.isNotEmpty)
+          ? (options.appDirectory != null
+                ? path.posix.join(options.basePath!, options.appDirectory)
+                : options.basePath)
+          : options.appDirectory,
+      configDirectory = (options.basePath != null && options.basePath!.isNotEmpty)
+          ? (options.configDirectory != null
+                ? path.posix.join(options.basePath!, options.configDirectory)
+                : options.basePath)
+          : options.configDirectory,
       objcOptions = (options.objcHeaderOut == null || options.objcSourceOut == null)
           ? null
           : InternalObjcOptions.fromObjcOptions(
@@ -57,7 +72,9 @@ class InternalPigeonOptions {
               objcHeaderOut: options.objcHeaderOut!,
               objcSourceOut: options.objcSourceOut!,
               fileSpecificClassNameComponent:
-                  options.objcSourceOut?.split('/').lastOrNull?.split('.').firstOrNull ?? '',
+                  options.objcOptions?.fileSpecificClassNameComponent ??
+                  options.fileSpecificClassNameComponent ??
+                  deduceClassNameComponent(options.objcSourceOut),
               copyrightHeader: copyrightHeader,
             ),
       javaOptions = options.javaOut == null
@@ -67,12 +84,15 @@ class InternalPigeonOptions {
               javaOut: options.javaOut!,
               copyrightHeader: copyrightHeader,
             ),
-      swiftOptions = options.swiftOut == null
+      swiftOptions = (options.swiftOutPaths == null || options.swiftOutPaths!.isEmpty)
           ? null
           : InternalSwiftOptions.fromSwiftOptions(
               options.swiftOptions ?? const SwiftOptions(),
-              swiftOut: options.swiftOut!,
+              swiftOuts: options.swiftOutPaths,
               copyrightHeader: copyrightHeader,
+              fileSpecificClassNameComponent:
+                  options.swiftOptions?.fileSpecificClassNameComponent ??
+                  options.fileSpecificClassNameComponent,
             ),
       kotlinOptions = options.kotlinOut == null
           ? null
@@ -80,6 +100,9 @@ class InternalPigeonOptions {
               options.kotlinOptions ?? const KotlinOptions(),
               kotlinOut: options.kotlinOut!,
               copyrightHeader: copyrightHeader,
+              fileSpecificClassNameComponent:
+                  options.kotlinOptions?.fileSpecificClassNameComponent ??
+                  options.fileSpecificClassNameComponent,
             ),
       cppOptions = (options.cppHeaderOut == null || options.cppSourceOut == null)
           ? null
@@ -104,6 +127,24 @@ class InternalPigeonOptions {
               dartOut: options.dartOut,
               testOut: options.dartTestOut,
               copyrightHeader: copyrightHeader,
+              useJni: options.kotlinOptions?.useJni ?? false,
+              useFfi: options.swiftOptions?.useFfi ?? false,
+              ffiErrorClassName: options.swiftOptions?.errorClassName ?? 'PigeonError',
+              jniErrorClassName: options.kotlinOptions?.errorClassName ?? 'FlutterError',
+              fileSpecificClassNameComponent:
+                  options.fileSpecificClassNameComponent ??
+                  (options.swiftOptions?.useFfi ?? false
+                      ? options.swiftOptions?.fileSpecificClassNameComponent ??
+                            (options.swiftOutPaths?.firstOrNull == null
+                                ? null
+                                : deduceClassNameComponent(options.swiftOutPaths!.first))
+                      : null) ??
+                  (options.kotlinOptions?.useJni ?? false
+                      ? options.kotlinOptions?.fileSpecificClassNameComponent ??
+                            (options.kotlinOut == null
+                                ? null
+                                : deduceClassNameComponent(options.kotlinOut))
+                      : null),
             ),
       copyrightHeader = options.copyrightHeader != null
           ? _lineReader(path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -124,6 +165,12 @@ class InternalPigeonOptions {
 
   /// Path to the file which will be processed.
   final String? input;
+
+  /// Path to the app directory.
+  final String? appDirectory;
+
+  /// The directory where generated configuration files for native interop tooling (such as JNIgen and FFIgen) will be written.
+  final String? configDirectory;
 
   /// Options that control how Dart will be generated.
   final InternalDartOptions? dartOptions;
@@ -171,6 +218,12 @@ Iterable<String> _lineReader(String path) sync* {
   }
 }
 
+File _getFile(String output, {String basePath = ''}) {
+  final file = File(path.posix.join(basePath, output));
+  file.createSync(recursive: true);
+  return file;
+}
+
 IOSink? _openSink(String? output, {String basePath = ''}) {
   if (output == null) {
     return null;
@@ -178,9 +231,15 @@ IOSink? _openSink(String? output, {String basePath = ''}) {
   if (output == 'stdout') {
     return stdout;
   }
-  final file = File(path.posix.join(basePath, output));
-  file.createSync(recursive: true);
-  return file.openWrite();
+  return _getFile(output, basePath: basePath).openWrite();
+}
+
+void _writeToOutput(String output, String content, {String basePath = ''}) {
+  if (output == 'stdout') {
+    stdout.write(content);
+  } else {
+    _getFile(output, basePath: basePath).writeAsStringSync(content);
+  }
 }
 
 /// An adapter that will call a generator to write code to a sink
@@ -219,6 +278,50 @@ void _errorOnSealedClass(List<Error> errors, String generator, Root root) {
 void _errorOnInheritedClass(List<Error> errors, String generator, Root root) {
   if (root.classes.any((Class element) => element.superClass != null)) {
     errors.add(Error(message: '$generator does not support inheritance in classes'));
+  }
+}
+
+void _errorOnTaskQueueInNativeInterop(List<Error> errors, String generator, Root root) {
+  for (final Api api in root.apis) {
+    for (final Method method in api.methods) {
+      if (method.taskQueueType != TaskQueueType.serial) {
+        errors.add(
+          Error(
+            message:
+                '$generator does not support TaskQueue because native interop calls bypass Flutter Engine message queues and run directly on the caller\'s thread (in method "${method.name}" in API "${api.name}").',
+          ),
+        );
+      }
+    }
+  }
+}
+
+void _errorOnJniPropertyCollisions(List<Error> errors, Root root) {
+  for (final Api api in root.apis) {
+    final Set<String> methodNames = api.methods.map((Method m) => m.name).toSet();
+    for (final Method method in api.methods) {
+      final bool isGetter =
+          !method.isAsynchronous &&
+          method.parameters.isEmpty &&
+          !method.returnType.isVoid &&
+          RegExp(r'^get[A-Z]').hasMatch(method.name);
+      final bool isSetter =
+          !method.isAsynchronous &&
+          method.parameters.length == 1 &&
+          method.returnType.isVoid &&
+          RegExp(r'^set[A-Z]').hasMatch(method.name);
+      if (isGetter || isSetter) {
+        final propertyName = '${method.name[3].toLowerCase()}${method.name.substring(4)}';
+        if (methodNames.contains(propertyName)) {
+          errors.add(
+            Error(
+              message:
+                  'Method "${method.name}" in API "${api.name}" collides with method "$propertyName" under JNI generation because JavaBean property naming maps "${method.name}" to "$propertyName".',
+            ),
+          );
+        }
+      }
+    }
   }
 }
 
@@ -405,12 +508,35 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
       return;
     }
     const generator = SwiftGenerator();
-    generator.generate(options.swiftOptions!, root, sink, dartPackageName: options.dartPackageName);
+    final List<String> outputs = options.swiftOptions!.allSwiftOuts.toList();
+    if (outputs.isEmpty) {
+      generator.generate(
+        options.swiftOptions!,
+        root,
+        sink,
+        dartPackageName: options.dartPackageName,
+      );
+      return;
+    }
+    final buffer = StringBuffer();
+    generator.generate(
+      options.swiftOptions!,
+      root,
+      buffer,
+      dartPackageName: options.dartPackageName,
+    );
+    final content = buffer.toString();
+    // [sink] was opened for the first entry in [outputs] by [shouldGenerate],
+    // so only the remaining output files need to be written here.
+    sink.write(content);
+    for (final String outputPath in outputs.skip(1)) {
+      _writeToOutput(outputPath, content, basePath: options.basePath ?? '');
+    }
   }
 
   @override
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
-      _openSink(options.swiftOptions?.swiftOut, basePath: options.basePath ?? '');
+      _openSink(options.swiftOptions?.allSwiftOuts.firstOrNull, basePath: options.basePath ?? '');
 
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) {
@@ -427,6 +553,69 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
         }
       }
     }
+    if (options.swiftOptions?.useFfi ?? false) {
+      _errorOnTaskQueueInNativeInterop(errors, 'Swift FFI', root);
+    }
+    return errors;
+  }
+}
+
+/// A [GeneratorAdapter] that generates FFIgen config source code.
+class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [FfigenConfigGeneratorAdapter].
+  const FfigenConfigGeneratorAdapter();
+
+  @override
+  List<FileType> get fileTypeList => const <FileType>[FileType.na];
+
+  @override
+  void generate(StringSink sink, InternalPigeonOptions options, Root root, FileType fileType) {
+    final InternalSwiftOptions? swiftOptions = options.swiftOptions;
+    final InternalDartOptions? dartOptions = options.dartOptions;
+    if (swiftOptions == null || dartOptions == null) {
+      return;
+    }
+    final generator = FfigenConfigGenerator();
+
+    final ffigenYamlOptions = InternalFfigenConfigOptions(
+      dartOptions,
+      swiftOptions,
+      options.basePath,
+      dartOptions.dartOut,
+      options.swiftOptions?.appDirectory ?? options.appDirectory,
+      configDirectory: options.swiftOptions?.configDirectory ?? options.configDirectory,
+    );
+
+    generator.generate(ffigenYamlOptions, root, sink, dartPackageName: options.dartPackageName);
+  }
+
+  @override
+  IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) {
+    if (!(options.swiftOptions?.useFfi ?? false)) {
+      return null;
+    }
+    final String targetDir =
+        options.swiftOptions?.configDirectory ?? options.configDirectory ?? options.basePath ?? '';
+    return _openSink(getFfigenConfigPath('', options.input), basePath: targetDir);
+  }
+
+  @override
+  List<Error> validate(InternalPigeonOptions options, Root root) {
+    if (!(options.swiftOptions?.useFfi ?? false)) {
+      return <Error>[];
+    }
+    final errors = <Error>[];
+    _errorOnTaskQueueInNativeInterop(errors, 'Swift FFI', root);
+    errors.addAll(
+      _validateDependencies(
+        appDirectory: options.swiftOptions?.appDirectory ?? options.appDirectory,
+        dartOutPath: options.dartOptions?.dartOut,
+        basePath: options.basePath,
+        apiName: 'Swift FFI',
+        requiredDeps: const <String>['ffi', 'objective_c'],
+        requiredDevDeps: const <String>['ffigen'],
+      ),
+    );
     return errors;
   }
 }
@@ -555,7 +744,71 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
       _openSink(options.kotlinOptions?.kotlinOut, basePath: options.basePath ?? '');
 
   @override
-  List<Error> validate(InternalPigeonOptions options, Root root) => <Error>[];
+  List<Error> validate(InternalPigeonOptions options, Root root) {
+    final errors = <Error>[];
+    if (options.kotlinOptions?.useJni ?? false) {
+      _errorOnTaskQueueInNativeInterop(errors, 'Kotlin JNI', root);
+      _errorOnJniPropertyCollisions(errors, root);
+    }
+    return errors;
+  }
+}
+
+/// A [GeneratorAdapter] that generates JNIgen config source code.
+class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [JnigenConfigGeneratorAdapter].
+  const JnigenConfigGeneratorAdapter();
+
+  @override
+  List<FileType> get fileTypeList => const <FileType>[FileType.na];
+
+  @override
+  void generate(StringSink sink, InternalPigeonOptions options, Root root, FileType fileType) {
+    if (options.kotlinOptions == null || options.dartOptions == null) {
+      return;
+    }
+    final generator = JnigenConfigGenerator();
+    final jnigenYamlOptions = InternalJnigenConfigOptions(
+      options.dartOptions!,
+      options.kotlinOptions!,
+      options.basePath,
+      options.kotlinOptions?.appDirectory ?? options.appDirectory,
+      configDirectory: options.kotlinOptions?.configDirectory ?? options.configDirectory,
+    );
+
+    generator.generate(jnigenYamlOptions, root, sink, dartPackageName: options.dartPackageName);
+  }
+
+  @override
+  IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) {
+    if (options.kotlinOptions?.kotlinOut == null || !(options.kotlinOptions?.useJni ?? false)) {
+      return null;
+    }
+    final String targetDir =
+        options.kotlinOptions?.configDirectory ?? options.configDirectory ?? options.basePath ?? '';
+    return _openSink(getJnigenConfigPath('', options.input), basePath: targetDir);
+  }
+
+  @override
+  List<Error> validate(InternalPigeonOptions options, Root root) {
+    if (!(options.kotlinOptions?.useJni ?? false)) {
+      return <Error>[];
+    }
+    final errors = <Error>[];
+    _errorOnTaskQueueInNativeInterop(errors, 'Kotlin JNI', root);
+    _errorOnJniPropertyCollisions(errors, root);
+    errors.addAll(
+      _validateDependencies(
+        appDirectory: options.kotlinOptions?.appDirectory ?? options.appDirectory,
+        dartOutPath: options.dartOptions?.dartOut,
+        basePath: options.basePath,
+        apiName: 'Kotlin JNI',
+        requiredDeps: const <String>['jni'],
+        requiredDevDeps: const <String>['jnigen'],
+      ),
+    );
+    return errors;
+  }
 }
 
 dart_ast.Annotation? _findMetadata(dart_ast.NodeList<dart_ast.Annotation> metadata, String query) {
@@ -1094,6 +1347,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   final List<Api> _apis = <Api>[];
   final List<Enum> _enums = <Enum>[];
   final List<Class> _classes = <Class>[];
+  final List<Constant> _constants = <Constant>[];
   final List<Error> _errors = <Error>[];
 
   /// Input file location.
@@ -1123,6 +1377,8 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   ParseResults results() {
     _storeCurrentApi();
     _storeCurrentClass();
+    final referencedLists = <String, TypeDeclaration>{};
+    final referencedMaps = <String, TypeDeclaration>{};
 
     final Map<TypeDeclaration, List<int>> referencedTypes = getReferencedTypes(_apis, _classes);
     final Set<String> referencedTypeNames = referencedTypes.keys
@@ -1135,6 +1391,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     }
 
     final referencedEnums = List<Enum>.from(_enums);
+
     var containsHostApi = false;
     var containsFlutterApi = false;
     var containsProxyApi = false;
@@ -1151,17 +1408,10 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         case AstEventChannelApi():
           containsEventChannel = true;
       }
+      if (containsEventChannel && containsFlutterApi && containsProxyApi && containsHostApi) {
+        break;
+      }
     }
-
-    final completeRoot = Root(
-      apis: _apis,
-      classes: _classes,
-      enums: referencedEnums,
-      containsHostApi: containsHostApi,
-      containsFlutterApi: containsFlutterApi,
-      containsProxyApi: containsProxyApi,
-      containsEventChannel: containsEventChannel,
-    );
 
     final totalErrors = List<Error>.from(_errors);
 
@@ -1213,13 +1463,78 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         api.interfaces = newInterfaceSet;
       }
     }
+
+    final Map<TypeDeclaration, List<int>> referencedTypesAfterAssoc = getReferencedTypes(
+      _apis,
+      _classes,
+    );
+
+    for (final TypeDeclaration type in referencedTypesAfterAssoc.keys) {
+      if (type.baseName == 'List') {
+        referencedLists[type.getFullName(withNullable: false)] = type;
+      } else if (type.baseName == 'Map') {
+        referencedMaps[type.getFullName(withNullable: false)] = type;
+      }
+    }
+
+    final completeRoot = Root(
+      apis: _apis,
+      classes: _classes,
+      enums: referencedEnums,
+      lists: referencedLists,
+      maps: referencedMaps,
+      constants: _constants,
+      containsHostApi: containsHostApi,
+      containsFlutterApi: containsFlutterApi,
+      containsProxyApi: containsProxyApi,
+      containsEventChannel: containsEventChannel,
+    );
+
     final List<Error> validateErrors = _validateAst(completeRoot, source);
     totalErrors.addAll(validateErrors);
+
+    final allowedValueValidators = <String, bool Function(Object?)>{
+      'String': (Object? v) => v is String,
+      'int': (Object? v) => v is int,
+      'double': (Object? v) => v is num,
+      'bool': (Object? v) => v is bool,
+    };
+    for (final Constant constant in _constants) {
+      final String typeName = constant.type.baseName;
+      final bool Function(Object?)? validator = allowedValueValidators[typeName];
+      if (validator == null) {
+        totalErrors.add(
+          Error(
+            message:
+                'Unsupported constant type: "$typeName". Only String, int, double, and bool are supported.',
+            lineNumber: constant.offset != null
+                ? calculateLineNumber(source, constant.offset!)
+                : null,
+          ),
+        );
+      } else if (!validator(constant.value)) {
+        totalErrors.add(
+          Error(
+            message:
+                'Constant "${constant.name}" type is $typeName but value is ${constant.value.runtimeType}.',
+            lineNumber: constant.offset != null
+                ? calculateLineNumber(source, constant.offset!)
+                : null,
+          ),
+        );
+      }
+    }
 
     return ParseResults(
       root: totalErrors.isEmpty
           ? completeRoot
-          : Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]),
+          : Root(
+              apis: <Api>[],
+              classes: <Class>[],
+              enums: <Enum>[],
+              lists: <String, TypeDeclaration>{},
+              maps: <String, TypeDeclaration>{},
+            ),
       errors: totalErrors,
       pigeonOptions: _pigeonOptions,
     );
@@ -1278,13 +1593,13 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   Object _expressionToMap(dart_ast.Expression expression) {
     if (expression is dart_ast.MethodInvocation) {
       final result = <String, Object>{};
-      for (final dart_ast.Expression argument in expression.argumentList.arguments) {
-        if (argument is dart_ast.NamedExpression) {
-          result[argument.name.label.name] = _expressionToMap(argument.expression);
+      for (final dart_ast.Argument argument in expression.argumentList.arguments) {
+        if (argument is dart_ast.NamedArgument) {
+          result[argument.name.lexeme] = _expressionToMap(argument.argumentExpression);
         } else {
           _errors.add(
             Error(
-              message: 'expected NamedExpression but found $expression',
+              message: 'expected NamedArgument but found $argument',
               lineNumber: calculateLineNumber(source, argument.offset),
             ),
           );
@@ -1355,19 +1670,148 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   }
 
   @override
+  Object? visitTopLevelVariableDeclaration(dart_ast.TopLevelVariableDeclaration node) {
+    if (node.variables.isConst) {
+      final dart_ast.TypeAnnotation? typeAnnotation = node.variables.type;
+      if (typeAnnotation == null) {
+        _errors.add(
+          Error(
+            message: 'Top-level constants must have an explicit type annotation.',
+            lineNumber: calculateLineNumber(source, node.offset),
+          ),
+        );
+        return null;
+      }
+      if (typeAnnotation is! dart_ast.NamedType) {
+        _errors.add(
+          Error(
+            message: 'Top-level constants must have a named type annotation.',
+            lineNumber: calculateLineNumber(source, node.offset),
+          ),
+        );
+        return null;
+      }
+      for (final dart_ast.VariableDeclaration variable in node.variables.variables) {
+        final dart_ast.Expression? initializer = variable.initializer;
+        if (initializer == null) {
+          _errors.add(
+            Error(
+              message: 'Top-level constant "${variable.name.lexeme}" must have an initializer.',
+              lineNumber: calculateLineNumber(source, variable.offset),
+            ),
+          );
+          continue;
+        }
+
+        Object? value = _evaluateExpression(initializer);
+        if (value == null) {
+          continue;
+        }
+
+        if (_getNamedTypeQualifiedName(typeAnnotation) == 'double' && value is num) {
+          value = value.toDouble();
+        }
+
+        final type = TypeDeclaration(
+          baseName: _getNamedTypeQualifiedName(typeAnnotation),
+          isNullable: typeAnnotation.question != null,
+          typeArguments: _typeAnnotationsToTypeArguments(typeAnnotation.typeArguments),
+        );
+
+        _constants.add(
+          Constant(
+            name: variable.name.lexeme,
+            type: type,
+            value: value,
+            offset: variable.offset,
+            documentationComments: _documentationCommentsParser(node.documentationComment?.tokens),
+          ),
+        );
+      }
+    }
+    node.visitChildren(this);
+    return null;
+  }
+
+  Object? _evaluateExpression(dart_ast.Expression expression) {
+    if (expression is dart_ast.SimpleStringLiteral) {
+      return expression.value;
+    } else if (expression is dart_ast.IntegerLiteral) {
+      return expression.value!;
+    } else if (expression is dart_ast.DoubleLiteral) {
+      return expression.value;
+    } else if (expression is dart_ast.BooleanLiteral) {
+      return expression.value;
+    } else if (expression is dart_ast.PrefixExpression) {
+      final Object? operandValue = _evaluateExpression(expression.operand);
+      if (operandValue == null) {
+        return null;
+      }
+      final String operator = expression.operator.lexeme;
+      if (operator == '-') {
+        if (operandValue is int) {
+          return -operandValue;
+        } else if (operandValue is double) {
+          return -operandValue;
+        }
+      } else if (operator == '!') {
+        if (operandValue is bool) {
+          return !operandValue;
+        }
+      }
+      _errors.add(
+        Error(
+          message: 'Unsupported prefix operator "$operator" on type "${operandValue.runtimeType}".',
+          lineNumber: calculateLineNumber(source, expression.offset),
+        ),
+      );
+      return null;
+    } else if (expression is dart_ast.AdjacentStrings) {
+      final buffer = StringBuffer();
+      for (final dart_ast.StringLiteral literal in expression.strings) {
+        final Object? val = _evaluateExpression(literal);
+        if (val is! String) {
+          return null;
+        }
+        buffer.write(val);
+      }
+      return buffer.toString();
+    } else if (expression is dart_ast.StringInterpolation) {
+      _errors.add(
+        Error(
+          message: 'String interpolation is not supported in Pigeon constants.',
+          lineNumber: calculateLineNumber(source, expression.offset),
+        ),
+      );
+      return null;
+    } else {
+      _errors.add(
+        Error(
+          message:
+              'Unsupported expression type ${expression.runtimeType} for constant initializer.',
+          lineNumber: calculateLineNumber(source, expression.offset),
+        ),
+      );
+      return null;
+    }
+  }
+
+  @override
   Object? visitAnnotation(dart_ast.Annotation node) {
     if (node.name.name == 'ConfigurePigeon') {
-      if (node.arguments == null) {
+      final dart_ast.ArgumentList? arguments = node.arguments;
+      if (arguments == null) {
         _errors.add(
           Error(
             message: 'ConfigurePigeon expects a PigeonOptions() call.',
             lineNumber: calculateLineNumber(source, node.offset),
           ),
         );
+      } else {
+        final pigeonOptionsMap =
+            _expressionToMap(arguments.arguments.first.argumentExpression) as Map<String, Object>;
+        _pigeonOptions = pigeonOptionsMap;
       }
-      final pigeonOptionsMap =
-          _expressionToMap(node.arguments!.arguments.first) as Map<String, Object>;
-      _pigeonOptions = pigeonOptionsMap;
     }
     node.visitChildren(this);
     return null;
@@ -1394,11 +1838,13 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           (dart_ast.Annotation element) => element.name.name == 'HostApi',
         );
         String? dartHostTestHandler;
-        if (hostApi.arguments != null) {
-          for (final dart_ast.Expression expression in hostApi.arguments!.arguments) {
-            if (expression is dart_ast.NamedExpression) {
-              if (expression.name.label.name == 'dartHostTestHandler') {
-                final dart_ast.Expression dartHostTestHandlerExpression = expression.expression;
+        final dart_ast.ArgumentList? arguments = hostApi.arguments;
+        if (arguments != null) {
+          for (final dart_ast.Argument argument in arguments.arguments) {
+            if (argument is dart_ast.NamedArgument) {
+              if (argument.name.lexeme == 'dartHostTestHandler') {
+                final dart_ast.Expression dartHostTestHandlerExpression =
+                    argument.argumentExpression;
                 if (dartHostTestHandlerExpression is dart_ast.SimpleStringLiteral) {
                   dartHostTestHandler = dartHostTestHandlerExpression.value;
                 }
@@ -1425,9 +1871,12 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         );
 
         final annotationMap = <String, Object?>{};
-        for (final dart_ast.Expression expression in proxyApiAnnotation.arguments!.arguments) {
-          if (expression is dart_ast.NamedExpression) {
-            annotationMap[expression.name.label.name] = _expressionToMap(expression.expression);
+        final dart_ast.ArgumentList? arguments = proxyApiAnnotation.arguments;
+        if (arguments != null) {
+          for (final dart_ast.Argument argument in arguments.arguments) {
+            if (argument is dart_ast.NamedArgument) {
+              annotationMap[argument.name.lexeme] = _expressionToMap(argument.argumentExpression);
+            }
           }
         }
 
@@ -1516,9 +1965,12 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         );
 
         final annotationMap = <String, Object?>{};
-        for (final dart_ast.Expression expression in annotation.arguments!.arguments) {
-          if (expression is dart_ast.NamedExpression) {
-            annotationMap[expression.name.label.name] = _expressionToMap(expression.expression);
+        final dart_ast.ArgumentList? arguments = annotation.arguments;
+        if (arguments != null) {
+          for (final dart_ast.Argument argument in arguments.arguments) {
+            if (argument is dart_ast.NamedArgument) {
+              annotationMap[argument.name.lexeme] = _expressionToMap(argument.argumentExpression);
+            }
           }
         }
 
@@ -1583,8 +2035,6 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     String? defaultValue,
   }) {
     final dart_ast.NamedType? parameter = _getFirstChildOfType<dart_ast.NamedType>(formalParameter);
-    final dart_ast.SimpleFormalParameter? simpleFormalParameter =
-        _getFirstChildOfType<dart_ast.SimpleFormalParameter>(formalParameter);
     if (parameter != null) {
       final String argTypeBaseName = _getNamedTypeQualifiedName(parameter);
       final isNullable = parameter.question != null;
@@ -1603,21 +2053,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         isOptional: isOptional ?? formalParameter.isOptional,
         isPositional: isPositional ?? formalParameter.isPositional,
         isRequired: isRequired ?? formalParameter.isRequired,
-        defaultValue: defaultValue,
-      );
-    } else if (simpleFormalParameter != null) {
-      String? defaultValue;
-      if (formalParameter is dart_ast.DefaultFormalParameter) {
-        defaultValue = formalParameter.defaultValue?.toString();
-      }
-
-      return _formalParameterToPigeonParameter(
-        simpleFormalParameter,
-        isNamed: simpleFormalParameter.isNamed,
-        isOptional: simpleFormalParameter.isOptional,
-        isPositional: simpleFormalParameter.isPositional,
-        isRequired: simpleFormalParameter.isRequired,
-        defaultValue: defaultValue,
+        defaultValue: defaultValue ?? formalParameter.defaultClause?.value.toString(),
       );
     } else {
       return Parameter(
@@ -1655,7 +2091,17 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final List<Parameter> arguments = parameters.parameters
         .map(_formalParameterToPigeonParameter)
         .toList();
-    final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
+    final bool hasAsync = _hasMetadata(node.metadata, 'async');
+    final bool hasAsyncCallback = _hasMetadata(node.metadata, 'asyncCallback');
+    final bool isUseCallback =
+        hasAsyncCallback ||
+        (_findMetadata(
+              node.metadata,
+              'async',
+            )?.arguments?.arguments.any((arg) => arg.toSource().contains('useCallback: true')) ??
+            false);
+    final bool isAsynchronous = hasAsync || hasAsyncCallback;
+    final bool isAsynchronousCallback = isAsynchronous && isUseCallback;
     final bool isStatic = _hasMetadata(node.metadata, 'static');
     final String objcSelector =
         _findMetadata(
@@ -1675,9 +2121,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     )?.arguments;
     final String? taskQueueTypeName = taskQueueArguments == null
         ? null
-        : _getFirstChildOfType<dart_ast.NamedExpression>(
+        : _getFirstChildOfType<dart_ast.NamedArgument>(
             taskQueueArguments,
-          )?.expression.asNullable<dart_ast.PrefixedIdentifier>()?.name;
+          )?.argumentExpression.asNullable<dart_ast.PrefixedIdentifier>()?.name;
     final TaskQueueType taskQueueType =
         _stringToEnum(TaskQueueType.values, taskQueueTypeName) ?? TaskQueueType.serial;
 
@@ -1725,6 +2171,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               AstEventChannelApi() => ApiLocation.host,
             },
             isAsynchronous: isAsynchronous,
+            isAsynchronousCallback: isAsynchronousCallback,
             objcSelector: objcSelector,
             swiftFunction: swiftFunction,
             offset: node.offset,
@@ -1747,6 +2194,26 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
   @override
   Object? visitEnumDeclaration(dart_ast.EnumDeclaration node) {
+    // Enhanced enums (those with a constructor, fields, methods, or arguments
+    // on their values) aren't supported by Pigeon.
+    final bool isEnhancedEnum =
+        node.body.members.isNotEmpty ||
+        node.body.constants.any((dart_ast.EnumConstantDeclaration e) => e.arguments != null) ||
+        node.namePart.typeParameters != null ||
+        node.namePart is dart_ast.PrimaryConstructorDeclaration ||
+        node.withClause != null ||
+        node.implementsClause != null;
+    if (isEnhancedEnum) {
+      _errors.add(
+        Error(
+          message:
+              'Pigeon doesn\'t support enhanced enums ("${node.namePart.typeName.lexeme}"). '
+              'Use a plain enum without a constructor, fields, methods, type parameters, '
+              'mixins, interfaces, or arguments on its values.',
+          lineNumber: calculateLineNumber(source, node.offset),
+        ),
+      );
+    }
     _enums.add(
       Enum(
         name: node.namePart.typeName.lexeme,
@@ -1761,7 +2228,12 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         documentationComments: _documentationCommentsParser(node.documentationComment?.tokens),
       ),
     );
-    node.visitChildren(this);
+    // Don't visit the children of an enhanced enum: the declaration is
+    // already reported as unsupported, and the visitor doesn't expect
+    // class-like members outside of a class.
+    if (!isEnhancedEnum) {
+      node.visitChildren(this);
+    }
     return null;
   }
 
@@ -1891,10 +2363,8 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         );
       } else {
         for (final dart_ast.FormalParameter param in node.parameters.parameters) {
-          if (param is dart_ast.DefaultFormalParameter) {
-            if (param.name != null && param.defaultValue != null) {
-              _currentClassDefaultValues[param.name!.toString()] = param.defaultValue!.toString();
-            }
+          if (param.name != null && param.defaultClause != null) {
+            _currentClassDefaultValues[param.name!.lexeme] = param.defaultClause!.value.toString();
           }
         }
       }
@@ -1929,9 +2399,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       )?.arguments;
       final String? taskQueueTypeName = taskQueueArguments == null
           ? null
-          : _getFirstChildOfType<dart_ast.NamedExpression>(
+          : _getFirstChildOfType<dart_ast.NamedArgument>(
               taskQueueArguments,
-            )?.expression.asNullable<dart_ast.PrefixedIdentifier>()?.name;
+            )?.argumentExpression.asNullable<dart_ast.PrefixedIdentifier>()?.name;
       final TaskQueueType taskQueueType =
           _stringToEnum(TaskQueueType.values, taskQueueTypeName) ?? TaskQueueType.serial;
 
@@ -2003,4 +2473,116 @@ int calculateLineNumber(String contents, int offset) {
     }
   }
   return result;
+}
+
+List<Error> _validateDependencies({
+  required String? appDirectory,
+  required String? dartOutPath,
+  String? basePath,
+  required String apiName,
+  required List<String> requiredDeps,
+  List<String> requiredDevDeps = const <String>[],
+}) {
+  final errors = <Error>[];
+
+  String? pubspecPath;
+  if (dartOutPath != null && dartOutPath.isNotEmpty) {
+    final String fullDartOut =
+        (basePath != null && basePath.isNotEmpty && !dartOutPath.startsWith(basePath))
+        ? path.join(basePath, dartOutPath)
+        : dartOutPath;
+    pubspecPath = findPubspecPath(File(fullDartOut).parent);
+  }
+  if (pubspecPath == null && appDirectory != null && appDirectory.isNotEmpty) {
+    final String fullAppDir =
+        (basePath != null && basePath.isNotEmpty && !appDirectory.startsWith(basePath))
+        ? path.join(basePath, appDirectory)
+        : appDirectory;
+    pubspecPath = findPubspecPath(Directory(fullAppDir));
+  }
+  if (pubspecPath == null && basePath != null && basePath.isNotEmpty) {
+    pubspecPath = findPubspecPath(Directory(basePath));
+  }
+  if (pubspecPath == null &&
+      (appDirectory == null || appDirectory.isEmpty) &&
+      (dartOutPath == null || dartOutPath.isEmpty)) {
+    pubspecPath = findPubspecPath(Directory.current);
+  }
+
+  if (pubspecPath == null) {
+    errors.add(
+      Error(
+        message:
+            'Could not find pubspec.yaml to validate dependencies for $apiName native interop support.',
+      ),
+    );
+    return errors;
+  }
+
+  final resolvedPubspec = File(pubspecPath);
+
+  try {
+    final String content = resolvedPubspec.readAsStringSync();
+    final dynamic doc = yaml.loadYaml(content);
+    if (doc is yaml.YamlMap) {
+      final dependencies = doc['dependencies'] as yaml.YamlMap?;
+      final devDependencies = doc['dev_dependencies'] as yaml.YamlMap?;
+      final dependencyOverrides = doc['dependency_overrides'] as yaml.YamlMap?;
+
+      for (final dep in requiredDeps) {
+        final bool inDeps = dependencies?.containsKey(dep) ?? false;
+        final bool inDevDeps = devDependencies?.containsKey(dep) ?? false;
+        final bool inOverrides = dependencyOverrides?.containsKey(dep) ?? false;
+        if (!inDeps && !inOverrides) {
+          if (inDevDeps) {
+            errors.add(
+              Error(
+                message:
+                    'Required dependency "$dep" for $apiName native interop support must be in "dependencies", but was found in "dev_dependencies" in pubspec.yaml.\n'
+                    'Please move "$dep" to dependencies in your pubspec.yaml file.',
+              ),
+            );
+          } else {
+            errors.add(
+              Error(
+                message:
+                    'Missing required dependency "$dep" in pubspec.yaml for $apiName native interop support.\n'
+                    'Please add "$dep" to your dependencies in your pubspec.yaml file.',
+              ),
+            );
+          }
+        }
+      }
+
+      for (final dep in requiredDevDeps) {
+        final bool inDeps = dependencies?.containsKey(dep) ?? false;
+        final bool inDevDeps = devDependencies?.containsKey(dep) ?? false;
+        final bool inOverrides = dependencyOverrides?.containsKey(dep) ?? false;
+        if (!inDeps && !inDevDeps && !inOverrides) {
+          errors.add(
+            Error(
+              message:
+                  'Missing required dev dependency "$dep" in pubspec.yaml for $apiName native interop support.\n'
+                  'Please add "$dep" to your dev_dependencies in your pubspec.yaml file.',
+            ),
+          );
+        }
+      }
+    } else {
+      errors.add(
+        Error(
+          message:
+              'Failed to parse "$pubspecPath" for $apiName native interop support: expected a YAML map.',
+        ),
+      );
+    }
+  } catch (e) {
+    errors.add(
+      Error(
+        message: 'Failed to read or parse "$pubspecPath" for $apiName native interop support: $e',
+      ),
+    );
+  }
+
+  return errors;
 }

@@ -71,7 +71,7 @@ class GObjectOptions {
   /// Overrides any non-null parameters from [options] into this to make a new
   /// [GObjectOptions].
   GObjectOptions merge(GObjectOptions options) {
-    return GObjectOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+    return GObjectOptions.fromMap(mergePigeonMaps(toMap(), options.toMap()));
   }
 }
 
@@ -196,6 +196,36 @@ class GObjectHeaderGenerator extends StructuredGenerator<InternalGObjectOptions>
   }) {
     indent.newln();
     indent.writeln('G_BEGIN_DECLS');
+  }
+
+  @override
+  void writeConstants(
+    InternalGObjectOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    if (root.constants.isEmpty) {
+      return;
+    }
+    indent.newln();
+    final String module = _getModule(generatorOptions, dartPackageName);
+    final String moduleScreaming = toScreamingSnakeCase(module);
+    for (final Constant constant in root.constants) {
+      addDocumentationComments(indent, constant.documentationComments, _docCommentSpec);
+      final String constantName = toScreamingSnakeCase(constant.name);
+      final String type = constant.type.baseName;
+      final String valueStr;
+      if (type == 'String') {
+        final String escaped = escapeStringDoubleQuotes(constant.value.toString());
+        valueStr = '"$escaped"';
+      } else if (type == 'bool') {
+        valueStr = (constant.value as bool) ? 'TRUE' : 'FALSE';
+      } else {
+        valueStr = constant.value.toString();
+      }
+      indent.writeln('#define ${moduleScreaming}_$constantName $valueStr');
+    }
   }
 
   @override
@@ -2432,10 +2462,7 @@ bool _isNullablePrimitiveType(TypeDeclaration type) {
     return false;
   }
 
-  return type.isEnum ||
-      type.baseName == 'bool' ||
-      type.baseName == 'int' ||
-      type.baseName == 'double';
+  return type.isEnum || isPrimitiveType(type);
 }
 
 // Whether [type] is a type that needs to stay an FlValue* since it can't be

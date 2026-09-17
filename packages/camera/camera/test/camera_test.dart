@@ -772,6 +772,64 @@ void main() {
       );
     });
 
+    test('setJpegImageQuality() calls CameraPlatform', () async {
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+      await cameraController.initialize();
+
+      await cameraController.setJpegImageQuality(50);
+
+      verify(CameraPlatform.instance.setJpegImageQuality(cameraController.cameraId, 50)).called(1);
+    });
+
+    test('setJpegImageQuality() throws CameraException on PlatformException', () async {
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+      await cameraController.initialize();
+
+      when(
+        CameraPlatform.instance.setJpegImageQuality(cameraController.cameraId, 50),
+      ).thenThrow(PlatformException(code: 'TEST_ERROR', message: 'This is a test error message'));
+
+      expect(
+        cameraController.setJpegImageQuality(50),
+        throwsA(
+          isA<CameraException>().having(
+            (CameraException error) => error.description,
+            'TEST_ERROR',
+            'This is a test error message',
+          ),
+        ),
+      );
+    });
+
+    test('setJpegImageQuality() throws ArgumentError for invalid values', () async {
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+      await cameraController.initialize();
+
+      expect(() => cameraController.setJpegImageQuality(0), throwsA(isA<ArgumentError>()));
+      expect(() => cameraController.setJpegImageQuality(101), throwsA(isA<ArgumentError>()));
+    });
+
     test('setExposureMode() calls $CameraPlatform', () async {
       final cameraController = CameraController(
         const CameraDescription(
@@ -3428,6 +3486,54 @@ void main() {
       expect(cameraController.value.errorDescription, mockOnCameraErrorEvent.description);
     });
   });
+
+  group('does not update value after dispose', () {
+    test('when initialization completes after dispose', () async {
+      final platform = MockDelayedInitializeCameraPlatform();
+      CameraPlatform.instance = platform;
+
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+
+      final Future<void> initializeFuture = cameraController.initialize();
+      await pumpEventQueue();
+
+      // Dispose while initialization is still in flight, then let it complete.
+      final Future<void> disposeFuture = cameraController.dispose();
+      platform.initializeCameraCompleter.complete();
+
+      await expectLater(initializeFuture, completes);
+      await disposeFuture;
+    });
+
+    test('when a camera error event arrives after dispose', () async {
+      final platform = MockControllableErrorCameraPlatform();
+      CameraPlatform.instance = platform;
+
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+      await cameraController.initialize();
+      await cameraController.dispose();
+
+      // A camera error arriving after dispose must not update `value`.
+      platform.cameraErrorController.add(const CameraErrorEvent(13, 'late error'));
+      await pumpEventQueue();
+
+      expect(cameraController.value.errorDescription, isNull);
+    });
+  });
 }
 
 class MockCameraPlatform extends Mock with MockPlatformInterfaceMixin implements CameraPlatform {
@@ -3598,6 +3704,10 @@ class MockCameraPlatform extends Mock with MockPlatformInterfaceMixin implements
   @override
   Future<void> setVideoStabilizationMode(int cameraId, VideoStabilizationMode mode) async =>
       super.noSuchMethod(Invocation.method(#setVideoStabilizationMode, <Object?>[cameraId, mode]));
+
+  @override
+  Future<void> setJpegImageQuality(int? cameraId, int? quality) async =>
+      super.noSuchMethod(Invocation.method(#setJpegImageQuality, <Object?>[cameraId, quality]));
 }
 
 class MockCameraDescription extends CameraDescription {
@@ -3610,4 +3720,27 @@ class MockCameraDescription extends CameraDescription {
 
   @override
   String get name => 'back';
+}
+
+/// A platform whose [initializeCamera] only completes once
+/// [initializeCameraCompleter] is completed, so a test can dispose the
+/// controller while initialization is still in flight.
+class MockDelayedInitializeCameraPlatform extends MockCameraPlatform {
+  final Completer<void> initializeCameraCompleter = Completer<void>();
+
+  @override
+  Future<void> initializeCamera(
+    int? cameraId, {
+    ImageFormatGroup? imageFormatGroup = ImageFormatGroup.unknown,
+  }) => initializeCameraCompleter.future;
+}
+
+/// A platform whose camera error events are driven by [cameraErrorController],
+/// so a test can emit an error after the controller has been disposed.
+class MockControllableErrorCameraPlatform extends MockCameraPlatform {
+  final StreamController<CameraErrorEvent> cameraErrorController =
+      StreamController<CameraErrorEvent>.broadcast();
+
+  @override
+  Stream<CameraErrorEvent> onCameraError(int cameraId) => cameraErrorController.stream;
 }

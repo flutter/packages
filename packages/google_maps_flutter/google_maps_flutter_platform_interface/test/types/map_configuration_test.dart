@@ -36,6 +36,9 @@ void main() {
       indoorViewEnabled: false,
       trafficEnabled: false,
       buildingsEnabled: false,
+      mapTypeControlEnabled: false,
+      fullscreenControlEnabled: false,
+      streetViewControlEnabled: false,
       style: 'diff base style',
     );
 
@@ -490,6 +493,42 @@ void main() {
       // The hash code should change.
       expect(empty.hashCode, isNot(diff.hashCode));
     });
+
+    test('handle mapTypeControlEnabled', () async {
+      const diff = MapConfiguration(mapTypeControlEnabled: true);
+
+      const empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      expect(empty.applyDiff(diff), diff);
+      expect(diff.diffFrom(empty), diff);
+      expect(updated.mapTypeControlEnabled, true);
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
+
+    test('handle fullscreenControlEnabled', () async {
+      const diff = MapConfiguration(fullscreenControlEnabled: true);
+
+      const empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      expect(empty.applyDiff(diff), diff);
+      expect(diff.diffFrom(empty), diff);
+      expect(updated.fullscreenControlEnabled, true);
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
+
+    test('handle streetViewControlEnabled', () async {
+      const diff = MapConfiguration(streetViewControlEnabled: true);
+
+      const empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      expect(empty.applyDiff(diff), diff);
+      expect(diff.diffFrom(empty), diff);
+      expect(updated.streetViewControlEnabled, true);
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
   });
 
   group('isEmpty', () {
@@ -646,6 +685,24 @@ void main() {
 
     test('is false with colorScheme', () async {
       const diff = MapConfiguration(colorScheme: MapColorScheme.followSystem);
+
+      expect(diff.isEmpty, false);
+    });
+
+    test('is false with mapTypeControlEnabled', () async {
+      const diff = MapConfiguration(mapTypeControlEnabled: true);
+
+      expect(diff.isEmpty, false);
+    });
+
+    test('is false with fullscreenControlEnabled', () async {
+      const diff = MapConfiguration(fullscreenControlEnabled: true);
+
+      expect(diff.isEmpty, false);
+    });
+
+    test('is false with streetViewControlEnabled', () async {
+      const diff = MapConfiguration(streetViewControlEnabled: true);
 
       expect(diff.isEmpty, false);
     });

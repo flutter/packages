@@ -93,10 +93,6 @@ public class SystemServicesTest {
     final String testErrorCode = "TestErrorCode";
     final String testErrorDescription = "Test error description.";
 
-    final ArgumentCaptor<GeneratedCameraXLibrary.CameraPermissionsErrorData>
-        cameraPermissionsErrorDataCaptor =
-            ArgumentCaptor.forClass(GeneratedCameraXLibrary.CameraPermissionsErrorData.class);
-
     resultCallback.onResult(new CameraPermissionsError(testErrorCode, testErrorDescription));
     assertEquals(result[0], new CameraPermissionsError(testErrorCode, testErrorDescription));
   }

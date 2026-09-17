@@ -35,6 +35,7 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
   @NonNull protected final VideoPlayerCallbacks videoPlayerEvents;
   @Nullable protected final SurfaceProducer surfaceProducer;
   @Nullable private DisposeHandler disposeHandler;
+  @Nullable private ExoPlayerEventListener exoPlayerEventListener;
   @NonNull protected ExoPlayer exoPlayer;
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi @Nullable protected DefaultTrackSelector trackSelector;
@@ -82,7 +83,8 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
 
     exoPlayer.setMediaItem(mediaItem);
     exoPlayer.prepare();
-    exoPlayer.addListener(createExoPlayerEventListener(exoPlayer, surfaceProducer));
+    exoPlayerEventListener = createExoPlayerEventListener(exoPlayer, surfaceProducer);
+    exoPlayer.addListener(exoPlayerEventListener);
     setAudioAttributes(exoPlayer, options.mixWithOthers);
   }
 
@@ -452,6 +454,10 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     mainHandler.removeCallbacksAndMessages(null);
     if (disposeHandler != null) {
       disposeHandler.onDispose();
+    }
+    if (exoPlayerEventListener != null) {
+      exoPlayerEventListener.dispose();
+      exoPlayerEventListener = null;
     }
     exoPlayer.release();
   }

@@ -108,6 +108,81 @@ void main() {
     expect(map.mapConfiguration.mapToolbarEnabled, true);
   });
 
+  testWidgets('Can update mapTypeControlEnabled', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+          mapTypeControlEnabled: true,
+        ),
+      ),
+    );
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.mapConfiguration.mapTypeControlEnabled, true);
+
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0))),
+      ),
+    );
+
+    expect(map.mapConfiguration.mapTypeControlEnabled, false);
+  });
+
+  testWidgets('Can update fullscreenControlEnabled', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+          fullscreenControlEnabled: true,
+        ),
+      ),
+    );
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.mapConfiguration.fullscreenControlEnabled, true);
+
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0))),
+      ),
+    );
+
+    expect(map.mapConfiguration.fullscreenControlEnabled, false);
+  });
+
+  testWidgets('Can update streetViewControlEnabled', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+          streetViewControlEnabled: true,
+        ),
+      ),
+    );
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.mapConfiguration.streetViewControlEnabled, true);
+
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0))),
+      ),
+    );
+
+    expect(map.mapConfiguration.streetViewControlEnabled, false);
+  });
+
   testWidgets('Can update cameraTargetBounds', (WidgetTester tester) async {
     await tester.pumpWidget(
       Directionality(

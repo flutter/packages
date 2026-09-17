@@ -4,16 +4,30 @@
 
 package io.flutter.plugins.videoplayer;
 
+import android.os.Handler;
+import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media3.common.C;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
+import androidx.media3.common.Timeline;
 import androidx.media3.common.Tracks;
 import androidx.media3.exoplayer.ExoPlayer;
 
 public abstract class ExoPlayerEventListener implements Player.Listener {
+  static final long DURATION_UNSET_INITIALIZATION_TIMEOUT_MS = 2000;
   private boolean isInitialized = false;
+  private boolean isWaitingForValidDuration = false;
+  private final Handler mainHandler = new Handler(Looper.getMainLooper());
+  private final Runnable initializationFallback =
+      () -> {
+        if (!isInitialized && isWaitingForValidDuration) {
+          isWaitingForValidDuration = false;
+          isInitialized = true;
+          sendInitialized();
+        }
+      };
   protected final ExoPlayer exoPlayer;
   protected final VideoPlayerCallbacks events;
 
@@ -51,6 +65,39 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
 
   protected abstract void sendInitialized();
 
+  /** Cancels pending initialization callbacks when the player is disposed. */
+  public void dispose() {
+    isWaitingForValidDuration = false;
+    mainHandler.removeCallbacks(initializationFallback);
+  }
+
+  private boolean hasValidDuration() {
+    return exoPlayer.getDuration() != C.TIME_UNSET;
+  }
+
+  private boolean shouldWaitForValidDuration() {
+    return !exoPlayer.isCurrentMediaItemLive() && !exoPlayer.isCurrentMediaItemDynamic();
+  }
+
+  private void maybeSendInitialized() {
+    if (isInitialized) {
+      return;
+    }
+
+    if (!hasValidDuration() && shouldWaitForValidDuration()) {
+      if (!isWaitingForValidDuration) {
+        isWaitingForValidDuration = true;
+        mainHandler.postDelayed(initializationFallback, DURATION_UNSET_INITIALIZATION_TIMEOUT_MS);
+      }
+      return;
+    }
+
+    isWaitingForValidDuration = false;
+    isInitialized = true;
+    mainHandler.removeCallbacks(initializationFallback);
+    sendInitialized();
+  }
+
   @Override
   public void onPlaybackStateChanged(final int playbackState) {
     PlatformPlaybackState platformState = PlatformPlaybackState.UNKNOWN;
@@ -60,10 +107,7 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
         break;
       case Player.STATE_READY:
         platformState = PlatformPlaybackState.READY;
-        if (!isInitialized) {
-          isInitialized = true;
-          sendInitialized();
-        }
+        maybeSendInitialized();
         break;
       case Player.STATE_ENDED:
         platformState = PlatformPlaybackState.ENDED;
@@ -73,6 +117,13 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
         break;
     }
     events.onPlaybackStateChanged(platformState);
+  }
+
+  @Override
+  public void onTimelineChanged(@NonNull Timeline timeline, int reason) {
+    if (isWaitingForValidDuration && exoPlayer.getPlaybackState() == Player.STATE_READY) {
+      maybeSendInitialized();
+    }
   }
 
   @Override

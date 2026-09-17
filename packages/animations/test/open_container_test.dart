@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:animations/src/open_container.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   testWidgets('Can be opened via GlobalKey', (WidgetTester tester) async {

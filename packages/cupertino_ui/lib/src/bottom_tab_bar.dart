@@ -54,7 +54,7 @@ const Color _kDefaultTabBarInactiveColor = CupertinoColors.inactiveGray;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/bottom_tab_bar/cupertino_tab_bar.0.dart}
+/// {@example /example/lib/bottom_tab_bar/cupertino_tab_bar.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -81,7 +81,7 @@ class CupertinoTabBar extends StatelessWidget implements PreferredSizeWidget {
         width: 0.0, // 0.0 means one physical pixel
       ),
     ),
-  }) : assert(items.length >= 2, "Tabs need at least 2 items to conform to Apple's HIG"),
+  }) : assert(items.length > 0, 'CupertinoTabBar requires at least one tab.'),
        assert(0 <= currentIndex && currentIndex < items.length),
        assert(height >= 0.0);
 

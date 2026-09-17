@@ -1,0 +1,55 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import Flutter
+import GoogleMaps
+import Testing
+
+@testable import google_maps_flutter_ios_sdk9
+
+class StubTileReceiver: NSObject, GMSTileReceiver {
+  func receiveTileWith(x: UInt, y: UInt, zoom: UInt, image: UIImage?) {
+    // No-op.
+  }
+}
+
+// A tile provider that expects a single call to
+// tileWithOverlayIdentifier:location:zoom:completion: on the main thread,
+// and then confirms it.
+class TestTileProvider: TileProviderDelegate {
+  var onTileCalled: () -> Void
+
+  init(onTileCalled: @escaping () -> Void) {
+    self.onTileCalled = onTileCalled
+  }
+
+  @MainActor func tile(
+    withOverlayIdentifier tileOverlayId: String,
+    location: PlatformPoint,
+    zoom: Int64,
+  ) async throws -> PlatformTile {
+    onTileCalled()
+    return PlatformTile(width: 0, height: 0)
+  }
+}
+
+@MainActor struct TileProviderControllerTests {
+
+  @Test func tileProviderCallsFlutterApi() async {
+    var continuationToResume: CheckedContinuation<Void, Never>?
+
+    let tileProvider = TestTileProvider {
+      continuationToResume?.resume()
+    }
+    let controller = TileProviderController(
+      tileOverlayIdentifier: "foo",
+      tileProvider: tileProvider
+    )
+
+    await withCheckedContinuation { continuation in
+      continuationToResume = continuation
+      controller.requestTileFor(x: 0, y: 0, zoom: 0, receiver: StubTileReceiver())
+    }
+  }
+}

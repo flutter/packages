@@ -69,7 +69,7 @@ const CupertinoDynamicColor _kOffLabelColor = CupertinoDynamicColor.withBrightne
 ///
 /// Used to toggle the on/off state of a single setting.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=24tg_N4sdMQ}
+/// Learn more about [CupertinoSwitch] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=24tg_N4sdMQ).
 ///
 /// The switch itself does not maintain its toggle state. Instead, when the
 /// toggle state of the switch changes, the widget calls the [onChanged]
@@ -86,7 +86,7 @@ const CupertinoDynamicColor _kOffLabelColor = CupertinoDynamicColor.withBrightne
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/switch/cupertino_switch.0.dart}
+/// {@example /example/lib/switch/cupertino_switch.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -288,16 +288,26 @@ class CupertinoSwitch extends StatefulWidget {
   /// (or [Color.fromARGB(255, 255, 255, 255)] in high contrast) when null.
   final Color? offLabelColor;
 
-  /// {@macro flutter.material.switch.activeThumbImage}
+  /// {@template cupertino_ui.switch.activeThumbImage}
+  /// An image to use on the thumb of this switch when the switch is on.
+  /// {@endtemplate}
   final ImageProvider? activeThumbImage;
 
-  /// {@macro flutter.material.switch.onActiveThumbImageError}
+  /// {@template cupertino_ui.switch.onActiveThumbImageError}
+  /// An optional error callback for errors emitted when loading
+  /// [activeThumbImage].
+  /// {@endtemplate}
   final ImageErrorListener? onActiveThumbImageError;
 
-  /// {@macro flutter.material.switch.inactiveThumbImage}
+  /// {@template cupertino_ui.switch.inactiveThumbImage}
+  /// An image to use on the thumb of this switch when the switch is off.
+  /// {@endtemplate}
   final ImageProvider? inactiveThumbImage;
 
-  /// {@macro flutter.material.switch.onInactiveThumbImageError}
+  /// {@template cupertino_ui.switch.onInactiveThumbImageError}
+  /// An optional error callback for errors emitted when loading
+  /// [inactiveThumbImage].
+  /// {@endtemplate}
   final ImageErrorListener? onInactiveThumbImageError;
 
   /// The outline color of this [CupertinoSwitch]'s track.
@@ -464,7 +474,7 @@ class CupertinoSwitch extends StatefulWidget {
   /// {@macro flutter.widgets.Focus.autofocus}
   final bool autofocus;
 
-  /// {@template flutter.cupertino.CupertinoSwitch.applyTheme}
+  /// {@template cupertino_ui.CupertinoSwitch.applyTheme}
   /// Whether to apply the ambient [CupertinoThemeData].
   ///
   /// If true, the track uses [CupertinoThemeData.primaryColor] for the track
@@ -474,7 +484,7 @@ class CupertinoSwitch extends StatefulWidget {
   /// {@endtemplate}
   final bool? applyTheme;
 
-  /// {@template flutter.cupertino.CupertinoSwitch.dragStartBehavior}
+  /// {@template cupertino_ui.CupertinoSwitch.dragStartBehavior}
   /// Determines the way that drag start behavior is handled.
   ///
   /// If set to [DragStartBehavior.start], the drag behavior used to move the

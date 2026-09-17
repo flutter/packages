@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// #region body
 import 'package:cupertino_ui/cupertino_ui.dart';
 
 /// Flutter code sample for [CupertinoLinearActivityIndicator].
@@ -75,3 +76,4 @@ class CupertinoIndicatorExample extends StatelessWidget {
     );
   }
 }
+// #endregion body

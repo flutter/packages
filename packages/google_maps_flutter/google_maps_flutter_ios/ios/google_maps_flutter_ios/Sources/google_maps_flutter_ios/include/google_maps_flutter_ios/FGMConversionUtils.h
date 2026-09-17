@@ -10,9 +10,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Returns dict[key], or nil if dict[key] is NSNull.
-extern id _Nullable FGMGetValueOrNilFromDict(NSDictionary *dict, NSString *key);
-
 /// Creates a CGPoint from its Pigeon equivalent.
 extern CGPoint FGMGetCGPointForPigeonPoint(FGMPlatformPoint *point);
 

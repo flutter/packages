@@ -11,3 +11,4 @@ local.properties
 gradle-wrapper.jar
 bin/pigeon.dart.dill
 **/subdirectory/does/not/exist/**
+*.g.o

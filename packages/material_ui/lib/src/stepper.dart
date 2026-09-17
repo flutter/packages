@@ -199,7 +199,7 @@ class Step {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/stepper/stepper.0.dart}
+/// {@example /example/lib/stepper/stepper.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -350,7 +350,7 @@ class Stepper extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/stepper/stepper.controls_builder.0.dart}
+  /// {@example /example/lib/stepper/stepper.controls_builder.0.dart#body}
   ///
   /// </callout-box>
   final ControlsWidgetBuilder? controlsBuilder;
@@ -403,7 +403,7 @@ class Stepper extends StatefulWidget {
   /// The padding around the header row in both [StepperType.vertical] and
   /// [StepperType.horizontal] steppers.
   ///
-  /// Defaults to to `EdgeInsets.symmetric(horizontal: 24.0)`.
+  /// Defaults to `EdgeInsets.symmetric(horizontal: 24.0)`.
   final EdgeInsetsGeometry? headerPadding;
 
   /// The padding around the content area in both [StepperType.vertical] and
@@ -1061,7 +1061,7 @@ class _TrianglePainter extends CustomPainter {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/stepper/step_style.0.dart}
+/// {@example /example/lib/stepper/step_style.0.dart#body}
 ///
 /// </callout-box>
 
