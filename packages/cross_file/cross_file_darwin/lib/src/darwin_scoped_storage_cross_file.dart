@@ -274,7 +274,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
   }
 
   PHAssetResource? _tryGetAssetResource({required String identifier}) {
-    if (_tryGetAsset(identifier: params.uri) case final PHAsset asset) {
+    if (_tryGetAsset(identifier: identifier) case final PHAsset asset) {
       final NSArray resources = PHAssetResource.assetResourcesForAsset(asset);
       final ObjCObject? firstObject = resources.firstObject;
 
