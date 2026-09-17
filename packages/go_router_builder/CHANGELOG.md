@@ -1,3 +1,7 @@
+## 5.0.0
+
+- Migrates to `material_ui` package (1.3.0).
+
 ## 4.5.0
 
 - Detects routes that resolve to the same URL pattern. Routes are compared by

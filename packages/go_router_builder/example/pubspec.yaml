@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   go_router: ^17.3.0
+  material_ui: ^1.3.0
   provider: 6.0.5
 
 dev_dependencies:
