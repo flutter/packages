@@ -2682,7 +2682,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
           );
         }, addTrailingNewline: false);
         if (!returnType.isNullable && !returnType.isVoid) {
-          indent.addScoped('else if listResponse[0] == nil {', '} ', () {
+          indent.addScoped('else if listResponse[0] == nil || listResponse[0] is NSNull {', '} ', () {
             indent.writeln(
               resumeError(
                 '${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")',
