@@ -22,7 +22,7 @@ private func colorString(atPixel image: UIImage, pixelX: Int, pixelY: Int) -> St
     width: 1,
     height: 1,
     bitsPerComponent: cgImage.bitsPerComponent,
-    bytesPerRow: cgImage.bytesPerRow,
+    bytesPerRow: MemoryLayout.size(ofValue: argb),
     space: CGColorSpaceCreateDeviceRGB(),
     bitmapInfo: cgImage.bitmapInfo.rawValue)!
   context.draw(

@@ -41,7 +41,8 @@ struct MetaDataUtilTests {
     let dataJPG = ImagePickerTestImages.jpgTestData
     let metaData = FLTImagePickerMetaDataUtil.getMetaData(fromImageData: dataJPG)
     let tmpPath = (NSTemporaryDirectory() as NSString).appendingPathComponent(
-      "image_picker_test.jpg")
+      UUID().uuidString + ".jpg")
+    defer { try? FileManager.default.removeItem(atPath: tmpPath) }
     let newData = FLTImagePickerMetaDataUtil.image(fromImage: dataJPG, withMetaData: metaData)
     #expect(FileManager.default.createFile(atPath: tmpPath, contents: newData, attributes: nil))
     let savedTmpImageData = try? Data(contentsOf: URL(fileURLWithPath: tmpPath))
