@@ -4,6 +4,7 @@ publish_to: none
 
 environment:
   sdk: ^3.10.0
+  flutter: ">=3.38.0"
 
 dependencies:
   cross_file:
@@ -13,6 +14,30 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
+  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_android` is released.
+  cross_file_android:
+    path: ../../cross_file_android
+  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_darwin` is released.
+  cross_file_darwin:
+    path: ../../cross_file_darwin
+  cross_file_io: ^1.0.0
+  # TODO(bparrishMines): Change this to hosted dependency once `cross_file_web` is released.
+  cross_file_web:
+    path: ../../cross_file_web
+  flutter:
+    sdk: flutter
+  mime: ^2.0.0
 
 dev_dependencies:
-  test: ^1.24.0
+  espresso: ^0.4.0
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  path: ^1.9.1
+  path_provider: ^2.1.5
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/hello.txt

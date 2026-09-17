@@ -8,6 +8,9 @@ set -e
 git fetch origin main
 git branch main origin/main
 
+# Enables long paths to work on Windows.
+git config --global core.longpaths true
+
 cd script/tool
 dart pub get
 
