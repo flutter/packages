@@ -343,7 +343,7 @@ class TextField extends StatefulWidget {
     this.stylusHandwritingEnabled = EditableText.defaultStylusHandwritingEnabled,
     this.enableIMEPersonalizedLearning = true,
     this.enableInlinePrediction,
-    this.contextMenuBuilder,
+    this.contextMenuBuilder = _defaultContextMenuBuilder,
     this.canRequestFocus = true,
     this.spellCheckConfiguration,
     this.magnifierConfiguration,
@@ -905,6 +905,16 @@ class TextField extends StatefulWidget {
 
   /// {@macro flutter.services.TextInputConfiguration.hintLocales}
   final List<Locale>? hintLocales;
+
+  static Widget _defaultContextMenuBuilder(
+    BuildContext context,
+    EditableTextState editableTextState,
+  ) {
+    if (SystemContextMenu.isSupportedByField(editableTextState)) {
+      return SystemContextMenu.editableText(editableTextState: editableTextState);
+    }
+    return AdaptiveTextSelectionToolbar.editableText(editableTextState: editableTextState);
+  }
 
   /// {@macro flutter.widgets.EditableText.spellCheckConfiguration}
   ///
@@ -1534,16 +1544,6 @@ class _TextFieldState extends State<TextField>
     return providedStyle.merge(stateStyle);
   }
 
-  static Widget _defaultContextMenuBuilder(
-    BuildContext context,
-    EditableTextState editableTextState,
-  ) {
-    if (SystemContextMenu.isSupportedByField(editableTextState)) {
-      return SystemContextMenu.editableText(editableTextState: editableTextState);
-    }
-    return AdaptiveTextSelectionToolbar.editableText(editableTextState: editableTextState);
-  }
-
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasMaterial(context));
@@ -1770,10 +1770,10 @@ class _TextFieldState extends State<TextField>
           enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
           enableInlinePrediction: widget.enableInlinePrediction,
           contentInsertionConfiguration: widget.contentInsertionConfiguration,
-          contextMenuBuilder:
-              widget.contextMenuBuilder ??
-              TextSelectionTheme.of(context).contextMenuBuilder ??
-              _defaultContextMenuBuilder,
+          contextMenuBuilder: widget.contextMenuBuilder == TextField._defaultContextMenuBuilder
+              ? (TextSelectionTheme.of(context).contextMenuBuilder ??
+                    TextField._defaultContextMenuBuilder)
+              : widget.contextMenuBuilder,
           spellCheckConfiguration: spellCheckConfiguration,
           magnifierConfiguration:
               widget.magnifierConfiguration ?? TextMagnifier.adaptiveMagnifierConfiguration,

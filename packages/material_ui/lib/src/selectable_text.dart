@@ -205,7 +205,7 @@ class SelectableText extends StatefulWidget {
     this.textHeightBehavior,
     this.textWidthBasis,
     this.onSelectionChanged,
-    this.contextMenuBuilder,
+    this.contextMenuBuilder = _defaultContextMenuBuilder,
     this.magnifierConfiguration,
   }) : assert(maxLines == null || maxLines > 0),
        assert(minLines == null || minLines > 0),
@@ -264,7 +264,7 @@ class SelectableText extends StatefulWidget {
     this.textHeightBehavior,
     this.textWidthBasis,
     this.onSelectionChanged,
-    this.contextMenuBuilder,
+    this.contextMenuBuilder = _defaultContextMenuBuilder,
     this.magnifierConfiguration,
   }) : assert(maxLines == null || maxLines > 0),
        assert(minLines == null || minLines > 0),
@@ -451,6 +451,13 @@ class SelectableText extends StatefulWidget {
 
   /// {@macro flutter.widgets.EditableText.contextMenuBuilder}
   final EditableTextContextMenuBuilder? contextMenuBuilder;
+
+  static Widget _defaultContextMenuBuilder(
+    BuildContext context,
+    EditableTextState editableTextState,
+  ) {
+    return AdaptiveTextSelectionToolbar.editableText(editableTextState: editableTextState);
+  }
 
   /// The configuration for the magnifier used when the text is selected.
   ///
@@ -668,13 +675,6 @@ class _SelectableTextState extends State<SelectableText>
     return false;
   }
 
-  static Widget _defaultContextMenuBuilder(
-    BuildContext context,
-    EditableTextState editableTextState,
-  ) {
-    return AdaptiveTextSelectionToolbar.editableText(editableTextState: editableTextState);
-  }
-
   @override
   Widget build(BuildContext context) {
     // TODO(garyq): Assert to block WidgetSpans from being used here are removed,
@@ -806,10 +806,10 @@ class _SelectableTextState extends State<SelectableText>
         scrollPhysics: widget.scrollPhysics,
         scrollBehavior: widget.scrollBehavior,
         autofillHints: null,
-        contextMenuBuilder:
-            widget.contextMenuBuilder ??
-            TextSelectionTheme.of(context).contextMenuBuilder ??
-            _defaultContextMenuBuilder,
+        contextMenuBuilder: widget.contextMenuBuilder == SelectableText._defaultContextMenuBuilder
+            ? (TextSelectionTheme.of(context).contextMenuBuilder ??
+                  SelectableText._defaultContextMenuBuilder)
+            : widget.contextMenuBuilder,
       ),
     );
 

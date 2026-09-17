@@ -5738,6 +5738,65 @@ void main() {
       expect(contextMenu, isNot(isA<Placeholder>()));
     });
 
+    testWidgets(
+      'contextMenuBuilder changes from default to null',
+      (WidgetTester tester) async {
+        final GlobalKey key = GlobalKey();
+        const data = 'one two three';
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Material(child: SelectableText(data, key: key)),
+          ),
+        );
+
+        await tester.pump(); // Wait for autofocus to take effect.
+
+        // Long-press to bring up the context menu.
+        Finder textFinder = find.byType(SelectableText);
+        Finder editableTextFinder = find.descendant(
+          of: textFinder,
+          matching: find.byType(EditableText),
+        );
+        await tester.longPress(editableTextFinder);
+        tester.state<EditableTextState>(editableTextFinder).showToolbar();
+        await tester.pump();
+
+        expect(find.byType(AdaptiveTextSelectionToolbar), findsOneWidget);
+
+        // Set contextMenuBuilder to null.
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Material(child: SelectableText(data, key: key, contextMenuBuilder: null)),
+          ),
+        );
+
+        // Trigger build one more time...
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Material(
+              child: Padding(
+                padding: EdgeInsets.zero,
+                child: SelectableText(data, key: key, contextMenuBuilder: null),
+              ),
+            ),
+          ),
+        );
+
+        await tester.pump(); // Wait for autofocus to take effect.
+
+        // Long-press to bring up the context menu.
+        textFinder = find.byType(SelectableText);
+        editableTextFinder = find.descendant(of: textFinder, matching: find.byType(EditableText));
+        await tester.longPress(editableTextFinder);
+        tester.state<EditableTextState>(editableTextFinder).showToolbar();
+        await tester.pump();
+
+        expect(find.byType(AdaptiveTextSelectionToolbar), findsNothing);
+      },
+      skip: kIsWeb, // [intended] on web the browser handles the context menu.
+    );
+
     // Regression test for https://github.com/flutter/flutter/issues/169001.
     testWidgets(
       'iOS does not use the system context menu by default even when supported',

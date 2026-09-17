@@ -17188,7 +17188,7 @@ void main() {
         await tester.pump(); // Wait for autofocus to take effect.
 
         // Long-press to bring up the context menu.
-        final Finder textFinder = find.byType(EditableText);
+        Finder textFinder = find.byType(EditableText);
         await tester.longPress(textFinder);
         tester.state<EditableTextState>(textFinder).showToolbar();
         await tester.pump();
@@ -17199,7 +17199,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: Material(
-              child: TextField(key: key, controller: controller),
+              child: TextField(key: key, controller: controller, contextMenuBuilder: null),
             ),
           ),
         );
@@ -17210,11 +17210,21 @@ void main() {
             home: Material(
               child: Padding(
                 padding: EdgeInsets.zero,
-                child: TextField(key: key, controller: controller),
+                child: TextField(key: key, controller: controller, contextMenuBuilder: null),
               ),
             ),
           ),
         );
+
+        await tester.pump(); // Wait for autofocus to take effect.
+
+        // Long-press to bring up the context menu.
+        textFinder = find.byType(EditableText);
+        await tester.longPress(textFinder);
+        tester.state<EditableTextState>(textFinder).showToolbar();
+        await tester.pump();
+
+        expect(find.byType(AdaptiveTextSelectionToolbar), findsNothing);
       },
       skip: kIsWeb, // [intended] on web the browser handles the context menu.
     );

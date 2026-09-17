@@ -1856,6 +1856,58 @@ void main() {
     });
 
     testWidgets(
+      'contextMenuBuilder changes from default to null',
+      (WidgetTester tester) async {
+        final GlobalKey key = GlobalKey();
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Material(child: TextFormField(key: key)),
+          ),
+        );
+
+        await tester.pump(); // Wait for autofocus to take effect.
+
+        // Long-press to bring up the context menu.
+        Finder textFinder = find.byType(EditableText);
+        await tester.longPress(textFinder);
+        tester.state<EditableTextState>(textFinder).showToolbar();
+        await tester.pump();
+
+        expect(find.byType(AdaptiveTextSelectionToolbar), findsOneWidget);
+
+        // Set contextMenuBuilder to null.
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Material(child: TextFormField(key: key, contextMenuBuilder: null)),
+          ),
+        );
+
+        // Trigger build one more time...
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Material(
+              child: Padding(
+                padding: EdgeInsets.zero,
+                child: TextFormField(key: key, contextMenuBuilder: null),
+              ),
+            ),
+          ),
+        );
+
+        await tester.pump(); // Wait for autofocus to take effect.
+
+        // Long-press to bring up the context menu.
+        textFinder = find.byType(EditableText);
+        await tester.longPress(textFinder);
+        tester.state<EditableTextState>(textFinder).showToolbar();
+        await tester.pump();
+
+        expect(find.byType(AdaptiveTextSelectionToolbar), findsNothing);
+      },
+      skip: kIsWeb, // [intended] on web the browser handles the context menu.
+    );
+
+    testWidgets(
       'iOS uses the system context menu by default if supported',
       (WidgetTester tester) async {
         tester.platformDispatcher.supportsShowingSystemContextMenu = true;
