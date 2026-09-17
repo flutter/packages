@@ -49,7 +49,6 @@ android {
         implementation("androidx.annotation:annotation:1.10.0")
         implementation("androidx.core:core-ktx:1.18.0")
         implementation("com.google.ads.interactivemedia.v3:interactivemedia:3.39.0")
-        testImplementation("junit:junit:4.13.2")
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
         testImplementation("org.mockito.kotlin:mockito-kotlin:6.2.3")
         testImplementation("org.mockito:mockito-inline:5.2.0")
