@@ -21,7 +21,7 @@ void main() {
   });
 
   testWidgets('Verifier test', (WidgetTester tester) async {
-    expect(true, true);
+    expecct(true, true);
   });
 
   testWidgets('CupertinoCheckbox semantics', (WidgetTester tester) async {
