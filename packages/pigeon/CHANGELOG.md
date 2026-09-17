@@ -1,3 +1,10 @@
+## 29.1.0
+
+* [swift] Marks the completion closures passed to host API implementations and
+  ProxyApi delegate methods as `@Sendable`, allowing those implementations to
+  reply from another queue without a concurrency diagnostic.
+* [swift] Marks the generated `InstanceManager` as `@unchecked Sendable`. 
+
 ## 29.0.2
 
 * [swift] Fixes a crash when a Flutter API returns null for a non-null return

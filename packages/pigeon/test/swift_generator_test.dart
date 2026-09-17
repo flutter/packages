@@ -774,10 +774,41 @@ void main() {
     expect(
       code,
       contains(
-        'func doSomething(arg: Input, completion: @escaping (Result<Output, Error>) -> Void)',
+        'func doSomething(arg: Input, completion: @escaping @Sendable (Result<Output, Error>) -> Void)',
       ),
     );
     expect(code, contains('api.doSomething(arg: argArg) { result in'));
+  });
+
+  test('asyncCallback flutter api completion closure is not Sendable', () {
+    final root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.flutter,
+              returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+              isAsynchronous: true,
+              isAsynchronousCallback: true,
+              parameters: <Parameter>[],
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    // The caller supplies this closure, and a `@Sendable` closure cannot touch
+    // main-actor state, so marking it would break callers.
+    expect(code, contains('func doSomething(completion: @escaping (Result<Int64, PigeonError>)'));
+    expect(code, isNot(contains('@escaping @Sendable')));
   });
 
   test('gen one async Flutter Api', () {

@@ -1592,6 +1592,7 @@ if (wrapped == nil) {
             isAsynchronous: method.isAsynchronous,
             isAsynchronousCallback: method.isAsynchronousCallback,
             swiftFunction: method.swiftFunction,
+            isCompletionClosureSendable: !generatorOptions.useFfi,
             ffiUserApi: generatorOptions.useFfi,
           ),
         );
@@ -3169,6 +3170,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         returnType: method.returnType,
         isAsynchronous: method.isAsynchronous,
         isAsynchronousCallback: true,
+        isCompletionClosureSendable: true,
         errorTypeName: 'Error',
       );
       indent.writeln(methodSignature);
@@ -3965,6 +3967,7 @@ String _getMethodSignature({
   bool isAsynchronous = false,
   bool ffiUserApi = false,
   bool isAsynchronousCallback = false,
+  bool isCompletionClosureSendable = false,
   bool isMainActor = false,
   String? swiftFunction,
   bool ffiBridgeApi = false,
@@ -4035,7 +4038,14 @@ String _getMethodSignature({
   }
 
   if (isAsynchronous) {
-    final completion = 'completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void';
+    // Only applied to completion closures that the client *receives* (host API
+    // methods and ProxyApi delegate methods), where `@Sendable` grants the
+    // implementation permission to reply from another queue. It must not be
+    // applied to closures the client *supplies*, because a `@Sendable` closure
+    // cannot access main-actor state, which would break existing callers.
+    final sendablePrefix = isCompletionClosureSendable ? '@Sendable ' : '';
+    final completion =
+        'completion: @escaping $sendablePrefix(Result<$returnTypeString, $errorTypeName>) -> Void';
     final params = parameters.isEmpty ? completion : '$parameterSignature, $completion';
     return 'func $methodName($params)';
   }

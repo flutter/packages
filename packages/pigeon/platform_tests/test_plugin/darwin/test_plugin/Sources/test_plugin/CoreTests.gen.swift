@@ -6501,13 +6501,15 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
 ///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol HostCallbackCoreApi {
-  func noop(completion: @escaping (Result<Void, Error>) -> Void)
-  func echo(_ aString: String, completion: @escaping (Result<String, Error>) -> Void)
-  func echo(_ everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void)
-  func echoNullable(_ aString: String?, completion: @escaping (Result<String?, Error>) -> Void)
-  func throwError(completion: @escaping (Result<Any?, Error>) -> Void)
-  func throwErrorFromVoid(completion: @escaping (Result<Void, Error>) -> Void)
-  func taskQueueIsBackgroundThread(completion: @escaping (Result<Bool, Error>) -> Void)
+  func noop(completion: @escaping @Sendable (Result<Void, Error>) -> Void)
+  func echo(_ aString: String, completion: @escaping @Sendable (Result<String, Error>) -> Void)
+  func echo(
+    _ everything: AllTypes, completion: @escaping @Sendable (Result<AllTypes, Error>) -> Void)
+  func echoNullable(
+    _ aString: String?, completion: @escaping @Sendable (Result<String?, Error>) -> Void)
+  func throwError(completion: @escaping @Sendable (Result<Any?, Error>) -> Void)
+  func throwErrorFromVoid(completion: @escaping @Sendable (Result<Void, Error>) -> Void)
+  func taskQueueIsBackgroundThread(completion: @escaping @Sendable (Result<Bool, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.

@@ -142,7 +142,10 @@ internal final class ProxyApiTestsPigeonInternalFinalizer {
 /// again.
 ///
 /// Accessing and inserting to an InstanceManager is thread safe.
-final class ProxyApiTestsPigeonInstanceManager {
+///
+/// Thread safety is provided by `lockQueue` rather than by the type system, so
+/// the `Sendable` conformance is `@unchecked`.
+final class ProxyApiTestsPigeonInstanceManager: @unchecked Sendable {
   // Identifiers are locked to a specific range to avoid collisions with objects
   // created simultaneously from Dart.
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
@@ -780,178 +783,185 @@ protocol PigeonApiDelegateProxyApiTestClass {
   /// test basic asynchronous calling.
   func noopAsync(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Void, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Void, Error>) -> Void)
   /// Returns passed in int asynchronously.
   func echoAsyncInt(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64,
-    completion: @escaping (Result<Int64, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Int64, Error>) -> Void)
   /// Returns passed in double asynchronously.
   func echoAsyncDouble(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aDouble: Double,
-    completion: @escaping (Result<Double, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Double, Error>) -> Void)
   /// Returns the passed in boolean asynchronously.
   func echoAsyncBool(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool,
-    completion: @escaping (Result<Bool, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Bool, Error>) -> Void)
   /// Returns the passed string asynchronously.
   func echoAsyncString(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String,
-    completion: @escaping (Result<String, Error>) -> Void)
+    completion: @escaping @Sendable (Result<String, Error>) -> Void)
   /// Returns the passed in Uint8List asynchronously.
   func echoAsyncUint8List(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aUint8List: FlutterStandardTypedData,
-    completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void)
+    completion: @escaping @Sendable (Result<FlutterStandardTypedData, Error>) -> Void)
   /// Returns the passed in generic Object asynchronously.
   func echoAsyncObject(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anObject: Any,
-    completion: @escaping (Result<Any, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Any, Error>) -> Void)
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   func echoAsyncList(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?],
-    completion: @escaping (Result<[Any?], Error>) -> Void)
+    completion: @escaping @Sendable (Result<[Any?], Error>) -> Void)
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   func echoAsyncMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aMap: [String?: Any?],
-    completion: @escaping (Result<[String?: Any?], Error>) -> Void)
+    completion: @escaping @Sendable (Result<[String?: Any?], Error>) -> Void)
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   func echoAsyncEnum(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    anEnum: ProxyApiTestEnum, completion: @escaping (Result<ProxyApiTestEnum, Error>) -> Void)
+    anEnum: ProxyApiTestEnum,
+    completion: @escaping @Sendable (Result<ProxyApiTestEnum, Error>) -> Void)
   /// Responds with an error from an async function returning a value.
   func throwAsyncError(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Any?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Any?, Error>) -> Void)
   /// Responds with an error from an async void function.
   func throwAsyncErrorFromVoid(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Void, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Void, Error>) -> Void)
   /// Responds with a Flutter error from an async function returning a value.
   func throwAsyncFlutterError(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Any?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Any?, Error>) -> Void)
   /// Returns passed in int asynchronously.
   func echoAsyncNullableInt(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64?,
-    completion: @escaping (Result<Int64?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Int64?, Error>) -> Void)
   /// Returns passed in double asynchronously.
   func echoAsyncNullableDouble(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aDouble: Double?,
-    completion: @escaping (Result<Double?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Double?, Error>) -> Void)
   /// Returns the passed in boolean asynchronously.
   func echoAsyncNullableBool(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool?,
-    completion: @escaping (Result<Bool?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Bool?, Error>) -> Void)
   /// Returns the passed string asynchronously.
   func echoAsyncNullableString(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String?,
-    completion: @escaping (Result<String?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<String?, Error>) -> Void)
   /// Returns the passed in Uint8List asynchronously.
   func echoAsyncNullableUint8List(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aUint8List: FlutterStandardTypedData?,
-    completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<FlutterStandardTypedData?, Error>) -> Void)
   /// Returns the passed in generic Object asynchronously.
   func echoAsyncNullableObject(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anObject: Any?,
-    completion: @escaping (Result<Any?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Any?, Error>) -> Void)
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   func echoAsyncNullableList(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?]?,
-    completion: @escaping (Result<[Any?]?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<[Any?]?, Error>) -> Void)
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   func echoAsyncNullableMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
+    aMap: [String?: Any?]?,
+    completion: @escaping @Sendable (Result<[String?: Any?]?, Error>) -> Void)
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   func echoAsyncNullableEnum(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    anEnum: ProxyApiTestEnum?, completion: @escaping (Result<ProxyApiTestEnum?, Error>) -> Void)
+    anEnum: ProxyApiTestEnum?,
+    completion: @escaping @Sendable (Result<ProxyApiTestEnum?, Error>) -> Void)
   func staticNoop(pigeonApi: PigeonApiProxyApiTestClass) throws
   func echoStaticString(pigeonApi: PigeonApiProxyApiTestClass, aString: String) throws -> String
   func staticAsyncNoop(
-    pigeonApi: PigeonApiProxyApiTestClass, completion: @escaping (Result<Void, Error>) -> Void)
+    pigeonApi: PigeonApiProxyApiTestClass,
+    completion: @escaping @Sendable (Result<Void, Error>) -> Void)
   func callFlutterNoop(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Void, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Void, Error>) -> Void)
   func callFlutterThrowError(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Any?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Any?, Error>) -> Void)
   func callFlutterThrowErrorFromVoid(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Void, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Void, Error>) -> Void)
   func callFlutterEchoBool(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool,
-    completion: @escaping (Result<Bool, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Bool, Error>) -> Void)
   func callFlutterEchoInt(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64,
-    completion: @escaping (Result<Int64, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Int64, Error>) -> Void)
   func callFlutterEchoDouble(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aDouble: Double,
-    completion: @escaping (Result<Double, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Double, Error>) -> Void)
   func callFlutterEchoString(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String,
-    completion: @escaping (Result<String, Error>) -> Void)
+    completion: @escaping @Sendable (Result<String, Error>) -> Void)
   func callFlutterEchoUint8List(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aUint8List: FlutterStandardTypedData,
-    completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void)
+    completion: @escaping @Sendable (Result<FlutterStandardTypedData, Error>) -> Void)
   func callFlutterEchoList(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?],
-    completion: @escaping (Result<[Any?], Error>) -> Void)
+    completion: @escaping @Sendable (Result<[Any?], Error>) -> Void)
   func callFlutterEchoProxyApiList(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    aList: [ProxyApiTestClass?], completion: @escaping (Result<[ProxyApiTestClass?], Error>) -> Void
-  )
+    aList: [ProxyApiTestClass?],
+    completion: @escaping @Sendable (Result<[ProxyApiTestClass?], Error>) -> Void)
   func callFlutterEchoMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aMap: [String?: Any?],
-    completion: @escaping (Result<[String?: Any?], Error>) -> Void)
+    completion: @escaping @Sendable (Result<[String?: Any?], Error>) -> Void)
   func callFlutterEchoProxyApiMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aMap: [String?: ProxyApiTestClass?],
-    completion: @escaping (Result<[String?: ProxyApiTestClass?], Error>) -> Void)
+    completion: @escaping @Sendable (Result<[String?: ProxyApiTestClass?], Error>) -> Void)
   func callFlutterEchoEnum(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    anEnum: ProxyApiTestEnum, completion: @escaping (Result<ProxyApiTestEnum, Error>) -> Void)
+    anEnum: ProxyApiTestEnum,
+    completion: @escaping @Sendable (Result<ProxyApiTestEnum, Error>) -> Void)
   func callFlutterEchoProxyApi(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    aProxyApi: ProxyApiSuperClass, completion: @escaping (Result<ProxyApiSuperClass, Error>) -> Void
-  )
+    aProxyApi: ProxyApiSuperClass,
+    completion: @escaping @Sendable (Result<ProxyApiSuperClass, Error>) -> Void)
   func callFlutterEchoNullableBool(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool?,
-    completion: @escaping (Result<Bool?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Bool?, Error>) -> Void)
   func callFlutterEchoNullableInt(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64?,
-    completion: @escaping (Result<Int64?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Int64?, Error>) -> Void)
   func callFlutterEchoNullableDouble(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aDouble: Double?,
-    completion: @escaping (Result<Double?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Double?, Error>) -> Void)
   func callFlutterEchoNullableString(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String?,
-    completion: @escaping (Result<String?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<String?, Error>) -> Void)
   func callFlutterEchoNullableUint8List(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aUint8List: FlutterStandardTypedData?,
-    completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<FlutterStandardTypedData?, Error>) -> Void)
   func callFlutterEchoNullableList(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?]?,
-    completion: @escaping (Result<[Any?]?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<[Any?]?, Error>) -> Void)
   func callFlutterEchoNullableMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
+    aMap: [String?: Any?]?,
+    completion: @escaping @Sendable (Result<[String?: Any?]?, Error>) -> Void)
   func callFlutterEchoNullableEnum(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    anEnum: ProxyApiTestEnum?, completion: @escaping (Result<ProxyApiTestEnum?, Error>) -> Void)
+    anEnum: ProxyApiTestEnum?,
+    completion: @escaping @Sendable (Result<ProxyApiTestEnum?, Error>) -> Void)
   func callFlutterEchoNullableProxyApi(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aProxyApi: ProxyApiSuperClass?,
-    completion: @escaping (Result<ProxyApiSuperClass?, Error>) -> Void)
+    completion: @escaping @Sendable (Result<ProxyApiSuperClass?, Error>) -> Void)
   func callFlutterNoopAsync(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Void, Error>) -> Void)
+    completion: @escaping @Sendable (Result<Void, Error>) -> Void)
   func callFlutterEchoAsyncString(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String,
-    completion: @escaping (Result<String, Error>) -> Void)
+    completion: @escaping @Sendable (Result<String, Error>) -> Void)
 }
 
 protocol PigeonApiProtocolProxyApiTestClass {
