@@ -138,6 +138,7 @@ class SK2SubscriptionInfo {
     required this.subscriptionGroupID,
     required this.promotionalOffers,
     required this.subscriptionPeriod,
+    this.pricingTerms,
   });
 
   /// An array of all the promotional offers configured for this subscription.
@@ -148,6 +149,127 @@ class SK2SubscriptionInfo {
 
   /// The duration that this subscription lasts before auto-renewing.
   final SK2SubscriptionPeriod subscriptionPeriod;
+
+  /// Every billing plan available for this subscription in the customer's
+  /// storefront.
+  ///
+  /// `null` on iOS below 26.4, where StoreKit has no such concept. A standard
+  /// subscription has a single [SK2BillingPlanType.upFront] entry; a yearly
+  /// subscription with a 12-month commitment configured also has an
+  /// [SK2BillingPlanType.monthly] one, but only where that plan is available.
+  final List<SK2PricingTerms>? pricingTerms;
+}
+
+/// The way a subscription bills.
+/// https://developer.apple.com/documentation/storekit/product/subscriptioninfo/billingplantype
+enum SK2BillingPlanType {
+  /// Billed in full, up front, for the whole period. The default.
+  upFront,
+
+  /// Billed monthly for the duration of a 12-month commitment.
+  monthly,
+}
+
+/// A wrapper around StoreKit2's CommitmentInfo
+/// https://developer.apple.com/documentation/storekit/product/subscriptioninfo/commitmentinfo
+/// The total commitment behind a [SK2BillingPlanType.monthly] plan.
+class SK2CommitmentInfo {
+  /// Creates a new instance of [SK2CommitmentInfo]
+  const SK2CommitmentInfo({required this.price, required this.displayPrice, required this.period});
+
+  /// The total price of the full commitment.
+  final double price;
+
+  /// The localized total price of the full commitment, suitable for display.
+  final String displayPrice;
+
+  /// How long the commitment lasts, as configured in App Store Connect.
+  ///
+  /// Read this rather than assuming twelve months.
+  final SK2SubscriptionPeriod period;
+}
+
+/// A wrapper around StoreKit2's PricingTerms
+/// https://developer.apple.com/documentation/storekit/product/subscriptioninfo/pricingterms-swift.struct
+/// One billing plan available for a subscription.
+class SK2PricingTerms {
+  /// Creates a new instance of [SK2PricingTerms]
+  const SK2PricingTerms({
+    required this.billingPlanType,
+    required this.billingPrice,
+    required this.billingDisplayPrice,
+    required this.billingPeriod,
+    required this.subscriptionOffers,
+    this.commitmentInfo,
+  });
+
+  /// Whether this plan bills up front or monthly.
+  final SK2BillingPlanType billingPlanType;
+
+  /// The price charged for each billing period.
+  final double billingPrice;
+
+  /// The localized price charged for each billing period, suitable for display.
+  final String billingDisplayPrice;
+
+  /// How often this plan bills.
+  ///
+  /// A [SK2BillingPlanType.monthly] plan bills monthly even though
+  /// [SK2SubscriptionInfo.subscriptionPeriod] is a year.
+  final SK2SubscriptionPeriod billingPeriod;
+
+  /// The offers available on this billing plan specifically.
+  ///
+  /// This is not the same as [SK2SubscriptionInfo.promotionalOffers], which
+  /// lists the offers of the subscription as a whole; an offer may be
+  /// configured for one billing plan and not another.
+  final List<SK2SubscriptionOffer> subscriptionOffers;
+
+  /// Only set when [billingPlanType] is [SK2BillingPlanType.monthly].
+  final SK2CommitmentInfo? commitmentInfo;
+}
+
+extension on SK2BillingPlanTypeMessage {
+  SK2BillingPlanType convertFromPigeon() {
+    return switch (this) {
+      SK2BillingPlanTypeMessage.upFront => SK2BillingPlanType.upFront,
+      SK2BillingPlanTypeMessage.monthly => SK2BillingPlanType.monthly,
+    };
+  }
+}
+
+extension on SK2BillingPlanType {
+  SK2BillingPlanTypeMessage convertToPigeon() {
+    return switch (this) {
+      SK2BillingPlanType.upFront => SK2BillingPlanTypeMessage.upFront,
+      SK2BillingPlanType.monthly => SK2BillingPlanTypeMessage.monthly,
+    };
+  }
+}
+
+extension on SK2CommitmentInfoMessage {
+  SK2CommitmentInfo convertFromPigeon() {
+    return SK2CommitmentInfo(
+      price: price,
+      displayPrice: displayPrice,
+      period: period.convertFromPigeon(),
+    );
+  }
+}
+
+extension on SK2PricingTermsMessage {
+  SK2PricingTerms convertFromPigeon() {
+    return SK2PricingTerms(
+      billingPlanType: billingPlanType.convertFromPigeon(),
+      billingPrice: billingPrice,
+      billingDisplayPrice: billingDisplayPrice,
+      billingPeriod: billingPeriod.convertFromPigeon(),
+      subscriptionOffers: subscriptionOffers
+          .map((SK2SubscriptionOfferMessage offer) => offer.convertFromPigeon())
+          .toList(),
+      commitmentInfo: commitmentInfo?.convertFromPigeon(),
+    );
+  }
 }
 
 extension on SK2SubscriptionInfoMessage {
@@ -158,6 +280,9 @@ extension on SK2SubscriptionInfoMessage {
           .map((SK2SubscriptionOfferMessage offer) => offer.convertFromPigeon())
           .toList(),
       subscriptionPeriod: subscriptionPeriod.convertFromPigeon(),
+      pricingTerms: pricingTerms
+          ?.map((SK2PricingTermsMessage terms) => terms.convertFromPigeon())
+          .toList(),
     );
   }
 }
@@ -290,6 +415,7 @@ class SK2ProductPurchaseOptions {
     this.promotionalOffer,
     this.winBackOfferId,
     this.introductoryOfferEligibilityCompactJWS,
+    this.billingPlanType,
   });
 
   /// Sets a UUID to associate the purchase with an account in your system.
@@ -310,6 +436,11 @@ class SK2ProductPurchaseOptions {
   /// See [Sk2PurchaseParam.introductoryOfferEligibilityCompactJWS].
   final String? introductoryOfferEligibilityCompactJWS;
 
+  /// Selects which billing plan to purchase.
+  ///
+  /// See [Sk2PurchaseParam.billingPlanType].
+  final SK2BillingPlanType? billingPlanType;
+
   /// Convert to pigeon representation [SK2ProductPurchaseOptionsMessage].
   SK2ProductPurchaseOptionsMessage convertToPigeon() {
     return SK2ProductPurchaseOptionsMessage(
@@ -318,6 +449,7 @@ class SK2ProductPurchaseOptions {
       winBackOfferId: winBackOfferId,
       promotionalOffer: promotionalOffer,
       introductoryOfferEligibilityCompactJWS: introductoryOfferEligibilityCompactJWS,
+      billingPlanType: billingPlanType?.convertToPigeon(),
     );
   }
 }

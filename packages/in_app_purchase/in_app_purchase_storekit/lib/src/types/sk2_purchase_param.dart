@@ -17,6 +17,7 @@ class Sk2PurchaseParam extends PurchaseParam {
     this.winBackOfferId,
     this.promotionalOffer,
     this.introductoryOfferEligibilityCompactJWS,
+    this.billingPlanType,
   });
 
   /// Creates a [Sk2PurchaseParam] from a [ProductDetails] and a [SK2SubscriptionOffer].
@@ -83,4 +84,20 @@ class Sk2PurchaseParam extends PurchaseParam {
   /// Available on iOS 15.0+ and macOS 12.0+; the underlying StoreKit API is
   /// back deployed, so no additional OS version check is required.
   final String? introductoryOfferEligibilityCompactJWS;
+
+  /// Which billing plan to purchase.
+  ///
+  /// When null the default, up-front plan is purchased.
+  /// [SK2BillingPlanType.monthly] buys a yearly subscription as monthly
+  /// payments under a 12-month commitment, and is forwarded to StoreKit as
+  /// [`Product.PurchaseOption.billingPlanType(_:)`](https://developer.apple.com/documentation/storekit/product/purchaseoption/billingplantype(_:)).
+  ///
+  /// A monthly billing plan must be configured for the subscription in App
+  /// Store Connect, and is not offered in every storefront. Check
+  /// [SK2SubscriptionInfo.pricingTerms] for an [SK2BillingPlanType.monthly]
+  /// entry before offering it; when the plan is unavailable StoreKit falls
+  /// back to the up-front plan.
+  ///
+  /// Requires iOS 26.4+ or macOS 26.4+; it is ignored on earlier versions.
+  final SK2BillingPlanType? billingPlanType;
 }
