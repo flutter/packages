@@ -481,7 +481,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 
 - (void)picker:(PHPickerViewController *)picker
     didFinishPicking:(NSArray<PHPickerResult *> *)results API_AVAILABLE(ios(14)) {
-  [self processPickerItems:results fromPicker:picker];
+  [self processPickerItems:(NSArray<id<FIPPickerItem>> *)results fromPicker:picker];
 }
 
 - (void)processPickerItems:(NSArray<id<FIPPickerItem>> *)results
