@@ -1016,6 +1016,24 @@ private let hlsAudioTestURI =
     player.disposeWithError(&error)
   }
 
+  @Test func validFrameDurationWithPositiveTime() {
+    let duration = CMTimeMake(value: 1, timescale: 30)
+    #expect(FVPIsValidFrameDuration(duration))
+  }
+
+  @Test func validFrameDurationWithZeroTime() {
+    #expect(!FVPIsValidFrameDuration(CMTime.zero))
+  }
+
+  @Test func validFrameDurationWithInvalidTime() {
+    #expect(!FVPIsValidFrameDuration(CMTime.invalid))
+  }
+
+  @Test func validFrameDurationWithNegativeTime() {
+    let duration = CMTimeMake(value: -1, timescale: 30)
+    #expect(!FVPIsValidFrameDuration(duration))
+  }
+
   // MARK: - Helper Methods
 
   /// Creates a plugin with the given dependencies, and default stubs for any that aren't provided,

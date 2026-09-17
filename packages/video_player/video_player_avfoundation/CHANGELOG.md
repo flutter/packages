@@ -1,3 +1,7 @@
+## 2.12.1
+
+* Fixes a crash caused by a videoTrack that has a zero-duration minFrameDuration when creating a AVMutableVideoComposition.
+
 ## 2.12.0
 
 * Routes video over AirPlay when an external screen is active, by setting
