@@ -1519,6 +1519,15 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
               isForMainFrame: request.isForMainFrame,
             );
           },
+      onCreateWindow: (_, String url) {
+        final CreateWindowCallback? callback = weakThis.target?._onCreateWindow;
+        if (callback != null) {
+          callback(url);
+        } else {
+          // Upstream default: load new-window URLs in the same WebView.
+          weakThis.target?._handleNavigation(url, isForMainFrame: true);
+        }
+      },
       urlLoading: (_, android_webview.WebView webView, String url) {
         weakThis.target?._handleNavigation(url, isForMainFrame: true);
       },
@@ -1627,6 +1636,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   ProgressCallback? _onProgress;
   WebResourceErrorCallback? _onWebResourceError;
   NavigationRequestCallback? _onNavigationRequest;
+  CreateWindowCallback? _onCreateWindow;
   LoadRequestCallback? _onLoadRequest;
   UrlChangeCallback? _onUrlChange;
   HttpAuthRequestCallback? _onHttpAuthRequest;
@@ -1670,6 +1680,11 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   Future<void> setOnNavigationRequest(NavigationRequestCallback onNavigationRequest) async {
     _onNavigationRequest = onNavigationRequest;
     return _webViewClient.setSynchronousReturnValueForShouldOverrideUrlLoading(true);
+  }
+
+  @override
+  Future<void> setOnCreateWindow(CreateWindowCallback onCreateWindow) async {
+    _onCreateWindow = onCreateWindow;
   }
 
   @override
