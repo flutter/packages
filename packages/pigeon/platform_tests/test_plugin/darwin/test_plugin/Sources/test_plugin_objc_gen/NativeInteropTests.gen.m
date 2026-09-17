@@ -53,29 +53,29 @@ id objc_retainBlock(id);
   weakSelfBlock = strongSelfBlock;                                                               \
   return strongSelfBlock;
 
-__attribute__((visibility("default"))) __attribute__((used))
-Protocol *_julz8q_NativeInteropFlutterIntegrationCoreApiBridge(void) {
+__attribute__((visibility("default"))) __attribute__((used)) Protocol *
+_julz8q_NativeInteropFlutterIntegrationCoreApiBridge(void) {
   return @protocol(NativeInteropFlutterIntegrationCoreApiBridge);
 }
 
 typedef id (^_ProtocolTrampoline)(void *sel, id arg1, id arg2);
 __attribute__((visibility("default"))) __attribute__((used)) id _julz8q_protocolTrampoline_zi5eed(
     id target, void *sel, id arg1, id arg2) {
-  return ((_ProtocolTrampoline)((id (*)(id, SEL, SEL))objc_msgSend)(
+  return ((_ProtocolTrampoline)((id(*)(id, SEL, SEL))objc_msgSend)(
       target, @selector(getDOBJCDartProtocolMethodForSelector:), sel))(sel, arg1, arg2);
 }
 
 typedef id (^_ProtocolTrampoline_1)(void *sel, id arg1);
 __attribute__((visibility("default"))) __attribute__((used)) id _julz8q_protocolTrampoline_xr62hr(
     id target, void *sel, id arg1) {
-  return ((_ProtocolTrampoline_1)((id (*)(id, SEL, SEL))objc_msgSend)(
+  return ((_ProtocolTrampoline_1)((id(*)(id, SEL, SEL))objc_msgSend)(
       target, @selector(getDOBJCDartProtocolMethodForSelector:), sel))(sel, arg1);
 }
 
 typedef id (^_ProtocolTrampoline_2)(void *sel, id arg1, id arg2, id arg3, id arg4);
 __attribute__((visibility("default"))) __attribute__((used)) id _julz8q_protocolTrampoline_qfyidt(
     id target, void *sel, id arg1, id arg2, id arg3, id arg4) {
-  return ((_ProtocolTrampoline_2)((id (*)(id, SEL, SEL))objc_msgSend)(
+  return ((_ProtocolTrampoline_2)((id(*)(id, SEL, SEL))objc_msgSend)(
       target, @selector(getDOBJCDartProtocolMethodForSelector:), sel))(sel, arg1, arg2, arg3, arg4);
 }
 
@@ -238,7 +238,7 @@ _julz8q_wrapBlockingBlock_bklti2(int64_t port, DOBJC_Context *ctx,
 typedef void (^_ProtocolTrampoline_3)(void *sel, id arg1, id arg2, id arg3);
 __attribute__((visibility("default"))) __attribute__((used)) void _julz8q_protocolTrampoline_bklti2(
     id target, void *sel, id arg1, id arg2, id arg3) {
-  return ((_ProtocolTrampoline_3)((id (*)(id, SEL, SEL))objc_msgSend)(
+  return ((_ProtocolTrampoline_3)((id(*)(id, SEL, SEL))objc_msgSend)(
       target, @selector(getDOBJCDartProtocolMethodForSelector:), sel))(sel, arg1, arg2, arg3);
 }
 
@@ -297,7 +297,7 @@ _julz8q_wrapBlockingBlock_18v1jvf(int64_t port, DOBJC_Context *ctx,
 typedef void (^_ProtocolTrampoline_4)(void *sel, id arg1);
 __attribute__((visibility("default"))) __attribute__((used)) void
 _julz8q_protocolTrampoline_18v1jvf(id target, void *sel, id arg1) {
-  return ((_ProtocolTrampoline_4)((id (*)(id, SEL, SEL))objc_msgSend)(
+  return ((_ProtocolTrampoline_4)((id(*)(id, SEL, SEL))objc_msgSend)(
       target, @selector(getDOBJCDartProtocolMethodForSelector:), sel))(sel, arg1);
 }
 
@@ -360,7 +360,7 @@ _julz8q_wrapBlockingBlock_jk1ljc(int64_t port, DOBJC_Context *ctx,
 typedef void (^_ProtocolTrampoline_5)(void *sel, id arg1, id arg2);
 __attribute__((visibility("default"))) __attribute__((used)) void _julz8q_protocolTrampoline_jk1ljc(
     id target, void *sel, id arg1, id arg2) {
-  return ((_ProtocolTrampoline_5)((id (*)(id, SEL, SEL))objc_msgSend)(
+  return ((_ProtocolTrampoline_5)((id(*)(id, SEL, SEL))objc_msgSend)(
       target, @selector(getDOBJCDartProtocolMethodForSelector:), sel))(sel, arg1, arg2);
 }
 #undef BLOCKING_BLOCK_IMPL

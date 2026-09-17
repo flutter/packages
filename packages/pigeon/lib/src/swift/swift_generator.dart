@@ -1592,7 +1592,8 @@ if (wrapped == nil) {
             isAsynchronous: method.isAsynchronous,
             isAsynchronousCallback: method.isAsynchronousCallback,
             swiftFunction: method.swiftFunction,
-            isCompletionClosureSendable: !generatorOptions.useFfi,
+            isCompletionClosureSendable:
+                !generatorOptions.useFfi && method.taskQueueType == .serialBackgroundThread,
             ffiUserApi: generatorOptions.useFfi,
           ),
         );
@@ -1621,9 +1622,7 @@ if (wrapped == nil) {
           r'let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""',
         );
         String? serialBackgroundQueue;
-        if (api.methods.any(
-          (Method m) => m.taskQueueType == TaskQueueType.serialBackgroundThread,
-        )) {
+        if (api.methods.any((Method m) => m.taskQueueType == .serialBackgroundThread)) {
           serialBackgroundQueue = 'taskQueue';
           // TODO(stuartmorgan): Remove the ? once macOS supports task queues
           // and this is no longer an optional protocol method.
@@ -1647,7 +1646,7 @@ if (wrapped == nil) {
             isAsynchronousCallback: method.isAsynchronousCallback,
             swiftFunction: method.swiftFunction,
             documentationComments: method.documentationComments,
-            serialBackgroundQueue: method.taskQueueType == TaskQueueType.serialBackgroundThread
+            serialBackgroundQueue: method.taskQueueType == .serialBackgroundThread
                 ? serialBackgroundQueue
                 : null,
           );
@@ -4038,11 +4037,6 @@ String _getMethodSignature({
   }
 
   if (isAsynchronous) {
-    // Only applied to completion closures that the client *receives* (host API
-    // methods and ProxyApi delegate methods), where `@Sendable` grants the
-    // implementation permission to reply from another queue. It must not be
-    // applied to closures the client *supplies*, because a `@Sendable` closure
-    // cannot access main-actor state, which would break existing callers.
     final sendablePrefix = isCompletionClosureSendable ? '@Sendable ' : '';
     final completion =
         'completion: @escaping $sendablePrefix(Result<$returnTypeString, $errorTypeName>) -> Void';

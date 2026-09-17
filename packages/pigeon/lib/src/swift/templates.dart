@@ -90,9 +90,6 @@ String instanceManagerTemplate(InternalSwiftOptions options) {
 /// again.
 ///
 /// Accessing and inserting to an InstanceManager is thread safe.
-///
-/// Thread safety is provided by `lockQueue` rather than by the type system, so
-/// the `Sendable` conformance is `@unchecked`.
 final class ${swiftInstanceManagerClassName(options)}: @unchecked Sendable {
   // Identifiers are locked to a specific range to avoid collisions with objects
   // created simultaneously from Dart.
