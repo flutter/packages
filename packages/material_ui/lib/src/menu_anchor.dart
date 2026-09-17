@@ -221,7 +221,7 @@ class _TweenCurve extends Curve {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.0.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -236,7 +236,7 @@ class _TweenCurve extends Curve {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.1.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -249,7 +249,7 @@ class _TweenCurve extends Curve {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.3.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.3.dart#body}
 ///
 /// </callout-box>
 ///
@@ -282,6 +282,7 @@ class MenuAnchor extends StatefulWidget {
     this.onAnimationStatusChanged,
     required this.menuChildren,
     this.builder,
+    this.semanticLabel,
     this.child,
   });
 
@@ -307,7 +308,7 @@ class MenuAnchor extends StatefulWidget {
   /// Defaults to the ambient [MenuThemeData.style].
   final MenuStyle? style;
 
-  /// {@template flutter.material.MenuAnchor.alignmentOffset}
+  /// {@template material_ui.MenuAnchor.alignmentOffset}
   /// The offset of the menu relative to the alignment origin determined by
   /// [MenuStyle.alignment] on the [style] attribute and the ambient
   /// [Directionality].
@@ -338,7 +339,7 @@ class MenuAnchor extends StatefulWidget {
   /// surrounds if it moves because of view insets changes.
   final LayerLink? layerLink;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
@@ -460,7 +461,7 @@ class MenuAnchor extends StatefulWidget {
   /// A list of children containing the menu items that are the contents of the
   /// menu surrounded by this [MenuAnchor].
   ///
-  /// {@macro flutter.material.MenuBar.shortcuts_note}
+  /// {@macro material_ui.MenuBar.shortcuts_note}
   final List<Widget> menuChildren;
 
   /// The widget that this [MenuAnchor] surrounds.
@@ -474,6 +475,11 @@ class MenuAnchor extends StatefulWidget {
   /// If provided, the builder will be called each time the menu is opened or
   /// closed.
   final MenuAnchorChildBuilder? builder;
+
+  /// The semantic label of the menu.
+  ///
+  /// Defaults to null.
+  final String? semanticLabel;
 
   /// The optional child to be passed to the [builder].
   ///
@@ -714,6 +720,32 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
   }
 
   Widget _buildOverlay(BuildContext context, RawMenuOverlayInfo position) {
+    Widget submenu = _Submenu(
+      fadeAnimation: opacityAnimation,
+      heightAnimation: heightAnimation,
+      layerLink: widget.layerLink,
+      consumeOutsideTaps: widget.consumeOutsideTap,
+      menuScopeNode: _menuScopeNode,
+      menuStyle: widget.style,
+      clipBehavior: widget.clipBehavior,
+      menuChildren: _menuChildren,
+      crossAxisUnconstrained: widget.crossAxisUnconstrained,
+      menuPosition: position,
+      anchor: this,
+      alignmentOffset: widget.alignmentOffset ?? Offset.zero,
+      reservedPadding: widget.reservedPadding ?? const EdgeInsets.all(_kMenuViewPadding),
+    );
+
+    // Only inject the semantics node if a label is provided
+    if (widget.semanticLabel != null) {
+      submenu = Semantics(
+        container: true,
+        explicitChildNodes: true,
+        label: widget.semanticLabel,
+        child: submenu,
+      );
+    }
+
     // ExcludeSemantics, ExcludeFocus, and IgnorePointer are used to effectively
     // disable all interactions with the menu while it is closing.
     //
@@ -724,24 +756,7 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
       excluding: isClosingOrClosed,
       child: IgnorePointer(
         ignoring: isClosingOrClosed,
-        child: ExcludeFocus(
-          excluding: isClosingOrClosed,
-          child: _Submenu(
-            fadeAnimation: opacityAnimation,
-            heightAnimation: heightAnimation,
-            layerLink: widget.layerLink,
-            consumeOutsideTaps: widget.consumeOutsideTap,
-            menuScopeNode: _menuScopeNode,
-            menuStyle: widget.style,
-            clipBehavior: widget.clipBehavior,
-            menuChildren: _menuChildren,
-            crossAxisUnconstrained: widget.crossAxisUnconstrained,
-            menuPosition: position,
-            anchor: this,
-            alignmentOffset: widget.alignmentOffset ?? Offset.zero,
-            reservedPadding: widget.reservedPadding ?? const EdgeInsets.all(_kMenuViewPadding),
-          ),
-        ),
+        child: ExcludeFocus(excluding: isClosingOrClosed, child: submenu),
       ),
     );
   }
@@ -819,7 +834,7 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
 /// [SubmenuButton.onOpen], and [SubmenuButton.onClose] are called on the
 /// corresponding [SubmenuButton] child of the menu bar.
 ///
-/// {@template flutter.material.MenuBar.shortcuts_note}
+/// {@template material_ui.MenuBar.shortcuts_note}
 /// Menus using [MenuItemButton] can have a [SingleActivator] or
 /// [CharacterActivator] assigned to them as their [MenuItemButton.shortcut],
 /// which will display an appropriate shortcut hint. Even though the shortcut
@@ -845,12 +860,12 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_bar.0.dart}
+/// {@example /example/lib/menu_anchor/menu_bar.0.dart#body}
 ///
 /// </callout-box>
 /// {@endtemplate}
 ///
-/// {@macro flutter.material.MenuAcceleratorLabel.accelerator_sample}
+/// {@macro material_ui.MenuAcceleratorLabel.accelerator_sample}
 ///
 /// See also:
 ///
@@ -886,7 +901,7 @@ class MenuBar extends StatelessWidget {
   /// Defaults to the ambient [MenuThemeData.style].
   final MenuStyle? style;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;
@@ -901,7 +916,7 @@ class MenuBar extends StatelessWidget {
   /// incorrect behaviors. Whenever the menus list is modified, a new list
   /// object must be provided.
   ///
-  /// {@macro flutter.material.MenuBar.shortcuts_note}
+  /// {@macro material_ui.MenuBar.shortcuts_note}
   final List<Widget> children;
 
   @override
@@ -937,7 +952,7 @@ class MenuBar extends StatelessWidget {
 /// part of a [MenuBar], but may be used independently, or as part of a menu
 /// created with a [MenuAnchor].
 ///
-/// {@macro flutter.material.MenuBar.shortcuts_note}
+/// {@macro material_ui.MenuBar.shortcuts_note}
 ///
 /// See also:
 ///
@@ -1012,7 +1027,7 @@ class MenuItemButton extends StatefulWidget {
 
   /// The optional shortcut that selects this [MenuItemButton].
   ///
-  /// {@macro flutter.material.MenuBar.shortcuts_note}
+  /// {@macro material_ui.MenuBar.shortcuts_note}
   final MenuSerializableShortcut? shortcut;
 
   /// An optional Semantics label, applied to the entire [MenuItemButton].
@@ -1040,10 +1055,10 @@ class MenuItemButton extends StatefulWidget {
   /// Null by default.
   final ButtonStyle? style;
 
-  /// {@macro flutter.material.inkwell.statesController}
+  /// {@macro material_ui.inkwell.statesController}
   final MaterialStatesController? statesController;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;
@@ -1054,7 +1069,7 @@ class MenuItemButton extends StatefulWidget {
   /// An optional icon to display after the [child] label.
   final Widget? trailingIcon;
 
-  /// {@template flutter.material.menu_anchor.closeOnActivate}
+  /// {@template material_ui.menu_anchor.closeOnActivate}
   /// Determines if the menu will be closed when a [MenuItemButton]
   /// is pressed.
   ///
@@ -1064,7 +1079,7 @@ class MenuItemButton extends StatefulWidget {
 
   /// The direction in which the menu item expands.
   ///
-  /// If the menu item button is a descendent of [MenuAnchor] or [MenuBar], then
+  /// If the menu item button is a descendant of [MenuAnchor] or [MenuBar], then
   /// this property is ignored.
   ///
   /// If [overflowAxis] is [Axis.vertical], the menu will be expanded vertically.
@@ -1091,9 +1106,9 @@ class MenuItemButton extends StatefulWidget {
 
   /// Defines the button's default appearance.
   ///
-  /// {@macro flutter.material.text_button.default_style_of}
+  /// {@macro material_ui.text_button.default_style_of}
   ///
-  /// {@macro flutter.material.text_button.material3_defaults}
+  /// {@macro material_ui.text_button.material3_defaults}
   ButtonStyle defaultStyleOf(BuildContext context) {
     return _MenuButtonDefaultsM3(context);
   }
@@ -1369,7 +1384,7 @@ class _MenuItemButtonState extends State<MenuItemButton> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/checkbox_menu_button.0.dart}
+/// {@example /example/lib/menu_anchor/checkbox_menu_button.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1474,7 +1489,7 @@ class CheckboxMenuButton extends StatelessWidget {
 
   /// The optional shortcut that selects this [MenuItemButton].
   ///
-  /// {@macro flutter.material.MenuBar.shortcuts_note}
+  /// {@macro material_ui.MenuBar.shortcuts_note}
   final MenuSerializableShortcut? shortcut;
 
   /// Customizes this button's appearance.
@@ -1488,10 +1503,10 @@ class CheckboxMenuButton extends StatelessWidget {
   /// Null by default.
   final ButtonStyle? style;
 
-  /// {@macro flutter.material.inkwell.statesController}
+  /// {@macro material_ui.inkwell.statesController}
   final MaterialStatesController? statesController;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;
@@ -1499,7 +1514,7 @@ class CheckboxMenuButton extends StatelessWidget {
   /// An optional icon to display after the [child] label.
   final Widget? trailingIcon;
 
-  /// {@macro flutter.material.menu_anchor.closeOnActivate}
+  /// {@macro material_ui.menu_anchor.closeOnActivate}
   final bool closeOnActivate;
 
   /// The widget displayed in the center of this button.
@@ -1571,7 +1586,7 @@ class CheckboxMenuButton extends StatelessWidget {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/radio_menu_button.0.dart}
+/// {@example /example/lib/menu_anchor/radio_menu_button.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1678,7 +1693,7 @@ class RadioMenuButton<T> extends StatelessWidget {
 
   /// The optional shortcut that selects this [MenuItemButton].
   ///
-  /// {@macro flutter.material.MenuBar.shortcuts_note}
+  /// {@macro material_ui.MenuBar.shortcuts_note}
   final MenuSerializableShortcut? shortcut;
 
   /// Customizes this button's appearance.
@@ -1692,10 +1707,10 @@ class RadioMenuButton<T> extends StatelessWidget {
   /// Null by default.
   final ButtonStyle? style;
 
-  /// {@macro flutter.material.inkwell.statesController}
+  /// {@macro material_ui.inkwell.statesController}
   final MaterialStatesController? statesController;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;
@@ -1703,7 +1718,7 @@ class RadioMenuButton<T> extends StatelessWidget {
   /// An optional icon to display after the [child] label.
   final Widget? trailingIcon;
 
-  /// {@macro flutter.material.menu_anchor.closeOnActivate}
+  /// {@macro material_ui.menu_anchor.closeOnActivate}
   final bool closeOnActivate;
 
   /// The widget displayed in the center of this button.
@@ -1860,7 +1875,7 @@ class SubmenuButton extends StatefulWidget {
   /// top of the [MenuAnchor] region.
   final Offset? alignmentOffset;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
@@ -1868,7 +1883,7 @@ class SubmenuButton extends StatefulWidget {
   /// {@macro flutter.widgets.Focus.focusNode}
   final FocusNode? focusNode;
 
-  /// {@macro flutter.material.inkwell.statesController}
+  /// {@macro material_ui.inkwell.statesController}
   final MaterialStatesController? statesController;
 
   /// An optional icon to display before the [child].
@@ -1947,9 +1962,9 @@ class SubmenuButton extends StatefulWidget {
 
   /// Defines the button's default appearance.
   ///
-  /// {@macro flutter.material.text_button.default_style_of}
+  /// {@macro material_ui.text_button.default_style_of}
   ///
-  /// {@macro flutter.material.text_button.material3_defaults}
+  /// {@macro material_ui.text_button.material3_defaults}
   ButtonStyle defaultStyleOf(BuildContext context) {
     return _MenuButtonDefaultsM3(context);
   }
@@ -2910,7 +2925,7 @@ class MenuAcceleratorCallbackBinding extends InheritedWidget {
 /// The type of builder function used for building a [MenuAcceleratorLabel]'s
 /// [MenuAcceleratorLabel.builder] function.
 ///
-/// {@template flutter.material.menu_anchor.menu_accelerator_child_builder.args}
+/// {@template material_ui.menu_anchor.menu_accelerator_child_builder.args}
 /// The arguments to the function are as follows:
 ///
 /// * The `context` supplies the [BuildContext] to use.
@@ -2959,7 +2974,7 @@ typedef MenuAcceleratorChildBuilder =
 /// your own custom menu item type that takes a [MenuAcceleratorLabel], it is
 /// not necessary to provide one.
 ///
-/// {@template flutter.material.MenuAcceleratorLabel.accelerator_sample}
+/// {@template material_ui.MenuAcceleratorLabel.accelerator_sample}
 /// <callout-box>
 ///
 /// This example shows a [MenuBar] that handles keyboard
@@ -2973,7 +2988,7 @@ typedef MenuAcceleratorChildBuilder =
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/menu_anchor/menu_accelerator_label.0.dart}
+/// {@example /example/lib/menu_anchor/menu_accelerator_label.0.dart#body}
 ///
 /// </callout-box>
 /// {@endtemplate}
@@ -2988,7 +3003,7 @@ class MenuAcceleratorLabel extends StatefulWidget {
   /// The label string provides the label text, as well as the possible
   /// characters which could be used as accelerators in the menu system.
   ///
-  /// {@template flutter.material.menu_anchor.menu_accelerator_label.label}
+  /// {@template material_ui.menu_anchor.menu_accelerator_label.label}
   /// To indicate which letters in the label are to be used as accelerators, add
   /// an "&" character before the character in the string. If more than one
   /// character has an "&" in front of it, then the characters appearing earlier
@@ -3021,7 +3036,7 @@ class MenuAcceleratorLabel extends StatefulWidget {
   /// [TextSpan]s for rendering the label with an underscore under the selected
   /// accelerator for the label when accelerators have been activated.
   ///
-  /// {@macro flutter.material.menu_anchor.menu_accelerator_child_builder.args}
+  /// {@macro material_ui.menu_anchor.menu_accelerator_child_builder.args}
   ///
   /// When writing the builder function, it's not necessary to take the current
   /// platform into account. On platforms which don't support accelerators (e.g.
@@ -3031,7 +3046,7 @@ class MenuAcceleratorLabel extends StatefulWidget {
 
   /// Whether [label] contains an accelerator definition.
   ///
-  /// {@macro flutter.material.menu_anchor.menu_accelerator_label.label}
+  /// {@macro material_ui.menu_anchor.menu_accelerator_label.label}
   bool get hasAccelerator => RegExp(r'&(?!([&\s]|$))').hasMatch(label);
 
   /// Serves as the default value for [builder], rendering the label as a
@@ -3039,7 +3054,7 @@ class MenuAcceleratorLabel extends StatefulWidget {
   /// with an underscore under the selected accelerator for the label when the
   /// [index] is non-negative, and a [Text] widget when the [index] is negative.
   ///
-  /// {@macro flutter.material.menu_anchor.menu_accelerator_child_builder.args}
+  /// {@macro material_ui.menu_anchor.menu_accelerator_child_builder.args}
   static Widget defaultLabelBuilder(BuildContext context, String label, int index) {
     if (index < 0) {
       return Text(label);
@@ -3068,7 +3083,7 @@ class MenuAcceleratorLabel extends StatefulWidget {
   /// If [setIndex] is supplied, it will be called before this function returns
   /// with the index in the returned string of the accelerator character.
   ///
-  /// {@macro flutter.material.menu_anchor.menu_accelerator_label.label}
+  /// {@macro material_ui.menu_anchor.menu_accelerator_label.label}
   static String stripAcceleratorMarkers(String label, {void Function(int index)? setIndex}) {
     var quotedAmpersands = 0;
     final displayLabel = StringBuffer();
@@ -3627,7 +3642,7 @@ class _MenuPanel extends StatefulWidget {
   /// The menu style that has all the attributes for this menu panel.
   final MenuStyle? menuStyle;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;

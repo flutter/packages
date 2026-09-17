@@ -939,7 +939,7 @@ typedef TabValueChanged<T> = void Function(T value, int index);
 /// Typically created as the [AppBar.bottom] part of an [AppBar] and in
 /// conjunction with a [TabBarView].
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=POtoEH-5l40}
+/// Learn more about [TabBar] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=POtoEH-5l40).
 ///
 /// If a [TabController] is not provided, then a [DefaultTabController] ancestor
 /// must be provided instead. The tab controller's [TabController.length] must
@@ -959,7 +959,7 @@ typedef TabValueChanged<T> = void Function(T value, int index);
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/tabs/tab_bar.0.dart}
+/// {@example /example/lib/tabs/tab_bar.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -973,7 +973,7 @@ typedef TabValueChanged<T> = void Function(T value, int index);
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/tabs/tab_bar.1.dart}
+/// {@example /example/lib/tabs/tab_bar.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -987,7 +987,7 @@ typedef TabValueChanged<T> = void Function(T value, int index);
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/tabs/tab_bar.2.dart}
+/// {@example /example/lib/tabs/tab_bar.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1003,7 +1003,7 @@ typedef TabValueChanged<T> = void Function(T value, int index);
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/tabs/tab_bar.3.dart}
+/// {@example /example/lib/tabs/tab_bar.3.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1084,7 +1084,7 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/tabs/tab_bar.2.dart}
+  /// {@example /example/lib/tabs/tab_bar.2.dart#body}
   ///
   /// </callout-box>
   ///
@@ -1362,7 +1362,7 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   /// {@macro flutter.widgets.scrollable.dragStartBehavior}
   final DragStartBehavior dragStartBehavior;
 
-  /// {@template flutter.material.tabs.mouseCursor}
+  /// {@template material_ui.tabs.mouseCursor}
   /// The cursor for a mouse pointer when it enters or is hovering over the
   /// individual tab widgets.
   ///
@@ -1416,7 +1416,7 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/tabs/tab_bar.onHover.dart}
+  /// {@example /example/lib/tabs/tab_bar.onHover.dart#body}
   ///
   /// </callout-box>
   final TabValueChanged<bool>? onHover;
@@ -1442,7 +1442,7 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/tabs/tab_bar.onFocusChange.dart}
+  /// {@example /example/lib/tabs/tab_bar.onFocusChange.dart#body}
   ///
   /// </callout-box>
   final TabValueChanged<bool>? onFocusChange;
@@ -1541,7 +1541,7 @@ class TabBar extends StatefulWidget implements PreferredSizeWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/tabs/tab_bar.indicator_animation.0.dart}
+  /// {@example /example/lib/tabs/tab_bar.indicator_animation.0.dart#body}
   ///
   /// </callout-box>
   ///
@@ -2253,7 +2253,7 @@ class _TabBarState extends State<TabBar> {
 ///
 /// This widget is typically used in conjunction with a [TabBar].
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=POtoEH-5l40}
+/// Learn more about [TabBarView] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=POtoEH-5l40).
 ///
 /// If a [TabController] is not provided, then there must be a [DefaultTabController]
 /// ancestor.
@@ -2305,7 +2305,7 @@ class TabBarView extends StatefulWidget {
   /// {@macro flutter.widgets.pageview.viewportFraction}
   final double viewportFraction;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
@@ -2632,7 +2632,7 @@ class TabPageSelectorIndicator extends StatelessWidget {
 /// Uses [TabPageSelectorIndicator] to display a row of small circular
 /// indicators, one per tab.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=Q628ue9Cq7U}
+/// Learn more about [TabPageSelector] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=Q628ue9Cq7U).
 ///
 /// The selected tab's indicator is highlighted. Often used in conjunction with
 /// a [TabBarView].

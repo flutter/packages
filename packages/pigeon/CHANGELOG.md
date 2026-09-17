@@ -1,3 +1,44 @@
+## 29.0.2
+
+* [swift] Fixes a crash when a Flutter API returns null for a non-null return
+  value and the null arrives as `NSNull`.
+
+## 29.0.1
+
+* [swift] Annotates async `FlutterApi` methods with `@MainActor`.
+
+## 29.0.0
+
+* [swift] [kotlin] Adds experimental support for FFI and JNI.
+* Exposes missing PigeonOptions and language-specific configurations as command-line arguments.
+
+## 28.1.0
+
+* [swift] Adds support for multiple output locations in `swiftOut` and `--swift_out`.
+
+## 28.0.0
+
+* **Breaking Change** Updates Kotlin and Swift generators to generate `suspend` functions and `async` signatures for `@FlutterApi` methods by default, and for `@HostApi` methods annotated with `@async`.
+  * Use `@asyncCallback` if callback-style signatures are required.
+
+## 27.3.2
+
+* [dart] Fixes lint warning from unused codec variable in Dart proxy classes.
+
+## 27.3.1
+
+* Updates `analyzer` dependency to support versions 13 and 14.
+* Updates minimum Dart SDK constraint to 3.11.0.
+
+
+## 27.3.0
+
+* Adds support for sharing constants across platforms.
+
+## 27.2.0
+
+* Adds support for empty data classes.
+
 ## 27.1.2
 
 * Reports a clear error when an input file uses an enhanced enum (one with a

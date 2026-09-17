@@ -14,13 +14,14 @@ import 'package:git/git.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:mockito/mockito.dart';
+import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
 import 'util.dart';
 
 void main() {
-  late MockPlatform platform;
+  late NativePlatform platform;
   late Directory packagesDir;
   late TestProcessRunner processRunner;
   late PublishCommand command;
@@ -36,7 +37,7 @@ void main() {
   }
 
   setUp(() async {
-    platform = MockPlatform(isLinux: true);
+    platform = createMockPlatform(isLinux: true);
     processRunner = TestProcessRunner();
     final GitDir gitDir;
     (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
@@ -1338,7 +1339,7 @@ void main() {
 
   group('credential location', () {
     test('Linux with XDG', () async {
-      platform = MockPlatform(isLinux: true);
+      platform = createMockPlatform(isLinux: true);
       platform.environment['XDG_CONFIG_HOME'] = '/xdghome/config';
       command = PublishCommand(packagesDir, platform: platform);
 
@@ -1346,7 +1347,7 @@ void main() {
     });
 
     test('Linux without XDG', () async {
-      platform = MockPlatform(isLinux: true);
+      platform = createMockPlatform(isLinux: true);
       platform.environment['HOME'] = '/home';
       command = PublishCommand(packagesDir, platform: platform);
 
@@ -1354,7 +1355,7 @@ void main() {
     });
 
     test('macOS', () async {
-      platform = MockPlatform(isMacOS: true);
+      platform = createMockPlatform(isMacOS: true);
       platform.environment['HOME'] = '/Users/someuser';
       command = PublishCommand(packagesDir, platform: platform);
 
@@ -1365,7 +1366,7 @@ void main() {
     });
 
     test('Windows', () async {
-      platform = MockPlatform(isWindows: true);
+      platform = createMockPlatform(isWindows: true);
       platform.environment['APPDATA'] = r'C:\Users\SomeUser\AppData';
       command = PublishCommand(packagesDir, platform: platform);
 

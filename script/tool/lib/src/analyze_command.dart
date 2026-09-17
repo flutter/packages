@@ -321,7 +321,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
     ];
 
     final customCheckRunners = <_CustomLinter>[
-      _CustomLinter(dependencyName: 'dart_code_linter', run: _runDartCodeLinterForPackage),
+      _CustomLinter(dependencyName: 'cognitive_complexity', run: _runCognitiveComplexityForPackage),
     ];
 
     // Skip custom linters during downgrade as metrics are redundant and vulnerable to dependency issues.
@@ -338,7 +338,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
     return errors.isEmpty ? PackageResult.success() : PackageResult.fail(errors);
   }
 
-  /// Retrieves the configured cyclomatic complexity threshold from the local
+  /// Retrieves the configured cognitive complexity threshold from the local
   /// `analysis_options.yaml` if it exists and is configured.
   int? _getLinterThreshold(RepositoryPackage package) {
     final File optionsFile = package.directory.childFile('analysis_options.yaml');
@@ -348,14 +348,11 @@ class AnalyzeCommand extends PackageLoopingCommand {
     try {
       final Object? yaml = loadYaml(optionsFile.readAsStringSync());
       if (yaml is YamlMap) {
-        final Object? linter = yaml['dart_code_linter'];
+        final Object? linter = yaml['cognitive_complexity'];
         if (linter is YamlMap) {
-          final Object? metrics = linter['metrics'];
-          if (metrics is YamlMap) {
-            final Object? complexity = metrics['cyclomatic-complexity'];
-            if (complexity is int) {
-              return complexity;
-            }
+          final Object? threshold = linter['fail-threshold'];
+          if (threshold is int) {
+            return threshold;
           }
         }
       }
@@ -365,23 +362,53 @@ class AnalyzeCommand extends PackageLoopingCommand {
     return null;
   }
 
-  /// Runs the `dart_code_linter` metrics analyzer on the package.
+  bool _isGeneratedDartFile(String filePath) {
+    return filePath.endsWith('.g.dart') ||
+        filePath.endsWith('.mocks.dart') ||
+        filePath.endsWith('.gen.dart');
+  }
+
+  /// Runs the `cognitive_complexity` metrics analyzer on the package.
   ///
-  /// Assumes `dart_code_linter` is present in `dev_dependencies`.
-  Future<List<String>> _runDartCodeLinterForPackage(RepositoryPackage package) async {
+  /// Assumes `cognitive_complexity` is present in `dev_dependencies`.
+  Future<List<String>> _runCognitiveComplexityForPackage(RepositoryPackage package) async {
     if (!package.libDirectory.existsSync()) {
       return <String>[];
     }
-    print('Running dart_code_linter:metrics analysis...');
-    final int linterExitCode = await processRunner.runAndStream(_dartBinaryPath, <String>[
+    final filesToAnalyze = <String>[];
+    for (final FileSystemEntity entity in package.libDirectory.listSync(recursive: true)) {
+      if (entity is File && entity.path.endsWith('.dart') && !_isGeneratedDartFile(entity.path)) {
+        final String relativePath = path.relative(entity.path, from: package.directory.path);
+        filesToAnalyze.add(relativePath.replaceAll(r'\', '/'));
+      }
+    }
+    if (filesToAnalyze.isEmpty) {
+      return <String>[];
+    }
+    filesToAnalyze.sort();
+
+    print('Running cognitive_complexity analysis...');
+    final int? threshold = _getLinterThreshold(package);
+    final args = <String>[
       'run',
-      'dart_code_linter:metrics',
-      'analyze',
-      'lib',
-      '--set-exit-on-violation-level=warning',
-    ], workingDir: package.directory);
+      'cognitive_complexity',
+      if (threshold != null) ...<String>[
+        // --fail-threshold only controls the exit code, while --threshold
+        // controls which functions are printed in the output table (default 0).
+        // Pass both so that only failing functions are printed in CI logs.
+        '--threshold',
+        threshold.toString(),
+        '--fail-threshold',
+        threshold.toString(),
+      ],
+      ...filesToAnalyze,
+    ];
+    final int linterExitCode = await processRunner.runAndStream(
+      _dartBinaryPath,
+      args,
+      workingDir: package.directory,
+    );
     if (linterExitCode != 0) {
-      final int? threshold = _getLinterThreshold(package);
       final thresholdMessage = threshold != null ? ' (configured threshold: $threshold)' : '';
       return <String>[
         'Metrics violations found$thresholdMessage. See the package\'s local "analysis_options.yaml" for configured thresholds.',

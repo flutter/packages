@@ -103,9 +103,10 @@ class LoggingThumbShape extends SliderComponentShape {
 
 // A value indicator shape to log labelPainter text.
 class LoggingValueIndicatorShape extends SliderComponentShape {
-  LoggingValueIndicatorShape(this.logLabel);
+  LoggingValueIndicatorShape(this.logLabel, [this.logPainter]);
 
   final List<InlineSpan> logLabel;
+  final List<TextPainter>? logPainter;
 
   @override
   Size getPreferredSize(bool isEnabled, bool isDiscrete) {
@@ -128,6 +129,7 @@ class LoggingValueIndicatorShape extends SliderComponentShape {
     required Size sizeWithOverflow,
   }) {
     logLabel.add(labelPainter.text!);
+    logPainter?.add(labelPainter);
   }
 }
 
@@ -3999,7 +4001,7 @@ void main() {
         ),
       ),
     );
-    // Initially, the slider does not have focus whe enabled and not tapped.
+    // Initially, the slider does not have focus when enabled and not tapped.
     await tester.pumpAndSettle();
     expect(value, equals(0.5));
     // Get FocusNode from the state of the slider to include auto-generated FocusNode.
@@ -5619,7 +5621,7 @@ void main() {
     expect(log.last, const Offset(400.0, 300.0));
   });
 
-  // Regression test for hhttps://github.com/flutter/flutter/issues/161805
+  // Regression test for https://github.com/flutter/flutter/issues/161805
   testWidgets('Discrete Slider does not apply thumb padding in a non-rounded track shape', (
     WidgetTester tester,
   ) async {
@@ -5672,6 +5674,43 @@ void main() {
       ),
     );
     expect(tester.getSize(find.byType(Slider)), Size.zero);
+  });
+
+  testWidgets('Slider label respects horizontal buffer and avoids screen overflow', (
+    WidgetTester tester,
+  ) async {
+    final logPainters = <TextPainter>[];
+    final shape = LoggingValueIndicatorShape(<InlineSpan>[], logPainters);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SliderTheme(
+            data: SliderThemeData(
+              showValueIndicator: ShowValueIndicator.always,
+              valueIndicatorShape: shape,
+            ),
+            child: Slider(
+              value: 0.5,
+              divisions: 10,
+              label:
+                  'A very long label string that exceeds standard screen widths to test clipping behavior',
+              onChanged: (double value) {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final TestGesture gesture = await tester.startGesture(tester.getCenter(find.byType(Slider)));
+    await tester.pumpAndSettle();
+
+    final double screenWidth = tester.view.physicalSize.width / tester.view.devicePixelRatio;
+
+    expect(logPainters, isNotEmpty);
+    expect(logPainters.last.width, lessThanOrEqualTo(screenWidth - 64.0));
+
+    await gesture.up();
   });
 }
 

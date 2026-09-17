@@ -36,7 +36,7 @@ const double _kVelocityThreshold = 1.0;
 
 /// An iOS-style slider.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=ufb4gIPDmEs}
+/// Learn more about [CupertinoSlider] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=ufb4gIPDmEs).
 ///
 /// Used to select from a range of values.
 ///
@@ -60,7 +60,7 @@ const double _kVelocityThreshold = 1.0;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/slider/cupertino_slider.0.dart}
+/// {@example /example/lib/slider/cupertino_slider.0.dart#body}
 ///
 /// </callout-box>
 ///

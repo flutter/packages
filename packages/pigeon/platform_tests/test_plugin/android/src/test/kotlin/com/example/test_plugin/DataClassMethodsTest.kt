@@ -9,16 +9,15 @@ import io.mockk.every
 import io.mockk.mockk
 import java.nio.ByteBuffer
 import java.util.ArrayList
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 internal class DataClassMethodsTest {
 
   @Test
-  fun testNullValues() {
+  fun testNullValues() = runTest {
     val everything = AllNullableTypes()
     val binaryMessenger = mockk<BinaryMessenger>()
     val api = FlutterIntegrationCoreApi(binaryMessenger)
@@ -35,14 +34,8 @@ internal class DataClassMethodsTest {
           reply.reply(replyData)
         }
 
-    var didCall = false
-    api.echoAllNullableTypes(everything) { result ->
-      didCall = true
-      val output = (result.getOrNull())?.let { it == everything }
-      assertNotNull(output)
-    }
-
-    assertTrue(didCall)
+    val res = api.echoAllNullableTypes(everything)
+    assertEquals(everything, res)
   }
 
   @Test
@@ -90,7 +83,7 @@ internal class DataClassMethodsTest {
   }
 
   @Test
-  fun testHasValues() {
+  fun testHasValues() = runTest {
     val everything = getFullyPopulatedAllNullableTypes()
     val binaryMessenger = mockk<BinaryMessenger>()
     val api = FlutterIntegrationCoreApi(binaryMessenger)
@@ -107,13 +100,8 @@ internal class DataClassMethodsTest {
           reply.reply(replyData)
         }
 
-    var didCall = false
-    api.echoAllNullableTypes(everything) {
-      didCall = true
-      assertTrue(everything == it.getOrNull())
-    }
-
-    assertTrue(didCall)
+    val res = api.echoAllNullableTypes(everything)
+    assertEquals(everything, res)
   }
 
   @Test
@@ -302,5 +290,14 @@ internal class DataClassMethodsTest {
     assertEquals(
         "AllNullableTypes(aNullableBool=false, aNullableInt=1234, aNullableInt64=null, aNullableDouble=2.0, aNullableByteArray=[1, 2, 3, 4], aNullable4ByteArray=[1, 2, 3, 4], aNullable8ByteArray=[1, 2, 3, 4], aNullableFloatArray=[0.5, 0.25, 1.5, 1.25], aNullableEnum=TWO, anotherNullableEnum=JUST_IN_CASE, aNullableString=hello, aNullableObject=0, allNullableTypes=null, list=[1, 2, 3], stringList=[string, another one], intList=[1, 2], doubleList=[1.1, 2.2], boolList=[true, false], enumList=[ONE, TWO], objectList=[1, 2, 3], listList=[[string, another one], [string, another one]], mapList=[{hello=1234}, {hello=1234}], recursiveClassList=null, map={hello=1234}, stringMap={hello=you}, intMap={1=0}, enumMap={ONE=FORTY_TWO, TWO=FOUR_HUNDRED_TWENTY_TWO}, objectMap={hello=1234}, listMap={1=[string, another one]}, mapMap={1={}}, recursiveClassMap=null)",
         everything.toString())
+  }
+
+  @Test
+  fun testConstants() {
+    assertEquals("stringConstantValue", aStringConstant)
+    assertEquals("string\\'\\\"\\\$ConstantValue", aStringConstantWithEscapes)
+    assertEquals(42L, anIntConstant)
+    assertEquals(3.14, aDoubleConstant, 0.0)
+    assertEquals(true, aBoolConstant)
   }
 }

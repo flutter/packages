@@ -28,7 +28,7 @@ const double _kIndicatorHeight = 32;
 /// app to navigate between a small number of views, typically between three and
 /// five.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=y9xchtVTtqQ}
+/// Learn more about [NavigationRail] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=y9xchtVTtqQ).
 ///
 /// The navigation rail is meant for layouts with wide viewports, such as a
 /// desktop web or tablet landscape layout. For smaller layouts, like mobile
@@ -57,7 +57,7 @@ const double _kIndicatorHeight = 32;
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/navigation_rail/navigation_rail.0.dart}
+/// {@example /example/lib/navigation_rail/navigation_rail.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -394,7 +394,7 @@ class NavigationRail extends StatefulWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/navigation_rail/navigation_rail.extended_animation.0.dart}
+  /// {@example /example/lib/navigation_rail/navigation_rail.extended_animation.0.dart#body}
   ///
   /// </callout-box>
   static Animation<double> extendedAnimation(BuildContext context) {

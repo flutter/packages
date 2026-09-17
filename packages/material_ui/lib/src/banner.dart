@@ -18,6 +18,8 @@ import 'scaffold.dart';
 import 'text_theme.dart';
 import 'theme.dart';
 
+part 'generated/banner_defaults_m3.g.dart';
+
 // Examples can assume:
 // late BuildContext context;
 
@@ -79,7 +81,7 @@ enum MaterialBannerClosedReason {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/banner/material_banner.0.dart}
+/// {@example /example/lib/banner/material_banner.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -92,7 +94,7 @@ enum MaterialBannerClosedReason {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/banner/material_banner.1.dart}
+/// {@example /example/lib/banner/material_banner.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -501,35 +503,3 @@ class _BannerDefaultsM2 extends MaterialBannerThemeData {
   @override
   TextStyle? get contentTextStyle => _theme.textTheme.bodyMedium;
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - Banner
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _BannerDefaultsM3 extends MaterialBannerThemeData {
-  _BannerDefaultsM3(this.context)
-    : super(elevation: 1.0);
-
-  final BuildContext context;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-  late final TextTheme _textTheme = Theme.of(context).textTheme;
-
-  @override
-  Color? get backgroundColor => _colors.surfaceContainerLow;
-
-  @override
-  Color? get surfaceTintColor => Colors.transparent;
-
-  @override
-  Color? get dividerColor => _colors.outlineVariant;
-
-  @override
-  TextStyle? get contentTextStyle => _textTheme.bodyMedium;
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - Banner

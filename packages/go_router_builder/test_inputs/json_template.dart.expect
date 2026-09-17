@@ -1,5 +1,6 @@
 RouteBase get $jsonTemplateRoute => GoRouteData.$route(
       path: '/',
+      hasOverriddenOnExit: false,
       factory: $JsonTemplateRoute._fromState,
     );
 

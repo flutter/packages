@@ -195,7 +195,7 @@ bool _isInAccessibilityMode(BuildContext context) {
 
 /// An iOS-style alert dialog.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=75CsnyRXf5I}
+/// Learn more about [CupertinoAlertDialog] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=75CsnyRXf5I).
 ///
 /// An alert dialog informs the user about situations that require
 /// acknowledgment. An alert dialog has an optional title, optional content,
@@ -223,7 +223,7 @@ bool _isInAccessibilityMode(BuildContext context) {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/dialog/cupertino_alert_dialog.0.dart}
+/// {@example /example/lib/dialog/cupertino_alert_dialog.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -289,10 +289,21 @@ class CupertinoAlertDialog extends StatefulWidget {
   ///    section when it is long.
   final ScrollController? actionScrollController;
 
-  /// {@macro flutter.material.dialog.insetAnimationDuration}
+  /// {@template cupertino_ui.dialog.insetAnimationDuration}
+  /// The duration of the animation to show when the system keyboard intrudes
+  /// into the space that the dialog is placed in.
+  ///
+  /// Defaults to 100 milliseconds when [Dialog] is used, and [Duration.zero]
+  /// when [Dialog.fullscreen] is used.
+  /// {@endtemplate}
   final Duration insetAnimationDuration;
 
-  /// {@macro flutter.material.dialog.insetAnimationCurve}
+  /// {@template cupertino_ui.dialog.insetAnimationCurve}
+  /// The curve to use for the animation shown when the system keyboard intrudes
+  /// into the space that the dialog is placed in.
+  ///
+  /// Defaults to [Curves.decelerate].
+  /// {@endtemplate}
   final Curve insetAnimationCurve;
 
   @override
@@ -533,7 +544,7 @@ class _CupertinoAlertDialogState extends State<CupertinoAlertDialog> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/dialog/cupertino_popup_surface.0.dart}
+/// {@example /example/lib/dialog/cupertino_popup_surface.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1041,7 +1052,7 @@ class _ActionSheetGestureDetector extends StatelessWidget {
 
 /// An iOS-style action sheet.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=U-ao8p4A82k}
+/// Learn more about [CupertinoActionSheet] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=U-ao8p4A82k).
 ///
 /// An action sheet is a specific style of alert that presents the user
 /// with a set of two or more choices related to the current context.
@@ -1074,7 +1085,7 @@ class _ActionSheetGestureDetector extends StatelessWidget {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro cupertino_ui.dartpad_guide}
 ///
-/// {@example /example/lib/dialog/cupertino_action_sheet.0.dart}
+/// {@example /example/lib/dialog/cupertino_action_sheet.0.dart#body}
 ///
 /// </callout-box>
 ///

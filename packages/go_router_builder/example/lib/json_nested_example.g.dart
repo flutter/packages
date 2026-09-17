@@ -13,8 +13,15 @@ List<RouteBase> get $appRoutes => [$homeRoute];
 RouteBase get $homeRoute => GoRouteData.$route(
   path: '/',
   name: 'Home',
+  hasOverriddenOnExit: false,
   factory: $HomeRoute._fromState,
-  routes: [GoRouteData.$route(path: 'json', factory: $JsonRoute._fromState)],
+  routes: [
+    GoRouteData.$route(
+      path: 'json',
+      hasOverriddenOnExit: false,
+      factory: $JsonRoute._fromState,
+    ),
+  ],
 );
 
 mixin $HomeRoute on GoRouteData {

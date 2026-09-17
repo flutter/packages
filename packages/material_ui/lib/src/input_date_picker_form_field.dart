@@ -147,7 +147,7 @@ class InputDatePickerFormField extends StatefulWidget {
   /// {@macro flutter.widgets.Focus.focusNode}
   final FocusNode? focusNode;
 
-  /// {@macro flutter.material.calendar_date_picker.calendarDelegate}
+  /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
 
   @override
@@ -213,6 +213,7 @@ class _InputDatePickerFormFieldState extends State<InputDatePickerFormField> {
 
   DateTime? _parseDate(String? text) {
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
+
     return widget.calendarDelegate.parseCompactDate(text, localizations);
   }
 
@@ -284,6 +285,7 @@ class _InputDatePickerFormFieldState extends State<InputDatePickerFormField> {
         autofocus: widget.autofocus,
         controller: _controller,
         focusNode: widget.focusNode,
+        inputFormatters: widget.calendarDelegate.keyboardInputFormatters(localizations),
       ),
     );
   }

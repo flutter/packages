@@ -5,15 +5,7 @@
 // reduced-test-set:
 //   This file is run as part of a reduced test set in CI on Mac and Windows
 //   machines.
-// no-shuffle:
-// TODO(122950): Remove this tag once this test's state leaks/test
-// dependencies have been fixed.
-// https://github.com/flutter/flutter/issues/122950
-// Fails with "flutter test --test-randomize-ordering-seed=20230318"
-@Tags(<String>['reduced-test-set', 'no-shuffle'])
-// TODO(188666): Fix web test failures and re-enable. See also:
-// https://github.com/flutter/flutter/issues/71604.
-@TestOn('!chrome')
+@Tags(<String>['reduced-test-set'])
 library;
 
 import 'dart:async';
@@ -2134,6 +2126,8 @@ void main() {
       TargetPlatform.linux,
       TargetPlatform.windows,
     }),
+    skip:
+        isContextMenuProvidedByPlatform, // [intended] only applies to platforms where we supply the context menu.
   );
 
   testWidgets('Swapping controllers should update selection', (WidgetTester tester) async {
@@ -3401,75 +3395,78 @@ void main() {
     ),
   );
 
-  testWidgets('assertion error is not thrown when attempting to drag both selection handles', (
-    WidgetTester tester,
-  ) async {
-    // Regression test for https://github.com/flutter/flutter/issues/168578.
-    final controller = TextEditingController(text: 'abc def ghi');
-    addTearDown(controller.dispose);
+  testWidgets(
+    'assertion error is not thrown when attempting to drag both selection handles',
+    (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/168578.
+      final controller = TextEditingController(text: 'abc def ghi');
+      addTearDown(controller.dispose);
 
-    await tester.pumpWidget(
-      overlay(
-        child: Center(
-          child: TextField(
-            dragStartBehavior: DragStartBehavior.down,
-            controller: controller,
-            style: const TextStyle(fontSize: 10.0),
+      await tester.pumpWidget(
+        overlay(
+          child: Center(
+            child: TextField(
+              dragStartBehavior: DragStartBehavior.down,
+              controller: controller,
+              style: const TextStyle(fontSize: 10.0),
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    // Double tap on 'e' to select 'def'.
-    final Offset ePos = textOffsetToPosition(tester, 5);
-    await tester.tapAt(ePos, pointer: 7);
-    await tester.pump(const Duration(milliseconds: 50));
-    expect(controller.selection.isCollapsed, isTrue);
-    expect(controller.selection.baseOffset, 5);
-    await tester.tapAt(ePos, pointer: 7);
-    await tester.pumpAndSettle();
-    expect(controller.selection.baseOffset, 4);
-    expect(controller.selection.extentOffset, 7);
+      // Double tap on 'e' to select 'def'.
+      final Offset ePos = textOffsetToPosition(tester, 5);
+      await tester.tapAt(ePos, pointer: 7);
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(controller.selection.isCollapsed, isTrue);
+      expect(controller.selection.baseOffset, 5);
+      await tester.tapAt(ePos, pointer: 7);
+      await tester.pumpAndSettle();
+      expect(controller.selection.baseOffset, 4);
+      expect(controller.selection.extentOffset, 7);
 
-    final RenderEditable renderEditable = findRenderEditable(tester);
-    final List<TextSelectionPoint> endpoints = globalize(
-      renderEditable.getEndpointsForSelection(controller.selection),
-      renderEditable,
-    );
-    expect(endpoints.length, 2);
+      final RenderEditable renderEditable = findRenderEditable(tester);
+      final List<TextSelectionPoint> endpoints = globalize(
+        renderEditable.getEndpointsForSelection(controller.selection),
+        renderEditable,
+      );
+      expect(endpoints.length, 2);
 
-    // Drag the end handle to 'g'.
-    final Offset endHandlePos = endpoints[1].point + const Offset(1.0, 1.0);
-    Offset newHandlePos = textOffsetToPosition(tester, 9); // Position of 'g'.
-    final TestGesture endHandleGesture = await tester.startGesture(endHandlePos, pointer: 7);
-    await tester.pump();
-    await endHandleGesture.moveTo(newHandlePos);
-    await tester.pump();
-    expect(controller.selection.baseOffset, 4);
-    expect(controller.selection.extentOffset, 9);
+      // Drag the end handle to 'g'.
+      final Offset endHandlePos = endpoints[1].point + const Offset(1.0, 1.0);
+      Offset newHandlePos = textOffsetToPosition(tester, 9); // Position of 'g'.
+      final TestGesture endHandleGesture = await tester.startGesture(endHandlePos, pointer: 7);
+      await tester.pump();
+      await endHandleGesture.moveTo(newHandlePos);
+      await tester.pump();
+      expect(controller.selection.baseOffset, 4);
+      expect(controller.selection.extentOffset, 9);
 
-    // Attempt to drag the start handle to the start of the text.
-    final Offset startHandlePos = endpoints[0].point + const Offset(1.0, 1.0);
-    newHandlePos = textOffsetToPosition(tester, 0);
-    final TestGesture startHandleGesture = await tester.startGesture(startHandlePos, pointer: 8);
-    await tester.pump();
-    await startHandleGesture.moveTo(newHandlePos);
-    await tester.pump();
-    await startHandleGesture.up();
-    await tester.pump();
+      // Attempt to drag the start handle to the start of the text.
+      final Offset startHandlePos = endpoints[0].point + const Offset(1.0, 1.0);
+      newHandlePos = textOffsetToPosition(tester, 0);
+      final TestGesture startHandleGesture = await tester.startGesture(startHandlePos, pointer: 8);
+      await tester.pump();
+      await startHandleGesture.moveTo(newHandlePos);
+      await tester.pump();
+      await startHandleGesture.up();
+      await tester.pump();
 
-    // Drag the end handle to the end of the text after releasing the start handle.
-    newHandlePos = textOffsetToPosition(tester, 11); // Position of 'i'.
-    await tester.pump();
-    await endHandleGesture.moveTo(newHandlePos);
-    await tester.pump();
-    await endHandleGesture.up();
-    await tester.pump();
+      // Drag the end handle to the end of the text after releasing the start handle.
+      newHandlePos = textOffsetToPosition(tester, 11); // Position of 'i'.
+      await tester.pump();
+      await endHandleGesture.moveTo(newHandlePos);
+      await tester.pump();
+      await endHandleGesture.up();
+      await tester.pump();
 
-    expect(tester.takeException(), isNull);
-    expect(controller.selection.baseOffset, 0);
-    expect(controller.selection.extentOffset, 11);
-  }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+      expect(tester.takeException(), isNull);
+      expect(controller.selection.baseOffset, 0);
+      expect(controller.selection.extentOffset, 11);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+    skip: kIsWeb, // [intended] on web only one selection handle can be dragged at a time.
+  );
 
   testWidgets('Can only drag one selection handle at a time on iOS', (WidgetTester tester) async {
     final controller = TextEditingController(text: 'abc def ghi');
@@ -12738,6 +12735,8 @@ void main() {
     variant: TargetPlatformVariant.all(
       excluding: <TargetPlatform>{TargetPlatform.iOS, TargetPlatform.macOS},
     ),
+    skip:
+        isContextMenuProvidedByPlatform, // [intended] only applies to platforms where we supply the context menu.
   );
 
   testWidgets(
@@ -17749,7 +17748,7 @@ void main() {
       expect(magnifierController, isNotNull);
       expect(magnifierController!.shown, false);
 
-      // Keep draging to select 'one two three four five' while the position continues to
+      // Keep dragging to select 'one two three four five' while the position continues to
       // exceed the `hideBelowThreshold` keeping the magnifier hidden.
       await gesture.moveTo(textOffsetToPosition(tester, 20) + const Offset(0.0, 50.0));
       await tester.pumpAndSettle();

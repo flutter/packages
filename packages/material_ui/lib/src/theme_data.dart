@@ -113,7 +113,7 @@ class Adaptation<T> {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/switch/switch.4.dart}
+  /// {@example /example/lib/switch/switch.4.dart#body}
   ///
   /// </callout-box>
   T adapt(ThemeData theme, T defaultValue) => defaultValue;
@@ -121,7 +121,7 @@ class Adaptation<T> {
 
 /// An interface that defines custom additions to a [ThemeData] object.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=8-szcYzFVao}
+/// Learn more about [ThemeExtension] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=8-szcYzFVao).
 ///
 /// Typically used for custom colors. To use, subclass [ThemeExtension],
 /// define a number of fields (e.g. [Color]s), and implement the [copyWith] and
@@ -137,7 +137,7 @@ class Adaptation<T> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/theme/theme_extension.1.dart}
+/// {@example /example/lib/theme/theme_extension.1.dart#body}
 ///
 /// </callout-box>
 abstract class ThemeExtension<T extends ThemeExtension<T>> {
@@ -194,6 +194,23 @@ enum MaterialTapTargetSize {
   shrinkWrap,
 }
 
+/// Defines the Material Design style variant used by Material components.
+enum StyleVariant {
+  /// The Material Design 3 style variant.
+  material3,
+
+  /// The Material Design 3 Expressive style variant.
+  ///
+  /// Material 3 Expressive support is under development. Apps or components
+  /// that opt into this variant may see visual changes as more Expressive
+  /// features get added.
+  ///
+  /// See also:
+  ///
+  ///  * [Material Design 3 Expressive updates](https://m3.material.io/#9f2db05b-ebbb-47c2-892d-1cca35afa386) for design guidelines.
+  material3Expressive,
+}
+
 /// Defines the configuration of the overall visual [Theme] for a [MaterialApp]
 /// or a widget subtree within the app.
 ///
@@ -227,7 +244,7 @@ enum MaterialTapTargetSize {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/theme_data/theme_data.0.dart}
+/// {@example /example/lib/theme_data/theme_data.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -272,7 +289,7 @@ class ThemeData with Diagnosticable {
   /// When [useSystemColors] is true and the platform supports system colors, then the system colors
   /// will be used to override certain theme colors. The [colorScheme], [textTheme],
   /// [elevatedButtonTheme], [outlinedButtonTheme], [textButtonTheme], [filledButtonTheme], and
-  /// [floatingActionButtonTheme] are overriden by the system colors.
+  /// [floatingActionButtonTheme] are overridden by the system colors.
   ///
   /// See also:
   ///
@@ -1005,7 +1022,7 @@ class ThemeData with Diagnosticable {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/theme/theme_extension.1.dart}
+  /// {@example /example/lib/theme/theme_extension.1.dart#body}
   ///
   /// </callout-box>
   ///
@@ -1176,7 +1193,7 @@ class ThemeData with Diagnosticable {
 
   /// The density value for specifying the compactness of various UI components.
   ///
-  /// {@template flutter.material.themedata.visualDensity}
+  /// {@template material_ui.themedata.visualDensity}
   /// Density, in the context of a UI, is the vertical and horizontal
   /// "compactness" of the elements in the UI. It is unitless, since it means
   /// different things to different UI elements. For buttons, it affects the
@@ -1220,7 +1237,7 @@ class ThemeData with Diagnosticable {
   /// The color of [Material] when it is used as a [Card].
   final Color cardColor;
 
-  /// {@macro flutter.material.color_scheme.ColorScheme}
+  /// {@macro material_ui.color_scheme.ColorScheme}
   ///
   /// This property was added much later than the theme's set of highly specific
   /// colors, like [cardColor], [canvasColor] etc. New components can be defined

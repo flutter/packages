@@ -253,7 +253,7 @@ class DatePickerThemeData with Diagnosticable {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/date_picker/date_picker_theme_day_shape.0.dart}
+  /// {@example /example/lib/date_picker/date_picker_theme_day_shape.0.dart#body}
   ///
   /// </callout-box>
   final WidgetStateProperty<OutlinedBorder?>? dayShape;
@@ -275,7 +275,7 @@ class DatePickerThemeData with Diagnosticable {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/date_picker/date_picker_theme_day_shape.0.dart}
+  /// {@example /example/lib/date_picker/date_picker_theme_day_shape.0.dart#body}
   ///
   /// </callout-box>
   final WidgetStateProperty<Color?>? todayForegroundColor;
@@ -285,8 +285,8 @@ class DatePickerThemeData with Diagnosticable {
   final WidgetStateProperty<Color?>? todayBackgroundColor;
 
   /// Overrides the border used to paint the
-  /// [DatePickerDialog.currentDate] label in the grid of the date
-  /// picker.
+  /// [DatePickerDialog.currentDate] label in both the day grid and the year
+  /// selector of the date picker.
   ///
   /// If the border side's [BorderSide.color] is transparent (has 0 opacity),
   /// [todayForegroundColor] is used instead. Otherwise, the border's color
@@ -303,7 +303,7 @@ class DatePickerThemeData with Diagnosticable {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/date_picker/date_picker_theme_day_shape.0.dart}
+  /// {@example /example/lib/date_picker/date_picker_theme_day_shape.0.dart#body}
   ///
   /// </callout-box>
   final BorderSide? todayBorder;
@@ -1004,7 +1004,7 @@ class DatePickerThemeData with Diagnosticable {
 /// given an explicit non-null value.
 class DatePickerTheme extends InheritedTheme {
   /// Creates a [DatePickerTheme] that controls visual parameters for
-  /// descendent [DatePickerDialog]s.
+  /// descendant [DatePickerDialog]s.
   const DatePickerTheme({super.key, required this.data, required super.child});
 
   /// Specifies the visual properties used by descendant [DatePickerDialog]

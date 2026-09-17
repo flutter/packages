@@ -19,6 +19,7 @@ RouteBase get $myShellRouteData => StatefulShellRouteData.$route(
       routes: [
         GoRouteData.$route(
           path: '/detailsA',
+          hasOverriddenOnExit: false,
           factory: $DetailsARouteData._fromState,
         ),
       ],
@@ -29,6 +30,7 @@ RouteBase get $myShellRouteData => StatefulShellRouteData.$route(
       routes: [
         GoRouteData.$route(
           path: '/detailsB',
+          hasOverriddenOnExit: false,
           factory: $DetailsBRouteData._fromState,
         ),
       ],

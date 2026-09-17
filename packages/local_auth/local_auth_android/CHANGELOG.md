@@ -1,3 +1,15 @@
+## 2.2.0
+
+* Adjusts visibilty modifiers to support the migration of unit tests to Kotlin.
+
+## 2.1.0
+
+* Converts the implementation to Kotlin.
+
+## 2.0.10
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
 ## 2.0.9
 
 * Migrates to Built-in Kotlin to support AGP 9.

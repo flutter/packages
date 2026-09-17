@@ -37,12 +37,18 @@ class ReadinessChecker {
     if (!await _checkGitState(workspaceRoot)) {
       isReady = false;
     }
+    if (!await _checkGitHooks(workspaceRoot)) {
+      isReady = false;
+    }
 
     final bool hasTools = await _checkFlutterAndDart();
     if (!hasTools) {
       isReady = false;
     } else {
       if (!await _checkDependencies(workspaceRoot)) {
+        isReady = false;
+      }
+      if (!await _activateFlutterPluginTools(workspaceRoot)) {
         isReady = false;
       }
     }
@@ -88,7 +94,7 @@ class ReadinessChecker {
     final ProcessResult result;
     try {
       result = await _processManager.run(
-        ['git', 'status', '--porcelain'],
+        <String>['git', 'status', '--porcelain'],
         workingDirectory: workspaceRoot,
       );
     } on ProcessException catch (e) {
@@ -110,8 +116,42 @@ class ReadinessChecker {
     return true;
   }
 
+  Future<bool> _checkGitHooks(String workspaceRoot) async {
+    _log('3. Checking Git hooks configuration...');
+    final ProcessResult result;
+    try {
+      result = await _processManager.run(
+        <String>['git', 'config', '--get', 'core.hooksPath'],
+        workingDirectory: workspaceRoot,
+      );
+    } on ProcessException catch (e) {
+      _log('Error: Failed to check git config. Is git installed and on the PATH?');
+      _log(e.toString());
+      return false;
+    }
+
+    final String hooksPath = (result.stdout as String).trim();
+    if (result.exitCode != 0 || !_fileSystem.path.equals(hooksPath, 'script/githooks')) {
+      _log(
+        'Error: Git hooks are not configured correctly (core.hooksPath is "$hooksPath", expected "script/githooks").',
+      );
+      final String? repoRoot = _findRepoRoot(workspaceRoot);
+      final String githooksDir = repoRoot != null
+          ? _fileSystem.path.join(repoRoot, 'script', 'githooks')
+          : 'script/githooks';
+      _log(
+        'To install git hooks, run:\n'
+        '  (cd $githooksDir && dart pub get && dart run bin/install_hooks.dart)',
+      );
+      return false;
+    }
+
+    _log('Git hooks are configured correctly.');
+    return true;
+  }
+
   Future<bool> _checkFlutterAndDart() async {
-    _log('3. Checking Flutter and Dart...');
+    _log('4. Checking Flutter and Dart...');
     if (!_processManager.canRun('flutter')) {
       _log("Error: 'flutter' is not on the PATH.");
       return false;
@@ -125,9 +165,9 @@ class ReadinessChecker {
   }
 
   Future<bool> _checkDependencies(String workspaceRoot) async {
-    _log('4. Checking dependencies in camera_android_camerax...');
+    _log('5. Checking dependencies in camera_android_camerax...');
     final ProcessResult result = await _processManager.run(
-      ['flutter', 'pub', 'get'],
+      <String>['flutter', 'pub', 'get'],
       workingDirectory: workspaceRoot,
     );
     if (result.exitCode != 0) {
@@ -136,5 +176,49 @@ class ReadinessChecker {
     }
     _log('Dependencies are resolved and ready.');
     return true;
+  }
+
+  Future<bool> _activateFlutterPluginTools(String workspaceRoot) async {
+    _log('6. Activating flutter_plugin_tools...');
+    final String? repoRoot = _findRepoRoot(workspaceRoot);
+    if (repoRoot == null) {
+      _log('Error: Failed to find repository root (no .git directory found).');
+      return false;
+    }
+    final ProcessResult activateResult = await _processManager.run(
+      [
+        'dart',
+        'pub',
+        'global',
+        'activate',
+        '--source',
+        'path',
+        _fileSystem.path.join(repoRoot, 'script', 'tool')
+      ],
+      workingDirectory: workspaceRoot,
+    );
+    if (activateResult.exitCode != 0) {
+      _log('Error: Failed to globally activate flutter_plugin_tools.');
+      _log(activateResult.stderr);
+      return false;
+    }
+    _log('flutter_plugin_tools activated successfully.');
+    return true;
+  }
+
+  String? _findRepoRoot(String startPath) {
+    Directory dir = _fileSystem.directory(startPath);
+    while (true) {
+      final String gitPath = _fileSystem.path.join(dir.path, '.git');
+      if (_fileSystem.typeSync(gitPath) != FileSystemEntityType.notFound) {
+        return dir.path;
+      }
+      final Directory parent = dir.parent;
+      if (parent.path == dir.path) {
+        break;
+      }
+      dir = parent;
+    }
+    return null;
   }
 }

@@ -39,7 +39,7 @@ enum _ChipVariant { flat, elevated }
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/choice_chip/choice_chip.0.dart}
+/// {@example /example/lib/choice_chip/choice_chip.0.dart#body}
 ///
 /// </callout-box>
 ///

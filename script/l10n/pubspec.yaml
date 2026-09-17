@@ -1,0 +1,15 @@
+name: l10n
+description: Generates localizations for material_ui and cupertino_ui.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.12.0
+
+dependencies:
+  args: ^2.7.0
+  meta: ^1.19.0
+  path: ^1.9.0
+
+dev_dependencies:
+  test: ^1.25.6

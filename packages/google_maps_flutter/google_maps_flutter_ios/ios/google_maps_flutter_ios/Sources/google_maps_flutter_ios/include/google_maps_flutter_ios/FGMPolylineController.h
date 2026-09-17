@@ -7,6 +7,8 @@
 #import "FGMMapEventDelegate.h"
 #import "google_maps_flutter_pigeon_messages.g.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 // Defines polyline controllable by Flutter.
 @interface FGMPolylineController : NSObject
 - (instancetype)initWithPath:(GMSMutablePath *)path
@@ -24,3 +26,5 @@
 - (void)didTapPolylineWithIdentifier:(NSString *)identifier;
 - (bool)hasPolylineWithIdentifier:(NSString *)identifier;
 @end
+
+NS_ASSUME_NONNULL_END

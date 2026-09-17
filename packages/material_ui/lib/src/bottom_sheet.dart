@@ -24,6 +24,8 @@ import 'motion.dart';
 import 'scaffold.dart';
 import 'theme.dart';
 
+part 'generated/bottom_sheet_defaults_m3.g.dart';
+
 const Duration _kBottomSheetEnterDuration = Duration(milliseconds: 250);
 const Duration _kBottomSheetExitDuration = Duration(milliseconds: 200);
 const Curve _kModalBottomSheetCurve = Easing.legacyDecelerate;
@@ -203,7 +205,7 @@ class BottomSheet extends StatefulWidget {
   /// Defaults to null and falls back to [Material]'s default.
   final ShapeBorder? shape;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defines the bottom sheet's [Material.clipBehavior].
   ///
@@ -648,7 +650,6 @@ class _RenderBottomSheetLayoutWithSizeListener extends RenderShiftedBox {
 
 class _ModalBottomSheet<T> extends StatefulWidget {
   const _ModalBottomSheet({
-    super.key,
     required this.route,
     this.backgroundColor,
     this.elevation,
@@ -804,7 +805,7 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
 
 /// A route that represents a Material Design modal bottom sheet.
 ///
-/// {@template flutter.material.ModalBottomSheetRoute}
+/// {@template material_ui.ModalBottomSheetRoute}
 /// A modal bottom sheet is an alternative to a menu or a dialog and prevents
 /// the user from interacting with the rest of the app.
 ///
@@ -938,7 +939,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
   /// If this property is not provided, it falls back to [Material]'s default.
   final ShapeBorder? shape;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defines the bottom sheet's [Material.clipBehavior].
   ///
@@ -1047,7 +1048,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
   /// To disable the modal bottom sheet animation, use [AnimationStyle.noAnimation].
   final AnimationStyle? sheetAnimationStyle;
 
-  /// {@template flutter.material.ModalBottomSheetRoute.barrierOnTapHint}
+  /// {@template material_ui.ModalBottomSheetRoute.barrierOnTapHint}
   /// The semantic hint text that informs users what will happen if they
   /// tap on the widget. Announced in the format of 'Double tap to ...'.
   ///
@@ -1207,7 +1208,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
 
 /// Shows a modal Material Design bottom sheet.
 ///
-/// {@macro flutter.material.ModalBottomSheetRoute}
+/// {@macro material_ui.ModalBottomSheetRoute}
 ///
 /// {@macro flutter.widgets.RawDialogRoute}
 ///
@@ -1239,7 +1240,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/bottom_sheet/show_modal_bottom_sheet.0.dart}
+/// {@example /example/lib/bottom_sheet/show_modal_bottom_sheet.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1252,7 +1253,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/bottom_sheet/show_modal_bottom_sheet.1.dart}
+/// {@example /example/lib/bottom_sheet/show_modal_bottom_sheet.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1282,7 +1283,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/bottom_sheet/show_modal_bottom_sheet.2.dart}
+/// {@example /example/lib/bottom_sheet/show_modal_bottom_sheet.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1300,6 +1301,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
 ///  * The Material 3 spec at <https://m3.material.io/components/bottom-sheets/overview>.
 ///  * [AnimationStyle], which is used to override the modal bottom sheet
 ///    animation duration and reverse animation duration.
+@awaitNotRequired
 Future<T?> showModalBottomSheet<T>({
   required BuildContext context,
   required WidgetBuilder builder,
@@ -1392,7 +1394,7 @@ Future<T?> showModalBottomSheet<T>({
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/bottom_sheet/show_bottom_sheet.0.dart}
+/// {@example /example/lib/bottom_sheet/show_bottom_sheet.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1491,45 +1493,3 @@ class _BottomSheetGestureDetector extends StatelessWidget {
     );
   }
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - BottomSheet
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _BottomSheetDefaultsM3 extends BottomSheetThemeData {
-  _BottomSheetDefaultsM3(this.context)
-    : super(
-      elevation: 1.0,
-      modalElevation: 1.0,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28.0))),
-      constraints: const BoxConstraints(maxWidth: 640),
-    );
-
-  final BuildContext context;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-
-  @override
-  Color? get backgroundColor => _colors.surfaceContainerLow;
-
-  @override
-  Color? get surfaceTintColor => Colors.transparent;
-
-  @override
-  Color? get shadowColor => Colors.transparent;
-
-  @override
-  Color? get dragHandleColor => _colors.onSurfaceVariant;
-
-  @override
-  Size? get dragHandleSize => const Size(32, 4);
-
-  @override
-  BoxConstraints? get constraints => const BoxConstraints(maxWidth: 640.0);
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - BottomSheet

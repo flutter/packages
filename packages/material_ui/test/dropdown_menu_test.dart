@@ -4260,7 +4260,7 @@ void main() {
     },
   );
 
-  testWidgets('items can be constrainted to be smaller than the text field with menuStyle', (
+  testWidgets('items can be constrained to be smaller than the text field with menuStyle', (
     WidgetTester tester,
   ) async {
     const longLabel = 'This is a long text that it can overflow.';

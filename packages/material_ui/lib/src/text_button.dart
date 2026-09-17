@@ -25,6 +25,8 @@ import 'text_button_theme.dart';
 import 'theme.dart';
 import 'theme_data.dart';
 
+part 'generated/text_button_defaults_m3.g.dart';
+
 /// A Material Design "Text Button".
 ///
 /// Use text buttons on toolbars, in dialogs, or inline with other
@@ -65,7 +67,7 @@ import 'theme_data.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/text_button/text_button.0.dart}
+/// {@example /example/lib/text_button/text_button.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -78,7 +80,7 @@ import 'theme_data.dart';
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/text_button/text_button.1.dart}
+/// {@example /example/lib/text_button/text_button.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -116,7 +118,7 @@ class TextButton extends ButtonStyleButton {
   /// If [icon] is null, this constructor will create a [TextButton]
   /// that doesn't display an icon.
   ///
-  /// {@macro flutter.material.ButtonStyle.iconAlignment}
+  /// {@macro material_ui.ButtonStyle.iconAlignment}
   ///
   TextButton.icon({
     super.key,
@@ -279,7 +281,7 @@ class TextButton extends ButtonStyleButton {
 
   /// Defines the button's default appearance.
   ///
-  /// {@template flutter.material.text_button.default_style_of}
+  /// {@template material_ui.text_button.default_style_of}
   /// The button [child]'s [Text] and [Icon] widgets are rendered with
   /// the [ButtonStyle]'s foreground color. The button's [InkWell] adds
   /// the style's overlay color when the button is focused, hovered
@@ -353,7 +355,7 @@ class TextButton extends ButtonStyleButton {
   /// If [ThemeData.useMaterial3] is set to true the following defaults will
   /// be used:
   ///
-  /// {@template flutter.material.text_button.material3_defaults}
+  /// {@template material_ui.text_button.material3_defaults}
   /// * `textStyle` - Theme.textTheme.labelLarge
   /// * `backgroundColor` - transparent
   /// * `foregroundColor`
@@ -493,125 +495,3 @@ class _TextButtonWithIconChild extends StatelessWidget {
     );
   }
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - TextButton
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _TextButtonDefaultsM3 extends ButtonStyle {
-  _TextButtonDefaultsM3(this.context)
-   : super(
-       animationDuration: kThemeChangeDuration,
-       enableFeedback: true,
-       alignment: Alignment.center,
-     );
-
-  final BuildContext context;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-
-  @override
-  WidgetStateProperty<TextStyle?> get textStyle =>
-    MaterialStatePropertyAll<TextStyle?>(Theme.of(context).textTheme.labelLarge);
-
-  @override
-  WidgetStateProperty<Color?>? get backgroundColor =>
-    const MaterialStatePropertyAll<Color>(Colors.transparent);
-
-  @override
-  WidgetStateProperty<Color?>? get foregroundColor =>
-    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.disabled)) {
-        return _colors.onSurface.withOpacity(0.38);
-      }
-      return _colors.primary;
-    });
-
-  @override
-  WidgetStateProperty<Color?>? get overlayColor =>
-    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.pressed)) {
-        return _colors.primary.withOpacity(0.1);
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return _colors.primary.withOpacity(0.08);
-      }
-      if (states.contains(WidgetState.focused)) {
-        return _colors.primary.withOpacity(0.1);
-      }
-      return null;
-    });
-
-  @override
-  WidgetStateProperty<Color>? get shadowColor =>
-    const MaterialStatePropertyAll<Color>(Colors.transparent);
-
-  @override
-  WidgetStateProperty<Color>? get surfaceTintColor =>
-    const MaterialStatePropertyAll<Color>(Colors.transparent);
-
-  @override
-  WidgetStateProperty<double>? get elevation =>
-    const MaterialStatePropertyAll<double>(0.0);
-
-  @override
-  WidgetStateProperty<EdgeInsetsGeometry>? get padding =>
-    MaterialStatePropertyAll<EdgeInsetsGeometry>(_scaledPadding(context));
-
-  @override
-  WidgetStateProperty<Size>? get minimumSize =>
-    const MaterialStatePropertyAll<Size>(Size(64.0, 40.0));
-
-  // No default fixedSize
-
-  @override
-  WidgetStateProperty<double>? get iconSize =>
-    const MaterialStatePropertyAll<double>(18.0);
-
-  @override
-  WidgetStateProperty<Color>? get iconColor {
-    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.disabled)) {
-        return _colors.onSurface.withOpacity(0.38);
-      }
-      if (states.contains(WidgetState.pressed)) {
-        return _colors.primary;
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return _colors.primary;
-      }
-      if (states.contains(WidgetState.focused)) {
-        return _colors.primary;
-      }
-      return _colors.primary;
-    });
-  }
-
-  @override
-  WidgetStateProperty<Size>? get maximumSize =>
-    const MaterialStatePropertyAll<Size>(Size.infinite);
-
-  // No default side
-
-  @override
-  WidgetStateProperty<OutlinedBorder>? get shape =>
-    const MaterialStatePropertyAll<OutlinedBorder>(StadiumBorder());
-
-  @override
-  WidgetStateProperty<MouseCursor?>? get mouseCursor => WidgetStateMouseCursor.adaptiveClickable;
-
-  @override
-  VisualDensity? get visualDensity => Theme.of(context).visualDensity;
-
-  @override
-  MaterialTapTargetSize? get tapTargetSize => Theme.of(context).materialTapTargetSize;
-
-  @override
-  InteractiveInkFeatureFactory? get splashFactory => Theme.of(context).splashFactory;
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - TextButton

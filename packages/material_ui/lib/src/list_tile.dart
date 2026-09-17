@@ -168,7 +168,7 @@ enum ListTileTitleAlignment {
 /// A single fixed-height row that typically contains some text as well as
 /// a leading or trailing icon.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=l8dj0yPBvgQ}
+/// Learn more about [ListTile] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=l8dj0yPBvgQ).
 ///
 /// A list tile contains one to three lines of text optionally flanked by icons or
 /// other widgets, such as check boxes. The icons (or other widgets) for the
@@ -241,7 +241,7 @@ enum ListTileTitleAlignment {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/list_tile/list_tile.0.dart}
+/// {@example /example/lib/list_tile/list_tile.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -256,7 +256,7 @@ enum ListTileTitleAlignment {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/list_tile/list_tile.1.dart}
+/// {@example /example/lib/list_tile/list_tile.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -269,7 +269,7 @@ enum ListTileTitleAlignment {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/list_tile/list_tile.2.dart}
+/// {@example /example/lib/list_tile/list_tile.2.dart#body}
 ///
 /// </callout-box>
 ///
@@ -283,7 +283,7 @@ enum ListTileTitleAlignment {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/list_tile/list_tile.3.dart}
+/// {@example /example/lib/list_tile/list_tile.3.dart#body}
 ///
 /// </callout-box>
 ///
@@ -297,7 +297,7 @@ enum ListTileTitleAlignment {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/list_tile/list_tile.4.dart}
+/// {@example /example/lib/list_tile/list_tile.4.dart#body}
 ///
 /// </callout-box>
 ///
@@ -409,7 +409,7 @@ enum ListTileTitleAlignment {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/list_tile/custom_list_item.0.dart}
+/// {@example /example/lib/list_tile/custom_list_item.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -423,7 +423,7 @@ enum ListTileTitleAlignment {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/list_tile/custom_list_item.1.dart}
+/// {@example /example/lib/list_tile/custom_list_item.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -552,7 +552,7 @@ class ListTile extends StatelessWidget {
   ///   [ListTileThemeData].
   final bool? isThreeLine;
 
-  /// {@template flutter.material.ListTile.dense}
+  /// {@template material_ui.ListTile.dense}
   /// Whether this list tile is part of a vertically dense list.
   ///
   /// If this property is null then its value is based on [ListTileTheme.dense].
@@ -565,7 +565,7 @@ class ListTile extends StatelessWidget {
 
   /// Defines how compact the list tile's layout will be.
   ///
-  /// {@macro flutter.material.themedata.visualDensity}
+  /// {@macro material_ui.themedata.visualDensity}
   ///
   /// See also:
   ///
@@ -573,7 +573,7 @@ class ListTile extends StatelessWidget {
   ///    widgets within a [Theme].
   final VisualDensity? visualDensity;
 
-  /// {@template flutter.material.ListTile.shape}
+  /// {@template material_ui.ListTile.shape}
   /// Defines the tile's [InkWell.customBorder] and [Ink.decoration] shape.
   /// {@endtemplate}
   ///
@@ -698,10 +698,10 @@ class ListTile extends StatelessWidget {
   /// Inoperative if [enabled] is false.
   final GestureLongPressCallback? onLongPress;
 
-  /// {@macro flutter.material.inkwell.onFocusChange}
+  /// {@macro cupertino_ui.inkwell.onFocusChange}
   final ValueChanged<bool>? onFocusChange;
 
-  /// {@template flutter.material.ListTile.mouseCursor}
+  /// {@template material_ui.ListTile.mouseCursor}
   /// The cursor for a mouse pointer when it enters or is hovering over the
   /// widget.
   ///
@@ -731,7 +731,7 @@ class ListTile extends StatelessWidget {
   // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
   /// {@macro material_ui.dartpad_guide}
   ///
-  /// {@example /example/lib/list_tile/list_tile.selected.0.dart}
+  /// {@example /example/lib/list_tile/list_tile.selected.0.dart#body}
   ///
   /// </callout-box>
   final bool selected;
@@ -751,7 +751,7 @@ class ListTile extends StatelessWidget {
   /// {@macro flutter.widgets.Focus.autofocus}
   final bool autofocus;
 
-  /// {@template flutter.material.ListTile.tileColor}
+  /// {@template material_ui.ListTile.tileColor}
   /// Defines the background color of `ListTile` when [selected] is false.
   ///
   /// If this property is null and [selected] is false then [ListTileThemeData.tileColor]
@@ -768,7 +768,7 @@ class ListTile extends StatelessWidget {
   /// if it's not null and to [Colors.transparent] if it's null.
   final Color? selectedTileColor;
 
-  /// {@template flutter.material.ListTile.enableFeedback}
+  /// {@template material_ui.ListTile.enableFeedback}
   /// Whether detected gestures should provide acoustic and/or haptic feedback.
   ///
   /// For example, on Android a tap will produce a clicking sound and a
@@ -782,7 +782,7 @@ class ListTile extends StatelessWidget {
   ///  * [Feedback] for providing platform-specific feedback to certain actions.
   final bool? enableFeedback;
 
-  /// {@template flutter.material.ListTile.horizontalTitleGap}
+  /// {@template material_ui.ListTile.horizontalTitleGap}
   /// The horizontal gap between the titles and the leading/trailing widgets.
   ///
   /// If null, then the value of [ListTileTheme.horizontalTitleGap] is used. If
@@ -790,7 +790,7 @@ class ListTile extends StatelessWidget {
   /// {@endtemplate}
   final double? horizontalTitleGap;
 
-  /// {@template flutter.material.ListTile.minVerticalPadding}
+  /// {@template material_ui.ListTile.minVerticalPadding}
   /// The minimum padding on the top and bottom of the title and subtitle widgets.
   ///
   /// If null, then the value of [ListTileTheme.minVerticalPadding] is used. If
@@ -798,7 +798,7 @@ class ListTile extends StatelessWidget {
   /// {@endtemplate}
   final double? minVerticalPadding;
 
-  /// {@template flutter.material.ListTile.minLeadingWidth}
+  /// {@template material_ui.ListTile.minLeadingWidth}
   /// The minimum width allocated for the [ListTile.leading] widget.
   ///
   /// If null, then the value of [ListTileTheme.minLeadingWidth] is used. If
@@ -806,7 +806,7 @@ class ListTile extends StatelessWidget {
   /// {@endtemplate}
   final double? minLeadingWidth;
 
-  /// {@template flutter.material.ListTile.minTileHeight}
+  /// {@template material_ui.ListTile.minTileHeight}
   /// The minimum height allocated for the [ListTile] widget.
   ///
   /// If this is null, default tile heights are 56.0, 72.0, and 88.0 for one,
@@ -837,7 +837,7 @@ class ListTile extends StatelessWidget {
   // the default value to true.
   final bool internalAddSemanticForOnTap;
 
-  /// {@macro flutter.material.inkwell.statesController}
+  /// {@macro material_ui.inkwell.statesController}
   final MaterialStatesController? statesController;
 
   /// Add a one pixel border in between each tile. If color isn't specified the

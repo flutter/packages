@@ -388,7 +388,7 @@ class DataCell {
 /// [Material 2](https://material.io/go/design-data-tables)
 /// design specification.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=ktTajqbhIcY}
+/// Learn more about [DataTable] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=ktTajqbhIcY).
 ///
 /// ## Performance considerations
 ///
@@ -421,7 +421,7 @@ class DataCell {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/data_table/data_table.0.dart}
+/// {@example /example/lib/data_table/data_table.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -435,7 +435,7 @@ class DataCell {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/data_table/data_table.1.dart}
+/// {@example /example/lib/data_table/data_table.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -508,6 +508,7 @@ class DataTable extends StatelessWidget {
     this.checkboxHorizontalMargin,
     this.border,
     this.clipBehavior = Clip.none,
+    this.sortIconBuilder,
   }) : assert(columns.isNotEmpty),
        assert(
          sortColumnIndex == null || (sortColumnIndex >= 0 && sortColumnIndex < columns.length),
@@ -562,6 +563,27 @@ class DataTable extends StatelessWidget {
   /// Ascending order is represented by an upwards-facing arrow.
   final bool sortAscending;
 
+  /// {@template flutter.material.dataTable.sortIconBuilder}
+  /// A builder function that returns a widget to use as the sorting indicator
+  /// icon for the table's header cells.
+  ///
+  /// When providing a custom sort icon via this builder, the default sort arrow's
+  /// automatic rotation and opacity transitions are omitted. To achieve animated
+  /// transitions for custom icons, wrap the returned widget in explicit
+  /// transition widgets such as [AnimatedRotation] or [AnimatedOpacity].
+  ///
+  /// Custom icons should target a size of approximately 18.0 logical pixels or
+  /// be wrapped in a fixed-size container to maintain visually balanced header
+  /// labels. For columns where [DataColumn.numeric] is true, [DataTable] adds
+  /// a leading 20.0 logical pixel spacer to mirror the space occupied by the
+  /// sort icon and its padding, ensuring centered column labels remain properly
+  /// aligned.
+  ///
+  /// If null, [DataTableThemeData.sortIconBuilder] is used. If that is also null,
+  /// the default Material design sort arrow animation is used.
+  /// {@endtemplate}
+  final DataTableSortIconBuilder? sortIconBuilder;
+
   /// Invoked when the user selects or unselects every row, using the
   /// checkbox in the heading row.
   ///
@@ -573,7 +595,7 @@ class DataTable extends StatelessWidget {
   /// row is selectable.
   final ValueSetter<bool?>? onSelectAll;
 
-  /// {@template flutter.material.dataTable.decoration}
+  /// {@template material_ui.dataTable.decoration}
   /// The background and border decoration for the table.
   /// {@endtemplate}
   ///
@@ -581,7 +603,7 @@ class DataTable extends StatelessWidget {
   /// decoration.
   final Decoration? decoration;
 
-  /// {@template flutter.material.dataTable.dataRowColor}
+  /// {@template material_ui.dataTable.dataRowColor}
   /// The background color for the data rows.
   ///
   /// The effective background color can be made to depend on the
@@ -600,7 +622,7 @@ class DataTable extends StatelessWidget {
   /// translucent color. To set a different color for individual rows, see
   /// [DataRow.color].
   ///
-  /// {@template flutter.material.DataTable.dataRowColor}
+  /// {@template material_ui.DataTable.dataRowColor}
   /// ```dart
   /// DataTable(
   ///   dataRowColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
@@ -622,7 +644,7 @@ class DataTable extends StatelessWidget {
   /// {@endtemplate}
   final WidgetStateProperty<Color?>? dataRowColor;
 
-  /// {@template flutter.material.dataTable.dataRowHeight}
+  /// {@template material_ui.dataTable.dataRowHeight}
   /// The height of each row (excluding the row that contains column headings).
   /// {@endtemplate}
   ///
@@ -635,7 +657,7 @@ class DataTable extends StatelessWidget {
   )
   double? get dataRowHeight => dataRowMinHeight == dataRowMaxHeight ? dataRowMinHeight : null;
 
-  /// {@template flutter.material.dataTable.dataRowMinHeight}
+  /// {@template material_ui.dataTable.dataRowMinHeight}
   /// The minimum height of each row (excluding the row that contains column headings).
   /// {@endtemplate}
   ///
@@ -644,7 +666,7 @@ class DataTable extends StatelessWidget {
   /// specifications.
   final double? dataRowMinHeight;
 
-  /// {@template flutter.material.dataTable.dataRowMaxHeight}
+  /// {@template material_ui.dataTable.dataRowMaxHeight}
   /// The maximum height of each row (excluding the row that contains column headings).
   /// {@endtemplate}
   ///
@@ -653,7 +675,7 @@ class DataTable extends StatelessWidget {
   /// specifications.
   final double? dataRowMaxHeight;
 
-  /// {@template flutter.material.dataTable.dataTextStyle}
+  /// {@template material_ui.dataTable.dataTextStyle}
   /// The text style for data rows.
   /// {@endtemplate}
   ///
@@ -661,7 +683,7 @@ class DataTable extends StatelessWidget {
   /// style is [TextTheme.bodyMedium].
   final TextStyle? dataTextStyle;
 
-  /// {@template flutter.material.dataTable.headingRowColor}
+  /// {@template material_ui.dataTable.headingRowColor}
   /// The background color for the heading row.
   ///
   /// The effective background color can be made to depend on the
@@ -673,7 +695,7 @@ class DataTable extends StatelessWidget {
   ///
   /// If null, [DataTableThemeData.headingRowColor] is used.
   ///
-  /// {@template flutter.material.DataTable.headingRowColor}
+  /// {@template material_ui.DataTable.headingRowColor}
   /// ```dart
   /// DataTable(
   ///   columns: _columns,
@@ -695,7 +717,7 @@ class DataTable extends StatelessWidget {
   /// {@endtemplate}
   final WidgetStateProperty<Color?>? headingRowColor;
 
-  /// {@template flutter.material.dataTable.headingRowHeight}
+  /// {@template material_ui.dataTable.headingRowHeight}
   /// The height of the heading row.
   /// {@endtemplate}
   ///
@@ -703,7 +725,7 @@ class DataTable extends StatelessWidget {
   /// defaults to 56.0 to adhere to the Material Design specifications.
   final double? headingRowHeight;
 
-  /// {@template flutter.material.dataTable.headingTextStyle}
+  /// {@template material_ui.dataTable.headingTextStyle}
   /// The text style for the heading row.
   /// {@endtemplate}
   ///
@@ -711,7 +733,7 @@ class DataTable extends StatelessWidget {
   /// text style is [TextTheme.titleSmall].
   final TextStyle? headingTextStyle;
 
-  /// {@template flutter.material.dataTable.horizontalMargin}
+  /// {@template material_ui.dataTable.horizontalMargin}
   /// The horizontal margin between the edges of the table and the content
   /// in the first and last cells of each row.
   ///
@@ -727,7 +749,7 @@ class DataTable extends StatelessWidget {
   /// margin between the checkbox and the content in the first data column.
   final double? horizontalMargin;
 
-  /// {@template flutter.material.dataTable.columnSpacing}
+  /// {@template material_ui.dataTable.columnSpacing}
   /// The horizontal margin between the contents of each data column.
   /// {@endtemplate}
   ///
@@ -735,7 +757,7 @@ class DataTable extends StatelessWidget {
   /// to 56.0 to adhere to the Material Design specifications.
   final double? columnSpacing;
 
-  /// {@template flutter.material.dataTable.showCheckboxColumn}
+  /// {@template material_ui.dataTable.showCheckboxColumn}
   /// Whether the widget should display checkboxes for selectable rows.
   ///
   /// If true, a [Checkbox] will be placed at the beginning of each row that is
@@ -752,7 +774,7 @@ class DataTable extends StatelessWidget {
   /// The list may be empty.
   final List<DataRow> rows;
 
-  /// {@template flutter.material.dataTable.dividerThickness}
+  /// {@template material_ui.dataTable.dividerThickness}
   /// The width of the divider that appears between [TableRow]s.
   ///
   /// Must be greater than or equal to zero.
@@ -768,7 +790,7 @@ class DataTable extends StatelessWidget {
   /// around the table defined by [decoration].
   final bool showBottomBorder;
 
-  /// {@template flutter.material.dataTable.checkboxHorizontalMargin}
+  /// {@template material_ui.dataTable.checkboxHorizontalMargin}
   /// Horizontal margin around the checkbox, if it is displayed.
   /// {@endtemplate}
   ///
@@ -781,7 +803,7 @@ class DataTable extends StatelessWidget {
   /// The style to use when painting the boundary and interior divisions of the table.
   final TableBorder? border;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// This can be used to clip the content within the border of the [DataTable].
   ///
@@ -903,6 +925,9 @@ class DataTable extends StatelessWidget {
   }) {
     final ThemeData themeData = Theme.of(context);
     final DataTableThemeData dataTableTheme = DataTableTheme.of(context);
+    final DataTableSortIconBuilder? effectiveSortIconBuilder =
+        sortIconBuilder ?? dataTableTheme.sortIconBuilder;
+
     label = Semantics(
       role: SemanticsRole.columnHeader,
       child: Row(
@@ -913,11 +938,14 @@ class DataTable extends StatelessWidget {
             const SizedBox(width: _SortArrowState._arrowIconSize + _sortArrowPadding),
           label,
           if (onSort != null) ...<Widget>[
-            _SortArrow(
-              visible: sorted,
-              up: sorted ? ascending : null,
-              duration: _sortArrowAnimationDuration,
-            ),
+            if (effectiveSortIconBuilder != null)
+              effectiveSortIconBuilder(context, sorted, ascending)
+            else
+              _SortArrow(
+                visible: sorted,
+                up: sorted ? ascending : null,
+                duration: _sortArrowAnimationDuration,
+              ),
             const SizedBox(width: _sortArrowPadding),
           ],
         ],

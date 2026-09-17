@@ -117,7 +117,7 @@ class CalendarDatePicker extends StatefulWidget {
   /// If [selectableDayPredicate] and [initialDate] are both non-null,
   /// [selectableDayPredicate] must return `true` for the [initialDate].
   ///
-  /// {@template flutter.material.calendar_date_picker.calendarDelegate}
+  /// {@template material_ui.calendar_date_picker.calendarDelegate}
   /// The [calendarDelegate] controls date interpretation, formatting, and
   /// navigation within the picker. By providing a custom implementation,
   /// you can support alternative calendar systems such as Nepali, Hijri,
@@ -192,7 +192,7 @@ class CalendarDatePicker extends StatefulWidget {
   /// Function to provide full control over which dates in the calendar can be selected.
   final SelectableDayPredicate? selectableDayPredicate;
 
-  /// {@macro flutter.material.calendar_date_picker.calendarDelegate}
+  /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
 
   @override
@@ -611,7 +611,7 @@ class _MonthPicker extends StatefulWidget {
   /// Optional user supplied predicate function to customize selectable days.
   final SelectableDayPredicate? selectableDayPredicate;
 
-  /// {@macro flutter.material.calendar_date_picker.calendarDelegate}
+  /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
 
   @override
@@ -1034,7 +1034,7 @@ class _DayPicker extends StatefulWidget {
   /// Optional user supplied predicate function to customize selectable days.
   final SelectableDayPredicate? selectableDayPredicate;
 
-  /// {@macro flutter.material.calendar_date_picker.calendarDelegate}
+  /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
 
   @override
@@ -1421,7 +1421,7 @@ class YearPicker extends StatefulWidget {
   /// {@macro flutter.widgets.scrollable.dragStartBehavior}
   final DragStartBehavior dragStartBehavior;
 
-  /// {@macro flutter.material.calendar_date_picker.calendarDelegate}
+  /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
 
   @override
@@ -1523,10 +1523,11 @@ class _YearPickerState extends State<YearPicker> {
 
     BorderSide? borderSide;
     if (isCurrentYear) {
-      borderSide = datePickerTheme.todayBorder ?? defaults.todayBorder;
-      if (borderSide != null) {
-        borderSide = borderSide.copyWith(color: textColor);
-      }
+      final bool hasCustomBorderColor =
+          datePickerTheme.todayBorder != null && datePickerTheme.todayBorder!.color.opacity != 0.0;
+      borderSide = hasCustomBorderColor
+          ? datePickerTheme.todayBorder
+          : (datePickerTheme.todayBorder ?? defaults.todayBorder)?.copyWith(color: textColor);
     }
     final decoration = ShapeDecoration(
       color: background,

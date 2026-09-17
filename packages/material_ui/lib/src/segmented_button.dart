@@ -66,6 +66,8 @@ class ButtonSegment<T> {
 
 /// A Material button that allows the user to select from limited set of options.
 ///
+/// Learn more about [SegmentedButton] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=Kj6jwKsVC3A).
+///
 /// Segmented buttons are used to help people select options, switch views, or
 /// sort elements. They are typically used in cases where there are only 2-5
 /// options.
@@ -102,7 +104,7 @@ class ButtonSegment<T> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/segmented_button/segmented_button.0.dart}
+/// {@example /example/lib/segmented_button/segmented_button.0.dart#body}
 ///
 /// </callout-box>
 ///
@@ -114,7 +116,7 @@ class ButtonSegment<T> {
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
 /// {@macro material_ui.dartpad_guide}
 ///
-/// {@example /example/lib/segmented_button/segmented_button.1.dart}
+/// {@example /example/lib/segmented_button/segmented_button.1.dart#body}
 ///
 /// </callout-box>
 ///
@@ -266,7 +268,7 @@ class SegmentedButton<T> extends StatefulWidget {
   /// standard opacity adjustments for the pressed, focused, and
   /// hovered states, one could write:
   ///
-  /// {@example /example/lib/segmented_button/segmented_button.1.dart}
+  /// {@example /example/lib/segmented_button/segmented_button.1.dart#body}
   ///
   /// ```dart
   /// SegmentedButton<int>(
@@ -735,7 +737,6 @@ class SegmentedButtonState<T> extends State<SegmentedButton<T>> {
 
 class _SegmentedButtonRenderWidget<T> extends MultiChildRenderObjectWidget {
   const _SegmentedButtonRenderWidget({
-    super.key,
     required this.segments,
     required this.enabledBorder,
     required this.disabledBorder,

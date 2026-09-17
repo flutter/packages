@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// #region body
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -111,6 +112,7 @@ class _MyCascadingMenuState extends State<MyCascadingMenu> {
       children: <Widget>[
         MenuAnchor(
           animated: true,
+          semanticLabel: 'Cascading application menu',
           onAnimationStatusChanged: (AnimationStatus status) {
             // Store the animation status so that it can be used to determine
             // whether the menu is opening or closing when the button is
@@ -240,3 +242,4 @@ class MenuApp extends StatelessWidget {
     );
   }
 }
+// #endregion body

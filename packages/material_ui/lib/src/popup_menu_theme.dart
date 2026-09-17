@@ -94,7 +94,7 @@ class PopupMenuThemeData with Diagnosticable {
   /// If [PopupMenuButton.enableFeedback] is provided, [enableFeedback] is ignored.
   final bool? enableFeedback;
 
-  /// {@macro flutter.material.popupmenu.mouseCursor}
+  /// {@macro material_ui.popupmenu.mouseCursor}
   ///
   /// If specified, overrides the default value of [PopupMenuItem.mouseCursor].
   final WidgetStateProperty<MouseCursor?>? mouseCursor;

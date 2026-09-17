@@ -57,6 +57,7 @@ void main() {
         'packages/a_plugin/CHANGELOG.md',
         // Dev-facing docs.
         'packages/a_plugin/CONTRIBUTING.md',
+        'packages/a_plugin/AGENTS.md',
         // Analysis.
         'packages/a_plugin/example/android/lint-baseline.xml',
         // Tests.
@@ -105,6 +106,38 @@ void main() {
         'packages/a_plugin/.agents/skills/check-readiness/bin/check.dart',
         'packages/a_plugin/.agents/skills/check-readiness/pubspec.yaml',
       ];
+
+      final PackageChangeState state = await checkPackageChangeState(
+        package,
+        changedPaths: changedFiles,
+        relativePackagePath: 'packages/a_plugin/',
+      );
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, false);
+      expect(state.needsChangelogChange, false);
+    });
+
+    test('does not require version or changelog change for evals changes', () async {
+      final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
+
+      const changedFiles = <String>['packages/a_plugin/evals/foo.dart'];
+
+      final PackageChangeState state = await checkPackageChangeState(
+        package,
+        changedPaths: changedFiles,
+        relativePackagePath: 'packages/a_plugin/',
+      );
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, false);
+      expect(state.needsChangelogChange, false);
+    });
+
+    test('does not require version or changelog change for AGENTS.md changes', () async {
+      final RepositoryPackage package = createFakePlugin('a_plugin', packagesDir);
+
+      const changedFiles = <String>['packages/a_plugin/AGENTS.md'];
 
       final PackageChangeState state = await checkPackageChangeState(
         package,
