@@ -686,10 +686,14 @@ class _CarouselViewState extends State<CarouselView> {
     Widget? child;
 
     if (widget.itemBuilder != null) {
-      if (widget.infinite && widget.itemCount != null && widget.itemCount! > 0) {
-        itemIndex = index % widget.itemCount!;
+      if (widget.itemCount == 0) {
+        child = null;
+      } else {
+        if (widget.infinite && widget.itemCount != null && widget.itemCount! > 0) {
+          itemIndex = index % widget.itemCount!;
+        }
+        child = widget.itemBuilder!(context, itemIndex);
       }
-      child = widget.itemBuilder!(context, itemIndex);
     } else {
       if (widget.children.isEmpty) {
         child = null;
