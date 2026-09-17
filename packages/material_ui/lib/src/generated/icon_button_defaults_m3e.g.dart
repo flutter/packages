@@ -42,7 +42,7 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
 
   @override
   WidgetStateProperty<Color?>? get backgroundColor =>
-      const MaterialStatePropertyAll<Color?>(Colors.transparent);
+      const WidgetStatePropertyAll<Color?>(Colors.transparent);
 
   @override
   WidgetStateProperty<Color?>? get foregroundColor =>
@@ -83,19 +83,19 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
       });
 
   @override
-  WidgetStateProperty<double>? get elevation => const MaterialStatePropertyAll<double>(0.0);
+  WidgetStateProperty<double>? get elevation => const WidgetStatePropertyAll<double>(0.0);
 
   @override
   WidgetStateProperty<Color>? get shadowColor =>
-      const MaterialStatePropertyAll<Color>(Colors.transparent);
+      const WidgetStatePropertyAll<Color>(Colors.transparent);
 
   @override
   WidgetStateProperty<Color>? get surfaceTintColor =>
-      const MaterialStatePropertyAll<Color>(Colors.transparent);
+      const WidgetStatePropertyAll<Color>(Colors.transparent);
 
   @override
   WidgetStateProperty<EdgeInsetsGeometry>?
-  get padding => MaterialStatePropertyAll<EdgeInsetsGeometry>(switch (sizeVariant) {
+  get padding => WidgetStatePropertyAll<EdgeInsetsGeometry>(switch (sizeVariant) {
     ButtonSizeVariant.xSmall => switch (iconButtonWidth) {
       IconButtonWidthVariant.narrow => const EdgeInsetsDirectional.fromSTEB(4.0, 6.0, 4.0, 6.0),
       IconButtonWidthVariant.standard => const EdgeInsetsDirectional.fromSTEB(6.0, 6.0, 6.0, 6.0),
@@ -139,47 +139,45 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
   });
 
   @override
-  WidgetStateProperty<Size>? get minimumSize =>
-      MaterialStatePropertyAll<Size>(switch (sizeVariant) {
-        ButtonSizeVariant.xSmall => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(28.0, 32.0),
-          IconButtonWidthVariant.standard => const Size(32.0, 32.0),
-          IconButtonWidthVariant.wide => const Size(40.0, 32.0),
-        },
-        ButtonSizeVariant.small => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(32.0, 40.0),
-          IconButtonWidthVariant.standard => const Size(40.0, 40.0),
-          IconButtonWidthVariant.wide => const Size(52.0, 40.0),
-        },
-        ButtonSizeVariant.medium => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(48.0, 56.0),
-          IconButtonWidthVariant.standard => const Size(56.0, 56.0),
-          IconButtonWidthVariant.wide => const Size(72.0, 56.0),
-        },
-        ButtonSizeVariant.large => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(64.0, 96.0),
-          IconButtonWidthVariant.standard => const Size(96.0, 96.0),
-          IconButtonWidthVariant.wide => const Size(128.0, 96.0),
-        },
-        ButtonSizeVariant.xLarge => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(104.0, 136.0),
-          IconButtonWidthVariant.standard => const Size(136.0, 136.0),
-          IconButtonWidthVariant.wide => const Size(184.0, 136.0),
-        },
-      });
+  WidgetStateProperty<Size>? get minimumSize => WidgetStatePropertyAll<Size>(switch (sizeVariant) {
+    ButtonSizeVariant.xSmall => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(28.0, 32.0),
+      IconButtonWidthVariant.standard => const Size(32.0, 32.0),
+      IconButtonWidthVariant.wide => const Size(40.0, 32.0),
+    },
+    ButtonSizeVariant.small => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(32.0, 40.0),
+      IconButtonWidthVariant.standard => const Size(40.0, 40.0),
+      IconButtonWidthVariant.wide => const Size(52.0, 40.0),
+    },
+    ButtonSizeVariant.medium => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(48.0, 56.0),
+      IconButtonWidthVariant.standard => const Size(56.0, 56.0),
+      IconButtonWidthVariant.wide => const Size(72.0, 56.0),
+    },
+    ButtonSizeVariant.large => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(64.0, 96.0),
+      IconButtonWidthVariant.standard => const Size(96.0, 96.0),
+      IconButtonWidthVariant.wide => const Size(128.0, 96.0),
+    },
+    ButtonSizeVariant.xLarge => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(104.0, 136.0),
+      IconButtonWidthVariant.standard => const Size(136.0, 136.0),
+      IconButtonWidthVariant.wide => const Size(184.0, 136.0),
+    },
+  });
 
   @override
-  WidgetStateProperty<Size>? get maximumSize => const MaterialStatePropertyAll<Size>(Size.infinite);
+  WidgetStateProperty<Size>? get maximumSize => const WidgetStatePropertyAll<Size>(Size.infinite);
 
   @override
-  WidgetStateProperty<double>? get iconSize =>
-      MaterialStatePropertyAll<double>(switch (sizeVariant) {
-        ButtonSizeVariant.xSmall => 20.0,
-        ButtonSizeVariant.small => 24.0,
-        ButtonSizeVariant.medium => 24.0,
-        ButtonSizeVariant.large => 32.0,
-        ButtonSizeVariant.xLarge => 40.0,
-      });
+  WidgetStateProperty<double>? get iconSize => WidgetStatePropertyAll<double>(switch (sizeVariant) {
+    ButtonSizeVariant.xSmall => 20.0,
+    ButtonSizeVariant.small => 24.0,
+    ButtonSizeVariant.medium => 24.0,
+    ButtonSizeVariant.large => 32.0,
+    ButtonSizeVariant.xLarge => 40.0,
+  });
 
   @override
   WidgetStateProperty<OutlinedBorder>? get shape =>
@@ -376,19 +374,19 @@ class _FilledIconButtonDefaultsM3E extends ButtonStyle {
       });
 
   @override
-  WidgetStateProperty<double>? get elevation => const MaterialStatePropertyAll<double>(0.0);
+  WidgetStateProperty<double>? get elevation => const WidgetStatePropertyAll<double>(0.0);
 
   @override
   WidgetStateProperty<Color>? get shadowColor =>
-      const MaterialStatePropertyAll<Color>(Colors.transparent);
+      const WidgetStatePropertyAll<Color>(Colors.transparent);
 
   @override
   WidgetStateProperty<Color>? get surfaceTintColor =>
-      const MaterialStatePropertyAll<Color>(Colors.transparent);
+      const WidgetStatePropertyAll<Color>(Colors.transparent);
 
   @override
   WidgetStateProperty<EdgeInsetsGeometry>?
-  get padding => MaterialStatePropertyAll<EdgeInsetsGeometry>(switch (sizeVariant) {
+  get padding => WidgetStatePropertyAll<EdgeInsetsGeometry>(switch (sizeVariant) {
     ButtonSizeVariant.xSmall => switch (iconButtonWidth) {
       IconButtonWidthVariant.narrow => const EdgeInsetsDirectional.fromSTEB(4.0, 6.0, 4.0, 6.0),
       IconButtonWidthVariant.standard => const EdgeInsetsDirectional.fromSTEB(6.0, 6.0, 6.0, 6.0),
@@ -432,47 +430,45 @@ class _FilledIconButtonDefaultsM3E extends ButtonStyle {
   });
 
   @override
-  WidgetStateProperty<Size>? get minimumSize =>
-      MaterialStatePropertyAll<Size>(switch (sizeVariant) {
-        ButtonSizeVariant.xSmall => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(28.0, 32.0),
-          IconButtonWidthVariant.standard => const Size(32.0, 32.0),
-          IconButtonWidthVariant.wide => const Size(40.0, 32.0),
-        },
-        ButtonSizeVariant.small => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(32.0, 40.0),
-          IconButtonWidthVariant.standard => const Size(40.0, 40.0),
-          IconButtonWidthVariant.wide => const Size(52.0, 40.0),
-        },
-        ButtonSizeVariant.medium => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(48.0, 56.0),
-          IconButtonWidthVariant.standard => const Size(56.0, 56.0),
-          IconButtonWidthVariant.wide => const Size(72.0, 56.0),
-        },
-        ButtonSizeVariant.large => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(64.0, 96.0),
-          IconButtonWidthVariant.standard => const Size(96.0, 96.0),
-          IconButtonWidthVariant.wide => const Size(128.0, 96.0),
-        },
-        ButtonSizeVariant.xLarge => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(104.0, 136.0),
-          IconButtonWidthVariant.standard => const Size(136.0, 136.0),
-          IconButtonWidthVariant.wide => const Size(184.0, 136.0),
-        },
-      });
+  WidgetStateProperty<Size>? get minimumSize => WidgetStatePropertyAll<Size>(switch (sizeVariant) {
+    ButtonSizeVariant.xSmall => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(28.0, 32.0),
+      IconButtonWidthVariant.standard => const Size(32.0, 32.0),
+      IconButtonWidthVariant.wide => const Size(40.0, 32.0),
+    },
+    ButtonSizeVariant.small => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(32.0, 40.0),
+      IconButtonWidthVariant.standard => const Size(40.0, 40.0),
+      IconButtonWidthVariant.wide => const Size(52.0, 40.0),
+    },
+    ButtonSizeVariant.medium => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(48.0, 56.0),
+      IconButtonWidthVariant.standard => const Size(56.0, 56.0),
+      IconButtonWidthVariant.wide => const Size(72.0, 56.0),
+    },
+    ButtonSizeVariant.large => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(64.0, 96.0),
+      IconButtonWidthVariant.standard => const Size(96.0, 96.0),
+      IconButtonWidthVariant.wide => const Size(128.0, 96.0),
+    },
+    ButtonSizeVariant.xLarge => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(104.0, 136.0),
+      IconButtonWidthVariant.standard => const Size(136.0, 136.0),
+      IconButtonWidthVariant.wide => const Size(184.0, 136.0),
+    },
+  });
 
   @override
-  WidgetStateProperty<Size>? get maximumSize => const MaterialStatePropertyAll<Size>(Size.infinite);
+  WidgetStateProperty<Size>? get maximumSize => const WidgetStatePropertyAll<Size>(Size.infinite);
 
   @override
-  WidgetStateProperty<double>? get iconSize =>
-      MaterialStatePropertyAll<double>(switch (sizeVariant) {
-        ButtonSizeVariant.xSmall => 20.0,
-        ButtonSizeVariant.small => 24.0,
-        ButtonSizeVariant.medium => 24.0,
-        ButtonSizeVariant.large => 32.0,
-        ButtonSizeVariant.xLarge => 40.0,
-      });
+  WidgetStateProperty<double>? get iconSize => WidgetStatePropertyAll<double>(switch (sizeVariant) {
+    ButtonSizeVariant.xSmall => 20.0,
+    ButtonSizeVariant.small => 24.0,
+    ButtonSizeVariant.medium => 24.0,
+    ButtonSizeVariant.large => 32.0,
+    ButtonSizeVariant.xLarge => 40.0,
+  });
 
   @override
   WidgetStateProperty<OutlinedBorder>? get shape =>
@@ -669,19 +665,19 @@ class _FilledTonalIconButtonDefaultsM3E extends ButtonStyle {
       });
 
   @override
-  WidgetStateProperty<double>? get elevation => const MaterialStatePropertyAll<double>(0.0);
+  WidgetStateProperty<double>? get elevation => const WidgetStatePropertyAll<double>(0.0);
 
   @override
   WidgetStateProperty<Color>? get shadowColor =>
-      const MaterialStatePropertyAll<Color>(Colors.transparent);
+      const WidgetStatePropertyAll<Color>(Colors.transparent);
 
   @override
   WidgetStateProperty<Color>? get surfaceTintColor =>
-      const MaterialStatePropertyAll<Color>(Colors.transparent);
+      const WidgetStatePropertyAll<Color>(Colors.transparent);
 
   @override
   WidgetStateProperty<EdgeInsetsGeometry>?
-  get padding => MaterialStatePropertyAll<EdgeInsetsGeometry>(switch (sizeVariant) {
+  get padding => WidgetStatePropertyAll<EdgeInsetsGeometry>(switch (sizeVariant) {
     ButtonSizeVariant.xSmall => switch (iconButtonWidth) {
       IconButtonWidthVariant.narrow => const EdgeInsetsDirectional.fromSTEB(4.0, 6.0, 4.0, 6.0),
       IconButtonWidthVariant.standard => const EdgeInsetsDirectional.fromSTEB(6.0, 6.0, 6.0, 6.0),
@@ -725,47 +721,45 @@ class _FilledTonalIconButtonDefaultsM3E extends ButtonStyle {
   });
 
   @override
-  WidgetStateProperty<Size>? get minimumSize =>
-      MaterialStatePropertyAll<Size>(switch (sizeVariant) {
-        ButtonSizeVariant.xSmall => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(28.0, 32.0),
-          IconButtonWidthVariant.standard => const Size(32.0, 32.0),
-          IconButtonWidthVariant.wide => const Size(40.0, 32.0),
-        },
-        ButtonSizeVariant.small => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(32.0, 40.0),
-          IconButtonWidthVariant.standard => const Size(40.0, 40.0),
-          IconButtonWidthVariant.wide => const Size(52.0, 40.0),
-        },
-        ButtonSizeVariant.medium => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(48.0, 56.0),
-          IconButtonWidthVariant.standard => const Size(56.0, 56.0),
-          IconButtonWidthVariant.wide => const Size(72.0, 56.0),
-        },
-        ButtonSizeVariant.large => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(64.0, 96.0),
-          IconButtonWidthVariant.standard => const Size(96.0, 96.0),
-          IconButtonWidthVariant.wide => const Size(128.0, 96.0),
-        },
-        ButtonSizeVariant.xLarge => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(104.0, 136.0),
-          IconButtonWidthVariant.standard => const Size(136.0, 136.0),
-          IconButtonWidthVariant.wide => const Size(184.0, 136.0),
-        },
-      });
+  WidgetStateProperty<Size>? get minimumSize => WidgetStatePropertyAll<Size>(switch (sizeVariant) {
+    ButtonSizeVariant.xSmall => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(28.0, 32.0),
+      IconButtonWidthVariant.standard => const Size(32.0, 32.0),
+      IconButtonWidthVariant.wide => const Size(40.0, 32.0),
+    },
+    ButtonSizeVariant.small => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(32.0, 40.0),
+      IconButtonWidthVariant.standard => const Size(40.0, 40.0),
+      IconButtonWidthVariant.wide => const Size(52.0, 40.0),
+    },
+    ButtonSizeVariant.medium => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(48.0, 56.0),
+      IconButtonWidthVariant.standard => const Size(56.0, 56.0),
+      IconButtonWidthVariant.wide => const Size(72.0, 56.0),
+    },
+    ButtonSizeVariant.large => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(64.0, 96.0),
+      IconButtonWidthVariant.standard => const Size(96.0, 96.0),
+      IconButtonWidthVariant.wide => const Size(128.0, 96.0),
+    },
+    ButtonSizeVariant.xLarge => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(104.0, 136.0),
+      IconButtonWidthVariant.standard => const Size(136.0, 136.0),
+      IconButtonWidthVariant.wide => const Size(184.0, 136.0),
+    },
+  });
 
   @override
-  WidgetStateProperty<Size>? get maximumSize => const MaterialStatePropertyAll<Size>(Size.infinite);
+  WidgetStateProperty<Size>? get maximumSize => const WidgetStatePropertyAll<Size>(Size.infinite);
 
   @override
-  WidgetStateProperty<double>? get iconSize =>
-      MaterialStatePropertyAll<double>(switch (sizeVariant) {
-        ButtonSizeVariant.xSmall => 20.0,
-        ButtonSizeVariant.small => 24.0,
-        ButtonSizeVariant.medium => 24.0,
-        ButtonSizeVariant.large => 32.0,
-        ButtonSizeVariant.xLarge => 40.0,
-      });
+  WidgetStateProperty<double>? get iconSize => WidgetStatePropertyAll<double>(switch (sizeVariant) {
+    ButtonSizeVariant.xSmall => 20.0,
+    ButtonSizeVariant.small => 24.0,
+    ButtonSizeVariant.medium => 24.0,
+    ButtonSizeVariant.large => 32.0,
+    ButtonSizeVariant.xLarge => 40.0,
+  });
 
   @override
   WidgetStateProperty<OutlinedBorder>? get shape =>
@@ -948,19 +942,19 @@ class _OutlinedIconButtonDefaultsM3E extends ButtonStyle {
       });
 
   @override
-  WidgetStateProperty<double>? get elevation => const MaterialStatePropertyAll<double>(0.0);
+  WidgetStateProperty<double>? get elevation => const WidgetStatePropertyAll<double>(0.0);
 
   @override
   WidgetStateProperty<Color>? get shadowColor =>
-      const MaterialStatePropertyAll<Color>(Colors.transparent);
+      const WidgetStatePropertyAll<Color>(Colors.transparent);
 
   @override
   WidgetStateProperty<Color>? get surfaceTintColor =>
-      const MaterialStatePropertyAll<Color>(Colors.transparent);
+      const WidgetStatePropertyAll<Color>(Colors.transparent);
 
   @override
   WidgetStateProperty<EdgeInsetsGeometry>?
-  get padding => MaterialStatePropertyAll<EdgeInsetsGeometry>(switch (sizeVariant) {
+  get padding => WidgetStatePropertyAll<EdgeInsetsGeometry>(switch (sizeVariant) {
     ButtonSizeVariant.xSmall => switch (iconButtonWidth) {
       IconButtonWidthVariant.narrow => const EdgeInsetsDirectional.fromSTEB(4.0, 6.0, 4.0, 6.0),
       IconButtonWidthVariant.standard => const EdgeInsetsDirectional.fromSTEB(6.0, 6.0, 6.0, 6.0),
@@ -1004,47 +998,45 @@ class _OutlinedIconButtonDefaultsM3E extends ButtonStyle {
   });
 
   @override
-  WidgetStateProperty<Size>? get minimumSize =>
-      MaterialStatePropertyAll<Size>(switch (sizeVariant) {
-        ButtonSizeVariant.xSmall => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(28.0, 32.0),
-          IconButtonWidthVariant.standard => const Size(32.0, 32.0),
-          IconButtonWidthVariant.wide => const Size(40.0, 32.0),
-        },
-        ButtonSizeVariant.small => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(32.0, 40.0),
-          IconButtonWidthVariant.standard => const Size(40.0, 40.0),
-          IconButtonWidthVariant.wide => const Size(52.0, 40.0),
-        },
-        ButtonSizeVariant.medium => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(48.0, 56.0),
-          IconButtonWidthVariant.standard => const Size(56.0, 56.0),
-          IconButtonWidthVariant.wide => const Size(72.0, 56.0),
-        },
-        ButtonSizeVariant.large => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(64.0, 96.0),
-          IconButtonWidthVariant.standard => const Size(96.0, 96.0),
-          IconButtonWidthVariant.wide => const Size(128.0, 96.0),
-        },
-        ButtonSizeVariant.xLarge => switch (iconButtonWidth) {
-          IconButtonWidthVariant.narrow => const Size(104.0, 136.0),
-          IconButtonWidthVariant.standard => const Size(136.0, 136.0),
-          IconButtonWidthVariant.wide => const Size(184.0, 136.0),
-        },
-      });
+  WidgetStateProperty<Size>? get minimumSize => WidgetStatePropertyAll<Size>(switch (sizeVariant) {
+    ButtonSizeVariant.xSmall => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(28.0, 32.0),
+      IconButtonWidthVariant.standard => const Size(32.0, 32.0),
+      IconButtonWidthVariant.wide => const Size(40.0, 32.0),
+    },
+    ButtonSizeVariant.small => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(32.0, 40.0),
+      IconButtonWidthVariant.standard => const Size(40.0, 40.0),
+      IconButtonWidthVariant.wide => const Size(52.0, 40.0),
+    },
+    ButtonSizeVariant.medium => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(48.0, 56.0),
+      IconButtonWidthVariant.standard => const Size(56.0, 56.0),
+      IconButtonWidthVariant.wide => const Size(72.0, 56.0),
+    },
+    ButtonSizeVariant.large => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(64.0, 96.0),
+      IconButtonWidthVariant.standard => const Size(96.0, 96.0),
+      IconButtonWidthVariant.wide => const Size(128.0, 96.0),
+    },
+    ButtonSizeVariant.xLarge => switch (iconButtonWidth) {
+      IconButtonWidthVariant.narrow => const Size(104.0, 136.0),
+      IconButtonWidthVariant.standard => const Size(136.0, 136.0),
+      IconButtonWidthVariant.wide => const Size(184.0, 136.0),
+    },
+  });
 
   @override
-  WidgetStateProperty<Size>? get maximumSize => const MaterialStatePropertyAll<Size>(Size.infinite);
+  WidgetStateProperty<Size>? get maximumSize => const WidgetStatePropertyAll<Size>(Size.infinite);
 
   @override
-  WidgetStateProperty<double>? get iconSize =>
-      MaterialStatePropertyAll<double>(switch (sizeVariant) {
-        ButtonSizeVariant.xSmall => 20.0,
-        ButtonSizeVariant.small => 24.0,
-        ButtonSizeVariant.medium => 24.0,
-        ButtonSizeVariant.large => 32.0,
-        ButtonSizeVariant.xLarge => 40.0,
-      });
+  WidgetStateProperty<double>? get iconSize => WidgetStatePropertyAll<double>(switch (sizeVariant) {
+    ButtonSizeVariant.xSmall => 20.0,
+    ButtonSizeVariant.small => 24.0,
+    ButtonSizeVariant.medium => 24.0,
+    ButtonSizeVariant.large => 32.0,
+    ButtonSizeVariant.xLarge => 40.0,
+  });
 
   @override
   WidgetStateProperty<OutlinedBorder>? get shape =>
