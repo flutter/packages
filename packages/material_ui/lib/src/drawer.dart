@@ -70,7 +70,7 @@ const Duration _kBaseSettleDuration = Duration(milliseconds: 246);
 /// that's preferred for applications that are configured for Material 3
 /// (see [ThemeData.useMaterial3]).
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=WRj86iHihgY}
+/// Learn more about [Drawer] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=WRj86iHihgY).
 ///
 /// Drawers are typically used with the [Scaffold.drawer] property. The child of
 /// the drawer is usually a [ListView] whose first child is a [DrawerHeader]
@@ -339,7 +339,7 @@ class DrawerController extends StatefulWidget {
   ///
   /// The [child] argument is typically a [Drawer].
   const DrawerController({
-    GlobalKey? key,
+    GlobalKey? super.key,
     required this.child,
     required this.alignment,
     this.isDrawerOpen = false,
@@ -349,7 +349,7 @@ class DrawerController extends StatefulWidget {
     this.edgeDragWidth,
     this.enableOpenDragGesture = true,
     this.drawerBarrierDismissible = true,
-  }) : super(key: key);
+  });
 
   /// The widget below this widget in the tree.
   ///

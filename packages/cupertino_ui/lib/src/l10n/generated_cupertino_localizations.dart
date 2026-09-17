@@ -6,6 +6,9 @@
 // To regenerate the file, use:
 // dart script/l10n/bin/gen_localizations.dart --overwrite
 
+/// @docImport 'package:intl/intl.dart';
+library;
+
 import 'dart:collection';
 
 import 'package:flutter/widgets.dart';

@@ -340,9 +340,9 @@ class CupertinoTextField extends StatefulWidget {
        assert(maxLength == null || maxLength > 0),
        // Assert the following instead of setting it directly to avoid surprising the user by silently changing the value they set.
        assert(
-         !identical(textInputAction, TextInputAction.newline) ||
+         textInputAction != TextInputAction.newline ||
              maxLines == 1 ||
-             !identical(keyboardType, TextInputType.text),
+             keyboardType != TextInputType.text,
          'Use keyboardType TextInputType.multiline when using TextInputAction.newline on a multiline TextField.',
        ),
        keyboardType =
@@ -480,9 +480,9 @@ class CupertinoTextField extends StatefulWidget {
        assert(maxLength == null || maxLength > 0),
        // Assert the following instead of setting it directly to avoid surprising the user by silently changing the value they set.
        assert(
-         !identical(textInputAction, TextInputAction.newline) ||
+         textInputAction != TextInputAction.newline ||
              maxLines == 1 ||
-             !identical(keyboardType, TextInputType.text),
+             keyboardType != TextInputType.text,
          'Use keyboardType TextInputType.multiline when using TextInputAction.newline on a multiline TextField.',
        ),
        keyboardType =
@@ -700,7 +700,13 @@ class CupertinoTextField extends StatefulWidget {
   /// {@macro flutter.services.textFormatter.maxLengthEnforcement}
   final MaxLengthEnforcement? maxLengthEnforcement;
 
-  /// {@macro flutter.widgets.editableText.onChanged}
+  /// Called when the user initiates a change to the TextField's
+  /// value: when they have inserted or deleted text.
+  ///
+  /// For more information, see [EditableText.onChanged].
+  // TODO(dkwingsmt): Migrate the doc back to macro
+  // flutter.widgets.editableText.onChanged
+  // https://github.com/flutter/flutter/issues/189629
   final ValueChanged<String>? onChanged;
 
   /// {@macro flutter.widgets.editableText.onEditingComplete}
@@ -865,10 +871,21 @@ class CupertinoTextField extends StatefulWidget {
   /// {@macro flutter.services.TextInputConfiguration.enableInlinePrediction}
   final bool? enableInlinePrediction;
 
-  /// {@macro flutter.widgets.editableText.contentInsertionConfiguration}
+  /// Configuration of handler for media content inserted via the system input
+  /// method.
+  ///
+  /// For more information, see [EditableText.contentInsertionConfiguration].
+  // TODO(dkwingsmt): Migrate the doc back to macro
+  // flutter.widgets.editableText.contentInsertionConfiguration
+  // https://github.com/flutter/flutter/issues/189629
   final ContentInsertionConfiguration? contentInsertionConfiguration;
 
-  /// {@macro flutter.widgets.EditableText.contextMenuBuilder}
+  /// Builds the text selection toolbar when requested by the user.
+  ///
+  /// For more information, see [EditableText.contextMenuBuilder].
+  // TODO(dkwingsmt): Migrate the doc back to macro
+  // flutter.widgets.EditableText.contextMenuBuilder
+  // https://github.com/flutter/flutter/issues/189629
   ///
   /// If not provided, will build a default menu based on the platform.
   ///

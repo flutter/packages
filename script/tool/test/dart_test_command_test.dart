@@ -16,14 +16,14 @@ import 'util.dart';
 
 void main() {
   group('TestCommand', () {
-    late Platform mockPlatform;
+    late NativePlatform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
     late RecordingProcessRunner gitProcessRunner;
 
     setUp(() {
-      mockPlatform = MockPlatform();
+      mockPlatform = createMockPlatform();
       final GitDir gitDir;
       (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
         platform: mockPlatform,
@@ -583,6 +583,28 @@ test_on: vm && browser
       );
       package.directory.childFile('dart_test.yaml').writeAsStringSync('''
 test_on: vm
+''');
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'dart-test',
+        '--platform=chrome',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Package has opted out of non-vm testing.')]),
+      );
+      expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+    });
+
+    test('skips browser testing regardless of the exact yaml formatting', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+      package.directory.childFile('dart_test.yaml').writeAsStringSync('''
+test_on: "vm"
 ''');
 
       final List<String> output = await runCapturingPrint(runner, <String>[

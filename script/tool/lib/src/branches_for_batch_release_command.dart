@@ -77,7 +77,7 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
       return;
     }
 
-    final pubspec = Pubspec.parse(package.pubspecFile.readAsStringSync());
+    final Pubspec pubspec = package.parsePubspec();
     if (pubspec.version == null) {
       printError('The package has no version specified.');
       throw ToolExit(_kExitPackageMalformed);
@@ -96,7 +96,6 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
 
     await _createAndPushReleaseBranch(
       git: repository,
-      package: package,
       releaseBranchName: releaseBranchName,
       remoteName: remoteName,
     );
@@ -128,6 +127,10 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
       versionIndex = math.min(versionIndex, entry.version.index);
     }
     final VersionChange effectiveVersionChange = VersionChange.values[versionIndex];
+    if (effectiveVersionChange == VersionChange.promote && oldVersion.major != 0) {
+      printError('"promote" is only valid for pre-1.0 packages.');
+      throw ToolExit(_kExitPackageMalformed);
+    }
 
     final Version? newVersion = _newVersionFollowingDartSemVer(oldVersion, effectiveVersionChange);
     return _ReleaseInfo(newVersion, changelogs);
@@ -138,6 +141,7 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
       final oldBuildNumber = oldVersion.build.isEmpty ? 0 : oldVersion.build.first as int;
       return switch (change) {
         VersionChange.skip => null,
+        VersionChange.promote => Version(1, 0, 0),
         VersionChange.major => Version(0, oldVersion.minor + 1, 0),
         VersionChange.minor => Version(0, oldVersion.minor, oldVersion.patch + 1),
         VersionChange.patch => Version(
@@ -150,6 +154,7 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
     } else {
       return switch (change) {
         VersionChange.skip => null,
+        VersionChange.promote => throw ArgumentError('promote is only valid for pre-1.0 packages.'),
         VersionChange.major => Version(oldVersion.major + 1, 0, 0),
         VersionChange.minor => Version(oldVersion.major, oldVersion.minor + 1, 0),
         VersionChange.patch => Version(oldVersion.major, oldVersion.minor, oldVersion.patch + 1),
@@ -165,7 +170,6 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
   /// Throws a [ToolExit] if any of the steps fail.
   Future<void> _createAndPushReleaseBranch({
     required GitDir git,
-    required RepositoryPackage package,
     required String releaseBranchName,
     required String remoteName,
   }) async {
@@ -183,11 +187,7 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
 
     await _pushBranch(git, remoteName, releaseBranchName);
 
-    final String? githubOutput = platform.environment['GITHUB_OUTPUT'];
-    if (githubOutput != null && githubOutput.isNotEmpty) {
-      final File file = package.directory.fileSystem.file(githubOutput);
-      file.writeAsStringSync('release_branch=$releaseBranchName\n', mode: io.FileMode.append);
-    }
+    writeGitHubActionsOutput('release_branch', releaseBranchName);
   }
 
   Future<void> _createHeadBranchAndCommit({

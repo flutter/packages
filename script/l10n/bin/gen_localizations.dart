@@ -84,9 +84,7 @@ String generateArbBasedLocalizationSubclasses({
   assert(supportedLanguagesDocMacro.isNotEmpty);
   generateConstructorForCountrySubClass ??= generateConstructor;
   final output = StringBuffer();
-  output.writeln(
-    generateHeader('dart script/l10n/bin/gen_localizations.dart --overwrite'),
-  );
+  output.writeln(generateHeader('dart script/l10n/bin/gen_localizations.dart --overwrite'));
 
   final supportedLocales = StringBuffer();
 
