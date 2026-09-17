@@ -168,7 +168,6 @@ if (response.notFoundIDs.isNotEmpty) {
   // Handle the error.
 }
 final List<ProductDetails> products = response.productDetails;
-print(products);
 ```
 
 ### Restoring previous purchases

@@ -139,8 +139,8 @@ Future<void> loadProducts() async {
     // Handle the error.
   }
   final List<ProductDetails> products = response.productDetails;
-  print(products);
   // #enddocregion product-query
+  print(products);
 }
 
 Future<void> restorePurchases() async {
