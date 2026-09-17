@@ -129,7 +129,7 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
   @override
   Future<bool> canRead() async {
     return NSFileManager.getDefaultManager().isReadableFileAtPath(
-      Uri.file(params.uri).path.toNSString(),
+      Uri.parse(params.uri).toFilePath().toNSString(),
     );
   }
 
@@ -181,7 +181,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     if (_tryGetAsset(identifier: params.uri) case final PHAsset asset) {
       final NSDate? date = asset.modificationDate;
       if (date != null) {
-        DateTime.fromMillisecondsSinceEpoch((date.timeIntervalSince1970 * 1000).round());
+        return DateTime.fromMillisecondsSinceEpoch((date.timeIntervalSince1970 * 1000).round());
       }
     }
 
@@ -207,7 +207,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
   @override
   Stream<Uint8List> openRead([int? start, int? end]) {
     if (start != null && start < 0) {
-      return Stream.error(RangeError('`start` must be greater than 0. start: $start'));
+      return Stream.error(RangeError('`start` must be >= 0. start: $start'));
     } else if (end != null && end <= (start ?? 0)) {
       return Stream.error(
         RangeError(
@@ -263,7 +263,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
 
   PHAsset? _tryGetAsset({required String identifier}) {
     final PHFetchResult result = PHAsset.fetchAssetsWithLocalIdentifiers(
-      <String>[params.uri].toNSArray(),
+      <String>[identifier].toNSArray(),
     );
     final ObjCObject? firstObject = result.firstObject;
     if (firstObject != null) {
@@ -274,7 +274,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
   }
 
   PHAssetResource? _tryGetAssetResource({required String identifier}) {
-    if (_tryGetAsset(identifier: params.uri) case final PHAsset asset) {
+    if (_tryGetAsset(identifier: identifier) case final PHAsset asset) {
       final NSArray resources = PHAssetResource.assetResourcesForAsset(asset);
       final ObjCObject? firstObject = resources.firstObject;
 

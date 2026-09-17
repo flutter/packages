@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
@@ -55,7 +56,7 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
   @override
   Stream<Uint8List> openRead([int? start, int? end]) async* {
     if (start != null && start < 0) {
-      throw RangeError('`start` must be greater than 0. start: $start');
+      throw RangeError('`start` must be >= 0. start: $start');
     } else if (end != null && end <= (start ?? 0)) {
       throw RangeError(
         '`end` must be greater than 0 and greater than `start`. start: $start, end: $end',
@@ -75,7 +76,7 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
         if (end == null) {
           yield chunk;
         } else {
-          yield Uint8List.sublistView(chunk, 0, end - currentByteIndex);
+          yield Uint8List.sublistView(chunk, 0, min(chunk.length, end - currentByteIndex));
         }
         currentByteIndex += chunk.length;
 

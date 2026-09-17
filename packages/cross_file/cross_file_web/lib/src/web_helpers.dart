@@ -83,9 +83,13 @@ Blob bytesToBlob(Uint8List bytes, String? mimeType) {
 Future<Blob> fetchBlob(String objectUrl) async {
   try {
     final Response response = await window.fetch(objectUrl.toJS).toDart;
+    if (!response.ok) {
+      throw Exception('${response.status} ${response.statusText}');
+    }
+
     return await response.blob().toDart;
-  } catch (e) {
-    throw Exception('Could not fetch Blob by URL: $objectUrl');
+  } catch (exception) {
+    throw Exception('Could not fetch Blob by URL: $objectUrl. $exception');
   }
 }
 

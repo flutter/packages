@@ -99,7 +99,7 @@ base class SecurityScopedDarwinScopedStorageXDirectory extends DarwinScopedStora
   @override
   Future<bool> canRead() async {
     return NSFileManager.getDefaultManager().isReadableFileAtPath(
-      NSString(Uri.file(params.uri).path),
+      NSString(Uri.parse(params.uri).toFilePath()),
     );
   }
 

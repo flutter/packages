@@ -111,6 +111,41 @@ void main() {
       expect(combineLists(await file.openRead().toList()), testBytes);
     });
 
+    test(
+      'openRead finishes successfully with file larger than max array len and end is set',
+      () async {
+        final testBytes = Uint8List.fromList(
+          List.filled(AndroidScopedStorageXFile.maxByteArrayLen + 1, 0),
+        );
+
+        final mockDocumentFile = MockDocumentFile();
+
+        const uri = 'uri';
+        android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
+          expect(singleUri, uri);
+          return mockDocumentFile;
+        };
+
+        final mockInputStream = MockInputStream();
+        setUpInputStreamWithBytes(mockInputStream, testBytes);
+
+        final mockContentResolver = MockContentResolver();
+        when(mockContentResolver.openInputStream(uri)).thenAnswer((_) async => mockInputStream);
+        android.PigeonOverrides.contentResolver_instance = mockContentResolver;
+
+        final file = AndroidScopedStorageXFile(
+          const PlatformScopedStorageXFileCreationParams(uri: uri),
+        );
+
+        expect(
+          combineLists(
+            await file.openRead(0, AndroidScopedStorageXFile.maxByteArrayLen + 1).toList(),
+          ),
+          testBytes,
+        );
+      },
+    );
+
     test('openRead finishes successfully with subset of array', () async {
       final testBytes = Uint8List.fromList(<int>[0, 0, 0, 1, 1, 1, 0, 0, 0]);
 
