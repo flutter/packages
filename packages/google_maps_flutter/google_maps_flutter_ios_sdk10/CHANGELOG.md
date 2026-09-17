@@ -1,3 +1,9 @@
+## 2.18.14
+
+* Fixes corrupted and missing marker icons on maps with many markers created from
+  `BitmapDescriptor.bytes`, by sharing a single `UIImage` between markers that use the same
+  bytes and scaling.
+
 ## 2.18.13
 
 * Adopts new Pigeon async Swift support.
