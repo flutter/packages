@@ -4114,6 +4114,55 @@ void main() {
       );
     });
 
+    // Regression test for https://github.com/flutter/flutter/issues/161474
+    testWidgets('Menu does not cover the anchor when it does not fit above it', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(400, 200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      final controller = MenuController();
+      final anchorKey = UniqueKey();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                MenuAnchor(
+                  controller: controller,
+                  menuChildren: List<MenuItemButton>.generate(
+                    3,
+                    (int index) =>
+                        MenuItemButton(onPressed: () {}, child: Text('Item ${index + 1}')),
+                  ),
+                  builder: (BuildContext context, MenuController controller, Widget? child) {
+                    return SizedBox(key: anchorKey, width: 56, height: 56);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      controller.open();
+      await tester.pumpAndSettle();
+
+      final Rect anchorRect = tester.getRect(find.byKey(anchorKey));
+      final Rect menuRect = tester.getRect(findMenuPanels());
+      // There is not enough room above the anchor to show the whole menu, so
+      // the menu is shortened rather than being pushed down over the anchor.
+      expect(
+        menuRect.bottom,
+        lessThanOrEqualTo(anchorRect.top),
+        reason:
+            'Menu bottom (${menuRect.bottom}) should not cover the anchor top (${anchorRect.top})',
+      );
+    });
+
     testWidgets(
       'Menu is correctly offset when a LayerLink is provided and alignmentOffset is set',
       (WidgetTester tester) async {
