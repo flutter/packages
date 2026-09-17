@@ -154,16 +154,21 @@ base class WebScopedStorageXFile extends PlatformScopedStorageXFile
 
   @override
   Future<void> download([String? suggestedName]) async {
-    final Blob blob = await getBlob();
-
-    String? name;
-    if (suggestedName != null) {
-      name = suggestedName;
-    } else if (blob.isA<File>()) {
-      name = (blob as File).name;
+    switch (params) {
+      case UrlWebScopedStorageXFileCreationParams():
+        downloadObjectUrl(params.uri, suggestedName, testOverrides: params.testOverrides);
+      case BlobWebScopedStorageXFileCreationParams():
+        String? name;
+        if (suggestedName != null) {
+          name = suggestedName;
+        } else {
+          final Blob blob = await getBlob();
+          if (blob.isA<File>()) {
+            name = (blob as File).name;
+          }
+        }
+        downloadObjectUrl(params.uri, name, testOverrides: params.testOverrides);
     }
-
-    downloadObjectUrl(params.uri, name, testOverrides: params.testOverrides);
   }
 
   @override
