@@ -310,19 +310,19 @@ switch (shapeVariant) {
     return '''
   @override
   WidgetStateProperty<EdgeInsetsGeometry>? get padding =>
-    MaterialStatePropertyAll<EdgeInsetsGeometry>($_paddingSwitch);
+    WidgetStatePropertyAll<EdgeInsetsGeometry>($_paddingSwitch);
 
   @override
   WidgetStateProperty<Size>? get minimumSize =>
-    MaterialStatePropertyAll<Size>($_minimumSizeSwitch);
+    WidgetStatePropertyAll<Size>($_minimumSizeSwitch);
 
   @override
   WidgetStateProperty<Size>? get maximumSize =>
-    const MaterialStatePropertyAll<Size>(Size.infinite);
+    const WidgetStatePropertyAll<Size>(Size.infinite);
 
   @override
   WidgetStateProperty<double>? get iconSize =>
-    MaterialStatePropertyAll<double>($_iconSizeSwitch);
+    WidgetStatePropertyAll<double>($_iconSizeSwitch);
 
   @override
   WidgetStateProperty<OutlinedBorder>? get shape =>
@@ -365,7 +365,7 @@ $_variantGetters
 
   @override
   WidgetStateProperty<Color?>? get backgroundColor =>
-    const MaterialStatePropertyAll<Color?>(Colors.transparent);
+    const WidgetStatePropertyAll<Color?>(Colors.transparent);
 
   @override
   WidgetStateProperty<Color?>? get foregroundColor =>
@@ -407,15 +407,15 @@ $_variantGetters
 
   @override
   WidgetStateProperty<double>? get elevation =>
-    const MaterialStatePropertyAll<double>(0.0);
+    const WidgetStatePropertyAll<double>(0.0);
 
   @override
   WidgetStateProperty<Color>? get shadowColor =>
-    const MaterialStatePropertyAll<Color>(Colors.transparent);
+    const WidgetStatePropertyAll<Color>(Colors.transparent);
 
   @override
   WidgetStateProperty<Color>? get surfaceTintColor =>
-    const MaterialStatePropertyAll<Color>(Colors.transparent);
+    const WidgetStatePropertyAll<Color>(Colors.transparent);
 
 $_sizeDependentProperties
 
@@ -531,15 +531,15 @@ $_variantGetters
 
   @override
   WidgetStateProperty<double>? get elevation =>
-    const MaterialStatePropertyAll<double>(0.0);
+    const WidgetStatePropertyAll<double>(0.0);
 
   @override
   WidgetStateProperty<Color>? get shadowColor =>
-    const MaterialStatePropertyAll<Color>(Colors.transparent);
+    const WidgetStatePropertyAll<Color>(Colors.transparent);
 
   @override
   WidgetStateProperty<Color>? get surfaceTintColor =>
-    const MaterialStatePropertyAll<Color>(Colors.transparent);
+    const WidgetStatePropertyAll<Color>(Colors.transparent);
 
 $_sizeDependentProperties
 
@@ -655,15 +655,15 @@ $_variantGetters
 
   @override
   WidgetStateProperty<double>? get elevation =>
-    const MaterialStatePropertyAll<double>(0.0);
+    const WidgetStatePropertyAll<double>(0.0);
 
   @override
   WidgetStateProperty<Color>? get shadowColor =>
-    const MaterialStatePropertyAll<Color>(Colors.transparent);
+    const WidgetStatePropertyAll<Color>(Colors.transparent);
 
   @override
   WidgetStateProperty<Color>? get surfaceTintColor =>
-    const MaterialStatePropertyAll<Color>(Colors.transparent);
+    const WidgetStatePropertyAll<Color>(Colors.transparent);
 
 $_sizeDependentProperties
 
@@ -765,15 +765,15 @@ $_variantGetters
 
   @override
   WidgetStateProperty<double>? get elevation =>
-    const MaterialStatePropertyAll<double>(0.0);
+    const WidgetStatePropertyAll<double>(0.0);
 
   @override
   WidgetStateProperty<Color>? get shadowColor =>
-    const MaterialStatePropertyAll<Color>(Colors.transparent);
+    const WidgetStatePropertyAll<Color>(Colors.transparent);
 
   @override
   WidgetStateProperty<Color>? get surfaceTintColor =>
-    const MaterialStatePropertyAll<Color>(Colors.transparent);
+    const WidgetStatePropertyAll<Color>(Colors.transparent);
 
 $_sizeDependentProperties
 
