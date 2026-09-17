@@ -6,6 +6,7 @@ package dev.flutter.packages.crossfileandroid.proxies
 
 import dev.flutter.packages.crossfileandroid.ProxyApiRegistrar
 import java.io.InputStream
+import java.lang.Math
 
 /**
  * ProxyApi implementation for [InputStream].
@@ -19,7 +20,7 @@ class InputStreamProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
       pigeon_instance: InputStream,
       len: Long,
   ): ByteArray {
-    val bytes = ByteArray(len.toInt())
+    val bytes = ByteArray(Math.toIntExact(len))
     val bytesRead = pigeon_instance.read(bytes)
     if (bytesRead == -1) {
       return byteArrayOf()
