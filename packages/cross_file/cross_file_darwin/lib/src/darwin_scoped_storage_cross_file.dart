@@ -263,7 +263,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
 
   PHAsset? _tryGetAsset({required String identifier}) {
     final PHFetchResult result = PHAsset.fetchAssetsWithLocalIdentifiers(
-      <String>[params.uri].toNSArray(),
+      <String>[identifier].toNSArray(),
     );
     final ObjCObject? firstObject = result.firstObject;
     if (firstObject != null) {
