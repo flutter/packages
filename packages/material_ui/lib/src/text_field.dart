@@ -1699,6 +1699,12 @@ class _TextFieldState extends State<TextField>
         };
     }
 
+    final EditableTextContextMenuBuilder? resolvedContextMenuBuilder =
+        widget.contextMenuBuilder == TextField._defaultContextMenuBuilder
+        ? (TextSelectionTheme.of(context).contextMenuBuilder ??
+              TextField._defaultContextMenuBuilder)
+        : widget.contextMenuBuilder;
+
     Widget child = RepaintBoundary(
       child: UnmanagedRestorationScope(
         bucket: bucket,
@@ -1770,10 +1776,7 @@ class _TextFieldState extends State<TextField>
           enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
           enableInlinePrediction: widget.enableInlinePrediction,
           contentInsertionConfiguration: widget.contentInsertionConfiguration,
-          contextMenuBuilder: widget.contextMenuBuilder == TextField._defaultContextMenuBuilder
-              ? (TextSelectionTheme.of(context).contextMenuBuilder ??
-                    TextField._defaultContextMenuBuilder)
-              : widget.contextMenuBuilder,
+          contextMenuBuilder: resolvedContextMenuBuilder,
           spellCheckConfiguration: spellCheckConfiguration,
           magnifierConfiguration:
               widget.magnifierConfiguration ?? TextMagnifier.adaptiveMagnifierConfiguration,

@@ -758,12 +758,20 @@ class _SelectableTextState extends State<SelectableText>
         widget.style ?? _controller._textSpan.style,
       );
     }
+
     final TextScaler? effectiveScaler =
         widget.textScaler ??
         switch (widget.textScaleFactor) {
           null => null,
           final double textScaleFactor => TextScaler.linear(textScaleFactor),
         };
+
+    final EditableTextContextMenuBuilder? resolvedContextMenuBuilder =
+        widget.contextMenuBuilder == SelectableText._defaultContextMenuBuilder
+        ? (TextSelectionTheme.of(context).contextMenuBuilder ??
+              SelectableText._defaultContextMenuBuilder)
+        : widget.contextMenuBuilder;
+
     final Widget child = RepaintBoundary(
       child: EditableText(
         key: editableTextKey,
@@ -806,10 +814,7 @@ class _SelectableTextState extends State<SelectableText>
         scrollPhysics: widget.scrollPhysics,
         scrollBehavior: widget.scrollBehavior,
         autofillHints: null,
-        contextMenuBuilder: widget.contextMenuBuilder == SelectableText._defaultContextMenuBuilder
-            ? (TextSelectionTheme.of(context).contextMenuBuilder ??
-                  SelectableText._defaultContextMenuBuilder)
-            : widget.contextMenuBuilder,
+        contextMenuBuilder: resolvedContextMenuBuilder,
       ),
     );
 

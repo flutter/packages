@@ -247,6 +247,12 @@ class TextFormField extends FormField<String> {
              onChanged?.call(value);
            }
 
+           final EditableTextContextMenuBuilder? resolvedContextMenuBuilder =
+               contextMenuBuilder == _defaultContextMenuBuilder
+               ? (TextSelectionTheme.of(field.context).contextMenuBuilder ??
+                     _defaultContextMenuBuilder)
+               : contextMenuBuilder;
+
            return UnmanagedRestorationScope(
              bucket: field.bucket,
              child: TextField(
@@ -310,10 +316,7 @@ class TextFormField extends FormField<String> {
                scrollController: scrollController,
                enableIMEPersonalizedLearning: enableIMEPersonalizedLearning,
                mouseCursor: mouseCursor,
-               contextMenuBuilder: contextMenuBuilder == _defaultContextMenuBuilder
-                   ? (TextSelectionTheme.of(field.context).contextMenuBuilder ??
-                         _defaultContextMenuBuilder)
-                   : contextMenuBuilder,
+               contextMenuBuilder: resolvedContextMenuBuilder,
                spellCheckConfiguration: spellCheckConfiguration,
                magnifierConfiguration: magnifierConfiguration,
                undoController: undoController,

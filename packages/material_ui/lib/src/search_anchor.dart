@@ -242,7 +242,7 @@ class SearchAnchor extends StatefulWidget {
     TextInputAction? textInputAction,
     TextInputType? keyboardType,
     EdgeInsets scrollPadding,
-    EditableTextContextMenuBuilder contextMenuBuilder,
+    EditableTextContextMenuBuilder? contextMenuBuilder,
     bool enabled,
     SmartDashesType? smartDashesType,
     SmartQuotesType? smartQuotesType,
@@ -1813,6 +1813,12 @@ class _SearchBarState extends State<SearchBar> {
         )
         .toList();
 
+    final EditableTextContextMenuBuilder? resolvedContextMenuBuilder =
+        widget.contextMenuBuilder == SearchBar._defaultContextMenuBuilder
+        ? (TextSelectionTheme.of(context).contextMenuBuilder ??
+              SearchBar._defaultContextMenuBuilder)
+        : widget.contextMenuBuilder;
+
     return ConstrainedBox(
       constraints: widget.constraints ?? searchBarTheme.constraints ?? defaults.constraints!,
       child: Opacity(
@@ -1876,11 +1882,7 @@ class _SearchBarState extends State<SearchBar> {
                             textInputAction: widget.textInputAction,
                             keyboardType: widget.keyboardType,
                             scrollPadding: widget.scrollPadding,
-                            contextMenuBuilder:
-                                widget.contextMenuBuilder == SearchBar._defaultContextMenuBuilder
-                                ? (TextSelectionTheme.of(context).contextMenuBuilder ??
-                                      SearchBar._defaultContextMenuBuilder)
-                                : widget.contextMenuBuilder,
+                            contextMenuBuilder: resolvedContextMenuBuilder,
                             smartDashesType: widget.smartDashesType,
                             smartQuotesType: widget.smartQuotesType,
                           ),
