@@ -1475,8 +1475,67 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
     if (matchList != null && matchList.isNotEmpty) {
       _router.restore(matchList);
     } else {
-      _router.go(widget._effectiveInitialBranchLocation(index));
+      final RouteMatchList? initialMatchList = _initialMatchListForBranch(index);
+      if (initialMatchList != null) {
+        _router.restore(initialMatchList);
+      } else {
+        _router.go(widget._effectiveInitialBranchLocation(index));
+      }
     }
+  }
+
+  /// Builds the match list for the initial location of the branch at [index],
+  /// keeping the parts of the current match list that lie outside this shell
+  /// route.
+  ///
+  /// Switching to a branch without preserved state must not drop pages the
+  /// parent Navigators have below the shell route. This grafts the shell match
+  /// for the initial branch location into the current match list instead of
+  /// navigating from scratch. See
+  /// https://github.com/flutter/flutter/issues/188295.
+  RouteMatchList? _initialMatchListForBranch(int index) {
+    final RouteMatchList initialMatchList = _router.configuration.findMatch(
+      Uri.parse(widget._effectiveInitialBranchLocation(index)),
+    );
+    ShellRouteMatch? newShellMatch;
+    initialMatchList.visitRouteMatches((RouteMatchBase match) {
+      if (match is ShellRouteMatch && match.route == route) {
+        newShellMatch = match;
+        return false;
+      }
+      return true;
+    });
+    if (newShellMatch == null) {
+      return null;
+    }
+
+    List<RouteMatchBase> replaceShellMatch(List<RouteMatchBase> matches) {
+      return matches.map((RouteMatchBase match) {
+        if (match is ShellRouteMatch) {
+          if (match.route == route) {
+            return newShellMatch!;
+          }
+          return match.copyWith(matches: replaceShellMatch(match.matches));
+        }
+        return match;
+      }).toList();
+    }
+
+    final RouteMatchList currentMatchList = _scopedMatchList(
+      widget.shellRouteContext.routeMatchList,
+    );
+    final List<RouteMatchBase> matches = replaceShellMatch(currentMatchList.matches);
+    return RouteMatchList(
+      matches: matches,
+      uri: initialMatchList.uri,
+      // The branch is navigated to as if by [GoRouter.go], which carries no
+      // extra. The object the outer location was given must not leak into it.
+      extra: initialMatchList.extra,
+      pathParameters: <String, String>{
+        ...currentMatchList.pathParameters,
+        ...initialMatchList.pathParameters,
+      },
+    );
   }
 
   @override
