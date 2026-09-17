@@ -75,7 +75,7 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
         if (end == null) {
           yield chunk;
         } else {
-          yield Uint8List.sublistView(chunk, 0, end - currentByteIndex);
+          yield Uint8List.sublistView(chunk, 0, (end - currentByteIndex).clamp(1, chunk.length));
         }
         currentByteIndex += chunk.length;
 
