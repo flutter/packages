@@ -9,7 +9,6 @@ import '../ast.dart';
 import '../functional.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
-import '../types/task_queue.dart';
 import 'templates.dart';
 
 /// Documentation comment open symbol.

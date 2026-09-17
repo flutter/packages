@@ -774,10 +774,54 @@ void main() {
     expect(
       code,
       contains(
-        'func doSomething(arg: Input, completion: @escaping @Sendable (Result<Output, Error>) -> Void)',
+        'func doSomething(arg: Input, completion: @escaping (Result<Output, Error>) -> Void)',
       ),
     );
     expect(code, contains('api.doSomething(arg: argArg) { result in'));
+  });
+
+  test('asyncCallback host api method with a task queue emits @Sendable', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration(baseName: 'Output', isNullable: false),
+              isAsynchronous: true,
+              isAsynchronousCallback: true,
+              taskQueueType: TaskQueueType.serialBackgroundThread,
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'arg',
+                  type: const TypeDeclaration(baseName: 'Input', isNullable: false),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[
+        Class(name: 'Input', fields: <NamedType>[]),
+        Class(name: 'Output', fields: <NamedType>[]),
+      ],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    // The handler runs off the main thread, so the implementation needs to be
+    // able to carry the completion closure across queues.
+    expect(
+      code,
+      contains(
+        'func doSomething(arg: Input, completion: @escaping @Sendable (Result<Output, Error>) -> Void)',
+      ),
+    );
   });
 
   test('asyncCallback flutter api completion closure is not Sendable', () {

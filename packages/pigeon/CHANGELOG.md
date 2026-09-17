@@ -1,7 +1,9 @@
 ## 29.1.0
 
-* [swift] Marks serial-background-task-queue-bound completion closures `@Sendable`.
-* [swift] Marks the generated `InstanceManager` as `@unchecked Sendable`. 
+* [swift] Marks completion closures of host API methods with a
+  `serialBackgroundThread` task queue, and of ProxyApi host method delegates,
+  as `@Sendable`, to allow implementations to reply from a background task queue.
+* [swift] Marks the generated `InstanceManager` as `@unchecked Sendable`.
 
 ## 29.0.2
 
