@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import CryptoKit
 import Flutter
 import GoogleMaps
 import UIKit
@@ -63,6 +64,10 @@ extension PlatformBitmap {
         }
       }
     case let bitmap as PlatformBitmapBytesMap:
+      let cacheKey = bitmap.iconCacheKey(screenScale: screenScale)
+      if let cachedIcon = bytesMapIconCache.object(forKey: cacheKey) {
+        return cachedIcon
+      }
       let bytes = bitmap.byteData
       image = UIImage(data: bytes.data, scale: screenScale)
       if let currentImage = image {
@@ -80,6 +85,9 @@ extension PlatformBitmap {
           // No scaling, load image from bytes without scale parameter.
           image = UIImage(data: bytes.data)
         }
+      }
+      if let icon = image {
+        bytesMapIconCache.setObject(icon, forKey: cacheKey)
       }
     case let bitmap as PlatformBitmapPinConfig:
       let options = GMSPinImageOptions()
@@ -116,6 +124,31 @@ extension PlatformBitmap {
     }
 
     return image
+  }
+}
+
+/// Caches the icons created from `PlatformBitmapBytesMap` bitmaps, keyed by everything that
+/// affects the resulting image.
+///
+/// The Maps SDK allocates marker texture space per `UIImage` instance instead of per image content,
+/// so creating a new `UIImage` for every marker exhausts the SDK's texture atlases ("Reached the
+/// max number of texture atlases, can not allocate more."), after which markers are drawn with the
+/// contents of other markers. Sharing one instance between identical bitmaps avoids that, and is
+/// safe because `UIImage` is immutable.
+///
+/// `NSCache` is thread-safe, and releases its contents when the system is under memory pressure.
+private let bytesMapIconCache = NSCache<NSString, UIImage>()
+
+extension PlatformBitmapBytesMap {
+  /// Returns a key that covers every input of the icon created from this bitmap, so that bitmaps
+  /// that would produce different images never share one.
+  fileprivate func iconCacheKey(screenScale: CGFloat) -> NSString {
+    let contentHash = Data(SHA256.hash(data: byteData.data)).base64EncodedString()
+    let widthKey = width?.description ?? "nil"
+    let heightKey = height?.description ?? "nil"
+    return
+      "\(contentHash)|\(bitmapScaling.rawValue)|\(imagePixelRatio)|\(widthKey)|\(heightKey)|\(screenScale)"
+      as NSString
   }
 }
 
