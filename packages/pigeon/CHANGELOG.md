@@ -1,8 +1,7 @@
 ## 29.1.0
 
-* [swift] Marks completion closures of host API methods with a
-  `serialBackgroundThread` task queue, and of ProxyApi host method delegates,
-  as `@Sendable`, to allow implementations to reply from a background task queue.
+* [swift] Marks the completion closures passed to host API implementations and
+  ProxyApi host method delegates as `@Sendable`. 
 * [swift] Marks the generated `InstanceManager` as `@unchecked Sendable`.
 
 ## 29.0.2

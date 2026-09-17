@@ -774,13 +774,13 @@ void main() {
     expect(
       code,
       contains(
-        'func doSomething(arg: Input, completion: @escaping (Result<Output, Error>) -> Void)',
+        'func doSomething(arg: Input, completion: @escaping @Sendable (Result<Output, Error>) -> Void)',
       ),
     );
     expect(code, contains('api.doSomething(arg: argArg) { result in'));
   });
 
-  test('asyncCallback host api method with a task queue emits @Sendable', () {
+  test('asyncCallback host api method with a task queue also emits @Sendable', () {
     final root = Root(
       apis: <Api>[
         AstHostApi(
@@ -814,8 +814,8 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    // The handler runs off the main thread, so the implementation needs to be
-    // able to carry the completion closure across queues.
+    // The annotation is not conditional on the task queue; the Flutter reply
+    // callback can be invoked from any thread either way.
     expect(
       code,
       contains(

@@ -1591,8 +1591,7 @@ if (wrapped == nil) {
             isAsynchronous: method.isAsynchronous,
             isAsynchronousCallback: method.isAsynchronousCallback,
             swiftFunction: method.swiftFunction,
-            isCompletionClosureSendable:
-                !generatorOptions.useFfi && method.taskQueueType == .serialBackgroundThread,
+            isCompletionClosureSendable: !generatorOptions.useFfi,
             ffiUserApi: generatorOptions.useFfi,
           ),
         );
