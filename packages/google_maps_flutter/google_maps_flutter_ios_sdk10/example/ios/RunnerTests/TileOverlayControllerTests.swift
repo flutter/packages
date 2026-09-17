@@ -4,7 +4,6 @@
 
 import GoogleMaps
 import Testing
-import google_maps_flutter_ios_sdk10_objc
 
 @testable import google_maps_flutter_ios_sdk10
 
@@ -14,8 +13,8 @@ import google_maps_flutter_ios_sdk10_objc
     let tileLayer = PropertyOrderValidatingTileLayer()
     TileOverlayController.update(
       tileLayer,
-      from: FGMPlatformTileOverlay.make(
-        withTileOverlayId: "overlay",
+      from: PlatformTileOverlay(
+        tileOverlayId: "overlay",
         fadeIn: false,
         transparency: 0.5,
         zIndex: 0,

@@ -3,41 +3,55 @@
 // found in the LICENSE file.
 
 import Foundation
-import google_maps_flutter_ios_sdk10
-import google_maps_flutter_ios_sdk10_objc
 
-/// Fake implementation of FGMMapEventDelegate for unit tests.
-class TestMapEventHandler: NSObject, FGMMapEventDelegate {
-  func didStartCameraMove() {}
+@testable import google_maps_flutter_ios_sdk10
 
-  func didMoveCamera(to cameraPosition: FGMPlatformCameraPosition) {}
+/// Fake implementation of MapEventDelegate for unit tests.
+class TestMapEventHandler: MapEventDelegate {
+  func didStartCameraMove() async throws {}
 
-  func didIdleCamera() {}
+  func didMoveCamera(to cameraPositionArg: PlatformCameraPosition) async throws {}
 
-  func didTap(atPosition position: FGMPlatformLatLng) {}
+  func didIdleCamera() async throws {}
 
-  func didLongPress(atPosition position: FGMPlatformLatLng) {}
+  func didTap(at positionArg: PlatformLatLng) async throws {}
 
-  func didTapMarker(withIdentifier markerId: String) {}
+  func didLongPress(at positionArg: PlatformLatLng) async throws {}
+
+  func didTapMarker(withIdentifier markerIdArg: String) async throws {}
 
   func didStartDragForMarker(
-    withIdentifier markerId: String, atPosition position: FGMPlatformLatLng
-  ) {}
+    withIdentifier markerIdArg: String,
+    at positionArg: PlatformLatLng
+  ) async throws {}
 
-  func didDragMarker(withIdentifier markerId: String, atPosition position: FGMPlatformLatLng) {}
+  func didDragMarker(
+    withIdentifier markerIdArg: String,
+    at positionArg: PlatformLatLng
+  ) async throws {}
 
-  func didEndDragForMarker(withIdentifier markerId: String, atPosition position: FGMPlatformLatLng)
-  {}
+  func didEndDragForMarker(
+    withIdentifier markerIdArg: String,
+    at positionArg: PlatformLatLng
+  ) async throws {}
 
-  func didTapInfoWindowOfMarker(withIdentifier markerId: String) {}
+  func didTapInfoWindowOfMarker(withIdentifier markerIdArg: String) async throws {}
 
-  func didTapCircle(withIdentifier circleId: String) {}
+  func didTapCircle(withIdentifier circleIdArg: String) async throws {}
 
-  func didTap(_ cluster: FGMPlatformCluster) {}
+  func didTapCluster(_ clusterArg: PlatformCluster) async throws {}
 
-  func didTapPolygon(withIdentifier polygonId: String) {}
+  func didTapPolygon(withIdentifier polygonIdArg: String) async throws {}
 
-  func didTapPolyline(withIdentifier polylineId: String) {}
+  func didTapPolyline(withIdentifier polylineIdArg: String) async throws {}
 
-  func didTapGroundOverlay(withIdentifier groundOverlayId: String) {}
+  func didTapGroundOverlay(withIdentifier groundOverlayIdArg: String) async throws {}
+
+  func tile(
+    withOverlayIdentifier tileOverlayIdArg: String,
+    location locationArg: PlatformPoint,
+    zoom zoomArg: Int64
+  ) async throws -> PlatformTile {
+    return PlatformTile(width: 0, height: 0)
+  }
 }
