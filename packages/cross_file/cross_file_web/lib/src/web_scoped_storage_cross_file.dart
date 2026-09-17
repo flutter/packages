@@ -174,7 +174,10 @@ base class WebScopedStorageXFile extends PlatformScopedStorageXFile
 
   @override
   Future<void> dispose() async {
-    URL.revokeObjectURL(params.uri);
+    // Only revoke the object URL if the XFile was the one that created it.
+    if (params is BlobWebScopedStorageXFileCreationParams) {
+      URL.revokeObjectURL(params.uri);
+    }
   }
 }
 
