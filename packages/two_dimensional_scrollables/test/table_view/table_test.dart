@@ -4119,6 +4119,70 @@ void main() {
     expect(find.text('R19 C0'), findsOneWidget);
   });
 
+  // Regression test for https://github.com/flutter/flutter/issues/185842.
+  testWidgets('Trailing pinned rows and columns are excluded from the non-pinned ranges together', (
+    WidgetTester tester,
+  ) async {
+    final verticalController = ScrollController();
+    addTearDown(verticalController.dispose);
+    final horizontalController = ScrollController();
+    addTearDown(horizontalController.dispose);
+    final rowPaintCounts = <int, int>{};
+    final columnPaintCounts = <int, int>{};
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 400,
+            child: TableView.builder(
+              columnCount: 20,
+              rowCount: 20,
+              trailingPinnedColumnCount: 1,
+              trailingPinnedRowCount: 1,
+              verticalDetails: ScrollableDetails.vertical(controller: verticalController),
+              horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
+              columnBuilder: (int index) => TableSpan(
+                extent: const FixedTableSpanExtent(100),
+                backgroundDecoration: CountingSpanDecoration(
+                  index: index,
+                  paintCounts: columnPaintCounts,
+                ),
+              ),
+              rowBuilder: (int index) => TableSpan(
+                extent: const FixedTableSpanExtent(100),
+                backgroundDecoration: CountingSpanDecoration(
+                  index: index,
+                  paintCounts: rowPaintCounts,
+                ),
+              ),
+              cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                return TableViewCell(child: Text('R${vicinity.row} C${vicinity.column}'));
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    rowPaintCounts.clear();
+    columnPaintCounts.clear();
+    verticalController.jumpTo(verticalController.position.maxScrollExtent);
+    horizontalController.jumpTo(horizontalController.position.maxScrollExtent);
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    // Each trailing pinned span is decorated once for each region it shares
+    // with the other axis: the regular region and the trailing pinned one.
+    expect(rowPaintCounts[19], 2);
+    expect(columnPaintCounts[19], 2);
+    // The corner cell belongs to the trailing pinned row and column only.
+    expect(find.text('R19 C19'), findsOneWidget);
+    expect(find.text('R19 C18'), findsOneWidget);
+    expect(find.text('R18 C19'), findsOneWidget);
+  });
+
   testWidgets('Intersections of leading and trailing pinned', (WidgetTester tester) async {
     const span = TableSpan(extent: FixedTableSpanExtent(100));
     await tester.pumpWidget(
