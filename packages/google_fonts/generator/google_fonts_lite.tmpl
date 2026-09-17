@@ -6,7 +6,7 @@
 
 import 'dart:ui' as ui;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'google_fonts_base.dart';
 import 'google_fonts_descriptor.dart';
