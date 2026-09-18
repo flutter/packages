@@ -1,3 +1,11 @@
+## 3.27.0
+
+* Adds `WebKitWebViewWidgetCreationParams.gestureBlockingPolicy` for choosing the gesture
+  blocking policy of the iOS platform view. Setting it to `doNotBlockGesture` works around web
+  views becoming unresponsive to touches. See
+  https://github.com/flutter/flutter/issues/175099.
+* Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
+
 ## 3.26.1
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
