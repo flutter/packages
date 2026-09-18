@@ -7,8 +7,8 @@
 //   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
 part of '../icon_button.dart';
 
-class _IconButtonDefaultsM3E extends ButtonStyle {
-  _IconButtonDefaultsM3E(
+class _FilledIconButtonDefaultsM3E extends ButtonStyle {
+  _FilledIconButtonDefaultsM3E(
     this.context,
     this.toggleable,
     ButtonSizeVariant? sizeVariant,
@@ -42,7 +42,18 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
 
   @override
   WidgetStateProperty<Color?>? get backgroundColor =>
-      const WidgetStatePropertyAll<Color?>(Colors.transparent);
+      WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
+          return _colors.onSurface.withOpacity(0.1);
+        }
+        if (toggleable && states.contains(WidgetState.selected)) {
+          return _colors.primary;
+        }
+        if (toggleable) {
+          return _colors.surfaceContainer;
+        }
+        return _colors.primary;
+      });
 
   @override
   WidgetStateProperty<Color?>? get foregroundColor =>
@@ -51,9 +62,12 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
           return _colors.onSurface.withOpacity(0.38);
         }
         if (toggleable && states.contains(WidgetState.selected)) {
-          return _colors.primary;
+          return _colors.onPrimary;
         }
-        return _colors.onSurfaceVariant;
+        if (toggleable) {
+          return _colors.onSurfaceVariant;
+        }
+        return _colors.onPrimary;
       });
 
   @override
@@ -61,23 +75,34 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (toggleable && states.contains(WidgetState.selected)) {
           if (states.contains(WidgetState.pressed)) {
-            return _colors.primary.withOpacity(0.1);
+            return _colors.onPrimary.withOpacity(0.1);
           }
           if (states.contains(WidgetState.hovered)) {
-            return _colors.primary.withOpacity(0.08);
+            return _colors.onPrimary.withOpacity(0.08);
           }
           if (states.contains(WidgetState.focused)) {
-            return _colors.primary.withOpacity(0.1);
+            return _colors.onPrimary.withOpacity(0.1);
+          }
+        }
+        if (toggleable) {
+          if (states.contains(WidgetState.pressed)) {
+            return _colors.onSurfaceVariant.withOpacity(0.1);
+          }
+          if (states.contains(WidgetState.hovered)) {
+            return _colors.onSurfaceVariant.withOpacity(0.08);
+          }
+          if (states.contains(WidgetState.focused)) {
+            return _colors.onSurfaceVariant.withOpacity(0.1);
           }
         }
         if (states.contains(WidgetState.pressed)) {
-          return _colors.onSurfaceVariant.withOpacity(0.1);
+          return _colors.onPrimary.withOpacity(0.1);
         }
         if (states.contains(WidgetState.hovered)) {
-          return _colors.onSurfaceVariant.withOpacity(0.08);
+          return _colors.onPrimary.withOpacity(0.08);
         }
         if (states.contains(WidgetState.focused)) {
-          return _colors.onSurfaceVariant.withOpacity(0.1);
+          return _colors.onPrimary.withOpacity(0.1);
         }
         return Colors.transparent;
       });

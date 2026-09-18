@@ -15,10 +15,10 @@ import '../data/icon_button_xsmall.dart';
 import 'template.dart';
 
 class IconButtonTemplateM3E extends TokenTemplateM3E {
-  const IconButtonTemplateM3E();
+  const IconButtonTemplateM3E(this.name);
 
   @override
-  String get name => 'Icon Button';
+  final String name;
 
   @override
   String get parentFilePath => 'icon_button.dart';
@@ -40,12 +40,13 @@ class IconButtonTemplateM3E extends TokenTemplateM3E {
 
   @override
   String generateContents(String className) {
-    return '''
-${_generateStandardDefaults(className)}
-${_generateFilledDefaults()}
-${_generateFilledTonalDefaults()}
-${_generateOutlinedDefaults()}
-''';
+    return switch (name) {
+      'Icon Button' => _generateStandardDefaults(className),
+      'Filled Icon Button' => _generateFilledDefaults(className),
+      'Filled Tonal Icon Button' => _generateFilledTonalDefaults(className),
+      'Outlined Icon Button' => _generateOutlinedDefaults(className),
+      _ => throw UnsupportedError('Unsupported IconButton variant: $name'),
+    };
   }
 
   String _sizeSwitch({
@@ -437,10 +438,10 @@ $_sizeDependentProperties
 ''';
   }
 
-  String _generateFilledDefaults() {
+  String _generateFilledDefaults(String className) {
     return '''
-class _FilledIconButtonDefaultsM3E extends ButtonStyle {
-  _FilledIconButtonDefaultsM3E(
+class $className extends ButtonStyle {
+  $className(
     this.context,
     this.toggleable,
     ButtonSizeVariant? sizeVariant,
@@ -561,10 +562,10 @@ $_sizeDependentProperties
 ''';
   }
 
-  String _generateFilledTonalDefaults() {
+  String _generateFilledTonalDefaults(String className) {
     return '''
-class _FilledTonalIconButtonDefaultsM3E extends ButtonStyle {
-  _FilledTonalIconButtonDefaultsM3E(
+class $className extends ButtonStyle {
+  $className(
     this.context,
     this.toggleable,
     ButtonSizeVariant? sizeVariant,
@@ -685,10 +686,10 @@ $_sizeDependentProperties
 ''';
   }
 
-  String _generateOutlinedDefaults() {
+  String _generateOutlinedDefaults(String className) {
     return '''
-class _OutlinedIconButtonDefaultsM3E extends ButtonStyle {
-  _OutlinedIconButtonDefaultsM3E(
+class $className extends ButtonStyle {
+  $className(
     this.context,
     this.toggleable,
     ButtonSizeVariant? sizeVariant,

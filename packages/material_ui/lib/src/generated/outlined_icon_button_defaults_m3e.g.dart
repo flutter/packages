@@ -7,8 +7,8 @@
 //   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
 part of '../icon_button.dart';
 
-class _IconButtonDefaultsM3E extends ButtonStyle {
-  _IconButtonDefaultsM3E(
+class _OutlinedIconButtonDefaultsM3E extends ButtonStyle {
+  _OutlinedIconButtonDefaultsM3E(
     this.context,
     this.toggleable,
     ButtonSizeVariant? sizeVariant,
@@ -42,7 +42,18 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
 
   @override
   WidgetStateProperty<Color?>? get backgroundColor =>
-      const WidgetStatePropertyAll<Color?>(Colors.transparent);
+      WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
+          if (toggleable && states.contains(WidgetState.selected)) {
+            return _colors.onSurface.withOpacity(0.1);
+          }
+          return Colors.transparent;
+        }
+        if (toggleable && states.contains(WidgetState.selected)) {
+          return _colors.inverseSurface;
+        }
+        return Colors.transparent;
+      });
 
   @override
   WidgetStateProperty<Color?>? get foregroundColor =>
@@ -51,7 +62,7 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
           return _colors.onSurface.withOpacity(0.38);
         }
         if (toggleable && states.contains(WidgetState.selected)) {
-          return _colors.primary;
+          return _colors.onInverseSurface;
         }
         return _colors.onSurfaceVariant;
       });
@@ -61,13 +72,13 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (toggleable && states.contains(WidgetState.selected)) {
           if (states.contains(WidgetState.pressed)) {
-            return _colors.primary.withOpacity(0.1);
+            return _colors.onInverseSurface.withOpacity(0.1);
           }
           if (states.contains(WidgetState.hovered)) {
-            return _colors.primary.withOpacity(0.08);
+            return _colors.onInverseSurface.withOpacity(0.08);
           }
           if (states.contains(WidgetState.focused)) {
-            return _colors.primary.withOpacity(0.1);
+            return _colors.onInverseSurface.withOpacity(0.1);
           }
         }
         if (states.contains(WidgetState.pressed)) {
@@ -258,7 +269,34 @@ class _IconButtonDefaultsM3E extends ButtonStyle {
       });
 
   @override
-  WidgetStateProperty<BorderSide?>? get side => null;
+  WidgetStateProperty<BorderSide?>? get side =>
+      WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+        if (toggleable && states.contains(WidgetState.selected)) {
+          return null;
+        }
+        if (states.contains(WidgetState.disabled)) {
+          return BorderSide(
+            color: _colors.outlineVariant,
+            width: switch (sizeVariant) {
+              ButtonSizeVariant.xSmall => 1.0,
+              ButtonSizeVariant.small => 1.0,
+              ButtonSizeVariant.medium => 1.0,
+              ButtonSizeVariant.large => 2.0,
+              ButtonSizeVariant.xLarge => 3.0,
+            },
+          );
+        }
+        return BorderSide(
+          color: _colors.outlineVariant,
+          width: switch (sizeVariant) {
+            ButtonSizeVariant.xSmall => 1.0,
+            ButtonSizeVariant.small => 1.0,
+            ButtonSizeVariant.medium => 1.0,
+            ButtonSizeVariant.large => 2.0,
+            ButtonSizeVariant.xLarge => 3.0,
+          },
+        );
+      });
 
   @override
   WidgetStateProperty<MouseCursor?>? get mouseCursor => WidgetStateMouseCursor.adaptiveClickable;
