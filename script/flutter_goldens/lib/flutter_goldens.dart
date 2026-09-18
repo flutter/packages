@@ -322,7 +322,12 @@ class FlutterPostSubmitFileComparator extends FlutterGoldenFileComparator {
       process: process,
       httpClient: httpClient,
     );
-    await goldens.auth();
+    try {
+      await goldens.auth();
+    } on SkiaException catch (e) {
+      // TODO(Piinks): Remove try/catch once the Flutter Packages Gold dashboard is set up.
+      log('$e');
+    }
     return FlutterPostSubmitFileComparator(
       baseDirectory.uri,
       goldens,
@@ -335,12 +340,12 @@ class FlutterPostSubmitFileComparator extends FlutterGoldenFileComparator {
 
   @override
   Future<bool> compare(Uint8List imageBytes, Uri golden) async {
-    await skiaClient.imgtestInit();
-    golden = _addPrefix(golden);
-
-    await update(golden, imageBytes);
-    final File goldenFile = getGoldenFile(golden);
     try {
+      await skiaClient.imgtestInit();
+      golden = _addPrefix(golden);
+
+      await update(golden, imageBytes);
+      final File goldenFile = getGoldenFile(golden);
       // TODO(Piinks): Return the result from skiaClient once the Flutter Packages Gold dashboard is set up.
       await skiaClient.imgtestAdd(golden.path, goldenFile);
       return true;
@@ -439,7 +444,12 @@ class FlutterPreSubmitFileComparator extends FlutterGoldenFileComparator {
       httpClient: httpClient,
     );
 
-    await goldens.auth();
+    try {
+      await goldens.auth();
+    } on SkiaException catch (e) {
+      // TODO(Piinks): Remove try/catch once the Flutter Packages Gold dashboard is set up.
+      log('$e');
+    }
     return FlutterPreSubmitFileComparator(
       baseDirectory.uri,
       goldens,
@@ -452,13 +462,13 @@ class FlutterPreSubmitFileComparator extends FlutterGoldenFileComparator {
 
   @override
   Future<bool> compare(Uint8List imageBytes, Uri golden) async {
-    await skiaClient.tryjobInit();
-    golden = _addPrefix(golden);
-
-    await update(golden, imageBytes);
-    final File goldenFile = getGoldenFile(golden);
-
     try {
+      await skiaClient.tryjobInit();
+      golden = _addPrefix(golden);
+
+      await update(golden, imageBytes);
+      final File goldenFile = getGoldenFile(golden);
+
       await skiaClient.tryjobAdd(golden.path, goldenFile);
     } on SkiaException catch (e) {
       // TODO(Piinks): Remove try/catch once the Flutter Packages Gold dashboard is set up.
@@ -690,6 +700,17 @@ class FlutterLocalFileComparator extends FlutterGoldenFileComparator with LocalC
         log: log,
         fs: fs,
       );
+    } on SkiaException catch (_) {
+      return FlutterSkippingFileComparator(
+        baseDirectory.uri,
+        goldens,
+        'SkiaException occurred, could not reach Gold. '
+        'Switching to FlutterSkippingGoldenFileComparator.',
+        namePrefix: namePrefix,
+        platform: platform,
+        log: log,
+        fs: fs,
+      );
     }
 
     return FlutterLocalFileComparator(
@@ -704,37 +725,43 @@ class FlutterLocalFileComparator extends FlutterGoldenFileComparator with LocalC
 
   @override
   Future<bool> compare(Uint8List imageBytes, Uri golden) async {
-    golden = _addPrefix(golden);
+    try {
+      golden = _addPrefix(golden);
 
-    final String testName = skiaClient.cleanTestName(golden.path);
-    late String? testExpectation;
-    testExpectation = await skiaClient.getExpectationForTest(testName);
+      final String testName = skiaClient.cleanTestName(golden.path);
+      late String? testExpectation;
+      testExpectation = await skiaClient.getExpectationForTest(testName);
 
-    if (testExpectation == null || testExpectation.isEmpty) {
-      log(
-        'No expectations provided by Skia Gold for test: $golden. '
-        'This may be a new test. If this is an unexpected result, check '
-        'https://flutter-packages-gold.skia.org.\n'
-        'Validate image output found at $basedir',
-      );
-      await update(golden, imageBytes);
-      return true;
-    }
+      if (testExpectation == null || testExpectation.isEmpty) {
+        log(
+          'No expectations provided by Skia Gold for test: $golden. '
+          'This may be a new test. If this is an unexpected result, check '
+          'https://flutter-packages-gold.skia.org.\n'
+          'Validate image output found at $basedir',
+        );
+        await update(golden, imageBytes);
+        return true;
+      }
 
-    ComparisonResult result;
-    final List<int> goldenBytes = await skiaClient.getImageBytes(testExpectation);
+      ComparisonResult result;
+      final List<int> goldenBytes = await skiaClient.getImageBytes(testExpectation);
 
-    result = await GoldenFileComparator.compareLists(imageBytes, goldenBytes);
+      result = await GoldenFileComparator.compareLists(imageBytes, goldenBytes);
 
-    if (result.passed) {
+      if (result.passed) {
+        result.dispose();
+        return true;
+      }
+
+      final String error = await generateFailureOutput(result, golden, basedir);
       result.dispose();
+      // TODO(Piinks): Throw FlutterError once the Flutter Packages Gold dashboard is set up.
+      log(error);
+      return true;
+    } on SkiaException catch (e) {
+      // TODO(Piinks): Remove try/catch once the Flutter Packages Gold dashboard is set up.
+      log('$e');
       return true;
     }
-
-    final String error = await generateFailureOutput(result, golden, basedir);
-    result.dispose();
-    // TODO(Piinks): Throw FlutterError once the Flutter Packages Gold dashboard is set up.
-    log(error);
-    return true;
   }
 }
