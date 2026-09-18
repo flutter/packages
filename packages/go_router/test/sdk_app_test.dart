@@ -83,19 +83,18 @@ void main() {
     },
   );
 
-  testWidgets(
-    'GoRoute.builder uses Material when Material is nested in Cupertino',
-    (WidgetTester tester) async {
-      final settings = await _pumpApp(
-        tester,
-        (GoRouter router) => flutter_cupertino.CupertinoApp(
-          home: flutter_material.MaterialApp.router(routerConfig: router),
-        ),
-      );
+  testWidgets('GoRoute.builder uses Material when Material is nested in Cupertino', (
+    WidgetTester tester,
+  ) async {
+    final settings = await _pumpApp(
+      tester,
+      (GoRouter router) => flutter_cupertino.CupertinoApp(
+        home: flutter_material.MaterialApp.router(routerConfig: router),
+      ),
+    );
 
-      expect(settings, isA<flutter_material.MaterialPage<void>>());
-    },
-  );
+    expect(settings, isA<flutter_material.MaterialPage<void>>());
+  });
 
   testWidgets('SDK MaterialApp uses the SDK Material error screen', (WidgetTester tester) async {
     final router = _errorRouter();
