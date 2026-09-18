@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'dart:ui';
 
 import 'package:cupertino_ui/cupertino_ui.dart';
@@ -15,6 +16,47 @@ void main() {
   tearDown(() {
     LicenseRegistry.reset();
   });
+
+  Widget buildWithoutTitle(Widget child) {
+    return MediaQuery(
+      data: const MediaQueryData(),
+      child: Localizations(
+        locale: const Locale('en', 'US'),
+        delegates: const <LocalizationsDelegate<dynamic>>[
+          DefaultMaterialLocalizations.delegate,
+          DefaultWidgetsLocalizations.delegate,
+        ],
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Theme(data: ThemeData(), child: child),
+        ),
+      ),
+    );
+  }
+
+  testWidgets(
+    'AboutDialog defaults the application name to the executable name without a Title ancestor',
+    (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/191887.
+      await tester.pumpWidget(buildWithoutTitle(const AboutDialog()));
+
+      final String expectedName = Platform.resolvedExecutable.split(Platform.pathSeparator).last;
+      expect(find.text(expectedName), findsOneWidget);
+    },
+    skip: kIsWeb, // [intended] There is no executable name on the web.
+  );
+
+  testWidgets(
+    'AboutDialog does not throw on the web without a Title ancestor',
+    (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/191887.
+      await tester.pumpWidget(buildWithoutTitle(const AboutDialog()));
+
+      expect(tester.takeException(), isNull);
+      expect(find.byType(AboutDialog), findsOneWidget);
+    },
+    skip: !kIsWeb, // [intended] Exercises the web-specific fallback.
+  );
 
   testWidgets('Material3 has sentence case labels', (WidgetTester tester) async {
     await tester.pumpWidget(

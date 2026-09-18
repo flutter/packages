@@ -1,0 +1,3 @@
+changelog: |
+  - Removes the unconditional `dart:io` import from `AboutDialog`, so that `material_ui` is correctly detected as supporting the web platform and `showAboutDialog` no longer throws on the web when no application name is available.
+version: patch
