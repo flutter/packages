@@ -32,6 +32,9 @@ import 'theme_data.dart';
 import 'tooltip.dart';
 
 part 'generated/icon_button_defaults_m3e.g.dart';
+part 'generated/filled_icon_button_defaults_m3e.g.dart';
+part 'generated/filled_tonal_icon_button_defaults_m3e.g.dart';
+part 'generated/outlined_icon_button_defaults_m3e.g.dart';
 
 // Examples can assume:
 // late BuildContext context;
