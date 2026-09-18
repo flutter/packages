@@ -10,89 +10,89 @@ import 'package:flutter/material.dart' as flutter_material;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:go_router/src/pages/material.dart' as go_material;
 import 'package:material_ui/material_ui.dart' as material_ui;
 
 void main() {
+  test('Material hero controller factories keep their matching implementations', () {
+    const begin = Rect.fromLTRB(0.0, 0.0, 10.0, 10.0);
+    const end = Rect.fromLTRB(10.0, 10.0, 20.0, 20.0);
+
+    final sdkTween = go_material.createSdkMaterialHeroController().createRectTween!(begin, end);
+    expect(sdkTween, isA<flutter_material.MaterialRectArcTween>());
+
+    final materialUiTween = go_material.createMaterialHeroController().createRectTween!(begin, end);
+    expect(materialUiTween, isA<material_ui.MaterialRectArcTween>());
+  });
+
   testWidgets('GoRoute.builder uses SDK Material configuration for SDK MaterialApp', (
     WidgetTester tester,
   ) async {
-    final result = await _pumpApp(
+    final settings = await _pumpApp(
       tester,
       (GoRouter router) => flutter_material.MaterialApp.router(routerConfig: router),
     );
 
-    expect(result.settings, isA<flutter_material.MaterialPage<void>>());
-    final controller = result.heroController!;
-    final tween = controller.createRectTween!(
-      const Rect.fromLTRB(0.0, 0.0, 10.0, 10.0),
-      const Rect.fromLTRB(10.0, 10.0, 20.0, 20.0),
-    );
-    expect(tween, isA<flutter_material.MaterialRectArcTween>());
+    expect(settings, isA<flutter_material.MaterialPage<void>>());
   });
 
   testWidgets('GoRoute.builder keeps material_ui configuration for material_ui MaterialApp', (
     WidgetTester tester,
   ) async {
-    final result = await _pumpApp(
+    final settings = await _pumpApp(
       tester,
       (GoRouter router) => material_ui.MaterialApp.router(routerConfig: router),
     );
 
-    expect(result.settings, isA<material_ui.MaterialPage<void>>());
-    final controller = result.heroController!;
-    final tween = controller.createRectTween!(
-      const Rect.fromLTRB(0.0, 0.0, 10.0, 10.0),
-      const Rect.fromLTRB(10.0, 10.0, 20.0, 20.0),
-    );
-    expect(tween, isA<material_ui.MaterialRectArcTween>());
+    expect(settings, isA<material_ui.MaterialPage<void>>());
   });
 
   testWidgets('GoRoute.builder uses SDK CupertinoPage for SDK CupertinoApp', (
     WidgetTester tester,
   ) async {
-    final result = await _pumpApp(
+    final settings = await _pumpApp(
       tester,
       (GoRouter router) => flutter_cupertino.CupertinoApp.router(routerConfig: router),
     );
 
-    expect(result.settings, isA<flutter_cupertino.CupertinoPage<void>>());
+    expect(settings, isA<flutter_cupertino.CupertinoPage<void>>());
   });
 
   testWidgets('GoRoute.builder keeps cupertino_ui CupertinoPage for cupertino_ui CupertinoApp', (
     WidgetTester tester,
   ) async {
-    final result = await _pumpApp(
+    final settings = await _pumpApp(
       tester,
       (GoRouter router) => cupertino_ui.CupertinoApp.router(routerConfig: router),
     );
 
-    expect(result.settings, isA<cupertino_ui.CupertinoPage<void>>());
+    expect(settings, isA<cupertino_ui.CupertinoPage<void>>());
   });
 
   testWidgets('GoRoute.builder uses the closest supported app when Cupertino is nested in Material', (
     WidgetTester tester,
   ) async {
-    final result = await _pumpApp(
+    final settings = await _pumpApp(
       tester,
       (GoRouter router) => flutter_material.MaterialApp(
         home: flutter_cupertino.CupertinoApp.router(routerConfig: router),
       ),
     );
 
-    expect(result.settings, isA<flutter_cupertino.CupertinoPage<void>>());
+    expect(settings, isA<flutter_cupertino.CupertinoPage<void>>());
   });
 
   testWidgets('GoRoute.builder uses the closest supported app when Material is nested in Cupertino', (
     WidgetTester tester,
   ) async {
-    final result = await _pumpApp(
+    final settings = await _pumpApp(
       tester,
       (GoRouter router) => flutter_cupertino.CupertinoApp(
         home: flutter_material.MaterialApp.router(routerConfig: router),
       ),
     );
 
-    expect(result.settings, isA<flutter_material.MaterialPage<void>>());
+    expect(settings, isA<flutter_material.MaterialPage<void>>());
   });
 
   testWidgets('SDK MaterialApp uses the SDK Material error screen', (WidgetTester tester) async {
@@ -146,12 +146,8 @@ void main() {
 
 typedef _AppBuilder = Widget Function(GoRouter router);
 
-Future<({RouteSettings? settings, HeroController? heroController})> _pumpApp(
-  WidgetTester tester,
-  _AppBuilder appBuilder,
-) async {
+Future<RouteSettings?> _pumpApp(WidgetTester tester, _AppBuilder appBuilder) async {
   RouteSettings? settings;
-  HeroController? heroController;
   final router = GoRouter(
     routes: <RouteBase>[
       GoRoute(
@@ -159,7 +155,6 @@ Future<({RouteSettings? settings, HeroController? heroController})> _pumpApp(
         builder: (BuildContext context, GoRouterState state) => Builder(
           builder: (BuildContext context) {
             settings = ModalRoute.of(context)?.settings;
-            heroController = HeroControllerScope.maybeOf(context);
             return const SizedBox.shrink();
           },
         ),
@@ -171,7 +166,7 @@ Future<({RouteSettings? settings, HeroController? heroController})> _pumpApp(
   await tester.pumpWidget(appBuilder(router));
   await tester.pumpAndSettle();
 
-  return (settings: settings, heroController: heroController);
+  return settings;
 }
 
 GoRouter _errorRouter() => GoRouter(
