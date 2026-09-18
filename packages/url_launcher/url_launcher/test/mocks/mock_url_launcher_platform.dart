@@ -61,7 +61,7 @@ class MockUrlLauncher extends Fake with MockPlatformInterfaceMixin implements Ur
   }
 
   // ignore: use_setters_to_change_properties
-  void setCloseForModeResponse(bool response) {
+  void setCloseForModeResponse(bool? response) {
     closeForModeResponse = response;
   }
 

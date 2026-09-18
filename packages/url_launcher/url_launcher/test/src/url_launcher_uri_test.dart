@@ -13,6 +13,12 @@ void main() {
   final mock = MockUrlLauncher();
   UrlLauncherPlatform.instance = mock;
 
+  // The mock is shared across tests, so reset any close-mode override that a
+  // test opts into to avoid leaking it into later tests.
+  tearDown(() {
+    mock.setCloseForModeResponse(null);
+  });
+
   test('closeInAppWebView', () async {
     await closeInAppWebView();
     expect(mock.closeWebViewCalled, isTrue);
