@@ -5,6 +5,9 @@ on:
     branches:
       - fix-go-router-sdk-app-pages
 
+permissions:
+  contents: write
+
 jobs:
   go-router-regression:
     runs-on: ubuntu-latest
@@ -13,7 +16,16 @@ jobs:
       - uses: subosito/flutter-action@v2.21.0
         with:
           channel: master
-      - run: flutter pub get
+      - name: Resolve go_router dependencies
+        working-directory: packages/go_router
+        run: flutter pub get
       - name: Run targeted go_router regression tests
         working-directory: packages/go_router
         run: flutter test test/sdk_app_test.dart
+      - name: Remove temporary validation workflow
+        run: |
+          git config user.name "Yazan Arafeh"
+          git config user.email "32390922+yazanmg@users.noreply.github.com"
+          git rm .github/workflows/pr12924-validation.yml
+          git commit -m "ci: remove temporary PR 12924 validation"
+          git push origin HEAD:fix-go-router-sdk-app-pages
