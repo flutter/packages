@@ -195,6 +195,20 @@ void main() {
       irregularPolygonMeasure(triangle);
     });
 
+    test('measures a zero-perimeter polygon', () {
+      irregularPolygonMeasure(RoundedPolygon(4, radius: 0), (measuredPolygon) {
+        // With no lengths to go by, the cubics are spaced evenly instead.
+        final double expectedSpan = 1 / measuredPolygon.length;
+        for (var index = 0; index < measuredPolygon.length; index++) {
+          final MeasuredCubic measuredCubic = measuredPolygon[index];
+          expectEqualish(
+            expectedSpan,
+            measuredCubic.endOutlineProgress - measuredCubic.startOutlineProgress,
+          );
+        }
+      });
+    });
+
     test('findCubicCutPoint at measure zero returns the curve start', () {
       final zeroLength = CubicBezier.point(Offset.zero);
       expect(measurer.findCubicCutPoint(zeroLength, 0), 0);

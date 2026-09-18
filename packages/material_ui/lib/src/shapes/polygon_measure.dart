@@ -81,8 +81,17 @@ class MeasuredPolygon {
     }
 
     final outlineProgress = List<double>.filled(measures.length, 0);
-    for (var i = 0; i < measures.length; i++) {
-      outlineProgress[i] = measures[i] / totalMeasure;
+    if (totalMeasure < distanceEpsilon) {
+      // A degenerate polygon, e.g. one with all of its points coincident, has
+      // no measurable outline to divide by. Space the cubics evenly along the
+      // progress range instead, so the polygon can still be morphed.
+      for (var i = 0; i < measures.length; i++) {
+        outlineProgress[i] = i / cubics.length;
+      }
+    } else {
+      for (var i = 0; i < measures.length; i++) {
+        outlineProgress[i] = measures[i] / totalMeasure;
+      }
     }
 
     final features = List<ProgressableFeature>.generate(featureToCubic.length, (i) {

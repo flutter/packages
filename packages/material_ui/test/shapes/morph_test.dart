@@ -104,6 +104,36 @@ void main() {
       await comparePathsVisually(poly2Path, morph121Path, radius * 2);
     });
 
+    test('morphs a zero-perimeter polygon', () {
+      final point = RoundedPolygon(4, radius: 0);
+      final morph = Morph(point, poly2);
+
+      // At progress 0 the morph is collapsed to the single point.
+      for (final CubicBezier cubic in morph.toCubics(0)) {
+        expectCubicsEqualish(CubicBezier.point(Point.zero), cubic);
+      }
+
+      // On the way to the other shape all coordinates stay finite.
+      for (final CubicBezier cubic in morph.toCubics(0.5)) {
+        expect(cubic.anchor0X.isFinite, isTrue);
+        expect(cubic.anchor0Y.isFinite, isTrue);
+        expect(cubic.control0X.isFinite, isTrue);
+        expect(cubic.control0Y.isFinite, isTrue);
+        expect(cubic.control1X.isFinite, isTrue);
+        expect(cubic.control1Y.isFinite, isTrue);
+        expect(cubic.anchor1X.isFinite, isTrue);
+        expect(cubic.anchor1Y.isFinite, isTrue);
+      }
+
+      // And at progress 1 it stays within the other shape's bounds.
+      final ui.Rect bounds = poly2.bounds;
+      expectInBounds(
+        morph.toCubics(1),
+        Point(bounds.left, bounds.top),
+        Point(bounds.right, bounds.bottom),
+      );
+    });
+
     test('exposes the shapes it morphs between', () {
       expect(morph12.start, poly1);
       expect(morph12.end, poly2);
