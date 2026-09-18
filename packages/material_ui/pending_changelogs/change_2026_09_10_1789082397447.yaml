@@ -1,0 +1,3 @@
+changelog: |
+  - Adds Material 3 Expressive support for IconButton.
+version: minor
