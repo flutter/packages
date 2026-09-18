@@ -41,6 +41,7 @@ void main() {
     expect(theme.exitDuration, null);
     expect(theme.triggerMode, null);
     expect(theme.enableFeedback, null);
+    expect(theme.ignorePointer, null);
   });
 
   testWidgets('Default TooltipThemeData debugFillProperties', (WidgetTester tester) async {
@@ -62,6 +63,7 @@ void main() {
     const exit = Duration(milliseconds: 100);
     const TooltipTriggerMode triggerMode = TooltipTriggerMode.longPress;
     const enableFeedback = true;
+    const ignorePointer = false;
     const TooltipThemeData(
       height: 15.0,
       padding: EdgeInsets.all(20.0),
@@ -76,6 +78,7 @@ void main() {
       exitDuration: exit,
       triggerMode: triggerMode,
       enableFeedback: enableFeedback,
+      ignorePointer: ignorePointer,
     ).debugFillProperties(builder);
 
     final List<String> description = builder.properties
@@ -97,6 +100,7 @@ void main() {
       'exit duration: $exit',
       'triggerMode: $triggerMode',
       'enableFeedback: true',
+      'ignorePointer: false',
     ]);
   });
 
@@ -1539,6 +1543,23 @@ void main() {
       matching: find.byWidgetPredicate((_) => true),
     );
     expect(tester.element(textAncestors.first).size, equals(themeConstraints.biggest));
+  });
+
+  testWidgets('Tooltip respects ignorePointer from the ambient theme', (WidgetTester tester) async {
+    final tooltipKey = GlobalKey<TooltipState>();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(tooltipTheme: const TooltipThemeData(ignorePointer: false)),
+        home: Tooltip(
+          key: tooltipKey,
+          message: tooltipText,
+          child: const SizedBox(width: 100, height: 100),
+        ),
+      ),
+    );
+
+    final RawTooltip rawTooltip = tester.widget<RawTooltip>(find.byType(RawTooltip));
+    expect(rawTooltip.ignorePointer, isFalse);
   });
 }
 

@@ -318,22 +318,19 @@ class _AutocompleteOptionsListState<T extends Object> extends State<_Autocomplet
       itemCount: widget.options.length,
       itemBuilder: (BuildContext context, int index) {
         final T option = widget.options.elementAt(index);
+        final bool highlight = highlightedIndex == index;
         return Semantics(
           button: true,
+          selected: highlight,
           child: InkWell(
             key: GlobalObjectKey(option),
             onTap: () {
               widget.onSelected(option);
             },
-            child: Builder(
-              builder: (BuildContext context) {
-                final highlight = highlightedIndex == index;
-                return Container(
-                  color: highlight ? Theme.of(context).focusColor : null,
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(widget.displayStringForOption(option)),
-                );
-              },
+            child: Container(
+              color: highlight ? Theme.of(context).focusColor : null,
+              padding: const EdgeInsets.all(16.0),
+              child: Text(widget.displayStringForOption(option)),
             ),
           ),
         );
