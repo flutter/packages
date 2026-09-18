@@ -243,6 +243,9 @@ void main() {
       find.byType(DummyStatefulWidget),
     );
     final NavigatorState pushedFirstNavigator = Navigator.of(pushedFirstPage.context);
+    final State<StatefulWidget> pushedFirstNavigatorWrapper = _customNavigatorStateFor(
+      pushedFirstNavigator,
+    );
     expect(pushedFirstPage, isNot(same(firstPage)));
     expect(pushedFirstNavigator, isNot(same(firstNavigator)));
     expect(pushedFirstNavigator, isNot(same(secondNavigator)));
@@ -265,6 +268,7 @@ void main() {
       same(pushedFirstPage),
     );
     expect(Navigator.of(pushedFirstPage.context), same(pushedFirstNavigator));
+    expect(_customNavigatorStateFor(pushedFirstNavigator), same(pushedFirstNavigatorWrapper));
 
     router.refresh();
     await tester.pumpAndSettle();
@@ -446,4 +450,16 @@ class _CollidingNavigatorKey extends GlobalKey<NavigatorState> {
 
   @override
   bool operator ==(Object other) => other is _CollidingNavigatorKey && other._label == _label;
+}
+
+State<StatefulWidget> _customNavigatorStateFor(NavigatorState navigator) {
+  StatefulElement? customNavigatorElement;
+  (navigator.context as Element).visitAncestorElements((Element element) {
+    if (element.widget.runtimeType.toString() == '_CustomNavigator') {
+      customNavigatorElement = element as StatefulElement;
+      return false;
+    }
+    return true;
+  });
+  return customNavigatorElement!.state;
 }
