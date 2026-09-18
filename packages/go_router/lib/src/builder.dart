@@ -189,7 +189,10 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       null => HeroController(),
     };
     // This method can also be called if any of the page builders depend on
-    // the context. In this case, make sure _pages are rebuilt.
+    // the context. In this case, make sure the app-type builders and pages are
+    // recomputed from the current ancestor tree.
+    _pageBuilderForAppType = null;
+    _errorBuilderForAppType = null;
     _pages = null;
   }
 
