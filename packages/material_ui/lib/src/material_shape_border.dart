@@ -108,6 +108,14 @@ class MaterialShapeBorder extends OutlinedBorder {
     final RoundedPolygon? aShape = a.shape;
     final RoundedPolygon? bShape = b.shape;
 
+    if (aShape != null && bShape != null && aShape == bShape) {
+      return MaterialShapeBorder(
+        shape: bShape,
+        side: BorderSide.lerp(a.side, b.side, t),
+        squash: ui.lerpDouble(a.squash, b.squash, t)!,
+      );
+    }
+
     final RoundedPolygon start;
     final RoundedPolygon end;
     final double progress;

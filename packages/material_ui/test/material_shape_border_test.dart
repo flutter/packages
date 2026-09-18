@@ -354,6 +354,33 @@ void main() {
       expect(backward.squash, 0.25);
     });
 
+    test('lerp between borders with equal shapes keeps the shape', () {
+      final start = MaterialShapeBorder(
+        shape: MaterialShapes.circle,
+        side: const BorderSide(width: 2.0),
+      );
+      final end = MaterialShapeBorder(
+        shape: MaterialShapes.circle,
+        side: const BorderSide(width: 4.0),
+        squash: 1.0,
+      );
+
+      // Only the side and the squash animate, so no morph is needed and the
+      // result keeps the shape instead of becoming a lerp result.
+      final lerped = start.lerpTo(end, 0.25)! as MaterialShapeBorder;
+      expect(lerped.shape, MaterialShapes.circle);
+      expect(lerped.side, const BorderSide(width: 2.5));
+      expect(lerped.squash, 0.25);
+
+      // Interrupting the animation and redirecting it toward another border
+      // with the same shape continues from the current state instead of
+      // restarting.
+      final redirected = lerped.lerpTo(end, 0.5)! as MaterialShapeBorder;
+      expect(redirected.shape, MaterialShapes.circle);
+      expect(redirected.side, const BorderSide(width: 3.25));
+      expect(redirected.squash, 0.625);
+    });
+
     test('lerp resumes the morph of an already lerped border', () {
       final start = MaterialShapeBorder(shape: MaterialShapes.circle);
       final end = MaterialShapeBorder(shape: MaterialShapes.square);
