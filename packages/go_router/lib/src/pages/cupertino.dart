@@ -63,18 +63,13 @@ class CupertinoErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => cupertino_ui.CupertinoPageScaffold(
-    navigationBar: const cupertino_ui.CupertinoNavigationBar(
-      middle: Text('Page Not Found'),
-    ),
+    navigationBar: const cupertino_ui.CupertinoNavigationBar(middle: Text('Page Not Found')),
     child: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(error?.toString() ?? 'page not found'),
-          cupertino_ui.CupertinoButton(
-            onPressed: () => context.go('/'),
-            child: const Text('Home'),
-          ),
+          cupertino_ui.CupertinoButton(onPressed: () => context.go('/'), child: const Text('Home')),
         ],
       ),
     ),
@@ -91,9 +86,7 @@ class SdkCupertinoErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => flutter_cupertino.CupertinoPageScaffold(
-    navigationBar: const flutter_cupertino.CupertinoNavigationBar(
-      middle: Text('Page Not Found'),
-    ),
+    navigationBar: const flutter_cupertino.CupertinoNavigationBar(middle: Text('Page Not Found')),
     child: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

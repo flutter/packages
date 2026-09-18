@@ -69,10 +69,7 @@ class MaterialErrorScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           material_ui.SelectableText(error?.toString() ?? 'page not found'),
-          material_ui.TextButton(
-            onPressed: () => context.go('/'),
-            child: const Text('Home'),
-          ),
+          material_ui.TextButton(onPressed: () => context.go('/'), child: const Text('Home')),
         ],
       ),
     ),
@@ -95,10 +92,7 @@ class SdkMaterialErrorScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           flutter_material.SelectableText(error?.toString() ?? 'page not found'),
-          flutter_material.TextButton(
-            onPressed: () => context.go('/'),
-            child: const Text('Home'),
-          ),
+          flutter_material.TextButton(onPressed: () => context.go('/'), child: const Text('Home')),
         ],
       ),
     ),

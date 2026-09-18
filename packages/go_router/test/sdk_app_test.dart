@@ -69,31 +69,33 @@ void main() {
     expect(settings, isA<cupertino_ui.CupertinoPage<void>>());
   });
 
-  testWidgets('GoRoute.builder uses the closest supported app when Cupertino is nested in Material', (
-    WidgetTester tester,
-  ) async {
-    final settings = await _pumpApp(
-      tester,
-      (GoRouter router) => flutter_material.MaterialApp(
-        home: flutter_cupertino.CupertinoApp.router(routerConfig: router),
-      ),
-    );
+  testWidgets(
+    'GoRoute.builder uses the closest supported app when Cupertino is nested in Material',
+    (WidgetTester tester) async {
+      final settings = await _pumpApp(
+        tester,
+        (GoRouter router) => flutter_material.MaterialApp(
+          home: flutter_cupertino.CupertinoApp.router(routerConfig: router),
+        ),
+      );
 
-    expect(settings, isA<flutter_cupertino.CupertinoPage<void>>());
-  });
+      expect(settings, isA<flutter_cupertino.CupertinoPage<void>>());
+    },
+  );
 
-  testWidgets('GoRoute.builder uses the closest supported app when Material is nested in Cupertino', (
-    WidgetTester tester,
-  ) async {
-    final settings = await _pumpApp(
-      tester,
-      (GoRouter router) => flutter_cupertino.CupertinoApp(
-        home: flutter_material.MaterialApp.router(routerConfig: router),
-      ),
-    );
+  testWidgets(
+    'GoRoute.builder uses the closest supported app when Material is nested in Cupertino',
+    (WidgetTester tester) async {
+      final settings = await _pumpApp(
+        tester,
+        (GoRouter router) => flutter_cupertino.CupertinoApp(
+          home: flutter_material.MaterialApp.router(routerConfig: router),
+        ),
+      );
 
-    expect(settings, isA<flutter_material.MaterialPage<void>>());
-  });
+      expect(settings, isA<flutter_material.MaterialPage<void>>());
+    },
+  );
 
   testWidgets('SDK MaterialApp uses the SDK Material error screen', (WidgetTester tester) async {
     final router = _errorRouter();

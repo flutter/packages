@@ -20,14 +20,13 @@ import 'state.dart';
 /// Signature of a go router builder function with navigator.
 typedef GoRouterBuilderWithNav = Widget Function(BuildContext context, Widget child);
 
-typedef _PageBuilderForAppType =
-    Page<void> Function({
-      required LocalKey key,
-      required String? name,
-      required Object? arguments,
-      required String restorationId,
-      required Widget child,
-    });
+typedef _PageBuilderForAppType = Page<void> Function({
+  required LocalKey key,
+  required String? name,
+  required Object? arguments,
+  required String restorationId,
+  required Widget child,
+});
 
 typedef _ErrorBuilderForAppType = Widget Function(BuildContext context, GoRouterState state);
 
@@ -39,8 +38,11 @@ typedef _ErrorBuilderForAppType = Widget Function(BuildContext context, GoRouter
 /// associates with.
 ///
 /// Used by of [RouteBuilder.onPopPageWithRouteMatch].
-typedef PopPageWithRouteMatchCallback =
-    bool Function(Route<dynamic> route, dynamic result, RouteMatchBase match);
+typedef PopPageWithRouteMatchCallback = bool Function(
+  Route<dynamic> route,
+  dynamic result,
+  RouteMatchBase match,
+);
 
 /// Builds the top-level Navigator for GoRouter.
 class RouteBuilder {
