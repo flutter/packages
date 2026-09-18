@@ -7,9 +7,9 @@
 import Foundation
 
 #if os(iOS)
-  import Flutter
+  @preconcurrency import Flutter
 #elseif os(macOS)
-  import FlutterMacOS
+  @preconcurrency import FlutterMacOS
 #else
   #error("Unsupported platform.")
 #endif
@@ -320,7 +320,7 @@ class ExampleHostApiSetup {
         "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      getHostLanguageChannel.setMessageHandler { _, reply in
+      func handler(_: Any?, reply: @escaping FlutterReply) {
         do {
           let result = try api.getHostLanguage()
           reply(wrapResult(result))
@@ -328,6 +328,7 @@ class ExampleHostApiSetup {
           reply(wrapError(error))
         }
       }
+      getHostLanguageChannel.setMessageHandler(handler)
     } else {
       getHostLanguageChannel.setMessageHandler(nil)
     }
@@ -335,7 +336,7 @@ class ExampleHostApiSetup {
       name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      addChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aArg = args[0] as! Int64
         let bArg = args[1] as! Int64
@@ -346,6 +347,7 @@ class ExampleHostApiSetup {
           reply(wrapError(error))
         }
       }
+      addChannel.setMessageHandler(handler)
     } else {
       addChannel.setMessageHandler(nil)
     }
@@ -353,7 +355,7 @@ class ExampleHostApiSetup {
       name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      sendMessageChannel.setMessageHandler { message, reply in
+      func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let messageArg = args[0] as! MessageData
         Task { @MainActor in
@@ -365,6 +367,7 @@ class ExampleHostApiSetup {
           }
         }
       }
+      sendMessageChannel.setMessageHandler(handler)
     } else {
       sendMessageChannel.setMessageHandler(nil)
     }

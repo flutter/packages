@@ -582,6 +582,10 @@ ${_argParser.usage}''';
       help: 'Whether to include the error class in Swift generation.',
       defaultsTo: true,
     )
+    ..addFlag(
+      'swift_strict_concurrency',
+      help: 'Whether to include strict concurrency annotations in Swift generation.',
+    )
     ..addFlag('swift_use_ffi', help: 'Whether to use FFI for Swift generation.')
     ..addOption('swift_ffi_module_name', help: 'The FFI module name for Swift generation.')
     ..addOption(
@@ -728,6 +732,7 @@ ${_argParser.usage}''';
       swiftOptions: SwiftOptions(
         errorClassName: results['swift_error_class_name'] as String?,
         includeErrorClass: results['swift_include_error_class'] as bool? ?? true,
+        strictConcurrency: results['swift_strict_concurrency'] as bool? ?? false,
         useFfi: results['swift_use_ffi'] as bool? ?? false,
         ffiModuleName: results['swift_ffi_module_name'] as String?,
         appDirectory: results['swift_app_directory'] as String?,

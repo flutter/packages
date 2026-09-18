@@ -1,0 +1,25 @@
+name: swift_concurrency_test_plugin_example
+description: Pigeon test harness for Swift 6 strict concurrency.
+publish_to: 'none'
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_test_plugin_code:
+    path: ../../shared_test_plugin_code
+  swift_concurrency_test_plugin:
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  pigeon:
+    path: ../../..
+
+flutter:
+  uses-material-design: true

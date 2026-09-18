@@ -212,8 +212,14 @@ Future<int> generateTestPigeons({required String baseDir, bool includeOverflow =
 
   const testPluginName = 'test_plugin';
   const alternateTestPluginName = 'alternate_language_test_plugin';
+  const swiftConcurrencyTestPluginName = 'swift_concurrency_test_plugin';
   final String outputBase = p.join(baseDir, 'platform_tests', testPluginName);
   final String alternateOutputBase = p.join(baseDir, 'platform_tests', alternateTestPluginName);
+  final String swiftConcurrencyOutputBase = p.join(
+    baseDir,
+    'platform_tests',
+    swiftConcurrencyTestPluginName,
+  );
   final String sharedDartOutputBase = p.join(baseDir, 'platform_tests', 'shared_test_plugin_code');
 
   for (final input in inputs) {
@@ -316,6 +322,25 @@ Future<int> generateTestPigeons({required String baseDir, bool includeOverflow =
     if (generateCode != 0) {
       return generateCode;
     }
+
+    // Generate the Swift strict concurrency test plugin output.
+    if (!skipLanguages.contains(GeneratorLanguage.swift) && input != 'native_interop_tests') {
+      final swiftConcurrencyBase =
+          '$swiftConcurrencyOutputBase/darwin/$swiftConcurrencyTestPluginName/Sources/$swiftConcurrencyTestPluginName';
+      generateCode = await runPigeon(
+        input: './pigeons/$input.dart',
+        dartPackageName: 'pigeon_integration_tests',
+        suppressVersion: true,
+        swiftOut: '$swiftConcurrencyBase/$pascalCaseName.gen.swift',
+        swiftErrorClassName: swiftErrorClassName,
+        swiftIncludeErrorClass: input != 'primitive',
+        strictConcurrency: true,
+        mergeDefinitionFileOptions: input != 'enum',
+      );
+      if (generateCode != 0) {
+        return generateCode;
+      }
+    }
   }
 
   // Test case for useGeneratedAnnotation feature with core_tests
@@ -348,6 +373,7 @@ Future<int> runPigeon({
   bool swiftIncludeErrorClass = true,
   Object? swiftOut,
   String? swiftErrorClassName,
+  bool strictConcurrency = false,
   bool swiftUseFfi = false,
   String swiftAppDirectory = '',
   String? cppHeaderOut,
@@ -430,6 +456,7 @@ Future<int> runPigeon({
       swiftOptions: SwiftOptions(
         errorClassName: swiftErrorClassName,
         includeErrorClass: swiftIncludeErrorClass,
+        strictConcurrency: strictConcurrency,
         useFfi: swiftUseFfi,
         appDirectory: swiftAppDirectory.isNotEmpty ? swiftAppDirectory : null,
         configDirectory: swiftAppDirectory.isNotEmpty ? swiftAppDirectory : null,

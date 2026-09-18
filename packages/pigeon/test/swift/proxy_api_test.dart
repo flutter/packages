@@ -1034,6 +1034,85 @@ void main() {
         );
       });
     });
+
+    group('Swift strict concurrency', () {
+      test('adds @MainActor to delegate and flutter methods', () {
+        final root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[
+                Constructor(name: 'aConstructor', parameters: <Parameter>[]),
+              ],
+              fields: <ApiField>[
+                ApiField(
+                  name: 'aField',
+                  type: const TypeDeclaration(isNullable: false, baseName: 'int'),
+                ),
+              ],
+              methods: <Method>[
+                Method(
+                  name: 'doHostWork',
+                  location: ApiLocation.host,
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                ),
+                Method(
+                  name: 'doFlutterWork',
+                  location: ApiLocation.flutter,
+                  isRequired: false,
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
+        generator.generate(
+          const InternalSwiftOptions(swiftOut: '', strictConcurrency: true),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+
+        final code = sink.toString();
+        expect(
+          code,
+          contains(
+            '@MainActor func aConstructor(pigeonApi: PigeonApiApi, aField: Int64) throws -> Api',
+          ),
+        );
+        expect(
+          code,
+          contains(
+            '@MainActor func aField(pigeonApi: PigeonApiApi, pigeonInstance: Api) throws -> Int64',
+          ),
+        );
+        expect(
+          code,
+          contains(
+            '@MainActor func doHostWork(pigeonApi: PigeonApiApi, pigeonInstance: Api) throws',
+          ),
+        );
+        expect(
+          code,
+          contains(
+            '@MainActor func doFlutterWork(pigeonInstance pigeonInstanceArg: Api, completion: @escaping @MainActor (Result<Void, PigeonError>) -> Void)',
+          ),
+        );
+        expect(
+          code,
+          contains(
+            '@MainActor func pigeonNewInstance(pigeonInstance: Api, completion: @escaping @MainActor (Result<Void, PigeonError>) -> Void)',
+          ),
+        );
+      });
+    });
   });
 }
 
