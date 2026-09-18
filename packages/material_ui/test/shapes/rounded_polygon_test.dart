@@ -78,6 +78,18 @@ void main() {
       expectInBounds(manualSquarePVRounded.cubics, min, max);
     });
 
+    test('rectangle requires positive dimensions', () {
+      expect(() => RoundedPolygon.rectangle(width: 0), throwsArgumentError);
+      expect(() => RoundedPolygon.rectangle(width: -1), throwsArgumentError);
+      expect(() => RoundedPolygon.rectangle(height: 0), throwsArgumentError);
+      expect(() => RoundedPolygon.rectangle(height: -1), throwsArgumentError);
+    });
+
+    test('star and pillStar require at least 3 vertices per radius', () {
+      expect(() => RoundedPolygon.star(numVerticesPerRadius: 2), throwsArgumentError);
+      expect(() => RoundedPolygon.pillStar(numVerticesPerRadius: 2), throwsArgumentError);
+    });
+
     group('fromFeatures', () {
       test('throws for too few features', () {
         expect(() => RoundedPolygon.fromFeatures(const []), throwsArgumentError);

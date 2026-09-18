@@ -249,6 +249,9 @@ class RoundedPolygon {
   /// [rounding] rounds all four corners the same way. [perVertexRounding]
   /// overrides it, and must have 4 elements when it is not null. The default
   /// leaves the corners sharp.
+  ///
+  /// Throws [ArgumentError] if either [width] or [height] is not greater
+  /// than 0.
   factory RoundedPolygon.rectangle({
     double width = 2,
     double height = 2,
@@ -256,6 +259,10 @@ class RoundedPolygon {
     List<CornerRounding>? perVertexRounding,
     Offset center = Offset.zero,
   }) {
+    if (width <= 0 || height <= 0) {
+      throw ArgumentError('Rectangles must have positive width and height.');
+    }
+
     final double left = center.x - width / 2;
     final double top = center.y - height / 2;
     final double right = center.x + width / 2;
@@ -281,9 +288,9 @@ class RoundedPolygon {
   /// alternating outer and inner starting with an outer vertex. The default
   /// leaves the corners sharp and the edges straight.
   ///
-  /// Throws [ArgumentError] if either radius is not greater than 0, if
-  /// [innerRadius] is not less than [radius], or if [perVertexRounding] has
-  /// the wrong number of elements.
+  /// Throws [ArgumentError] if [numVerticesPerRadius] is less than 3, if
+  /// either radius is not greater than 0, if [innerRadius] is not less than
+  /// [radius], or if [perVertexRounding] has the wrong number of elements.
   factory RoundedPolygon.star({
     required int numVerticesPerRadius,
     double radius = 1,
@@ -293,6 +300,9 @@ class RoundedPolygon {
     List<CornerRounding>? perVertexRounding,
     Offset center = Offset.zero,
   }) {
+    if (numVerticesPerRadius < 3) {
+      throw ArgumentError('numVerticesPerRadius must be at least 3.');
+    }
     if (radius <= 0 || innerRadius <= 0) {
       throw ArgumentError('Star radii must both be greater than 0.');
     }
@@ -381,9 +391,10 @@ class RoundedPolygon {
   /// begin, from 0 to 1. This is rarely needed or noticed, but it decides
   /// where the path starts and ends for a caller stroking it gradually.
   ///
-  /// Throws [ArgumentError] if either [width] or [height] is not greater
-  /// than 0, if [innerRadiusRatio] is outside the range 0 (exclusive) to 1,
-  /// or if [vertexSpacing] or [startLocation] is outside the range 0 to 1.
+  /// Throws [ArgumentError] if [numVerticesPerRadius] is less than 3, if
+  /// either [width] or [height] is not greater than 0, if [innerRadiusRatio]
+  /// is outside the range 0 (exclusive) to 1, or if [vertexSpacing] or
+  /// [startLocation] is outside the range 0 to 1.
   factory RoundedPolygon.pillStar({
     double width = 2,
     double height = 1,
@@ -396,6 +407,9 @@ class RoundedPolygon {
     double startLocation = 0,
     Offset center = Offset.zero,
   }) {
+    if (numVerticesPerRadius < 3) {
+      throw ArgumentError('numVerticesPerRadius must be at least 3.');
+    }
     if (width <= 0 || height <= 0) {
       throw ArgumentError('Pill shapes must have positive width and height.');
     }
