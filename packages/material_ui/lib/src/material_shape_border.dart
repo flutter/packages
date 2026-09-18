@@ -164,7 +164,15 @@ class MaterialShapeBorder extends OutlinedBorder {
     final RoundedPolygon? shape = this.shape;
 
     if (shape == null) {
-      return _lerpStart == start && _lerpEnd == end ? _lerpProgress : null;
+      if (_lerpStart == start && _lerpEnd == end) {
+        return _lerpProgress;
+      }
+
+      if (_lerpStart == end && _lerpEnd == start) {
+        return 1.0 - _lerpProgress!;
+      }
+
+      return null;
     }
 
     if (shape == start) {

@@ -412,6 +412,19 @@ void main() {
       expect(quarter.lerpTo(threeQuarters, 0.5), start.lerpTo(end, 0.5));
     });
 
+    test('lerp resumes between morphs of the same shapes in opposite directions', () {
+      final start = MaterialShapeBorder(shape: MaterialShapes.circle);
+      final end = MaterialShapeBorder(shape: MaterialShapes.square);
+
+      final forward = start.lerpTo(end, 0.25)! as MaterialShapeBorder;
+      final backward = end.lerpTo(start, 0.25)! as MaterialShapeBorder;
+
+      // backward sits at 0.75 of the morph forward is on, so lerping between
+      // the two resumes along that shared morph instead of snapping.
+      expect(forward.lerpTo(backward, 0.5), start.lerpTo(end, 0.5));
+      expect(backward.lerpTo(forward, 0.5), end.lerpTo(start, 0.5));
+    });
+
     test('lerp resumes the morph for an equal but freshly built shape', () {
       final start = MaterialShapeBorder(shape: MaterialShapes.circle);
       final end = MaterialShapeBorder(shape: MaterialShapes.square);
