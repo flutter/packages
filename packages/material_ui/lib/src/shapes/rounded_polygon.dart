@@ -1009,6 +1009,8 @@ List<Point> _pillStarVerticesFromNumVerts(
     final double boundedT = t % perimeter;
     if (boundedT < secStart) {
       currSecIndex = 0;
+      secStart = 0;
+      secEnd = sections[1];
     }
     while (boundedT >= sections[(currSecIndex + 1) % sections.length]) {
       currSecIndex = (currSecIndex + 1) % sections.length;
