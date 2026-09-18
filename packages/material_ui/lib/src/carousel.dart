@@ -1979,7 +1979,6 @@ class CarouselController extends ScrollController {
   /// direction.
   ///
   /// Does nothing if the carousel is not attached to this controller.
-  @awaitNotRequired
   Future<void> animateToItem(
     int index, {
     Duration duration = const Duration(milliseconds: 300),

@@ -1,0 +1,3 @@
+changelog: |
+  - Removes `@awaitNotRequired` annotations, which require Flutter 3.47 or later, to restore compatibility with the declared minimum Flutter version.
+version: patch
