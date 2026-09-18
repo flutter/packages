@@ -24,20 +24,19 @@ class TestTileProvider: TileProviderDelegate {
     self.onTileCalled = onTileCalled
   }
 
-  func tile(
+  @MainActor func tile(
     withOverlayIdentifier tileOverlayId: String,
     location: PlatformPoint,
     zoom: Int64,
-    completion: @escaping (Result<PlatformTile, PigeonError>) -> Void
-  ) {
-    #expect(Thread.isMainThread)
+  ) async throws -> PlatformTile {
     onTileCalled()
+    return PlatformTile(width: 0, height: 0)
   }
 }
 
 @MainActor struct TileProviderControllerTests {
 
-  @Test func callChannelOnPlatformThread() async {
+  @Test func tileProviderCallsFlutterApi() async {
     var continuationToResume: CheckedContinuation<Void, Never>?
 
     let tileProvider = TestTileProvider {

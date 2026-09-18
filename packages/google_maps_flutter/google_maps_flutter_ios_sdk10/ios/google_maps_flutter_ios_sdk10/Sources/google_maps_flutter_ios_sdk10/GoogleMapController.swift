@@ -313,17 +313,23 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   // MARK: - GMSMapViewDelegate methods
 
   public func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
-    dartCallbackHandler.didStartCameraMove { _ in }
+    Task {
+      try await dartCallbackHandler.didStartCameraMove()
+    }
   }
 
   public func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
     if trackCameraPosition {
-      dartCallbackHandler.didMoveCamera(to: PlatformCameraPosition.make(from: position)) { _ in }
+      Task {
+        try await dartCallbackHandler.didMoveCamera(to: PlatformCameraPosition.make(from: position))
+      }
     }
   }
 
   public func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
-    dartCallbackHandler.didIdleCamera { _ in }
+    Task {
+      try await dartCallbackHandler.didIdleCamera()
+    }
   }
 
   public func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
@@ -379,11 +385,15 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   }
 
   public func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
-    dartCallbackHandler.didTap(at: PlatformLatLng.make(from: coordinate)) { _ in }
+    Task {
+      try await dartCallbackHandler.didTap(at: PlatformLatLng.make(from: coordinate))
+    }
   }
 
   public func mapView(_ mapView: GMSMapView, didLongPressAt coordinate: CLLocationCoordinate2D) {
-    dartCallbackHandler.didLongPress(at: PlatformLatLng.make(from: coordinate)) { _ in }
+    Task {
+      try await dartCallbackHandler.didLongPress(at: PlatformLatLng.make(from: coordinate))
+    }
   }
 
   func interpretMapConfiguration(_ config: PlatformMapConfiguration) {
