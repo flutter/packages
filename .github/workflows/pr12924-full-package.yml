@@ -20,15 +20,16 @@ jobs:
       - name: Resolve go_router dependencies
         working-directory: packages/go_router
         run: flutter pub get
-      - name: Format check changed Dart files
-        run: dart format --output=none --set-exit-if-changed packages/go_router/lib/src/builder.dart packages/go_router/lib/src/pages/app_type.dart packages/go_router/lib/src/pages/cupertino.dart packages/go_router/lib/src/pages/material.dart packages/go_router/test/sdk_app_test.dart
+      - name: Format changed Dart files
+        run: dart format packages/go_router/lib/src/builder.dart packages/go_router/lib/src/pages/app_type.dart packages/go_router/lib/src/pages/cupertino.dart packages/go_router/lib/src/pages/material.dart packages/go_router/test/sdk_app_test.dart
       - name: Run full go_router test suite
         working-directory: packages/go_router
         run: flutter test
-      - name: Remove temporary validation workflow
+      - name: Commit formatting and remove temporary validation workflow
         run: |
           git config user.name "Yazan Arafeh"
           git config user.email "32390922+yazanmg@users.noreply.github.com"
+          git add packages/go_router/lib/src/builder.dart packages/go_router/lib/src/pages/app_type.dart packages/go_router/lib/src/pages/cupertino.dart packages/go_router/lib/src/pages/material.dart packages/go_router/test/sdk_app_test.dart
           git rm .github/workflows/pr12924-full-package.yml
-          git commit -m "ci: remove temporary PR 12924 full validation"
+          git commit -m "Format and validate go_router SDK app fix"
           git push origin HEAD:fix-go-router-sdk-app-pages
