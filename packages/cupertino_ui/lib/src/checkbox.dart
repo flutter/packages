@@ -188,7 +188,7 @@ class CupertinoCheckbox extends StatefulWidget {
   ///
   ///  * [WidgetStateMouseCursor], a [MouseCursor] that implements
   ///    [WidgetStateProperty] which is used in APIs that need to accept
-  ///    either a [MouseCursor] or a [WidgetStateProperty].
+  ///    either a [MouseCursor] or a [WidgetStateProperty]..
   final MouseCursor? mouseCursor;
 
   /// The color to use when this checkbox is checked.
