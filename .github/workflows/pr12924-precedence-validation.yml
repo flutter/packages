@@ -22,18 +22,19 @@ jobs:
       - name: Resolve go_router dependencies
         working-directory: packages/go_router
         run: flutter pub get
-      - name: Check formatting
-        run: dart format --output=none --set-exit-if-changed packages/go_router/lib/src/pages/app_type.dart packages/go_router/test/sdk_app_test.dart
+      - name: Format changed Dart files
+        run: dart format packages/go_router/lib/src/pages/app_type.dart packages/go_router/test/sdk_app_test.dart
       - name: Run targeted SDK app tests
         working-directory: packages/go_router
         run: flutter test test/sdk_app_test.dart
       - name: Run full go_router test suite
         working-directory: packages/go_router
         run: flutter test
-      - name: Remove temporary validation workflow
+      - name: Commit formatting and remove temporary validation workflow
         run: |
           git config user.name "Yazan Arafeh"
           git config user.email "32390922+yazanmg@users.noreply.github.com"
+          git add packages/go_router/lib/src/pages/app_type.dart packages/go_router/test/sdk_app_test.dart
           git rm .github/workflows/pr12924-precedence-validation.yml
-          git commit -m "ci: remove PR 12924 precedence validation"
+          git commit -m "Validate go_router adapter precedence"
           git push origin HEAD:fix-go-router-sdk-app-pages
