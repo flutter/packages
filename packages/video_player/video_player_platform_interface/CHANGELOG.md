@@ -1,3 +1,7 @@
+## 6.10.0
+
+* Adds `VideoPlayerAndroidOptions` and forwards Android-specific creation options through `VideoPlayerOptions`.
+
 ## 6.9.0
 
 * Adds `backBufferDurationMs` to `VideoPlayerOptions` to support configuring the back buffer duration.

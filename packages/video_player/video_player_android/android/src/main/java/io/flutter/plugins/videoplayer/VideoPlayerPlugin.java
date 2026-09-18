@@ -84,11 +84,10 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   @Override
   public long createForPlatformView(@NonNull CreationOptions options) {
     final VideoAsset videoAsset = videoAssetWithOptions(options);
+    final VideoPlayerOptions playerOptions = videoPlayerOptionsWithCreationOptions(options);
 
     long id = nextPlayerIdentifier++;
     final String streamInstance = Long.toString(id);
-    VideoPlayerOptions playerOptions = new VideoPlayerOptions(sharedOptions);
-    playerOptions.backBufferDurationMs = options.getBackBufferDurationMs();
 
     VideoPlayer videoPlayer =
         PlatformViewVideoPlayer.create(
@@ -105,12 +104,11 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   @Override
   public @NonNull TexturePlayerIds createForTextureView(@NonNull CreationOptions options) {
     final VideoAsset videoAsset = videoAssetWithOptions(options);
+    final VideoPlayerOptions playerOptions = videoPlayerOptionsWithCreationOptions(options);
 
     long id = nextPlayerIdentifier++;
     final String streamInstance = Long.toString(id);
     TextureRegistry.SurfaceProducer handle = flutterState.textureRegistry.createSurfaceProducer();
-    VideoPlayerOptions playerOptions = new VideoPlayerOptions(sharedOptions);
-    playerOptions.backBufferDurationMs = options.getBackBufferDurationMs();
 
     VideoPlayer videoPlayer =
         TextureVideoPlayer.create(
@@ -149,6 +147,15 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
       return VideoAsset.fromRemoteUrl(
           uri, streamingFormat, options.getHttpHeaders(), options.getUserAgent());
     }
+  }
+
+  private @NonNull VideoPlayerOptions videoPlayerOptionsWithCreationOptions(
+      @NonNull CreationOptions options) {
+    final VideoPlayerOptions playerOptions = new VideoPlayerOptions(sharedOptions);
+    playerOptions.backBufferDurationMs = options.getBackBufferDurationMs();
+    playerOptions.enableDecoderFallback = options.getEnableDecoderFallback();
+    playerOptions.disableMediaCodecAsyncQueueing = options.getDisableMediaCodecAsyncQueueing();
+    return playerOptions;
   }
 
   private void registerPlayerInstance(VideoPlayer player, long id) {
