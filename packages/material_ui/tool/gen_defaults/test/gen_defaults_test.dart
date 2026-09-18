@@ -21,7 +21,7 @@ import '../templates/card_template.dart';
 // import '../templates/chip_template.dart';
 // import '../templates/color_scheme_template.dart';
 // import '../templates/date_picker_template.dart';
-// import '../templates/dialog_template.dart';
+import '../templates/dialog_template.dart';
 // import '../templates/divider_template.dart';
 // import '../templates/drawer_template.dart';
 // import '../templates/expansion_tile_template.dart';
@@ -489,8 +489,24 @@ void main() {
     });
 
     test('DialogTemplateM3 emits M3 Dialog defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const DialogTemplateM3());
+      expect(contents, contains('class _DialogDefaultsM3 extends DialogThemeData'));
+      expect(
+        contents,
+        contains(
+          'shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28.0)))',
+        ),
+      );
+      expect(contents, contains('Color? get backgroundColor => _colors.surfaceContainerHigh'));
+
+      final String fullscreenContents = _generateContents(const DialogFullscreenTemplateM3());
+      expect(
+        fullscreenContents,
+        allOf(
+          contains('class _DialogFullscreenDefaultsM3 extends DialogThemeData'),
+          contains('Color? get backgroundColor => Theme.of(context).colorScheme.surface'),
+        ),
+      );
     });
 
     test('DividerTemplateM3 emits M3 Divider defaults from tokens', () {
