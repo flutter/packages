@@ -90,7 +90,7 @@ String instanceManagerTemplate(InternalSwiftOptions options) {
 /// again.
 ///
 /// Accessing and inserting to an InstanceManager is thread safe.
-final class ${swiftInstanceManagerClassName(options)} {
+final class ${swiftInstanceManagerClassName(options)}: @unchecked Sendable {
   // Identifiers are locked to a specific range to avoid collisions with objects
   // created simultaneously from Dart.
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,

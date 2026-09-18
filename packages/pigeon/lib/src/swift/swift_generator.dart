@@ -9,7 +9,6 @@ import '../ast.dart';
 import '../functional.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
-import '../types/task_queue.dart';
 import 'templates.dart';
 
 /// Documentation comment open symbol.
@@ -1592,6 +1591,7 @@ if (wrapped == nil) {
             isAsynchronous: method.isAsynchronous,
             isAsynchronousCallback: method.isAsynchronousCallback,
             swiftFunction: method.swiftFunction,
+            isCompletionClosureSendable: !generatorOptions.useFfi,
             ffiUserApi: generatorOptions.useFfi,
           ),
         );
@@ -1620,9 +1620,7 @@ if (wrapped == nil) {
           r'let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""',
         );
         String? serialBackgroundQueue;
-        if (api.methods.any(
-          (Method m) => m.taskQueueType == TaskQueueType.serialBackgroundThread,
-        )) {
+        if (api.methods.any((Method m) => m.taskQueueType == .serialBackgroundThread)) {
           serialBackgroundQueue = 'taskQueue';
           // TODO(stuartmorgan): Remove the ? once macOS supports task queues
           // and this is no longer an optional protocol method.
@@ -1646,7 +1644,7 @@ if (wrapped == nil) {
             isAsynchronousCallback: method.isAsynchronousCallback,
             swiftFunction: method.swiftFunction,
             documentationComments: method.documentationComments,
-            serialBackgroundQueue: method.taskQueueType == TaskQueueType.serialBackgroundThread
+            serialBackgroundQueue: method.taskQueueType == .serialBackgroundThread
                 ? serialBackgroundQueue
                 : null,
           );
@@ -3169,6 +3167,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
         returnType: method.returnType,
         isAsynchronous: method.isAsynchronous,
         isAsynchronousCallback: true,
+        isCompletionClosureSendable: true,
         errorTypeName: 'Error',
       );
       indent.writeln(methodSignature);
@@ -3965,6 +3964,7 @@ String _getMethodSignature({
   bool isAsynchronous = false,
   bool ffiUserApi = false,
   bool isAsynchronousCallback = false,
+  bool isCompletionClosureSendable = false,
   bool isMainActor = false,
   String? swiftFunction,
   bool ffiBridgeApi = false,
@@ -4035,7 +4035,9 @@ String _getMethodSignature({
   }
 
   if (isAsynchronous) {
-    final completion = 'completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void';
+    final sendablePrefix = isCompletionClosureSendable ? '@Sendable ' : '';
+    final completion =
+        'completion: @escaping $sendablePrefix(Result<$returnTypeString, $errorTypeName>) -> Void';
     final params = parameters.isEmpty ? completion : '$parameterSignature, $completion';
     return 'func $methodName($params)';
   }
