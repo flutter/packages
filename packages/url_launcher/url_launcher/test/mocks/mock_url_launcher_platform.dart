@@ -20,6 +20,7 @@ class MockUrlLauncher extends Fake with MockPlatformInterfaceMixin implements Ur
   String? webOnlyWindowName;
 
   bool? response;
+  bool? closeForModeResponse;
 
   bool closeWebViewCalled = false;
   bool canLaunchCalled = false;
@@ -57,6 +58,11 @@ class MockUrlLauncher extends Fake with MockPlatformInterfaceMixin implements Ur
   // ignore: use_setters_to_change_properties
   void setResponse(bool response) {
     this.response = response;
+  }
+
+  // ignore: use_setters_to_change_properties
+  void setCloseForModeResponse(bool response) {
+    closeForModeResponse = response;
   }
 
   @override
@@ -120,6 +126,6 @@ class MockUrlLauncher extends Fake with MockPlatformInterfaceMixin implements Ur
   @override
   Future<bool> supportsCloseForMode(PreferredLaunchMode mode) async {
     launchMode = mode;
-    return response!;
+    return closeForModeResponse ?? response!;
   }
 }

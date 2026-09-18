@@ -322,5 +322,15 @@ void main() {
       expect(await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView), false);
       expect(mock.launchMode, PreferredLaunchMode.inAppBrowserView);
     });
+
+    test('uses supportsCloseForMode rather than supportsMode', () async {
+      // Regression test for https://github.com/flutter/flutter/issues/192758
+      mock
+        ..setResponse(false)
+        ..setCloseForModeResponse(true);
+
+      expect(await supportsLaunchMode(LaunchMode.inAppBrowserView), false);
+      expect(await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView), true);
+    });
   });
 }
