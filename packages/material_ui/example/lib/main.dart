@@ -28,6 +28,7 @@ import 'progress_indicator/linear_progress_indicator.0.dart'
 import 'progress_indicator/circular_progress_indicator.0.dart'
     as circular_progress_indicator_0;
 import 'dropdown_menu/dropdown_menu.1.dart' as dropdown_menu_1;
+import 'material_shapes/material_shapes.0.dart' as material_shapes_0;
 import 'navigation_bar/navigation_bar.1.dart' as navigation_bar_1;
 import 'navigation_rail/navigation_rail.0.dart' as navigation_rail_0;
 import 'navigation_drawer/navigation_drawer.0.dart' as navigation_drawer_0;
@@ -160,6 +161,12 @@ class ExampleApp extends StatelessWidget {
       title: 'Circular progress indicators',
       builder: (BuildContext context) =>
           const circular_progress_indicator_0.ProgressIndicatorExampleApp(),
+    ),
+    _Example(
+      filepath: 'material_shapes/material_shapes.0.dart',
+      title: 'Material shapes',
+      builder: (BuildContext context) =>
+          const material_shapes_0.MaterialShapesExampleApp(),
     ),
     _Example(
       filepath: 'dropdown_menu/dropdown_menu.1.dart',
