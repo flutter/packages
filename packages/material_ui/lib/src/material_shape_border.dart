@@ -158,8 +158,6 @@ class MaterialShapeBorder extends OutlinedBorder {
   ///
   /// Shapes are compared by value, so a border rebuilt with an equal but newly
   /// constructed shape still resumes its morph instead of snapping.
-  /// [_MorphCacheKey] makes the opposite trade, since hashing a polygon is
-  /// expensive.
   double? _progressAlong(RoundedPolygon start, RoundedPolygon end) {
     final RoundedPolygon? shape = this.shape;
 
@@ -364,10 +362,8 @@ class MaterialShapeBorder extends OutlinedBorder {
 
 /// The pair of shapes a cached [Morph] was built from.
 ///
-/// Keys compare by identity rather than by value, because
-/// [RoundedPolygon.hashCode] walks every coordinate of every feature and would
-/// cost a sizeable fraction of what the cache saves. A pair that misses is
-/// simply rebuilt.
+/// Keys compare by value. This is cheap because [RoundedPolygon.hashCode] is
+/// computed once and cached, and its `==` short-circuits on identical instances.
 @immutable
 class _MorphCacheKey {
   const _MorphCacheKey(this.start, this.end);
@@ -377,11 +373,11 @@ class _MorphCacheKey {
   final RoundedPolygon end;
 
   @override
-  int get hashCode => Object.hash(identityHashCode(start), identityHashCode(end));
+  int get hashCode => Object.hash(start, end);
 
   @override
   bool operator ==(Object other) {
-    return other is _MorphCacheKey && identical(other.start, start) && identical(other.end, end);
+    return other is _MorphCacheKey && other.start == start && other.end == end;
   }
 }
 
