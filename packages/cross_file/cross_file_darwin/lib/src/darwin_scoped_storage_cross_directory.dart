@@ -58,9 +58,7 @@ base class SecurityScopedDarwinScopedStorageXDirectory extends DarwinScopedStora
     // Check that this is not called during a unit test.
     if (Platform.environment['FLUTTER_TEST'] != 'true') {
       final NSURL? url = NSURL.URLWithString(NSString(uri));
-      if (url != null) {
-        url.stopAccessingSecurityScopedResource();
-      }
+      url?.stopAccessingSecurityScopedResource();
     }
   });
 
@@ -115,9 +113,7 @@ base class SecurityScopedDarwinScopedStorageXDirectory extends DarwinScopedStora
   @override
   Future<void> stopAccessingSecurityScopedResource() async {
     final NSURL? url = NSURL.URLWithString(NSString(params.uri));
-    if (url != null) {
-      url.stopAccessingSecurityScopedResource();
-    }
+    url?.stopAccessingSecurityScopedResource();
   }
 
   @override

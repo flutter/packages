@@ -82,9 +82,7 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
     // Check that this is not called during a unit test.
     if (Platform.environment['FLUTTER_TEST'] != 'true') {
       final NSURL? url = NSURL.URLWithString(uri.toNSString());
-      if (url != null) {
-        url.stopAccessingSecurityScopedResource();
-      }
+      url?.stopAccessingSecurityScopedResource();
     }
   });
 
@@ -151,9 +149,7 @@ base class SecurityScopedDarwinScopedStorageXFile extends DarwinScopedStorageXFi
   @override
   Future<void> stopAccessingSecurityScopedResource() async {
     final NSURL? url = NSURL.URLWithString(params.uri.toNSString());
-    if (url != null) {
-      url.stopAccessingSecurityScopedResource();
-    }
+    url?.stopAccessingSecurityScopedResource();
   }
 
   @override
@@ -216,9 +212,11 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
       );
     }
 
-    // TODO(bparrishMines): Thread merging is optional on macOS, so the FFI
-    // implementation is not guaranteed to work when it needs to switch to the
-    // platform thread from a native callback.
+    // TODO(bparrishMines): Remove pigeon implementation once
+    // https://github.com/flutter/flutter/issues/181874 lands in stable. Thread
+    // merging is optional on macOS, so the FFI implementation is not guaranteed
+    // to work when it needs to switch to the platform thread from a native
+    // callback. See https://github.com/flutter/flutter/issues/181874
     if (defaultTargetPlatform == TargetPlatform.macOS) {
       return _openReadWithPigeon(start, end);
     }
@@ -228,9 +226,11 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
 
   @override
   Future<Uint8List> readAsBytes() {
-    // TODO(bparrishMines): Thread merging is optional on macOS, so the FFI
-    // implementation is not guaranteed to work when it needs to switch to the
-    // platform thread from a native callback.
+    // TODO(bparrishMines): Remove pigeon implementation once
+    // https://github.com/flutter/flutter/issues/181874 lands in stable. Thread
+    // merging is optional on macOS, so the FFI implementation is not guaranteed
+    // to work when it needs to switch to the platform thread from a native
+    // callback.
     if (defaultTargetPlatform == TargetPlatform.macOS) {
       return _readBytesWithPigeon();
     }
@@ -347,19 +347,20 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     final streamController = StreamController<Uint8List>();
     final filter = ByteRangeFilter(start: start ?? 0, end: end);
 
+    final weakStream = WeakReference<StreamController<Uint8List>>(streamController);
     final delegate = AssetResourceReaderDelegate(
       onDataReceived: (_, Uint8List bytes) {
         final Uint8List inRangeBytes = filter.addBytes(bytes);
         if (inRangeBytes.isNotEmpty) {
-          streamController.add(inRangeBytes);
+          weakStream.target?.add(inRangeBytes);
         }
       },
       onCompletion: (_, String? error) {
         if (error != null) {
-          streamController.addError(Exception(error));
+          weakStream.target?.addError(Exception(error));
         }
 
-        streamController.close();
+        weakStream.target?.close();
       },
     );
 

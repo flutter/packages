@@ -3,7 +3,7 @@
 ## `ffigen`
 
 This package uses [ffigen](https://pub.dev/packages/ffigen) to call Foundation
-methods, rather than using the standard Flutter plugin structure. To add new
+methods in addition to the standard Flutter plugin structure. To add new
 functionality to the FFI interface, update `tool/ffigen.dart`, then run:
 
 ```bash

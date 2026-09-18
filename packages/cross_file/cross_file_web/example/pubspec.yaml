@@ -23,4 +23,4 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  web: ">=0.5.1 <2.0.0"
+  web: ^1.0.0
