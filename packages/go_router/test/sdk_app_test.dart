@@ -70,7 +70,7 @@ void main() {
   });
 
   testWidgets(
-    'GoRoute.builder uses the closest supported app when Cupertino is nested in Material',
+    'GoRoute.builder preserves Material precedence when Cupertino is nested in Material',
     (WidgetTester tester) async {
       final settings = await _pumpApp(
         tester,
@@ -79,12 +79,12 @@ void main() {
         ),
       );
 
-      expect(settings, isA<flutter_cupertino.CupertinoPage<void>>());
+      expect(settings, isA<flutter_material.MaterialPage<void>>());
     },
   );
 
   testWidgets(
-    'GoRoute.builder uses the closest supported app when Material is nested in Cupertino',
+    'GoRoute.builder uses Material when Material is nested in Cupertino',
     (WidgetTester tester) async {
       final settings = await _pumpApp(
         tester,

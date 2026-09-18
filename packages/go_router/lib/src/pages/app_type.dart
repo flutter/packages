@@ -23,28 +23,32 @@ enum AppType {
   cupertinoUi,
 }
 
-/// Finds the closest supported app implementation in the widget tree.
+/// Finds the supported app implementation to use for the Navigator.
+///
+/// Material apps retain precedence over Cupertino apps, matching the existing
+/// go_router adapter selection behavior. Within each app family, the closest
+/// supported implementation is used.
 AppType? appTypeOf(BuildContext context) {
-  AppType? result;
+  AppType? nearestCupertino;
+  AppType? material;
   context.visitAncestorElements((Element element) {
     final Widget widget = element.widget;
     if (widget is flutter_material.MaterialApp) {
-      result = AppType.sdkMaterial;
+      material = AppType.sdkMaterial;
       return false;
     }
     if (widget is material_ui.MaterialApp) {
-      result = AppType.materialUi;
+      material = AppType.materialUi;
       return false;
     }
-    if (widget is flutter_cupertino.CupertinoApp) {
-      result = AppType.sdkCupertino;
-      return false;
-    }
-    if (widget is cupertino_ui.CupertinoApp) {
-      result = AppType.cupertinoUi;
-      return false;
+    if (nearestCupertino == null) {
+      if (widget is flutter_cupertino.CupertinoApp) {
+        nearestCupertino = AppType.sdkCupertino;
+      } else if (widget is cupertino_ui.CupertinoApp) {
+        nearestCupertino = AppType.cupertinoUi;
+      }
     }
     return true;
   });
-  return result;
+  return material ?? nearestCupertino;
 }
