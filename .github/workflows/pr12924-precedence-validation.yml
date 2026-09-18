@@ -1,0 +1,39 @@
+name: PR 12924 precedence validation
+
+on:
+  push:
+    branches:
+      - fix-go-router-sdk-app-pages
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: master
+          cache: true
+      - name: Resolve go_router dependencies
+        working-directory: packages/go_router
+        run: flutter pub get
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed packages/go_router/lib/src/pages/app_type.dart packages/go_router/test/sdk_app_test.dart
+      - name: Run targeted SDK app tests
+        working-directory: packages/go_router
+        run: flutter test test/sdk_app_test.dart
+      - name: Run full go_router test suite
+        working-directory: packages/go_router
+        run: flutter test
+      - name: Remove temporary validation workflow
+        run: |
+          git config user.name "Yazan Arafeh"
+          git config user.email "32390922+yazanmg@users.noreply.github.com"
+          git rm .github/workflows/pr12924-precedence-validation.yml
+          git commit -m "ci: remove PR 12924 precedence validation"
+          git push origin HEAD:fix-go-router-sdk-app-pages
