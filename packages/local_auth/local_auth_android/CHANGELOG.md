@@ -1,3 +1,7 @@
+## 2.3.0
+
+* Updates internal platform API from callbacks to `suspend`.
+
 ## 2.2.0
 
 * Adjusts visibilty modifiers to support the migration of unit tests to Kotlin.
