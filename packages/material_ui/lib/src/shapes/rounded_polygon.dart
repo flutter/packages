@@ -654,11 +654,13 @@ class RoundedPolygon {
       return true;
     }
 
-    return other is RoundedPolygon && listEquals(other.features, features);
+    return other is RoundedPolygon &&
+        other._center == _center &&
+        listEquals(other.features, features);
   }
 
   @override
-  late final int hashCode = Object.hashAll(features);
+  late final int hashCode = Object.hash(_center, Object.hashAll(features));
 }
 
 /// Calculates an estimated center position for the polygon, returning it. This

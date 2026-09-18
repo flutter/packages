@@ -394,7 +394,10 @@ void main() {
       // A widget that builds its border inline hands over a new polygon on
       // every build, so matching the endpoints by identity would snap here.
       final rebuilt = MaterialShapeBorder(
-        shape: RoundedPolygon.fromFeatures(List<Feature>.of(MaterialShapes.circle.features)),
+        shape: RoundedPolygon.fromFeatures(
+          List<Feature>.of(MaterialShapes.circle.features),
+          center: MaterialShapes.circle.center,
+        ),
       );
 
       expect(rebuilt.shape, isNot(same(MaterialShapes.circle)));

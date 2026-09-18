@@ -195,6 +195,20 @@ void main() {
       expect(circle, isNot(otherCircle));
     });
 
+    test('== distinguishes centers', () {
+      final List<Feature> features = RoundedPolygon.circle().features;
+      final base = RoundedPolygon.fromFeatures(features);
+      final sameCenter = RoundedPolygon.fromFeatures(features, center: base.center);
+      final movedCenter = RoundedPolygon.fromFeatures(
+        features,
+        center: base.center + const Offset(0.1, 0),
+      );
+
+      expect(base, sameCenter);
+      expect(base.hashCode, sameCenter.hashCode);
+      expect(base, isNot(movedCenter));
+    });
+
     test('toPath rotates around the polygon center', () {
       // A diamond filling the unit square, with its first vertex at angle zero
       // from its center.
