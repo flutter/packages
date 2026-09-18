@@ -68,6 +68,9 @@ void main() {
     );
     workspaceRoot = fileSystem.path.absolute('workspace');
     fileSystem.file(fileSystem.path.join(workspaceRoot, '.git')).createSync(recursive: true);
+    fileSystem
+        .file(fileSystem.path.join(workspaceRoot, 'script', 'githooks', 'pre-push'))
+        .createSync(recursive: true);
     processManager.runMock['git config --get core.hooksPath'] =
         ProcessResult(0, 0, 'script/githooks\n', '');
     printLogs.clear();
@@ -153,6 +156,20 @@ void main() {
     );
   });
 
+  test('fails when pre-push hook file is missing', () async {
+    fileSystem
+        .directory(fileSystem.path.join(workspaceRoot, '.agents', 'skills'))
+        .createSync(recursive: true);
+
+    fileSystem
+        .file(fileSystem.path.join(workspaceRoot, 'script', 'githooks', 'pre-push'))
+        .deleteSync();
+
+    final bool result = await runChecker();
+    expect(result, isFalse);
+    expect(printLogs.any((line) => line.contains('Git pre-push hook is missing')), isTrue);
+  });
+
   test('fails when flutter is missing', () async {
     fileSystem
         .directory(fileSystem.path.join(workspaceRoot, '.agents', 'skills'))
@@ -224,6 +241,9 @@ void main() {
       winWorkspaceRoot = r'C:\workspace';
       winFileSystem
           .file(winFileSystem.path.join(winWorkspaceRoot, '.git'))
+          .createSync(recursive: true);
+      winFileSystem
+          .file(winFileSystem.path.join(winWorkspaceRoot, 'script', 'githooks', 'pre-push'))
           .createSync(recursive: true);
       printLogs.clear();
     });
