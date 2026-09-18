@@ -39,6 +39,8 @@ class TestMapEventHandler: MapEventDelegate {
 
   func didTapCircle(withIdentifier circleIdArg: String) async throws {}
 
+  func didTapPointOfInterest(withPlaceIdentifier placeIdArg: String) async throws {}
+
   func didTapCluster(_ clusterArg: PlatformCluster) async throws {}
 
   func didTapPolygon(withIdentifier polygonIdArg: String) async throws {}

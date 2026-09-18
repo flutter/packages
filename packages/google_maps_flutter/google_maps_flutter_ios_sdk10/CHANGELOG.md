@@ -1,3 +1,7 @@
+## 2.19.0
+
+* Adds support for tapping points of interest on the map.
+
 ## 2.18.13
 
 * Adopts new Pigeon async Swift support.

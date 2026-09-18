@@ -1,3 +1,7 @@
+## 0.6.4
+
+* Adds support for tapping points of interest on the map.
+
 ## 0.6.3+1
 
 * Fixes flickering of byte-backed advanced markers when updating their position on web.

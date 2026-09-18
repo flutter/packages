@@ -59,7 +59,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   /// The Google Maps SDK map view managed by this controller.
   let mapView: GMSMapView
   /// The Pigeon callback API implementation, used to send events to the Dart side.
-  let dartCallbackHandler: MapsCallbackApi
+  let dartCallbackHandler: MapEventDelegate
   /// The main Pigeon API implementation, separate to avoid lifetime extension.
   let callHandler: MapCallHandler
   /// The inspector API implementation, separate to avoid lifetime extension.
@@ -101,12 +101,37 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
       options.mapID = GMSMapID(identifier: mapId)
     }
 
+    let binaryMessenger = registrar.messenger()
     self.init(
       mapView: GMSMapView(options: options),
       viewIdentifier: viewId,
       creationParameters: creationParameters,
       assetProvider: DefaultAssetProvider(registrar: registrar),
-      binaryMessenger: registrar.messenger()
+      binaryMessenger: binaryMessenger,
+      callbackHandler: MapsCallbackApi(
+        binaryMessenger: binaryMessenger,
+        messageChannelSuffix: String(format: "%lld", viewId)
+      )
+    )
+  }
+
+  convenience init(
+    mapView: GMSMapView,
+    viewIdentifier viewId: Int64,
+    creationParameters: PlatformMapViewCreationParams,
+    assetProvider: AssetProvider,
+    binaryMessenger: FlutterBinaryMessenger
+  ) {
+    self.init(
+      mapView: mapView,
+      viewIdentifier: viewId,
+      creationParameters: creationParameters,
+      assetProvider: assetProvider,
+      binaryMessenger: binaryMessenger,
+      callbackHandler: MapsCallbackApi(
+        binaryMessenger: binaryMessenger,
+        messageChannelSuffix: String(format: "%lld", viewId)
+      )
     )
   }
 
@@ -115,7 +140,8 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     viewIdentifier viewId: Int64,
     creationParameters: PlatformMapViewCreationParams,
     assetProvider: AssetProvider,
-    binaryMessenger: FlutterBinaryMessenger
+    binaryMessenger: FlutterBinaryMessenger,
+    callbackHandler: MapEventDelegate
   ) {
     self.mapView = mapView
     mapView.accessibilityElementsHidden = false
@@ -134,10 +160,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     // End duplicate code.
 
     let pigeonSuffix = String(format: "%lld", viewId)
-    dartCallbackHandler = MapsCallbackApi(
-      binaryMessenger: binaryMessenger,
-      messageChannelSuffix: pigeonSuffix
-    )
+    dartCallbackHandler = callbackHandler
 
     let markerType = creationParameters.mapConfiguration.markerType
 
@@ -167,7 +190,8 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     heatmapsController = HeatmapsController(mapView: mapView)
     tileOverlaysController = TileOverlaysController(
       mapView: mapView,
-      tileProvider: dartCallbackHandler
+      tileProvider: (callbackHandler as? MapsCallbackApi)
+        ?? MapsCallbackApi(binaryMessenger: binaryMessenger, messageChannelSuffix: pigeonSuffix)
     )
     groundOverlaysController = GroundOverlaysController(
       mapView: mapView,
@@ -393,6 +417,15 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
   public func mapView(_ mapView: GMSMapView, didLongPressAt coordinate: CLLocationCoordinate2D) {
     Task {
       try await dartCallbackHandler.didLongPress(at: PlatformLatLng.make(from: coordinate))
+    }
+  }
+
+  public func mapView(
+    _ mapView: GMSMapView, didTapPOIWithPlaceID placeID: String, name: String,
+    location: CLLocationCoordinate2D
+  ) {
+    Task {
+      try await dartCallbackHandler.didTapPointOfInterest(withPlaceIdentifier: placeID)
     }
   }
 
