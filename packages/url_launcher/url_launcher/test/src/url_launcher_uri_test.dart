@@ -13,6 +13,12 @@ void main() {
   final mock = MockUrlLauncher();
   UrlLauncherPlatform.instance = mock;
 
+  // The mock is shared across tests, so reset any close-mode override that a
+  // test opts into to avoid leaking it into later tests.
+  tearDown(() {
+    mock.setCloseForModeResponse(null);
+  });
+
   test('closeInAppWebView', () async {
     await closeInAppWebView();
     expect(mock.closeWebViewCalled, isTrue);
@@ -321,6 +327,16 @@ void main() {
 
       expect(await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView), false);
       expect(mock.launchMode, PreferredLaunchMode.inAppBrowserView);
+    });
+
+    test('uses supportsCloseForMode rather than supportsMode', () async {
+      // Regression test for https://github.com/flutter/flutter/issues/192758
+      mock
+        ..setResponse(false)
+        ..setCloseForModeResponse(true);
+
+      expect(await supportsLaunchMode(LaunchMode.inAppBrowserView), false);
+      expect(await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView), true);
     });
   });
 }
