@@ -347,19 +347,20 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     final streamController = StreamController<Uint8List>();
     final filter = ByteRangeFilter(start: start ?? 0, end: end);
 
+    final weakStream = WeakReference<StreamController<Uint8List>>(streamController);
     final delegate = AssetResourceReaderDelegate(
       onDataReceived: (_, Uint8List bytes) {
         final Uint8List inRangeBytes = filter.addBytes(bytes);
         if (inRangeBytes.isNotEmpty) {
-          streamController.add(inRangeBytes);
+          weakStream.target?.add(inRangeBytes);
         }
       },
       onCompletion: (_, String? error) {
         if (error != null) {
-          streamController.addError(Exception(error));
+          weakStream.target?.addError(Exception(error));
         }
 
-        streamController.close();
+        weakStream.target?.close();
       },
     );
 
