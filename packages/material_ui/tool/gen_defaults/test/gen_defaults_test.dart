@@ -27,7 +27,7 @@ import '../templates/card_template.dart';
 // import '../templates/expansion_tile_template.dart';
 // import '../templates/fab_template.dart';
 // import '../templates/filter_chip_template.dart';
-// import '../templates/icon_button_template.dart';
+import '../templates/icon_button_template.dart' as icon_button;
 // import '../templates/input_chip_template.dart';
 // import '../templates/input_decorator_template.dart';
 // import '../templates/list_tile_template.dart';
@@ -519,8 +519,39 @@ void main() {
     });
 
     test('IconButtonTemplateM3 emits M3 IconButton defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = icon_button.IconButtonTemplateM3('Icon Button');
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _IconButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.38);'));
+      expect(contents, contains('return _colors.primary;'));
+      expect(contents, contains('return _colors.primary.withOpacity(0.1);'));
+    });
+
+    test('IconButtonTemplateM3 emits M3 FilledIconButton defaults from tokens', () {
+      const template = icon_button.IconButtonTemplateM3('Filled Icon Button');
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _FilledIconButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.12);'));
+      expect(contents, contains('return _colors.surfaceContainerHighest;'));
+      expect(contents, contains('return _colors.primary.withOpacity(0.1);'));
+    });
+
+    test('IconButtonTemplateM3 emits M3 FilledTonalIconButton defaults from tokens', () {
+      const template = icon_button.IconButtonTemplateM3('Filled Tonal Icon Button');
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _FilledTonalIconButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('return _colors.secondaryContainer;'));
+      expect(contents, contains('return _colors.onSurfaceVariant;'));
+      expect(contents, contains('return _colors.onSecondaryContainer.withOpacity(0.1);'));
+    });
+
+    test('IconButtonTemplateM3 emits M3 OutlinedIconButton defaults from tokens', () {
+      const template = icon_button.IconButtonTemplateM3('Outlined Icon Button');
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _OutlinedIconButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('return _colors.inverseSurface;'));
+      expect(contents, contains('return _colors.onInverseSurface.withOpacity(0.1);'));
+      expect(contents, contains('return BorderSide(color: _colors.onSurface.withOpacity(0.12));'));
     });
 
     test('InputChipTemplateM3 emits M3 InputChip defaults from tokens', () {
