@@ -107,7 +107,8 @@ void main() {
     test('toString', () {
       expect(
         MaterialShapeBorder(shape: unitSquare, squash: 0.5).toString(),
-        'MaterialShapeBorder(side: BorderSide(width: 0.0, style: none), squash: 0.5)',
+        'MaterialShapeBorder(shape: $unitSquare, '
+        'side: BorderSide(width: 0.0, style: none), squash: 0.5)',
       );
     });
 

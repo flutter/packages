@@ -356,7 +356,7 @@ class MaterialShapeBorder extends OutlinedBorder {
   @override
   String toString() {
     return '${objectRuntimeType(this, 'MaterialShapeBorder')}'
-        '(side: $side, squash: $squash)';
+        '(shape: $shape, side: $side, squash: $squash)';
   }
 }
 
