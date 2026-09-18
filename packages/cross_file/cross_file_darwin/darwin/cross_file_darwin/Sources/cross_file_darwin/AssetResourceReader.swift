@@ -7,9 +7,6 @@ import Photos
 
 /// Class for handling an instance of asynchronously reading bytes from an asset.
 class AssetResourceReader {
-  /// Handles the bytes read.
-  var delegate: AssetResourceReaderDelegate?
-
   /// Begin reading bytes from PHAssetResource with `localIdentifier`.
   func openRead(localIdentifier: String, delegate: AssetResourceReaderDelegate) -> Bool {
     let assets = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil)
@@ -23,11 +20,11 @@ class AssetResourceReader {
 
         resourceManager.requestData(for: resource, options: options) { data in
           DispatchQueue.main.async {
-            self.delegate?.onDataReceived(reader: self, bytes: data)
+            delegate.onDataReceived(reader: self, bytes: data)
           }
         } completionHandler: { error in
           DispatchQueue.main.async {
-            self.delegate?.onCompletion(reader: self, error: error?.localizedDescription)
+            delegate.onCompletion(reader: self, error: error?.localizedDescription)
           }
         }
 
