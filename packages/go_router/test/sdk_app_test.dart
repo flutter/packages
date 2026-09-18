@@ -69,6 +69,32 @@ void main() {
     expect(result.settings, isA<cupertino_ui.CupertinoPage<void>>());
   });
 
+  testWidgets('GoRoute.builder uses the closest supported app when Cupertino is nested in Material', (
+    WidgetTester tester,
+  ) async {
+    final result = await _pumpApp(
+      tester,
+      (GoRouter router) => flutter_material.MaterialApp(
+        home: flutter_cupertino.CupertinoApp.router(routerConfig: router),
+      ),
+    );
+
+    expect(result.settings, isA<flutter_cupertino.CupertinoPage<void>>());
+  });
+
+  testWidgets('GoRoute.builder uses the closest supported app when Material is nested in Cupertino', (
+    WidgetTester tester,
+  ) async {
+    final result = await _pumpApp(
+      tester,
+      (GoRouter router) => flutter_cupertino.CupertinoApp(
+        home: flutter_material.MaterialApp.router(routerConfig: router),
+      ),
+    );
+
+    expect(result.settings, isA<flutter_material.MaterialPage<void>>());
+  });
+
   testWidgets('SDK MaterialApp uses the SDK Material error screen', (WidgetTester tester) async {
     final router = _errorRouter();
     addTearDown(router.dispose);
@@ -80,6 +106,19 @@ void main() {
     expect(find.byType(material_ui.Scaffold), findsNothing);
   });
 
+  testWidgets('material_ui MaterialApp keeps the material_ui error screen', (
+    WidgetTester tester,
+  ) async {
+    final router = _errorRouter();
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(material_ui.MaterialApp.router(routerConfig: router));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(material_ui.Scaffold), findsOneWidget);
+    expect(find.byType(flutter_material.Scaffold), findsNothing);
+  });
+
   testWidgets('SDK CupertinoApp uses the SDK Cupertino error screen', (WidgetTester tester) async {
     final router = _errorRouter();
     addTearDown(router.dispose);
@@ -89,6 +128,19 @@ void main() {
 
     expect(find.byType(flutter_cupertino.CupertinoPageScaffold), findsOneWidget);
     expect(find.byType(cupertino_ui.CupertinoPageScaffold), findsNothing);
+  });
+
+  testWidgets('cupertino_ui CupertinoApp keeps the cupertino_ui error screen', (
+    WidgetTester tester,
+  ) async {
+    final router = _errorRouter();
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(cupertino_ui.CupertinoApp.router(routerConfig: router));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(cupertino_ui.CupertinoPageScaffold), findsOneWidget);
+    expect(find.byType(flutter_cupertino.CupertinoPageScaffold), findsNothing);
   });
 }
 
