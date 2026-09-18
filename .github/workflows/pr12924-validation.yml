@@ -1,0 +1,19 @@
+name: PR 12924 targeted validation
+
+on:
+  push:
+    branches:
+      - fix-go-router-sdk-app-pages
+
+jobs:
+  go-router-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2.21.0
+        with:
+          channel: master
+      - run: flutter pub get
+      - name: Run targeted go_router regression tests
+        working-directory: packages/go_router
+        run: flutter test test/sdk_app_test.dart
