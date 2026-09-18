@@ -718,6 +718,36 @@ void main() {
         );
         expect(log.single, contains('Skia Gold received an unapproved image in post-submit'));
       });
+
+      test(
+        'logs failure and returns true when imgtestInit throws while dashboard is being set up',
+        () async {
+          // TODO(Piinks): Restore TestFailure expectation once the Flutter Packages Gold dashboard is set up.
+          final log = <String>[];
+          final fs = MemoryFileSystem();
+          final platform = FakePlatform(operatingSystem: 'macos');
+          fs.directory(_kFlutterRoot).createSync(recursive: true);
+          final Directory basedir = fs.directory('flutter/test/library/')
+            ..createSync(recursive: true);
+          final fakeSkiaClient = FakeSkiaGoldClient()
+            ..initThrowable = const SkiaException('Skia Gold imgtest init failed.');
+          final FlutterGoldenFileComparator comparator = FlutterPostSubmitFileComparator(
+            basedir.uri,
+            fakeSkiaClient,
+            fs: fs,
+            platform: platform,
+            log: log.add,
+          );
+          expect(
+            await comparator.compare(
+              Uint8List.fromList(_kTestPngBytes),
+              Uri.parse('flutter.golden_test.1.png'),
+            ),
+            isTrue,
+          );
+          expect(log.single, contains('Skia Gold imgtest init failed.'));
+        },
+      );
     });
 
     group('Pre-Submit', () {
@@ -798,6 +828,36 @@ void main() {
         );
         expect(fakeSkiaClient.tryInitCalls, 0);
       });
+
+      test(
+        'logs failure and returns true when tryjobInit throws while dashboard is being set up',
+        () async {
+          // TODO(Piinks): Remove test once the Flutter Packages Gold dashboard is set up.
+          final log = <String>[];
+          final fs = MemoryFileSystem();
+          final platform = FakePlatform(operatingSystem: 'macos');
+          fs.directory(_kFlutterRoot).createSync(recursive: true);
+          final Directory basedir = fs.directory('flutter/test/library/')
+            ..createSync(recursive: true);
+          final fakeSkiaClient = FakeSkiaGoldClient()
+            ..tryInitThrowable = const SkiaException('Skia Gold tryjobInit failure.');
+          final FlutterGoldenFileComparator comparator = FlutterPreSubmitFileComparator(
+            basedir.uri,
+            fakeSkiaClient,
+            fs: fs,
+            platform: platform,
+            log: log.add,
+          );
+          expect(
+            await comparator.compare(
+              Uint8List.fromList(_kTestPngBytes),
+              Uri.parse('flutter.golden_test.1.png'),
+            ),
+            isTrue,
+          );
+          expect(log.single, contains('Skia Gold tryjobInit failure.'));
+        },
+      );
     });
 
     group('Local', () {
@@ -1094,8 +1154,15 @@ class FakeSkiaGoldClient extends Fake implements SkiaGoldClient {
   final List<String> testNames = <String>[];
 
   int initCalls = 0;
+  Exception? initThrowable;
   @override
-  Future<void> imgtestInit() async => initCalls += 1;
+  Future<void> imgtestInit() async {
+    initCalls += 1;
+    if (initThrowable != null) {
+      throw initThrowable!;
+    }
+  }
+
   @override
   Future<bool> imgtestAdd(String testName, File goldenFile) async {
     testNames.add(testName);
@@ -1103,8 +1170,15 @@ class FakeSkiaGoldClient extends Fake implements SkiaGoldClient {
   }
 
   int tryInitCalls = 0;
+  Exception? tryInitThrowable;
   @override
-  Future<void> tryjobInit() async => tryInitCalls += 1;
+  Future<void> tryjobInit() async {
+    tryInitCalls += 1;
+    if (tryInitThrowable != null) {
+      throw tryInitThrowable!;
+    }
+  }
+
   @override
   Future<String?> tryjobAdd(String testName, File goldenFile) async => null;
 

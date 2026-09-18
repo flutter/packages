@@ -10,7 +10,6 @@ import 'dart:io' as io;
 
 import 'package:crypto/crypto.dart';
 import 'package:file/file.dart';
-import 'package:path/path.dart' as path;
 import 'package:platform/platform.dart';
 import 'package:process/process.dart';
 
@@ -431,13 +430,17 @@ class SkiaGoldClient {
 
   /// Returns the current commit hash of the packages repository.
   Future<String> _getCurrentCommit() async {
-    final String cleanPath = path.normalize(platform.environment[_kSDKKey]!);
+    final String? sdkCheckoutPath = platform.environment[_kSDKKey];
+    if (sdkCheckoutPath == null) {
+      throw const SkiaException('SDK_CHECKOUT_PATH environment variable is missing.');
+    }
+    final String cleanPath = fs.path.normalize(sdkCheckoutPath);
 
     final io.ProcessResult revParse = await process.run(<String>[
       'git',
       'rev-parse',
       'HEAD',
-    ], workingDirectory: path.join(path.dirname(cleanPath), 'packages'));
+    ], workingDirectory: fs.path.join(fs.path.dirname(cleanPath), 'packages'));
     if (revParse.exitCode != 0) {
       throw const SkiaException('Current commit of flutter/packages can not be found.');
     }
@@ -464,7 +467,7 @@ class SkiaGoldClient {
   /// Removes the file extension from the [fileName] to represent the test name
   /// properly.
   String cleanTestName(String fileName) {
-    return fileName.split(path.extension(fileName))[0];
+    return fileName.split(fs.path.extension(fileName))[0];
   }
 
   /// Returns a boolean value to prevent the client from re-authorizing itself
