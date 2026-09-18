@@ -2677,7 +2677,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('PopupMenuItem changes mouse cursor when hovered', (WidgetTester tester) async {
     const Key key = ValueKey<int>(1);
@@ -2771,7 +2771,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('CheckedPopupMenuItem changes mouse cursor when hovered', (
     WidgetTester tester,
@@ -2873,7 +2873,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('PopupMenu in AppBar does not overlap with the status bar', (
     WidgetTester tester,
