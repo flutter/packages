@@ -342,8 +342,8 @@ class _ShellRoutePageKey extends ValueKey<String> {
       _imperativePageKey = imperativePageKey,
       super(
         imperativePageKey == null
-            ? identityHashCode(route.pageIdentity).toString()
-            : '${identityHashCode(route.pageIdentity)}-${imperativePageKey.value}',
+            ? route.pageIdentity.hashCode.toString()
+            : '${route.pageIdentity.hashCode}-${imperativePageKey.value}',
       );
 
   final Object _routeIdentity;
@@ -352,12 +352,12 @@ class _ShellRoutePageKey extends ValueKey<String> {
   @override
   bool operator ==(Object other) {
     return other is _ShellRoutePageKey &&
-        identical(other._routeIdentity, _routeIdentity) &&
+        other._routeIdentity == _routeIdentity &&
         other._imperativePageKey == _imperativePageKey;
   }
 
   @override
-  int get hashCode => Object.hash(identityHashCode(_routeIdentity), _imperativePageKey);
+  int get hashCode => Object.hash(_routeIdentity.hashCode, _imperativePageKey);
 }
 
 class _ShellRouteNavigatorKey extends GlobalKey<NavigatorState> {
@@ -371,12 +371,12 @@ class _ShellRouteNavigatorKey extends GlobalKey<NavigatorState> {
   @override
   bool operator ==(Object other) {
     return other is _ShellRouteNavigatorKey &&
-        identical(other._routeIdentity, _routeIdentity) &&
+        other._routeIdentity == _routeIdentity &&
         other.imperativePageKey == imperativePageKey;
   }
 
   @override
-  int get hashCode => Object.hash(identityHashCode(_routeIdentity), imperativePageKey);
+  int get hashCode => Object.hash(_routeIdentity.hashCode, imperativePageKey);
 }
 
 /// An matched result by matching a [ShellRoute] against a location.

@@ -204,7 +204,9 @@ void main() {
 
     test('push scopes key collisions in nested ShellRouteMatch', () {
       final leafRoute = GoRoute(path: '/leaf', builder: _builder);
-      final nestedNavigatorKey = GlobalKey<NavigatorState>();
+      // Deliberately create separate instances to verify value equality below.
+      // ignore: prefer_const_constructors
+      final nestedNavigatorKey = _ValueNavigatorKey('nested');
       final nestedRoute = ShellRoute(
         navigatorKey: nestedNavigatorKey,
         builder: _shellBuilder,
@@ -276,6 +278,61 @@ void main() {
       expect(pushedOuterMatch.navigatorKey, same(pushedOuterRoute.navigatorKey));
       expect(pushedNestedMatch.pageKey, isNot(nestedPageKey));
       expect(pushedNestedMatch.navigatorKey, isNot(equals(nestedNavigatorKey)));
+
+      // ignore: prefer_const_constructors
+      final equivalentNestedNavigatorKey = _ValueNavigatorKey('nested');
+      expect(equivalentNestedNavigatorKey, equals(nestedNavigatorKey));
+      expect(equivalentNestedNavigatorKey, isNot(same(nestedNavigatorKey)));
+      final equivalentLeafRoute = GoRoute(path: '/leaf', builder: _builder);
+      final equivalentNestedRoute = ShellRoute(
+        navigatorKey: equivalentNestedNavigatorKey,
+        builder: _shellBuilder,
+        routes: <RouteBase>[equivalentLeafRoute],
+      );
+      final equivalentPushedOuterRoute = ShellRoute(
+        builder: _shellBuilder,
+        routes: <RouteBase>[equivalentNestedRoute],
+      );
+      final equivalentPushedMatchList = RouteMatchList(
+        matches: <RouteMatchBase>[
+          ShellRouteMatch(
+            route: equivalentPushedOuterRoute,
+            matches: <RouteMatchBase>[
+              ShellRouteMatch(
+                route: equivalentNestedRoute,
+                matches: <RouteMatchBase>[
+                  RouteMatch(
+                    route: equivalentLeafRoute,
+                    matchedLocation: '/leaf',
+                    pageKey: const ValueKey<String>('/leaf'),
+                  ),
+                ],
+                matchedLocation: '/leaf',
+                pageKey: nestedPageKey,
+                navigatorKey: equivalentNestedNavigatorKey,
+              ),
+            ],
+            matchedLocation: '/leaf',
+            pageKey: pushedOuterPageKey,
+            navigatorKey: equivalentPushedOuterRoute.navigatorKey,
+          ),
+        ],
+        uri: Uri.parse('/leaf'),
+        pathParameters: const <String, String>{},
+      );
+      final RouteMatchList equivalentResult = currentMatchList.push(
+        ImperativeRouteMatch(
+          pageKey: const ValueKey<String>('push'),
+          matches: equivalentPushedMatchList,
+          completer: Completer<void>(),
+        ),
+      );
+      final equivalentPushedOuterMatch = equivalentResult.matches.last as ShellRouteMatch;
+      final equivalentPushedNestedMatch =
+          equivalentPushedOuterMatch.matches.single as ShellRouteMatch;
+      expect(equivalentPushedNestedMatch.pageKey, pushedNestedMatch.pageKey);
+      expect(equivalentPushedNestedMatch.pageKey.value, pushedNestedMatch.pageKey.value);
+      expect(equivalentPushedNestedMatch.navigatorKey, pushedNestedMatch.navigatorKey);
     });
   });
 }
@@ -284,3 +341,15 @@ Widget _builder(BuildContext context, GoRouterState state) => const Placeholder(
 
 Widget _shellBuilder(BuildContext context, GoRouterState state, Widget child) =>
     const Placeholder();
+
+class _ValueNavigatorKey extends GlobalKey<NavigatorState> {
+  const _ValueNavigatorKey(this.label) : super.constructor();
+
+  final String label;
+
+  @override
+  bool operator ==(Object other) => other is _ValueNavigatorKey && other.label == label;
+
+  @override
+  int get hashCode => label.hashCode;
+}

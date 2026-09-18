@@ -310,6 +310,50 @@ void main() {
     expect(find.byKey(secondPageKey), findsOneWidget);
   });
 
+  testWidgets('push sequence from flutter/flutter#140586 does not duplicate page keys', (
+    WidgetTester tester,
+  ) async {
+    NoTransitionPage<void> page(GoRouterState state, String label) {
+      return NoTransitionPage<void>(key: state.pageKey, child: Text(label));
+    }
+
+    final routes = <RouteBase>[
+      GoRoute(path: '/a', pageBuilder: (_, GoRouterState state) => page(state, 'A Screen')),
+      ShellRoute(
+        navigatorKey: GlobalKey<NavigatorState>(),
+        pageBuilder: (_, GoRouterState state, Widget child) {
+          return NoTransitionPage<void>(key: state.pageKey, child: child);
+        },
+        routes: <RouteBase>[
+          GoRoute(path: '/b', pageBuilder: (_, GoRouterState state) => page(state, 'B Screen')),
+          GoRoute(path: '/c', pageBuilder: (_, GoRouterState state) => page(state, 'C Screen')),
+        ],
+      ),
+    ];
+    final GoRouter router = await createRouter(routes, tester, initialLocation: '/a');
+    expect(find.text('A Screen'), findsOneWidget);
+
+    router.push<void>('/b');
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('B Screen'), findsOneWidget);
+
+    router.push<void>('/c');
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('C Screen'), findsOneWidget);
+
+    router.pushReplacement<void>('/a');
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('A Screen'), findsOneWidget);
+
+    router.push<void>('/b');
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('B Screen'), findsOneWidget);
+  });
+
   testWidgets('push inside or outside shell route', (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/issues/120665.
     final inside = UniqueKey();
