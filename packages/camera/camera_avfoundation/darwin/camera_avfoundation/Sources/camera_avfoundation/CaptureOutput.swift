@@ -59,6 +59,15 @@ protocol CapturePhotoOutput: CaptureOutput {
   /// Corresponds to the `supportedFlashModes` property of `AVCapturePhotoOutput`
   var supportedFlashModes: [AVCaptureDevice.FlashMode] { get }
 
+  /// Corresponds to the `isZeroShutterLagSupported` property of
+  /// `AVCapturePhotoOutput` on iOS 17+/macOS 14+; `false` on older versions.
+  var flutterZeroShutterLagSupported: Bool { get }
+
+  /// Corresponds to the `isZeroShutterLagEnabled` property of
+  /// `AVCapturePhotoOutput` on iOS 17+/macOS 14+; reads `false` and ignores
+  /// writes on older versions.
+  var flutterZeroShutterLagEnabled: Bool { get set }
+
   /// Corresponds to the `capturePhotoWithSettings` method of `AVCapturePhotoOutput`
   func capturePhoto(with settings: AVCapturePhotoSettings, delegate: AVCapturePhotoCaptureDelegate)
 }
@@ -67,6 +76,27 @@ protocol CapturePhotoOutput: CaptureOutput {
 extension AVCapturePhotoOutput: CapturePhotoOutput {
   var avOutput: AVCapturePhotoOutput {
     return self
+  }
+
+  var flutterZeroShutterLagSupported: Bool {
+    if #available(iOS 17.0, macOS 14.0, *) {
+      return isZeroShutterLagSupported
+    }
+    return false
+  }
+
+  var flutterZeroShutterLagEnabled: Bool {
+    get {
+      if #available(iOS 17.0, macOS 14.0, *) {
+        return isZeroShutterLagEnabled
+      }
+      return false
+    }
+    set {
+      if #available(iOS 17.0, macOS 14.0, *) {
+        isZeroShutterLagEnabled = newValue
+      }
+    }
   }
 
   func connection(with mediaType: AVMediaType) -> CaptureConnection? {

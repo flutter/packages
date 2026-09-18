@@ -1,3 +1,9 @@
+## 0.12.2
+
+* Adds `CameraController.isZeroShutterLagSupported` and
+  `CameraController.setZeroShutterLagEnabled` for zero-shutter-lag still image
+  capture on platforms that support it.
+
 ## 0.12.1
 
 * Adds `setJpegImageQuality` for controlling JPEG compression quality.

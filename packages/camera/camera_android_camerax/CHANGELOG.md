@@ -1,3 +1,8 @@
+## 0.7.5
+
+* Adds support for zero-shutter-lag still image capture via
+  `isZeroShutterLagSupported` and `setZeroShutterLagEnabled`.
+
 ## 0.7.4+8
 
 * Bumps cameraxVersion from 1.6.1 to 1.6.2.

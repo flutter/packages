@@ -343,6 +343,16 @@ abstract class CameraApi {
   @async
   @ObjCSelector('setJpegImageQuality:')
   void setJpegImageQuality(int quality);
+
+  /// Returns whether the current session configuration supports
+  /// zero-shutter-lag capture.
+  @async
+  bool isZeroShutterLagSupported();
+
+  /// Enables or disables zero-shutter-lag capture.
+  @async
+  @ObjCSelector('setZeroShutterLagEnabled:')
+  void setZeroShutterLagEnabled(bool enabled);
 }
 
 @EventChannelApi()
