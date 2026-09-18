@@ -26,15 +26,15 @@ jobs:
           from pathlib import Path
           p = Path('packages/go_router/lib/src/builder.dart')
           s = p.read_text()
-          old = '''    // This method can also be called if any of the page builders depend on
-    // the context. In this case, make sure _pages are rebuilt.
-    _pages = null;'''
-          new = '''    // This method can also be called if any of the page builders depend on
-    // the context. In this case, make sure the app-type builders and pages are
-    // recomputed from the current ancestor tree.
-    _pageBuilderForAppType = null;
-    _errorBuilderForAppType = null;
-    _pages = null;'''
+          old = ('    // This method can also be called if any of the page builders depend on\n'
+                 '    // the context. In this case, make sure _pages are rebuilt.\n'
+                 '    _pages = null;')
+          new = ('    // This method can also be called if any of the page builders depend on\n'
+                 '    // the context. In this case, make sure the app-type builders and pages are\n'
+                 '    // recomputed from the current ancestor tree.\n'
+                 '    _pageBuilderForAppType = null;\n'
+                 '    _errorBuilderForAppType = null;\n'
+                 '    _pages = null;')
           if old not in s:
               raise SystemExit('didChangeDependencies block not found')
           p.write_text(s.replace(old, new, 1))
