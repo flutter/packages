@@ -212,9 +212,11 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
       );
     }
 
-    // TODO(bparrishMines): Thread merging is optional on macOS, so the FFI
-    // implementation is not guaranteed to work when it needs to switch to the
-    // platform thread from a native callback.
+    // TODO(bparrishMines): Remove pigeon implementation once
+    // https://github.com/flutter/flutter/issues/181874 lands in stable. Thread
+    // merging is optional on macOS, so the FFI implementation is not guaranteed
+    // to work when it needs to switch to the platform thread from a native
+    // callback. See https://github.com/flutter/flutter/issues/181874
     if (defaultTargetPlatform == TargetPlatform.macOS) {
       return _openReadWithPigeon(start, end);
     }
@@ -224,9 +226,11 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
 
   @override
   Future<Uint8List> readAsBytes() {
-    // TODO(bparrishMines): Thread merging is optional on macOS, so the FFI
-    // implementation is not guaranteed to work when it needs to switch to the
-    // platform thread from a native callback.
+    // TODO(bparrishMines): Remove pigeon implementation once
+    // https://github.com/flutter/flutter/issues/181874 lands in stable. Thread
+    // merging is optional on macOS, so the FFI implementation is not guaranteed
+    // to work when it needs to switch to the platform thread from a native
+    // callback.
     if (defaultTargetPlatform == TargetPlatform.macOS) {
       return _readBytesWithPigeon();
     }
