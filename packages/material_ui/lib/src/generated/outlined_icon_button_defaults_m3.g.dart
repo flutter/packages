@@ -2,8 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-class _FilledTonalIconButtonDefaultsM3 extends ButtonStyle {
-  _FilledTonalIconButtonDefaultsM3(this.context, this.toggleable)
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../icon_button.dart';
+
+class _OutlinedIconButtonDefaultsM3 extends ButtonStyle {
+  _OutlinedIconButtonDefaultsM3(this.context, this.toggleable)
     : super(
         animationDuration: kThemeChangeDuration,
         enableFeedback: true,
@@ -20,16 +25,15 @@ class _FilledTonalIconButtonDefaultsM3 extends ButtonStyle {
   WidgetStateProperty<Color?>? get backgroundColor =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
-          return _colors.onSurface.withOpacity(0.12);
+          if (states.contains(WidgetState.selected)) {
+            return _colors.onSurface.withOpacity(0.12);
+          }
+          return Colors.transparent;
         }
         if (states.contains(WidgetState.selected)) {
-          return _colors.secondaryContainer;
+          return _colors.inverseSurface;
         }
-        if (toggleable) {
-          // toggleable but unselected case
-          return _colors.surfaceContainerHighest;
-        }
-        return _colors.secondaryContainer;
+        return Colors.transparent;
       });
 
   @override
@@ -39,13 +43,9 @@ class _FilledTonalIconButtonDefaultsM3 extends ButtonStyle {
           return _colors.onSurface.withOpacity(0.38);
         }
         if (states.contains(WidgetState.selected)) {
-          return _colors.onSecondaryContainer;
+          return _colors.onInverseSurface;
         }
-        if (toggleable) {
-          // toggleable but unselected case
-          return _colors.onSurfaceVariant;
-        }
-        return _colors.onSecondaryContainer;
+        return _colors.onSurfaceVariant;
       });
 
   @override
@@ -53,35 +53,23 @@ class _FilledTonalIconButtonDefaultsM3 extends ButtonStyle {
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.selected)) {
           if (states.contains(WidgetState.pressed)) {
-            return _colors.onSecondaryContainer.withOpacity(0.1);
+            return _colors.onInverseSurface.withOpacity(0.1);
           }
           if (states.contains(WidgetState.hovered)) {
-            return _colors.onSecondaryContainer.withOpacity(0.08);
+            return _colors.onInverseSurface.withOpacity(0.08);
           }
           if (states.contains(WidgetState.focused)) {
-            return _colors.onSecondaryContainer.withOpacity(0.1);
-          }
-        }
-        if (toggleable) {
-          // toggleable but unselected case
-          if (states.contains(WidgetState.pressed)) {
-            return _colors.onSurfaceVariant.withOpacity(0.1);
-          }
-          if (states.contains(WidgetState.hovered)) {
-            return _colors.onSurfaceVariant.withOpacity(0.08);
-          }
-          if (states.contains(WidgetState.focused)) {
-            return _colors.onSurfaceVariant.withOpacity(0.1);
+            return _colors.onInverseSurface.withOpacity(0.08);
           }
         }
         if (states.contains(WidgetState.pressed)) {
-          return _colors.onSecondaryContainer.withOpacity(0.1);
+          return _colors.onSurface.withOpacity(0.1);
         }
         if (states.contains(WidgetState.hovered)) {
-          return _colors.onSecondaryContainer.withOpacity(0.08);
+          return _colors.onSurfaceVariant.withOpacity(0.08);
         }
         if (states.contains(WidgetState.focused)) {
-          return _colors.onSecondaryContainer.withOpacity(0.1);
+          return _colors.onSurfaceVariant.withOpacity(0.08);
         }
         return Colors.transparent;
       });
@@ -114,7 +102,17 @@ class _FilledTonalIconButtonDefaultsM3 extends ButtonStyle {
   WidgetStateProperty<double>? get iconSize => const MaterialStatePropertyAll<double>(24.0);
 
   @override
-  WidgetStateProperty<BorderSide?>? get side => null;
+  WidgetStateProperty<BorderSide?>? get side =>
+      WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.selected)) {
+          return null;
+        } else {
+          if (states.contains(WidgetState.disabled)) {
+            return BorderSide(color: _colors.onSurface.withOpacity(0.12));
+          }
+          return BorderSide(color: _colors.outline);
+        }
+      });
 
   @override
   WidgetStateProperty<OutlinedBorder>? get shape =>
