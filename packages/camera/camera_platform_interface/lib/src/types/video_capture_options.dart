@@ -71,6 +71,12 @@ class VideoCaptureOptions {
           videoOutputPath == other.videoOutputPath;
 
   @override
-  int get hashCode =>
-      Object.hash(cameraId, maxDuration, streamCallback, streamOptions, enablePersistentRecording);
+  int get hashCode => Object.hash(
+    cameraId,
+    maxDuration,
+    streamCallback,
+    streamOptions,
+    enablePersistentRecording,
+    videoOutputPath,
+  );
 }

@@ -1681,6 +1681,12 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(api.callFlutterNoop(), completes);
     });
 
+    testWidgets('async FlutterApi works on proper thread and isolate', (WidgetTester _) async {
+      final api = HostIntegrationCoreApi();
+
+      expect(await api.callFlutterIsAsyncFlutterApiOnRoot(), isTrue);
+    });
+
     testWidgets('callback basic void->void call works', (WidgetTester _) async {
       final api = HostIntegrationCoreApi();
 
@@ -2630,6 +2636,11 @@ class FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   @override
   Future<String> echoAsyncString(String aString) async {
     return aString;
+  }
+
+  @override
+  Future<bool> isAsyncFlutterApiOnRoot() async {
+    return RootIsolateToken.instance != null && ServicesBinding.rootIsolateToken != null;
   }
 }
 
